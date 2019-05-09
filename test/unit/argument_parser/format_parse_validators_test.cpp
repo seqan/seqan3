@@ -97,7 +97,7 @@ TEST(validator_test, input_file)
         // option
         std::filesystem::path path = tmp_name.get_path();
         const char * argv[] = {"./argument_parser_test", "-i", path.c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_option(file_in_path, 'i', "int-option", "desc",
                           option_spec::DEFAULT, input_file_validator{formats});
 
@@ -113,7 +113,7 @@ TEST(validator_test, input_file)
         std::filesystem::path path_2 = tmp_name_2.get_path();
 
         const char * argv[] = {"./argument_parser_test", path.c_str(), path_2.c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_positional_option(input_files, "desc", input_file_validator{formats});
 
         EXPECT_NO_THROW(parser.parse());
@@ -125,7 +125,7 @@ TEST(validator_test, input_file)
     { // get help page message
         std::filesystem::path path;
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser("test_parser", 2, argv);
+        argument_parser parser{"test_parser", 2, argv};
         parser.add_positional_option(path, "desc", input_file_validator{formats});
 
         testing::internal::CaptureStdout();
@@ -181,7 +181,7 @@ TEST(validator_test, output_file)
         // option
         std::filesystem::path path = tmp_name.get_path();
         const char * argv[] = {"./argument_parser_test", "-o", path.c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_option(file_out_path, 'o', "out-option", "desc",
                           option_spec::DEFAULT, output_file_validator{formats});
 
@@ -197,7 +197,7 @@ TEST(validator_test, output_file)
         std::filesystem::path path_3 = tmp_name_3.get_path();
 
         const char * argv[] = {"./argument_parser_test", path.c_str(), path_3.c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_positional_option(output_files, "desc", output_file_validator{formats});
 
         EXPECT_NO_THROW(parser.parse());
@@ -210,7 +210,7 @@ TEST(validator_test, output_file)
     {
         std::filesystem::path path;
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser("test_parser", 2, argv);
+        argument_parser parser{"test_parser", 2, argv};
         parser.add_positional_option(path, "desc", output_file_validator{formats});
 
         testing::internal::CaptureStdout();
@@ -251,7 +251,7 @@ TEST(validator_test, input_directory)
 
             // option
             const char * argv[] = {"./argument_parser_test", "-i", p.c_str()};
-            argument_parser parser("test_parser", 3, argv);
+            argument_parser parser{"test_parser", 3, argv};
             parser.add_option(dir_in_path, 'i', "input-option", "desc",
                               option_spec::DEFAULT, input_directory_validator{});
 
@@ -264,7 +264,7 @@ TEST(validator_test, input_directory)
         // get help page message
         std::filesystem::path path;
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser("test_parser", 2, argv);
+        argument_parser parser{"test_parser", 2, argv};
         parser.add_positional_option(path, "desc", input_directory_validator{});
 
         testing::internal::CaptureStdout();
@@ -297,7 +297,7 @@ TEST(validator_test, output_directory)
 
         // option
         const char * argv[] = {"./argument_parser_test", "-o", p.c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_option(dir_out_path, 'o', "output-option", "desc",
                           option_spec::DEFAULT, output_directory_validator{});
 
@@ -309,7 +309,7 @@ TEST(validator_test, output_directory)
         // get help page message
         std::filesystem::path path;
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser("test_parser", 2, argv);
+        argument_parser parser{"test_parser", 2, argv};
         parser.add_positional_option(path, "desc", output_directory_validator{});
 
         testing::internal::CaptureStdout();
@@ -448,9 +448,9 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // option
     const char * argv[] = {"./argument_parser_test", "-i", "10"};
-    argument_parser parser("test_parser", 3, argv);
+    argument_parser parser{"test_parser", 3, argv};
     parser.add_option(option_value, 'i', "int-option", "desc",
-                      option_spec::DEFAULT, arithmetic_range_validator(1, 20));
+                      option_spec::DEFAULT, arithmetic_range_validator{1, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
@@ -459,9 +459,9 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // option - negative values
     const char * argv2[] = {"./argument_parser_test", "-i", "-10"};
-    argument_parser parser2("test_parser", 3, argv2);
+    argument_parser parser2{"test_parser", 3, argv2};
     parser2.add_option(option_value, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator(-20, 20));
+                       option_spec::DEFAULT, arithmetic_range_validator{-20, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser2.parse());
@@ -470,8 +470,8 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // positional option
     const char * argv3[] = {"./argument_parser_test", "10"};
-    argument_parser parser3("test_parser", 2, argv3);
-    parser3.add_positional_option(option_value, "desc", arithmetic_range_validator(1, 20));
+    argument_parser parser3{"test_parser", 2, argv3};
+    parser3.add_positional_option(option_value, "desc", arithmetic_range_validator{1, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser3.parse());
@@ -480,8 +480,8 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // positional option - negative values
     const char * argv4[] = {"./argument_parser_test", "--", "-10"};
-    argument_parser parser4("test_parser", 3, argv4);
-    parser4.add_positional_option(option_value, "desc", arithmetic_range_validator(-20, 20));
+    argument_parser parser4{"test_parser", 3, argv4};
+    parser4.add_positional_option(option_value, "desc", arithmetic_range_validator{-20, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser4.parse());
@@ -490,9 +490,9 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "48"};
-    argument_parser parser5("test_parser", 5, argv5);
+    argument_parser parser5{"test_parser", 5, argv5};
     parser5.add_option(option_vector, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator(-50,50));
+                       option_spec::DEFAULT, arithmetic_range_validator{-50,50});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser5.parse());
@@ -503,8 +503,8 @@ TEST(validator_test, arithmetic_range_validator_success)
     // positional option - vector
     option_vector.clear();
     const char * argv6[] = {"./argument_parser_test", "--", "-10", "1"};
-    argument_parser parser6("test_parser", 4, argv6);
-    parser6.add_positional_option(option_vector, "desc", arithmetic_range_validator(-20,20));
+    argument_parser parser6{"test_parser", 4, argv6};
+    parser6.add_positional_option(option_vector, "desc", arithmetic_range_validator{-20,20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser6.parse());
@@ -515,8 +515,8 @@ TEST(validator_test, arithmetic_range_validator_success)
     // get help page message
     option_vector.clear();
     const char * argv7[] = {"./argument_parser_test", "-h"};
-    argument_parser parser7("test_parser", 2, argv7);
-    parser7.add_positional_option(option_vector, "desc", arithmetic_range_validator(-20,20));
+    argument_parser parser7{"test_parser", 2, argv7};
+    parser7.add_positional_option(option_vector, "desc", arithmetic_range_validator{-20,20});
 
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -534,9 +534,9 @@ TEST(validator_test, arithmetic_range_validator_success)
     // option - double value
     double double_option_value;
     const char * argv8[] = {"./argument_parser_test", "-i", "10.9"};
-    argument_parser parser8("test_parser", 3, argv8);
+    argument_parser parser8{"test_parser", 3, argv8};
     parser8.add_option(double_option_value, 'i', "double-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator(1, 20));
+                       option_spec::DEFAULT, arithmetic_range_validator{1, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser8.parse());
@@ -551,56 +551,56 @@ TEST(validator_test, arithmetic_range_validator_error)
 
     // option - above max
     const char * argv[] = {"./argument_parser_test", "-i", "30"};
-    argument_parser parser("test_parser", 3, argv);
+    argument_parser parser{"test_parser", 3, argv};
     parser.add_option(option_value, 'i', "int-option", "desc",
-                      option_spec::DEFAULT, arithmetic_range_validator(1, 20));
+                      option_spec::DEFAULT, arithmetic_range_validator{1, 20});
 
     EXPECT_THROW(parser.parse(), validation_failed);
 
     // option - below min
     const char * argv2[] = {"./argument_parser_test", "-i", "-21"};
-    argument_parser parser2("test_parser", 3, argv2);
+    argument_parser parser2{"test_parser", 3, argv2};
     parser2.add_option(option_value, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator(-20, 20));
+                       option_spec::DEFAULT, arithmetic_range_validator{-20, 20});
 
     EXPECT_THROW(parser2.parse(), validation_failed);
 
     // positional option - above max
     const char * argv3[] = {"./argument_parser_test", "30"};
-    argument_parser parser3("test_parser", 2, argv3);
-    parser3.add_positional_option(option_value, "desc", arithmetic_range_validator(1, 20));
+    argument_parser parser3{"test_parser", 2, argv3};
+    parser3.add_positional_option(option_value, "desc", arithmetic_range_validator{1, 20});
 
     EXPECT_THROW(parser3.parse(), validation_failed);
 
     // positional option - below min
     const char * argv4[] = {"./argument_parser_test", "--", "-21"};
-    argument_parser parser4("test_parser", 3, argv4);
-    parser4.add_positional_option(option_value, "desc", arithmetic_range_validator(-20, 20));
+    argument_parser parser4{"test_parser", 3, argv4};
+    parser4.add_positional_option(option_value, "desc", arithmetic_range_validator{-20, 20});
 
     EXPECT_THROW(parser4.parse(), validation_failed);
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-100"};
-    argument_parser parser5("test_parser", 3, argv5);
+    argument_parser parser5{"test_parser", 3, argv5};
     parser5.add_option(option_vector, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator(-50, 50));
+                       option_spec::DEFAULT, arithmetic_range_validator{-50, 50});
 
     EXPECT_THROW(parser5.parse(), validation_failed);
 
     // positional option - vector
     option_vector.clear();
     const char * argv6[] = {"./argument_parser_test", "--", "-10", "100"};
-    argument_parser parser6("test_parser", 4, argv6);
-    parser6.add_positional_option(option_vector, "desc", arithmetic_range_validator(-20, 20));
+    argument_parser parser6{"test_parser", 4, argv6};
+    parser6.add_positional_option(option_vector, "desc", arithmetic_range_validator{-20, 20});
 
     EXPECT_THROW(parser6.parse(), validation_failed);
 
     // option - double value
     double double_option_value;
     const char * argv7[] = {"./argument_parser_test", "-i", "0.9"};
-    argument_parser parser7("test_parser", 3, argv7);
+    argument_parser parser7{"test_parser", 3, argv7};
     parser7.add_option(double_option_value, 'i', "double-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator(1, 20));
+                       option_spec::DEFAULT, arithmetic_range_validator{1, 20});
 
     EXPECT_THROW(parser7.parse(), validation_failed);
 }
@@ -614,9 +614,9 @@ TEST(validator_test, value_list_validator_success)
 
     // option
     const char * argv[] = {"./argument_parser_test", "-s", "ba"};
-    argument_parser parser("test_parser", 3, argv);
+    argument_parser parser{"test_parser", 3, argv};
     parser.add_option(option_value, 's', "string-option", "desc",
-                      option_spec::DEFAULT, value_list_validator({"ha", "ba", "ma"}));
+                      option_spec::DEFAULT, value_list_validator{{"ha", "ba", "ma"}});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
@@ -625,9 +625,9 @@ TEST(validator_test, value_list_validator_success)
 
     // option with integers
     const char * argv2[] = {"./argument_parser_test", "-i", "-21"};
-    argument_parser parser2("test_parser", 3, argv2);
+    argument_parser parser2{"test_parser", 3, argv2};
     parser2.add_option(option_value_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>({0, -21, 10}));
+                       option_spec::DEFAULT, value_list_validator<int>{{0, -21, 10}});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser2.parse());
@@ -636,8 +636,8 @@ TEST(validator_test, value_list_validator_success)
 
     // positional option
     const char * argv3[] = {"./argument_parser_test", "ma"};
-    argument_parser parser3("test_parser", 2, argv3);
-    parser3.add_positional_option(option_value, "desc", value_list_validator({"ha", "ba", "ma"}));
+    argument_parser parser3{"test_parser", 2, argv3};
+    parser3.add_positional_option(option_value, "desc", value_list_validator{{"ha", "ba", "ma"}});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser3.parse());
@@ -646,9 +646,9 @@ TEST(validator_test, value_list_validator_success)
 
     // positional option - vector
     const char * argv4[] = {"./argument_parser_test", "ha", "ma"};
-    argument_parser parser4("test_parser", 3, argv4);
+    argument_parser parser4{"test_parser", 3, argv4};
     parser4.add_positional_option(option_vector, "desc",
-                                  value_list_validator({"ha", "ba", "ma"}));
+                                  value_list_validator{{"ha", "ba", "ma"}});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser4.parse());
@@ -658,9 +658,9 @@ TEST(validator_test, value_list_validator_success)
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "48"};
-    argument_parser parser5("test_parser", 5, argv5);
+    argument_parser parser5{"test_parser", 5, argv5};
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>({-10,48,50}));
+                       option_spec::DEFAULT, value_list_validator<int>{{-10,48,50}});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser5.parse());
@@ -671,9 +671,9 @@ TEST(validator_test, value_list_validator_success)
     // get help page message
     option_vector_int.clear();
     const char * argv7[] = {"./argument_parser_test", "-h"};
-    argument_parser parser7("test_parser", 2, argv7);
+    argument_parser parser7{"test_parser", 2, argv7};
     parser7.add_option(option_vector_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>({-10,48,50}));
+                       option_spec::DEFAULT, value_list_validator<int>{{-10,48,50}});
 
     option_vector_int.clear();
     testing::internal::CaptureStdout();
@@ -698,32 +698,32 @@ TEST(validator_test, value_list_validator_error)
 
     // option
     const char * argv[] = {"./argument_parser_test", "-s", "sa"};
-    argument_parser parser("test_parser", 3, argv);
+    argument_parser parser{"test_parser", 3, argv};
     parser.add_option(option_value, 's', "string-option", "desc",
-                      option_spec::DEFAULT, value_list_validator({"ha", "ba", "ma"}));
+                      option_spec::DEFAULT, value_list_validator{{"ha", "ba", "ma"}});
 
     EXPECT_THROW(parser.parse(), validation_failed);
 
     // positional option
     const char * argv3[] = {"./argument_parser_test", "30"};
-    argument_parser parser3("test_parser", 2, argv3);
-    parser3.add_positional_option(option_value_int, "desc", value_list_validator({0, 5, 10}));
+    argument_parser parser3{"test_parser", 2, argv3};
+    parser3.add_positional_option(option_value_int, "desc", value_list_validator{{0, 5, 10}});
 
     EXPECT_THROW(parser3.parse(), validation_failed);
 
     // positional option - vector
     const char * argv4[] = {"./argument_parser_test", "fo", "ma"};
-    argument_parser parser4("test_parser", 3, argv4);
+    argument_parser parser4{"test_parser", 3, argv4};
     parser4.add_positional_option(option_vector, "desc",
-                                  value_list_validator({"ha", "ba", "ma"}));
+                                  value_list_validator{{"ha", "ba", "ma"}});
 
     EXPECT_THROW(parser4.parse(), validation_failed);
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "488"};
-    argument_parser parser5("test_parser", 5, argv5);
+    argument_parser parser5{"test_parser", 5, argv5};
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>({-10,48,50}));
+                       option_spec::DEFAULT, value_list_validator<int>{{-10,48,50}});
 
     EXPECT_THROW(parser5.parse(), validation_failed);
 }
@@ -737,7 +737,7 @@ TEST(validator_test, regex_validator_success)
 
     // option
     const char * argv[] = {"./argument_parser_test", "-s", "ballo@rollo.com"};
-    argument_parser parser("test_parser", 3, argv);
+    argument_parser parser{"test_parser", 3, argv};
     parser.add_option(option_value, 's', "string-option", "desc",
                       option_spec::DEFAULT, email_validator);
 
@@ -748,7 +748,7 @@ TEST(validator_test, regex_validator_success)
 
     // positional option
     const char * argv2[] = {"./argument_parser_test", "chr1"};
-    argument_parser parser2("test_parser", 2, argv2);
+    argument_parser parser2{"test_parser", 2, argv2};
     parser2.add_positional_option(option_value, "desc",
                                   regex_validator{"^chr[0-9]+"});
 
@@ -759,7 +759,7 @@ TEST(validator_test, regex_validator_success)
 
     // positional option - vector
     const char * argv3[] = {"./argument_parser_test", "rollo", "bollo", "lollo"};
-    argument_parser parser3("test_parser", 4, argv3);
+    argument_parser parser3{"test_parser", 4, argv3};
     parser3.add_positional_option(option_vector, "desc",
                                   regex_validator{".*oll.*"});
 
@@ -773,7 +773,7 @@ TEST(validator_test, regex_validator_success)
     // option - vector
     option_vector.clear();
     const char * argv4[] = {"./argument_parser_test", "-s", "rita@rambo.com", "-s", "tina@rambo.com"};
-    argument_parser parser4("test_parser", 5, argv4);
+    argument_parser parser4{"test_parser", 5, argv4};
     parser4.add_option(option_vector, 's', "string-option", "desc",
                        option_spec::DEFAULT, email_vector_validator);
 
@@ -786,7 +786,7 @@ TEST(validator_test, regex_validator_success)
     // get help page message
     option_vector.clear();
     const char * argv7[] = {"./argument_parser_test", "-h"};
-    argument_parser parser7("test_parser", 2, argv7);
+    argument_parser parser7{"test_parser", 2, argv7};
     parser7.add_option(option_vector, 's', "string-option", "desc",
                        option_spec::DEFAULT, email_vector_validator);
 
@@ -811,23 +811,23 @@ TEST(validator_test, regex_validator_error)
 
     // option
     const char * argv[] = {"./argument_parser_test", "--string-option", "sally"};
-    argument_parser parser("test_parser", 3, argv);
+    argument_parser parser{"test_parser", 3, argv};
     parser.add_option(option_value, '\0', "string-option", "desc",
-                      option_spec::DEFAULT, regex_validator("tt"));
+                      option_spec::DEFAULT, regex_validator{"tt"});
 
     EXPECT_THROW(parser.parse(), validation_failed);
 
     // positional option
     const char * argv2[] = {"./argument_parser_test", "jessy"};
-    argument_parser parser2("test_parser", 2, argv2);
+    argument_parser parser2{"test_parser", 2, argv2};
     parser2.add_positional_option(option_value, "desc",
-                                  regex_validator("[0-9]"));
+                                  regex_validator{"[0-9]"});
 
     EXPECT_THROW(parser2.parse(), validation_failed);
 
     // positional option - vector
     const char * argv3[] = {"./argument_parser_test", "rollo", "bttllo", "lollo"};
-    argument_parser parser3("test_parser", 4, argv3);
+    argument_parser parser3{"test_parser", 4, argv3};
     parser3.add_positional_option(option_vector, "desc",
                                   regex_validator{".*oll.*"});
 
@@ -836,9 +836,9 @@ TEST(validator_test, regex_validator_error)
     // option - vector
     option_vector.clear();
     const char * argv4[] = {"./argument_parser_test", "-s", "gh", "-s", "tt"};
-    argument_parser parser4("test_parser", 5, argv4);
+    argument_parser parser4{"test_parser", 5, argv4};
     parser4.add_option(option_vector, 's', "", "desc",
-                       option_spec::DEFAULT, regex_validator("tt"));
+                       option_spec::DEFAULT, regex_validator{"tt"});
 
     EXPECT_THROW(parser4.parse(), validation_failed);
 }
@@ -847,8 +847,8 @@ TEST(validator_test, chaining_validators)
 {
     std::string option_value{};
     std::vector<std::string> option_vector{};
-    regex_validator absolute_path_validator("(/[^/]+)+/.*\\.[^/\\.]+$");
-    output_file_validator my_file_ext_validator({"sa", "so"});
+    regex_validator absolute_path_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"};
+    output_file_validator my_file_ext_validator{{"sa", "so"}};
 
     test::tmp_filename tmp_name{"file.sa"};
     std::filesystem::path invalid_extension{tmp_name.get_path()};
@@ -857,7 +857,7 @@ TEST(validator_test, chaining_validators)
     // option
     {
         const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
@@ -869,7 +869,7 @@ TEST(validator_test, chaining_validators)
 
     {
         const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().relative_path().c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
@@ -879,7 +879,7 @@ TEST(validator_test, chaining_validators)
     {
 
         const char * argv[] = {"./argument_parser_test", "-s", invalid_extension.c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
@@ -889,7 +889,7 @@ TEST(validator_test, chaining_validators)
     // with temporary validators
     {
         const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
@@ -904,7 +904,7 @@ TEST(validator_test, chaining_validators)
     // three validators
     {
         const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
@@ -920,7 +920,7 @@ TEST(validator_test, chaining_validators)
     // help page message
     {
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser("test_parser", 2, argv);
+        argument_parser parser{"test_parser", 2, argv};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
@@ -947,7 +947,7 @@ TEST(validator_test, chaining_validators)
     {
         std::vector<std::string> option_list_value{};
         const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
-        argument_parser parser("test_parser", 3, argv);
+        argument_parser parser{"test_parser", 3, argv};
         parser.add_option(option_list_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} | output_file_validator{{"sa", "so"}});

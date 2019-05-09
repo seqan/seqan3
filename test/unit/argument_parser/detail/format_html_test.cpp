@@ -23,7 +23,7 @@ TEST(html_format, empty_information)
 
     // Empty html help page.
     const char * argv0[] = {"./help_add_test", "--export-help", "html"};
-    argument_parser parser0("empty_options", 3, argv0);
+    argument_parser parser0{"empty_options", 3, argv0};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     my_stdout = testing::internal::GetCapturedStdout();
@@ -60,7 +60,7 @@ TEST(html_format, empty_information)
     EXPECT_EQ(my_stdout, expected);
 
     const char * argv1[] = {"./help_add_test", "--export-help=html"};
-    argument_parser parser1("empty_options", 2, argv1);
+    argument_parser parser1{"empty_options", 2, argv1};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     my_stdout = testing::internal::GetCapturedStdout();
@@ -77,7 +77,7 @@ TEST(html_format, full_information_information)
 
    // Full html help page.
    const char * argv0[] = {"./help_add_test", "--export-help", "html"};
-   argument_parser parser1("program_full_options", 3, argv0);
+   argument_parser parser1{"program_full_options", 3, argv0};
    parser1.info.synopsis.push_back("./some_binary_name synopsis");
    parser1.info.synopsis.push_back("./some_binary_name synopsis2");
    parser1.info.description.push_back("description");

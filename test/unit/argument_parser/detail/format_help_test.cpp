@@ -53,7 +53,7 @@ std::string const basic_version_str = "VERSION"
 TEST(help_page_printing, short_help)
 {
     // Empty call with no options given. For detail::format_short_help
-    argument_parser parser0("empty_options", 1, argv0);
+    argument_parser parser0{"empty_options", 1, argv0};
     parser0.info.synopsis.push_back("./some_binary_name synopsis");
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -68,7 +68,7 @@ TEST(help_page_printing, short_help)
 TEST(help_page_printing, no_information)
 {
     // Empty help call with -h
-    argument_parser parser1("test_parser", 2, argv1);
+    argument_parser parser1{"test_parser", 2, argv1};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -134,7 +134,7 @@ TEST(help_page_printing, with_citation)
 TEST(help_page_printing, empty_advanced_help)
 {
     // Empty help call with -hh
-    argument_parser parser2("test_parser", 2, argv2);
+    argument_parser parser2{"test_parser", 2, argv2};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser2.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -148,7 +148,7 @@ TEST(help_page_printing, empty_advanced_help)
 TEST(help_page_printing, empty_version_call)
 {
     // Empty version call
-    argument_parser parser3("test_parser", 2, argv3);
+    argument_parser parser3{"test_parser", 2, argv3};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser3.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -161,7 +161,7 @@ TEST(help_page_printing, empty_version_call)
 TEST(help_page_printing, version_call)
 {
     // Version call with url and options.
-    argument_parser parser4("test_parser", 2, argv3);
+    argument_parser parser4{"test_parser", 2, argv3};
     parser4.info.url = "www.seqan.de";
     parser4.add_option(option_value, 'i', "int", "this is a int option.");
     parser4.add_flag(flag_value, 'f', "flag", "this is a flag.");
@@ -180,7 +180,7 @@ TEST(help_page_printing, version_call)
 TEST(help_page_printing, do_not_print_hidden_options)
 {
     // Add an option and request help.
-    argument_parser parser5("test_parser", 2, argv1);
+    argument_parser parser5{"test_parser", 2, argv1};
     parser5.add_option(option_value, 'i', "int", "this is a int option.", option_spec::HIDDEN);
     parser5.add_flag(flag_value, 'f', "flag", "this is a flag.", option_spec::HIDDEN);
     testing::internal::CaptureStdout();
@@ -196,7 +196,7 @@ TEST(help_page_printing, do_not_print_hidden_options)
 TEST(help_page_printing, full_information)
 {
     // Add synopsis, description, short description, positional option, option, flag, and example.
-    argument_parser parser6("test_parser", 2, argv1);
+    argument_parser parser6{"test_parser", 2, argv1};
     parser6.info.synopsis.push_back("./some_binary_name synopsis");
     parser6.info.synopsis.push_back("./some_binary_name synopsis2");
     parser6.info.description.push_back("description");
