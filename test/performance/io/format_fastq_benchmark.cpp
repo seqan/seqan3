@@ -32,10 +32,10 @@ unsigned int const SEED = 1234;
 // ============================================================================
 // generate fastq file
 // ============================================================================
-static constexpr std::size_t SEQUENCE_LENGTH = 300; // length of nucleotide and quality sequence
+static constexpr std::size_t SEQUENCE_LENGTH = 50; // length of nucleotide and quality sequence
 static constexpr std::size_t N_ENTRIES_IN_FILE = 4069; // number of 3-line entries
 
-// run-time workaround because test::generate_sequence does not work at compile time
+// run-time execution workaround because test::generate_sequence does not work at compile time
 std::string fastq_file;
 bool has_been_init = false;
 
@@ -121,10 +121,6 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
 {
     using namespace seqan;
 
-    String<char> id{};
-    String<Dna5> seq{};
-    String<char> qual{};
-
     std::istringstream istream{};
 
     auto restart_iterator = [&istream]()    // c.f. format_fasta_benchmark
@@ -135,13 +131,17 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
         return directionIterator(comp, Input());
     };
 
+    String<char> id{};
+    String<Dna5> seq{};
+    String<char> qual{};
+
     for (auto _ : state)
     {
         auto it = restart_iterator();
         // should be same overhead as istream(file) in equivalent seqan3 benchmark
         // thus skews benchmark but still makes for a valid comparison between seqan2 and 3
 
-        readRecord(id, seq, it, seqan::Fastq{});
+        readRecord(id, seq, qual, it, seqan::Fastq{});
         clear(id);
         clear(seq);
         clear(qual);
@@ -175,6 +175,7 @@ void fastq_read_from_disc(benchmark::State & state)
     ostream << get_file();
     ostream.close();
 
+    // benchmark
     std::string id{};
     std::vector<dna5> seq{};
     std::vector<phred42> qual{};
@@ -183,16 +184,10 @@ void fastq_read_from_disc(benchmark::State & state)
     {
         sequence_file_input fin{file_name};
 
-        for (auto & [seq_f, id_f, qual_f] : fin)
-        {
-            id = id_f;
-            seq = seq_f;
-            qual = qual_f;
-        }
-
-        id.clear();
-        seq.clear();
-        qual.clear();
+        // read all records and store in internal buffer
+        auto it = fin.begin();
+        while (it != fin.end())
+            ++it;
     }
 
     // remove temporary file
@@ -229,18 +224,19 @@ void fastq_read_from_disc_seqan2(benchmark::State & state)
     ostream << get_file();
     ostream.close();
 
-    String<char> id{};
-    String<Dna5> seq{};
-    String<char> qual{};
+    // benchmark
+    StringSet<String<char>> ids{};
+    StringSet<String<Dna5>> seqs{};
+    StringSet<String<char>> quals{};
 
     for (auto _ : state)
     {
         SeqFileIn seqFileIn(file_name.c_str());
-        readRecord(id, seq, qual, seqFileIn);
+        readRecords(ids, seqs, quals, seqFileIn);
 
-        clear(id);
-        clear(seq);
-        clear(qual);
+        clear(ids);
+        clear(seqs);
+        clear(quals);
     }
 
     // delete
@@ -258,36 +254,6 @@ BENCHMARK(fastq_read_from_disc_seqan2);
 #endif
 
 /*
-// ============================================================================
-// read dummy fastq file ignoring only quality
-// ============================================================================
-void fastq_read_without_quality(benchmark::State & state)
-{
-    auto const fastq_file = generate_dummy_fastq_file(POWER);
-
-    sequence_file_format_fastq format;
-    sequence_file_input_options<dna5, false> const options{};
-
-    std::string id{};
-    std::vector<dna5> seq{};
-
-    for (auto _ : state)
-    {
-        state.PauseTiming();
-        std::istringstream istream{fastq_file};
-        state.ResumeTiming();
-
-        for (size_t i = 0; i < iterations_per_run; ++i)
-        {
-            format.read(istream, options, seq, id, std::ignore);
-            id.clear();
-            seq.clear();
-        }
-    }
-}
-
-BENCHMARK(fastq_read_without_quality);
-
 // ============================================================================
 // read dummy fastq file ignoring all parameters
 // ============================================================================
