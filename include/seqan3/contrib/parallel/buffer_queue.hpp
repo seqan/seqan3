@@ -23,7 +23,9 @@
 #include <seqan3/contrib/parallel/spin_delay.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
+#include <seqan3/std/new>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 
@@ -255,16 +257,13 @@ private:
 
     buffer_t data;
 
-    //Note, this value is available since c++17 but not supported in current versions of gcc-7, 8 and 9.
-    static constexpr size_type hardware_destructive_interference_size = 64;
-
-    alignas(hardware_destructive_interference_size) std::shared_mutex mutable mutex;
-    alignas(hardware_destructive_interference_size) std::atomic<size_type>    headPos{0};
-    alignas(hardware_destructive_interference_size) std::atomic<size_type>    headReadPos{0};
-    alignas(hardware_destructive_interference_size) std::atomic<size_type>    tailPos{0};
-    alignas(hardware_destructive_interference_size) std::atomic<size_type>    tailWritePos{0};
-    alignas(hardware_destructive_interference_size) std::atomic<size_type>    roundSize{0};
-    alignas(hardware_destructive_interference_size) std::atomic<bool>         closed_flag{false};
+    alignas(std::hardware_destructive_interference_size) std::shared_mutex mutable mutex;
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    headPos{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    headReadPos{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    tailPos{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    tailWritePos{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    roundSize{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<bool>         closed_flag{false};
 };
 
 // Specifies a fixed size buffer queue.
