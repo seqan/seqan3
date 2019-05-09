@@ -226,7 +226,7 @@ struct alignment_file_input_default_traits
  *                              must be in seqan3::alignment_file_input::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
  *                              seqan3::AlignmentFileInputFormat).
- * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::char_concept.
+ * \tparam stream_char_type     The type of the underlying stream device(s); must model std::Integral.
  *
  * \details
  *
@@ -375,7 +375,7 @@ template <
                                                                               field::BIT_SCORE,
                                                                               field::HEADER_PTR>,
     detail::TypeListOfAlignmentFileInputFormats  valid_formats_ = type_list<alignment_file_format_sam>,
-    char_concept                                 stream_char_type_ = char>
+    std::Integral                                stream_char_type_ = char>
 class alignment_file_input
 {
 public:
@@ -1101,7 +1101,7 @@ namespace std
 template <seqan3::AlignmentFileInputTraits                    traits_type,
           seqan3::detail::Fields                              selected_field_ids,
           seqan3::detail::TypeListOfAlignmentFileInputFormats valid_formats,
-          seqan3::char_concept                                stream_char_t>
+          std::Integral                                       stream_char_t>
 struct tuple_size<seqan3::alignment_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -1113,7 +1113,7 @@ template <size_t                                              elem_no,
           seqan3::AlignmentFileInputTraits                    traits_type,
           seqan3::detail::Fields                              selected_field_ids,
           seqan3::detail::TypeListOfAlignmentFileInputFormats valid_formats,
-          seqan3::char_concept                                stream_char_t>
+          std::Integral                                       stream_char_t>
 struct tuple_element<elem_no, seqan3::alignment_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::alignment_file_input<traits_type,
                                                                selected_field_ids,
