@@ -110,6 +110,8 @@ public:
             else if (status == queue_op_status::success)
                 return;
 
+            assert(status != queue_op_status::empty);
+            assert(status == queue_op_status::full);
             delay.wait(); // pause and then try again.
         }
     } // throws if closed
@@ -126,6 +128,9 @@ public:
             // wait until queue is not full anymore..
             if (status != queue_op_status::full)
                 return status;
+
+            assert(status != queue_op_status::empty);
+            assert(status == queue_op_status::full);
             delay.wait(); // pause and then try again.
         }
     }
@@ -138,11 +143,14 @@ public:
         for (;;)
         {
             auto status = try_pop(value);
+
             if (status == queue_op_status::closed)
                 throw queue_op_status::closed;
             else if (status == queue_op_status::success)
                 return value;
 
+            assert(status != queue_op_status::full);
+            assert(status == queue_op_status::empty);
             delay.wait(); // pause and then try again.
         }
     }
@@ -155,10 +163,11 @@ public:
         for (;;)
         {
             status = try_pop(value);
-            assert(status != queue_op_status::full);
+
             if (status == queue_op_status::closed || status == queue_op_status::success)
                 break;
 
+            assert(status != queue_op_status::full);
             assert(status == queue_op_status::empty);
             delay.wait(); // pause and then try again.
         }
