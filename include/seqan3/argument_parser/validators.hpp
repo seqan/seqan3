@@ -176,15 +176,7 @@ public:
     /*!\brief Constructing from a vector.
      * \param[in] v The vector of valid values to test.
      */
-    value_list_validator(std::vector<value_type> const & v) :
-        values{v}
-    {}
-
-    /*!\brief Constructing from an initializer_list.
-     * \param[in] v The initializer_list of valid values to test.
-     */
-    value_list_validator(std::initializer_list<value_type> const & v) :
-        values{v}
+    value_list_validator(std::vector<value_type> v) : values{std::move(v)}
     {}
 
     /*!\brief Tests whether cmp lies inside values.
@@ -227,15 +219,16 @@ private:
  * \relates seqan3::value_list_validator
  * \{
  */
-template <Arithmetic option_value_type>
-value_list_validator(std::vector<option_value_type> const & v) -> value_list_validator<double>;
 
 template <Arithmetic option_value_type>
-value_list_validator(std::initializer_list<option_value_type> const & v) -> value_list_validator<double>;
+value_list_validator(std::vector<option_value_type>) -> value_list_validator<double>;
 
-value_list_validator(std::vector<const char *> const & v) -> value_list_validator<std::string>;
+template <Arithmetic option_value_type>
+value_list_validator(std::initializer_list<option_value_type>) -> value_list_validator<double>;
 
-value_list_validator(std::initializer_list<const char *> const & v) -> value_list_validator<std::string>;
+value_list_validator(std::vector<const char *>) -> value_list_validator<std::string>;
+
+value_list_validator(std::initializer_list<const char *>) -> value_list_validator<std::string>;
 //!\}
 
 /*!\brief An abstract base class for the file and directory validators.
