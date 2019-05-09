@@ -25,6 +25,7 @@
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
@@ -39,30 +40,6 @@ SEQAN3_CONCEPT MaxErrors = requires (align_config_t & cfg)
 };
 //!\endcond
 
-/*!\todo Document me
- * \ingroup pairwise_alignment
- */
-template <typename traits_type>
-SEQAN3_CONCEPT EditDistanceTrait = requires
-{
-    typename std::remove_reference_t<traits_type>::word_type;
-    typename std::remove_reference_t<traits_type>::is_semi_global_type;
-
-    // Must be a boolean integral constant.
-    requires std::Same<typename std::remove_reference_t<traits_type>::is_semi_global_type::value_type, bool>;
-};
-
-/*!\brief The default traits type for the edit distance algorithm.
- * \ingroup pairwise_alignment
- */
-struct default_edit_distance_trait_type
-{
-    //!\brief The default word type.
-    using word_type = uint64_t;
-    //!\brief Semi global alignment is disabled by default.
-    using is_semi_global_type = std::false_type;
-};
-
 /*!\brief This calculates an alignment using the edit distance and without a band.
  * \ingroup pairwise_alignment
  * \tparam database_t     \copydoc pairwise_alignment_edit_distance_unbanded::database_type
@@ -72,7 +49,7 @@ struct default_edit_distance_trait_type
 template <std::ranges::ViewableRange database_t,
           std::ranges::ViewableRange query_t,
           typename align_config_t,
-          EditDistanceTrait traits_t = default_edit_distance_trait_type>
+          EditDistanceTrait traits_t>
 class pairwise_alignment_edit_distance_unbanded
 {
     /*!\name Befriended classes
