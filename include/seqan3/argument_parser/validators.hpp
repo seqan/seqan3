@@ -419,19 +419,30 @@ public:
 
     /*!\brief Tests whether path is an existing regular file and is readable.
      * \param file The input value to check.
-     * \throws parser_invalid_argument if the validation process failed, or
-     *         std::filesystem::filesystem_error on underlying OS API errors.
+     * \throws parser_invalid_argument if the validation process failed. Might be nested with
+     *         std::filesystem::filesystem_error on unhandled OS API errors.
      */
     virtual void operator()(std::filesystem::path const & file) const override
     {
-        if (!std::filesystem::exists(file))
-            throw parser_invalid_argument(detail::to_string("The file ", file, " does not exist!"));
+        try
+        {
+            if (!std::filesystem::exists(file))
+                throw parser_invalid_argument(detail::to_string("The file ", file, " does not exist!"));
 
-        // Check if file is regular and can be opened for reading.
-        validate_readability(file);
+            // Check if file is regular and can be opened for reading.
+            validate_readability(file);
 
-        // Check extension.
-        validate_filename(file);
+            // Check extension.
+            validate_filename(file);
+        }
+        catch (std::filesystem::filesystem_error & ex)
+        {
+            std::throw_with_nested(parser_invalid_argument("Unhandled filesystem error!"));
+        }
+        catch (...)
+        {
+            std::rethrow_exception(std::current_exception());
+        }
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
@@ -483,18 +494,29 @@ public:
 
     /*!\brief Tests whether path is does not already exists and is writable.
      * \param file The input value to check.
-     * \throws parser_invalid_argument if the validation process failed, or
-     *         std::filesystem::filesystem_error on underlying OS API errors.
+     * \throws parser_invalid_argument if the validation process failed. Might be nested with
+     *         std::filesystem::filesystem_error on unhandled OS API errors.
      */
     virtual void operator()(std::filesystem::path const & file) const override
     {
-        if (std::filesystem::exists(file))
-            throw parser_invalid_argument(detail::to_string("The file ", file, " already exists!"));
+        try
+        {
+            if (std::filesystem::exists(file))
+                throw parser_invalid_argument(detail::to_string("The file ", file, " already exists!"));
 
-        // Check if file has any write permissions.
-        validate_writeability(file);
+            // Check if file has any write permissions.
+            validate_writeability(file);
 
-        validate_filename(file);
+            validate_filename(file);
+        }
+        catch (std::filesystem::filesystem_error & ex)
+        {
+            std::throw_with_nested(parser_invalid_argument("Unhandled filesystem error!"));
+        }
+        catch (...)
+        {
+            std::rethrow_exception(std::current_exception());
+        }
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
@@ -544,19 +566,30 @@ public:
 
     /*!\brief Tests whether path is an existing directory and is readable.
      * \param dir The input value to check.
-     * \throws seqan3::parser_invalid_argument if the validation process failed, or
-     *         std::filesystem::filesystem_error on underlying OS API errors.
+     * \throws seqan3::parser_invalid_argument if the validation process failed. Might be nested with
+     *         std::filesystem::filesystem_error on unhandled OS API errors.
      */
     virtual void operator()(std::filesystem::path const & dir) const override
     {
-        if (!std::filesystem::exists(dir))
-            throw parser_invalid_argument(detail::to_string("The directory ", dir, " does not exists!"));
+        try
+        {
+            if (!std::filesystem::exists(dir))
+                throw parser_invalid_argument(detail::to_string("The directory ", dir, " does not exists!"));
 
-        if (!std::filesystem::is_directory(dir))
-            throw parser_invalid_argument(detail::to_string("The path ", dir, " is not a directory!"));
+            if (!std::filesystem::is_directory(dir))
+                throw parser_invalid_argument(detail::to_string("The path ", dir, " is not a directory!"));
 
-        // Check if directory has any read permissions.
-        validate_readability(dir);
+            // Check if directory has any read permissions.
+            validate_readability(dir);
+        }
+        catch (std::filesystem::filesystem_error & ex)
+        {
+            std::throw_with_nested(parser_invalid_argument("Unhandled filesystem error!"));
+        }
+        catch (...)
+        {
+            std::rethrow_exception(std::current_exception());
+        }
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
@@ -605,8 +638,8 @@ public:
 
     /*!\brief Tests whether path is writable.
      * \param dir The input value to check.
-     * \throws parser_invalid_argument if the validation process failed, or
-     *         std::filesystem::filesystem_error on underlying OS API errors.
+     * \throws parser_invalid_argument if the validation process failed. Might be nested with
+     *         std::filesystem::filesystem_error on unhandled OS API errors.
      */
     virtual void operator()(std::filesystem::path const & dir) const override
     {
@@ -618,15 +651,26 @@ public:
         if (static_cast<bool>(ec))
             throw parser_invalid_argument(detail::to_string("Cannot create directory: ", dir, "!"));
 
-        if (!dir_exists)
+        try
         {
-            detail::safe_filesystem_entry dir_guard{dir};
-            validate_writeability(dir / "dummy.txt");
-            dir_guard.remove_all();
+            if (!dir_exists)
+            {
+                detail::safe_filesystem_entry dir_guard{dir};
+                validate_writeability(dir / "dummy.txt");
+                dir_guard.remove_all();
+            }
+            else
+            {
+                validate_writeability(dir / "dummy.txt");
+            }
         }
-        else
+        catch (std::filesystem::filesystem_error & ex)
         {
-            validate_writeability(dir / "dummy.txt");
+            std::throw_with_nested(parser_invalid_argument("Unhandled filesystem error!"));
+        }
+        catch (...)
+        {
+            std::rethrow_exception(std::current_exception());
         }
     }
 

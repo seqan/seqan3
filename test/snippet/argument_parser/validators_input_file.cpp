@@ -25,11 +25,6 @@ int main(int argc, const char ** argv)
         std::cerr << "[PARSER ERROR] " << ext.what() << "\n"; // customize your error message
         return -1;
     }
-    catch (std::filesystem::filesystem_error const & ext)
-    {
-        std::cerr << "[IO ERROR] " << ext.what() << "\n"; // customize your error message
-        return -2;
-    }
 
     seqan3::debug_stream << "filename given by user passed validation: " << myfile << "\n";
     return 0;

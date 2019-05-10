@@ -113,11 +113,6 @@ int main(int argc, char ** argv)
         debug_stream << "[Winter has come] " << ext.what() << "\n"; // customise your error message
         return -1;
     }
-    catch (std::filesystem::filesystem_error const & ext)
-    {
-        std::cerr << "[IO ERROR] " << ext.what() << "\n";           // customize your error message
-        return -2;
-    }
 
     // parsing was successful !
     // we can start running our program
