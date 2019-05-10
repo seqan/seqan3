@@ -153,14 +153,14 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
 #endif
 
 // ============================================================================
-// read dummy fastq file from temporary file on disc
+// read dummy fastq file from temporary file on disk
 // ============================================================================
 template<std::size_t n_entries_in_file = N_ENTRIES_IN_FILE>
-void fastq_read_from_disc(benchmark::State & state)
+void fastq_read_from_disk(benchmark::State & state)
 {
     sequence_file_format_fastq format;
 
-    // create temporary file on disc
+    // create temporary file on disk
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path();
     std::string const file_name = tmp_dir/"tmp.fastq";
 
@@ -169,7 +169,7 @@ void fastq_read_from_disc(benchmark::State & state)
 
     if (!open_success)
     {
-        std::perror("Error creating temporary file \"tmp.fastq\" for fastq_read_from_disc.");
+        std::perror("Error creating temporary file \"tmp.fastq\" for fastq_read_from_disk.");
         std::cout << "aborting..." << std::endl;
         exit(1);
     }
@@ -196,7 +196,7 @@ void fastq_read_from_disc(benchmark::State & state)
     const int remove_success = std::remove(file_name.c_str());
     if (remove_success != 0) // sic
     {
-        std::perror("Error removing temporary file \"tmp.fastq\" for fastq_read_from_disc.");
+        std::perror("Error removing temporary file \"tmp.fastq\" for fastq_read_from_disk.");
         std::cout << "aborting..." << std::endl;
         exit(1);
     }
@@ -208,7 +208,7 @@ void fastq_read_from_disc(benchmark::State & state)
 #if SEQAN2_HAS_SEQAN3
 
 template<std::size_t n_entries_in_file = N_ENTRIES_IN_FILE>
-void fastq_read_from_disc_seqan2(benchmark::State & state)
+void fastq_read_from_disk_seqan2(benchmark::State & state)
 {
     using namespace seqan;
 
@@ -221,7 +221,7 @@ void fastq_read_from_disc_seqan2(benchmark::State & state)
 
     if (!open_success)
     {
-        std::perror("Error creating temporary file \"tmp.fastq\" for fastq_read_from_disc_seqan2.");
+        std::perror("Error creating temporary file \"tmp.fastq\" for fastq_read_from_disk_seqan2.");
         std::cout << "aborting..." << std::endl;
         exit(1);
     }
@@ -248,7 +248,7 @@ void fastq_read_from_disc_seqan2(benchmark::State & state)
     const int remove_success = std::remove(file_name.c_str());
     if (remove_success != 0)
     {
-        std::perror("Error removing temporary file \"tmp.fastq\" for fastq_read_from_disc_seqan2.");
+        std::perror("Error removing temporary file \"tmp.fastq\" for fastq_read_from_disk_seqan2.");
         std::cout << "aborting..." << std::endl;
         exit(1);
     }
@@ -262,23 +262,23 @@ BENCHMARK(fastq_write);
 
     BENCHMARK_TEMPLATE(fastq_read_from_stream, 1000);
     BENCHMARK_TEMPLATE(fastq_read_from_stream_seqan2, 1000);
-    BENCHMARK_TEMPLATE(fastq_read_from_disc, 1000);
-    BENCHMARK_TEMPLATE(fastq_read_from_disc_seqan2, 1000);
+    BENCHMARK_TEMPLATE(fastq_read_from_disk, 1000);
+    BENCHMARK_TEMPLATE(fastq_read_from_disk_seqan2, 1000);
 
     BENCHMARK_TEMPLATE(fastq_read_from_stream, 5000);
     BENCHMARK_TEMPLATE(fastq_read_from_stream_seqan2, 5000);
-    BENCHMARK_TEMPLATE(fastq_read_from_disc, 5000);
-    BENCHMARK_TEMPLATE(fastq_read_from_disc_seqan2, 5000);
+    BENCHMARK_TEMPLATE(fastq_read_from_disk, 5000);
+    BENCHMARK_TEMPLATE(fastq_read_from_disk_seqan2, 5000);
 
     BENCHMARK_TEMPLATE(fastq_read_from_stream, 10000);
     BENCHMARK_TEMPLATE(fastq_read_from_stream_seqan2, 10000);
-    BENCHMARK_TEMPLATE(fastq_read_from_disc, 10000);
-    BENCHMARK_TEMPLATE(fastq_read_from_disc_seqan2, 10000);
+    BENCHMARK_TEMPLATE(fastq_read_from_disk, 10000);
+    BENCHMARK_TEMPLATE(fastq_read_from_disk_seqan2, 10000);
 
 #elif
 
     BENCHMARK_TEMPLATE(fastq_read_from_stream);
-    BENCHMARK_TEMAPLTE(fastq_read_from_disc);
+    BENCHMARK_TEMAPLTE(fastq_read_from_disk);
 
 #endif
 
