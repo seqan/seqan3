@@ -364,3 +364,28 @@ debug_matrix(matrix_t &&, sequence1_t &&, sequence2_t &&)
 //!\}
 
 } // namespace seqan3::detail
+
+namespace seqan3
+{
+/*!\brief An alignment matrix can be printed to the seqan3::debug_stream.
+ * \tparam alignment_matrix_t Type of the alignment matrix to be printed; must model seqan3::detail::Matrix.
+ * \param s The seqan3::debug_stream.
+ * \param matrix The alignment matrix.
+ * \relates seqan3::debug_stream_type
+ *
+ * \details
+ *
+ * This prints out an alignment matrix, which can be a score matrix or a trace matrix.
+ */
+template <detail::Matrix alignment_matrix_t>
+inline debug_stream_type & operator<<(debug_stream_type & s, alignment_matrix_t && matrix)
+{
+    detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
+
+    std::stringstream sstream{};
+    debug.print(sstream, s.flags2());
+    s << sstream.str();
+    return s;
+}
+
+} // namespace seqan3
