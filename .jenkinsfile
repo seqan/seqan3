@@ -4,9 +4,11 @@ import hudson.triggers.TimerTrigger;
 // Global properties
 // ============================================================================
 
+// Only one build at a time for each branch/PR
 // Start build every night between 1:00-4:59
 // Keep only last 10 builds
 properties([
+    disableConcurrentBuilds(),
     pipelineTriggers(
         [cron(env.BRANCH_NAME == 'master' ? 'H H(1-4) * * *' : '')]
     ),
