@@ -66,11 +66,9 @@ namespace seqan3
  * \{
  */
 /*!\typedef using seq_alphabet
- * \memberof seqan3::StructureFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using seq_legal_alphabet
- * \memberof seqan3::StructureFileInputTraits
  * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::Alphabet and be convertible to
  * `seq_alphabet`.
  *
@@ -82,115 +80,92 @@ namespace seqan3
  * character and produce an error.
  */
 /*!\typedef using seq_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of the seqan3::field::SEQ, a container template over `seq_alphabet`;
  * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using seq_container_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of a column of seqan3::field::SEQ, a container template that can hold multiple
  * `seq_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using id_alphabet
- * \memberof seqan3::StructureFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using id_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
  * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using id_container_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of a column of seqan3::field::ID, a container template that can hold multiple
  * `id_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using bpp_prob
- * \memberof seqan3::StructureFileInputTraits
  * \brief Data type for the base pair probabilities in seqan3::field::BPP; must satisfy std::is_floating_point.
  */
 /*!\typedef using bpp_partner
- * \memberof seqan3::StructureFileInputTraits
  * \brief Data type for the partner index of an interaction in seqan3::field::BPP; must satisfy
  * std::numeric_limits::is_integer.
  */
 /*!\typedef using bpp_queue
- * \memberof seqan3::StructureFileInputTraits
  * \brief A container template representing a set of interactions of type bpp_item,
  * which are (comparable) tuples of `bpp_prob` and `bpp_partner`;
  * must satisfy seqan3::Container and must provide an std::emplace(bpp_prob, bpp_partner) function.
  */
 /*!\typedef using bpp_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of the seqan3::field::BPP, a container template over a set (bpp_queue) of interactions;
  * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using bpp_container_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of a column of seqan3::field::BPP, a container template that can hold multiple
  * `bpp_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using structure_alphabet
- * \memberof seqan3::StructureFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::STRUCTURE; must satisfy seqan3::RnaStructureAlphabet.
  */
 /*!\typedef using structure_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of the seqan3::field::STRUCTURE, a container template over `structure_alphabet`;
  * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using structure_container_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of a column of seqan3::field::STRUCTURE, a container template that can hold multiple
  * `structure_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using energy_type
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of the seqan3::field::ENERGY; must be std::optional of a type satisfying std::is_floating_point.
  * \details
  * If the file record contains an energy, the value can be obtained through dereference or std::optional::value.
  * Otherwise, operator bool or std::optional::has_value return false.
  */
 /*!\typedef using energy_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of a column of seqan3::field::ENERGY, a container template that can hold multiple `energy_type`;
  * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using react_type
- * \memberof seqan3::StructureFileInputTraits
  * \brief Data type for the reactivity and reactivity error in seqan3::field::REACT and seqan3::field::REACT_ERR,
  * respectively; must satisfy std::is_floating_point.
  */
 /*!\typedef using react_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of the seqan3::field::REACT and seqan3::field::REACT_ERR, a container template over
  * `react_type`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using react_container_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of a column of seqan3::field::REACT and seqan3::field::REACT_ERR, a container template that
  * can hold multiple `react_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using comment_alphabet
- * \memberof seqan3::StructureFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::COMMENT; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using comment_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of the seqan3::field::COMMENT, a container template over `comment_alphabet`;
  * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using comment_container_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of a column of seqan3::field::COMMENT, a container template that can hold multiple
  * `comment_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using offset_type
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of the seqan3::field::OFFSET; must statisfy std::numeric_limits::is_integer.
  */
 /*!\typedef using offset_container
- * \memberof seqan3::StructureFileInputTraits
  * \brief Type template of a column of seqan3::field::OFFSET, a container template that can hold multiple `offset_type`;
  * must satisfy seqan3::SequenceContainer.
  */
