@@ -275,7 +275,7 @@ BENCHMARK(fastq_write);
     BENCHMARK_TEMPLATE(fastq_read_from_disk, 10000);
     BENCHMARK_TEMPLATE(fastq_read_from_disk_seqan2, 10000);
 
-#elif
+#else
 
     BENCHMARK_TEMPLATE(fastq_read_from_stream);
     BENCHMARK_TEMAPLTE(fastq_read_from_disk);
