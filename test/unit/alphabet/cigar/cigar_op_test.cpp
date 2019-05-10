@@ -35,5 +35,5 @@ TEST(cigar_op, char_literal)
 
 TEST(cigar_op, assign_char_strict)
 {
-    EXPECT_THROW(cigar_op{}.assign_char_strictly('A'), invalid_char_assignment);
+    EXPECT_THROW(assign_char_strictly_to('A', cigar_op{}), invalid_char_assignment);
 }

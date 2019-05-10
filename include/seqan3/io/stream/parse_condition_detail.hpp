@@ -20,6 +20,7 @@
 #include <seqan3/std/concepts>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/char_operations/pretty_print.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/exception.hpp>
@@ -101,7 +102,7 @@ class parse_condition_base;
  *
  * \details
  *
- * The must be invocable with an seqan3::char_adaptation_concept type and supply a static constexpr `msg` member of type
+ * An object of the type must be invocable with a std::Integral type and supply a static constexpr `msg` member of type
  * seqan3::small_string.
  */
 //!\cond
@@ -140,52 +141,6 @@ SEQAN3_CONCEPT ParseCondition = requires
  */
 //!\}
 
-// ----------------------------------------------------------------------------
-// make_printable
-// ----------------------------------------------------------------------------
-
-/*!\brief Returns a printable value for the given character `c`.
- * \param[in] c The character to be represented as printable string.
- * \return    a std::string containing a printable version of the given character `c`.
- *
- * \details
- *
- * Some characters, e.g. control commands cannot be printed. This function converts them to a std::string
- * containing the visual representation of this character. For all control commands the value `'CTRL'` is returned.
- *
- * ### Exception
- *
- * Strong exception guarantee is given.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Concurrency
- *
- * Thread-safe.
- */
-inline std::string make_printable(char const c)
-{
-    switch (c)
-    {
-        case '\0':                   return "'\\0'";
-        case '\t':                   return "'\\t'";
-        case '\n':                   return "'\\n'";
-        case '\v':                   return "'\\v'";
-        case '\f':                   return "'\\f'";
-        case '\r':                   return "'\\r'";
-        case static_cast<char>(127): return "'DEL'";
-        default:
-        {
-            if ((c >= static_cast<char>(1) && c <= static_cast<char>(8)) ||
-                (c >= static_cast<char>(14) && c <= static_cast<char>(31)))
-                return "'CTRL'";
-            else
-                return {'\'', c, '\''};
-        }
-    }
-}
 
 // ----------------------------------------------------------------------------
 // parse_condition

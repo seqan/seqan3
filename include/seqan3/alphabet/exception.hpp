@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <seqan3/io/stream/parse_condition_detail.hpp>
+#include <seqan3/core/char_operations/pretty_print.hpp>
 
 namespace seqan3
 {

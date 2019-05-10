@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include <seqan3/alphabet/adaptation/pre.hpp>
-#include <seqan3/alphabet/adaptation/concept.hpp> // has to be after
-
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
 
