@@ -21,6 +21,7 @@
 #include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/drop.hpp>
 #include <seqan3/range/view/to_lower.hpp>
@@ -362,15 +363,16 @@ protected:
     void validate_writeability(std::filesystem::path const & path) const
     {
         std::ofstream file{path};
+        detail::safe_filesystem_entry file_guard{path};
+
         bool is_open = file.is_open();
         bool is_good = file.good();
         file.close();
 
-        // Try to remove file.
-        std::filesystem::remove(path);
-
         if (!is_good || !is_open)
             throw parser_invalid_argument(detail::to_string("Cannot write ", path, "!"));
+
+        file_guard.remove();
     }
 
     //!\brief Stores the extensions.
@@ -608,32 +610,24 @@ public:
      */
     virtual void operator()(std::filesystem::path const & dir) const override
     {
-        std::function<void(std::filesystem::path const *)> deleter;
-        if (std::filesystem::exists(dir))
-        {
-            deleter = [] (std::filesystem::path const *) { /* no-op */ };
-        }
-        else
-        {
-            deleter = [] (std::filesystem::path const * p)
-            {
-                [[maybe_unused]] std::error_code ec;
-                std::filesystem::remove(*p, ec);
-
-                assert(!static_cast<bool>(ec));
-            };
-        }
-
+        bool dir_exists = std::filesystem::exists(dir);
         // Make sure the created dir is deleted after we are done.
-        std::unique_ptr<std::filesystem::path const, decltype(deleter)> raii{&dir, deleter};
-
         std::error_code ec;
         std::filesystem::create_directory(dir, ec); // does nothing and is not treated as error if path already exists.
         // if error code was set or if dummy.txt could not be created within the output dir, throw an error.
         if (static_cast<bool>(ec))
             throw parser_invalid_argument(detail::to_string("Cannot create directory: ", dir, "!"));
 
-        validate_writeability(dir / "dummy.txt");
+        if (!dir_exists)
+        {
+            detail::safe_filesystem_entry dir_guard{dir};
+            validate_writeability(dir / "dummy.txt");
+            dir_guard.remove_all();
+        }
+        else
+        {
+            validate_writeability(dir / "dummy.txt");
+        }
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
