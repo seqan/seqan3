@@ -7,16 +7,15 @@ int main(int argc, const char ** argv)
 {
     seqan3::argument_parser myparser{"Test", argc, argv}; // initialize
 
-    //![validator_call]
-    std::filesystem::path myfile;
+    //! [validator_call]
+    std::filesystem::path myfile{};
 
-    myparser.add_option(myfile,'f',"file","Give me a filename.",
+    myparser.add_option(myfile,'f',"file","The input file containing the sequences.",
                         seqan3::option_spec::DEFAULT, seqan3::input_file_validator{{"fa","fasta"}});
-    //![validator_call]
+    //! [validator_call]
 
     // an exception will be thrown if the user specifies a filename
-    // that does not have one of the extensions ["fa","fasta"],
-    // does not exists, or is not readable.
+    // that does not have one of the extensions ["fa","fasta"] or if the file does not exist/is not readable.
     try
     {
         myparser.parse();
