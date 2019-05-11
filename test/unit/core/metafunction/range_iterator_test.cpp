@@ -12,13 +12,13 @@
 
 #include <meta/meta.hpp>
 
-#include <range/v3/view/iota.hpp>
-#include <range/v3/view/take_exactly.hpp>
 
 #include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/range/view/take_exactly.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -29,7 +29,7 @@ TEST(range_and_iterator, iterator_)
     EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<std::vector<int> const>,
                                 typename std::vector<int>::const_iterator>));
 
-    auto v = ranges::view::ints(1);
+    auto v = std::ranges::view::iota(1);
     EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
                                 decltype(begin(v))>));
     EXPECT_FALSE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
@@ -45,7 +45,7 @@ TEST(range_and_iterator, sentinel_)
     EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<std::vector<int>>,
                                 std::ranges::iterator_t<std::vector<int>>>));
 
-    auto v = ranges::view::ints(1);
+    auto v = std::ranges::view::iota(1);
     EXPECT_FALSE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
                                 decltype(begin(v))>));
     EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
@@ -70,7 +70,7 @@ void expect_same_types()
 TEST(range_and_iterator, value_type_)
 {
     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = ranges::view::ints(1);
+    auto v = std::ranges::view::iota(1);
     using type_list = meta::list<value_type_t<std::vector<int>>,                    // short
                                  typename value_type<std::vector<int>>::type,       // long
                                  typename std::vector<int>::value_type,             // member type
@@ -92,7 +92,7 @@ TEST(range_and_iterator, value_type_)
 TEST(range_and_iterator, reference_)
 {
     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = ranges::view::ints(1);
+    auto v = std::ranges::view::iota(1);
     using type_list = meta::list<reference_t<std::vector<int>>,                    // short
                                  typename reference<std::vector<int>>::type,       // long
                                  typename std::vector<int>::reference,             // member type
@@ -115,7 +115,7 @@ TEST(range_and_iterator, reference_)
 TEST(range_and_iterator, rvalue_reference_)
 {
     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = ranges::view::ints(1);
+    auto v = std::ranges::view::iota(1);
     using type_list = meta::list<rvalue_reference_t<std::vector<int>>,                    // short
                                  typename rvalue_reference<std::vector<int>>::type,       // long
 // No types have member,yet:
@@ -139,7 +139,7 @@ TEST(range_and_iterator, rvalue_reference_)
 TEST(range_and_iterator, const_reference_)
 {
 //     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = ranges::view::ints(1);
+    auto v = std::ranges::view::iota(1);
     using type_list = meta::list<const_reference_t<std::vector<int>>,                    // short
                                  typename const_reference<std::vector<int>>::type,       // long
                                  typename std::vector<int>::const_reference,             // member type
@@ -164,7 +164,7 @@ TEST(range_and_iterator, difference_type_)
 {
     //TODO(h-2): add something that actually has a different difference_type
     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = ranges::view::ints(1);
+    auto v = std::ranges::view::iota(1);
     using type_list = meta::list<difference_type_t<std::vector<int>>,                    // short
                                  typename difference_type<std::vector<int>>::type,       // long
                                  typename std::vector<int>::difference_type,             // member type
@@ -199,7 +199,7 @@ TEST(range_and_iterator, size_type_)
     //TODO(h-2): add something that actually has a different size_type
     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
 // iota is not a sized range, but take_exactly is
-    auto v = ranges::view::ints | ranges::view::take_exactly(2);
+    auto v = std::view::iota(0) | view::take_exactly(2);
     using type_list = meta::list<size_type_t<std::vector<int>>,                    // short
                                  typename size_type<std::vector<int>>::type,       // long
                                  typename std::vector<int>::size_type,             // member type
