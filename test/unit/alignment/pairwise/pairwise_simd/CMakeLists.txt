@@ -1,0 +1,1 @@
+seqan3_test(simd_alignment_algorithm_basic_test.cpp)
