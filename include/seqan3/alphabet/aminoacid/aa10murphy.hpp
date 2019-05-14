@@ -24,9 +24,11 @@ namespace seqan3
 /*!\brief The reduced Murphy amino acid alphabet.
  * \ingroup aminoacid
  * \implements seqan3::AminoacidAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \details
  * The alphabet consists of letters A, B, C, F, G, H, I, K, P, S

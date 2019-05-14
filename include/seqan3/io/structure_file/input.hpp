@@ -176,8 +176,8 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
 {
     // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
     // sequence
-    requires Alphabet<typename t::seq_alphabet>;
-    requires Alphabet<typename t::seq_legal_alphabet>;
+    requires WritableAlphabet<typename t::seq_alphabet>;
+    requires WritableAlphabet<typename t::seq_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
     requires SequenceContainer<typename t::template seq_container<typename t::seq_alphabet>>;
 //    requires SequenceContainer
@@ -186,7 +186,7 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
 //                <typename t::seq_alphabet>>>;
 
     // id
-    requires Alphabet<typename t::id_alphabet>;
+    requires WritableAlphabet<typename t::id_alphabet>;
     requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
 //    requires SequenceContainer
 //        <typename t::template id_container_container
@@ -254,7 +254,7 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
 //                <typename t::react_type>>>;
 
     // comment
-    requires Alphabet<typename t::comment_alphabet>;
+    requires WritableAlphabet<typename t::comment_alphabet>;
     requires SequenceContainer<typename t::template comment_container<typename t::comment_alphabet>>;
 //    requires SequenceContainer
 //        <typename t::template comment_container_container

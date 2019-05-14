@@ -62,7 +62,8 @@ namespace seqan3::view
  */
 inline auto const to_rank = deep{std::view::transform([] (auto const in) noexcept
 {
-    static_assert(Alphabet<remove_cvref_t<decltype(in)>>, "The value type of seqan3::view::to_rank must model the seqan3::Alphabet.");
+    static_assert(Semialphabet<decltype(in)>,
+                  "The value type of seqan3::view::to_rank must model the seqan3::Alphabet.");
     return seqan3::to_rank(in);
 })};
 

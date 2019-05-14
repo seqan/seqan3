@@ -27,9 +27,11 @@ namespace seqan3
  * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::Alphabet.
  * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::QualityAlphabet.
  * \implements seqan3::QualityAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  *
  * This composite pairs an arbitrary alphabet with a quality alphabet, where

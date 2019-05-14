@@ -23,6 +23,11 @@ namespace seqan3
 
 /*!\brief The (extended) cigar operation alphabet of M,D,I,H,N,P,S,X,=.
  * \ingroup cigar
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
+ * \implements seqan3::TriviallyCopyable
+ * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \details
  *

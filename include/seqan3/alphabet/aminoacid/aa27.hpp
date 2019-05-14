@@ -23,9 +23,11 @@ namespace seqan3
 /*!\brief The twenty-seven letter amino acid alphabet.
  * \ingroup aminoacid
  * \implements seqan3::AminoacidAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \details
  * The alphabet consists of letters A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X,

@@ -122,14 +122,14 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
 {
-    requires Alphabet<typename t::sequence_alphabet>;
-    requires Alphabet<typename t::sequence_legal_alphabet>;
+    requires WritableAlphabet<typename t::sequence_alphabet>;
+    requires WritableAlphabet<typename t::sequence_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
     requires SequenceContainer<typename t::template sequence_container<typename t::sequence_alphabet>>;
     requires SequenceContainer<typename t::template sequence_container_container<
         typename t::template sequence_container<typename t::sequence_alphabet>>>;
 
-    requires Alphabet<typename t::id_alphabet>;
+    requires WritableAlphabet<typename t::id_alphabet>;
     requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
     requires SequenceContainer<typename t::template id_container_container<typename t::template id_container<
         typename t::id_alphabet>>>;
