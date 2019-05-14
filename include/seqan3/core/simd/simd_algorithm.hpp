@@ -22,7 +22,7 @@ namespace seqan3::detail
 
 //!\brief Helper function for seqan3::simd::fill.
 //!\ingroup simd
-template <simd_concept simd_t, size_t... I>
+template <Simd simd_t, size_t... I>
 constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>)
 {
     return simd_t{((void)I, scalar)...};
@@ -30,7 +30,7 @@ constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scala
 
 //!\brief Helper function for seqan3::simd::iota.
 //!\ingroup simd
-template <simd_concept simd_t, typename scalar_t, scalar_t... I>
+template <Simd simd_t, typename scalar_t, scalar_t... I>
 constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t, I...>)
 {
     return simd_t{static_cast<scalar_t>(offset + I)...};
@@ -45,7 +45,7 @@ inline namespace simd
 {
 
 /*!\brief Fills a seqan3::simd::simd_type vector with a scalar value.
- * \tparam    simd_t The simd type which satisfies seqan3::simd::simd_concept.
+ * \tparam    simd_t The simd type which satisfies seqan3::simd::Simd.
  * \param[in] scalar The scalar value to fill the seqan3::simd::simd_type vector.
  * \ingroup simd
  *
@@ -53,7 +53,7 @@ inline namespace simd
  *
  * \include test/snippet/core/simd/fill.cpp
  */
-template <simd_concept simd_t>
+template <Simd simd_t>
 constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
@@ -61,7 +61,7 @@ constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
 }
 
 /*!\brief Fills a seqan3::simd::simd_type vector with the scalar values offset, offset+1, offset+2, ...
- * \tparam    simd_t The simd type which satisfies seqan3::simd::simd_concept.
+ * \tparam    simd_t The simd type which satisfies seqan3::simd::Simd.
  * \param[in] offset The scalar offset to fill the seqan3::simd::simd_type vector.
  * \ingroup simd
  *
@@ -69,7 +69,7 @@ constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
  *
  * \include test/snippet/core/simd/iota.cpp
  */
-template <simd_concept simd_t>
+template <Simd simd_t>
 constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
