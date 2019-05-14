@@ -18,6 +18,15 @@
 #include <climits>
 #include <utility>
 
+// Find correct header for byte-order conversion functions.
+#if __has_include(<endian.h>) // unix GLIBC
+    #include <endian.h>
+#elif __has_include(<libkern/OSByteOrder.h>)  // APPLE
+    #include <libkern/OSByteOrder.h>
+#elif __has_include(<sys/endian.h>)  // *BSD
+    #include <sys/endian.h>
+#endif // __has_include(endian.h)
+
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/std/concepts>
 
@@ -94,6 +103,50 @@ constexpr uint8_t bit_scan_reverse(unsigned_t n)
     for (; n != 0; n >>= 1, ++i);
     return i - 1;
 #endif
+}
+
+/*!\brief Convert the byte encoding of integer values to little-endian byte order.
+ * \ingroup core
+ * \tparam type The type of the value to convert; must model std::Integral.
+ * \param  in   The input value to convert.
+ * \returns the converted value in little-endian byte-order.
+ *
+ * \details
+ *
+ * This function swaps the bytes if the host system uses big endian and if the size of the integral types is not
+ * bigger than 8 byte. Otherwise, the function does nothing and returns the unchanged input value.
+ */
+template <std::Integral type>
+inline constexpr type enforce_little_endian(type const in) noexcept
+{
+    if constexpr (sizeof(type) == 2)      // 16 bit integral type
+    {
+        #if __has_include(<libkern/OSByteOrder.h>)  // APPLE
+            return OSSwapHostToLittleInt16(in);
+        #else
+            return htole16(in);
+        #endif // __has_include(<libkern/OSByteOrder.h>)
+    }
+    else if constexpr (sizeof(type) == 4) // 32 bit integral type
+    {
+        #if __has_include(<libkern/OSByteOrder.h>)  // APPLE
+            return OSSwapHostToLittleInt32(in);
+        #else
+            return htole32(in);
+        #endif // __has_include(<libkern/OSByteOrder.h>)
+    }
+    else if constexpr (sizeof(type) == 8) // 64 bit integral type
+    {
+        #if __has_include(<libkern/OSByteOrder.h>)  // APPLE
+            return OSSwapHostToLittleInt64(in);
+        #else
+            return htole64(in);
+        #endif // __has_include(<libkern/OSByteOrder.h>)
+    }
+    else
+    {
+        return in;
+    }
 }
 
 } // namespace seqan3::detail
