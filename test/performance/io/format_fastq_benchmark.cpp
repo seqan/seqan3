@@ -21,8 +21,9 @@
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/view/to_char.hpp>
-#include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/std/filesystem>
+#include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
 
@@ -69,7 +70,7 @@ std::string get_file(std::size_t n_entries)
 // ============================================================================
 // write 3-line entry to stream as often as possible
 // ============================================================================
-void fastq_write(benchmark::State & state)
+void fastq_write_to_stream(benchmark::State & state)
 {
     std::ostringstream ostream;
 
@@ -142,6 +143,7 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
     for (auto _ : state)
     {
         auto it = restart_iterator();
+
         readRecord(id, seq, qual, it, seqan::Fastq{});
 
         clear(id);
@@ -256,7 +258,7 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
 
 #endif
 
-BENCHMARK(fastq_write);
+BENCHMARK(fastq_write_to_stream);
 
 #if SEQAN2_HAS_SEQAN3
 
