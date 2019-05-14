@@ -36,7 +36,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT NucleotideAlphabet = Alphabet<type> && requires (type v, std::remove_reference_t<type> c)
+SEQAN3_CONCEPT NucleotideAlphabet = Alphabet<type> && requires (type v, remove_cvref_t<type> c)
 {
     requires std::Same<decltype(complement(v)), decltype(c)>;
 };

@@ -22,10 +22,11 @@ namespace seqan3
 /*!\brief Implementation of a masked composite, which extends a given alphabet
  * with a mask.
  * \ingroup mask
- * \implements seqan3::Alphabet
- * \implements seqan3::detail::ConstexprSemialphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::Semialphabet.
  * \tparam mask_t Types of masked letter; must satisfy seqan3::Semialphabet, defaults to seqan3::mask.
@@ -39,7 +40,7 @@ namespace seqan3
  */
  template <typename sequence_alphabet_t>
 //!\cond
-    requires Alphabet<sequence_alphabet_t>
+    requires WritableAlphabet<sequence_alphabet_t>
 //!\endcond
 class masked : public alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
 {

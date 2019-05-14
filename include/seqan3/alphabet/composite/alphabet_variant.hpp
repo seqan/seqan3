@@ -140,10 +140,16 @@ namespace seqan3
 
 /*!\brief A combined alphabet that can hold values of either of its alternatives.
  * \ingroup composite
- * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::Alphabet and be
- *                              unique.
- * \implements seqan3::Alphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \if DEV
+ * \tparam ...alternative_types Types of possible values (at least 2); all must model
+ *                              seqan3::detail::WritableConstexprAlphabet, not be references and be unique.
+ * \implements seqan3::detail::WritableConstexprAlphabet
+ * \else
+ * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::WritableAlphabet,
+ *                              must not be references and must be unique; all required functions for
+ *                              seqan3::WritableAlphabet need to be callable in a `constexpr`-context.
+ * \endif
+ * \implements seqan3::WritableAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
 
@@ -169,7 +175,8 @@ namespace seqan3
  */
 template <typename ...alternative_types>
 //!\cond
-    requires (detail::ConstexprAlphabet<alternative_types> && ...) &&
+    requires (detail::WritableConstexprAlphabet<alternative_types> && ...) &&
+             (!std::is_reference_v<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond

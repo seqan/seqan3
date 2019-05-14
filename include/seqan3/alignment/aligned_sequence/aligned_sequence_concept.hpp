@@ -193,7 +193,7 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT AlignedSequence =
     std::ranges::ForwardRange<t> &&
-    Alphabet<value_type_t<t>> &&
+    Alphabet<reference_t<t>> &&
     WeaklyAssignable<reference_t<t>, gap const &> &&
     requires { typename detail::unaligned_seq_t<t>; } &&
     requires (t v, detail::unaligned_seq_t<t> unaligned)

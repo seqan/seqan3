@@ -39,7 +39,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<reference_t<urng_t>>
 //!\endcond
 class view_translate;
 
@@ -47,7 +47,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<reference_t<urng_t>>
 //!\endcond
 class view_translate_single;
 
@@ -148,7 +148,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<reference_t<urng_t>>
 //!\endcond
 class view_translate_single
 {
@@ -370,7 +370,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<reference_t<urng_t>>
 //!\endcond
 view_translate_single(urng_t &&, translation_frames const) -> view_translate_single<urng_t>;
 
@@ -379,7 +379,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<reference_t<urng_t>>
 //!\endcond
 view_translate_single(urng_t &&) -> view_translate_single<urng_t>;
 
@@ -459,7 +459,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<reference_t<urng_t>>
 //!\endcond
 class view_translate
 {
@@ -658,7 +658,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<reference_t<urng_t>>
 //!\endcond
 view_translate(urng_t &&, translation_frames const = translation_frames{}) -> view_translate<urng_t>;
 

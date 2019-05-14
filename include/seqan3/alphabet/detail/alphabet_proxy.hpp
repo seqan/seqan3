@@ -153,7 +153,7 @@ namespace seqan3
  *
  * See seqan3::bitcompressed_vector or seqan3::alphabet_tuple_base for examples of how this class is used.
  */
-template <typename derived_type, typename alphabet_type>
+template <typename derived_type, WritableSemialphabet alphabet_type>
 class alphabet_proxy : public alphabet_base<derived_type,
                                             alphabet_size_v<alphabet_type>,
                                             detail::alphabet_char_type_or_void_t<alphabet_type>>
@@ -233,26 +233,15 @@ public:
     constexpr derived_type & assign_rank(alphabet_rank_t<alphabet_type> const r) noexcept
     {
         alphabet_type tmp{};
-        using seqan3::assign_rank_to;
         assign_rank_to(r, tmp);
         return operator=(tmp);
     }
 
     constexpr derived_type & assign_char(char_type_virtual const c) noexcept
-        requires Alphabet<alphabet_type>
+        requires WritableAlphabet<alphabet_type>
     {
         alphabet_type tmp{};
-        using seqan3::assign_char_to;
         assign_char_to(c, tmp);
-        return operator=(tmp);
-    }
-
-    derived_type & assign_char_strictly(char_type_virtual const c)
-        requires Alphabet<alphabet_type>
-    {
-        alphabet_type tmp{};
-        using seqan3::assign_char_strictly_to;
-        assign_char_strictly_to(c, tmp);
         return operator=(tmp);
     }
 
@@ -273,18 +262,16 @@ public:
     //!\brief Implicit conversion to the emulated type.
     constexpr operator alphabet_type() const noexcept
     {
-        using seqan3::assign_rank_to;
         return assign_rank_to(to_rank(), alphabet_type{});
     }
 
     constexpr char_type to_char() const noexcept
         requires Alphabet<alphabet_type>
     {
-        using seqan3::to_char;
         /* (smehringer) Explicit conversion instead of static_cast:
          * See explanation in to_phred().
          */
-        return to_char(operator alphabet_type());
+        return seqan3::to_char(operator alphabet_type());
     }
 
     constexpr phred_type to_phred() const noexcept
@@ -314,8 +301,8 @@ public:
 
     //!\brief Delegate to the emulated type's validator.
     static constexpr bool char_is_valid(char_type_virtual const c) noexcept
+        requires WritableAlphabet<alphabet_type>
     {
-        using seqan3::char_is_valid_for;
         return char_is_valid_for<alphabet_type>(c);
     }
     //!\}

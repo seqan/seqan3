@@ -125,13 +125,13 @@ template <typename t>
 SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
 {
     // field::SEQ
-    requires Alphabet<typename t::sequence_alphabet>;
-    requires Alphabet<typename t::sequence_legal_alphabet>;
+    requires WritableAlphabet<typename t::sequence_alphabet>;
+    requires WritableAlphabet<typename t::sequence_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
     requires SequenceContainer<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
     // field::ID
-    requires Alphabet<typename t::id_alphabet>;
+    requires WritableAlphabet<typename t::id_alphabet>;
     requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
 
     // field::QUAL
@@ -142,12 +142,14 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
     // either ref_info_not_given or a range over ranges over Alphabet (e.g. std::vector<dna4_vector>)
     requires std::Same<typename t::ref_sequences, ref_info_not_given> ||
          (std::ranges::ForwardRange<typename t::ref_sequences> &&
-         std::ranges::ForwardRange<detail::transformation_trait_or_t<value_type<typename t::ref_sequences>, dna4_vector>> &&
-         Alphabet<value_type_t<detail::transformation_trait_or_t<value_type<typename t::ref_sequences>, dna4_vector>>>);
+         std::ranges::ForwardRange<detail::transformation_trait_or_t<reference<typename t::ref_sequences>, dna4_vector>> &&
+         Alphabet<reference_t<detail::transformation_trait_or_t<reference<typename t::ref_sequences>, dna4_vector>>>);
 
     // field::REF_ID
-    requires Alphabet<value_type_t<value_type_t<typename t::ref_ids>>>;
-    requires std::ranges::ForwardRange<value_type_t<typename t::ref_ids>>;
+    requires Alphabet<reference_t<reference_t<typename t::ref_ids>>> &&
+             (!std::Same<typename t::ref_sequences, ref_info_not_given> ||
+              WritableAlphabet<reference_t<reference_t<typename t::ref_ids>>>);
+    requires std::ranges::ForwardRange<reference_t<typename t::ref_ids>>;
     requires std::ranges::ForwardRange<typename t::ref_ids>;
 
     // field::OFFSET is fixed to int32_t

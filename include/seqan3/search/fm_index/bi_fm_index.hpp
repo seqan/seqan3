@@ -55,7 +55,7 @@ struct bi_fm_index_default_traits
  */
 template <std::ranges::RandomAccessRange text_t, BiFmIndexTraits index_traits_t = bi_fm_index_default_traits>
 //!\cond
-    requires Alphabet<innermost_value_type_t<text_t>> &&
+    requires Semialphabet<innermost_value_type_t<text_t>> &&
              std::Same<alphabet_rank_t<innermost_value_type_t<text_t>>, uint8_t>
 //!\endcond
 class bi_fm_index

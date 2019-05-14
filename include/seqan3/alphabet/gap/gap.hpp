@@ -22,10 +22,11 @@ namespace seqan3
 
 /*!\brief The alphabet of a gap character '-'
  * \ingroup gap
- * \implements seqan3::Alphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * The alphabet always has the same value ('-').
  *
