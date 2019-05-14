@@ -868,7 +868,8 @@ TEST(validator_test, chaining_validators)
     }
 
     {
-        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().relative_path().c_str()};
+        auto rel_path = tmp_name.get_path().relative_path();
+        const char * argv[] = {"./argument_parser_test", "-s", rel_path.c_str()};
         argument_parser parser{"test_parser", 3, argv};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
