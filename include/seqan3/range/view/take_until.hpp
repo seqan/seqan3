@@ -235,17 +235,18 @@ private:
         //!\brief Defaulted.
         ~iterator_type_consume_input()                                                             = default;
 
-        //!\brief Constructor that delegates to the CRTP layer.
-        iterator_type_consume_input(base_base_t it) noexcept(noexcept(base_t{it})) :
-            base_t{std::move(it)}
-        {}
-
         //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
         iterator_type_consume_input(base_base_t it,
                                     fun_ref_t _fun,
                                     sentinel_type sen) noexcept(noexcept(base_t{it})) :
             base_t{std::move(it)}, fun{_fun}, stored_end{std::move(sen)}
-        {}
+        {
+            if ((*this->this_to_base() != stored_end) && fun(**this))
+            {
+                at_end_gracefully = true;
+                ++(*this);
+            }
+        }
         //!\}
 
         /*!\name Associated types

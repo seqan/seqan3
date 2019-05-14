@@ -109,6 +109,15 @@ TEST(view_take_line, no_eol)
     EXPECT_EQ("foo", v);
 }
 
+TEST(view_take_line, eol_at_first_position)
+{
+    using sbt = std::istreambuf_iterator<char>;
+    std::istringstream vec{"\n\nfoo"};
+    auto stream_view = std::ranges::subrange<decltype(sbt{vec}), decltype(sbt{})> {sbt{vec}, sbt{}};
+    EXPECT_EQ("", std::string(stream_view | view::take_line));
+    EXPECT_EQ("foo", std::string(stream_view | view::take_line));
+}
+
 TEST(view_take_line, concepts)
 {
     do_concepts(view::take_line);
