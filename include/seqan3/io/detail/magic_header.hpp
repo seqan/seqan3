@@ -82,7 +82,7 @@ struct bgzf_compression
  * Specialises seqan3::detail::magic_header for seqan3::detail::bgzf_compression.
  */
 template <>
-inline constexpr std::array<int8_t, 18 > magic_header<bgzf_compression>
+inline constexpr std::array<int8_t, 18> magic_header<bgzf_compression>
 {
 //  ID1                              ID2                              CM
     magic_header<gz_compression>[0], magic_header<gz_compression>[1], magic_header<gz_compression>[2],
