@@ -36,17 +36,11 @@
  * for qualities, RNA structures and alignment gaps. In addition there are templates for combining alphabet
  * types into new alphabets, and wrappers for existing data types like the canonical `char`.
  *
- * To be included into the alphabet module, an alphabet must satisfy the generic seqan3::Alphabet
- * documented below. While this only encompasses a minimum set of requirements, many of our alphabets provide
- * more features and there are more refined concepts. The inheritance diagram of seqan3::Alphabet gives
- * a detailed overview. A more basic overview of this module and it's submodules is available in the collaboration
- * diagram at the top of this page.
+ * In addition to concrete alphabet types, SeqAn provides multiple *concepts* that describe groups of alphabets
+ * by their properties and can be used to *constrain* templates so that they only work with certain alphabet types.
+ * See the \link tutorial_concepts Tutorial on Concepts \endlink for a gentle introduction to the topic.
  *
- * # The alphabet concept
- *
- * The seqan3::Alphabet defines the requirements a type needs to meet to be considered an alphabet
- * by SeqAn, or in other words: you can expect certain properties and functions to be defined on
- * all data types we call an alphabet.
+ * # The alphabet concepts
  *
  * ### Alphabet size
  *
@@ -79,25 +73,19 @@
  *
  * \snippet test/snippet/alphabet/all.cpp ambiguity
  *
- * To solve this problem, every alphabet defines two interfaces:
+ * To solve this problem, alphabets in SeqAn define two interfaces:
  *
  *   1. a **rank based interface** with
- *     * the \link seqan3::alphabet_rank_t underlying rank type \endlink able to represent this alphabet numerically;
- *       this type must be able to represent the numbers from `0` to `alphabet size - 1` (often `uint8_t`, but
- *       sometimes a larger unsigned integral type);
- *     * a \link seqan3::to_rank to_rank \endlink function to produce the numerical representation;
- *     * an \link seqan3::assign_rank_to assign_rank \endlink function to assign from the numerical
- *       representation;
+ *     * seqan3::to_rank to produce the numerical representation;
+ *     * seqan3::assign_rank_to to assign from the numerical representation;
+ *     * the numerical representation is an unsigned integral type like `size_t`; the exact type can be retrieved via
+ *       the seqan3::alphabet_rank_t.
  *   2. a **character based interface** with
- *     * the \link seqan3::alphabet_char_t underlying character type \endlink able to represent this alphabet visually
- *       (almost always `char`, but could be `char16_t` or `char32_t`, as well)
- *     * a \link seqan3::to_char to_char \endlink function to produce the visual representation;
- *     * an \link seqan3::assign_char_to assign_char \endlink function to assign from the visual
- *       representation;
- *     * a \link seqan3::char_is_valid_for char_is_valid_for \endlink function that checks whether
- *       a character value has a one-to-one mapping to an alphabet value;
- *     * an \link seqan3::assign_char_strictly_to assign_char_strict \endlink function to assign a
- *       characters while verifying its validity.
+ *     * seqan3::to_char to produce the visual representation;
+ *     * seqan3::assign_char_to to assign from the visual representation;
+ *     * seqan3::char_is_valid_for that checks whether a character value has a one-to-one mapping to an alphabet value;
+ *     * the visual representation is a character type (almost always `char`, but could be `char16_t` or `char32_t`,
+ *       as well); the exact type can be retrieved via seqan3::alphabet_char_t.
  *
  * To prevent the aforementioned ambiguity, you can neither assign from rank or char representation via `operator=`,
  * nor can you cast the alphabet to either of it's representation forms, **you need to explicitly use the
@@ -119,9 +107,36 @@
  *
  * Note, however, that literals **are not** required by the concept.
  *
- * <small>In the documentation you will also encounter seqan3::Semialphabet. It describes "one half" of an
- * alphabet and only defines the rank interface as a type requirement. It is mainly used internally and not
- * relevant to most users of SeqAn.</small>
+ * ### Different concepts
+ *
+ * All types that have valid implementations of the functions/functors described above model the concept
+ * seqan3::WritableAlphabet. This is the strongest (i.e. most refined) *general case* concept.
+ * There are more refined concepts for specific biological applications (like seqan3::NucleotideAlphabet), and there are
+ * less refined concepts that only model part of an alphabet:
+ *
+ *   * seqan3::Semialphabet and derived concepts only require the rank interface;
+ *   * seqan3::Alphabet (without `Writable*`) and derived concepts only require readability and not assignability.
+ *
+ * Typically you will use seqan3::Alphabet in "read-only" situations (e.g. `const` parameters) and
+ * seqan3::WritableAlphabet whenever the values might be changed.
+ * Semi-alphabets are less useful in application code.
+ *
+ * |                                  | seqan3::Semialphabet | seqan3::WritableSemialphabet | seqan3::Alphabet | seqan3::WritableAlphabet | Aux |
+ * |----------------------------------|:--------------------:|:----------------------------:|:----------------:|:------------------------:|:---:|
+ * | seqan3::alphabet_size_v          | ✅                    | ✅                            | ✅                | ✅                        |     |
+ * | seqan3::to_rank                  | ✅                    | ✅                            | ✅                | ✅                        |     |
+ * | seqan3::alphabet_rank_t          | ✅                    | ✅                            | ✅                | ✅                        |  🔗 |
+ * | seqan3::assign_rank_to           |                      | ✅                            |                  | ✅                        |     |
+ * | seqan3::to_char                  |                      |                              | ✅                | ✅                        |     |
+ * | seqan3::alphabet_char_t          |                      |                              | ✅                | ✅                        |  🔗 |
+ * | seqan3::assign_char_to           |                      |                              |                  | ✅                        |     |
+ * | seqan3::char_is_valid_for        |                      |                              |                  | ✅                        |     |
+ * | seqan3::assign_char_strictly_to  |                      |                              |                  | ✅                        |  🔗 |
+ *
+ * The above table shows all alphabet concepts and related functions and type traits.
+ * The entities marked as "auxiliary" provide shortcuts to the other "essential" entitities.
+ * This difference is only relevant if you want to create your own alphabet (you do not need to provide an
+ * implementation for the "auxiliary" entities, they are provided automatically).
  *
  * ### Members VS free/global functions
  *
