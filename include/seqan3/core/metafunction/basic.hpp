@@ -23,67 +23,6 @@ namespace seqan3
 /*!\addtogroup metafunction
  * \{
  */
- // ----------------------------------------------------------------------------
- // delete_const
- // ----------------------------------------------------------------------------
-
-/*!\brief Return the input type with the topmost `const` removed [Type metafunction].
- * \tparam t The type to operate on.
- * \attention In contrast to std::remove_const, this function also removes `const` from pointers and references.
- *
- * | t                | delete_const<t>::type |
- * |------------------|-----------------------|
- * | t                | t                     |
- * | t const          | t                     |
- * | t &              | t &                   |
- * | t const &        | t &                   |
- * | t &&             | t &&                  |
- * | t const &&       | t &&                  |
- * | t *              | t                     |
- * | t const *        | t *                   |
- * | t const * const  | t const *             |
- * | t volatile       | t volatile            |
- * | t const volatile | t volatile            |
- */
-template <typename t>
-struct delete_const
-{
-    //!\brief The return type is the input type with the topmost `const` stripped.
-    using type = t;
-};
-
-//!\cond
-template <typename t>
-struct delete_const<t const>
-{
-    using type = t;
-};
-
-template <typename t>
-struct delete_const<t const *>
-{
-    using type = t *;
-};
-
-template <typename t>
-struct delete_const<t const &>
-{
-    using type = t &;
-};
-
-template <typename t>
-struct delete_const<t const &&>
-{
-    using type = t &&;
-};
-//!\endcond
-
-/*!\brief Return the input type with topmost `const` removed [Type metafunction, shortcut].
- * \tparam t The type to operate on.
- * \attention In contrast to std::remove_const, this function also removes `const` from pointers and references.
- */
-template <typename t>
-using delete_const_t = typename delete_const<t>::type;
 
 // ----------------------------------------------------------------------------
 // remove_cvref_t
