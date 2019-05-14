@@ -7,13 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/iota.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/exception.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
-#include <seqan3/test/cereal.hpp>
 #include <seqan3/test/pretty_printing.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -199,95 +196,31 @@ TYPED_TEST_P(alphabet, comparison_operators)
 
 TYPED_TEST_P(alphabet, concept_check)
 {
+    EXPECT_TRUE(Semialphabet<TypeParam>);
+    EXPECT_TRUE(Semialphabet<TypeParam &>);
+
+    EXPECT_TRUE(WritableSemialphabet<TypeParam>);
+    EXPECT_TRUE(WritableSemialphabet<TypeParam &>);
+
+    EXPECT_TRUE(Semialphabet<TypeParam const>);
+    EXPECT_TRUE(Semialphabet<TypeParam const &>);
+
+    EXPECT_FALSE(WritableSemialphabet<TypeParam const>);
+    EXPECT_FALSE(WritableSemialphabet<TypeParam const &>);
+
     EXPECT_TRUE(Alphabet<TypeParam>);
     EXPECT_TRUE(Alphabet<TypeParam &>);
-    EXPECT_TRUE(Alphabet<TypeParam &&>);
-}
 
-TYPED_TEST_P(alphabet, debug_streaming)
-{
-    std::ostringstream o;
-    debug_stream_type my_stream{o};
+    EXPECT_TRUE(WritableAlphabet<TypeParam>);
+    EXPECT_TRUE(WritableAlphabet<TypeParam &>);
 
-    my_stream << TypeParam{};
+    EXPECT_TRUE(Alphabet<TypeParam const>);
+    EXPECT_TRUE(Alphabet<TypeParam const &>);
 
-    o.flush();
-    EXPECT_EQ(o.str().size(), 1u);
-}
-
-TYPED_TEST_P(alphabet, hash)
-{
-    {
-        TypeParam t0{};
-        std::hash<TypeParam> h{};
-        if constexpr (std::Same<TypeParam, char>)
-        {
-            for (size_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
-            {
-                assign_rank_to(i, t0);
-                ASSERT_EQ(h(t0), i);
-            }
-        }
-        else
-        {
-            for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
-            {
-                assign_rank_to(i, t0);
-                ASSERT_EQ(h(t0), i);
-            }
-        }
-    }
-    {
-        std::vector<TypeParam> text;
-        text.reserve(4);
-        for (size_t i = 0; i < 4; ++i)
-        {
-            text.push_back(assign_rank_to(0, TypeParam{}));
-        }
-        std::hash<decltype(text)> h{};
-        ASSERT_EQ(h(text), 0u);
-    }
-    {
-        std::hash<TypeParam const> h{};
-        if constexpr (std::Same<TypeParam, char>)
-        {
-            for (size_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
-            {
-                TypeParam const t0 = assign_rank_to(i, TypeParam{});
-                ASSERT_EQ(h(t0), i);
-            }
-        }
-        else
-        {
-            for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
-            {
-                TypeParam const t0 = assign_rank_to(i, TypeParam{});
-                ASSERT_EQ(h(t0), i);
-            }
-        }
-    }
-    {
-        std::vector<TypeParam> const text(4, assign_rank_to(0, TypeParam{}));
-        std::hash<decltype(text)> h{};
-        ASSERT_EQ(h(text), 0u);
-    }
-}
-
-TYPED_TEST_P(alphabet, serialisation)
-{
-    TypeParam letter;
-
-    assign_rank_to(1 % alphabet_size_v<TypeParam>, letter);
-    test::do_serialisation(letter);
-
-    std::vector<TypeParam> vec;
-    vec.resize(10);
-    for (unsigned i = 0; i < 10; ++i)
-        assign_rank_to(i % alphabet_size_v<TypeParam>, vec[i]);
-    test::do_serialisation(vec);
+    EXPECT_FALSE(WritableAlphabet<TypeParam const>);
+    EXPECT_FALSE(WritableAlphabet<TypeParam const &>);
 }
 
 REGISTER_TYPED_TEST_CASE_P(alphabet, alphabet_size, default_value_constructor, global_assign_rank, global_to_rank,
     copy_constructor, move_constructor, copy_assignment, move_assignment, swap, global_assign_char, global_to_char,
-    global_char_is_valid_for, global_assign_char_strict, comparison_operators, concept_check, debug_streaming, hash,
-    serialisation);
+    global_char_is_valid_for, global_assign_char_strict, comparison_operators, concept_check);

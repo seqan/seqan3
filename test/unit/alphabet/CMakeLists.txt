@@ -1,3 +1,6 @@
 add_subdirectories()
+seqan3_test(alphabet_cereal_test.cpp)
+seqan3_test(alphabet_debug_stream_test.cpp)
+seqan3_test(alphabet_hash_test.cpp)
 seqan3_test(custom_alphabet_test.cpp)
 seqan3_test(custom_alphabet2_test.cpp)
