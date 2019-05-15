@@ -13,6 +13,7 @@
 
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
+#include <seqan3/alphabet/composite/semialphabet_any.hpp>
 
 /*!\defgroup composite Composite
  * \brief Provides data structures joining multiple alphabets into a single alphabet.
@@ -24,9 +25,11 @@
  * you can add new characters to existing alphabets by using seqan3::alphabet_variant or combine alphabets with quality
  * information by using seqan3::alphabet_tuple_base.
  *
- * We have currently two major composite alphabets:
+ * We have currently three major composite alphabets:
  * * seqan3::alphabet_tuple_base which can be used to create a std::tuple like object that still models
  *   seqan3::Alphabet.
  * * seqan3::alphabet_variant which roughly corresponds to the Union of the given types. It behaves similar to
  *   std::variant, but also models seqan3::Alphabet.
+ * * seqan3::semialphabet_any which type erases other alphabets of the same size and allows again transformation to
+ *   alphabets of the same size by copying the rank.
  */
