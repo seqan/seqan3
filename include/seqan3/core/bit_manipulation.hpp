@@ -21,12 +21,11 @@
 // Find correct header for byte-order conversion functions.
 #if __has_include(<endian.h>) // unix GLIBC
     #include <endian.h>
-#elif __has_include(<libkern/OSByteOrder.h>)  // APPLE
-    #include <libkern/OSByteOrder.h>
 #elif __has_include(<sys/endian.h>)  // *BSD
     #include <sys/endian.h>
 #endif // __has_include(endian.h)
 
+#include <seqan3/core/detail/endian.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/std/concepts>
 
@@ -113,39 +112,37 @@ constexpr uint8_t bit_scan_reverse(unsigned_t n)
  *
  * \details
  *
- * This function swaps the bytes if the host system uses big endian and if the size of the integral types is not
- * bigger than 8 byte. Otherwise, the function does nothing and returns the unchanged input value.
+ * This function swaps the bytes if the host system uses big endian. In this case only 1, 2, 4, or 8 byte big
+ * integral types are allowed as input. On host systems with little endian this function is a no-op and returns the
+ * unchanged input value. Other systems with mixed endianness are not supported.
  */
 template <std::Integral type>
-inline constexpr type enforce_little_endian(type const in) noexcept
+constexpr type to_little_endian(type const in) noexcept
 {
-    if constexpr (sizeof(type) == 2)      // 16 bit integral type
+    if constexpr (endian::native == endian::little)
     {
-        #if __has_include(<libkern/OSByteOrder.h>)  // APPLE
-            return OSSwapHostToLittleInt16(in);
-        #else
+        return in;
+    }
+    else if constexpr (endian::native == endian::big)
+    {
+        static_assert(sizeof(type) <= 8,
+                      "Can only convert the byte encoding for integral numbers with a size of up to 8 bytes.");
+        static_assert(is_power_of_two(sizeof(type)),
+                      "Can only convert the byte encoding for integral numbers whose byte size is a power of two.");
+
+        if constexpr (sizeof(type) == 2)
             return htole16(in);
-        #endif // __has_include(<libkern/OSByteOrder.h>)
-    }
-    else if constexpr (sizeof(type) == 4) // 32 bit integral type
-    {
-        #if __has_include(<libkern/OSByteOrder.h>)  // APPLE
-            return OSSwapHostToLittleInt32(in);
-        #else
+        else if constexpr (sizeof(type) == 4)
             return htole32(in);
-        #endif // __has_include(<libkern/OSByteOrder.h>)
-    }
-    else if constexpr (sizeof(type) == 8) // 64 bit integral type
-    {
-        #if __has_include(<libkern/OSByteOrder.h>)  // APPLE
-            return OSSwapHostToLittleInt64(in);
-        #else
+        else if constexpr (sizeof(type) == 8)
             return htole64(in);
-        #endif // __has_include(<libkern/OSByteOrder.h>)
+        else
+            return in;  // single byte.
     }
     else
     {
-        return in;
+        static_assert(endian::native == endian::little || endian::native == endian::big,
+                      "Expected a little-endian or big-endian platform.");
     }
 }
 
