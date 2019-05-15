@@ -16,20 +16,23 @@ namespace seqan3::detail
 {
 struct debug_matrix_print_test : public ::testing::Test
 {
-    static constexpr int inf = matrix_inf<int>;
+    static constexpr auto inf = std::nullopt;
     std::vector<dna4> sequence1 = "AACACGTTAACCGGTT"_dna4;
     std::vector<dna4> sequence2 = "ACGTACGT"_dna4;
-    std::vector<int> scores
+
+    detail::row_wise_matrix<std::optional<int>> score_matrix
     {
-        0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
-        1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
-        2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-        3,  2,  2,  2,  2,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,
-        4,  3,  3,  3,  3,  3,  4,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
-        5,  4,  3,  4,  3,  4,  4,  4,  4,  4,  5,  6,  7,  8,  9, 10, 11,
-        6,  5,  4,  3,  4,  3,  4,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
-        7,  6,  5,  4,  4,  4,  3,  4,  5,  6,  6,  6,  6,  6,  7,  8,  9,
-        inf,7,  6,  5,  5,  5,  4,  3,  4,  5,  6,  7,  7,  7,  7,  7,  8
+        {
+            0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+            1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
+            2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+            3,  2,  2,  2,  2,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,
+            4,  3,  3,  3,  3,  3,  4,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
+            5,  4,  3,  4,  3,  4,  4,  4,  4,  4,  5,  6,  7,  8,  9, 10, 11,
+            6,  5,  4,  3,  4,  3,  4,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
+            7,  6,  5,  4,  4,  4,  3,  4,  5,  6,  6,  6,  6,  6,  7,  8,  9,
+            inf,7,  6,  5,  5,  5,  4,  3,  4,  5,  6,  7,  7,  7,  7,  7,  8
+        }, 9u, 17u
     };
 
     detail::trace_directions N{},
@@ -38,17 +41,19 @@ struct debug_matrix_print_test : public ::testing::Test
         U{detail::trace_directions::up},
         DL{D|L}, DU{D|U}, UL{U|L}, DUL{D|U|L};
 
-    std::vector<detail::trace_directions> traces
+    detail::row_wise_matrix<detail::trace_directions> trace_matrix
     {
-        N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
-        U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
-        U,  U,  D,  D,  L,  DL, L,  L,  L,  L,  L,  DL, DL, L,  L,  L,  L,
-        U,  U,  DU, DU, D,  DL, D,  L,  L,  L,  L,  L,  L,  DL, DL, L,  L,
-        U,  U,  DU, DU, DU, D,  DUL,D,  DL, L,  L,  L,  L,  L,  L,  DL, DL,
-        U,  DU, D,  DUL,D,  DUL,D,  U,  D,  D,  DL, L,  L,  L,  L,  L,  L,
-        U,  U,  U,  D,  UL, D,  L,  DUL,DU, DU, D,  D,  DL, L,  L,  L,  L,
-        U,  U,  U,  U,  D,  U,  D,  L,  L,  DUL,DU, DU, D,  D,  DL, L,  L,
-        N,  U,  U,  U,  DU, DU, U,  D,  DL, L,  L,  DUL,DU, DU, D,  D,  DL
+        {
+            N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
+            U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
+            U,  U,  D,  D,  L,  DL, L,  L,  L,  L,  L,  DL, DL, L,  L,  L,  L,
+            U,  U,  DU, DU, D,  DL, D,  L,  L,  L,  L,  L,  L,  DL, DL, L,  L,
+            U,  U,  DU, DU, DU, D,  DUL,D,  DL, L,  L,  L,  L,  L,  L,  DL, DL,
+            U,  DU, D,  DUL,D,  DUL,D,  U,  D,  D,  DL, L,  L,  L,  L,  L,  L,
+            U,  U,  U,  D,  UL, D,  L,  DUL,DU, DU, D,  D,  DL, L,  L,  L,  L,
+            U,  U,  U,  U,  D,  U,  D,  L,  L,  DUL,DU, DU, D,  D,  DL, L,  L,
+            N,  U,  U,  U,  DU, DU, U,  D,  DL, L,  L,  DUL,DU, DU, D,  D,  DL
+        }, 9u, 17u
     };
 
     std::string score_matrix_ascii
@@ -267,7 +272,7 @@ TEST_F(debug_matrix_print_test, unicode_str_length)
 
 TEST_F(debug_matrix_print_test, score_matrix_ascii)
 {
-    detail::debug_matrix matrix{scores, 9, 17};
+    detail::debug_matrix matrix{score_matrix};
 
     fmtflags2 flags = fmtflags2::default_;
 
@@ -278,7 +283,7 @@ TEST_F(debug_matrix_print_test, score_matrix_ascii)
 
 TEST_F(debug_matrix_print_test, score_matrix_ascii_with_sequences)
 {
-    detail::debug_matrix matrix{scores, 9, 17, sequence1, sequence2};
+    detail::debug_matrix matrix{score_matrix, sequence1, sequence2};
 
     fmtflags2 flags = fmtflags2::default_;
     EXPECT_EQ(matrix.auto_column_width(flags), 2u);
@@ -290,7 +295,7 @@ TEST_F(debug_matrix_print_test, score_matrix_ascii_with_sequences)
 
 TEST_F(debug_matrix_print_test, score_matrix_unicode)
 {
-    detail::debug_matrix matrix{scores, 9, 17};
+    detail::debug_matrix matrix{score_matrix};
 
     fmtflags2 flags = fmtflags2::default_ | fmtflags2::utf8;
     EXPECT_EQ(matrix.auto_column_width(flags), 2u);
@@ -302,7 +307,7 @@ TEST_F(debug_matrix_print_test, score_matrix_unicode)
 
 TEST_F(debug_matrix_print_test, score_matrix_unicode_with_sequences)
 {
-    detail::debug_matrix matrix{scores, 9, 17, sequence1, sequence2};
+    detail::debug_matrix matrix{score_matrix, sequence1, sequence2};
     matrix.column_width = 4u;
 
     fmtflags2 flags = fmtflags2::default_ | fmtflags2::utf8;
@@ -315,7 +320,7 @@ TEST_F(debug_matrix_print_test, score_matrix_unicode_with_sequences)
 
 TEST_F(debug_matrix_print_test, trace_matrix_ascii)
 {
-    detail::debug_matrix matrix{traces, 9, 17};
+    detail::debug_matrix matrix{trace_matrix};
     matrix.column_width = 4u;
 
     fmtflags2 flags = fmtflags2::default_;
@@ -329,7 +334,7 @@ TEST_F(debug_matrix_print_test, trace_matrix_ascii)
 
 TEST_F(debug_matrix_print_test, trace_matrix_ascii_with_sequences)
 {
-    detail::debug_matrix matrix{traces, 9, 17, sequence1, sequence2};
+    detail::debug_matrix matrix{trace_matrix, sequence1, sequence2};
     matrix.column_width = 4u;
 
     fmtflags2 flags = fmtflags2::default_;
@@ -343,7 +348,7 @@ TEST_F(debug_matrix_print_test, trace_matrix_ascii_with_sequences)
 
 TEST_F(debug_matrix_print_test, trace_matrix_unicode)
 {
-    detail::debug_matrix matrix{traces, 9, 17};
+    detail::debug_matrix matrix{trace_matrix};
 
     fmtflags2 flags = fmtflags2::default_ | fmtflags2::utf8;
     EXPECT_EQ(matrix.auto_column_width(flags), 3u);
@@ -355,7 +360,7 @@ TEST_F(debug_matrix_print_test, trace_matrix_unicode)
 
 TEST_F(debug_matrix_print_test, trace_matrix_unicode_with_sequences)
 {
-    detail::debug_matrix matrix{traces, 9, 17, sequence1, sequence2};
+    detail::debug_matrix matrix{trace_matrix, sequence1, sequence2};
     matrix.column_width = 4u;
 
     fmtflags2 flags = fmtflags2::default_ | fmtflags2::utf8;
@@ -368,7 +373,7 @@ TEST_F(debug_matrix_print_test, trace_matrix_unicode_with_sequences)
 
 TEST_F(debug_stream_test, score_matrix_ascii)
 {
-    detail::debug_matrix matrix{scores, 9, 17};
+    detail::debug_matrix matrix{score_matrix};
 
     std::stringstream stream;
     debug_stream_type debug_stream{stream};
@@ -379,7 +384,7 @@ TEST_F(debug_stream_test, score_matrix_ascii)
 
 TEST_F(debug_stream_test, score_matrix_ascii_with_sequences)
 {
-    detail::debug_matrix matrix{detail::debug_matrix{scores, 9, 17}, sequence1, sequence2};
+    detail::debug_matrix matrix{detail::debug_matrix{score_matrix}, sequence1, sequence2};
 
     std::stringstream stream;
     debug_stream_type debug_stream{stream};
@@ -390,7 +395,7 @@ TEST_F(debug_stream_test, score_matrix_ascii_with_sequences)
 
 TEST_F(debug_stream_test, score_matrix_unicode)
 {
-    detail::debug_matrix matrix{scores, 9, 17};
+    detail::debug_matrix matrix{score_matrix};
 
     std::stringstream stream;
     debug_stream_type debug_stream{stream};
@@ -401,7 +406,7 @@ TEST_F(debug_stream_test, score_matrix_unicode)
 
 TEST_F(debug_stream_test, score_matrix_unicode_with_sequences)
 {
-    detail::debug_matrix matrix{detail::debug_matrix{scores, 9, 17}, sequence1, sequence2};
+    detail::debug_matrix matrix{detail::debug_matrix{score_matrix}, sequence1, sequence2};
     matrix.column_width = 4u;
 
     std::stringstream stream;
@@ -413,7 +418,7 @@ TEST_F(debug_stream_test, score_matrix_unicode_with_sequences)
 
 TEST_F(debug_stream_test, trace_matrix_ascii)
 {
-    detail::debug_matrix matrix{traces, 9, 17};
+    detail::debug_matrix matrix{trace_matrix};
     matrix.column_width = 4u;
 
     std::stringstream stream;
@@ -425,7 +430,7 @@ TEST_F(debug_stream_test, trace_matrix_ascii)
 
 TEST_F(debug_stream_test, trace_matrix_ascii_with_sequences)
 {
-    detail::debug_matrix matrix{detail::debug_matrix{traces, 9, 17}, sequence1, sequence2};
+    detail::debug_matrix matrix{detail::debug_matrix{trace_matrix}, sequence1, sequence2};
     matrix.column_width = 4u;
 
     std::stringstream stream;
@@ -437,7 +442,7 @@ TEST_F(debug_stream_test, trace_matrix_ascii_with_sequences)
 
 TEST_F(debug_stream_test, trace_matrix_unicode)
 {
-    detail::debug_matrix matrix{traces, 9, 17};
+    detail::debug_matrix matrix{trace_matrix};
 
     std::stringstream stream;
     debug_stream_type debug_stream{stream};
@@ -448,7 +453,7 @@ TEST_F(debug_stream_test, trace_matrix_unicode)
 
 TEST_F(debug_stream_test, trace_matrix_unicode_with_sequences)
 {
-    detail::debug_matrix matrix{detail::debug_matrix{traces, 9, 17}, sequence1, sequence2};
+    detail::debug_matrix matrix{detail::debug_matrix{trace_matrix}, sequence1, sequence2};
     matrix.column_width = 4u;
 
     std::stringstream stream;

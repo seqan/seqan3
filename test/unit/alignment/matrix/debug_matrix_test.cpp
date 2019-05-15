@@ -16,8 +16,24 @@ using namespace seqan3::detail;
 
 struct debug_matrix_test : public ::testing::Test
 {
-    std::vector<dna4> sequence1 = "AACACGTTAACCGGTT"_dna4;
-    std::vector<dna4> sequence2 = "ACGTACGT"_dna4;
+    static constexpr std::nullopt_t inf = std::nullopt;
+
+    std::vector<dna4> first_sequence = "AACACGTTAACCGGTT"_dna4;
+    std::vector<dna4> second_sequence = "ACGTACGT"_dna4;
+
+    std::vector<bool> masking_matrix
+    {
+         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
+         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
+         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
+         0,  1,  1,  1,  1,  1,  1,  0,  0,  0,  1,  1,  1,  1,  1,  0,  1,
+         0,  0,  1,  1,  1,  1,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  1,
+         0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  1,  1,  0,  0,  1,
+         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1
+    };
+
     std::vector<int> scores
     {
        -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
@@ -30,24 +46,70 @@ struct debug_matrix_test : public ::testing::Test
        -7, -6, -5, -4, -4, -4, -3, -4, -5, -6, -6, -6, -6, -6, -7, -8, -9,
        -8, -7, -6, -5, -5, -5, -4, -3, -4, -5, -6, -7, -7, -7, -7, -7, -8
     };
-    std::vector<int> scores_shorter_cols
+
+    row_wise_matrix<int> score_matrix{scores, 9u, 17u};
+
+    row_wise_matrix<int> transposed_score_matrix
     {
-       -0, -1, -2, -3, -4, -5, -6,
-       -1, -0, -1, -2, -3, -4, -5,
-       -2, -1, -1, -1, -2, -3, -4,
-       -3, -2, -2, -2, -2, -3, -3,
-       -4, -3, -3, -3, -3, -3, -4,
-       -5, -4, -3, -4, -3, -4, -4,
-       -6, -5, -4, -3, -4, -3, -4,
-       -7, -6, -5, -4, -4, -4, -3,
-       -8, -7, -6, -5, -5, -5, -4
+        {
+           -0, -1, -2, -3, -4, -5, -6, -7, -8,
+           -1, -0, -1, -2, -3, -4, -5, -6, -7,
+           -2, -1, -1, -2, -3, -3, -4, -5, -6,
+           -3, -2, -1, -2, -3, -4, -3, -4, -5,
+           -4, -3, -2, -2, -3, -3, -4, -4, -5,
+           -5, -4, -3, -3, -3, -4, -3, -4, -5,
+           -6, -5, -4, -3, -4, -4, -4, -3, -4,
+           -7, -6, -5, -4, -3, -4, -5, -4, -3,
+           -8, -7, -6, -5, -4, -4, -5, -5, -4,
+           -9, -8, -7, -6, -5, -4, -5, -6, -5,
+          -10, -9, -8, -7, -6, -5, -5, -6, -6,
+          -11,-10, -9, -8, -7, -6, -5, -6, -7,
+          -12,-11,-10, -9, -8, -7, -6, -6, -7,
+          -13,-12,-11,-10, -9, -8, -7, -6, -7,
+          -14,-13,-12,-11,-10, -9, -8, -7, -7,
+          -15,-14,-13,-12,-11,-10, -9, -8, -7,
+          -16,-15,-14,-13,-12,-11,-10, -9, -8
+        }, 17u, 9u
     };
-    std::vector<int> scores_shorter_rows
+
+    row_wise_matrix<std::optional<int>> masked_score_matrix
     {
-       -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
-       -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
-       -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,
-       -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13
+        {
+            -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
+            -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
+            -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,inf,-14,
+            -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7, -8, -9,-10,-11,inf,-13,
+            -4, -3, -3, -3, -3, -3, -4, -3, -4, -5, -6, -7, -8, -9,-10,inf,-12,
+           inf, -4, -3, -4, -3, -4, -4,inf,inf,inf, -5, -6, -7, -8, -9,inf,-11,
+           inf,inf, -4, -3, -4, -3,inf,inf,inf,inf,inf, -5, -6, -7,inf,inf,-10,
+           inf,inf,inf, -4, -4,inf,inf,inf,inf,inf,inf,inf, -6, -6,inf,inf, -9,
+           inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf, -8
+        }, 9u, 17u
+    };
+
+    row_wise_matrix<int> score_matrix_s9u_7u
+    {
+        {
+           -0, -1, -2, -3, -4, -5, -6,
+           -1, -0, -1, -2, -3, -4, -5,
+           -2, -1, -1, -1, -2, -3, -4,
+           -3, -2, -2, -2, -2, -3, -3,
+           -4, -3, -3, -3, -3, -3, -4,
+           -5, -4, -3, -4, -3, -4, -4,
+           -6, -5, -4, -3, -4, -3, -4,
+           -7, -6, -5, -4, -4, -4, -3,
+           -8, -7, -6, -5, -5, -5, -4
+        }, 9u, 7u
+    };
+
+    row_wise_matrix<int> score_matrix_s4u_17u
+    {
+        {
+           -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
+           -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
+           -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,
+           -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13
+        }, 4u, 17u
     };
 
     trace_directions N{},
@@ -68,28 +130,74 @@ struct debug_matrix_test : public ::testing::Test
         U,  U,  U,  U,  D,  U,  D,  L,  L,  DUL,DU, DU, D,  D,  DL, L,  L,
         U,  U,  U,  U,  DU, DU, U,  D,  DL, L,  L,  DUL,DU, DU, D,  D,  DL
     };
-    std::vector<trace_directions> traces_shorter_rows
+
+    row_wise_matrix<trace_directions> trace_matrix{traces, 9u, 17u};
+
+    row_wise_matrix<trace_directions> transposed_trace_matrix
     {
-        N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
-        U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
-        U,  U,  D,  D,  L,  DL, L,  L,  L,  L,  L,  DL, DL, L,  L,  L,  L,
-        U,  U,  DU, DU, D,  DL, D,  L,  L,  L,  L,  L,  L,  DL, DL, L,  L
+        {
+            N,  L,  L,  L,  L,  L,  L,  L,  L,
+            U,  D,  L,  L,  L,  DL, L,  L,  L,
+            U,  DU, D,  DL, DL, D,  L,  L,  L,
+            U,  U,  D,  DL, DL, DUL,D,  L,  L,
+            U,  DU, U,  D,  DL, D,  UL, D,  DL,
+            U,  U,  DU, DU, D,  DUL,D,  L,  DL,
+            U,  U,  U,  D,  DUL,D,  U,  D,  L,
+            U,  U,  U,  U,  D,  L,  DUL,U,  D,
+            U,  U,  U,  U,  DU, D,  DL, U,  DU,
+            U,  DU, U,  U,  U,  D,  DL, DUL,U,
+            U,  DU, U,  U,  U,  DU, D,  DL, U,
+            U,  U,  DU, U,  U,  U,  D,  DL, DUL,
+            U,  U,  DU, U,  U,  U,  DU, D,  DL,
+            U,  U,  U,  DU, U,  U,  U,  D,  DL,
+            U,  U,  U,  DU, U,  U,  U,  DU, D,
+            U,  U,  U,  U,  DU, U,  U,  U,  D,
+            U,  U,  U,  U,  DU, U,  U,  U,  DU
+        }, 17u, 9u
     };
-    std::vector<trace_directions> traces_shorter_cols
+
+    row_wise_matrix<trace_directions> masked_trace_matrix
     {
-        N,  L,  L,  L,  L,  L,  L,
-        U,  D,  DL, L,  DL, L,  L,
-        U,  U,  D,  D,  L,  DL, L,
-        U,  U,  DU, DU, D,  DL, D,
-        U,  U,  DU, DU, DU, D,  DUL,
-        U,  DU, D,  DUL,D,  DUL,D,
-        U,  U,  U,  D,  UL, D,  L,
-        U,  U,  U,  U,  D,  U,  D,
-        U,  U,  U,  U,  DU, DU, U
+        {
+            N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
+            U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
+            U,  U,  D,  D,  L,  DL, L,  L,  L,  L,  L,  DL, DL, L,  L,  N,  L,
+            U,  U,  DU, DU, D,  DL, D,  L,  L,  L,  L,  L,  L,  DL, DL, N,  L,
+            U,  U,  DU, DU, DU, D,  DUL,D,  DL, L,  L,  L,  L,  L,  L,  N,  DL,
+            N,  DU, D,  DUL,D,  DUL,D,  N,  N,  N,  DL, L,  L,  L,  L,  N,  L,
+            N,  N,  U,  D,  UL, D,  N,  N,  N,  N,  N,  D,  DL, L,  N,  N,  L,
+            N,  N,  N,  U,  D,  N,  N,  N,  N,  N,  N,  N,  D,  D,  N,  N,  L,
+            N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N , N,  N,  DL
+        }, 9u, 17u
+    };
+
+    row_wise_matrix<trace_directions> trace_matrix_s9u_7u
+    {
+        {
+            N,  L,  L,  L,  L,  L,  L,
+            U,  D,  DL, L,  DL, L,  L,
+            U,  U,  D,  D,  L,  DL, L,
+            U,  U,  DU, DU, D,  DL, D,
+            U,  U,  DU, DU, DU, D,  DUL,
+            U,  DU, D,  DUL,D,  DUL,D,
+            U,  U,  U,  D,  UL, D,  L,
+            U,  U,  U,  U,  D,  U,  D,
+            U,  U,  U,  U,  DU, DU, U
+        }, 9u, 7u
+    };
+
+    row_wise_matrix<trace_directions> trace_matrix_s4u_17u
+    {
+        {
+            N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
+            U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
+            U,  U,  D,  D,  L,  DL, L,  L,  L,  L,  L,  DL, DL, L,  L,  L,  L,
+            U,  U,  DU, DU, D,  DL, D,  L,  L,  L,  L,  L,  L,  DL, DL, L,  L
+        }, 4u, 17u
     };
 
     template <typename score_matrix_t>
-    void score_matrix_test(score_matrix_t matrix)
+    void test_score_matrix(score_matrix_t matrix)
     {
         EXPECT_EQ(matrix.cols(), 17u);
         EXPECT_EQ(matrix.rows(), 9u);
@@ -116,7 +224,7 @@ struct debug_matrix_test : public ::testing::Test
     }
 
     template <typename trace_matrix_t>
-    void trace_matrix_test(trace_matrix_t matrix)
+    void test_trace_matrix(trace_matrix_t matrix)
     {
         EXPECT_EQ(matrix.cols(), 17u);
         EXPECT_EQ(matrix.rows(), 9u);
@@ -136,18 +244,18 @@ struct debug_matrix_test : public ::testing::Test
     }
 };
 
-using score_matrix = debug_matrix_test;
-using trace_matrix = debug_matrix_test;
+using score_matrix_test = debug_matrix_test;
+using trace_matrix_test = debug_matrix_test;
 
 template <typename>
 struct debug_matrix_traits;
 
-template <Matrix matrix_t, typename sequence1_t, typename sequence2_t>
-struct debug_matrix_traits<debug_matrix<matrix_t, sequence1_t, sequence2_t>>
+template <Matrix matrix_t, typename first_sequence_t, typename second_sequence_t>
+struct debug_matrix_traits<debug_matrix<matrix_t, first_sequence_t, second_sequence_t>>
 {
     using matrix_type = matrix_t;
-    using sequence1_type = sequence1_t;
-    using sequence2_type = sequence2_t;
+    using first_sequence_type = first_sequence_t;
+    using second_sequence_type = second_sequence_t;
 };
 
 TEST_F(debug_matrix_test, matrix_concept)
@@ -164,199 +272,305 @@ TEST_F(debug_matrix_test, matrix_concept)
 
 TEST_F(debug_matrix_test, construct_with_references)
 {
-    {
-        using debug_matrix_type = decltype(debug_matrix{scores, 9u, 17u, sequence1, sequence2});
-        using matrix_type = typename debug_matrix_traits<debug_matrix_type>::matrix_type;
-        using sequence1_type = typename debug_matrix_traits<debug_matrix_type>::sequence1_type;
-        using sequence2_type = typename debug_matrix_traits<debug_matrix_type>::sequence2_type;
+    using debug_matrix_type = decltype(debug_matrix{score_matrix, first_sequence, second_sequence});
+    using matrix_type = typename debug_matrix_traits<debug_matrix_type>::matrix_type;
+    using first_sequence_type = typename debug_matrix_traits<debug_matrix_type>::first_sequence_type;
+    using second_sequence_type = typename debug_matrix_traits<debug_matrix_type>::second_sequence_type;
 
-        // the first one has no reference, because {scores, 9u, 17u} will create a row_wise_matrix internally.
-        EXPECT_TRUE((std::Same<matrix_type, row_wise_matrix<int>>));
-        EXPECT_TRUE((std::Same<sequence1_type, std::vector<dna4> &>));
-        EXPECT_TRUE((std::Same<sequence2_type, std::vector<dna4> &>));
-    }
-
-    {
-        row_wise_matrix row_wise{scores, 9u, 17u};
-        using debug_matrix_type = decltype(debug_matrix{row_wise, sequence1, sequence2});
-        using matrix_type = typename debug_matrix_traits<debug_matrix_type>::matrix_type;
-        using sequence1_type = typename debug_matrix_traits<debug_matrix_type>::sequence1_type;
-        using sequence2_type = typename debug_matrix_traits<debug_matrix_type>::sequence2_type;
-
-        EXPECT_TRUE((std::Same<matrix_type, row_wise_matrix<int> &>));
-        EXPECT_TRUE((std::Same<sequence1_type, std::vector<dna4> &>));
-        EXPECT_TRUE((std::Same<sequence2_type, std::vector<dna4> &>));
-    }
+    EXPECT_TRUE((std::Same<matrix_type, row_wise_matrix<int> &>));
+    EXPECT_TRUE((std::Same<first_sequence_type, std::vector<dna4> &>));
+    EXPECT_TRUE((std::Same<second_sequence_type, std::vector<dna4> &>));
 }
 
 TEST_F(debug_matrix_test, construct_with_move)
 {
-    {
-        using debug_matrix_type = decltype(debug_matrix{std::move(scores), 9u, 17u,
-                                                        std::move(sequence1), std::move(sequence2)});
-        using matrix_type = typename debug_matrix_traits<debug_matrix_type>::matrix_type;
-        using sequence1_type = typename debug_matrix_traits<debug_matrix_type>::sequence1_type;
-        using sequence2_type = typename debug_matrix_traits<debug_matrix_type>::sequence2_type;
+    using debug_matrix_type = decltype(debug_matrix{std::move(score_matrix),
+                                                    std::move(first_sequence), std::move(second_sequence)});
+    using matrix_type = typename debug_matrix_traits<debug_matrix_type>::matrix_type;
+    using first_sequence_type = typename debug_matrix_traits<debug_matrix_type>::first_sequence_type;
+    using second_sequence_type = typename debug_matrix_traits<debug_matrix_type>::second_sequence_type;
 
-        EXPECT_TRUE((std::Same<matrix_type, row_wise_matrix<int>>));
-        EXPECT_TRUE((std::Same<sequence1_type, std::vector<dna4>>));
-        EXPECT_TRUE((std::Same<sequence2_type, std::vector<dna4>>));
-    }
-
-    {
-        row_wise_matrix row_wise{scores, 9u, 17u};
-        using debug_matrix_type = decltype(debug_matrix{std::move(row_wise),
-                                                        std::move(sequence1), std::move(sequence2)});
-        using matrix_type = typename debug_matrix_traits<debug_matrix_type>::matrix_type;
-        using sequence1_type = typename debug_matrix_traits<debug_matrix_type>::sequence1_type;
-        using sequence2_type = typename debug_matrix_traits<debug_matrix_type>::sequence2_type;
-
-        EXPECT_TRUE((std::Same<matrix_type, row_wise_matrix<int>>));
-        EXPECT_TRUE((std::Same<sequence1_type, std::vector<dna4>>));
-        EXPECT_TRUE((std::Same<sequence2_type, std::vector<dna4>>));
-    }
+    EXPECT_TRUE((std::Same<matrix_type, row_wise_matrix<int>>));
+    EXPECT_TRUE((std::Same<first_sequence_type, std::vector<dna4>>));
+    EXPECT_TRUE((std::Same<second_sequence_type, std::vector<dna4>>));
 }
 
-TEST_F(score_matrix, vector)
+TEST_F(score_matrix_test, other_matrix)
 {
-    debug_matrix matrix{scores, 9u, 17u};
+    debug_matrix matrix{score_matrix};
 
-    score_matrix_test(std::move(matrix));
+    test_score_matrix(std::move(matrix));
 }
 
-TEST_F(score_matrix, sequences_vector)
+TEST_F(score_matrix_test, sequences_other_matrix)
 {
-    debug_matrix matrix{scores, 9u, 17u, sequence1, sequence2};
+    debug_matrix matrix{score_matrix, first_sequence, second_sequence};
 
-    EXPECT_EQ(matrix.sequence1(), sequence1);
-    EXPECT_EQ(matrix.sequence2(), sequence2);
+    EXPECT_EQ(matrix.first_sequence(), first_sequence);
+    EXPECT_EQ(matrix.second_sequence(), second_sequence);
 
-    score_matrix_test(std::move(matrix));
+    test_score_matrix(std::move(matrix));
 }
 
-TEST_F(score_matrix, other_matrix)
-{
-    debug_matrix matrix{scores, 9u, 17u};
-    debug_matrix<decltype(matrix)> matrix2{matrix};
-
-    score_matrix_test(std::move(matrix2));
-}
-
-TEST_F(score_matrix, sequences_other_matrix)
-{
-    debug_matrix matrix{scores, 9u, 17u};
-    debug_matrix matrix2{matrix, sequence1, sequence2};
-
-    EXPECT_EQ(matrix2.sequence1(), sequence1);
-    EXPECT_EQ(matrix2.sequence2(), sequence2);
-
-    score_matrix_test(std::move(matrix));
-}
-
-TEST_F(score_matrix, equal)
+TEST_F(score_matrix_test, equal)
 {
     // last entry of second row
     std::vector<int> scores_unequal{scores};
     scores_unequal[2 * 16] = -16;
+    row_wise_matrix<int> score_matrix_unequal{std::move(scores_unequal), 9u, 17u};
 
-    debug_matrix matrix_shorter_cols{scores_shorter_cols, 9u, 7u};
-    debug_matrix matrix_shorter_rows{scores_shorter_rows, 4u, 17u};
-    debug_matrix matrix_unequal{std::move(scores_unequal), 9u, 17u};
+    debug_matrix matrix{score_matrix};
 
-    debug_matrix matrix_vector{scores, 9u, 17u};
-
-    EXPECT_EQ(matrix_vector, matrix_vector);
-    EXPECT_FALSE(matrix_vector == matrix_shorter_cols);
-    EXPECT_FALSE(matrix_vector == matrix_shorter_rows);
-    EXPECT_FALSE(matrix_vector == matrix_unequal);
+    EXPECT_EQ(matrix, score_matrix);
+    EXPECT_EQ(matrix, matrix);
+    EXPECT_FALSE(matrix == score_matrix_s9u_7u);
+    EXPECT_FALSE(matrix == score_matrix_s4u_17u);
+    EXPECT_FALSE(matrix == score_matrix_unequal);
 }
 
-TEST_F(score_matrix, not_equal)
+TEST_F(score_matrix_test, not_equal)
 {
     // last entry of second row
     std::vector<int> scores_unequal{scores};
     scores_unequal[2 * 16] = -16;
+    row_wise_matrix<int> score_matrix_unequal{std::move(scores_unequal), 9u, 17u};
 
-    debug_matrix matrix_shorter_cols{scores_shorter_cols, 9u, 7u};
-    debug_matrix matrix_shorter_rows{scores_shorter_rows, 4u, 17u};
-    debug_matrix matrix_unequal{std::move(scores_unequal), 9u, 17u};
+    debug_matrix matrix{score_matrix};
 
-    debug_matrix matrix_vector{scores, 9u, 17u};
-
-    EXPECT_FALSE(matrix_vector != matrix_vector);
-    EXPECT_NE(matrix_vector, matrix_shorter_cols);
-    EXPECT_NE(matrix_vector, matrix_shorter_rows);
-    EXPECT_NE(matrix_vector, matrix_unequal);
+    EXPECT_FALSE(matrix != score_matrix);
+    EXPECT_FALSE(matrix != matrix);
+    EXPECT_NE(matrix, score_matrix_s9u_7u);
+    EXPECT_NE(matrix, score_matrix_s4u_17u);
+    EXPECT_NE(matrix, score_matrix_unequal);
 }
 
-TEST_F(trace_matrix, vector)
+TEST_F(score_matrix_test, sub_matrix_lvalue)
 {
-    debug_matrix matrix{traces, 9u, 17u};
+    auto first_sequence_expect = first_sequence;
+    auto second_sequence_expect = second_sequence;
+    debug_matrix matrix{score_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix sub_matrix = matrix.sub_matrix(9u, 7u);
 
-    trace_matrix_test(std::move(matrix));
+    EXPECT_EQ(sub_matrix.rows(), 9u);
+    EXPECT_EQ(sub_matrix.cols(), 7u);
+    EXPECT_EQ(sub_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(sub_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(sub_matrix, score_matrix_s9u_7u);
 }
 
-TEST_F(trace_matrix, sequences_vector)
+TEST_F(score_matrix_test, sub_matrix_rvalue)
 {
-    debug_matrix matrix{scores, 9u, 17u, sequence1, sequence2};
+    auto first_sequence_expect = first_sequence;
+    auto second_sequence_expect = second_sequence;
+    debug_matrix matrix{score_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix sub_matrix = std::move(matrix).sub_matrix(9u, 7u);
 
-    EXPECT_EQ(matrix.sequence1(), sequence1);
-    EXPECT_EQ(matrix.sequence2(), sequence2);
+    EXPECT_EQ(sub_matrix.rows(), 9u);
+    EXPECT_EQ(sub_matrix.cols(), 7u);
+    EXPECT_EQ(sub_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(sub_matrix.second_sequence(), second_sequence_expect);
 
-    score_matrix_test(std::move(matrix));
+    EXPECT_EQ(sub_matrix, score_matrix_s9u_7u);
+    EXPECT_EQ((debug_matrix{score_matrix}.sub_matrix(4u, 17u)), score_matrix_s4u_17u);
 }
 
-TEST_F(trace_matrix, other_matrix)
+TEST_F(score_matrix_test, mask_matrix_lvalue)
 {
-    debug_matrix matrix{traces, 9u, 17u};
-    debug_matrix<decltype(matrix)> matrix2{traces, 9u, 17u};
+    auto first_sequence_expect = first_sequence;
+    auto second_sequence_expect = second_sequence;
+    debug_matrix matrix{score_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix mask_matrix = matrix.mask_matrix(masking_matrix);
 
-    trace_matrix_test(std::move(matrix2));
+    EXPECT_EQ(mask_matrix.rows(), 9u);
+    EXPECT_EQ(mask_matrix.cols(), 17u);
+    EXPECT_EQ(mask_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(mask_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(mask_matrix, masked_score_matrix);
 }
 
-TEST_F(trace_matrix, sequences_other_matrix)
+TEST_F(score_matrix_test, mask_matrix_rvalue)
 {
-    debug_matrix matrix{scores, 9u, 17u};
-    debug_matrix matrix2{matrix, sequence1, sequence2};
+    auto first_sequence_expect = first_sequence;
+    auto second_sequence_expect = second_sequence;
+    debug_matrix matrix{score_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix mask_matrix = std::move(matrix).mask_matrix(masking_matrix);
 
-    EXPECT_EQ(matrix2.sequence1(), sequence1);
-    EXPECT_EQ(matrix2.sequence2(), sequence2);
+    EXPECT_EQ(mask_matrix.rows(), 9u);
+    EXPECT_EQ(mask_matrix.cols(), 17u);
+    EXPECT_EQ(mask_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(mask_matrix.second_sequence(), second_sequence_expect);
 
-    score_matrix_test(std::move(matrix));
+    EXPECT_EQ(mask_matrix, masked_score_matrix);
 }
 
-TEST_F(trace_matrix, equal)
+TEST_F(score_matrix_test, transpose_matrix_lvalue)
+{
+    auto first_sequence_expect = second_sequence;
+    auto second_sequence_expect = first_sequence;
+    debug_matrix matrix{score_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix transpose_matrix = matrix.transpose_matrix();
+
+    EXPECT_EQ(transpose_matrix.rows(), 17u);
+    EXPECT_EQ(transpose_matrix.cols(), 9u);
+    EXPECT_EQ(transpose_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(transpose_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(transpose_matrix, transposed_score_matrix);
+}
+
+TEST_F(score_matrix_test, transpose_matrix_rvalue)
+{
+    auto first_sequence_expect = second_sequence;
+    auto second_sequence_expect = first_sequence;
+    debug_matrix matrix{score_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix transpose_matrix = std::move(matrix).transpose_matrix();
+
+    EXPECT_EQ(transpose_matrix.rows(), 17u);
+    EXPECT_EQ(transpose_matrix.cols(), 9u);
+    EXPECT_EQ(transpose_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(transpose_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(transpose_matrix, transposed_score_matrix);
+}
+
+TEST_F(trace_matrix_test, other_matrix)
+{
+    debug_matrix matrix{trace_matrix};
+
+    test_trace_matrix(std::move(matrix));
+}
+
+TEST_F(trace_matrix_test, sequences_other_matrix)
+{
+    debug_matrix matrix{trace_matrix, first_sequence, second_sequence};
+
+    EXPECT_EQ(matrix.first_sequence(), first_sequence);
+    EXPECT_EQ(matrix.second_sequence(), second_sequence);
+
+    test_trace_matrix(std::move(matrix));
+}
+
+TEST_F(trace_matrix_test, equal)
 {
     // last entry of second row
     std::vector<trace_directions> traces_unequal{traces};
     traces_unequal[2 * 16] = trace_directions::up;
+    row_wise_matrix<trace_directions> trace_matrix_unequal{std::move(traces_unequal), 9u, 17u};
 
-    debug_matrix matrix_shorter_cols{traces_shorter_cols, 9u, 7u};
-    debug_matrix matrix_shorter_rows{traces_shorter_rows, 4u, 17u};
-    debug_matrix matrix_unequal{std::move(traces_unequal), 9u, 17u};
+    debug_matrix matrix{trace_matrix};
 
-    debug_matrix matrix_vector{traces, 9u, 17u};
-
-    EXPECT_EQ(matrix_vector, matrix_vector);
-    EXPECT_FALSE(matrix_vector == matrix_shorter_cols);
-    EXPECT_FALSE(matrix_vector == matrix_shorter_rows);
-    EXPECT_FALSE(matrix_vector == matrix_unequal);
+    EXPECT_EQ(matrix, trace_matrix);
+    EXPECT_EQ(matrix, matrix);
+    EXPECT_FALSE(matrix == trace_matrix_s9u_7u);
+    EXPECT_FALSE(matrix == trace_matrix_s4u_17u);
+    EXPECT_FALSE(matrix == trace_matrix_unequal);
 }
 
-TEST_F(trace_matrix, not_equal)
+TEST_F(trace_matrix_test, not_equal)
 {
     // last entry of second row
     std::vector<trace_directions> traces_unequal{traces};
     traces_unequal[2 * 16] = trace_directions::up;
+    row_wise_matrix<trace_directions> trace_matrix_unequal{std::move(traces_unequal), 9u, 17u};
 
-    debug_matrix matrix_shorter_cols{traces_shorter_cols, 9u, 7u};
-    debug_matrix matrix_shorter_rows{traces_shorter_rows, 4u, 17u};
-    debug_matrix matrix_unequal{std::move(traces_unequal), 9u, 17u};
+    debug_matrix matrix{trace_matrix};
 
-    debug_matrix matrix_vector{traces, 9u, 17u};
+    EXPECT_FALSE(matrix != trace_matrix);
+    EXPECT_FALSE(matrix != matrix);
+    EXPECT_NE(matrix, trace_matrix_s9u_7u);
+    EXPECT_NE(matrix, trace_matrix_s4u_17u);
+    EXPECT_NE(matrix, trace_matrix_unequal);
+}
 
-    EXPECT_FALSE(matrix_vector != matrix_vector);
-    EXPECT_NE(matrix_vector, matrix_shorter_cols);
-    EXPECT_NE(matrix_vector, matrix_shorter_rows);
-    EXPECT_NE(matrix_vector, matrix_unequal);
+TEST_F(trace_matrix_test, sub_matrix_lvalue)
+{
+    auto first_sequence_expect = first_sequence;
+    auto second_sequence_expect = second_sequence;
+    debug_matrix matrix{trace_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix sub_matrix = matrix.sub_matrix(9u, 7u);
+
+    EXPECT_EQ(sub_matrix.rows(), 9u);
+    EXPECT_EQ(sub_matrix.cols(), 7u);
+    EXPECT_EQ(sub_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(sub_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(sub_matrix, trace_matrix_s9u_7u);
+}
+
+TEST_F(trace_matrix_test, sub_matrix_rvalue)
+{
+    auto first_sequence_expect = first_sequence;
+    auto second_sequence_expect = second_sequence;
+    debug_matrix matrix{trace_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix sub_matrix = std::move(matrix).sub_matrix(9u, 7u);
+
+    EXPECT_EQ(sub_matrix.rows(), 9u);
+    EXPECT_EQ(sub_matrix.cols(), 7u);
+    EXPECT_EQ(sub_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(sub_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(sub_matrix, trace_matrix_s9u_7u);
+    EXPECT_EQ((debug_matrix{trace_matrix}.sub_matrix(4u, 17u)), trace_matrix_s4u_17u);
+}
+
+TEST_F(trace_matrix_test, mask_matrix_lvalue)
+{
+    auto first_sequence_expect = first_sequence;
+    auto second_sequence_expect = second_sequence;
+    debug_matrix matrix{trace_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix mask_matrix = matrix.mask_matrix(masking_matrix);
+
+    EXPECT_EQ(mask_matrix.rows(), 9u);
+    EXPECT_EQ(mask_matrix.cols(), 17u);
+    EXPECT_EQ(mask_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(mask_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(mask_matrix, masked_trace_matrix);
+}
+
+TEST_F(trace_matrix_test, mask_matrix_rvalue)
+{
+    auto first_sequence_expect = first_sequence;
+    auto second_sequence_expect = second_sequence;
+    debug_matrix matrix{trace_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix mask_matrix = std::move(matrix).mask_matrix(masking_matrix);
+
+    EXPECT_EQ(mask_matrix.rows(), 9u);
+    EXPECT_EQ(mask_matrix.cols(), 17u);
+    EXPECT_EQ(mask_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(mask_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(mask_matrix, masked_trace_matrix);
+}
+
+TEST_F(trace_matrix_test, transpose_matrix_lvalue)
+{
+    auto first_sequence_expect = second_sequence;
+    auto second_sequence_expect = first_sequence;
+    debug_matrix matrix{trace_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix transpose_matrix = matrix.transpose_matrix();
+
+    EXPECT_EQ(transpose_matrix.rows(), 17u);
+    EXPECT_EQ(transpose_matrix.cols(), 9u);
+    EXPECT_EQ(transpose_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(transpose_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(transpose_matrix, transposed_trace_matrix);
+}
+
+TEST_F(trace_matrix_test, transpose_matrix_rvalue)
+{
+    auto first_sequence_expect = second_sequence;
+    auto second_sequence_expect = first_sequence;
+    debug_matrix matrix{trace_matrix, std::move(first_sequence), std::move(second_sequence)};
+    debug_matrix transpose_matrix = std::move(matrix).transpose_matrix();
+
+    EXPECT_EQ(transpose_matrix.rows(), 17u);
+    EXPECT_EQ(transpose_matrix.cols(), 9u);
+    EXPECT_EQ(transpose_matrix.first_sequence(), first_sequence_expect);
+    EXPECT_EQ(transpose_matrix.second_sequence(), second_sequence_expect);
+
+    EXPECT_EQ(transpose_matrix, transposed_trace_matrix);
 }

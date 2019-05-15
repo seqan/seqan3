@@ -25,10 +25,11 @@ namespace seqan3::detail
 /*!\brief A debug matrix to wrap alignment matrices and sequences and make them printable together.
  * \ingroup alignment_matrix
  * \implements seqan3::detail::Matrix
- * \tparam matrix_t    An alignment matrix; Must model seqan3::detail::Matrix.
- * \tparam sequence1_t The type of the first sequence; If no sequences are given this is std::nullopt_t.
- * \tparam sequence2_t The type of the second sequence; If no sequences are given this is std::nullopt_t.
+ * \tparam matrix_t          An alignment matrix; Must model seqan3::detail::Matrix.
+ * \tparam first_sequence_t  The type of the first sequence; If no sequences are given this is std::nullopt_t.
+ * \tparam second_sequence_t The type of the second sequence; If no sequences are given this is std::nullopt_t.
  *
+ * \details
  *
  * This debug matrix allows you to print an alignment matrix (e.g. score or trace matrix) combined with two sequences.
  *
@@ -38,26 +39,40 @@ namespace seqan3::detail
  *   * to compare alignment matrices in in test cases.
  * \endcond
  *
- * # Score Matrix Example
+ * # Score matrix example
  *
- * \snippet test/snippet/alignment/matrix/debug_matrix.cpp score_matrix
- *
- * ### Output
- * \snippet test/snippet/alignment/matrix/debug_matrix.out score_matrix::out
- *
- * # Trace Matrix Example
- *
- * \snippet test/snippet/alignment/matrix/debug_matrix.cpp trace_matrix
+ * \include test/snippet/alignment/matrix/debug_matrix_score.cpp
  *
  * ### Output
- * \snippet test/snippet/alignment/matrix/debug_matrix.out trace_matrix::out
+ * \include test/snippet/alignment/matrix/debug_matrix_score.out
+ *
+ * # Trace matrix example
+ *
+ * \include test/snippet/alignment/matrix/debug_matrix_trace.cpp
+ *
+ * ### Output
+ * \include test/snippet/alignment/matrix/debug_matrix_trace.out
  */
-template <Matrix matrix_t, typename sequence1_t = std::nullopt_t, typename sequence2_t = std::nullopt_t>
+template <Matrix matrix_t, typename first_sequence_t = std::nullopt_t, typename second_sequence_t = std::nullopt_t>
 class debug_matrix
 {
+protected:
+    //!\brief Whether the current debug_matrix was given a first_sequence.
+    static constexpr bool has_first_sequence = !std::is_same_v<std::decay_t<first_sequence_t>, std::nullopt_t>;
+    //!\brief Whether the current debug_matrix was given a second_sequence.
+    static constexpr bool has_second_sequence = !std::is_same_v<std::decay_t<second_sequence_t>, std::nullopt_t>;
+    //!\copydoc seqan3::detail::Matrix::entry_type
+    using entry_t = typename std::remove_reference_t<matrix_t>::entry_type;
+    //!\brief Whether the entry_type is trace_directions.
+    static constexpr bool is_traceback_matrix = std::is_same_v<std::decay_t<entry_t>, trace_directions>;
+    //!\brief Whether a score matrix already returns std::optional scores. (Where std::nullopt means
+    //!       unset/invalid/infinite score)
+    static constexpr bool is_optional_score = is_type_specialisation_of_v<entry_t, std::optional>;
 public:
     //!\copydoc seqan3::detail::Matrix::entry_type
-    using entry_type = typename std::remove_reference_t<matrix_t>::entry_type;
+    using entry_type = std::conditional_t<is_traceback_matrix || is_optional_score,
+                                          entry_t,
+                                          std::optional<entry_t>>;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -69,87 +84,147 @@ public:
     debug_matrix & operator=(debug_matrix &&) = default; //!< Defaulted
     ~debug_matrix() = default;  //!< Defaulted
 
-    /*!\brief Construct the matrix out of the *entries*, the *rows*, and the *cols*.
-     * \param entries The entry values as a flat std::vector <#entry_type>.
-     * \param rows    The number of rows.
-     * \param cols    The number of columns.
-     */
-    debug_matrix(std::vector<entry_type> entries, size_t const rows, size_t const cols)
-        : _matrix{std::move(entries), rows, cols},
-          _sequence1{std::nullopt},
-          _sequence2{std::nullopt}
-    {}
-
-    /*!\brief Construct the matrix out of the *entries*, the *rows*, and the *cols* and the corresponding sequences.
-     * \param entries The entry values as a flat std::vector <#entry_type>.
-     * \param rows    The number of rows.
-     * \param cols    The number of columns.
-     * \param sequence1 The first sequence of the sequence alignment.
-     * \param sequence2 The second sequence of the sequence alignment.
-     */
-    debug_matrix(std::vector<entry_type> entries, size_t const rows, size_t const cols,
-                 sequence1_t sequence1, sequence2_t sequence2)
-        : _matrix{std::move(entries), rows, cols},
-          _sequence1{std::forward<sequence1_t>(sequence1)},
-          _sequence2{std::forward<sequence2_t>(sequence2)}
-    {
-        assert(cols == _sequence1.size() + 1u);
-        assert(rows == _sequence2.size() + 1u);
-    }
-
     /*!\brief Construct the matrix out of an existing matrix.
      * \param matrix An alignment matrix; Must model seqan3::detail::Matrix.
      */
     debug_matrix(matrix_t matrix)
-        : _matrix{std::forward<matrix_t>(matrix)},
-          _sequence1{std::nullopt},
-          _sequence2{std::nullopt}
+        : debug_matrix(std::forward<matrix_t>(matrix), std::nullopt, std::nullopt)
     {}
 
     /*!\brief Construct the matrix out of an existing matrix and two sequences.
      * \param matrix An alignment matrix; Must model seqan3::detail::Matrix.
-     * \param sequence1 The first sequence of the sequence alignment.
-     * \param sequence2 The second sequence of the sequence alignment.
+     * \param first_sequence The first sequence of the sequence alignment.
+     * \param second_sequence The second sequence of the sequence alignment.
      */
-    debug_matrix(matrix_t matrix, sequence1_t sequence1, sequence2_t sequence2)
+    debug_matrix(matrix_t matrix, first_sequence_t first_sequence, second_sequence_t second_sequence)
         : _matrix{std::forward<matrix_t>(matrix)},
-          _sequence1{std::forward<sequence1_t>(sequence1)},
-          _sequence2{std::forward<sequence2_t>(sequence2)}
+          _first_sequence{std::forward<first_sequence_t>(first_sequence)},
+          _second_sequence{std::forward<second_sequence_t>(second_sequence)}
     {
-        assert(_matrix.cols() == _sequence1.size() + 1u);
-        assert(_matrix.rows() == _sequence2.size() + 1u);
+        if constexpr(has_first_sequence)
+        {
+            assert(_matrix.cols() <= _first_sequence.size() + 1u);
+        }
+
+        if constexpr(has_second_sequence)
+        {
+            assert(_matrix.rows() <= _second_sequence.size() + 1u);
+        }
     }
     //!\}
 
     //!\copydoc seqan3::detail::Matrix::rows
     size_t rows() const noexcept
     {
-        return _matrix.rows();
+        if (!_transpose)
+            return _rows.value_or(_matrix.rows());
+        else
+            return _cols.value_or(_matrix.cols());
     }
 
     //!\copydoc seqan3::detail::Matrix::cols
     size_t cols() const noexcept
     {
-        return _matrix.cols();
+        if (!_transpose)
+            return _cols.value_or(_matrix.cols());
+        else
+            return _rows.value_or(_matrix.rows());
     }
 
-    //!\copydoc seqan3::detail::debug_matrix::_sequence1
-    sequence1_t const & sequence1() const noexcept
+    //!\copydoc seqan3::detail::debug_matrix::_first_sequence
+    first_sequence_t const & first_sequence() const noexcept
     {
-        return _sequence1;
+        if (!_transpose)
+            return _first_sequence;
+        else
+            return _second_sequence;
     }
 
-    //!\copydoc seqan3::detail::debug_matrix::_sequence2
-    sequence2_t const & sequence2() const noexcept
+    //!\copydoc seqan3::detail::debug_matrix::_second_sequence
+    second_sequence_t const & second_sequence() const noexcept
     {
-        return _sequence2;
+        if (!_transpose)
+            return _second_sequence;
+        else
+            return _first_sequence;
     }
 
     //!\copydoc seqan3::detail::Matrix::at
     entry_type at(size_t const row, size_t const col) const noexcept
     {
         assert(row < rows() && col < cols());
-        return _matrix.at(row, col);
+
+        size_t const _row = !_transpose ? row : col;
+        size_t const _col = !_transpose ? col : row;
+
+        if (!_masking_matrix.has_value() || _masking_matrix.value().at(_row, _col))
+        {
+            entry_t const & entry = _matrix.at(_row, _col);
+
+            if (!is_traceback_matrix || !_transpose)
+                return entry;
+
+            if constexpr(is_traceback_matrix)
+            {
+                trace_directions reverse{};
+                if ((entry & trace_directions::left) == trace_directions::left)
+                    reverse |= trace_directions::up;
+                if ((entry & trace_directions::up) == trace_directions::up)
+                    reverse |= trace_directions::left;
+                if ((entry & trace_directions::diagonal) == trace_directions::diagonal)
+                    reverse |= trace_directions::diagonal;
+                return reverse;
+            }
+        }
+
+        if constexpr(is_traceback_matrix)
+            return trace_directions::none;
+        else
+            return std::nullopt;
+    }
+
+    /*!\brief Masks entries out of the current matrix. This operations changes the way `this.at(i, j)` will operate.
+     * If `masking_matrix.at(i,j)` returns true `this.at(i, j)` will operate as usual.
+     * But, if false `this.at(i, j)` will return std::nullopt.
+     * \param masking_matrix \copydoc _masking_matrix
+     * \returns *this
+     */
+    debug_matrix & mask_matrix(row_wise_matrix<bool> masking_matrix) noexcept
+    {
+        _masking_matrix = masking_matrix;
+        return *this;
+    }
+
+    /*!\brief Creates the masking_matrix out of the given masking_vector and calls #mask_matrix(row_wise_matrix<bool>)
+     * \param masking_vector The masking vector to construct the masking_matrix.
+     * \returns *this
+     */
+    debug_matrix & mask_matrix(std::vector<bool> masking_vector) noexcept
+    {
+        return mask_matrix(row_wise_matrix<bool>{masking_vector, rows(), cols()});
+    }
+
+    /*!\brief Limits the view port of the current matrix.
+     * \param new_rows \copydoc _rows
+     * \param new_cols \copydoc _cols
+     * \returns *this
+     */
+    debug_matrix & sub_matrix(size_t const new_rows, size_t const new_cols) noexcept
+    {
+        assert(new_rows <= _matrix.rows());
+        assert(new_cols <= _matrix.cols());
+        _rows = new_rows;
+        _cols = new_cols;
+        return *this;
+    }
+
+    /*!\brief Transposes the current matrix.
+     * \returns *this
+     */
+    debug_matrix & transpose_matrix() noexcept
+    {
+        _transpose = !_transpose;
+        return *this;
     }
 
 protected:
@@ -162,31 +237,32 @@ public:
      * \param cout  The stream to print to.
      * \param flags Modify the way the matrix is printed.
      *
+     * \details
      *
-     * The matrix will be printed out with unicode characters if seqan3::fmtflags2::utf8 is set in the flags. Ascii
+     * The matrix will be printed with unicode characters if seqan3::fmtflags2::utf8 is set in the flags. Ascii
      * otherwise.
      */
-    template <typename oostream_t>
-    void print(oostream_t & cout, fmtflags2 const flags) const noexcept
+    template <typename ostream_t>
+    void print(ostream_t & cout, fmtflags2 const flags) const noexcept
     {
         format_type const & symbols = (flags & fmtflags2::utf8) == fmtflags2::utf8 ? unicode : csv;
         size_t const column_width = this->column_width.has_value() ?
                                     this->column_width.value() : auto_column_width(flags);
 
-        auto char_sequence1 = [&]([[maybe_unused]] size_t const i) -> std::string
+        auto char_first_sequence = [&]([[maybe_unused]] size_t const i) -> std::string
         {
-            if constexpr(std::is_same_v<sequence1_t, std::nullopt_t>)
+            if constexpr(!has_first_sequence)
                 return " ";
             else
-                return as_string(sequence1()[i], flags);
+                return as_string(first_sequence()[i], flags);
         };
 
-        auto char_sequence2 = [&]([[maybe_unused]] size_t const i) -> std::string
+        auto char_second_sequence = [&]([[maybe_unused]] size_t const i) -> std::string
         {
-            if constexpr(std::is_same_v<sequence2_t, std::nullopt_t>)
+            if constexpr(!has_second_sequence)
                 return " ";
             else
-                return as_string(sequence2()[i], flags);
+                return as_string(second_sequence()[i], flags);
         };
 
         auto print_cell = [&](std::string const & symbol)
@@ -214,7 +290,8 @@ public:
             print_cell(symbols.epsilon);
 
             for (size_t col = 0; col < cols() - 1; ++col)
-                print_cell(char_sequence1(col));
+                print_cell(char_first_sequence(col));
+
             cout << "\n";
         };
 
@@ -226,6 +303,7 @@ public:
             {
                 for (size_t i = 0; i < column_width; ++i)
                     cout << symbols.row_sep;
+
                 cout << symbols.row_col_sep;
             }
             cout << "\n";
@@ -241,10 +319,11 @@ public:
             if (row == 0)
                 print_first_cell(symbols.epsilon);
             else
-                print_first_cell(char_sequence2(row - 1));
+                print_first_cell(char_second_sequence(row - 1));
 
             for (size_t col = 0; col < cols(); ++col)
                 print_cell(entry_at(row, col, flags));
+
             cout << "\n";
         }
     }
@@ -256,13 +335,11 @@ public:
         for (size_t row = 0; row < rows(); ++row)
             for (size_t col = 0; col < cols(); ++col)
                 col_width = std::max(col_width, unicode_str_length(entry_at(row, col, flags)));
+
         return col_width;
     }
 
 protected:
-    //!\brief Whether the entry_type is trace_directions.
-    static constexpr bool is_traceback_matrix = std::is_same_v<std::decay_t<entry_type>, trace_directions>;
-
     //!\brief Same as at(*row*, *col*), but as string.
     std::string entry_at(size_t const row, size_t const col, fmtflags2 flags) const noexcept
     {
@@ -271,6 +348,7 @@ protected:
         entry_type const & entry = at(row, col);
         if (!is_traceback_matrix && entry == matrix_inf<entry_type>)
             return symbols.inf;
+
         return as_string(entry, flags);
     }
 
@@ -330,37 +408,33 @@ protected:
     //!\brief The matrix
     matrix_t _matrix;
     //!\brief The first sequence of the sequence alignment.
-    sequence1_t _sequence1;
+    first_sequence_t _first_sequence;
     //!\brief The second sequence of the sequence alignment.
-    sequence2_t _sequence2;
+    second_sequence_t _second_sequence;
+    //!\brief The number of rows the debug matrix should have. Must be at most the size of the original matrix.
+    std::optional<size_t> _rows{};
+    //!\brief The number of columns the debug matrix should have. Must be at most the size of the original matrix.
+    std::optional<size_t> _cols{};
+    //!\brief The masking matrix.
+    std::optional<row_wise_matrix<bool>> _masking_matrix{};
+    //!\brief Whether the current matrix should be transposed.
+    bool _transpose{};
 };
 
 /*!\name Type deduction guides
  * \relates seqan3::detail::debug_matrix
  * \{
  */
-//!\brief The type deduction guide for the constructor
-//!seqan3::detail::debug_matrix(std::vector<entry_type>, size_t const, size_t const)
-template <typename entry_type>
-debug_matrix(std::vector<entry_type>, size_t const, const size_t)
-    -> debug_matrix<row_wise_matrix<entry_type>>;
-
-//!\brief The type deduction guide for the constructor
-//!seqan3::detail::debug_matrix(std::vector<entry_type>, size_t const, size_t const, sequence1_t, sequence2_t)
-template <typename entry_type, typename sequence1_t, typename sequence2_t>
-debug_matrix(std::vector<entry_type>, size_t const, const size_t, sequence1_t &&, sequence2_t &&)
-   -> debug_matrix<row_wise_matrix<entry_type>, sequence1_t, sequence2_t>;
-
-
 //!\brief The type deduction guide for the constructor seqan3::detail::debug_matrix(matrix_t)
 template <Matrix matrix_t>
 debug_matrix(matrix_t &&)
    -> debug_matrix<matrix_t>;
 
-//!\brief The type deduction guide for the constructor seqan3::detail::debug_matrix(matrix_t, sequence1_t, sequence2_t)
-template <Matrix matrix_t, typename sequence1_t, typename sequence2_t>
-debug_matrix(matrix_t &&, sequence1_t &&, sequence2_t &&)
-   -> debug_matrix<matrix_t, sequence1_t, sequence2_t>;
+//!\brief The type deduction guide for the constructor
+//!       seqan3::detail::debug_matrix(matrix_t, first_sequence_t, second_sequence_t)
+template <Matrix matrix_t, typename first_sequence_t, typename second_sequence_t>
+debug_matrix(matrix_t &&, first_sequence_t &&, second_sequence_t &&)
+   -> debug_matrix<matrix_t, first_sequence_t, second_sequence_t>;
 //!\}
 
 } // namespace seqan3::detail
@@ -375,7 +449,7 @@ namespace seqan3
  *
  * \details
  *
- * This prints out an alignment matrix, which can be a score matrix or a trace matrix.
+ * This prints out an alignment matrix which can be a score matrix or a trace matrix.
  */
 template <detail::Matrix alignment_matrix_t>
 inline debug_stream_type & operator<<(debug_stream_type & s, alignment_matrix_t && matrix)
