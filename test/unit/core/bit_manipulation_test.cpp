@@ -108,27 +108,27 @@ TYPED_TEST(unsigned_operations, bit_scan_reverse)
     }
 }
 
-TEST(enforce_little_endian, byte)
+TEST(to_little_endian, byte)
 {
     uint8_t val = 0x01;
 
-    EXPECT_EQ(enforce_little_endian(val), 0x01);
+    EXPECT_EQ(to_little_endian(val), 0x01);
 }
 
-TEST(enforce_little_endian, word)
+TEST(to_little_endian, word)
 {
     uint16_t val = 0x0102;  // 258
-    uint16_t res = enforce_little_endian(val);
+    uint16_t res = to_little_endian(val);
     char * res_p = reinterpret_cast<char *>(&res);
 
     EXPECT_EQ(*(res_p + 0), '\x02'); // LSB
     EXPECT_EQ(*(res_p + 1), '\x01'); // MSB
 }
 
-TEST(enforce_little_endian, double_word)
+TEST(to_little_endian, double_word)
 {
     uint32_t val = 0x01020304; // 16.909.060
-    uint32_t res = enforce_little_endian(val);
+    uint32_t res = to_little_endian(val);
     char * res_p = reinterpret_cast<char *>(&res);
 
     EXPECT_EQ(*(res_p + 0), '\x04');
@@ -137,10 +137,10 @@ TEST(enforce_little_endian, double_word)
     EXPECT_EQ(*(res_p + 3), '\x01');
 }
 
-TEST(enforce_little_endian, quad_word)
+TEST(to_little_endian, quad_word)
 {
     uint64_t val = 0x0102030405060708;
-    uint64_t res = enforce_little_endian(val);
+    uint64_t res = to_little_endian(val);
     char * res_p = reinterpret_cast<char *>(&res);
 
     EXPECT_EQ(*(res_p + 0), '\x08');
