@@ -30,7 +30,7 @@ namespace seqan3::contrib
  * constructed. An individual latch is a single-use object; once the count has been reached, the latch cannot be reused.
  * This implementation uses a lock-free mechanism if the atomic operations on the respective platform are lock-free.
  *
- * \note The adapts the proposal for the c++ standard
+ * \note This adapts the proposal for the c++ standard
  * [P0666R2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0666r2.pdf) for latches.
  */
 class latch
