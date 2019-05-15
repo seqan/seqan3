@@ -23,34 +23,34 @@ struct score_matrix : public ::testing::Test
     std::vector<dna4> query = "ACGTACGT"_dna4;
     std::vector<int> scores
     {
-        0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
-        1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
-        2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-        3,  2,  2,  2,  2,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,
-        4,  3,  3,  3,  3,  3,  4,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
-        5,  4,  3,  4,  3,  4,  4,  4,  4,  4,  5,  6,  7,  8,  9, 10, 11,
-        6,  5,  4,  3,  4,  3,  4,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
-        7,  6,  5,  4,  4,  4,  3,  4,  5,  6,  6,  6,  6,  6,  7,  8,  9,
-        8,  7,  6,  5,  5,  5,  4,  3,  4,  5,  6,  7,  7,  7,  7,  7,  8
+       -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
+       -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
+       -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,
+       -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,
+       -4, -3, -3, -3, -3, -3, -4, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,
+       -5, -4, -3, -4, -3, -4, -4, -4, -4, -4, -5, -6, -7, -8, -9,-10,-11,
+       -6, -5, -4, -3, -4, -3, -4, -5, -5, -5, -5, -5, -6, -7, -8, -9,-10,
+       -7, -6, -5, -4, -4, -4, -3, -4, -5, -6, -6, -6, -6, -6, -7, -8, -9,
+       -8, -7, -6, -5, -5, -5, -4, -3, -4, -5, -6, -7, -7, -7, -7, -7, -8
     };
     std::vector<int> scores_shorter_cols
     {
-        0,  1,  2,  3,  4,  5,  6,
-        1,  0,  1,  2,  3,  4,  5,
-        2,  1,  1,  1,  2,  3,  4,
-        3,  2,  2,  2,  2,  3,  3,
-        4,  3,  3,  3,  3,  3,  4,
-        5,  4,  3,  4,  3,  4,  4,
-        6,  5,  4,  3,  4,  3,  4,
-        7,  6,  5,  4,  4,  4,  3,
-        8,  7,  6,  5,  5,  5,  4
+       -0, -1, -2, -3, -4, -5, -6,
+       -1, -0, -1, -2, -3, -4, -5,
+       -2, -1, -1, -1, -2, -3, -4,
+       -3, -2, -2, -2, -2, -3, -3,
+       -4, -3, -3, -3, -3, -3, -4,
+       -5, -4, -3, -4, -3, -4, -4,
+       -6, -5, -4, -3, -4, -3, -4,
+       -7, -6, -5, -4, -4, -4, -3,
+       -8, -7, -6, -5, -5, -5, -4
     };
     std::vector<int> scores_shorter_rows
     {
-        0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
-        1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
-        2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-        3,  2,  2,  2,  2,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13
+       -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
+       -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
+       -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,
+       -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13
     };
 
     trace_directions N{},
@@ -97,21 +97,21 @@ struct score_matrix : public ::testing::Test
         EXPECT_EQ(matrix.cols(), 17u);
         EXPECT_EQ(matrix.rows(), 9u);
 
-        EXPECT_EQ(matrix.at(0, 0), 0);
-        EXPECT_EQ(matrix.at(0, 6), 6);
-        EXPECT_EQ(matrix.at(0, 16), 16);
+        EXPECT_EQ(matrix.at(0, 0), -0);
+        EXPECT_EQ(matrix.at(0, 6), -6);
+        EXPECT_EQ(matrix.at(0, 16), -16);
 
-        EXPECT_EQ(matrix.at(3, 0), 3);
-        EXPECT_EQ(matrix.at(3, 6), 3);
-        EXPECT_EQ(matrix.at(3, 16), 13);
+        EXPECT_EQ(matrix.at(3, 0), -3);
+        EXPECT_EQ(matrix.at(3, 6), -3);
+        EXPECT_EQ(matrix.at(3, 16), -13);
 
-        EXPECT_EQ(matrix.at(4, 0), 4);
-        EXPECT_EQ(matrix.at(4, 6), 4);
-        EXPECT_EQ(matrix.at(4, 16), 12);
+        EXPECT_EQ(matrix.at(4, 0), -4);
+        EXPECT_EQ(matrix.at(4, 6), -4);
+        EXPECT_EQ(matrix.at(4, 16), -12);
 
-        EXPECT_EQ(matrix.at(8, 0), 8);
-        EXPECT_EQ(matrix.at(8, 6), 4);
-        EXPECT_EQ(matrix.at(8, 16), 8);
+        EXPECT_EQ(matrix.at(8, 0), -8);
+        EXPECT_EQ(matrix.at(8, 6), -4);
+        EXPECT_EQ(matrix.at(8, 16), -8);
 
         for (size_t row = 0; row < matrix.rows(); row++)
             for (size_t col = 0; col < matrix.cols(); col++)
@@ -152,7 +152,7 @@ TEST_F(score_matrix, equal)
 {
     // last entry of second row
     std::vector<int> scores_unequal{scores};
-    scores_unequal[2 * 16] = 16;
+    scores_unequal[2 * 16] = -16;
 
     alignment_score_matrix matrix_shorter_cols{scores_shorter_cols, 9u, 7u};
     alignment_score_matrix matrix_shorter_rows{scores_shorter_rows, 4u, 17u};
@@ -170,7 +170,7 @@ TEST_F(score_matrix, not_equal)
 {
     // last entry of second row
     std::vector<int> scores_unequal{scores};
-    scores_unequal[2 * 16] = 16;
+    scores_unequal[2 * 16] = -16;
 
     alignment_score_matrix matrix_shorter_cols{scores_shorter_cols, 9u, 7u};
     alignment_score_matrix matrix_shorter_rows{scores_shorter_rows, 4u, 17u};
