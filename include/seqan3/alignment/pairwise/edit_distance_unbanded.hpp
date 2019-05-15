@@ -688,7 +688,7 @@ public:
 
                 // init first row with 0, 1, 2, 3, ...
                 for (size_t col = 0; col < _cols; ++col)
-                    scores[col] = alignment_type::is_global ? col : 0;
+                    scores[col] = alignment_type::is_global ? -col : 0;
 
                 auto deltas = [&](size_t col)
                 {
@@ -711,7 +711,7 @@ public:
                 {
                     auto delta = deltas(col);
                     for (size_t row = 1; row < _rows; ++row)
-                        scores[row * _cols + col] = scores[(row - 1) * _cols + col] + delta(row - 1);
+                        scores[row * _cols + col] = scores[(row - 1) * _cols + col] - delta(row - 1);
                 }
 
                 return scores;
