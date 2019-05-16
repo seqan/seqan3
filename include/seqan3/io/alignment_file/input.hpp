@@ -18,8 +18,6 @@
 #include <variant>
 #include <vector>
 
-#include <range/v3/view/repeat_n.hpp>
-
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
@@ -39,6 +37,7 @@
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
+#include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
@@ -156,7 +155,7 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
     // Type of tuple entry 1 (reference) is set to
     // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
-    // ranges::view::repeat_n(sequence_alphabet{}, size_t{}) | std::view::transform(detail::access_restrictor_fn{})
+    // view::repeat_n(sequence_alphabet{}, size_t{}) | std::view::transform(detail::access_restrictor_fn{})
     // Type of tuple entry 2 (query) is set to
     // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
@@ -403,7 +402,7 @@ public:
 
 private:
     //!\brief The dummy ref sequence type if no reference information were given.
-    using dummy_ref_type = decltype(ranges::view::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
+    using dummy_ref_type = decltype(view::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
                                     std::view::transform(detail::access_restrictor_fn{}));
 public:
     /*!\name Field types and record type

@@ -9,8 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
 #include <seqan3/io/alignment_file/output_format_concept.hpp>
@@ -298,7 +296,7 @@ TYPED_TEST_P(alignment_file_read, read_in_nothing)
 
 TYPED_TEST_P(alignment_file_read, read_in_alignment_only)
 {
-    using dummy_type = gap_decorator_anchor_set<decltype(ranges::view::repeat_n(dna5{}, size_t{}) |
+    using dummy_type = gap_decorator_anchor_set<decltype(view::repeat_n(dna5{}, size_t{}) |
                                                          std::view::transform(detail::access_restrictor_fn{}))>;
     std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
     std::optional<int32_t> ref_id_in;
@@ -411,7 +409,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id)
 
 TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_information)
 {
-    using dummy_type = gap_decorator_anchor_set<decltype(ranges::view::repeat_n(dna5{}, size_t{}) |
+    using dummy_type = gap_decorator_anchor_set<decltype(view::repeat_n(dna5{}, size_t{}) |
                                                          std::view::transform(detail::access_restrictor_fn{}))>;
     std::optional<int32_t> ref_id_in;
     std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;

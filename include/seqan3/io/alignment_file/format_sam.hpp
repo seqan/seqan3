@@ -17,8 +17,6 @@
 #include <string>
 #include <vector>
 
-#include <range/v3/view/repeat_n.hpp>
-
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/reflection.hpp>
@@ -40,6 +38,7 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/istreambuf.hpp>
+#include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -47,6 +46,7 @@
 #include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
+#include <seqan3/version.hpp>
 
 namespace seqan3
 {
@@ -233,12 +233,14 @@ public:
         check_and_assign_ref_id(ref_id, ref_id_tmp, header, ref_seqs);
 
         read_field(field_view, ref_offset_tmp);
+        --ref_offset_tmp; // SAM format is 1-based but SeqAn operates 0-based
 
-        if (ref_offset_tmp > 0)
-            ref_offset = --ref_offset_tmp; // SAM format is 1-based but SeqAn operates 0-based
-        else if (ref_offset_tmp < 0)
+        if (ref_offset_tmp == -1)
+            ref_offset = std::nullopt; // indicates an unmapped read -> ref_offset is not set
+        else if (ref_offset_tmp > -1)
+            ref_offset = ref_offset_tmp;
+        else if (ref_offset_tmp < -1)
             throw format_error{"No negative values are allowed for field::REF_OFFSET."};
-        // ref_offset_tmp == 0 indicates an unmapped read -> out-param ref_offset (std::optional) will not be filled
 
         read_field(field_view, mapq);
 
@@ -248,8 +250,7 @@ public:
         {
             if (!is_char<'*'>(*std::ranges::begin(stream_view))) // no cigar information given
             {
-                std::tie(cigar, ref_length, seq_length, offset_tmp, soft_clipping_end) =
-                    parse_cigar(field_view);
+                std::tie(cigar, ref_length, seq_length, offset_tmp, soft_clipping_end) = parse_cigar(field_view);
             }
             else
             {
@@ -354,9 +355,12 @@ public:
 
                 if constexpr (!detail::decays_to_ignore_v<align_type>)
                 {
-                    assign_unaligned(get<1>(align),
-                                     seq | view::slice(static_cast<decltype(std::ranges::size(seq))>(offset_tmp),
-                                                       std::ranges::size(seq) - soft_clipping_end));
+                    if (!cigar.empty()) // if no alignment info is given, the field::ALIGNMENT should remain empty
+                    {
+                        assign_unaligned(get<1>(align),
+                                         seq | view::slice(static_cast<decltype(std::ranges::size(seq))>(offset_tmp),
+                                                           std::ranges::size(seq) - soft_clipping_end));
+                    }
                 }
             }
         }
@@ -396,51 +400,18 @@ public:
         // Note that the query sequence in get<1>(align) has already been filled while reading Field 10.
         if constexpr (!detail::decays_to_ignore_v<align_type>)
         {
-            if (!cigar.empty() && !std::ranges::empty(get<1>(align))) // only parse alignment if cigar and seq was given
+            int32_t ref_idx{(ref_id_tmp.empty()/*unmapped read?*/) ? -1 : 0};
+
+            if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>)
             {
-                if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>)
+                if (!ref_id_tmp.empty())
                 {
                     assert(header.ref_dict.count(ref_id_tmp) != 0); // taken care of in check_and_assign_ref_id()
-
-                    size_t pos = header.ref_dict[ref_id_tmp]; // get index for reference sequence
-
-                    assert(static_cast<size_t>(ref_offset_tmp + ref_length) <= std::ranges::size(ref_seqs[pos]));
-
-                    // copy over unaligned reference sequence part
-                    assign_unaligned(get<0>(align),
-                                     ref_seqs[pos] | view::slice(ref_offset_tmp, ref_offset_tmp + ref_length));
-                }
-                else
-                {
-                    using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-                    auto dummy_seq    = ranges::view::repeat_n(value_type_t<unaligned_t>{}, ref_length)
-                                      | std::view::transform(detail::access_restrictor_fn{});
-                    static_assert(std::Same<unaligned_t, decltype(dummy_seq)>,
-                                  "No reference information was given so the type of the first alignment tuple position"
-                                  "must have an unaligned sequence type of a dummy sequence ("
-                                  "ranges::view::repeat_n(dna5{}, size_t{}) | "
-                                  "std::view::transform(detail::access_restrictor_fn{}))");
-
-                    assign_unaligned(get<0>(align), dummy_seq); // assign dummy sequence
-                }
-
-                // insert gaps according to the cigar information
-                detail::alignment_from_cigar(align, cigar);
-            }
-            else // not enough information for an alignment, assign an empty view/dummy_sequence
-            {
-                if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference info given
-                {
-                    assert(std::ranges::size(ref_seqs) > 0); // we assume that the given ref info is not empty
-                    assign_unaligned(get<0>(align), ref_seqs[0] | view::slice(0, 0));
-                }
-                else
-                {
-                    using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-                    assign_unaligned(get<0>(align), ranges::view::repeat_n(value_type_t<unaligned_t>{}, 0)
-                                                    | std::view::transform(detail::access_restrictor_fn{}));
+                    ref_idx = header.ref_dict[ref_id_tmp];          // get index for reference sequence
                 }
             }
+
+            construct_alignment(align, cigar, ref_idx, ref_seqs, ref_offset_tmp, ref_length);
         }
     }
 
@@ -453,10 +424,10 @@ protected:
     bool ref_info_present_in_header{false};
 
     /*!\brief Checks for known reference ids or adds a new reference is and assigns a reference id to `ref_id`.
-     * \tparam ref_id_type             The type of the reference id (usually a view::all over ref_id_tmp_type).
-     * \tparam ref_id_tmp_type         The type of the temporary parsed id (Same type as reference ids in header).
-     * \tparam header_type             The type of the alignment header.
-     * \tparam ref_seqs_type  A tag whether the reference information were given or not (std::ignore or not).
+     * \tparam ref_id_type         The type of the reference id (usually a view::all over ref_id_tmp_type).
+     * \tparam ref_id_tmp_type     The type of the temporary parsed id (Same type as reference ids in header).
+     * \tparam header_type         The type of the alignment header.
+     * \tparam ref_seqs_type       A tag whether the reference information were given or not (std::ignore or not).
      *
      * \param[in, out] ref_id      The reference id to be filled.
      * \param[in, out] ref_id_tmp  The temporary of the parsed reference id.
@@ -466,10 +437,10 @@ protected:
               typename ref_id_tmp_type,
               typename header_type,
               typename ref_seqs_type>
-    void check_and_assign_ref_id(ref_id_type            & ref_id,
-                                 ref_id_tmp_type        & ref_id_tmp,
-                                 header_type            & header,
-                                 ref_seqs_type & /*tag*/)
+    void check_and_assign_ref_id(ref_id_type      & ref_id,
+                                 ref_id_tmp_type  & ref_id_tmp,
+                                 header_type      & header,
+                                 ref_seqs_type    & /*tag*/)
     {
         if (!std::ranges::empty(ref_id_tmp)) // otherwise the std::optional will not be filled
         {
@@ -499,6 +470,67 @@ protected:
             else
             {
                 ref_id = search->second;
+            }
+        }
+    }
+
+    /*!\brief Construct the field::ALGIGNMENT depending on the given information.
+     * \tparam align_type    The alignment type.
+     * \tparam ref_seqs_type The type of reference sequences (might decay to ignore).
+     * \param[in,out] align  The alignment (pair of aligned sequences) to fill.
+     * \param[in] cigar      The cigar information to convert to an alignment.
+     * \param[in] rid        The index of the reference sequence in header.ref_ids().
+     * \param[in] ref_seqs   The reference sequence information.
+     * \param[in] ref_start  The start position of the alignment in the reference sequence.
+     * \param[in] ref_length The length of the aligned reference sequence.
+     */
+    template <typename align_type, typename ref_seqs_type>
+    void construct_alignment(align_type                           & align,
+                             std::vector<std::pair<char, size_t>> & cigar,
+                             [[maybe_unused]] int32_t               rid,
+                             [[maybe_unused]] ref_seqs_type       & ref_seqs,
+                             [[maybe_unused]] int32_t               ref_start,
+                             size_t                                 ref_length)
+    {
+        if (rid > -1 && ref_start > -1 &&       // read is mapped
+            !cigar.empty() &&                   // alignment field was not empty
+            !std::ranges::empty(get<1>(align))) // seq field was not empty
+        {
+            if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>)
+            {
+                assert(static_cast<size_t>(ref_start + ref_length) <= std::ranges::size(ref_seqs[rid]));
+                // copy over unaligned reference sequence part
+                assign_unaligned(get<0>(align), ref_seqs[rid] | view::slice(ref_start, ref_start + ref_length));
+            }
+            else
+            {
+                using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
+                auto dummy_seq    = view::repeat_n(value_type_t<unaligned_t>{}, ref_length)
+                                  | std::view::transform(detail::access_restrictor_fn{});
+                static_assert(std::Same<unaligned_t, decltype(dummy_seq)>,
+                              "No reference information was given so the type of the first alignment tuple position"
+                              "must have an unaligned sequence type of a dummy sequence ("
+                              "view::repeat_n(dna5{}, size_t{}) | "
+                              "std::view::transform(detail::access_restrictor_fn{}))");
+
+                assign_unaligned(get<0>(align), dummy_seq); // assign dummy sequence
+            }
+
+            // insert gaps according to the cigar information
+            detail::alignment_from_cigar(align, cigar);
+        }
+        else // not enough information for an alignment, assign an empty view/dummy_sequence
+        {
+            if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference info given
+            {
+                assert(std::ranges::size(ref_seqs) > 0); // we assume that the given ref info is not empty
+                assign_unaligned(get<0>(align), ref_seqs[0] | view::slice(0, 0));
+            }
+            else
+            {
+                using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
+                assign_unaligned(get<0>(align), view::repeat_n(value_type_t<unaligned_t>{}, 0)
+                                                | std::view::transform(detail::access_restrictor_fn{}));
             }
         }
     }
@@ -825,7 +857,8 @@ protected:
                     auto id_it = hdr.ref_dict.find(id);
 
                     if (id_it == hdr.ref_dict.end())
-                        throw format_error{"Unknown reference name found in SAM header."};
+                        throw format_error{to_string("Unknown reference name '", id, "' found in SAM header ",
+                                                     "(header.ref_ids(): ", hdr.ref_ids(), ").")};
 
                     auto & given_ref_info = hdr.ref_id_info[id_it->second];
 
@@ -1197,6 +1230,7 @@ public:
 
         detail::write_eol(stream_it, options.add_carriage_return);
     }
+
 protected:
     //!\privatesection
     //!\brief The format version string.
