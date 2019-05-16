@@ -23,6 +23,7 @@
 #ifdef SEQAN3_HAS_ZLIB
     #include <seqan3/contrib/stream/gz_istream.hpp>
 #endif
+#include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
@@ -97,7 +98,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     std::string const extension = filename.extension().string();
 
     // set return value appropriately
-    if (starts_with(magic_number, std::array{'\x1f', '\x8b', '\x08'})) // GZIP
+    if (starts_with(magic_number, magic_header<gz_compression>)) // GZIP
     {
     #ifdef SEQAN3_HAS_ZLIB
         if ((extension == ".gz") || (extension == ".bgzf"))
@@ -108,7 +109,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         throw file_open_error{"Trying to read from a gzipped file, but no ZLIB available."};
     #endif
     }
-    else if (starts_with(magic_number, std::array{'\x42', '\x5a', '\x68'})) // BZip2
+    else if (starts_with(magic_number, magic_header<bz2_compression>)) // BZip2
     {
     #ifdef SEQAN3_HAS_BZIP2
         if (extension == ".bz2")
@@ -119,7 +120,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         throw file_open_error{"Trying to read from a bzipped file, but no libbz2 available."};
     #endif
     }
-    else if (starts_with(magic_number, std::array{'\x28', '\xb5', '\x2f', '\xfd'})) // ZStd
+    else if (starts_with(magic_number, magic_header<zstd_compression>)) // ZStd
     {
         throw file_open_error{"Trying to read from a zst'ed file, but SeqAn does not yet support this."};
     }
