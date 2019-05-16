@@ -109,7 +109,7 @@ before_script:
     fi
 
 script:
-  - make -k
+  - make -k -j2
   - |
     if test coverage != "${BUILD}"; then
       ctest . --output-on-failure
