@@ -19,7 +19,7 @@ struct alignment_file_read<format_sam> : public alignment_file_data
 	using stream_type = std::istringstream;
 
     std::string big_header_input{
-R"(@HD	VN:1.0	SO:coordinate	SS:coordinate:queryname	GO:none
+R"(@HD	VN:1.6	SO:coordinate	SS:coordinate:queryname	GO:none
 @PG	ID:qc	PN:quality_control	CL:qc -f file1	DS:trim reads with low qual	VN:1.0.0
 @PG	ID:novoalign	PN:novoalign	VN:V3.02.07	CL:novoalign -d /path/hs37d5.ndx -f /path/file.fastq.gz	PP:qc
 @SQ	SN:ref	LN:249250621
@@ -52,7 +52,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
 
     std::string empty_cigar{"read1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\n"};
 
-    std::string unknown_ref{"*\t0\tunknown_ref\t1\t0\t4M\t*\t0\t0\tAAAA\t*\n"};
+    std::string unknown_ref{"read1\t41\traf\t1\t61\t1S1M1D1M1I\t=\t10\t300\tACGT\t!##$\taa:A:c\tAS:i:2\tff:f:3.1\tzz:Z:str\n"};
 
     std::string unknown_ref_header{"@HD\tVN:1.6\n@SQ\tSN:ref\tLN:34\n*\t0\tunknown_ref\t1\t0\t4M\t*\t0\t0\tAAAA\t*\n"};
 
@@ -60,7 +60,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
     // formatted output
     // -----------------------------------------------------------------------------------------------------------------
 
-    std::string simple_three_reads_output{ // mate ref id is not '=' for write comparison, no hard clipping
+    std::string simple_three_reads_output{ // mate ref id is not '=' for write comparison, no hard clipping and no hard clipping
 R"(@HD	VN:1.6
 @SQ	SN:ref	LN:34
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
