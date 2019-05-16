@@ -22,10 +22,7 @@
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 
-namespace seqan3
-{
-
-namespace detail
+namespace seqan3::detail
 {
 
 /*!\brief Helper function for seqan3::tuple_split.
@@ -66,7 +63,10 @@ constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const
     return tuple_t<std::tuple_element_t<beg + Is, tuple_t<ts...>>...>{std::move(std::get<beg + Is>(t))...};
 }
 
-} // namespace detail
+} // namespace seqan3::detail
+
+namespace seqan3
+{
 
 /*!\name Tuple utility functions
  * \brief Helper functions for tuple like objects.
