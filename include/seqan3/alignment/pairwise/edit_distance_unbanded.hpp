@@ -418,14 +418,16 @@ private:
 public:
 
     /*!\brief Generic invocable interface.
+     * \param[in]     idx The index of the currently processed sequence pair.
      * \param[in,out] res The alignment result to fill.
      * \returns A reference to the filled alignment result.
      */
     template <typename result_value_type>
-    alignment_result<result_value_type> & operator()(alignment_result<result_value_type> & res)
+    alignment_result<result_value_type> & operator()(size_t const idx, alignment_result<result_value_type> & res)
     {
         _compute();
         result_value_type res_vt{};
+        res_vt.id = idx;
         if constexpr (!std::is_same_v<decltype(res_vt.score), std::nullopt_t *>)
         {
             res_vt.score = score();
@@ -630,11 +632,12 @@ public:
     /*!\brief Invokes the actual alignment computation given two sequences.
      * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
      * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \param[in] idx            The index of the current sequence pair.
      * \param[in] first_range    The first sequence (or packed sequences).
      * \param[in] second_range   The second sequence (or packed sequences).
      */
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    constexpr auto operator()(first_range_t && first_range, second_range_t && second_range)
+    constexpr auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
     {
         using result_t = typename detail::align_result_selector<remove_cvref_t<first_range_t>,
                                                                 remove_cvref_t<second_range_t>,
@@ -642,7 +645,7 @@ public:
 
         pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, traits_t{}};
         alignment_result<result_t> res{};
-        return algo(res);
+        return algo(idx, res);
     }
 
 private:

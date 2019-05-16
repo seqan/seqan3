@@ -278,7 +278,7 @@ public:
                                                                          std::remove_reference_t<second_seq_t>,
                                                                          config_t>::type>;
             // Define the function wrapper type.
-            using function_wrapper_t = std::function<result_t(first_seq_t &, second_seq_t &)>;
+            using function_wrapper_t = std::function<result_t(size_t const, first_seq_t &, second_seq_t &)>;
 
             // ----------------------------------------------------------------------------
             // Test some basic preconditions
