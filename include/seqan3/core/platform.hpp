@@ -52,8 +52,8 @@
 
 // Ranges [required]
 #if __has_include(<range/v3/version.hpp>)
-#   define RANGE_V3_MINVERSION 400
-#   define RANGE_V3_MAXVERSION 499
+#   define RANGE_V3_MINVERSION 500
+#   define RANGE_V3_MAXVERSION 599
 // TODO the following doesn't actually show the current version, only its formula. How'd you do it?
 #   define MSG "Your version: " STR(RANGE_V3_VERSION) \
                 "; minimum version: " STR(RANGE_V3_MINVERSION) \
