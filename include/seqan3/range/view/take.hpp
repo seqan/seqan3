@@ -113,10 +113,16 @@ private:
          * \brief All are derived from the base_base_t.
          * \{
          */
+
+        //!\brief The difference type.
         using difference_type       = typename std::iterator_traits<base_base_t>::difference_type;
+        //!\brief The value type.
         using value_type            = typename std::iterator_traits<base_base_t>::value_type;
+        //!\brief The reference type.
         using reference             = typename std::iterator_traits<base_base_t>::reference;
+        //!\brief The pointer type.
         using pointer               = typename std::iterator_traits<base_base_t>::pointer;
+        //!\brief The iterator category tag.
         using iterator_category     = iterator_tag_t<base_base_t>;
         //!\}
 
@@ -124,6 +130,8 @@ private:
          * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
          * \{
          */
+
+        //!\brief Increments the iterator by one.
         constexpr iterator_type & operator++() noexcept(noexcept(++std::declval<base_t &>()))
         {
             base_t::operator++();
@@ -133,6 +141,7 @@ private:
             return *this;
         }
 
+        //!\brief Returns an iterator incremented by one.
         constexpr iterator_type operator++(int) noexcept(noexcept(++std::declval<iterator_type &>()) &&
                                                std::is_nothrow_copy_constructible_v<iterator_type>)
         {
@@ -141,6 +150,7 @@ private:
             return cpy;
         }
 
+        //!\brief Decrements the iterator by one.
         constexpr iterator_type & operator--() noexcept(noexcept(--std::declval<base_base_t &>()))
         //!\cond
             requires std::BidirectionalIterator<base_base_t>
@@ -151,6 +161,7 @@ private:
             return *this;
         }
 
+        //!\brief Returns an iterator decremented by one.
         constexpr iterator_type operator--(int) noexcept(noexcept(--std::declval<iterator_type &>()) &&
                                                std::is_nothrow_copy_constructible_v<iterator_type>)
         //!\cond
@@ -162,6 +173,7 @@ private:
             return cpy;
         }
 
+        //!\brief Advances the iterator by skip positions.
         constexpr iterator_type & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() += skip))
         //!\cond
             requires std::RandomAccessIterator<base_base_t>
@@ -172,6 +184,7 @@ private:
             return *this;
         }
 
+        //!\brief Advances the iterator by -skip positions.
         constexpr iterator_type & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -= skip))
         //!\cond
             requires std::RandomAccessIterator<base_base_t>
@@ -187,6 +200,8 @@ private:
          * \brief We define comparison against self and against the sentinel.
          * \{
          */
+
+        //!\brief Checks whether `*this` is equal to `rhs`.
         constexpr bool operator==(iterator_type const & rhs) const
             noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
         //!\cond
@@ -196,6 +211,7 @@ private:
             return *base_t::this_to_base() == *rhs.this_to_base();
         }
 
+        //!\copydoc operator==()
         constexpr bool operator==(sentinel_type const & rhs) const
             noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<sentinel_type &>()))
         {
@@ -215,17 +231,20 @@ private:
             }
         }
 
+        //!\brief Checks whether `lhs` is equal to `rhs`.
         constexpr friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs == lhs))
         {
             return rhs == lhs;
         }
 
+        //!\brief Checks whether `*this` is equal to `rhs`.
         constexpr bool operator!=(sentinel_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         {
             return !(*this == rhs);
         }
 
+        //!\copydoc operator!=()
         constexpr bool operator!=(iterator_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         //!\cond
@@ -235,6 +254,7 @@ private:
             return !(*this == rhs);
         }
 
+        //!\brief Checks whether `lhs` is not equal to `rhs`.
         constexpr friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs != lhs))
         {
             return rhs != lhs;
@@ -244,6 +264,11 @@ private:
         /*!\name Reference/Dereference operators
          * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
          * \{
+         */
+
+        /*!\brief Accesses an element by index.
+         * \param n Position relative to current location.
+         * \return A reference to the element at relative location.
          */
         constexpr reference operator[](std::make_unsigned_t<difference_type> const n) const
             noexcept(noexcept(std::declval<base_base_t &>()[0]))
