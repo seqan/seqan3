@@ -290,36 +290,43 @@ private:
          * \brief Compares iterators by virtual position.
          * \{
          */
+
+        //!\brief Checks whether `*this` is equal to `rhs`.
         constexpr friend bool operator==(gap_decorator_anchor_set_iterator const & lhs,
                                          gap_decorator_anchor_set_iterator const & rhs)
         {
             return lhs.pos == rhs.pos;
         }
 
+        //!\brief Checks whether `*this` is not equal to `rhs`.
         constexpr friend bool operator!=(gap_decorator_anchor_set_iterator const & lhs,
                                          gap_decorator_anchor_set_iterator const & rhs)
         {
             return lhs.pos != rhs.pos;
         }
 
+        //!\brief Checks whether `*this` is less than `rhs`.
         constexpr friend bool operator<(gap_decorator_anchor_set_iterator const & lhs,
                                         gap_decorator_anchor_set_iterator const & rhs)
         {
             return lhs.pos < rhs.pos;
         }
 
+        //!\brief Checks whether `*this` is greater than `rhs`.
         constexpr friend bool operator>(gap_decorator_anchor_set_iterator const & lhs,
                                         gap_decorator_anchor_set_iterator const & rhs)
         {
             return lhs.pos > rhs.pos;
         }
 
+        //!\brief Checks whether `*this` is less than or equal to `rhs`.
         constexpr friend bool operator<=(gap_decorator_anchor_set_iterator const & lhs,
                                          gap_decorator_anchor_set_iterator const & rhs)
         {
             return lhs.pos <= rhs.pos;
         }
 
+        //!\brief Checks whether `*this` is greater than or equal to `rhs`.
         constexpr friend bool operator>=(gap_decorator_anchor_set_iterator const & lhs,
                                          gap_decorator_anchor_set_iterator const & rhs)
         {
@@ -372,9 +379,11 @@ public:
 
     //!\brief Construct with the ungapped range type.
     template <typename other_range_t>
+    //!\cond
          requires !std::Same<other_range_t, gap_decorator_anchor_set> &&
                   std::Same<remove_cvref_t<other_range_t>, remove_cvref_t<inner_type>> &&
                   std::ranges::ViewableRange<other_range_t> // at end, otherwise it competes with the move ctor
+    //!\endcond
     gap_decorator_anchor_set(other_range_t && range) : ungapped_view{std::view::all(std::forward<inner_type>(range))}
     {} // TODO (@smehringer) only works for copyable views. Has to be changed once views are not required to be copyable anymore.
     // !\}
@@ -643,21 +652,25 @@ public:
     //!\}
 
     /*!\name Comparison operators
-     * \{
-     */
-    /*!\brief Compares two seqan3::gap_decorator_anchor_set 's by underlying sequence and gaps.
+     * \brief Compares two seqan3::gap_decorator_anchor_set 's by underlying sequence and gaps.
      * \param[in] lhs The left-hand side gap decorator to compare.
      * \param[in] rhs The right-hand side gap decorator to compare.
      * \returns A boolean flag indicating (in)equality of the aligned sequences.
      *
+     * \details
+     *
      * ### Complexity
+     *
      * Worst case: \f$O(n*\log k)\f$
      * Constant in case the decorators have not the same number of (consecutive) gaps.
      *
      * ### Exceptions
      *
      * No-throw guarantee. Does not modify the aligned sequences.
+     * \{
      */
+
+    //!\brief Checks whether `lhs` is equal to `rhs`.
     friend bool operator==(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
     {
         if (lhs.size()  == rhs.size()  &&
@@ -670,12 +683,13 @@ public:
         return false;
     }
 
-    //!\copydoc operator==
+    //!\brief Checks whether `lhs` is not equal to `rhs`.
     friend bool operator!=(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
+    //!\brief Checks whether `lhs` is less than `rhs`.
     friend bool operator<(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
     {
         auto lit = lhs.begin();
@@ -692,6 +706,7 @@ public:
         return *lit < *rit;
     }
 
+    //!\brief Checks whether `lhs` is less than or equal to `rhs`.
     friend bool operator<=(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
     {
         auto lit = lhs.begin();
@@ -708,11 +723,13 @@ public:
         return *lit < *rit;
     }
 
+    //!\brief Checks whether `lhs` is greater than `rhs`.
     friend bool operator>(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
     {
         return !(lhs <= rhs);
     }
 
+    //!\brief Checks whether `lhs` is greater than or equal to `rhs`.
     friend bool operator>=(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
     {
         return !(lhs < rhs);

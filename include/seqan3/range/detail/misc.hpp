@@ -35,7 +35,6 @@ constexpr void consume(rng_t && rng)
 /*!\brief Iterate over a range (NO-OP for forward ranges).
  * \ingroup range
  * \tparam rng_t Type of the range; must satisfy std::ranges::ForwardRange.
- * \param rng The range.
  */
 template <std::ranges::ForwardRange rng_t>
 constexpr void consume(rng_t &&)
