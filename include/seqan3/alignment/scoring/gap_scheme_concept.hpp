@@ -30,20 +30,22 @@ namespace seqan3
  * ability to request the gap penalties.
  *
  */
+
 /*!\name Requirements for seqan3::GapScheme
  * \brief You can expect these members on all types that implement seqan3::GapScheme.
  * \memberof seqan3::GapScheme
  * \{
  */
+
 /*!\fn       ptrdiff_t score(size_t s);
  * \brief    Returns the score for a gap of length `s`.
- * \memberof seqan3::GapScheme
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
  * will provide an implementation).
  */
 //!\}
+
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT GapScheme = requires (t scheme, size_t num)
