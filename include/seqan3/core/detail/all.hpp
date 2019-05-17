@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <seqan3/core/detail/endian.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/detail/strong_type.hpp>

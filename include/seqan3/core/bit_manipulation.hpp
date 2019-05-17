@@ -18,6 +18,14 @@
 #include <climits>
 #include <utility>
 
+// Find correct header for byte-order conversion functions.
+#if __has_include(<endian.h>) // unix GLIBC
+    #include <endian.h>
+#elif __has_include(<sys/endian.h>)  // *BSD
+    #include <sys/endian.h>
+#endif // __has_include(endian.h)
+
+#include <seqan3/core/detail/endian.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/std/concepts>
 
@@ -94,6 +102,48 @@ constexpr uint8_t bit_scan_reverse(unsigned_t n)
     for (; n != 0; n >>= 1, ++i);
     return i - 1;
 #endif
+}
+
+/*!\brief Convert the byte encoding of integer values to little-endian byte order.
+ * \ingroup core
+ * \tparam type The type of the value to convert; must model std::Integral.
+ * \param  in   The input value to convert.
+ * \returns the converted value in little-endian byte-order.
+ *
+ * \details
+ *
+ * This function swaps the bytes if the host system uses big endian. In this case only 1, 2, 4, or 8 byte big
+ * integral types are allowed as input. On host systems with little endian this function is a no-op and returns the
+ * unchanged input value. Other systems with mixed endianness are not supported.
+ */
+template <std::Integral type>
+constexpr type to_little_endian(type const in) noexcept
+{
+    if constexpr (endian::native == endian::little)
+    {
+        return in;
+    }
+    else if constexpr (endian::native == endian::big)
+    {
+        static_assert(sizeof(type) <= 8,
+                      "Can only convert the byte encoding for integral numbers with a size of up to 8 bytes.");
+        static_assert(is_power_of_two(sizeof(type)),
+                      "Can only convert the byte encoding for integral numbers whose byte size is a power of two.");
+
+        if constexpr (sizeof(type) == 2)
+            return htole16(in);
+        else if constexpr (sizeof(type) == 4)
+            return htole32(in);
+        else if constexpr (sizeof(type) == 8)
+            return htole64(in);
+        else
+            return in;  // single byte.
+    }
+    else
+    {
+        static_assert(endian::native == endian::little || endian::native == endian::big,
+                      "Expected a little-endian or big-endian platform.");
+    }
 }
 
 } // namespace seqan3::detail
