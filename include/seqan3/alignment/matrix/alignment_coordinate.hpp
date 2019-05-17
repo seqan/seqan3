@@ -77,8 +77,10 @@ class advanceable_alignment_coordinate
 {
 public:
 
-    //!\name Member types
-    //!\{
+    /*!\name Member types
+     * \{
+     */
+
     //!\brief Defines the difference type to model the std::WeaklyIncrementable concept.
     using difference_type = std::make_signed_t<size_t>;
     //!\}
@@ -171,6 +173,10 @@ public:
      *        seqan3::detail::advanceable_alignment_coordinate_state::none.
      * \{
      */
+
+    /*!\brief Increments the coordinate depending on the set policy by one.
+     * \return `*this`
+     */
     constexpr advanceable_alignment_coordinate & operator++(/*pre-increment*/) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -183,6 +189,9 @@ public:
         return *this;
     }
 
+    /*!\brief Post-increments the coordinate depending on the set policy by one.
+     * \return a seqan3::detail::advanceable_alignment_coordinate that holds an unchanged value.
+     */
     constexpr advanceable_alignment_coordinate operator++(int /*post-increment*/) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -193,6 +202,9 @@ public:
         return tmp;
     }
 
+    /*!\brief Decrements the coordinate depending on the set policy by one.
+     * \return `*this`
+     */
     constexpr advanceable_alignment_coordinate & operator--(/*pre-decrement*/) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -205,6 +217,9 @@ public:
         return *this;
     }
 
+    /*!\brief Post-decrements the coordinate depending on the set policy by one.
+     * \return a seqan3::detail::advanceable_alignment_coordinate that holds an unchanged value.
+     */
     constexpr advanceable_alignment_coordinate operator--(int /*post-decrement*/) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -215,6 +230,10 @@ public:
         return tmp;
     }
 
+    /*!\brief Returns the coordinate which is advanced depending on the set policy by `offset`.
+     * \param offset The value to add to the coordinate.
+     * \return `*this`
+     */
     constexpr advanceable_alignment_coordinate & operator+=(difference_type const offset) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -227,6 +246,10 @@ public:
         return *this;
     }
 
+    /*!\brief Returns the coordinate which is advanced depending on the set policy by -`offset`.
+     * \param offset The value to subtract from the coordinate.
+     * \return `*this`
+     */
     constexpr advanceable_alignment_coordinate & operator-=(difference_type const offset) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -239,6 +262,10 @@ public:
         return *this;
     }
 
+    /*!\brief Returns a new coordinate which is advanced depending on the set policy by `offset`.
+     * \param offset The value to add to the coordinate.
+     * \return a seqan3::detail::advanceable_alignment_coordinate that holds the updated value.
+     */
     constexpr advanceable_alignment_coordinate operator+(difference_type const offset) const noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -249,6 +276,10 @@ public:
         return tmp;
     }
 
+    /*!\brief Returns a new coordinate which is advanced depending on the set policy by -`offset`.
+     * \param offset The value to subtract from the coordinate.
+     * \return a seqan3::detail::advanceable_alignment_coordinate that holds the updated value.
+     */
     constexpr advanceable_alignment_coordinate operator-(difference_type const offset) const noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -259,6 +290,10 @@ public:
         return tmp;
     }
 
+    /*!\brief Returns the difference of this and another coordinate depending on the set policy.
+     * \param other The other coordinate.
+     * \return the difference between the coordinates.
+     */
     constexpr difference_type operator-(advanceable_alignment_coordinate const & other) const noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -337,7 +372,7 @@ public:
     //!\brief Inherit the constructor from the base class.
     using base_t::base_t;
 
-    // !\brief Constructs from the seqan3::detail::advanceable_alignment_coordinate base class.
+    //!\brief Constructs from the seqan3::detail::advanceable_alignment_coordinate base class.
     constexpr alignment_coordinate(base_t const & base) : base_t{base}
     {}
 

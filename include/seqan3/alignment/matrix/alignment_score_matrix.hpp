@@ -54,6 +54,8 @@ public:
  * \relates seqan3::detail::alignment_score_matrix
  * \{
  */
+
+//!\brief Deduce the score matrix type from the provided arguments.
 template <typename score_t>
 alignment_score_matrix(std::vector<score_t>, size_t rows, size_t cols)
     -> alignment_score_matrix<std::vector<score_t>>;
