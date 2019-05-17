@@ -1236,33 +1236,41 @@ public:
     }
     //!\}
 
-    //!\name Comparison operators
-    //!\{
+    /*!\name Comparison operators
+     * \{
+     */
+
+    //!\brief Checks whether `*this` is equal to `rhs`.
     constexpr bool operator==(concatenated_sequences const & rhs) const noexcept
     {
         return data() == rhs.data();
     }
 
+    //!\brief Checks whether `*this` is not equal to `rhs`.
     constexpr bool operator!=(concatenated_sequences const & rhs) const noexcept
     {
         return data() != rhs.data();
     }
 
+    //!\brief Checks whether `*this` is less than `rhs`.
     constexpr bool operator<(concatenated_sequences const & rhs) const noexcept
     {
         return data() < rhs.data();
     }
 
+    //!\brief Checks whether `*this` is greater than `rhs`.
     constexpr bool operator>(concatenated_sequences const & rhs) const noexcept
     {
         return data() > rhs.data();
     }
 
+    //!\brief Checks whether `*this` is less than or equal to `rhs`.
     constexpr bool operator<=(concatenated_sequences const & rhs) const noexcept
     {
         return data() <= rhs.data();
     }
 
+    //!\brief Checks whether `*this` is greater than or equal to `rhs`.
     constexpr bool operator>=(concatenated_sequences const & rhs) const noexcept
     {
         return data() >= rhs.data();
