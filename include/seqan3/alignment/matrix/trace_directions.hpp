@@ -47,3 +47,27 @@ namespace seqan3
 template <>
 constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_directions> = true;
 } // namespace seqan3
+
+#include <seqan3/io/stream/debug_stream.hpp>
+namespace seqan3
+{
+
+/*!\brief All trace_directions can be printed as ascii or as utf8 to the seqan3::debug_stream.
+ * \param s The seqan3::debug_stream.
+ * \param trace The trace direction.
+ * \relates seqan3::debug_stream_type
+ */
+inline debug_stream_type & operator<<(debug_stream_type & s, detail::trace_directions const trace)
+{
+    using char_t = decltype(u8' ');
+    static char_t const * unicode[8]{u8"↺", u8"↖", u8"↑", u8"↖↑", u8"←", u8"↖←", u8"↑←", u8"↖↑←"};
+    static char_t const * csv[8]{"N", "D", "U", "DU", "L", "DL", "UL", "DUL"};
+
+    bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
+    auto const & trace_dir = is_unicode ? unicode : csv;
+
+    s << trace_dir[static_cast<size_t>(trace) % 8u];
+    return s;
+}
+
+} // namespace seqan3
