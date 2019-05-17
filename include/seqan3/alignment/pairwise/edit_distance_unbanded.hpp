@@ -575,10 +575,13 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
  * \relates seqan3::detail::pairwise_alignment_edit_distance_unbanded
  * \{
  */
+
+//!\brief Deduce the type from the provided arguments.
 template<typename database_t, typename query_t, typename config_t>
 pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config)
     -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t>;
 
+//!\brief Deduce the type from the provided arguments.
 template<typename database_t, typename query_t, typename config_t, typename traits_t>
 pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config, traits_t)
     -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t, traits_t>;
