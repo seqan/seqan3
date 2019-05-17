@@ -77,10 +77,16 @@ private:
         /*!\name Associated types
          * \{
          */
+
+        //!\brief The difference type.
         using difference_type   = std::ptrdiff_t;
+        //!\brief The value type.
         using value_type        = std::tuple<underlying_val_t, underlying_val_t>;
+        //!\brief The reference type.
         using reference         = std::tuple<underlying_ref_t, underlying_ref_t>;
+        //!\brief The pointer type.
         using pointer           = void;
+        //!\brief The iterator category tag.
         using iterator_category = iterator_tag_t<underlying_iterator_type>;
         //!\}
 
@@ -289,6 +295,8 @@ private:
         //NOTE: The comparison operators should be implemented as friends, but due to a bug in gcc friend function
         // cannot yet be constrained. To avoid unexpected errors with the comparison all operators are implemented as
         // direct members and not as friends.
+
+        //!\brief Checks whether `*this` is equal to `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::EqualityComparableWith<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
@@ -300,6 +308,7 @@ private:
             return std::tie(first_it, second_it) == std::tie(rhs.first_it, rhs.second_it);
         }
 
+        //!\brief Checks whether `*this` is not equal to `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::EqualityComparableWith<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
@@ -311,6 +320,7 @@ private:
             return !(*this == rhs);
         }
 
+        //!\brief Checks whether `*this` is less than `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::StrictTotallyOrderedWith<underlying_iterator_type,
@@ -323,6 +333,7 @@ private:
             return std::tie(first_it, second_it) < std::tie(rhs.first_it, rhs.second_it);
         }
 
+        //!\brief Checks whether `*this` is greater than `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::StrictTotallyOrderedWith<underlying_iterator_type,
@@ -336,6 +347,7 @@ private:
             return std::tie(first_it, second_it) > std::tie(rhs.first_it, rhs.second_it);
         }
 
+        //!\brief Checks whether `*this` is less than or equal to `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::StrictTotallyOrderedWith<underlying_iterator_type,
@@ -348,6 +360,7 @@ private:
             return std::tie(first_it, second_it) <= std::tie(rhs.first_it, rhs.second_it);
         }
 
+        //!\brief Checks whether `*this` is greater than or equal to `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::StrictTotallyOrderedWith<underlying_iterator_type,
@@ -420,8 +433,10 @@ private:
 
 public:
 
-    //!\name Associated types
-    //!\{
+    /*!\name Associated types
+     * \{
+     */
+
     //!\brief The iterator type.
     using iterator          = iterator_type<underlying_range_type>;
     //!\brief The const iterator type. Evaluates to void if the underlying range is not const iterable.
