@@ -287,6 +287,8 @@ private:
  * \relates seqan3::aminoacid_scoring_scheme
  * \{
  */
+
+//!\brief Default constructed objects deduce to `int8_t`.
 aminoacid_scoring_scheme() -> aminoacid_scoring_scheme<int8_t>;
 
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
@@ -296,9 +298,13 @@ template <Arithmetic score_arg_type>
 aminoacid_scoring_scheme(match_score<score_arg_type>,
                          mismatch_score<score_arg_type>) -> aminoacid_scoring_scheme<int8_t>;
 
+//!\brief Deduce the score type from the provided matrix.
 template <Arithmetic score_arg_type>
 aminoacid_scoring_scheme(std::array<std::array<score_arg_type, 27>, 27>) -> aminoacid_scoring_scheme<score_arg_type>;
 
+/*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
+ * To use a larger type, specify the template argument manually.
+ */
 aminoacid_scoring_scheme(aminoacid_similarity_matrix) -> aminoacid_scoring_scheme<int8_t>;
 //!\}
 
