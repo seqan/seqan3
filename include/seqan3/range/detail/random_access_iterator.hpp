@@ -116,6 +116,8 @@ public:
      * specialised in derived type.
      * \{
      */
+
+    //!\brief Checks whether `*this` is equal to `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -125,6 +127,7 @@ public:
         return pos == rhs.pos;
     }
 
+    //!\brief Checks whether `*this` is not equal to `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -134,6 +137,7 @@ public:
         return !(*this == rhs);
     }
 
+    //!\brief Checks whether `*this` is less than `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -143,6 +147,7 @@ public:
         return static_cast<bool>(pos < rhs.pos);
     }
 
+    //!\brief Checks whether `*this` is greater than `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -152,6 +157,7 @@ public:
         return pos > rhs.pos;
     }
 
+    //!\brief Checks whether `*this` is less than or equal to `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -161,6 +167,7 @@ public:
         return pos <= rhs.pos;
     }
 
+    //!\brief Checks whether `*this` is greater than or equal to `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>

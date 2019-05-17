@@ -56,10 +56,16 @@ public:
      * \brief All are derived from the base_t.
      * \{
      */
+
+    //!\brief The difference type.
     using difference_type       = typename std::iterator_traits<base_t>::difference_type;
+    //!\brief The value type.
     using value_type            = typename std::iterator_traits<base_t>::value_type;
+    //!\brief The reference type.
     using reference             = typename std::iterator_traits<base_t>::reference;
+    //!\brief The pointer type.
     using pointer               = typename std::iterator_traits<base_t>::pointer;
+    //!\brief The iterator category tag.
     using iterator_category     = iterator_tag_t<base_t>;
     //!\}
 
@@ -101,6 +107,8 @@ public:
      * \brief Unless specialised in derived_type, all operators perform base_t's operator and cast to derived_t.
      * \{
      */
+
+    //!\brief Checks whether `*this` is equal to `rhs`.
     constexpr bool operator==(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() == std::declval<base_t &>()))
     //!\cond
@@ -110,6 +118,7 @@ public:
         return *this_to_base() == *rhs.this_to_base();
     }
 
+    //!\brief Checks whether `*this` is not equal to `rhs`.
     constexpr bool operator!=(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() == std::declval<base_t &>()))
     //!\cond
@@ -119,6 +128,7 @@ public:
         return !(*this == rhs);
     }
 
+    //!\brief Checks whether `*this` is less than `rhs`.
     constexpr bool operator<(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() < std::declval<base_t &>()))
     //!\cond
@@ -128,6 +138,7 @@ public:
         return *this_to_base() < *rhs.this_to_base();
     }
 
+    //!\brief Checks whether `*this` is greater than `rhs`.
     constexpr bool operator>(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() > std::declval<base_t &>()))
     //!\cond
@@ -137,6 +148,7 @@ public:
         return *this_to_base() > *rhs.this_to_base();
     }
 
+    //!\brief Checks whether `*this` is less than or equal to `rhs`.
     constexpr bool operator<=(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() > std::declval<base_t &>()))
     //!\cond
@@ -146,6 +158,7 @@ public:
         return !(*this > rhs);
     }
 
+    //!\brief Checks whether `*this` is greater than or equal to `rhs`.
     constexpr bool operator>=(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() < std::declval<base_t &>()))
     //!\cond
@@ -214,7 +227,7 @@ public:
         return *this_derived();
     }
 
-    //!\brief Return a an iterator moved to the right.
+    //!\brief Returns an iterator which is advanced by `skip` positions.
     constexpr derived_t operator+(difference_type const skip) const
         noexcept(noexcept(std::declval<derived_t &>() += skip) && noexcept(derived_t{std::declval<base_t &>()}))
     //!\cond
