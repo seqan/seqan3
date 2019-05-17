@@ -119,8 +119,9 @@ private:
 public:
     /*!\name Constructors, destructor and assignment
      * \{
-     *
-     * \brief Constructor to pass the alignment result traits.
+     */
+
+    /*!\brief Constructs a seqan3::alignment_result from an `alignment_result_traits` object.
      * \param[in] value The alignment results.
      */
     alignment_result(alignment_result_traits value) : data(value) {};
