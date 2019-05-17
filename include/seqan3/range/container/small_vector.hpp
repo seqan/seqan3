@@ -956,8 +956,10 @@ protected:
     }
 };
 
-//!\name Type deduction guides
-//!\{
+/*!\name Type deduction guides
+ * \{
+ */
+
 //!\brief Deducts the size and value type from an built-in array on construction.
 template <size_t capacity2, typename value_type>
 small_vector(const value_type (&array)[capacity2]) -> small_vector<value_type, capacity2>;
