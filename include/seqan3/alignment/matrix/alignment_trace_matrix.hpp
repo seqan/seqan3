@@ -195,9 +195,12 @@ private:
  * \relates seqan3::detail::alignment_trace_matrix
  * \{
  */
+
+//!\brief Deduce the trace matrix type from the provided arguments.
 alignment_trace_matrix(std::vector<trace_directions>, size_t rows, size_t cols)
     -> alignment_trace_matrix<std::vector<trace_directions>>;
 
+//!\brief Deduce the trace matrix type from the provided arguments.
 template <typename database_t, typename query_t, typename align_config_t, typename alignment_t, typename ...options_t>
 alignment_trace_matrix(database_t && database, query_t && query, align_config_t && config, alignment_score_matrix<alignment_t, options_t...>)
     -> alignment_trace_matrix<database_t, query_t, align_config_t, alignment_score_matrix<alignment_t, options_t...>>;
