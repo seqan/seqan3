@@ -279,6 +279,8 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
+
+    //! \brief Default constructor.
     constexpr end_gaps() noexcept
     {
         [[maybe_unused]] auto dummy = ((values[std::remove_reference_t<ends_t>::id()] =
@@ -398,11 +400,13 @@ private:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::end_gaps
  * \{
  */
 
-//!\brief Deduces the end-gap specifier from the constructor arguments.
+/*!\brief Deduces the end-gap specifier from the constructor arguments.
+ * \relates seqan3::end_gaps
+ * \tparam ends_t A template parameter pack containing at most 4 sequence end-gap specifiers.
+ */
 template <typename ... ends_t>
 end_gaps(ends_t const & ...) -> end_gaps<ends_t...>;
 //!\}
@@ -412,9 +416,9 @@ end_gaps(ends_t const & ...) -> end_gaps<ends_t...>;
 // ----------------------------------------------------------------------------
 
 /*!\name Predefined end-gaps configurations
+ * \relates seqan3::end_gaps
  * \anchor predefined_end_gap_configurations
  * \brief These variables are pre-configured end-gaps that are frequently used in pairwise sequence alignments.
- * \relates seqan3::end_gaps
  * \{
  */
 
