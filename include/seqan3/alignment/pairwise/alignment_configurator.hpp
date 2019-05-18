@@ -386,7 +386,12 @@ private:
             }
             else if constexpr (align_ends_cfg_t::template is_static<1>())
             {
+#if defined(__GNUC__) && __GNUC__ >= 9
+                constexpr bool free_ends_trailing = align_ends_cfg_t::template get_static<1>();
+                return configure_edit_traits(std::integral_constant<bool, free_ends_trailing>{});
+#else // ^^^ workaround / no workaround vvv
                 return configure_edit_traits(std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>{});
+#endif // defined(__GNUC__) && __GNUC__ >= 9
             }
             else // Resolve correct property at runtime.
             {
