@@ -36,5 +36,5 @@ TEST(debug_stream, unicode)
     stream << fmtflags2::utf8;
     stream << N << ";" << D << ";" << U << ";" << L << ";" << (D|U) << ";" << (D|L) << ";" << (U|L) << ";" << (D|U|L);
 
-    EXPECT_EQ(s.str(), u8"↺;↖;↑;←;↖↑;↖←;↑←;↖↑←");
+    EXPECT_EQ(s.str(), "↺;↖;↑;←;↖↑;↖←;↑←;↖↑←");
 }
