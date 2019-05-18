@@ -59,9 +59,8 @@ namespace seqan3
  */
 inline debug_stream_type & operator<<(debug_stream_type & s, detail::trace_directions const trace)
 {
-    using char_t = decltype(u8' ');
-    static char_t const * unicode[8]{u8"↺", u8"↖", u8"↑", u8"↖↑", u8"←", u8"↖←", u8"↑←", u8"↖↑←"};
-    static char_t const * csv[8]{"N", "D", "U", "DU", "L", "DL", "UL", "DUL"};
+    static char const * unicode[8]{"↺", "↖", "↑", "↖↑", "←", "↖←", "↑←", "↖↑←"};
+    static char const * csv[8]{"N", "D", "U", "DU", "L", "DL", "UL", "DUL"};
 
     bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
     auto const & trace_dir = is_unicode ? unicode : csv;
