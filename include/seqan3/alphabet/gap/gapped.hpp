@@ -39,7 +39,7 @@ template <typename alphabet_t>
 //!\cond
     requires WritableAlphabet<alphabet_t>
 //!\endcond
-using gapped = alphabet_variant<gap, alphabet_t>;
+using gapped = alphabet_variant<alphabet_t, gap>;
 
 } // namespace seqan3
 
