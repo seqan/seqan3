@@ -732,8 +732,6 @@ protected:
  * \relates seqan3::alignment_file_output
  * \{
  */
-
-//!\brief Deduction of the selected fields.
 template <detail::Fields    selected_field_ids>
 alignment_file_output(std::filesystem::path &&, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
@@ -741,7 +739,6 @@ alignment_file_output(std::filesystem::path &&, selected_field_ids const &)
                              typename alignment_file_output<>::stream_type,
                              ref_info_not_given>;
 
-//!\brief Deduction of the selected fields, the file format and the stream type.
 template <OStream<char>             stream_type,
           AlignmentFileOutputFormat file_format,
           detail::Fields            selected_field_ids>
@@ -751,7 +748,6 @@ alignment_file_output(stream_type && _stream, file_format const &, selected_fiel
                              std::remove_reference_t<stream_type>,
                              ref_info_not_given>;
 
-//!\brief Deduction of the selected fields, as well as the id and length types.
 template <detail::Fields    selected_field_ids,
           std::ranges::ForwardRange ref_ids_type,
           std::ranges::ForwardRange ref_lengths_type>
@@ -764,7 +760,6 @@ alignment_file_output(std::filesystem::path &&,
                              typename alignment_file_output<>::stream_type,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduction of the id and length types.
 template <std::ranges::ForwardRange ref_ids_type,
           std::ranges::ForwardRange ref_lengths_type>
 alignment_file_output(std::filesystem::path &&,
@@ -775,7 +770,6 @@ alignment_file_output(std::filesystem::path &&,
                              typename alignment_file_output<>::stream_type,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduction of the selected fields and file format, as well as the id, length and stream types.
 template <OStream<char>             stream_type,
           std::ranges::ForwardRange ref_ids_type,
           std::ranges::ForwardRange ref_lengths_type,
@@ -791,7 +785,6 @@ alignment_file_output(stream_type && _stream,
                              std::remove_reference_t<stream_type>,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduction of the file format, as well as the id, length and stream types.
 template <OStream<char>             stream_type,
           std::ranges::ForwardRange ref_ids_type,
           std::ranges::ForwardRange ref_lengths_type,

@@ -126,28 +126,28 @@ public:
      * \{
      */
 
-    //!\brief Test for equality.
+    //!\brief Checks whether `*this` is equal to the sentinel.
     constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
     {
         assert(host != nullptr);
         return host->at_end;
     }
 
-    //!\brief Test for inequality.
+    //!\brief Checks whether `*this` is not equal to the sentinel.
     constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
     {
         assert(host != nullptr);
         return !host->at_end;
     }
 
-    //!\brief Test for equality.
+    //!\brief Checks whether `it` is equal to the sentinel.
     constexpr friend bool operator==(std::ranges::default_sentinel_t const &,
                                      in_file_iterator const & it) noexcept
     {
         return (it == std::ranges::default_sentinel);
     }
 
-    //!\brief Test for inequality.
+    //!\brief Checks whether `it` is not equal to the sentinel.
     constexpr friend bool operator!=(std::ranges::default_sentinel_t const &,
                                      in_file_iterator const & it) noexcept
     {
