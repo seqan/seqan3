@@ -28,6 +28,14 @@ dna5 letter4 = letter2.convert_to<dna5>();      // this works
 }
 
 {
+//! [char_representation]
+alphabet_variant<dna4, dna5> var;
+var.assign_char('A');             // will be in the "dna4-state"
+var = 'A'_dna5;                   // will be in the "dna5-state"
+//! [char_representation]
+}
+
+{
 //! [holds_alternative]
 using variant_t = alphabet_variant<dna5, gap>;
 
