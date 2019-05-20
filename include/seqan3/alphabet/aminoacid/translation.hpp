@@ -125,7 +125,7 @@ constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
 */
 template <genetic_code gc = genetic_code::CANONICAL, std::ranges::InputRange range_type>
     //!\cond
-    requires NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<range_type>>>>
+    requires NucleotideAlphabet<reference_t<std::decay_t<range_type>>>
     //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {
@@ -159,7 +159,7 @@ constexpr aa27 translate_triplet(range_type && input_range)
 */
 template <genetic_code gc = genetic_code::CANONICAL, std::ranges::RandomAccessRange range_type>
 //!\cond
-    requires NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<range_type>>>>
+    requires NucleotideAlphabet<reference_t<std::decay_t<range_type>>>
 //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {

@@ -131,7 +131,7 @@ private:
         //!\}
     };
 
-    static_assert(Alphabet<reference_proxy_type>);
+    static_assert(WritableAlphabet<reference_proxy_type>);
     //!\cond
     //NOTE(h-2): it is entirely unclear to me why we need this
     template <typename t>

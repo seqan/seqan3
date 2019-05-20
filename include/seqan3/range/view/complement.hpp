@@ -62,13 +62,12 @@ namespace seqan3::view
  * \hideinitializer
  */
 
-inline auto const complement = deep{std::view::transform([] (auto && in)
+inline auto const complement = deep{std::view::transform([] (auto const in)
 {
-    static_assert(NucleotideAlphabet<delete_const_t<decltype(in)>>,
+    static_assert(NucleotideAlphabet<decltype(in)>,
                   "The innermost value type must satisfy the NucleotideAlphabet.");
     // call element-wise complement from the NucleotideAlphabet
-    using seqan3::complement;
-    return complement(in);
+    return seqan3::complement(in);
 })};
 
 //!\}

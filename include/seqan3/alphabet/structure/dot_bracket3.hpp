@@ -27,9 +27,11 @@ namespace seqan3
 
 /*!\brief The three letter RNA structure alphabet of the characters ".()".
  * \implements seqan3::RnaStructureAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \ingroup structure
  *

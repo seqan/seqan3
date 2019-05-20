@@ -43,7 +43,7 @@ struct kmer_hash_fn
      */
     template <std::ranges::ViewableRange urng_t>
     //!\cond
-        requires Semialphabet<delete_const_t<reference_t<urng_t>>>
+        requires Semialphabet<reference_t<urng_t>>
     //!\endcond
     constexpr auto operator()(urng_t && urange, size_t const k) const noexcept
     {

@@ -298,7 +298,7 @@ namespace seqan3
 template <typename tuple_t>
 //!\cond
     requires !std::ranges::InputRange<tuple_t> &&
-             !Alphabet<remove_cvref_t<tuple_t>> && // exclude alphabet_tuple_base
+             !Alphabet<tuple_t> && // exclude alphabet_tuple_base
              tuple_like_concept<remove_cvref_t<tuple_t>>
 //!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & s, tuple_t && t)
@@ -374,7 +374,7 @@ inline debug_stream_type & operator<<(debug_stream_type & s, rng_t && r)
                std::Same<remove_cvref_t<reference_t<rng_t>>, char>)
 //!\endcond
 {
-    if constexpr (Alphabet<remove_cvref_t<reference_t<rng_t>>> &&
+    if constexpr (Alphabet<reference_t<rng_t>> &&
                   !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<rng_t>>>)
     {
         for (auto && l : r)

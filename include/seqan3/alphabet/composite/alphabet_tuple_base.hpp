@@ -144,18 +144,23 @@ decltype(auto) get();
 
 /*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
  * \ingroup composite
- * \implements seqan3::Semialphabet
- * \implements seqan3::detail::ConstexprSemialphabet
- * \tparam first_component_type Type of the first letter; must model seqan3::Semialphabet.
- * \tparam component_types      Types of further letters (up to 4); must model seqan3::Semialphabet.
+ * \implements seqan3::WritableSemialphabet
+ * \if DEV
+ * \implements seqan3::detail::ConstexprWritableSemialphabet
+ * \tparam component_types Types of letters; must model seqan3::detail::WritableConstexprSemialphabet.
+ * \else
+ * \tparam component_types Types of letters; must model seqan3::WritableSemialphabet and all required function calls
+ * need to be callable in `constexpr`-context.
+ * \endif
  *
- * This data structure is CRTP base class for combined alphabets, where the different
- * alphabet letters exist independently as component_list, similar to a tuple.
+ *
+ * This data structure is a CRTP base class for combined alphabets, where the different
+ * alphabet letters exist independently as a components, similar to a tuple.
  *
  * Short description:
- *   * combines multiple alphabets as independent component_list, similar to a tuple;
+ *   * combines multiple alphabets as independent components, similar to a tuple;
  *   * models seqan3::tuple_like_concept, i.e. provides a get interface to its component_list;
- *   * is itself a seqan3::Semialphabet, but most derived types implement the full seqan3::Alphabet;
+ *   * is itself a seqan3::WritableSemialphabet, but most derived types implement the full seqan3::WritableAlphabet;
  *   * its alphabet size is the product of the individual sizes;
  *   * constructible, assignable and comparable with each component type and also all types that
  *     these are constructible/assignable/comparable with;
@@ -177,7 +182,8 @@ decltype(auto) get();
 template <typename derived_type,
           typename ...component_types>
 //!\cond
-    requires (detail::ConstexprSemialphabet<component_types> && ...)
+    requires (detail::WritableConstexprSemialphabet<component_types> && ...) &&
+             (!std::is_reference_v<component_types> && ...)
 //!\endcond
 class alphabet_tuple_base :
     public alphabet_base<derived_type,

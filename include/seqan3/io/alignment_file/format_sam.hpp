@@ -460,17 +460,17 @@ public:
         // Type Requirements (as static asserts for user friendliness)
         // ---------------------------------------------------------------------
         static_assert((std::ranges::ForwardRange<seq_type>        &&
-                      Alphabet<value_type_t<remove_cvref_t<seq_type>>>),
+                      Alphabet<reference_t<seq_type>>),
                       "The seq object must be a std::ranges::ForwardRange over "
                       "letters that model seqan3::Alphabet.");
 
         static_assert((std::ranges::ForwardRange<id_type>         &&
-                      Alphabet<value_type_t<remove_cvref_t<id_type>>>),
+                      Alphabet<reference_t<id_type>>),
                       "The id object must be a std::ranges::ForwardRange over "
                       "letters that model seqan3::Alphabet.");
 
         static_assert((std::ranges::ForwardRange<ref_seq_type>    &&
-                      Alphabet<value_type_t<remove_cvref_t<ref_seq_type>>>),
+                      Alphabet<reference_t<ref_seq_type>>),
                       "The ref_seq object must be a std::ranges::ForwardRange "
                       "over letters that model seqan3::Alphabet.");
 
@@ -493,13 +493,13 @@ public:
                       "value_type is comparable to seqan3::gap");
 
         static_assert((std::tuple_size_v<remove_cvref_t<align_type>> == 2 &&
-                       std::EqualityComparableWith<gap, value_type_t<remove_cvref_t<decltype(std::get<0>(align))>>> &&
-                       std::EqualityComparableWith<gap, value_type_t<remove_cvref_t<decltype(std::get<1>(align))>>>),
+                       std::EqualityComparableWith<gap, reference_t<decltype(std::get<0>(align))>> &&
+                       std::EqualityComparableWith<gap, reference_t<decltype(std::get<1>(align))>>),
                       "The align object must be a std::pair of two ranges whose "
                       "value_type is comparable to seqan3::gap");
 
         static_assert((std::ranges::ForwardRange<qual_type>       &&
-                       Alphabet<value_type_t<remove_cvref_t<qual_type>>>),
+                       Alphabet<reference_t<qual_type>>),
                       "The qual object must be a std::ranges::ForwardRange "
                       "over letters that model seqan3::Alphabet.");
 

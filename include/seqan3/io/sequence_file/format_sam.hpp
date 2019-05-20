@@ -237,7 +237,7 @@ public:
     {
         if constexpr (!(detail::decays_to_ignore_v<seq_type>))
         {
-            static_assert(std::ranges::ForwardRange<seq_type> && Alphabet<value_type_t<seq_type>>,
+            static_assert(std::ranges::ForwardRange<seq_type> && Alphabet<reference_t<seq_type>>,
                           "The sequence must model std::ranges::ForwardRange and its value type must model "
                           "seqan3::Alphabet.");
         }

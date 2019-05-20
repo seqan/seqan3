@@ -160,7 +160,8 @@ namespace seqan3
 // forward
 template <typename ...alternative_types>
 //!\cond
-    requires (detail::ConstexprAlphabet<alternative_types> && ...) &&
+    requires (detail::WritableConstexprAlphabet<alternative_types> && ...) &&
+             (!std::is_reference_v<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond
@@ -169,7 +170,8 @@ class alphabet_variant;
 template <typename derived_type,
           typename ...component_types>
 //!\cond
-    requires (detail::ConstexprSemialphabet<component_types> && ...)
+    requires (detail::WritableConstexprSemialphabet<component_types> && ...) &&
+             (!std::is_reference_v<component_types> && ...)
 //!\endcond
 class alphabet_tuple_base;
 
