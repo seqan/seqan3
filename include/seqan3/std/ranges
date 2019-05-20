@@ -21,7 +21,6 @@
 #include <range/v3/range/concepts.hpp>
 #include <range/v3/iterator/default_sentinel.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
-#include <range/v3/iterator/stream_iterators.hpp>
 #include <range/v3/view/all.hpp>
 #include <range/v3/view/any_view.hpp>
 #include <range/v3/view/common.hpp>
@@ -215,11 +214,6 @@ using SEQAN3_DOXYGEN_ONLY(sentinel_t =) ::ranges::sentinel_t;
 */
 using SEQAN3_DOXYGEN_ONLY(iterator_t =) ::ranges::iterator_t;
 
-/*!\typedef std::ranges::ostreambuf_iterator
-* \brief Alias for ranges::ostreambuf_iterator. Output iterator that writes to std::basic_streambuf.
-*/
-using SEQAN3_DOXYGEN_ONLY(ostreambuf_iterator =) ::ranges::ostreambuf_iterator;
-
 /*!\typedef std::ranges::cbegin
 * \brief Alias for ranges::cbegin. Returns an iterator to the beginning of a range.
 */
@@ -229,11 +223,6 @@ using SEQAN3_DOXYGEN_ONLY(cbegin =) ::ranges::cbegin;
 * \brief Alias for ranges::cend. Returns an iterator to the end of a range.
 */
 using SEQAN3_DOXYGEN_ONLY(cend =) ::ranges::cend;
-
-/*!\typedef std::ranges::ostream_iterator
-* \brief Alias for ranges::ostream_iterator. Ostream adaptor for a Range type.
-*/
-using SEQAN3_DOXYGEN_ONLY(ostream_iterator =) ::ranges::ostream_iterator;
 
 /*!\typedef std::ranges::view_interface
 * \brief Alias for ranges::view_interface.

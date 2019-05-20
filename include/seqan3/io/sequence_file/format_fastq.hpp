@@ -29,6 +29,7 @@
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
@@ -224,7 +225,7 @@ public:
                id_type                        && id,
                qual_type                      && qualities)
     {
-        std::ranges::ostreambuf_iterator stream_it{stream};
+        seqan3::ostreambuf_iterator stream_it{stream};
 
         // ID
         if constexpr (detail::decays_to_ignore_v<id_type>)

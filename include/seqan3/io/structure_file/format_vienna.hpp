@@ -30,6 +30,7 @@
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/io/structure_file/detail.hpp>
 #include <seqan3/io/structure_file/input_options.hpp>
@@ -277,7 +278,7 @@ public:
                comment_type && SEQAN3_DOXYGEN_ONLY(comment),
                offset_type && SEQAN3_DOXYGEN_ONLY(offset))
     {
-        std::ranges::ostreambuf_iterator stream_it{stream};
+        seqan3::ostreambuf_iterator stream_it{stream};
 
         // WRITE ID (optional)
         if constexpr (!detail::decays_to_ignore_v<id_type>)
