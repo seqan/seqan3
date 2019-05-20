@@ -20,10 +20,19 @@
 namespace seqan3::detail
 {
 
+/*!\brief The underlying data structure of seqan3::detail::pairwise_alignment_edit_distance_unbanded that represents the
+ *        score matrix.
+ * \ingroup pairwise_alignment
+ * \tparam word_t         \copydoc word_type
+ * \tparam score_t        \copydoc score_type
+ * \tparam is_semi_global \copydoc pairwise_alignment_edit_distance_unbanded::is_semi_global
+ * \tparam use_max_errors \copydoc pairwise_alignment_edit_distance_unbanded::use_max_errors
+ */
 template <typename word_t, typename score_t, bool is_semi_global, bool use_max_errors>
 class edit_distance_score_matrix_full
 {
 public:
+    //!\brief This friend allows the edit distance algorithm to fill the score matrix via add_column.
     template <std::ranges::ViewableRange database_t,
               std::ranges::ViewableRange query_t,
               typename align_config_t,
@@ -39,27 +48,48 @@ public:
      edit_distance_score_matrix_full & operator=(edit_distance_score_matrix_full const &) = default; //!< Defaulted
      edit_distance_score_matrix_full & operator=(edit_distance_score_matrix_full &&) = default; //!< Defaulted
      ~edit_distance_score_matrix_full() = default; //!< Defaulted
-    //!\}
-
-    using word_type = word_t;
-
-    static constexpr auto word_size = sizeof_bits<word_type>;
-
-    using score_type = score_t;
-    using entry_type = std::conditional_t<use_max_errors, std::optional<score_type>, score_type>;
-
-    static constexpr std::optional<score_type> inf = std::nullopt;
 
 protected:
+    /*!\brief Construct the score_matrix by giving the number of rows within the matrix.
+     * \param rows_size \copydoc rows_size
+     */
     edit_distance_score_matrix_full(size_t const rows_size)
         : rows_size{rows_size}, columns{}
     {}
+    //!\}
 
-    void reserve(size_t const columns_size)
+public:
+    //!\copydoc pairwise_alignment_edit_distance_unbanded::word_type
+    using word_type = word_t;
+
+    //!\copydoc pairwise_alignment_edit_distance_unbanded::word_size
+    static constexpr auto word_size = sizeof_bits<word_type>;
+
+    //!\copydoc pairwise_alignment_edit_distance_unbanded::score_type
+    using score_type = score_t;
+
+    //!\copydoc seqan3::detail::Matrix::entry_type
+    using entry_type = std::conditional_t<use_max_errors, std::optional<score_type>, score_type>;
+
+    //!\brief A special score which represents infinity.
+    static constexpr std::optional<score_type> inf = std::nullopt;
+
+    /*!\brief Increase the capacity of the columns to a value that's greater or equal to `new_capacity`.
+     * \param new_capacity The new capacity.
+     */
+    void reserve(size_t const new_capacity)
     {
-        columns.reserve(columns_size);
+        columns.reserve(new_capacity);
     }
 
+    /*!\brief Computes the number of max rows in the current column.
+     * \tparam score_type \copybrief score_type
+     * \param score_mask  \copybrief pairwise_alignment_edit_distance_unbanded::score_mask
+     * \param last_block  \copybrief pairwise_alignment_edit_distance_unbanded::last_block
+     * \param score       \copybrief pairwise_alignment_edit_distance_unbanded::_score
+     * \param max_errors  \copybrief pairwise_alignment_edit_distance_unbanded::max_errors
+     * \return Number of max rows in the current column.
+     */
     template <typename score_type>
     static size_t max_rows(word_type const score_mask, unsigned const last_block,
                            score_type const score, score_type const max_errors)
@@ -69,8 +99,13 @@ protected:
         return active_row + (score <= max_errors);
     }
 
-    static score_type score_delta_within_word(word_type const & vp, word_type const & vn,
-                                              uint8_t const offset) noexcept
+    /*!\brief Computes delta score between `vp` and `vn` at position `offset`.
+     * \param  vp     \copydoc score_matrix_state::vp
+     * \param  vn     \copydoc score_matrix_state::vn
+     * \param  offset Delta Score at this position within machine word.
+     * \return Delta score at `offset` position; Value can be {-1, 0, +1}.
+     */
+    static score_type score_delta_within_word(word_type const & vp, word_type const & vn, uint8_t const offset) noexcept
     {
         using bitset = std::bitset<word_size>;
         assert(offset < word_size);
@@ -81,6 +116,11 @@ protected:
         return p - n;
     }
 
+    /*!\brief Computes delta score between `vp` and `vn`.
+     * \param  vp     \copydoc score_matrix_state::vp
+     * \param  vn     \copydoc score_matrix_state::vn
+     * \return Delta score.
+     */
     static score_type score_delta_of_word(word_type const & vp, word_type const & vn) noexcept
     {
         using bitset = std::bitset<word_size>;
@@ -130,10 +170,11 @@ public:
     }
 
 protected:
-    //!\brief If use_max_errors is true store these additional
-    //!state information in state_type.
+    //!\brief If use_max_errors is true store these additional state information in state_type.
     struct max_errors_state
     {
+        //!\brief The number of max_rows within the current column. Computed by
+        //!       edit_distance_score_matrix_full::max_rows.
         size_t max_rows;
     };
 
@@ -152,8 +193,14 @@ protected:
         enable_state_t<use_max_errors, max_errors_state>
     {};
 
+    /*!\brief Adds a column to the score matrix.
+     * \param vp \copydoc score_matrix_state::vp
+     * \param vn \copydoc score_matrix_state::vn
+     */
     void add_column(std::vector<word_type> vp, std::vector<word_type> vn)
+    //!\cond
         requires !use_max_errors
+    //!\endcond
     {
         column_type column{};
         column.vp = std::move(vp);
@@ -162,8 +209,15 @@ protected:
         columns.push_back(std::move(column));
     }
 
-    void add_column(std::vector<word_type> vp, std::vector<word_type> vn, size_t max_rows)
+    /*!\brief Adds a column to the score matrix.
+     * \param vp       \copydoc score_matrix_state::vp
+     * \param vn       \copydoc score_matrix_state::vn
+     * \param max_rows \copydoc max_errors_state::max_rows
+     */
+    void add_column(std::vector<word_type> vp, std::vector<word_type> vn, size_t const max_rows)
+    //!\cond
         requires use_max_errors
+    //!\endcond
     {
         column_type column{};
         column.vp = std::move(vp);
@@ -174,7 +228,9 @@ protected:
     }
 
 private:
+    //!\copydoc seqan3::detail::Matrix::rows
     size_t rows_size{};
+    //!\brief The columns of the score matrix.
     std::vector<column_type> columns{};
 };
 
