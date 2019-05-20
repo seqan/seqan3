@@ -27,7 +27,8 @@ TYPED_TEST_CASE_P(aligned_sequence);
 TYPED_TEST_P(aligned_sequence, fulfills_concept)
 {
     EXPECT_TRUE((AlignedSequence<TypeParam>));
-    EXPECT_FALSE((AlignedSequence<std::vector<dna4>>));
+    EXPECT_FALSE((AlignedSequence<std::vector<dna4>>)); // has no gap character
+    EXPECT_FALSE((AlignedSequence<std::array<gapped<dna4>, 0>>)); // is not modifiable
 }
 
 TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
