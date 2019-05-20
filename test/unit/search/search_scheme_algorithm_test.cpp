@@ -11,7 +11,7 @@
 #include "helper.hpp"
 #include "helper_search_scheme.hpp"
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
 #include <seqan3/search/fm_index/all.hpp>

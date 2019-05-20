@@ -15,7 +15,7 @@
 
 #include <range/v3/view/unique.hpp>
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/drop.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/concept.hpp>

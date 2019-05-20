@@ -1,4 +1,4 @@
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/rank_to.hpp>
 #include <seqan3/range/view/to_char.hpp>

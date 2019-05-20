@@ -11,7 +11,7 @@
 #include <seqan3/io/sequence_file/all.hpp>
 //![include]
 //![include_debug_stream]
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 //![include_debug_stream]
 #include <seqan3/range/detail/misc.hpp>
 //![include_ranges]

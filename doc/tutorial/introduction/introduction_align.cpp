@@ -2,7 +2,7 @@
 
 //! [sequence_input_include]
 #include <seqan3/io/sequence_file/input.hpp> // for sequence_file_input
-#include <seqan3/io/stream/debug_stream.hpp> // for debug_stream
+#include <seqan3/core/debug_stream.hpp>      // for debug_stream
 //! [sequence_input_include]
 
 //! [alignment_include]

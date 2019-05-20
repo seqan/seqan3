@@ -1,4 +1,4 @@
-#include <seqan3/io/stream/debug_stream.hpp>  // pretty printing
+#include <seqan3/core/debug_stream.hpp>  // pretty printing
 #include <seqan3/search/algorithm/search.hpp> // this already includes (bi)_fm_index
 
 using namespace seqan3;

@@ -1,5 +1,5 @@
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 int main()
 {

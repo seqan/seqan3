@@ -21,8 +21,8 @@
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/gap/all.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/metafunction/all.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/to_char.hpp>

@@ -1,4 +1,4 @@
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/std/ranges>
 

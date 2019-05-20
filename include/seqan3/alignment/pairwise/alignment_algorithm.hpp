@@ -25,8 +25,8 @@
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/metafunction/deferred_crtp_base.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/view/get.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/std/concepts>

@@ -1,6 +1,6 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/std/filesystem>
 
 int main(int argc, const char ** argv)

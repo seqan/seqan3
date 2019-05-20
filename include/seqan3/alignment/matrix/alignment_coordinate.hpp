@@ -14,8 +14,8 @@
 
 #include <type_traits>
 
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 

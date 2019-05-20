@@ -3,7 +3,7 @@
 
 #include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 using namespace seqan3;
 

@@ -1,4 +1,4 @@
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/all.hpp>            // include all of SeqAn's views
 #include <seqan3/std/ranges>                    // include all of the standard library's views
 

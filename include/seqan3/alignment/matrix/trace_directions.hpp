@@ -48,7 +48,7 @@ template <>
 constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_directions> = true;
 } // namespace seqan3
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 namespace seqan3
 {
 

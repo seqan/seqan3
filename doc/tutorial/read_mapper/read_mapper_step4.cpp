@@ -10,7 +10,7 @@
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/io/alignment_file/output.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/algorithm/all.hpp>
 #include <seqan3/std/span>
 
