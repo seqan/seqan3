@@ -1,6 +1,6 @@
 #include <range/v3/algorithm/equal.hpp>
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/interleave.hpp>
 
 int main()

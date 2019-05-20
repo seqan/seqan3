@@ -7,7 +7,7 @@
 
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 
 using namespace seqan3;

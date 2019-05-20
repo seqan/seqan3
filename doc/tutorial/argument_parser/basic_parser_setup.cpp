@@ -1,5 +1,5 @@
 #include <seqan3/argument_parser/all.hpp>     // includes all necessary headers
-#include <seqan3/io/stream/debug_stream.hpp>  // our custom output stream
+#include <seqan3/core/debug_stream.hpp>  // our custom output stream
 
 using namespace seqan3;
 

@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include <seqan3/alphabet/aminoacid/all.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/convert.hpp>
 
 #include <seqan3/alphabet/composite/semialphabet_any.hpp>

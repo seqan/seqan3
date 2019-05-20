@@ -1,7 +1,7 @@
 //! [example]
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/convert.hpp>
 
 using seqan3::operator""_aa10murphy;

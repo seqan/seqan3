@@ -12,7 +12,7 @@
 #include <range/v3/view/take.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/algorithm>

@@ -3,7 +3,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alignment/matrix/alignment_matrix_formatter.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/to_char.hpp>
 
 int main()

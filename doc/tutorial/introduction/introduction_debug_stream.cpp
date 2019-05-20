@@ -1,7 +1,7 @@
 //! [debug]
 #include <iostream>                          // for std::cerr, std::endl
 #include <vector>                            // for std::vector
-#include <seqan3/io/stream/debug_stream.hpp> // for debug_stream
+#include <seqan3/core/debug_stream.hpp> // for debug_stream
 
 using namespace seqan3;
 

@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/translation.hpp>
 #include <seqan3/range/view/complement.hpp>
 

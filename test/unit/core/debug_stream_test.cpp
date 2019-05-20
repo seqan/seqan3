@@ -11,10 +11,10 @@
 #include <string>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/std/filesystem>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
+#include <seqan3/std/filesystem>
 
 using namespace seqan3;
 

@@ -7,7 +7,7 @@ seqan3::cleanup index_file{"index.file"};
 #include <cereal/archives/binary.hpp>
 #endif //SEQAN3_WITH_CEREAL
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/algorithm/search.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>

@@ -10,7 +10,7 @@
 #include <range/v3/range_traits.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/test/cereal.hpp>

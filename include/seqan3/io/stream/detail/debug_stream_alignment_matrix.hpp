@@ -15,7 +15,7 @@
 #include <sstream>
 
 #include <seqan3/alignment/matrix/alignment_matrix_formatter.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 namespace seqan3::detail
 {

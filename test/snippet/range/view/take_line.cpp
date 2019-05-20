@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/std/ranges>

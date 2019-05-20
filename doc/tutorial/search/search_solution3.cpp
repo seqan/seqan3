@@ -1,4 +1,4 @@
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/algorithm/search.hpp>
 #include <seqan3/std/span>
 
