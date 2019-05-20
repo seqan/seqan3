@@ -98,11 +98,11 @@ public:
     //!\brief Type of the score values.
     using score_type = score_t;
     //!\brief Size type that can hold the dimension of the matrix (i.e. size of the alphabet).
-    using matrix_size_type = std::remove_const_t<decltype(alphabet_size_v<alphabet_t>)>;
+    using matrix_size_type = std::remove_const_t<decltype(alphabet_size<alphabet_t>)>;
     //!\}
 
     //!\brief Size of the matrix dimensions (i.e. size of the alphabet).
-    static constexpr matrix_size_type matrix_size = alphabet_size_v<alphabet_t>;
+    static constexpr matrix_size_type matrix_size = alphabet_size<alphabet_t>;
 
     /*!\name Member types
      * \{

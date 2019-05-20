@@ -181,14 +181,14 @@ template <typename ...alternative_types>
              //TODO same char_type
 //!\endcond
 class alphabet_variant : public alphabet_base<alphabet_variant<alternative_types...>,
-                                               (static_cast<size_t>(alphabet_size_v<alternative_types>) + ...),
+                                               (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
                                                char> //TODO underlying char t
 
 {
 private:
     //!\brief The base type.
     using base_t = alphabet_base<alphabet_variant<alternative_types...>,
-                                                   (static_cast<size_t>(alphabet_size_v<alternative_types>) + ...),
+                                                   (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
                                                    char>;
     //!\brief Befriend the base type.
     friend base_t;
@@ -468,7 +468,7 @@ protected:
     {
         constexpr size_t N = sizeof...(alternative_types) + 1;
 
-        std::array<rank_type, N> partial_sum{0, alphabet_size_v<alternative_types>...};
+        std::array<rank_type, N> partial_sum{0, seqan3::alphabet_size<alternative_types>...};
         for (size_t i = 1u; i < N; ++i)
             partial_sum[i] += partial_sum[i-1];
 
@@ -495,7 +495,7 @@ protected:
         auto assign_value_to_char = [assign_rank_to_char] (auto alternative, auto & value_to_char, auto & value) constexpr
         {
             using alternative_t = std::decay_t<decltype(alternative)>;
-            for (size_t i = 0u; i < alphabet_size_v<alternative_t>; ++i, ++value)
+            for (size_t i = 0u; i < seqan3::alphabet_size<alternative_t>; ++i, ++value)
                 value_to_char[value] = assign_rank_to_char(alternative, i);
         };
 

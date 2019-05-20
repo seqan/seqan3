@@ -38,7 +38,7 @@ static void push_back(benchmark::State& state)
 
     state.counters["sizeof"] = sizeof(alphabet_t);
     if constexpr (Alphabet<alphabet_t>)
-        state.counters["alph_size"] = seqan3::alphabet_size_v<alphabet_t>;
+        state.counters["alph_size"] = seqan3::alphabet_size<alphabet_t>;
 #if 0
     state.counters["preallocated_mem"] = reserve;
 #endif
@@ -135,7 +135,7 @@ static void sequential_read(benchmark::State& state)
 
     state.counters["sizeof"] = sizeof(alphabet_t);
     if constexpr (Alphabet<alphabet_t>)
-        state.counters["alph_size"] = seqan3::alphabet_size_v<alphabet_t>;
+        state.counters["alph_size"] = seqan3::alphabet_size<alphabet_t>;
     state.counters["const"] = const_;
 }
 
@@ -224,7 +224,7 @@ static void sequential_write(benchmark::State& state)
 
     state.counters["sizeof"] = sizeof(alphabet_t);
     if constexpr (Alphabet<alphabet_t>)
-        state.counters["alph_size"] = seqan3::alphabet_size_v<alphabet_t>;
+        state.counters["alph_size"] = seqan3::alphabet_size<alphabet_t>;
 }
 
 BENCHMARK_TEMPLATE(sequential_write, std::vector, uint8_t);

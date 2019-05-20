@@ -31,7 +31,7 @@ auto generate_sequence(size_t const len = 500,
                        size_t const seed = 0)
 {
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<uint8_t> dis_alpha(0, alphabet_size_v<alphabet_t> - 1);
+    std::uniform_int_distribution<uint8_t> dis_alpha(0, alphabet_size<alphabet_t> - 1);
     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
 
     std::vector<alphabet_t> sequence;

@@ -155,13 +155,13 @@ namespace seqan3
  */
 template <typename derived_type, WritableSemialphabet alphabet_type>
 class alphabet_proxy : public alphabet_base<derived_type,
-                                            alphabet_size_v<alphabet_type>,
+                                            alphabet_size<alphabet_type>,
                                             detail::alphabet_char_type_or_void_t<alphabet_type>>
 {
 private:
     //!\brief Type of the base class.
     using base_t =  alphabet_base<derived_type,
-                                  alphabet_size_v<alphabet_type>,
+                                  alphabet_size<alphabet_type>,
                                   detail::alphabet_char_type_or_void_t<alphabet_type>>;
 
     //!\brief Befriend the base type.

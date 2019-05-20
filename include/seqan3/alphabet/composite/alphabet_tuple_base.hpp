@@ -187,13 +187,13 @@ template <typename derived_type,
 //!\endcond
 class alphabet_tuple_base :
     public alphabet_base<derived_type,
-                         (1 * ... * alphabet_size_v<component_types>),
+                         (1 * ... * alphabet_size<component_types>),
                          void> // no char type, because this is only semi_alphabet
 {
 private:
     //!\brief The base type of this class.
     using base_t = alphabet_base<derived_type,
-                                (1 * ... * alphabet_size_v<component_types>),
+                                (1 * ... * alphabet_size<component_types>),
                                 void>; // no char type, because this is only semi_alphabet
 
     //!\brief A meta::list The types of each component in the composite
@@ -572,7 +572,7 @@ private:
     template <size_t index>
     constexpr rank_type to_component_rank() const noexcept
     {
-        return (to_rank() / cummulative_alph_sizes[index]) % alphabet_size_v<meta::at_c<component_list, index>>;
+        return (to_rank() / cummulative_alph_sizes[index]) % seqan3::alphabet_size<meta::at_c<component_list, index>>;
     }
 
     //!\brief the cumulative alphabet size products are cached
@@ -584,9 +584,9 @@ private:
             std::array<rank_type, component_list::size() + 1> ret{};
             ret[0] = 1;
             size_t count = 1;
-            meta::for_each(meta::reverse<component_list>{}, [&] (auto && alph) constexpr
+            meta::for_each(meta::reverse<component_list>{}, [&] (auto alph) constexpr
             {
-                ret[count] = static_cast<rank_type>(alphabet_size_v<std::decay_t<decltype(alph)>> * ret[count - 1]);
+                ret[count] = static_cast<rank_type>(seqan3::alphabet_size<decltype(alph)> * ret[count - 1]);
                 ++count;
             });
 

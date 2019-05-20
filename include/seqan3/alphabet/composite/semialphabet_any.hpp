@@ -68,7 +68,7 @@ public:
     //!\brief Construct semialphabet_any from alphabet of the same size
     template <Semialphabet other_alph_t>
     //!\cond
-        requires (alphabet_size_v<other_alph_t> == size)
+        requires (alphabet_size<other_alph_t> == size)
     //!\endcond
     explicit semialphabet_any(other_alph_t const other)
     {
@@ -79,7 +79,7 @@ public:
     //!\brief Enable conversion of semialphabet_any into other (semi-)alphabet of the same size
     template <Semialphabet other_alph_t>
     //!\cond
-        requires (alphabet_size_v<other_alph_t> == size)
+        requires (alphabet_size<other_alph_t> == size)
     //!\endcond
     explicit operator other_alph_t() const
     {

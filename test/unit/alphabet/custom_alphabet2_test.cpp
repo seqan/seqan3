@@ -81,7 +81,7 @@ constexpr bool char_is_valid_for(char const c, std::type_identity<my_alph> const
 
 } // namespace my_namespace
 
-static_assert(seqan3::alphabet_size_v<my_namespace::my_alph> == 2);
+static_assert(seqan3::alphabet_size<my_namespace::my_alph> == 2);
 static_assert(seqan3::char_is_valid_for<my_namespace::my_alph>('T'));
 static_assert(!seqan3::char_is_valid_for<my_namespace::my_alph>('!'));
 static_assert(seqan3::Semialphabet<my_namespace::my_alph>);

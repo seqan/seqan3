@@ -94,8 +94,8 @@ TYPED_TEST(uint_adaptation, assign_char_strict)
     EXPECT_EQ((assign_char_strictly_to('C', l            )), TypeParam{67});
 }
 
-TYPED_TEST(uint_adaptation, alphabet_size_v)
+TYPED_TEST(uint_adaptation, alphabet_size)
 {
-    EXPECT_EQ(alphabet_size_v<TypeParam>,
+    EXPECT_EQ(alphabet_size<TypeParam>,
         static_cast<uint64_t>(std::numeric_limits<TypeParam>::max()) + 1 - std::numeric_limits<TypeParam>::lowest());
 }

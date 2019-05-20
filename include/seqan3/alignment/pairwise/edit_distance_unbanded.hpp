@@ -203,7 +203,7 @@ public:
         database_it{ranges::begin(database)},
         database_it_end{ranges::end(database)}
     {
-        static constexpr size_t alphabet_size = alphabet_size_v<query_alphabet_type>;
+        static constexpr size_t alphabet_size_ = alphabet_size<query_alphabet_type>;
 
         if constexpr (use_max_errors)
         {
@@ -231,7 +231,7 @@ public:
 
         vp.resize(block_count, vp0);
         vn.resize(block_count, vn0);
-        bit_masks.resize((alphabet_size + 1) * block_count, 0);
+        bit_masks.resize((alphabet_size_ + 1) * block_count, 0);
 
         // encoding the letters as bit-vectors
         for (size_t j = 0; j < query.size(); j++)
