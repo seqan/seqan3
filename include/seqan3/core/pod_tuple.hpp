@@ -65,7 +65,6 @@ struct pod_tuple<type0, types...>
 
     /*!\name Comparison operators
      * \{
-     * \brief Lexicographically compares the values in the tuple.
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
