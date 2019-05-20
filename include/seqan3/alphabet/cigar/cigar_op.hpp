@@ -75,7 +75,7 @@ protected:
     //!\privatesection
 
     //!\brief Value to char conversion table.
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'M',
         'D',
@@ -96,7 +96,7 @@ protected:
             std::array<rank_type, 256> ret{};
 
             // reverse mapping for characters
-            for (size_t rnk = 0u; rnk < value_size; ++rnk)
+            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
             {
                 ret[rank_to_char[rnk] ] = rnk;
             }

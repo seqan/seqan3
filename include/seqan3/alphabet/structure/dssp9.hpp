@@ -82,7 +82,7 @@ protected:
     //!\privatesection
 
     //!\brief Value-to-char conversion table.
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'H', 'B', 'E', 'G', 'I', 'T', 'S', 'C', 'X'
     };
@@ -99,7 +99,7 @@ protected:
                 rnk = 8u;
 
             // reverse mapping for characters
-            for (rank_type rnk = 0u; rnk < value_size; ++rnk)
+            for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
             {
                 ret[static_cast<rank_type>(rank_to_char[rnk])] = rnk;
             }

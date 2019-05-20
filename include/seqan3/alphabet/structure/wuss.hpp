@@ -67,7 +67,7 @@ private:
     friend base_t;
 
 public:
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_rank;
     using base_t::to_char;
     using typename base_t::rank_type;
@@ -115,7 +115,7 @@ public:
      *        It is the number of distinct pairs of interaction symbols the format supports: 4..30 (depends on size)
      */
     // formula: (alphabet size - 7 unpaired characters) / 2, as every bracket exists as opening/closing pair
-    static constexpr uint8_t max_pseudoknot_depth{static_cast<uint8_t>((value_size - 7) / 2)};
+    static constexpr uint8_t max_pseudoknot_depth{static_cast<uint8_t>((alphabet_size - 7) / 2)};
 
     /*!\brief Get an identifier for a pseudoknotted interaction.
      * Opening and closing brackets of the same type have the same id.
@@ -134,17 +134,17 @@ public:
 protected:
     //!\privatesection
     //!\brief Value-to-char conversion table.
-    static constexpr std::array<char_type, value_size> rank_to_char
+    static constexpr std::array<char_type, alphabet_size> rank_to_char
     {
         [] () constexpr
         {
-            std::array<char_type, value_size> chars
+            std::array<char_type, alphabet_size> chars
             {
                 '.', ':', ',', '-', '_', '~', ';', '<', '(', '[', '{', '>', ')', ']', '}'
             };
 
             // pseudoknot letters
-            for (rank_type rnk = 15u; rnk + 1u < value_size; rnk += 2u)
+            for (rank_type rnk = 15u; rnk + 1u < alphabet_size; rnk += 2u)
             {
                 char_type const off = static_cast<char_type>((rnk - 15u) / 2u);
                 chars[rnk] = 'A' + off;
@@ -167,7 +167,7 @@ protected:
                 rnk = 6u;
 
             // set alphabet values
-            for (rank_type rnk = 0u; rnk < value_size; ++rnk)
+            for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
                 rank_table[rank_to_char[rnk]] = rnk;
             return rank_table;
         } ()
@@ -182,7 +182,7 @@ protected:
 template <uint8_t SIZE>
 constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
 {
-    std::array<int8_t, value_size> interaction_table{};
+    std::array<int8_t, alphabet_size> interaction_table{};
     int cnt_open = 0;
     int cnt_close = 0;
 
@@ -201,7 +201,7 @@ constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
         interaction_table[rnk] = ++cnt_close;
     }
 
-    for (rank_type rnk = 15u; rnk + 1u < value_size; rnk += 2u)
+    for (rank_type rnk = 15u; rnk + 1u < alphabet_size; rnk += 2u)
     {
         interaction_table[rnk]      = --cnt_open;
         interaction_table[rnk + 1u] = ++cnt_close;

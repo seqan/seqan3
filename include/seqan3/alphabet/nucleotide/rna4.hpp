@@ -79,7 +79,7 @@ protected:
     //!\privatesection
 
     //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'A',
         'C',
@@ -91,7 +91,7 @@ protected:
     static constexpr std::array<rank_type, 256> char_to_rank = dna4::char_to_rank;
 
     //!\copydoc seqan3::dna4::complement_table
-    static const std::array<rna4, value_size> complement_table;
+    static const std::array<rna4, alphabet_size> complement_table;
 };
 
 // ------------------------------------------------------------------
@@ -144,7 +144,7 @@ inline rna4_vector operator""_rna4(char const * s, std::size_t n)
 // rna4 (deferred definition)
 // ------------------------------------------------------------------
 
-constexpr std::array<rna4, rna4::value_size> rna4::complement_table
+constexpr std::array<rna4, rna4::alphabet_size> rna4::complement_table
 {
     'U'_rna4,    // complement of 'A'_rna4
     'G'_rna4,    // complement of 'C'_rna4

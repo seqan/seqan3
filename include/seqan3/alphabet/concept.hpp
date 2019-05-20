@@ -602,7 +602,7 @@ struct alphabet_size_fn
 private:
     SEQAN3_CPO_IMPL(2, (alphabet_size(v)                           ))    // ADL
     SEQAN3_CPO_IMPL(1, (seqan3::adaptation::alphabet_size(v)       ))    // customisation namespace
-    SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::value_size )) // member
+    SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::alphabet_size )) // member
 
 public:
     //!\brief Operator definition.

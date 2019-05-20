@@ -169,7 +169,7 @@ private:
 
 public:
     // Import from base:
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_rank;
 
     /*!\name Member types

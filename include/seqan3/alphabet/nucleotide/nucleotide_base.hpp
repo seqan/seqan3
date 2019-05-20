@@ -33,7 +33,7 @@ namespace seqan3
  * In addition to the requirements of seqan3::alphabet_base, the derived type needs to define the following static
  * member variable (can be private):
  *
- *   * `static std::array<THAT_TYPE, value_size> complement_table` that defines for every possible rank value
+ *   * `static std::array<THAT_TYPE, alphabet_size> complement_table` that defines for every possible rank value
  *     the corresponding complement.
  */
 template <typename derived_type, auto size>
@@ -61,7 +61,7 @@ public:
     // Import from base:
     using typename base_t::char_type;
     using typename base_t::rank_type;
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_rank;
 
     /*!\name Constructors, destructor and assignment
