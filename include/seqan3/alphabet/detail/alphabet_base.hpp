@@ -177,37 +177,37 @@ public:
 
     //!\name Comparison operators
     //!\{
-    friend constexpr bool operator==(derived_type const & lhs, derived_type const & rhs) noexcept
+    friend constexpr bool operator==(derived_type const lhs, derived_type const rhs) noexcept
     {
         using seqan3::to_rank;
         return to_rank(lhs) == to_rank(rhs);
     }
 
-    friend constexpr bool operator!=(derived_type const & lhs, derived_type const & rhs) noexcept
+    friend constexpr bool operator!=(derived_type const lhs, derived_type const rhs) noexcept
     {
         using seqan3::to_rank;
         return to_rank(lhs) != to_rank(rhs);
     }
 
-    friend constexpr bool operator<(derived_type const & lhs, derived_type const & rhs) noexcept
+    friend constexpr bool operator<(derived_type const lhs, derived_type const rhs) noexcept
     {
         using seqan3::to_rank;
         return to_rank(lhs) < to_rank(rhs);
     }
 
-    friend constexpr bool operator>(derived_type const & lhs, derived_type const & rhs) noexcept
+    friend constexpr bool operator>(derived_type const lhs, derived_type const rhs) noexcept
     {
         using seqan3::to_rank;
         return to_rank(lhs) > to_rank(rhs);
     }
 
-    friend constexpr bool operator<=(derived_type const & lhs, derived_type const & rhs) noexcept
+    friend constexpr bool operator<=(derived_type const lhs, derived_type const rhs) noexcept
     {
         using seqan3::to_rank;
         return to_rank(lhs) <= to_rank(rhs);
     }
 
-    friend constexpr bool operator>=(derived_type const & lhs, derived_type const & rhs) noexcept
+    friend constexpr bool operator>=(derived_type const lhs, derived_type const rhs) noexcept
     {
         using seqan3::to_rank;
         return to_rank(lhs) >= to_rank(rhs);
@@ -299,32 +299,32 @@ public:
 
     //!\name Comparison operators
     //!\{
-    friend constexpr bool operator==(derived_type const &, derived_type const &) noexcept
+    friend constexpr bool operator==(derived_type const, derived_type const) noexcept
     {
         return true;
     }
 
-    friend constexpr bool operator!=(derived_type const &, derived_type const &) noexcept
+    friend constexpr bool operator!=(derived_type const, derived_type const) noexcept
     {
         return false;
     }
 
-    friend constexpr bool operator<(derived_type const &,  derived_type const &)  noexcept
+    friend constexpr bool operator<(derived_type const,  derived_type const)  noexcept
     {
         return false;
     }
 
-    friend constexpr bool operator>(derived_type const &,  derived_type const &)  noexcept
+    friend constexpr bool operator>(derived_type const,  derived_type const)  noexcept
     {
         return false;
     }
 
-    friend constexpr bool operator<=(derived_type const &, derived_type const &) noexcept
+    friend constexpr bool operator<=(derived_type const, derived_type const) noexcept
     {
         return true;
     }
 
-    friend constexpr bool operator>=(derived_type const &, derived_type const &) noexcept
+    friend constexpr bool operator>=(derived_type const, derived_type const) noexcept
     {
         return true;
     }

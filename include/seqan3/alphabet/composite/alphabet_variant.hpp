@@ -407,14 +407,14 @@ public:
      * \{
      */
     template <typename alternative_t>
-    constexpr bool operator==(alternative_t const & rhs) const noexcept
+    constexpr bool operator==(alternative_t const rhs) const noexcept
         requires holds_alternative<alternative_t>()
     {
         return is_alternative<alternative_t>() && (convert_unsafely_to<alternative_t>() == rhs);
     }
 
     template <typename alternative_t>
-    constexpr bool operator!=(alternative_t const & rhs) const noexcept
+    constexpr bool operator!=(alternative_t const rhs) const noexcept
         requires holds_alternative<alternative_t>()
     {
         return !operator==(rhs);
@@ -429,7 +429,7 @@ public:
      * \{
      */
     template <typename indirect_alternative_type>
-    constexpr bool operator==(indirect_alternative_type const & rhs) const noexcept
+    constexpr bool operator==(indirect_alternative_type const rhs) const noexcept
     //!\cond
         requires detail::one_alternative_is<alphabet_variant,
                                             detail::weakly_equality_comparable_with,
@@ -443,7 +443,7 @@ public:
     }
 
     template <typename indirect_alternative_type>
-    constexpr bool operator!=(indirect_alternative_type const & rhs) const noexcept
+    constexpr bool operator!=(indirect_alternative_type const rhs) const noexcept
     //!\cond
         requires detail::one_alternative_is<alphabet_variant,
                                             detail::weakly_equality_comparable_with,
@@ -603,7 +603,7 @@ protected:
  *\{
  */
 template <typename lhs_t, typename ...alternative_types>
-constexpr bool operator==(lhs_t const & lhs, alphabet_variant<alternative_types...> const & rhs) noexcept
+constexpr bool operator==(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
 //!\cond
     requires detail::WeaklyEqualityComparableByMembersWith<alphabet_variant<alternative_types...>, lhs_t> &&
              !detail::WeaklyEqualityComparableByMembersWith<lhs_t, alphabet_variant<alternative_types...>>
@@ -613,7 +613,7 @@ constexpr bool operator==(lhs_t const & lhs, alphabet_variant<alternative_types.
 }
 
 template <typename lhs_t, typename ...alternative_types>
-constexpr bool operator!=(lhs_t const & lhs, alphabet_variant<alternative_types...> const & rhs) noexcept
+constexpr bool operator!=(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
 //!\cond
     requires detail::WeaklyEqualityComparableByMembersWith<alphabet_variant<alternative_types...>, lhs_t> &&
              !detail::WeaklyEqualityComparableByMembersWith<lhs_t, alphabet_variant<alternative_types...>>
