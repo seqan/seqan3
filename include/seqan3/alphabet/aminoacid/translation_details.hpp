@@ -60,7 +60,7 @@ template <typename void_type>
 struct translation_table<dna15, seqan3::genetic_code::CANONICAL, void_type>
 {
     //!\brief Holds the translation table for canonical genetic code and nucl16 alphabet.
-    static constexpr aa27 VALUE[dna15::value_size][dna15::value_size][dna15::value_size]
+    static constexpr aa27 VALUE[dna15::alphabet_size][dna15::alphabet_size][dna15::alphabet_size]
     {
         { // a??
             // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y

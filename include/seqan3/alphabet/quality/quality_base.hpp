@@ -61,7 +61,7 @@ private:
 
 public:
     // Import from base type:
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_rank;
     using base_t::assign_rank;
     using typename base_t::char_type;
@@ -134,8 +134,8 @@ protected:
             {
                 if (i < derived_type::offset_phred)                     // map too-small to smallest possible
                     ret[static_cast<rank_type>(i)] = 0;
-                else if (i >= derived_type::offset_phred + value_size)  // map too-large to highest possible
-                    ret[static_cast<rank_type>(i)] = value_size - 1;
+                else if (i >= derived_type::offset_phred + alphabet_size)  // map too-large to highest possible
+                    ret[static_cast<rank_type>(i)] = alphabet_size - 1;
                 else                                                    // map valid range to identity
                     ret[static_cast<rank_type>(i)] = i - derived_type::offset_phred;
             }
@@ -154,8 +154,8 @@ protected:
             {
                 if (i < derived_type::offset_char)                     // map too-small to smallest possible
                     ret[static_cast<rank_type>(i)] = 0;
-                else if (i >= derived_type::offset_char + value_size)  // map too-large to highest possible
-                    ret[static_cast<rank_type>(i)] = value_size - 1;
+                else if (i >= derived_type::offset_char + alphabet_size)  // map too-large to highest possible
+                    ret[static_cast<rank_type>(i)] = alphabet_size - 1;
                 else                                                   // map valid range to identity
                     ret[static_cast<rank_type>(i)] = i - derived_type::offset_char;
             }

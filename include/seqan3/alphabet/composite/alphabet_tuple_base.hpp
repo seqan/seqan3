@@ -238,7 +238,7 @@ private:
     public:
         //Import from base type:
         using base_t::to_rank;
-        using base_t::value_size;
+        using base_t::alphabet_size;
         using base_t::operator=;
 
         /*!\name Associated types
@@ -286,7 +286,7 @@ private:
 
 public:
     // Import from base:
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using typename base_t::rank_type;
     using base_t::to_rank;
     using base_t::assign_rank;

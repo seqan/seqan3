@@ -84,7 +84,7 @@ protected:
     //!\privatesection
 
     //!\brief Value to char conversion table.
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'A',
         'C',
@@ -100,7 +100,7 @@ protected:
             std::array<rank_type, 256> ret{};
 
             // reverse mapping for characters and their lowercase
-            for (size_t rnk = 0u; rnk < value_size; ++rnk)
+            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
             {
                 ret[         rank_to_char[rnk] ] = rnk;
                 ret[to_lower(rank_to_char[rnk])] = rnk;
@@ -126,7 +126,7 @@ protected:
     };
 
     //!\brief The complement table.
-    static const std::array<dna4, value_size> complement_table;
+    static const std::array<dna4, alphabet_size> complement_table;
 };
 
 // ------------------------------------------------------------------
@@ -179,7 +179,7 @@ inline dna4_vector operator""_dna4(char const * s, std::size_t n)
 // dna4 (deferred definition)
 // ------------------------------------------------------------------
 
-constexpr std::array<dna4, dna4::value_size> dna4::complement_table
+constexpr std::array<dna4, dna4::alphabet_size> dna4::complement_table
 {
     'T'_dna4,    // complement of 'A'_dna4
     'G'_dna4,    // complement of 'C'_dna4

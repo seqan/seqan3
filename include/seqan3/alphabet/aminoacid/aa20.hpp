@@ -86,7 +86,7 @@ public:
 
 protected:
     //!\brief Value to char conversion table.
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'A',
         'C',
@@ -122,7 +122,7 @@ protected:
                 c = 15; // value of 'S', because that appears most frequently
 
             // reverse mapping for characters and their lowercase
-            for (rank_type rnk = 0u; rnk < value_size; ++rnk)
+            for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
             {
                 ret[static_cast<rank_type>(         rank_to_char[rnk]) ] = rnk;
                 ret[static_cast<rank_type>(to_lower(rank_to_char[rnk]))] = rnk;

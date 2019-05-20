@@ -8,7 +8,7 @@ class ab : public alphabet_base<ab, 2>
 {
 private:
     // map 0 -> A and 1 -> B
-    static std::array<char_type, value_size> constexpr rank_to_char{'A', 'B'};
+    static std::array<char_type, alphabet_size> constexpr rank_to_char{'A', 'B'};
 
     // map every letter to rank zero, except Bs
     static std::array<rank_type, 256> constexpr char_to_rank

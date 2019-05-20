@@ -37,7 +37,7 @@ namespace seqan3
  * automatically deduces the rank type from the size, it further defines all required member functions and types; the
  * derived type needs to define only the following two tables as static member variables:
  *
- *   * `static std::array<char_type, value_size> constexpr rank_to_char` that defines for every possible rank value
+ *   * `static std::array<char_type, alphabet_size> constexpr rank_to_char` that defines for every possible rank value
  *     the corresponding char value.
  *   * `static std::array<rank_type, 256> constexpr char_to_rank` that defines for every possible character value the
  *     corresponding rank value.
@@ -166,14 +166,14 @@ public:
      */
     constexpr derived_type & assign_rank(rank_type const c) noexcept
     {
-        assert(static_cast<size_t>(c) < static_cast<size_t>(value_size));
+        assert(static_cast<size_t>(c) < static_cast<size_t>(alphabet_size));
         rank = c;
         return static_cast<derived_type &>(*this);
     }
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static detail::min_viable_uint_t<size> constexpr value_size = size;
+    static detail::min_viable_uint_t<size> constexpr alphabet_size = size;
 
     //!\name Comparison operators
     //!\{
@@ -295,7 +295,7 @@ public:
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr bool value_size = 1;
+    static constexpr bool alphabet_size = 1;
 
     //!\name Comparison operators
     //!\{

@@ -81,7 +81,7 @@ protected:
     //!\privatesection
 
     //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'A',
         'B',
@@ -104,7 +104,7 @@ protected:
     static constexpr std::array<rank_type, 256> char_to_rank = dna15::char_to_rank;
 
     //!\copydoc seqan3::dna4::complement_table
-    static const std::array<rna15, value_size> complement_table;
+    static const std::array<rna15, alphabet_size> complement_table;
 };
 
 // ------------------------------------------------------------------
@@ -157,7 +157,7 @@ inline rna15_vector operator""_rna15(char const * s, std::size_t n)
 // rna15 (deferred definition)
 // ------------------------------------------------------------------
 
-constexpr std::array<rna15, rna15::value_size> rna15::complement_table
+constexpr std::array<rna15, rna15::alphabet_size> rna15::complement_table
 {
     'U'_rna15,    // complement of 'A'_rna15
     'V'_rna15,    // complement of 'B'_rna15
