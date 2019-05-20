@@ -524,7 +524,7 @@ inline std::from_chars_result sign_combinator(_It first, _It last, value_type & 
     }
     else
     {
-        if (x <= (tl::max)())
+        if (x <= to_unsigned(tl::max()))
         {
             value = x;
             return r;
