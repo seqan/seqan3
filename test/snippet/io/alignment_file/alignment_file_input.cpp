@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/persist.hpp>
@@ -24,7 +25,7 @@ r001  147 ref 37 30 9M         =  7 -39 CAGCGGCAT         * NM:i:1
 )//![sam_file]";
 
         std::ofstream file_stream{"/tmp/my.sam"};
-        std::ranges::ostreambuf_iterator stream_it{file_stream};
+        seqan3::ostreambuf_iterator stream_it{file_stream};
 
         std::string sam_file{sam_file_raw};
         auto sam_view = sam_file | seqan3::view::single_pass_input;
