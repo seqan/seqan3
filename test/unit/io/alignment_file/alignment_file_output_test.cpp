@@ -82,6 +82,12 @@ TEST(general, construct_by_filename)
                       unhandled_extension_error );
     }
 
+    /* unknown file */
+    {
+        test::tmp_filename filename{"I/do/not/exist.sam"};
+        EXPECT_THROW( alignment_file_output<>{filename.get_path()}, file_open_error );
+    }
+
     /* filename + fields */
     {
         test::tmp_filename filename{"alignment_file_output_constructor.sam"};

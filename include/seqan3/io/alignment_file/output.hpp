@@ -294,7 +294,7 @@ public:
     {
         // open stream
         if (!primary_stream->good())
-            throw file_open_error{"Could not open file " + filename.string() + " for reading."};
+            throw file_open_error{"Could not open file " + filename.string() + " for writing."};
 
         // possibly add intermediate compression stream
         secondary_stream = detail::make_secondary_ostream(*primary_stream, filename);
