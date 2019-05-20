@@ -122,7 +122,7 @@ struct fm_index_default_traits
 template <std::ranges::RandomAccessRange text_t, FmIndexTraits fm_index_traits = fm_index_default_traits>
 //!\cond
     requires Semialphabet<innermost_value_type_t<text_t>> &&
-             alphabet_size_v<innermost_value_type_t<text_t>> <= 256
+             alphabet_size<innermost_value_type_t<text_t>> <= 256
 //!\endcond
 class fm_index
 {
@@ -251,7 +251,7 @@ public:
                           | view::to_rank
                           | std::view::transform([] (uint8_t const r)
                           {
-                              if constexpr (alphabet_size_v<char_type> == 256)
+                              if constexpr (alphabet_size<char_type> == 256)
                               {
                                   if (r == 255)
                                       throw std::out_of_range("The input text cannot be indexed, because for full"
@@ -316,7 +316,7 @@ public:
 
         sdsl::int_vector<8> tmp_text(text_size - 1); // last text in collection needs no delimiter
 
-        uint8_t delimiter = alphabet_size_v<char_type> >= 255 ? 255 : alphabet_size_v<char_type> + 1;
+        uint8_t delimiter = alphabet_size<char_type> >= 255 ? 255 : alphabet_size<char_type> + 1;
 
         std::vector<uint8_t> tmp = text
                                    | view::deep{view::to_rank}
@@ -324,7 +324,7 @@ public:
                                    {
                                        std::view::transform([] (uint8_t const r)
                                        {
-                                           if constexpr (alphabet_size_v<char_type> >= 255)
+                                           if constexpr (alphabet_size<char_type> >= 255)
                                            {
                                                if (r >= 254)
                                                    throw std::out_of_range("The input text cannot be indexed, because"

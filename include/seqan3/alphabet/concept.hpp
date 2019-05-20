@@ -582,12 +582,12 @@ inline constexpr auto assign_char_strictly_to = detail::adl::only::assign_char_s
 } // namespace seqan3
 
 // ============================================================================
-// alphabet_size_v
+// alphabet_size
 // ============================================================================
 
 namespace seqan3::detail::adl::only
 {
-/*!\brief Functor definition used indirectly by for seqan3::detail::alphabet_size_v.
+/*!\brief Functor definition used indirectly by for seqan3::detail::alphabet_size.
  * \tparam alph_t   The type being queried.
  * \tparam s_alph_t `alph_t` with cvref removed and possibly wrapped in std::type_identity; never user-provide this!
  * \ingroup alphabet
@@ -622,6 +622,13 @@ public:
         return impl(priority_tag<2>{}, s_alph_t{});
     }
 };
+
+//!\cond
+// required to prevent https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89953
+template <typename alph_t>
+    requires requires { { alphabet_size_fn<alph_t>{} }; }
+inline constexpr auto alphabet_size_obj = alphabet_size_fn<alph_t>{};
+//!\endcond
 
 } // namespace seqan3::detail::adl::only
 
@@ -668,9 +675,10 @@ namespace seqan3
  */
 template <typename alph_t>
 //!\cond
-    requires requires { { detail::adl::only::alphabet_size_fn<alph_t>{}() }; }
+    requires requires { { detail::adl::only::alphabet_size_fn<alph_t>{} }; } &&
+             requires { { detail::adl::only::alphabet_size_obj<alph_t>() }; }
 //!\endcond
-inline constexpr auto alphabet_size_v = detail::adl::only::alphabet_size_fn<alph_t>{}();
+inline constexpr auto alphabet_size = detail::adl::only::alphabet_size_obj<alph_t>();
 
 // ============================================================================
 // Semialphabet
@@ -692,7 +700,7 @@ inline constexpr auto alphabet_size_v = detail::adl::only::alphabet_size_fn<alph
  *     * `t` shall model std::CopyConstructible and be std::is_nothrow_copy_constructible
  *     * move construction shall not be more efficient than copy construction; this implies no dynamic memory
  *       (de-)allocation [this is a semantic requirement that cannot be checked]
- *   3. seqan3::alphabet_size_v needs to be defined for `t`
+ *   3. seqan3::alphabet_size needs to be defined for `t`
  *   4. seqan3::to_rank needs to be defined for objects of type `t`
  *
  * See the documentation pages for the respective requirements.
@@ -723,7 +731,7 @@ SEQAN3_CONCEPT Semialphabet =
     std::is_nothrow_copy_constructible_v<t> &&
     requires (t v)
 {
-    requires seqan3::alphabet_size_v<t> >= 0;
+    requires seqan3::alphabet_size<t> >= 0;
 
     { seqan3::to_rank(v) };
 };

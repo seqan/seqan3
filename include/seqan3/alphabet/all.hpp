@@ -123,7 +123,7 @@
  *
  * |                                  | seqan3::Semialphabet | seqan3::WritableSemialphabet | seqan3::Alphabet | seqan3::WritableAlphabet | Aux |
  * |----------------------------------|:--------------------:|:----------------------------:|:----------------:|:------------------------:|:---:|
- * | seqan3::alphabet_size_v          | ✅                    | ✅                            | ✅                | ✅                        |     |
+ * | seqan3::alphabet_size            | ✅                    | ✅                            | ✅                | ✅                        |     |
  * | seqan3::to_rank                  | ✅                    | ✅                            | ✅                | ✅                        |     |
  * | seqan3::alphabet_rank_t          | ✅                    | ✅                            | ✅                | ✅                        |  🔗 |
  * | seqan3::assign_rank_to           |                      | ✅                            |                  | ✅                        |     |

@@ -71,7 +71,7 @@ class bitcompressed_vector
 {
 private:
     //!\brief The number of bits needed to represent a single letter of the alphabet_type.
-    static constexpr size_t bits_per_letter = std::ceil(std::log2(alphabet_size_v<alphabet_type>));
+    static constexpr size_t bits_per_letter = std::ceil(std::log2(alphabet_size<alphabet_type>));
 
     static_assert(bits_per_letter <= 64, "Alphabet must be representable in at most 64bit.");
 

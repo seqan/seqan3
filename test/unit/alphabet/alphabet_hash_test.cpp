@@ -29,7 +29,7 @@ TYPED_TEST(alphabet_hashing, hash)
         std::hash<TypeParam> h{};
         if constexpr (std::Same<TypeParam, char>)
         {
-            for (size_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
+            for (size_t i = 0; i < alphabet_size<TypeParam>/2; ++i)
             {
                 assign_rank_to(i, t0);
                 ASSERT_EQ(h(t0), i);
@@ -37,7 +37,7 @@ TYPED_TEST(alphabet_hashing, hash)
         }
         else
         {
-            for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
+            for (size_t i = 0; i < alphabet_size<TypeParam>; ++i)
             {
                 assign_rank_to(i, t0);
                 ASSERT_EQ(h(t0), i);
@@ -58,7 +58,7 @@ TYPED_TEST(alphabet_hashing, hash)
         std::hash<TypeParam const> h{};
         if constexpr (std::Same<TypeParam, char>)
         {
-            for (size_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
+            for (size_t i = 0; i < alphabet_size<TypeParam>/2; ++i)
             {
                 TypeParam const t0 = assign_rank_to(i, TypeParam{});
                 ASSERT_EQ(h(t0), i);
@@ -66,7 +66,7 @@ TYPED_TEST(alphabet_hashing, hash)
         }
         else
         {
-            for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
+            for (size_t i = 0; i < alphabet_size<TypeParam>; ++i)
             {
                 TypeParam const t0 = assign_rank_to(i, TypeParam{});
                 ASSERT_EQ(h(t0), i);
