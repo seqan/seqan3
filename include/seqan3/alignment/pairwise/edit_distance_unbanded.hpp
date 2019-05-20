@@ -320,20 +320,8 @@ private:
             return true;
 
         if constexpr (is_global)
-        {
-            if (last_block == 0)  // [[unlikely]]
-            {
-                // Note: This is a special case where we hit before the first query character (i.e. score_mask == 0 &&
-                // last_block == 0), which means that there is NO score in the entire column that is below the max_error.
-                // This can't happen in the semi-global setting, because the first row in the score matrix is always
-                // filled with zeros.
-
-                // manually set the next last active cell
-                score_mask = 1;
-                advance_score(vp[last_block], vn[last_block], score_mask);
+            if (last_block == 0u)  // [[unlikely]]
                 return false;
-            }
-        }
 
         last_block--;
 
