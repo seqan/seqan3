@@ -104,23 +104,6 @@ public:
         return active_row + (score <= max_errors);
     }
 
-    /*!\brief Computes delta score between `vp` and `vn` at position `offset`.
-     * \param  vp     \copydoc score_matrix_state::vp
-     * \param  vn     \copydoc score_matrix_state::vn
-     * \param  offset Delta Score at this position within machine word.
-     * \return Delta score at `offset` position; Value can be {-1, 0, +1}.
-     */
-    static score_type score_delta_within_word(word_type const & vp, word_type const & vn, uint8_t const offset) noexcept
-    {
-        using bitset = std::bitset<word_size>;
-        assert(offset < word_size);
-
-        score_type const p = bitset(vp)[offset] ? 1u : 0u;
-        score_type const n = bitset(vn)[offset] ? 1u : 0u;
-
-        return p - n;
-    }
-
     /*!\brief Computes delta score between `vp` and `vn`.
      * \param  vp     \copydoc score_matrix_state::vp
      * \param  vn     \copydoc score_matrix_state::vn
@@ -153,8 +136,11 @@ public:
         for (; current_row + word_size <= row; ++word_idx, current_row += word_size)
             score += score_delta_of_word(column.vp[word_idx], column.vn[word_idx]);
 
-        for (size_t offset = 0u; current_row + offset <= row; ++offset)
-            score += score_delta_within_word(column.vp[word_idx], column.vn[word_idx], offset);
+        if (row >= current_row)
+        {
+            word_type const mask = (1u << (row - current_row + 1u)) - 1u;
+            score += score_delta_of_word(column.vp[word_idx] & mask, column.vn[word_idx] & mask);
+        }
 
         return -score;
     }
