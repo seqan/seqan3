@@ -61,6 +61,12 @@ TEST(structure_file_output_class, construct_by_filename)
         EXPECT_THROW(structure_file_out<>{filename.get_path()}, unhandled_extension_error);
     }
 
+    /* unknown file */
+    {
+        test::tmp_filename filename{"I/do/not/exist.dbn"};
+        EXPECT_THROW(structure_file_out<>{filename.get_path()}, file_open_error);
+    }
+
     /* non-existent file*/
     {
         EXPECT_THROW(structure_file_out<>{"/dev/nonexistant/foobarOOO"}, file_open_error);

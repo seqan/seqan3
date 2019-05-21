@@ -91,6 +91,12 @@ TEST(general, construct_by_filename)
                       unhandled_extension_error );
     }
 
+    /* unknown file */
+    {
+        test::tmp_filename filename{"I/do/not/exist.fasta"};
+        EXPECT_THROW( sequence_file_output<>{filename.get_path()}, file_open_error );
+    }
+
     /* filename + fields */
     {
         test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
