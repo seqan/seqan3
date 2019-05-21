@@ -407,6 +407,11 @@ namespace seqan3::view
  *
  * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/translation.hpp>
+ * ```
+ *
  * ### View properties
  *
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
@@ -685,6 +690,11 @@ namespace seqan3::view
  * \details
  *
  * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
+ *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/translation.hpp>
+ * ```
  *
  * ### View properties
  *

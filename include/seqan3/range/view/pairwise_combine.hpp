@@ -674,6 +674,11 @@ namespace seqan3::view
  * since it does not return a reference to the represented type but a prvalue. Thus this iterator might not be usable
  * within some legacy algorithms of the STL. But it is guaranteed to work with the ranges algorithms.
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/pairwise_combine.hpp>
+ * ```
+ *
  * ### View properties
  *
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                       |

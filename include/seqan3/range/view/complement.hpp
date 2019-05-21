@@ -32,6 +32,11 @@ namespace seqan3::view
  *
  * Calls seqan3::NucleotideAlphabet::complement() on every element of the input range.
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/complement.hpp>
+ * ```
+ *
  * ### View properties
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply

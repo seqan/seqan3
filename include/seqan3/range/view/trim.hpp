@@ -91,6 +91,11 @@ namespace seqan3::view
  *
  * This view can be used to do easy quality based trimming of sequences.
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/trim.hpp>
+ * ```
+ *
  * ### View properties
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply

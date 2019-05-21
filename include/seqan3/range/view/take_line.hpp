@@ -43,6 +43,11 @@ namespace seqan3::view
  * but for *single pass input ranges* this means that any endline characters after the returned range are also consumed
  * (this potentially includes multiple newline characters).
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/take_line.hpp>
+ * ```
+ *
  * ### View properties
  *
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
