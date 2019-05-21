@@ -603,19 +603,6 @@ public:
     }
     //!\}
 
-    //!\brief Returns a list of valid file extensions.
-    //!\returns std::vector over std::string with all valid file extensions specified by `valid_formats`.
-    static std::vector<std::string> valid_file_extensions()
-    {
-        std::vector<std::string> extensions;
-        detail::for_each_type([&extensions] (auto t_identity)
-        {
-            using format_t = typename decltype(t_identity)::type;
-            std::ranges::copy(format_t::file_extensions, std::back_inserter(extensions));
-        }, valid_formats{});
-        return extensions;
-    }
-
     //!\brief The options are public and its members can be set directly.
     sequence_file_output_options options;
 
