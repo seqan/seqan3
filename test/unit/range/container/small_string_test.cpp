@@ -111,6 +111,29 @@ TEST(small_string, implicit_conversion)
     EXPECT_EQ(str, "hello"s);  // explicit
 }
 
+constexpr bool erase_test()
+{
+    small_string em{"hello"};
+    em.erase();
+    bool res = em.empty();
+
+    small_string em1{"hello"};
+    em1.erase(2);
+    res = res && (em1 == small_string<5>{"he"});
+
+    small_string em2{"hello"};
+    em2.erase(2, 2);
+    res = res && (em2 == small_string<5>{"heo"});
+
+    return res;
+}
+
+TEST(small_string, erase)
+{
+    constexpr bool res = erase_test();
+    EXPECT_TRUE(res);
+}
+
 TEST(small_string, concat)
 {
     {
