@@ -21,6 +21,22 @@
 
 using namespace seqan3;
 
+struct dummy_file
+{
+
+    struct format1
+    {
+        static inline std::vector<std::string> file_extensions{ {"fa"}, {"fasta"}};
+    };
+
+    struct format2
+    {
+        static inline std::vector<std::string> file_extensions{ {"sam"}, {"bam"}};
+    };
+
+    using valid_formats = type_list<format1, format2>;
+};
+
 std::string const basic_options_str = "OPTIONS"
                                       "Basic options:"
                                       "-h, --help Prints the help page."
@@ -47,8 +63,8 @@ TEST(validator_test, fullfill_concept)
     EXPECT_TRUE(Validator<arithmetic_range_validator>);
     EXPECT_TRUE(Validator<value_list_validator<double>>);
     EXPECT_TRUE(Validator<value_list_validator<std::string>>);
-    EXPECT_TRUE(Validator<input_file_validator>);
-    EXPECT_TRUE(Validator<output_file_validator>);
+    EXPECT_TRUE(Validator<input_file_validator<>>);
+    EXPECT_TRUE(Validator<output_file_validator<>>);
     EXPECT_TRUE(Validator<input_directory_validator>);
     EXPECT_TRUE(Validator<output_directory_validator>);
     EXPECT_TRUE(Validator<regex_validator>);
@@ -90,6 +106,11 @@ TEST(validator_test, input_file)
             does_not_exist.replace_extension();
             input_file_validator my_validator{formats};
             EXPECT_THROW(my_validator(does_not_exist), parser_invalid_argument);
+        }
+
+        {  // read from file
+            input_file_validator<dummy_file> my_validator{};
+            EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
         }
 
         std::filesystem::path file_in_path;
@@ -135,11 +156,19 @@ TEST(validator_test, input_file)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Valid input file formats: fa, sam, fasta."} +
+                               "          desc Valid input file formats: [fa, sam, fasta]"} +
                                basic_options_str +
                                basic_version_str;
         EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
     }
+}
+
+TEST(validator_test, input_file_ext_from_file)
+{
+    // Give as a template argument the seqan3 file type to get all valid extensions for this file.
+    input_file_validator<dummy_file> validator{};
+
+    EXPECT_EQ(validator.get_help_page_message(), "Valid input file formats: [fa, fasta, sam, bam]");
 }
 
 TEST(validator_test, output_file)
@@ -166,7 +195,7 @@ TEST(validator_test, output_file)
 
         { // file has wrong format.
             output_file_validator my_validator{std::vector{std::string{"sam"}}};
-                EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
+            EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
         }
 
         { // file has no extension.
@@ -174,6 +203,11 @@ TEST(validator_test, output_file)
             no_extension.replace_extension();
             output_file_validator my_validator{formats};
             EXPECT_THROW(my_validator(no_extension), parser_invalid_argument);
+        }
+
+        {  // read from file
+            output_file_validator<dummy_file> my_validator{};
+            EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
         }
 
         std::filesystem::path file_out_path;
@@ -220,11 +254,19 @@ TEST(validator_test, output_file)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Valid output file formats: fa, sam, fasta."} +
+                               "          desc Valid output file formats: [fa, sam, fasta]"} +
                                basic_options_str +
                                basic_version_str;
         EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
     }
+}
+
+TEST(validator_test, output_file_ext_from_file)
+{
+    // Give as a template argument the seqan3 file type to get all valid extensions for this file.
+    output_file_validator<dummy_file> validator{};
+
+    EXPECT_EQ(validator.get_help_page_message(), "Valid output file formats: [fa, fasta, sam, bam]");
 }
 
 TEST(validator_test, input_directory)
@@ -937,7 +979,7 @@ TEST(validator_test, chaining_validators)
                                basic_options_str +
                                "    -s, --string-option (std::string)"
                                "          desc Default:. Value must match the pattern '(/[^/]+)+/.*\\.[^/\\.]+$'. "
-                               "          Valid output file formats:  sa, so."
+                               "          Valid output file formats:  [sa, so]"
                                "          Value must match the pattern '.*'."} +
                                basic_version_str;
         EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),

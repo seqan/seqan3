@@ -55,7 +55,6 @@ TEST(misc, valid_file_extensions)
 
 TEST(misc, valid_compression_extensions)
 {
-
     std::vector<std::string> valid_compression = detail::valid_file_extensions<detail::compression_formats>();
 
     #if defined(SEQAN3_HAS_ZLIB)
