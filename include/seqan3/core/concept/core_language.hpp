@@ -173,7 +173,7 @@ SEQAN3_CONCEPT Trivial = TriviallyCopyable<t> && TriviallyDestructible<t> && std
 
 /*!\interface   seqan3::StandardLayout
  * \brief       Resolves to std::is_standard_layout_v<t>.
- * \sa          http://en.cppreference.com/w/cpp/concept/StandardLayoutType
+ * \sa          https://en.cppreference.com/w/cpp/named_req/StandardLayoutType
  */
 //!\cond
 template <typename t>
