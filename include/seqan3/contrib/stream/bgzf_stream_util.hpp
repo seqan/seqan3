@@ -77,7 +77,7 @@ template <>
 struct CompressionContext<detail::bgzf_compression>:
     CompressionContext<detail::gz_compression>
 {
-    static constexpr size_t BLOCK_HEADER_LENGTH = detail::magic_header<detail::bgzf_compression>.size();
+    static constexpr size_t BLOCK_HEADER_LENGTH = detail::bgzf_compression::magic_header.size();
     unsigned char headerPos;
 };
 
@@ -192,7 +192,7 @@ _compressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
     assert(sizeof(unsigned) == 4u);
 
     // 1. COPY HEADER
-    std::ranges::copy(detail::magic_header<detail::bgzf_compression>, dstBegin);
+    std::ranges::copy(detail::bgzf_compression::magic_header, dstBegin);
 
     // 2. COMPRESS
     compressInit(ctx);
@@ -234,15 +234,15 @@ _compressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
 inline bool
 _bgzfCheckHeader(char const * header)
 {
-    const char FLG_FEXTRA = detail::magic_header<detail::bgzf_compression>[3];
-    const char BGZF_ID1   = detail::magic_header<detail::bgzf_compression>[12];
-    const char BGZF_ID2   = detail::magic_header<detail::bgzf_compression>[13];
-    const char BGZF_SLEN  = detail::magic_header<detail::bgzf_compression>[14];
-    const char BGZF_XLEN  = detail::magic_header<detail::bgzf_compression>[10];
+    const char FLG_FEXTRA = detail::bgzf_compression::magic_header[3];
+    const char BGZF_ID1   = detail::bgzf_compression::magic_header[12];
+    const char BGZF_ID2   = detail::bgzf_compression::magic_header[13];
+    const char BGZF_SLEN  = detail::bgzf_compression::magic_header[14];
+    const char BGZF_XLEN  = detail::bgzf_compression::magic_header[10];
 
-    return (header[0] == static_cast<char>(detail::magic_header<detail::gz_compression>[0]) &&
-            header[1] == static_cast<char>(detail::magic_header<detail::gz_compression>[1]) &&
-            header[2] == static_cast<char>(detail::magic_header<detail::gz_compression>[2]) &&
+    return (header[0] == static_cast<char>(detail::gz_compression::magic_header[0]) &&
+            header[1] == static_cast<char>(detail::gz_compression::magic_header[1]) &&
+            header[2] == static_cast<char>(detail::gz_compression::magic_header[2]) &&
             (header[3] & FLG_FEXTRA) != 0 &&
             _bgzfUnpack16(header + 10) == BGZF_XLEN &&
             header[12] == BGZF_ID1 &&
