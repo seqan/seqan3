@@ -232,6 +232,11 @@ namespace seqan3::view
  * internally so all view requirements like constant copy are satisfied. However construction and copying might be
  * slightly slower, because of reference counting.
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/persist.hpp>
+ * ```
+ *
  * ### View properties
  *
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |

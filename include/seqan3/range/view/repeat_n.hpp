@@ -58,6 +58,11 @@ namespace seqan3::view
  *
  * \details
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/repeat_n.hpp>
+ * ```
+ *
  * ### View properties
  *
  * This view is **source-only**, it can only be at the beginning of a pipe of range transformations.

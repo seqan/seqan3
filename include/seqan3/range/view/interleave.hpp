@@ -326,6 +326,11 @@ namespace seqan3::view
  * std::ranges::RandomAccessRange and std::ranges::SizedRange a more efficient data structure is returned
  * (otherwise it returns exactly the above combination of views).
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/interleave.hpp>
+ * ```
+ *
  * ### View properties
  *
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |

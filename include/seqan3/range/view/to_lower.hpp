@@ -31,6 +31,11 @@ namespace seqan3::view
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/to_lower.hpp>
+ * ```
+ *
  * ### View properties
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
