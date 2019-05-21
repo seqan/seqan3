@@ -224,7 +224,6 @@ public:
             score_mask = (word_type)1 << (local_max_errors % word_size);
             last_block = std::min(local_max_errors / word_size, block_count - 1);
             _score = local_max_errors + 1;
-            _best_score = _score;
         }
 
         word_type vp0{static_cast<word_type>(~0)};
@@ -281,9 +280,26 @@ private:
             _score++;
         else if ((N & mask) != (word_type)0)
             _score--;
+    }
+
+    //!\brief Returns true if the current active cell is within the last row.
+    bool is_last_active_cell_within_last_row()
+    {
+        return (score_mask == last_score_mask) && (last_block == vp.size() - 1);
+    }
+
+    //!\brief Update the current best known score if the current score is better.
+    void update_best_score()
+    {
+        if constexpr(is_global)
+            _best_score = _score;
 
         if constexpr(is_semi_global)
         {
+            // we have to make sure that update_best_score is only called after a score update within the
+            // last row.
+            assert(is_last_active_cell_within_last_row());
+
             _best_score_col = (_score <= _best_score) ? database_it : _best_score_col;
             _best_score     = (_score <= _best_score) ? _score : _best_score;
         }
@@ -328,7 +344,7 @@ private:
                 break;
         }
 
-        if ((score_mask == last_score_mask) && (last_block == vp.size() - 1))
+        if (is_last_active_cell_within_last_row())
             return on_hit();
         else
         {
@@ -339,14 +355,15 @@ private:
         return false;
     }
 
-    //!\brief Will be called if a hit was found (e.g., score < max_errors).
+    //!\brief Will be called if a hit was found (e.g., score <= max_errors).
     bool on_hit()
     {
         assert(_score <= max_errors);
-        // _setFinderEnd(finder);
-        //
-        // if constexpr(is_global)
-        //     _setFinderLength(finder, endPosition());
+
+        if constexpr(is_semi_global)
+            update_best_score();
+
+        // TODO: call external on_hit functor
 
         return false;
     }
@@ -377,7 +394,7 @@ private:
             large_patterns();
 
         if constexpr(is_global)
-            _best_score = _score;
+            update_best_score();
     }
 
 public:
@@ -468,6 +485,10 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
         compute_step<false>(b, hp, hn, vp[0], vn[0], _, _, _);
         advance_score(hp, hn, score_mask);
 
+        // semi-global without max_errors guarantees that the score stays within the last row
+        if constexpr(is_semi_global && !use_max_errors)
+            update_best_score();
+
         if constexpr(use_max_errors)
         {
             // updating the last active cell
@@ -502,6 +523,10 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
             compute_step<true>(b, hp, hn, vp[current_block], vn[current_block], carry_d0, carry_hp, carry_hn);
         }
         advance_score(hp, hn, score_mask);
+
+        // semi-global without max_errors guarantees that the score stays within the last row
+        if constexpr(is_semi_global && !use_max_errors)
+            update_best_score();
 
         if constexpr(use_max_errors)
         {
