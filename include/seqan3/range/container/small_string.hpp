@@ -228,6 +228,33 @@ public:
         sz = count;
         data_[sz] = '\0';
     }
+
+    /*!\brief Removes specified elements from the container.
+     * \param   index Remove the elements starting at `index`. Defaults to `0`.
+     * \param   count The number of elements to remove. Defaults to `max_size()`.
+     * \returns `*this`
+     *
+     * Invalidates iterators and references at or after the point of the erase, including the end() iterator.
+     *
+     * The iterator `pos` must be valid and dereferenceable. Thus the end() iterator (which is valid, but is not
+     * dereferencable) cannot be used as a value for pos.
+     *
+     * ### Complexity
+     *
+     * Linear in size().
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    constexpr small_string & erase(size_type index = 0, size_type count = max_size()) noexcept
+    {
+        assert(index <= this->size());
+
+        iterator it = this->begin() + index;
+        base_t::erase(it, it + std::min<size_type>(count, this->size() - index));
+        return *this;
+    }
     //!\}
 
     /*!\name Concatenation
