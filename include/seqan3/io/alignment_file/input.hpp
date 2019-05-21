@@ -1005,6 +1005,26 @@ alignment_file_input(stream_type & stream,
                             type_list<file_format>,
                             typename std::remove_reference_t<stream_type>::char_type>;
 
+//!\brief Deduce file_format and stream char type, default the rest.
+template <IStream2                 stream_type,
+          AlignmentFileInputFormat file_format>
+alignment_file_input(stream_type && stream,
+                     file_format const &)
+    -> alignment_file_input<typename alignment_file_input<>::traits_type,        // actually use the default
+                            typename alignment_file_input<>::selected_field_ids, // actually use the default
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_type>::char_type>;
+
+//!\brief Deduce file_format and stream char type, default the rest.
+template <IStream2                 stream_type,
+          AlignmentFileInputFormat file_format>
+alignment_file_input(stream_type & stream,
+                     file_format const &)
+    -> alignment_file_input<typename alignment_file_input<>::traits_type,        // actually use the default
+                            typename alignment_file_input<>::selected_field_ids, // actually use the default
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_type>::char_type>;
+
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, default the rest.
 template <std::ranges::ForwardRange           ref_ids_t,
           std::ranges::ForwardRange           ref_sequences_t,
