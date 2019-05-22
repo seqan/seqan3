@@ -1,5 +1,5 @@
 #include <string>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/drop.hpp>               // provides view::drop
 #include <seqan3/std/ranges>                        // provides std::view::reverse
 

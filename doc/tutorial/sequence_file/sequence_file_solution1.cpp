@@ -31,8 +31,8 @@ IIIIHHGIIIIHHGIIIH
 write_file_dummy_struct go{};
 
 //![solution]
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/all.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/std/filesystem>
 
 using namespace seqan3;

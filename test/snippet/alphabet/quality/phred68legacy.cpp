@@ -1,5 +1,5 @@
 #include <seqan3/alphabet/quality/phred68legacy.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 using namespace seqan3;
 int main()

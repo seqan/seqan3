@@ -9,8 +9,8 @@
 
 #include <sstream>
 
-#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 using namespace seqan3;
 using namespace seqan3::detail;

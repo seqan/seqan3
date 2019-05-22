@@ -1,8 +1,8 @@
 //! [all]
 #include <iostream>
 
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 
 using namespace seqan3;
 

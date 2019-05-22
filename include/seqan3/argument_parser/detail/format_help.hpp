@@ -20,8 +20,8 @@
 #include <range/v3/view/repeat_n.hpp>
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/detail/terminal.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/version.hpp>
 
 namespace seqan3::detail

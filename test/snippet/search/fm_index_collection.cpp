@@ -1,5 +1,5 @@
 #include <vector>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 
 using namespace seqan3;

@@ -1,4 +1,4 @@
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/get.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>

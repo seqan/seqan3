@@ -3,7 +3,7 @@
 #include <vector>                            // for std::vector
 #include <seqan3/argument_parser/all.hpp>    // for argument_parser
 #include <seqan3/io/sequence_file/input.hpp> // for sequence_file_input
-#include <seqan3/io/stream/debug_stream.hpp> // for debug_stream
+#include <seqan3/core/debug_stream.hpp> // for debug_stream
 
 using namespace seqan3;
 
