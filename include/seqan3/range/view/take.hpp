@@ -230,7 +230,7 @@ private:
             return rhs == lhs;
         }
 
-        //!\brief Checks whether `*this` is equal to `rhs`.
+        //!\brief Checks whether `*this` is not equal to `rhs`.
         constexpr bool operator!=(sentinel_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         {
