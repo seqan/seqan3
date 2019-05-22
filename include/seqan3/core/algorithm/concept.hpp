@@ -55,11 +55,9 @@ class config_element_base;
  * \{
  */
 /*!\var id
- * \memberof seqan3::detail::ConfigElement
  * \brief Algorithm specific static id used for internal validation checks.
  */
 /*!\var value
- * \memberof seqan3::detail::ConfigElement
  * \brief Member storing the configuration value.
  */
 //!\}

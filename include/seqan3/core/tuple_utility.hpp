@@ -131,7 +131,23 @@ constexpr auto tuple_split(tuple_t<ts...> && t)
  *
  * \returns A new tuple of tuples with the left side of the split and the right side of the split.
  *
- * \copydetails seqan3::tuple_split
+ * \details
+ *
+ * Splits a tuple into two tuples, while the element at the split position will be contained in the second tuple.
+ * Note, that the returned tuples can be empty. For this reason it is not possible to use tuple like objects,
+ * that cannot be empty, i.e. std::pair. Using such an object will emit an compiler error.
+ *
+ * ### example
+ *
+ * \snippet test/snippet/core/tuple_utility.cpp usage
+ *
+ * ### Complexity
+ *
+ * Linear in the number of elements.
+ *
+ * ### Thread safety
+ *
+ * Concurrent invocations of this functions are thread safe.
  */
 template <typename pivot_t, tuple_like_concept tuple_t>
 constexpr auto tuple_split(tuple_t && t)
@@ -171,4 +187,5 @@ constexpr auto tuple_pop_front(tuple_t && t)
     return std::get<1>(tuple_split<1>(std::forward<tuple_t>(t)));
 }
 //!\}
+
 } // namespace seqan3
