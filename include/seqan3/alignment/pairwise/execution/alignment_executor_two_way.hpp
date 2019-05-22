@@ -156,7 +156,7 @@ private:
      * \{
      */
 
-    //\brief Sets the buffer pointer.
+    //!\brief Sets the buffer pointer.
     void setg(buffer_pointer beg, buffer_pointer end)
     {
         gptr = beg;
@@ -228,6 +228,8 @@ private:
  * \relates seqan3::detail::alignment_executor_two_way
  * \{
  */
+
+//!\brief Deduce the type from the provided arguments and set the sequential execution handler.
 template <typename resource_rng_t, typename func_t>
 alignment_executor_two_way(resource_rng_t &&, func_t) ->
     alignment_executor_two_way<resource_rng_t, func_t, execution_handler_sequential>;

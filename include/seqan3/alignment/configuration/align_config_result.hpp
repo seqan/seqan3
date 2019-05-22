@@ -113,4 +113,4 @@ result() -> result<detail::with_score_type>;
 template <typename with_type>
 result(with_type) -> result<remove_cvref_t<with_type>>;
 //!\}
-} //namespace seqan3::align_cfg
+} // namespace seqan3::align_cfg

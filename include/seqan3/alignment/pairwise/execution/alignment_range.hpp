@@ -68,6 +68,10 @@ class alignment_range
         /*!\name Read
          * \{
          */
+
+         /*!\brief Access the pointed-to element.
+          * \return A reference to the current element.
+          */
         reference operator*() const noexcept
         {
             return range_ptr->cache;
@@ -77,12 +81,15 @@ class alignment_range
         /*!\name Increment operators
          * \{
          */
+
+        //!\brief Increments the iterator by one.
         iterator_type & operator++(/*pre*/) noexcept
         {
             range_ptr->next();
             return *this;
         }
 
+        //!\brief Returns an iterator incremented by one.
         void operator++(int /*post*/) noexcept
         {
             ++(*this);
@@ -93,22 +100,26 @@ class alignment_range
          * \{
          */
 
+        //!\brief Checks whether `*this` is equal to the sentinel.
         constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
         {
             return range_ptr->eof();
         }
 
+        //!\brief Checks whether `lhs` is equal to `rhs`.
         friend constexpr bool operator==(std::ranges::default_sentinel_t const & lhs,
                                          iterator_type const & rhs) noexcept
         {
             return rhs == lhs;
         }
 
+        //!\brief Checks whether `*this` is not equal to the sentinel.
         constexpr bool operator!=(std::ranges::default_sentinel_t const & rhs) const noexcept
         {
             return !(*this == rhs);
         }
 
+        //!\brief Checks whether `lhs` is not equal to `rhs`.
         friend constexpr bool operator!=(std::ranges::default_sentinel_t const & lhs,
                                          iterator_type const & rhs) noexcept
         {
@@ -170,6 +181,13 @@ public:
     /*!\name Iterators
      * \{
      */
+
+    /*!\brief Returns an iterator to the first element of the alignment range.
+     * \return An iterator to the first element.
+     *
+     * \details
+     * Invocation of this function will trigger the computation of the first alignment.
+     */
     constexpr iterator begin()
     {
         if (!eof_flag)
@@ -180,6 +198,13 @@ public:
     const_iterator begin() const = delete;
     const_iterator cbegin() const = delete;
 
+    /*!\brief Returns a sentinel signaling the end of the alignment range.
+     * \return a sentinel.
+     *
+     * \details
+     * The alignment range is an input range and the end is reached when the internal buffer over the alignment
+     * results has signaled end-of-stream.
+     */
     constexpr sentinel end() noexcept
     {
         return {};

@@ -26,41 +26,38 @@ template <typename score_type>
 constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
 
 /*!\interface seqan3::detail::Matrix <>
- * \brief Defines the requirements of an matrix (e.g. score matrices, trace matrices).
+ * \brief Defines the requirements of a matrix (e.g. score matrices, trace matrices).
  * \tparam matrix_t The type the concept check is performed on (the putative matrix).
  * \ingroup alignment_matrix
  */
 /*!\name Requirements for seqan3::detail::Matrix
-* \brief You can expect these members on all types that implement seqan3::detail::Matrix.
-* \memberof seqan3::detail::Matrix
-* \{
-*/
+ * \brief You can expect these members on all types that implement seqan3::detail::Matrix.
+ * \relates seqan3::detail::Matrix
+ * \{
+ */
 //!\cond
 template <typename matrix_t>
 SEQAN3_CONCEPT Matrix = requires(matrix_t m)
 {
 //!\endcond
+
     /*!\typedef typedef IMPLEMENTATION_DEFINED entry_type;
      * \brief The type of an entry in the matrix.
-     * \memberof seqan3::detail::Matrix
      */
     typename matrix_t::entry_type;
 
     /*!\fn size_t cols() const noexcept;
      * \brief The number of columns in the matrix.
-     * \memberof seqan3::detail::Matrix
      */
     { m.cols() } -> size_t;
 
     /*!\fn size_t rows() const noexcept;
      * \brief The number of rows in the matrix.
-     * \memberof seqan3::detail::Matrix
      */
     { m.rows() } -> size_t;
 
     /*!\fn entry_type at(size_t row, size_t col) const noexcept;
      * \brief The entry of the matrix at position (\a row, \a col), e.g. `matrix[row][col]`.
-     * \memberof seqan3::detail::Matrix
      */
     { m.at(size_t{0u}, size_t{0u}) } -> typename matrix_t::entry_type;
 //!\cond
@@ -69,10 +66,11 @@ SEQAN3_CONCEPT Matrix = requires(matrix_t m)
 //!\}
 
 /*!\name Comparison operators
+ * \ingroup alignment_matrix
  * \{
  */
+
 /*!\brief Whether two alignment matrices are equal.
- * \relates Matrix
  * \tparam    matrix1_t The type of the left hand side matrix.
  * \tparam    matrix2_t The type of the right hand side matrix.
  * \param[in] lhs       Compare the left hand side matrix
@@ -99,7 +97,6 @@ inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 }
 
 /*!\brief Whether two alignment matrices are equal.
- * \relates Matrix
  * \tparam    matrix1_t The type of the left hand side matrix.
  * \tparam    matrix2_t The type of the right hand side matrix.
  * \param[in] lhs       Compare the left hand side matrix
@@ -115,4 +112,4 @@ inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 }
 //!\}
 
-} // namespace seqan3
+} // namespace seqan3::detail

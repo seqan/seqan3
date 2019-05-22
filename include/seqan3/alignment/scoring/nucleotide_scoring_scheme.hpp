@@ -71,6 +71,8 @@ public:
  * \relates seqan3::nucleotide_scoring_scheme
  * \{
  */
+
+//!\brief Default constructed objects deduce to `int8_t`.
 nucleotide_scoring_scheme() -> nucleotide_scoring_scheme<int8_t>;
 
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
@@ -80,6 +82,7 @@ template <Arithmetic score_arg_type>
 nucleotide_scoring_scheme(match_score<score_arg_type>,
                           mismatch_score<score_arg_type>) -> nucleotide_scoring_scheme<int8_t>;
 
+//!\brief Deduce the score type from the provided matrix.
 template <Arithmetic score_arg_type>
 nucleotide_scoring_scheme(std::array<std::array<score_arg_type, 15>, 15>) -> nucleotide_scoring_scheme<score_arg_type>;
 //!\}

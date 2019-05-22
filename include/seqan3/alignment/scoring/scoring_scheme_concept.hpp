@@ -36,25 +36,26 @@ namespace seqan3
  * \memberof seqan3::ScoringScheme
  * \{
  */
+
 /*!\typedef     typedef IMPLEMENTATION_DEFINED score_type;
  * \brief       The type returned by seqan3::ScoringScheme::score(), usually a seqan3::Arithmetic.
- * \memberof seqan3::ScoringScheme
  *
  * \details
  * \attention This is a concept requirement, not an actual typedef (however types satisfying this concept
  * will provide an implementation).
  */
+
 /*!\fn          score_type score(alph1_t const alph1, alph2_t const alph2);
  * \brief       Compute the score of two letters
  * \param alph1 First letter.
  * \param alph2 Second letter.
- * \memberof seqan3::ScoringScheme
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
  * will provide an implementation).
  */
 //!\}
+
 //!\cond
 template <typename t, Alphabet alphabet_t, Alphabet alphabet2_t = alphabet_t>
 SEQAN3_CONCEPT ScoringScheme = requires (t scheme,
