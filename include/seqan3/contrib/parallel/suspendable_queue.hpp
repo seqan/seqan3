@@ -38,26 +38,6 @@ namespace seqan3::contrib
 // ----------------------------------------------------------------------------
 // Class ConcurrentQueue
 // ----------------------------------------------------------------------------
-/*!
- * @class ConcurrentSuspendableQueue Concurrent Suspendable Queue
- * @extends ConcurrentQueue
- * @headerfile <seqan/parallel.h>
- * @brief Thread-safe suspendable queue for multiple producers and multiple consumers.
- *
- * @signature template <typename TValue, typename TSpec>
- *            class ConcurrentQueue<TValue, Suspendable<TSpec> >;
- *
- * @tparam TValue Element type of the queue.
- * @tparam TSpec  Tag for further specializing the Concurrent Queue. Default is <tt>void</tt>.
- *
- * In contrast to the standard @Class.ConcurrentQueue@ this queue suspends the caller
- * if it pops a value when the queue was empty or appends a value to a full
- * fixed-size queue.
- *
- * The implementation uses Mutexes and Events to optionally suspend the calling
- * thread and uses a @Class.AllocString@ as ring buffer.
- *
- */
 
 template <typename TSpec = void>
 struct Tag{};
