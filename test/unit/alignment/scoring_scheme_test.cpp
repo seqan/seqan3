@@ -131,7 +131,7 @@ TYPED_TEST(generic, member_types)
         EXPECT_TRUE((std::is_same_v<score_t, int8_t>));
     }
 
-    EXPECT_EQ(matrix_size, alphabet_size_v<alph_t>);
+    EXPECT_EQ(matrix_size, alphabet_size<alph_t>);
     EXPECT_TRUE((std::is_same_v<std::remove_const_t<decltype(matrix_size)>, matrix_size_t>));
     EXPECT_TRUE((std::is_same_v<matrix_size_t, uint8_t>));
 
@@ -147,9 +147,9 @@ TYPED_TEST(generic, simple_score)
     // Test set function
     scheme.set_simple_scheme(match_score{5}, mismatch_score{-3});
 
-    for (uint8_t i = 0; i < alphabet_size_v<alph_t>; ++i)
+    for (uint8_t i = 0; i < alphabet_size<alph_t>; ++i)
     {
-        for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
+        for (uint8_t j = 0; j < alphabet_size<alph_t>; ++j)
         {
             int8_t expected = i == j ? 5 : -3;
             EXPECT_EQ(expected, scheme.score(assign_rank_to(i, alph_t{}), assign_rank_to(j, alph_t{})));
@@ -190,9 +190,9 @@ TYPED_TEST(generic, hamming)
     // Test set function
     scheme.set_hamming_distance();
 
-    for (uint8_t i = 0; i < alphabet_size_v<alph_t>; ++i)
+    for (uint8_t i = 0; i < alphabet_size<alph_t>; ++i)
     {
-        for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
+        for (uint8_t j = 0; j < alphabet_size<alph_t>; ++j)
         {
             int8_t expected = i == j ? 0 : -1;
             EXPECT_EQ(expected, scheme.score(assign_rank_to(i, alph_t{}), assign_rank_to(j, alph_t{})));
@@ -206,8 +206,8 @@ TYPED_TEST(generic, custom)
 
     typename TypeParam::matrix_type matrix;
 
-    for (uint8_t i = 0; i < alphabet_size_v<alph_t>; ++i)
-        for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
+    for (uint8_t i = 0; i < alphabet_size<alph_t>; ++i)
+        for (uint8_t j = 0; j < alphabet_size<alph_t>; ++j)
             matrix[i][j] = i * i + j;
 
     // Test constructor
@@ -240,8 +240,8 @@ TYPED_TEST(generic, convertability)
 
     typename TypeParam::matrix_type matrix;
 
-    for (uint8_t i = 0; i < alphabet_size_v<alph_t>; ++i)
-        for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
+    for (uint8_t i = 0; i < alphabet_size<alph_t>; ++i)
+        for (uint8_t j = 0; j < alphabet_size<alph_t>; ++j)
             matrix[i][j] = i * i + j;
 
     TypeParam scheme{};

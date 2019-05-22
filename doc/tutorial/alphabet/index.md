@@ -87,7 +87,7 @@ You can test the validity of a character by calling seqan3::char_is_valid_for.
 It returns true if the character is valid and false otherwise.
 
 ## Obtaining the alphabet size
-You can retrieve the alphabet size by accessing the class member variable `value_size`
+You can retrieve the alphabet size by accessing the class member variable `alphabet_size`
 which is implemented in most seqan3::Alphabet instances.
 
 \snippet alphabet_main.cpp size

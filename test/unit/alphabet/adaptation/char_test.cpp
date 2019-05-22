@@ -89,8 +89,8 @@ TYPED_TEST(char_adaptation, assign_rank)
     EXPECT_EQ((assign_rank_to(67, l)), TypeParam{'C'});
 }
 
-TYPED_TEST(char_adaptation, alphabet_size_v)
+TYPED_TEST(char_adaptation, alphabet_size)
 {
-    EXPECT_EQ(alphabet_size_v<TypeParam>,
+    EXPECT_EQ(alphabet_size<TypeParam>,
         static_cast<size_t>(std::numeric_limits<TypeParam>::max()) + 1 - std::numeric_limits<TypeParam>::lowest());
 }

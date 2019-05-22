@@ -84,7 +84,7 @@ protected:
     //!\privatesection
 
     //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'A',
         'C',
@@ -105,7 +105,7 @@ protected:
                 c = 3; // == 'N'
 
             // reverse mapping for characters and their lowercase
-            for (size_t rnk = 0u; rnk < value_size; ++rnk)
+            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
             {
                 ret[         rank_to_char[rnk] ] = rnk;
                 ret[to_lower(rank_to_char[rnk])] = rnk;
@@ -120,7 +120,7 @@ protected:
     };
 
     //!\copydoc seqan3::dna4::complement_table
-    static const std::array<dna5, value_size> complement_table;
+    static const std::array<dna5, alphabet_size> complement_table;
 };
 
 // ------------------------------------------------------------------
@@ -173,7 +173,7 @@ inline dna5_vector operator""_dna5(char const * s, std::size_t n)
 // dna5 (deferred definition)
 // ------------------------------------------------------------------
 
-constexpr std::array<dna5, dna5::value_size> dna5::complement_table
+constexpr std::array<dna5, dna5::alphabet_size> dna5::complement_table
 {
     'T'_dna5,    // complement of 'A'_dna5
     'G'_dna5,    // complement of 'C'_dna5

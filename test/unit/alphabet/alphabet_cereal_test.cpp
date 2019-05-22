@@ -27,12 +27,12 @@ TYPED_TEST(alphabet_cereal, serialisation)
 {
     TypeParam letter;
 
-    assign_rank_to(1 % alphabet_size_v<TypeParam>, letter);
+    assign_rank_to(1 % alphabet_size<TypeParam>, letter);
     test::do_serialisation(letter);
 
     std::vector<TypeParam> vec;
     vec.resize(10);
     for (unsigned i = 0; i < 10; ++i)
-        assign_rank_to(i % alphabet_size_v<TypeParam>, vec[i]);
+        assign_rank_to(i % alphabet_size<TypeParam>, vec[i]);
     test::do_serialisation(vec);
 }

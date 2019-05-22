@@ -203,14 +203,14 @@ template <typename ...alternative_types>
              //TODO same char_type
 //!\endcond
 class alphabet_variant : public alphabet_base<alphabet_variant<alternative_types...>,
-                                               (static_cast<size_t>(alphabet_size_v<alternative_types>) + ...),
+                                               (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
                                                char> //TODO underlying char t
 
 {
 private:
     //!\brief The base type.
     using base_t = alphabet_base<alphabet_variant<alternative_types...>,
-                                                   (static_cast<size_t>(alphabet_size_v<alternative_types>) + ...),
+                                                   (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
                                                    char>;
     //!\brief Befriend the base type.
     friend base_t;
@@ -222,7 +222,7 @@ private:
                   "All types in a alphabet_variant must be distinct.");
 
 public:
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_char;
     using base_t::to_rank;
     using base_t::assign_rank;
@@ -338,7 +338,7 @@ public:
     template <size_t index>
     constexpr bool is_alternative() const noexcept
     {
-        static_assert(index < value_size, "The alphabet_variant contains less alternatives than you are checking.");
+        static_assert(index < alphabet_size, "The alphabet_variant contains less alternatives than you are checking.");
         return (to_rank() >= partial_sum_sizes[index]) && (to_rank() < partial_sum_sizes[index + 1]);
     }
 
@@ -407,14 +407,14 @@ public:
      * \{
      */
     template <typename alternative_t>
-    constexpr bool operator==(alternative_t const & rhs) const noexcept
+    constexpr bool operator==(alternative_t const rhs) const noexcept
         requires holds_alternative<alternative_t>()
     {
         return is_alternative<alternative_t>() && (convert_unsafely_to<alternative_t>() == rhs);
     }
 
     template <typename alternative_t>
-    constexpr bool operator!=(alternative_t const & rhs) const noexcept
+    constexpr bool operator!=(alternative_t const rhs) const noexcept
         requires holds_alternative<alternative_t>()
     {
         return !operator==(rhs);
@@ -429,7 +429,7 @@ public:
      * \{
      */
     template <typename indirect_alternative_type>
-    constexpr bool operator==(indirect_alternative_type const & rhs) const noexcept
+    constexpr bool operator==(indirect_alternative_type const rhs) const noexcept
     //!\cond
         requires detail::one_alternative_is<alphabet_variant,
                                             detail::weakly_equality_comparable_with,
@@ -443,7 +443,7 @@ public:
     }
 
     template <typename indirect_alternative_type>
-    constexpr bool operator!=(indirect_alternative_type const & rhs) const noexcept
+    constexpr bool operator!=(indirect_alternative_type const rhs) const noexcept
     //!\cond
         requires detail::one_alternative_is<alphabet_variant,
                                             detail::weakly_equality_comparable_with,
@@ -464,7 +464,7 @@ protected:
     template <size_t index, bool throws>
     constexpr auto convert_impl() const noexcept(!throws) -> meta::at_c<alternatives, index>
     {
-        static_assert(index < value_size, "The alphabet_variant contains less alternatives than you are checking.");
+        static_assert(index < alphabet_size, "The alphabet_variant contains less alternatives than you are checking.");
         using alternative_t = meta::at_c<alternatives, index>;
 
         if constexpr (throws)
@@ -483,14 +483,14 @@ protected:
      * sum up to the position of each alternative.
      *
      * An array which contains the prefix sum over all
-     * alternative_types::value_size's.
+     * alternative_types::alphabet_size's.
      *
      */
     static constexpr std::array partial_sum_sizes = []() constexpr
     {
         constexpr size_t N = sizeof...(alternative_types) + 1;
 
-        std::array<rank_type, N> partial_sum{0, alphabet_size_v<alternative_types>...};
+        std::array<rank_type, N> partial_sum{0, seqan3::alphabet_size<alternative_types>...};
         for (size_t i = 1u; i < N; ++i)
             partial_sum[i] += partial_sum[i-1];
 
@@ -504,7 +504,7 @@ protected:
      * and alternative.
      *
      */
-    static constexpr std::array<char_type, value_size> rank_to_char = []() constexpr
+    static constexpr std::array<char_type, alphabet_size> rank_to_char = []() constexpr
     {
         // Explicitly writing assign_rank_to_char within assign_rank_to_char
         // causes this bug (g++-7 and g++-8):
@@ -517,12 +517,12 @@ protected:
         auto assign_value_to_char = [assign_rank_to_char] (auto alternative, auto & value_to_char, auto & value) constexpr
         {
             using alternative_t = std::decay_t<decltype(alternative)>;
-            for (size_t i = 0u; i < alphabet_size_v<alternative_t>; ++i, ++value)
+            for (size_t i = 0u; i < seqan3::alphabet_size<alternative_t>; ++i, ++value)
                 value_to_char[value] = assign_rank_to_char(alternative, i);
         };
 
         unsigned value = 0u;
-        std::array<char_type, value_size> value_to_char{};
+        std::array<char_type, alphabet_size> value_to_char{};
 
         // initializer lists guarantee sequencing;
         // the following expression behaves as:
@@ -603,7 +603,7 @@ protected:
  *\{
  */
 template <typename lhs_t, typename ...alternative_types>
-constexpr bool operator==(lhs_t const & lhs, alphabet_variant<alternative_types...> const & rhs) noexcept
+constexpr bool operator==(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
 //!\cond
     requires detail::WeaklyEqualityComparableByMembersWith<alphabet_variant<alternative_types...>, lhs_t> &&
              !detail::WeaklyEqualityComparableByMembersWith<lhs_t, alphabet_variant<alternative_types...>>
@@ -613,7 +613,7 @@ constexpr bool operator==(lhs_t const & lhs, alphabet_variant<alternative_types.
 }
 
 template <typename lhs_t, typename ...alternative_types>
-constexpr bool operator!=(lhs_t const & lhs, alphabet_variant<alternative_types...> const & rhs) noexcept
+constexpr bool operator!=(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
 //!\cond
     requires detail::WeaklyEqualityComparableByMembersWith<alphabet_variant<alternative_types...>, lhs_t> &&
              !detail::WeaklyEqualityComparableByMembersWith<lhs_t, alphabet_variant<alternative_types...>>

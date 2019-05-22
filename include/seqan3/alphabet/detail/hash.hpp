@@ -65,7 +65,7 @@ struct hash<urng_t>
         hash<alphabet_t> h{};
         for (auto const character : range)
         {
-            result *= seqan3::alphabet_size_v<alphabet_t>;
+            result *= seqan3::alphabet_size<alphabet_t>;
             result += h(character);
         }
         return result;

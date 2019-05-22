@@ -56,7 +56,7 @@ public:
     // Import from base:
     using typename base_t::char_type;
     using typename base_t::rank_type;
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_rank;
 
     /*!\name Constructors, destructor and assignment

@@ -250,19 +250,19 @@ TEST(alphabet_variant_test, rank_type)
     EXPECT_TRUE((std::is_same_v<alphabet3_t::rank_type, uint16_t>));
 }
 
-TEST(alphabet_variant_test, value_size)
+TEST(alphabet_variant_test, alphabet_size_)
 {
     using alphabet1_t = alphabet_variant<dna4, dna5, gap>;
     using alphabet2_t = alphabet_variant<gap, dna5, dna4>;
     using alphabet3_t = alphabet_variant<char, gap>;
 
-    EXPECT_TRUE((std::is_same_v<decltype(alphabet1_t::value_size), const uint8_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(alphabet2_t::value_size), const uint8_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(alphabet3_t::value_size), const uint16_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet1_t::alphabet_size), const uint8_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet2_t::alphabet_size), const uint8_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet3_t::alphabet_size), const uint16_t>));
 
-    EXPECT_EQ(alphabet1_t::value_size, 10);
-    EXPECT_EQ(alphabet2_t::value_size, 10);
-    EXPECT_EQ(alphabet3_t::value_size, 257);
+    EXPECT_EQ(alphabet1_t::alphabet_size, 10);
+    EXPECT_EQ(alphabet2_t::alphabet_size, 10);
+    EXPECT_EQ(alphabet3_t::alphabet_size, 257);
 }
 
 TEST(alphabet_variant_test, convert_by_index)

@@ -62,7 +62,7 @@ static void assign_rank_(benchmark::State& state)
         {
             benchmark::DoNotOptimize
             (
-                assign_rank_to(r % alphabet_size_v<alphabet_t>, chr)
+                assign_rank_to(r % alphabet_size<alphabet_t>, chr)
             );
         }
     }
@@ -82,7 +82,7 @@ static void to_rank_(benchmark::State& state)
         {
             benchmark::DoNotOptimize
             (
-                to_rank(assign_rank_to(r % alphabet_size_v<alphabet_t>, chr))
+                to_rank(assign_rank_to(r % alphabet_size<alphabet_t>, chr))
             );
         }
     }
