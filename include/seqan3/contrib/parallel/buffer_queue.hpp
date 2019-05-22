@@ -20,7 +20,7 @@
 #include <type_traits>
 #include <vector>
 
-#include <seqan3/contrib/parallel/spin_delay.hpp>
+#include <seqan3/core/parallel/detail/spin_delay.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/algorithm>
@@ -90,7 +90,7 @@ public:
         requires std::ConvertibleTo<value2_t, value_t>
     void push(value2_t && value)
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         for (;;)
         {
@@ -110,7 +110,7 @@ public:
         requires std::ConvertibleTo<value2_t, value_t>
     queue_op_status wait_push(value2_t && value)
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         for (;;)
         {
@@ -127,7 +127,7 @@ public:
 
     value_type value_pop() // throws if closed
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         value_type value{};
         for (;;)
@@ -147,7 +147,7 @@ public:
 
     queue_op_status wait_pop(value_type & value)
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         queue_op_status status;
         for (;;)
@@ -370,7 +370,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
     size_type roundSize = this->roundSize;
     size_type headReadPos;
     size_type newHeadReadPos;
-    spin_delay spinDelay;
+    detail::spin_delay spinDelay;
 
     // wait for queue to become filled
     while (true)
@@ -401,7 +401,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
 
     // wait for pending previous reads and synchronize headPos to headReadPos
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
         size_type old = headReadPos;
         while (!this->headPos.compare_exchange_weak(old, newHeadReadPos, std::memory_order_acq_rel))
         {
@@ -444,7 +444,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(
 {
     // try to push the value
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         std::shared_lock read_lock(mutex);
 
@@ -474,7 +474,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(
 
                 // wait for pending previous writes and synchronise tailPos to tailWritePos
                 {
-                    spin_delay delay{};
+                    detail::spin_delay delay{};
                     size_type old = tailWritePos;
                     while (!this->tailPos.compare_exchange_weak(old, newTailWritePos, std::memory_order_acq_rel))
                     {

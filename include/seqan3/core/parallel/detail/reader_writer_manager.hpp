@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::contrib::reader_writer_manager and utility objects.
+ * \brief Provides seqan3::detail::reader_writer_manager.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -15,15 +15,15 @@
 #include <cassert>
 #include <mutex>
 
-#include <seqan3/contrib/parallel/latch.hpp>
-#include <seqan3/contrib/parallel/spin_delay.hpp>
+#include <seqan3/core/parallel/detail/latch.hpp>
+#include <seqan3/core/parallel/detail/spin_delay.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/std/new>
 
-namespace seqan3::contrib
+namespace seqan3::detail
 {
-//!\cond
-//!\brief A strong type to set the writer count of a seqan3::contrib::reader_writer_manager.
+
+//!\brief A strong type to set the writer count of a seqan3::detail::reader_writer_manager.
 struct writer_count : public detail::strong_type<size_t, writer_count>
 {
     //!\brief An alias for the base type.
@@ -33,7 +33,7 @@ struct writer_count : public detail::strong_type<size_t, writer_count>
     using base_t::base_t;
 };
 
-//!\brief A strong type to set the reader count of a seqan3::contrib::reader_writer_manager.
+//!\brief A strong type to set the reader count of a seqan3::detail::reader_writer_manager.
 struct reader_count : public detail::strong_type<size_t, reader_count>
 {
     //!\brief An alias for the base type.
@@ -48,8 +48,8 @@ struct reader_count : public detail::strong_type<size_t, reader_count>
  * \details
  *
  * A reader writer manager is a thread coordination mechanism specifically designed to synchronise with a concurrent
- * data structure such as the seqan3::contrib::buffer_queue. In particular, the manager is constructed with a
- * seqan3::contrib::reader_count and a seqan3::contrib::writer_count and offers special functions for readers
+ * data structure such as the seqan3::detail::buffer_queue. In particular, the manager is constructed with a
+ * seqan3::detail::reader_count and a seqan3::detail::writer_count and offers special functions for readers
  * and writers that arrive at the synchronisation point. If all writers arrived at the synchronisation point
  * the associated concurrent data structure is closed by invoking the member method `close()`. This so called
  * completion phase is triggered  by only one of the participating producer threads. Accordingly, no more data can
@@ -66,21 +66,21 @@ class reader_writer_manager
 {
 private:
 
-    //!\brief A strictly scope-based seqan3::contrib::reader_writer_manager wrapper for producer threads.
+    //!\brief A strictly scope-based seqan3::detail::reader_writer_manager wrapper for producer threads.
     class [[nodiscard]] scoped_writer_type
     {
     public:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr scoped_writer_type() = delete;                                           //!< Deleted.
-        constexpr scoped_writer_type(scoped_writer_type const &) = default;                //!< Deleted.
-        constexpr scoped_writer_type(scoped_writer_type &&) = default;                     //!< Defaulted.
-        constexpr scoped_writer_type & operator=(scoped_writer_type const &) = default;    //!< Deleted.
-        constexpr scoped_writer_type & operator=(scoped_writer_type &&) = default;         //!< Defaulted.
+        scoped_writer_type() = delete;                                           //!< Deleted.
+        scoped_writer_type(scoped_writer_type const &) = default;                //!< Deleted.
+        scoped_writer_type(scoped_writer_type &&) = default;                     //!< Defaulted.
+        scoped_writer_type & operator=(scoped_writer_type const &) = default;    //!< Deleted.
+        scoped_writer_type & operator=(scoped_writer_type &&) = default;         //!< Defaulted.
 
         /*!\brief Constructs the scoped writer with the associated manager.
-         * \param _manager The seqan3::contrib::reader_writer_manager.
+         * \param _manager The seqan3::detail::reader_writer_manager.
          */
         explicit scoped_writer_type(reader_writer_manager & _manager) : manager{_manager}
         {}
@@ -96,21 +96,21 @@ private:
         reader_writer_manager & manager;
     };
 
-    //!\brief A strictly scope-based seqan3::contrib::reader_writer_manager wrapper for consumer threads.
+    //!\brief A strictly scope-based seqan3::detail::reader_writer_manager wrapper for consumer threads.
     class [[nodiscard]] scoped_reader_type
     {
     public:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr scoped_reader_type() = delete;                                           //!< Deleted.
-        constexpr scoped_reader_type(scoped_reader_type const &) = default;                //!< Deleted.
-        constexpr scoped_reader_type(scoped_reader_type &&) = default;                     //!< Defaulted.
-        constexpr scoped_reader_type & operator=(scoped_reader_type const &) = default;    //!< Deleted.
-        constexpr scoped_reader_type & operator=(scoped_reader_type &&) = default;         //!< Defaulted.
+        scoped_reader_type() = delete;                                           //!< Deleted.
+        scoped_reader_type(scoped_reader_type const &) = default;                //!< Deleted.
+        scoped_reader_type(scoped_reader_type &&) = default;                     //!< Defaulted.
+        scoped_reader_type & operator=(scoped_reader_type const &) = default;    //!< Deleted.
+        scoped_reader_type & operator=(scoped_reader_type &&) = default;         //!< Defaulted.
 
         /*!\brief Constructs the scoped reader with the associated manager.
-         * \param _manager The seqan3::contrib::reader_writer_manager.
+         * \param _manager The seqan3::detail::reader_writer_manager.
          */
         explicit scoped_reader_type(reader_writer_manager & _manager) : manager{_manager}
         {}
@@ -154,7 +154,9 @@ public:
      * Throws std::invalid_argument if reader count or writer count is less than 1.
      */
     template <typename concurrent_t>
+    //!\cond
         requires requires { std::declval<concurrent_t>().close(); }  // requires closable concurrent data structure.
+    //!\endcond
     reader_writer_manager(reader_count const rcount, writer_count const wcount, concurrent_t & ds) :
         reader_latch{static_cast<ptrdiff_t>(rcount.get())},
         writer_latch{static_cast<ptrdiff_t>(wcount.get())},
@@ -175,11 +177,11 @@ public:
      *
      * ### Exception
      *
-     * no-throw
+     * Guaranteed not to throw.
      *
      * ### Thread safety
      *
-     * thread-safe
+     * Thread-safe.
      */
     void writer_arrive_and_wait() noexcept
     {
@@ -198,11 +200,11 @@ public:
      *
      * ### Exception
      *
-     * no-throw
+     * Guaranteed not to throw.
      *
      * ### Thread safety
      *
-     * thread-safe
+     * Thread-safe.
      */
     void writer_arrive() noexcept
     {
@@ -221,11 +223,11 @@ public:
      *
      * ### Exception
      *
-     * no-throw
+     * Guaranteed not to throw.
      *
      * ### Thread safety
      *
-     * thread-safe
+     * Thread-safe.
      */
     void reader_arrive_and_wait() noexcept
     {
@@ -240,11 +242,11 @@ public:
      *
      * ### Exception
      *
-     * no-throw
+     * Guaranteed not to throw.
      *
      * ### Thread safety
      *
-     * thread-safe
+     * Thread-safe.
      */
     void reader_arrive() noexcept
     {
@@ -258,7 +260,15 @@ public:
      *
      * If a thread calls this function it will become a participating producer thread for the monitored concurrent
      * data structure. On destruction of the returned RAII wrapper class
-     * seqan3::contrib::reader_writer_manager::writer_arrive is called automatically.
+     * seqan3::detail::reader_writer_manager::writer_arrive is called automatically.
+     *
+     * ### Exception
+     *
+     * Guaranteed not to throw.
+     *
+     * ### Thread safety
+     *
+     * Thread-safe.
      */
     scoped_writer_type register_writer() noexcept
     {
@@ -272,7 +282,15 @@ public:
      *
      * If a thread calls this function it will become a participating consumer thread for the monitored concurrent
      * data structure. On destruction of the returned RAII wrapper class
-     * seqan3::contrib::reader_writer_manager::reader_arrive is called automatically.
+     * seqan3::detail::reader_writer_manager::reader_arrive is called automatically.
+     *
+     * ### Exception
+     *
+     * Guaranteed not to throw.
+     *
+     * ### Thread safety
+     *
+     * Thread-safe.
      */
     scoped_reader_type register_reader() noexcept
     {
@@ -290,5 +308,4 @@ private:
     std::once_flag                                             flag;
 };
 
-//!\endcond
-} // namespace seqan3::contrib
+} // namespace seqan3::detail
