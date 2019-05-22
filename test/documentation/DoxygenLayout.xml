@@ -22,8 +22,10 @@
         </tab>
         <tab type="usergroup" visible="yes" title="About" intro="">
             <tab type="user" visible="yes" title="API/ABI stability"    url="\ref about_api"           intro=""/>
-            <tab type="user" visible="yes" title="Copyright"            url="\ref about_copyright"     intro=""/>
             <tab type="user" visible="yes" title="Citing"               url="\ref about_citing"        intro=""/>
+            <tab type="user" visible="yes" title="Copyright"            url="\ref about_copyright"     intro=""/>
+            <tab type="user" visible="yes" title="Code of Conduct"      url="\ref about_code_of_conduct" intro=""/>
+            <tab type="user" visible="yes" title="Contributing"         url="\ref about_contributing"  intro=""/>
         </tab>
         <tab type="modules" visible="yes" title="API Reference (Modules)" intro=""/>
         <tab type="usergroup" visible="yes" title="API Reference (details)" intro="">

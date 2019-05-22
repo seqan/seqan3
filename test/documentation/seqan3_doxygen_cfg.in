@@ -6,9 +6,11 @@ LAYOUT_FILE            = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/Doxygen
 ## PATHS
 OUTPUT_DIRECTORY       = ${SEQAN3_DOXYGEN_OUTPUT_DIR}
 INCLUDE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
-INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/LICENSE.md
+INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include               \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc                   \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/LICENSE.md            \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CODE_OF_CONDUCT.md    \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CONTRIBUTING.md
 STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
 STRIP_FROM_INC_PATH    = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
 EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}
