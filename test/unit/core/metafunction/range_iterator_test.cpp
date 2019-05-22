@@ -250,21 +250,21 @@ TEST(range_and_iterator, dimension)
 
 TEST(range_and_iterator, compatible)
 {
-    EXPECT_TRUE((compatible_concept<std::vector<int>,
+    EXPECT_TRUE((Compatible<std::vector<int>,
                                     std::list<int>>));
-    EXPECT_TRUE((compatible_concept<std::vector<int>,
+    EXPECT_TRUE((Compatible<std::vector<int>,
                                     std::ranges::iterator_t<std::vector<int>>>));
-    EXPECT_TRUE((compatible_concept<std::vector<int>,
+    EXPECT_TRUE((Compatible<std::vector<int>,
                                     std::ranges::iterator_t<std::vector<int> const>>));
-    EXPECT_TRUE((compatible_concept<std::list<std::vector<char>>,
+    EXPECT_TRUE((Compatible<std::list<std::vector<char>>,
                                     std::ranges::iterator_t<std::vector<std::string>>>));
 
-    EXPECT_FALSE((compatible_concept<std::list<std::vector<char>>,
+    EXPECT_FALSE((Compatible<std::list<std::vector<char>>,
                                      std::string>));
-    EXPECT_FALSE((compatible_concept<std::list<std::vector<char>>,
+    EXPECT_FALSE((Compatible<std::list<std::vector<char>>,
                                      std::ranges::iterator_t<std::string>>));
-    EXPECT_FALSE((compatible_concept<std::list<int>,
+    EXPECT_FALSE((Compatible<std::list<int>,
                                      int>));
-    EXPECT_FALSE((compatible_concept<std::vector<int>,
+    EXPECT_FALSE((Compatible<std::vector<int>,
                                      std::string>));
 }
