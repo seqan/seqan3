@@ -20,7 +20,7 @@
 #include <variant>
 #include <vector>
 
-// #include <seqan3/argument_parser/detail/format_ctd.hpp>
+#include <seqan3/argument_parser/detail/format_ctd.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>
 #include <seqan3/argument_parser/detail/format_html.hpp>
 #include <seqan3/argument_parser/detail/format_man.hpp>
@@ -520,12 +520,11 @@ private:
                     format = detail::format_html{};
                 else if (export_format == "man")
                     format = detail::format_man{};
-                // TODO (smehringer) use when CTD support is available
-                // else if (export_format == "ctd")
-                //     format = detail::format_ctd{};
+                else if (export_format == "ctd")
+                    format = detail::format_ctd{};
                 else
                     throw validation_failed{"Validation failed for option --export-help: "
-                                            "Value must be one of [html, man]"};
+                                            "Value must be one of [html, man, ctd]"};
                 init_standard_options();
                 return;
             }
@@ -609,8 +608,8 @@ private:
                  detail::format_version,
                  detail::format_html,
                  detail::format_man,
-                 detail::format_copyright/*,
-                 detail::format_ctd*/> format{detail::format_help(0)};
+                 detail::format_copyright,
+                 detail::format_ctd> format{detail::format_help(0)};
 
     //!\brief List of option/flag identifiers that are already used.
     std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "copyright"};
