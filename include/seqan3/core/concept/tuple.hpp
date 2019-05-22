@@ -24,14 +24,14 @@
 namespace seqan3::detail
 {
 
-/*!\interface seqan3::detail::tuple_size_concept <>
+/*!\interface seqan3::detail::TupleSize <>
  * \ingroup   core
  * \brief     Subconcept definition for seqan3::tuple_like_concept to test for std::tuple_size-interface.
  * \see       seqan3::tuple_like_concept
  */
 //!\cond
 template <typename tuple_t>
-SEQAN3_CONCEPT tuple_size_concept = requires (tuple_t v)
+SEQAN3_CONCEPT TupleSize = requires (tuple_t v)
 {
     { std::tuple_size<tuple_t>::value } -> size_t;
 };
@@ -85,7 +85,7 @@ struct models_strict_totally_ordered
  * \returns A seqan3::type_list over the element types of the given tuple.
  * \see seqan3::detail::tuple_type_list_t
  */
-template <detail::tuple_size_concept tuple_t>
+template <detail::TupleSize tuple_t>
 struct tuple_type_list
 {
 protected:
@@ -107,7 +107,7 @@ public:
  *
  * \see seqan3::detail::tuple_type_list
  */
-template <detail::tuple_size_concept tuple_t>
+template <detail::TupleSize tuple_t>
 using tuple_type_list_t = typename tuple_type_list<tuple_t>::type;
 } // namespace::seqan3
 
@@ -168,7 +168,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT tuple_like_concept = detail::tuple_size_concept<std::remove_reference_t<t>> && requires(t v)
+SEQAN3_CONCEPT tuple_like_concept = detail::TupleSize<std::remove_reference_t<t>> && requires(t v)
 {
     typename detail::tuple_type_list<remove_cvref_t<t>>::type;
 
