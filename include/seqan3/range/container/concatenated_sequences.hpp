@@ -161,7 +161,7 @@ protected:
     //!\hideinitializer
     // we explicitly check same-ness, because these types may not be fully resolved, yet
     template <typename t>
-    static constexpr bool is_compatible_value = Compatible<value_type, t>                   ||
+    static constexpr bool is_compatible_value = Compatible<value_type, t>                           ||
                                                 std::is_same_v<remove_cvref_t<t>, value_type>       ||
                                                 std::is_same_v<remove_cvref_t<t>, reference>        ||
                                                 std::is_same_v<remove_cvref_t<t>, const_reference>;
