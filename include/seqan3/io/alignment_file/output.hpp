@@ -515,7 +515,7 @@ public:
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
     //!\endcond
     {
-        using default_align_t = std::pair<std::basic_string_view<gapped<char>>, std::basic_string_view<gapped<char>>>;
+        using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         write_record(detail::get_or<field::HEADER_PTR>(r, nullptr),
@@ -562,7 +562,7 @@ public:
         requires tuple_like_concept<tuple_t>
     //!\endcond
     {
-        using default_align_t = std::pair<std::basic_string_view<gapped<char>>, std::basic_string_view<gapped<char>>>;
+        using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
