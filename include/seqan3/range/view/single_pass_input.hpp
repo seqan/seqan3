@@ -342,6 +342,11 @@ namespace seqan3::view
  * Note, the view updates an internal state after moving the associated iterator.
  * Thus, the `const begin` and `const end` are explicitly deleted.
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/single_pass_input.hpp>
+ * ```
+ *
  * ### View properties
  *
  *
