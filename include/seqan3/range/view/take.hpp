@@ -81,6 +81,9 @@ private:
         //!\brief The size parameter to the view.
         size_t max_pos{};
 
+        //!\brief A pointer to host, s.t. the size of the view can shrink on pure input ranges.
+        std::conditional_t<exactly && !std::ForwardIterator<base_base_t>, view_take *, detail::ignore_t> host_ptr;
+
     public:
         /*!\name Constructors, destructor and assignment
          * \brief Exceptions specification is implicitly inherited.
@@ -99,9 +102,11 @@ private:
         {}
 
         //!\brief Constructor that delegates to the CRTP layer and initialises the members.
-        constexpr iterator_type(base_base_t it, size_t const _pos, size_t const _max_pos) noexcept(noexcept(base_t{it})) :
+        constexpr iterator_type(base_base_t it, size_t const _pos, size_t const _max_pos, view_take * host = nullptr) noexcept(noexcept(base_t{it})) :
             base_t{std::move(it)}, pos{_pos}, max_pos(_max_pos)
-        {}
+        {
+            host_ptr = host;
+        }
         //!\}
 
         /*!\name Associated types
@@ -123,6 +128,8 @@ private:
         {
             base_t::operator++();
             ++pos;
+            if constexpr (exactly && !std::ForwardIterator<base_base_t>)
+                --host_ptr->target_size;
             return *this;
         }
 
@@ -330,7 +337,7 @@ public:
      */
     constexpr iterator begin() noexcept
     {
-        return {seqan3::begin(urange), 0, target_size};
+        return {seqan3::begin(urange), 0, target_size, &(*this)};
     }
 
     //!\copydoc begin()

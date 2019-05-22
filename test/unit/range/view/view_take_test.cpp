@@ -225,6 +225,26 @@ TEST(view_take_exactly, underlying_is_shorter)
     EXPECT_EQ(size(v2), 4u); // here be dragons
 }
 
+TEST(view_take_exactly, shrink_size_on_input_ranges)
+{
+    std::string vec{"foobar"};
+    auto v = vec | view::single_pass_input | view::take_exactly(3);
+
+    EXPECT_EQ(std::ranges::size(v), 3u);
+    EXPECT_EQ(*std::ranges::begin(v), 'f');
+
+    auto it = std::ranges::begin(v);
+    ++it;
+
+    EXPECT_EQ(std::ranges::size(v), 2u);
+    EXPECT_EQ(*std::ranges::begin(v), 'o');
+
+    ++it;
+    ++it;
+
+    EXPECT_EQ(std::ranges::size(v), 0u); // view is empty now
+}
+
 // ============================================================================
 //  view_take_exactly_or_throw
 // ============================================================================
