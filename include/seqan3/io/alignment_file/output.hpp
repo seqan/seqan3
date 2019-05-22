@@ -511,7 +511,7 @@ public:
     template <typename record_t>
     void push_back(record_t && r)
     //!\cond
-        requires tuple_like_concept<record_t> &&
+        requires TupleLike<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
     //!\endcond
     {
@@ -559,7 +559,7 @@ public:
     template <typename tuple_t>
     void push_back(tuple_t && t)
     //!\cond
-        requires tuple_like_concept<tuple_t>
+        requires TupleLike<tuple_t>
     //!\endcond
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
@@ -614,7 +614,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy seqan3::output_range_concept and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      *
      * \details
@@ -636,7 +636,7 @@ public:
     template <typename rng_t>
     alignment_file_output & operator=(rng_t && range)
     //!\cond
-        requires std::ranges::InputRange<rng_t> && tuple_like_concept<reference_t<rng_t>>
+        requires std::ranges::InputRange<rng_t> && TupleLike<reference_t<rng_t>>
     //!\endcond
     {
         for (auto && record : range)
@@ -646,7 +646,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy seqan3::std::ranges::InputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
      *
@@ -675,7 +675,7 @@ public:
     template <typename rng_t>
     friend alignment_file_output & operator|(rng_t && range, alignment_file_output & f)
     //!\cond
-        requires std::ranges::InputRange<rng_t> && tuple_like_concept<reference_t<rng_t>>
+        requires std::ranges::InputRange<rng_t> && TupleLike<reference_t<rng_t>>
     //!\endcond
     {
         f = range;
@@ -686,7 +686,7 @@ public:
     template <typename rng_t>
     friend alignment_file_output operator|(rng_t && range, alignment_file_output && f)
     //!\cond
-        requires std::ranges::InputRange<rng_t> && tuple_like_concept<reference_t<rng_t>>
+        requires std::ranges::InputRange<rng_t> && TupleLike<reference_t<rng_t>>
     //!\endcond
     {
         f = range;

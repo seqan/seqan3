@@ -159,7 +159,7 @@ TYPED_TEST(alignment_result_test, alignment)
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).alignment()), alignment_t const &>));
     }
 
-    if constexpr (tuple_like_concept<alignment_t>)
+    if constexpr (TupleLike<alignment_t>)
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(std::string{std::get<0>(tmp.alignment()) | view::persist | view::to_char},

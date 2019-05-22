@@ -427,7 +427,7 @@ private:
 
     /*!\brief Creates a new configuration object by recursively adding the configs from the tuple.
      * \tparam    tuple_t The tuple from which to create a new configuration object; must model
-                          seqan3::detail::tuple_like_concept and must at least have one element.
+                          seqan3::detail::TupleLike and must at least have one element.
      * \param[in] tpl     The tuple to create the configuration from.
      * \returns A new configuration object.
      */

@@ -290,7 +290,7 @@ namespace seqan3
 {
 
 /*!\brief All tuples can be printed by printing their elements separately.
- * \tparam tuple_t Type of the tuple to be printed; must model seqan3::tuple_like_concept.
+ * \tparam tuple_t Type of the tuple to be printed; must model seqan3::TupleLike.
  * \param s The seqan3::debug_stream.
  * \param t The tuple.
  * \relates seqan3::debug_stream_type
@@ -299,7 +299,7 @@ template <typename tuple_t>
 //!\cond
     requires !std::ranges::InputRange<tuple_t> &&
              !Alphabet<tuple_t> && // exclude alphabet_tuple_base
-             tuple_like_concept<remove_cvref_t<tuple_t>>
+             TupleLike<remove_cvref_t<tuple_t>>
 //!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & s, tuple_t && t)
 {

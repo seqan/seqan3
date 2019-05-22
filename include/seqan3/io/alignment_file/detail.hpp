@@ -192,7 +192,7 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
 /*!\brief Creates a CIGAR string (SAM format) given an alignment represented by two aligned sequences.
  * \ingroup alignment_file
  *
- * \tparam alignment_type  Must model the seqan3::tuple_like_concept and must
+ * \tparam alignment_type  Must model the seqan3::TupleLike and must
  *                         have std::tuple_size 2. Each tuple element must model
  *                         std::ForwardRange and its value_type must be comparable
  *                         to seqan3::gap.
@@ -228,7 +228,7 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
  * string would look like this: "3=1X2I3=1X1=2D1=".
  * \sa seqan3::AlignedSequence
  */
-template<tuple_like_concept alignment_type>
+template<TupleLike alignment_type>
 //!\cond
     requires std::tuple_size_v<remove_cvref_t<alignment_type>> == 2
 //!\endcond
@@ -351,7 +351,7 @@ parse_cigar(cigar_input_type && cigar_input)
 /*!\brief Transforms a std::vector of operation-count pairs (representing the cigar string).
  * \ingroup alignment_file
  *
- * \tparam alignment_type The type of alignment; must model seqan3::tuple_like_concept and all tuple element types
+ * \tparam alignment_type The type of alignment; must model seqan3::TupleLike and all tuple element types
  *                        must model seqan3::AlignedSequence.
  *
  * \param[in,out] alignment  The alignment to fill with gaps according to the cigar information.
@@ -371,7 +371,7 @@ parse_cigar(cigar_input_type && cigar_input)
  * ATGCCCCGTTG--C
  * ```
  */
-template <tuple_like_concept alignment_type>
+template <TupleLike alignment_type>
 //!\cond
     requires std::tuple_size_v<remove_cvref_t<alignment_type>> == 2 &&
              detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<alignment_type>>

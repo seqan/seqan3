@@ -61,7 +61,7 @@ TEST_F(record_, definition_tuple_traits)
                                 dna4_vector>));
     EXPECT_EQ(std::tuple_size_v<record_type>, 2ul);
 
-    EXPECT_TRUE(tuple_like_concept<record_type>);
+    EXPECT_TRUE(TupleLike<record_type>);
 }
 
 TEST_F(record_, construction)
