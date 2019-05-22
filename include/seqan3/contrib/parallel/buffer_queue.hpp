@@ -141,7 +141,7 @@ public:
     {
         spin_delay delay{};
 
-        value_type value;
+        value_type value{};
         for (;;)
         {
             auto status = try_pop(value);
