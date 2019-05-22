@@ -80,7 +80,7 @@ public:
      * No-throw guarantee.
      */
     template <size_t N>
-    explicit constexpr small_string(char const (&_lit)[N]) noexcept : small_string{}
+    constexpr small_string(char const (&_lit)[N]) noexcept : small_string{}
     {
         static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of small_string.");
         assign(_lit);

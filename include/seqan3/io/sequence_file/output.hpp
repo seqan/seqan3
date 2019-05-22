@@ -511,7 +511,12 @@ public:
     friend sequence_file_output operator|(rng_t && range, sequence_file_output && f)
         requires tuple_like_concept<reference_t<rng_t>>
     {
+    #if defined(__GNUC__) && (__GNUC__ == 9) // an unreported build problem of GCC9
+        for (auto && record : range)
+            f.push_back(std::forward<decltype(record)>(record));
+    #else // ^^^ workaround | regular solution ↓↓↓
         f = range;
+    #endif
         return std::move(f);
     }
     //!\}
