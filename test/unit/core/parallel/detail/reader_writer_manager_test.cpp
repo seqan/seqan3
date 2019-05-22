@@ -8,9 +8,10 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
-#include <seqan3/contrib/parallel/buffer_queue.hpp>
-#include <seqan3/contrib/parallel/reader_writer_manager.hpp>
+#include <seqan3/core/parallel/detail/reader_writer_manager.hpp>
 
+using namespace seqan3;
+using namespace seqan3::detail;
 using namespace seqan3::contrib;
 
 TEST(reader_writer_manager, parallel)
@@ -25,7 +26,7 @@ TEST(reader_writer_manager, parallel)
 
     EXPECT_GE(threads, 1u);
 
-    size_t job_size = threads * 1000000;
+    uint64_t job_size = threads * 1000000;
 
     fixed_buffer_queue<uint32_t> source_queue{job_size};
     fixed_buffer_queue<uint32_t> target_queue{job_size};
@@ -51,7 +52,7 @@ TEST(reader_writer_manager, parallel)
         }
     };
 
-    uint32_t counter{0};
+    uint64_t counter{0};
 
     // start the producer of source/consumer of target.
     std::thread t1{[&] ()
@@ -62,7 +63,7 @@ TEST(reader_writer_manager, parallel)
             // Initialise source_queue.
             for (size_t i = 0; i < job_size; ++i)
             {
-                queue_op_status status = source_queue.try_push(1);
+                queue_op_status status = source_queue.try_push(i + 1);
                 EXPECT_TRUE(status == queue_op_status::success);
             }
             EXPECT_FALSE(source_queue.is_closed());
@@ -91,7 +92,7 @@ TEST(reader_writer_manager, parallel)
     EXPECT_TRUE(source_queue.is_closed());
     EXPECT_TRUE(target_queue.is_empty());
     EXPECT_TRUE(source_queue.is_empty());
-    EXPECT_EQ(counter, job_size);
+    EXPECT_EQ(counter, static_cast<uint64_t>((job_size * (job_size + 1)) / 2));
 
     for (std::thread & t : pool)
         t.join();

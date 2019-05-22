@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::contrib::latch.
+ * \brief Provides seqan3::detail::latch.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -15,12 +15,12 @@
 #include <atomic>
 #include <cassert>
 
-#include <seqan3/contrib/parallel/spin_delay.hpp>
+#include <seqan3/core/parallel/detail/spin_delay.hpp>
 #include <seqan3/std/new>
 
-namespace seqan3::contrib
+namespace seqan3::detail
 {
-//!\cond
+
 /*!\brief A single-use synchronisation point to coordinate concurrent threads.
  *
  * \details
@@ -75,11 +75,11 @@ public:
      *
      * ### Exception
      *
-     * no-throw
+     * Guaranteed not to throw.
      *
      * ### Thread safety
      *
-     * thread-safe
+     * Thread-safe.
      */
     void arrive(ptrdiff_t n = 1) noexcept
     {
@@ -100,11 +100,11 @@ public:
      *
      * ### Exception
      *
-     * no-throw
+     * Guaranteed not to throw.
      *
      * ### Thread safety
      *
-     * thread-safe
+     * Thread-safe.
      */
     void arrive_and_wait(ptrdiff_t n = 1) noexcept
     {
@@ -118,11 +118,11 @@ public:
      *
      * ### Exception
      *
-     * no-throw
+     * Guaranteed not to throw.
      *
      * ### Thread safety
      *
-     * thread-safe
+     * Thread-safe.
      */
     bool try_wait() const noexcept
     {
@@ -138,11 +138,11 @@ public:
      *
      * ### Exception
      *
-     * no-throw
+     * Guaranteed not to throw.
      *
      * ### Thread safety
      *
-     * thread-safe
+     * Thread-safe.
      */
     void wait() const
     {
@@ -160,5 +160,5 @@ private:
     //!\brief The number of waiting threads.
     alignas(std::hardware_destructive_interference_size) mutable std::atomic<std::ptrdiff_t> num_waiting;
 };
-//!\endcond
-} // namespace seqan3::contrib
+
+} // namespace seqan3::detail

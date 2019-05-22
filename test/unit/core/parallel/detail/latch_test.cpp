@@ -9,7 +9,9 @@
 
 #include <vector>
 
-#include <seqan3/contrib/parallel/latch.hpp>
+#include <seqan3/core/parallel/detail/latch.hpp>
+
+using namespace seqan3::detail;
 
 TEST(latch, arrive_wait)
 {
@@ -17,7 +19,7 @@ TEST(latch, arrive_wait)
     if (threads > 4)
         threads = 4;
 
-    seqan3::contrib::latch completion_latch{threads};
+    latch completion_latch{threads};
     std::atomic<uint32_t> counter{0};
 
     auto work = [&] ()
@@ -46,7 +48,7 @@ TEST(latch, arrive_and_wait)
     if (threads > 4)
         threads = 4;
 
-    seqan3::contrib::latch completion_latch{threads};
+    latch completion_latch{threads};
     std::atomic<uint32_t> counter{0};
 
     auto work = [&] ()

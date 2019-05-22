@@ -15,7 +15,9 @@
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
 
+using namespace seqan3;
 using namespace seqan3::contrib;
+using namespace seqan3::detail;
 
 template <typename sequential_push_t, typename sequential_pop_t>
 void test_buffer_queue_wait_status()
