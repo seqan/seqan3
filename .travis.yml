@@ -29,6 +29,16 @@ linux-gcc-8: &linux-gcc-8
   before_install:
     - export CC="gcc-8" CXX="g++-8"
 
+linux-gcc-9: &linux-gcc-9
+  os: linux
+  compiler: 'g++-9'
+  addons:
+    apt:
+      sources: ['ubuntu-toolchain-r-test']
+      packages: ['g++-9']
+  before_install:
+    - export CC="gcc-9" CXX="g++-9"
+
 # https://docs.travis-ci.com/user/languages/c/#gcc-on-linux
 matrix:
   include:
@@ -36,6 +46,11 @@ matrix:
     env:
       - BUILD=coverage
       - BUILD_TYPE=Debug
+  - << : *linux-gcc-9
+    env:
+      - BUILD=unit
+      - BUILD_TYPE=Release
+      - CXXFLAGS="-std=c++2a"
   - << : *linux-gcc-8
     env:
       - BUILD=unit
