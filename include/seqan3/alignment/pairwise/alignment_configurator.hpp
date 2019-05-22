@@ -37,7 +37,7 @@ namespace seqan3::detail
 //!\ingroup pairwise_alignment
 template <typename value_t>
 SEQAN3_CONCEPT AlignPairwiseValue =
-    tuple_like_concept<value_t> &&
+    TupleLike<value_t> &&
     std::tuple_size_v<value_t> == 2 &&
     std::ranges::ForwardRange<std::tuple_element_t<0, value_t>> &&
     std::ranges::ForwardRange<std::tuple_element_t<1, value_t>>;
@@ -102,7 +102,7 @@ public:
     //!\brief Tests whether the value type of `range_type` is a tuple with exactly 2 members.
     constexpr static bool expects_tuple_like_value_type()
     {
-        return tuple_like_concept<alignment_config_type> &&
+        return TupleLike<alignment_config_type> &&
                std::tuple_size_v<value_type_t<std::ranges::iterator_t<unref_range_type>>> == 2;
     }
 
@@ -292,7 +292,7 @@ public:
 
             static_assert(alignment_contract_t::expects_tuple_like_value_type(),
                           "Alignment configuration error: "
-                          "The value type of the sequence ranges must model the seqan3::detail::tuple_like_concept "
+                          "The value type of the sequence ranges must model the seqan3::detail::TupleLike "
                           "and must contain exactly 2 elements.");
 
             static_assert(alignment_contract_t::expects_valid_scoring_scheme(),

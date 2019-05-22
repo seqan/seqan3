@@ -51,12 +51,12 @@ TYPED_TEST(tuple_utility, tuple_type_list)
     }
 }
 
-TYPED_TEST(tuple_utility, tuple_like_concept)
+TYPED_TEST(tuple_utility, TupleLike)
 {
-    EXPECT_TRUE(tuple_like_concept<TypeParam>);
-    EXPECT_TRUE(tuple_like_concept<std::tuple<>>);
-    EXPECT_TRUE(tuple_like_concept<my_tuple>);
-    EXPECT_FALSE(tuple_like_concept<int>);
+    EXPECT_TRUE(TupleLike<TypeParam>);
+    EXPECT_TRUE(TupleLike<std::tuple<>>);
+    EXPECT_TRUE(TupleLike<my_tuple>);
+    EXPECT_FALSE(TupleLike<int>);
 }
 
 TYPED_TEST(tuple_utility, detail_split)

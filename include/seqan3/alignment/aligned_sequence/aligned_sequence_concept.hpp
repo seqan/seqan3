@@ -437,12 +437,12 @@ namespace detail
 
 /*!\brief               Create the formatted alignment output and add it to the provided debug_stream.
  * \ingroup             aligned_sequence
- * \tparam alignment_t  The type of the alignment, must satisfy tuple_like_concept.
+ * \tparam alignment_t  The type of the alignment, must satisfy TupleLike.
  * \tparam idx          An index sequence.
  * \param[in] stream    The output stream that receives the formatted alignment.
  * \param[in] align     The alignment that shall be streamed.
  */
-template<tuple_like_concept alignment_t, size_t ...idx>
+template<TupleLike alignment_t, size_t ...idx>
 void stream_alignment(debug_stream_type & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
     using std::get;
@@ -506,12 +506,12 @@ inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (AlignedSeq
 
 /*!\brief Streaming operator for alignments, which are represented as tuples of aligned sequences.
  * \ingroup         aligned_sequence
- * \tparam tuple_t  The alignment type, must satisfy tuple_like_concept and its size must be at least 2.
+ * \tparam tuple_t  The alignment type, must satisfy TupleLike and its size must be at least 2.
  * \param stream    The target stream for the formatted output.
  * \param alignment The alignment that shall be formatted. All sequences must be equally long.
  * \return          The given stream to which the alignment representation is appended.
  */
-template <tuple_like_concept tuple_t>
+template <TupleLike tuple_t>
 //!\cond
     requires detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<tuple_t>>
 //!\endcond

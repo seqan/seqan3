@@ -370,7 +370,7 @@ public:
      */
     template <typename record_t>
     void push_back(record_t && r)
-        requires tuple_like_concept<record_t> &&
+        requires TupleLike<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
     {
         write_record(detail::get_or_ignore<field::SEQ>(r),
@@ -403,7 +403,7 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
-        requires tuple_like_concept<tuple_t>
+        requires TupleLike<tuple_t>
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(t),
@@ -443,7 +443,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::OutputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      *
      * \details
@@ -464,7 +464,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     sequence_file_output & operator=(rng_t && range)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -473,7 +473,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
      *
@@ -500,7 +500,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     friend sequence_file_output & operator|(rng_t && range, sequence_file_output & f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         f = range;
         return f;
@@ -509,7 +509,7 @@ public:
     //!\overload
     template <std::ranges::InputRange rng_t>
     friend sequence_file_output operator|(rng_t && range, sequence_file_output && f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         f = range;
         return std::move(f);
