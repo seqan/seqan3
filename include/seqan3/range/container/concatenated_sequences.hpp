@@ -136,7 +136,7 @@ public:
 
 protected:
     /*!\name Compatibility
-     * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible_concept (which doesn't work for types during their definition).
+     * \brief Static constexpr variables that emulate/encapsulate seqan3::Compatible (which doesn't work for types during their definition).
      * \{
      */
     //!\cond
@@ -148,7 +148,7 @@ protected:
     static constexpr bool is_compatible_this_aux = true;
     //!\endcond
 
-    //!\brief Whether a type satisfies seqan3::compatible_concept with this class.
+    //!\brief Whether a type satisfies seqan3::Compatible with this class.
     //!\hideinitializer
     // cannot use the concept, because this class is not yet fully defined
     template <typename t>
@@ -157,11 +157,11 @@ protected:
                                                std::is_same_v<remove_cvref_t<t>, iterator>                  ||
                                                std::is_same_v<remove_cvref_t<t>, const_iterator>;
 
-    //!\brief Whether a type satisfies seqan3::compatible_concept with this class's value_type or reference type.
+    //!\brief Whether a type satisfies seqan3::Compatible with this class's value_type or reference type.
     //!\hideinitializer
     // we explicitly check same-ness, because these types may not be fully resolved, yet
     template <typename t>
-    static constexpr bool is_compatible_value = compatible_concept<value_type, t>                   ||
+    static constexpr bool is_compatible_value = Compatible<value_type, t>                   ||
                                                 std::is_same_v<remove_cvref_t<t>, value_type>       ||
                                                 std::is_same_v<remove_cvref_t<t>, reference>        ||
                                                 std::is_same_v<remove_cvref_t<t>, const_reference>;
