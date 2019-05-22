@@ -248,7 +248,7 @@ private:
 
     //!\brief The ring buffer.
     buffer_t data;
-    alignas(std::hardware_destructive_interference_size) std::shared_mutex mutable mutex;
+    alignas(std::hardware_destructive_interference_size) std::shared_mutex mutable mutex{};
     alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    headPos{0};
     alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    headReadPos{0};
     alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    tailPos{0};
@@ -390,7 +390,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
 
         newHeadReadPos = cyclic_increment(headReadPos, cap, roundSize);
 
-        if (this->headReadPos.compare_exchange_weak(headReadPos, newHeadReadPos, std::memory_order_acq_rel))
+        if (this->headReadPos.compare_exchange_weak(headReadPos, newHeadReadPos))
             break;
 
         spinDelay.wait();
@@ -403,7 +403,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
     {
         detail::spin_delay delay{};
         size_type old = headReadPos;
-        while (!this->headPos.compare_exchange_weak(old, newHeadReadPos, std::memory_order_acq_rel))
+        while (!this->headPos.compare_exchange_weak(old, newHeadReadPos))
         {
             old = headReadPos;
             delay.wait();  // add adapting delay in case of high contention.
@@ -466,7 +466,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(
             if (newTailWritePos >= headPos + roundSize)
                 break;
 
-            if (this->tailWritePos.compare_exchange_weak(tailWritePos, newTailWritePos, std::memory_order_acq_rel))
+            if (this->tailWritePos.compare_exchange_weak(tailWritePos, newTailWritePos))
             {
                 auto it = std::ranges::begin(data) + (tailWritePos & (roundSize - 1));
                 *it = std::forward<value2_t>(value);
@@ -476,7 +476,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(
                 {
                     detail::spin_delay delay{};
                     size_type old = tailWritePos;
-                    while (!this->tailPos.compare_exchange_weak(old, newTailWritePos, std::memory_order_acq_rel))
+                    while (!this->tailPos.compare_exchange_weak(old, newTailWritePos))
                     {
                         old = tailWritePos;
                         delay.wait();  // add adapting delay in case of high contention.

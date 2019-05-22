@@ -22,6 +22,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A single-use synchronisation point to coordinate concurrent threads.
+ * \ingroup parallel
  *
  * \details
  *
@@ -31,7 +32,8 @@ namespace seqan3::detail
  * This implementation uses a lock-free mechanism if the atomic operations on the respective platform are lock-free.
  *
  * \note This adapts the proposal for the c++ standard
- * [P0666R2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0666r2.pdf) for latches.
+ * [P0666R2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0666r2.pdf) for latches and is likely to be
+ * changed according to the revisions of the proposal.
  */
 class latch
 {
@@ -40,11 +42,11 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    latch()                           = delete;  //!> Deleted.
-    latch(latch const &)              = delete;  //!> Deleted.
-    latch(latch &&)                   = default; //!> Defaulted.
-    latch & operator=(latch const &)  = delete;  //!> Deleted.
-    latch & operator=(latch &&)       = default; //!> Defaulted.
+    latch()                           = delete;  //!< Deleted.
+    latch(latch const &)              = delete;  //!< Deleted.
+    latch(latch &&)                   = default; //!< Defaulted.
+    latch & operator=(latch const &)  = delete;  //!< Deleted.
+    latch & operator=(latch &&)       = default; //!< Defaulted.
 
     //!\brief Destructs the latch and waits for all participating threads to arrive.
     ~latch()
