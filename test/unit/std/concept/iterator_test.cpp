@@ -91,7 +91,7 @@ TEST(iterator_concepts, Sentinel)
     EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           input_iterator>,
                                           input_iterator>));
-    EXPECT_TRUE((std::is_same_v<char, value_type_t<std::ranges::ostream_iterator<char>>>));
+    EXPECT_TRUE((std::is_same_v<char, value_type_t<seqan3::ostream_iterator<char>>>));
     EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           output_iterator>,
                                           output_iterator>));

@@ -30,6 +30,7 @@
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
 #include <seqan3/range/detail/misc.hpp>
@@ -566,7 +567,7 @@ public:
         // ---------------------------------------------------------------------
         // Writing the Record
         // ---------------------------------------------------------------------
-        std::ranges::ostreambuf_iterator stream_it{stream};
+        seqan3::ostreambuf_iterator stream_it{stream};
         char const separator{'\t'};
 
         write_range(stream_it, std::forward<id_type>(id));
@@ -1284,7 +1285,7 @@ protected:
         // -----------------------------------------------------------------
         // Write Header
         // -----------------------------------------------------------------
-        std::ranges::ostreambuf_iterator stream_it{stream};
+        seqan3::ostreambuf_iterator stream_it{stream};
 
         // (@HD) Write header line [required].
         stream << "@HD\tVN:";
