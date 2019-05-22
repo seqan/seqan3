@@ -37,14 +37,14 @@ SEQAN3_CONCEPT TupleSize = requires (tuple_t v)
 };
 //!\endcond
 
-/*!\interface seqan3::detail::tuple_get_concept <>
+/*!\interface seqan3::detail::TupleGet <>
  * \ingroup   core
  * \brief     Subconcept definition for seqan3::tuple_like_concept to test for std::get-interface.
  * \see       seqan3::tuple_like_concept
  */
 //!\cond
 template <typename tuple_t>
-SEQAN3_CONCEPT tuple_get_concept = requires (tuple_t & v, tuple_t const & v_c)
+SEQAN3_CONCEPT TupleGet = requires (tuple_t & v, tuple_t const & v_c)
 {
     requires std::tuple_size_v<tuple_t> > 0;
 
@@ -177,7 +177,7 @@ SEQAN3_CONCEPT tuple_like_concept = detail::TupleSize<std::remove_reference_t<t>
     //              empty. Furthermore, the std::StrictTotallyOrdered can only be checked if all elements in the
     //              tuple are strict_totally_ordered. This is done, by the fold expression in the second part.
     requires (std::tuple_size<std::remove_reference_t<t>>::value == 0) ||
-                detail::tuple_get_concept<remove_cvref_t<t>> &&
+                detail::TupleGet<remove_cvref_t<t>> &&
                 (!meta::fold<detail::tuple_type_list_t<remove_cvref_t<t>>,
                              std::true_type,
                              meta::quote_trait<detail::models_strict_totally_ordered>>::value ||
