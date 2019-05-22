@@ -24,6 +24,7 @@
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
@@ -177,7 +178,7 @@ public:
                id_type                            && id,
                qual_type                          && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        std::ranges::ostreambuf_iterator stream_it{stream};
+        seqan3::ostreambuf_iterator stream_it{stream};
         size_t sequence_size{0};
         [[maybe_unused]] char buffer[50];
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
@@ -231,7 +232,7 @@ public:
                 std::ranges::copy(std::to_string(bp), stream_it);
                 stream_it = ' ';
                 std::ranges::copy(seq[i] | view::to_char
-                                         | view::interleave(10, ' '), stream_it);
+                                         | view::interleave(10, std::string_view{" "}), stream_it);
                 bp += 60;
                 ++i;
                 detail::write_eol(stream_it,false);
