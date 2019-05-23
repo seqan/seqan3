@@ -1117,7 +1117,6 @@ structure_file_in(stream_type && stream, file_format const &, selected_field_ids
                          type_list<file_format>,
                          typename std::remove_reference_t<stream_type>::char_type>;
 
-
 //!\overload
 template <IStream2                 stream_type,
           StructureFileInputFormat file_format,
