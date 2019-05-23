@@ -316,6 +316,7 @@ if (_SEQAN3_HAVE_FILESYSTEM)
         int main()
         {
             std::filesystem::path p{\"\tmp/\"};
+            throw std::filesystem::filesystem_error(\"Empty file name!\", std::make_error_code(std::errc::invalid_argument));
         }")
 elseif (_SEQAN3_HAVE_EXP_FILESYSTEM)
     seqan3_config_print ("C++ Filesystem header:      <experimental/filesystem>")
@@ -325,6 +326,7 @@ elseif (_SEQAN3_HAVE_EXP_FILESYSTEM)
         int main()
         {
             std::experimental::filesystem::path p{\"/tmp/\"};
+            throw std::experimental::filesystem::filesystem_error(\"Empty file name!\", std::make_error_code(std::errc::invalid_argument));
         }")
 else ()
     seqan3_config_error ("SeqAn3 requires C++17 filesystem support, but the filesystem header was not found.")
