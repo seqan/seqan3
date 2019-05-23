@@ -170,7 +170,7 @@ namespace seqan3
  */
 
 /*!\brief Assign a rank to an alphabet object.
-  *\tparam your_type Type of the target object.
+ * \tparam your_type Type of the target object.
  * \param chr  The rank being assigned; must be of the seqan3::alphabet_rank_t of the target object.
  * \param alph The target object.
  * \returns Reference to `alph` if `alph` was given as lvalue, otherwise a copy.

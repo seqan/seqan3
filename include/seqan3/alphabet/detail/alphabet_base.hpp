@@ -105,7 +105,7 @@ public:
      *
      * \details
      *
-     * Provides an implementation for seqan3::to_char, required to model seqan3::Semialphabet.
+     * Provides an implementation for seqan3::to_rank, required to model seqan3::Semialphabet.
      *
      * \par Complexity
      *

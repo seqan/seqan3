@@ -23,30 +23,6 @@ namespace seqan3
 {
 
 // ------------------------------------------------------------------
-// seqan3::NucleotideAlphabet
-// ------------------------------------------------------------------
-
-/*!\name Helpers for seqan3::NucleotideAlphabet
- * \brief These functions and metafunctions expose member variables and types so that they satisfy
- * seqan3::NucleotideAlphabet.
- * \ingroup nucleotide
- * \{
- */
-
-/*!\brief Implementation of seqan3::NucleotideAlphabet::complement() that delegates to a member function.
- * \tparam nucleotide_type Must provide a `.complement()` member function.
- * \param alph The alphabet letter for whom you wish to receive the complement.
- * \returns The letter's complement, e.g. 'T' for 'A'.
- */
-template <typename nucleotide_type>
-    requires requires (nucleotide_type alph) { { alph.complement() } -> nucleotide_type; }
-constexpr nucleotide_type complement(nucleotide_type const alph)
-{
-    return alph.complement();
-}
-//!\}
-
-// ------------------------------------------------------------------
 // seqan3::RnaStructureAlphabet
 // ------------------------------------------------------------------
 
