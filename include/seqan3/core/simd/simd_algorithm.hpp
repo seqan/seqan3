@@ -94,6 +94,21 @@ inline simd_t unpack_hi(simd_t const & first, simd_t const & second)
                   "Only integral scalar types are supported.");
     return detail::unpack_hi(first, second);
 }
+
+/*!\brief Unpacks and interleaves the low halves of both simd vectors.
+ * \tparam simd_t      The simd type; must model seqan3::simd::Simd.
+ * \param[in] first   The vector whose values come before the `second`.
+ * \param[in] second  The vector whose values come after the `first`.
+ * \ingroup simd
+ */
+template <Simd simd_t>
+constexpr simd_t unpack_lo(simd_t const & first, simd_t const & second)
+{
+    static_assert(std::Integral<typename simd_traits<simd_t>::scalar_type>,
+                  "Only integral scalar types are supported.");
+    return detail::unpack_lo(first, second);
+}
+
 } // inline namespace simd
 
 } // namespace seqan3
