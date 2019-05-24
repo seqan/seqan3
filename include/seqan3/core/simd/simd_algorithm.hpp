@@ -15,7 +15,11 @@
 #include <utility>
 
 #include <seqan3/core/simd/concept.hpp>
+#include <seqan3/core/simd/detail/simd_algorithm_sse4.hpp>
+#include <seqan3/core/simd/detail/simd_algorithm_avx2.hpp>
+#include <seqan3/core/simd/detail/simd_algorithm_avx512.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
@@ -77,6 +81,19 @@ constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
     return detail::iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
 }
 
+/*!\brief Unpacks and interleaves the high halves of both simd vectors.
+ * \tparam simd_t      The simd type; must model seqan3::simd::Simd.
+ * \param[in] first   The vector whose values come before the `second`.
+ * \param[in] second  The vector whose values come after the `first`.
+ * \ingroup simd
+ */
+template <Simd simd_t>
+inline simd_t unpack_hi(simd_t const & first, simd_t const & second)
+{
+    static_assert(std::Integral<typename simd_traits<simd_t>::scalar_type>,
+                  "Only integral scalar types are supported.");
+    return detail::unpack_hi(first, second);
+}
 } // inline namespace simd
 
 } // namespace seqan3
