@@ -7,6 +7,7 @@
 
 #include <range/v3/view/zip.hpp>
 
+#include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 
 #include "../alphabet_test_template.hpp"
@@ -50,12 +51,11 @@ TEST(dot_bracket3, to_char)
 TEST(dot_bracket3, concept_check)
 {
     EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3>);
-    EXPECT_NE(max_pseudoknot_depth_v<dot_bracket3>, 0);
+    EXPECT_NE(max_pseudoknot_depth<dot_bracket3>, 0);
 }
 
 TEST(dot_bracket3, literals)
 {
-
     std::vector<dot_bracket3> vec1;
     vec1.resize(5, '('_db3);
     EXPECT_EQ(vec1, "((((("_db3);
@@ -64,11 +64,14 @@ TEST(dot_bracket3, literals)
     EXPECT_EQ(vec2, ".(())."_db3);
 }
 
-TEST(dot_bracket3, dot_bracket3)
+TEST(dot_bracket3, rna_structure_properties)
 {
     EXPECT_EQ(dot_bracket3::max_pseudoknot_depth, 1);
     EXPECT_TRUE('.'_db3.is_unpaired());
     EXPECT_TRUE('('_db3.is_pair_open());
     EXPECT_TRUE(')'_db3.is_pair_close());
-    EXPECT_TRUE('.'_db3.is_unpaired());
+
+    EXPECT_FALSE('.'_db3.pseudoknot_id());
+    EXPECT_EQ('('_db3.pseudoknot_id().value(), 0);
+    EXPECT_EQ(')'_db3.pseudoknot_id().value(), 0);
 }

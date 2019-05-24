@@ -15,7 +15,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
-#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 
 // ------------------------------------------------------------------
@@ -101,6 +101,18 @@ public:
      * pseudoknot support.
      */
     static constexpr uint8_t max_pseudoknot_depth{1u};
+
+    /*!\brief Get an identifier for a pseudoknotted interaction,
+     * where opening and closing brackets of the same type have the same id.
+     * \returns The pseudoknot id (always 0) if alph denotes an interaction, and no value otherwise.
+     */
+    constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
+    {
+        if (is_unpaired())
+            return std::nullopt;
+        else
+            return 0;
+    }
     //!\}
 
 protected:

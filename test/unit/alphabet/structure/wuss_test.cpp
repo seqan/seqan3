@@ -7,7 +7,7 @@
 
 #include <range/v3/view/zip.hpp>
 
-#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
 
 #include "../alphabet_test_template.hpp"
@@ -21,7 +21,7 @@ INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet, wuss<67>);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet_constexpr, wuss<67>);
 
 // assign_char functions
-TEST(wuss51, assign_char)
+TEST(wuss, assign_char)
 {
     std::vector<char> input
     {
@@ -44,7 +44,7 @@ TEST(wuss51, assign_char)
 }
 
 // to_char functions
-TEST(wuss51, to_char)
+TEST(wuss, to_char)
 {
     EXPECT_EQ(to_char('.'_wuss51), '.');
     EXPECT_EQ(to_char(':'_wuss51), ':');
@@ -64,16 +64,16 @@ TEST(wuss51, to_char)
 }
 
 // concepts
-TEST(wuss51, concept_check)
+TEST(wuss, concept_check)
 {
     EXPECT_TRUE(RnaStructureAlphabet<wuss51>);
-    EXPECT_NE(max_pseudoknot_depth_v<wuss51>, 0);
+    EXPECT_NE(max_pseudoknot_depth<wuss51>, 0);
 
     EXPECT_TRUE(RnaStructureAlphabet<wuss<>>);  // same as wuss51
     EXPECT_TRUE(RnaStructureAlphabet<wuss<67>>);
 }
 
-TEST(wuss51, literals)
+TEST(wuss, literals)
 {
     std::vector<wuss51> vec1;
     vec1.resize(5, '<'_wuss51);
@@ -83,7 +83,7 @@ TEST(wuss51, literals)
     EXPECT_EQ(vec2, ".<<>>."_wuss51);
 }
 
-TEST(wuss51, structure_properties)
+TEST(wuss, rna_structure_properties)
 {
     EXPECT_EQ(wuss51::max_pseudoknot_depth, 22);
     std::vector<wuss51> vec = ".:,-_~;<>()[]{}AaBbCcDd"_wuss51;

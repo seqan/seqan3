@@ -88,14 +88,9 @@ namespace seqan3
 inline constexpr auto complement = detail::adl::only::complement_fn{};
 //!\}
 
-} // namespace seqan3
-
 // ============================================================================
 // NucleotideAlphabet concept
 // ============================================================================
-
-namespace seqan3
-{
 
 /*!\interface seqan3::NucleotideAlphabet <>
  * \extends seqan3::Alphabet
