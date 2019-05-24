@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <seqan3/range/container/small_vector.hpp>
 
 namespace seqan3
@@ -228,6 +229,33 @@ public:
         sz = count;
         data_[sz] = '\0';
     }
+
+    /*!\brief Removes specified elements from the container.
+     * \param   index Remove the elements starting at `index`. Defaults to `0`.
+     * \param   count The number of elements to remove. Defaults to `max_size()`.
+     * \returns `*this`
+     *
+     * Invalidates iterators and references at or after the point of the erase, including the end() iterator.
+     *
+     * The iterator `pos` must be valid and dereferenceable. Thus the end() iterator (which is valid, but is not
+     * dereferencable) cannot be used as a value for pos.
+     *
+     * ### Complexity
+     *
+     * Linear in size().
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    constexpr small_string & erase(size_type index = 0, size_type count = max_size()) noexcept
+    {
+        assert(index <= this->size());
+
+        iterator it = this->begin() + index;
+        base_t::erase(it, it + std::min<size_type>(count, this->size() - index));
+        return *this;
+    }
     //!\}
 
     /*!\name Concatenation
@@ -307,6 +335,65 @@ public:
     operator std::string() const
     {
         return str();
+    }
+    //!\}
+
+    /*!\name Input/output
+     * \{
+     */
+
+    /*!\brief Formatted output for the seqan3::small_string.
+     * \param[in,out] os  The std::basic_ostream to write to.
+     * \param[in]     str The seqan3::small_string to read from.
+     * \returns `os`.
+     *
+     * \details
+     *
+     * Internally calls `os << str.str()`.
+     */
+    friend std::ostream & operator<<(std::ostream & os, small_string const & str)
+    {
+        os << str.str();
+        return os;
+    }
+
+    /*!\brief Formatted input for the seqan3::small_string.
+     * \param[in,out] is  The std::basic_istream to read from.
+     * \param[out]    str The seqan3::small_string to write to.
+     * \returns `is`.
+     *
+     * \details
+     *
+     * Reads at most seqan3::small_string::max_size characters from the stream.
+     * If a stream error occurred or no characters could be extracted the std::ios_base::failbit is set.
+     * This may throw an exception.
+     */
+    friend std::istream & operator>>(std::istream & is, small_string & str)
+    {
+        // Check if stream is ok and skip leading whitespaces.
+        std::istream::sentry s(is);
+        if (s)
+        {
+            str.erase(); // clear the string
+            std::streamsize num_char = (is.width() > 0)
+                ? std::min<std::streamsize>(is.width(), str.max_size())
+                : str.max_size();
+            assert(num_char > 0);
+            for (std::streamsize n = num_char; n > 0 && !std::isspace(static_cast<char>(is.peek()), is.getloc()); --n)
+            {
+                char c = is.get();
+                if (is.eof())
+                    break;
+                str.push_back(c);
+            }
+
+            if (str.size() == 0) // nothing extracted so we set the fail bit.
+                is.setstate(std::ios_base::failbit);
+
+            is.width(0); // cancel the effects of std::setw, if any.
+        }
+
+        return is;
     }
     //!\}
 };

@@ -267,7 +267,9 @@ public:
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = value_type_t<urng_t>;
     //!\brief The size_type is `size_t` if the view is exact, otherwise `void`.
-    using size_type         = std::conditional_t<exactly, size_t, void>;
+    using size_type         = std::conditional_t<exactly,
+                                                 transformation_trait_or_t<seqan3::size_type<urng_t>, size_t>,
+                                                 void>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = difference_type_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).

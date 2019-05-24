@@ -58,8 +58,8 @@ void expect_same_types()
     constexpr bool val = std::is_same_v<meta::at_c<list1, pos>, meta::at_c<list2, pos>>;
     if constexpr (!val)
     {
-        std::cerr << "\'" << detail::get_display_name_v<meta::at_c<list1, pos>> << "\' not equal to \'"
-                  << detail::get_display_name_v<meta::at_c<list2, pos>> << "\' \n";
+        std::cerr << "pos: " << pos << " \'" << detail::get_display_name_v<meta::at_c<list1, pos>>
+                  << "\' not equal to \'" << detail::get_display_name_v<meta::at_c<list2, pos>> << "\' \n";
     }
     EXPECT_TRUE(val);
 
@@ -208,17 +208,13 @@ TEST(range_and_iterator, size_type_)
                                  size_type_t<foreign_iterator>,                    // iterator2
                                  size_type_t<decltype(v)>>;                        // range, no member
 
-    // see above
-    using view_int_size_t = std::conditional_t<sizeof(std::size_t) == 8,
-                                               std::uint_fast64_t,
-                                               std::uint_fast32_t>;
     using comp_list = meta::list<size_t,
                                  size_t,
                                  size_t,
                                  size_t,
                                  size_t,
                                  size_t,
-                                 view_int_size_t>;
+                                 size_t>;
 
     expect_same_types<type_list, comp_list>();
 }

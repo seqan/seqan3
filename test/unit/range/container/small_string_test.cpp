@@ -111,6 +111,29 @@ TEST(small_string, implicit_conversion)
     EXPECT_EQ(str, "hello"s);  // explicit
 }
 
+constexpr bool erase_test()
+{
+    small_string em{"hello"};
+    em.erase();
+    bool res = em.empty();
+
+    small_string em1{"hello"};
+    em1.erase(2);
+    res = res && (em1 == small_string<5>{"he"});
+
+    small_string em2{"hello"};
+    em2.erase(2, 2);
+    res = res && (em2 == small_string<5>{"heo"});
+
+    return res;
+}
+
+TEST(small_string, erase)
+{
+    constexpr bool res = erase_test();
+    EXPECT_TRUE(res);
+}
+
 TEST(small_string, concat)
 {
     {
@@ -314,4 +337,40 @@ TEST(small_string, compile_time_fill)
 {
     constexpr bool cmp = fill_small_string(small_string<4>{}, 'x') == small_string{"xxxx"};
     EXPECT_TRUE(cmp);
+}
+
+TEST(small_string, output)
+{
+    small_string em{"hello"};
+    std::ostringstream os;
+    os << em;
+    EXPECT_EQ(os.str(), "hello"s);
+}
+
+TEST(small_string, input)
+{
+    { // Until whitespace
+        small_string<50> em{"test"};
+        std::istringstream is{"hello test"};
+        is >> em;
+        EXPECT_EQ(em.str(), "hello"s);
+    }
+
+    { // Exceed capacity
+        small_string<5> em{"test"};
+        std::istringstream is{"hellotest"};
+        is >> em;
+        EXPECT_EQ(em.str(), "hello"s);
+
+        std::string remaining{};
+        is >> remaining;
+        EXPECT_EQ(remaining, "test"s);
+    }
+
+    { // eof before capacity reached
+        small_string<50> em{""};
+        std::istringstream is{"hellotest"};
+        is >> em;
+        EXPECT_EQ(em.str(), "hellotest"s);
+    }
 }
