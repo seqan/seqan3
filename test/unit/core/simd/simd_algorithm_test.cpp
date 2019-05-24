@@ -38,3 +38,20 @@ TEST(simd_algorithm, iota)
     constexpr simd_type result = iota<simd_type>(0);
     SIMD_EQ(result, expect);
 }
+
+TEST(simd_algorithm, load)
+{
+    using simd_type = simd_type_t<int16_t>;
+
+    std::array<int16_t, simd_traits<simd_type>::length> mem{};
+    simd_type expect{};
+
+    for (int16_t i = 0; i < static_cast<int16_t>(mem.size()); ++i)
+    {
+        mem[i] = i;
+        expect[i] = i;
+    }
+
+    simd_type result = load<simd_type>(mem.data());
+    SIMD_EQ(result, expect);
+}
