@@ -26,7 +26,8 @@ namespace seqan3::detail
 
 // Make a namespace alias in an anonymous namespace, such that it will not be visible from outside this file.
 // TODO (emanueleparisi) Is this a good programming practice ?!?
-namespace {
+namespace 
+{
     //!\brief The cereal inner XML library providing facilities for handling XML documents.
     namespace rxml = cereal::rapidxml;
 }
@@ -36,7 +37,7 @@ namespace {
  *
  * \details
  *
- * The CTD file is not written immediatelly, because the whole DOM tree
+ * The CTD file is not written immediately, because the whole DOM tree
  * composing the XML document can be completely built only after the parser
  * is completely initialized. Instead, every call is stored and evaluated only
  * when format_ctd::parse() is called.
@@ -54,15 +55,7 @@ public:
                     option_spec const & spec,
                     validator_type && validator) 
     {
-        // Local variables decided at runtime.
-        std::string prefixed_option_name = {};
-        std::string option_name = {};
-        std::string option_gkn_type = {};
-        std::string option_description = {};
-        bool is_required = false;
-        bool is_advanced = false;
-        
-        // TODO (emanueleparisi) 
+        // TODO (emanueleparisi) The current version of the CTD exporter does not support list options.
         if (value_is_container(value)) 
         {
             throw parser_design_error("At the moment, the CTD exporter does not support list options");
@@ -74,51 +67,38 @@ public:
             return;
         }
 
-        // Initialize option_name and prefixed_option_name.
-        if (long_id.empty())
-        {
-            prefixed_option_name = std::string{'-'}.append(std::string{short_id});
-            option_name = std::string{short_id};
-        }
-        else
-        {
-            prefixed_option_name = std::string{"--"}.append(long_id);
-            option_name = std::string{long_id};
-        }
-
-        // Guess GKN type name.
-        option_gkn_type = guess_gkn_type(value, 
-                                         validator);
-
-        // Copy option description from the one the user provided.
-        option_description = desc;
-
-        // Check if the option is required.
-        if (spec == REQUIRED)
-        {
-            is_required = true;
-        }
-
-        // Check if the option is advanced.
-        if (spec == ADVANCED)
-        {
-            is_advanced = true;
-        }
-
         // Register clielement callback.
-        append_clielement_option_callbacks.push_back([prefixed_option_name,
-                                                      option_name] (rxml::xml_document<> *pool, 
-                                                                    rxml::xml_node<> *parent_node,
-                                                                    argument_parser_meta_data const & parser_meta) {
+        append_clielement_option_callbacks.push_back([this,
+                                                      short_id,
+                                                      long_id] (rxml::xml_document<> *pool, 
+                                                                rxml::xml_node<> *parent_node,
+                                                                argument_parser_meta_data const & parser_meta) {
+            char *prefixed_option_name = nullptr;
+            char *reference_name = nullptr;
             rxml::xml_node<> *clielement_node = nullptr;
             rxml::xml_node<> *mapping_node = nullptr;
-            std::string app_name = parser_meta.app_name;
+            
+            // Allocate helper variables related to the DOM tree construction, getting memory from the CTD document
+            // memory pool.
+            if (long_id.empty())
+            {
+                prefixed_option_name = pool->allocate_string(prepend_dash(short_id).data());
+                reference_name = pool->allocate_string(prepend_app_name(parser_meta.app_name, 
+                                                                        short_id).data());
+            }
+            else
+            {
+                prefixed_option_name = pool->allocate_string(prepend_dash(long_id).data());
+                reference_name = pool->allocate_string(prepend_app_name(parser_meta.app_name,
+                                                                        long_id).data());
+            }
 
             // Allocate and fill 'clielement' node.
             clielement_node = pool->allocate_node(rxml::node_element,
                                                   "clielement");
             clielement_node->append_attribute(pool->allocate_attribute("optionIdentifier",
-                                                                       pool->allocate_string(prefixed_option_name.data()))); 
+                                                                       prefixed_option_name)); 
+            
             // At the moment, list options are not supported by the CTD exporter.
             clielement_node->append_attribute(pool->allocate_attribute("isList",
                                                                        "false"));
@@ -126,11 +106,8 @@ public:
             // Allocate and fill 'mapping' node.
             mapping_node = pool->allocate_node(rxml::node_element, 
                                                "mapping");
-            mapping_node->append_attribute(pool->allocate_attribute("referenceName", 
-                                                                    pool->allocate_string(app_name
-                                                                                          .append(".")
-                                                                                          .append(option_name)
-                                                                                          .data())));
+            mapping_node->append_attribute(pool->allocate_attribute("referenceName",
+                                                                    reference_name));
 
             // Build 'clielement' subtree.
             parent_node->append_node(clielement_node);
@@ -138,14 +115,32 @@ public:
         });
 
         // Register ITEM callback.
-        append_item_option_callbacks.push_back([value,
-                                                option_name,
-                                                option_gkn_type,
-                                                option_description,
-                                                is_required,
-                                                is_advanced] (rxml::xml_document<> *pool, 
-                                                              rxml::xml_node<> *parent_node) {
+        append_item_option_callbacks.push_back([this,
+                                                value,
+                                                short_id,
+                                                long_id,
+                                                desc,
+                                                spec,
+                                                validator] (rxml::xml_document<> *pool, 
+                                                            rxml::xml_node<> *parent_node) {
+            char *option_name = nullptr;
+            char *option_gkn_type = nullptr;
+            char *option_description = nullptr;
             rxml::xml_node<> *item_node = nullptr;
+
+            // Allocate helper variables related to the DOM tree construction, getting memory from the CTD document
+            // memory pool.
+            if (long_id.empty())
+            {
+                option_name = pool->allocate_string(std::string{short_id}.data());
+            }
+            else
+            {
+                option_name = pool->allocate_string(long_id.data());
+            }
+            option_gkn_type = pool->allocate_string(guess_gkn_type(value, 
+                                                                   validator).data());
+            option_description = pool->allocate_string(desc.data()); 
 
             // Create the ITEM node for non-list options. For list options, a ITEMLIST node 
             // should be created instead. Unfortunately, the CTD exporter does not support list options.
@@ -154,49 +149,48 @@ public:
             
             // Write the 'name' ITEM node attribute.
             item_node->append_attribute(pool->allocate_attribute("name",
-                                                                 pool->allocate_string(option_name.data())));
+                                                                 option_name));
             // Write the 'type' ITEM node attribute.
             item_node->append_attribute(pool->allocate_attribute("type",
-                                                                 pool->allocate_string(option_gkn_type.data())));
+                                                                 option_gkn_type));
             // Write the 'description' ITEM node attribute.
             item_node->append_attribute(pool->allocate_attribute("description",
-                                                                 pool->allocate_string(option_description.data())));
+                                                                 option_description));
             
-            // Write the 'retriction' and 'supported_formats' ITEM node attributes.
+            // Write the 'restrictions' and 'supported_formats' ITEM node attributes.
             // TODO (emanueleparisi) Here support for restriction and supported formats is missing ! 
             // For that to be implement we need validators to provide such information. For the sake 
             // of first releases, we ignore any constraints posed by the user.
             item_node->append_attribute(pool->allocate_attribute("restrictions",
                                                                  ""));
-            if (option_gkn_type == "input-file" || 
-                option_gkn_type == "output-file" || 
-                option_gkn_type == "input-prefix" || 
-                option_gkn_type == "output-prefix")
+            if (option_gkn_type == std::string{"input-file"} || 
+                option_gkn_type == std::string{"output-file"} || 
+                option_gkn_type == std::string{"input-prefix"} || 
+                option_gkn_type == std::string{"output-prefix"})
             {
                 item_node->append_attribute(pool->allocate_attribute("supported_formats",
                                                                      "*.*"));
             }
-            
-            // Write the 'required' ITEM node attribute.
-            if (is_required)
+
+            // Write the 'required' and 'advanced' attributes.
+            if (spec == REQUIRED)
             {
                 item_node->append_attribute(pool->allocate_attribute("required",
+                                                                     "true"));
+                item_node->append_attribute(pool->allocate_attribute("advanced",
+                                                                     "false"));
+            }
+            else if (spec == ADVANCED)
+            {
+                item_node->append_attribute(pool->allocate_attribute("required",
+                                                                     "false"));
+                item_node->append_attribute(pool->allocate_attribute("advanced",
                                                                      "true"));
             }
             else
             {
                 item_node->append_attribute(pool->allocate_attribute("required",
                                                                      "false"));
-            }
-
-            // Write the 'advanced' ITEM node attribute.
-            if (is_advanced)
-            {
-                item_node->append_attribute(pool->allocate_attribute("advanced",
-                                                                     "true"));
-            }
-            else
-            {
                 item_node->append_attribute(pool->allocate_attribute("advanced",
                                                                      "false"));
             }
@@ -302,15 +296,47 @@ public:
 private:
 
     template <typename option_type>
-    static bool constexpr
+    bool 
     value_is_container(option_type const & /* value */) 
     {
         return SequenceContainer<option_type> && !std::is_same_v<option_type,
                                                                  std::string>;
     }
 
+    // TODO (emanueleparisi) This function is copied from format_parse.hpp, as it is 
+    // required also here ! Can we move in a place where both format_ctd and format_parse
+    // can see it ?
+    std::string 
+    prepend_dash(std::string const & long_id)
+    {
+        return "--" + long_id;
+    }
+
+    // TODO (emanueleparisi) This function is copied from format_parse.hpp, as it is 
+    // required also here ! Can we move in a place where both format_ctd and format_parse
+    // can see it ?
+    std::string 
+    prepend_dash(char const short_id)
+    {
+        return "-" + std::string(1, short_id);
+    }
+
+    std::string
+    prepend_app_name(std::string const & app_name,
+                     std::string const & long_id)
+    {
+        return app_name + '.' + long_id;
+    }
+
+    std::string
+    prepend_app_name(std::string const & app_name,
+                     char const short_id)
+    {
+        return app_name + '.' + short_id;
+    }
+
     template<typename option_type, typename validator_type>
-    static std::string constexpr
+    std::string
     guess_gkn_type(option_type const & /* option */,
                    validator_type && /* validator */)
     {
@@ -443,7 +469,7 @@ private:
         rxml::xml_node<> *cli_node = nullptr;
 
         cli_node = pool->allocate_node(rxml::node_element, 
-                                           "cli");
+                                       "cli");
         for (auto f : append_clielement_option_callbacks)
         {
             f(pool,
@@ -531,26 +557,26 @@ private:
         
         // Set tool node attributes. 
         tool_node->append_attribute(pool->allocate_attribute("name",
-                                                                 parser_meta.app_name.data()));
+                                                             parser_meta.app_name.data()));
         if (parser_meta.version.empty())
         {
             // App version is a mandatory attribute of the 'tool' node. If the developer does not provide any
             // data, a fake 0.0.0.0 version is used.
             tool_node->append_attribute(pool->allocate_attribute("version",
-                                                                     "0.0.0.0"));
+                                                                 "0.0.0.0"));
         }
         else
         {
              tool_node->append_attribute(pool->allocate_attribute("version",
-                                                                      parser_meta.version.data()));
+                                                                  parser_meta.version.data()));
         }
         if (!parser_meta.url.empty())
         {
             tool_node->append_attribute(pool->allocate_attribute("docurl",
-                                                                     parser_meta.url.data()));
+                                                                 parser_meta.url.data()));
         }
         tool_node->append_attribute(pool->allocate_attribute("ctdVersion",
-                                                                 "1.7.0"));
+                                                             "1.7.0"));
 
         // Create and append 'description', 'manual', 'cli' and 'parameters' nodes which are children 
         // of the 'tool' node.
