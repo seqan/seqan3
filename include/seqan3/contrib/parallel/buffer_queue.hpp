@@ -20,7 +20,7 @@
 #include <type_traits>
 #include <vector>
 
-#include <seqan3/contrib/parallel/spin_delay.hpp>
+#include <seqan3/core/parallel/detail/spin_delay.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/algorithm>
@@ -63,23 +63,11 @@ public:
     // Default constructor sets capacity to 1 (still empty)
     buffer_queue() : buffer_queue{0u}
     {}
-    buffer_queue(buffer_queue const &) = delete;
-    buffer_queue(buffer_queue &&) = default;
+    buffer_queue(buffer_queue const &)             = delete;
+    buffer_queue(buffer_queue &&)                  = default;
     buffer_queue & operator=(buffer_queue const &) = delete;
-    buffer_queue & operator=(buffer_queue &&) = default;
-    ~buffer_queue()
-    {
-        // barrier
-        close();  // close the queue.
-
-        // wait until queue is empty (all readers are finished).
-        spin_delay delay{};
-        while (!is_empty())
-            delay.wait();
-
-        assert(tailPos == tailWritePos);
-        assert(headPos == headReadPos);
-    }
+    buffer_queue & operator=(buffer_queue &&)      = default;
+    ~buffer_queue()                                = default;
 
     // you can set the initial capacity here
     explicit buffer_queue(size_type const init_capacity)
@@ -99,10 +87,10 @@ public:
      * \{
      */
     template <typename value2_t>
-        requires std::Same<std::remove_reference_t<value2_t>, value_t>
+        requires std::ConvertibleTo<value2_t, value_t>
     void push(value2_t && value)
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         for (;;)
         {
@@ -119,10 +107,10 @@ public:
     } // throws if closed
 
     template <typename value2_t>
-        requires std::Same<std::remove_reference_t<value2_t>, value_t>
+        requires std::ConvertibleTo<value2_t, value_t>
     queue_op_status wait_push(value2_t && value)
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         for (;;)
         {
@@ -139,7 +127,7 @@ public:
 
     value_type value_pop() // throws if closed
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         value_type value{};
         for (;;)
@@ -159,7 +147,7 @@ public:
 
     queue_op_status wait_pop(value_type & value)
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         queue_op_status status;
         for (;;)
@@ -181,7 +169,7 @@ public:
      * \{
      */
     template <typename value2_t>
-        requires std::Same<std::remove_reference_t<value2_t>, value_t>
+        requires std::ConvertibleTo<value2_t, value_t>
     queue_op_status try_push(value2_t &&);
 
     queue_op_status try_pop(value_t &);
@@ -246,18 +234,21 @@ private:
     }
 
     template <typename value2_t>
-        requires (std::Same<std::remove_reference_t<value2_t>, value_type>) &&
+        requires (std::ConvertibleTo<value2_t, value_t>) &&
                  (buffer_policy == buffer_queue_policy::fixed)
-    bool overflow(value2_t &&);
+    bool overflow(value2_t &&)
+    {
+        return false;
+    }
 
     template <typename value2_t>
-        requires (std::Same<std::remove_reference_t<value2_t>, value_type>) &&
+        requires (std::ConvertibleTo<value2_t, value_t>) &&
                  (buffer_policy == buffer_queue_policy::dynamic)
     bool overflow(value2_t && value);
 
+    //!\brief The ring buffer.
     buffer_t data;
-
-    alignas(std::hardware_destructive_interference_size) std::shared_mutex mutable mutex;
+    alignas(std::hardware_destructive_interference_size) std::shared_mutex mutable mutex{};
     alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    headPos{0};
     alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    headReadPos{0};
     alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    tailPos{0};
@@ -282,20 +273,9 @@ using dynamic_buffer_queue = buffer_queue<value_t, buffer_t, buffer_queue_policy
 // Functions
 // ============================================================================
 
-template <std::Semiregular value_t, SequenceContainer buffer_t, buffer_queue_policy buffer_policy>
+template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
-    requires (std::Same<std::remove_reference_t<value2_t>,
-                        typename buffer_queue<value_t, buffer_t, buffer_policy>::value_type>) &&
-             (buffer_policy == buffer_queue_policy::fixed)
-inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t &&)
-{
-    return false;
-}
-
-template <std::Semiregular value_t, SequenceContainer buffer_t, buffer_queue_policy buffer_policy>
-template <typename value2_t>
-    requires (std::Same<std::remove_reference_t<value2_t>,
-                        typename buffer_queue<value_t, buffer_t, buffer_policy>::value_type>) &&
+    requires (std::ConvertibleTo<value2_t, value_t>) &&
              (buffer_policy == buffer_queue_policy::dynamic)
 inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t && value)
 {
@@ -380,7 +360,7 @@ inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t &&
 // currently filled    [tail, tailWrite)
 // currently removed   [head, headRead)
 
-template <std::Semiregular value_t, SequenceContainer buffer_t, buffer_queue_policy buffer_policy>
+template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
 inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(value_t & result)
 {
     // try to extract a value
@@ -390,7 +370,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
     size_type roundSize = this->roundSize;
     size_type headReadPos;
     size_type newHeadReadPos;
-    spin_delay spinDelay;
+    detail::spin_delay spinDelay;
 
     // wait for queue to become filled
     while (true)
@@ -421,7 +401,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
 
     // wait for pending previous reads and synchronize headPos to headReadPos
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
         size_type old = headReadPos;
         while (!this->headPos.compare_exchange_weak(old, newHeadReadPos))
         {
@@ -457,14 +437,14 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
  *                            Default is @link ParallelismTags#Parallel @endlink.
  */
 //
-template <std::Semiregular value_t, SequenceContainer buffer_t, buffer_queue_policy buffer_policy>
+template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
-    requires std::Same<std::remove_reference_t<value2_t>, value_t>
+    requires std::ConvertibleTo<value2_t, value_t>
 inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(value2_t && value)
 {
     // try to push the value
     {
-        spin_delay delay{};
+        detail::spin_delay delay{};
 
         std::shared_lock read_lock(mutex);
 
@@ -486,9 +466,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(
             if (newTailWritePos >= headPos + roundSize)
                 break;
 
-            if (this->tailWritePos.compare_exchange_weak(tailWritePos, newTailWritePos,
-                                                         std::memory_order_release,
-                                                         std::memory_order_relaxed))
+            if (this->tailWritePos.compare_exchange_weak(tailWritePos, newTailWritePos))
             {
                 auto it = std::ranges::begin(data) + (tailWritePos & (roundSize - 1));
                 *it = std::forward<value2_t>(value);
@@ -496,7 +474,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(
 
                 // wait for pending previous writes and synchronise tailPos to tailWritePos
                 {
-                    spin_delay delay{};
+                    detail::spin_delay delay{};
                     size_type old = tailWritePos;
                     while (!this->tailPos.compare_exchange_weak(old, newTailWritePos))
                     {

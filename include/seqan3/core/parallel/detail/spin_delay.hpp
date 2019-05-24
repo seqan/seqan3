@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::spin_delay.
+ * \brief Provides seqan3::detail::spin_delay.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -17,9 +17,19 @@
 
 #include <seqan3/core/platform.hpp>
 
-namespace seqan3::contrib
+namespace seqan3::detail
 {
-//!\cond
+/*!\brief A delay for threads waiting for a shared resource.
+ * \ingroup parallel
+ *
+ * \details
+ *
+ * This spin delay is used in combination with spin locks. If the thread is waiting for a shared resource
+ * it will usually waste CPU cycles until it can acquire the lock. Especially if there is a high contention on the
+ * lock this can become a performance bottleneck. This spin delay allows for more efficient
+ * spinning phases using a hybrid spinning approach. At first it does active spinning until a certain number of
+ * wait cycles has been reached. After this the thread yields.
+ */
 class spin_delay
 {
 public:
@@ -34,13 +44,20 @@ public:
     ~spin_delay()                                        noexcept = default;  //!< Defaulted.
     //!\}
 
+    /*!\brief Delays the calling thread by either using active spinning or passive spinning.
+     *
+     * \details
+     *
+     * In the first x repetitions the thread is paused using efficient CPU instructions. After x cycles of
+     * active spinning the thread will be suspended by invoking std::this_thread::yield.
+     */
     void wait()
     {
         if (current <= max_repetitions)  // Start active spinning phase
         {
             for (int_fast32_t i = 0; i < current; ++i)
                 pause_processor();
-            current <<= 1;  // double the amount of active CPU waiting.
+            current <<= 1;  // double the amount of active CPU waiting cycles.
         }
         else  // Start passive spinning phase
         {
@@ -50,6 +67,7 @@ public:
 
 private:
 
+    //!\brief Efficient instruction to pause the CPU.
     void pause_processor()
     {
         #if defined(__SSE2__)  // AMD and Intel
@@ -61,8 +79,10 @@ private:
         #endif
     }
 
+    //!\brief The maximal number of repetitions until the thread yields.
     static constexpr int_fast32_t max_repetitions{16};
+    //!\brief The current waiting phase.
     int_fast32_t                  current{1};
 };
-//!\endcond
-} // namespace seqan3::contrib
+
+} // namespace seqan3::detail
