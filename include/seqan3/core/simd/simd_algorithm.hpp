@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <immintrin.h>
 #include <utility>
 
 #include <seqan3/core/simd/concept.hpp>
@@ -77,6 +78,28 @@ constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
     return detail::iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
 }
 
+/*!\brief Loads size of simd_t bytes of integral data from memory.
+ * \tparam    simd_t    The simd type; must model seqan3::simd::Simd.
+ * \param[in] mem_addr  The memory address to load from. Does not need to be aligned on any particular boundary.
+ * \ingroup simd
+ */
+template <Simd simd_t>
+constexpr simd_t load([[maybe_unused]] void const * mem_addr)
+{
+    assert(mem_addr != nullptr);
+
+    if constexpr (simd_traits<simd_t>::max_length == 16)
+        return reinterpret_cast<simd_t>(_mm_loadu_si128(reinterpret_cast<__m128i const *>(mem_addr)));
+    else if constexpr (simd_traits<simd_t>::max_length == 32)
+        return reinterpret_cast<simd_t>(_mm256_loadu_si256(reinterpret_cast<__m256i const *>(mem_addr)));
+    else if constexpr (simd_traits<simd_t>::max_length == 64)
+        return reinterpret_cast<simd_t>(_mm512_loadu_si512(mem_addr));
+    else if constexpr (simd_traits<simd_t>::max_length == 1)  // scalar value?
+        return simd_t{*reinterpret_cast<simd_t const *>(mem_addr)};
+    else
+        static_assert(simd_traits<simd_t>::max_length >= 1 && simd_traits<simd_t>::max_length,
+                      "Unsupported simd type to load.");
+}
 } // inline namespace simd
 
 } // namespace seqan3
