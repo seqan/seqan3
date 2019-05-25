@@ -61,7 +61,7 @@ TYPED_TEST(simd_algorithm_generic, unpack_hi)
     else
     {
         simd_t lhs = iota<simd_t>(1);
-        simd_t rhs = iota<simd_t>(1);
+        simd_t rhs = iota<simd_t>(simd_traits<simd_t>::length + 1);
 
         simd_t res = unpack_hi(lhs, rhs);
 
@@ -92,7 +92,7 @@ TYPED_TEST(simd_algorithm_generic, unpack_lo)
     {
 
         simd_t lhs = iota<simd_t>(1);
-        simd_t rhs = iota<simd_t>(1);
+        simd_t rhs = iota<simd_t>(simd_traits<simd_t>::length + 1);
 
         simd_t res = unpack_lo(lhs, rhs);
 
