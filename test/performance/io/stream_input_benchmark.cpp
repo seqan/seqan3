@@ -12,6 +12,8 @@
 #include <sstream>
 
 #ifdef SEQAN3_HAS_ZLIB
+    #include <seqan3/contrib/stream/bgzf_istream.hpp>
+    #include <seqan3/contrib/stream/bgzf_ostream.hpp>
     #include <seqan3/contrib/stream/gz_istream.hpp>
     #include <seqan3/contrib/stream/gz_ostream.hpp>
 #endif
@@ -75,6 +77,18 @@ std::string const input_comp<contrib::gz_istream>
         return ret.str();
     } ()
 };
+
+template <>
+std::string const input_comp<contrib::bgzf_istream>
+{
+    [] ()
+    {
+        std::ostringstream ret;
+        contrib::bgzf_ostream os{ret};
+        std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+        return ret.str();
+    } ()
+};
 #ifdef SEQAN3_HAS_SEQAN2
 template <>
 std::string const & input_comp<seqan::GZFile> = input_comp<contrib::gz_istream>;
@@ -106,9 +120,7 @@ std::string const & input_comp<seqan::BZ2File> = input_comp<contrib::bz2_istream
 void uncompressed(benchmark::State & state)
 {
     std::istringstream s{input};
-
     std::istreambuf_iterator<char> it{s};
-
     size_t i = 0;
     for (auto _ : state)
     {
@@ -144,6 +156,7 @@ void compressed(benchmark::State & state)
 
 #ifdef SEQAN3_HAS_ZLIB
 BENCHMARK_TEMPLATE(compressed, contrib::gz_istream);
+BENCHMARK_TEMPLATE(compressed, contrib::bgzf_istream);
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
@@ -173,6 +186,7 @@ void compressed_type_erased(benchmark::State & state)
 
 #ifdef SEQAN3_HAS_ZLIB
 BENCHMARK_TEMPLATE(compressed_type_erased, contrib::gz_istream);
+BENCHMARK_TEMPLATE(compressed_type_erased, contrib::bgzf_istream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed_type_erased, contrib::bz2_istream);
@@ -201,6 +215,7 @@ void compressed_type_erased2(benchmark::State & state)
 
 #ifdef SEQAN3_HAS_ZLIB
 BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::gz_istream);
+BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::bgzf_istream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::bz2_istream);
@@ -234,7 +249,7 @@ BENCHMARK_TEMPLATE(seqan2_compressed, seqan::Nothing);
 
 #ifdef SEQAN_HAS_ZLIB
 BENCHMARK_TEMPLATE(seqan2_compressed, seqan::GZFile);
-// BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BgzfFile);
+BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BgzfFile);
 #endif
 #ifdef SEQAN_HAS_BZIP2
 BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BZ2File);

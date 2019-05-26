@@ -8,5 +8,5 @@ if (ZLIB_FOUND)
     seqan3_test(gz_ostream_test.cpp)
 
     seqan3_test(bgzf_istream_test.cpp)
-    # seqan3_test(bgzf_ostream_test.cpp)
+    seqan3_test(bgzf_ostream_test.cpp)
 endif ()
