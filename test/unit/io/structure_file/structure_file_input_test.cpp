@@ -500,7 +500,7 @@ TEST_F(structure_file_input_read, decompression_by_filename_gz)
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
 
-        std::copy(begin(input_gz), end(input_gz), std::ostreambuf_iterator<char>{of});
+        std::copy(input_gz.begin(), input_gz.end(), std::ostreambuf_iterator<char>{of});
     }
 
     structure_file_in fin{filename.get_path()};
@@ -527,6 +527,62 @@ TEST_F(structure_file_input_read, read_empty_gz_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
+
+std::string input_bgzf
+{
+    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
+    '\x02', '\x00', '\xB6', '\x00', '\x55', '\x8E', '\xC1', '\x0A', '\x02', '\x31', '\x0C', '\x44', '\xEF', '\xF9',
+    '\x8A', '\x1E', '\xDB', '\xC3', '\xD6', '\x96', '\x55', '\x7A', '\x5B', '\x08', '\x41', '\xE2', '\x45', '\x11',
+    '\x25', '\x67', '\x59', '\xA4', '\x87', '\x05', '\x05', '\x51', '\x11', '\x3F', '\xDF', '\xB4', '\x15', '\x59',
+    '\x27', '\x50', '\x3A', '\x8F', '\x30', '\x93', '\xE1', '\xE8', '\xCF', '\xF9', '\x9E', '\x5F', '\xD3', '\x63',
+    '\x1A', '\xF3', '\xE9', '\x79', '\xD8', '\x61', '\xB7', '\xDF', '\xAC', '\xCD', '\x36', '\x86', '\xB4', '\x0C',
+    '\x8B', '\xD8', '\xA5', '\x1E', '\x98', '\x98', '\x51', '\x44', '\x90', '\x49', '\x08', '\x59', '\x84', '\xD5',
+    '\xEB', '\x10', '\x93', '\x5A', '\x24', '\x61', '\xC4', '\xBA', '\x50', '\x30', '\x0B', '\x29', '\xD0', '\x11',
+    '\x52', '\xA6', '\x0B', '\x65', '\x05', '\x8B', '\x23', '\x04', '\xDB', '\xE4', '\x7D', '\x7B', '\x9B', '\x9C',
+    '\xEA', '\x0F', '\x34', '\x52', '\x64', '\x67', '\xD8', '\xCD', '\xE4', '\x8D', '\xED', '\x62', '\xF2', '\xAB',
+    '\xE0', '\x60', '\x30', '\xF9', '\x3D', '\x5E', '\x6F', '\x97', '\x0C', '\xAD', '\x5F', '\xB0', '\x54', '\x62',
+    '\x3D', '\xA2', '\x7C', '\x85', '\xF4', '\x30', '\x82', '\x5F', '\x56', '\x0B', '\xAC', '\x05', '\xEE', '\xDB',
+    '\xA3', '\x61', '\xBD', '\x4F', '\xD1', '\xC1', '\x07', '\x38', '\xAB', '\x49', '\x82', '\x0C', '\x01', '\x00',
+    '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42',
+    '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+    '\x00'
+};
+
+TEST_F(structure_file_input_read, decompression_by_filename_bgzf)
+{
+    test::tmp_filename filename{"structure_file_input_test.dbn.bgzf"};
+
+    {
+        std::ofstream of{filename.get_path(), std::ios::binary};
+
+        std::copy(input_gz.begin(), input_gz.end(), std::ostreambuf_iterator<char>{of});
+    }
+
+    structure_file_in fin{filename.get_path()};
+
+    decompression_impl(fin);
+}
+
+TEST_F(structure_file_input_read, decompression_by_stream_bgzf)
+{
+    structure_file_in fin{std::istringstream{input_gz}, structure_file_format_vienna{}};
+
+    decompression_impl(fin);
+}
+
+TEST_F(structure_file_input_read, read_empty_bgzf_file)
+{
+    std::string empty_bgzf_file
+    {
+        '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF',
+        '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
+    };
+    structure_file_in fin{std::istringstream{empty_bgzf_file}, structure_file_format_vienna{}};
+
+    EXPECT_TRUE(fin.begin() == fin.end());
+}
+
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
@@ -554,7 +610,7 @@ TEST_F(structure_file_input_read, decompression_by_filename_bz2)
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
 
-        std::copy(begin(input_bz2), end(input_bz2), std::ostreambuf_iterator<char>{of});
+        std::copy(input_bz2.begin(), input_bz2.end(), std::ostreambuf_iterator<char>{of});
     }
 
     structure_file_in fin{filename.get_path()};
