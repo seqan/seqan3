@@ -211,7 +211,6 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
 
 #endif
 
-// weirdly formatted code but makes console output easier to read
 BENCHMARK(fastq_write_to_stream);
 
 BENCHMARK(fastq_read_from_stream)->Arg(100);
@@ -239,3 +238,5 @@ BENCHMARK(fastq_read_from_disk_seqan2)->Arg(100000);
 #endif
 
 BENCHMARK_MAIN();
+
+
