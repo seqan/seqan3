@@ -67,125 +67,94 @@ public:
             return;
         }
 
-        // Register clielement callback.
-        append_clielement_option_callbacks.push_back([this,
-                                                      short_id,
-                                                      long_id] (rxml::xml_document<> *pool, 
-                                                                rxml::xml_node<> *parent_node,
-                                                                argument_parser_meta_data const & parser_meta) {
+        // Register 'clielement' node generation callback.
+        clielement_option_callbacks.push_back([this,
+                                               short_id,
+                                               long_id] (rxml::xml_document<> *pool, 
+                                                         rxml::xml_node<> *parent_node,
+                                                         argument_meta_data const & meta) {
             char *prefixed_option_name = nullptr;
             char *reference_name = nullptr;
-            rxml::xml_node<> *clielement_node = nullptr;
-            rxml::xml_node<> *mapping_node = nullptr;
             
-            // Allocate helper variables related to the DOM tree construction, getting memory from the CTD document
-            // memory pool.
+            // Allocate helper variables related to the DOM tree construction, getting memory 
+            // from the CTD document memory pool.
             if (long_id.empty())
             {
                 prefixed_option_name = pool->allocate_string(prepend_dash(short_id).data());
-                reference_name = pool->allocate_string(prepend_app_name(parser_meta.app_name, 
+                reference_name = pool->allocate_string(prepend_app_name(meta.app_name, 
                                                                         short_id).data());
             }
             else
             {
                 prefixed_option_name = pool->allocate_string(prepend_dash(long_id).data());
-                reference_name = pool->allocate_string(prepend_app_name(parser_meta.app_name,
+                reference_name = pool->allocate_string(prepend_app_name(meta.app_name,
                                                                         long_id).data());
             }
 
-            // Allocate and fill 'clielement' node.
-            clielement_node = pool->allocate_node(rxml::node_element,
-                                                  "clielement");
-            clielement_node->append_attribute(pool->allocate_attribute("optionIdentifier",
-                                                                       prefixed_option_name)); 
-            
-            // At the moment, list options are not supported by the CTD exporter.
-            clielement_node->append_attribute(pool->allocate_attribute("isList",
-                                                                       "false"));
-
-            // Allocate and fill 'mapping' node.
-            mapping_node = pool->allocate_node(rxml::node_element, 
-                                               "mapping");
-            mapping_node->append_attribute(pool->allocate_attribute("referenceName",
-                                                                    reference_name));
-
-            // Build 'clielement' subtree.
-            parent_node->append_node(clielement_node);
-            clielement_node->append_node(mapping_node);
+            // Build and append 'clielement' subtree.
+            append_clielement_node(pool, 
+                                   parent_node, 
+                                   prefixed_option_name, 
+                                   reference_option_name);
         });
 
         // Register ITEM callback.
-        append_item_option_callbacks.push_back([this,
-                                                value,
-                                                short_id,
-                                                long_id,
-                                                desc,
-                                                spec,
-                                                validator] (rxml::xml_document<> *pool, 
-                                                            rxml::xml_node<> *parent_node) {
-            char *option_name = nullptr;
-            char *option_gkn_type = nullptr;
-            char *option_description = nullptr;
+        item_option_callbacks.push_back([this,
+                                         value,
+                                         short_id,
+                                         long_id,
+                                         desc,
+                                         spec,
+                                         validator] (rxml::xml_document<> *pool, 
+                                                     rxml::xml_node<> *parent_node) {
+            char *argument_name = nullptr;
+            char *argument_type = nullptr;
+            char *argument_description = nullptr;
+            char *argument_restrictions = nullptr;
+            char *argument_formats = nullptr;
+            char *argument_required = nullptr;
+            char *argument_advanced = nullptr;
+            char *argument_value = nullptr;
             rxml::xml_node<> *item_node = nullptr;
 
-            // Allocate helper variables related to the DOM tree construction, getting memory from the CTD document
-            // memory pool.
+            // Allocate helper variables related to the DOM tree construction, getting 
+            // memory from the CTD document memory pool.
             if (long_id.empty())
             {
-                option_name = pool->allocate_string(std::string{short_id}.data());
+                argument_name = pool->allocate_string(prepend_dash(std::string{short_id}).data());
             }
             else
             {
-                option_name = pool->allocate_string(long_id.data());
+                argument_name = pool->allocate_string(prepend_dash(long_id).data());
             }
-            option_gkn_type = pool->allocate_string(guess_gkn_type(value, 
-                                                                   validator).data());
-            option_description = pool->allocate_string(desc.data()); 
+            argument_name = pool->allocate_string(std::string{"argument-"}.append(std::to_string(args_counter)));
+            argument_type = pool->allocate_string(guess_gkn_type(value, 
+                                                                 validator).data());
+            argument_description = pool->allocate_string(desc.data()); 
 
-            // Create the ITEM node for non-list options. For list options, a ITEMLIST node 
-            // should be created instead. Unfortunately, the CTD exporter does not support list options.
-            item_node = pool->allocate_node(rxml::node_element, 
-                                            "ITEM");               
-            
-            // Write the 'name' ITEM node attribute.
-            item_node->append_attribute(pool->allocate_attribute("name",
-                                                                 option_name));
-            // Write the 'type' ITEM node attribute.
-            item_node->append_attribute(pool->allocate_attribute("type",
-                                                                 option_gkn_type));
-            // Write the 'description' ITEM node attribute.
-            item_node->append_attribute(pool->allocate_attribute("description",
-                                                                 option_description));
-            
             // Write the 'restrictions' and 'supported_formats' ITEM node attributes.
             // TODO (emanueleparisi) Here support for restriction and supported formats is missing ! 
             // For that to be implement we need validators to provide such information. For the sake 
             // of first releases, we ignore any constraints posed by the user.
             item_node->append_attribute(pool->allocate_attribute("restrictions",
                                                                  ""));
-            if (option_gkn_type == std::string{"input-file"} || 
-                option_gkn_type == std::string{"output-file"} || 
-                option_gkn_type == std::string{"input-prefix"} || 
-                option_gkn_type == std::string{"output-prefix"})
-            {
-                item_node->append_attribute(pool->allocate_attribute("supported_formats",
-                                                                     "*.*"));
-            }
+            item_node->append_attribute(pool->allocate_attribute("supported_formats",
+                                                                 "*.*"));
 
             // Write the 'required' and 'advanced' attributes.
             if (spec == REQUIRED)
             {
-                item_node->append_attribute(pool->allocate_attribute("required",
-                                                                     "true"));
-                item_node->append_attribute(pool->allocate_attribute("advanced",
-                                                                     "false"));
+                argument_required = pool->allocate_attribute("required",
+                                                             "true");
+                argument_required = pool->allocate_attribute("advanced",
+                                                             "false");
             }
             else if (spec == ADVANCED)
             {
-                item_node->append_attribute(pool->allocate_attribute("required",
-                                                                     "false"));
-                item_node->append_attribute(pool->allocate_attribute("advanced",
-                                                                     "true"));
+                argument_required = pool->allocate_attribute("required",
+                                                             "false");
+                argument_required = pool->allocate_attribute("advanced",
+                                                             "true");
             }
             else
             {
@@ -198,11 +167,19 @@ public:
             // For non-list options, append 'value' attribute to ite node. 
             // For list options, create the ITEMLIST subtree. Unfortunately, the CTD exporter
             // does not support list options.
-            item_node->append_attribute(pool->allocate_attribute("value",
-                                                                 ""));
-            
-            // Append the 'ITEM' subtree to the parent 'NODE' node.
-            parent_node->append_node(item_node);
+            argument_value = pool->allocate_attribute("value",
+                                                      "");
+        
+            append_item_node(pool,
+                             parent_node,
+                             argument_name,
+                             argument_type,
+                             argument_description,
+                             argument_restrictions,
+                             argument_formats,
+                             argument_required,
+                             argument_advanced,
+                             argument_value);
         });
     }
 
@@ -225,16 +202,108 @@ public:
                                std::string const & desc,
                                validator_type && validator) 
     {
+        clielement_argument_callbacks.push_back([this,
+                                                 args_counter] (rxml::xml_document<> *pool, 
+                                                                rxml::xml_node<> *parent_node,
+                                                                argument_parser_meta_data const & meta) {
+            std::string reference_option_suffix = {};
+            char *reference_option_name = nullptr;
+
+            reference_option_suffix = std::string{"argument-"}.append(std::to_string(args_counter));
+            reference_option_name = pool->allocate_string(prepend_app_name(meta.app_name,
+                                                                           reference_option_suffix));
+            clielement_argument_callbacks(pool,
+                                          parent_node,
+                                          "",
+                                          reference_option_name);
+        });
+
+        // Register ITEM callback.
+        item_option_callbacks.push_back([this,
+                                         value,
+                                         desc,
+                                         spec,
+                                         validator,
+                                         args_counter] (rxml::xml_document<> *pool, 
+                                                        rxml::xml_node<> *parent_node) {
+            char *argument_name = nullptr;
+            char *argument_type = nullptr;
+            char *argument_description = nullptr;
+            char *argument_restrictions = nullptr;
+            char *argument_formats = nullptr;
+            char *argument_required = nullptr;
+            char *argument_advanced = nullptr;
+            char *argument_value = nullptr;
+            rxml::xml_node<> *item_node = nullptr;
+
+            // Allocate helper variables related to the DOM tree construction, getting 
+            // memory from the CTD document memory pool.
+            argument_name = pool->allocate_string(std::string{"argument-"}.append(std::to_string(args_counter)));
+            argument_type = pool->allocate_string(guess_gkn_type(value, 
+                                                                 validator).data());
+            argument_description = pool->allocate_string(desc.data()); 
+
+            // Write the 'restrictions' and 'supported_formats' ITEM node attributes.
+            // TODO (emanueleparisi) Here support for restriction and supported formats is missing ! 
+            // For that to be implement we need validators to provide such information. For the sake 
+            // of first releases, we ignore any constraints posed by the user.
+            item_node->append_attribute(pool->allocate_attribute("restrictions",
+                                                                 ""));
+            item_node->append_attribute(pool->allocate_attribute("supported_formats",
+                                                                 "*.*"));
+
+            // Write the 'required' and 'advanced' attributes.
+            if (spec == REQUIRED)
+            {
+                argument_required = pool->allocate_attribute("required",
+                                                             "true");
+                argument_required = pool->allocate_attribute("advanced",
+                                                             "false");
+            }
+            else if (spec == ADVANCED)
+            {
+                argument_required = pool->allocate_attribute("required",
+                                                             "false");
+                argument_required = pool->allocate_attribute("advanced",
+                                                             "true");
+            }
+            else
+            {
+                item_node->append_attribute(pool->allocate_attribute("required",
+                                                                     "false"));
+                item_node->append_attribute(pool->allocate_attribute("advanced",
+                                                                     "false"));
+            }
+
+            // For non-list options, append 'value' attribute to ite node. 
+            // For list options, create the ITEMLIST subtree. Unfortunately, the CTD exporter
+            // does not support list options.
+            argument_value = pool->allocate_attribute("value",
+                                                      "");
+        
+            append_item_node(pool,
+                             parent_node,
+                             argument_name,
+                             argument_type,
+                             argument_description,
+                             argument_restrictions,
+                             argument_formats,
+                             argument_required,
+                             argument_advanced,
+                             argument_value);
+        });
+
+        args_counter++;
     }
 
-    void parse(argument_parser_meta_data const & parser_meta) 
+    void parse(argument_parser_meta_data const & meta) 
     {
         rxml::xml_document<> *ctd_document = new rxml::xml_document<>();
 
         // Validate the application name using the regex provided by the CTD XML schema.
-        if (!std::regex_match(parser_meta.app_name, 
+        if (!std::regex_match(meta.app_name, 
                               std::regex("[A-Za-z0-9?_\\-]+"))) {
-            throw parser_design_error("CTD file requires the application name to match [A-Za-z0-9_\\-]+ regex");
+            throw parser_design_error("CTD requires the application name to match [A-Za-z0-9_\\-]+");
         }
 
         // Append the XML declaration node on top of the XML document. 
@@ -244,7 +313,7 @@ public:
         // Append the tool subtree to the CTD document DOM tree.
         append_tool_node(ctd_document, 
                          ctd_document,
-                         parser_meta);
+                         meta);
         
         // Print the CTD file on the standard output stream.
         std::cout << *ctd_document;
@@ -392,8 +461,6 @@ private:
         return gkn_type_name;
     }
 
-
-
     /*!\brief 
      *
      * \param[in] document
@@ -418,17 +485,17 @@ private:
      *
      * \param[in] document
      * \param[in] parent_node
-     * \param[in] parser_meta
+     * \param[in] meta
      */
     void append_description_node(rxml::xml_document<> *pool,
                                  rxml::xml_node<> *parent_node,
-                                 argument_parser_meta_data const & parser_meta) 
+                                 argument_parser_meta_data const & meta) 
     {
         rxml::xml_node<> *description_node = nullptr;
 
         description_node = pool->allocate_node(rxml::node_element, 
                                                "description",
-                                               parser_meta.short_description.data());
+                                               meta.short_description.data());
         parent_node->append_node(description_node);
     }
 
@@ -436,17 +503,17 @@ private:
      *
      * \param[in] document
      * \param[in] parent_node
-     * \param[in] parser_meta
+     * \param[in] meta
      */
     void append_manual_node(rxml::xml_document<> *pool, 
                             rxml::xml_node<> *parent_node, 
-                            argument_parser_meta_data const & parser_meta) 
+                            argument_parser_meta_data const & meta) 
     {
         rxml::xml_node<> *manual_node = nullptr;
         std::string description = {};
 
         // Merge description lines into a single string.
-        for (auto const & l : parser_meta.description)
+        for (auto const & l : meta.description)
         {
             description.append(l);
         }
@@ -456,53 +523,133 @@ private:
         parent_node->append_node(manual_node);
     }
 
-    /*!\brief 
-     *
-     * \param[in] document
-     * \param[in] parent_node
-     * \param[in] parser_meta
-     */
-    void append_cli_node(rxml::xml_document<> *pool,
-                         rxml::xml_node<> *parent_node,
-                         argument_parser_meta_data const & parser_meta) 
+    void append_clielement_node(rxml::xml_document<> *pool, 
+                                rxml::xml_node<> *parent_node, 
+                                const char *prefixed_option_name, 
+                                char const *reference_option_name)
     {
-        rxml::xml_node<> *cli_node = nullptr;
+        rxml::xml_node<> *clielement_node = nullptr;
+        rxml::xml_node<> *mapping_node = nullptr;
+            
+        // Allocate and fill 'clielement' node.
+        clielement_node = pool->allocate_node(rxml::node_element,
+                                              "clielement");
+        clielement_node->append_attribute(pool->allocate_attribute("optionIdentifier",
+                                                                   prefixed_option_name)); 
+        
+        // At the moment, list options are not supported by the CTD exporter.
+        clielement_node->append_attribute(pool->allocate_attribute("isList",
+                                                                   "false"));
 
-        cli_node = pool->allocate_node(rxml::node_element, 
-                                       "cli");
-        for (auto f : append_clielement_option_callbacks)
-        {
-            f(pool,
-              cli_node,
-              parser_meta);
-        }
-        for (auto f : append_clielement_argument_callbacks)
-        {
-            f(pool,
-              cli_node,
-              parser_meta);
-        }
-        parent_node->append_node(cli_node);
+        // Allocate and fill 'mapping' node.
+        mapping_node = pool->allocate_node(rxml::node_element, 
+                                           "mapping");
+        mapping_node->append_attribute(pool->allocate_attribute("referenceName",
+                                                                reference_name));
+
+        // Build 'clielement' subtree.
+        parent_node->append_node(clielement_node);
+        clielement_node->append_node(mapping_node);
     }
 
     /*!\brief 
      *
      * \param[in] document
      * \param[in] parent_node
-     * \param[in] parser_meta
+     * \param[in] meta
+     */
+    void append_cli_node(rxml::xml_document<> *pool,
+                         rxml::xml_node<> *parent_node,
+                         argument_parser_meta_data const & meta) 
+    {
+        rxml::xml_node<> *cli_node = nullptr;
+
+        cli_node = pool->allocate_node(rxml::node_element, 
+                                       "cli");
+        for (auto f : clielement_option_callbacks)
+        {
+            f(pool,
+              cli_node,
+              meta);
+        }
+        for (auto f : clielement_argument_callbacks)
+        {
+            f(pool,
+              cli_node,
+              meta);
+        }
+        parent_node->append_node(cli_node);
+    }
+
+    void append_item_node(rxml::xml_document<> *pool,
+                          rxml::xml_node<> *parent_node,
+                          char const *argument_name,
+                          char const *argument_type,
+                          char const *argument_description,
+                          char const *argument_restrictions,
+                          char const *argument_formats,
+                          char const *argument_required,
+                          char const *argument_advanced,
+                          char const *argument_value)
+    {
+        rxml::xml_node<> *item_node = nullptr;
+
+        // Create the ITEM node for non-list options. For list options, a ITEMLIST node should
+        // be created instead. Unfortunately, the CTD exporter does not support list options.
+        item_node = pool->allocate_node(rxml::node_element, 
+                                        "ITEM");               
+        
+        // Append node attributes.
+        item_node->append_attribute(pool->allocate_attribute("name",
+                                                             argument_name));
+        item_node->append_attribute(pool->allocate_attribute("type",
+                                                             argument_type));
+        item_node->append_attribute(pool->allocate_attribute("description",
+                                                             argument_description));
+        // TODO (emanueleparisi) Here support for restriction and supported formats is missing ! 
+        // For that to be implement we need validators to provide such information. For the sake 
+        // of first releases, we ignore any constraints posed by the user.
+        item_node->append_attribute(pool->allocate_attribute("restrictions",
+                                                             ""));
+        if (argument_type == std::string{"input-file"} || 
+            argument_type == std::string{"output-file"} || 
+            argument_type == std::string{"input-prefix"} || 
+            argument_type == std::string{"output-prefix"})
+        {
+            item_node->append_attribute(pool->allocate_attribute("supported_formats",
+                                                                 "*.*"));
+        }
+
+        // Append 'required' and 'advanced' node attributes.
+        item_node->append_attribute(pool->allocate_attribute("advanced",
+                                                             argument_advanced));
+        item_node->append_attribute(pool->allocate_attribute("required",
+                                                             argument_required));
+        item_node->append_attribute(pool->allocate_attribute("value",
+                                                             ""));
+        
+        // Append the 'ITEM' subtree to the parent 'NODE' node.
+        parent_node->append_node(item_node);
+    }
+
+    /*!\brief 
+     *
+     * \param[in] document
+     * \param[in] parent_node
+     * \param[in] meta
      */
     void append_node_node(rxml::xml_document<> *pool, 
                           rxml::xml_node<> *parent_node, 
-                          argument_parser_meta_data const & parser_meta) 
+                          argument_parser_meta_data const & meta) 
     {
         rxml::xml_node<> *node_node = nullptr;
 
         node_node = pool->allocate_node(rxml::node_element,
                                         "NODE");
         node_node->append_attribute(pool->allocate_attribute("name", 
-                                                             parser_meta.app_name.data()));
+                                                             meta.app_name.data()));
         node_node->append_attribute(pool->allocate_attribute("description",
-                                                             parser_meta.short_description.data()));
+                                                             meta.short_description.data()));
         for (auto f : append_item_option_callbacks)
         {
             f(pool,
@@ -524,7 +671,7 @@ private:
      */
     void append_parameters_node(rxml::xml_document<> *pool, 
                                 rxml::xml_node<> *parent_node, 
-                                argument_parser_meta_data const & parser_meta) 
+                                argument_parser_meta_data const & meta) 
     {
         rxml::xml_node<> *parameters_node = nullptr;
 
@@ -534,21 +681,20 @@ private:
                                                                    "1.7.0"));
         append_node_node(pool, 
                          parameters_node, 
-                         parser_meta);
+                         meta);
         parent_node->append_node(parameters_node);
     }
-
 
     /*!\brief 
      *
      * \param[in] document
      * \param[in] parent_node
-     * \param[in] parser_meta
+     * \param[in] meta
      * \param[in] ctd_version
      */
     void append_tool_node(rxml::xml_document<> *pool,
                           rxml::xml_node<> *parent_node,
-                          argument_parser_meta_data const & parser_meta) 
+                          argument_parser_meta_data const & meta) 
     {
         rxml::xml_node<> *tool_node = nullptr;
         
@@ -557,23 +703,23 @@ private:
         
         // Set tool node attributes. 
         tool_node->append_attribute(pool->allocate_attribute("name",
-                                                             parser_meta.app_name.data()));
-        if (parser_meta.version.empty())
+                                                             meta.app_name.data()));
+        if (meta.version.empty())
         {
-            // App version is a mandatory attribute of the 'tool' node. If the developer does not provide any
-            // data, a fake 0.0.0.0 version is used.
+            // App version is a mandatory attribute of the 'tool' node. If the developer 
+            // does not provide any data, a fake 0.0.0.0 version is used.
             tool_node->append_attribute(pool->allocate_attribute("version",
                                                                  "0.0.0.0"));
         }
         else
         {
              tool_node->append_attribute(pool->allocate_attribute("version",
-                                                                  parser_meta.version.data()));
+                                                                  meta.version.data()));
         }
-        if (!parser_meta.url.empty())
+        if (!meta.url.empty())
         {
             tool_node->append_attribute(pool->allocate_attribute("docurl",
-                                                                 parser_meta.url.data()));
+                                                                 meta.url.data()));
         }
         tool_node->append_attribute(pool->allocate_attribute("ctdVersion",
                                                              "1.7.0"));
@@ -582,16 +728,16 @@ private:
         // of the 'tool' node.
         append_description_node(pool,
                                 tool_node, 
-                                parser_meta);
+                                meta);
         append_manual_node(pool,
                            tool_node, 
-                           parser_meta);
+                           meta);
         append_cli_node(pool,
                         tool_node,
-                        parser_meta);
+                        meta);
         append_parameters_node(pool, 
                                tool_node, 
-                               parser_meta);
+                               meta);
 
         // Append tool node to the document DOM tree.
         parent_node->append_node(tool_node);
@@ -599,14 +745,15 @@ private:
    
     std::vector<std::function<void(rxml::xml_document<>*, 
                                    rxml::xml_node<>*,
-                                   argument_parser_meta_data const &)>> append_clielement_option_callbacks;
+                                   std::string)>> clielement_option_callbacks;
     std::vector<std::function<void(rxml::xml_document<>*, 
                                    rxml::xml_node<>*,
-                                   argument_parser_meta_data const &)>> append_clielement_argument_callbacks;
+                                   std::string)>> clielement_argument_callbacks;
     std::vector<std::function<void(rxml::xml_document<>*, 
-                                   rxml::xml_node<>*)>> append_item_option_callbacks;
+                                   rxml::xml_node<>*)>> item_option_callbacks;
     std::vector<std::function<void(rxml::xml_document<>*, 
-                                   rxml::xml_node<>*)>> append_item_argument_callbacks;
+                                   rxml::xml_node<>*)>> item_argument_callbacks;
+    unsigned args_counter;
 };
 
 } // namespace seqan3
