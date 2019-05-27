@@ -49,11 +49,18 @@ public:
      * \brief The associated types are derived from the `file_type`.
      * \{
      */
+
+    //!\brief The value type.
     using value_type        = typename file_type::value_type;
+    //!\brief The reference type.
     using reference         = typename file_type::reference;
+    //!\brief The const reference type.
     using const_reference   = typename file_type::reference;
+    //!\brief The size type.
     using size_type         = typename file_type::size_type;
+    //!\brief The difference type. A signed integer type, usually std::ptrdiff_t.
     using difference_type   = typename file_type::difference_type;
+    //!\brief The pointer type.
     using pointer           = typename file_type::value_type *;
     //!\brief Tag this class as an input iterator.
     using iterator_category = std::input_iterator_tag;
@@ -118,24 +125,29 @@ public:
      * \brief Only (in-)equality comparison of iterator with end() is supported.
      * \{
      */
+
+    //!\brief Checks whether `*this` is equal to the sentinel.
     constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
     {
         assert(host != nullptr);
         return host->at_end;
     }
 
+    //!\brief Checks whether `*this` is not equal to the sentinel.
     constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
     {
         assert(host != nullptr);
         return !host->at_end;
     }
 
+    //!\brief Checks whether `it` is equal to the sentinel.
     constexpr friend bool operator==(std::ranges::default_sentinel_t const &,
                                      in_file_iterator const & it) noexcept
     {
         return (it == std::ranges::default_sentinel);
     }
 
+    //!\brief Checks whether `it` is not equal to the sentinel.
     constexpr friend bool operator!=(std::ranges::default_sentinel_t const &,
                                      in_file_iterator const & it) noexcept
     {

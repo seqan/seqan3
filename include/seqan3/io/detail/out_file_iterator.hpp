@@ -55,11 +55,18 @@ public:
      * \brief The associated types are `void`, see the full description.
      * \{
      */
+
+    //!\brief The value type (void).
     using value_type        = void;
+    //!\brief The reference type (void).
     using reference         = void;
+    //!\brief The const reference type (void).
     using const_reference   = void;
+    //!\brief The size type (void).
     using size_type         = void;
+    //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ptrdiff_t;
+    //!\brief The pointer type.
     using pointer           = void *;
     //!\brief Tag this class as an input access iterator.
     using iterator_category = std::output_iterator_tag;
@@ -126,22 +133,27 @@ public:
      * \brief This iterator never equals its sentinel.
      * \{
      */
+
+    //!\brief Checks whether `*this` is equal to the sentinel (always false).
     constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
     {
         return false;
     }
 
+    //!\brief Checks whether `*this` is not equal to the sentinel (always true).
     constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
     {
         return true;
     }
 
+    //!\brief Checks whether `it` is equal to the sentinel.
     constexpr friend bool operator==(std::ranges::default_sentinel_t const &,
                                      out_file_iterator const & it) noexcept
     {
         return (it == std::ranges::default_sentinel);
     }
 
+    //!\brief Checks whether `it` is not equal to the sentinel.
     constexpr friend bool operator!=(std::ranges::default_sentinel_t const &,
                                      out_file_iterator const & it) noexcept
     {

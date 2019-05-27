@@ -118,7 +118,6 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
  *               mapq_type & mapq, mate_type & mate, tag_dict_type & tag_dict, e_value_type & e_value,
  *               bit_score_type & bit_score)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \memberof seqan3::AlignmentFileInputFormat
  * \tparam stream_type        The input stream type; Must be derived from std::ostream.
  * \tparam ref_seqs_type      e.g. std::deque<ref_sequence_type> or decltype(std::ignore).
  * \tparam seq_type           Type of the seqan3::field::SEQ input (see seqan3::AlignmentFileInputTraits).

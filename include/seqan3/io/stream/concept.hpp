@@ -54,7 +54,6 @@ SEQAN3_CONCEPT OStream2 = requires { typename std::remove_reference_t<stream_typ
  */
 /*!\fn      std::basic_ostream<char_type, traits_type> & operator<<(value_type val);
  * \brief   (un)-formatted output operator for the respective type on the underlying stream.
- * \relates seqan3::OStream
  * \param   val The value to write into the stream.
  * \returns A reference to a std::basic_ostream<char_type, traits_type>.
  *
@@ -67,27 +66,22 @@ SEQAN3_CONCEPT OStream2 = requires { typename std::remove_reference_t<stream_typ
  */
 
  /*!\typedef typename stream::char_type char_type
-  * \memberof seqan3::OStream
   * \brief Declares the associated char type.
   */
 
  /*!\typedef typename stream::traits_type traits_type
-  * \memberof seqan3::OStream
   * \brief Declares the associated traits type.
   */
 
  /*!\typedef typename stream::int_type int_type
-  * \memberof seqan3::OStream
   * \brief Declares the associated int type.
   */
 
  /*!\typedef typename stream::pos_type pos_type
-  * \memberof seqan3::OStream
   * \brief Declares the associated pos type.
   */
 
  /*!\typedef typename stream::off_type off_type
-  * \memberof seqan3::OStream
   * \brief Declares the associated off type.
   */
 //!\}
@@ -127,7 +121,6 @@ SEQAN3_CONCEPT IStream2 = requires { typename std::remove_reference_t<stream_typ
  */
 /*!\fn      std::basic_istream<char_type, traits_type> & operator>>(value_type val);
  * \brief   (un)-formatted input operator for the respective type on the underlying stream.
- * \relates seqan3::IStream
  * \param   val The value to read from the stream.
  * \returns A reference to a std::basic_istream<char_type, traits_type>.
  *
@@ -140,27 +133,22 @@ SEQAN3_CONCEPT IStream2 = requires { typename std::remove_reference_t<stream_typ
  */
 
  /*!\typedef typename stream::char_type char_type
-  * \memberof seqan3::IStream
   * \brief Declares the associated char type.
   */
 
  /*!\typedef typename stream::traits_type traits_type
-  * \memberof seqan3::IStream
   * \brief Declares the associated traits type.
   */
 
  /*!\typedef typename stream::int_type int_type
-  * \memberof seqan3::IStream
   * \brief Declares the associated int type.
   */
 
  /*!\typedef typename stream::pos_type pos_type
-  * \memberof seqan3::IStream
   * \brief Declares the associated pos type.
   */
 
  /*!\typedef typename stream::off_type off_type
-  * \memberof seqan3::IStream
   * \brief Declares the associated off type.
   */
 //!\}

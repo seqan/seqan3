@@ -233,9 +233,14 @@ public:
      * \brief Most of the range associated types are `void` for output ranges.
      * \{
      */
+
+    //!\brief The value type (void).
     using value_type        = void;
+    //!\brief The reference type (void).
     using reference         = void;
+    //!\brief The const reference type (void).
     using const_reference   = void;
+    //!\brief The size type (void).
     using size_type         = void;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ptrdiff_t;
