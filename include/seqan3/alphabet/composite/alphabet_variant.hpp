@@ -122,11 +122,11 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          target_t> = false;
 
 // guard against pairs/tuples that *might* contain self to prevent recursive instantiation
-// (applying tuple_like_concept unfortunately does not work because it itself starts recursive instantiation)
+// (applying TupleLike unfortunately does not work because it itself starts recursive instantiation)
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires tuple_size_concept<target_t> && !alphabet_tuple_base_concept<target_t>
+    requires TupleSize<target_t> && !alphabet_tuple_base_concept<target_t>
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;

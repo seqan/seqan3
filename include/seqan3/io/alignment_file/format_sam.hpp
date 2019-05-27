@@ -489,7 +489,7 @@ public:
                               "If you give indices as reference id information the header must also be present.");
         }
 
-        static_assert(tuple_like_concept<remove_cvref_t<align_type>>,
+        static_assert(TupleLike<remove_cvref_t<align_type>>,
                       "The align object must be a std::pair of two ranges whose "
                       "value_type is comparable to seqan3::gap");
 
@@ -504,7 +504,7 @@ public:
                       "The qual object must be a std::ranges::ForwardRange "
                       "over letters that model seqan3::Alphabet.");
 
-        static_assert(tuple_like_concept<remove_cvref_t<mate_type>>,
+        static_assert(TupleLike<remove_cvref_t<mate_type>>,
                       "The mate object must be a std::tuple of size 3 with "
                       "1) a std::ranges::ForwardRange with a value_type modelling seqan3::Alphabet, "
                       "2) a std::Integral or std::optional<std::Integral>, and "

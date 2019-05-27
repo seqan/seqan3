@@ -20,7 +20,7 @@ TEST(configuration, concept_check)
     EXPECT_TRUE(detail::ConfigElement<bar>);
     EXPECT_FALSE(detail::ConfigElement<int>);
 
-    EXPECT_TRUE((tuple_like_concept<configuration<bax, bar>>));
+    EXPECT_TRUE((TupleLike<configuration<bax, bar>>));
 }
 
 TEST(configuration, tuple_size)

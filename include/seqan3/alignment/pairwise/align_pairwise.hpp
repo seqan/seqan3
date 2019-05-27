@@ -39,7 +39,7 @@ namespace seqan3
 /*!\brief Computes a pairwise alignment over a sequence pair or a range of sequence pairs.
  * \ingroup pairwise_alignment
  *
- * \tparam sequence_t         The type of sequence pairs. Either a type modelling seqan3::tuple_like_concept
+ * \tparam sequence_t         The type of sequence pairs. Either a type modelling seqan3::TupleLike
  *                            with a tuple size of exactly two or std::ranges::InputRange whose value type models the
  *                            before mentioned tuple concept.
  * \tparam alignment_config_t The type of the alignment configuration; must be a seqan3::configuration.
@@ -50,7 +50,7 @@ namespace seqan3
  * \details
  *
  * This function computes the pairwise alignment of a sequence pair or a range over sequence pairs.
- * The pairs can be any class template that models the seqan3::tuple_like_concept.
+ * The pairs can be any class template that models the seqan3::TupleLike.
  * In case of calling the alignment with a single tuple, the value is passed as a std::view::single to the range
  * aware interface. In this case the passed class must be std::CopyConstructible and both element types of the tuple
  * must model std::ranges::ViewableRange because it is copied into the std::view::single. The same

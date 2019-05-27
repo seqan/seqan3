@@ -159,7 +159,7 @@ decltype(auto) get();
  *
  * Short description:
  *   * combines multiple alphabets as independent components, similar to a tuple;
- *   * models seqan3::tuple_like_concept, i.e. provides a get interface to its component_list;
+ *   * models seqan3::TupleLike, i.e. provides a get interface to its component_list;
  *   * is itself a seqan3::WritableSemialphabet, but most derived types implement the full seqan3::WritableAlphabet;
  *   * its alphabet size is the product of the individual sizes;
  *   * constructible, assignable and comparable with each component type and also all types that

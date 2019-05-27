@@ -183,7 +183,7 @@ TYPED_TEST_CASE(alphabet_tuple_base_test, composite_types);
 
 TYPED_TEST(alphabet_tuple_base_test, concept_check)
 {
-    EXPECT_TRUE(tuple_like_concept<TypeParam>);
+    EXPECT_TRUE(TupleLike<TypeParam>);
 }
 
 // default/zero construction
