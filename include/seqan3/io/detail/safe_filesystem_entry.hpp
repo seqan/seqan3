@@ -75,6 +75,13 @@ public:
         return std::filesystem::remove(entry);
     }
 
+    //!\copydoc remove
+    bool remove_no_throw() const noexcept
+    {
+        std::error_code ec;
+        return std::filesystem::remove(entry, ec);
+    }
+
     /*!\brief Removes a file or directory and all its contents, recursively.
     * \returns Returns the number of files and directories that were deleted (which may be zero if p did not exist to
     *          begin with).
