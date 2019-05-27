@@ -86,7 +86,7 @@ views as "underlying range + algorithm".
 The storage behaviour is orthogonal to the range concepts defined by the iterators mentioned above, i.e. you
 can have a container that satisfies std::ranges::RandomAccessRange (e.g. `std::vector` does, but `std::list`
 does not) and you can have views or decorators that do so or don't. For some combinations of iterator capabilities
-and storage behaviour there are extra concept definitions, e.g. seqan3::random_access_container_concept.
+and storage behaviour there are extra concept definitions, e.g. seqan3::RandomAccessContainer.
 
 # Views
 
@@ -258,7 +258,7 @@ For certain use-cases we have introduced our own containers, though.
 
 All standard library containers model std::ranges::ForwardRange (see above), but we have introduced container
 concepts that encompass more of a containers interface.
-Have a look at the API documentation of seqan3::container_concept and unfold the inheritance diagram.
+Have a look at the API documentation of seqan3::Container and unfold the inheritance diagram.
 What can you learn about the different refinements and their relation to the range concepts?
 
 ## The bitcompressed vector

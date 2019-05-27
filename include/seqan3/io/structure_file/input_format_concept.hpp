@@ -97,7 +97,7 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_
  *               comment_type & comment,
  *               offset_type & offset)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
+ * \tparam stream_type      Input stream, must satisfy seqan3::Istream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
@@ -147,7 +147,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::structure_file_format_concept [default is false].
+ * seqan3::StructureFileInputFormat [default is false].
  * \ingroup core
  * \see seqan3::TypeListOfStructureFileInputFormats
  */

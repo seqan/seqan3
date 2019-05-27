@@ -333,12 +333,12 @@ public:
     }
 
     /*!\brief Construction via a value of a subtype that is assignable to one of the components.
-     * \tparam indirect_component_type Type that models the seqan3::is_assignable_concept for
+     * \tparam indirect_component_type Type that models seqan3::WeaklyAssignable for
      *                                 one of the component types.
      * \param  alph                    The value that should be assigned.
      *
      * Note that the value will be assigned to the **FIRST** type T that fulfils
-     * the `assignable_concept<T, indirect_component_type>`, regardless if other types are also
+     * `Assignable<T, indirect_component_type>`, regardless if other types are also
      * fit for assignment.
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
@@ -388,7 +388,7 @@ public:
     }
 
     /*!\brief Assignment via a value of a subtype that is assignable to one of the components.
-     * \tparam indirect_component_type Type that models the seqan3::is_assignable_concept for
+     * \tparam indirect_component_type Type that models seqan3::WeaklyAssignable for
      *                                 one of the component types.
      * \param  alph                    The value of a component that should be assigned.
      *

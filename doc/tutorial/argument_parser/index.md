@@ -213,7 +213,7 @@ Take a look at the help page again after you've done all of the above. You will 
 
 # List options {#tutorial_argument_parser_list_options}
 
-In some use cases you may want to allow the user to specify an option multiple times and store the values in a list. With the seqan3::argument_parser this behaviour can be achieved simply by choosing your input variable to be of a container type (e.g. std::vector). The parser registers the container type through the seqan3::container_concept and will adapt the parsing of command line arguments accordingly.
+In some use cases you may want to allow the user to specify an option multiple times and store the values in a list. With the seqan3::argument_parser this behaviour can be achieved simply by choosing your input variable to be of a container type (e.g. std::vector). The parser registers the container type through seqan3::Container and will adapt the parsing of command line arguments accordingly.
 
 Example:
 

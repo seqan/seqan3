@@ -617,7 +617,7 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::output_range_concept and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy seqan3::OutputRange and have a reference type that
      *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      *
