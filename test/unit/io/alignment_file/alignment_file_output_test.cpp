@@ -539,7 +539,7 @@ TEST(rows, convert_sam_to_blast)
 // compression
 // ----------------------------------------------------------------------------
 
-void compression_by_filename_impl(test::tmp_filename & filename, std::string_view const expected)
+std::string compression_by_filename_impl(test::tmp_filename & filename)
 {
     {
         alignment_file_output fout{filename.get_path()};
@@ -553,7 +553,7 @@ void compression_by_filename_impl(test::tmp_filename & filename, std::string_vie
 
     }
 
-    std::string buffer;
+    std::string buffer{};
 
     {
         std::ifstream fi{filename.get_path(), std::ios::binary};
@@ -561,7 +561,7 @@ void compression_by_filename_impl(test::tmp_filename & filename, std::string_vie
         buffer = std::string{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
     }
 
-    EXPECT_EQ(buffer, expected);
+    return buffer;
 }
 
 template <typename comp_stream_t>
@@ -580,7 +580,7 @@ void compression_by_stream_impl(comp_stream_t & stream)
 #ifdef SEQAN3_HAS_ZLIB
 std::string expected_gz
 {
-    '\x1F', '\x8B', '\x08', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x03', '\x2B', '\x4A', '\x4D',
+    '\x1F', '\x8B', '\x08', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x2B', '\x4A', '\x4D',
     '\x4C', '\x31', '\xE4', '\x34', '\xE0', '\xD4', '\x02', '\x62', '\x10', '\x09', '\xA1', '\x1D', '\x9D',
     '\xDD', '\x43', '\x38', '\xB5', '\xB8', '\x8A', '\x80', '\x92', '\x46', '\x98', '\x92', '\xEE', '\xEE',
     '\xCE', '\x21', '\xEE', '\x7E', '\x30', '\x0A', '\xAA', '\xCE', '\x18', '\x43', '\x9D', '\xBB', '\xBB',
@@ -588,11 +588,25 @@ std::string expected_gz
     '\x7E', '\x6C', '\x6C', '\x0F', '\x76', '\x00', '\x00', '\x00'
 };
 
+std::string expected_bgzf
+{
+    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x00', '\x42', '\x43',
+    '\x02', '\x00', '\x50', '\x00', '\x2B', '\x4A', '\x4D', '\x4C', '\x31', '\xE4', '\x34', '\xE0', '\xD4', '\x02',
+    '\x62', '\x10', '\x09', '\xA1', '\x1D', '\x9D', '\xDD', '\x43', '\x38', '\xB5', '\xB8', '\x8A', '\x80', '\x92',
+    '\x46', '\x98', '\x92', '\xEE', '\xEE', '\xCE', '\x21', '\xEE', '\x7E', '\x8E', '\x50', '\x0A', '\xAA', '\xCE',
+    '\x18', '\x43', '\x9D', '\xBB', '\xBB', '\xA3', '\x7B', '\x88', '\x63', '\x88', '\x23', '\x10', '\xA1', '\x40',
+    '\xA0', '\x06', '\x00', '\x7E', '\x6C', '\x6C', '\x0F', '\x76', '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08',
+    '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B',
+    '\x00', '\x03', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
+};
+
 TEST(compression, by_filename_gz)
 {
     test::tmp_filename filename{"alignment_file_output_test.sam.gz"};
 
-    compression_by_filename_impl(filename, expected_gz);
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte.
+    EXPECT_EQ(buffer, expected_bgzf);
 }
 
 TEST(compression, by_stream_gz)
@@ -603,8 +617,31 @@ TEST(compression, by_stream_gz)
         contrib::gz_ostream compout{out};
         compression_by_stream_impl(compout);
     }
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte.
+    EXPECT_EQ(buffer, expected_gz);
+}
 
-    EXPECT_EQ(out.str(), expected_gz);
+TEST(compression, by_filename_bgzf)
+{
+    test::tmp_filename filename{"alignment_file_output_test.sam.bgzf"};
+
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte.
+    EXPECT_EQ(buffer, expected_bgzf);
+}
+
+TEST(compression, by_stream_bgzf)
+{
+    std::ostringstream out;
+
+    {
+        contrib::bgzf_ostream compout{out};
+        compression_by_stream_impl(compout);
+    }
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte.
+    EXPECT_EQ(buffer, expected_bgzf);
 }
 #endif
 
@@ -624,7 +661,8 @@ TEST(compression, by_filename_bz2)
 {
     test::tmp_filename filename{"alignment_file_output_test.sam.bz2"};
 
-    compression_by_filename_impl(filename, expected_bz2);
+    std::string buffer = compression_by_filename_impl(filename);
+    EXPECT_EQ(buffer, expected_bz2);
 }
 
 TEST(compression, by_stream_bz2)

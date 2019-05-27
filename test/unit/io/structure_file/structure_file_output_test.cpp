@@ -423,11 +423,10 @@ TEST_F(structure_file_output_columns, assign_tuple_of_columns)
 #if defined(SEQAN3_HAS_ZLIB) || defined(SEQAN3_HAS_BZIP2)
 struct structure_file_output_compression : public structure_file_output_write
 {
-    void compression_by_filename_impl(test::tmp_filename & filename, std::string_view const expected)
+    std::string compression_by_filename_impl(test::tmp_filename & filename)
     {
         {
-            structure_file_out
-            fout{filename.get_path()};
+            structure_file_out fout{filename.get_path()};
 
             for (size_t idx = 0ul; idx < num_records; ++idx)
             {
@@ -436,12 +435,12 @@ struct structure_file_output_compression : public structure_file_output_write
                 fout.push_back(rec);
             }
         }
-        std::string buffer;
+        std::string buffer{};
         {
             std::ifstream fi{filename.get_path(), std::ios::binary};
             buffer = std::string{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
         }
-        EXPECT_EQ(buffer, expected);
+        return buffer;
     }
 
     template<typename comp_stream_t>
@@ -461,7 +460,7 @@ struct structure_file_output_compression : public structure_file_output_write
 #ifdef SEQAN3_HAS_ZLIB
 std::string expected_gz
 {
-    '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x03','\x55','\x8E','\xC1','\x0A','\xC2','\x40',
+    '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x55','\x8E','\xC1','\x0A','\xC2','\x40',
     '\x0C','\x44','\xEF','\xF9','\x8A','\x3D','\x76','\x0F','\x5D','\x5B','\x14','\x7A','\x2B','\x84','\x20','\xF1',
     '\xA2','\x88','\x92','\xB3','\x14','\xD9','\x43','\x41','\x41','\xB4','\x14','\x3F','\xDF','\x64','\x23','\x52',
     '\x27','\xB0','\x64','\x1E','\x61','\x66','\xFB','\x70','\x4E','\xD7','\xFC','\xCC','\xF3','\xF8','\x1A','\x87',
@@ -474,10 +473,31 @@ std::string expected_gz
     '\xFC','\x00','\x00','\x00'
 };
 
+std::string expected_bgzf
+{
+    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x00', '\x42', '\x43',
+    '\x02', '\x00', '\xAF', '\x00', '\x55', '\x4E', '\xB1', '\x0A', '\xC2', '\x50', '\x0C', '\xDC', '\xF3', '\x15',
+    '\x1D', '\x75', '\x68', '\x6C', '\x51', '\xE8', '\x56', '\x08', '\x41', '\xE2', '\xA2', '\x88', '\x92', '\x59',
+    '\x8A', '\xBC', '\xA1', '\xA0', '\x50', '\x54', '\xC4', '\xCF', '\xF7', '\xF2', '\x9E', '\x88', '\x5E', '\x86',
+    '\x7B', '\xB9', '\x5C', '\x72', '\xAF', '\xAF', '\x8E', '\x7C', '\x4E', '\xB7', '\xF4', '\x1C', '\xEF', '\xE3',
+    '\x90', '\x4E', '\x8F', '\xC3', '\x4E', '\xEA', '\xFD', '\x66', '\x5D', '\x6D', '\xDB', '\xA6', '\x5B', '\x35',
+    '\x8B', '\xB6', '\xEE', '\x96', '\x64', '\x6A', '\x26', '\xEE', '\x2E', '\xA6', '\xAE', '\x62', '\xEE', '\x86',
+    '\x1E', '\xA5', '\xA6', '\x68', '\x45', '\xDD', '\x04', '\x04', '\x43', '\xC8', '\xE6', '\x0A', '\x01', '\xE5',
+    '\x0A', '\x0D', '\x86', '\xB0', '\x60', '\x08', '\xB3', '\xD0', '\xAC', '\x80', '\x39', '\x98', '\x3F', '\x98',
+    '\x03', '\x7F', '\x02', '\x67', '\x25', '\xA6', '\xD9', '\xFE', '\x63', '\x8B', '\x41', '\x80', '\xA9', '\xAF',
+    '\xD2', '\x6B', '\xB8', '\x4E', '\x97', '\x44', '\x25', '\xD6', '\x91', '\xA3', '\x22', '\x39', '\x3B', '\x9E',
+    '\xAE', '\xF8', '\x8F', '\xD2', '\xF7', '\x44', '\xC9', '\x8B', '\xD5', '\x7C', '\x1D', '\xC4', '\xF4', '\x06',
+    '\xA0', '\x5A', '\xBE', '\x54', '\xFC', '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00',
+    '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
+    '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
+};
+
 TEST_F(structure_file_output_compression, by_filename_gz)
 {
     test::tmp_filename filename{"structure_file_output_test.dbn.gz"};
-    compression_by_filename_impl(filename, expected_gz);
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
 }
 
 TEST_F(structure_file_output_compression, by_stream_gz)
@@ -487,7 +507,29 @@ TEST_F(structure_file_output_compression, by_stream_gz)
         contrib::gz_ostream compout{out};
         compression_by_stream_impl(compout);
     }
-    EXPECT_EQ(out.str(), expected_gz);
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_gz);
+}
+
+TEST_F(structure_file_output_compression, by_filename_bgzf)
+{
+    test::tmp_filename filename{"structure_file_output_test.dbn.bgzf"};
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
+}
+
+TEST_F(structure_file_output_compression, by_stream_bgzf)
+{
+    std::ostringstream out;
+    {
+        contrib::bgzf_ostream compout{out};
+        compression_by_stream_impl(compout);
+    }
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
 }
 #endif
 
@@ -512,7 +554,8 @@ std::string expected_bz2
 TEST_F(structure_file_output_compression, by_filename_bz2)
 {
     test::tmp_filename filename{"structure_file_output_test.dbn.bz2"};
-    compression_by_filename_impl(filename, expected_bz2);
+    std::string buffer = compression_by_filename_impl(filename);
+    EXPECT_EQ(buffer, expected_bz2);
 }
 
 TEST_F(structure_file_output_compression, by_stream_bz2)
