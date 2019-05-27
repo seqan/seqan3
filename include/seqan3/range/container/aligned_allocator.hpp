@@ -84,6 +84,7 @@ public:
     aligned_allocator& operator=(aligned_allocator &&)      = default; //!< Defaulted.
     ~aligned_allocator()                                    = default; //!< Defaulted.
 
+    //!\brief Copy constructor with different value type.
     template <class other_value_type>
     constexpr aligned_allocator(aligned_allocator<other_value_type, alignment> const &) noexcept
     {}
