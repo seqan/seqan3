@@ -2,10 +2,10 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-// @author: Clemens Cords <clemens.cords@fu-berlin.de>
+// !\author: Clemens Cords <clemens.cords@fu-berlin.de>
 
 #include <benchmark/benchmark.h>
 #include <cstring>
@@ -13,7 +13,7 @@
 
 #include <seqan3/test/seqan2.hpp>
 #if SEQAN3_HAS_SEQAN2
-    #include <seqan/seq_io.h>
+#include <seqan/seq_io.h>
 #endif
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
@@ -27,17 +27,15 @@
 
 using namespace seqan3;
 
-unsigned int const seed = 1234;
+constexpr unsigned seed = 1234u;
 
 // ============================================================================
 // generate fastq file
 // ============================================================================
 constexpr size_t default_sequence_length = 50; //length of nucleotide and quality sequence
 
-std::string generate_fastq_file(size_t n_entries)
+std::string get_file(size_t n_entries)
 {
-    std::cout << std::endl; // sic, helps formatting print output
-
     std::string file{};
     std::string const id{"@name"};
 
@@ -53,20 +51,6 @@ std::string generate_fastq_file(size_t n_entries)
     }
 
     return file;
-}
-
-// if a file of length m is requested once, that file is stored so
-// any functions later on that needs the exact same file can access it
-std::map<size_t, std::string> file_dict;
-
-std::string get_file(size_t n_entries)
-{
-    bool has_been_init = file_dict.find(n_entries) != file_dict.end();
-
-    if (!has_been_init)
-        file_dict[n_entries] = generate_fastq_file(n_entries);
-
-    return file_dict[n_entries];
 }
 
 // ============================================================================
@@ -92,7 +76,6 @@ void fastq_write_to_stream(benchmark::State & state)
 // ============================================================================
 // read dummy fastq file from a stream
 // ============================================================================
-template<size_t n_entries_in_file>
 void fastq_read_from_stream(benchmark::State & state)
 {
     sequence_file_format_fastq format;
@@ -102,6 +85,7 @@ void fastq_read_from_stream(benchmark::State & state)
     std::vector<dna5> seq{};
     std::vector<phred42> qual{};
 
+    size_t n_entries_in_file = state.range(0);
     auto file = get_file(n_entries_in_file);
 
     for (auto _ : state)
@@ -123,13 +107,12 @@ void fastq_read_from_stream(benchmark::State & state)
 // seqan2 comparison
 // ============================================================================
 #if SEQAN3_HAS_SEQAN2
-
-template<size_t n_entries_in_file>
 void fastq_read_from_stream_seqan2(benchmark::State & state)
 {
     using namespace seqan;
 
     std::istringstream istream{};
+    size_t n_entries_in_file = state.range(0);
     auto file = get_file(n_entries_in_file);
 
     auto restart_iterator = [&istream, &file]()    // c.f. format_fasta_benchmark
@@ -164,7 +147,6 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
 // ============================================================================
 // read dummy fastq file from temporary file on disk
 // ============================================================================
-template<size_t n_entries_in_file>
 void fastq_read_from_disk(benchmark::State & state)
 {
     sequence_file_format_fastq format;
@@ -174,7 +156,7 @@ void fastq_read_from_disk(benchmark::State & state)
     auto tmp_path = file_name.get_path();
 
     std::ofstream ostream{tmp_path};
-    ostream << get_file(n_entries_in_file);
+    ostream << get_file(state.range(0));
     ostream.close();
 
     // benchmark
@@ -198,7 +180,6 @@ void fastq_read_from_disk(benchmark::State & state)
 // ============================================================================
 #if SEQAN3_HAS_SEQAN2
 
-template<size_t n_entries_in_file>
 void fastq_read_from_disk_seqan2(benchmark::State & state)
 {
     using namespace seqan;
@@ -208,6 +189,7 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
     auto tmp_path = file_name.get_path();
 
     std::ofstream ostream{tmp_path};
+    size_t n_entries_in_file = state.range(0);
     ostream << get_file(n_entries_in_file);
     ostream.close();
 
@@ -232,25 +214,28 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
 // weirdly formatted code but makes console output easier to read
 BENCHMARK(fastq_write_to_stream);
 
-BENCHMARK_TEMPLATE(fastq_read_from_stream, 100);
-BENCHMARK_TEMPLATE(fastq_read_from_disk, 100);
+BENCHMARK(fastq_read_from_stream)->Arg(100);
+BENCHMARK(fastq_read_from_disk)->Arg(100);
 
 #if SEQAN3_HAS_SEQAN2
-    BENCHMARK_TEMPLATE(fastq_read_from_stream_seqan2, 100);
-    BENCHMARK_TEMPLATE(fastq_read_from_disk_seqan2, 100);
+BENCHMARK(fastq_read_from_stream_seqan2)->Arg(100);
+BENCHMARK(fastq_read_from_disk_seqan2)->Arg(100);
 #endif
 
-BENCHMARK_TEMPLATE(fastq_read_from_stream, 1000);
-BENCHMARK_TEMPLATE(fastq_read_from_disk, 1000);
+BENCHMARK(fastq_read_from_stream)->Arg(1000);
+BENCHMARK(fastq_read_from_disk)->Arg(1000);
 
 #if SEQAN3_HAS_SEQAN2
-    BENCHMARK_TEMPLATE(fastq_read_from_stream_seqan2, 1000);
-    BENCHMARK_TEMPLATE(fastq_read_from_disk_seqan2, 1000);
+BENCHMARK(fastq_read_from_stream_seqan2)->Arg(1000);
+BENCHMARK(fastq_read_from_disk_seqan2)->Arg(1000);
 #endif
 
+BENCHMARK(fastq_read_from_stream)->Arg(10000);
+BENCHMARK(fastq_read_from_disk)->Arg(10000);
+
 #if SEQAN3_HAS_SEQAN2
-    BENCHMARK_TEMPLATE(fastq_read_from_stream_seqan2, 10000);
-    BENCHMARK_TEMPLATE(fastq_read_from_disk_seqan2, 10000);
+BENCHMARK(fastq_read_from_stream_seqan2)->Arg(100000);
+BENCHMARK(fastq_read_from_disk_seqan2)->Arg(100000);
 #endif
 
 BENCHMARK_MAIN();
