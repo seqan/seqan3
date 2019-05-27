@@ -319,7 +319,7 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  * \ingroup aligned_sequence
  * \tparam        aligned_seq_t     Type of the container to reassign; must model seqan3::SequenceContainer;
  *                                  the value type must be a seqan3::gapped alphabet.
- * \tparam        unaligned_seq_t   Type of the container to assign from; must model std::ranges::ForwardRange;
+ * \tparam        unaligned_seq_t   Type of the container to assign from; must model std::ranges::ForwardRange.
  * \param[in,out] aligned_seq       The gapped sequence container to assign to.
  * \param[in,out] unaligned_seq     The unaligned sequence container to assign from.
  *
