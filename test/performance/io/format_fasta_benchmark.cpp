@@ -32,15 +32,23 @@
 using namespace seqan3;
 using namespace seqan3::test;
 
-static constexpr size_t iterations_per_run = 4096;
+inline constexpr size_t iterations_per_run = 1024;
 
-static std::string fasta_line{">seq\nACTAGACTAGCTACGATCAGCTACGATCAGCTACGA\n"};
+inline std::string const fasta_hdr{"seq foobar blobber"};
+inline std::string const fasta_seq{
+    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
+    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
+    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
+    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
+    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
+    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"};
+//TODO: benchmark with spaces/newlines
 
 static std::string fasta_file = []()
 {
     std::string file{};
     for (size_t idx = 0; idx < iterations_per_run; idx++)
-        file += fasta_line;
+        file += "> " + fasta_hdr + "\n" + fasta_seq + "\n";
     return file;
 }();
 
@@ -49,17 +57,15 @@ void write3(benchmark::State & state)
     std::ostringstream ostream;
     sequence_file_format_fasta format;
     sequence_file_output_options options;
-    std::string id{"seq"};
-    dna5_vector seq{"ACTAGACTAGCTACGATCAGCTACGATCAGCTACGA"_dna5};
 
     for (auto _ : state)
     {
         for (size_t i = 0; i < iterations_per_run; ++i)
-            format.write(ostream, options, seq, id, std::ignore);
+            format.write(ostream, options, fasta_seq, fasta_hdr, std::ignore);
     }
 
     ostream = std::ostringstream{};
-    format.write(ostream, options, seq, id, std::ignore);
+    format.write(ostream, options, fasta_seq, fasta_hdr, std::ignore);
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
@@ -73,8 +79,8 @@ BENCHMARK(write3);
 void write2(benchmark::State & state)
 {
     std::ostringstream ostream;
-    seqan::CharString id = "seq";
-    seqan::Dna5String seq = "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGA";
+    seqan::CharString id = fasta_hdr;
+    seqan::Dna5String seq = fasta_seq;
 
     for (auto _ : state)
     {
@@ -100,11 +106,13 @@ void read3(benchmark::State & state)
 
     sequence_file_format_fasta format;
     sequence_file_input_options<dna5, false> options;
+
+    std::istringstream istream{fasta_file};
+
     for (auto _ : state)
     {
-        state.PauseTiming();
-        std::istringstream istream{fasta_file};
-        state.ResumeTiming();
+        istream.clear();
+        istream.seekg(0, std::ios::beg);
 
         for (size_t i = 0; i < iterations_per_run; ++i)
         {
@@ -114,7 +122,7 @@ void read3(benchmark::State & state)
         }
     }
 
-    size_t bytes_per_run = fasta_line.size() * iterations_per_run;
+    size_t bytes_per_run = fasta_file.size();
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
     state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
@@ -130,21 +138,13 @@ void read2(benchmark::State & state)
     seqan::CharString id;
     seqan::Dna5String seq;
 
-    std::istringstream istream{};
-
-    auto restart_iterator = [&istream]()
-    {
-        istream = std::istringstream{fasta_file};
-        seqan::VirtualStream<char, seqan::Input> comp;
-        open(comp, istream);
-        return seqan::directionIterator(comp, seqan::Input());
-    };
+    std::istringstream istream{fasta_file};
 
     for (auto _ : state)
     {
-        state.PauseTiming();
-        auto it = restart_iterator();
-        state.ResumeTiming();
+        istream.clear();
+        istream.seekg(0, std::ios::beg);
+        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input> >(istream);
 
         for (size_t i = 0; i < iterations_per_run; ++i)
         {
@@ -154,7 +154,7 @@ void read2(benchmark::State & state)
         }
     }
 
-    size_t bytes_per_run = fasta_line.size() * iterations_per_run;
+    size_t bytes_per_run = fasta_file.size();
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
     state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);

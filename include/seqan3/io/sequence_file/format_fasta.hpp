@@ -17,13 +17,6 @@
 #include <string_view>
 #include <vector>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/view/chunk.hpp>
-#include <range/v3/view/drop_while.hpp>
-#include <range/v3/view/join.hpp>
-#include <range/v3/view/remove_if.hpp>
-#include <range/v3/view/take_while.hpp>
-
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/core/metafunction/range.hpp>
@@ -36,6 +29,7 @@
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/take.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
@@ -117,11 +111,8 @@ public:
               id_type                                                                & id,
               qual_type                                                              & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        using stream_char_t = typename stream_type::char_type;
-        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
-                                          decltype(std::istreambuf_iterator<stream_char_t>{})>
-                            {std::istreambuf_iterator<stream_char_t>{stream},
-                             std::istreambuf_iterator<stream_char_t>{}};
+        auto stream_view = view::istreambuf(stream);
+
         // ID
         read_id(stream_view, options, id);
 
@@ -191,20 +182,70 @@ protected:
         {
             if (options.truncate_ids)
             {
-                std::ranges::copy(stream_view | std::view::drop_while(is_id || is_blank)     // skip leading >
+            #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
+                auto it = stream_view.begin();
+                auto e = stream_view.end();
+                for (; (it != e) && (is_id || is_blank)(*it); ++it)
+                {}
+
+                bool at_delimiter = false;
+                for (; it != e; ++it)
+                {
+                    if ((is_cntrl || is_blank)(*it))
+                    {
+                        at_delimiter = true;
+                        break;
+                    }
+                    id.push_back(assign_char_to(*it, value_type_t<id_type>{}));
+                }
+
+                if (!at_delimiter)
+                    throw unexpected_end_of_input{"FastA ID line did not end in newline."};
+
+                for (; (it != e) && ((!is_char<'\n'>)(*it)); ++it)
+                {}
+
+            #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
+
+                std::ranges::copy(stream_view | std::view::drop_while(is_id || is_blank)        // skip leading >
                                               | view::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
                                               | view::char_to<value_type_t<id_type>>,
                                   std::back_inserter(id));                                      // … ^A is old delimiter
 
                 // consume rest of line
                 detail::consume(stream_view | view::take_line_or_throw);
+            #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
+
             }
             else
             {
-                std::ranges::copy(stream_view | view::take_line_or_throw                                        // read line
-                                              | std::view::drop_while(is_id || is_blank)                     // skip leading >
+            #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
+                auto it = stream_view.begin();
+                auto e = stream_view.end();
+                for (; (it != e) && (is_id || is_blank)(*it); ++it)
+                {}
+
+                bool at_delimiter = false;
+                for (; it != e; ++it)
+                {
+                    if ((is_char<'\n'>)(*it))
+                    {
+                        at_delimiter = true;
+                        break;
+                    }
+                    id.push_back(assign_char_to(*it, value_type_t<id_type>{}));
+                }
+
+                if (!at_delimiter)
+                    throw unexpected_end_of_input{"FastA ID line did not end in newline."};
+
+            #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
+
+                std::ranges::copy(stream_view | view::take_line_or_throw                    // read line
+                                              | std::view::drop_while(is_id || is_blank)    // skip leading >
                                               | view::char_to<value_type_t<id_type>>,
                                   std::back_inserter(id));
+            #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
             }
         }
         else
@@ -225,15 +266,36 @@ protected:
 
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
+            auto constexpr not_in_alph = !is_in_alphabet<seq_legal_alph_type>;
+
+        #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
+            auto it = stream_view.begin();
+            auto e = stream_view.end();
+            for (; (it != e) && ((!is_id)(*it)); ++it)
+            {
+                if ((is_space || is_digit)(*it))
+                    continue;
+                else if (not_in_alph(*it))
+                {
+                    throw parse_error{std::string{"Encountered an unexpected letter: "} +
+                                        not_in_alph.msg.str() +
+                                        " evaluated to true on " +
+                                        detail::make_printable(*it)};
+                }
+
+                seq.push_back(assign_char_to(*it, value_type_t<seq_type>{}));
+            }
+
+        #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
+
             std::ranges::copy(stream_view | view::take_until(is_id)                      // until next header (or end)
                                           | std::view::filter(!(is_space || is_digit))// ignore whitespace and numbers
-                                          | std::view::transform([is_legal_alph] (char const c)
+                                          | std::view::transform([not_in_alph] (char const c)
                                             {
-                                                if (!is_legal_alph(c))
+                                                if (not_in_alph(c))
                                                 {
                                                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                        is_legal_alph.msg.str() +
+                                                                        not_in_alph.msg.str() +
                                                                         " evaluated to false on " +
                                                                         detail::make_printable(c)};
                                                 }
@@ -241,6 +303,7 @@ protected:
                                             })                                           // enforce legal alphabet
                                           | view::char_to<value_type_t<seq_type>>,       // convert to actual target alphabet
                               std::back_inserter(seq));
+        #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
         }
         else
         {
@@ -277,30 +340,35 @@ protected:
     {
         if (options.fasta_letters_per_line > 0)
         {
+        #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
+            size_t count = 0;
+            for (auto c : seq)
+            {
+                stream_it = to_char(c);
+                if (++count % options.fasta_letters_per_line == 0)
+                    detail::write_eol(stream_it, options.add_carriage_return);
+            }
+            if (count % options.fasta_letters_per_line != 0)
+                detail::write_eol(stream_it, options.add_carriage_return);
+
+        #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
+
+            //TODO: combining chunk and join is substantially faster than view::interleave (2.5x), why?
             std::ranges::copy(seq | view::to_char
-                             | ranges::view::chunk(options.fasta_letters_per_line)
-                             | std::view::join(options.add_carriage_return
+                                  | ranges::view::chunk(options.fasta_letters_per_line)
+                                  | std::view::join(options.add_carriage_return
                                                     ? std::string_view{"\r\n"}
                                                     : std::string_view{"\n"}),
-                         stream_it);
-            // TODO(h-2): benchmark the above vs:
-//             size_t count = 0;
-//             for (auto seq_it = begin(seq); seq_it != end(seq_it); ++seq_it)
-//             {
-//                 stream_it = to_char(*seq_it);
-//                 ++count;
-//                 if (count % fasta_letters_per_line == 0)
-//                 {
-//                     detail::write_eol(stream_it, options.add_carriage_return);
-//                 }
-//             }
+                              stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
+        #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
         }
         else
         {
+            // No performance workaround here, because transform views alone are fast
             std::ranges::copy(seq | view::to_char, stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
-
-        detail::write_eol(stream_it, options.add_carriage_return);
     }
 };
 
