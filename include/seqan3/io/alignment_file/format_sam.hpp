@@ -1166,7 +1166,7 @@ protected:
         if (std::ranges::empty(field_value))
             stream_it = '*';
         else
-            std::ranges::copy(field_value | view::to_char | view::take_until(is_space), stream_it);
+            std::ranges::copy(field_value | view::to_char, stream_it);
     }
 
     /*!\brief Writes a field value to the stream.
