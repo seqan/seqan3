@@ -192,13 +192,16 @@ public:
                                std::string const & desc,
                                validator_type && validator) 
     {
-        clielement_argument_callbacks.push_back([this] (rxml::xml_document<> *pool, 
-                                                        rxml::xml_node<> *parent_node,
-                                                        argument_parser_meta_data const & meta) {
+        unsigned argument_id = args_counter;
+
+        clielement_argument_callbacks.push_back([this,
+						 argument_id] (rxml::xml_document<> *pool, 
+                                                               rxml::xml_node<> *parent_node,
+                                                               std::string app_name) {
             char *reference_option_name = nullptr;
 
-            reference_option_name = pool->allocate_string(build_reference_name(meta.app_name,
-                                                                               args_counter).data());
+            reference_option_name = pool->allocate_string(build_reference_name(app_name,
+                                                                               argument_id).data());
             append_clielement_node(pool,
                                    parent_node,
                                    "",
@@ -206,11 +209,12 @@ public:
         });
 
         // Register ITEM callback.
-        item_option_callbacks.push_back([this,
-                                         value,
-                                         desc,
-                                         validator] (rxml::xml_document<> *pool, 
-                                                     rxml::xml_node<> *parent_node) {
+        item_argument_callbacks.push_back([this,
+                                           value,
+                                           desc,
+                                           validator,
+					   argument_id] (rxml::xml_document<> *pool, 
+                                                         rxml::xml_node<> *parent_node) {
             char *argument_name = nullptr;
             char *argument_type = nullptr;
             char *argument_description = nullptr;
@@ -219,11 +223,10 @@ public:
             char *argument_required = nullptr;
             char *argument_advanced = nullptr;
             char *argument_value = nullptr;
-            rxml::xml_node<> *item_node = nullptr;
 
             // Allocate helper variables related to the DOM tree construction, getting 
             // memory from the CTD document memory pool.
-            argument_name = pool->allocate_string(std::string{"argument-"}.append(std::to_string(args_counter)).data());
+            argument_name = pool->allocate_string(std::string{"argument-"}.append(std::to_string(argument_id)).data());
             argument_type = pool->allocate_string(get_type_as_gkn_string(value, 
                                                                          validator).data());
             argument_description = pool->allocate_string(desc.data()); 
@@ -232,22 +235,17 @@ public:
             // TODO (emanueleparisi) Here support for restriction and supported formats is missing ! 
             // For that to be implement we need validators to provide such information. For the sake 
             // of first releases, we ignore any constraints posed by the user.
-            item_node->append_attribute(pool->allocate_attribute("restrictions",
-                                                                 ""));
-            item_node->append_attribute(pool->allocate_attribute("supported_formats",
-                                                                 "*.*"));
+            argument_restrictions = pool->allocate_string("");
+            argument_formats = pool->allocate_string("*.*");
 
             // 'required' and 'advanced' attributes have default values for positional arguments.
-            argument_required = pool->allocate_attribute("required",
-                                                         "true");
-            argument_required = pool->allocate_attribute("advanced",
-                                                         "false");
+            argument_required = pool->allocate_string("true");
+            argument_advanced = pool->allocate_string("false");
 
             // For non-list options, append 'value' attribute to ite node. 
             // For list options, create the ITEMLIST subtree. Unfortunately, the CTD exporter
             // does not support list options.
-            argument_value = pool->allocate_attribute("value",
-                                                      "");
+            argument_value = pool->allocate_string("");
         
             append_item_node(pool,
                              parent_node,
@@ -335,7 +333,7 @@ private:
     build_reference_name(std::string const & app_name,
                          unsigned args_counter)
     {
-        return app_name + "argument-" + std::to_string(args_counter);
+        return app_name + ".argument-" + std::to_string(args_counter);
     }
     
     /*!\brief Allocate and append an XML declaration node to the current DOM tree.

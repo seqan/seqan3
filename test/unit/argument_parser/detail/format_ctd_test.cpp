@@ -39,7 +39,7 @@ TEST(ctd_format, empty_information)
               "\n");
 }
 
-TEST (ctd_test, test_valid_app_name)
+TEST (ctd_format, test_valid_app_name)
 {
     // App name cannot contain space characters.
     argument_parser parser0{"empty options",
@@ -56,16 +56,16 @@ TEST (ctd_test, test_valid_app_name)
                  parser_design_error);
 }
 
-TEST (ctd_test, test_add_option)
+TEST (ctd_format, test_add_option)
 {
+    std::string opt_a{};
+    std::string opt_b{};
+    std::string opt_c{};
+    std::string opt_d{};
+
     argument_parser parser{"test_add_option",
                            3,
                            argv}; 
-
-    // Test short and long identifiers are correctly displayed.
-    std::string opt_a{};
-    std::string opt_b{};
-
     parser.add_option(opt_a, 
                       'a', 
                       "", 
@@ -73,7 +73,18 @@ TEST (ctd_test, test_add_option)
     parser.add_option(opt_b, 
                       'b', 
                       "option-b", 
-                      "Description long option B");
+                      "Description long option B",
+                      ADVANCED);
+    parser.add_option(opt_c,
+                      'c',
+                      "",
+                      "Description short option C",
+                      REQUIRED);
+    parser.add_option(opt_d,
+                      'd',
+                      "",
+                      "Description short option D",
+                      HIDDEN);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser.parse(), 
                 ::testing::ExitedWithCode(EXIT_SUCCESS), 
@@ -90,14 +101,90 @@ TEST (ctd_test, test_add_option)
               "\t\t<clielement optionIdentifier=\"--option-b\" isList=\"false\">\n"
               "\t\t\t<mapping referenceName=\"test_add_option.option-b\"/>\n"
               "\t\t</clielement>\n"
+              "\t\t<clielement optionIdentifier=\"-c\" isList=\"false\">\n"
+              "\t\t\t<mapping referenceName=\"test_add_option.c\"/>\n"
+              "\t\t</clielement>\n"
               "\t</cli>\n"
               "\t<PARAMETERS version=\"1.7.0\">\n"
               "\t\t<NODE name=\"test_add_option\" description=\"\">\n"
               "\t\t\t<ITEM name=\"a\" type=\"string\" description=\"Description short option A\" restrictions=\"\" required=\"false\" advanced=\"false\" value=\"\"/>\n"
-              "\t\t\t<ITEM name=\"option-b\" type=\"string\" description=\"Description long option B\" restrictions=\"\" required=\"false\" advanced=\"false\" value=\"\"/>\n"
+              "\t\t\t<ITEM name=\"option-b\" type=\"string\" description=\"Description long option B\" restrictions=\"\" required=\"false\" advanced=\"true\" value=\"\"/>\n"
+              "\t\t\t<ITEM name=\"c\" type=\"string\" description=\"Description short option C\" restrictions=\"\" required=\"true\" advanced=\"false\" value=\"\"/>\n"
               "\t\t</NODE>\n"
               "\t</PARAMETERS>\n"
               "</tool>\n"
               "\n");
 }
 
+TEST (ctd_format, test_add_flag) 
+{
+    bool opt_a{};
+
+    argument_parser parser{"test_add_flag",
+                           3,
+                           argv}; 
+    parser.add_flag(opt_a, 
+                    'a', 
+                    "", 
+                    "Description short option A");
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(parser.parse(), 
+                ::testing::ExitedWithCode(EXIT_SUCCESS), 
+                "");
+    EXPECT_EQ(testing::internal::GetCapturedStdout(),
+              "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+              "<tool name=\"test_add_flag\" version=\"0.0.0.0\" ctdVersion=\"1.7.0\">\n"
+              "\t<description/>\n"
+              "\t<manual/>\n"
+              "\t<cli>\n"
+              "\t\t<clielement optionIdentifier=\"-a\" isList=\"false\">\n"
+              "\t\t\t<mapping referenceName=\"test_add_flag.a\"/>\n"
+              "\t\t</clielement>\n"
+              "\t</cli>\n"
+              "\t<PARAMETERS version=\"1.7.0\">\n"
+              "\t\t<NODE name=\"test_add_flag\" description=\"\">\n"
+              "\t\t\t<ITEM name=\"a\" type=\"bool\" description=\"Description short option A\" restrictions=\"\" required=\"false\" advanced=\"false\" value=\"\"/>\n"
+              "\t\t</NODE>\n"
+              "\t</PARAMETERS>\n"
+              "</tool>\n"
+              "\n");
+}
+
+TEST (ctd_format, test_add_positional_option)
+{
+    std::string arg_a{};
+    std::string arg_b{};
+
+    argument_parser parser{"test_add_positional_option",
+                           3,
+                           argv}; 
+    parser.add_positional_option(arg_a, 
+                                 "Description argument A");
+    parser.add_positional_option(arg_b, 
+                                 "Description argument B");
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(parser.parse(), 
+                ::testing::ExitedWithCode(EXIT_SUCCESS), 
+                "");
+    EXPECT_EQ(testing::internal::GetCapturedStdout(),
+              "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+              "<tool name=\"test_add_positional_option\" version=\"0.0.0.0\" ctdVersion=\"1.7.0\">\n"
+              "\t<description/>\n"
+              "\t<manual/>\n"
+              "\t<cli>\n"
+              "\t\t<clielement optionIdentifier=\"\" isList=\"false\">\n"
+              "\t\t\t<mapping referenceName=\"test_add_positional_option.argument-0\"/>\n"
+              "\t\t</clielement>\n"
+              "\t\t<clielement optionIdentifier=\"\" isList=\"false\">\n"
+              "\t\t\t<mapping referenceName=\"test_add_positional_option.argument-1\"/>\n"
+              "\t\t</clielement>\n"
+              "\t</cli>\n"
+              "\t<PARAMETERS version=\"1.7.0\">\n"
+              "\t\t<NODE name=\"test_add_positional_option\" description=\"\">\n"
+              "\t\t\t<ITEM name=\"argument-0\" type=\"string\" description=\"Description argument A\" restrictions=\"\" required=\"true\" advanced=\"false\" value=\"\"/>\n"
+              "\t\t\t<ITEM name=\"argument-1\" type=\"string\" description=\"Description argument B\" restrictions=\"\" required=\"true\" advanced=\"false\" value=\"\"/>\n"
+              "\t\t</NODE>\n"
+              "\t</PARAMETERS>\n"
+              "</tool>\n"
+              "\n");
+}
