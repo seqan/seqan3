@@ -339,7 +339,7 @@ private:
     
     /*!\brief Allocate and append an XML declaration node to the current DOM tree.
      *
-     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] pool The memory pool used for allocating memory.
      * \param[in] parent_node The node the declaration node will be attached to.
      *
      * \details 
@@ -361,7 +361,7 @@ private:
 
     /*!\brief Allocate and append a CTD 'description' node to the current DOM tree.
      *
-     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] pool The memory pool used for allocating memory.
      * \param[in] parent_node The node the 'description' node will be attached to.
      * \param[in] meta A structure storing application meta-data.
      */
@@ -379,7 +379,7 @@ private:
 
     /*!\brief Allocate and append a CTD 'manual' node to the current DOM tree.
      *
-     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] pool The memory pool used for allocating memory.
      * \param[in] parent_node The node the 'manual' node will be attached to.
      * \param[in] meta A structure storing application meta-data.
      */
@@ -403,7 +403,7 @@ private:
 
     /*!\brief Allocate and append a CTD 'clielement' subtree to the current DOM tree.
      *
-     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] pool The memory pool used for allocating memory.
      * \param[in] parent_node The node the 'clielement' subtree will be attached to.
      * \param[in] prefixed_option_name The option name with one or multiple dash prepended.
      * \param[in] reference_option_name The option name or argument id with the application name prepended.
@@ -439,7 +439,7 @@ private:
 
     /*!\brief Allocate and append the CTD 'cli' subtree to the current DOM tree.
      *
-     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] pool The memory pool used for allocating memory.
      * \param[in] parent_node The node the 'cli' subtree will be attached to.
      * \param[in] meta A structure storing application meta-data.
      */
@@ -468,7 +468,7 @@ private:
 
     /*!\brief Allocate and append a CTD 'ITEM' node to the current DOM tree.
      *
-     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] pool The memory pool used for allocating memory.
      * \param[in] parent_node The node the 'item' subtree will be attached to.
      * \param[in] argument_name The 'name' attribute id of the argument being created. 
      * \param[in] argument_type The 'type' attribute of the argument being created.
@@ -532,7 +532,7 @@ private:
 
     /*!\brief Allocate and append a CTD 'NODE' subtree to the current DOM tree.
      *
-     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] pool The memory pool used for allocating memory.
      * \param[in] parent_node The node the 'NODE' subtree will be attached to.
      * \param[in] meta A structure storing application meta-data.
      */
@@ -563,7 +563,7 @@ private:
 
     /*!\brief Allocate and append a CTD 'PARAMETERS' subtree to the current DOM tree.
      *
-     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] pool The memory pool used for allocating memory.
      * \param[in] parent_node The node the 'PARAMETERS' subtree will be attached to.
      * \param[in] meta A structure storing application meta-data.
      */
@@ -585,7 +585,7 @@ private:
 
     /*!\brief Allocate and append a CTD 'tool' subtree to the current DOM tree. 
      *
-     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] pool The memory pool used for allocating memory.
      * \param[in] parent_node The node the 'tool' subtree will be attached to.
      * \param[in] meta A structure storing application meta-data.
      */
