@@ -15,7 +15,6 @@
 #include <iostream>
 #include <regex>
 
-#include <seqan3/argument_parser/validators.hpp>
 #include <seqan3/argument_parser/detail/format_base.hpp>
 
 #include <cereal/external/rapidxml/rapidxml.hpp>
@@ -129,8 +128,8 @@ public:
             {
                 argument_name = pool->allocate_string(long_id.data());
             }
-            argument_type = pool->allocate_string(guess_gkn_type(value, 
-                                                                 validator).data());
+            argument_type = pool->allocate_string(get_type_as_gkn_string(value, 
+                                                                         validator).data());
             argument_description = pool->allocate_string(desc.data()); 
 
             // Write the 'restrictions' and 'supported_formats' ITEM node attributes.
@@ -227,8 +226,8 @@ public:
             // Allocate helper variables related to the DOM tree construction, getting 
             // memory from the CTD document memory pool.
             argument_name = pool->allocate_string(std::string{"argument-"}.append(std::to_string(args_counter)).data());
-            argument_type = pool->allocate_string(guess_gkn_type(value, 
-                                                                 validator).data());
+            argument_type = pool->allocate_string(get_type_as_gkn_string(value, 
+                                                                         validator).data());
             argument_description = pool->allocate_string(desc.data()); 
 
             // Write the 'restrictions' and 'supported_formats' ITEM node attributes.
@@ -314,63 +313,6 @@ private:
                      char const short_id)
     {
         return app_name + '.' + short_id;
-    }
-
-    template<typename option_type, typename validator_type>
-    std::string
-    guess_gkn_type(option_type const & /* option */,
-                   validator_type && /* validator */)
-    {
-        std::string gkn_type_name = {};
-
-        if constexpr (std::is_same_v<option_type,
-                                     bool>)
-        {
-            gkn_type_name = "bool";
-        } 
-        else if constexpr (std::is_integral_v<option_type>)
-        {
-            gkn_type_name = "int";
-        }
-        else if constexpr (std::is_same_v<option_type,
-                                          float>)
-        {
-            gkn_type_name = "float";
-        }
-        else if constexpr (std::is_same_v<option_type,
-                                          double>)
-        {
-            gkn_type_name = "double";
-        }
-        else
-        {
-            if constexpr (std::is_same_v<validator_type, 
-                                         input_file_validator>)
-            {
-                gkn_type_name = "input-file";
-            }
-            else if constexpr (std::is_same_v<validator_type,
-                                              output_file_validator>)
-            {
-                gkn_type_name = "output-file";
-            }
-            else if constexpr (std::is_same_v<validator_type,
-                                              input_directory_validator>)
-            {
-                gkn_type_name = "input-prefix";
-            }
-            else if constexpr (std::is_same_v<validator_type,
-                                              output_directory_validator>)
-            {
-                gkn_type_name = "output-prefix";
-            }
-            else
-            {
-                gkn_type_name = "string";
-            }
-        }
-
-        return gkn_type_name;
     }
 
     /*!\brief 

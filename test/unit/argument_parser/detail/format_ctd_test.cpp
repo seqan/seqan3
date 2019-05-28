@@ -61,18 +61,19 @@ TEST (ctd_test, test_add_option)
     argument_parser parser{"test_add_option",
                            3,
                            argv}; 
+
+    // Test short and long identifiers are correctly displayed.
     std::string opt_a{};
     std::string opt_b{};
 
-    // Test add_option with short and long string identifier.
     parser.add_option(opt_a, 
                       'a', 
                       "", 
-                      "Description option A");
+                      "Description short option A");
     parser.add_option(opt_b, 
                       'b', 
                       "option-b", 
-                      "Description option B");
+                      "Description long option B");
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser.parse(), 
                 ::testing::ExitedWithCode(EXIT_SUCCESS), 
@@ -92,8 +93,8 @@ TEST (ctd_test, test_add_option)
               "\t</cli>\n"
               "\t<PARAMETERS version=\"1.7.0\">\n"
               "\t\t<NODE name=\"test_add_option\" description=\"\">\n"
-              "\t\t\t<ITEM name=\"a\" type=\"string\" description=\"Description option A\" restrictions=\"\" required=\"false\" advanced=\"false\" value=\"\"/>\n"
-              "\t\t\t<ITEM name=\"option-b\" type=\"string\" description=\"Description option B\" restrictions=\"\" required=\"false\" advanced=\"false\" value=\"\"/>\n"
+              "\t\t\t<ITEM name=\"a\" type=\"string\" description=\"Description short option A\" restrictions=\"\" required=\"false\" advanced=\"false\" value=\"\"/>\n"
+              "\t\t\t<ITEM name=\"option-b\" type=\"string\" description=\"Description long option B\" restrictions=\"\" required=\"false\" advanced=\"false\" value=\"\"/>\n"
               "\t\t</NODE>\n"
               "\t</PARAMETERS>\n"
               "</tool>\n"
