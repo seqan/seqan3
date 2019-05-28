@@ -462,6 +462,53 @@ TEST_F(sequence_file_input_f, read_empty_gz_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
+
+std::string input_bgzf
+{
+    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
+    '\x02', '\x00', '\x4A', '\x00', '\xB3', '\x53', '\x08', '\x71', '\x0D', '\x0E', '\x51', '\x30', '\xE4', '\x72',
+    '\x74', '\x76', '\x0F', '\xE1', '\xB2', '\x0B', '\x49', '\x2D', '\x2E', '\x31', '\xE2', '\x72', '\x74', '\x77',
+    '\x77', '\x0E', '\x71', '\xF7', '\xE3', '\xB2', '\x53', '\x00', '\xF1', '\x8D', '\xB9', '\xDC', '\xDD', '\x1D',
+    '\xDD', '\x43', '\x1C', '\x43', '\x1C', '\x1D', '\x43', '\x50', '\x21', '\x17', '\x00', '\xEF', '\x24', '\xC2',
+    '\xE9', '\x3E', '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00',
+    '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00',
+    '\x00', '\x00', '\x00', '\x00', '\x00'
+};
+
+TEST_F(sequence_file_input_f, decompression_by_filename_bgzf)
+{
+    test::tmp_filename filename{"sequence_file_output_test.fasta.bgzf"};
+
+    {
+        std::ofstream of{filename.get_path(), std::ios::binary};
+
+        std::copy(input_bgzf.begin(), input_bgzf.end(), std::ostreambuf_iterator<char>{of});
+    }
+
+    sequence_file_input fin{filename.get_path()};
+
+    decompression_impl(*this, fin);
+}
+
+TEST_F(sequence_file_input_f, decompression_by_stream_bgzf)
+{
+    sequence_file_input fin{std::istringstream{input_bgzf}, sequence_file_format_fasta{}};
+
+    decompression_impl(*this, fin);
+}
+
+TEST_F(sequence_file_input_f, read_empty_bgzf_file)
+{
+    std::string empty_bgzf_file
+    {
+        '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF',
+        '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+    };
+    sequence_file_input fin{std::istringstream{empty_bgzf_file}, sequence_file_format_fasta{}};
+
+    EXPECT_TRUE(fin.begin() == fin.end());
+}
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2

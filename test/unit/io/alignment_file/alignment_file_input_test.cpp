@@ -363,7 +363,7 @@ TEST_F(alignment_file_input_f, decompression_by_filename_gz)
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
 
-        std::copy(begin(input_gz), end(input_gz), std::ostreambuf_iterator<char>{of});
+        std::copy(input_gz.begin(), input_gz.end(), std::ostreambuf_iterator<char>{of});
     }
 
     alignment_file_input fin{filename.get_path()};
@@ -390,6 +390,66 @@ TEST_F(alignment_file_input_f, read_empty_gz_file)
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
+
+std::string input_bgzf
+{
+    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
+    '\x02', '\x00', '\xF2', '\x00', '\x6D', '\x8E', '\x5D', '\x4B', '\xC3', '\x40', '\x10', '\x45', '\x9F', '\x6F',
+    '\x7E', '\x45', '\x43', '\xC5', '\x6A', '\x8D', '\x31', '\xFB', '\x61', '\x0A', '\xF3', '\x94', '\x35', '\x81',
+    '\x55', '\x30', '\x9B', '\xCA', '\x06', '\x5F', '\x25', '\xD4', '\xA8', '\x45', '\xB3', '\x2B', '\x51', '\x51',
+    '\xFF', '\xBD', '\xE9', '\xEA', '\x8B', '\x50', '\x18', '\xB8', '\xDC', '\x61', '\xCE', '\x61', '\x8A', '\xCB',
+    '\x0A', '\xB7', '\x86', '\x58', '\x9A', '\xC3', '\x36', '\xF4', '\xE1', '\x9E', '\x9D', '\xFF', '\x74', '\xD0',
+    '\x0D', '\x39', '\xEF', '\xFA', '\xA8', '\xB0', '\x37', '\xB0', '\x86', '\xC6', '\xFE', '\x01', '\xD7', '\x86',
+    '\x84', '\x8C', '\x8A', '\xB5', '\xC6', '\x55', '\x45', '\xAF', '\xA3', '\x7F', '\x64', '\x58', '\x1B', '\xDA',
+    '\x78', '\xFF', '\x72', '\xB7', '\x6B', '\x63', '\x37', '\x44', '\x45', '\xD9', '\xA0', '\x7D', '\xDA', '\xBE',
+    '\xCD', '\xA6', '\xE9', '\x66', '\x1B', '\x3F', '\x0C', '\xBD', '\x7B', '\x4F', '\xA3', '\xB1', '\xEF', '\xEE',
+    '\x19', '\x24', '\xC3', '\x4E', '\xC3', '\x90', '\x33', '\x30', '\xCB', '\x6A', '\x56', '\xF1', '\xFA', '\x77',
+    '\x93', '\x41', '\x64', '\x19', '\x54', '\xA9', '\x5B', '\xC4', '\xF3', '\xF9', '\x01', '\x94', '\xA5', '\x2D',
+    '\x71', '\x98', '\x7A', '\x8A', '\x55', '\xA0', '\x39', '\x24', '\x0F', '\xB7', '\x1C', '\x39', '\xC7', '\x6A',
+    '\x62', '\x27', '\xDE', '\xFE', '\xA3', '\xB5', '\x2E', '\x5B', '\x6D', '\x94', '\x0E', '\x8A', '\xC3', '\xC5',
+    '\xD1', '\xF1', '\x12', '\x5F', '\xDF', '\x74', '\x41', '\x36', '\x11', '\x89', '\x4C', '\xCE', '\x83', '\x46',
+    '\x40', '\x8A', '\x00', '\x09', '\xE4', '\xE2', '\xEF', '\x09', '\xB9', '\x47', '\xA6', '\xB5', '\xD2', '\xAD',
+    '\x6A', '\x15', '\xE2', '\x78', '\x79', '\x92', '\x9C', '\xA6', '\x67', '\xD1', '\x0F', '\x72', '\x0E', '\xE3',
+    '\xE8', '\x26', '\x01', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00',
+    '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00',
+    '\x00', '\x00', '\x00', '\x00', '\x00'
+};
+
+TEST_F(alignment_file_input_f, decompression_by_filename_bgzf)
+{
+    test::tmp_filename filename{"alignment_file_output_test.sam.bgzf"};
+
+    {
+        std::ofstream of{filename.get_path(), std::ios::binary};
+
+        std::copy(input_bgzf.begin(), input_bgzf.end(), std::ostreambuf_iterator<char>{of});
+    }
+
+    alignment_file_input fin{filename.get_path()};
+
+    decompression_impl(*this, fin);
+}
+
+TEST_F(alignment_file_input_f, decompression_by_stream_bgzf)
+{
+    alignment_file_input fin{std::istringstream{input_bgzf}, alignment_file_format_sam{}};
+
+    decompression_impl(*this, fin);
+}
+
+TEST_F(alignment_file_input_f, read_empty_bgzf_file)
+{
+    std::string empty_bgzf_file
+    {
+        '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF',
+        '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
+    };
+    alignment_file_input fin{std::istringstream{empty_bgzf_file}, alignment_file_format_sam{}};
+
+    EXPECT_TRUE(fin.begin() == fin.end());
+}
+
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
@@ -415,7 +475,7 @@ TEST_F(alignment_file_input_f, decompression_by_filename_bz2)
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
 
-        std::copy(begin(input_bz2), end(input_bz2), std::ostreambuf_iterator<char>{of});
+        std::copy(input_bz2.begin(), input_bz2.end(), std::ostreambuf_iterator<char>{of});
     }
 
     alignment_file_input fin{filename.get_path()};

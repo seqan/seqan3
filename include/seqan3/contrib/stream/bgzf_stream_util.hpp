@@ -23,8 +23,8 @@
 #error "This file cannot be used when building without GZip-support."
 #endif  // SEQAN3_HAS_ZLIB
 
-#include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/algorithm>

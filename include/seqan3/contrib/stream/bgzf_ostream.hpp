@@ -229,7 +229,7 @@ public:
     int_type overflow(int_type c)
     {
         int w = static_cast<int>(this->pptr() - this->pbase());
-        if (c != EOF)
+        if (c != static_cast<int_type>(EOF))
         {
             *this->pptr() = c;
             ++w;
@@ -270,8 +270,8 @@ public:
     {
         if (this->pptr() != this->pbase())
         {
-            int c = overflow(EOF);
-            if (c == EOF)
+            int_type c = overflow(EOF);
+            if (c == static_cast<int_type>(EOF))
                 return -1;
         }
         return 0;

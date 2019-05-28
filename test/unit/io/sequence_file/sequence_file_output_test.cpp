@@ -460,7 +460,7 @@ TEST(columns, writing_seq_qual)
 // compression
 // ----------------------------------------------------------------------------
 
-void compression_by_filename_impl(test::tmp_filename & filename, std::string_view const expected)
+std::string compression_by_filename_impl([[maybe_unused]]test::tmp_filename & filename)
 {
     {
         sequence_file_output fout{filename.get_path()};
@@ -482,8 +482,7 @@ void compression_by_filename_impl(test::tmp_filename & filename, std::string_vie
 
         buffer = std::string{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
     }
-
-    EXPECT_EQ(buffer, expected);
+    return buffer;
 }
 
 template <typename comp_stream_t>
@@ -503,18 +502,32 @@ void compression_by_stream_impl(comp_stream_t & stream)
 #ifdef SEQAN3_HAS_ZLIB
 std::string expected_gz
 {
-    '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x03','\xB3','\x53','\x08','\x71','\x0D','\x0E',
+    '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\xB3','\x53','\x08','\x71','\x0D','\x0E',
     '\x51','\x30','\xE4','\x72','\x74','\x76','\x0F','\xE1','\xB2','\x53','\x08','\x49','\x2D','\x2E','\x31','\xE2',
     '\x72','\x74','\x77','\x77','\x0E','\x71','\xF7','\xA3','\x05','\x05','\xB5','\xC3','\x98','\xCB','\xDD','\xDD',
     '\xD1','\x3D','\xC4','\x31','\xC4','\xD1','\x31','\x04','\x15','\x72','\x01','\x00','\x27','\xAD','\xB4','\xE9',
     '\x93','\x00','\x00','\x00'
 };
 
+std::string expected_bgzf
+{
+    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x00', '\x42', '\x43',
+    '\x02', '\x00', '\x4A', '\x00', '\xB3', '\x53', '\x08', '\x71', '\x0D', '\x0E', '\x51', '\x30', '\xE4', '\x72',
+    '\x74', '\x76', '\x0F', '\xE1', '\xB2', '\x53', '\x08', '\x49', '\x2D', '\x2E', '\x31', '\xE2', '\x72', '\x74',
+    '\x77', '\x77', '\x0E', '\x71', '\xF7', '\xA3', '\x05', '\x05', '\xB5', '\xC3', '\x98', '\xCB', '\xDD', '\xDD',
+    '\xD1', '\x3D', '\xC4', '\x31', '\xC4', '\x11', '\x88', '\x50', '\x20', '\x17', '\x00', '\x27', '\xAD', '\xB4',
+    '\xE9', '\x93', '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00',
+    '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00',
+    '\x00', '\x00', '\x00', '\x00', '\x00'
+};
+
 TEST(compression, by_filename_gz)
 {
     test::tmp_filename filename{"sequence_file_output_test.fasta.gz"};
 
-    compression_by_filename_impl(filename, expected_gz);
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
 }
 
 TEST(compression, by_stream_gz)
@@ -526,8 +539,34 @@ TEST(compression, by_stream_gz)
         compression_by_stream_impl(compout);
     }
 
-    EXPECT_EQ(out.str(), expected_gz);
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_gz);
 }
+
+TEST(compression, by_filename_bgzf)
+{
+    test::tmp_filename filename{"sequence_file_output_test.fasta.bgzf"};
+
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
+}
+
+TEST(compression, by_stream_bgzf)
+{
+    std::ostringstream out;
+
+    {
+        contrib::bgzf_ostream compout{out};
+        compression_by_stream_impl(compout);
+    }
+
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
+}
+
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
@@ -545,8 +584,8 @@ TEST(compression, by_filename_bz2)
 {
     test::tmp_filename filename{"sequence_file_output_test.fasta.bz2"};
 
-
-    compression_by_filename_impl(filename, expected_bz2);
+    std::string buffer = compression_by_filename_impl(filename);
+    EXPECT_EQ(buffer, expected_bz2);
 }
 
 TEST(compression, by_stream_bz2)

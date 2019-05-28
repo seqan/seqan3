@@ -191,7 +191,7 @@ private:
                     {
                         // read header
                         streamBuf->serializer.istream.read(
-                            (char*)&job.inputBuffer[0],
+                            (char_type*)&job.inputBuffer[0],
                             DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH);
 
                         if (!streamBuf->serializer.istream.good())
@@ -217,7 +217,7 @@ private:
 
                         // read compressed data and tail
                         streamBuf->serializer.istream.read(
-                            (char*)&job.inputBuffer[0] + DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH,
+                            (char_type*)&job.inputBuffer[0] + DefaultPageSize<detail::bgzf_compression>::BLOCK_HEADER_LENGTH,
                             tailLen);
 
                         // Check if end-of-file marker is set
@@ -402,7 +402,7 @@ public:
                 while (currentJobId < 0 || this->egptr() - this->gptr() < ofs)
                 {
                     ofs -= this->egptr() - this->gptr();
-                    if (this->underflow() == EOF)
+                    if (this->underflow() == static_cast<int_type>(EOF))
                         break;
                 }
 

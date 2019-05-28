@@ -21,6 +21,7 @@
     #include <seqan3/contrib/stream/bz2_ostream.hpp>
 #endif
 #ifdef SEQAN3_HAS_ZLIB
+    #include <seqan3/contrib/stream/bgzf_ostream.hpp>
     #include <seqan3/contrib/stream/gz_ostream.hpp>
 #endif
 
@@ -46,12 +47,12 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
 
     if ((extension == ".gz") || (extension == ".bgzf") || (extension == ".bam"))
     {
-        //TODO: always write bgzf even when gz was requested? It's compatible and faster
     #ifdef SEQAN3_HAS_ZLIB
         if (extension != ".bam") // remove extension except for bam
             filename.replace_extension("");
 
-        return {new contrib::basic_gz_ostream<char_t>{primary_stream}, stream_deleter_default};
+        return {new contrib::basic_bgzf_ostream<char_t>{primary_stream},
+                stream_deleter_default};
     #else
         throw file_open_error{"Trying to write a gzipped file, but no ZLIB available."};
     #endif
