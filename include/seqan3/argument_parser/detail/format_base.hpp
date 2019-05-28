@@ -193,6 +193,24 @@ protected:
 
         return tmp;
     }
+    
+    /*!\brief Appends a double dash to a long identifier and returns it.
+     * \param[in] long_id The name of the long identifier.
+     * \returns The input long name prepended with a double dash.
+     */
+    std::string prepend_dash(std::string const & long_id)
+    {
+        return ("--" + long_id);
+    }
+
+    /*!\brief Appends a double dash to a short identifier and returns it.
+     * \param[in] short_id The name of the short identifier.
+     * \returns The input short name prepended with a single dash.
+     */
+    std::string prepend_dash(char const short_id)
+    {
+        return ("-" + std::string(1, short_id));
+    }
 };
 
 /*!\brief The format that contains all helper functions needed in all formats for
