@@ -83,14 +83,14 @@ public:
             if (long_id.empty())
             {
                 prefixed_option_name = pool->allocate_string(prepend_dash(short_id).data());
-                reference_option_name = pool->allocate_string(prepend_app_name(app_name, 
-                                                                               short_id).data());
+                reference_option_name = pool->allocate_string(build_reference_name(app_name, 
+                                                                                   short_id).data());
             }
             else
             {
                 prefixed_option_name = pool->allocate_string(prepend_dash(long_id).data());
-                reference_option_name = pool->allocate_string(prepend_app_name(app_name,
-                                                                               long_id).data());
+                reference_option_name = pool->allocate_string(build_reference_name(app_name,
+                                                                                   long_id).data());
             }
 
             // Build and append 'clielement' subtree.
@@ -195,12 +195,10 @@ public:
         clielement_argument_callbacks.push_back([this] (rxml::xml_document<> *pool, 
                                                         rxml::xml_node<> *parent_node,
                                                         argument_parser_meta_data const & meta) {
-            std::string reference_option_suffix = {};
             char *reference_option_name = nullptr;
 
-            reference_option_suffix = std::string{"argument-"}.append(std::to_string(args_counter));
-            reference_option_name = pool->allocate_string(prepend_app_name(meta.app_name,
-                                                                           reference_option_suffix).data());
+            reference_option_name = pool->allocate_string(build_reference_name(meta.app_name,
+                                                                               args_counter).data());
             append_clielement_node(pool,
                                    parent_node,
                                    "",
@@ -300,27 +298,54 @@ public:
     //!\endcond
 
 private:
-
-    std::string
-    prepend_app_name(std::string const & app_name,
-                     std::string const & long_id)
+    
+    /*!\brief Build the 'referenceName' attribute of the 'mapping' node in the CTD XML file.
+     *
+     * \param[in] app_name The name of the application the parser refers to.
+     * \param[in] long_id The long identifer of the option being described.
+     * \return The reference name of the option being described.
+     */
+    std::string 
+    build_reference_name(std::string const & app_name,
+                         std::string const & long_id)
     {
         return app_name + '.' + long_id;
     }
 
-    std::string
-    prepend_app_name(std::string const & app_name,
-                     char const short_id)
+    /*!\brief Build the 'referenceName' attribute of the 'mapping' node in the CTD XML file.
+     *
+     * \param[in] app_name The name of the application the parser refers to.
+     * \param[in] short_id The short identifer of the option being described.
+     * \return The reference name of the option being described.
+     */
+    std::string 
+    build_reference_name(std::string const & app_name,
+                         char const short_id)
     {
         return app_name + '.' + short_id;
     }
 
-    /*!\brief 
+    /*!\brief Build the 'referenceName' attribute of the 'mapping' node in the CTD XML file.
      *
-     * \param[in] document
-     * \param[in] parent_node
-     * \param[in] version
-     * \param[in] encoding
+     * \param[in] app_name The name of the application the parser refers to.
+     * \param[in] args_counter The argument identifer of the argument being described.
+     * \return The reference name of the argument being described.
+     */
+    std::string 
+    build_reference_name(std::string const & app_name,
+                         unsigned args_counter)
+    {
+        return app_name + "argument-" + std::to_string(args_counter);
+    }
+    
+    /*!\brief Allocate and append an XML declaration node to the current DOM tree.
+     *
+     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] parent_node The node the declaration node will be attached to.
+     *
+     * \details 
+     * The 'version' and 'encoding' attributes required by every XML declaration node are
+     * hard coded to '1.0' and 'UTF-8'.
      */
     void append_declaration_node(rxml::xml_document<> *pool,
                                  rxml::xml_node<> *parent_node) 
@@ -335,11 +360,11 @@ private:
         parent_node->append_node(declaration_node);
     }
 
-    /*!\brief 
+    /*!\brief Allocate and append a CTD 'description' node to the current DOM tree.
      *
-     * \param[in] document
-     * \param[in] parent_node
-     * \param[in] meta
+     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] parent_node The node the 'description' node will be attached to.
+     * \param[in] meta A structure storing application meta-data.
      */
     void append_description_node(rxml::xml_document<> *pool,
                                  rxml::xml_node<> *parent_node,
@@ -353,11 +378,11 @@ private:
         parent_node->append_node(description_node);
     }
 
-    /*!\brief 
+    /*!\brief Allocate and append a CTD 'manual' node to the current DOM tree.
      *
-     * \param[in] document
-     * \param[in] parent_node
-     * \param[in] meta
+     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] parent_node The node the 'manual' node will be attached to.
+     * \param[in] meta A structure storing application meta-data.
      */
     void append_manual_node(rxml::xml_document<> *pool, 
                             rxml::xml_node<> *parent_node, 
@@ -377,6 +402,13 @@ private:
         parent_node->append_node(manual_node);
     }
 
+    /*!\brief Allocate and append a CTD 'clielement' subtree to the current DOM tree.
+     *
+     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] parent_node The node the 'clielement' subtree will be attached to.
+     * \param[in] prefixed_option_name The option name with one or multiple dash prepended.
+     * \param[in] reference_option_name The option name or argument id with the application name prepended.
+     */
     void append_clielement_node(rxml::xml_document<> *pool, 
                                 rxml::xml_node<> *parent_node, 
                                 const char *prefixed_option_name, 
@@ -406,11 +438,11 @@ private:
         clielement_node->append_node(mapping_node);
     }
 
-    /*!\brief 
+    /*!\brief Allocate and append the CTD 'cli' subtree to the current DOM tree.
      *
-     * \param[in] document
-     * \param[in] parent_node
-     * \param[in] meta
+     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] parent_node The node the 'cli' subtree will be attached to.
+     * \param[in] meta A structure storing application meta-data.
      */
     void append_cli_node(rxml::xml_document<> *pool,
                          rxml::xml_node<> *parent_node,
@@ -435,6 +467,19 @@ private:
         parent_node->append_node(cli_node);
     }
 
+    /*!\brief Allocate and append a CTD 'ITEM' node to the current DOM tree.
+     *
+     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] parent_node The node the 'item' subtree will be attached to.
+     * \param[in] argument_name The 'name' attribute id of the argument being created. 
+     * \param[in] argument_type The 'type' attribute of the argument being created.
+     * \param[in] argument_description The 'description' attribute of the argument being created.
+     * \param[in] argument_restrictions The 'restrictions' attribute of the argument being created.
+     * \param[in] argument_formats The 'supported_formats' attribute of the argument being created.
+     * \param[in] argument_required The 'required' attribute of the argument being created.
+     * \param[in] argument_advanced The 'advanced' attribute of the argument being created.
+     * \param[in] argument_value The 'value' attribute of the argument being created.
+     */
     void append_item_node(rxml::xml_document<> *pool,
                           rxml::xml_node<> *parent_node,
                           char const *argument_name,
@@ -486,11 +531,11 @@ private:
         parent_node->append_node(item_node);
     }
 
-    /*!\brief 
+    /*!\brief Allocate and append a CTD 'NODE' subtree to the current DOM tree.
      *
-     * \param[in] document
-     * \param[in] parent_node
-     * \param[in] meta
+     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] parent_node The node the 'NODE' subtree will be attached to.
+     * \param[in] meta A structure storing application meta-data.
      */
     void append_node_node(rxml::xml_document<> *pool, 
                           rxml::xml_node<> *parent_node, 
@@ -517,11 +562,11 @@ private:
         parent_node->append_node(node_node);
     }
 
-    /*!\brief 
+    /*!\brief Allocate and append a CTD 'PARAMETERS' subtree to the current DOM tree.
      *
-     * \param[in] document
-     * \param[in] parent_node
-     * \param[in] version
+     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] parent_node The node the 'PARAMETERS' subtree will be attached to.
+     * \param[in] meta A structure storing application meta-data.
      */
     void append_parameters_node(rxml::xml_document<> *pool, 
                                 rxml::xml_node<> *parent_node, 
@@ -539,12 +584,11 @@ private:
         parent_node->append_node(parameters_node);
     }
 
-    /*!\brief 
+    /*!\brief Allocate and append a CTD 'tool' subtree to the current DOM tree. 
      *
-     * \param[in] document
-     * \param[in] parent_node
-     * \param[in] meta
-     * \param[in] ctd_version
+     * \param[in] document The memory pool used for allocating memory.
+     * \param[in] parent_node The node the 'tool' subtree will be attached to.
+     * \param[in] meta A structure storing application meta-data.
      */
     void append_tool_node(rxml::xml_document<> *pool,
                           rxml::xml_node<> *parent_node,
@@ -596,17 +640,26 @@ private:
         // Append tool node to the document DOM tree.
         parent_node->append_node(tool_node);
     }
-   
+
+    //! List of callbacks for generating 'clielement' subtree for options and flags.
     std::vector<std::function<void(rxml::xml_document<>*, 
                                    rxml::xml_node<>*,
                                    std::string)>> clielement_option_callbacks;
+
+    //! List of callbacks for generating 'clielement' subtree for arguments.
     std::vector<std::function<void(rxml::xml_document<>*, 
                                    rxml::xml_node<>*,
                                    std::string)>> clielement_argument_callbacks;
+
+    //! List of callbacks for generating 'ITEM' subtree for options and flags.
     std::vector<std::function<void(rxml::xml_document<>*, 
                                    rxml::xml_node<>*)>> item_option_callbacks;
+
+    //! List of callbacks for generating 'ITEM' subtree for arguments.
     std::vector<std::function<void(rxml::xml_document<>*, 
                                    rxml::xml_node<>*)>> item_argument_callbacks;
+
+    //! Number of positional arguments the user added to the argument parser.
     unsigned args_counter;
 };
 
