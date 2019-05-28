@@ -47,7 +47,7 @@ template <std::ranges::RandomAccessRange urng_t, std::ranges::RandomAccessRange 
     //!\cond
     requires std::ranges::View<urng_t> && std::ranges::SizedRange<urng_t> &&
              std::ranges::View<inserted_rng_t> && std::ranges::SizedRange<inserted_rng_t> &&
-             std::Same<reference_t<urng_t>, reference_t<inserted_rng_t>>
+             std::CommonReference<reference_t<urng_t>, reference_t<inserted_rng_t>>
     //!\endcond
 class view_interleave : public std::ranges::view_interface<view_interleave<urng_t, inserted_rng_t>>
 {
@@ -64,9 +64,10 @@ public:
      * \{
      */
     //!\brief The reference_type.
-    using reference         = reference_t<urng_t>;
+    using reference         = ranges::common_reference_t<reference_t<urng_t>, reference_t<inserted_rng_t>>;
     //!\brief The const_reference type is equal to the reference type.
-    using const_reference   = detail::transformation_trait_or_t<seqan3::reference<urng_t const>, void>;
+    using const_reference   = detail::transformation_trait_or_t<
+                                ranges::common_reference<reference_t<urng_t const>, reference_t<inserted_rng_t const>>, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = value_type_t<urng_t>;
     //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be Sized.
@@ -249,7 +250,7 @@ template <std::ranges::RandomAccessRange urng_t, std::ranges::RandomAccessRange 
     //!\cond
     requires std::ranges::ViewableRange<urng_t> && std::ranges::SizedRange<urng_t> &&
              std::ranges::SizedRange<inserted_rng_t> &&
-             std::Same<reference_t<urng_t>, reference_t<inserted_rng_t>>
+             std::CommonReference<reference_t<urng_t>, reference_t<inserted_rng_t>>
     //!\endcond
 view_interleave(urng_t &&, size_t, inserted_rng_t &&)
     -> view_interleave<decltype(view::all(std::declval<urng_t>())), decltype(view::persist(std::declval<inserted_rng_t>()))>;
@@ -287,11 +288,13 @@ struct interleave_fn
         if constexpr (std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t> &&
                       std::ranges::RandomAccessRange<inserted_rng_t> && std::ranges::SizedRange<inserted_rng_t>)
         {
-            return detail::view_interleave{std::forward<urng_t>(urange), size, std::forward<inserted_rng_t>(i)};
+            return detail::view_interleave{std::forward<urng_t>(urange),
+                                           static_cast<size_t>(size),
+                                           std::forward<inserted_rng_t>(i)};
         }
         else
         {
-            return ranges::view::chunk(std::forward<urng_t>(urange), size)
+            return ranges::view::chunk(std::forward<urng_t>(urange), static_cast<size_t>(size))
                  | std::view::join(std::forward<inserted_rng_t>(i));
         }
     }

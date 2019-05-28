@@ -37,6 +37,7 @@
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <seqan3/io/sequence_file/format_genbank.hpp>
 #include <seqan3/io/sequence_file/format_sam.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
@@ -352,6 +353,7 @@ template <
     detail::TypeListOfSequenceFileInputFormats valid_formats_      = type_list<sequence_file_format_embl,
                                                                                sequence_file_format_fasta,
                                                                                sequence_file_format_fastq,
+                                                                               sequence_file_format_genbank,
                                                                                sequence_file_format_sam
                                                                                /*, ...*/>,
     char_concept                               stream_char_type_   = char>
