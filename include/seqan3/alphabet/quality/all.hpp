@@ -68,10 +68,12 @@
  *
  * \par Concept
  *
- * The quality submodule defines the seqan3::QualityAlphabet which encompasses
+ * The quality submodule defines the seqan3::WritableQualityAlphabet which encompasses
  * all the alphabets, defined in the submodule, and refines the
- * seqan3::Alphabet by providing Phred score assignment and conversion
+ * seqan3::WritableAlphabet by providing Phred score assignment and conversion
  * operations.
+ * Additionally, this submodule defines the seqan3::QualityAlphabet, which only requires
+ * readablity and not assignability.
  *
  * \par Assignment and Conversion
  *
@@ -79,8 +81,8 @@
  * `to_char` and `to_rank` respectively (like all other alphabets). Additionally
  * they can be converted to their Phred representation via `to_phred`.
  *
- * Likewise, assignment happens via `assign_char`, `assign_rank` and
- * `assign_phred`. Phred values outside the representable range, but inside the
+ * Likewise, assignment happens via `assign_char_to`, `assign_rank_to` and
+ * `assign_phred_to`. Phred values outside the representable range, but inside the
  * legal range, are converted to the closest Phred score, e.g. assigning 60 to a
  * `seqan3::phred42` will result in a Phred score of 41. Assigning Phred values
  * outside the legal range results in undefined behaviour.

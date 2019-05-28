@@ -32,7 +32,7 @@ struct trim_fn
     template <typename threshold_t>
     constexpr auto operator()(threshold_t const threshold) const
     {
-        static_assert(QualityAlphabet<remove_cvref_t<threshold_t>> || std::Integral<threshold_t>,
+        static_assert(QualityAlphabet<threshold_t> || std::Integral<threshold_t>,
                       "The threshold must either be a quality alphabet or an integral type "
                       "in which case it is compared with the underlying phred type.");
 

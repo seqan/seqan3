@@ -84,8 +84,7 @@ public:
         requires !std::Same<phred_type, void>
     {
         alphabet_type tmp{};
-        using seqan3::assign_phred;
-        assign_phred(tmp, c);
+        assign_phred_to(c, tmp);
         return operator=(tmp);
     }
 };
@@ -246,11 +245,10 @@ public:
     }
 
     constexpr derived_type & assign_phred(phred_type_virtual const c) noexcept
-        requires QualityAlphabet<alphabet_type>
+        requires WritableQualityAlphabet<alphabet_type>
     {
         alphabet_type tmp{};
-        using seqan3::assign_phred;
-        assign_phred(tmp, c);
+        assign_phred_to(c, tmp);
         return operator=(tmp);
     }
     //!\}
@@ -284,7 +282,7 @@ public:
          * Now when accessing get<1>(seq_qual_alph) we want to call to_phred at some point because we want the quality,
          * therefore the to_phred function from alphabet_proxy is called, but this function did a static_cast to the
          * derived type which is calling the constructor from quality_base. Unfortunately now, the generic quality_base
-         *  constructor uses assign_phred(static_cast<derived_type &>(*this), to_phred(other)); (here) which again
+         *  constructor uses assign_phred_to(to_phred(other), static_cast<derived_type &>(*this)); (here) which again
          * tries to call to_phred of the alphabet_proxy => infinite loop :boom:
          */
         return to_phred(operator alphabet_type());

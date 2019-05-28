@@ -86,7 +86,7 @@ namespace seqan3
  * must model seqan3::SequenceContainer.
  */
 /*!\typedef using quality_alphabet
- * \brief Alphabet of the characters for the seqan3::field::QUAL; must model seqan3::QualityAlphabet.
+ * \brief Alphabet of the characters for the seqan3::field::QUAL; must model seqan3::WritableQualityAlphabet.
  */
 /*!\typedef using quality_container
  * \brief Type template of the seqan3::field::QUAL, a container template over `quality_alphabet`;
@@ -126,7 +126,7 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
     requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
 
     // field::QUAL
-    requires QualityAlphabet<typename t::quality_alphabet>;
+    requires WritableQualityAlphabet<typename t::quality_alphabet>;
     requires SequenceContainer<typename t::template quality_container<typename t::quality_alphabet>>;
 
     // field::REF_SEQ

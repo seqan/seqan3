@@ -69,6 +69,7 @@ TYPED_TEST_P(phred, conversion_rank)
 TYPED_TEST_P(phred, concept_check)
 {
     EXPECT_TRUE(QualityAlphabet<TypeParam>);
+    EXPECT_TRUE(WritableQualityAlphabet<TypeParam>);
 }
 
 REGISTER_TYPED_TEST_CASE_P(phred, conversion_char, conversion_phred, conversion_rank, concept_check);

@@ -80,9 +80,7 @@ public:
     //!\endcond
     explicit constexpr quality_base(other_qual_type const & other) noexcept
     {
-        using seqan3::assign_phred;
-        using seqan3::to_phred;
-        assign_phred(static_cast<derived_type &>(*this), to_phred(other));
+        assign_phred_to(seqan3::to_phred(other), static_cast<derived_type &>(*this));
     }
     //!\}
 
@@ -110,7 +108,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::QualityAlphabet::assign_phred() requirement via the seqan3::assign_rank() wrapper.
+     * Satisfies the seqan3::WritableQualityAlphabet::assign_phred() requirement via the seqan3::assign_rank() wrapper.
      *
      * \par Complexity
      *
