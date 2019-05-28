@@ -2,7 +2,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/view/translation.hpp>
+#include <seqan3/range/view/translate.hpp>
 #include <seqan3/range/view/complement.hpp>
 
 using namespace seqan3;
