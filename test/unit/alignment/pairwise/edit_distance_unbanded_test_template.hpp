@@ -9,8 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
-#include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 
 #include <seqan3/range/view/to_char.hpp>

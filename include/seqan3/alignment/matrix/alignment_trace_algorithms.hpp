@@ -17,8 +17,9 @@
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
-#include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
-#include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/alignment/matrix/matrix_concept.hpp>
+#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/view/view_all.hpp>
 
