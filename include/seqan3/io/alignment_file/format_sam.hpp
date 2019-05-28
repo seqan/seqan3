@@ -22,6 +22,7 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/reflection.hpp>
+#include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
@@ -368,6 +369,16 @@ public:
         // -------------------------------------------------------------------------------------------------------------
         auto const tab_or_end = is_char<'\t'> || is_char<'\r'> || is_char<'\n'>;
         read_field(stream_view | view::take_until_or_throw(tab_or_end), qual);
+
+        if constexpr (!detail::decays_to_ignore_v<seq_type> && !detail::decays_to_ignore_v<qual_type>)
+        {
+            if (std::ranges::distance(seq) != 0 && std::ranges::distance(qual) != 0 &&
+                std::ranges::distance(seq) != std::ranges::distance(qual))
+            {
+                throw format_error{to_string("Sequence length (", std::ranges::distance(seq), ") and quality length (",
+                                             std::ranges::distance(qual), ") must be the same.")};
+            }
+        }
 
         // All remaining optional fields if any: SAM tags dictionary
         // -------------------------------------------------------------------------------------------------------------
