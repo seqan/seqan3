@@ -87,11 +87,11 @@ public:
      *
      * Behaviour specific to amino acids: True also for lower case letters that silently convert to their upper case.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */

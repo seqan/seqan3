@@ -37,7 +37,7 @@ namespace seqan3
  * \brief The concept for option validators passed to add_option/positional_option.
  * \ingroup argument_parser
  *
- * \par Concepts and doxygen
+ * ###Concepts and doxygen
  *
  * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".

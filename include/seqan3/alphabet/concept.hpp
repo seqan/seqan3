@@ -899,7 +899,7 @@ SEQAN3_CONCEPT WritableAlphabet = Alphabet<t> && WritableSemialphabet<t> && requ
  *
  * \details
  *
- * Delegates to seqan3::Semialphabet::to_rank.
+ * Delegates to seqan3::to_rank.
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
@@ -918,7 +918,7 @@ alphabet_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &,
  *
  * \details
  *
- * Delegates to seqan3::Semialphabet::assign_rank.
+ * Delegates to seqan3::assign_rank.
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */

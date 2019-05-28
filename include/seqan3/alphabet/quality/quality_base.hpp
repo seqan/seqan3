@@ -110,7 +110,7 @@ public:
      *
      * Satisfies the seqan3::WritableQualityAlphabet::assign_phred() requirement via the seqan3::assign_rank() wrapper.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      */

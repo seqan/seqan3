@@ -25,7 +25,7 @@
  * \attention
  * This macro can handle multiple "," which is normally a limitation of macros.
  *
- * \par Example
+ * ###Example
  *
  * \include test/snippet/core/simd/simd_test_utility.cpp
  */

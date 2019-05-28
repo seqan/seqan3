@@ -118,7 +118,7 @@ namespace seqan3::view
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * \par Example
+ * ###Example
  *
  * Operating on a range of seqan3::phred42:
  * \snippet test/snippet/range/view/trim.cpp phred42

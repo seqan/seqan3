@@ -36,7 +36,7 @@ namespace seqan3::detail
  * \attention This might get removed if one of our used libraries offers the same
  * functionality.
  *
- * \par Helper types
+ * ###Helper types
  *   seqan3::detail::transformation_trait_or_t as a shorthand for *seqan3::detail::transformation_trait_or::type*
  */
 template <typename type_t, typename default_t>

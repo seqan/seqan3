@@ -53,7 +53,7 @@ namespace seqan3
  * C = coil/loop
  * X = unknown
  *
- * \par Usage
+ * ###Usage
  * The following code example creates a dssp9 vector, modifies it, and prints the result to stderr.
  * \snippet test/snippet/alphabet/structure/dssp9.cpp general
  */

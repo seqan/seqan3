@@ -280,7 +280,7 @@ private:
     using base_t::base_t;
     //!\}
 
-    //!\brief befriend the derived type so that it can instantiate
+    //!\brief Befriend the derived type so that it can instantiate.
     //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
     friend derived_type;
 
@@ -575,7 +575,7 @@ private:
         return (to_rank() / cummulative_alph_sizes[index]) % seqan3::alphabet_size<meta::at_c<component_list, index>>;
     }
 
-    //!\brief the cumulative alphabet size products are cached
+    //!\brief The cumulative alphabet size products are cached.
     static constexpr std::array<rank_type, component_list::size()> cummulative_alph_sizes
     {
         [] () constexpr

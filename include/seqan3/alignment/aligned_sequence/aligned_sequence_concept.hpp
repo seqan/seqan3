@@ -386,7 +386,7 @@ typename range_type::iterator insert_gap(range_type & rng,
 
 /*!\brief An implementation of seqan3::AlignedSequence::erase_gap for ranges with the corresponding
  *        member function erase_gap(it).
- * \ingroup seqan3::AlignedSequence
+ * \ingroup aligned_sequence
  * \tparam range_type   Type of the range to modify; must have an erase_gap(it) member function.
  * \param[in,out] rng   The range to modify.
  * \param[in] it        The iterator pointing to the position where to erase one gap.

@@ -51,7 +51,7 @@
  * Gaps are usually not scored on a per-character-basis, because it is widely recognised that the likelihood of
  * `n` consecutive gaps is much higher than that of `n` individual gaps. This is based on the assumption that
  * one biological event often introduces more than one gap at a time and that single character gaps are not common
- * due to other bioligical factors like frame preservation in protein-coding sequences.
+ * due to other biological factors like frame preservation in protein-coding sequences.
  *
  * Therefore the default scoring schemes do not cover the seqan3::gap alphabet and there is an additional
  * seqan3::gap_scheme whose score() function takes the length as parameter. This forces you to handle gaps separately
