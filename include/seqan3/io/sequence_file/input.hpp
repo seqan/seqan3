@@ -350,12 +350,11 @@ template <
     detail::Fields                             selected_field_ids_ = fields<field::SEQ,
                                                                             field::ID,
                                                                             field::QUAL>,
-    detail::TypeListOfSequenceFileInputFormats valid_formats_      = type_list<sequence_file_format_embl,
-                                                                               sequence_file_format_fasta,
-                                                                               sequence_file_format_fastq,
-                                                                               sequence_file_format_genbank,
-                                                                               sequence_file_format_sam
-                                                                               /*, ...*/>,
+    detail::TypeListOfSequenceFileInputFormats valid_formats_      = type_list<format_embl,
+                                                                               format_fasta,
+                                                                               format_fastq,
+                                                                               format_genbank,
+                                                                               format_sam>,
     char_concept                               stream_char_type_   = char>
 class sequence_file_input
 {
@@ -546,7 +545,7 @@ public:
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
-        format{file_format{}}
+        format{detail::sequence_file_input_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -565,7 +564,7 @@ public:
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
-        format{file_format{}}
+        format{detail::sequence_file_input_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -740,7 +739,7 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::sequence_file_input_format>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -760,7 +759,7 @@ protected:
         }
 
         assert(!format.valueless_by_exception());
-        std::visit([&] (SequenceFileInputFormat & f)
+        std::visit([&] (auto & f)
         {
             // read new record
             if constexpr (selected_field_ids::contains(field::SEQ_QUAL))

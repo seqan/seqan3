@@ -55,7 +55,7 @@ static std::string fasta_file = []()
 void write3(benchmark::State & state)
 {
     std::ostringstream ostream;
-    sequence_file_format_fasta format;
+    detail::sequence_file_output_format<format_fasta> format;
     sequence_file_output_options options;
 
     for (auto _ : state)
@@ -104,7 +104,7 @@ void read3(benchmark::State & state)
     std::string id;
     dna5_vector seq;
 
-    sequence_file_format_fasta format;
+    detail::sequence_file_input_format<format_fasta> format;
     sequence_file_input_options<dna5, false> options;
 
     std::istringstream istream{fasta_file};

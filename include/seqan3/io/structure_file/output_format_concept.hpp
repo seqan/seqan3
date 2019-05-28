@@ -22,11 +22,21 @@
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The structure file output format base class.
+template <typename t>
+class structure_file_output_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
 /*!\interface seqan3::StructureFileOutputFormat <>
- * \brief The generic concept for sequence file out formats.
+ * \brief The generic concept for structure file out formats.
  * \ingroup structure_file
  *
  * \details
@@ -37,7 +47,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT StructureFileOutputFormat = requires(t & v,
+SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_output_format<t> & v,
                                                     std::ofstream & f,
                                                     structure_file_output_options & options,
                                                     rna5_vector & seq,

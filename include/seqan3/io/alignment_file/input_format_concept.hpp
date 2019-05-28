@@ -26,6 +26,16 @@
 #include <seqan3/io/alignment_file/input_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The alignment file input format base class.
+template <typename t>
+class alignment_file_input_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -42,7 +52,7 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT AlignmentFileInputFormat =
-    requires (t                                                                   & v,
+    requires (detail::alignment_file_input_format<t>                              & v,
               std::ifstream                                                       & stream,
               alignment_file_input_options<dna5>                                  & options,
               std::vector<dna5_vector>                                            & ref_sequences,

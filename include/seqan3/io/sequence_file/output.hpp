@@ -28,6 +28,7 @@
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/io/record.hpp>
+#include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
@@ -161,8 +162,7 @@ namespace seqan3
 
 template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
-              type_list<sequence_file_format_embl, sequence_file_format_fasta, sequence_file_format_fastq,
-                        sequence_file_format_genbank, sequence_file_format_sam>,
+              type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>,
           char_concept stream_char_type_ = char>
 class sequence_file_output
 {
@@ -290,7 +290,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{file_format{}}
+        format{detail::sequence_file_output_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -304,7 +304,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{file_format{}}
+        format{detail::sequence_file_output_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -628,7 +628,7 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::sequence_file_output_format>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}

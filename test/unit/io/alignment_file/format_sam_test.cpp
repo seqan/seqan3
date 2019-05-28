@@ -10,7 +10,7 @@
 #include "alignment_file_format_test_template.hpp"
 
 template <>
-struct alignment_file_read<alignment_file_format_sam> : public alignment_file_data
+struct alignment_file_read<format_sam> : public alignment_file_data
 {
     // -----------------------------------------------------------------------------------------------------------------
     // formatted input
@@ -91,8 +91,8 @@ read1	41	*	1	61	1S1M1D1M1I	*	0	0	ACGT	!##$
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(sam, alignment_file_read, alignment_file_format_sam);
-INSTANTIATE_TYPED_TEST_CASE_P(sam, alignment_file_write, alignment_file_format_sam);
+INSTANTIATE_TYPED_TEST_CASE_P(sam, alignment_file_read, format_sam);
+INSTANTIATE_TYPED_TEST_CASE_P(sam, alignment_file_write, format_sam);
 
 // ---------------------------------------------------------------------------------------------------------------------
 // SAM specifics
@@ -104,7 +104,7 @@ struct sam_format : public alignment_file_data
 // since BAM uses the same read header function from SAM, it only needs to be tested once
 TEST_F(sam_format, header_errors)
 {
-    alignment_file_format_sam format;
+    detail::alignment_file_input_format<format_sam> format;
 
     {
         std::string header_str
@@ -180,7 +180,7 @@ TEST_F(sam_format, header_errors)
 
 TEST_F(sam_format, windows_file)
 {
-    alignment_file_format_sam format;
+    detail::alignment_file_input_format<format_sam> format;
     std::string id;
     std::istringstream istream(std::string("read1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\r\n"));
 
@@ -195,7 +195,7 @@ TEST_F(sam_format, windows_file)
 
 TEST_F(sam_format, format_error_illegal_character_in_seq)
 {
-    alignment_file_format_sam format;
+    detail::alignment_file_input_format<format_sam> format;
 
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\tAC!T\t*\n"));
 
@@ -210,7 +210,7 @@ TEST_F(sam_format, format_error_illegal_character_in_seq)
 
 TEST_F(sam_format, format_error_invalid_arithmetic_value)
 {
-    alignment_file_format_sam format;
+    detail::alignment_file_input_format<format_sam> format;
 
     // invalid value
     std::istringstream istream(std::string("*\t0\t*\t1abc\t0\t*\t*\t0\t0\t*\t*\n"));
@@ -252,7 +252,7 @@ TEST_F(sam_format, format_error_invalid_arithmetic_value)
 
 TEST_F(sam_format, format_error_invalid_cigar)
 {
-    alignment_file_format_sam format;
+    detail::alignment_file_input_format<format_sam> format;
 
     // operation P is not supported yet
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t5P\t*\t0\t0\t*\t*\n"));
@@ -288,7 +288,7 @@ TEST_F(sam_format, format_error_invalid_cigar)
 
 TEST_F(sam_format, format_error_invalid_sam_tag_format)
 {
-    alignment_file_format_sam format;
+    detail::alignment_file_input_format<format_sam> format;
 
     // type identifier is wrong
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\tNM:X:3\n"));
@@ -320,7 +320,7 @@ TEST_F(sam_format, write_different_header)
 
     auto write_header = [&] ()
     {
-        alignment_file_format_sam format;
+        detail::alignment_file_output_format<format_sam> format;
 
         ASSERT_NO_THROW(format.write(ostream, output_options, header, "", std::vector<phred42>{}, "", 0, "", 0, 0,
                                      std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>{}, 0, 0,

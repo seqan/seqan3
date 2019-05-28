@@ -23,6 +23,16 @@
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The sequence file input format base class.
+template <typename format_tag>
+class sequence_file_input_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -38,7 +48,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT SequenceFileInputFormat = requires (t                                        & v,
+SEQAN3_CONCEPT SequenceFileInputFormat = requires (detail::sequence_file_input_format<t>    & v,
                                                    std::ifstream                            & f,
                                                    sequence_file_input_options<dna5, false> & options,
                                                    dna5_vector                              & seq,

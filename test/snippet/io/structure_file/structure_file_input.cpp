@@ -63,7 +63,7 @@ std::string const input
 
 std::istringstream iss(input);
 
-structure_file_in fin{iss, structure_file_format_vienna{}};
+structure_file_in fin{iss, format_vienna{}};
 //              ^ no need to specify the template arguments
 //! [stringstream_read]
 }
@@ -91,8 +91,8 @@ std::istringstream iss(input);
 
 structure_file_in<structure_file_input_default_traits_aa,
                   fields<field::SEQ, field::ID, field::STRUCTURE>,
-                  type_list<structure_file_format_vienna>,
-                  char> fin{iss, structure_file_format_vienna{}};
+                  type_list<format_vienna>,
+                  char> fin{iss, format_vienna{}};
 //! [trait_def]
 }
 
@@ -100,7 +100,7 @@ structure_file_in<structure_file_input_default_traits_aa,
 //! [record_iter]
 structure_file_in<structure_file_input_default_traits_aa,
                   fields<field::SEQ, field::ID, field::STRUCTURE>,
-                  type_list<structure_file_format_vienna>> fin{tmp_dir/"input_aa.dbn"};
+                  type_list<format_vienna>> fin{tmp_dir/"input_aa.dbn"};
 
 for (auto & rec : fin)
 {
@@ -127,7 +127,7 @@ for (auto & rec : fin)
 //! [structured_bindings]
 structure_file_in<structure_file_input_default_traits_aa,
                   fields<field::SEQ, field::ID, field::STRUCTURE>,
-                  type_list<structure_file_format_vienna>> fin{tmp_dir/"input_aa.dbn"};
+                  type_list<format_vienna>> fin{tmp_dir/"input_aa.dbn"};
 
 for (auto & [ seq, id, structure ] : fin)
 {

@@ -268,7 +268,7 @@ struct alignment_file_input_default_traits
  * All of these fields are retrieved by default (and in that order).
  * Note that some of the fields are specific to the SAM format (e.g. seqan3::field::FLAG) while others are specific to
  * BLAST format (e.g. seqan3::field::BIT_SCORE). Please see the corresponding formats for more details
- * (seqan3::alignment_file_format_sam).
+ * (seqan3::format_sam).
  *
  * ### Construction and specialisation
  *
@@ -382,7 +382,7 @@ template <
                                                                               field::EVALUE,
                                                                               field::BIT_SCORE,
                                                                               field::HEADER_PTR>,
-    detail::TypeListOfAlignmentFileInputFormats  valid_formats_ = type_list<alignment_file_format_sam>,
+    detail::TypeListOfAlignmentFileInputFormats  valid_formats_    = type_list<format_sam>,
     std::Integral                                stream_char_type_ = char>
 class alignment_file_input
 {
@@ -849,7 +849,7 @@ protected:
         static_assert(meta::in<valid_formats, format_type>::value,
                       "You selected a format that is not in the valid_formats of this file.");
 
-        format = format_type{};
+        format = detail::alignment_file_input_format<format_type>{};
         secondary_stream = detail::make_secondary_istream(*primary_stream);
 
         // buffer first record
@@ -886,7 +886,7 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::alignment_file_input_format>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
@@ -942,7 +942,7 @@ protected:
 
         auto call_read_func = [this] (auto & ref_seq_info)
         {
-            std::visit([&] (AlignmentFileInputFormat & f)
+            std::visit([&] (auto & f)
             {
                 f.read(*secondary_stream,
                        options,

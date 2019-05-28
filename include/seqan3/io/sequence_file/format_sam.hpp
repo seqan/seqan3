@@ -6,7 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::sequence_file_format_sam class.
+ * \brief Provides the seqan3::format_sam tag and the seqan3::sequence_file_input_format and
+ *        seqan3::sequence_file_output_format specialisation for this tag.
  * \author Mitra Darvish <mitra.darvish AT fu-berlin.de>
  */
 
@@ -19,8 +20,11 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
@@ -34,59 +38,45 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
-namespace seqan3
+namespace seqan3::detail
 {
-  /*!\brief       The SAM format used as sequence file.
-   * \implements  SequenceFileFormat
-   * \ingroup     sequence
-   *
-   * \details
-   *
-   * ### Introduction
-   *
-   * The SAM format is commonly used to store pairwise alignment information between a query sequence and its
-   * reference sequence, e.g. a read mapping result. Some people also use the SAM format as plain storage for
-   * sequences (and qualities) and in some cases the original sequence files are no longer available. The
-   * seqan3::sequence_file_format_sam allows using SAM files in this manner and provides easy convertibility
-   * from/to FASTQ; but there is no access to the alignment information stored in SAM files. Use
-   * seqan3::alignment_file_format_sam if you are interested in the alignment.
-   * See the [article on Wikipedia](https://en.wikipedia.org/wiki/SAM_(file_format)) or the
-   * [technical specification] (https://samtools.github.io/hts-specs/SAMv1.pdf) for an in-depth description of
-   * the format.
-   *
-   * ### Fields
-   *
-   * The SAM format provides the fields seqan3::field::SEQ, seqan3::field::ID and seqan3::field::SEQ_QUAL.
-   * All fields are allowed to be empty when writing.
-   *
-   * ### Implementation notes
-   *
-   * This implementation ignores all fields besides id, seq and quality.
-   *
-   */
-class sequence_file_format_sam
+
+/*!\brief The seqan3::sequence_file_input_format specialisation that handles formatted SAM input.
+ * \ingroup sequence
+ *
+ * \details
+ *
+ * ### Introduction
+ *
+ * The SAM format is commonly used to store pairwise alignment information between a query sequence and its
+ * reference sequence, e.g. a read mapping result. Some people also use the SAM format as plain storage for
+ * sequences (and qualities) and in some cases the original sequence files are no longer available. The
+ * seqan3::format_sam allows using SAM files in this manner and provides easy convertibility
+ * from/to FASTQ; but there is no access to the alignment information stored in SAM files. Use
+ * seqan3::format_sam if you are interested in the alignment.
+ *
+ * See seqan3::format_sam
+ *
+ */
+template <>
+class sequence_file_input_format<format_sam>
 {
 public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_sam;
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
-     //!\brief Default constructor is explicitly defaulted, you need to give a stream or file name.
-    sequence_file_format_sam() = default;
+    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_format_sam(sequence_file_format_sam const &) = delete;
+    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_format_sam & operator=(sequence_file_format_sam const &) = delete;
-    //!\brief Move construction is defaulted.
-    sequence_file_format_sam(sequence_file_format_sam &&) = default;
-    //!\brief Move assignment is defaulted.
-    sequence_file_format_sam & operator=(sequence_file_format_sam &&) = default;
+    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
+    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
     //!\}
-
-    //!\brief The valid file extensions for this format; note that you can modify this value.
-    static inline std::vector<std::string> file_extensions
-    {
-        { "sam" },
-    };
 
     //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
@@ -224,6 +214,30 @@ public:
               stream.get(); // triggers error in stream and sets eof
           }
     }
+};
+
+
+//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted SAM.
+//!\ingroup sequence
+template <>
+class sequence_file_output_format<format_sam>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_sam;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
+    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
@@ -274,4 +288,4 @@ public:
     }
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

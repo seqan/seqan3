@@ -22,7 +22,9 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
@@ -40,7 +42,8 @@
 
 namespace seqan3
 {
-/*!\brief       The GenBank format.
+
+/*!\brief       The GenBank format (tag).
  * \implements  seqan3::SequenceFileInputFormat
  * \implements  seqan3::SequenceFileOutputFormat
  * \ingroup     sequence
@@ -66,21 +69,8 @@ namespace seqan3
  * Qualities passed to the write function are ignored.
  *
  */
-class sequence_file_format_genbank
+struct format_genbank
 {
-public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    sequence_file_format_genbank() = default;                                            //!< Defaulted.
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the genbank file.
-    sequence_file_format_genbank(sequence_file_format_genbank const &) = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the genbank file.
-    sequence_file_format_genbank & operator=(sequence_file_format_genbank const &) = delete;
-    sequence_file_format_genbank(sequence_file_format_genbank &&) = default;             //!< Defaulted.
-    sequence_file_format_genbank & operator=(sequence_file_format_genbank &&) = default; //!< Defaulted.
-    //!\}
-
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
@@ -88,6 +78,34 @@ public:
         { "gb" },
         { "gbk" },
     };
+};
+
+} // namespace seqan
+
+namespace seqan3::detail
+{
+
+//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted Genbank input.
+//!\ingroup sequence
+template<>
+class sequence_file_input_format<format_genbank>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_genbank;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
+    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
@@ -165,6 +183,29 @@ public:
             ++stream_it; // consume "/n"
         }
     }
+};
+
+//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted Genbank output.
+//!\ingroup sequence
+template <>
+class sequence_file_output_format<format_genbank>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_genbank;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
+    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
@@ -240,7 +281,6 @@ public:
             detail::write_eol(stream_it,false);
         }
     }
-
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

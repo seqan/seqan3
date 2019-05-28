@@ -24,8 +24,19 @@
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/structure_file/input_options.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The structure file input format base class.
+template <typename format_tag>
+class structure_file_input_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
+
 /*!\interface seqan3::StructureFileInputFormat <>
  * \brief The generic concept for structure file in formats.
  * \ingroup structure_file
@@ -38,7 +49,7 @@ namespace seqan3
  */
 //!\cond
 template<typename t>
-SEQAN3_CONCEPT StructureFileInputFormat = requires(t & v,
+SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_format<t> & v,
                                                    std::ifstream & f,
                                                    structure_file_input_options<rna5, false> & options,
                                                    rna5_vector & seq,

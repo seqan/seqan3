@@ -22,6 +22,16 @@
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The sequence file output format base class.
+template <typename t>
+class sequence_file_output_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -37,13 +47,13 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT SequenceFileOutputFormat = requires (t                            & v,
-                                                    std::ofstream                & f,
-                                                    sequence_file_output_options & options,
-                                                    dna5_vector                  & seq,
-                                                    std::string                  & id,
-                                                    std::vector<phred42>         & qual,
-                                                    std::vector<dna5q>           & seq_qual)
+SEQAN3_CONCEPT SequenceFileOutputFormat = requires (detail::sequence_file_output_format<t> & v,
+                                                    std::ofstream                  & f,
+                                                    sequence_file_output_options   & options,
+                                                    dna5_vector                    & seq,
+                                                    std::string                    & id,
+                                                    std::vector<phred42>           & qual,
+                                                    std::vector<dna5q>             & seq_qual)
 {
     t::file_extensions;
 

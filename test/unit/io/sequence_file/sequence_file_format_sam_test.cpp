@@ -25,8 +25,8 @@ using namespace seqan3;
 // ----------------------------------------------------------------------------
 TEST(general, concepts)
 {
-  EXPECT_TRUE((SequenceFileInputFormat<sequence_file_format_sam>));
-  EXPECT_TRUE((SequenceFileOutputFormat<sequence_file_format_sam>));
+   EXPECT_TRUE((SequenceFileInputFormat<format_sam>));
+   EXPECT_TRUE((SequenceFileOutputFormat<format_sam>));
 }
 // ----------------------------------------------------------------------------
 // reading
@@ -52,7 +52,7 @@ struct read : public ::testing::Test
         { "!!!!!!!"_phred42 },
     };
 
-    sequence_file_format_sam format;
+    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -190,7 +190,7 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
 )"
     };
 
-    sequence_file_format_sam format;
+    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -215,7 +215,7 @@ ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()-./++-
 )"
     };
 
-    sequence_file_format_sam format;
+    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -234,7 +234,7 @@ ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-+
 )"
     };
 
-    sequence_file_format_sam format;
+    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -253,7 +253,7 @@ ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*\n,-./++-
 )"
     };
 
-    sequence_file_format_sam format;
+    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -272,7 +272,7 @@ R"(@ Comment
 )"
     };
 
-    sequence_file_format_sam format;
+    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     std::stringstream istream{input};
@@ -289,7 +289,7 @@ ID 1	0	*	0	0	*	*	0	0	*	!##$%&'()*+,-./++-
 )"
     };
 
-    sequence_file_format_sam format;
+    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     dna5_vector seq;
     std::stringstream istream{input};
@@ -308,7 +308,7 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
 )"
     };
 
-    sequence_file_format_sam format;
+    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     std::vector<phred42> qual;
@@ -333,7 +333,7 @@ ID 1	0	*	0	0	*	*	0	0	ACGTTTTT?TTTTTTTTT	!##$%&'()*+,-./++-
 )"
     };
 
-    sequence_file_format_sam format;
+    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     dna5_vector seq;
     std::stringstream istream{input};
@@ -372,7 +372,7 @@ read3	43	ref	3	63	1S1M1D4M1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
         { "!!*+,-./"_phred42 },
     };
 
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_sam{}};
+    sequence_file_input fin{std::istringstream{input}, format_sam{}};
 
     size_t counter = 0;
     for (auto & [ seq, id, qual ] : fin)
@@ -410,7 +410,7 @@ struct write : public ::testing::Test
         { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE"_phred42 },
         { "!!*+,-./+*+,-./+!!FF!!"_phred42 },
     };
-    sequence_file_format_sam format;
+    detail::sequence_file_output_format<format_sam> format;
     sequence_file_output_options options;
     std::ostringstream ostream;
     void do_write_test()
@@ -504,7 +504,7 @@ Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	*
 
 TEST_F(write, from_stream_file)
 {
-    sequence_file_output fout{std::ostringstream{}, sequence_file_format_sam{}};
+    sequence_file_output fout{std::ostringstream{}, format_sam{}};
 
     for(int i = 0; i < 3; i++)
     {

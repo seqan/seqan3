@@ -143,7 +143,7 @@ TYPED_TEST_P(alignment_file_read, input_concept)
 
 TYPED_TEST_P(alignment_file_read, header_sucess)
 {
-    TypeParam format;
+    detail::alignment_file_input_format<TypeParam> format;
     typename TestFixture::stream_type istream{this->big_header_input};
 
     alignment_file_header header{};
@@ -186,7 +186,7 @@ TYPED_TEST_P(alignment_file_read, header_sucess)
 
 TYPED_TEST_P(alignment_file_read, read_in_all_data)
 {
-    TypeParam format;
+    detail::alignment_file_input_format<TypeParam> format;
     typename TestFixture::stream_type istream{this->verbose_reads_input};
 
     this->tag_dicts[0]["AS"_tag] = 2;
@@ -248,7 +248,7 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
 
 TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
 {
-    TypeParam format;
+    detail::alignment_file_input_format<TypeParam> format;
     typename TestFixture::stream_type istream{this->empty_input};
 
     dna5_vector seq;
@@ -283,7 +283,7 @@ TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
 
 TYPED_TEST_P(alignment_file_read, read_in_nothing)
 {
-    TypeParam format;
+    detail::alignment_file_input_format<TypeParam> format;
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
 
     alignment_file_header header{};
@@ -305,7 +305,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only)
     std::pair<dummy_type, std::vector<gapped<dna5>>> alignment2;
 
     {
-        TypeParam format;
+        detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
         /*with reference information*/
         for (size_t i = 0; i < 3; ++i)
@@ -325,7 +325,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only)
 
     /*no reference information*/
     {
-        TypeParam format;
+        detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
         alignment_file_header<> default_header{};
 
@@ -345,7 +345,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only)
     /*no alignment information because cigar is empty*/
 
     {   // with reference sequence information
-        TypeParam format;
+        detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->empty_cigar};
         std::istringstream istream_empty_cigar();
 
@@ -359,7 +359,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only)
     }
 
     {   // without reference sequence information
-        TypeParam format;
+        detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->empty_cigar};
         alignment_file_header<> default_header{};
 
@@ -377,7 +377,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id)
     std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate;
 
     {   /*with reference information*/
-        TypeParam format;
+        detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
 
         for (size_t i = 0; i < 3; ++i)
@@ -393,7 +393,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id)
     }
 
     {   /*no reference information*/
-        TypeParam format;
+        detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
         alignment_file_header<> default_header{};
 
@@ -418,7 +418,7 @@ TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_informati
     std::pair<dummy_type, std::vector<gapped<dna5>>> alignment2;
 
     {   // with reference information given
-        TypeParam format;
+        detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->unknown_ref};
 
         EXPECT_THROW(format.read(istream, input_options,  this->ref_sequences, this->header, std::ignore, std::ignore,
@@ -428,7 +428,7 @@ TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_informati
     }
 
     {   // with reference information in the header
-        TypeParam format;
+        detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->unknown_ref_header};
         alignment_file_header<> default_header{};
 
@@ -456,7 +456,7 @@ TYPED_TEST_P(alignment_file_write, output_concept)
 
 TYPED_TEST_P(alignment_file_write, default_options_all_members_specified)
 {
-    TypeParam format;
+    detail::alignment_file_output_format<TypeParam> format;
 
     std::ostringstream ostream;
 
@@ -480,7 +480,7 @@ TYPED_TEST_P(alignment_file_write, default_options_all_members_specified)
 
 TYPED_TEST_P(alignment_file_write, with_header)
 {
-    TypeParam format;
+    detail::alignment_file_output_format<TypeParam> format;
 
     std::ostringstream ostream;
 
@@ -509,7 +509,7 @@ TYPED_TEST_P(alignment_file_write, with_header)
 
 TYPED_TEST_P(alignment_file_write, special_cases)
 {
-    TypeParam format;
+    detail::alignment_file_output_format<TypeParam> format;
 
     alignment_file_header header{std::vector<std::string>{this->ref_id}};
     header.ref_id_info.push_back({this->ref_seq.size(), ""});
@@ -528,7 +528,7 @@ TYPED_TEST_P(alignment_file_write, special_cases)
     EXPECT_EQ(ostream.str(), this->special_output);
 
     ostream = std::ostringstream{}; // clear
-    format = TypeParam{};           // clear header_was_written
+    format = detail::alignment_file_output_format<TypeParam>{}; // clear header_was_written
 
     // write the ref id and mate ref as string
     std::tuple<std::string, std::optional<int32_t>, int32_t> mate_str{"", rid, 0};
@@ -543,7 +543,7 @@ TYPED_TEST_P(alignment_file_write, special_cases)
 
 TYPED_TEST_P(alignment_file_write, format_errors)
 {
-    TypeParam format;
+    detail::alignment_file_output_format<TypeParam> format;
 
     alignment_file_header header{std::vector<std::string>{this->ref_id}};
     header.ref_id_info.push_back({this->ref_seq.size(), ""});
