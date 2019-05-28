@@ -78,6 +78,39 @@ protected:
             return detail::get_display_name_v<value_type>.str();
     }
 
+    /*!\brief Returns the corresponding CTD type for the input type.
+     *
+     * \tparam value_type The type whose name is converted std::string.
+     * \tparam validator_type The type of the validator object required for distinguishing 
+     *                        strings from input/output file types.
+     *
+     * \return The type of the value as a string.
+     */
+    template<typename value_type, typename validator_type>
+    static std::string get_type_as_ctd_string(value_type const & /* option */,
+                                              validator_type && /* validator */)
+    {
+        if constexpr (std::is_same_v<value_type, bool>)
+            return "bool";
+        else if constexpr (std::is_integral_v<value_type>)
+            return "int";
+        else if constexpr (std::is_same_v<value_type, float>)
+            return "float";
+        else if constexpr (std::is_same_v<value_type, double>)
+            return "double";
+        else
+            if constexpr (std::is_same_v<validator_type, input_file_validator<>>)
+                return "input-file";
+            else if constexpr (std::is_same_v<validator_type, output_file_validator<>>)
+                return "output-file";
+	    else if constexpr (std::is_same_v<validator_type, input_directory_validator>)
+                return "input-prefix";
+            else if constexpr (std::is_same_v<validator_type, output_directory_validator>)
+                return "output-prefix";
+        
+	return "string";
+    }
+
     /*!\brief Returns the `value_type` of the input container as a string (reflection).
      * \tparam container_type The container type for which to query it's value_type.
      * \returns The type of the container value_type as a string.
@@ -193,6 +226,25 @@ protected:
 
         return tmp;
     }
+
+    /*!\brief Appends a double dash to a long identifier and returns it.
+    * \param[in] long_id The name of the long identifier.
+    * \returns The input long name prepended with a double dash.
+    */
+    std::string prepend_dash(std::string const & long_id)
+    {
+        return ("--" + long_id);
+    }
+
+    /*!\brief Appends a double dash to a short identifier and returns it.
+    * \param[in] short_id The name of the short identifier.
+    * \returns The input short name prepended with a single dash.
+    */
+    std::string prepend_dash(char const short_id)
+    {
+        return ("-" + std::string(1, short_id));
+    }
+
 };
 
 /*!\brief The format that contains all helper functions needed in all formats for

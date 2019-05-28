@@ -181,24 +181,6 @@ public:
 
 private:
 
-    /*!\brief Appends a double dash to a long identifier and returns it.
-    * \param[in] long_id The name of the long identifier.
-    * \returns The input long name prepended with a double dash.
-    */
-    std::string prepend_dash(std::string const & long_id)
-    {
-        return ("--" + long_id);
-    }
-
-    /*!\brief Appends a double dash to a short identifier and returns it.
-    * \param[in] short_id The name of the short identifier.
-    * \returns The input short name prepended with a single dash.
-    */
-    std::string prepend_dash(char const short_id)
-    {
-        return ("-" + std::string(1, short_id));
-    }
-
     /*!\brief Returns "-[short_id]/--[long_id]" if both are non-empty or just one of them if the other is empty.
     * \param[in] short_id The name of the short identifier.
     * \param[in] long_id  The name of the long identifier.
