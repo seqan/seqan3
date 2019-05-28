@@ -20,6 +20,16 @@ using semi_global_edit_distance_max_errors_unbanded_types
         semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01T_e255, uint32_t>,
         semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01T_e255, uint64_t>,
 
+        semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01_e5, uint8_t>,
+        semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01_e5, uint16_t>,
+        semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01_e5, uint32_t>,
+        semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01_e5, uint64_t>,
+
+        semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01_e2, uint8_t>,
+        semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01_e2, uint16_t>,
+        semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01_e2, uint32_t>,
+        semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_01_e2, uint64_t>,
+
         semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_02_e255, uint8_t>,
         semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_02_e255, uint16_t>,
         semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::dna4_02_e255, uint32_t>,
