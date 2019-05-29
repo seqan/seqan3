@@ -46,7 +46,19 @@ class format_ctd : format_base
 {
 
 public:
-
+    
+    /*!\brief Adds calls for appending 'clielement' and 'ITEM' nodes to the CTD DOM tree to be evaluated at parse time.
+     *
+     * \tparam option_type    The type of variable in which to store the given command line argument.
+     * \tparam validator_type The type of validator applied to the value after parsing.
+     *
+     * \param[out] value     The variable in which to store the given command line argument.
+     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
+     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
+     * \param[in]  desc      The description of the option.
+     * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
+     * \param[in]  validator The validator applied to the value after parsing (callable).
+     */
     template<typename option_type, typename validator_type>
     void add_option(option_type & value,
                     char const short_id,
@@ -174,6 +186,18 @@ public:
         });
     }
 
+    /*!\brief Adds calls for appending 'clielement' and 'ITEM' nodes to the CTD DOM tree to be evaluated at parse time.
+     *
+     * \param[in]  value    The variable in which to store the given command line argument.
+     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
+     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
+     * \param[in]  desc     The description of the flag.
+     * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
+     *
+     * \details
+     * For the sake of the CTD exporter, add_flag is the same of add_option, with a constrained option_type and
+     * a default validator.
+     */
     void add_flag(bool & value,
                   char const short_id,
                   std::string const & long_id,
@@ -188,6 +212,15 @@ public:
                    default_validator<bool> {});
     }
 
+    /*!\brief Adds calls for appending 'clielement' and 'ITEM' nodes to the CTD DOM tree to be evaluated at parse time.
+     *
+     * \tparam option_type    The type of variable in which to store the given command line argument.
+     * \tparam validator_type The type of validator applied to the value after parsing.
+     *
+     * \param[out] value     The variable in which to store the given command line argument.
+     * \param[in]  desc      The description of the positional option.
+     * \param[in]  validator The validator applied to the value after parsing (callable).
+     */
     template<typename option_type, typename validator_type>
     void add_positional_option(option_type & value,
                                std::string const & desc,
@@ -263,6 +296,9 @@ public:
         args_counter++;
     }
 
+    /*!\brief Builds the CTD document DOM tree and prints it to standard output.
+     * \param[in] meta The meta information that are needed for building the DOM tree.
+     */
     void parse(argument_parser_meta_data const & meta) 
     {
         rxml::xml_document<> *ctd_document = new rxml::xml_document<>();
