@@ -260,7 +260,7 @@ public:
 
             // Allocate helper variables related to the DOM tree construction, getting 
             // memory from the CTD document memory pool.
-            argument_name = pool->allocate_string(std::string{"argument-"}.append(std::to_string(argument_id)).data());
+            argument_name = pool->allocate_string(build_argument_name(argument_id).data());
             argument_type = pool->allocate_string(get_type_as_gkn_string(value, 
                                                                          validator).data());
             argument_description = pool->allocate_string(desc.data()); 
@@ -333,7 +333,18 @@ public:
     //!\endcond
 
 private:
-    
+
+    /*!\brief Build the identifier for the i-th positional option.
+     *
+     * \param[in] argument_numeric_id The numeric identifier of the argument being described.
+     * \return The string representing the i-th positional option identifier.
+     */
+    std::string
+    build_argument_name(unsigned argument_numeric_id)
+    {
+        return std::string{"argument-"} + std::to_string(argument_numeric_id);
+    }
+
     /*!\brief Build the 'referenceName' attribute of the 'mapping' node in the CTD XML file.
      *
      * \param[in] app_name The name of the application the parser refers to.
@@ -363,14 +374,14 @@ private:
     /*!\brief Build the 'referenceName' attribute of the 'mapping' node in the CTD XML file.
      *
      * \param[in] app_name The name of the application the parser refers to.
-     * \param[in] args_counter The argument identifer of the argument being described.
+     * \param[in] argument_numeric_id The numeric identifer of the argument being described.
      * \return The reference name of the argument being described.
      */
     std::string 
     build_reference_name(std::string const & app_name,
-                         unsigned args_counter)
+                         unsigned argument_numeric_id)
     {
-        return app_name + ".argument-" + std::to_string(args_counter);
+        return app_name + '.' + build_argument_name(argument_numeric_id);
     }
     
     /*!\brief Allocate and append an XML declaration node to the current DOM tree.
