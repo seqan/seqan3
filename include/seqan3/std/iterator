@@ -17,6 +17,7 @@
 #ifndef __cpp_lib_ranges
 
 #include <range/v3/iterator/access.hpp>
+#include <range/v3/iterator/default_sentinel.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
 #include <range/v3/iterator/operations.hpp>
 #include <range/v3/iterator/stream_iterators.hpp>
@@ -338,6 +339,16 @@ using SEQAN3_DOXYGEN_ONLY(iter_move =) ::ranges::iter_move;
 * \brief Alias for ranges::iter_swap. Exchanges the values denoted by its arguments.
 */
 using SEQAN3_DOXYGEN_ONLY(iter_swap =) ::ranges::iter_swap;
+
+/*!\typedef std::ranges::default_sentinel
+* \brief Alias for ranges::default_sentinel. Empty sentinel object for use with iterators that know the bound of their range.
+*/
+using SEQAN3_DOXYGEN_ONLY(default_sentinel =) ::ranges::default_sentinel;
+
+/*!\typedef std::ranges::default_sentinel_t
+* \brief Alias for ranges::default_sentinel_t. Type of ranges::default_sentinel.
+*/
+using SEQAN3_DOXYGEN_ONLY(default_sentinel_t =) ::ranges::default_sentinel_t;
 
 //!\}
 } // namespace std::ranges
