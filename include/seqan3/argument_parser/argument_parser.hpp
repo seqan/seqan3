@@ -170,7 +170,7 @@ public:
      * \param[in]  short_id  The short identifier for the option (e.g. 'a').
      * \param[in]  long_id   The long identifier for the option (e.g. "age").
      * \param[in]  desc      The description of the option to be shown in the help page.
-     * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
+     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      */
     template <typename option_type, validator_concept validator_type = detail::default_validator<option_type>>
@@ -198,7 +198,7 @@ public:
      * \param[in]  short_id The short identifier for the flag (e.g. 'i').
      * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      * \param[in]  desc     The description of the flag to be shown in the help page.
-     * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
+     * \param[in]  spec     Advanced flag specification, see seqan3::option_spec.
      */
     void add_flag(bool & value,
                   char const short_id,
@@ -253,7 +253,7 @@ public:
      * \attention The function must be called at the very end of all parser
      * related code and should be enclosed in a try catch block.
      *
-     * \throws seqan3::parser_design_error if the this function was already called before.
+     * \throws seqan3::parser_design_error if this function was already called before.
      *
      * \throws seqan3::option_declared_multiple_times if an option that is not a list was declared multiple times.
      * \throws seqan3::overflow_error_on_conversion if the numeric argument would cause an overflow error when
@@ -261,7 +261,7 @@ public:
      * \throws seqan3::parser_invalid_argument if the user provided wrong arguments.
      * \throws seqan3::required_option_missing if the user did not provide a required option.
      * \throws seqan3::too_many_arguments if the command line call contained more arguments than expected.
-     * \throws seqan3::too_few_arguments if the command line call contained too few arguments than expected.
+     * \throws seqan3::too_few_arguments if the command line call contained less arguments than expected.
      * \throws seqan3::type_conversion_failed if the argument value could not be converted into the expected type.
      * \throws seqan3::validation_failed if the argument was not excepted by the provided validator.
      *

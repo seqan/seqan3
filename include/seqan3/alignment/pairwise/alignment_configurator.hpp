@@ -292,7 +292,7 @@ public:
 
             static_assert(alignment_contract_t::expects_tuple_like_value_type(),
                           "Alignment configuration error: "
-                          "The value type of the sequence ranges must model the seqan3::detail::TupleLike "
+                          "The value type of the sequence ranges must model the seqan3::TupleLike "
                           "and must contain exactly 2 elements.");
 
             static_assert(alignment_contract_t::expects_valid_scoring_scheme(),

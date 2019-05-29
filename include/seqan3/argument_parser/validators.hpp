@@ -55,11 +55,11 @@ namespace seqan3
  * will provide an implementation).
  */
 /*!\fn              void operator()(value_type const & cmp) const
- * \brief           Validates the value 'cmp' and throws a seqan3::validation_error on failure.
+ * \brief           Validates the value 'cmp' and throws a seqan3::validation_failed on failure.
  * \tparam          value_type The type of the value to be validated.
  * \param[in,out]   cmp The value to be validated.
  * \relates         seqan3::validator_concept
- * \throws          seqan3::validation_error if value 'cmp' does not pass validation.
+ * \throws          seqan3::validation_failed if value 'cmp' does not pass validation.
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
@@ -387,7 +387,7 @@ protected:
  *
  * On construction, the validator can receive a list (std::vector over std::string) of valid file extensions.
  * The struct acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given filename's
- * extension (sts::filesystem::path) is not in the given list of valid file extensions, if the file does not exist, or
+ * extension (std::filesystem::path) is not in the given list of valid file extensions, if the file does not exist, or
  * if the file does not have the proper read permissions.
  *
  * \snippet test/snippet/argument_parser/validators_input_file.cpp usage
@@ -853,7 +853,7 @@ private:
 } // namespace detail
 
 /*!\brief Enables the chaining of validators.
- *!\ingroup argument_parser
+ * \ingroup argument_parser
  * \tparam validator1_type The type of the fist validator;
  *                         Must satisfy the seqan3::validator_concept and the
  *                         same value_type as the second validator type.
