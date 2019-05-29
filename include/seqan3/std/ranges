@@ -19,7 +19,6 @@
 #else // implement via range-v3
 
 #include <range/v3/range/concepts.hpp>
-#include <range/v3/iterator/default_sentinel.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
 #include <range/v3/view/all.hpp>
 #include <range/v3/view/any_view.hpp>
@@ -193,16 +192,6 @@ using SEQAN3_DOXYGEN_ONLY(size =) ::ranges::size;
  * \brief Alias for ranges::empty. Checks whether a range is empty.
  */
 using SEQAN3_DOXYGEN_ONLY(empty =) ::ranges::empty;
-
-/*!\typedef std::ranges::default_sentinel
-* \brief Alias for ranges::default_sentinel. Empty sentinel object for use with iterators that know the bound of their range.
-*/
-using SEQAN3_DOXYGEN_ONLY(default_sentinel =) ::ranges::default_sentinel;
-
-/*!\typedef std::ranges::default_sentinel_t
-* \brief Alias for ranges::default_sentinel_t. Type of ranges::default_sentinel.
-*/
-using SEQAN3_DOXYGEN_ONLY(default_sentinel_t =) ::ranges::default_sentinel_t;
 
 /*!\typedef std::ranges::sentinel_t
 * \brief Alias for ranges::sentinel_t. Obtains the sentinel type of a range.

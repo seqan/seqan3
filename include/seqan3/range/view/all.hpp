@@ -17,6 +17,8 @@
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/get.hpp>
+#include <seqan3/range/view/interleave.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/pairwise_combine.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/rank_to.hpp>

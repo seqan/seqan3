@@ -22,6 +22,10 @@
 #define STR(x) STR_HELPER(x)
 //!\endcond
 
+// ============================================================================
+//  C++ standard and features
+// ============================================================================
+
 // C++ standard [required]
 #ifdef __cplusplus
     static_assert(__cplusplus >= 201703, "SeqAn3 requires C++17, make sure that you have set -std=c++17.");
@@ -44,6 +48,17 @@
 #else
 #   error "SeqAn3 requires C++ Concepts, either vie the TS (flag: -fconcepts) or via C++20 (flag: -std=c++2a / -std=c++20)."
 #endif
+
+// filesystem [required]
+#if !__has_include(<filesystem>)
+#   if !__has_include(<experimental/filesystem>)
+#      error SeqAn3 requires C++17 filesystem support, but it was not found.
+#   endif
+#endif
+
+// ============================================================================
+//  Dependencies
+// ============================================================================
 
 // SeqAn [required]
 #if !__has_include(<seqan3/version.hpp>)
@@ -69,13 +84,6 @@
 #   undef MSG
 #else
 #   error The range-v3 library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
-#endif
-
-// filesystem [required]
-#if !__has_include(<filesystem>)
-#   if !__has_include(<experimental/filesystem>)
-#      error SeqAn3 requires C++17 filesystem support, but it was not found.
-#   endif
 #endif
 
 // SDSL [required]
@@ -158,11 +166,28 @@
 
 // TODO (doesn't have a version.hpp, yet)
 
+// ============================================================================
+//  Documentation
+// ============================================================================
+
 // Doxygen related
 // this macro is a NO-OP unless doxygen parses it, in which case it resolves to the argument
 #ifndef SEQAN3_DOXYGEN_ONLY
 #   define SEQAN3_DOXYGEN_ONLY(x)
 #endif
+
+// ============================================================================
+//  Workarounds
+// ============================================================================
+
+#ifndef SEQAN3_WORKAROUND_VIEW_PERFORMANCE
+//!\brief Performance of views, especially filter and join is currently bad, especially in I/O.
+#   define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
+#endif
+
+// ============================================================================
+//  Backmatter
+// ============================================================================
 
 // macro cruft undefine
 #undef STR

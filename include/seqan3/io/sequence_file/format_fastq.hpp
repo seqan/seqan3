@@ -34,6 +34,7 @@
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/take.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
@@ -110,12 +111,7 @@ public:
               id_type                                                                & id,
               qual_type                                                              & qualities)
     {
-        using stream_char_t = typename stream_type::char_type;
-        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
-                                                 decltype(std::istreambuf_iterator<stream_char_t>{})>
-                            {std::istreambuf_iterator<stream_char_t>{stream},
-                             std::istreambuf_iterator<stream_char_t>{}};
-
+        auto stream_view = view::istreambuf(stream);
         auto stream_it = begin(stream_view);
 
         // cache the begin position so we write quals to the same position as seq in seq_qual case
