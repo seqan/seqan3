@@ -796,7 +796,7 @@ SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v)
  * ### Requirements
  *
  *   1. `t` shall model seqan3::Semialphabet ("has all rank representation")
- *   4. seqan3::to_char needs to be defined for objects of type `t`
+ *   2. seqan3::to_char needs to be defined for objects of type `t`
  *
  * See the documentation pages for the respective requirements.
  *

@@ -19,6 +19,23 @@
 #include <seqan3/std/type_traits>
 
 // ============================================================================
+// forwards
+// ============================================================================
+
+//!\cond
+namespace seqan3::adaptation
+{
+
+void is_pair_open();
+void is_pair_close();
+void is_unpaired();
+void max_pseudoknot_depth();
+void pseudoknot_id();
+
+} // namespace seqan3::adaptation
+//!\endcond
+
+// ============================================================================
 // is_pair_open()
 // ============================================================================
 
@@ -29,23 +46,24 @@ namespace seqan3::detail::adl::only
 struct is_pair_open_fn
 {
 private:
-    SEQAN3_CPO_IMPL(1, is_pair_open(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(0, v.is_pair_open()                      )    // member
+    SEQAN3_CPO_IMPL(2, is_pair_open(v)                     ) // ADL
+    SEQAN3_CPO_IMPL(1, seqan3::adaptation::is_pair_open(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(0, v.is_pair_open()                    ) // member
 
 public:
     //!\brief Operator definition.
     template <typename rna_structure_t>
     //!\cond
-        requires requires (rna_structure_t const chr) { { impl(priority_tag<1>{}, chr) }; }
+        requires requires (rna_structure_t const chr) { { impl(priority_tag<2>{}, chr) }; }
     //!\endcond
     constexpr auto operator()(rna_structure_t const chr) const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<1>{}, chr)),
+        static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::is_pair_open().");
-        static_assert(std::Same<bool, decltype(impl(priority_tag<1>{}, chr))>,
+        static_assert(std::Same<bool, decltype(impl(priority_tag<2>{}, chr))>,
             "The return type of your is_pair_open() implementation must be 'bool'.");
 
-        return impl(priority_tag<1>{}, chr);
+        return impl(priority_tag<2>{}, chr);
     }
 };
 
@@ -67,12 +85,14 @@ namespace seqan3
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
  *
- * It acts as a wrapper and looks for two possible implementations (in this order):
+ * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `is_pair_open(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be `bool`.
- *   2. A member function called `is_pair_open()`.
+ *   2. A free function `is_pair_open(your_type const a)` in `namespace seqan3::adaptation`.
+ *      The same restrictions apply as above.
+ *   3. A member function called `is_pair_open()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
  *      `bool`.
  *
@@ -85,7 +105,7 @@ namespace seqan3
  * ### Customisation point
  *
  * This is a customisation point. To specify the behaviour for your own alphabet type,
- * simply provide one of the two functions specified above.
+ * simply provide one of the three functions specified above.
  */
 inline constexpr auto is_pair_open = detail::adl::only::is_pair_open_fn{};
 //!\}
@@ -103,23 +123,24 @@ namespace seqan3::detail::adl::only
 struct is_pair_close_fn
 {
 private:
-    SEQAN3_CPO_IMPL(1, is_pair_close(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(0, v.is_pair_close()                      )    // member
+    SEQAN3_CPO_IMPL(2, is_pair_close(v)                     ) // ADL
+    SEQAN3_CPO_IMPL(1, seqan3::adaptation::is_pair_close(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(0, v.is_pair_close()                    ) // member
 
 public:
     //!\brief Operator definition.
     template <typename rna_structure_t>
     //!\cond
-        requires requires (rna_structure_t const chr) { { impl(priority_tag<1>{}, chr) }; }
+        requires requires (rna_structure_t const chr) { { impl(priority_tag<2>{}, chr) }; }
     //!\endcond
     constexpr auto operator()(rna_structure_t const chr) const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<1>{}, chr)),
+        static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::is_pair_close().");
-        static_assert(std::Same<bool, decltype(impl(priority_tag<1>{}, chr))>,
+        static_assert(std::Same<bool, decltype(impl(priority_tag<2>{}, chr))>,
             "The return type of your is_pair_close() implementation must be 'bool'.");
 
-        return impl(priority_tag<1>{}, chr);
+        return impl(priority_tag<2>{}, chr);
     }
 };
 
@@ -141,12 +162,14 @@ namespace seqan3
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
  *
- * It acts as a wrapper and looks for two possible implementations (in this order):
+ * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `is_pair_close(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be `bool`.
- *   2. A member function called `is_pair_close()`.
+ *   2. A free function `is_pair_close(your_type const a)` in `namespace seqan3::adaptation`.
+ *      The same restrictions apply as above.
+ *   3. A member function called `is_pair_close()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
  *      `bool`.
  *
@@ -159,7 +182,7 @@ namespace seqan3
  * ### Customisation point
  *
  * This is a customisation point. To specify the behaviour for your own alphabet type,
- * simply provide one of the two functions specified above.
+ * simply provide one of the three functions specified above.
  */
 inline constexpr auto is_pair_close = detail::adl::only::is_pair_close_fn{};
 //!\}
@@ -177,23 +200,24 @@ namespace seqan3::detail::adl::only
 struct is_unpaired_fn
 {
 private:
-    SEQAN3_CPO_IMPL(1, is_unpaired(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(0, v.is_unpaired()                      )    // member
+    SEQAN3_CPO_IMPL(2, is_unpaired(v)                     ) // ADL
+    SEQAN3_CPO_IMPL(1, seqan3::adaptation::is_unpaired(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(0, v.is_unpaired()                    ) // member
 
 public:
     //!\brief Operator definition.
     template <typename rna_structure_t>
     //!\cond
-        requires requires (rna_structure_t const chr) { { impl(priority_tag<1>{}, chr) }; }
+        requires requires (rna_structure_t const chr) { { impl(priority_tag<2>{}, chr) }; }
     //!\endcond
     constexpr auto operator()(rna_structure_t const chr) const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<1>{}, chr)),
+        static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::is_unpaired().");
-        static_assert(std::Same<bool, decltype(impl(priority_tag<1>{}, chr))>,
+        static_assert(std::Same<bool, decltype(impl(priority_tag<2>{}, chr))>,
             "The return type of your is_unpaired() implementation must be 'bool'.");
 
-        return impl(priority_tag<1>{}, chr);
+        return impl(priority_tag<2>{}, chr);
     }
 };
 
@@ -215,12 +239,14 @@ namespace seqan3
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
  *
- * It acts as a wrapper and looks for two possible implementations (in this order):
+ * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `is_unpaired(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be `bool`.
- *   2. A member function called `is_unpaired()`.
+ *   2. A free function `is_unpaired(your_type const a)` in `namespace seqan3::adaptation`.
+ *      The same restrictions apply as above.
+ *   3. A member function called `is_unpaired()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
  *      `bool`.
  *
@@ -233,7 +259,7 @@ namespace seqan3
  * ### Customisation point
  *
  * This is a customisation point. To specify the behaviour for your own alphabet type,
- * simply provide one of the two functions specified above.
+ * simply provide one of the three functions specified above.
  */
 inline constexpr auto is_unpaired = detail::adl::only::is_unpaired_fn{};
 //!\}
@@ -260,25 +286,26 @@ template <typename alph_t,
 struct max_pseudoknot_depth_fn
 {
 private:
-    SEQAN3_CPO_IMPL(1, max_pseudoknot_depth(v)                                                      ) // ADL
+    SEQAN3_CPO_IMPL(2, (max_pseudoknot_depth(v)                                                    )) // ADL
+    SEQAN3_CPO_IMPL(1, (seqan3::adaptation::max_pseudoknot_depth(v)                                )) // custom nsp
     SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::max_pseudoknot_depth )) // member
 
 public:
     //!\brief Operator definition.
     template <typename dummy = int>
     //!\cond
-        requires requires { { impl(priority_tag<1>{}, s_alph_t{}, dummy{}) }; }
+        requires requires { { impl(priority_tag<2>{}, s_alph_t{}, dummy{}) }; }
     //!\endcond
     constexpr auto operator()() const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<1>{}, s_alph_t{})),
+        static_assert(noexcept(impl(priority_tag<2>{}, s_alph_t{})),
             "Only overloads that are marked noexcept are picked up by seqan3::max_pseudoknot_depth.");
-        static_assert(std::Constructible<size_t, decltype(impl(priority_tag<1>{}, s_alph_t{}))>,
+        static_assert(std::Constructible<size_t, decltype(impl(priority_tag<2>{}, s_alph_t{}))>,
             "The return type of your max_pseudoknot_depth implementation must be convertible to size_t.");
-        static_assert(SEQAN3_IS_CONSTEXPR(impl(priority_tag<1>{}, s_alph_t{})),
+        static_assert(SEQAN3_IS_CONSTEXPR(impl(priority_tag<2>{}, s_alph_t{})),
             "Only overloads that are marked constexpr are picked up by seqan3::max_pseudoknot_depth.");
 
-        return impl(priority_tag<1>{}, s_alph_t{});
+        return impl(priority_tag<2>{}, s_alph_t{});
     }
 };
 
@@ -313,13 +340,15 @@ namespace seqan3
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
  *
- * It acts as a wrapper and looks for two possible implementations (in this order):
+ * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `max_pseudoknot_depth(your_type const)` in the namespace of your type (or as `friend`).
  *      The function must be marked `constexpr` and `noexcept` and the return type must be convertible to `size_t`.
  *      The value of the argument to the function shall be ignored, it is only used to select the function via
  *      [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
- *   2. A `static constexpr` data member of a type implicitly convertible to `size_t` called `max_pseudoknot_depth`.
+ *   2. A free function `max_pseudoknot_depth(your_type const)` in `namespace seqan3::adaptation`.
+ *      The same restrictions apply as above.
+ *   3. A `static constexpr` data member of a type implicitly convertible to `size_t` called `max_pseudoknot_depth`.
  *
  * Every RNA structure alphabet type must provide one of the above.
  *
@@ -331,7 +360,7 @@ namespace seqan3
  * ### Customisation point
  *
  * This is a customisation point. To specify the behaviour for your own alphabet type,
- * simply provide one of the two functions specified above.
+ * simply provide one of the three functions specified above.
  */
 template <typename alph_t>
 //!\cond
@@ -353,23 +382,24 @@ namespace seqan3::detail::adl::only
 struct pseudoknot_id_fn
 {
 private:
-    SEQAN3_CPO_IMPL(1, pseudoknot_id(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(0, v.pseudoknot_id()                      )    // member
+    SEQAN3_CPO_IMPL(2, pseudoknot_id(v)                     ) // ADL
+    SEQAN3_CPO_IMPL(1, seqan3::adaptation::pseudoknot_id(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(0, v.pseudoknot_id()                    ) // member
 
 public:
     //!\brief Operator definition.
     template <typename rna_structure_t>
     //!\cond
-        requires requires (rna_structure_t const chr) { { impl(priority_tag<1>{}, chr) }; }
+        requires requires (rna_structure_t const chr) { { impl(priority_tag<2>{}, chr) }; }
     //!\endcond
     constexpr auto operator()(rna_structure_t const chr) const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<1>{}, chr)),
+        static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::pseudoknot_id().");
-        static_assert(std::Constructible<std::optional<size_t>, decltype(impl(priority_tag<1>{}, chr))>,
+        static_assert(std::Constructible<std::optional<size_t>, decltype(impl(priority_tag<2>{}, chr))>,
             "The return type of your pseudoknot_id() implementation must be convertible to std::optional<size_t>.");
 
-        return impl(priority_tag<1>{}, chr);
+        return impl(priority_tag<2>{}, chr);
     }
 };
 
@@ -387,17 +417,20 @@ namespace seqan3
  * \param  chr       The RNA structure character whose property is checked.
  * \returns An std::optional containing the pseudoknot identifier if `alph` represents an interaction.
  * The returned value is std::nullopt for unpaired sites. For non-nested interactions the identifier is always 0.
+ * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
  * \ingroup structure
  * \details
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
  *
- * It acts as a wrapper and looks for two possible implementations (in this order):
+ * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `pseudoknot_id(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type must be convertible to `size_t`.
- *   2. A member function called `pseudoknot_id()`.
+ *   2. A free function `pseudoknot_id(your_type const a)` in `namespace seqan3::adaptation`.
+ *      The same restrictions apply as above.
+ *   3. A member function called `pseudoknot_id()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type
  *      must be convertible to `size_t`.
  *
@@ -410,7 +443,7 @@ namespace seqan3
  * ### Customisation point
  *
  * This is a customisation point. To specify the behaviour for your own alphabet type,
- * simply provide one of the two functions specified above.
+ * simply provide one of the three functions specified above.
  */
 inline constexpr auto pseudoknot_id = detail::adl::only::pseudoknot_id_fn{};
 //!\}
@@ -423,58 +456,47 @@ inline constexpr auto pseudoknot_id = detail::adl::only::pseudoknot_id_fn{};
 
 namespace seqan3
 {
-/*!\interface seqan3::RnaStructureAlphabet
+/*!\interface seqan3::RnaStructureAlphabet <>
  * \brief A concept that indicates whether an alphabet represents RNA structure.
- * \implements Alphabet
- * \tparam structure_type The structure alphabet type.
+ * \extends seqan3::Alphabet
  * \ingroup structure
- * \details RNA structure alphabets are required to represent interactions among RNA nucleotides.
-   Therefore, each structure letter can be categorised as unpaired, opening an interaction, or closing an interaction.
-   Additionally, the ability of representing pseudoknots is a property of RNA structure types.
- */
-/*!\fn bool is_pair_open(structure_type const alph)
- * \brief Check whether the given character represents a rightward interaction in an RNA structure.
- * \relates seqan3::RnaStructureAlphabet
- * \param alph The alphabet letter which is checked for the pairing property.
- * \returns True if the letter represents a rightward interaction, False otherwise.
- */
-/*!\fn bool is_pair_close(structure_type const alph)
- * \brief Check whether the given character represents a leftward interaction in an RNA structure.
- * \relates seqan3::RnaStructureAlphabet
- * \param alph The alphabet letter which is checked for the pairing property.
- * \returns True if the letter represents a leftward interaction, False otherwise.
- */
-/*!\fn bool is_unpaired(structure_type const alph)
- * \brief Check whether the given character represents an unpaired position in an RNA structure.
- * \relates seqan3::RnaStructureAlphabet
- * \param alph The alphabet letter which is checked for the pairing property.
- * \returns True if the letter represents an unpaired site, False otherwise.
- */
-/*!\fn std::optional<uint8_t> pseudoknot_id(structure_type const alph)
- * \brief Get an identifier for a pseudoknotted interaction.
- * \relates seqan3::RnaStructureAlphabet
- * \param alph The alphabet letter which is checked for the pseudoknot id.
- * \returns The pseudoknot id, if alph represents an interaction, and no value otherwise.
- * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
- */
-/*!\var max_pseudoknot_depth<structure_type>
- * \brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
- * \relates seqan3::RnaStructureAlphabet
+ *
  * \details
- * It is the number of distinct pairs of interaction symbols the format supports. The value 1 denotes no
- * pseudoknot support; any higher number gives the maximum nestedness. Value 0 is not allowed.
+ *
+ * RNA structure alphabets are required to represent interactions among RNA nucleotides.
+ * Therefore, each structure letter can be categorised as unpaired, opening an interaction, or closing an interaction.
+ * Additionally, the ability of representing pseudoknots is a property of RNA structure types.
+ *
+ * ### Requirements
+ *
+ *   1. `t` shall model seqan3::Alphabet
+ *   2. seqan3::is_pair_open needs to be defined for objects of type `t`
+ *   3. seqan3::is_pair_close needs to be defined for objects of type `t`
+ *   4. seqan3::is_unpaired needs to be defined for objects of type `t`
+ *   5. seqan3::max_pseudoknot_depth needs to be defined for `t` and be greater than zero
+ *   6. seqan3::pseudoknot_id needs to be defined for objects of type `t`
+ *
+ * See the documentation pages for the respective requirements.
+ *
+ * ### Related types
+ *
+ * If a given type `t` models this concept, the following types typically do so, as well:
+ *
+ *   * `t &`
+ *   * `t const`
+ *   * `t const &`
  */
 //!\cond
-template <typename structure_type>
-SEQAN3_CONCEPT RnaStructureAlphabet = seqan3::Alphabet<structure_type> && requires(structure_type val)
+template <typename t>
+SEQAN3_CONCEPT RnaStructureAlphabet = seqan3::Alphabet<t> && requires(t val)
 {
-    { seqan3::is_pair_open(val) } -> bool;
-    { seqan3::is_pair_close(val) } -> bool;
-    { seqan3::is_unpaired(val) } -> bool;
-    { seqan3::pseudoknot_id(val) } -> std::optional<uint8_t>;
+    { seqan3::is_pair_open(val) };
+    { seqan3::is_pair_close(val) };
+    { seqan3::is_unpaired(val) };
+    { seqan3::pseudoknot_id(val) };
 
     // this is delegated to a static class variable, which must not be 0
-    requires seqan3::max_pseudoknot_depth<structure_type> > 0;
+    requires seqan3::max_pseudoknot_depth<t> > 0;
 };
 //!\endcond
 
