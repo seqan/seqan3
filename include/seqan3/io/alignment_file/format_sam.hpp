@@ -1269,6 +1269,21 @@ protected:
         write_range(stream_it, std::string_view{field_value});
     }
 
+    /*!\brief Writes a field value to the stream.
+     * \tparam stream_t           The stream type.
+     * \param[in,out] stream      The stream to print to.
+     * \param[in]     field_value The value to print.
+     */
+    template <typename stream_t, Arithmetic field_type>
+    void write_field(stream_t & stream, field_type field_value)
+    {
+        // TODO: replace this with to_chars for efficiency
+        if constexpr (std::Same<field_type, int8_t> || std::Same<field_type, uint8_t>)
+            stream << static_cast<int16_t>(field_value);
+        else
+            stream << field_value;
+    }
+
     /*!\brief Writes the optional fields of the seqan3::sam_tag_dictionary.
      * \tparam stream_t   The stream type.
      *
@@ -1279,11 +1294,11 @@ protected:
     template <typename stream_t>
     void write_tag_fields(stream_t & stream, sam_tag_dictionary const & tag_dict, char const separator)
     {
-        auto stream_variant_fn = [&stream] (auto && arg) // helper to print an std::variant
+        auto stream_variant_fn = [this, &stream] (auto && arg) // helper to print an std::variant
         {
             using T = remove_cvref_t<decltype(arg)>;
 
-            if constexpr (!Container<T>)
+            if constexpr (!Container<T> || std::Same<T, std::string>)
             {
                 stream << arg;
             }
@@ -1292,9 +1307,12 @@ protected:
                 if (arg.begin() != arg.end())
                 {
                     for (auto it = arg.begin(); it != (arg.end() - 1); ++it)
-                        stream << *it << ",";
+                    {
+                        write_field(stream, *it);
+                        stream << ',';
+                    }
 
-                    stream << *(arg.end() - 1); // write last value without trailing ','
+                    write_field(stream, *(arg.end() - 1)); // write last value without trailing ','
                 }
             }
         };

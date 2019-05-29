@@ -187,7 +187,10 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
     detail::alignment_file_input_format<TypeParam> format;
     typename TestFixture::stream_type istream{this->verbose_reads_input};
 
+    this->tag_dicts[0]["NM"_tag] = -7;
     this->tag_dicts[0]["AS"_tag] = 2;
+    this->tag_dicts[0]["CC"_tag] = 300;
+    this->tag_dicts[0]["cc"_tag] = -300;
     this->tag_dicts[0]["aa"_tag] = 'c';
     this->tag_dicts[0]["ff"_tag] = 3.1f;
     this->tag_dicts[0]["zz"_tag] = "str";
@@ -296,8 +299,6 @@ TYPED_TEST_P(alignment_file_read, read_in_nothing)
 
 TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 {
-    using dummy_type = gap_decorator_anchor_set<decltype(view::repeat_n(dna5{}, size_t{}) |
-                                                         std::view::transform(detail::access_restrictor_fn{}))>;
     std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
     std::optional<int32_t> ref_id_in;
 
@@ -499,9 +500,20 @@ TYPED_TEST_P(alignment_file_write, with_header)
     header.read_groups.emplace_back("group1", "more info");
     header.comments.push_back("This is a comment.");
 
-    this->tag_dicts[0]["NM"_tag] = 7;
+    this->tag_dicts[0]["NM"_tag] = -7;
     this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
+    this->tag_dicts[0]["CC"_tag] = 300;
+    this->tag_dicts[0]["cc"_tag] = -300;
+    this->tag_dicts[0]["aa"_tag] = 'c';
+    this->tag_dicts[0]["ff"_tag] = 3.1f;
+    this->tag_dicts[0]["zz"_tag] = "str";
+    this->tag_dicts[1]["bc"_tag] = std::vector<int8_t>{-3};
+    this->tag_dicts[1]["bC"_tag] = std::vector<uint8_t>{3u, 200u};
+    this->tag_dicts[1]["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
+    this->tag_dicts[1]["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
+    this->tag_dicts[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
+    this->tag_dicts[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
+    this->tag_dicts[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
 
     for (size_t i = 0; i < 3; ++i)
         ASSERT_NO_THROW(format.write(ostream, output_options, header, this->seqs[i], this->quals[i], this->ids[i],
