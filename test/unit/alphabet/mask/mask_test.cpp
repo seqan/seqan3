@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/mask/all.hpp>
 
 using namespace seqan3;

@@ -18,10 +18,13 @@
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/std/concepts>
 
 #if 0 // this is the alphabet_proxy I want, but GCC won't give me:
+#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+
 template <typename derived_type, typename alphabet_type>
 class alphabet_proxy : public alphabet_type
 {
@@ -31,10 +34,10 @@ public:
     using base_t::alphabet_size;
     using typename base_t::rank_type;
     using char_type  = detail::transformation_trait_or_t<std::type_identity<alphabet_char_t<<alphabet_type>, void>;
-    using phred_type = detail::transformation_trait_or_t<underlying_phred<alphabet_type>, void>;
+    using phred_type = detail::transformation_trait_or_t<alphabet_phred_t<alphabet_type>, void>;
 
-    using char_type_virtual  = std::conditional_t<std::Same<char_type, void>, char, char_type>;
-    using phred_type_virtual = std::conditional_t<std::Same<phred_type, void>, int8_t, phred_type>;
+    using char_type_virtual  = detail::valid_template_spec_or_t<char, alphabet_char_t, alphabet_type>;
+    using phred_type_virtual = detail::valid_template_spec_or_t<int8_t, alphabet_phred_t, alphabet_type>;
 
     constexpr alphabet_proxy() : base_t{} {}
     constexpr alphabet_proxy(alphabet_proxy const &) = default;
@@ -84,42 +87,13 @@ public:
         requires !std::Same<phred_type, void>
     {
         alphabet_type tmp{};
-        using seqan3::assign_phred;
-        assign_phred(tmp, c);
+        assign_phred_to(c, tmp);
         return operator=(tmp);
     }
 };
 #endif
 
 #if 1// this is the one that works for most things, but not all
-
-namespace seqan3::detail
-{
-
-//!\brief Auxiliary transformation trait that is void for types by default.
-//!\ingroup alphabet
-template <typename t>
-struct alphabet_char_type_or_void
-{
-    //!\brief The "return" type.
-    using type = void;
-};
-
-//!\brief Auxiliary transformation trait specialisation that returns seqan3::alphabet_char_t.
-//!\ingroup alphabet
-template <Alphabet t>
-struct alphabet_char_type_or_void<t>
-{
-    //!\brief The "return" type.
-    using type = alphabet_char_t<t>;
-};
-
-//!\brief Auxiliary transformation trait shortcut.
-//!\relates seqan3::alphabet_char_type_or_void
-template <typename t>
-using alphabet_char_type_or_void_t = typename alphabet_char_type_or_void<t>::type;
-
-} // namespace seqan3::detail
 
 namespace seqan3
 {
@@ -156,16 +130,22 @@ namespace seqan3
 template <typename derived_type, WritableSemialphabet alphabet_type>
 class alphabet_proxy : public alphabet_base<derived_type,
                                             alphabet_size<alphabet_type>,
-                                            detail::alphabet_char_type_or_void_t<alphabet_type>>
+                                            detail::valid_template_spec_or_t<void, alphabet_char_t, alphabet_type>>
 {
 private:
     //!\brief Type of the base class.
     using base_t =  alphabet_base<derived_type,
                                   alphabet_size<alphabet_type>,
-                                  detail::alphabet_char_type_or_void_t<alphabet_type>>;
+                                  detail::valid_template_spec_or_t<void, alphabet_char_t, alphabet_type>>;
 
     //!\brief Befriend the base type.
     friend base_t;
+
+    //!\brief The type of the alphabet character.
+    using char_type  = detail::valid_template_spec_or_t<char, alphabet_char_t, alphabet_type>;
+
+    //!\brief The type of the phred score.
+    using phred_type = detail::valid_template_spec_or_t<int8_t, alphabet_phred_t, alphabet_type>;
 
 public:
     // Import from base:
@@ -175,16 +155,13 @@ public:
     /*!\name Member types
      * \{
      */
+
+    //!\brief The type of the rank representation.
     using rank_type  = alphabet_rank_t<alphabet_type>;
-    using char_type  = detail::alphabet_char_type_or_void_t<alphabet_type>;
-    using phred_type = detail::transformation_trait_or_t<underlying_phred<alphabet_type>, void>;
     //!\}
 
 private:
     //!\brief Never used, but required for valid definitions.
-    using char_type_virtual  = std::conditional_t<std::Same<char_type, void>, char, char_type>;
-    //!\brief Never used, but required for valid definitions.
-    using phred_type_virtual = std::conditional_t<std::Same<phred_type, void>, int8_t, phred_type>;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -237,7 +214,7 @@ public:
         return operator=(tmp);
     }
 
-    constexpr derived_type & assign_char(char_type_virtual const c) noexcept
+    constexpr derived_type & assign_char(char_type const c) noexcept
         requires WritableAlphabet<alphabet_type>
     {
         alphabet_type tmp{};
@@ -245,12 +222,11 @@ public:
         return operator=(tmp);
     }
 
-    constexpr derived_type & assign_phred(phred_type_virtual const c) noexcept
-        requires QualityAlphabet<alphabet_type>
+    constexpr derived_type & assign_phred(phred_type const c) noexcept
+        requires WritableQualityAlphabet<alphabet_type>
     {
         alphabet_type tmp{};
-        using seqan3::assign_phred;
-        assign_phred(tmp, c);
+        assign_phred_to(c, tmp);
         return operator=(tmp);
     }
     //!\}
@@ -265,7 +241,7 @@ public:
         return assign_rank_to(to_rank(), alphabet_type{});
     }
 
-    constexpr char_type to_char() const noexcept
+    constexpr auto to_char() const noexcept
         requires Alphabet<alphabet_type>
     {
         /* (smehringer) Explicit conversion instead of static_cast:
@@ -274,7 +250,7 @@ public:
         return seqan3::to_char(operator alphabet_type());
     }
 
-    constexpr phred_type to_phred() const noexcept
+    constexpr auto to_phred() const noexcept
         requires QualityAlphabet<alphabet_type>
     {
         using seqan3::to_phred;
@@ -284,7 +260,7 @@ public:
          * Now when accessing get<1>(seq_qual_alph) we want to call to_phred at some point because we want the quality,
          * therefore the to_phred function from alphabet_proxy is called, but this function did a static_cast to the
          * derived type which is calling the constructor from quality_base. Unfortunately now, the generic quality_base
-         *  constructor uses assign_phred(static_cast<derived_type &>(*this), to_phred(other)); (here) which again
+         * constructor uses `assign_phred_to(to_phred(other), static_cast<derived_type &>(*this))`; (here) which again
          * tries to call to_phred of the alphabet_proxy => infinite loop :boom:
          */
         return to_phred(operator alphabet_type());
@@ -300,7 +276,7 @@ public:
 #endif
 
     //!\brief Delegate to the emulated type's validator.
-    static constexpr bool char_is_valid(char_type_virtual const c) noexcept
+    static constexpr bool char_is_valid(char_type const c) noexcept
         requires WritableAlphabet<alphabet_type>
     {
         return char_is_valid_for<alphabet_type>(c);

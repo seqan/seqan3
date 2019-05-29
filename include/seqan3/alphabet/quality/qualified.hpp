@@ -24,10 +24,9 @@ namespace seqan3
 
 /*!\brief Joins an arbitrary alphabet with a quality alphabet.
  * \ingroup quality
- * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::Alphabet.
- * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::QualityAlphabet.
- * \implements seqan3::QualityAlphabet
- * \implements seqan3::WritableAlphabet
+ * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::WritableAlphabet.
+ * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::WritableQualityAlphabet.
+ * \implements seqan3::WritableQualityAlphabet
  * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
@@ -54,9 +53,9 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/quality/qualified.cpp general
  *
- * This seqan3::alphabet_tuple_base itself fulfils both seqan3::Alphabet and seqan3::QualityAlphabet.
+ * This seqan3::alphabet_tuple_base itself fulfils both seqan3::WritableAlphabet and seqan3::WritableQualityAlphabet.
  */
-template <Alphabet sequence_alphabet_t, QualityAlphabet quality_alphabet_t>
+template <WritableAlphabet sequence_alphabet_t, WritableQualityAlphabet quality_alphabet_t>
 class qualified :
     public alphabet_tuple_base<qualified<sequence_alphabet_t, quality_alphabet_t>,
                                  sequence_alphabet_t, quality_alphabet_t>
@@ -75,7 +74,7 @@ public:
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = alphabet_char_t<sequence_alphabet_type>;
     //!\brief Equals the phred_type of the quality_alphabet_type.
-    using phred_type = underlying_phred_t<quality_alphabet_type>;
+    using phred_type = alphabet_phred_t<quality_alphabet_type>;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -128,7 +127,7 @@ public:
     //!\brief Assign from a phred value. This modifies the internal quality letter.
     constexpr qualified & assign_phred(phred_type const c) noexcept
     {
-        seqan3::assign_phred(get<1>(*this), c);
+        seqan3::assign_phred_to(c, get<1>(*this));
         return *this;
     }
     //!\}

@@ -22,8 +22,7 @@ namespace seqan3
 {
 
 /*!\brief Quality type for traditional Sanger and modern Illumina Phred scores (typical range).
- * \implements seqan3::QualityAlphabet
- * \implements seqan3::WritableAlphabet
+ * \implements seqan3::WritableQualityAlphabet
  * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout

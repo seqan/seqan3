@@ -17,7 +17,6 @@
 #include <sdsl/int_vector.hpp>
 
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
-#include <seqan3/alphabet/detail/member_exposure.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/range/shortcuts.hpp>

@@ -16,8 +16,6 @@
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
-#include <seqan3/alphabet/concept_pre.hpp>
-#include <seqan3/alphabet/detail/member_exposure.hpp>
 #include <seqan3/alphabet/exception.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/core_language.hpp>
@@ -170,7 +168,7 @@ namespace seqan3
  */
 
 /*!\brief Assign a rank to an alphabet object.
-  *\tparam your_type Type of the target object.
+ * \tparam your_type Type of the target object.
  * \param chr  The rank being assigned; must be of the seqan3::alphabet_rank_t of the target object.
  * \param alph The target object.
  * \returns Reference to `alph` if `alph` was given as lvalue, otherwise a copy.
@@ -411,7 +409,7 @@ void char_is_valid_for(); // forward
 
 namespace seqan3::detail::adl::only
 {
-/*!\brief Functor definition for seqan3::assign_char_strictly_to.
+/*!\brief Functor definition for seqan3::char_is_valid_for.
  * \tparam alph_t   The alphabet type being queried.
  * \tparam s_alph_t `alph_t` with cvref removed and possibly wrapped in std::type_identity; never user-provide this!
  * \ingroup alphabet
@@ -431,10 +429,10 @@ private:
 public:
     //!\brief Operator definition.
     template <typename dummy = int> // need to make this a template to enforce deferred instantiation
-    constexpr bool operator()(alphabet_char_t<alph_t> const a) const noexcept
     //!\cond
         requires requires (alphabet_char_t<alph_t> const a) { { impl(priority_tag<3>{}, a, dummy{}) }; }
     //!\endcond
+    constexpr bool operator()(alphabet_char_t<alph_t> const a) const noexcept
     {
         static_assert(noexcept(impl(priority_tag<3>{}, a)),
             "Only overloads that are marked noexcept are picked up by seqan3::char_is_valid_for().");
@@ -607,10 +605,10 @@ private:
 public:
     //!\brief Operator definition.
     template <typename dummy = int> // need to make this a template to enforce deferred instantiation
-    constexpr auto operator()() const noexcept
     //!\cond
         requires requires { { impl(priority_tag<2>{}, s_alph_t{}, dummy{}) }; }
     //!\endcond
+    constexpr auto operator()() const noexcept
     {
         static_assert(noexcept(impl(priority_tag<2>{}, s_alph_t{})),
             "Only overloads that are marked noexcept are picked up by seqan3::alphabet_size.");
@@ -798,7 +796,7 @@ SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v)
  * ### Requirements
  *
  *   1. `t` shall model seqan3::Semialphabet ("has all rank representation")
- *   4. seqan3::to_char needs to be defined for objects of type `t`
+ *   2. seqan3::to_char needs to be defined for objects of type `t`
  *
  * See the documentation pages for the respective requirements.
  *

@@ -19,7 +19,7 @@
 
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/alphabet/structure/concept.hpp>
 
 namespace seqan3
 {
@@ -186,14 +186,7 @@ public:
      */
     constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
     {
-        if constexpr (structure_alphabet_type::max_pseudoknot_depth > 1)
-        {
-            return get<1>(*this).pseudoknot_id();
-        }
-        else
-        {
-            return (is_pair_open() || is_pair_close()) ? std::optional<uint8_t>(0) : std::nullopt;
-        }
+        return get<1>(*this).pseudoknot_id();
     };
     //!\}
 };

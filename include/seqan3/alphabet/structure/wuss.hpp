@@ -15,8 +15,8 @@
 #include <cmath>
 #include <vector>
 
-#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 
 // ------------------------------------------------------------------
@@ -117,8 +117,8 @@ public:
     // formula: (alphabet size - 7 unpaired characters) / 2, as every bracket exists as opening/closing pair
     static constexpr uint8_t max_pseudoknot_depth{static_cast<uint8_t>((alphabet_size - 7) / 2)};
 
-    /*!\brief Get an identifier for a pseudoknotted interaction.
-     * Opening and closing brackets of the same type have the same id.
+    /*!\brief Get an identifier for a pseudoknotted interaction,
+     * where opening and closing brackets of the same type have the same id.
      * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
      * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
      */

@@ -93,7 +93,7 @@ public:
      *
      * See \ref nucleotide for the actual values.
      *
-     * Satisfies the seqan3::NucleotideAlphabet::complement() requirement via the seqan3::complement() wrapper.
+     * Provides an implementation for seqan3::complement, required to model seqan3::NucleotideAlphabet.
      *
      * \par Complexity
      *

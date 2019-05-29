@@ -98,7 +98,7 @@ namespace seqan3
  * `id_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using quality_alphabet
- * \brief Alphabet of the characters for the seqan3::field::QUAL; must satisfy seqan3::QualityAlphabet.
+ * \brief Alphabet of the characters for the seqan3::field::QUAL; must satisfy seqan3::WritableQualityAlphabet.
  */
 /*!\typedef using quality_container
  * \brief Type template of the seqan3::field::QUAL, a container template over `quality_alphabet`;
@@ -125,7 +125,7 @@ SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
     requires SequenceContainer<typename t::template id_container_container<typename t::template id_container<
         typename t::id_alphabet>>>;
 
-    requires QualityAlphabet<typename t::quality_alphabet>;
+    requires WritableQualityAlphabet<typename t::quality_alphabet>;
     requires SequenceContainer<typename t::template quality_container<typename t::quality_alphabet>>;
     requires SequenceContainer<typename t::template quality_container_container<
         typename t::template quality_container<typename t::quality_alphabet>>>;

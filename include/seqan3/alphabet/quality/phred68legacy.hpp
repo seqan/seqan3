@@ -22,8 +22,7 @@ namespace seqan3
 {
 
 /*!\brief Quality type for Solexa and deprecated Illumina formats.
- * \implements seqan3::QualityAlphabet
- * \implements seqan3::WritableAlphabet
+ * \implements seqan3::WritableQualityAlphabet
  * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
