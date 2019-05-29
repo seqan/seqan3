@@ -35,6 +35,7 @@
 #include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -180,10 +181,7 @@ public:
                       detail::is_type_specialisation_of_v<ref_offset_type, std::optional>,
                       "The ref_offset must be a specialisation of std::optional.");
 
-        using stream_buf_t = std::istreambuf_iterator<typename stream_type::char_type>;
-        auto stream_view = std::ranges::subrange<decltype(stream_buf_t{stream}), decltype(stream_buf_t{})>
-                               {stream_buf_t{stream}, stream_buf_t{}};
-
+        auto stream_view = view::istreambuf(stream);
         auto field_view = stream_view | view::take_until_or_throw_and_consume(is_char<'\t'>);
 
         // these variables need to be stored to compute the ALIGNMENT
@@ -200,7 +198,7 @@ public:
         {
             read_header(stream_view, header, ref_seqs);
 
-            if (stream_buf_t{stream} == stream_buf_t{}) // file has no records
+            if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // file has no records
                 return;
         }
 

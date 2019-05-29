@@ -38,6 +38,7 @@
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/take.hpp>
 #include <seqan3/range/view/take_line.hpp>
@@ -131,8 +132,7 @@ public:
               comment_type & SEQAN3_DOXYGEN_ONLY(comment),
               offset_type & SEQAN3_DOXYGEN_ONLY(offset))
     {
-        using stream_it_t = std::istreambuf_iterator<typename stream_type::char_type>;
-        auto stream_view = std::ranges::subrange<stream_it_t, stream_it_t>{stream_it_t{stream}, stream_it_t{}};
+        auto stream_view = view::istreambuf(stream);
 
         // READ ID (if present)
         auto constexpr is_id = is_char<'>'>;

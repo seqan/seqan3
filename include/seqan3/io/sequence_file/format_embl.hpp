@@ -29,6 +29,7 @@
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/range/view/take_line.hpp>
@@ -104,10 +105,7 @@ public:
               id_type                                                                   & id,
               qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<char>{stream}),
-                                                 decltype(std::istreambuf_iterator<char>{})>
-                           {std::istreambuf_iterator<char>{stream},
-                            std::istreambuf_iterator<char>{}};
+        auto stream_view = view::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
 
         std::string idbuffer;
