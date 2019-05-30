@@ -95,7 +95,7 @@ std::string input
 
 std::istringstream iss(input);
 
-alignment_file_input fin{iss, alignment_file_format_sam{}};
+alignment_file_input fin{iss, format_sam{}};
 //              ^ no need to specify the template arguments
 //![construction_from_stream]
 }
@@ -124,9 +124,9 @@ alignment_file_input<alignment_file_input_default_traits<>,  // The expected for
                             field::EVALUE,
                             field::BIT_SCORE,
                             field::HEADER_PTR>,
-                     type_list<alignment_file_format_sam>, // Which formats are allowed.
+                     type_list<format_sam>, // Which formats are allowed.
                      char>                                 // Value type of the stream.
-                     fin{iss, alignment_file_format_sam{}};
+                     fin{iss, format_sam{}};
 //![construction_without_automatic_type_deduction]
 }
 

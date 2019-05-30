@@ -25,8 +25,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((SequenceFileInputFormat<sequence_file_format_genbank>));
-    EXPECT_TRUE((SequenceFileOutputFormat<sequence_file_format_genbank>));
+    EXPECT_TRUE((SequenceFileInputFormat<format_genbank>));
+    EXPECT_TRUE((SequenceFileOutputFormat<format_genbank>));
 }
 
 // ----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ ORIGIN
 )"
     };
 
-    sequence_file_format_genbank format;
+    detail::sequence_file_input_format<format_genbank> format;
 
     sequence_file_input_options<dna5, false> options;
 
@@ -250,7 +250,7 @@ ORIGIN
 
 TEST_F(read, from_stream_file)
 {
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_genbank{}, fields<field::SEQ, field::ID>{}};
+    sequence_file_input fin{std::istringstream{input}, format_genbank{}, fields<field::SEQ, field::ID>{}};
 
     size_t counter = 0;
     for (auto & [ seq, id ] : fin)
@@ -302,7 +302,7 @@ ORIGIN
 )"
     };
 
-    sequence_file_format_genbank format;
+    detail::sequence_file_output_format<format_genbank> format;
 
     sequence_file_output_options options;
 
@@ -439,7 +439,7 @@ SOURCE      .
 
 TEST_F(write, from_stream_file)
 {
-    sequence_file_output fout{std::ostringstream{}, sequence_file_format_genbank{}};
+    sequence_file_output fout{std::ostringstream{}, format_genbank{}};
 
     for(int i = 0; i < 3; i++)
     {

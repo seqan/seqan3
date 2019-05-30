@@ -76,7 +76,7 @@ TEST(structure_file_output_class, construct_by_filename)
     {
         test::tmp_filename filename{"structure_file_output_constructor.dbn"};
         EXPECT_NO_THROW((structure_file_out<fields<field::SEQ>,
-                                            type_list<structure_file_format_vienna>>
+                                            type_list<format_vienna>>
                                             {filename.get_path(), fields<field::SEQ>{}}));
     }
 }
@@ -85,20 +85,20 @@ TEST(structure_file_output_class, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW((structure_file_out<fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                        type_list<structure_file_format_vienna>>
-                                        {std::ostringstream{}, structure_file_format_vienna{}}));
+                                        type_list<format_vienna>>
+                                        {std::ostringstream{}, format_vienna{}}));
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW((structure_file_out<fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                        type_list<structure_file_format_vienna>>
-                     {std::ostringstream{}, structure_file_format_vienna{},
+                                        type_list<format_vienna>>
+                     {std::ostringstream{}, format_vienna{},
                       fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
 }
 
 TEST(structure_file_output_class, default_template_args_and_deduction_guides)
 {
     using comp1 = fields<field::SEQ, field::ID, field::STRUCTURE>;
-    using comp2 = type_list<structure_file_format_vienna>;
+    using comp2 = type_list<format_vienna>;
     using comp3 = char;
 
     /* default template args */
@@ -134,42 +134,42 @@ TEST(structure_file_output_class, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::ostringstream ext{};
-        structure_file_out fout{ext, structure_file_format_vienna{}};
+        structure_file_out fout{ext, format_vienna{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream temporary constructor */
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}};
+        structure_file_out fout{std::ostringstream{}, format_vienna{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream constructor + custom fields + different stream_char_type */
     {
         std::wostringstream ext{};
-        structure_file_out fout{ext, structure_file_format_vienna{}, fields<field::SEQ>{}};
+        structure_file_out fout{ext, format_vienna{}, fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
     }
 
     /* guided stream temporary constructor + custom fields + different stream_char_type */
     {
-        structure_file_out fout{std::wostringstream{}, structure_file_format_vienna{}, fields<field::SEQ>{}};
+        structure_file_out fout{std::wostringstream{}, format_vienna{}, fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
     }
 }
@@ -217,7 +217,7 @@ struct structure_file_output_row : public structure_file_output_write
     template <typename fn_t>
     void row_wise_impl(fn_t fn)
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}};
+        structure_file_out fout{std::ostringstream{}, format_vienna{}};
 
         for (size_t idx = 0ul; idx < num_records; ++idx)
             fn(fout, idx);
@@ -326,7 +326,7 @@ struct structure_file_output_rows : public structure_file_output_write
     template<typename source_t>
     void assign_impl(source_t && source)
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}};
+        structure_file_out fout{std::ostringstream{}, format_vienna{}};
         fout = source;
         fout.get_stream().flush();
         EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
@@ -377,7 +377,7 @@ TEST_F(structure_file_output_rows, assign_structure_file_in)
         "..(((((..(((...)))..)))))...\n"
     };
 
-    structure_file_in fin{std::istringstream{inp}, structure_file_format_vienna{},
+    structure_file_in fin{std::istringstream{inp}, format_vienna{},
                           fields<field::SEQ, field::ID, field::STRUCTURE>{}};
     assign_impl(fin);
 }
@@ -385,12 +385,12 @@ TEST_F(structure_file_output_rows, assign_structure_file_in)
 TEST_F(structure_file_output_rows, assign_structure_file_pipes)
 {
     // valid without assignment?
-    structure_file_in{std::istringstream{output_comp}, structure_file_format_vienna{}}
-              | structure_file_out{std::ostringstream{}, structure_file_format_vienna{}};
+    structure_file_in{std::istringstream{output_comp}, format_vienna{}}
+              | structure_file_out{std::ostringstream{}, format_vienna{}};
 
     // valid with assignment and check contents
-    auto fout = structure_file_in{std::istringstream{output_comp}, structure_file_format_vienna{}}
-              | structure_file_out{std::ostringstream{}, structure_file_format_vienna{}};
+    auto fout = structure_file_in{std::istringstream{output_comp}, format_vienna{}}
+              | structure_file_out{std::ostringstream{}, format_vienna{}};
 
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
@@ -446,7 +446,7 @@ struct structure_file_output_compression : public structure_file_output_write
     template<typename comp_stream_t>
     void compression_by_stream_impl(comp_stream_t & stream)
     {
-        structure_file_out fout{stream, structure_file_format_vienna{}};
+        structure_file_out fout{stream, format_vienna{}};
         for (size_t idx = 0ul; idx < num_records; ++idx)
         {
             record<type_list<rna5_vector, std::string, std::vector<wuss51>>,

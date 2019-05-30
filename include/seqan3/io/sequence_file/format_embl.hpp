@@ -6,7 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::sequence_file_format_embl class.
+ * \brief Provides the seqan3::format_embl tag and the seqan3::sequence_file_input_format and
+ *        seqan3::sequence_file_output_format specialisation for this tag.
  * \author Mitra Darvish <mitra.darvish AT fu-berlin.de>
  */
 
@@ -23,7 +24,9 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
@@ -40,7 +43,7 @@
 
 namespace seqan3
 {
-/*!\brief       The EMBL format.
+/*!\brief       The EMBL format (tag).
  * \implements  seqan3::SequenceFileInputFormat
  * \implements  seqan3::SequenceFileOutputFormat
  * \ingroup     sequence
@@ -69,29 +72,41 @@ namespace seqan3
  * Passed qualities to either the read or write function are ignored.
  *
  */
-class sequence_file_format_embl
+struct format_embl
 {
-public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-     //!\brief Default constructor is explicitly deleted, you need to provide a stream or file name.
-    sequence_file_format_embl() = default;
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the embl file.
-    sequence_file_format_embl(sequence_file_format_embl const &) = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the embl file.
-    sequence_file_format_embl & operator=(sequence_file_format_embl const &) = delete;
-    //!\brief Move construction is defaulted.
-    sequence_file_format_embl(sequence_file_format_embl &&) = default;
-    //!\brief Move assignment is defaulted.
-    sequence_file_format_embl & operator=(sequence_file_format_embl &&) = default;
-    //!\}
-
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
         { "embl" },
     };
+};
+
+} // namespace seqan
+
+namespace seqan3::detail
+{
+
+//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted EMBL input.
+//!\ingroup sequence
+template <>
+class sequence_file_input_format<format_embl>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_embl;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
+    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
@@ -193,6 +208,29 @@ public:
         ++stream_it;
         ++stream_it;
     }
+};
+
+//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted EMBL.
+//!\ingroup sequence
+template <>
+class sequence_file_output_format<format_embl>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_embl;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
+    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
@@ -274,4 +312,4 @@ public:
     }
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

@@ -104,7 +104,7 @@ TEST_F(sequence_file_input_f, construct_by_filename)
 
         EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
                                              fields<field::SEQ>,
-                                             type_list<sequence_file_format_fasta>,
+                                             type_list<format_fasta>,
                                              char>{filename.get_path(), fields<field::SEQ>{}} ));
     }
 }
@@ -114,17 +114,17 @@ TEST_F(sequence_file_input_f, construct_from_stream)
     /* stream + format_tag */
     EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
                                          fields<field::SEQ, field::ID, field::QUAL>,
-                                         type_list<sequence_file_format_fasta>,
+                                         type_list<format_fasta>,
                                          char>{std::istringstream{input},
-                                               sequence_file_format_fasta{}} ));
+                                               format_fasta{}} ));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
                                           fields<field::SEQ, field::ID, field::QUAL>,
-                                          type_list<sequence_file_format_fasta>,
+                                          type_list<format_fasta>,
                                           char>{std::istringstream{input},
-                                                sequence_file_format_fasta{},
+                                                format_fasta{},
                                                 fields<field::SEQ, field::ID, field::QUAL>{}} ));
 }
 
@@ -132,8 +132,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 {
     using comp0 = sequence_file_input_default_traits_dna;
     using comp1 = fields<field::SEQ, field::ID, field::QUAL>;
-    using comp2 = type_list<sequence_file_format_embl, sequence_file_format_fasta, sequence_file_format_fastq,
-                            sequence_file_format_genbank, sequence_file_format_sam>;
+    using comp2 = type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>;
     using comp3 = char;
 
     /* default template args */
@@ -182,31 +181,31 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::istringstream ext{input};
-        sequence_file_input fin{ext, sequence_file_format_fasta{}};
+        sequence_file_input fin{ext, format_fasta{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_embl,
-                                                                              sequence_file_format_fasta,
-                                                                              sequence_file_format_fastq,
-                                                                              sequence_file_format_genbank,
-                                                                              sequence_file_format_sam>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_embl,
+                                                                              format_fasta,
+                                                                              format_fastq,
+                                                                              format_genbank,
+                                                                              format_sam>>));                // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream temporary constructor */
     {
-        sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
+        sequence_file_input fin{std::istringstream{input}, format_fasta{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_embl,
-                                                                              sequence_file_format_fasta,
-                                                                              sequence_file_format_fastq,
-                                                                              sequence_file_format_genbank,
-                                                                              sequence_file_format_sam>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_embl,
+                                                                              format_fasta,
+                                                                              format_fastq,
+                                                                              format_genbank,
+                                                                              format_sam>>));                // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -214,24 +213,24 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
     {
         auto winput = input | view::convert<wchar_t>;
         std::wistringstream ext{winput};
-        sequence_file_input fin{ext, sequence_file_format_fasta{}, fields<field::SEQ>{}};
+        sequence_file_input fin{ext, format_fasta{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));              // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
     }
 
     /* guided stream temporary constructor + custom fields + different stream char type */
     {
         auto winput = input | view::convert<wchar_t>;
-        sequence_file_input fin{std::wistringstream{winput}, sequence_file_format_fasta{}, fields<field::SEQ>{}};
+        sequence_file_input fin{std::wistringstream{winput}, format_fasta{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));              // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
     }
 }
@@ -248,7 +247,7 @@ TEST_F(sequence_file_input_f, empty_file)
 
 TEST_F(sequence_file_input_f, empty_stream)
 {
-    sequence_file_input fin{std::istringstream{std::string{}}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{std::string{}}, format_fasta{}};
 
     EXPECT_EQ(fin.begin(), fin.end());
 }
@@ -256,7 +255,7 @@ TEST_F(sequence_file_input_f, empty_stream)
 TEST_F(sequence_file_input_f, record_reading)
 {
     /* record based reading */
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, format_fasta{}};
 
     size_t counter = 0;
     for (auto & rec : fin)
@@ -274,7 +273,7 @@ TEST_F(sequence_file_input_f, record_reading)
 TEST_F(sequence_file_input_f, record_reading_struct_bind)
 {
     /* record based reading */
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, format_fasta{}};
 
     size_t counter = 0;
     for (auto & [ seq, id, qual ] : fin)
@@ -293,7 +292,7 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
 {
     /* record based reading */
     sequence_file_input fin{std::istringstream{input},
-                         sequence_file_format_fasta{},
+                         format_fasta{},
                          fields<field::ID, field::SEQ_QUAL>{}};
 
     size_t counter = 0;
@@ -310,7 +309,7 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
 
 TEST_F(sequence_file_input_f, file_view)
 {
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, format_fasta{}};
 
     auto minimum_length_filter = std::view::filter([] (auto const & rec)
     {
@@ -332,7 +331,7 @@ TEST_F(sequence_file_input_f, file_view)
 
 TEST_F(sequence_file_input_f, column_reading)
 {
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, format_fasta{}};
 
     auto & seqs  = get<field::SEQ>(fin);                                    // by field
     auto & ids   = get<1>(fin);                                             // by index
@@ -352,9 +351,9 @@ TEST_F(sequence_file_input_f, column_reading)
 
 TEST_F(sequence_file_input_f, column_reading_temporary)
 {
-    sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input{std::istringstream{input}, format_fasta{}};
 
-    auto seqs = get<field::SEQ>(sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}});
+    auto seqs = get<field::SEQ>(sequence_file_input{std::istringstream{input}, format_fasta{}});
 
     ASSERT_EQ(seqs.size(), 3ul);
 
@@ -366,7 +365,7 @@ TEST_F(sequence_file_input_f, column_reading_temporary)
 
 TEST_F(sequence_file_input_f, column_reading_decomposed)
 {
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, format_fasta{}};
 
     auto & [ seqs, ids , quals ] = fin;
 
@@ -384,7 +383,7 @@ TEST_F(sequence_file_input_f, column_reading_decomposed)
 
 TEST_F(sequence_file_input_f, column_reading_decomposed_temporary)
 {
-    auto && [ seqs, ids , quals ] = sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}};
+    auto && [ seqs, ids , quals ] = sequence_file_input{std::istringstream{input}, format_fasta{}};
 
     ASSERT_EQ(seqs.size(), 3ul);
     ASSERT_EQ(ids.size(), 3ul);
@@ -445,7 +444,7 @@ TEST_F(sequence_file_input_f, decompression_by_filename_gz)
 
 TEST_F(sequence_file_input_f, decompression_by_stream_gz)
 {
-    sequence_file_input fin{std::istringstream{input_gz}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input_gz}, format_fasta{}};
 
     decompression_impl(*this, fin);
 }
@@ -458,7 +457,7 @@ TEST_F(sequence_file_input_f, read_empty_gz_file)
         '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
     };
-    sequence_file_input fin{std::istringstream{empty_zipped_file}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{empty_zipped_file}, format_fasta{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -492,7 +491,7 @@ TEST_F(sequence_file_input_f, decompression_by_filename_bgzf)
 
 TEST_F(sequence_file_input_f, decompression_by_stream_bgzf)
 {
-    sequence_file_input fin{std::istringstream{input_bgzf}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input_bgzf}, format_fasta{}};
 
     decompression_impl(*this, fin);
 }
@@ -505,7 +504,7 @@ TEST_F(sequence_file_input_f, read_empty_bgzf_file)
         '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
     };
-    sequence_file_input fin{std::istringstream{empty_bgzf_file}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{empty_bgzf_file}, format_fasta{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -539,7 +538,7 @@ TEST_F(sequence_file_input_f, decompression_by_filename_bz2)
 
 TEST_F(sequence_file_input_f, decompression_by_stream_bz2)
 {
-    sequence_file_input fin{std::istringstream{input_bz2}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input_bz2}, format_fasta{}};
 
     decompression_impl(*this, fin);
 }
@@ -550,7 +549,7 @@ TEST_F(sequence_file_input_f, read_empty_bz2_file)
     {
         '\x42', '\x5a', '\x68', '\x39', '\x17', '\x72', '\x45', '\x38', '\x50', '\x90', '\x00', '\x00', '\x00', '\x00'
     };
-    sequence_file_input fin{std::istringstream{empty_zipped_file}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{empty_zipped_file}, format_fasta{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }

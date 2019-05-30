@@ -92,7 +92,7 @@ TEST(general, construct_by_filename)
     {
         test::tmp_filename filename{"alignment_file_output_constructor.sam"};
         EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ>,
-                                                type_list<alignment_file_format_sam>,
+                                                type_list<format_sam>,
                                                 char>{filename.get_path(), fields<field::SEQ>{}} ));
     }
 }
@@ -101,15 +101,15 @@ TEST(general, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ, field::ID, field::QUAL>,
-                                            type_list<alignment_file_format_sam>,
-                                            char>{std::ostringstream{}, alignment_file_format_sam{}} ));
+                                            type_list<format_sam>,
+                                            char>{std::ostringstream{}, format_sam{}} ));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ, field::ID, field::QUAL>,
-                                            type_list<alignment_file_format_sam>,
+                                            type_list<format_sam>,
                                             char>{std::ostringstream{},
-                                                  alignment_file_format_sam{},
+                                                  format_sam{},
                                                   fields<field::SEQ, field::ID, field::QUAL>{}} ));
 }
 
@@ -130,7 +130,7 @@ TEST(general, default_template_args_and_deduction_guides)
                          field::EVALUE,
                          field::BIT_SCORE,
                          field::HEADER_PTR>;
-    using comp2 = type_list<alignment_file_format_sam>;
+    using comp2 = type_list<format_sam>;
     using comp3 = char;
 
     /* default template args */
@@ -168,42 +168,42 @@ TEST(general, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::ostringstream ext{};
-        alignment_file_output fout{ext, alignment_file_format_sam{}};
+        alignment_file_output fout{ext, format_sam{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>)); // changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream temporary constructor */
     {
-        alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}};
+        alignment_file_output fout{std::ostringstream{}, format_sam{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>)); // changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream constructor + custom fields + different stream_char_type */
     {
         std::wostringstream ext{};
-        alignment_file_output fout{ext, alignment_file_format_sam{}, fields<field::SEQ>{}};
+        alignment_file_output fout{ext, format_sam{}, fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>)); // changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
     }
 
     /* guided stream temporary constructor + custom fields + different stream_char_type */
     {
-        alignment_file_output fout{std::wostringstream{}, alignment_file_format_sam{}, fields<field::REF_ID>{}};
+        alignment_file_output fout{std::wostringstream{}, format_sam{}, fields<field::REF_ID>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::REF_ID>>));                // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>)); // changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
     }
 }
@@ -215,7 +215,7 @@ TEST(general, default_template_args_and_deduction_guides)
 template <typename fn_t>
 void row_wise_impl(fn_t fn)
 {
-    alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}};
+    alignment_file_output fout{std::ostringstream{}, format_sam{}};
 
     for (size_t i = 0; i < 3; ++i)
         fn(fout, i);
@@ -227,7 +227,7 @@ void row_wise_impl(fn_t fn)
 template <typename source_t>
 void assign_impl(source_t && source)
 {
-    alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}};
+    alignment_file_output fout{std::ostringstream{}, format_sam{}};
 
     fout = source;
 
@@ -348,7 +348,7 @@ TEST(row, different_fields_in_record_and_file)
     record<type_list<std::vector<phred42>, std::string, dna5_vector>,
            fields<field::QUAL, field::ID, field::SEQ>> rec{qual, ids[1], seqs[1]};
 
-    alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}, fields<field::SEQ, field::ID>{}};
+    alignment_file_output fout{std::ostringstream{}, format_sam{}, fields<field::SEQ, field::ID>{}};
 
     fout.emplace_back("AGGCTGNAGGCTGNA"_dna5, std::string("read1"));
     // fout.emplace_back("AGGCTGNAGGCTGNA"_dna5, "read1"); // const char * is not allowed
@@ -373,7 +373,7 @@ TEST(row, print_header_in_file)
     alignment_file_output fout{std::ostringstream{},
                                ref_ids,
                                ref_len,
-                               alignment_file_format_sam{},
+                               format_sam{},
                                fields<field::ID>{}};
 
     fout.emplace_back(std::string("read1"));
@@ -405,7 +405,7 @@ TEST(row, print_header_in_record)
 
     // no file header present
     {
-        alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}, fields<field::HEADER_PTR>{}};
+        alignment_file_output fout{std::ostringstream{}, format_sam{}, fields<field::HEADER_PTR>{}};
 
         fout.emplace_back(&header);
 
@@ -427,7 +427,7 @@ TEST(row, print_header_in_record)
         alignment_file_output fout{std::ostringstream{},
                                    std::vector<std::string>{"other_ref1", "other_ref2"},
                                    std::vector<int32_t>{12, 13},
-                                   alignment_file_format_sam{},
+                                   format_sam{},
                                    fields<field::HEADER_PTR>{}};
 
         fout.emplace_back(&header);
@@ -495,8 +495,8 @@ read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
 read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )";
 
-    alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, alignment_file_format_sam{}};
-    alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, format_sam{}};
+    alignment_file_output fout{std::ostringstream{}, format_sam{}};
 
     fout = fin;
 
@@ -520,8 +520,8 @@ read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
 read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )";
 
-    alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, alignment_file_format_sam{}};
-    alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, format_sam{}};
+    alignment_file_output fout{std::ostringstream{}, format_sam{}};
 
     fin | fout;
 
@@ -567,7 +567,7 @@ std::string compression_by_filename_impl(test::tmp_filename & filename)
 template <typename comp_stream_t>
 void compression_by_stream_impl(comp_stream_t & stream)
 {
-    alignment_file_output fout{stream, alignment_file_format_sam{}};
+    alignment_file_output fout{stream, format_sam{}};
 
     for (size_t i = 0; i < 3; ++i)
     {

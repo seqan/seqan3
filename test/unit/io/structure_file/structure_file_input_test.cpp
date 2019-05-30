@@ -36,7 +36,7 @@ struct structure_file_input_class : public ::testing::Test
 {
     using comp0 = structure_file_input_default_traits_rna;
     using comp1 = fields<field::SEQ, field::ID, field::STRUCTURE>;
-    using comp2 = type_list<structure_file_format_vienna>;
+    using comp2 = type_list<format_vienna>;
     using comp3 = char;
 
     test::tmp_filename create_file(char const * contents)
@@ -93,7 +93,7 @@ TEST_F(structure_file_input_class, construct_by_filename)
         test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
         EXPECT_NO_THROW((structure_file_in<structure_file_input_default_traits_rna,
                                            fields<field::SEQ>,
-                                           type_list<structure_file_format_vienna>,
+                                           type_list<format_vienna>,
                                            char>{filename.get_path(), fields<field::SEQ>{}}));
     }
 }
@@ -103,17 +103,17 @@ TEST_F(structure_file_input_class, construct_from_stream)
     /* stream + format_tag */
     EXPECT_NO_THROW((structure_file_in<structure_file_input_default_traits_rna,
                                        fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                       type_list<structure_file_format_vienna>,
+                                       type_list<format_vienna>,
                                        char>{std::istringstream{"> ID\nACGU\n....\n"},
-                                             structure_file_format_vienna{}}));
+                                             format_vienna{}}));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW((structure_file_in<structure_file_input_default_traits_rna,
                                        fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                       type_list<structure_file_format_vienna>,
+                                       type_list<format_vienna>,
                                        char>{std::istringstream{"> ID\nACGU\n....\n"},
-                                             structure_file_format_vienna{},
+                                             format_vienna{},
                                              fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
 }
 
@@ -156,12 +156,12 @@ TEST_F(structure_file_input_class, guided_filename_constructor_and_custom_fields
 TEST_F(structure_file_input_class, guided_stream_constructor)
 {
     /* guided stream constructor */
-    structure_file_in fin{std::istringstream{"> ID\nACGU\n....\n"}, structure_file_format_vienna{}};
+    structure_file_in fin{std::istringstream{"> ID\nACGU\n....\n"}, format_vienna{}};
 
     using t = decltype(fin);
     EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
     EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
     EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
 }
 
@@ -169,13 +169,13 @@ TEST_F(structure_file_input_class, guided_stream_constructor_and_custom_fields)
 {
     /* guided stream constructor + custom fields */
     structure_file_in fin{std::wistringstream{"> ID\nACGU\n....\n" | view::convert<wchar_t>},
-                          structure_file_format_vienna{},
+                          format_vienna{},
                           fields<field::SEQ>{}};
 
     using t = decltype(fin);
     EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
     EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
     EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
 }
 
@@ -301,7 +301,7 @@ TEST_F(structure_file_input_read, empty_file)
 
 TEST_F(structure_file_input_read, empty_stream)
 {
-    structure_file_in fin{std::istringstream{std::string{}}, structure_file_format_vienna{}};
+    structure_file_in fin{std::istringstream{std::string{}}, format_vienna{}};
 
     EXPECT_EQ(fin.begin(), fin.end());
 }
@@ -309,7 +309,7 @@ TEST_F(structure_file_input_read, empty_stream)
 TEST_F(structure_file_input_read, record_general)
 {
     /* record based reading */
-    structure_file_in fin{std::istringstream{input}, structure_file_format_vienna{}};
+    structure_file_in fin{std::istringstream{input}, format_vienna{}};
 
     size_t counter = 0ul;
     for (auto & rec : fin)
@@ -326,7 +326,7 @@ TEST_F(structure_file_input_read, record_struct_bind)
 {
     /* record based reading */
     structure_file_in fin{std::istringstream{input},
-                          structure_file_format_vienna{},
+                          format_vienna{},
                           fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
 
     size_t counter = 0ul;
@@ -346,7 +346,7 @@ TEST_F(structure_file_input_read, record_custom_fields)
 {
     /* record based reading */
     structure_file_in fin{std::istringstream{input},
-                         structure_file_format_vienna{},
+                         format_vienna{},
                          fields<field::ID, field::STRUCTURED_SEQ>{}};
 
     size_t counter = 0ul;
@@ -362,7 +362,7 @@ TEST_F(structure_file_input_read, record_custom_fields)
 
 TEST_F(structure_file_input_read, record_file_view)
 {
-    structure_file_in fin{std::istringstream{input}, structure_file_format_vienna{},
+    structure_file_in fin{std::istringstream{input}, format_vienna{},
                           fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
 
     auto minimum_length_filter = ranges::view::filter([] (auto const & rec)
@@ -385,7 +385,7 @@ TEST_F(structure_file_input_read, record_file_view)
 
 TEST_F(structure_file_input_read, column_general)
 {
-    structure_file_in fin{std::istringstream{input}, structure_file_format_vienna{},
+    structure_file_in fin{std::istringstream{input}, format_vienna{},
                           fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
 
     auto & seqs  = get<field::SEQ>(fin);                                    // by field
@@ -412,9 +412,9 @@ TEST_F(structure_file_input_read, column_general)
 
 TEST_F(structure_file_input_read, column_temporary)
 {
-    structure_file_in{std::istringstream{input}, structure_file_format_vienna{}};
+    structure_file_in{std::istringstream{input}, format_vienna{}};
 
-    auto seqs = get<field::SEQ>(structure_file_in{std::istringstream{input}, structure_file_format_vienna{}});
+    auto seqs = get<field::SEQ>(structure_file_in{std::istringstream{input}, format_vienna{}});
 
     ASSERT_EQ(seqs.size(), num_records);
 
@@ -426,7 +426,7 @@ TEST_F(structure_file_input_read, column_temporary)
 
 TEST_F(structure_file_input_read, column_decomposed)
 {
-    structure_file_in fin{std::istringstream{input}, structure_file_format_vienna{},
+    structure_file_in fin{std::istringstream{input}, format_vienna{},
                           fields<field::SEQ, field::ID, field::STRUCTURE, field::ENERGY, field::BPP>{}};
 
     auto & [ seqs, ids, struc, energies, bpps ] = fin;
@@ -450,7 +450,7 @@ TEST_F(structure_file_input_read, column_decomposed)
 TEST_F(structure_file_input_read, column_decomposed_temporary)
 {
     auto && [ seqs, ids, struc, energies, bpps ] = structure_file_in{std::istringstream{input},
-                                                                     structure_file_format_vienna{},
+                                                                     format_vienna{},
                                                                      fields<field::SEQ,
                                                                             field::ID,
                                                                             field::STRUCTURE,
@@ -510,7 +510,7 @@ TEST_F(structure_file_input_read, decompression_by_filename_gz)
 
 TEST_F(structure_file_input_read, decompression_by_stream_gz)
 {
-    structure_file_in fin{std::istringstream{input_gz}, structure_file_format_vienna{}};
+    structure_file_in fin{std::istringstream{input_gz}, format_vienna{}};
 
     decompression_impl(fin);
 }
@@ -523,7 +523,7 @@ TEST_F(structure_file_input_read, read_empty_gz_file)
         '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
     };
-    structure_file_in fin{std::istringstream{empty_zipped_file}, structure_file_format_vienna{}};
+    structure_file_in fin{std::istringstream{empty_zipped_file}, format_vienna{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -565,7 +565,7 @@ TEST_F(structure_file_input_read, decompression_by_filename_bgzf)
 
 TEST_F(structure_file_input_read, decompression_by_stream_bgzf)
 {
-    structure_file_in fin{std::istringstream{input_gz}, structure_file_format_vienna{}};
+    structure_file_in fin{std::istringstream{input_gz}, format_vienna{}};
 
     decompression_impl(fin);
 }
@@ -578,7 +578,7 @@ TEST_F(structure_file_input_read, read_empty_bgzf_file)
         '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
     };
-    structure_file_in fin{std::istringstream{empty_bgzf_file}, structure_file_format_vienna{}};
+    structure_file_in fin{std::istringstream{empty_bgzf_file}, format_vienna{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -620,7 +620,7 @@ TEST_F(structure_file_input_read, decompression_by_filename_bz2)
 
 TEST_F(structure_file_input_read, decompression_by_stream_bz2)
 {
-    structure_file_in fin{std::istringstream{input_bz2}, structure_file_format_vienna{}};
+    structure_file_in fin{std::istringstream{input_bz2}, format_vienna{}};
 
     decompression_impl(fin);
 }
@@ -631,7 +631,7 @@ TEST_F(structure_file_input_read, read_empty_bz2_file)
     {
         '\x42', '\x5a', '\x68', '\x39', '\x17', '\x72', '\x45', '\x38', '\x50', '\x90', '\x00', '\x00', '\x00', '\x00'
     };
-    structure_file_in fin{std::istringstream{empty_zipped_file}, structure_file_format_vienna{}};
+    structure_file_in fin{std::istringstream{empty_zipped_file}, format_vienna{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }

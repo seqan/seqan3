@@ -29,8 +29,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((StructureFileInputFormat<structure_file_format_vienna>));
-    EXPECT_TRUE((StructureFileOutputFormat<structure_file_format_vienna>));
+    EXPECT_TRUE((StructureFileInputFormat<format_vienna>));
+    EXPECT_TRUE((StructureFileOutputFormat<format_vienna>));
 }
 
 // ----------------------------------------------------------------------------
@@ -83,7 +83,7 @@ struct read : public ::testing::Test
         }
     };
 
-    structure_file_format_vienna format;
+    detail::structure_file_input_format<format_vienna> format;
 
     structure_file_input_options<rna4, false> options;
 
@@ -455,7 +455,7 @@ struct write : public ::testing::Test
         -17.5f, -3.71f
     };
 
-    structure_file_format_vienna format;
+    detail::structure_file_output_format<format_vienna> format;
 
     structure_file_output_options options;
 

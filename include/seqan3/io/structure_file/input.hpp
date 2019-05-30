@@ -579,12 +579,12 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *
  * ### Formats
  *
- * Currently, the only implemented format is seqan3::structure_file_format_vienna. More formats will follow soon.
+ * Currently, the only implemented format is seqan3::format_vienna. More formats will follow soon.
  */
 template<StructureFileInputTraits traits_type_ = structure_file_input_default_traits_rna,
          detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
          detail::TypeListOfStructureFileInputFormats valid_formats_
-             = type_list<structure_file_format_vienna>,
+             = type_list<format_vienna>,
          char_concept stream_char_type_ = char>
 class structure_file_in
 {
@@ -806,7 +806,8 @@ public:
     structure_file_in(stream_t & stream,
                       file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{&stream, stream_deleter_noop}, format{file_format{}}
+        primary_stream{&stream, stream_deleter_noop},
+        format{detail::structure_file_input_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -823,7 +824,8 @@ public:
     structure_file_in(stream_t && stream,
                       file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new stream_t{std::move(stream)}, stream_deleter_default}, format{file_format{}}
+        primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
+        format{detail::structure_file_input_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -998,7 +1000,7 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::structure_file_input_format>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -1018,7 +1020,7 @@ protected:
         }
 
         assert(!format.valueless_by_exception());
-        std::visit([&] (StructureFileInputFormat & f)
+        std::visit([&] (auto & f)
         {
             // read new record
             if constexpr (selected_field_ids::contains(field::STRUCTURED_SEQ))

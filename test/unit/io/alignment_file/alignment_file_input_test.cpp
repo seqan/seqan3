@@ -117,7 +117,7 @@ TEST_F(alignment_file_input_f, construct_by_filename)
 
         EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
                                                fields<field::SEQ>,
-                                               type_list<alignment_file_format_sam>,
+                                               type_list<format_sam>,
                                                char>{filename.get_path(), fields<field::SEQ>{}} ));
     }
 }
@@ -127,17 +127,17 @@ TEST_F(alignment_file_input_f, construct_from_stream)
     /* stream + format_tag */
     EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
                                            fields<field::SEQ, field::ID, field::QUAL>,
-                                           type_list<alignment_file_format_sam>,
+                                           type_list<format_sam>,
                                            char>{std::istringstream{input},
-                                                 alignment_file_format_sam{}} ));
+                                                 format_sam{}} ));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
                                            fields<field::SEQ, field::ID, field::QUAL>,
-                                           type_list<alignment_file_format_sam>,
+                                           type_list<format_sam>,
                                            char>{std::istringstream{input},
-                                                 alignment_file_format_sam{},
+                                                 format_sam{},
                                                  fields<field::SEQ, field::ID, field::QUAL>{}} ));
 }
 
@@ -148,7 +148,7 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
                          field::REF_ID, field::REF_OFFSET, field::ALIGNMENT,
                          field::MAPQ, field::QUAL, field::FLAG, field::MATE,
                          field::TAGS, field::EVALUE, field::BIT_SCORE, field::HEADER_PTR>;
-    using comp2 = type_list<alignment_file_format_sam>;
+    using comp2 = type_list<format_sam>;
     using comp3 = char;
 
     /* default template args */
@@ -197,23 +197,23 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::istringstream ext{input};
-        alignment_file_input fin{ext, alignment_file_format_sam{}};
+        alignment_file_input fin{ext, format_sam{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream temporary constructor */
     {
-        alignment_file_input fin{std::istringstream{input}, alignment_file_format_sam{}};
+        alignment_file_input fin{std::istringstream{input}, format_sam{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -221,24 +221,24 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
     {
         auto winput = input | view::convert<wchar_t>;
         std::wistringstream ext{winput};
-        alignment_file_input fin{ext, alignment_file_format_sam{}, fields<field::SEQ>{}};
+        alignment_file_input fin{ext, format_sam{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
     }
 
     /* guided stream temporary constructor + custom fields + different stream char type */
     {
         auto winput = input | view::convert<wchar_t>;
-        alignment_file_input fin{std::wistringstream{winput}, alignment_file_format_sam{}, fields<field::SEQ>{}};
+        alignment_file_input fin{std::wistringstream{winput}, format_sam{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
     }
 }
@@ -255,7 +255,7 @@ TEST_F(alignment_file_input_f, empty_file)
 
 TEST_F(alignment_file_input_f, empty_stream)
 {
-    alignment_file_input fin{std::istringstream{std::string{}}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{std::string{}}, format_sam{}};
 
     EXPECT_EQ(fin.begin(), fin.end());
 }
@@ -263,7 +263,7 @@ TEST_F(alignment_file_input_f, empty_stream)
 TEST_F(alignment_file_input_f, record_reading)
 {
     /* record based reading */
-    alignment_file_input fin{std::istringstream{input}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{input}, format_sam{}};
 
     size_t counter = 0;
     for (auto & rec : fin)
@@ -282,7 +282,7 @@ TEST_F(alignment_file_input_f, record_reading_custom_fields)
 {
     /* record based reading */
     alignment_file_input fin{std::istringstream{input},
-                             alignment_file_format_sam{},
+                             format_sam{},
                              fields<field::ID, field::SEQ>{}};
 
     size_t counter = 0;
@@ -299,7 +299,7 @@ TEST_F(alignment_file_input_f, record_reading_custom_fields)
 
 TEST_F(alignment_file_input_f, file_view)
 {
-    alignment_file_input fin{std::istringstream{input}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{input}, format_sam{}};
 
     auto minimum_length_filter = std::view::filter([] (auto const & rec)
     {
@@ -373,7 +373,7 @@ TEST_F(alignment_file_input_f, decompression_by_filename_gz)
 
 TEST_F(alignment_file_input_f, decompression_by_stream_gz)
 {
-    alignment_file_input fin{std::istringstream{input_gz}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{input_gz}, format_sam{}};
 
     decompression_impl(*this, fin);
 }
@@ -386,7 +386,7 @@ TEST_F(alignment_file_input_f, read_empty_gz_file)
         '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
     };
-    alignment_file_input fin{std::istringstream{empty_zipped_file}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{empty_zipped_file}, format_sam{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -432,7 +432,7 @@ TEST_F(alignment_file_input_f, decompression_by_filename_bgzf)
 
 TEST_F(alignment_file_input_f, decompression_by_stream_bgzf)
 {
-    alignment_file_input fin{std::istringstream{input_bgzf}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{input_bgzf}, format_sam{}};
 
     decompression_impl(*this, fin);
 }
@@ -445,7 +445,7 @@ TEST_F(alignment_file_input_f, read_empty_bgzf_file)
         '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
     };
-    alignment_file_input fin{std::istringstream{empty_bgzf_file}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{empty_bgzf_file}, format_sam{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -485,7 +485,7 @@ TEST_F(alignment_file_input_f, decompression_by_filename_bz2)
 
 TEST_F(alignment_file_input_f, decompression_by_stream_bz2)
 {
-    alignment_file_input fin{std::istringstream{input_bz2}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{input_bz2}, format_sam{}};
 
     decompression_impl(*this, fin);
 }
@@ -496,7 +496,7 @@ TEST_F(alignment_file_input_f, read_empty_bz2_file)
     {
         '\x42', '\x5a', '\x68', '\x39', '\x17', '\x72', '\x45', '\x38', '\x50', '\x90', '\x00', '\x00', '\x00', '\x00'
     };
-    alignment_file_input fin{std::istringstream{empty_zipped_file}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{empty_zipped_file}, format_sam{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -568,8 +568,7 @@ TEST_F(alignment_file_input_sam_format_f, construct_by_filename_and_read_alignme
 
 TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignments)
 {
-    alignment_file_input fin{std::istringstream{input}, ref_ids, ref_seqs,
-                             alignment_file_format_sam{}, fields<field::ALIGNMENT>{}};
+    alignment_file_input fin{std::istringstream{input}, ref_ids, ref_seqs, format_sam{}, fields<field::ALIGNMENT>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
 
@@ -587,7 +586,7 @@ TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignme
 
 TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignment_with_dummy)
 {
-    alignment_file_input fin{std::istringstream{input}, alignment_file_format_sam{}, fields<field::ALIGNMENT>{}};
+    alignment_file_input fin{std::istringstream{input}, format_sam{}, fields<field::ALIGNMENT>{}};
 
     size_t counter = 0;
     for (auto & [ alignment ] : fin)

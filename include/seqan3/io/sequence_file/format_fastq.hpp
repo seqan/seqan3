@@ -6,7 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::sequence_file_format_fastq class.
+ * \brief Provides the seqan3::format_fastq tag and the seqan3::sequence_file_input_format and
+ *        seqan3::sequence_file_output_format specialisation for this tag.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -27,7 +28,9 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
@@ -45,7 +48,8 @@
 
 namespace seqan3
 {
-/*!\brief       The FastQ format.
+
+/*!\brief       The FastQ format. (tag)
  * \implements  SequenceFileFormat
  * \ingroup     sequence
  *
@@ -76,28 +80,42 @@ namespace seqan3
  *   * writing the ID to the `+`-line also (line is always ignored when reading)
  *
  */
-class sequence_file_format_fastq
+struct format_fastq
 {
-public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    sequence_file_format_fastq() = default;                                          //!< Defaulted
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_format_fastq(sequence_file_format_fastq const &) = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_format_fastq & operator=(sequence_file_format_fastq const &) = delete;
-    sequence_file_format_fastq(sequence_file_format_fastq &&) = default;             //!< Defaulted
-    sequence_file_format_fastq & operator=(sequence_file_format_fastq &&) = default; //!< Defaulted
-    ~sequence_file_format_fastq() = default;                                         //!< Defaulted
-    //!\}
-
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
         { "fastq" },
         { "fq"    }
     };
+};
+
+} // namespace seqan
+
+namespace seqan3::detail
+{
+
+//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted FASTQ input.
+//!\ingroup sequence
+template <>
+class sequence_file_input_format<format_fastq>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_fastq;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
+    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
@@ -209,6 +227,29 @@ public:
             detail::consume(qview);
         }
     }
+};
+
+//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted FASTQ.
+//!\ingroup sequence
+template <>
+class sequence_file_output_format<format_fastq>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_fastq;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
+    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
@@ -287,4 +328,4 @@ public:
     }
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

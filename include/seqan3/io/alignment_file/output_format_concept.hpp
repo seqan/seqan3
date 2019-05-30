@@ -25,6 +25,16 @@
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The alignment file output format base class.
+template <typename t>
+class alignment_file_output_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -42,7 +52,7 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT AlignmentFileOutputFormat =
-    requires (t                                                                    & v,
+    requires (detail::alignment_file_output_format<t>                              & v,
               std::ofstream                                                        & stream,
               alignment_file_output_options                                        & options,
               alignment_file_header<>                                              & header,
@@ -172,7 +182,7 @@ constexpr bool is_type_list_of_alignment_file_output_formats_v<type_list<ts...>>
                 = (AlignmentFileOutputFormat<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::alignment_file_format_concept.
+ * seqan3::AlignmentFileOutputFormat.
  * \ingroup core
  * \see seqan3::is_type_list_of_alignment_file_formats_v
  */

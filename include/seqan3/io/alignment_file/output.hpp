@@ -139,7 +139,7 @@ namespace seqan3
  * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp custom_fields
  *
  * This will copy the FLAG and REF_OFFSET value into the new output file. Note that the other SAM columns in the
- * output file will be defaulted, so unless you specify to read all SAM columns (see seqan3::alignment_file_format_sam)
+ * output file will be defaulted, so unless you specify to read all SAM columns (see seqan3::format_sam)
  * the output file will not be equal to the input file.
  *
  * ### Writing record-wise in batches
@@ -163,7 +163,7 @@ namespace seqan3
  *
  * TODO give overview of formats, once they are all implemented
  *
- * \sa seqan3::alignment_file_format_sam
+ * \sa seqan3::format_sam
  */
 template <detail::Fields selected_field_ids_ =
               fields<field::SEQ,
@@ -181,9 +181,7 @@ template <detail::Fields selected_field_ids_ =
                      field::EVALUE,
                      field::BIT_SCORE,
                      field::HEADER_PTR>,
-          detail::TypeListOfAlignmentFileOutputFormats valid_formats_ =
-              type_list<alignment_file_format_sam/*,
-                        alignment_file_format_bam,*/>,
+          detail::TypeListOfAlignmentFileOutputFormats valid_formats_ = type_list<format_sam/*, format_bam,*/>,
           char_concept stream_char_type_ = char,
           typename ref_ids_type = ref_info_not_given>
 class alignment_file_output
@@ -330,7 +328,7 @@ public:
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{file_format{}}
+        format{detail::alignment_file_output_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -343,7 +341,7 @@ public:
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_type{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{file_format{}}
+        format{detail::alignment_file_output_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -750,7 +748,7 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::alignment_file_output_format>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;

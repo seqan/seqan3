@@ -6,7 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::sequence_file_format_fasta class.
+ * \brief Provides the seqan3::format_fasta tag and the seqan3::sequence_file_input_format and
+ *        seqan3::sequence_file_output_format specialisation for this tag.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -22,7 +23,9 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
@@ -40,7 +43,8 @@
 
 namespace seqan3
 {
-/*!\brief       The FastA format.
+
+/*!\brief       The FastA format (tag).
  * \implements  SequenceFileInputFormat
  * \implements  SequenceFileOutputFormat
  * \ingroup     sequence
@@ -72,22 +76,8 @@ namespace seqan3
  *   * Multiple comment lines (starting with either `;` or `>`), only one ID line before the sequence line is accepted
  *
  */
-class sequence_file_format_fasta
+struct format_fasta
 {
-public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    sequence_file_format_fasta() = default;                                          //!< Defaulted
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_format_fasta(sequence_file_format_fasta const &) = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_format_fasta & operator=(sequence_file_format_fasta const &) = delete;
-    sequence_file_format_fasta(sequence_file_format_fasta &&) = default;             //!< Defaulted
-    sequence_file_format_fasta & operator=(sequence_file_format_fasta &&) = default; //!< Defaulted
-    ~sequence_file_format_fasta() = default;                                         //!< Defaulted
-    //!\}
-
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
@@ -98,6 +88,34 @@ public:
         { "faa"   },
         { "frn"   },
     };
+};
+
+} // namespace seqan
+
+namespace seqan3::detail
+{
+
+//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted FASTA input.
+//!\ingroup sequence
+template <>
+class sequence_file_input_format<format_fasta>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_fasta;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
+    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.                                //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
@@ -105,11 +123,11 @@ public:
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void read(stream_type                                                            & stream,
+    void read(stream_type                                                               & stream,
               sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
-              seq_type                                                               & sequence,
-              id_type                                                                & id,
-              qual_type                                                              & SEQAN3_DOXYGEN_ONLY(qualities))
+              seq_type                                                                  & sequence,
+              id_type                                                                   & id,
+              qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
         auto stream_view = view::istreambuf(stream);
 
@@ -118,47 +136,6 @@ public:
 
         // Sequence
         read_seq(stream_view, options, sequence);
-    }
-
-    //!\copydoc SequenceFileOutputFormat::write
-    template <typename stream_type,     // constraints checked by file
-              typename seq_type,        // other constraints checked inside function
-              typename id_type,
-              typename qual_type>
-    void write(stream_type                     & stream,
-               sequence_file_output_options const & options,
-               seq_type                       && sequence,
-               id_type                        && id,
-               qual_type                      && SEQAN3_DOXYGEN_ONLY(qualities))
-    {
-
-        seqan3::ostreambuf_iterator stream_it{stream};
-
-        // ID
-        if constexpr (detail::decays_to_ignore_v<id_type>)
-        {
-            throw std::logic_error{"The ID field may not be set to ignore when writing FASTA files."};
-        }
-        else
-        {
-            if (empty(id)) //[[unlikely]]
-                throw std::runtime_error{"The ID field may not be empty when writing FASTA files."};
-
-            write_id(stream_it, options, id);
-        }
-
-        // Sequence
-        if constexpr (detail::decays_to_ignore_v<seq_type>) // sequence
-        {
-            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing FASTA files."};
-        }
-        else
-        {
-            if (empty(sequence)) //[[unlikely]]
-                throw std::runtime_error{"The SEQ field may not be empty when writing FASTA files."};
-
-            write_seq(stream_it, options, sequence);
-        }
     }
 
 protected:
@@ -310,6 +287,70 @@ protected:
             detail::consume(stream_view | view::take_until(is_id));
         }
     }
+};
+
+//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted FASTA.
+//!\ingroup sequence
+template <>
+class sequence_file_output_format<format_fasta>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_fasta;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
+    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    //!\}
+
+    //!\copydoc SequenceFileOutputFormat::write
+    template <typename stream_type,     // constraints checked by file
+              typename seq_type,        // other constraints checked inside function
+              typename id_type,
+              typename qual_type>
+    void write(stream_type                        & stream,
+               sequence_file_output_options const & options,
+               seq_type                          && sequence,
+               id_type                           && id,
+               qual_type                         && SEQAN3_DOXYGEN_ONLY(qualities))
+    {
+
+        seqan3::ostreambuf_iterator stream_it{stream};
+
+        // ID
+        if constexpr (detail::decays_to_ignore_v<id_type>)
+        {
+            throw std::logic_error{"The ID field may not be set to ignore when writing FASTA files."};
+        }
+        else
+        {
+            if (empty(id)) //[[unlikely]]
+                throw std::runtime_error{"The ID field may not be empty when writing FASTA files."};
+
+            write_id(stream_it, options, id);
+        }
+
+        // Sequence
+        if constexpr (detail::decays_to_ignore_v<seq_type>) // sequence
+        {
+            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing FASTA files."};
+        }
+        else
+        {
+            if (empty(sequence)) //[[unlikely]]
+                throw std::runtime_error{"The SEQ field may not be empty when writing FASTA files."};
+
+            write_seq(stream_it, options, sequence);
+        }
+    }
 
     //!\brief Implementation of writing the ID.
     template <typename stream_it_t,
@@ -372,4 +413,4 @@ protected:
     }
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail
