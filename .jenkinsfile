@@ -8,7 +8,6 @@ import hudson.triggers.TimerTrigger;
 // Start build every night between 1:00-4:59
 // Keep only last 10 builds
 properties([
-    disableConcurrentBuilds(),
     pipelineTriggers(
         [cron(env.BRANCH_NAME == 'master' ? 'H H(1-4) * * *' : '')]
     ),
@@ -16,6 +15,34 @@ properties([
         logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10')
     )
 ])
+
+// ============================================================================
+// Stop current build if superseded by new one.
+// ============================================================================
+
+// Cancels active build if there was a new one.
+@NonCPS
+def cancel_previous_builds()
+{
+    def job_name = env.JOB_NAME
+    def build_number = env.BUILD_NUMBER.toInteger()
+    // Get job name
+    def currentJob = Jenkins.instance.getItemByFullName(job_name)
+
+    // Iterating over the builds for specific job
+    for (def build : currentJob.builds)
+    {
+        // If there is a build that is currently running and it's not current build
+        if (build.isBuilding() && build.number.toInteger() != build_number)
+            build.doStop()
+    }
+}
+
+cancel_previous_builds()
+
+// ============================================================================
+// Nightly execution
+// ============================================================================
 
 // Checks whether the current build was triggered by cron job.
 // We need this to check, whether we want to trigger a deployment
@@ -151,7 +178,7 @@ for(int i = 0; i < axis_compiler.size(); ++i)
                     // For docker nodes we need to define the workspace explicitly, as they use a mounted
                     // volume on the filesystem which is shared by all docker instances. Since the docker executor
                     // doesn't know the other running instances it cannot locking the workspace.
-                    def workspace = "$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$label"
+                    def workspace = "$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$env.BUILD_NUMBER/$label/"
                     ws("$workspace")
                     {
                         stage('install')
@@ -220,7 +247,7 @@ if (is_nightly)
 {
     stage ("cleanup")
     {
-        // On the docker nodes we need to regularly check if the a pull request was closed in order
+        // On the docker nodes we need to regularly check if a pull request was closed in order
         // to remove the workspace which is stored persistently on the docker server.
         node("ubuntu_1604 || ubuntu_1804")
         {
