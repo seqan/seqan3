@@ -29,22 +29,22 @@ void do_test(adaptor_t const & adaptor, fun_t && fun, std::string const & vec)
 {
     // pipe notation
     auto v = vec | adaptor(fun);
-    EXPECT_EQ("foo", std::string(v));
+    EXPECT_EQ("foo", v  | std::ranges::to<std::string>);
 
     // function notation
-    std::string v2 = adaptor(vec, fun);
+    std::string v2 = adaptor(vec, fun) | std::ranges::to<std::string>;
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = vec | adaptor(fun) | ranges::view::unique;
-    EXPECT_EQ("fo", std::string(v3));
-    std::string v3b = vec | std::view::reverse | adaptor(fun) | ranges::view::unique;
+    EXPECT_EQ("fo", v3  | std::ranges::to<std::string>);
+    std::string v3b = vec | std::view::reverse | adaptor(fun) | ranges::view::unique | std::ranges::to<std::string>;
     EXPECT_EQ("rab", v3b);
 
     // pointer as iterator
     std::span s{std::ranges::data(vec), vec.size()};
     auto v4 = s | adaptor(fun);
-    EXPECT_EQ("foo", std::string(v4));
+    EXPECT_EQ("foo", v4 | std::ranges::to<std::string>);
 
     // comparability against self
     EXPECT_TRUE(std::ranges::equal(v,v));
@@ -102,7 +102,7 @@ TEST(view_take_until, functor_fail)
 {
     std::string vec{"foo"};
     std::string v;
-    EXPECT_NO_THROW(( v = vec | view::take_until([] (char c) { return c == '\n'; }) ));
+    EXPECT_NO_THROW(( v = vec | view::take_until([] (char c) { return c == '\n'; }) | std::ranges::to<std::string> ));
     EXPECT_EQ("foo", v);
 }
 
@@ -128,7 +128,8 @@ TEST(view_take_until_or_throw, unix_eol)
 TEST(view_take_until_or_throw, functor_fail)
 {
     std::string vec{"foo"};
-    EXPECT_THROW(std::string v = vec | view::take_until_or_throw([] (char c) { return c == '\n'; }),
+    EXPECT_THROW(std::string v = vec | view::take_until_or_throw([] (char c) { return c == '\n'; })
+                                     | std::ranges::to<std::string>,
                  unexpected_end_of_input);
 }
 

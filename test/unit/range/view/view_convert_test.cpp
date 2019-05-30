@@ -22,16 +22,16 @@ TEST(view_convert, basic)
     std::vector<bool> cmp{1, 1, 0, 1, 0, 0, 1, 1, 1};
 
     // pipe notation
-    std::vector<bool> v = vec | view::convert<bool>;
+    std::vector<bool> v = vec | view::convert<bool> | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    std::vector<bool> v2(view::convert<bool>(vec));
+    std::vector<bool> v2(view::convert<bool>(vec) | std::ranges::to<std::vector>);
     EXPECT_EQ(cmp, v2);
 
     // combinability
     std::vector<bool> cmp2{1, 1, 1, 0, 0, 1, 0, 1, 1};
-    std::vector<bool> v3 = vec | view::convert<bool> | std::view::reverse;
+    std::vector<bool> v3 = vec | view::convert<bool> | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp2, v3);
 }
 
@@ -41,16 +41,16 @@ TEST(view_convert, explicit_conversion)
     dna4_vector cmp{"ACGATAGGA"_dna4};
 
     // pipe notation
-    dna4_vector v = vec | view::convert<dna4>;
+    dna4_vector v = vec | view::convert<dna4> | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    dna4_vector v2(view::convert<dna4>(vec));
+    dna4_vector v2(view::convert<dna4>(vec) | std::ranges::to<std::vector>);
     EXPECT_EQ(cmp, v2);
 
     // combinability
     dna4_vector cmp2{"AGGATAGCA"_dna4};
-    dna4_vector v3 = vec | view::convert<dna4> | std::view::reverse;
+    dna4_vector v3 = vec | view::convert<dna4> | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp2, v3);
 }
 

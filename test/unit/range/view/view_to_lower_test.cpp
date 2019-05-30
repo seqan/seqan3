@@ -23,11 +23,11 @@ TEST(view_to_lower, basic)
     std::string cmp {"iamadnastring"};
 
     // pipe notation string
-    std::string s(input_string | view::to_lower);
+    std::string s(input_string | view::to_lower | std::ranges::to<std::string>);
     EXPECT_EQ(cmp, s);
 
     // custom conversion operator
-    std::string s2(view::to_lower(input_string));
+    std::string s2(view::to_lower(input_string) | std::ranges::to<std::string>);
     EXPECT_EQ(cmp, s2);
 }
 
@@ -40,11 +40,11 @@ TEST(view_to_lower, combinability)
     std::string cmp2{"aggcgt"};
 
    // output combinability
-    std::string s(input_string | view::to_lower | std::view::reverse);
+    std::string s(input_string | view::to_lower | std::view::reverse | std::ranges::to<std::string>);
     EXPECT_EQ(cmp, s);
 
     // input combinability
-    std::string s2(dna_vec | view::to_char | view::to_lower);
+    std::string s2(dna_vec | view::to_char | view::to_lower | std::ranges::to<std::string>);
     EXPECT_EQ(cmp2, s2);
 }
 
@@ -53,7 +53,7 @@ TEST(view_to_lower, deep)
     std::vector<std::string> input_vec{"IAmADnaString", "IAmAProteinString"};
     std::vector<std::string> cmp{"iamadnastring", "iamaproteinstring"};
 
-    std::vector<std::string> s(input_vec | view::to_lower);
+    std::vector<std::string> s(input_vec | view::to_lower | std::ranges::to<std::vector<std::string>>);
     EXPECT_EQ(cmp, s);
 }
 

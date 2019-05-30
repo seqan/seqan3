@@ -22,16 +22,16 @@ TEST(view_to_char, basic)
     std::string cmp{"ACTTTGATA"};
 
     // pipe notation
-    std::string v = vec | view::to_char;
+    std::string v = vec | view::to_char | std::ranges::to<std::string>;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    std::string v2(view::to_char(vec));
+    std::string v2(view::to_char(vec) | std::ranges::to<std::string>);
     EXPECT_EQ(cmp, v2);
 
     // combinability
     std::string cmp2{"ATAGTTTCA"};
-    std::string v3 = vec | view::to_char | std::view::reverse;
+    std::string v3 = vec | view::to_char | std::view::reverse | std::ranges::to<std::string>;
     EXPECT_EQ(cmp2, v3);
 }
 
