@@ -150,25 +150,29 @@ def tasks = [:]
 // First iterate over all supported compiler versions
 // If the compilers do not match on the respective platform either use a different scope to
 // iterate over them or define some kind of map to point to the right compiler name per platform.
-for(int i = 0; i < axis_compiler.size(); ++i)
+for (int h = 0; h < axis_agent.size(); ++h)
 {
-    def axis_compiler_value = axis_compiler[i]
-    def subTasks = [:] // defines subtask per compiler; later we can make it per platform.
-    for(int j = 0; j < axis_cereal.size(); ++j)  // Whether to use cereal or not
+    def agent = axis_agent[h];
+    for(int i = 0; i < axis_compiler.size(); ++i)
     {
-        def axis_cereal_value = axis_cereal[j]
-        for (int k = 0; k < axis_build_type.size(); ++k) // Whether to build in release or debug mode
+        def axis_compiler_value = axis_compiler[i]
+        def subTasks = [:] // defines subtask per platform & compiler;
+        for(int j = 0; j < axis_cereal.size(); ++j)  // Whether to use cereal or not
         {
-            def axis_build_type_value = axis_build_type[k]
-            // Only build nightlies in debug and release mode
-            if (!is_nightly && (axis_build_type_value == "Release"))
+            def axis_cereal_value = axis_cereal[j]
+            // Only build nightlies with cereal disabled
+            if (!is_nightly && !axis_cereal_value)
                 continue
 
-            def test_model = is_nightly ? 'Nightly' : 'Continuous'
-
-            for (int l = 0; l < axis_agent.size(); ++l)
+            for (int k = 0; k < axis_build_type.size(); ++k) // Whether to build in release or debug mode
             {
-                def agent = axis_agent[l];
+                def axis_build_type_value = axis_build_type[k]
+                // Only build nightlies in debug mode
+                if (!is_nightly && (axis_build_type_value == "Debug"))
+                    continue
+
+                def test_model = is_nightly ? 'Nightly' : 'Continuous'
+
                 def label = "${agent}_${axis_compiler_value}_cereal-${axis_cereal_value}_$axis_build_type_value"
                 subTasks[label] =
                 {
@@ -220,10 +224,10 @@ for(int i = 0; i < axis_compiler.size(); ++i)
                 }
             }
         }
-    }
-    tasks["ubuntu-${axis_compiler_value}"] =
-    {
-        parallel subTasks
+        tasks["${agent}-${axis_compiler_value}"] =
+        {
+            parallel subTasks
+        }
     }
 }
 
