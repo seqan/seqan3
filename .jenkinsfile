@@ -140,7 +140,7 @@ def run_unit_tests(slave_name, compiler, build_type, model, with_cereal)
 
 // Configure unit tests. Add platforms here but adapt the inner loop of the matrix setup to call instantiate and
 // setup the right agent.
-def axis_agent = ["ubuntu"]
+def axis_agent = ["ubuntu", "osx"]
 def axis_compiler = ["g++-7", "g++-8"] // g++-9, clang-concepts
 def axis_cereal = [true, false]
 def axis_build_type =["Release", "Debug"]
@@ -165,37 +165,56 @@ for(int i = 0; i < axis_compiler.size(); ++i)
                 continue
 
             def test_model = is_nightly ? 'Nightly' : 'Continuous'
-            def label = "ubuntu_${axis_compiler_value}_cereal-${axis_cereal_value}_$axis_build_type_value"
-            subTasks[label] =
+
+            for (int l = 0; l < axis_agent.size(); ++l)
             {
-                // Add node per platform here.
-                // They might differ in the usage and setup.
-                // Run on nodes matching labels 'ubuntu' and the compiler axis value.
-                // Only run g++-8 on ubuntu 1804 due to some linker errors on the ported package from ubuntu 1604
-                def platform = (axis_compiler_value == 'g++-8' ? 'ubuntu_1804' : 'ubuntu')
-                node("$platform && $axis_compiler_value")
+                def agent = axis_agent[l];
+                def label = "${agent}_${axis_compiler_value}_cereal-${axis_cereal_value}_$axis_build_type_value"
+                subTasks[label] =
                 {
-                    // For docker nodes we need to define the workspace explicitly, as they use a mounted
-                    // volume on the filesystem which is shared by all docker instances. Since the docker executor
-                    // doesn't know the other running instances it cannot locking the workspace.
-                    def workspace = "$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$env.BUILD_NUMBER/$label/"
-                    ws("$workspace")
+                    if (agent == "osx") // build on macos
                     {
-                        stage('install')
+                        node("$agent && $axis_compiler_value")
                         {
-                            sh """
-                                sudo apt-get update
-                                sudo apt-get install -y $axis_compiler_value cmake git zlib1g-dev libbz2-dev
-                            """
-                        }
-                        withEnv(["HOME=$workspace"])
-                        {
-                            sh "echo $HOME"
-                            run_unit_tests(env.DOCKER_SLAVE_NAME,
+                            run_unit_tests(env.NODE_NAME,
                                            axis_compiler_value,
                                            axis_build_type_value,
                                            test_model,
                                            axis_cereal_value)
+                        }
+                    }
+                    else  // build ubuntu
+                    {
+                        // Add node per platform here.
+                        // They might differ in the usage and setup.
+                        // Run on nodes matching labels 'ubuntu' and the compiler axis value.
+                        // Only run g++-8 on ubuntu 1804 due to some linker errors on the ported package from ubuntu 1604
+                        def platform = (axis_compiler_value == 'g++-8' ? 'ubuntu_1804' : 'ubuntu')
+                        node("$platform && $axis_compiler_value")
+                        {
+                            // For docker nodes we need to define the workspace explicitly, as they use a mounted
+                            // volume on the filesystem which is shared by all docker instances. Since the docker executor
+                            // doesn't know the other running instances it cannot lock the workspace.
+                            def workspace = "$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$env.BUILD_NUMBER/$label"
+                            ws("$workspace")
+                            {
+                                stage('install')
+                                {
+                                    sh """
+                                        sudo apt-get update
+                                        sudo apt-get install -y $axis_compiler_value cmake git zlib1g-dev libbz2-dev
+                                    """
+                                }
+                                withEnv(["HOME=$workspace"])
+                                {
+                                    sh "echo $HOME"
+                                    run_unit_tests(env.DOCKER_SLAVE_NAME,
+                                                   axis_compiler_value,
+                                                   axis_build_type_value,
+                                                   test_model,
+                                                   axis_cereal_value)
+                                }
+                            }
                         }
                     }
                 }
