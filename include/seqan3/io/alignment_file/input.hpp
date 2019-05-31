@@ -27,6 +27,7 @@
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
+#include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/misc.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
@@ -381,7 +382,7 @@ template <
                                                                               field::EVALUE,
                                                                               field::BIT_SCORE,
                                                                               field::HEADER_PTR>,
-    detail::TypeListOfAlignmentFileInputFormats  valid_formats_    = type_list<format_sam>,
+    detail::TypeListOfAlignmentFileInputFormats  valid_formats_    = type_list<format_sam, format_bam>,
     std::Integral                                stream_char_type_ = char>
 class alignment_file_input
 {

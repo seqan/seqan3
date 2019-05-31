@@ -22,6 +22,7 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/misc.hpp>
@@ -181,7 +182,7 @@ template <detail::Fields selected_field_ids_ =
                      field::EVALUE,
                      field::BIT_SCORE,
                      field::HEADER_PTR>,
-          detail::TypeListOfAlignmentFileOutputFormats valid_formats_ = type_list<format_sam/*, format_bam,*/>,
+          detail::TypeListOfAlignmentFileOutputFormats valid_formats_ = type_list<format_sam, format_bam>,
           char_concept stream_char_type_ = char,
           typename ref_ids_type = ref_info_not_given>
 class alignment_file_output

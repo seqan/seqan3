@@ -148,7 +148,7 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
                          field::REF_ID, field::REF_OFFSET, field::ALIGNMENT,
                          field::MAPQ, field::QUAL, field::FLAG, field::MATE,
                          field::TAGS, field::EVALUE, field::BIT_SCORE, field::HEADER_PTR>;
-    using comp2 = type_list<format_sam>;
+    using comp2 = type_list<format_sam, format_bam>;
     using comp3 = char;
 
     /* default template args */
@@ -592,6 +592,102 @@ TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignme
     for (auto & [ alignment ] : fin)
     {
         EXPECT_EQ(get<1>(alignment), get<1>(alignments_expected[counter]));
+
+        counter++;
+    }
+
+    EXPECT_EQ(counter, 3u);
+}
+
+// ----------------------------------------------------------------------------
+// BAM format specificities
+// ----------------------------------------------------------------------------
+
+struct alignment_file_input_bam_format_f : public alignment_file_input_sam_format_f
+{
+    std::string binary_input{ // corresponds to 'input' from alignment_file_input_f fixture
+        '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42',
+        '\x43', '\x02', '\x00', '\x8D', '\x00', '\x73', '\x72', '\xF4', '\x65', '\x4C', '\x66', '\x60', '\x60',
+        '\x70', '\xF0', '\x70', '\xE1', '\x0C', '\xF3', '\xB3', '\x32', '\xD4', '\x33', '\xE3', '\x0C', '\xF6',
+        '\xB7', '\x2A', '\xCD', '\xCB', '\xCE', '\xCB', '\x2F', '\xCF', '\xE3', '\x74', '\xF7', '\xB7', '\xCA',
+        '\xCB', '\xCF', '\x4B', '\xE5', '\x72', '\x08', '\x0E', '\xE4', '\x0C', '\xF6', '\xB3', '\x2A', '\x4A',
+        '\x4D', '\xE3', '\xF4', '\xF1', '\xB3', '\x32', '\x36', '\xE1', '\x72', '\x08', '\x70', '\xE7', '\xF4',
+        '\x74', '\xB1', '\x2A', '\x28', '\xCA', '\x4F', '\x37', '\xE4', '\x0C', '\xF0', '\xB3', '\x4A', '\xCE',
+        '\xCF', '\xCF', '\x89', '\x07', '\xF1', '\x8A', '\x12', '\x73', '\xB9', '\x1C', '\x9C', '\xFD', '\x39',
+        '\x43', '\x32', '\x32', '\x8B', '\x15', '\x80', '\x28', '\x51', '\x21', '\x39', '\x3F', '\x37', '\x37',
+        '\x35', '\xAF', '\x44', '\x8F', '\x8B', '\x11', '\x68', '\x0D', '\x0B', '\x10', '\x03', '\x4D', '\x61',
+        '\x50', '\x02', '\xD2', '\x00', '\xF2', '\x5C', '\x8E', '\x8D', '\x7B', '\x00', '\x00', '\x00', '\x1F',
+        '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
+        '\x02', '\x00', '\x9F', '\x00', '\x73', '\x61', '\x40', '\x00', '\x36', '\x5B', '\x4F', '\x21', '\x16',
+        '\x06', '\x4D', '\x06', '\x16', '\x28', '\x9F', '\x13', '\x88', '\x75', '\x18', '\x19', '\x18', '\x8A',
+        '\x52', '\x13', '\x53', '\x0C', '\x19', '\x44', '\x80', '\x3C', '\x01', '\x20', '\x16', '\x02', '\x62',
+        '\x05', '\x10', '\xED', '\xC1', '\xC0', '\xC4', '\xC4', '\xEC', '\x18', '\xEC', '\xCC', '\xE4', '\xE7',
+        '\xEB', '\xCC', '\x1E', '\x04', '\xD5', '\xC3', '\x08', '\x32', '\xC7', '\x0E', '\x64', '\x8E', '\x16',
+        '\x58', '\x3F', '\xBA', '\x39', '\x46', '\x0C', '\x05', '\x50', '\x33', '\x40', '\x66', '\x81', '\xCC',
+        '\x14', '\x71', '\x6A', '\xF9', '\xE8', '\x00', '\x32', '\x8A', '\x95', '\x8D', '\x9D', '\x83', '\xB3',
+        '\xA2', '\xD2', '\x29', '\x98', '\x19', '\x28', '\xCA', '\x0C', '\x74', '\x05', '\x2B', '\x83', '\x1F',
+        '\xD4', '\x04', '\x26', '\x90', '\xA9', '\xF6', '\x9E', '\x42', '\xEC', '\x0C', '\xDA', '\x0C', '\x1C',
+        '\x58', '\x4C', '\x35', '\x46', '\x71', '\x9D', '\x03', '\x9A', '\x0D', '\x2E', '\x22', '\x8D', '\x8D',
+        '\x40', '\xF5', '\x5C', '\xDC', '\x3C', '\xBC', '\x7C', '\x00', '\xC5', '\xFD', '\x4B', '\xCD', '\xF0',
+        '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF',
+        '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00'
+    };
+};
+
+TEST_F(alignment_file_input_bam_format_f, construct_by_filename)
+{
+    test::tmp_filename filename{"alignment_file_input_constructor.bam"};
+    {
+        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+        filecreator << binary_input;
+    }
+
+    alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, fields<field::ID,
+                                                                            field::SEQ,
+                                                                            field::QUAL,
+                                                                            field::ALIGNMENT>{}};
+
+    EXPECT_EQ(fin.header().ref_ids(), ref_ids);
+    EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});
+
+    size_t counter = 0;
+    for (auto & [ id, seq, qual, alignment ] : fin)
+    {
+        EXPECT_EQ(id, id_comp[counter]);
+        EXPECT_EQ(seq, seq_comp[counter]);
+        EXPECT_EQ(qual, qual_comp[counter]);
+
+        EXPECT_TRUE(std::ranges::equal(get<0>(alignment), get<0>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(alignments_expected[counter])));
+
+        counter++;
+    }
+
+    EXPECT_EQ(counter, 3u);
+}
+
+TEST_F(alignment_file_input_bam_format_f, construct_by_stream)
+{
+    std::istringstream stream{binary_input};
+
+    alignment_file_input fin{stream, ref_ids, ref_seqs, format_bam{}, fields<field::ID,
+                                                                             field::SEQ,
+                                                                             field::QUAL,
+                                                                             field::ALIGNMENT>{}};
+
+    EXPECT_EQ(fin.header().ref_ids(), ref_ids);
+    EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});
+
+    size_t counter = 0;
+    for (auto & [ id, seq, qual, alignment ] : fin)
+    {
+        EXPECT_EQ(id, id_comp[counter]);
+        EXPECT_EQ(seq, seq_comp[counter]);
+        EXPECT_EQ(qual, qual_comp[counter]);
+
+        EXPECT_TRUE(std::ranges::equal(get<0>(alignment), get<0>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(alignments_expected[counter])));
 
         counter++;
     }

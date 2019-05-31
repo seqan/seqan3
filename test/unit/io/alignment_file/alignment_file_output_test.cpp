@@ -130,7 +130,7 @@ TEST(general, default_template_args_and_deduction_guides)
                          field::EVALUE,
                          field::BIT_SCORE,
                          field::HEADER_PTR>;
-    using comp2 = type_list<format_sam>;
+    using comp2 = type_list<format_sam, format_bam>;
     using comp3 = char;
 
     /* default template args */
@@ -530,6 +530,39 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), comp);
 }
 
+TEST(rows, write_bam_file)
+{
+    test::tmp_filename const filename{"in_out.bam"};
+
+    std::vector<std::string> const ref_ids{"ref"};
+    std::vector<dna4_vector> const ref_seqs{"ACTAGCTAGGAGGACTAGCATCGATC"_dna4};
+
+    std::string comp =
+R"(@HD	VN:1.6	SO:unknown	GO:none
+@SQ	SN:ref	LN:26
+@PG	ID:prog1	PN:cool_program
+@CO	This is a comment.
+read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
+read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
+read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+)";
+    {
+        alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, format_sam{}};
+        alignment_file_output fout{filename.get_path()};
+
+        fin | fout;
+    }
+
+    alignment_file_input fin2{filename.get_path(), ref_ids, ref_seqs};
+    alignment_file_output fout2{std::ostringstream{}, format_sam{}};
+
+    fin2 | fout2;
+
+    fout2.get_stream().flush();
+
+    EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout2.get_stream()).str(), comp);
+}
+
 TEST(rows, convert_sam_to_blast)
 {
     // TODO when blast format is implemented
@@ -542,7 +575,11 @@ TEST(rows, convert_sam_to_blast)
 std::string compression_by_filename_impl(test::tmp_filename & filename)
 {
     {
-        alignment_file_output fout{filename.get_path()};
+        // explicitly only test compression on sam format
+        alignment_file_output<typename alignment_file_output<>::selected_field_ids,
+                             type_list<format_sam>,
+                             typename alignment_file_output<>::stream_char_type,
+                             ref_info_not_given> fout{filename.get_path()};
 
         for (size_t i = 0; i < 3; ++i)
         {
