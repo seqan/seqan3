@@ -33,13 +33,13 @@ TEST(view_persist, delegate_to_view_all)
     EXPECT_EQ("foo", std::string{v});
 
     // function notation
-    std::string v2 = view::persist(vec);
+    std::string v2 = view::persist(vec) | std::ranges::to<std::string>;
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = vec | view::persist | ranges::view::unique;
     EXPECT_EQ("fo", std::string{v3});
-    std::string v3b = vec | std::view::reverse | view::persist | ranges::view::unique;
+    std::string v3b = vec | std::view::reverse | view::persist | ranges::view::unique | std::ranges::to<std::string>;
     EXPECT_EQ("of", v3b);
 
     // store combined
@@ -55,13 +55,17 @@ TEST(view_persist, wrap_temporary)
     EXPECT_EQ("foo", std::string(v));
 
     // function notation
-    std::string v2 = view::persist(std::string{"foo"});
+    std::string v2 = view::persist(std::string{"foo"}) | std::ranges::to<std::string>;
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = std::string{"foo"} | view::persist | ranges::view::unique;
     EXPECT_EQ("fo", std::string(v3));
-    std::string v3b = std::string{"foo"} | view::persist | std::view::filter(is_char<'o'>) | ranges::view::unique;
+    std::string v3b = std::string{"foo"}
+                    | view::persist
+                    | std::view::filter(is_char<'o'>)
+                    | ranges::view::unique
+                    | std::ranges::to<std::string>;
     EXPECT_EQ("o", v3b);
 }
 

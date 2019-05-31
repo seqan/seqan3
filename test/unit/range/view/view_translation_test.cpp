@@ -37,7 +37,7 @@ TYPED_TEST_CASE(nucleotide, nucleotide_types);
 TYPED_TEST(nucleotide, view_translate_single)
 {
     std::string const in{"ACGTACGTACGTA"};
-    std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
+    std::vector<TypeParam> vec = in | view::char_to<TypeParam> | std::ranges::to<std::vector>;
     aa27_vector cmp1{"TYVR"_aa27};
     aa27_vector cmp2{"CMHA"_aa27};
 

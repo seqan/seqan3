@@ -26,18 +26,18 @@ TEST(view_trim, standalone)
 
     // trim by phred_value
     auto v1 = vec | view::trim(20u);                        // == ['I','I','?','5']
-    EXPECT_EQ(std::vector<phred42>(v1), cmp1);
+    EXPECT_EQ(v1 | std::ranges::to<std::vector>, cmp1);
 
     // trim by quality character
     auto v2 = vec | view::trim(phred42{40});             // == ['I','I']
-    EXPECT_EQ(std::vector<phred42>(v2), cmp2);
+    EXPECT_EQ(v2 | std::ranges::to<std::vector>, cmp2);
 
     // function syntax
     auto v3 = view::trim(vec, 20u);                         // == ['I','I','?','5']
-    EXPECT_EQ(std::vector<phred42>(v3), cmp1);
+    EXPECT_EQ(v3 | std::ranges::to<std::vector>, cmp1);
 
     // combinability
-    std::string v4 = view::trim(vec, 20u) | view::to_char;  // == "II?5"
+    std::string v4 = view::trim(vec, 20u) | view::to_char | std::ranges::to<std::string>;  // == "II?5"
     EXPECT_EQ("II?5", v4);
 }
 
@@ -51,15 +51,15 @@ TEST(view_trim, qualified)
 
     // trim by phred_value
     auto v1 = vec | view::trim(20u);
-    EXPECT_EQ(std::vector<dna5q>(v1), cmp1);
+    EXPECT_EQ(v1 | std::ranges::to<std::vector>, cmp1);
 
     // trim by quality character
     auto v2 = vec | view::trim(dna5q{'C'_dna5, phred42{40}});
-    EXPECT_EQ(std::vector<dna5q>(v2), cmp2);
+    EXPECT_EQ(v2 | std::ranges::to<std::vector>, cmp2);
 
     // function syntax
     auto v3 = view::trim(vec, 20u);
-    EXPECT_EQ(std::vector<dna5q>(v3), cmp1);
+    EXPECT_EQ(v3 | std::ranges::to<std::vector>, cmp1);
 
     // combinability
     std::string v4 = view::trim(vec, 20u) | view::to_char;

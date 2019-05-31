@@ -36,20 +36,20 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
     // pipe notation
     auto v = vec | adaptor(3);
-    EXPECT_EQ("foo", std::string(v));
+    EXPECT_EQ("foo", v | std::ranges::to<std::string>);
 
     // iterators (code coverage)
     EXPECT_EQ(v.begin(), v.begin());
     EXPECT_NE(v.begin(), v.end());
 
     // function notation
-    std::string v2{adaptor(vec, 3)};
+    std::string v2{adaptor(vec, 3) | std::ranges::to<std::string>};
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = vec | adaptor(3) | adaptor(3) | ranges::view::unique;
-    EXPECT_EQ("fo", std::string(v3));
-    std::string v3b = vec | std::view::reverse | adaptor(3) | ranges::view::unique;
+    EXPECT_EQ("fo", v3 | std::ranges::to<std::string>);
+    std::string v3b = vec | std::view::reverse | adaptor(3) | ranges::view::unique | std::ranges::to<std::string>;
     EXPECT_EQ("rab", v3b);
 
     // comparability against self
@@ -115,7 +115,8 @@ TEST(view_take, underlying_is_shorter)
     EXPECT_NO_THROW(( view::take(vec, 4) )); // no parsing
 
     std::string v;
-    EXPECT_NO_THROW(( v = vec | view::single_pass_input | view::take(4) )); // full parsing on conversion
+    // full parsing on conversion
+    EXPECT_NO_THROW(( v = vec | view::single_pass_input | view::take(4) | std::ranges::to<std::string>));
     EXPECT_EQ("foo", v);
 }
 

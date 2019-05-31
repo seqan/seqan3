@@ -19,19 +19,19 @@ using namespace seqan3;
 TEST(view_to_rank, basic)
 {
     dna5_vector vec{"ACTTTGATA"_dna5};
-    std::vector<unsigned> cmp{0,1,4,4,4,2,0,4,0};
+    std::vector<uint8_t> cmp{0,1,4,4,4,2,0,4,0};
 
     // pipe notation
-    std::vector<unsigned> v = vec | view::to_rank;
+    std::vector<uint8_t> v = vec | view::to_rank | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    std::vector<unsigned> v2(view::to_rank(vec));
+    std::vector<uint8_t> v2(view::to_rank(vec) | std::ranges::to<std::vector>);
     EXPECT_EQ(cmp, v2);
 
     // combinability
-    std::vector<unsigned> cmp2{0, 4, 0, 2, 4, 4, 4, 1, 0};
-    std::vector<unsigned> v3 = vec | view::to_rank | std::view::reverse;
+    std::vector<uint8_t> cmp2{0, 4, 0, 2, 4, 4, 4, 1, 0};
+    std::vector<uint8_t> v3 = vec | view::to_rank | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp2, v3);
 }
 
@@ -58,5 +58,5 @@ TEST(view_to_rank, concepts)
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
     EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5>));
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), unsigned>));
+    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), uint8_t>));
 }

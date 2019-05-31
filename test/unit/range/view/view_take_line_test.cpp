@@ -29,22 +29,22 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
     // pipe notation
     auto v = vec | adaptor;
-    EXPECT_EQ("foo", std::string(v));
+    EXPECT_EQ("foo", v | std::ranges::to<std::string>);
 
     // function notation
-    std::string v2(adaptor(vec));
+    std::string v2(adaptor(vec) | std::ranges::to<std::string>);
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = vec | adaptor | ranges::view::unique;
-    EXPECT_EQ("fo", std::string(v3));
-    std::string v3b = vec | std::view::reverse | adaptor | ranges::view::unique;
+    EXPECT_EQ("fo", v3 | std::ranges::to<std::string>);
+    std::string v3b = vec | std::view::reverse | adaptor | ranges::view::unique | std::ranges::to<std::string>;
     EXPECT_EQ("rab", v3b);
 
     // consuming behaviour
     auto v4 = vec | view::single_pass_input;
     auto v5 = std::move(v4) | adaptor;
-    EXPECT_EQ("foo", std::string(v5));
+    EXPECT_EQ("foo", v5 | std::ranges::to<std::string>);
     EXPECT_EQ('b', *begin(v5)); // not newline
 }
 
@@ -114,8 +114,8 @@ TEST(view_take_line, eol_at_first_position)
     using sbt = std::istreambuf_iterator<char>;
     std::istringstream vec{"\n\nfoo"};
     auto stream_view = std::ranges::subrange<decltype(sbt{vec}), decltype(sbt{})> {sbt{vec}, sbt{}};
-    EXPECT_EQ("", std::string(stream_view | view::take_line));
-    EXPECT_EQ("foo", std::string(stream_view | view::take_line));
+    EXPECT_EQ("", stream_view | view::take_line | std::ranges::to<std::string>);
+    EXPECT_EQ("foo", stream_view | view::take_line | std::ranges::to<std::string>);
 }
 
 TEST(view_take_line, concepts)

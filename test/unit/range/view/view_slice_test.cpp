@@ -35,32 +35,32 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
     // pipe notation
     auto v = vec | adaptor(1, 4);
-    EXPECT_EQ("oob", std::string(v));
+    EXPECT_EQ("oob", v | std::ranges::to<std::string>);
 
     // function notation
-    std::string v2{adaptor(vec, 1, 4)};
+    std::string v2{adaptor(vec, 1, 4) | std::ranges::to<std::string>};
     EXPECT_EQ("oob", v2);
 
     // combinability
     auto v3 = vec | adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
-    EXPECT_EQ("o", std::string(v3));
-    std::string v3b = vec | std::view::reverse | adaptor(1, 4) | ranges::view::unique;
+    EXPECT_EQ("o", v3 | std::ranges::to<std::string>);
+    std::string v3b = vec | std::view::reverse | adaptor(1, 4) | ranges::view::unique | std::ranges::to<std::string>;
     EXPECT_EQ("abo", v3b);
 
     // store arg
     auto a0 = adaptor(1, 4);
     auto v4 = vec | a0;
-    EXPECT_EQ("oob", std::string(v4));
+    EXPECT_EQ("oob", v4 | std::ranges::to<std::string>);
 
     // store combined
     auto a1 = adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
     auto v5 = vec | a1;
-    EXPECT_EQ("o", std::string(v5));
+    EXPECT_EQ("o", v5 | std::ranges::to<std::string>);
 
     // store combined in middle
     auto a2 = std::view::reverse | adaptor(1, 4) | ranges::view::unique;
     auto v6 = vec | a2;
-    EXPECT_EQ("abo", std::string(v6));
+    EXPECT_EQ("abo", v6 | std::ranges::to<std::string>);
 }
 
 template <typename adaptor_t>
@@ -122,7 +122,8 @@ TEST(view_slice, underlying_is_shorter)
     EXPECT_NO_THROW(( view::slice(vec, 1, 4) )); // no parsing
 
     std::string v;
-    EXPECT_NO_THROW(( v = vec | view::single_pass_input | view::slice(1, 4) )); // full parsing on conversion
+    // full parsing on conversion
+    EXPECT_NO_THROW(( v = vec | view::single_pass_input | view::slice(1, 4) | std::ranges::to<std::string> ));
     EXPECT_EQ("oob", v);
 }
 

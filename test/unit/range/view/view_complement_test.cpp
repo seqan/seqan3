@@ -22,29 +22,29 @@ TEST(view_complement, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation
-    dna5_vector v = foo | view::complement;
+    dna5_vector v = foo | view::complement | std::ranges::to<std::vector>;
     EXPECT_EQ(v, "TGCAT"_dna5);
 
     // function notation
-    dna5_vector v2(view::complement(foo));
+    dna5_vector v2(view::complement(foo) | std::ranges::to<std::vector>);
     EXPECT_EQ(v2, "TGCAT"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::complement | std::view::reverse;
+    dna5_vector v3 = foo | view::complement | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v3, "TACGT"_dna5);
 
     dna5_vector const bar{"ACGTA"_dna5};
 
     // const pipe notation
-    dna5_vector v4 = bar | view::complement;
+    dna5_vector v4 = bar | view::complement | std::ranges::to<std::vector>;
     EXPECT_EQ(v4, "TGCAT"_dna5);
 
     // const function notation
-    dna5_vector v5(view::complement(bar));
+    dna5_vector v5(view::complement(bar) | std::ranges::to<std::vector>);
     EXPECT_EQ(v5, "TGCAT"_dna5);
 
     // const combinability
-    dna5_vector v6 = bar | view::complement | std::view::reverse;
+    dna5_vector v6 = bar | view::complement | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v6, "TACGT"_dna5);
 }
 

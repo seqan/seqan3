@@ -34,19 +34,19 @@ TEST(view_deep_reverse, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | view::deep{std::view::reverse};
+    dna5_vector v0 = foo | view::deep{std::view::reverse} | std::ranges::to<std::vector>;
     EXPECT_EQ(v0, "ATGCA"_dna5);
 
     // pipe notation
-    dna5_vector v = foo | view::deep_reverse;
+    dna5_vector v = foo | view::deep_reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v, "ATGCA"_dna5);
 
     // function notation
-    dna5_vector v2(view::deep_reverse(foo));
+    dna5_vector v2(view::deep_reverse(foo) | std::ranges::to<std::vector>);
     EXPECT_EQ(v2, "ATGCA"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_reverse | std::view::reverse;
+    dna5_vector v3 = foo | view::deep_reverse | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v3, "ACGTA"_dna5);
 }
 
@@ -106,19 +106,19 @@ TEST(view_deep_take, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | view::deep{ranges::view::take}(2);
+    dna5_vector v0 = foo | view::deep{ranges::view::take}(2) | std::ranges::to<std::vector>;
     EXPECT_EQ(v0, "AC"_dna5);
 
     // pipe notation
-    dna5_vector v = foo | view::deep_take(2);
+    dna5_vector v = foo | view::deep_take(2) | std::ranges::to<std::vector>;
     EXPECT_EQ(v, "AC"_dna5);
 
     // function notation
-    dna5_vector v2(view::deep_take(foo, 2));
+    dna5_vector v2(view::deep_take(foo, 2) | std::ranges::to<std::vector>);
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_take(2) | std::view::reverse;
+    dna5_vector v3 = foo | view::deep_take(2) | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 
@@ -151,19 +151,19 @@ TEST(view_deep_take2, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | view::deep{ranges::view::take(2)};
+    dna5_vector v0 = foo | view::deep{ranges::view::take(2)} | std::ranges::to<std::vector>;
     EXPECT_EQ(v0, "AC"_dna5);
 
     // pipe notation
-    dna5_vector v = foo | view::deep_take2;
+    dna5_vector v = foo | view::deep_take2 | std::ranges::to<std::vector>;
     EXPECT_EQ(v, "AC"_dna5);
 
     // function notation
-    dna5_vector v2(view::deep_take2(foo));
+    dna5_vector v2(view::deep_take2(foo) | std::ranges::to<std::vector>);
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_take2 | std::view::reverse;
+    dna5_vector v3 = foo | view::deep_take2 | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 

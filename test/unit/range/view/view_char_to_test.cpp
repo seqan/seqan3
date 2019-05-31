@@ -23,16 +23,16 @@ TEST(view_char_to, basic)
     dna5_vector cmp{"ACTTTGATA"_dna5};
 
     // pipe notation
-    dna5_vector v = vec | view::char_to<dna5>;
+    dna5_vector v = vec | view::char_to<dna5> | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    dna5_vector v2(view::char_to<dna5>(vec));
+    dna5_vector v2(view::char_to<dna5>(vec) | std::ranges::to<std::vector>);
     EXPECT_EQ(cmp, v2);
 
     // combinability
     dna5_vector cmp2{"ATAGTTTCA"_dna5};
-    dna5_vector v3 = vec | view::char_to<dna5> | std::view::reverse;
+    dna5_vector v3 = vec | view::char_to<dna5> | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp2, v3);
 }
 
@@ -40,7 +40,7 @@ TEST(view_char_to, deep_view)
 {
     std::vector<std::string> foo{"ACGTA", "TGCAT"};
 
-    std::vector<dna5_vector> v = foo | view::char_to<dna5>;
+    std::vector<dna5_vector> v = foo | view::char_to<dna5> | std::ranges::to<std::vector<dna5_vector>>;
 
     ASSERT_EQ(size(v), 2u);
     EXPECT_TRUE((std::ranges::equal(v[0], "ACGTA"_dna5)));

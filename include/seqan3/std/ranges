@@ -218,7 +218,13 @@ using SEQAN3_DOXYGEN_ONLY(cend =) ::ranges::cend;
 */
 template <typename urng_t>
 using view_interface = ::ranges::view_interface<urng_t>;
+
+/*!\typedef std::ranges::to
+ * \brief Alias for ranges::to.
+ */
+using SEQAN3_DOXYGEN_ONLY(to =) ::ranges::_to_::to;
 //!\}
+
 } // namespace std::ranges
 
 // -----------------------------------------------------------------------------------------------------

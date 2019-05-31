@@ -19,25 +19,25 @@ TEST(kmer_hash, view)
 {
     {
         std::vector<dna4> text{"AAAAA"_dna4};
-        std::vector<size_t> hashes = text | view::kmer_hash(3);
+        std::vector<size_t> hashes = text | view::kmer_hash(3) | std::ranges::to<std::vector>;
         std::vector<size_t> expected{0,0,0};
         EXPECT_EQ(expected, hashes);
     }
     {
         std::vector<dna4> text{"ACGTAGC"_dna4};
-        std::vector<size_t> hashes = text | view::kmer_hash(3);
+        std::vector<size_t> hashes = text | view::kmer_hash(3) | std::ranges::to<std::vector>;
         std::vector<size_t> expected{6,27,44,50,9};
         EXPECT_EQ(expected, hashes);
     }
     {
         std::vector<dna4> text{"AC"_dna4};
-        std::vector<size_t> hashes = text | view::kmer_hash(3);
+        std::vector<size_t> hashes = text | view::kmer_hash(3) | std::ranges::to<std::vector>;
         std::vector<size_t> expected{};
         EXPECT_EQ(expected, hashes);
     }
     {
         bitcompressed_vector<dna4> text{"ACGTAGC"_dna4};
-        std::vector<size_t> hashes = text | view::kmer_hash(3);
+        std::vector<size_t> hashes = text | view::kmer_hash(3) | std::ranges::to<std::vector>;
         std::vector<size_t> expected{6,27,44,50,9};
         EXPECT_EQ(expected, hashes);
     }
@@ -47,25 +47,25 @@ TEST(kmer_hash, const_view)
 {
     {
         std::vector<dna4> const text{"AAAAA"_dna4};
-        std::vector<size_t> hashes = text | view::kmer_hash(3);
+        std::vector<size_t> hashes = text | view::kmer_hash(3) | std::ranges::to<std::vector>;
         std::vector<size_t> expected{0,0,0};
         EXPECT_EQ(expected, hashes);
     }
     {
         std::vector<dna4> const text{"ACGTAGC"_dna4};
-        std::vector<size_t> hashes = text | view::kmer_hash(3);
+        std::vector<size_t> hashes = text | view::kmer_hash(3) | std::ranges::to<std::vector>;
         std::vector<size_t> expected{6,27,44,50,9};
         EXPECT_EQ(expected, hashes);
     }
     {
         std::vector<dna4> const text{"AC"_dna4};
-        std::vector<size_t> hashes = text | view::kmer_hash(3);
+        std::vector<size_t> hashes = text | view::kmer_hash(3) | std::ranges::to<std::vector>;
         std::vector<size_t> expected{};
         EXPECT_EQ(expected, hashes);
     }
     {
         bitcompressed_vector<dna4> const text{"ACGTAGC"_dna4};
-        std::vector<size_t> hashes = text | view::kmer_hash(3);
+        std::vector<size_t> hashes = text | view::kmer_hash(3) | std::ranges::to<std::vector>;
         std::vector<size_t> expected{6,27,44,50,9};
         EXPECT_EQ(expected, hashes);
     }
