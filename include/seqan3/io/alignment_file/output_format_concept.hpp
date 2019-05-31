@@ -66,7 +66,7 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
               std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>>      & align,
               uint16_t                                                             & flag,
               uint8_t                                                              & mapq,
-              std::tuple<std::optional<int32_t>, std::optional<int32_t>, uint32_t> & mate,
+              std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>  & mate,
               sam_tag_dictionary                                                   & tag_dict,
               double                                                               & e_value,
               double                                                               & bit_score)
