@@ -22,6 +22,7 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/misc.hpp>
@@ -181,7 +182,7 @@ template <detail::Fields selected_field_ids_ =
                      field::EVALUE,
                      field::BIT_SCORE,
                      field::HEADER_PTR>,
-          detail::TypeListOfAlignmentFileOutputFormats valid_formats_ = type_list<format_sam/*, format_bam,*/>,
+          detail::TypeListOfAlignmentFileOutputFormats valid_formats_ = type_list<format_sam, format_bam>,
           char_concept stream_char_type_ = char,
           typename ref_ids_type = ref_info_not_given>
 class alignment_file_output
@@ -795,7 +796,7 @@ protected:
  * seqan3::detail::ref_info_not_given. Valid formats and stream_char_type are defaulted.
  */
 template <detail::Fields    selected_field_ids>
-alignment_file_output(std::filesystem::path &&, selected_field_ids const &)
+alignment_file_output(std::filesystem::path, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              typename alignment_file_output<>::valid_formats,
                              typename alignment_file_output<>::stream_char_type,
@@ -825,11 +826,33 @@ alignment_file_output(stream_type &, file_format const &, selected_field_ids con
                              typename std::remove_reference_t<stream_type>::char_type,
                              ref_info_not_given>;
 
+/*!\brief Deduces the valid format and the stream_char_type from input and
+ * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
+ */
+template <OStream2                  stream_type,
+          AlignmentFileOutputFormat file_format>
+alignment_file_output(stream_type &&, file_format const &)
+    -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
+                             type_list<file_format>,
+                             typename std::remove_reference_t<stream_type>::char_type,
+                             ref_info_not_given>;
+
+/*!\brief Deduces the valid format and the stream_char_type from input and
+ * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
+ */
+template <OStream2                  stream_type,
+          AlignmentFileOutputFormat file_format>
+alignment_file_output(stream_type &, file_format const &)
+    -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
+                             type_list<file_format>,
+                             typename std::remove_reference_t<stream_type>::char_type,
+                             ref_info_not_given>;
+
 //!\brief Deduces selected_field_ids and ref_ids_type from input. Valid formats and stream_char_type are defaulted.
 template <detail::Fields    selected_field_ids,
           std::ranges::ForwardRange ref_ids_type,
           std::ranges::ForwardRange ref_lengths_type>
-alignment_file_output(std::filesystem::path &&,
+alignment_file_output(std::filesystem::path const &,
                       ref_ids_type &&,
                       ref_lengths_type &&,
                       selected_field_ids const &)
@@ -841,7 +864,7 @@ alignment_file_output(std::filesystem::path &&,
 //!\brief Deduces ref_ids_type from input. Valid formats, selected_field_ids and stream_char_type are defaulted.
 template <std::ranges::ForwardRange ref_ids_type,
           std::ranges::ForwardRange ref_lengths_type>
-alignment_file_output(std::filesystem::path &&,
+alignment_file_output(std::filesystem::path const &,
                       ref_ids_type &&,
                       ref_lengths_type &&)
     -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,

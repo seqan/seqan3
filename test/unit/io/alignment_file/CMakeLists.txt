@@ -1,4 +1,5 @@
 seqan3_test(sam_tag_dictionary_test.cpp)
+seqan3_test(format_bam_test.cpp)
 seqan3_test(format_sam_test.cpp)
 seqan3_test(alignment_file_output_test.cpp)
 seqan3_test(alignment_file_input_test.cpp)

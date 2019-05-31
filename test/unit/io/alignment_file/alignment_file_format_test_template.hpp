@@ -9,8 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
 #include <seqan3/io/alignment_file/output_format_concept.hpp>
@@ -152,7 +150,7 @@ TYPED_TEST_P(alignment_file_read, header_sucess)
                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore));
 
-    EXPECT_EQ(header.format_version, "1.0");
+    EXPECT_EQ(header.format_version, "1.6");
     EXPECT_EQ(header.sorting, "coordinate");
     EXPECT_EQ(header.subsorting, "coordinate:queryname");
     EXPECT_EQ(header.grouping, "none");
@@ -189,7 +187,10 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
     detail::alignment_file_input_format<TypeParam> format;
     typename TestFixture::stream_type istream{this->verbose_reads_input};
 
+    this->tag_dicts[0]["NM"_tag] = -7;
     this->tag_dicts[0]["AS"_tag] = 2;
+    this->tag_dicts[0]["CC"_tag] = 300;
+    this->tag_dicts[0]["cc"_tag] = -300;
     this->tag_dicts[0]["aa"_tag] = 'c';
     this->tag_dicts[0]["ff"_tag] = 3.1f;
     this->tag_dicts[0]["zz"_tag] = "str";
@@ -296,13 +297,10 @@ TYPED_TEST_P(alignment_file_read, read_in_nothing)
     }
 }
 
-TYPED_TEST_P(alignment_file_read, read_in_alignment_only)
+TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 {
-    using dummy_type = gap_decorator_anchor_set<decltype(ranges::view::repeat_n(dna5{}, size_t{}) |
-                                                         std::view::transform(detail::access_restrictor_fn{}))>;
     std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
     std::optional<int32_t> ref_id_in;
-    std::pair<dummy_type, std::vector<gapped<dna5>>> alignment2;
 
     {
         detail::alignment_file_input_format<TypeParam> format;
@@ -319,11 +317,31 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only)
 
             alignment = std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>{}; // reset
             ref_id_in = 0;
-
         }
     }
 
-    /*no reference information*/
+    {   // empty cigar
+        detail::alignment_file_input_format<TypeParam> format;
+        typename TestFixture::stream_type istream{this->empty_cigar};
+        std::istringstream istream_empty_cigar{};
+
+
+        ASSERT_NO_THROW(format.read(istream, input_options, this->ref_sequences, this->header, std::ignore, std::ignore,
+                                    std::ignore, std::ignore, std::ignore, ref_id_in, std::ignore, alignment,
+                                    std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore));
+
+        EXPECT_TRUE(std::ranges::empty(get<0>(alignment)));
+        EXPECT_TRUE(std::ranges::empty(get<1>(alignment)));
+    }
+}
+
+TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
+{
+    using dummy_type = gap_decorator_anchor_set<decltype(view::repeat_n(dna5{}, size_t{}) |
+                                                         std::view::transform(detail::access_restrictor_fn{}))>;
+    std::optional<int32_t> ref_id_in;
+    std::pair<dummy_type, std::vector<gapped<dna5>>> alignment2;
+
     {
         detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
@@ -342,23 +360,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only)
         }
     }
 
-    /*no alignment information because cigar is empty*/
-
-    {   // with reference sequence information
-        detail::alignment_file_input_format<TypeParam> format;
-        typename TestFixture::stream_type istream{this->empty_cigar};
-        std::istringstream istream_empty_cigar();
-
-
-        ASSERT_NO_THROW(format.read(istream, input_options, this->ref_sequences, this->header, std::ignore, std::ignore,
-                                    std::ignore, std::ignore, std::ignore, ref_id_in, std::ignore, alignment,
-                                    std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore));
-
-        EXPECT_TRUE(std::ranges::empty(get<0>(alignment)));
-        EXPECT_TRUE(std::ranges::empty(get<1>(alignment)));
-    }
-
-    {   // without reference sequence information
+    {   // empty cigar
         detail::alignment_file_input_format<TypeParam> format;
         typename TestFixture::stream_type istream{this->empty_cigar};
         alignment_file_header<> default_header{};
@@ -372,7 +374,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only)
     }
 }
 
-TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id)
+TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_with_ref)
 {
     std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate;
 
@@ -391,6 +393,11 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id)
             mate = std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>{};
         }
     }
+}
+
+TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
+{
+    std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate;
 
     {   /*no reference information*/
         detail::alignment_file_input_format<TypeParam> format;
@@ -411,7 +418,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id)
 
 TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_information)
 {
-    using dummy_type = gap_decorator_anchor_set<decltype(ranges::view::repeat_n(dna5{}, size_t{}) |
+    using dummy_type = gap_decorator_anchor_set<decltype(view::repeat_n(dna5{}, size_t{}) |
                                                          std::view::transform(detail::access_restrictor_fn{}))>;
     std::optional<int32_t> ref_id_in;
     std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
@@ -493,9 +500,20 @@ TYPED_TEST_P(alignment_file_write, with_header)
     header.read_groups.emplace_back("group1", "more info");
     header.comments.push_back("This is a comment.");
 
-    this->tag_dicts[0]["NM"_tag] = 7;
+    this->tag_dicts[0]["NM"_tag] = -7;
     this->tag_dicts[0]["AS"_tag] = 2;
-    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
+    this->tag_dicts[0]["CC"_tag] = 300;
+    this->tag_dicts[0]["cc"_tag] = -300;
+    this->tag_dicts[0]["aa"_tag] = 'c';
+    this->tag_dicts[0]["ff"_tag] = 3.1f;
+    this->tag_dicts[0]["zz"_tag] = "str";
+    this->tag_dicts[1]["bc"_tag] = std::vector<int8_t>{-3};
+    this->tag_dicts[1]["bC"_tag] = std::vector<uint8_t>{3u, 200u};
+    this->tag_dicts[1]["bs"_tag] = std::vector<int16_t>{-3, 200, -300};
+    this->tag_dicts[1]["bS"_tag] = std::vector<uint16_t>{300u, 40u, 500u};
+    this->tag_dicts[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
+    this->tag_dicts[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
+    this->tag_dicts[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
 
     for (size_t i = 0; i < 3; ++i)
         ASSERT_NO_THROW(format.write(ostream, output_options, header, this->seqs[i], this->quals[i], this->ids[i],
@@ -533,10 +551,10 @@ TYPED_TEST_P(alignment_file_write, special_cases)
     // write the ref id and mate ref as string
     std::tuple<std::string, std::optional<int32_t>, int32_t> mate_str{"", rid, 0};
 
-    EXPECT_NO_THROW(format.write(ostream, output_options, header, this->seqs[0], this->quals[0], this->ids[0],
+    /*EXPECT_NO_THROW(*/format.write(ostream, output_options, header, this->seqs[0], this->quals[0], this->ids[0],
                                  this->offsets[0], std::string{}, std::string(""), this->ref_offsets[0],
                                  this->alignments[0], this->flags[0], this->mapqs[0], mate_str,
-                                 this->tag_dicts[0], 0, 0));
+                                 this->tag_dicts[0], 0, 0)/*)*/;
     ostream.flush();
     EXPECT_EQ(ostream.str(), this->special_output);
 }
@@ -570,8 +588,10 @@ REGISTER_TYPED_TEST_CASE_P(alignment_file_read,
                            read_in_all_data,
                            read_in_all_but_empty_data,
                            read_in_nothing,
-                           read_in_alignment_only,
-                           read_mate_but_not_ref_id,
+                           read_in_alignment_only_with_ref,
+                           read_in_alignment_only_without_ref,
+                           read_mate_but_not_ref_id_with_ref,
+                           read_mate_but_not_ref_id_without_ref,
                            format_error_ref_id_not_in_reference_information);
 
 REGISTER_TYPED_TEST_CASE_P(alignment_file_write,

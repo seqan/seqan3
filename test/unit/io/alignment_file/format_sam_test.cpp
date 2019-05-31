@@ -19,7 +19,7 @@ struct alignment_file_read<format_sam> : public alignment_file_data
 	using stream_type = std::istringstream;
 
     std::string big_header_input{
-R"(@HD	VN:1.0	SO:coordinate	SS:coordinate:queryname	GO:none
+R"(@HD	VN:1.6	SO:coordinate	SS:coordinate:queryname	GO:none
 @PG	ID:qc	PN:quality_control	CL:qc -f file1	DS:trim reads with low qual	VN:1.0.0
 @PG	ID:novoalign	PN:novoalign	VN:V3.02.07	CL:novoalign -d /path/hs37d5.ndx -f /path/file.fastq.gz	PP:qc
 @SQ	SN:ref	LN:249250621
@@ -38,7 +38,13 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
 )"};
 
     std::string verbose_reads_input{
-        "read1\t41\tref\t1\t61\t1S1M1D1M1I\t=\t10\t300\tACGT\t!##$\taa:A:c\tAS:i:2\tff:f:3.1\tzz:Z:str\n"
+        "read1\t41\tref\t1\t61\t1S1M1D1M1I\t=\t10\t300\tACGT\t!##$\taa:A:c"
+                                                                 "\tNM:i:-7"
+                                                                 "\tAS:i:2"
+                                                                 "\tff:f:3.1"
+                                                                 "\tzz:Z:str"
+                                                                 "\tCC:i:300"
+                                                                 "\tcc:i:-300\n"
         "read2\t42\tref\t2\t62\t1H7M1D1M1S\tref\t10\t300\tAGGCTGNAG\t!##$&'()*\tbc:B:c,-3"
                                                                              "\tbC:B:C,3,200"
                                                                              "\tbs:B:s,-3,200,-300"
@@ -52,7 +58,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
 
     std::string empty_cigar{"read1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\n"};
 
-    std::string unknown_ref{"*\t0\tunknown_ref\t1\t0\t4M\t*\t0\t0\tAAAA\t*\n"};
+    std::string unknown_ref{"read1\t41\traf\t1\t61\t1S1M1D1M1I\t=\t10\t300\tACGT\t!##$\taa:A:c\tAS:i:2\tff:f:3.1\tzz:Z:str\n"};
 
     std::string unknown_ref_header{"@HD\tVN:1.6\n@SQ\tSN:ref\tLN:34\n*\t0\tunknown_ref\t1\t0\t4M\t*\t0\t0\tAAAA\t*\n"};
 
@@ -60,7 +66,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
     // formatted output
     // -----------------------------------------------------------------------------------------------------------------
 
-    std::string simple_three_reads_output{ // mate ref id is not '=' for write comparison, no hard clipping
+    std::string simple_three_reads_output{ // mate ref id is not '=' for write comparison, no hard clipping and no hard clipping
 R"(@HD	VN:1.6
 @SQ	SN:ref	LN:34
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
@@ -74,8 +80,8 @@ R"(@HD	VN:1.6	SO:unknown	GO:none
 @RG	ID:group1	more info
 @PG	ID:prog1	PN:cool_program	CL:./prog1	PP:a	DS:b	VN:c
 @CO	This is a comment.
-read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
-read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
+read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	CC:i:300	NM:i:-7	aa:A:c	cc:i:-300	ff:f:3.1	zz:Z:str
+read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	bC:B:C,3,200	bI:B:I,294967296	bS:B:S,300,40,500	bc:B:c,-3	bf:B:f,3.5,0.1,43.8	bi:B:i,-3,200,-66000	bs:B:s,-3,200,-300
 read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )"};
 

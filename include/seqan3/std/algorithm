@@ -22,6 +22,7 @@
 #ifndef __cpp_lib_ranges  // If not C++20 ranges available, implement via range-v3.
 
 #include <range/v3/algorithm/copy.hpp>
+#include <range/v3/algorithm/copy_n.hpp>
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/algorithm/fill.hpp>
 #include <range/v3/algorithm/find_if_not.hpp>
@@ -41,6 +42,11 @@ namespace std::ranges
  * \brief Alias for ranges::copy. Copies a range of elements to a new location.
  */
 using SEQAN3_DOXYGEN_ONLY(copy =) ::ranges::copy;
+
+/*!\typedef std::ranges::copy_n
+ * \brief Alias for ranges::copy_n. Copies a range of exactly n elements to a new location.
+ */
+using SEQAN3_DOXYGEN_ONLY(copy_n =) ::ranges::copy_n;
 
 /*!\typedef std::ranges::equal
 * \brief Alias for ranges::equal. Determines if two sets of elements are the same.

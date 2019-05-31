@@ -18,8 +18,6 @@
 #include <variant>
 #include <vector>
 
-#include <range/v3/view/repeat_n.hpp>
-
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
@@ -29,6 +27,7 @@
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
+#include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/misc.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
@@ -39,6 +38,7 @@
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
+#include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
@@ -156,7 +156,7 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
     // Type of tuple entry 1 (reference) is set to
     // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
-    // ranges::view::repeat_n(sequence_alphabet{}, size_t{}) | std::view::transform(detail::access_restrictor_fn{})
+    // view::repeat_n(sequence_alphabet{}, size_t{}) | std::view::transform(detail::access_restrictor_fn{})
     // Type of tuple entry 2 (query) is set to
     // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
@@ -382,7 +382,7 @@ template <
                                                                               field::EVALUE,
                                                                               field::BIT_SCORE,
                                                                               field::HEADER_PTR>,
-    detail::TypeListOfAlignmentFileInputFormats  valid_formats_    = type_list<format_sam>,
+    detail::TypeListOfAlignmentFileInputFormats  valid_formats_    = type_list<format_sam, format_bam>,
     std::Integral                                stream_char_type_ = char>
 class alignment_file_input
 {
@@ -403,7 +403,7 @@ public:
 
 private:
     //!\brief The dummy ref sequence type if no reference information were given.
-    using dummy_ref_type = decltype(ranges::view::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
+    using dummy_ref_type = decltype(view::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
                                     std::view::transform(detail::access_restrictor_fn{}));
 public:
     /*!\name Field types and record type
@@ -1003,6 +1003,26 @@ alignment_file_input(stream_type & stream,
                      selected_field_ids const &)
     -> alignment_file_input<typename alignment_file_input<>::traits_type,       // actually use the default
                             selected_field_ids,
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_type>::char_type>;
+
+//!\brief Deduce file_format and stream char type, default the rest.
+template <IStream2                 stream_type,
+          AlignmentFileInputFormat file_format>
+alignment_file_input(stream_type && stream,
+                     file_format const &)
+    -> alignment_file_input<typename alignment_file_input<>::traits_type,        // actually use the default
+                            typename alignment_file_input<>::selected_field_ids, // actually use the default
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_type>::char_type>;
+
+//!\brief Deduce file_format and stream char type, default the rest.
+template <IStream2                 stream_type,
+          AlignmentFileInputFormat file_format>
+alignment_file_input(stream_type & stream,
+                     file_format const &)
+    -> alignment_file_input<typename alignment_file_input<>::traits_type,        // actually use the default
+                            typename alignment_file_input<>::selected_field_ids, // actually use the default
                             type_list<file_format>,
                             typename std::remove_reference_t<stream_type>::char_type>;
 
