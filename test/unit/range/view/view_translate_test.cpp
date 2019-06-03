@@ -18,12 +18,11 @@
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/complement.hpp>
-#include <seqan3/range/view/translation.hpp>
+#include <seqan3/range/view/translate.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;
-// using namespace seqan3::view;
 
 template <typename T>
 class nucleotide : public ::testing::Test
@@ -37,9 +36,10 @@ TYPED_TEST_CASE(nucleotide, nucleotide_types);
 TYPED_TEST(nucleotide, view_translate_single)
 {
     std::string const in{"ACGTACGTACGTA"};
-    std::vector<TypeParam> vec = in | view::char_to<TypeParam> | std::ranges::to<std::vector>;
+    std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
     aa27_vector cmp1{"TYVR"_aa27};
     aa27_vector cmp2{"CMHA"_aa27};
+    aa27_vector cmp3{"AHMC"_aa27};
 
     // default parameter translation_frames
     auto v1 = vec | view::translate_single;
@@ -65,6 +65,11 @@ TYPED_TEST(nucleotide, view_translate_single)
     auto v5 = vec | view::complement | view::translate_single(translation_frames::FWD_FRAME_0);
     // == [C,M,H,A]
     EXPECT_TRUE((std::ranges::equal(v5, cmp2)));
+
+    // combinability
+    auto v6 = vec | view::complement | view::translate_single(translation_frames::FWD_FRAME_0) | std::view::reverse;
+    // == [A,H,M,C]
+    EXPECT_TRUE((std::ranges::equal(v6, cmp3)));
 }
 
 TYPED_TEST(nucleotide, view_translate)
@@ -164,9 +169,9 @@ TYPED_TEST(nucleotide, view_translate_single_container_conversion)
     aa27_vector cmp1{"TYVR"_aa27};
 
     // default parameter translation_frames
-    auto v1 = vec | view::translate_single;
+    auto v1 = vec | view::translate_single | std::ranges::to<std::vector>;
     // == [T,Y,V,R]
-    EXPECT_EQ(std::vector<aa27>(v1), cmp1);
+    EXPECT_EQ(std::vector<aa27>(v1) , cmp1);
 }
 
 TYPED_TEST(nucleotide, view_translate_container_conversion)
@@ -180,10 +185,9 @@ TYPED_TEST(nucleotide, view_translate_container_conversion)
     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
     EXPECT_EQ(v1.size(), cmp1.size());
     for (unsigned i = 0; i < v1.size(); i++)
-        EXPECT_EQ(std::vector<std::vector<aa27> >(v1), cmp1);
+        EXPECT_EQ(v1[i] | std::ranges::to<std::vector>, cmp1[i]);
 
-    for (unsigned i = 0; i < v1.size(); i++)
-        EXPECT_TRUE(concatenated_sequences<std::vector<aa27> >(v1) == cmp1);
+    EXPECT_TRUE(concatenated_sequences<std::vector<aa27> >(v1) == cmp1);
 }
 
 TYPED_TEST(nucleotide, view_translate_single_concepts)

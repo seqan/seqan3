@@ -29,7 +29,7 @@
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/to_rank.hpp>
-#include <seqan3/range/view/translation.hpp>
+#include <seqan3/range/view/translate.hpp>
 #include <seqan3/range/view/trim.hpp>
 
 /*!\defgroup view View
