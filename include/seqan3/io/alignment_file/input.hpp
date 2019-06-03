@@ -94,7 +94,7 @@ namespace seqan3
  */
 /*!\typedef using ref_sequences
  * \brief The type of range over reference sequences; must model std::ranges::ForwardRange,
- *        the value_type mus also model std::ranges::ForwardRange, and the value type of the value type
+ *        the value_type must also model std::ranges::ForwardRange, and the value type of the value type
  *        must model seqan3::Alphabet (e.g. std::vector<std::vector<dna4>>).
  *
  * \attention This type is the first template parameter of the alignment_file_default_traits and should not be manually
@@ -103,7 +103,7 @@ namespace seqan3
  */
 /*!\typedef using ref_ids
  * \brief The type of range over reference sequences; must model std::ranges::ForwardRange,
- *        the value_type mus also model std::ranges::ForwardRange, and the value type of the value type
+ *        the value_type must also model std::ranges::ForwardRange, and the value type of the value type
  *        must model seqan3::Alphabet (e.g. std::vector<string>).
  *
  * \attention This type is the second template parameter of the alignment_file_default_traits and should not be manually

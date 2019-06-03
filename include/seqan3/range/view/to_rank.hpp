@@ -59,7 +59,7 @@ namespace seqan3::view
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * \par Example
+ * ###Example
  * \snippet test/snippet/range/view/rank_char.cpp to_rank
  * We also convert to unsigned here, because the seqan3::alphabet_rank_t is often `uint8_t` which is
  * often implemented as `unsigned char` and thus will not be printed as a number by default.

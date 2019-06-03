@@ -44,7 +44,7 @@ namespace seqan3
  *     (((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).
  *```
  *
- * \par Usage
+ * ###Usage
  * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stderr.
  * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp general
  */

@@ -24,7 +24,7 @@
  * \brief Contains the amino acid alphabets and functionality for translation from nucleotide.
  * \ingroup alphabet
  *
- * \par Introduction
+ * ###Introduction
  * Amino acid sequences are an important part of bioinformatic data processing and used by many applications
  * and while it is possible to represent them in a regular std::string, it makes sense to have specialised data
  * structures in most cases. This sub-module offers the 27 letter aminoacid alphabet as well as three reduced versions
@@ -34,7 +34,7 @@
  * allow a more generic usage for example in case of ambiguous amino acids (e.g. J which means either Isoleucine or
  * Leucine). See also https://en.wikipedia.org/wiki/Amino_acid for more information about the amino acid alphabet.
  *
- * \par Conversions
+ * ###Conversions
  * | Amino acid name            | Three letter code | One letter code | Remapped in\n seqan3::aa20      | Remapped in\n seqan3::aa10murphy | Remapped in\n seqan3::aa10li     |
  * |----------------------------|-------------------|-----------------|---------------------------------|----------------------------------|----------------------------------|
  * |    Alanine                 | Ala               | A               | A                               | A                                | A                                |

@@ -49,7 +49,7 @@ namespace seqan3
  * <<<<_AAAA____>>>>aaaa
  *```
  *
- * \par Usage
+ * ###Usage
  * The following code example creates a wuss vector, modifies it, and prints the result to stderr.
  * \snippet test/snippet/alphabet/structure/wuss.cpp general
  */

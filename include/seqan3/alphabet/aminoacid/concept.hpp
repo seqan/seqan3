@@ -55,7 +55,7 @@ constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
  * function for nucleotide alphabets), we distinguish an amino acid alphabet by
  * the seqan3::is_aminoacid metafunction.
  *
- * \par Concepts and doxygen
+ * ###Concepts and doxygen
  * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".
  */

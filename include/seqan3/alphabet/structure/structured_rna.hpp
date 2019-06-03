@@ -133,9 +133,9 @@ public:
      * See \ref nucleotide for the actual values.
      * Satisfies the seqan3::NucleotideAlphabet::complement() requirement via the seqan3::complement() wrapper.
      * The structure letter is not modified.
-     * \par Complexity
+     * ###Complexity
      * Constant.
-     * \par Exceptions
+     * ###Exceptions
      * Guaranteed not to throw.
      */
     constexpr structured_rna complement() const noexcept

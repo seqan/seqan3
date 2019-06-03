@@ -38,7 +38,7 @@ namespace seqan3::detail
 
 /*!\brief Evaluates to true if the one of the alternatives of the seqan3::alphabet_variant satisifes a compile-time
  *        predicate.
- * \tparam variantt_t A specialisation of seqan3::alphabet_variant.
+ * \tparam variant_t A specialisation of seqan3::alphabet_variant.
  * \tparam fun_t    A template template that takes target_t as argument and exposes an `invoke` member type that
  *                  evaluates some predicate and returns `std::true_type` or `std::false_type`.
  * \tparam target_t The type you wish query.

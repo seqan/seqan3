@@ -80,7 +80,7 @@ public:
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  short_id  The short identifier for the option (e.g. 'i').
      * \param[in]  long_id   The long identifier for the option (e.g. "integer").
-     * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
+     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
      * \throws seqan3::parser_design_error
@@ -598,7 +598,7 @@ private:
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  short_id  The short identifier for the option (e.g. 'i').
      * \param[in]  long_id   The long identifier for the option (e.g. "integer").
-     * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
+     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
      * \throws seqan3::option_declared_multiple_times
@@ -611,7 +611,7 @@ private:
      * - checks if the option is required but not set,
      * - retrieves any value found by the short or long identifier,
      * - throws on (mis)use of both identifiers for non-container type values,
-     * - re-throws the validation exception with appended option information
+     * - re-throws the validation exception with appended option information.
      */
     template <typename option_type, typename validator_type>
     void get_option(option_type & value,
@@ -687,7 +687,7 @@ private:
      * - retrieves the next(no container type) or all (container type),
      *   remaining non empty value/s in argv,
      * - re-throws the value cast exception with appended positional option information,
-     * - and re-throws the validation exception with appended positional option information
+     * - and re-throws the validation exception with appended positional option information.
      */
     template <typename option_type, typename validator_type>
     void get_positional_option(option_type & value,

@@ -136,11 +136,11 @@ public:
      * Default implementation: True for all character values that are reproduced by #to_char() after being assigned
      * to the alphabet.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */

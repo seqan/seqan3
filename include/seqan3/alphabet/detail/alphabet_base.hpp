@@ -85,11 +85,11 @@ public:
      *
      * Provides an implementation for seqan3::to_char, required to model seqan3::Alphabet.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */
@@ -107,11 +107,11 @@ public:
      *
      * Provides an implementation for seqan3::to_rank, required to model seqan3::Semialphabet.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */
@@ -131,11 +131,11 @@ public:
      *
      * Provides an implementation for seqan3::assign_char_to, required to model seqan3::Alphabet.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */
@@ -156,11 +156,11 @@ public:
      *
      * Provides an implementation for seqan3::assign_rank_to, required to model seqan3::Semialphabet.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */

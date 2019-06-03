@@ -36,18 +36,18 @@ namespace test
  * the associated filesystem directory and all it's contents will be deleted automatically.
  * Hence an instance of this class cannot be copied.
  *
- * \par Example
+ * ###Example
  *
  * ```cpp
  * tmp_filename fn{"my_file"};
  * std::cout << fn.get_path() << std::endl;
  * ```
  *
- * \par Exceptions
+ * ###Exceptions
  *
  * Might throw a std::filesystem::filesystem_error on failure to create a temporary file directory.
  *
- * \par Thread safety
+ * ###Thread safety
  *
  *  According to "https://www.gnu.org/software/libc/manual/html_node/Temporary-Files.html" the call to
  * \a mkdtemp is thread safe, such that creating multiple parallel instances of this class will
@@ -77,7 +77,7 @@ public:
      *
      * The generated file name is unique due to a call to \a mkdtemp.
      *
-     * \par Exceptions
+     * ###Exceptions
      * Might throw std::filesystem::filesystem_error.
      */
     explicit tmp_filename(const char * f_name)

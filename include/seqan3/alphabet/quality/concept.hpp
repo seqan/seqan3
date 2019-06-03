@@ -220,6 +220,7 @@ namespace seqan3
  * In addition to the requirements for seqan3::Alphabet, the
  * QualityAlphabet introduces a requirement for conversion functions from and to
  * a Phred score.
+ * ### Concepts and doxygen
  *
  * ### Requirements
  *

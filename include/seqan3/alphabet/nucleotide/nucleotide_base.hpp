@@ -95,11 +95,11 @@ public:
      *
      * Provides an implementation for seqan3::complement, required to model seqan3::NucleotideAlphabet.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */
@@ -120,11 +120,11 @@ public:
      * **and** true also for U/T respectively, e.g. 'U' is a valid character for seqan3::dna4, because its informational
      * content is identical to 'T'.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */
