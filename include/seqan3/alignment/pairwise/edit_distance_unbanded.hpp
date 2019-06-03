@@ -917,6 +917,8 @@ public:
 template <typename database_t, typename query_t, typename align_config_t, typename traits_t>
 bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::small_patterns()
 {
+    bool abort_computation = false;
+
     // computing the blocks
     while (database_it != database_it_end)
     {
@@ -930,19 +932,14 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
         if constexpr(is_semi_global && !use_max_errors)
             this->update_best_score();
 
+        // updating the last active cell
         if constexpr(use_max_errors)
-        {
-            // updating the last active cell
-            if (this->update_last_active_cell())
-            {
-                add_state();
-                ++database_it;
-                return true;
-            }
-        }
+            abort_computation = this->update_last_active_cell();
 
         add_state();
         ++database_it;
+        if (abort_computation)
+            return true;
     }
 
     return false;
@@ -951,6 +948,8 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 template <typename database_t, typename query_t, typename align_config_t, typename traits_t>
 bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::large_patterns()
 {
+    bool abort_computation = false;
+
     while (database_it != database_it_end)
     {
         compute_state state{};
@@ -989,16 +988,14 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
             }
 
             // updating the last active cell
-            if (this->update_last_active_cell())
-            {
-                add_state();
-                ++database_it;
-                return true;
-            }
+            abort_computation = this->update_last_active_cell();
         }
 
         add_state();
         ++database_it;
+
+        if (abort_computation)
+            return true;
     }
 
     return false;
