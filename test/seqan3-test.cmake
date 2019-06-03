@@ -173,12 +173,15 @@ macro (seqan3_require_benchmark)
     list (APPEND gbenchmark_project_args "-DBENCHMARK_ENABLE_TESTING=false")
     # list (APPEND gbenchmark_project_args "-DBENCHMARK_ENABLE_LTO=true")
 
+    # force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
+    list (APPEND gbenchmark_project_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
+
     include (ExternalProject)
     ExternalProject_Add (
         gbenchmark_project
         PREFIX gbenchmark_project
         GIT_REPOSITORY "https://github.com/google/benchmark.git"
-        GIT_TAG "415835e03e5e78b5c17b450903c553a079214879"
+        GIT_TAG "v1.5.0"
         SOURCE_DIR "${SEQAN3_BENCHMARK_CLONE_DIR}"
         CMAKE_ARGS "${gbenchmark_project_args}"
         UPDATE_DISCONNECTED yes
