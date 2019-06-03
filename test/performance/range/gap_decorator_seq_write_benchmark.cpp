@@ -23,17 +23,6 @@
 
 using namespace seqan3;
 
-
-// Apply benchmarks with custom ranges for grid parameters sequence length and gap proportions
-static void CustomArguments(benchmark::internal::Benchmark* b) {
-    std::array<long long int, 5> gap_percentages = {1, 5, 25, 50, 75};
-    for (long long int seq_len = 4; seq_len <= (1 << 15); seq_len <<= 2)
-    {
-        for (auto gap_percentage : gap_percentages)
-            b->Args({seq_len, gap_percentage});
-    }
-}
-
 // ============================================================================
 //  insert left to right
 // ============================================================================
@@ -49,7 +38,7 @@ static void insert_left2right(benchmark::State& state)
     std::vector<size_type> gaps(seq_len, 0);
 
     // determine sum of gaps and non-gap symbols for not exceeding targeted sequence length
-    if constexpr(gapped_flag)
+    if (gapped_flag)
     {
         sample<size_type>(gaps, seq_len, state.range(1)/100.0);
         resize<size_type, sequence_type>(gaps, seq, seq_len);
@@ -59,7 +48,7 @@ static void insert_left2right(benchmark::State& state)
     assign_unaligned(gap_decorator, seq);
 
     // insert gaps before starting benchmark
-    if constexpr(gapped_flag)
+    if (gapped_flag)
         insert_gaps<gap_decorator_t>(gaps, gap_decorator, seq_len);
 
     auto it = std::ranges::begin(gap_decorator);
@@ -75,6 +64,7 @@ static void insert_left2right(benchmark::State& state)
 // Insert gaps of length 1 from left to right into UNGAPPED sequence
 BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(CustomArguments);
 BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, false)->Apply(CustomArguments);
+
 // Insert gaps of length 1 from left to right into GAPPED sequence
 BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(CustomArguments);
 BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, true)->Apply(CustomArguments);

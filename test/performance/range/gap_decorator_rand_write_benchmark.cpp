@@ -23,16 +23,6 @@
 
 using namespace seqan3;
 
-// Apply benchmarks with custom ranges for grid parameters sequence length and gap proportions
-static void CustomArguments(benchmark::internal::Benchmark* b) {
-    std::array<long long int, 5> gap_percentages = {1, 5, 25, 50, 75};
-    for (long long int seq_len = 4; seq_len <= (1 << 14); seq_len <<= 2)
-    {
-        for (auto gap_percentage : gap_percentages)
-            b->Args({seq_len, gap_percentage});
-    }
-}
-
 // ============================================================================
 //  insert at random position
 // ============================================================================
@@ -67,18 +57,15 @@ static void insert_random(benchmark::State& state)
 
     // presample insert positions
     std::vector<size_t> access_positions;
-    access_positions.resize(1 << 18);
+    access_positions.resize(1 << 10);
     for (size_t i = 0; i < access_positions.size(); ++i)
         access_positions[i] = uni_dis(generator);
     size_t j = 0;
     for (auto _ : state)
     {
-        state.PauseTiming();
         auto it = std::ranges::begin(gap_decorator);
         std::ranges::advance(it, access_positions[j++]);
-        if (j == (1 << 18))
-            j = 0;
-        state.ResumeTiming();
+        j %= 1 << 10;
         insert_gap(gap_decorator, it, 1);
     }
 }
@@ -122,10 +109,14 @@ static void delete_random(benchmark::State& state)
     std::mt19937 generator(time(0)); //Standard mersenne_twister_engine seeded with current time
     std::uniform_real_distribution<> uni_dis{0.0, static_cast<double>(seq_len)};
 
-    std::vector<size_t> access_positions;
-    access_positions.resize(1 << 18);
+    std::vector<size_t> access_positions(SEQ_LEN_SHORT);
+    #ifdef SEQAN3_LONG_TESTS
+        access_positions.resize(SEQ_LEN_LONG)
+    #endif
+
     for (size_t i = 0; i < access_positions.size(); ++i)
         access_positions[i] = uni_dis(generator);
+
     size_t j = 0;
     for (auto _ : state)
     {
@@ -136,7 +127,7 @@ static void delete_random(benchmark::State& state)
         auto last = std::ranges::begin(gap_decorator);
         last = first;
         std::ranges::advance(last, 2);
-        if (j == (1 << 18))
+        if (j == access_positions.size())
             j = 0;
         state.ResumeTiming();
         erase_gap(gap_decorator, first, last);

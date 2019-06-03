@@ -23,24 +23,9 @@
 
 using namespace seqan3;
 
-
-// Apply benchmarks with custom ranges for grid parameters sequence length and gap proportions
-static void CustomArguments(benchmark::internal::Benchmark* b) {
-    std::array<long long int, 5> gap_percentages = {1, 5, 25, 50, 75};
-    for (long long int seq_len = 4; seq_len <= (1 << 18); seq_len <<= 2)
-    {
-        for (auto gap_percentage : gap_percentages)
-            b->Args({seq_len, gap_percentage});
-    }
-}
-
 // ============================================================================
 //  read left to right (looped in case #ops exceeds sequence length)
 // ============================================================================
-/* Parameters:
- * gap_decorator_t      gap decorator class, e.g. gap_decorator_anchor_set
- * gapped_flag          operate on already gapped (true) or ungapped sequence (false)
- */
 template <typename gap_decorator_t, bool gapped_flag>
 static void read_left2right(benchmark::State& state)
 {

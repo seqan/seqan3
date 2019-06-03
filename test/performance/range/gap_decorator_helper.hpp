@@ -21,6 +21,35 @@
 
 using namespace seqan3;
 
+#define SEQ_LEN_LONG 1<<18
+#define SEQ_LEN_SHORT 1<<12
+
+/*
+ * Apply benchmarks with custom ranges for grid parameters sequence length and gap
+ * proportions. When setting the SEQAN3_LONG_TESTS macro, the longer benchmark
+ * version will be executed.
+ *
+ *  | flag                | sequence lengths | gap proportions
+ *  | --------------------|------------------|---------------------
+ *  !SEQAN3_LONG_TESTS    |  1 << [4:2:12]   | [1, 5, 50] %
+ *  !SEQAN3_LONG_TESTS    |  1 << [4:2:18]   | [1, 5, 25, 50, 75] %
+ */
+static void CustomArguments(benchmark::internal::Benchmark* b) {
+    std::vector<long long int> gap_percentages{1, 5, 50};
+    long long int seq_len_max = SEQ_LEN_SHORT;
+
+    #ifdef SEQAN3_LONG_TESTS
+        seq_len_max = SEQ_LEN_LONG;
+        gap_percentages = {1, 5, 25, 50, 75};
+    #endif
+
+    for (long long int seq_len = 16; seq_len <= seq_len_max; seq_len <<= 2)
+    {
+        for (auto gap_percentage : gap_percentages)
+            b->Args({seq_len, gap_percentage});
+    }
+}
+
 /* Helper function to sample gap length for each ungapped sequence position.
  * Distribution is derived from https://www.ncbi.nlm.nih.gov/pmc/articles/PMC419611.
  * Parameter:

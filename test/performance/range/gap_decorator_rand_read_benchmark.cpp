@@ -23,23 +23,9 @@
 
 using namespace seqan3;
 
-// Apply benchmarks with custom ranges for grid parameters sequence length and gap proportions
-static void CustomArguments(benchmark::internal::Benchmark* b) {
-    std::array<long long int, 5> gap_percentages = {1, 5, 25, 50, 75};
-    for (long long int seq_len = 4; seq_len <= (1 << 18); seq_len <<= 2)
-    {
-        for (auto gap_percentage : gap_percentages)
-            b->Args({seq_len, gap_percentage});
-    }
-}
-
 // ============================================================================
 //  read at random position
 // ============================================================================
-/* Parameters:
- * gap_decorator_t      gap decorator class, e.g. gap_decorator_anchor_set
- * gapped_flag          operate on already gapped (true) or ungapped sequence (false)
- */
 template <typename gap_decorator_t, bool gapped_flag>
 static void read_random(benchmark::State& state)
 {
@@ -71,14 +57,18 @@ static void read_random(benchmark::State& state)
 
     // sample read positions in advance
     std::vector<size_t> access_positions;
-    access_positions.resize(1 << 18);
+    access_positions.resize(SEQ_LEN_SHORT);
+    #ifdef SEQAN3_LONG_TESTS
+        access_positions.resize(SEQ_LEN_LONG)
+    #endif
+
     for (size_t i = 0; i < access_positions.size(); ++i)
         access_positions[i] = uni_dis(generator);
     size_t j = 0;
     for (auto _ : state)
     {
         benchmark::DoNotOptimize(gap_decorator[access_positions[j++]]);
-        if (j == (1 << 18))
+        if (j == access_positions.size())
             j = 0;
     }
 }
