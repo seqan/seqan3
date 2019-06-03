@@ -124,6 +124,7 @@ before_script:
     fi
 
 script:
+  - export SEQAN3_NO_VERSION_CHECK=1
   - make -k -j2
   - |
     if test coverage != "${BUILD}"; then

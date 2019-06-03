@@ -58,18 +58,15 @@ public:
     format_parse & operator=(format_parse const & pf) = default; //!< Defaulted.
     format_parse(format_parse &&) = default;                     //!< Defaulted.
     format_parse & operator=(format_parse &&) = default;         //!< Defaulted.
+    ~format_parse() = default;                                   //!< Defaulted.
 
     /*!\brief The constructor of the parse format.
      * \param[in] argc_ The number of command line arguments.
      * \param[in] argv_ The command line arguments to parse.
      */
-    format_parse(int const argc_, char const * const * const  argv_) :
-        argc(argc_ - 1)
-    {
-        init(argc_, argv_);
-    }
-
-    ~format_parse() = default;
+    format_parse(int const argc_, std::vector<std::string> && argv_) :
+        argc{argc_ - 1}, argv{std::move(argv_)}
+    {}
     //!\}
 
     /*!\brief Adds an seqan3::detail::get_option call to be evaluated later on.
@@ -183,22 +180,6 @@ public:
     }
 
 private:
-    /*!\brief Initializes the format_parse on construction.
-     *
-     * \param[in] argc_ Number of command line arguments.
-     * \param[in] argv_ Vector of command line arguments.
-     *
-     * \details
-     * Adds all command line arguments to the member format_parse::argv,
-     * but splits all values (options) containing an equality sign.
-     */
-    void init(int argc_, char const * const * const  argv_)
-    {
-        argv.resize(argc_ - 1); // -1 because of the binary name
-
-        for(int i = 1; i < argc_; ++i) // start at 1 to skip binary name
-            argv.push_back(argv_[i]);
-    }
 
     /*!\brief Appends a double dash to a long identifier and returns it.
     * \param[in] long_id The name of the long identifier.
@@ -756,10 +737,10 @@ private:
     std::vector<std::function<void()>> positional_option_calls;
     //!\brief Keeps track of the number of specified positional options.
     unsigned positional_option_count{0};
-    //!\brief Vector of command line arguments.
-    std::vector<std::string> argv;
     //!\brief Number of command line arguments.
     int argc;
+    //!\brief Vector of command line arguments.
+    std::vector<std::string> argv;
     //!\brief Artificial end of argv if \-- was seen.
     std::vector<std::string>::iterator end_of_options_it;
 };

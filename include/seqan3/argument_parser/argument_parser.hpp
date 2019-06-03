@@ -25,6 +25,8 @@
 #include <seqan3/argument_parser/detail/format_html.hpp>
 #include <seqan3/argument_parser/detail/format_man.hpp>
 #include <seqan3/argument_parser/detail/format_parse.hpp>
+#include <seqan3/argument_parser/detail/version_check.hpp>
+#include <seqan3/core/detail/terminal.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 
@@ -123,6 +125,27 @@ namespace seqan3
  *
  * See the seqan3::argument_parser::parse documentation for a detailed list of
  * which exceptions are caught.
+ *
+ * ### Update Notifications
+ *
+ * SeqAn applications that are using the seqan3::argument_parser can check SeqAn servers for version updates.
+ * The functionality helps getting new versions out to users faster.
+ * It is also used to inform application developers of new versions of the SeqAn library
+ * which means that applications ship with less bugs.
+ * For privacy implications, please see: https://github.com/seqan/seqan3/wiki/Update-Notifications.
+ *
+ * Developers that wish to disable this feature permanently can pass an extra constructor argument:
+ *
+ * \include doc/tutorial/argument_parser/disable_version_check.cpp
+ *
+ * Users of applications that have this feature activated can opt-out, by either:
+ *
+ *  * disabling it for a specific application simply by setting the option `--version-check 0` or
+ *  * disabling it for all applications by setting the `SEQAN3_NO_VERSION_CHECK` environment variable.
+ *
+ * Note that in case there is no `--version-check` option (display available options with `-h/--help)`,
+ * then the developer already disabled the version check functionality.
+ *
  */
 class argument_parser
 {
@@ -138,18 +161,31 @@ public:
 
     /*!\brief Initializes an argument_parser object from the command line arguments.
      *
-     * \param[in] app_name The name of the app that is displayed on the help page.
-     * \param[in] argc     The number of command line arguments.
-     * \param[in] argv     The command line arguments to parse.
+     * \param[in] app_name       The name of the app that is displayed on the help page.
+     * \param[in] argc           The number of command line arguments.
+     * \param[in] argv           The command line arguments to parse.
+     * \param[in] version_check  Notify users about app version updates (default true).
+     *
+     * See the [argument parser tutorial](http://docs.seqan.de/seqan/3.0.0-master-dev/tutorial_argument_parser.html)
+     * for more information about the version check functionality.
      */
-    argument_parser(std::string const app_name, int const argc, char const * const * const  argv)
+    argument_parser(std::string const app_name,
+                    int const argc,
+                    char const * const * const  argv,
+                    bool version_check = true) :
+        version_check_dev_decision{version_check}
     {
         info.app_name = std::move(app_name);
         init(argc, argv);
     }
 
     //!\brief The destructor.
-    ~argument_parser() = default;
+    ~argument_parser()
+    {
+        // wait for another 3 seconds
+        if (version_check_future.valid())
+            version_check_future.wait_for(std::chrono::seconds(3));
+    }
     //!\}
 
     /*!\name Adding options
@@ -278,6 +314,7 @@ public:
      * - **-hh/\--advanced-help** Prints the help page including advanced options.
      * - <b>\--version</b> Prints the version information.
      * - <b>\--export-help [format]</b> Prints the application description in the given format (html/man/ctd).
+     * - <b>\--version-check 0/1</b> Disable/enable update notifications.
      *
      * Example:
      *
@@ -321,6 +358,16 @@ public:
     {
         if (parse_was_called)
             throw parser_design_error("The function parse() must only be called once!");
+
+        detail::version_checker app_version{info.app_name, info.version, info.url};
+
+        if (app_version.decide_if_check_is_performed(version_check_dev_decision, version_check_user_decision))
+        {
+            // must be done before calling parse on the format because this might std::exit
+            std::promise<bool> app_version_prom;
+            version_check_future = app_version_prom.get_future();
+            app_version(std::move(app_version_prom));
+        }
 
         std::visit([this] (auto & f) { f.parse(info); }, format);
         parse_was_called = true;
@@ -432,17 +479,18 @@ public:
      */
     argument_parser_meta_data info;
 
-// TODO (smehringer)
-// #ifdef SEQAN_VERSION_CHECK_OPT_IN
-//     bool  enabled_version_check{false};
-// #else  // Make version update opt out.
-//     bool  enabled_version_check{true};
-// #endif  // SEQAN_VERSION_CHECK_OPT_IN
-//     std::future<bool> appVersionCheckFuture;
-
 private:
     //!\brief Keeps track of whether the parse function has been called already.
     bool parse_was_called{false};
+
+    //!\brief Set on construction and indicates whether the developer deactivates the version check calls completely.
+    bool version_check_dev_decision{};
+
+    //!\brief Whether the **user** specified to perform the version check (true) or not (false), default unset.
+    std::optional<bool> version_check_user_decision;
+
+    //!\brief The future object that keeps track of the detached version check call thread.
+    std::future<bool> version_check_future;
 
     /*!\brief Initializes the seqan3::argument_parser class on construction.
      *
@@ -472,15 +520,18 @@ private:
      * If `--export-help` is specified with a value other than html/man or ctd
      * a parser_invalid_argument is thrown.
      */
-    void init(int const argc, char const * const * const argv)
+    void init(int argc, char const * const * const argv)
     {
+        // cash command line input, in case --version-check is specified but shall not be passed to format_parse()
+        std::vector<std::string> argv_new{};
+
         if (argc <= 1) // no arguments provided
         {
             format = detail::format_short_help{};
             return;
         }
 
-        for(int i = 1; i < argc; ++i) // start at 1 to skip binary name
+        for(int i = 1, argv_len = argc; i < argv_len; ++i) // start at 1 to skip binary name
         {
             std::string arg{argv[i]};
 
@@ -511,7 +562,7 @@ private:
                 }
                 else
                 {
-                    if (argc <= i + 1)
+                    if (argv_len <= i + 1)
                         throw parser_invalid_argument{"Option --export-help must be followed by a value."};
                     export_format = {argv[i+1]};
                 }
@@ -534,9 +585,29 @@ private:
                 format = detail::format_copyright{};
                 return;
             }
+            else if (arg == "--version-check")
+            {
+                if (++i >= argv_len)
+                    throw parser_invalid_argument{"Option --version-check must be followed by a value."};
+
+                arg = argv[i];
+
+                if (arg == "1")
+                    version_check_user_decision = true;
+                else if (arg == "0")
+                    version_check_user_decision = false;
+                else
+                    throw parser_invalid_argument{"Value for option --version-check must be 1 or 0."};
+
+                argc -= 2;
+            }
+            else
+            {
+                argv_new.push_back(std::move(arg));
+            }
         }
 
-        format = detail::format_parse(argc, argv);
+        format = detail::format_parse(argc, std::move(argv_new));
     }
 
     //!\brief Adds standard options to the help page.
@@ -550,6 +621,8 @@ private:
         add_list_item("\\fB--copyright\\fP", "Prints the copyright/license information.");
         add_list_item("\\fB--export-help\\fP (std::string)",
                                     "Export the help page information. Value must be one of [html, man].");
+        if (version_check_dev_decision)
+            add_list_item("\\fB--version-check\\fP (bool)", "Whether to to check for the newest app version. Default: 1.");
         add_subsection(""); // add a new line (todo smehringer) add a add_newline() function
     }
 
