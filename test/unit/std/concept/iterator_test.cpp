@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -91,7 +91,7 @@ TEST(iterator_concepts, Sentinel)
     EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           input_iterator>,
                                           input_iterator>));
-    EXPECT_TRUE((std::is_same_v<char, value_type_t<std::ranges::ostream_iterator<char>>>));
+    EXPECT_TRUE((std::is_same_v<char, value_type_t<seqan3::ostream_iterator<char>>>));
     EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           output_iterator>,
                                           output_iterator>));

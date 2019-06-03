@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -28,7 +28,7 @@ bool run_test(config_t const & cfg)
     auto fn = detail::alignment_configurator::configure<decltype(r)>(cfg);
     auto && [seq1, seq2] = *std::ranges::begin(r);
 
-    return fn(seq1, seq2).score() == 0;
+    return fn(0u, seq1, seq2).score() == 0;
 }
 
 TEST(alignment_configurator, configure_edit)
@@ -161,6 +161,45 @@ TEST(alignment_configurator, configure_affine_global_semi)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::aligned_ends{free_ends_all};
+
+    EXPECT_TRUE(run_test(cfg));
+}
+
+TEST(alignment_configurator, configure_affine_local)
+{
+    auto cfg = align_cfg::mode{local_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}};
+
+    EXPECT_TRUE(run_test(cfg));
+}
+
+TEST(alignment_configurator, configure_affine_local_back_coordinate)
+{
+    auto cfg = align_cfg::mode{local_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}} |
+               align_cfg::result{with_back_coordinate};
+
+    EXPECT_TRUE(run_test(cfg));
+}
+
+TEST(alignment_configurator, configure_affine_local_front_coordinate)
+{
+    auto cfg = align_cfg::mode{local_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}} |
+               align_cfg::result{with_front_coordinate};
+
+    EXPECT_TRUE(run_test(cfg));
+}
+
+TEST(alignment_configurator, configure_affine_local_alignment)
+{
+    auto cfg = align_cfg::mode{local_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}} |
+               align_cfg::result{with_alignment};
 
     EXPECT_TRUE(run_test(cfg));
 }

@@ -9,5 +9,11 @@ int main()
     align_cfg::mode cfg_global{global_alignment};
 //! [global]
 
+//! [local]
+    // Select the local mode.
+    align_cfg::mode cfg_local{local_alignment};
+//! [local]
+
     (void) cfg_global;
+    (void) cfg_local;
 }

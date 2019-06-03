@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -17,6 +17,8 @@
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/get.hpp>
+#include <seqan3/range/view/interleave.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/pairwise_combine.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/rank_to.hpp>
@@ -27,7 +29,7 @@
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/to_rank.hpp>
-#include <seqan3/range/view/translation.hpp>
+#include <seqan3/range/view/translate.hpp>
 #include <seqan3/range/view/trim.hpp>
 
 /*!\defgroup view View
@@ -121,7 +123,7 @@
  * | std::ranges::SizedRange         | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | std::ranges::CommonRange        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | std::ranges::OutputRange        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::const_iterable_concept  | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
+ * | seqan3::ConstIterableRange      | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
  * |                                 |                                  |                                                    |
  * | seqan3::reference_t             | optionally a type or concept     | optionally a type or concept                       |
  *

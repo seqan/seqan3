@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -125,7 +125,7 @@ constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
 */
 template <genetic_code gc = genetic_code::CANONICAL, std::ranges::InputRange range_type>
     //!\cond
-    requires NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<range_type>>>>
+    requires NucleotideAlphabet<reference_t<std::decay_t<range_type>>>
     //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {
@@ -159,7 +159,7 @@ constexpr aa27 translate_triplet(range_type && input_range)
 */
 template <genetic_code gc = genetic_code::CANONICAL, std::ranges::RandomAccessRange range_type>
 //!\cond
-    requires NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<range_type>>>>
+    requires NucleotideAlphabet<reference_t<std::decay_t<range_type>>>
 //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {

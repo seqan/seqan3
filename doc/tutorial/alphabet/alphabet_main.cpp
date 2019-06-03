@@ -48,15 +48,15 @@ int main ()
 
 //! [char_strict]
     // Assign from character with value check.
-    cyt.assign_char_strict('C');
+    assign_char_strictly_to('C', cyt);
 
-    // thy.assign_char_strict('X'); would throw seqan3::invalid_char_assignment
+    // thy.assign_char_strictly('X'); would throw seqan3::invalid_char_assignment
 //! [char_strict]
     assert(cyt == 'C'_dna4);
 
 //! [size]
     // Get the alphabet size as class member of the alphabet.
-    uint8_t const size1 = dna4::value_size;        // => 4
+    uint8_t const size1 = dna4::alphabet_size;        // => 4
 //! [size]
     assert(size1 == 4u);
 
@@ -84,7 +84,7 @@ int main ()
     sym = 'U'_rna5;                                   // => U
 
     // The alphabet size is six (AUGCN-).
-    uint8_t const size2 = gapped<rna5>::value_size;   // => 6
+    uint8_t const size2 = gapped<rna5>::alphabet_size;   // => 6
 //! [gapped]
     assert(size2 == 6u);
 

@@ -1,5 +1,5 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 using namespace seqan3;
 
@@ -19,8 +19,8 @@ int main()
 {
 //! [nonambiguous]
 dna4 my_letter;
-assign_rank(my_letter, 0);       // assign an A via rank interface
-assign_char(my_letter, 'A');     // assign an A via char interface
+assign_rank_to(0, my_letter);       // assign an A via rank interface
+assign_char_to('A', my_letter);     // assign an A via char interface
 //! [nonambiguous]
 
 //! [print]
@@ -37,7 +37,7 @@ debug_stream << to_rank(my_letter);         // prints 0   (casts uint8_t to unsi
 
 {
 //! [literal]
-dna4        my_letter = 'A'_dna4;           // identical to assign_char(my_letter, 'A');
+dna4        my_letter = 'A'_dna4;           // identical to assign_char_to('A', my_letter);
 dna4_vector my_seq    = "ACGT"_dna4;        // identical to calling assign_char for each element
 //! [literal]
 }

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -22,10 +22,11 @@ namespace seqan3
 {
 
 /*!\brief Quality type for Solexa and deprecated Illumina formats.
- * \implements seqan3::QualityAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableQualityAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \ingroup quality
  *
@@ -53,12 +54,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred68legacy() noexcept : base_t{} {}
-    constexpr phred68legacy(phred68legacy const &) = default;
-    constexpr phred68legacy(phred68legacy &&) = default;
-    constexpr phred68legacy & operator=(phred68legacy const &) = default;
-    constexpr phred68legacy & operator=(phred68legacy &&) = default;
-    ~phred68legacy() = default;
+    constexpr phred68legacy()                                   noexcept = default; //!< Defaulted.
+    constexpr phred68legacy(phred68legacy const &)              noexcept = default; //!< Defaulted.
+    constexpr phred68legacy(phred68legacy &&)                   noexcept = default; //!< Defaulted.
+    constexpr phred68legacy & operator=(phred68legacy const &)  noexcept = default; //!< Defaulted.
+    constexpr phred68legacy & operator=(phred68legacy &&)       noexcept = default; //!< Defaulted.
+    ~phred68legacy()                                            noexcept = default; //!< Defaulted.
 
     //!\brief Construct from phred value.
     constexpr phred68legacy(phred_type const p) : base_t{p} {}

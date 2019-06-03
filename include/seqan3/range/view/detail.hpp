@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -13,315 +13,362 @@
 
 #pragma once
 
-#include <range/v3/range_fwd.hpp>
+#include <tuple>
 
+#include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/core/type_list.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
 
 // ============================================================================
-//  view_base
+//  forwards
 // ============================================================================
 
-/*!\brief An empty base class that our views inherit from so they are treated as views by the STL/range-v3.
+template <typename left_adaptor_t, typename right_adaptor_t>
+class combined_adaptor;
+
+// ============================================================================
+//  adaptor_base
+// ============================================================================
+
+/*!\brief CRTP-base to simplify the definition of range adaptor closure objects and similar types.
+ * \tparam derived_type CRTP specialisation parameter.
+ * \tparam stored_args_ts Some closure objects store values, these are their types.
  * \ingroup view
- */
-struct view_base : public ranges::view_base
-{};
-
-// ============================================================================
-//  pipable_adaptor_base
-// ============================================================================
-
-/*!\brief   A CRTP base class for implementing the pipable behaviour of views.
- * \ingroup view
- * \tparam  derived_type The CRTP specialisation, must provide a `impl()`-member.
  *
  * \details
  *
- * ### Background
+ * See \ref howto_write_a_view for details on what range adaptor closure objects are.
  *
- * A full view implementation consists of three entities:
+ * This class requires from the `derived_type`:
+ *   * an `impl()` function that takes a range and possibly further arguments.
  *
- *   1. the actual view, e.g. `view_foo`;
- *   2. an adaptor that returns instances of 1. and enables usage in pipes, e.g. `foo_fn`
- *   3. an instance of the adaptor, e.g. `view::foo` that is usable by consumers of your view
+ * This base class provides:
+ *   * Storage of args, including perfect forwarding and moving-out.
+ *   * `operator()` that takes a range and passes the range and stored args to the derived_type.
+ *   * `operator|` that also takes a range and passes the range and stored args to the derived_type.
+ *   * `operator|` that takes another adaptor and returns seqan3::detail::combined_adaptor
  *
- * For more details, see the HowTo on writing views in the SeqAn3 wiki: https://github.com/seqan/seqan3/wiki
+ * # Examples
  *
- * ### Details
+ * ## "Direct derivation"
  *
- * This CRTP base class can be used to simplify the implementation of the adaptor type. For most use cases it is
- * sufficient to just use the specialisation seqan3::detail::generic_pipable_view_adaptor, but other specialisations
- * like seqan3::detail::deep_view_adaptor_wrapper also make use of this base template.
+ * From include/seqan3/range/view/persist.hpp:
+ *
+ * \snippet include/seqan3/range/view/persist.hpp adaptor_def
+ *
+ * This adaptor directly derives from adaptor_base (instead of just using
+ * `seqan3::detail::adaptor_for_view_without_args`) so that it can decide between
+ * actually calling the respective view's constructor and delegating to a different view
+ * (in this case `std::view::all`) based on the type of input.
+ *
+ * ## Derived templates
+ *
+ * * `seqan3::detail::combined_adaptor` : Combine two adaptor closure objects into a new one.
+ * * `seqan3::detail::adaptor_for_view_without_args` : Create an adaptor closure object for a view that doesn't require
+ *   args.
+ * * `seqan3::detail::adaptor_from_functor` : Create an adaptor closure object with possibly stored arguments that
+ *   delegates to a functor, usually a stored proto-adaptor (for view classes that require arguments or adaptors that
+ *   just forward to other adaptors).
+ * * `seqan3::view::deep` : Wraps an adaptor closure object or proto adaptor object and modifies the behaviour.
  */
-template <typename derived_type>
-class pipable_adaptor_base
+template <typename derived_type, typename ... stored_args_ts>
+class adaptor_base
 {
-public:
-    /*!\brief       Enables function style usage of the adaptor, forwards to the actual implementation in `derived_type`.
-     * \tparam      urng_t Type of the underlying range.
-     * \tparam      arg_types The types of further arguments.
-     * \param[in]   urange The underlying range.
-     * \param[in]   args Further arguments.
-     * \returns     Depends on the `derived_type`.
-     *
-     * \details
-     *
-     * This function works for views that take arguments, and for view that take no arguments, i.e.
-     * depending on the view args needs to be exactly those parameters that view expects which
-     * can/must be none for certain views.
-     *
-     * ### Example (based on the derived type seqan3::detail::generic_pipable_view_adaptor)
-     *
-     * Given:
-     *
-     * \snippet test/snippet/range/view/detail.cpp usage
-     *
-     * This operator enables the function call syntax of the adaptor:
-     *
-     * \snippet test/snippet/range/view/detail.cpp function_call
-     */
-    template <std::ranges::InputRange urng_t, typename ...arg_types>
-    auto operator()(urng_t && urange, arg_types && ...args) const
-    {
-        return static_cast<derived_type const *>(this)->impl(std::forward<urng_t>(urange),
-                                                             std::forward<arg_types>(args)...);
-    }
-
-    /*!\brief   Binds operator() with a placeholder for range so that the operator() without `urange` argument works
-     *          [for adaptors with arguments].
-     * \tparam  arg_types The types of the arguments.
-     *
-     * \details
-     *
-     * This replaces std::bind which doesn't work here because of the parent being template template and thus
-     * the type not being fully resolved. A lambda function wrapper could be used, but its type wouldn't be
-     * deducible which we need for the definition of the pipe operator.
-     *
-     * TODO re-evaluate this since pipable_adaptor_base is no longer template template
-     */
-    template <typename ...arg_types>
-    //!\cond
-        requires (sizeof...(arg_types) > 0)
-    //!\endcond
-    struct auxiliary_functor_t
-    {
-        /*!\brief Define the operator() that is ultimately called inside the pipe-operator to fill in the `urange`
-         * argument.
-         * \tparam urng_t Type of the underlying range.
-         * \param[in] urange The underlying range.
-         */
-        template <std::ranges::InputRange urng_t>
-        auto operator()(urng_t && urange)
-        {
-            return explode(std::forward<urng_t>(urange), std::make_index_sequence<sizeof...(arg_types)>{});
-        }
-
-        //!\overload
-        template <std::ranges::InputRange urng_t>
-        auto operator()(urng_t && urange) const
-        {
-            return explode(std::forward<urng_t>(urange), std::make_index_sequence<sizeof...(arg_types)>{});
-        }
-
-        //!\brief Store the arguments.
-        std::tuple<arg_types...> _arguments;
-
-    protected:
-        //!\brief Helper function to unpack the tuple.
-        template <typename urng_t, size_t... Is>
-        auto explode(urng_t && urange, std::index_sequence<Is...> const &) const &
-        {
-            // std::get returns lvalue-reference to value, but we need to copy the values
-            return pipable_adaptor_base{}(
-                std::forward<urng_t>(urange),
-                static_cast<std::tuple_element_t<Is, std::tuple<arg_types...>>>(std::get<Is>(_arguments))...);
-        }
-
-        //!\brief Helper function to unpack the tuple.
-        template <typename urng_t, size_t... Is>
-        auto explode(urng_t && urange, std::index_sequence<Is...> const &) &
-        {
-            // std::get returns lvalue-reference to value, but we need to copy the values
-            return pipable_adaptor_base{}(
-                std::forward<urng_t>(urange),
-                static_cast<std::tuple_element_t<Is, std::tuple<arg_types...>>>(std::get<Is>(_arguments))...);
-        }
-
-        //!\overload
-        template <typename urng_t, size_t... Is>
-        auto explode(urng_t && urange, std::index_sequence<Is...> const &) &&
-        {
-            // move out values, because we don't need them anymore (this is temporary)
-            return pipable_adaptor_base{}(std::forward<urng_t>(urange),
-                                          std::forward<arg_types>(std::get<Is>(_arguments))...);
-        }
-    };
-
-    /*!\brief       Enables calling the functor without a `urange` parameter, necessary inside a pipe statement
-     *              [for adaptors with arguments].
-     * \tparam      arg_types The types of the arguments.
-     * \param[in]   args Arguments stored in the auxiliary functor.
-     * \returns     An instance of auxiliary_functor_t for use in the pipe notation, **not an instance of `view_type`**!
-     *
-     * \details
-     *
-     * ### Example (based on the derived type seqan3::detail::generic_pipable_view_adaptor)
-     *
-     * Given:
-     *
-     * \snippet test/snippet/range/view/detail.cpp usage
-     *
-     * This functor enables the function call syntax, without the actual underlying range:
-     *
-     * \snippet test/snippet/range/view/detail.cpp function_call_2
-     */
-    template <typename ...arg_types>
-    auxiliary_functor_t<arg_types...> operator()(arg_types && ...args) const
-    {
-        return {{std::forward<arg_types>(args)...}};
-    }
-
-    /*!\brief       Enables pipe style usage of the view, forwards indirectly to the constructor of `view_type`
-     *              [for adaptors with arguments].
-     * \tparam      urng_t Type of the underlying range.
-     * \tparam      arg_types The types of the arguments.
-     * \param[in]   urange The underlying range [left hand side argument to `|`].
-     * \param[in]   bound_functor A functor of type auxiliary_functor_t, the result of a call to operator()()
-     *              [right hand side argument to `|`].
-     * \returns     An object of type `view_type`.
-     *
-     * \details
-     *
-     * ### Example (based on the derived type seqan3::detail::generic_pipable_view_adaptor)
-     *
-     * Given:
-     *
-     * \snippet test/snippet/range/view/detail.cpp usage
-     *
-     * This functor enables the pipe syntax:
-     *
-     * \snippet test/snippet/range/view/detail.cpp pipe_syntax
-     */
-    template <std::ranges::InputRange urng_t, typename ...arg_types>
-    friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> & bound_functor)
-        requires (sizeof...(arg_types) > 0)
-    {
-        return bound_functor(std::forward<urng_t>(urange));
-    }
-
-    //!\overload
-    template <std::ranges::InputRange urng_t, typename ...arg_types>
-    friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> const & bound_functor)
-        requires (sizeof...(arg_types) > 0)
-    {
-        return bound_functor(std::forward<urng_t>(urange));
-    }
-
-    //!\overload
-    template <std::ranges::InputRange urng_t, typename ...arg_types>
-    friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> && bound_functor)
-        requires (sizeof...(arg_types) > 0)
-    {
-        return bound_functor(std::forward<urng_t>(urange));
-    }
-
-    /*!\brief       Enables pipe style usage of the view, forwards to the constructor of view_type
-     *              [for adaptors without arguments].
-     * \tparam      urng_t Type of the underlying range.
-     * \param[in]   urange The underlying range [left hand side argument to `|`].
-     * \param[in]   fn An instance of the functor, e.g. `view::foo` [right hand side argument to `|`].
-     * \returns     An object of type `view_type`.
-     *
-     * \details
-     *
-     * ### Example (based on the derived type seqan3::detail::generic_pipable_view_adaptor)
-     *
-     * Given:
-     *
-     * \snippet test/snippet/range/view/detail.cpp usage
-     *
-     * This functor enables the pipe syntax:
-     *
-     * \snippet test/snippet/range/view/detail.cpp pipe_syntax_2
-     */
-    template <std::ranges::InputRange urng_t>
-    friend auto operator|(urng_t && urange,
-                          derived_type const & fn)
-    {
-        return fn(std::forward<urng_t>(urange));
-    }
-
 private:
+    //!\brief Stores the arguments.
+    std::tuple<stored_args_ts...> arguments;
+
+    //!\brief Helper function to unpack the tuple and delegate to the derived type.
+    template <typename urng_t, size_t... Is>
+    constexpr auto pass_args_to_impl(urng_t && urange, std::index_sequence<Is...> const &) const &
+    {
+        // std::get returns lvalue-reference to value, but we need to copy the values
+        // so that the view does not depend on the functor
+        return static_cast<derived_type const &>(*this).impl(
+            std::forward<urng_t>(urange),
+            std::tuple_element_t<Is, std::tuple<stored_args_ts...>>(std::get<Is>(arguments))...);
+    }
+
+    //!\overload
+    template <typename urng_t, size_t... Is>
+    constexpr auto pass_args_to_impl(urng_t && urange, std::index_sequence<Is...> const &) &&
+    {
+        // move out values, because we don't need them anymore (*this is temporary)
+        return static_cast<derived_type &&>(*this).impl(
+            std::forward<urng_t>(urange),
+            std::tuple_element_t<Is, std::tuple<stored_args_ts...>>(std::get<Is>(std::move(arguments)))...);
+    }
+
+
+    //!\brief Befriend the derived_type so it can access private members if need be.
+    friend derived_type;
+
+public:
     /*!\name Constructors, destructor and assignment
-     * \brief All are declared private to prevent direct use of the CRTP base.
-     * \sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
      * \{
      */
-    pipable_adaptor_base() = default;
-    constexpr pipable_adaptor_base(pipable_adaptor_base const &) = default;
-    constexpr pipable_adaptor_base(pipable_adaptor_base &&) = default;
-    constexpr pipable_adaptor_base & operator =(pipable_adaptor_base const &) = default;
-    constexpr pipable_adaptor_base & operator =(pipable_adaptor_base &&) = default;
-    ~pipable_adaptor_base() = default;
-    //!\brief befriend the derived type so that it can instantiate
-    friend derived_type;
+    // a default constructor is not provided, however the constructor below might be one.
+    constexpr adaptor_base(adaptor_base const &)                noexcept = default; //!< Defaulted.
+    constexpr adaptor_base(adaptor_base &&)                     noexcept = default; //!< Defaulted.
+    constexpr adaptor_base & operator=(adaptor_base const &)    noexcept = default; //!< Defaulted.
+    constexpr adaptor_base & operator=(adaptor_base &&)         noexcept = default; //!< Defaulted.
+    ~adaptor_base()                                             noexcept = default; //!< Defaulted.
+
+    //!\brief Constructor with possible arguments; becomes a default constructor for adaptors without args.
+    constexpr adaptor_base(stored_args_ts ... args) :
+        arguments{std::forward<stored_args_ts>(args)...}
+    {}
     //!\}
+
+    //!\brief Function-style overload for ranges.
+    template <std::ranges::InputRange urng_t>
+    constexpr auto operator()(urng_t && urange) const &
+    {
+        return pass_args_to_impl(std::forward<urng_t>(urange), std::make_index_sequence<sizeof...(stored_args_ts)>{});
+    }
+
+    //!\overload
+    template <std::ranges::InputRange urng_t>
+    constexpr auto operator()(urng_t && urange) &&
+    {
+        return std::move(*this).pass_args_to_impl(std::forward<urng_t>(urange),
+                                                  std::make_index_sequence<sizeof...(stored_args_ts)>{});
+    }
+
+    /*!\brief Left-hand-side pipe operator that handles range input or composing.
+     * \tparam    arg_t LHS argument type.
+     * \param[in] arg   LHS, either a range or another adaptor.
+     * \param[in] me    RHS.
+     *
+     * \details
+     *
+     * If the LHS models std::ranges::InputRange this functions delegates to operator()
+     * otherwise it assumes the LHS is another range adaptor closure object and it
+     * returns a seqan3::detail::combined_adaptor that wraps that adaptor and this one.
+     */
+    template <typename arg_t>
+    constexpr friend auto operator|(arg_t && arg, derived_type const & me)
+    {
+        if constexpr (std::ranges::InputRange<arg_t>)
+            return me(std::forward<arg_t>(arg));
+        else
+            return combined_adaptor{std::forward<arg_t>(arg), me};
+    }
+
+    //!\overload
+    template <typename arg_t>
+    constexpr friend auto operator|(arg_t && arg, derived_type && me)
+    {
+        if constexpr (std::ranges::InputRange<arg_t>)
+            return std::move(me)(std::forward<arg_t>(arg));
+        else
+            return combined_adaptor{std::forward<arg_t>(arg), std::move(me)};
+    }
+
+    /*!\brief Right-hand-side pipe operator that handles composing.
+     * \tparam arg_t RHS argument type.
+     * \param[in] me  LHS, another adaptor.
+     * \param[in] arg RHS.
+     *
+     * \details
+     *
+     * This operator assumes that the RHS is another range adaptor closure object and it
+     * returns a seqan3::detail::combined_adaptor that wraps that adaptor and this one.
+     *
+     * Note that this operator takes adaptor_base and not derived_type as parameter type
+     * so that an implicit conversion is required for invoking this function.
+     * This prioritises the LHS-pipe-operator overload and resolves ambiguity in cases
+     * where they are competing.
+     * It has no semantic meaning, the type is down-cast inside the function again.
+     */
+    template <typename arg_t>
+    constexpr friend auto operator|(adaptor_base const & me, arg_t && arg)
+    {
+        return combined_adaptor{static_cast<derived_type const &>(me), std::forward<arg_t>(arg)};
+    }
+
+    //!\overload
+    template <typename arg_t>
+    constexpr friend auto operator|(adaptor_base && me, arg_t && arg)
+    {
+        return combined_adaptor{static_cast<derived_type &&>(me), std::forward<arg_t>(arg)};
+    }
 };
 
 // ============================================================================
-//  generic_pipable_view_adaptor
+//  combined_adaptor
 // ============================================================================
 
-/*!\brief   A class template template that makes a view pipeable.
+/*!\brief Template for range adaptor closure objects that consist of two other range adaptor closure objects.
+ * \tparam left_adaptor_t  Type of the first stored adaptor.
+ * \tparam right_adaptor_t Type of the second stored adaptor.
  * \ingroup view
- * \tparam  view_type The view template that your wish to define the adaptor for.
  *
  * \details
  *
- * A full view implementation consists of three entities:
- *
- *   1. the actual view, e.g. `view_foo`;
- *   2. an adaptor that returns instances of 1. and enables usage in pipes, e.g. `foo_fn`
- *   3. an instance of the adaptor, e.g. `view::foo` that is usable by consumers of your view
- *
- * For more details, see the HowTo on writing views in the SeqAn3 wiki: https://github.com/seqan/seqan3/wiki
- *
- * This template generates the adaptor for you:
- *
- * \snippet test/snippet/range/view/detail.cpp adaptor_template
+ * If invoked with a range, this adaptor resolves to piping the range into left adaptor and the resulting
+ * range into the right adaptor.
  */
-template <template <typename, typename...> class view_type>
-class generic_pipable_view_adaptor : public pipable_adaptor_base<generic_pipable_view_adaptor<view_type>>
+template <typename left_adaptor_t, typename right_adaptor_t>
+class combined_adaptor :
+    public adaptor_base<combined_adaptor<left_adaptor_t, right_adaptor_t>,
+                        left_adaptor_t,
+                        right_adaptor_t>
 {
 private:
     //!\brief Type of the CRTP-base.
-    using base_type = pipable_adaptor_base<generic_pipable_view_adaptor<view_type>>;
+    using base_type = adaptor_base<combined_adaptor<left_adaptor_t, right_adaptor_t>,
+                                   left_adaptor_t,
+                                   right_adaptor_t>;
 
-public:
-    //!\brief Inherit the base class's Constructors.
-    using base_type::base_type;
-
-private:
     //!\brief Befriend the base class so it can call impl().
     friend base_type;
 
-    /*!\brief       Call the view's constructor with the given arguments (all of the base class'es operators ultimately
-     *              resolve to this function call).
-     * \tparam      arg_types The arguments to the view (this first one will be a range, the rest is optional).
-     * \param[in]   args The arguments to the constructor.
-     * \returns     An instance of `view_type`.
+    //!\brief Combine all arguments via `operator|`.
+    template <std::ranges::InputRange urng_t,
+              typename left_adaptor_t_,
+              typename right_adaptor_t_>
+    static auto impl(urng_t && urange, left_adaptor_t_ && left_adaptor, right_adaptor_t_ && right_adaptor)
+    {
+        return std::forward<urng_t>(urange)
+             | std::forward<left_adaptor_t_>(left_adaptor)
+             | std::forward<right_adaptor_t_>(right_adaptor);
+    }
+
+public:
+    //!\brief Inherit the base type's constructors.
+    using base_type::base_type;
+
+    //!\brief Store both arguments in the adaptor.
+    combined_adaptor(left_adaptor_t l, right_adaptor_t r) :
+        base_type{std::forward<left_adaptor_t>(l), std::forward<right_adaptor_t>(r)}
+    {}
+};
+
+// ============================================================================
+//  adaptor_for_view_without_args
+// ============================================================================
+
+/*!\brief Template for range adaptor closure objects that store no arguments and always delegate to the
+ *        view constructor.
+ * \tparam view_type The view type template.
+ * \ingroup view
+ *
+ * \details
+ *
+ * Use this adaptor template when you always want to delegate to the view's constructor and you have no arguments.
+ * Since it's a one-line it's easier than specialising seqan3::detail::adaptor_base.
+ *
+ * # Example
+ *
+ * (from include/seqan3/range/view/single_pass_input.hpp)
+ *
+ * This is the signature of the view type template in namespace seqan3::detail:
+ *
+ * \snippet include/seqan3/range/view/single_pass_input.hpp view_def
+ *
+ * This is the definition of the range adaptor closure object, it will always delegate to the
+ * constructor: seqan3::detail::single_pass_input_view::single_pass_input_view():
+ *
+ * \snippet include/seqan3/range/view/single_pass_input.hpp adaptor_def
+ */
+template <template <typename, typename...> typename view_type>
+class adaptor_for_view_without_args : public adaptor_base<adaptor_for_view_without_args<view_type>>
+{
+private:
+    //!\brief Type of the CRTP-base.
+    using base_type = adaptor_base<adaptor_for_view_without_args<view_type>>;
+
+    //!\brief Befriend the base class so it can call impl().
+    friend base_type;
+
+    /*!\brief Call the view's constructor with the given arguments (all of the base class'es operators ultimately
+     * resolve to this function call).
+     * \tparam    arg_types The arguments to the view (this first one will be a range, the rest is optional).
+     * \param[in] args      The arguments to the constructor.
+     * \returns An instance of `view_type`.
      */
     template <typename ... arg_types>
     static auto impl(arg_types && ... args)
     {
         return view_type{std::forward<arg_types>(args)...};
     }
+
+public:
+    //!\brief Inherit the base type's constructors.
+    using base_type::base_type;
+};
+
+// ============================================================================
+//  adaptor_from_functor
+// ============================================================================
+
+/*!\brief Template for range adaptor closure objects that store arguments and wrap a proto-adaptor.
+ * \tparam functor_type Type of the proto-adaptor functor.
+ * \tparam stored_args_ts Types of the stored arguments.
+ * \ingroup view
+ *
+ * \details
+ *
+ * This template is particularly useful in combination with range adaptor objects that are not closure
+ * objects (a.k.a. proto adaptors).
+ * These objects take other parameters in addition to the range parameter that they might need to store
+ * in which case they can return an object of this type with the stored arguments.
+ *
+ * This template delegates back to the proto adaptor for handling range input (impl() calls operator() of the
+ * proto-adaptor).
+ *
+ * # Example
+ *
+ * From include/seqan3/range/view/kmer_hash.hpp:
+ *
+ * \snippet include/seqan3/range/view/kmer_hash.hpp adaptor_def
+ *
+ * This is the full proto-adaptor, first look at the second member function: it handles range **and** argument
+ * input and returns a range (in other cases this would delegate to the view's constructor if you have
+ * your own view type declared).
+ *
+ * And it provides an `operator()` that takes only the argument and returns a range adaptor closure object
+ * with the argument wrapped (first member function). The proto-adaptor is passed to the closure object, as well, so
+ * that the proto-adaptor's `operator()` can be used for handling range input.
+ *
+ * Note that the proto-adaptor does not provide `operator|`, this is only required of adaptor closure objects.
+ */
+template <typename functor_type, typename ... stored_args_ts>
+class adaptor_from_functor :
+    public adaptor_base<adaptor_from_functor<functor_type, stored_args_ts...>, stored_args_ts...>
+{
+private:
+    //!\brief Type of the CRTP-base.
+    using base_type = adaptor_base<adaptor_from_functor<functor_type, stored_args_ts...>, stored_args_ts...>;
+
+    //!\brief Befriend the base class so it can call impl().
+    friend base_type;
+
+    //!\brief The stored functor, usually a "proto-adaptor".
+    functor_type fun;
+
+    /*!\brief Delegate the range argument and stored arguments to the wrapped functor.
+     * \tparam    urng_t         The underlying range type.
+     * \tparam    stored_args_ts The arguments to the view (this first one will be a range, the rest is optional).
+     * \param[in] urange         The underling range.
+     * \param[in] args           The arguments to the constructor.
+     * \returns Whatever the wrapped functor returns, usually a view.
+     */
+    template <std::ranges::InputRange urng_t>
+    constexpr auto impl(urng_t && urange, stored_args_ts ... args) const
+    {
+        return fun(std::forward<urng_t>(urange), std::forward<stored_args_ts>(args)...);
+    }
+
+public:
+    //!\brief Construct from functor and possibly arguments.
+    constexpr adaptor_from_functor(functor_type f, stored_args_ts ... args) :
+        base_type{std::forward<stored_args_ts>(args)...}, fun{std::move(f)}
+    {}
 };
 
 } // namespace seqan3::detail

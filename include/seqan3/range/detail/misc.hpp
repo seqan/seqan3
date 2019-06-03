@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -35,7 +35,6 @@ constexpr void consume(rng_t && rng)
 /*!\brief Iterate over a range (NO-OP for forward ranges).
  * \ingroup range
  * \tparam rng_t Type of the range; must satisfy std::ranges::ForwardRange.
- * \param rng The range.
  */
 template <std::ranges::ForwardRange rng_t>
 constexpr void consume(rng_t &&)

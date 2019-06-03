@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -33,25 +33,19 @@ namespace seqan3::detail
 // ============================================================================
 
 //!\brief View adaptor definition for view::slice.
-class slice_fn : public pipable_adaptor_base<slice_fn>
+struct slice_fn
 {
-private:
-    //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<slice_fn>;
-
-public:
-    //!\brief Inherit the base class's Constructors.
-    using base_t::base_t;
-
-private:
-    //!\brief Befriend the base class so it can call impl().
-    friend base_t;
+    //!\brief Store the arguments and return a range adaptor closure object.
+    constexpr auto operator()(ptrdiff_t begin_pos, ptrdiff_t end_pos) const noexcept
+    {
+        return detail::adaptor_from_functor{*this, begin_pos, end_pos};
+    }
 
     /*!\brief       Call the view's constructor with the underlying view as argument.
      * \returns     An instance of seqan3::detail::view_slice.
      */
     template <std::ranges::ViewableRange urng_t>
-    static auto impl(urng_t && urange, ptrdiff_t begin_pos, ptrdiff_t end_pos)
+    constexpr auto operator()(urng_t && urange, ptrdiff_t begin_pos, ptrdiff_t end_pos) const
     {
         if constexpr (std::ranges::SizedRange<urng_t>)
         {
@@ -93,24 +87,29 @@ namespace seqan3::view
  *
  * \details
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/slice.hpp>
+ * ```
+ *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         |                                       | *preserved*                                        |
- * | std::ranges::CommonRange        |                                       | *preserved*                                        |
- * | std::ranges::OutputRange        |                                       | *preserved* unless `urng_t` is std::basic_string   |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
+ * | range concepts and reference_t  | `urng_t` (underlying range type)  | `rrng_t` (returned range type)  |
+ * |---------------------------------|:---------------------------------:|:-------------------------------:|
+ * | std::ranges::InputRange         | *required*                        | *preserved*                     |
+ * | std::ranges::ForwardRange       |                                   | *preserved*                     |
+ * | std::ranges::BidirectionalRange |                                   | *preserved*                     |
+ * | std::ranges::RandomAccessRange  |                                   | *preserved*                     |
+ * | std::ranges::ContiguousRange    |                                   | *preserved*                     |
+ * |                                 |                                   |                                 |
+ * | std::ranges::ViewableRange      | *required*                        | *guaranteed*                    |
+ * | std::ranges::View               |                                   | *guaranteed*                    |
+ * | std::ranges::SizedRange         |                                   | *preserved*                     |
+ * | std::ranges::CommonRange        |                                   | *preserved*                     |
+ * | std::ranges::OutputRange        |                                   | *preserved*                     |
+ * | seqan3::ConstIterableRange      |                                   | *preserved*                     |
+ * |                                 |                                   |                                 |
+ * | seqan3::reference_t             |                                   | seqan3::reference_t<urng_t>     |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -119,15 +118,16 @@ namespace seqan3::view
  * If `begin_pos` is larger than the size of the underlying range an empty range is returned.
  * If `end_pos` is larger than the size of the underlying range less elements are returned.
  *
- * If `end_pos < begin_pos` and exception of type std::invalid_argument is thrown.
+ * If `end_pos < begin_pos` an exception of type std::invalid_argument is thrown.
  *
  * ### Return type
  *
- * | `urng_t` (underlying range type)                          | `rrng_t` (returned range type)                     |
- * |:---------------------------------------------------------:|:--------------------------------------------------:|
- * | std::basic_string *or* std::basic_string_view             | std::basic_string_view                             |
- * | std::ranges::SizedRange && std::ranges::ContiguousRange   | std::span                                          |
- * | *else*                                                    | std::ranges::subrange                              |
+ * | `urng_t` (underlying range type)                                                       | `rrng_t` (returned range type)  |
+ * |:--------------------------------------------------------------------------------------:|:-------------------------------:|
+ * | `std::basic_string const &` *or* `std::basic_string_view`                              | `std::basic_string_view`        |
+ * | `seqan3::ForwardingRange && std::ranges::SizedRange && std::ranges::ContiguousRange`   | `std::span`                     |
+ * | `seqan3::ForwardingRange && std::ranges::SizedRange && std::ranges::RandomAccessRange` | `std::ranges::subrange`         |
+ * | *else*                                                                                 | *implementation defined type*   |
  *
  * The adaptor returns exactly the type specified above.
  *

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -93,12 +93,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr configuration()                                  = default;
-    constexpr configuration(configuration const &)             = default;
-    constexpr configuration(configuration &&)                  = default;
-    constexpr configuration & operator=(configuration const &) = default;
-    constexpr configuration & operator=(configuration &&)      = default;
-    ~configuration()                                           = default;
+    constexpr configuration()                                  = default; //!< Defaulted.
+    constexpr configuration(configuration const &)             = default; //!< Defaulted.
+    constexpr configuration(configuration &&)                  = default; //!< Defaulted.
+    constexpr configuration & operator=(configuration const &) = default; //!< Defaulted.
+    constexpr configuration & operator=(configuration &&)      = default; //!< Defaulted.
+    ~configuration()                                           = default; //!< Defaulted.
 
     /*!\brief Constructs a configuration from a single configuration element.
      * \param elem The element to store.
@@ -307,12 +307,12 @@ public:
     friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
                                     pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
 
-    // //!\overload
+    //!\overload
     template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
     friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
                                     pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs);
 
-    // //!\overload
+    //!\overload
     template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
     friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
                                     pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
@@ -427,7 +427,7 @@ private:
 
     /*!\brief Creates a new configuration object by recursively adding the configs from the tuple.
      * \tparam    tuple_t The tuple from which to create a new configuration object; must model
-                          seqan3::detail::tuple_like_concept and must at least have one element.
+                          seqan3::detail::TupleLike and must at least have one element.
      * \param[in] tpl     The tuple to create the configuration from.
      * \returns A new configuration object.
      */
@@ -516,14 +516,18 @@ private:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::configuration
  * \{
  */
-//!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+
+/*!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+ * \relates seqan3::configuration
+ */
 template <typename derived_t, typename value_t>
 configuration(pipeable_config_element<derived_t, value_t> &&) -> configuration<remove_cvref_t<derived_t>>;
 
-//!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+/*!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+ * \relates seqan3::configuration
+ */
 template <typename derived_t, typename value_t>
 configuration(pipeable_config_element<derived_t, value_t> const &) -> configuration<remove_cvref_t<derived_t>>;
 //!\}
@@ -569,6 +573,7 @@ constexpr auto & get(configuration<configs_t...> & config) noexcept
     return get<pos>(config);
 }
 
+//!\overload
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto const & get(configuration<configs_t...> const & config) noexcept
 {
@@ -579,6 +584,7 @@ constexpr auto const & get(configuration<configs_t...> const & config) noexcept
     return get<pos>(config);
 }
 
+//!\overload
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto && get(configuration<configs_t...> && config) noexcept
 {
@@ -589,6 +595,7 @@ constexpr auto && get(configuration<configs_t...> && config) noexcept
     return get<pos>(std::move(config));
 }
 
+//!\overload
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto const && get(configuration<configs_t...> const && config) noexcept
 {
@@ -601,6 +608,7 @@ constexpr auto const && get(configuration<configs_t...> const && config) noexcep
     return std::move(get<pos>(config));
 }
 //!\}
+
 } // namespace seqan3::detail
 
 namespace std

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -53,7 +53,8 @@ private:
      * \{
      */
     //!\brief The underlying resource type.
-    using resource_type       = decltype(view::single_pass_input(std::declval<resource_t>()));
+    using resource_type       = decltype(view::single_pass_input(std::view::zip(std::declval<resource_t>(),
+                                                                                std::view::iota(0))));
     //!\brief The value type of the resource.
     using resource_value_type = value_type_t<resource_type>;
     //!\}
@@ -95,9 +96,9 @@ public:
     ~alignment_executor_two_way() = default;                                             //!< Defaulted
 
     //!\brief Constructs this executor with the passed range of alignment instances.
-    alignment_executor_two_way(resource_t && resrc,
+    alignment_executor_two_way(resource_t resrc,
                                alignment_algorithm_t fn) :
-        resource{std::forward<resource_t &&>(resrc)},
+        resource{std::view::zip(std::forward<resource_t>(resrc), std::view::iota(0))},
         kernel{std::move(fn)}
     {
         init_buffer();
@@ -155,7 +156,7 @@ private:
      * \{
      */
 
-    //\brief Sets the buffer pointer.
+    //!\brief Sets the buffer pointer.
     void setg(buffer_pointer beg, buffer_pointer end)
     {
         gptr = beg;
@@ -180,8 +181,9 @@ private:
         for (auto resource_iter = std::ranges::begin(resource);
              count < in_avail() && !is_eof(); ++count, ++resource_iter, ++gptr)
         {
-            auto && [first_seq, second_seq] = *resource_iter;
-            exec_handler.execute(kernel, first_seq, second_seq, [this](auto && res){ *gptr = std::move(res); });
+            auto && [tpl, idx] = *resource_iter;
+            auto && [first_seq, second_seq] = tpl;
+            exec_handler.execute(kernel, idx, first_seq, second_seq, [this](auto && res){ *gptr = std::move(res); });
         }
 
         // Update the available get position if the buffer was consumed completely.
@@ -226,6 +228,8 @@ private:
  * \relates seqan3::detail::alignment_executor_two_way
  * \{
  */
+
+//!\brief Deduce the type from the provided arguments and set the sequential execution handler.
 template <typename resource_rng_t, typename func_t>
 alignment_executor_two_way(resource_rng_t &&, func_t) ->
     alignment_executor_two_way<resource_rng_t, func_t, execution_handler_sequential>;

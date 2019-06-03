@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -25,54 +25,25 @@
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
-//!\cond
-template <typename align_config_t>
-SEQAN3_CONCEPT max_errors_concept = requires (align_config_t & cfg)
-{
-    requires cfg.template exists<align_cfg::max_error>();
-};
-//!\endcond
-
-/*!\todo Document me
- * \ingroup pairwise_alignment
- */
-template <typename traits_type>
-SEQAN3_CONCEPT edit_distance_trait_concept = requires
-{
-    typename std::remove_reference_t<traits_type>::word_type;
-    typename std::remove_reference_t<traits_type>::is_semi_global_type;
-
-    // Must be a boolean integral constant.
-    requires std::Same<typename std::remove_reference_t<traits_type>::is_semi_global_type::value_type, bool>;
-};
-
-/*!\brief The default traits type for the edit distance algorithm.
- * \ingroup pairwise_alignment
- */
-struct default_edit_distance_trait_type
-{
-    //!\brief The default word type.
-    using word_type = uint64_t;
-    //!\brief Semi global alignment is disabled by default.
-    using is_semi_global_type = std::false_type;
-};
 
 /*!\brief This calculates an alignment using the edit distance and without a band.
  * \ingroup pairwise_alignment
  * \tparam database_t     \copydoc pairwise_alignment_edit_distance_unbanded::database_type
  * \tparam query_t        \copydoc pairwise_alignment_edit_distance_unbanded::query_type
- * \tparam align_config_t The type of the alignment config.
+ * \tparam align_config_t The configuration type; must be of type seqan3::configuration.
  */
 template <std::ranges::ViewableRange database_t,
           std::ranges::ViewableRange query_t,
           typename align_config_t,
-          edit_distance_trait_concept traits_t = default_edit_distance_trait_type>
+          EditDistanceTrait traits_t>
 class pairwise_alignment_edit_distance_unbanded
 {
     /*!\name Befriended classes
@@ -94,40 +65,59 @@ class pairwise_alignment_edit_distance_unbanded
 public:
     //!\brief The type of one machine word.
     using word_type = typename std::remove_reference_t<traits_t>::word_type;
+    static_assert(std::is_unsigned_v<word_type>, "the word type of edit_distance_unbanded must be unsigned.");
     //!\brief The type of the score.
     using score_type = int;
     //!\brief The type of the database sequence.
     using database_type = std::remove_reference_t<database_t>;
     //!\brief The type of the query sequence.
     using query_type = std::remove_reference_t<query_t>;
+    //!\brief The type of the alignment config.
+    using align_config_type = std::remove_reference_t<align_config_t>;
     //!\brief The type of the score matrix.
     using score_matrix_type = detail::alignment_score_matrix<pairwise_alignment_edit_distance_unbanded>;
     //!\brief The type of the trace matrix.
     using trace_matrix_type = detail::alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded>;
 
     //!\brief The size of one machine word.
-    static constexpr uint8_t word_size = sizeof(word_type) * 8;
-
+    static constexpr uint8_t word_size = sizeof_bits<word_type>;
+    static_assert(sizeof_bits<word_type> <= 64u, "we assume at most uint64_t as word_type");
 private:
     //!\brief The type of an iterator of the database sequence.
     using database_iterator = std::ranges::iterator_t<database_type>;
     //!\brief The alphabet type of the query sequence.
     using query_alphabet_type = std::remove_reference_t<reference_t<query_type>>;
-
-    //TODO Make it dynamic.
-    // using result_type = alignment_result<type_list<uint32_t, int>>;
+    //!\brief The intermediate result type of the execution of this function object.
+    using result_value_type = typename align_result_selector<database_type, query_type, align_config_type>::type;
 
     //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to config.max_errors.
-    static constexpr bool use_max_errors = detail::max_errors_concept<align_config_t>;
+    static constexpr bool use_max_errors = align_config_type::template exists<align_cfg::max_error>();
     //!\brief Whether the alignment is a semi-global alignment or not.
     static constexpr bool is_semi_global = traits_t::is_semi_global_type::value;
     //!\brief Whether the alignment is a global alignment or not.
     static constexpr bool is_global = !is_semi_global;
 
+    //!\brief Whether the alignment configuration indicates to compute and/or store the score.
+    static constexpr bool compute_score = align_config_type::template exists<align_cfg::result<with_score_type>>() ||
+                                          !std::Same<decltype(result_value_type{}.back_coordinate), std::nullopt_t *>;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the back coordinate.
+    static constexpr bool compute_back_coordinate = !std::Same<decltype(result_value_type{}.back_coordinate),
+                                                               std::nullopt_t *>;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the front coordinate.
+    static constexpr bool compute_front_coordinate = !std::Same<decltype(result_value_type{}.front_coordinate),
+                                                                std::nullopt_t *>;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the alignment of the sequences.
+    static constexpr bool compute_sequence_alignment = !std::Same<decltype(result_value_type{}.alignment),
+                                                                  std::nullopt_t *>;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the score matrix.
+    static constexpr bool compute_score_matrix = compute_front_coordinate || compute_sequence_alignment;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the trace matrix.
+    static constexpr bool compute_trace_matrix = compute_front_coordinate || compute_sequence_alignment;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the score or trace matrix.
+    static constexpr bool compute_matrix = compute_score_matrix || compute_trace_matrix;
+
     //!\brief How to pre-initialize hp.
     static constexpr word_type hp0 = is_global ? 1 : 0;
-
-    static_assert(8 * sizeof(word_type) <= 64, "we assume at most uint64_t as word_type");
 
     //!\brief The score of the current column.
     score_type _score{};
@@ -226,7 +216,7 @@ public:
         database_it{ranges::begin(database)},
         database_it_end{ranges::end(database)}
     {
-        static constexpr size_t alphabet_size = alphabet_size_v<query_alphabet_type>;
+        static constexpr size_t alphabet_size_ = alphabet_size<query_alphabet_type>;
 
         if constexpr (use_max_errors)
         {
@@ -241,13 +231,12 @@ public:
 
         if constexpr(use_max_errors)
         {
-            // localMaxErrors either stores the maximal number of _score (me.max_errors) or the needle size minus one.
+            // local_max_errors either stores the maximal number of _score (me.max_errors) or the needle size minus one.
             // It is used for the mask computation and setting the initial score (the minus one is there because of the Ukkonen trick).
-            size_t localMaxErrors = std::min<size_t>(max_errors, query.size() - 1);
-            score_mask = (word_type)1 << (localMaxErrors % word_size);
-            last_block = std::min(localMaxErrors / word_size, block_count - 1);
-            _score = localMaxErrors + 1;
-            _best_score = _score;
+            size_t local_max_errors = std::min<size_t>(max_errors, query.size() - 1);
+            score_mask = (word_type)1 << (local_max_errors % word_size);
+            last_block = std::min(local_max_errors / word_size, block_count - 1);
+            _score = local_max_errors + 1;
         }
 
         word_type vp0{static_cast<word_type>(~0)};
@@ -255,7 +244,7 @@ public:
 
         vp.resize(block_count, vp0);
         vn.resize(block_count, vn0);
-        bit_masks.resize((alphabet_size + 1) * block_count, 0);
+        bit_masks.resize((alphabet_size_ + 1) * block_count, 0);
 
         // encoding the letters as bit-vectors
         for (size_t j = 0; j < query.size(); j++)
@@ -304,9 +293,26 @@ private:
             _score++;
         else if ((N & mask) != (word_type)0)
             _score--;
+    }
+
+    //!\brief Returns true if the current active cell is within the last row.
+    bool is_last_active_cell_within_last_row()
+    {
+        return (score_mask == last_score_mask) && (last_block == vp.size() - 1);
+    }
+
+    //!\brief Update the current best known score if the current score is better.
+    void update_best_score()
+    {
+        if constexpr(is_global)
+            _best_score = _score;
 
         if constexpr(is_semi_global)
         {
+            // we have to make sure that update_best_score is only called after a score update within the
+            // last row.
+            assert(is_last_active_cell_within_last_row());
+
             _best_score_col = (_score <= _best_score) ? database_it : _best_score_col;
             _best_score     = (_score <= _best_score) ? _score : _best_score;
         }
@@ -319,8 +325,9 @@ private:
         if (score_mask != (word_type)0)
             return true;
 
-        if (is_global && last_block == 0)
-            return false;
+        if constexpr (is_global)
+            if (last_block == 0u)  // [[unlikely]]
+                return false;
 
         last_block--;
 
@@ -350,7 +357,7 @@ private:
                 break;
         }
 
-        if ((score_mask == last_score_mask) && (last_block == vp.size() - 1))
+        if (is_last_active_cell_within_last_row())
             return on_hit();
         else
         {
@@ -361,14 +368,15 @@ private:
         return false;
     }
 
-    //!\brief Will be called if a hit was found (e.g., score < max_errors).
+    //!\brief Will be called if a hit was found (e.g., score <= max_errors).
     bool on_hit()
     {
         assert(_score <= max_errors);
-        // _setFinderEnd(finder);
-        //
-        // if constexpr(is_global)
-        //     _setFinderLength(finder, endPosition());
+
+        if constexpr(is_semi_global)
+            update_best_score();
+
+        // TODO: call external on_hit functor
 
         return false;
     }
@@ -399,72 +407,80 @@ private:
             large_patterns();
 
         if constexpr(is_global)
-            _best_score = _score;
+            update_best_score();
     }
 
 public:
 
     /*!\brief Generic invocable interface.
-     * \param[in,out] res The alignment result to fill.
+     * \param[in]     idx The index of the currently processed sequence pair.
      * \returns A reference to the filled alignment result.
      */
-    template <typename result_value_type>
-    alignment_result<result_value_type> & operator()(alignment_result<result_value_type> & res)
+    alignment_result<result_value_type> operator()(size_t const idx)
     {
         _compute();
         result_value_type res_vt{};
-        if constexpr (!std::is_same_v<decltype(res_vt.score), std::nullopt_t *>)
+        res_vt.id = idx;
+        if constexpr (compute_score)
         {
             res_vt.score = score();
         }
 
-        if constexpr (!std::is_same_v<decltype(res_vt.back_coordinate), std::nullopt_t *>)
+        if constexpr (compute_back_coordinate)
         {
             res_vt.back_coordinate = back_coordinate();
         }
 
-        [[maybe_unused]] alignment_trace_matrix matrix = trace_matrix();
-        if constexpr (!std::is_same_v<decltype(res_vt.front_coordinate), std::nullopt_t *>)
+        if constexpr (compute_front_coordinate)
         {
-            res_vt.front_coordinate = alignment_front_coordinate(matrix, res_vt.back_coordinate);
+            res_vt.front_coordinate = alignment_front_coordinate(trace_matrix(), res_vt.back_coordinate);
         }
 
-        if constexpr (!std::is_same_v<decltype(res_vt.alignment), std::nullopt_t *>)
+        if constexpr (compute_sequence_alignment)
         {
-            res_vt.alignment = alignment_trace(database, query, matrix, res_vt.back_coordinate);
+            res_vt.alignment = alignment_trace(database, query, trace_matrix(), res_vt.back_coordinate);
         }
-        res = alignment_result<result_value_type>{res_vt};
-        return res;
+        return alignment_result<result_value_type>{std::move(res_vt)};
     }
 
     //!\brief Return the score of the alignment.
     score_type score() const noexcept
     {
+        static_assert(compute_score, "score() can only be computed if you specify the result type within "
+                                     "your alignment config.");
         return -_best_score;
     }
 
     //!\brief Return the score matrix of the alignment.
     score_matrix_type score_matrix() const noexcept
     {
+        static_assert(compute_score_matrix, "score_matrix() can only be computed if you specify the result type within "
+                                            "your alignment config.");
         return score_matrix_type{*this};
     }
 
     //!\brief Return the trace matrix of the alignment.
     trace_matrix_type trace_matrix() const noexcept
     {
+        static_assert(compute_trace_matrix, "trace_matrix() can only be computed if you specify the result type within "
+                                            "your alignment config.");
         return trace_matrix_type{*this};
     }
 
     //!\brief Return the begin position of the alignment
     alignment_coordinate front_coordinate() const noexcept
     {
-        alignment_coordinate end = back_coordinate();
-        return alignment_front_coordinate(trace_matrix(), end);
+        static_assert(compute_front_coordinate, "front_coordinate() can only be computed if you specify the result type "
+                                                "within your alignment config.");
+        alignment_coordinate back = back_coordinate();
+        return alignment_front_coordinate(trace_matrix(), back);
     }
 
     //!\brief Return the end position of the alignment
     alignment_coordinate back_coordinate() const noexcept
     {
+        static_assert(compute_back_coordinate, "back_coordinate() can only be computed if you specify the result type "
+                                               "within your alignment config.");
         size_t col = database.size() - 1;
         if constexpr(is_semi_global)
             col = std::ranges::distance(begin(database), _best_score_col);
@@ -475,6 +491,8 @@ public:
     //!\brief Return the alignment, i.e. the actual base pair matching.
     auto alignment() const noexcept
     {
+        static_assert(compute_sequence_alignment, "alignment() can only be computed if you specify the result type "
+                                                  "within your alignment config.");
         return alignment_trace(database, query, trace_matrix(), back_coordinate());
     }
 };
@@ -491,13 +509,20 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
         compute_step<false>(b, hp, hn, vp[0], vn[0], _, _, _);
         advance_score(hp, hn, score_mask);
 
+        // semi-global without max_errors guarantees that the score stays within the last row
+        if constexpr(is_semi_global && !use_max_errors)
+            update_best_score();
+
         if constexpr(use_max_errors)
-            if (_score <= max_errors && on_hit())
+        {
+            // updating the last active cell
+            if (update_last_active_cell())
             {
                 add_state();
                 ++database_it;
                 return true;
             }
+        }
 
         add_state();
         ++database_it;
@@ -522,6 +547,10 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
             compute_step<true>(b, hp, hn, vp[current_block], vn[current_block], carry_d0, carry_hp, carry_hn);
         }
         advance_score(hp, hn, score_mask);
+
+        // semi-global without max_errors guarantees that the score stays within the last row
+        if constexpr(is_semi_global && !use_max_errors)
+            update_best_score();
 
         if constexpr(use_max_errors)
         {
@@ -557,82 +586,17 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
  * \relates seqan3::detail::pairwise_alignment_edit_distance_unbanded
  * \{
  */
+
+//!\brief Deduce the type from the provided arguments.
 template<typename database_t, typename query_t, typename config_t>
 pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config)
     -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t>;
 
+//!\brief Deduce the type from the provided arguments.
 template<typename database_t, typename query_t, typename config_t, typename traits_t>
 pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config, traits_t)
     -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t, traits_t>;
 //!\}
-
-// ----------------------------------------------------------------------------
-// edit_distance_wrapper
-// ----------------------------------------------------------------------------
-
-/*!\brief This type wraps the call to the seqan3::detail::pairwise_alignment_edit_distance_unbanded algorithm.
- * \implements std::Invocable
- * \tparam config_t The configuration type.
- *
- * \details
- *
- * This wrapper class is used to decouple the sequence types from the algorithm class type.
- * Within the alignment configuration a std::function object with this wrapper stored is returned
- * if an edit distance should be computed. On invocation it delegates the call to the actual implementation
- * of the edit distance algorithm, while the interface is unified with the execution model of the pairwise alignment
- * algorithms.
- */
-template <typename config_t, typename traits_t = default_edit_distance_trait_type>
-class edit_distance_wrapper
-{
-public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    constexpr edit_distance_wrapper() = default;                                          //!< Defaulted
-    constexpr edit_distance_wrapper(edit_distance_wrapper const &) = default;             //!< Defaulted
-    constexpr edit_distance_wrapper(edit_distance_wrapper &&) = default;                  //!< Defaulted
-    constexpr edit_distance_wrapper & operator=(edit_distance_wrapper const &) = default; //!< Defaulted
-    constexpr edit_distance_wrapper & operator=(edit_distance_wrapper &&) = default;      //!< Defaulted
-    ~edit_distance_wrapper() = default;                                                   //!< Defaulted
-
-    /*!\brief Constructs the wrapper with the passed configuration.
-     * \param cfg The configuration to be passed to the algorithm.
-     *
-     * \details
-     *
-     * The configuration is copied once to the heap during construction and maintained by a std::shared_ptr.
-     * The configuration is not passed to the function-call-operator of this function object, in order to avoid
-     * incompatible configurations between the passed configuration and the one used during configuration of this
-     * class. Further the function object will be stored in a std::function which requires copyable objects and
-     * in parallel executions the function object must be copied as well.
-     */
-    constexpr edit_distance_wrapper(config_t const & cfg) : cfg_ptr{new config_t(cfg)}
-    {}
-    //!}
-
-    /*!\brief Invokes the actual alignment computation given two sequences.
-     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
-     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
-     * \param[in] first_range    The first sequence (or packed sequences).
-     * \param[in] second_range   The second sequence (or packed sequences).
-     */
-    template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    constexpr auto operator()(first_range_t && first_range, second_range_t && second_range)
-    {
-        using result_t = typename detail::align_result_selector<remove_cvref_t<first_range_t>,
-                                                                remove_cvref_t<second_range_t>,
-                                                                remove_cvref_t<config_t>>::type;
-
-        pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, traits_t{}};
-        alignment_result<result_t> res{};
-        return algo(res);
-    }
-
-private:
-    //!\brief The alignment configuration stored on the heap.
-    std::shared_ptr<remove_cvref_t<config_t>> cfg_ptr{};
-};
 
 //!\cond
 template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
@@ -669,7 +633,7 @@ public:
 
                 // init first row with 0, 1, 2, 3, ...
                 for (size_t col = 0; col < _cols; ++col)
-                    scores[col] = alignment_type::is_global ? col : 0;
+                    scores[col] = alignment_type::is_global ? -col : 0;
 
                 auto deltas = [&](size_t col)
                 {
@@ -692,7 +656,7 @@ public:
                 {
                     auto delta = deltas(col);
                     for (size_t row = 1; row < _rows; ++row)
-                        scores[row * _cols + col] = scores[(row - 1) * _cols + col] + delta(row - 1);
+                        scores[row * _cols + col] = scores[(row - 1) * _cols + col] - delta(row - 1);
                 }
 
                 return scores;

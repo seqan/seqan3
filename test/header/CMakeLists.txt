@@ -2,7 +2,7 @@
 # Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 # Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 # This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-# shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+# shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
 cmake_minimum_required (VERSION 3.2)
@@ -41,7 +41,7 @@ macro (seqan3_header_test component header_base_path)
     seqan3_test_files (header_files "${header_base_path}" "*.hpp;*.h")
 
     # filter out headers which are implementation detail
-    list (FILTER header_files EXCLUDE REGEX "detail|/bits/|search")
+    list (FILTER header_files EXCLUDE REGEX "detail|/bits/")
 
     file (WRITE "${PROJECT_BINARY_DIR}/${target}.cpp" "")
     add_executable (${target} ${PROJECT_BINARY_DIR}/${target}.cpp)

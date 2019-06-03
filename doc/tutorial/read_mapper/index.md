@@ -69,7 +69,7 @@ Your `main` may look like this:
 \endsolution
 
 ## Step 2 - Reading the input
-As a next step, we want to use the parsed file name to read in our reference data. This will be done 
+As a next step, we want to use the parsed file name to read in our reference data. This will be done
 using seqan3::sequence_file_input class. As a guide, you can take a look at the
 \ref tutorial_sequence_file "Sequence I/O Tutorial".
 
@@ -112,7 +112,7 @@ Now that we have the necessary sequence information, we can create an index and 
 We want to create a new function `create_index`:
 * It takes `index_path` and `storage` as parameters
 * Creates a bi_fm_index
-* Stores the bi_fm_index (you may want to `throw` if this fails)
+* Stores the bi_fm_index
 
 We also need to change:
 * `run_program` to now also call `create_index`
@@ -127,7 +127,7 @@ This is the signature of `create_index`:
 \snippet doc/tutorial/read_mapper/read_mapper_indexer_step3.cpp solution
 Here is the complete program:
 \hint
-\include doc/tutorial/read_mapper/read_mapper_indexer_step3.cpp
+\snippet doc/tutorial/read_mapper/read_mapper_indexer_step3.cpp complete
 \endhint
 \endsolution
 
@@ -191,7 +191,7 @@ This is the signature of `map_reads`:
 \snippet doc/tutorial/read_mapper/read_mapper_step2.cpp solution
 Here is the complete program:
 \hint
-\include doc/tutorial/read_mapper/read_mapper_step2.cpp
+\snippet doc/tutorial/read_mapper/read_mapper_step2.cpp complete
 \endhint
 \endsolution
 
@@ -213,7 +213,7 @@ This is the alignment config:
 \snippet doc/tutorial/read_mapper/read_mapper_step3.cpp solution
 Here is the complete program:
 \hint
-\include doc/tutorial/read_mapper/read_mapper_step3.cpp
+\snippet doc/tutorial/read_mapper/read_mapper_step3.cpp complete
 \endhint
 \endsolution
 
@@ -236,6 +236,6 @@ This is the alignment_file_output construction:
 \snippet doc/tutorial/read_mapper/read_mapper_step4.cpp solution
 Here is the complete program:
 \hint
-\include doc/tutorial/read_mapper/read_mapper_step4.cpp
+\snippet doc/tutorial/read_mapper/read_mapper_step4.cpp complete
 \endhint
 \endsolution

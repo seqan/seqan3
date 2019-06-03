@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <iostream>
@@ -29,22 +29,22 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
     // pipe notation
     auto v = vec | adaptor;
-    EXPECT_EQ("foo", std::string(v));
+    EXPECT_EQ("foo", v | std::ranges::to<std::string>);
 
     // function notation
-    std::string v2(adaptor(vec));
+    std::string v2(adaptor(vec) | std::ranges::to<std::string>);
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = vec | adaptor | ranges::view::unique;
-    EXPECT_EQ("fo", std::string(v3));
-    std::string v3b = vec | std::view::reverse | adaptor | ranges::view::unique;
+    EXPECT_EQ("fo", v3 | std::ranges::to<std::string>);
+    std::string v3b = vec | std::view::reverse | adaptor | ranges::view::unique | std::ranges::to<std::string>;
     EXPECT_EQ("rab", v3b);
 
     // consuming behaviour
     auto v4 = vec | view::single_pass_input;
     auto v5 = std::move(v4) | adaptor;
-    EXPECT_EQ("foo", std::string(v5));
+    EXPECT_EQ("foo", v5 | std::ranges::to<std::string>);
     EXPECT_EQ('b', *begin(v5)); // not newline
 }
 
@@ -59,7 +59,7 @@ void do_concepts(adaptor_t const & adaptor)
     EXPECT_FALSE(std::ranges::View<decltype(vec)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), char>));
 
     auto v1 = vec | adaptor;
@@ -71,7 +71,7 @@ void do_concepts(adaptor_t const & adaptor)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_FALSE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
 
     auto v2 = vec | view::single_pass_input | adaptor;
@@ -83,7 +83,7 @@ void do_concepts(adaptor_t const & adaptor)
     EXPECT_TRUE(std::ranges::View<decltype(v2)>);
     EXPECT_FALSE(std::ranges::SizedRange<decltype(v2)>);
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_FALSE(const_iterable_concept<decltype(v2)>);
+    EXPECT_FALSE(ConstIterableRange<decltype(v2)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), char>));
 }
 
@@ -107,6 +107,15 @@ TEST(view_take_line, no_eol)
     std::string v;
     EXPECT_NO_THROW(( v = vec | view::take_line ));
     EXPECT_EQ("foo", v);
+}
+
+TEST(view_take_line, eol_at_first_position)
+{
+    using sbt = std::istreambuf_iterator<char>;
+    std::istringstream vec{"\n\nfoo"};
+    auto stream_view = std::ranges::subrange<decltype(sbt{vec}), decltype(sbt{})> {sbt{vec}, sbt{}};
+    EXPECT_EQ("", stream_view | view::take_line | std::ranges::to<std::string>);
+    EXPECT_EQ("foo", stream_view | view::take_line | std::ranges::to<std::string>);
 }
 
 TEST(view_take_line, concepts)
@@ -156,11 +165,10 @@ TEST(view_take_line, reverse_bug)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_FALSE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
 
-    // Either of these build-fail on GCC7 and GCC8
-//     auto v2 = v1 | ranges::view::reverse;
-//     auto v2 = ranges::reverse_view{v1};
+    // No build failure, but wrong results:
+//     auto v2 = v1 | std::view::reverse;
 //     EXPECT_EQ("oof", std::string(v2));
 }

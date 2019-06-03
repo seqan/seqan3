@@ -1,6 +1,6 @@
 #include <vector>
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/to_lower.hpp>
 #include <seqan3/range/view/to_upper.hpp>
 

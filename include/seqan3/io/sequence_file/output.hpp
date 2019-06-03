@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -28,12 +28,14 @@
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/io/record.hpp>
+#include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <seqan3/io/sequence_file/format_genbank.hpp>
 #include <seqan3/io/sequence_file/format_sam.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
@@ -158,10 +160,9 @@ namespace seqan3
  * TODO give overview of formats, once they are all implemented
  */
 
-template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
+template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
-              type_list<sequence_file_format_embl, sequence_file_format_fasta, sequence_file_format_fastq,
-                        sequence_file_format_sam>,
+              type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>,
           char_concept stream_char_type_ = char>
 class sequence_file_output
 {
@@ -203,9 +204,14 @@ public:
      * \brief Most of the range associated types are `void` for output ranges.
      * \{
      */
+
+    //!\brief The value type (void).
     using value_type        = void;
+    //!\brief The reference type (void).
     using reference         = void;
+    //!\brief The const reference type (void).
     using const_reference   = void;
+    //!\brief The size type (void).
     using size_type         = void;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ptrdiff_t;
@@ -253,7 +259,7 @@ public:
         primary_stream{new std::ofstream{filename, std::ios_base::out | std::ios::binary}, stream_deleter_default}
     {
         if (!primary_stream->good())
-            throw file_open_error{"Could not open file " + filename.string() + " for reading."};
+            throw file_open_error{"Could not open file " + filename.string() + " for writing."};
 
         // possibly add intermediate compression stream
         secondary_stream = detail::make_secondary_ostream(*primary_stream, filename);
@@ -284,7 +290,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{file_format{}}
+        format{detail::sequence_file_output_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -298,7 +304,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{file_format{}}
+        format{detail::sequence_file_output_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -370,7 +376,7 @@ public:
      */
     template <typename record_t>
     void push_back(record_t && r)
-        requires tuple_like_concept<record_t> &&
+        requires TupleLike<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
     {
         write_record(detail::get_or_ignore<field::SEQ>(r),
@@ -403,7 +409,7 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
-        requires tuple_like_concept<tuple_t>
+        requires TupleLike<tuple_t>
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(t),
@@ -443,7 +449,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::OutputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      *
      * \details
@@ -464,7 +470,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     sequence_file_output & operator=(rng_t && range)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -473,7 +479,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
      *
@@ -500,7 +506,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     friend sequence_file_output & operator|(rng_t && range, sequence_file_output & f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         f = range;
         return f;
@@ -509,9 +515,14 @@ public:
     //!\overload
     template <std::ranges::InputRange rng_t>
     friend sequence_file_output operator|(rng_t && range, sequence_file_output && f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
+    #if defined(__GNUC__) && (__GNUC__ == 9) // an unreported build problem of GCC9
+        for (auto && record : range)
+            f.push_back(std::forward<decltype(record)>(record));
+    #else // ^^^ workaround | regular solution ↓↓↓
         f = range;
+    #endif
         return std::move(f);
     }
     //!\}
@@ -617,7 +628,7 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::sequence_file_output_format>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -713,9 +724,11 @@ protected:
  * \relates seqan3::sequence_file_output
  * \{
  */
+
+//!\brief Deduction of the selected fields, the file format and the stream type.
 template <OStream2                 stream_t,
           SequenceFileOutputFormat file_format,
-          detail::fields_concept   selected_field_ids>
+          detail::Fields           selected_field_ids>
 sequence_file_output(stream_t &&,
                      file_format const &,
                      selected_field_ids const &)
@@ -723,9 +736,10 @@ sequence_file_output(stream_t &&,
                             type_list<file_format>,
                             typename std::remove_reference_t<stream_t>::char_type>;
 
+//!\overload
 template <OStream2                 stream_t,
           SequenceFileOutputFormat file_format,
-          detail::fields_concept   selected_field_ids>
+          detail::Fields           selected_field_ids>
 sequence_file_output(stream_t &,
                      file_format const &,
                      selected_field_ids const &)

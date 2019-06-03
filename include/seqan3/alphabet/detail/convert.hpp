@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\cond DEV
@@ -34,13 +34,13 @@ namespace seqan3::detail
  * \hideinitializer
  */
 template <Alphabet out_t, Alphabet in_t>
-constexpr std::array<out_t, alphabet_size_v<in_t>> convert_through_char_representation
+constexpr std::array<out_t, alphabet_size<in_t>> convert_through_char_representation
 {
     [] () constexpr
     {
-        std::array<out_t, alphabet_size_v<in_t>> ret{};
-        for (typename in_t::rank_type i = 0; i < alphabet_size_v<in_t>; ++i)
-            assign_char(ret[i], to_char(assign_rank(in_t{}, i)));
+        std::array<out_t, alphabet_size<in_t>> ret{};
+        for (typename in_t::rank_type i = 0; i < alphabet_size<in_t>; ++i)
+            assign_char_to(to_char(assign_rank_to(i, in_t{})), ret[i]);
         return ret;
     }()
 };

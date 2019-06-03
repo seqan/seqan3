@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -15,8 +15,8 @@
 #include <sstream>
 #include <vector>
 
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 
 namespace seqan3
 {
@@ -99,7 +99,7 @@ struct argument_parser_meta_data // holds all meta information
      *        is separated by a new line.
      */
     std::vector<std::string> description;
-    /*!\brief Add lines of usage to the synopsis section of the help page (e.g. 
+    /*!\brief Add lines of usage to the synopsis section of the help page (e.g.
      *        "./my_read_mapper [OPTIONS] FILE1 FILE1").
      */
     std::vector<std::string> synopsis;
@@ -109,28 +109,5 @@ struct argument_parser_meta_data // holds all meta information
      */
     std::vector<std::string> examples;
 };
-
-namespace detail
-{
-
-/*!\brief Streams all parameters and returns a concatenated string.
- *
- * \tparam value_type Must be streamable (stream << value).
- * \param  values Variable number of parameters of any type that
- *                implement the stream operator.
- */
-template <typename ...value_type>
-//!\cond
-requires (OStream<std::iostream, std::remove_reference_t<value_type>> && ...)
-//!\endcond
-std::string to_string(value_type && ...values)
-{
-    std::stringstream stream;
-    debug_stream_type dstream{stream};
-    (dstream << ... << std::forward<value_type>(values));
-    return stream.str();
-}
-
-} // namespace detail
 
 } // namespace seqan3

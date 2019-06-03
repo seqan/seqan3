@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -22,11 +22,21 @@
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The structure file output format base class.
+template <typename t>
+class structure_file_output_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
 /*!\interface seqan3::StructureFileOutputFormat <>
- * \brief The generic concept for sequence file out formats.
+ * \brief The generic concept for structure file out formats.
  * \ingroup structure_file
  *
  * \details
@@ -37,7 +47,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT StructureFileOutputFormat = requires(t & v,
+SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_output_format<t> & v,
                                                     std::ofstream & f,
                                                     structure_file_output_options & options,
                                                     rna5_vector & seq,
@@ -83,7 +93,6 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(t & v,
  *                comment_type && comment,
  *                offset_type && offset)
  * \brief Write the given fields to the specified stream.
- * \memberof seqan3::StructureFileOutputFormat
  * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.

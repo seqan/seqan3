@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -19,10 +19,10 @@ namespace seqan3::detail
 {
 
 //!\brief The declaration of alignment_score_matrix. Each specialisation of this
-//!       declaration must satisfy seqan3::detail::matrix_concept.
+//!       declaration must satisfy seqan3::detail::Matrix.
 //!\attention This is a pure base class, you must only use its specialisations.
 //!\ingroup alignment_matrix
-//!\implements seqan3::detail::matrix_concept
+//!\implements seqan3::detail::Matrix
 template <typename ...>
 class alignment_score_matrix;
 
@@ -54,6 +54,8 @@ public:
  * \relates seqan3::detail::alignment_score_matrix
  * \{
  */
+
+//!\brief Deduce the score matrix type from the provided arguments.
 template <typename score_t>
 alignment_score_matrix(std::vector<score_t>, size_t rows, size_t cols)
     -> alignment_score_matrix<std::vector<score_t>>;

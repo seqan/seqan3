@@ -27,14 +27,16 @@ We will explain the details about reading and writing files in the [Sequence Fil
 Currently, SeqAn3 supports the following file formats:
 
 - Sequence file formats:
-  - seqan3::sequence_file_format_fasta
-  - seqan3::sequence_file_format_fastq
+  - seqan3::format_fasta
+  - seqan3::format_fastq
+  - seqan3::format_embl
+  - seqan3::format_sam (alignment format contains enough information to be read/written as pure sequence file)
 
 - Structure file formats:
-  - seqan3::structure_file_format_vienna
+  - seqan3::format_vienna
 
 - Alignment file formats:
-  - seqan3::alignment_file_format_sam
+  - seqan3::format_sam
 
 \warning Access to compressed files relies on external libraries.
 For instance, you need to have *zlib* installed for reading `.gz` files and *libbz2* for reading `.bz2` files.
@@ -79,7 +81,7 @@ CCCCCCCCCCCCCCC
 CGATCGATC
 ```
 
-In SeqAn3 we provide the seqan3::sequence_file_format_fasta to read sequence files in FASTA format.
+In SeqAn3 we provide the seqan3::format_fasta to read sequence files in FASTA format.
 
 ### FASTQ format
 
@@ -96,17 +98,37 @@ CGATCGATC
 IIIIIIIII
 ```
 
-In SeqAn3 we provide the seqan3::sequence_file_format_fastq to read sequence files in FASTA format.
+In SeqAn3 we provide the seqan3::format_fastq to read sequence files in FASTQ format.
+
+### EMBL format
+
+An EMBL record stores sequence and its annotation together. We are only interested in the id (ID) and sequence (SQ)
+information for a sequence file. Qualities are not stored in this format.
+Here is an example of an EMBL file:
+
+```
+ID   X56734; SV 1; linear; mRNA; STD; PLN; 1859 BP.
+XX
+AC   X56734; S46826;
+XX
+SQ   Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+     aaacaaacca aatatggatt ttattgtagc catatttgct ctgtttgtta ttagctcatt
+     cacaattact tccacaaatg cagttgaagc ttctactctt cttgacatag gtaacctgag
+```
+
+In SeqAn3 we provide the seqan3::format_embl to read sequence files in EMBL format.
 
 ### File extensions
 
 The formerly introduced formats can be identified by the following file name extensions
 (this is important for automatic format detection from a file name as you will learn in the next section).
 
-| File Format | SeqAn3 format class                | File Extensions                                   |
-| ------------| -----------------------------------|---------------------------------------------------|
-| FASTA       | seqan3::sequence_file_format_fasta |   `.fa`, `.fasta`, `.fna`, `.ffn`, `.ffa`, `.frn` |
-| FASTQ       | seqan3::sequence_file_format_fastq |   `.fq`, `.fastq`                                 |
+| File Format | SeqAn3 format class  | File Extensions                                   |
+| ------------| ---------------------|---------------------------------------------------|
+| FASTA       | seqan3::format_fasta |   `.fa`, `.fasta`, `.fna`, `.ffn`, `.ffa`, `.frn` |
+| FASTQ       | seqan3::format_fastq |   `.fq`, `.fastq`                                 |
+| EMBL        | seqan3::format_embl  |   `.embl`                                         |
+
 
 You can access the valid file extension via the `file_extension` member variable in a format:
 
@@ -147,7 +169,7 @@ In most cases you construct from a file name:
 
 All template parameters of the seqan3::sequence_file_input are automatically deduced, even the format!
 We **detect the format by the file name extension**.
-The file extension in the example above is `.fasta` so we choose the seqan3::sequence_file_format_fasta.
+The file extension in the example above is `.fasta` so we choose the seqan3::format_fasta.
 
 You can also construct a sequence file object directly from a stream (e.g. std::cin or std::stringstream),
 but then you need to know your format beforehand:
@@ -364,10 +386,10 @@ You may give less fields than are selected if the actual format you are writing 
 
 Use your code (or the solution) from the previous exercise.
 Iterate over the records with a for loop and instead of just printing the ids,
-write out **all** the records that satisfy the filter to a new file called `output.fasta`.
+write out **all** the records that satisfy the filter to a new file called `output.fastq`.
 
 Test your code on the same FASTQ file.
-The file `output.fasta` should contain the following records:
+The file `output.fastq` should contain the following records:
 
 ```
 @seq1

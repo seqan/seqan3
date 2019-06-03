@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 
@@ -24,7 +24,7 @@ namespace seqan3
  */
 template <typename simd_t>
 //!\cond
-    requires simd::simd_concept<remove_cvref_t<simd_t>>
+    requires simd::Simd<remove_cvref_t<simd_t>>
 //!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & s, simd_t && simd)
 {

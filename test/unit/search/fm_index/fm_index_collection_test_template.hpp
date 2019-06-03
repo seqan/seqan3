@@ -2,16 +2,16 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
+
+#include <gtest/gtest.h>
 
 #include <type_traits>
 
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/search/fm_index/all.hpp>
-#include <seqan3/test/tmp_filename.hpp>
-
-#include <gtest/gtest.h>
+#include <seqan3/test/cereal.hpp>
 
 using namespace seqan3;
 
@@ -23,7 +23,7 @@ TYPED_TEST_CASE_P(fm_index_collection_test);
 
 TYPED_TEST_P(fm_index_collection_test, ctr)
 {
-    typedef value_type_t<typename TypeParam::text_type> inner_text_type;
+    using inner_text_type = value_type_t<typename TypeParam::text_type>;
     typename TypeParam::text_type text{inner_text_type(10), inner_text_type(10)}; // initialized with smallest char
 
     // default/zero construction
@@ -32,28 +32,28 @@ TYPED_TEST_P(fm_index_collection_test, ctr)
 
     // copy construction
     TypeParam fm1{fm0};
-    EXPECT_EQ(fm0.size(), fm1.size());
+    EXPECT_EQ(fm0, fm1);
 
     // copy assignment
     TypeParam fm2 = fm0;
-    EXPECT_EQ(fm0.size(), fm2.size());
+    EXPECT_EQ(fm0, fm2);
 
     // move construction
-    TypeParam fm3{std::move(fm0)};
-    EXPECT_EQ(fm0.size(), fm3.size());
+    TypeParam fm3{std::move(fm1)};
+    EXPECT_EQ(fm0, fm3);
 
     // move assigment
-    TypeParam fm4 = std::move(fm0);
-    EXPECT_EQ(fm0.size(), fm4.size());
+    TypeParam fm4 = std::move(fm2);
+    EXPECT_EQ(fm0, fm4);
 
     // container contructor
     TypeParam fm5{text};
-    EXPECT_EQ(fm0.size(), fm5.size());
+    EXPECT_EQ(fm0, fm5);
 }
 
 TYPED_TEST_P(fm_index_collection_test, swap)
 {
-    typedef value_type_t<typename TypeParam::text_type> inner_text_type;
+    using inner_text_type = value_type_t<typename TypeParam::text_type>;
     typename TypeParam::text_type textA{inner_text_type(10), inner_text_type(10)};
     typename TypeParam::text_type textB{inner_text_type(20), inner_text_type(20)};
 
@@ -62,15 +62,15 @@ TYPED_TEST_P(fm_index_collection_test, swap)
     TypeParam fm2{fm0};
     TypeParam fm3{fm1};
 
-    EXPECT_EQ(fm0.size(), fm2.size());
-    EXPECT_EQ(fm1.size(), fm3.size());
-    EXPECT_NE(fm0.size(), fm1.size());
+    EXPECT_EQ(fm0, fm2);
+    EXPECT_EQ(fm1, fm3);
+    EXPECT_NE(fm0, fm1);
 
     std::swap(fm1, fm2);
 
-    EXPECT_EQ(fm0.size(), fm1.size());
-    EXPECT_EQ(fm2.size(), fm3.size());
-    EXPECT_NE(fm0.size(), fm2.size());
+    EXPECT_EQ(fm0, fm1);
+    EXPECT_EQ(fm2, fm3);
+    EXPECT_NE(fm0, fm2);
 }
 
 TYPED_TEST_P(fm_index_collection_test, size)
@@ -78,27 +78,10 @@ TYPED_TEST_P(fm_index_collection_test, size)
     TypeParam fm;
     EXPECT_TRUE(fm.empty());
 
-    typedef value_type_t<typename TypeParam::text_type> inner_text_type;
+    using inner_text_type = value_type_t<typename TypeParam::text_type>;
     typename TypeParam::text_type text{inner_text_type(4), inner_text_type(4)};
     fm.construct(text);
     EXPECT_EQ(fm.size(), 10u); // including a sentinel character and a delimiter
-}
-
-TYPED_TEST_P(fm_index_collection_test, serialization)
-{
-    typedef value_type_t<typename TypeParam::text_type> inner_text_type;
-    typename TypeParam::text_type text{inner_text_type(4), inner_text_type(4)};
-    TypeParam fm0{text};
-
-    test::tmp_filename filename{"fm_index"};
-    auto const & path = filename.get_path();
-
-    EXPECT_TRUE(fm0.store(path));
-
-    TypeParam fm1{};
-    EXPECT_TRUE(fm1.load(path));
-
-    EXPECT_EQ(fm1.size(), 10u);
 }
 
 TYPED_TEST_P(fm_index_collection_test, concept_check)
@@ -122,4 +105,13 @@ TYPED_TEST_P(fm_index_collection_test, empty_text)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(fm_index_collection_test, ctr, swap, size, serialization, concept_check, empty_text);
+TYPED_TEST_P(fm_index_collection_test, serialisation)
+{
+    using inner_text_type = value_type_t<typename TypeParam::text_type>;
+    typename TypeParam::text_type text{inner_text_type(4), inner_text_type(12)};
+
+    TypeParam fm{text};
+    test::do_serialisation(fm);
+}
+
+REGISTER_TYPED_TEST_CASE_P(fm_index_collection_test, ctr, swap, size, serialisation, concept_check, empty_text);

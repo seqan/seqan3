@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -23,6 +23,16 @@
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The sequence file input format base class.
+template <typename format_tag>
+class sequence_file_input_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -38,7 +48,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT SequenceFileInputFormat = requires (t                                        & v,
+SEQAN3_CONCEPT SequenceFileInputFormat = requires (detail::sequence_file_input_format<t>    & v,
                                                    std::ifstream                            & f,
                                                    sequence_file_input_options<dna5, false> & options,
                                                    dna5_vector                              & seq,
@@ -63,14 +73,13 @@ SEQAN3_CONCEPT SequenceFileInputFormat = requires (t                            
 /*!\fn void read(stream_type & stream, seqan3::sequence_file_input_options const & options, seq_type & sequence,
  *               id_type & id, qual_type & qualities)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \memberof seqan3::SequenceFileInputFormat
  * \tparam stream_type      Input stream, must satisfy seqan3::IStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy std::ranges::OutputRange
- * over a seqan3::QualityAlphabet.
+ * over a seqan3::WritableQualityAlphabet.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
  * \param[out]    sequence  The buffer for seqan3::field::SEQ input, i.e. the "sequence".

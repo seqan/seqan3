@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <sstream>
@@ -91,11 +91,17 @@ TEST(general, construct_by_filename)
                       unhandled_extension_error );
     }
 
+    /* unknown file */
+    {
+        test::tmp_filename filename{"I/do/not/exist.fasta"};
+        EXPECT_THROW( sequence_file_output<>{filename.get_path()}, file_open_error );
+    }
+
     /* filename + fields */
     {
         test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
         EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ>,
-                                            type_list<sequence_file_format_fasta>>{filename.get_path(), fields<field::SEQ>{}} ));
+                                               type_list<format_fasta>>{filename.get_path(), fields<field::SEQ>{}} ));
     }
 }
 
@@ -103,22 +109,21 @@ TEST(general, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ, field::ID, field::QUAL>,
-                                           type_list<sequence_file_format_fasta>>{std::ostringstream{},
-                                                            sequence_file_format_fasta{}} ));
+                                           type_list<format_fasta>>{std::ostringstream{},
+                                                            format_fasta{}} ));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ, field::ID, field::QUAL>,
-                                        type_list<sequence_file_format_fasta>>{std::ostringstream{},
-                                                            sequence_file_format_fasta{},
-                                                            fields<field::SEQ, field::ID, field::QUAL>{}} ));
+                                           type_list<format_fasta>>{std::ostringstream{},
+                                                                    format_fasta{},
+                                                                    fields<field::SEQ, field::ID, field::QUAL>{}} ));
 }
 
 TEST(general, default_template_args_and_deduction_guides)
 {
     using comp1 = fields<field::SEQ, field::ID, field::QUAL>;
-    using comp2 = type_list<sequence_file_format_embl, sequence_file_format_fasta, sequence_file_format_fastq,
-                            sequence_file_format_sam>;
+    using comp2 = type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>;
     using comp3 = char;
 
     /* default template args */
@@ -156,48 +161,50 @@ TEST(general, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::ostringstream ext{};
-        sequence_file_output fout{ext, sequence_file_format_fasta{}};
+        sequence_file_output fout{ext, format_fasta{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_embl,
-                                                                              sequence_file_format_fasta,
-                                                                              sequence_file_format_fastq,
-                                                                              sequence_file_format_sam>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_embl,
+                                                                              format_fasta,
+                                                                              format_fastq,
+                                                                              format_genbank,
+                                                                              format_sam>>));                // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream temporary constructor */
     {
-        sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}};
+        sequence_file_output fout{std::ostringstream{}, format_fasta{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_embl,
-                                                                              sequence_file_format_fasta,
-                                                                              sequence_file_format_fastq,
-                                                                              sequence_file_format_sam>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_embl,
+                                                                              format_fasta,
+                                                                              format_fastq,
+                                                                              format_genbank,
+                                                                              format_sam>>));                // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream constructor + custom fields + different stream_char_type */
     {
         std::wostringstream ext{};
-        sequence_file_output fout{ext, sequence_file_format_fasta{}, fields<field::SEQ>{}};
+        sequence_file_output fout{ext, format_fasta{}, fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));              // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
     }
 
     /* guided stream temporary constructor + custom fields + different stream_char_type */
     {
-        sequence_file_output fout{std::wostringstream{}, sequence_file_format_fasta{}, fields<field::SEQ>{}};
+        sequence_file_output fout{std::wostringstream{}, format_fasta{}, fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));              // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
     }
 }
@@ -209,7 +216,7 @@ TEST(general, default_template_args_and_deduction_guides)
 template <typename fn_t>
 void row_wise_impl(fn_t fn)
 {
-    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}};
+    sequence_file_output fout{std::ostringstream{}, format_fasta{}};
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)
@@ -222,7 +229,7 @@ void row_wise_impl(fn_t fn)
 template <typename source_t>
 void assign_impl(source_t && source)
 {
-    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}};
+    sequence_file_output fout{std::ostringstream{}, format_fasta{}};
     fout.options.fasta_letters_per_line = 0;
 
     fout = source;
@@ -333,7 +340,7 @@ TEST(row, emplace_back)
     });
 }
 
-/* Here the record contains a different field composition than the file. The record knows about the
+/* Here the record contains a different field composite than the file. The record knows about the
  * association of values and fields, so it does not need to be guessed from the file.
  */
 TEST(row, different_fields_in_record_and_file)
@@ -344,7 +351,7 @@ TEST(row, different_fields_in_record_and_file)
     record<type_list<std::vector<phred42>, std::string, dna5_vector>,
            fields<field::QUAL, field::ID, field::SEQ>> rec{qual, ids[1], seqs[1]};
 
-    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::SEQ, field::ID>{}};
+    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::SEQ, field::ID>{}};
     fout.push_back(rec);
     fout.get_stream().flush();
 
@@ -359,7 +366,7 @@ TEST(row, different_fields_in_record_and_file)
 
 TEST(row, writing_seq_qual)
 {
-    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::ID, field::SEQ_QUAL>()};
+    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::ID, field::SEQ_QUAL>()};
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)
@@ -431,7 +438,7 @@ TEST(columns, assign_tuple_of_columns)
 
 TEST(columns, writing_seq_qual)
 {
-    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::ID, field::SEQ_QUAL>()};
+    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::ID, field::SEQ_QUAL>()};
     fout.options.fasta_letters_per_line = 0;
 
     std::vector<std::vector<qualified<dna5, phred42>>> seq_quals{3};
@@ -452,7 +459,7 @@ TEST(columns, writing_seq_qual)
 // compression
 // ----------------------------------------------------------------------------
 
-void compression_by_filename_impl(test::tmp_filename & filename, std::string_view const expected)
+std::string compression_by_filename_impl([[maybe_unused]]test::tmp_filename & filename)
 {
     {
         sequence_file_output fout{filename.get_path()};
@@ -474,14 +481,13 @@ void compression_by_filename_impl(test::tmp_filename & filename, std::string_vie
 
         buffer = std::string{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
     }
-
-    EXPECT_EQ(buffer, expected);
+    return buffer;
 }
 
 template <typename comp_stream_t>
 void compression_by_stream_impl(comp_stream_t & stream)
 {
-    sequence_file_output fout{stream, sequence_file_format_fasta{}};
+    sequence_file_output fout{stream, format_fasta{}};
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)
@@ -495,18 +501,32 @@ void compression_by_stream_impl(comp_stream_t & stream)
 #ifdef SEQAN3_HAS_ZLIB
 std::string expected_gz
 {
-    '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x03','\xB3','\x53','\x08','\x71','\x0D','\x0E',
+    '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\xB3','\x53','\x08','\x71','\x0D','\x0E',
     '\x51','\x30','\xE4','\x72','\x74','\x76','\x0F','\xE1','\xB2','\x53','\x08','\x49','\x2D','\x2E','\x31','\xE2',
     '\x72','\x74','\x77','\x77','\x0E','\x71','\xF7','\xA3','\x05','\x05','\xB5','\xC3','\x98','\xCB','\xDD','\xDD',
     '\xD1','\x3D','\xC4','\x31','\xC4','\xD1','\x31','\x04','\x15','\x72','\x01','\x00','\x27','\xAD','\xB4','\xE9',
     '\x93','\x00','\x00','\x00'
 };
 
+std::string expected_bgzf
+{
+    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x00', '\x42', '\x43',
+    '\x02', '\x00', '\x4A', '\x00', '\xB3', '\x53', '\x08', '\x71', '\x0D', '\x0E', '\x51', '\x30', '\xE4', '\x72',
+    '\x74', '\x76', '\x0F', '\xE1', '\xB2', '\x53', '\x08', '\x49', '\x2D', '\x2E', '\x31', '\xE2', '\x72', '\x74',
+    '\x77', '\x77', '\x0E', '\x71', '\xF7', '\xA3', '\x05', '\x05', '\xB5', '\xC3', '\x98', '\xCB', '\xDD', '\xDD',
+    '\xD1', '\x3D', '\xC4', '\x31', '\xC4', '\x11', '\x88', '\x50', '\x20', '\x17', '\x00', '\x27', '\xAD', '\xB4',
+    '\xE9', '\x93', '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00',
+    '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00',
+    '\x00', '\x00', '\x00', '\x00', '\x00'
+};
+
 TEST(compression, by_filename_gz)
 {
     test::tmp_filename filename{"sequence_file_output_test.fasta.gz"};
 
-    compression_by_filename_impl(filename, expected_gz);
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
 }
 
 TEST(compression, by_stream_gz)
@@ -518,8 +538,34 @@ TEST(compression, by_stream_gz)
         compression_by_stream_impl(compout);
     }
 
-    EXPECT_EQ(out.str(), expected_gz);
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_gz);
 }
+
+TEST(compression, by_filename_bgzf)
+{
+    test::tmp_filename filename{"sequence_file_output_test.fasta.bgzf"};
+
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
+}
+
+TEST(compression, by_stream_bgzf)
+{
+    std::ostringstream out;
+
+    {
+        contrib::bgzf_ostream compout{out};
+        compression_by_stream_impl(compout);
+    }
+
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
+}
+
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
@@ -537,8 +583,8 @@ TEST(compression, by_filename_bz2)
 {
     test::tmp_filename filename{"sequence_file_output_test.fasta.bz2"};
 
-
-    compression_by_filename_impl(filename, expected_bz2);
+    std::string buffer = compression_by_filename_impl(filename);
+    EXPECT_EQ(buffer, expected_bz2);
 }
 
 TEST(compression, by_stream_bz2)

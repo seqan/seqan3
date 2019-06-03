@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -90,6 +90,10 @@ public:
         // If lower_bound is positive, set it to 0 and trim the first sequences accordingly.
         band_row_index = std::abs(std::min(static_cast<int_fast32_t>(band.lower_bound),
                                            static_cast<int_fast32_t>(0)));
+
+        // If the band is wider than the sequence length, limit the band width.
+        band_column_index = std::min(band_column_index, static_cast<uint_fast32_t>(dimension_second_range - 1));
+        band_row_index = std::min(band_row_index, static_cast<uint_fast32_t>(dimension_first_range - 1));
 
         band_size = band_column_index + band_row_index + 1;
 

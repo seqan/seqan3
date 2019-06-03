@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -23,9 +23,9 @@
 
 #pragma once
 
+#include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 #include <seqan3/alphabet/structure/dssp9.hpp>
-#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
 #include <seqan3/alphabet/structure/structured_aa.hpp>
 #include <seqan3/alphabet/structure/structured_rna.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>

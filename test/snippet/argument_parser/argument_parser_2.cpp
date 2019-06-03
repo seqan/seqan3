@@ -1,10 +1,10 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 int main(int argc, char ** argv)
 {
-    seqan3::argument_parser myparser("The-Age-App", argc, argv); // initialize
+    seqan3::argument_parser myparser{"The-Age-App", argc, argv}; // initialize
 
     int age{30}; // define default values directly in the variable
 

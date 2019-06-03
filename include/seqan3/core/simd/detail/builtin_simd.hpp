@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -85,7 +85,12 @@ struct builtin_simd_traits_helper : std::false_type
  */
 template <typename builtin_simd_t>
 //!\cond
-    requires requires (builtin_simd_t simd) { {simd[0]}; }
+    // NOTE: gcc throws a compile time error if builtin_simd_t is a pointer of an incomplete type. To tackle this we
+    // short-circuit the requires with is_pointer_v. See builtin_simd_test.cpp for a test case for this.
+    requires !std::is_pointer_v<std::decay_t<builtin_simd_t>> && requires(builtin_simd_t simd)
+    {
+        { simd[0] };
+    }
 //!\endcond
 struct builtin_simd_traits_helper<builtin_simd_t>
 {

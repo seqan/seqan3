@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <algorithm>
@@ -11,7 +11,7 @@
 #include "helper.hpp"
 #include "helper_search_scheme.hpp"
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
 #include <seqan3/search/fm_index/all.hpp>
@@ -69,11 +69,11 @@ inline void test_search_hamming(auto it, text_t const & text, auto const & searc
         {
             uint64_t const pos = error_positions[error] + current_blocks_length;
             // Decrease alphabet size by one because we don't want to replace query[pos], with the same character.
-            uint8_t new_rank = std::rand() % (alphabet_size_v<char_t> - 1);
+            uint8_t new_rank = std::rand() % (alphabet_size<char_t> - 1);
             // If it is a match now, it can't be the highest rank of the alphabet. Thus we set it to the highest rank.
             if (new_rank == to_rank(query[pos]))
-                new_rank = alphabet_size_v<char_t> - 1;
-            assign_rank(query[pos], new_rank);
+                new_rank = alphabet_size<char_t> - 1;
+            assign_rank_to(new_rank, query[pos]);
         }
         current_blocks_length += single_block_length;
     }

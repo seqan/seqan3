@@ -2,11 +2,12 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::structure_file_format_vienna class.
+ * \brief Provides the seqan3::format_vienna tag and the seqan3::sequencestrucure_file_input_format and
+ *        seqan3::strucure_file_output_format specialisation for this tag.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -30,17 +31,22 @@
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/io/structure_file/detail.hpp>
+#include <seqan3/io/structure_file/input_format_concept.hpp>
 #include <seqan3/io/structure_file/input_options.hpp>
+#include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/take.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -81,22 +87,8 @@ namespace seqan3
  * stripped. Each field is read/written as a single line (except ENERGY, which goes right after the structure).
  * Numbers and spaces within the sequence are simply ignored, but not within the structure.
  */
-class structure_file_format_vienna
+struct format_vienna
 {
-public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    structure_file_format_vienna() = default;                                            //!< Defaulted
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    structure_file_format_vienna(structure_file_format_vienna const &) = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    structure_file_format_vienna & operator=(structure_file_format_vienna const &) = delete;
-    structure_file_format_vienna(structure_file_format_vienna &&) = default;             //!< Defaulted
-    structure_file_format_vienna & operator=(structure_file_format_vienna &&) = default; //!< Defaulted
-    ~ structure_file_format_vienna() = default;                                          //!< Defaulted
-    //!\}
-
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
@@ -104,6 +96,34 @@ public:
         { "fasta" },
         { "fa" }
     };
+};
+
+} // namespace seqan
+
+namespace seqan3::detail
+{
+
+//!\brief The seqan3::structure_file_input_format specialisation that can handle formatted VIENNA input.
+//!\ingroup structure_file
+template <>
+class structure_file_input_format<format_vienna>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_vienna;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    structure_file_input_format()                                                noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    structure_file_input_format(structure_file_input_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    structure_file_input_format & operator=(structure_file_input_format const &)          = delete;
+    structure_file_input_format(structure_file_input_format &&)                  noexcept = default; //!< Defaulted.
+    structure_file_input_format & operator=(structure_file_input_format &&)      noexcept = default; //!< Defaulted.
+    ~structure_file_input_format()                                               noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc seqan3::StructureFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
@@ -129,8 +149,7 @@ public:
               comment_type & SEQAN3_DOXYGEN_ONLY(comment),
               offset_type & SEQAN3_DOXYGEN_ONLY(offset))
     {
-        using stream_it_t = std::istreambuf_iterator<typename stream_type::char_type>;
-        auto stream_view = std::ranges::subrange<stream_it_t, stream_it_t>{stream_it_t{stream}, stream_it_t{}};
+        auto stream_view = view::istreambuf(stream);
 
         // READ ID (if present)
         auto constexpr is_id = is_char<'>'>;
@@ -165,7 +184,7 @@ public:
             if (!is_legal_seq(*begin(stream_view))) // if neither id nor seq found: throw
             {
                 throw parse_error{std::string{"Expected to be on beginning of ID or sequence, but "} +
-                                  is_id.msg.string() + " and " + is_legal_seq.msg.string() +
+                                  is_id.msg.str() + " and " + is_legal_seq.msg.str() +
                                   " evaluated to false on " + detail::make_printable(*begin(stream_view))};
             }
         }
@@ -181,7 +200,7 @@ public:
                                                 if (!is_legal_seq(c))                    // enforce legal alphabet
                                                 {
                                                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                      is_legal_seq.msg.string() +
+                                                                      is_legal_seq.msg.str() +
                                                                       " evaluated to false on " +
                                                                       detail::make_printable(c)};
                                                 }
@@ -254,6 +273,56 @@ public:
         detail::consume(stream_view | view::take_until(!is_space));
     }
 
+private:
+    /*!
+     * \brief Extract the structure string from the given stream.
+     * \tparam alph_type        The alphabet type the structure is converted to.
+     * \tparam stream_view_type The type of the input stream.
+     * \param stream_view       The input stream to be read.
+     * \return                  A ranges::view containing the structure annotation string.
+     */
+    template <typename alph_type, typename stream_view_type>
+    auto read_structure(stream_view_type & stream_view)
+    {
+        auto constexpr is_legal_structure = is_in_alphabet<alph_type>;
+        return stream_view | view::take_until(is_space) // until whitespace
+                           | std::view::transform([is_legal_structure](char const c)
+                             {
+                                 if (!is_legal_structure(c))
+                                 {
+                                     throw parse_error{
+                                         std::string{"Encountered an unexpected letter: "} +
+                                         is_legal_structure.msg.str() +
+                                         " evaluated to false on " + detail::make_printable(c)};
+                                 }
+                                 return c;
+                             })                                  // enforce legal alphabet
+                           | view::char_to<alph_type>;           // convert to actual target alphabet
+    }
+};
+
+//!\brief The seqan3::structure_file_output_format specialisation that can write formatted VIENNA.
+//!\ingroup structure_file
+template <>
+class structure_file_output_format<format_vienna>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_vienna;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    structure_file_output_format()                                                 noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    structure_file_output_format(structure_file_output_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    structure_file_output_format & operator=(structure_file_output_format const &)          = delete;
+    structure_file_output_format(structure_file_output_format &&)                  noexcept = default; //!< Defaulted.
+    structure_file_output_format & operator=(structure_file_output_format &&)      noexcept = default; //!< Defaulted.
+    ~structure_file_output_format()                                                noexcept = default; //!< Defaulted.
+    //!\}
+
     //!\copydoc seqan3::StructureFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
@@ -276,7 +345,7 @@ public:
                comment_type && SEQAN3_DOXYGEN_ONLY(comment),
                offset_type && SEQAN3_DOXYGEN_ONLY(offset))
     {
-        std::ranges::ostreambuf_iterator stream_it{stream};
+        seqan3::ostreambuf_iterator stream_it{stream};
 
         // WRITE ID (optional)
         if constexpr (!detail::decays_to_ignore_v<id_type>)
@@ -346,33 +415,6 @@ public:
             throw std::logic_error{"The ENERGY field cannot be written to a Vienna file without providing STRUCTURE."};
         }
     }
-
-private:
-    /*!
-     * \brief Extract the structure string from the given stream.
-     * \tparam alph_type        The alphabet type the structure is converted to.
-     * \tparam stream_view_type The type of the input stream.
-     * \param stream_view       The input stream to be read.
-     * \return                  A ranges::view containing the structure annotation string.
-     */
-    template <typename alph_type, typename stream_view_type>
-    auto read_structure(stream_view_type & stream_view)
-    {
-        auto constexpr is_legal_structure = is_in_alphabet<alph_type>;
-        return stream_view | view::take_until(is_space) // until whitespace
-                           | std::view::transform([is_legal_structure](char const c)
-                             {
-                                 if (!is_legal_structure(c))
-                                 {
-                                     throw parse_error{
-                                         std::string{"Encountered an unexpected letter: "} +
-                                         is_legal_structure.msg.string() +
-                                         " evaluated to false on " + detail::make_printable(c)};
-                                 }
-                                 return c;
-                             })                                  // enforce legal alphabet
-                           | view::char_to<alph_type>;           // convert to actual target alphabet
-    }
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

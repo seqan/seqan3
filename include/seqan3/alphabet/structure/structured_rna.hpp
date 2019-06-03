@@ -2,12 +2,12 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the composition of nucleotide with structure alphabets.
+ * \brief Contains the composite of nucleotide with structure alphabets.
  */
 
 #pragma once
@@ -17,46 +17,50 @@
 #include <string>
 #include <utility>
 
-#include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/alphabet/structure/concept.hpp>
 
 namespace seqan3
 {
 
-/*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with an RNA structure alphabet.
+/*!\brief A seqan3::alphabet_tuple_base that joins a nucleotide alphabet with an RNA structure alphabet.
  * \ingroup structure
  * \implements seqan3::RnaStructureAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::NucleotideAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
- * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::NucleotideAlphabet.
- * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::RnaStructureAlphabet.
+ * \tparam sequence_alphabet_t Type of the first letter; must model seqan3::WritableAlphabet,
+ * seqan3::NucleotideAlphabet and satisfy the requirements on arguments by seqan3::alphabet_tuple_base.
+ * \tparam structure_alphabet_t Types of further letters; must model seqan3::WritableAlphabet,
+ * seqan3::RnaStructureAlphabet and satisfy the requirements on arguments by seqan3::alphabet_tuple_base.
  *
- * This composition pairs a nucleotide alphabet with a structure alphabet. The rank values
- * correpsond to numeric values in the size of the composition, while the character values
+ * This composite pairs a nucleotide alphabet with a structure alphabet. The rank values
+ * correpsond to numeric values in the size of the composite, while the character values
  * are taken from the sequence alphabet and the structure annotation is taken from the structure
  * alphabet.
  *
- * As with all `seqan3::cartesian_composition` s you may access the individual alphabet letters in
+ * As with all `seqan3::alphabet_tuple_base` s you may access the individual alphabet letters in
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
  * \snippet test/snippet/alphabet/structure/structured_rna.cpp general
  *
- * This seqan3::cartesian_composition itself models both seqan3::NucleotideAlphabet and seqan3::RnaStructureAlphabet.
+ * This seqan3::alphabet_tuple_base itself models both seqan3::NucleotideAlphabet and seqan3::RnaStructureAlphabet.
  */
-template <typename sequence_alphabet_t, typename structure_alphabet_t>
+template <NucleotideAlphabet sequence_alphabet_t, RnaStructureAlphabet structure_alphabet_t>
 //!\cond
-    requires NucleotideAlphabet<sequence_alphabet_t> && RnaStructureAlphabet<structure_alphabet_t>
+    requires WritableAlphabet<sequence_alphabet_t> && WritableAlphabet<structure_alphabet_t>
 //!\endcond
 class structured_rna :
-    public cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
+    public alphabet_tuple_base<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
                                  sequence_alphabet_t, structure_alphabet_t>
 {
 private:
     //!\brief The base type.
-    using base_type = cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
+    using base_type = alphabet_tuple_base<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
                                             sequence_alphabet_t, structure_alphabet_t>;
 public:
     //!\brief First template parameter as member type.
@@ -65,27 +69,27 @@ public:
     using structure_alphabet_type = structure_alphabet_t;
 
     //!\brief Equals the char_type of sequence_alphabet_type.
-    using char_type = underlying_char_t<sequence_alphabet_type>;
+    using char_type = alphabet_char_t<sequence_alphabet_type>;
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr structured_rna() noexcept : base_type{} {}
-    constexpr structured_rna(structured_rna const &) = default;
-    constexpr structured_rna(structured_rna &&) = default;
-    constexpr structured_rna & operator =(structured_rna const &) = default;
-    constexpr structured_rna & operator =(structured_rna &&) = default;
-    ~structured_rna() = default;
+    constexpr structured_rna()                                    noexcept = default; //!< Defaulted.
+    constexpr structured_rna(structured_rna const &)              noexcept = default; //!< Defaulted.
+    constexpr structured_rna(structured_rna &&)                   noexcept = default; //!< Defaulted.
+    constexpr structured_rna & operator =(structured_rna const &) noexcept = default; //!< Defaulted.
+    constexpr structured_rna & operator =(structured_rna &&)      noexcept = default; //!< Defaulted.
+    ~structured_rna()                                             noexcept = default; //!< Defaulted.
 
     using base_type::base_type; // Inherit non-default constructors
 
-    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(component_type const alph) noexcept {} ))
-    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(indirect_component_type const alph) noexcept {} ))
-    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(component_type const alph) noexcept {} ))
-    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(indirect_component_type const alph) noexcept {} ))
     //!\}
 
@@ -103,14 +107,14 @@ public:
     //!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
     constexpr structured_rna & assign_char(char_type const c) noexcept
     {
-        seqan3::assign_char(get<0>(*this), c);
+        seqan3::assign_char_to(c, get<0>(*this));
         return *this;
     }
 
     //!\brief Strict assign from a nucleotide character. This modifies the internal sequence letter.
-    structured_rna & assign_char_strict(char_type const c)
+    structured_rna & assign_char_strictly(char_type const c)
     {
-        seqan3::assign_char_strict(get<0>(*this), c);
+        seqan3::assign_char_strictly_to(c, get<0>(*this));
         return *this;
     }
     //!\}
@@ -182,14 +186,7 @@ public:
      */
     constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
     {
-        if constexpr (structure_alphabet_type::max_pseudoknot_depth > 1)
-        {
-            return get<1>(*this).pseudoknot_id();
-        }
-        else
-        {
-            return (is_pair_open() || is_pair_close()) ? std::optional<uint8_t>(0) : std::nullopt;
-        }
+        return get<1>(*this).pseudoknot_id();
     };
     //!\}
 };

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -15,7 +15,7 @@
 #include <map>
 #include <stack>
 
-#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/alphabet/structure/concept.hpp>
 
 namespace seqan3::detail
 {
@@ -42,7 +42,7 @@ void bpp_from_rna_structure(bpp_type & bpp, structure_type const & structure, do
     if constexpr (std::ranges::SizedRange<structure_type>)
         bpp.reserve(size(structure));
 
-    std::stack<size_t> brackets[max_pseudoknot_depth_v<structure_alph_type>];
+    std::stack<size_t> brackets[max_pseudoknot_depth<structure_alph_type>];
     size_t pos = 0ul;
     for (structure_alph_type symbol : structure)
     {
@@ -70,7 +70,7 @@ void bpp_from_rna_structure(bpp_type & bpp, structure_type const & structure, do
         // no actions for unpaired
         ++pos;
     }
-    for (uint8_t id = 0u; id < max_pseudoknot_depth_v<structure_alph_type>; ++id)
+    for (uint8_t id = 0u; id < max_pseudoknot_depth<structure_alph_type>; ++id)
     {
         if (!brackets[id].empty())
         {

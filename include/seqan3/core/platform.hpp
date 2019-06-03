@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #pragma once
@@ -21,6 +21,10 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 //!\endcond
+
+// ============================================================================
+//  C++ standard and features
+// ============================================================================
 
 // C++ standard [required]
 #ifdef __cplusplus
@@ -45,6 +49,17 @@
 #   error "SeqAn3 requires C++ Concepts, either vie the TS (flag: -fconcepts) or via C++20 (flag: -std=c++2a / -std=c++20)."
 #endif
 
+// filesystem [required]
+#if !__has_include(<filesystem>)
+#   if !__has_include(<experimental/filesystem>)
+#      error SeqAn3 requires C++17 filesystem support, but it was not found.
+#   endif
+#endif
+
+// ============================================================================
+//  Dependencies
+// ============================================================================
+
 // SeqAn [required]
 #if !__has_include(<seqan3/version.hpp>)
 #   error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
@@ -52,8 +67,8 @@
 
 // Ranges [required]
 #if __has_include(<range/v3/version.hpp>)
-#   define RANGE_V3_MINVERSION 400
-#   define RANGE_V3_MAXVERSION 499
+#   define RANGE_V3_MINVERSION 500
+#   define RANGE_V3_MAXVERSION 599
 // TODO the following doesn't actually show the current version, only its formula. How'd you do it?
 #   define MSG "Your version: " STR(RANGE_V3_VERSION) \
                 "; minimum version: " STR(RANGE_V3_MINVERSION) \
@@ -69,13 +84,6 @@
 #   undef MSG
 #else
 #   error The range-v3 library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
-#endif
-
-// filesystem [required]
-#if !__has_include(<filesystem>)
-#   if !__has_include(<experimental/filesystem>)
-#      error SeqAn3 requires C++17 filesystem support, but it was not found.
-#   endif
 #endif
 
 // SDSL [required]
@@ -110,10 +118,16 @@
      * \brief These can be changed by apps so we used the macros instead of the values internally.
      * \{
      */
+
+     //! \brief Macro for Cereal's serialize function.
 #   define CEREAL_SERIALIZE_FUNCTION_NAME serialize
+     //! \brief Macro for Cereal's load function.
 #   define CEREAL_LOAD_FUNCTION_NAME load
+     //! \brief Macro for Cereal's save function.
 #   define CEREAL_SAVE_FUNCTION_NAME save
+     //! \brief Macro for Cereal's load_minimal function.
 #   define CEREAL_LOAD_MINIMAL_FUNCTION_NAME load_minimal
+     //! \brief Macro for Cereal's save_minimal function.
 #   define CEREAL_SAVE_MINIMAL_FUNCTION_NAME save_minimal
     /*!\}
      * \endcond
@@ -152,11 +166,28 @@
 
 // TODO (doesn't have a version.hpp, yet)
 
+// ============================================================================
+//  Documentation
+// ============================================================================
+
 // Doxygen related
 // this macro is a NO-OP unless doxygen parses it, in which case it resolves to the argument
 #ifndef SEQAN3_DOXYGEN_ONLY
 #   define SEQAN3_DOXYGEN_ONLY(x)
 #endif
+
+// ============================================================================
+//  Workarounds
+// ============================================================================
+
+#ifndef SEQAN3_WORKAROUND_VIEW_PERFORMANCE
+//!\brief Performance of views, especially filter and join is currently bad, especially in I/O.
+#   define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
+#endif
+
+// ============================================================================
+//  Backmatter
+// ============================================================================
 
 // macro cruft undefine
 #undef STR

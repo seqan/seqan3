@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <optional>
@@ -12,8 +12,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 #include <seqan3/alphabet/structure/structured_rna.hpp>
@@ -21,6 +19,7 @@
 #include <seqan3/io/structure_file/input_format_concept.hpp>
 #include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/std/algorithm>
 
 using namespace seqan3;
 
@@ -30,8 +29,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((StructureFileInputFormat<structure_file_format_vienna>));
-    EXPECT_TRUE((StructureFileOutputFormat<structure_file_format_vienna>));
+    EXPECT_TRUE((StructureFileInputFormat<format_vienna>));
+    EXPECT_TRUE((StructureFileOutputFormat<format_vienna>));
 }
 
 // ----------------------------------------------------------------------------
@@ -84,7 +83,7 @@ struct read : public ::testing::Test
         }
     };
 
-    structure_file_format_vienna format;
+    detail::structure_file_input_format<format_vienna> format;
 
     structure_file_input_options<rna4, false> options;
 
@@ -456,7 +455,7 @@ struct write : public ::testing::Test
         -17.5f, -3.71f
     };
 
-    structure_file_format_vienna format;
+    detail::structure_file_output_format<format_vienna> format;
 
     structure_file_output_options options;
 

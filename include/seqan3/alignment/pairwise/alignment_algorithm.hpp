@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -25,8 +25,8 @@
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/metafunction/deferred_crtp_base.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/view/get.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/std/concepts>
@@ -103,6 +103,7 @@ public:
     /*!\brief Invokes the actual alignment computation given two sequences.
      * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
      * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \param[in] idx            The index of the current processed sequence pair.
      * \param[in] first_range    The first sequence (or packed sequences).
      * \param[in] second_range   The second sequence (or packed sequences).
      *
@@ -127,7 +128,7 @@ public:
      * and at most \f$ O(N^2) \f$ space.
      */
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    auto operator()(first_range_t && first_range, second_range_t && second_range)
+    auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
         requires !is_banded
     {
         assert(cfg_ptr != nullptr);
@@ -158,6 +159,7 @@ public:
         using result_t = typename align_result_selector<first_range_t, second_range_t, config_t>::type;
         result_t res{};
 
+        res.id = idx;
         // Choose what needs to be computed.
         if constexpr (config_t::template exists<align_cfg::result<with_score_type>>())
         {
@@ -192,6 +194,7 @@ public:
     /*!\brief Invokes the banded alignment computation given two sequences.
      * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
      * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \param[in] idx            The index of the current processed sequence pair.
      * \param[in] first_range    The first sequence (or packed sequences).
      * \param[in] second_range   The second sequence (or packed sequences).
      *
@@ -217,7 +220,7 @@ public:
      * and at most \f$ O(N*k) \f$ space.
      */
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    auto operator()(first_range_t && first_range, second_range_t && second_range)
+    auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
         requires is_banded
     {
         assert(cfg_ptr != nullptr);
@@ -235,21 +238,19 @@ public:
         using diff_type = typename std::iterator_traits<std::ranges::iterator_t<first_range_t>>::difference_type;
         static_assert(std::is_signed_v<diff_type>,  "Only signed types can be used to test the band parameters.");
 
-        if (static_cast<diff_type>(band.lower_bound) >
-            std::ranges::distance(std::ranges::begin(first_range), std::ranges::end(first_range)))
+        if (static_cast<diff_type>(band.lower_bound) > std::ranges::distance(first_range))
         {
             throw invalid_alignment_configuration
             {
-                "The lower bound is bigger than the size of the first sequence."
+                "Invalid band error: The lower bound excludes the whole alignment matrix."
             };
         }
 
-        if (static_cast<diff_type>(std::abs(band.upper_bound)) >
-            std::ranges::distance(std::ranges::begin(second_range), std::ranges::end(second_range)))
+        if (static_cast<diff_type>(band.upper_bound) < -std::ranges::distance(second_range))
         {
             throw invalid_alignment_configuration
             {
-                "The upper bound is smaller than the size of the second sequence."
+                "Invalid band error: The upper bound excludes the whole alignment matrix."
             };
         }
 
@@ -284,6 +285,7 @@ public:
         using result_t = typename align_result_selector<first_range_t, second_range_t, config_t>::type;
         result_t res{};
 
+        res.id = idx;
         // Balance the score with possible leading/trailing gaps depending on the
         // band settings.
         this->balance_leading_gaps(get<3>(cache), band, gap);
@@ -524,7 +526,7 @@ private:
 
         auto fill_aligned_sequence = [](auto & aligned_sequence, auto & gap_segments, size_t const normalise)
         {
-            assert(normalise <= gap_segments[0].position);
+            assert(std::ranges::empty(gap_segments) || normalise <= gap_segments[0].position);
 
             size_t offset = 0;
             for (auto const & gap_elem : gap_segments)

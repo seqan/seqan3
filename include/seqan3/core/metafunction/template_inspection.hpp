@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -199,5 +199,38 @@ struct is_value_specialisation_of<source_t, target_template> :
  */
 template <typename source_t, template <auto ...> typename target_template>
 inline constexpr bool is_value_specialisation_of_v = is_value_specialisation_of<source_t, target_template>::value;
+
+/*!
+ * \brief A transformation trait that returns `templ_t<spec_t...>` if that is valid, otherwise `fallback_t`.
+ * \tparam fallback_t The fallback type.
+ * \tparam templ_t    The type template that should be specialised.
+ * \tparam spec_t     The specialisation for the type template.
+ */
+template <typename fallback_t, template <typename...> typename templ_t, typename ...spec_t>
+struct valid_template_spec_or
+{
+    //!\brief The resulting type.
+    using type = fallback_t;
+};
+
+//!\overload
+template <typename fallback_t, template <typename...> typename templ_t, typename ...spec_t>
+//!\cond
+    requires requires { typename templ_t<spec_t...>; }
+//!\endcond
+struct valid_template_spec_or<fallback_t, templ_t, spec_t...>
+{
+    //!\brief The resulting type.
+    using type = templ_t<spec_t...>;
+};
+
+/*!
+ * \brief Helper for seqan3::detail::valid_template_spec_or.
+ * \tparam fallback_t The fallback type.
+ * \tparam templ_t    The type template that should be specialised.
+ * \tparam spec_t     The specialisation for the type template.
+ */
+template <typename fallback_t, template <typename...> typename templ_t, typename ...spec_t>
+using valid_template_spec_or_t = typename valid_template_spec_or<fallback_t, templ_t, spec_t...>::type;
 
 } // namespace seqan3::detail

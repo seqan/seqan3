@@ -1,3 +1,9 @@
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+// -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
 
@@ -55,16 +61,16 @@ TEST(cereal, CerealArchive)
     EXPECT_TRUE((CerealArchive<cereal::PortableBinaryInputArchive>));
 }
 
-TEST(cereal, cereal_text_archive_concept)
+TEST(cereal, CerealTextArchive)
 {
-    EXPECT_TRUE((cereal_text_archive_concept<cereal::XMLOutputArchive>));
-    EXPECT_TRUE((cereal_text_archive_concept<cereal::JSONOutputArchive>));
-    EXPECT_FALSE((cereal_text_archive_concept<cereal::BinaryOutputArchive>));
-    EXPECT_FALSE((cereal_text_archive_concept<cereal::PortableBinaryOutputArchive>));
-    EXPECT_TRUE((cereal_text_archive_concept<cereal::XMLInputArchive>));
-    EXPECT_TRUE((cereal_text_archive_concept<cereal::JSONInputArchive>));
-    EXPECT_FALSE((cereal_text_archive_concept<cereal::BinaryInputArchive>));
-    EXPECT_FALSE((cereal_text_archive_concept<cereal::PortableBinaryInputArchive>));
+    EXPECT_TRUE((CerealTextArchive<cereal::XMLOutputArchive>));
+    EXPECT_TRUE((CerealTextArchive<cereal::JSONOutputArchive>));
+    EXPECT_FALSE((CerealTextArchive<cereal::BinaryOutputArchive>));
+    EXPECT_FALSE((CerealTextArchive<cereal::PortableBinaryOutputArchive>));
+    EXPECT_TRUE((CerealTextArchive<cereal::XMLInputArchive>));
+    EXPECT_TRUE((CerealTextArchive<cereal::JSONInputArchive>));
+    EXPECT_FALSE((CerealTextArchive<cereal::BinaryInputArchive>));
+    EXPECT_FALSE((CerealTextArchive<cereal::PortableBinaryInputArchive>));
 }
 
 struct my_struct{};

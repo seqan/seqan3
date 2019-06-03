@@ -6,7 +6,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -161,6 +161,30 @@ namespace sdsl
         {
             m_C.load(in);
             read_member(m_sigma, in);
+        }
+
+        template <typename archive_t>
+        void CEREAL_SAVE_FUNCTION_NAME(archive_t & ar) const
+        {
+            ar(CEREAL_NVP(m_C));
+            ar(CEREAL_NVP(m_sigma));
+        }
+
+        template <typename archive_t>
+        void CEREAL_LOAD_FUNCTION_NAME(archive_t & ar)
+        {
+            ar(CEREAL_NVP(m_C));
+            ar(CEREAL_NVP(m_sigma));
+        }
+
+        bool operator==(plain_byte_alphabet const & other) const noexcept
+        {
+            return (m_C == other.m_C) && (m_sigma == other.m_sigma);
+        }
+
+        bool operator!=(plain_byte_alphabet const & other) const noexcept
+        {
+            return !(*this == other);
         }
         //!\endcond
     };

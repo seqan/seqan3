@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -20,10 +20,11 @@
 #include <seqan3/std/concepts>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/char_operations/pretty_print.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/range/container/small_string.hpp>
 
 namespace seqan3::detail
 {
@@ -69,7 +70,7 @@ public:
 // condition_message_v
 // ----------------------------------------------------------------------------
 
-/*!\brief Defines a compound seqan3::constexpr_string consisting of all given conditions separated by the
+/*!\brief Defines a compound seqan3::small_string consisting of all given conditions separated by the
  *        operator-name `op`.
  * \ingroup stream
  * \tparam op               non-type template parameter specifying the separator character, e.g. '|'.
@@ -78,12 +79,12 @@ public:
  * \relates seqan3::detail::parse_condition
  */
 template <char op, typename condition_head_t, typename ...condition_ts>
-inline constexpr_string constexpr condition_message_v
+inline small_string constexpr condition_message_v
 {
-    constexpr_string{"("} +
+    small_string{"("} +
     (condition_head_t::msg + ... +
-        (constexpr_string{" "} + constexpr_string{{op, op, '\0'}} + constexpr_string{" "} + condition_ts::msg)) +
-    constexpr_string{")"}
+        (small_string{" "} + small_string{{op, op, '\0'}} + small_string{" "} + condition_ts::msg)) +
+    small_string{")"}
 };
 
 // ----------------------------------------------------------------------------
@@ -101,8 +102,8 @@ class parse_condition_base;
  *
  * \details
  *
- * The must be invocable with an seqan3::char_adaptation_concept type and supply a static constexpr `msg` member of type
- * seqan3::constexpr_string.
+ * An object of the type must be invocable with a std::Integral type and supply a static constexpr `msg` member of type
+ * seqan3::small_string.
  */
 //!\cond
 template <typename condition_t>
@@ -114,8 +115,8 @@ SEQAN3_CONCEPT ParseCondition = requires
 
     std::remove_reference_t<condition_t>::msg;
 
-    //The msg type can be added with a constexpr_string.
-    { constexpr_string<0>{} + std::remove_reference_t<condition_t>::msg } ->
+    //The msg type can be added with a small_string.
+    { small_string<0>{} + std::remove_reference_t<condition_t>::msg } ->
         decltype(std::remove_reference_t<condition_t>::msg);
 };
 //!\endcond
@@ -140,52 +141,6 @@ SEQAN3_CONCEPT ParseCondition = requires
  */
 //!\}
 
-// ----------------------------------------------------------------------------
-// make_printable
-// ----------------------------------------------------------------------------
-
-/*!\brief Returns a printable value for the given character `c`.
- * \param[in] c The character to be represented as printable string.
- * \return    a std::string containing a printable version of the given character `c`.
- *
- * \details
- *
- * Some characters, e.g. control commands cannot be printed. This function converts them to a std::string
- * containing the visual representation of this character. For all control commands the value `'CTRL'` is returned.
- *
- * ### Exception
- *
- * Strong exception guarantee is given.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Concurrency
- *
- * Thread-safe.
- */
-inline std::string make_printable(char const c)
-{
-    switch (c)
-    {
-        case '\0':                   return "'\\0'";
-        case '\t':                   return "'\\t'";
-        case '\n':                   return "'\\n'";
-        case '\v':                   return "'\\v'";
-        case '\f':                   return "'\\f'";
-        case '\r':                   return "'\\r'";
-        case static_cast<char>(127): return "'DEL'";
-        default:
-        {
-            if ((c >= static_cast<char>(1) && c <= static_cast<char>(8)) ||
-                (c >= static_cast<char>(14) && c <= static_cast<char>(31)))
-                return "'CTRL'";
-            else
-                return {'\'', c, '\''};
-        }
-    }
-}
 
 // ----------------------------------------------------------------------------
 // parse_condition
@@ -255,7 +210,7 @@ struct parse_condition_base
     //!\brief Returns the message representing this condition as std::string.
     std::string message() const
     {
-        return derived_t::msg.string();
+        return derived_t::msg;
     }
     //!\}
 };
@@ -298,7 +253,7 @@ template <ParseCondition condition_t>
 struct parse_condition_negator : public parse_condition_base<parse_condition_negator<condition_t>>
 {
     //!\brief The message representing the negation of the associated condition.
-    static constexpr auto msg = constexpr_string{'!'} + condition_t::msg;
+    static constexpr auto msg = small_string{'!'} + condition_t::msg;
 
     //!\brief The base type.
     using base_t = parse_condition_base<parse_condition_negator<condition_t>>;
@@ -328,11 +283,11 @@ template <uint8_t interval_first, uint8_t interval_last>
 struct is_in_interval_type : public parse_condition_base<is_in_interval_type<interval_first, interval_last>>
 {
     //!\brief The message representing this condition.
-    static constexpr constexpr_string msg = constexpr_string{"is_in_interval<'"} +
-                                            constexpr_string{interval_first}     +
-                                            constexpr_string{"', '"}             +
-                                            constexpr_string{interval_last}      +
-                                            constexpr_string{"'>"};
+    static constexpr small_string msg = small_string{"is_in_interval<'"} +
+                                        small_string{interval_first}     +
+                                        small_string{"', '"}             +
+                                        small_string{interval_last}      +
+                                        small_string{"'>"};
 
     //!\brief The base type.
     using base_t = parse_condition_base<is_in_interval_type<interval_first, interval_last>>;
@@ -365,9 +320,9 @@ struct is_in_alphabet_type : public parse_condition_base<is_in_alphabet_type<alp
 {
 public:
     //!\brief The message representing this condition.
-    static constexpr auto msg = constexpr_string{"is_in_alphabet<"} +
-                                constexpr_string{detail::get_display_name_v<alphabet_t>} +
-                                constexpr_string{">"};
+    static constexpr auto msg = small_string{"is_in_alphabet<"} +
+                                small_string{detail::get_display_name_v<alphabet_t>} +
+                                small_string{">"};
 
     //!\brief The base type.
     using base_t = parse_condition_base<is_in_alphabet_type<alphabet_t>>;
@@ -401,9 +356,9 @@ struct is_char_type : public parse_condition_base<is_char_type<char_v>>
     static_assert(char_v == EOF || static_cast<uint64_t>(char_v) < 256, "TODO");
 
     //!\brief The message representing this condition.
-    static constexpr auto msg = constexpr_string{"is_char<'"} +
-                                constexpr_string{char_v}      +
-                                constexpr_string("'>");
+    static constexpr auto msg = small_string{"is_char<'"} +
+                                small_string{char_v}      +
+                                small_string("'>");
 
 
 

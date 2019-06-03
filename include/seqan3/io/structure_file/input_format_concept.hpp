@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -24,8 +24,19 @@
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/structure_file/input_options.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The structure file input format base class.
+template <typename format_tag>
+class structure_file_input_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
+
 /*!\interface seqan3::StructureFileInputFormat <>
  * \brief The generic concept for structure file in formats.
  * \ingroup structure_file
@@ -38,7 +49,7 @@ namespace seqan3
  */
 //!\cond
 template<typename t>
-SEQAN3_CONCEPT StructureFileInputFormat = requires(t & v,
+SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_format<t> & v,
                                                    std::ifstream & f,
                                                    structure_file_input_options<rna5, false> & options,
                                                    rna5_vector & seq,
@@ -86,7 +97,6 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(t & v,
  *               comment_type & comment,
  *               offset_type & offset)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \memberof seqan3::StructureFileInputFormat
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.

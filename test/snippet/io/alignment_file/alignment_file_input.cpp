@@ -1,11 +1,13 @@
 #include <iostream>
 #include <fstream>
 
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/view/take_until.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 struct write_file_dummy_struct
@@ -23,7 +25,7 @@ r001  147 ref 37 30 9M         =  7 -39 CAGCGGCAT         * NM:i:1
 )//![sam_file]";
 
         std::ofstream file_stream{"/tmp/my.sam"};
-        std::ranges::ostreambuf_iterator stream_it{file_stream};
+        seqan3::ostreambuf_iterator stream_it{file_stream};
 
         std::string sam_file{sam_file_raw};
         auto sam_view = sam_file | seqan3::view::single_pass_input;
@@ -93,7 +95,7 @@ std::string input
 
 std::istringstream iss(input);
 
-alignment_file_input fin{iss, alignment_file_format_sam{}};
+alignment_file_input fin{iss, format_sam{}};
 //              ^ no need to specify the template arguments
 //![construction_from_stream]
 }
@@ -122,9 +124,9 @@ alignment_file_input<alignment_file_input_default_traits<>,  // The expected for
                             field::EVALUE,
                             field::BIT_SCORE,
                             field::HEADER_PTR>,
-                     type_list<alignment_file_format_sam>, // Which formats are allowed.
+                     type_list<format_sam>, // Which formats are allowed.
                      char>                                 // Value type of the stream.
-                     fin{iss, alignment_file_format_sam{}};
+                     fin{iss, format_sam{}};
 //![construction_without_automatic_type_deduction]
 }
 

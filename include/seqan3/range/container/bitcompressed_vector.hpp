@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -17,7 +17,6 @@
 #include <sdsl/int_vector.hpp>
 
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
-#include <seqan3/alphabet/detail/member_exposure.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/range/shortcuts.hpp>
@@ -37,7 +36,7 @@ class debug_stream_type;
 
 /*!\brief A space-optimised version of std::vector that compresses multiple letters into a single byte.
  * \tparam alphabet_type The value type of the container, must satisfy seqan3::Alphabet and not be `&`.
- * \implements seqan3::reservable_container_concept
+ * \implements seqan3::ReservableContainer
  * \implements seqan3::Cerealisable
  * \ingroup container
  *
@@ -71,7 +70,7 @@ class bitcompressed_vector
 {
 private:
     //!\brief The number of bits needed to represent a single letter of the alphabet_type.
-    static constexpr size_t bits_per_letter = std::ceil(std::log2(alphabet_size_v<alphabet_type>));
+    static constexpr size_t bits_per_letter = std::ceil(std::log2(alphabet_size<alphabet_type>));
 
     static_assert(bits_per_letter <= 64, "Alphabet must be representable in at most 64bit.");
 
@@ -113,15 +112,14 @@ private:
         using base_t::operator=;
 
         /*!\name Constructors, destructor and assignment
-         * \brief All are explicitly defaulted.
          * \{
          */
-        constexpr reference_proxy_type() noexcept : base_t{}, internal_proxy{} {}
-        constexpr reference_proxy_type(reference_proxy_type const &) = default;
-        constexpr reference_proxy_type(reference_proxy_type &&) = default;
-        constexpr reference_proxy_type & operator=(reference_proxy_type const &) = default;
-        constexpr reference_proxy_type & operator=(reference_proxy_type &&) = default;
-        ~reference_proxy_type() = default;
+        constexpr reference_proxy_type()                                         noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type(reference_proxy_type const &)             noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type(reference_proxy_type &&)                  noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type & operator=(reference_proxy_type const &) noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type & operator=(reference_proxy_type &&)      noexcept = default; //!< Defaulted.
+        ~reference_proxy_type()                                                  noexcept = default; //!< Defaulted.
 
         //!\brief Initialise from internal proxy type.
         reference_proxy_type(internal_proxy_type const & internal) noexcept :
@@ -132,7 +130,7 @@ private:
         //!\}
     };
 
-    static_assert(Alphabet<reference_proxy_type>);
+    static_assert(WritableAlphabet<reference_proxy_type>);
     //!\cond
     //NOTE(h-2): it is entirely unclear to me why we need this
     template <typename t>
@@ -170,12 +168,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    bitcompressed_vector() = default;
-    constexpr bitcompressed_vector(bitcompressed_vector const &) = default;
-    constexpr bitcompressed_vector(bitcompressed_vector &&) = default;
-    constexpr bitcompressed_vector & operator=(bitcompressed_vector const &) = default;
-    constexpr bitcompressed_vector & operator=(bitcompressed_vector &&) = default;
-    ~bitcompressed_vector() = default;
+    bitcompressed_vector()                                                   = default; //!< Defaulted.
+    constexpr bitcompressed_vector(bitcompressed_vector const &)             = default; //!< Defaulted.
+    constexpr bitcompressed_vector(bitcompressed_vector &&)                  = default; //!< Defaulted.
+    constexpr bitcompressed_vector & operator=(bitcompressed_vector const &) = default; //!< Defaulted.
+    constexpr bitcompressed_vector & operator=(bitcompressed_vector &&)      = default; //!< Defaulted.
+    ~bitcompressed_vector()                                                  = default; //!< Defaulted.
 
     /*!\brief Construct from a different range.
      * \tparam other_range_t The type of range to construct from; must satisfy std::ranges::InputRange and
@@ -478,7 +476,7 @@ public:
     const_reference operator[](size_type const i) const noexcept
     {
         assert(i < size());
-        return assign_rank(const_reference{}, data[i]);
+        return assign_rank_to(data[i], const_reference{});
     }
 
     /*!\brief Return the first element. Calling front on an empty container is undefined.
@@ -972,33 +970,41 @@ public:
     }
     //!\}
 
-    //!\name Comparison operators
-    //!\{
+    /*!\name Comparison operators
+     * \{
+     */
+
+    //!\brief Checks whether `*this` is equal to `rhs`.
     constexpr bool operator==(bitcompressed_vector const & rhs) const noexcept
     {
         return data == rhs.data;
     }
 
+    //!\brief Checks whether `*this` is not equal to `rhs`.
     constexpr bool operator!=(bitcompressed_vector const & rhs) const noexcept
     {
         return data != rhs.data;
     }
 
+    //!\brief Checks whether `*this` is less than `rhs`.
     constexpr bool operator<(bitcompressed_vector const & rhs) const noexcept
     {
         return data < rhs.data;
     }
 
+    //!\brief Checks whether `*this` is greater than `rhs`.
     constexpr bool operator>(bitcompressed_vector const & rhs) const noexcept
     {
         return data > rhs.data;
     }
 
+    //!\brief Checks whether `*this` is less than or equal to `rhs`.
     constexpr bool operator<=(bitcompressed_vector const & rhs) const noexcept
     {
         return data <= rhs.data;
     }
 
+    //!\brief Checks whether `*this` is greater than or equal to `rhs`.
     constexpr bool operator>=(bitcompressed_vector const & rhs) const noexcept
     {
         return data >= rhs.data;

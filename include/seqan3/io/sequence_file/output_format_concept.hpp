@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -22,6 +22,16 @@
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The sequence file output format base class.
+template <typename t>
+class sequence_file_output_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -37,13 +47,13 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT SequenceFileOutputFormat = requires (t                            & v,
-                                                    std::ofstream                & f,
-                                                    sequence_file_output_options & options,
-                                                    dna5_vector                  & seq,
-                                                    std::string                  & id,
-                                                    std::vector<phred42>         & qual,
-                                                    std::vector<dna5q>           & seq_qual)
+SEQAN3_CONCEPT SequenceFileOutputFormat = requires (detail::sequence_file_output_format<t> & v,
+                                                    std::ofstream                  & f,
+                                                    sequence_file_output_options   & options,
+                                                    dna5_vector                    & seq,
+                                                    std::string                    & id,
+                                                    std::vector<phred42>           & qual,
+                                                    std::vector<dna5q>             & seq_qual)
 {
     t::file_extensions;
 
@@ -63,7 +73,6 @@ SEQAN3_CONCEPT SequenceFileOutputFormat = requires (t                           
 /*!\fn void write(stream_type & stream, seqan3::sequence_file_output_options const & options, seq_type && sequence,
  *                id_type && id, qual_type && qualities)
  * \brief Write the given fields to the specified stream.
- * \memberof seqan3::SequenceFileOutputFormat
  * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.

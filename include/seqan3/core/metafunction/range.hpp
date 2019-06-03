@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -209,12 +209,12 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
 //!\endcond
 
 // ----------------------------------------------------------------------------
-// compatible_concept
+// Compatible
 // ----------------------------------------------------------------------------
 
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
-/*!\interface seqan3::compatible_concept <>
+/*!\interface seqan3::Compatible <>
  * \brief Two types are "compatible" if their seqan3::dimension_v and their seqan3::innermost_value_type_t are
  * the same.
  *
@@ -227,7 +227,7 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
  */
 //!\cond
 template <typename t1, typename t2>
-SEQAN3_CONCEPT compatible_concept = requires (t1, t2)
+SEQAN3_CONCEPT Compatible = requires (t1, t2)
 {
     requires (dimension_v<t1> == dimension_v<t2>);
 

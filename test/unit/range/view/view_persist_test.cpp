@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <iostream>
@@ -33,14 +33,19 @@ TEST(view_persist, delegate_to_view_all)
     EXPECT_EQ("foo", std::string{v});
 
     // function notation
-    std::string v2 = view::persist(vec);
+    std::string v2 = view::persist(vec) | std::ranges::to<std::string>;
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = vec | view::persist | ranges::view::unique;
     EXPECT_EQ("fo", std::string{v3});
-    std::string v3b = vec | std::view::reverse | view::persist | ranges::view::unique;
+    std::string v3b = vec | std::view::reverse | view::persist | ranges::view::unique | std::ranges::to<std::string>;
     EXPECT_EQ("of", v3b);
+
+    // store combined
+    auto a1 = view::persist | ranges::view::unique;
+    auto v5 = vec | a1;
+    EXPECT_EQ("fo", std::string{v5});
 }
 
 TEST(view_persist, wrap_temporary)
@@ -50,13 +55,17 @@ TEST(view_persist, wrap_temporary)
     EXPECT_EQ("foo", std::string(v));
 
     // function notation
-    std::string v2 = view::persist(std::string{"foo"});
+    std::string v2 = view::persist(std::string{"foo"}) | std::ranges::to<std::string>;
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = std::string{"foo"} | view::persist | ranges::view::unique;
     EXPECT_EQ("fo", std::string(v3));
-    std::string v3b = std::string{"foo"} | view::persist | std::view::filter(is_char<'o'>) | ranges::view::unique;
+    std::string v3b = std::string{"foo"}
+                    | view::persist
+                    | std::view::filter(is_char<'o'>)
+                    | ranges::view::unique
+                    | std::ranges::to<std::string>;
     EXPECT_EQ("o", v3b);
 }
 
@@ -87,7 +96,7 @@ TEST(view_persist, concepts)
     EXPECT_FALSE(std::ranges::View<decltype(std::string{"foo"})>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(std::string{"foo"})>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(const_iterable_concept<decltype(std::string{"foo"})>);
+    EXPECT_TRUE(ConstIterableRange<decltype(std::string{"foo"})>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(std::string{"foo"}), char>));
 
     auto v1 = std::string{"foo"} | view::persist;
@@ -99,6 +108,6 @@ TEST(view_persist, concepts)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
 }

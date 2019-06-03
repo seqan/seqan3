@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #pragma once
@@ -51,7 +51,7 @@ void random_text(std::vector<dna4> & text, uint64_t const length)
 
     text.resize(length);
     for (uint64_t i = 0; i < length; ++i)
-        assign_rank(text[i], std::rand() % alphabet_size);
+        assign_rank_to(std::rand() % alphabet_size, text[i]);
 }
 
 } // namespace std

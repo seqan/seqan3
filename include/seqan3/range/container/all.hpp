@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -16,7 +16,8 @@
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/range/container/small_string.hpp>
+#include <seqan3/range/container/small_vector.hpp>
 
 /*!\defgroup container Container
  * \brief The container submodule contains special SeqAn3 containers and generic container concepts.

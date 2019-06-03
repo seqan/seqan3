@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <iostream>
@@ -15,6 +15,7 @@
 
 #include <seqan3/range/view/view_all.hpp>
 #include <seqan3/std/concepts>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;
@@ -30,7 +31,7 @@ TEST(view_all, string_overload)
 
         auto v = view::all(urange);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::string_view>));
+        EXPECT_FALSE((std::Same<decltype(v), std::string_view>)); // only returns string_view for string const
         EXPECT_TRUE((std::ranges::equal(v, urange)));
     }
 

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -127,7 +127,7 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
     typename t::size_type;
     typename t::cursor_type;
 
-    requires sequence_container_concept<typename t::text_type>;
+    requires SequenceContainer<typename t::text_type>;
 
     // NOTE: circular dependency
     // requires FmIndexCursor<typename t::cursor_type>;
@@ -142,9 +142,6 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
 
     { index.size()  } -> typename t::size_type;
     { index.empty() } -> bool;
-
-    { index.load(std::string{})  } -> bool;
-    { index.store(std::string{}) } -> bool;
 };
 //!\endcond
 /*!\name Requirements for seqan3::FmIndex

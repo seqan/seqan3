@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -46,4 +46,27 @@ namespace seqan3
 //!\ingroup alignment_matrix
 template <>
 constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_directions> = true;
+} // namespace seqan3
+
+#include <seqan3/core/debug_stream.hpp>
+namespace seqan3
+{
+
+/*!\brief All trace_directions can be printed as ascii or as utf8 to the seqan3::debug_stream.
+ * \param s The seqan3::debug_stream.
+ * \param trace The trace direction.
+ * \relates seqan3::debug_stream_type
+ */
+inline debug_stream_type & operator<<(debug_stream_type & s, detail::trace_directions const trace)
+{
+    static char const * unicode[8]{"↺", "↖", "↑", "↖↑", "←", "↖←", "↑←", "↖↑←"};
+    static char const * csv[8]{"N", "D", "U", "DU", "L", "DL", "UL", "DUL"};
+
+    bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
+    auto const & trace_dir = is_unicode ? unicode : csv;
+
+    s << trace_dir[static_cast<size_t>(trace) % 8u];
+    return s;
+}
+
 } // namespace seqan3

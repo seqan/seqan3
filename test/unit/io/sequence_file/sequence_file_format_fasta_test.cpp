@@ -2,21 +2,20 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <sstream>
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/std/algorithm>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -26,8 +25,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((SequenceFileInputFormat<sequence_file_format_fasta>));
-    EXPECT_TRUE((SequenceFileOutputFormat<sequence_file_format_fasta>));
+    EXPECT_TRUE((SequenceFileInputFormat<format_fasta>));
+    EXPECT_TRUE((SequenceFileOutputFormat<format_fasta>));
 }
 
 // ----------------------------------------------------------------------------
@@ -50,7 +49,7 @@ struct read : public ::testing::Test
         { "ACGTTTA"_dna5 },
     };
 
-    sequence_file_format_fasta format;
+    detail::sequence_file_input_format<format_fasta> format;
 
     sequence_file_input_options<dna5, false> options;
 
@@ -329,7 +328,7 @@ struct write : public ::testing::Test
         "Test3"
     };
 
-    sequence_file_format_fasta format;
+    detail::sequence_file_output_format<format_fasta> format;
 
     sequence_file_output_options options;
 

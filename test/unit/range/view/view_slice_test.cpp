@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <deque>
@@ -20,6 +20,7 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -34,17 +35,32 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
     // pipe notation
     auto v = vec | adaptor(1, 4);
-    EXPECT_EQ("oob", std::string(v));
+    EXPECT_EQ("oob", v | std::ranges::to<std::string>);
 
     // function notation
-    std::string v2{adaptor(vec, 1, 4)};
+    std::string v2{adaptor(vec, 1, 4) | std::ranges::to<std::string>};
     EXPECT_EQ("oob", v2);
 
     // combinability
     auto v3 = vec | adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
-    EXPECT_EQ("o", std::string(v3));
-    std::string v3b = vec | std::view::reverse | adaptor(1, 4) | ranges::view::unique;
+    EXPECT_EQ("o", v3 | std::ranges::to<std::string>);
+    std::string v3b = vec | std::view::reverse | adaptor(1, 4) | ranges::view::unique | std::ranges::to<std::string>;
     EXPECT_EQ("abo", v3b);
+
+    // store arg
+    auto a0 = adaptor(1, 4);
+    auto v4 = vec | a0;
+    EXPECT_EQ("oob", v4 | std::ranges::to<std::string>);
+
+    // store combined
+    auto a1 = adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
+    auto v5 = vec | a1;
+    EXPECT_EQ("o", v5 | std::ranges::to<std::string>);
+
+    // store combined in middle
+    auto a2 = std::view::reverse | adaptor(1, 4) | ranges::view::unique;
+    auto v6 = vec | a2;
+    EXPECT_EQ("abo", v6 | std::ranges::to<std::string>);
 }
 
 template <typename adaptor_t>
@@ -58,7 +74,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_FALSE(std::ranges::View<decltype(vec)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), int>));
 
     auto v1 = vec | adaptor;
@@ -70,7 +86,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), int>));
 
     auto v2 = vec | view::single_pass_input | adaptor;
@@ -82,7 +98,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::View<decltype(v2)>);
     EXPECT_EQ(std::ranges::SizedRange<decltype(v2)>, exactly);
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v2)>);          // resolves subrange
+    EXPECT_FALSE(ConstIterableRange<decltype(v2)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), int>));
 }
 
@@ -106,14 +122,15 @@ TEST(view_slice, underlying_is_shorter)
     EXPECT_NO_THROW(( view::slice(vec, 1, 4) )); // no parsing
 
     std::string v;
-    EXPECT_NO_THROW(( v = vec | view::single_pass_input | view::slice(1, 4) )); // full parsing on conversion
+    // full parsing on conversion
+    EXPECT_NO_THROW(( v = vec | view::single_pass_input | view::slice(1, 4) | std::ranges::to<std::string> ));
     EXPECT_EQ("oob", v);
 }
 
 TEST(view_slice, type_erasure)
 {
     {   // string overload
-        std::string urange{"foobar"};
+        std::string const urange{"foobar"};
 
         auto v = view::slice(urange, 1, 4);
 

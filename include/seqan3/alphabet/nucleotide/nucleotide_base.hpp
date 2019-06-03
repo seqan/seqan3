@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -33,7 +33,7 @@ namespace seqan3
  * In addition to the requirements of seqan3::alphabet_base, the derived type needs to define the following static
  * member variable (can be private):
  *
- *   * `static std::array<THAT_TYPE, value_size> complement_table` that defines for every possible rank value
+ *   * `static std::array<THAT_TYPE, alphabet_size> complement_table` that defines for every possible rank value
  *     the corresponding complement.
  */
 template <typename derived_type, auto size>
@@ -46,12 +46,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr nucleotide_base() noexcept : base_t{} {}
-    constexpr nucleotide_base(nucleotide_base const &) = default;
-    constexpr nucleotide_base(nucleotide_base &&) = default;
-    constexpr nucleotide_base & operator=(nucleotide_base const &) = default;
-    constexpr nucleotide_base & operator=(nucleotide_base &&) = default;
-    ~nucleotide_base() = default;
+    constexpr nucleotide_base()                                    noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base(nucleotide_base const &)             noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base(nucleotide_base &&)                  noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base & operator=(nucleotide_base const &) noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base & operator=(nucleotide_base &&)      noexcept = default; //!< Defaulted.
+    ~nucleotide_base()                                             noexcept = default; //!< Defaulted.
     //!\}
 
     //! Befriend the derived_type so it can instantiate.
@@ -61,7 +61,7 @@ public:
     // Import from base:
     using typename base_t::char_type;
     using typename base_t::rank_type;
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_rank;
 
     /*!\name Constructors, destructor and assignment
@@ -93,7 +93,7 @@ public:
      *
      * See \ref nucleotide for the actual values.
      *
-     * Satisfies the seqan3::NucleotideAlphabet::complement() requirement via the seqan3::complement() wrapper.
+     * Provides an implementation for seqan3::complement, required to model seqan3::NucleotideAlphabet.
      *
      * \par Complexity
      *

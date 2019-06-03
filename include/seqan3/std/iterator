@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -16,6 +16,8 @@
 
 #ifndef __cpp_lib_ranges
 
+#include <range/v3/iterator/access.hpp>
+#include <range/v3/iterator/default_sentinel.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
 #include <range/v3/iterator/operations.hpp>
 #include <range/v3/iterator/stream_iterators.hpp>
@@ -305,12 +307,50 @@ SEQAN3_CONCEPT ContiguousIterator = RandomAccessIterator<i> &&
 
 namespace std::ranges
 {
-//!\cond
-using ::ranges::advance;
-using ::ranges::distance;
-using ::ranges::prev;
-using ::ranges::next;
-//!\endcond
+//!\addtogroup iterator
+//!\{
+
+/*!\typedef std::ranges::advance
+* \brief Alias for ranges::advance. Advances the iterator by the given distance.
+*/
+using SEQAN3_DOXYGEN_ONLY(advance =) ::ranges::advance;
+
+/*!\typedef std::ranges::distance
+* \brief Alias for ranges::distance. Returns the number of hops from first to last.
+*/
+using SEQAN3_DOXYGEN_ONLY(distance =) ::ranges::distance;
+
+/*!\typedef std::ranges::prev
+* \brief Alias for ranges::prev. Returns the nth predecessor of the given iterator.
+*/
+using SEQAN3_DOXYGEN_ONLY(prev =)::ranges::prev;
+
+/*!\typedef std::ranges::next
+* \brief Alias for ranges::next. Returns the nth successor of the given iterator.
+*/
+using SEQAN3_DOXYGEN_ONLY(next =) ::ranges::next;
+
+/*!\typedef std::ranges::iter_move
+* \brief Alias for ranges::iter_move. Casts the result of dereferencing an object to its associated rvalue reference type.
+*/
+using SEQAN3_DOXYGEN_ONLY(iter_move =) ::ranges::iter_move;
+
+/*!\typedef std::ranges::iter_swap
+* \brief Alias for ranges::iter_swap. Exchanges the values denoted by its arguments.
+*/
+using SEQAN3_DOXYGEN_ONLY(iter_swap =) ::ranges::iter_swap;
+
+/*!\typedef std::ranges::default_sentinel
+* \brief Alias for ranges::default_sentinel. Empty sentinel object for use with iterators that know the bound of their range.
+*/
+using SEQAN3_DOXYGEN_ONLY(default_sentinel =) ::ranges::default_sentinel;
+
+/*!\typedef std::ranges::default_sentinel_t
+* \brief Alias for ranges::default_sentinel_t. Type of ranges::default_sentinel.
+*/
+using SEQAN3_DOXYGEN_ONLY(default_sentinel_t =) ::ranges::default_sentinel_t;
+
+//!\}
 } // namespace std::ranges
 
 #endif // C++17

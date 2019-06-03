@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -23,7 +23,7 @@ inline namespace simd
 /*!\brief seqan3::simd::simd_traits is the trait class that provides uniform interface
  * to the properties of simd_t types.
  * \ingroup simd
- * \tparam simd_t The simd type that satisfies seqan3::simd::simd_concept.
+ * \tparam simd_t The simd type that satisfies seqan3::simd::Simd.
  *
  * The class defines the following member variables and types:
  * * scalar_type - the underlying type of a simd vector
@@ -39,24 +39,24 @@ struct simd_traits
 #if SEQAN3_DOXYGEN_ONLY(1)0
 {
     /*!\brief The underlying type of a simd vector (is not defined if *simd_t*
-     * does not satisfy *seqan3::simd::simd_concept*)
+     * does not model *seqan3::simd::Simd*)
      */
     using scalar_type = IMPLEMENTATION_DEFINED;
     /*!\brief The number of packed values in a simd vector (is not defined if
-     * *simd_t* does not satisfy *seqan3::simd::simd_concept*)
+     * *simd_t* does not model *seqan3::simd::Simd*)
      */
     static constexpr auto length = IMPLEMENTATION_DEFINED;
     /*!\brief The maximum number of packable values in a simd vector, if the
      * underlying type would be *[u]int8_t* (is not defined if *simd_t* does not
-     * satisfy *seqan3::simd::simd_concept*)
+     * model *seqan3::simd::Simd*)
      */
     static constexpr auto max_length = IMPLEMENTATION_DEFINED;
     /*!\brief The type returned by comparison operators (is not defined if
-     * *simd_t* does not satisfy *seqan3::simd::simd_concept*)
+     * *simd_t* does not model *seqan3::simd::Simd*)
      */
     using mask_type = IMPLEMENTATION_DEFINED;
     /*!\brief The type used to define how to swizzle a simd vector (is not
-     * defined if *simd_t* does not satisfy *seqan3::simd::simd_concept*)
+     * defined if *simd_t* does not model *seqan3::simd::Simd*)
      */
     using swizzle_type = IMPLEMENTATION_DEFINED;
 }

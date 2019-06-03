@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -36,6 +36,11 @@ namespace seqan3::view
  *
  * \details
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/take_exactly.hpp>
+ * ```
+ *
  * ### View properties
  *
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
@@ -51,7 +56,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | ***guaranteed***                                   |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
  * | std::ranges::OutputRange        |                                       | *preserved* except if `urng_t` is std::basic_string|
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *

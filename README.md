@@ -1,69 +1,60 @@
 # SeqAn3 -- the modern C++ library for sequence analysis
 
-SeqAn3 is the next version of the popular SeqAn template library for the analysis of biological sequences. If you develop applications, we recommend you currently stick to [SeqAn2](https://github.com/seqan/seqan).
+SeqAn3 is the new version of the popular SeqAn template library for the analysis of biological sequences.
+It enables the rapid development of high-performance solutions by providing generic algorithms and data structures
+for:
 
-SeqAn3 is major redesign of SeqAn and has fundamental changes throughout the codebase. We expect that porting applications from SeqAn2 to SeqAn3 requires substantial work, however by embracing new technologies from C++17 and modern third party libraries, SeqAn3 will be a much improved experience over SeqAn2.
+  * sequence representation and transformation
+  * full-text indexing and efficient search
+  * sequence alignment
+  * input/output of common file formats
 
+By leveraging *Modern C++* it provides unprecedented ease-of-use without sacrificing performance.
+
+Please see the [online documentation](http://docs.seqan.de/seqan/3-master-user/) for more details.
 
 ## Quick facts
 
-  * same design goals as SeqAn2: fast, efficient, extensible C++ header library for sequence analysis
-  * different design patterns: generic programming via C++ Concepts, encapsulation and members
-  * modern C++ that relies heavily on C++17, the [Concepts TS](http://www.stroustrup.com/good_concepts.pdf) and [Ranges TS](https://github.com/ericniebler/range-v3)
+  * C++ header-only library: easy to integrate with your app & easy to distribute
+  * liberal open source license: allows integration with any app or library, requires only attribution
+  * very high code quality standards: >97% unit test coverage, performance regression tests, ...
+  * extensive API documentation & tutorials: more lines of documentation than lines of code
 
+## Dependencies
 
-## Requirements
+|                   | requirement                                          | version  | comment                                     |
+|-------------------|------------------------------------------------------|----------|---------------------------------------------|
+|**compiler**       | [GCC](http://gcc.gnu.org)                            | ≥ 7      | no other compiler is currently supported!   |
+|**build system**   | [CMake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                   |
+|**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      |                                             |
+|                   | [Range-V3](https://github.com/ericniebler/range-v3)  | ≥ 1.0    |                                             |
+|**optional libs**  | [cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.3  | required for serialisation and CTD support  |
+|                   | [zlib](https://github.com/madler/zlib)               | ≥ 1.2    | required for `*.gz` and `.bam` file support |
+|                   | [bzip2](http://www.bzip.org)                         | ≥ 1.0    | required for `*.bz2` file support           |
 
-### Users of the library
+## Usage
 
-To include SeqAn3 in your app, you need the following:
+We recommend that you use CMake to build your project:
 
-|                   | requirement                                          | version  | comment                                   |
-|-------------------|------------------------------------------------------|----------|-------------------------------------------|
-|**compiler**       | [GCC](http://gcc.gnu.org)                            | ≥ 7      | no other compiler is currently supported! |
-|**build system**   | [cmake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                 |
-|**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      | succint datastructures                    |
-|                   | [Ranges-V3](https://github.com/ericniebler/range-v3) | == 0.3.* | ranges and views                          |
-|**optional libs**  | [Cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.3  | serialisation                             |
-|                   | [Lemon](http://lemon.cs.elte.hu)                     | ≥ 1.3.1  | graphs, required for MSA                  |
+  * [Setup-Tutorial](http://docs.seqan.de/seqan/3-master-user/setup.html)
+  * Using CMake guarantees that all optional dependencies are automatically detected and activated.
 
-### Developers of the library
+Quick-Setup without CMake:
 
-To build the tests and API documentation, you also need:
-
-|                   | requirement                                          | version  |
-|-------------------|------------------------------------------------------|----------|
-|**build system**   | [cmake](https://cmake.org)                           | ≥ 3.4    |
-|**test system**    | [GoogleTest](https://github.com/google/googletest)   | ≥ 1.8    |
-|**doc system**     | [Doxygen](https://github.com/doxygen/doxygen)        | ≥ 1.8    |
-
-## Using
-
-To use SeqAn3, clone this repository including it's submodules:
-
+  * Clone the repository with submodules: `git clone --recursive https://github.com/seqan/seqan3.git`
+  * Add the following to your compiler invocation:
+    * the include directories of SeqAn and its dependencies
+    * C++17 mode with concepts support
+    * Macros indicating the presence of zlib and bzip2 (set only if actually available in your paths!)
+  * The command could look like this:
 ```sh
-git clone --recursive https://github.com/seqan/seqan3.git
+g++-7 -O3 -DNDEBUG -Wall -Wextra                                \
+    -std=c++17 -fconcepts                                       \
+    -I       /path/to/seqan3/include                            \
+    -isystem /path/to/seqan3/submodules/range-v3/include        \
+    -isystem /path/to/seqan3/submodules/sdsl-lite/include       \
+    -isystem /path/to/seqan3/submodules/cereal/include          \
+    -DSEQAN3_HAS_ZLIB=1                                         \
+    -DSEQAN3_HAS_BZIP2=1                                        \
+  your_file.cpp
 ```
-
-SeqAn3 is still a header-only library so it is sufficient to add the `include` folder to your include path. When building make sure that you add the required parameters:
-
-```sh
-g++-7 -std=c++17 -fconcepts -I /path/to/seqan3/include -I /path/to/seqan3/submodules/range-v3/include -I /path/to/seqan3/submodules/sdsl-lite/include myfile.cpp
-```
-
-## Documentation
-
-### Recommended reading for (modern) C++
-
-  * [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md)
-
-### Users of the library
-
-  * [API documentation](http://docs.seqan.de/seqan/3.0.0-master-user/)
-  * Manual and tutorials (coming soon)
-
-
-### Developers of the library
-
-  * [Github Wiki](https://github.com/seqan/seqan3/wiki)
-

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -164,12 +164,11 @@ namespace seqan3
  *
  * ### Formats
  *
- * Currently, the only implemented format is seqan3::structure_file_format_vienna. More formats will follow soon.
+ * Currently, the only implemented format is seqan3::format_vienna. More formats will follow soon.
  */
 
-template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
-          detail::TypeListOfStructureFileOutputFormats valid_formats_
-              = type_list<structure_file_format_vienna>,
+template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
+          detail::TypeListOfStructureFileOutputFormats valid_formats_ = type_list<format_vienna>,
           char_concept stream_char_type_ = char>
 class structure_file_out
 {
@@ -220,9 +219,14 @@ public:
      * \brief Most of the range associated types are `void` for output ranges.
      * \{
      */
+
+    //!\brief The value type (void).
     using value_type        = void;
+    //!\brief The reference type (void).
     using reference         = void;
+    //!\brief The const reference type (void).
     using const_reference   = void;
+    //!\brief The size type (void).
     using size_type         = void;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ptrdiff_t;
@@ -270,7 +274,7 @@ public:
         primary_stream{new std::ofstream{filename, std::ios_base::out | std::ios::binary}, stream_deleter_default}
     {
         if (!primary_stream->good())
-            throw file_open_error{"Could not open file " + filename.string() + " for reading."};
+            throw file_open_error{"Could not open file " + filename.string() + " for writing."};
 
         // possibly add intermediate compression stream
         secondary_stream = detail::make_secondary_ostream(*primary_stream, filename);
@@ -301,7 +305,7 @@ public:
                        selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{file_format{}}
+        format{detail::structure_file_output_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -314,7 +318,7 @@ public:
                        selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{file_format{}}
+        format{detail::structure_file_output_format<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -386,7 +390,7 @@ public:
      */
     template <typename record_t>
     void push_back(record_t && r)
-        requires tuple_like_concept<record_t> &&
+        requires TupleLike<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
     {
         write_record(detail::get_or_ignore<field::SEQ>(r),
@@ -424,7 +428,7 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
-        requires tuple_like_concept<tuple_t>
+        requires TupleLike<tuple_t>
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(t),
@@ -470,7 +474,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::OutputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      *
      * \details
@@ -491,7 +495,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     structure_file_out & operator=(rng_t && range)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -500,7 +504,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
      *
@@ -527,7 +531,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     friend structure_file_out & operator|(rng_t && range, structure_file_out & f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         f = range;
         return f;
@@ -536,7 +540,7 @@ public:
     //!\overload
     template <std::ranges::InputRange rng_t>
     friend structure_file_out operator|(rng_t && range, structure_file_out && f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         f = range;
         return std::move(f);
@@ -657,7 +661,7 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::structure_file_output_format>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -803,17 +807,20 @@ protected:
  * \relates seqan3::structure_file_out
  * \{
  */
-template <OStream2 stream_t,
+
+//!\brief Deduction of the selected fields, the file format and the stream type.
+template <OStream2                  stream_t,
           StructureFileOutputFormat file_format,
-          detail::fields_concept selected_field_ids>
+          detail::Fields            selected_field_ids>
 structure_file_out(stream_t &&, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,
                           type_list<file_format>,
                           typename std::remove_reference_t<stream_t>::char_type>;
 
-template <OStream2 stream_t,
+//!\overload
+template <OStream2                  stream_t,
           StructureFileOutputFormat file_format,
-          detail::fields_concept selected_field_ids>
+          detail::Fields            selected_field_ids>
 structure_file_out(stream_t &, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,
                           type_list<file_format>,

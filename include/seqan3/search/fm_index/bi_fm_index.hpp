@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -55,8 +55,8 @@ struct bi_fm_index_default_traits
  */
 template <std::ranges::RandomAccessRange text_t, BiFmIndexTraits index_traits_t = bi_fm_index_default_traits>
 //!\cond
-    requires Alphabet<innermost_value_type_t<text_t>> &&
-             std::Same<underlying_rank_t<innermost_value_type_t<text_t>>, uint8_t>
+    requires Semialphabet<innermost_value_type_t<text_t>> &&
+             std::Same<alphabet_rank_t<innermost_value_type_t<text_t>>, uint8_t>
 //!\endcond
 class bi_fm_index
 {
@@ -264,17 +264,37 @@ public:
         return size() == 0;
     }
 
-    // operator== not implemented by sdsl indices yet
-    // bool operator==(fm_index const & rhs) const noexcept
-    // {
-    //     return std::tie(fwd_fm, rev_fm) == std::tie(rhs.fwd_fm, rhs.rev_fm);
-    // }
+    /*!\brief Compares two indices.
+     * \returns `true` if the indices are equal, false otherwise.
+     *
+     * ### Complexity
+     *
+     * Linear.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    bool operator==(bi_fm_index const & rhs) const noexcept
+    {
+        return std::tie(fwd_fm, rev_fm) == std::tie(rhs.fwd_fm, rhs.rev_fm);
+    }
 
-    // operator== not implemented by sdsl indices yet
-    // bool operator!=(fm_index const & rhs) const noexcept
-    // {
-    //     return !(*this == rhs);
-    // }
+    /*!\brief Compares two indices.
+     * \returns `true` if the indices are unequal, false otherwise.
+     *
+     * ### Complexity
+     *
+     * Linear.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    bool operator!=(bi_fm_index const & rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
 
     /*!\brief Returns a seqan3::bi_fm_index_cursor on the index that can be used for searching.
      *        \if DEV
@@ -331,48 +351,20 @@ public:
        return {rev_fm};
     }
 
-    /*!\brief Loads the index from disk. Temporary function until cereal is supported.
-     *        \todo cereal
-     * \returns `true` if the index was successfully loaded from disk.
+    /*!\cond DEV
+     * \brief Serialisation support function.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
+     * \param archive The archive being serialised from/to.
      *
-     * ### Complexity
-     *
-     * Linear.
-     *
-     * ### Exceptions
-     *
-     * Strong exception guarantee.
+     * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    bool load(std::filesystem::path const & path)
+    template <CerealArchive archive_t>
+    void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
-        std::filesystem::path path_fwd{path};
-        std::filesystem::path path_rev{path};
-        path_fwd += std::filesystem::path{".fwd"};
-        path_rev += std::filesystem::path{".rev"};
-        return fwd_fm.load(path_fwd) && rev_fm.load(path_rev);
+        archive(fwd_fm);
+        archive(rev_fm);
     }
-
-    /*!\brief Stores the index to disk. Temporary function until cereal is supported.
-     *        \todo cereal
-     * \returns `true` if the index was successfully stored to disk.
-     *
-     * ### Complexity
-     *
-     * Linear.
-     *
-     * ### Exceptions
-     *
-     * Strong exception guarantee.
-     */
-    bool store(std::filesystem::path const & path) const
-    {
-        std::filesystem::path path_fwd{path};
-        std::filesystem::path path_rev{path};
-        path_fwd += std::filesystem::path{".fwd"};
-        path_rev += std::filesystem::path{".rev"};
-        return fwd_fm.store(path_fwd) && rev_fm.store(path_rev);
-    }
-
+    //!\endcond
 };
 
 //!\}

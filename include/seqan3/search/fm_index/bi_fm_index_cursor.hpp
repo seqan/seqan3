@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -16,10 +16,9 @@
 
 #include <sdsl/suffix_trees.hpp>
 
-#include <range/v3/view/slice.hpp>
-
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/std/ranges>
 
@@ -732,7 +731,7 @@ public:
         assert(index != nullptr && query_length() > 0);
 
         typename index_t::char_type c;
-        assign_rank(c, index->fwd_fm.index.comp2char[_last_char] - 1); // text is not allowed to contain ranks of 0
+        assign_rank_to(index->fwd_fm.index.comp2char[_last_char] - 1, c); // text is not allowed to contain ranks of 0
         return c;
     }
 
@@ -867,7 +866,7 @@ public:
         assert(index != nullptr && index->text != nullptr);
 
         size_type const query_begin = offset() - index->fwd_fm.index[fwd_lb];
-        return *index->text | ranges::view::slice(query_begin, query_begin + query_length());
+        return *index->text | view::slice(query_begin, query_begin + query_length());
     }
 
     //!\overload
@@ -880,7 +879,7 @@ public:
 
         size_type const loc = offset() - index->fwd_fm.index[fwd_lb];
         size_type const query_begin = loc - index->fwd_fm.text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return *index->text | std::view::join | ranges::view::slice(query_begin, query_begin + query_length());
+        return *index->text | std::view::join | view::slice(query_begin, query_begin + query_length());
     }
 
     //!\copydoc query()

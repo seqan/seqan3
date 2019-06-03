@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -26,6 +26,16 @@
 #include <seqan3/io/alignment_file/input_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The alignment file input format base class.
+template <typename t>
+class alignment_file_input_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -42,7 +52,7 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT AlignmentFileInputFormat =
-    requires (t                                                                   & v,
+    requires (detail::alignment_file_input_format<t>                              & v,
               std::ifstream                                                       & stream,
               alignment_file_input_options<dna5>                                  & options,
               std::vector<dna5_vector>                                            & ref_sequences,
@@ -118,7 +128,6 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
  *               mapq_type & mapq, mate_type & mate, tag_dict_type & tag_dict, e_value_type & e_value,
  *               bit_score_type & bit_score)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \memberof seqan3::AlignmentFileInputFormat
  * \tparam stream_type        The input stream type; Must be derived from std::ostream.
  * \tparam ref_seqs_type      e.g. std::deque<ref_sequence_type> or decltype(std::ignore).
  * \tparam seq_type           Type of the seqan3::field::SEQ input (see seqan3::AlignmentFileInputTraits).

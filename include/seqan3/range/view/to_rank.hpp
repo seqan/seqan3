@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -30,6 +30,11 @@ namespace seqan3::view
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/to_rank.hpp>
+ * ```
+ *
  * ### View properties
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
@@ -48,21 +53,22 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::Alphabet                      | seqan3::underlying_rank_t<seqan3::value_type_t<urng_t>> |
+ * | seqan3::reference_t             | seqan3::Alphabet                      | seqan3::alphabet_rank_t<seqan3::value_type_t<urng_t>>   |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \par Example
  * \snippet test/snippet/range/view/rank_char.cpp to_rank
- * We also convert to unsigned here, because the seqan3::underlying_rank_t is often `uint8_t` which is
+ * We also convert to unsigned here, because the seqan3::alphabet_rank_t is often `uint8_t` which is
  * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer
  */
 inline auto const to_rank = deep{std::view::transform([] (auto const in) noexcept
 {
-    static_assert(Alphabet<remove_cvref_t<decltype(in)>>, "The value type of seqan3::view::to_rank must model the seqan3::Alphabet.");
+    static_assert(Semialphabet<decltype(in)>,
+                  "The value type of seqan3::view::to_rank must model the seqan3::Alphabet.");
     return seqan3::to_rank(in);
 })};
 

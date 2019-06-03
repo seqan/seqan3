@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -173,7 +173,7 @@ SEQAN3_CONCEPT Trivial = TriviallyCopyable<t> && TriviallyDestructible<t> && std
 
 /*!\interface   seqan3::StandardLayout
  * \brief       Resolves to std::is_standard_layout_v<t>.
- * \sa          http://en.cppreference.com/w/cpp/concept/StandardLayoutType
+ * \sa          https://en.cppreference.com/w/cpp/named_req/StandardLayoutType
  */
 //!\cond
 template <typename t>

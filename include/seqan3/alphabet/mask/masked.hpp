@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -13,25 +13,26 @@
 #pragma once
 
 #include <seqan3/alphabet/mask/all.hpp>
-#include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 
 namespace seqan3
 {
-/*!\brief Implementation of a masked composition, which extends a given alphabet
+/*!\brief Implementation of a masked composite, which extends a given alphabet
  * with a mask.
  * \ingroup mask
- * \implements seqan3::Alphabet
- * \implements seqan3::detail::ConstexprSemialphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::Semialphabet.
  * \tparam mask_t Types of masked letter; must satisfy seqan3::Semialphabet, defaults to seqan3::mask.
  *
  * \details
- * The masked composition represents a seqan3::cartesian_composition of any given alphabet with the
+ * The masked composite represents a seqan3::alphabet_tuple_base of any given alphabet with the
  * masked alphabet. It allows one to specify which portions of a sequence should be masked,
  * without losing additional information by replacing the sequence directly.
  *
@@ -39,42 +40,42 @@ namespace seqan3
  */
  template <typename sequence_alphabet_t>
 //!\cond
-    requires Alphabet<sequence_alphabet_t>
+    requires WritableAlphabet<sequence_alphabet_t>
 //!\endcond
-class masked : public cartesian_composition<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
+class masked : public alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
 {
 private:
     //!\brief The base type.
-    using base_type = cartesian_composition<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>;
+    using base_type = alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>;
 
 public:
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
 
     //!\brief Equals the char_type of sequence_alphabet_type.
-    using char_type = underlying_char_t<sequence_alphabet_type>;
+    using char_type = alphabet_char_t<sequence_alphabet_type>;
 
-    using base_type::value_size;
+    using base_type::alphabet_size;
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr masked() : base_type{} {}
-    constexpr masked(masked const &) = default;
-    constexpr masked(masked &&) = default;
-    constexpr masked & operator =(masked const &) = default;
-    constexpr masked & operator =(masked &&) = default;
-    ~masked() = default;
+    constexpr masked() : base_type{} {}                      //!< Defaulted.
+    constexpr masked(masked const &) = default;              //!< Defaulted.
+    constexpr masked(masked &&) = default;                   //!< Defaulted.
+    constexpr masked & operator =(masked const &) = default; //!< Defaulted.
+    constexpr masked & operator =(masked &&) = default;      //!< Defaulted.
+    ~masked() = default;                                     //!< Defaulted.
 
     using base_type::base_type; // Inherit non-default constructors
 
-    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr masked(component_type const alph) {} ))
-    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr masked(indirect_component_type const alph) {} ))
-    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr masked & operator=(component_type const alph) {} ))
-    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr masked & operator=(indirect_component_type const alph) {} ))
     //!\}
 
@@ -93,16 +94,16 @@ public:
     //!\brief Assign from a character.
     constexpr masked & assign_char(char_type const c) noexcept
     {
-        seqan3::assign_char(get<0>(*this), c);
-        seqan3::assign_rank(get<1>(*this), is_lower(c));
+        seqan3::assign_char_to(c, get<0>(*this));
+        seqan3::assign_rank_to(is_lower(c), get<1>(*this));
         return *this;
     }
 
     //!\brief Strict assign from a character.
-    masked & assign_char_strict(char_type const c)
+    masked & assign_char_strictly(char_type const c)
     {
         if (!char_is_valid(c))
-            throw invalid_char_assignment{detail::get_display_name_v<masked>.string(), c};
+            throw invalid_char_assignment{detail::get_display_name_v<masked>, c};
 
         return assign_char(c);
     }

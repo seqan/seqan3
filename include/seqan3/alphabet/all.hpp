@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -36,22 +36,16 @@
  * for qualities, RNA structures and alignment gaps. In addition there are templates for combining alphabet
  * types into new alphabets, and wrappers for existing data types like the canonical `char`.
  *
- * To be included into the alphabet module, an alphabet must satisfy the generic seqan3::Alphabet
- * documented below. While this only encompasses a minimum set of requirements, many of our alphabets provide
- * more features and there are more refined concepts. The inheritance diagram of seqan3::Alphabet gives
- * a detailed overview. A more basic overview of this module and it's submodules is available in the collaboration
- * diagram at the top of this page.
+ * In addition to concrete alphabet types, SeqAn provides multiple *concepts* that describe groups of alphabets
+ * by their properties and can be used to *constrain* templates so that they only work with certain alphabet types.
+ * See the \link tutorial_concepts Tutorial on Concepts \endlink for a gentle introduction to the topic.
  *
- * # The alphabet concept
- *
- * The seqan3::Alphabet defines the requirements a type needs to meet to be considered an alphabet
- * by SeqAn, or in other words: you can expect certain properties and functions to be defined on
- * all data types we call an alphabet.
+ * # The alphabet concepts
  *
  * ### Alphabet size
  *
  * All alphabets in SeqAn have a fixed size. It
- * can be queried via the seqan3::alphabet_size metafunction and *optionally* also the `value_size` static
+ * can be queried via the seqan3::alphabet_size metafunction and *optionally* also the `alphabet_size` static
  * member of the alphabet (see below for "members VS free/global functions").
  *
  * In some areas we provide alphabets types with different sizes for the same purpose, e.g. seqan3::dna4
@@ -62,8 +56,8 @@
  * space efficiency**. Note, however, that a single letter by itself can never be smaller than a byte for
  * architectural reasons. Actual space improvements are realised via secondary structures, e.g. when
  * using a seqan3::bitcompressed_vector<seqan3::dna4> instead of std::vector<seqan3::dna4>. Also
- * the single letter quality composition seqan3::qualified<seqan3::dna4, seqan3::phred42> fits into one byte, because
- * the product of the alphabet sizes (4 * 42) is smaller than 256; whereas the same composition
+ * the single letter quality composite seqan3::qualified<seqan3::dna4, seqan3::phred42> fits into one byte, because
+ * the product of the alphabet sizes (4 * 42) is smaller than 256; whereas the same composite
  * with seqan3::dna15 requires two bytes per letter (15 * 42 > 256).
  *
  * ### Assigning and retrieving values
@@ -79,25 +73,19 @@
  *
  * \snippet test/snippet/alphabet/all.cpp ambiguity
  *
- * To solve this problem, every alphabet defines two interfaces:
+ * To solve this problem, alphabets in SeqAn define two interfaces:
  *
  *   1. a **rank based interface** with
- *     * the \link seqan3::underlying_rank underlying rank type \endlink able to represent this alphabet numerically;
- *       this type must be able to represent the numbers from `0` to `alphabet size - 1` (often `uint8_t`, but
- *       sometimes a larger unsigned integral type);
- *     * a \link seqan3::Alphabet::to_rank to_rank \endlink function to produce the numerical representation;
- *     * an \link seqan3::Alphabet::assign_rank assign_rank \endlink function to assign from the numerical
- *       representation;
+ *     * seqan3::to_rank to produce the numerical representation;
+ *     * seqan3::assign_rank_to to assign from the numerical representation;
+ *     * the numerical representation is an unsigned integral type like `size_t`; the exact type can be retrieved via
+ *       the seqan3::alphabet_rank_t.
  *   2. a **character based interface** with
- *     * the \link seqan3::underlying_char underlying character type \endlink able to represent this alphabet visually
- *       (almost always `char`, but could be `char16_t` or `char32_t`, as well)
- *     * a \link seqan3::Alphabet::to_char to_char \endlink function to produce the visual representation;
- *     * an \link seqan3::Alphabet::assign_char assign_char \endlink function to assign from the visual
- *       representation;
- *     * a \link seqan3::Alphabet::char_is_valid_for char_is_valid_for \endlink function that checks whether
- *       a character value has a one-to-one mapping to an alphabet value;
- *     * an \link seqan3::Alphabet::assign_char_strict assign_char_strict \endlink function to assign a
- *       characters while verifying its validity.
+ *     * seqan3::to_char to produce the visual representation;
+ *     * seqan3::assign_char_to to assign from the visual representation;
+ *     * seqan3::char_is_valid_for that checks whether a character value has a one-to-one mapping to an alphabet value;
+ *     * the visual representation is a character type (almost always `char`, but could be `char16_t` or `char32_t`,
+ *       as well); the exact type can be retrieved via seqan3::alphabet_char_t.
  *
  * To prevent the aforementioned ambiguity, you can neither assign from rank or char representation via `operator=`,
  * nor can you cast the alphabet to either of it's representation forms, **you need to explicitly use the
@@ -119,16 +107,43 @@
  *
  * Note, however, that literals **are not** required by the concept.
  *
- * <small>In the documentation you will also encounter seqan3::Semialphabet. It describes "one half" of an
- * alphabet and only defines the rank interface as a type requirement. It is mainly used internally and not
- * relevant to most users of SeqAn.</small>
+ * ### Different concepts
+ *
+ * All types that have valid implementations of the functions/functors described above model the concept
+ * seqan3::WritableAlphabet. This is the strongest (i.e. most refined) *general case* concept.
+ * There are more refined concepts for specific biological applications (like seqan3::NucleotideAlphabet), and there are
+ * less refined concepts that only model part of an alphabet:
+ *
+ *   * seqan3::Semialphabet and derived concepts only require the rank interface;
+ *   * seqan3::Alphabet (without `Writable*`) and derived concepts only require readability and not assignability.
+ *
+ * Typically you will use seqan3::Alphabet in "read-only" situations (e.g. `const` parameters) and
+ * seqan3::WritableAlphabet whenever the values might be changed.
+ * Semi-alphabets are less useful in application code.
+ *
+ * |                                  | seqan3::Semialphabet | seqan3::WritableSemialphabet | seqan3::Alphabet | seqan3::WritableAlphabet | Aux |
+ * |----------------------------------|:--------------------:|:----------------------------:|:----------------:|:------------------------:|:---:|
+ * | seqan3::alphabet_size            | ✅                    | ✅                            | ✅                | ✅                        |     |
+ * | seqan3::to_rank                  | ✅                    | ✅                            | ✅                | ✅                        |     |
+ * | seqan3::alphabet_rank_t          | ✅                    | ✅                            | ✅                | ✅                        |  🔗 |
+ * | seqan3::assign_rank_to           |                      | ✅                            |                  | ✅                        |     |
+ * | seqan3::to_char                  |                      |                              | ✅                | ✅                        |     |
+ * | seqan3::alphabet_char_t          |                      |                              | ✅                | ✅                        |  🔗 |
+ * | seqan3::assign_char_to           |                      |                              |                  | ✅                        |     |
+ * | seqan3::char_is_valid_for        |                      |                              |                  | ✅                        |     |
+ * | seqan3::assign_char_strictly_to  |                      |                              |                  | ✅                        |  🔗 |
+ *
+ * The above table shows all alphabet concepts and related functions and type traits.
+ * The entities marked as "auxiliary" provide shortcuts to the other "essential" entitities.
+ * This difference is only relevant if you want to create your own alphabet (you do not need to provide an
+ * implementation for the "auxiliary" entities, they are provided automatically).
  *
  * ### Members VS free/global functions
  *
  * The alphabet concept (as most concepts in SeqAn) looks for free/global functions, i.e. you need to be able
  * to call `seqan3::to_rank(my_letter)`, however *most* alphabets also provide a member function, i.e.
  * `my_letter.to_rank()`. The same is true for the metafunction seqan3::alphabet_size vs the static data member
- * `value_size`.
+ * `alphabet_size`.
  *
  * Members are provided for convenience and if you are an application developer who works with a single concrete
  * alphabet type you are fine with using the member functions. If you, however, implement a generic function
@@ -138,7 +153,7 @@
  * # Containers over alphabets
  *
  * In SeqAn3 it is recommended you use the STL container classes like std::vector for storing sequence data,
- * but you can use other class templates if they satisfy the respective seqan3::container_concept, e.g. `std::deque` or
+ * but you can use other class templates if they satisfy the respective seqan3::Container, e.g. `std::deque` or
  * <a href="https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md" target="_blank">
  * <tt>folly::fbvector</tt></a> or even <a href="http://doc.qt.io/qt-5/qvector.html" target="_blank">
  * <tt>Qt::QVector</tt></a>.
@@ -155,7 +170,7 @@
 
 #include <seqan3/alphabet/adaptation/all.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
-#include <seqan3/alphabet/composition/all.hpp>
+#include <seqan3/alphabet/composite/all.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/gap/all.hpp>
 #include <seqan3/alphabet/mask/all.hpp>

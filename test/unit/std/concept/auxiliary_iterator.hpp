@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #pragma once
@@ -12,11 +12,12 @@
 #include <forward_list>
 #include <vector>
 
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 
 using input_iterator               = std::istream_iterator<char>;
-using output_iterator              = std::ranges::ostream_iterator<char>;
+using output_iterator              = seqan3::ostream_iterator<char>;
 using forward_iterator             = std::forward_list<char>::iterator;
 using bidirectional_iterator       = std::list<char>::iterator;
 using random_access_iterator       = std::vector<char>::iterator;
@@ -69,7 +70,7 @@ struct value
 };
 
 template <typename value_t, typename ...ts>
-struct value<std::ranges::ostream_iterator<value_t, ts...>>
+struct value<seqan3::ostream_iterator<value_t, ts...>>
 {
     using type = value_t;
 };

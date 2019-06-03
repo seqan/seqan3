@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 // ============================================================================
@@ -416,7 +416,7 @@ struct traits : traits_base<value_type>
 };
 
 template <typename value_type>
-inline value_type complement(value_type x) noexcept
+inline value_type complement_(value_type x) noexcept
 {
     static_assert(std::UnsignedIntegral<value_type>, "cast to unsigned first");
     return value_type(~x + 1);
@@ -447,7 +447,7 @@ inline std::to_chars_result to_chars_itoa(char* first, char* last, value_type va
     if (value < 0 && first != last)
     {
         *first++ = '-';
-        x = complement(x);
+        x = complement_(x);
     }
 
     return to_chars_itoa(first, last, x, std::false_type());
@@ -461,7 +461,7 @@ inline std::to_chars_result to_chars_integral(char* first, char* last, value_typ
     if (value < 0 && first != last)
     {
         *first++ = '-';
-        x = complement(x);
+        x = complement_(x);
     }
 
     return to_chars_integral(first, last, x, base, std::false_type());
@@ -515,16 +515,16 @@ inline std::from_chars_result sign_combinator(_It first, _It last, value_type & 
 
     if (neg)
     {
-        if (x <= complement(to_unsigned(tl::min())))
+        if (x <= complement_(to_unsigned(tl::min())))
         {
-            x = complement(x);
+            x = complement_(x);
             memcpy(&value, &x, sizeof(x));
             return r;
         }
     }
     else
     {
-        if (x <= (tl::max)())
+        if (x <= to_unsigned(tl::max()))
         {
             value = x;
             return r;

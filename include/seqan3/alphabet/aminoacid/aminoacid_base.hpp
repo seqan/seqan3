@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -40,12 +40,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr aminoacid_base() : base_t{} {}
-    constexpr aminoacid_base(aminoacid_base const &) = default;
-    constexpr aminoacid_base(aminoacid_base &&) = default;
-    constexpr aminoacid_base & operator=(aminoacid_base const &) = default;
-    constexpr aminoacid_base & operator=(aminoacid_base &&) = default;
-    ~aminoacid_base() = default;
+    constexpr aminoacid_base()                                   noexcept = default; //!< Defaulted.
+    constexpr aminoacid_base(aminoacid_base const &)             noexcept = default; //!< Defaulted.
+    constexpr aminoacid_base(aminoacid_base &&)                  noexcept = default; //!< Defaulted.
+    constexpr aminoacid_base & operator=(aminoacid_base const &) noexcept = default; //!< Defaulted.
+    constexpr aminoacid_base & operator=(aminoacid_base &&)      noexcept = default; //!< Defaulted.
+    ~aminoacid_base()                                            noexcept = default; //!< Defaulted.
     //!\}
 
     //!\brief Befriend the derived class so it can instantiate.
@@ -56,7 +56,7 @@ public:
     // Import from base:
     using typename base_t::char_type;
     using typename base_t::rank_type;
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_rank;
 
     /*!\name Constructors, destructor and assignment

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -159,7 +159,7 @@ TYPED_TEST(alignment_result_test, alignment)
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).alignment()), alignment_t const &>));
     }
 
-    if constexpr (tuple_like_concept<alignment_t>)
+    if constexpr (TupleLike<alignment_t>)
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(std::string{std::get<0>(tmp.alignment()) | view::persist | view::to_char},

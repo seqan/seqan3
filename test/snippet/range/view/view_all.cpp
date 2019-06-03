@@ -1,6 +1,6 @@
 #include <string>
 #include <vector>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/view_all.hpp>       // provides view::all, attention not <seqan3/range/view/all.hpp>!
 
 using namespace seqan3;

@@ -3,10 +3,10 @@
 
 #include <range/v3/view/split.hpp>
 
-#include <seqan3/argument_parser/all.hpp>     // includes all necessary headers
-#include <seqan3/io/stream/debug_stream.hpp>  // our custom output stream
-#include <seqan3/std/charconv>                // includes std::from_chars
-#include <seqan3/std/filesystem>              // use std::filesystem::path
+#include <seqan3/argument_parser/all.hpp> // includes all necessary headers
+#include <seqan3/core/debug_stream.hpp>   // our custom output stream
+#include <seqan3/std/charconv>            // includes std::from_chars
+#include <seqan3/std/filesystem>          // use std::filesystem::path
 
 using namespace seqan3;
 
@@ -92,7 +92,7 @@ void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser("Game of Parsing", argc, argv);        // initialise myparser
+    argument_parser myparser{"Game of Parsing", argc, argv};        // initialise myparser
     cmd_arguments args{};
 
     initialize_argument_parser(myparser, args);

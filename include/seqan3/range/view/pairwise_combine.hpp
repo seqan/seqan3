@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -77,22 +77,28 @@ private:
         /*!\name Associated types
          * \{
          */
+
+        //!\brief The difference type.
         using difference_type   = std::ptrdiff_t;
+        //!\brief The value type.
         using value_type        = std::tuple<underlying_val_t, underlying_val_t>;
+        //!\brief The reference type.
         using reference         = std::tuple<underlying_ref_t, underlying_ref_t>;
+        //!\brief The pointer type.
         using pointer           = void;
+        //!\brief The iterator category tag.
         using iterator_category = iterator_tag_t<underlying_iterator_type>;
         //!\}
 
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr iterator_type() = default;
-        constexpr iterator_type(iterator_type const &) = default;
-        constexpr iterator_type(iterator_type &&) = default;
-        constexpr iterator_type & operator=(iterator_type const &) = default;
-        constexpr iterator_type & operator=(iterator_type &&) = default;
-        ~iterator_type() = default;
+        constexpr iterator_type()                                  noexcept = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type const &)             noexcept = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type &&)                  noexcept = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type const &) noexcept = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type &&)      noexcept = default; //!< Defaulted.
+        ~iterator_type()                                           noexcept = default; //!< Defaulted.
 
         /*!\brief Constructs the iterator from the current underlying iterator and the end iterator of the underlying
          *        range.
@@ -289,6 +295,8 @@ private:
         //NOTE: The comparison operators should be implemented as friends, but due to a bug in gcc friend function
         // cannot yet be constrained. To avoid unexpected errors with the comparison all operators are implemented as
         // direct members and not as friends.
+
+        //!\brief Checks whether `*this` is equal to `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::EqualityComparableWith<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
@@ -300,6 +308,7 @@ private:
             return std::tie(first_it, second_it) == std::tie(rhs.first_it, rhs.second_it);
         }
 
+        //!\brief Checks whether `*this` is not equal to `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::EqualityComparableWith<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
@@ -311,6 +320,7 @@ private:
             return !(*this == rhs);
         }
 
+        //!\brief Checks whether `*this` is less than `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::StrictTotallyOrderedWith<underlying_iterator_type,
@@ -323,6 +333,7 @@ private:
             return std::tie(first_it, second_it) < std::tie(rhs.first_it, rhs.second_it);
         }
 
+        //!\brief Checks whether `*this` is greater than `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::StrictTotallyOrderedWith<underlying_iterator_type,
@@ -336,6 +347,7 @@ private:
             return std::tie(first_it, second_it) > std::tie(rhs.first_it, rhs.second_it);
         }
 
+        //!\brief Checks whether `*this` is less than or equal to `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::StrictTotallyOrderedWith<underlying_iterator_type,
@@ -348,6 +360,7 @@ private:
             return std::tie(first_it, second_it) <= std::tie(rhs.first_it, rhs.second_it);
         }
 
+        //!\brief Checks whether `*this` is greater than or equal to `rhs`.
         template <typename other_range_type>
         //!\cond
             requires std::StrictTotallyOrderedWith<underlying_iterator_type,
@@ -420,8 +433,10 @@ private:
 
 public:
 
-    //!\name Associated types
-    //!\{
+    /*!\name Associated types
+     * \{
+     */
+
     //!\brief The iterator type.
     using iterator          = iterator_type<underlying_range_type>;
     //!\brief The const iterator type. Evaluates to void if the underlying range is not const iterable.
@@ -559,7 +574,7 @@ public:
     //!\copydoc begin()
     constexpr const_iterator begin() const noexcept
     //!\cond
-        requires const_iterable_concept<underlying_range_type>
+        requires ConstIterableRange<underlying_range_type>
     //!\endcond
     {
         return {std::ranges::begin(u_range), std::ranges::begin(u_range), std::ranges::end(u_range)};
@@ -568,7 +583,7 @@ public:
     //!\copydoc begin()
     constexpr const_iterator cbegin() const noexcept
     //!\cond
-        requires const_iterable_concept<underlying_range_type>
+        requires ConstIterableRange<underlying_range_type>
     //!\endcond
     {
         return begin();
@@ -595,7 +610,7 @@ public:
     //!\copydoc end()
     constexpr const_iterator end() const noexcept
     //!\cond
-        requires const_iterable_concept<underlying_range_type>
+        requires ConstIterableRange<underlying_range_type>
     //!\endcond
     {
         return {back_iterator, std::ranges::begin(u_range), std::ranges::end(u_range)};
@@ -604,7 +619,7 @@ public:
     //!\copydoc end()
     constexpr const_iterator cend() const noexcept
     //!\cond
-        requires const_iterable_concept<underlying_range_type>
+        requires ConstIterableRange<underlying_range_type>
     //!\endcond
     {
         return end();
@@ -636,14 +651,10 @@ private:
  * \{
  */
 
-//!\brief Deduces the correct template type from a view.
-template <std::ranges::View other_range_t>
-pairwise_combine_view(other_range_t range) -> pairwise_combine_view<other_range_t>;
-
 //!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in std::ranges::view::all.
 template <std::ranges::ViewableRange other_range_t>
 pairwise_combine_view(other_range_t && range) ->
-    pairwise_combine_view<decltype(std::ranges::view::all(std::declval<other_range_t &&>()))>;
+    pairwise_combine_view<std::ranges::all_view<other_range_t>>;
 //!\}
 
 } // namespace seqan3::detail
@@ -678,6 +689,11 @@ namespace seqan3::view
  * since it does not return a reference to the represented type but a prvalue. Thus this iterator might not be usable
  * within some legacy algorithms of the STL. But it is guaranteed to work with the ranges algorithms.
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/pairwise_combine.hpp>
+ * ```
+ *
  * ### View properties
  *
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                       |
@@ -693,7 +709,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                                          |
  * | std::ranges::CommonRange        | *required*                            | *guaranteed*                                                         |
  * | std::ranges::OutputRange        |                                       | *lost*                                                               |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                                          |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                                          |
  * |                                 |                                       |                                                                      |
  * | seqan3::reference_t             |                                       | std::tuple<seqan3::reference_t<urng_t>, seqan3::reference_t<urng_t>> |
  *
@@ -712,7 +728,7 @@ namespace seqan3::view
  *
  * \hideinitializer
  */
-inline constexpr auto pairwise_combine = detail::generic_pipable_view_adaptor<detail::pairwise_combine_view>{};
+inline constexpr auto pairwise_combine = detail::adaptor_for_view_without_args<detail::pairwise_combine_view>{};
 
 //!\}
 } // namespace seqan3::view

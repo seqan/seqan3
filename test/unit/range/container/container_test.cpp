@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -12,21 +12,12 @@
 #include <range/v3/view/take.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/convert.hpp>
-
-#if SEQAN3_WITH_CEREAL
-#include <seqan3/test/tmp_filename.hpp>
-
-#include <fstream>
-
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/portable_binary.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/vector.hpp>
-#endif // SEQAN3_WITH_CEREAL
+#include <seqan3/std/algorithm>
+#include <seqan3/test/cereal.hpp>
+#include <seqan3/test/pretty_printing.hpp>
 
 using namespace seqan3;
 
@@ -35,13 +26,14 @@ class container : public ::testing::Test
 {};
 
 using container_types = ::testing::Types<std::vector<dna4>,
-                                         bitcompressed_vector<dna4>>;
+                                         bitcompressed_vector<dna4>,
+                                         small_vector<dna4, 1000>>;
 
 TYPED_TEST_CASE(container, container_types);
 
 TYPED_TEST(container, concepts)
 {
-    EXPECT_TRUE(reservable_container_concept<TypeParam>);
+    EXPECT_TRUE(ReservableContainer<TypeParam>);
 }
 
 TYPED_TEST(container, construction)
@@ -65,6 +57,20 @@ TYPED_TEST(container, construction)
     // direct from another container
     TypeParam t7{"ACCGT"_dna4};
     EXPECT_EQ(t3, t7);
+}
+
+TYPED_TEST(container, swap)
+{
+    TypeParam t0{};
+    TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
+
+    t0.swap(t1);
+    EXPECT_EQ(t0, (TypeParam{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4}));
+    EXPECT_EQ(t1, (TypeParam{}));
+
+    swap(t0, t1);
+    EXPECT_EQ(t0, (TypeParam{}));
+    EXPECT_EQ(t1, (TypeParam{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4}));
 }
 
 TYPED_TEST(container, assign)
@@ -131,8 +137,8 @@ TYPED_TEST(container, element_access)
     // at
     EXPECT_EQ(t1.at(0), 'A'_dna4);
     EXPECT_EQ(t2.at(0), 'A'_dna4);
-
-    //TODO check at's ability to throw
+    EXPECT_THROW(t1.at(20), std::out_of_range);
+    EXPECT_THROW(t2.at(20), std::out_of_range);
 
     // []
     EXPECT_EQ(t1[0], 'A'_dna4);
@@ -173,26 +179,42 @@ TYPED_TEST(container, capacity)
     EXPECT_EQ(t1.size(), 5u);
     EXPECT_EQ(t2.size(), 5u);
 
-    // max_size
-    EXPECT_GT(t0.max_size(), 1'000'000'000'000u);
-    EXPECT_GT(t1.max_size(), 1'000'000'000'000u);
-    EXPECT_GT(t2.max_size(), 1'000'000'000'000u);
-
     // capacity
     EXPECT_GE(t0.capacity(), t0.size());
     EXPECT_GE(t1.capacity(), t1.size());
     EXPECT_GE(t2.capacity(), t2.size());
 
-    // reserve
-    EXPECT_LT(t0.capacity(), 1000u);
-    t0.reserve(1000);
-    EXPECT_GE(t0.capacity(), 1000u);
+    if constexpr (!std::Same<TypeParam, small_vector<dna4, 1000>>)
+    {
+        // max_size
+        EXPECT_GT(t0.max_size(), 1'000'000'000'000u);
+        EXPECT_GT(t1.max_size(), 1'000'000'000'000u);
+        EXPECT_GT(t2.max_size(), 1'000'000'000'000u);
 
-    // shrink_to_fit
-    t1.reserve(1000);
-    EXPECT_GT(t1.capacity(), t1.size()*2);
-    t1.shrink_to_fit();
-    EXPECT_LE(t1.capacity(), std::max<size_t>(t1.size()*2, 32ul));
+        // reserve
+        EXPECT_LT(t0.capacity(), 1000u);
+        t0.reserve(1000);
+        EXPECT_GE(t0.capacity(), 1000u);
+
+        // shrink_to_fit
+        t1.reserve(1000);
+        EXPECT_GT(t1.capacity(), t1.size()*2);
+        t1.shrink_to_fit();
+        EXPECT_LE(t1.capacity(), std::max<size_t>(t1.size()*2, 32ul));
+    }
+    else
+    {
+        // max_size
+        EXPECT_EQ(t0.max_size(), 1000u);
+        EXPECT_EQ(t1.max_size(), 1000u);
+        EXPECT_EQ(t2.max_size(), 1000u);
+
+        // reserve
+        t0.reserve(2000);
+        EXPECT_EQ(t0.capacity(), 1000u); // no-op
+        t1.shrink_to_fit();
+        EXPECT_EQ(t0.capacity(), 1000u); // no-op
+    }
 }
 
 TYPED_TEST(container, clear)
@@ -251,6 +273,10 @@ TYPED_TEST(container, erase)
     // range
     t1.erase(t1.begin() + 1, t1.begin() + 3);
     EXPECT_EQ(t1, (TypeParam{'C'_dna4, 'T'_dna4}));
+
+    // empty range (no op)
+    t1.erase(t1.begin(), t1.begin());
+    EXPECT_EQ(t1, (TypeParam{'C'_dna4, 'T'_dna4}));
 }
 
 TYPED_TEST(container, push_pop)
@@ -291,16 +317,6 @@ TYPED_TEST(container, resize)
     EXPECT_EQ(t0, (TypeParam{'A'_dna4, 'A'_dna4}));
 }
 
-TYPED_TEST(container, swap)
-{
-    TypeParam t0{};
-    TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
-
-    t0.swap(t1);
-    EXPECT_EQ(t0, (TypeParam{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4}));
-    EXPECT_EQ(t1, (TypeParam{}));
-}
-
 TYPED_TEST(container, streamable)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -319,35 +335,8 @@ TYPED_TEST(container, streamable)
     EXPECT_EQ(o.str(), "ACCGT");
 }
 
-#if 0 // SEQAN3_WITH_CEREAL
-template <typename in_archive_t, typename out_archive_t, typename TypeParam>
-void do_serialisation(TypeParam const l)
-{
-    // This makes sure the file is also deleted if an exception is thrown in one of the tests below
-    // Generate unique file name.
-    test::tmp_file_name filename{"container_cereal_test"};
-    {
-        std::ofstream os{filename.get_path(), std::ios::binary};
-        out_archive_t oarchive{os};
-        oarchive(l);
-    }
-
-    {
-        TypeParam in_l{};
-        std::ifstream is{filename.get_path(), std::ios::binary};
-        in_archive_t iarchive{is};
-        iarchive(in_l);
-        EXPECT_EQ(l, in_l);
-    }
-}
-
 TYPED_TEST(container, serialisation)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
-
-    do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (t1);
-    do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(t1);
-    do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (t1);
-    do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (t1);
+    test::do_serialisation(t1);
 }
-#endif // SEQAN3_WITH_CEREAL

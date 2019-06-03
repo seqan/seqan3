@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -42,8 +42,10 @@ TEST(align_pairwise, single_rng_lvalue)
 
     {  // the alignment
         configuration cfg = align_cfg::edit | align_cfg::result{with_alignment};
+        unsigned idx = 0;
         for (auto && res : align_pairwise(p, cfg))
         {
+            EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);
             EXPECT_EQ(res.back_coordinate().first, 7u);
             EXPECT_EQ(res.back_coordinate().second, 8u);

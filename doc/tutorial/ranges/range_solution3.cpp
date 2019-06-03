@@ -1,4 +1,4 @@
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/all.hpp>            // include all of SeqAn's views
 #include <seqan3/std/ranges>                    // include all of the standard library's views
 
@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     // Bonus:
     //auto s_as_dna = s | std::view::transform([] (char const c)
     //{
-    //    return seqan3::assign_char_strict(seqan3::dna5{}, c);
+    //    return seqan3::assign_char_strictly_to(c, seqan3::dna5{});
     //});
 
     seqan3::debug_stream << "Original: " << s_as_dna << '\n';

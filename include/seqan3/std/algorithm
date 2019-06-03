@@ -1,0 +1,97 @@
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+// -----------------------------------------------------------------------------------------------------
+
+/*!\file
+ * \brief Adaptations of algorithms from the Ranges TS
+ * \author René Rahn <rene.rahn AT fu-berlin.de>
+ */
+
+#pragma once
+
+/*!\defgroup algorithm algorithm
+ * \ingroup std
+ * \brief The \<algorithm\> header with additional ranges algorithm from C++20's standard library.
+ */
+
+#include <algorithm>
+
+#ifndef __cpp_lib_ranges  // If not C++20 ranges available, implement via range-v3.
+
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/algorithm/copy_n.hpp>
+#include <range/v3/algorithm/equal.hpp>
+#include <range/v3/algorithm/fill.hpp>
+#include <range/v3/algorithm/find_if_not.hpp>
+#include <range/v3/algorithm/find_if.hpp>
+#include <range/v3/algorithm/find.hpp>
+#include <range/v3/algorithm/for_each.hpp>
+#include <range/v3/algorithm/move_backward.hpp>
+#include <range/v3/algorithm/move.hpp>
+#include <range/v3/algorithm/sort.hpp>
+
+#include <seqan3/core/platform.hpp>
+
+namespace std::ranges
+{
+
+/*!\typedef std::ranges::copy
+ * \brief Alias for ranges::copy. Copies a range of elements to a new location.
+ */
+using SEQAN3_DOXYGEN_ONLY(copy =) ::ranges::copy;
+
+/*!\typedef std::ranges::copy_n
+ * \brief Alias for ranges::copy_n. Copies a range of exactly n elements to a new location.
+ */
+using SEQAN3_DOXYGEN_ONLY(copy_n =) ::ranges::copy_n;
+
+/*!\typedef std::ranges::equal
+* \brief Alias for ranges::equal. Determines if two sets of elements are the same.
+*/
+using SEQAN3_DOXYGEN_ONLY(equal =) ::ranges::equal;
+
+/*!\typedef std::ranges::fill
+ * \brief Alias for ranges::fill. Assigns a value to the elements of a range.
+ */
+using SEQAN3_DOXYGEN_ONLY(fill =) ::ranges::fill;
+
+/*!\typedef std::ranges::find_if_not
+* \brief Alias for ranges::find_if_not. Returns the first element in the range for which the predicate returns false.
+*/
+using SEQAN3_DOXYGEN_ONLY(find_if_not =) ::ranges::find_if_not;
+
+/*!\typedef std::ranges::find_if
+* \brief Alias for ranges::find_if. Returns the first element in the range for which the predicate returns true.
+*/
+using SEQAN3_DOXYGEN_ONLY(find_if =) ::ranges::find_if;
+
+/*!\typedef std::ranges::find
+* \brief Alias for ranges::find. Returns the first element in the range equal to the given value.
+*/
+using SEQAN3_DOXYGEN_ONLY(find =) ::ranges::find;
+
+/*!\typedef std::ranges::for_each
+ * \brief Alias for ranges::for_each. Applies a function object to the elements of a range.
+ */
+using SEQAN3_DOXYGEN_ONLY(for_each =) ::ranges::for_each;
+
+/*!\typedef std::ranges::move_backward
+ * \brief Alias for ranges::move_backward. Moves a range of elements backward to a new location starting from the end.
+ */
+using SEQAN3_DOXYGEN_ONLY(move_backward =) ::ranges::move_backward;
+
+/*!\typedef std::ranges::move
+ * \brief Alias for ranges::move. Moves a range of elements to a new location.
+ */
+using SEQAN3_DOXYGEN_ONLY(move =) ::ranges::move;
+
+/*!\typedef std::ranges::sort
+* \brief Alias for ranges::sort. Sorts a range.
+*/
+using SEQAN3_DOXYGEN_ONLY(sort =) ::ranges::sort;
+
+} // namespace std::ranges
+#endif  // __cpp_lib_ranges

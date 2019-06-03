@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -25,15 +25,15 @@ namespace seqan3::detail
 //  kmer_hash_fn (adaptor definition)
 // ============================================================================
 
-//!\brief View adaptor definition for view::kmer_hash.
-class kmer_hash_fn : public pipable_adaptor_base<kmer_hash_fn>
+//![adaptor_def]
+//!\brief view::kmer_hash's range adaptor object type (non-closure).
+struct kmer_hash_fn
 {
-private:
-    //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<kmer_hash_fn>;
-
-    //!\brief Befriend the base class so it can call impl().
-    friend base_t;
+    //!\brief Store the argument and return a range adaptor closure object.
+    constexpr auto operator()(size_t const k) const noexcept
+    {
+        return detail::adaptor_from_functor{*this, k};
+    }
 
     /*!\brief            Call the view's constructor with the underlying view as argument.
      * \param[in] urange The input range to process. Must model std::ranges::ViewableRange and the reference type of the
@@ -43,9 +43,9 @@ private:
      */
     template <std::ranges::ViewableRange urng_t>
     //!\cond
-        requires Semialphabet<delete_const_t<reference_t<urng_t>>>
+        requires Semialphabet<reference_t<urng_t>>
     //!\endcond
-    static auto impl(urng_t && urange, size_t const k)
+    constexpr auto operator()(urng_t && urange, size_t const k) const noexcept
     {
         return std::forward<urng_t>(urange) | ranges::view::sliding(k) | std::view::transform(
         [] (auto const in)
@@ -54,11 +54,8 @@ private:
             return h(in);
         });
     }
-
-public:
-    //!\brief Inherit the base class's Constructors.
-    using base_t::base_t;
 };
+//![adaptor_def]
 
 } // namespace seqan3::detail
 
@@ -76,6 +73,11 @@ namespace seqan3::view
      *                      See below for the properties of the returned range.
      * \ingroup view
      *
+     * **Header**
+     * ```cpp
+     *      #include <seqan3/range/view/kmer_hash.hpp>
+     * ```
+     *
      * ### View properties
      *
      * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
@@ -91,7 +93,7 @@ namespace seqan3::view
      * | std::ranges::SizedRange         |                                       | *preserved*                                        |
      * | std::ranges::CommonRange        |                                       | *preserved*                                        |
      * | std::ranges::OutputRange        |                                       | *lost*                                             |
-     * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+     * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
      * |                                 |                                       |                                                    |
      * | seqan3::reference_t             | seqan3::Semialphabet                  | std::size_t                                        |
      *

@@ -1,10 +1,10 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 int main(int argc, char ** argv)
 {
-    seqan3::argument_parser myparser("Grade-Average", argc, argv); // initialize
+    seqan3::argument_parser myparser{"Grade-Average", argc, argv}; // initialize
 
     std::string name{"Max Muster"}; // define default values directly in the variable.
     bool bonus{false};

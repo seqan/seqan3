@@ -1,5 +1,5 @@
 #include <string>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/take_exactly.hpp>           // provides view::take_exactly and view::take_exactly_or_throw
 
 using namespace seqan3;

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -22,6 +22,7 @@
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/detail.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -73,12 +74,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_persist() = default;
-    constexpr view_persist(view_persist const & rhs) = default;
-    constexpr view_persist(view_persist && rhs) = default;
-    constexpr view_persist & operator=(view_persist const & rhs) = default;
-    constexpr view_persist & operator=(view_persist && rhs) = default;
-    ~view_persist() = default;
+    view_persist()                                               noexcept = default; //!< Defaulted.
+    constexpr view_persist(view_persist const & rhs)             noexcept = default; //!< Defaulted.
+    constexpr view_persist(view_persist && rhs)                  noexcept = default; //!< Defaulted.
+    constexpr view_persist & operator=(view_persist const & rhs) noexcept = default; //!< Defaulted.
+    constexpr view_persist & operator=(view_persist && rhs)      noexcept = default; //!< Defaulted.
+    ~view_persist()                                              noexcept = default; //!< Defaulted.
 
     /*!\brief Construct from another range.
      * \param[in] _urange The underlying range.
@@ -139,22 +140,6 @@ public:
         return end();
     }
     //!\}
-
-    /*!\brief Convert this view into a container implicitly.
-     * \tparam container_t Type of the container to convert to; must satisfy seqan3::sequence_container_concept and the
-     *                     seqan3::reference_t of both must model std::CommonReference.
-     * \returns This view converted to container_t.
-     */
-    template <sequence_container_concept container_t>
-    operator container_t() const
-    //!\cond
-        requires std::CommonReference<reference_t<std::remove_reference_t<container_t>>, reference>
-    //!\endcond
-    {
-        container_t ret;
-        std::ranges::copy(begin(), end(), std::back_inserter(ret));
-        return ret;
-    }
 };
 
 //!\brief Template argument type deduction guide that strips references.
@@ -166,13 +151,14 @@ view_persist(urng_t &&) -> view_persist<std::remove_reference_t<urng_t>>;
 //  persist_fn (adaptor definition)
 // ============================================================================
 
+//![adaptor_def]
 /*!\brief View adaptor definition for view::persist.
  */
-class persist_fn : public pipable_adaptor_base<persist_fn>
+class persist_fn : public adaptor_base<persist_fn>
 {
 private:
     //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<persist_fn>;
+    using base_t = adaptor_base<persist_fn>;
 
 public:
     //!\brief Inherit the base class's Constructors.
@@ -201,6 +187,7 @@ private:
         return view_persist{std::move(urange)};
     }
 };
+//![adaptor_def]
 
 } // namespace seqan3::detail
 
@@ -229,6 +216,11 @@ namespace seqan3::view
  * internally so all view requirements like constant copy are satisfied. However construction and copying might be
  * slightly slower, because of reference counting.
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/persist.hpp>
+ * ```
+ *
  * ### View properties
  *
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
@@ -244,7 +236,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *

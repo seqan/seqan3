@@ -1,5 +1,5 @@
-#include <seqan3/argument_parser/all.hpp>     // includes all necessary headers
-#include <seqan3/io/stream/debug_stream.hpp>  // our custom output stream
+#include <seqan3/argument_parser/all.hpp> // includes all necessary headers
+#include <seqan3/core/debug_stream.hpp>   // our custom output stream
 
 using namespace seqan3;
 
@@ -12,7 +12,7 @@ void initialize_argument_parser(argument_parser & parser)
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser("Game of Parsing", argc, argv);
+    argument_parser myparser{"Game of Parsing", argc, argv};
 
     // code from assignment 1
 }

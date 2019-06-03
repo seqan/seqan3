@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -14,6 +14,7 @@
 
 #include <string_view>
 
+#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/concepts>
@@ -29,11 +30,11 @@ namespace seqan3::detail
 
 /*!\brief View adaptor definition for view::all.
  */
-class all_fn : public pipable_adaptor_base<all_fn>
+class all_fn : public adaptor_base<all_fn>
 {
 private:
     //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<all_fn>;
+    using base_t = adaptor_base<all_fn>;
 
 public:
     //!\brief Inherit the base class's Constructors.
@@ -43,61 +44,50 @@ private:
     //!\brief Befriend the base class so it can call impl().
     friend base_t;
 
-    /*!\brief       Overload for std::basic_string.
-     * \returns     A std::basic_string_view over the input.
+    /*!\brief Type erase if possible and delegate to std::view::all otherwise.
+     * \returns An instance of std::span, std::basic_string_view, std::ranges::subrange or std::view::all's return type.
      */
-    template <typename char_t, typename traits_t, typename allocator_t>
-    static auto impl(std::basic_string<char_t, traits_t, allocator_t> const & urange)
+    template <std::ranges::Range urng_t>
+    static constexpr auto impl(urng_t && urange)
     {
-        return std::basic_string_view<char_t, traits_t>{urange};
-    }
+        static_assert(std::ranges::ViewableRange<urng_t>,
+                      "The view::all adaptor can only be passed ViewableRanges, i.e. Views or &-to-non-View.");
 
-    //!\overload
-    template <typename char_t, typename traits_t, typename allocator_t>
-    static auto impl(std::basic_string<char_t, traits_t, allocator_t> & urange)
-    {
-        return std::basic_string_view<char_t, traits_t>{urange};
-    }
-
-    //!\overload
-    template <typename char_t, typename traits_t, typename allocator_t>
-    static auto impl(std::basic_string<char_t, traits_t, allocator_t> const && urange) = delete;
-
-    /*!\brief       Overload for contiguous, sized ranges that aren't views.
-     * \returns     A std::span over the input.
-     */
-    template <std::ranges::ViewableRange urng_t>
-        requires !std::ranges::View<std::remove_reference_t<urng_t>> && // views are copied/moved by std::view::all
-                 std::ranges::ContiguousRange<urng_t> &&
-                 std::ranges::SizedRange<urng_t>
-    static auto impl(urng_t && urange)
-    {
-        return std::span{std::ranges::data(urange), std::ranges::size(urange)};
-    }
-
-    /*!\brief       Overload for random-access, sized ranges that aren't views.
-     * \returns     A std::ranges::subrange over the input.
-     */
-    template <std::ranges::ViewableRange urng_t>
-        requires !std::ranges::View<std::remove_reference_t<urng_t>> && // views are copied/moved by std::view::all
-                 std::ranges::RandomAccessRange<urng_t> &&
-                 std::ranges::SizedRange<urng_t>
-    static auto impl(urng_t && urange)
-    {
-        return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::sentinel_t<urng_t>>
+        // views are always passed as-is
+        if constexpr (std::ranges::View<remove_cvref_t<urng_t>>)
         {
-            std::ranges::begin(urange),
-            std::ranges::end(urange)
-        };
-    }
-
-    /*!\brief       Overload for the most generic case.
-     * \returns     The parameter forwarded to std::view::all.
-     */
-    template <std::ranges::ViewableRange urng_t>
-    static auto impl(urng_t && urange)
-    {
-        return std::view::all(std::forward<urng_t>(urange));
+            return std::view::all(std::forward<urng_t>(urange));
+        }
+        // string const &
+        else if constexpr (is_type_specialisation_of_v<remove_cvref_t<urng_t>, std::basic_string> &&
+                           std::is_const_v<std::remove_reference_t<urng_t>>)
+        {
+            return std::basic_string_view{std::ranges::data(urange), std::ranges::size(urange)};
+        }
+        // contiguous
+        else if constexpr (ForwardingRange<urng_t> &&
+                           std::ranges::ContiguousRange<urng_t> &&
+                           std::ranges::SizedRange<urng_t>)
+        {
+            return std::span{std::ranges::data(urange), std::ranges::size(urange)};
+        }
+        // random_access
+        else if constexpr (ForwardingRange<urng_t> &&
+                           std::ranges::RandomAccessRange<urng_t> &&
+                           std::ranges::SizedRange<urng_t>)
+        {
+            return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>
+            {
+                std::ranges::begin(urange),
+                std::ranges::begin(urange) + std::ranges::size(urange),
+                std::ranges::size(urange)
+            };
+        }
+        // pass to std::view::all (will return ref-view)
+        else
+        {
+            return std::view::all(std::forward<urng_t>(urange));
+        }
     }
 };
 
@@ -123,37 +113,42 @@ namespace seqan3::view
  *
  * \details
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/view_all.hpp>
+ * ```
+ *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         |                                       | *preserved*                                        |
- * | std::ranges::CommonRange        |                                       | *preserved*                                        |
- * | std::ranges::OutputRange        |                                       | *preserved* unless `urng_t` is std::basic_string   |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
+ * | range concepts and reference_t  | `urng_t` (underlying range type)  | `rrng_t` (returned range type)  |
+ * |---------------------------------|:---------------------------------:|:-------------------------------:|
+ * | std::ranges::InputRange         | *required*                        | *preserved*                     |
+ * | std::ranges::ForwardRange       |                                   | *preserved*                     |
+ * | std::ranges::BidirectionalRange |                                   | *preserved*                     |
+ * | std::ranges::RandomAccessRange  |                                   | *preserved*                     |
+ * | std::ranges::ContiguousRange    |                                   | *preserved*                     |
+ * |                                 |                                   |                                 |
+ * | std::ranges::ViewableRange      | *required*                        | *guaranteed*                    |
+ * | std::ranges::View               |                                   | *guaranteed*                    |
+ * | std::ranges::SizedRange         |                                   | *preserved*                     |
+ * | std::ranges::CommonRange        |                                   | *preserved*                     |
+ * | std::ranges::OutputRange        |                                   | *preserved*                     |
+ * | seqan3::ConstIterableRange      |                                   | *preserved*                     |
+ * |                                 |                                   |                                 |
+ * | seqan3::reference_t             |                                   | seqan3::reference_t<urng_t>     |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Return type
  *
- * | `urng_t` (underlying range type)                          | `rrng_t` (returned range type)                     |
- * |:---------------------------------------------------------:|:--------------------------------------------------:|
- * | std::basic_string *or* std::basic_string_view             | std::basic_string_view                             |
- * | std::ranges::SizedRange && std::ranges::ContiguousRange   | std::span                                          |
- * | std::ranges::SizedRange && std::ranges::RandomAccessRange | std::ranges::subrange                              |
- * | *else*                                                    | *implementation defined type*                      |
+ * | `urng_t` (underlying range type)                                                       | `rrng_t` (returned range type)  |
+ * |:--------------------------------------------------------------------------------------:|:-------------------------------:|
+ * | `std::basic_string const &` *or* `std::basic_string_view`                              | `std::basic_string_view`        |
+ * | `seqan3::ForwardingRange && std::ranges::SizedRange && std::ranges::ContiguousRange`   | `std::span`                     |
+ * | `seqan3::ForwardingRange && std::ranges::SizedRange && std::ranges::RandomAccessRange` | `std::ranges::subrange`         |
+ * | *else*                                                                                 | *implementation defined type*   |
  *
- * This adaptor is different from std::view::all in that it performs type erasure for some underlying ranges.
+ * This adaptor is different from std::view::take in that it performs type erasure for some underlying ranges.
  * It returns exactly the type specified above.
  *
  * ### Example

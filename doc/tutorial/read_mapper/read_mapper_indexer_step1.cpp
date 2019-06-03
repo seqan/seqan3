@@ -1,5 +1,5 @@
 #include <seqan3/argument_parser/all.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 using namespace seqan3;
 
@@ -22,9 +22,9 @@ void initialise_argument_parser(argument_parser & parser, cmd_arguments & args)
     parser.info.short_description = "Creates an index over a reference.";
     parser.info.version = "1.0.0";
     parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.", option_spec::REQUIRED,
-                      file_ext_validator({"fa","fasta"}) | seqan3::path_existence_validator{});
+                      input_file_validator{{"fa","fasta"}});
     parser.add_option(args.index_path, 'o', "output", "The output index file path.", option_spec::DEFAULT,
-                      file_ext_validator{{"index"}});
+                      output_file_validator{{"index"}});
 }
 
 //![main]

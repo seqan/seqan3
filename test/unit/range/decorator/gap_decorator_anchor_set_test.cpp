@@ -2,8 +2,9 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
+
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -210,10 +211,10 @@ TEST(gap_decorator_anchor_set, comparison)
     insert_gap(dec2, dec2.begin(), 1);
 
     EXPECT_NE(dec, dec2); // ACTG-- vs -ACTG--
-    EXPECT_LT(dec2, dec);
-    EXPECT_LE(dec2, dec);
-    EXPECT_GT(dec, dec2);
-    EXPECT_GE(dec, dec2);
+    EXPECT_GT(dec2, dec);
+    EXPECT_GE(dec2, dec);
+    EXPECT_LT(dec, dec2);
+    EXPECT_LE(dec, dec2);
 
     std::vector<dna4> v2{"TCTG"_dna4};
     gap_decorator_anchor_set decNE{v2};

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -25,6 +25,6 @@
  * seqan3::Alphabet.
  *
  * The main purpose of seqan3::gap is to be combined with other alphabets. This can easily be achieved by using the
- * seqan3::gapped<> template which transforms any other alphabet to be a composition of that alphabet + the gap
+ * seqan3::gapped<> template which transforms any other alphabet to be a composite of that alphabet + the gap
  * character.
  */

@@ -1,6 +1,6 @@
 //![start]
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;

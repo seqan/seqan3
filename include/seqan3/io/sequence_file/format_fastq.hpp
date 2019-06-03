@@ -2,11 +2,12 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::sequence_file_format_fastq class.
+ * \brief Provides the seqan3::format_fastq tag and the seqan3::sequence_file_input_format and
+ *        seqan3::sequence_file_output_format specialisation for this tag.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -27,22 +28,28 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/take.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 namespace seqan3
 {
-/*!\brief       The FastQ format.
+
+/*!\brief       The FastQ format. (tag)
  * \implements  SequenceFileFormat
  * \ingroup     sequence
  *
@@ -73,28 +80,42 @@ namespace seqan3
  *   * writing the ID to the `+`-line also (line is always ignored when reading)
  *
  */
-class sequence_file_format_fastq
+struct format_fastq
 {
-public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    sequence_file_format_fastq() = default;                                          //!< Defaulted
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_format_fastq(sequence_file_format_fastq const &) = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_format_fastq & operator=(sequence_file_format_fastq const &) = delete;
-    sequence_file_format_fastq(sequence_file_format_fastq &&) = default;             //!< Defaulted
-    sequence_file_format_fastq & operator=(sequence_file_format_fastq &&) = default; //!< Defaulted
-    ~sequence_file_format_fastq() = default;                                         //!< Defaulted
-    //!\}
-
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
         { "fastq" },
         { "fq"    }
     };
+};
+
+} // namespace seqan
+
+namespace seqan3::detail
+{
+
+//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted FASTQ input.
+//!\ingroup sequence
+template <>
+class sequence_file_input_format<format_fastq>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_fastq;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
+    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
@@ -108,12 +129,7 @@ public:
               id_type                                                                & id,
               qual_type                                                              & qualities)
     {
-        using stream_char_t = typename stream_type::char_type;
-        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
-                                                 decltype(std::istreambuf_iterator<stream_char_t>{})>
-                            {std::istreambuf_iterator<stream_char_t>{stream},
-                             std::istreambuf_iterator<stream_char_t>{}};
-
+        auto stream_view = view::istreambuf(stream);
         auto stream_it = begin(stream_view);
 
         // cache the begin position so we write quals to the same position as seq in seq_qual case
@@ -162,7 +178,7 @@ public:
                                         if (!is_legal_alph(c))
                                         {
                                             throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                is_legal_alph.msg.string() +
+                                                                is_legal_alph.msg.str() +
                                                                 " evaluated to false on " +
                                                                 detail::make_printable(c)};
                                         }
@@ -211,6 +227,29 @@ public:
             detail::consume(qview);
         }
     }
+};
+
+//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted FASTQ.
+//!\ingroup sequence
+template <>
+class sequence_file_output_format<format_fastq>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_fastq;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
+    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
@@ -223,7 +262,7 @@ public:
                id_type                        && id,
                qual_type                      && qualities)
     {
-        std::ranges::ostreambuf_iterator stream_it{stream};
+        seqan3::ostreambuf_iterator stream_it{stream};
 
         // ID
         if constexpr (detail::decays_to_ignore_v<id_type>)
@@ -289,4 +328,4 @@ public:
     }
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

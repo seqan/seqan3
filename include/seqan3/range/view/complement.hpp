@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -32,6 +32,11 @@ namespace seqan3::view
  *
  * Calls seqan3::NucleotideAlphabet::complement() on every element of the input range.
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/complement.hpp>
+ * ```
+ *
  * ### View properties
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
@@ -50,7 +55,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | std::remove_reference_t<seqan3::reference_t<urng_t>> |
  *
@@ -62,13 +67,12 @@ namespace seqan3::view
  * \hideinitializer
  */
 
-inline auto const complement = deep{std::view::transform([] (auto && in)
+inline auto const complement = deep{std::view::transform([] (auto const in)
 {
-    static_assert(NucleotideAlphabet<delete_const_t<decltype(in)>>,
+    static_assert(NucleotideAlphabet<decltype(in)>,
                   "The innermost value type must satisfy the NucleotideAlphabet.");
     // call element-wise complement from the NucleotideAlphabet
-    using seqan3::complement;
-    return complement(in);
+    return seqan3::complement(in);
 })};
 
 //!\}

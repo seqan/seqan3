@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -66,13 +66,13 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             | std::ranges::InputRange           | std::ranges::InputRange + std::ranges::View |
  *
  * ### Examples
  *
- * Wrapping an adaptor that takes no parameters:
+ * Wrapping an adaptor that takes no parameters ("range adaptor <i>closure</i> object"):
  *
  * \snippet test/snippet/range/view/deep.cpp no_param
  *
@@ -97,72 +97,131 @@ namespace seqan3::view
  * is less flexible, but does not require workarounds for arguments that are expensive (or impossible) to copy.
  *
  */
-
 template <typename underlying_adaptor_t>
-class deep : public detail::pipable_adaptor_base<deep<underlying_adaptor_t>>
+class deep : public detail::adaptor_base<deep<underlying_adaptor_t>, underlying_adaptor_t>
 {
 private:
-    //!\brief Hold the inner functor by value or reference depending on deduced type.
-    underlying_adaptor_t inner_functor;
+    //!\brief Type of the CRTP-base.
+    using base_type = detail::adaptor_base<deep<underlying_adaptor_t>, underlying_adaptor_t>;
+
+    //!\brief Befriend the base class so it can call impl().
+    friend base_type;
 
 public:
-
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr deep() = default;
-    constexpr deep(deep const &) = default;
-    constexpr deep(deep &&) = default;
-    constexpr deep & operator=(deep const &) = default;
-    constexpr deep & operator=(deep &&) = default;
-    ~deep() = default;
-
-    //!\brief Constructor that takes the underlying adaptor as parameter.
-    constexpr deep(underlying_adaptor_t && inner)
-        : inner_functor{std::forward<underlying_adaptor_t>(inner)}
-    {}
+    using base_type::base_type;
     //!\}
 
     //!\privatesection
 
-    /*!\brief       The implementation that the base classes operators all resolve to.
-     * \tparam      urng_t Type of the underlying range.
-     * \tparam      arg_types The argument types, not that **temporaries will be copied on recursion!**
-     * \param[in]   urange The view's underlying range.
-     * \param[in]   args Further arguments (optional).
-     * \returns     A view with the inner adaptor applied on the innermost ranges.
+    //!\brief Explicitly inherit operator() because we are also defining our own.
+    using base_type::operator();
+
+    /*!\brief Unwrap the internal adaptor closure object and pipe the range into it.
+     * \tparam    urng_t                Type of the underlying range.
+     * \tparam    underlying_adaptor_t_ Same as underlying_adaptor_t with possibly different cref qualification.
+     * \param[in] urange                The view's underlying range.
+     * \param[in] adap                  The stored adaptor unwrapped by the base-classes explode()-member.
+     * \returns A view with the inner adaptor applied on the innermost ranges.
+     */
+    template <std::ranges::InputRange urng_t, typename underlying_adaptor_t_>
+    static constexpr auto impl(urng_t && urange, underlying_adaptor_t_ && adap)
+    {
+        return std::forward<urng_t>(urange) | std::forward<underlying_adaptor_t_>(adap);
+    }
+
+    /*!\brief Specialisation of the range-handling `operator()` for range-of-range (this is where deep
+     * changes the behaviour for nested ranges).
+     * \tparam    urng_t Type of the underlying range.
+     * \param[in] urange The view's underlying range.
+     * \returns A view with the inner adaptor applied on the innermost ranges.
      *
      * \details
      *
      * Recurses and calls std::view::transform if the underlying range is a range-of-ranges.
      */
-
-    template <typename urng_t, typename ...arg_types>
-    constexpr auto impl(urng_t && urange, arg_types && ...args) const
+    template <std::ranges::InputRange urng_t>
+    //!\cond
+        requires std::ranges::InputRange<reference_t<urng_t>>
+    //!\endcond
+    constexpr auto operator()(urng_t && urange) const &
     {
-        if constexpr (std::ranges::InputRange<urng_t> && std::ranges::InputRange<reference_t<urng_t>>)
+        return std::forward<urng_t>(urange) | std::view::transform([me = *this] (auto && e)
         {
-            return urange | std::view::transform(
-                [argos = std::tuple<arg_types...>(std::forward<arg_types>(args)...), this] (auto && subrange)
-                {
-                    return impl_expand(std::forward<decltype(subrange)>(subrange),
-                                    argos,
-                                    std::make_index_sequence<std::tuple_size_v<decltype(argos)>>{});
-                });
-        }
-        else
-        {
-            return inner_functor(std::forward<urng_t>(urange), std::forward<arg_types>(args)...);
-        }
+            return std::forward<decltype(e)>(e) | me;
+        });
     }
 
-    //!\brief Auxiliary function to expand formerly packed tuple.
-    template <typename urng_t, typename tuple_t, size_t ... indexes>
-    constexpr auto impl_expand(urng_t && urange, tuple_t && tuple, std::index_sequence<indexes...>) const
+    //!\overload
+    template <std::ranges::InputRange urng_t>
+    //!\cond
+        requires std::ranges::InputRange<reference_t<urng_t>>
+    //!\endcond
+    constexpr auto operator()(urng_t && urange) &&
     {
-        return impl(std::forward<urng_t>(urange), std::get<indexes>(std::forward<tuple_t>(tuple))...);
+        return std::forward<urng_t>(urange) | std::view::transform([me = std::move(*this)] (auto && e)
+        {
+            return std::forward<decltype(e)>(e) | me;
+        });
     }
 
+    /*!\brief Called to produce a range adaptor closure object if the wrapped functor was **not** a range
+     * adaptor *closure* object before, i.e. requires arguments.
+     * \tparam    first_arg_t      The type of the first argument; must not model std::ranges::InputRange.
+     * \tparam    stored_arg_types The argument types, note that **temporaries will be copied on recursion!**
+     * \param[in] first            First argument.
+     * \param[in] args             Further arguments (optional).
+     * \returns A view::deep specialisation of a closure object, i.e. with stored arguments.
+     */
+    template <typename first_arg_t, typename ... stored_arg_types>
+    //!\cond
+        requires !std::ranges::InputRange<first_arg_t>
+    //!\endcond
+    constexpr auto operator()(first_arg_t && first, stored_arg_types && ...args) const
+    {
+        // The adaptor currently wrapped is a proto-adaptor and this function has the arguments to "complete" it.
+        // We extract the adaptor that is stored and invoke it with the given arguments.
+        // This returns an adaptor closure object.
+        auto adaptor_closure = std::get<0>(this->arguments)(std::forward<first_arg_t>(first),
+                                                            std::forward<stored_arg_types>(args)...);
+        // Now we wrap this closure object back into a view::deep to get the deep behaviour.
+        return deep<decltype(adaptor_closure)>{std::move(adaptor_closure)};
+    }
+
+    //!\overload
+    constexpr auto operator()() const
+    {
+        // Proto-adaptors require arguments by definition, but some support defaulting those (e.g. view::translate).
+        // This extracts the proto adaptor and invokes it without args which yields a different object, the closure
+        // with defaulted arguments.
+        auto adaptor_closure = std::get<0>(this->arguments)();
+        // Now we wrap this closure object back into a view::deep to get the deep behaviour.
+        return deep<decltype(adaptor_closure)>{std::move(adaptor_closure)};
+    }
+
+    /*!\brief Called to produce a range if the wrapped functor was **not** a range adaptor *closure* object
+     * before but necessary arguments are also provided.
+     * \tparam    urng_t    Type of the underlying range.
+     * \tparam    arg_types The argument types, note that **temporaries will be copied on recursion!**
+     * \param[in] urange    The view's underlying range.
+     * \param[in] args      Further arguments.
+     * \returns A view with the inner adaptor applied on the innermost ranges.
+     *
+     * \details
+     *
+     * Recurses and calls std::view::transform if the underlying range is a range-of-ranges.
+     */
+    template <std::ranges::InputRange urng_t, typename ... stored_arg_types>
+    //!\cond
+        requires sizeof...(stored_arg_types) > 0
+    //!\endcond
+    constexpr auto operator()(urng_t && urange, stored_arg_types && ...args) const
+    {
+        auto adaptor_closure = std::get<0>(this->arguments)(std::forward<stored_arg_types>(args)...);
+        return std::forward<urng_t>(urange) | std::move(adaptor_closure);
+    }
 };
 
 /*!\name Template argument deduction guides.

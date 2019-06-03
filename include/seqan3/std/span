@@ -226,6 +226,9 @@ public:
     span<byte, span_extent * sizeof(element_type)> as_writeable_bytes() const noexcept
     { return {reinterpret_cast<byte *>(data()), size_bytes()}; }
 
+    friend constexpr iterator begin(span s) noexcept { return s.begin(); }
+    friend constexpr iterator end(span s) noexcept { return s.end(); }
+
 private:
     pointer data_;
 
@@ -259,7 +262,7 @@ public:
     constexpr span& operator=(const span&) noexcept = default;
 
     constexpr span(pointer ptr, index_type count) : data_{ptr}, size_{count} {}
-    constexpr span(pointer f, pointer l) : data_{f}, size_{distance(f, l)} {}
+    constexpr span(pointer f, pointer l) : data_{f}, size_{static_cast<index_type>(distance(f, l))} {}
 
     template <size_t span_sz>
     inline constexpr span(element_type (&arr)[span_sz]) noexcept : data_{arr}, size_{span_sz} {}
@@ -380,6 +383,9 @@ public:
 
     span<byte, dynamic_extent> as_writeable_bytes() const noexcept
     { return {reinterpret_cast<byte *>(data()), size_bytes()}; }
+
+    friend constexpr iterator begin(span s) noexcept { return s.begin(); }
+    friend constexpr iterator end(span s) noexcept { return s.end(); }
 
 private:
     pointer    data_;

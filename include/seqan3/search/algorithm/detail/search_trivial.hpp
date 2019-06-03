@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -54,7 +54,7 @@ inline bool search_trivial(cursor_t cur, query_t & query, typename cursor_t::siz
     if (query_pos == std::ranges::size(query) || error_left.total == 0)
     {
         // If not at end of query sequence, try searching the remaining suffix without any errors.
-        if (query_pos == std::ranges::size(query) || cur.extend_right(std::view::drop(query, query_pos)))
+        if (query_pos == std::ranges::size(query) || cur.extend_right(view::drop(query, query_pos)))
         {
             delegate(cur);
             return true;

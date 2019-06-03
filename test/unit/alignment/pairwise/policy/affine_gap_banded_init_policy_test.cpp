@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -19,6 +19,7 @@ class affine_gap_banded_init_policy_mock :
 public:
     using base_t = seqan3::detail::affine_gap_banded_init_policy<affine_gap_banded_init_policy_mock>;
 
+    using base_t::base_t;
     using base_t::init_origin_cell;
     using base_t::init_column_cell;
     using base_t::init_row_cell;
@@ -85,7 +86,7 @@ TEST(affine_gap_banded_init_policy, init_row_cell)
     affine_gap_banded_init_policy_mock mock{};
 
     mock.init_row_cell(std::make_tuple(std::ref(cell), seqan3::alignment_coordinate{}, std::ignore), cache);
-    
+
     int first;
     int second;
     std::tie(first, second, std::ignore) = std::get<0>(cell);

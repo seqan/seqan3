@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -14,12 +14,13 @@
 #pragma once
 
 #include <range/v3/numeric/accumulate.hpp>
-#include <range/v3/view/slice.hpp>
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/algorithm/configuration/detail.hpp>
 #include <seqan3/search/algorithm/configuration/max_error_common.hpp>
+#include <seqan3/std/algorithm>
 
 namespace seqan3::search_cfg
 {

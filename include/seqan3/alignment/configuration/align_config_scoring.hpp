@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -23,7 +23,7 @@ namespace seqan3::align_cfg
 
 /*!\brief Sets the scoring scheme for the alignment algorithm.
  * \ingroup configuration
- * \tparam scoring_scheme_t The type of the scoring scheme. Must satisfy seqan3::scoring_scheme_concept.
+ * \tparam scoring_scheme_t The type of the scoring scheme. Must satisfy seqan3::ScoringScheme.
  *
  * \details
  *

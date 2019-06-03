@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -28,8 +28,8 @@ TYPED_TEST_P(phred, conversion_char)
 
         if (i < TypeParam::offset_char)                                     // too small, map to valid smallest
             EXPECT_EQ(v.to_char(), TypeParam::offset_char);
-        else if (i >= TypeParam::offset_char + TypeParam::value_size)       // too big, map to valid biggest
-            EXPECT_EQ(v.to_char(), TypeParam::offset_char + TypeParam::value_size - 1);
+        else if (i >= TypeParam::offset_char + TypeParam::alphabet_size)       // too big, map to valid biggest
+            EXPECT_EQ(v.to_char(), TypeParam::offset_char + TypeParam::alphabet_size - 1);
         else                                                                // valid range, map to identity
             EXPECT_EQ(v.to_char(), i);
     }
@@ -46,8 +46,8 @@ TYPED_TEST_P(phred, conversion_phred)
 
         if (i < TypeParam::offset_phred)                                     // too small, map to valid smallest
             EXPECT_EQ(v.to_phred(), TypeParam::offset_phred);
-        else if (i >= TypeParam::offset_phred + TypeParam::value_size)       // too big, map to valid biggest
-            EXPECT_EQ(v.to_phred(), TypeParam::offset_phred + TypeParam::value_size - 1);
+        else if (i >= TypeParam::offset_phred + TypeParam::alphabet_size)       // too big, map to valid biggest
+            EXPECT_EQ(v.to_phred(), TypeParam::offset_phred + TypeParam::alphabet_size - 1);
         else                                                                // valid range, map to identity
             EXPECT_EQ(v.to_phred(), i);
     }
@@ -69,6 +69,7 @@ TYPED_TEST_P(phred, conversion_rank)
 TYPED_TEST_P(phred, concept_check)
 {
     EXPECT_TRUE(QualityAlphabet<TypeParam>);
+    EXPECT_TRUE(WritableQualityAlphabet<TypeParam>);
 }
 
 REGISTER_TYPED_TEST_CASE_P(phred, conversion_char, conversion_phred, conversion_rank, concept_check);

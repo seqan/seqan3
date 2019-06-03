@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <sstream>
@@ -15,6 +15,7 @@
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_embl.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/test/pretty_printing.hpp>
 
 using namespace seqan3;
@@ -25,8 +26,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((SequenceFileInputFormat<sequence_file_format_embl>));
-    EXPECT_TRUE((SequenceFileOutputFormat<sequence_file_format_embl>));
+    EXPECT_TRUE((SequenceFileInputFormat<format_embl>));
+    EXPECT_TRUE((SequenceFileOutputFormat<format_embl>));
 }
 
 // ----------------------------------------------------------------------------
@@ -66,7 +67,7 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
 //)"
     };
 
-    sequence_file_format_embl format;
+    detail::sequence_file_input_format<format_embl> format;
 
     sequence_file_input_options<dna5, false> options;
 
@@ -255,7 +256,7 @@ TEST_F(read, illegal_alphabet)
 
 TEST_F(read, from_stream_file)
 {
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_embl{}, fields<field::SEQ, field::ID>{}};
+    sequence_file_input fin{std::istringstream{input}, format_embl{}, fields<field::SEQ, field::ID>{}};
 
     size_t counter = 0;
     for (auto & [ seq, id ] : fin)
@@ -307,7 +308,7 @@ GGAGTATAAT ATATATATAT ATAT                                        24
 )"
     };
 
-    sequence_file_format_embl format;
+    detail::sequence_file_output_format<format_embl> format;
 
     sequence_file_output_options options;
 
@@ -406,7 +407,7 @@ GGAGTATAAT ATATATATAT ATAT                                        24
 
 TEST_F(write, from_stream_file)
 {
-    sequence_file_output fout{std::ostringstream{}, sequence_file_format_embl{}};
+    sequence_file_output fout{std::ostringstream{}, format_embl{}};
 
     for(int i = 0; i < 3; i++)
     {

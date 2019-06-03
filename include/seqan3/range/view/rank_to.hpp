@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -26,10 +26,15 @@ namespace seqan3::view
 /*!\brief                A view over an alphabet, given a range of ranks.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
- * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::Alphabet.
+ * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::WritableSemialphabet.
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
+ *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/rank_to.hpp>
+ * ```
  *
  * ### View properties
  *
@@ -49,9 +54,9 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::underlying_rank_t<alphabet_t> | `alphabet_t`                                       |
+ * | seqan3::reference_t             | seqan3::alphabet_rank_t<alphabet_t>   | `alphabet_t`                                       |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -61,12 +66,12 @@ namespace seqan3::view
  */
 template <typename alphabet_type>
 //!\cond
-    requires Alphabet<alphabet_type>
+    requires WritableSemialphabet<alphabet_type>
 //!\endcond
 inline auto const rank_to = deep{std::view::transform(
-[] (underlying_rank_t<alphabet_type> const in) -> alphabet_type
+[] (alphabet_rank_t<alphabet_type> const in) -> alphabet_type
 {
-    return assign_rank(alphabet_type{}, in);
+    return assign_rank_to(in, alphabet_type{});
 })};
 
 //!\}

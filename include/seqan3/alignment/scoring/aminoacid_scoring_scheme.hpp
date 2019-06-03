@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -18,7 +18,7 @@
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/range/shortcuts.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/std/algorithm>
 
 namespace seqan3
 {
@@ -61,7 +61,7 @@ enum class aminoacid_similarity_matrix
 
 /*!\brief A data structure for managing and computing the score of two amino acids.
  * \ingroup scoring
- * \implements seqan3::scoring_scheme_concept
+ * \implements seqan3::ScoringScheme
  *
  * \details
  *
@@ -287,6 +287,8 @@ private:
  * \relates seqan3::aminoacid_scoring_scheme
  * \{
  */
+
+//!\brief Default constructed objects deduce to `int8_t`.
 aminoacid_scoring_scheme() -> aminoacid_scoring_scheme<int8_t>;
 
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
@@ -296,9 +298,13 @@ template <Arithmetic score_arg_type>
 aminoacid_scoring_scheme(match_score<score_arg_type>,
                          mismatch_score<score_arg_type>) -> aminoacid_scoring_scheme<int8_t>;
 
+//!\brief Deduce the score type from the provided matrix.
 template <Arithmetic score_arg_type>
 aminoacid_scoring_scheme(std::array<std::array<score_arg_type, 27>, 27>) -> aminoacid_scoring_scheme<score_arg_type>;
 
+/*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
+ * To use a larger type, specify the template argument manually.
+ */
 aminoacid_scoring_scheme(aminoacid_similarity_matrix) -> aminoacid_scoring_scheme<int8_t>;
 //!\}
 

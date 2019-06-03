@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -39,21 +39,26 @@ public:
      *                           std::Invocable.
      *
      * \param[in] func         The callable invoking the alignment algorithm.
+     * \param[in] idx          The index of the current processed sequence pair.
      * \param[in] first_range  The first range.
      * \param[in] second_range The second range.
      * \param[in] delegate     The callable invoked with the result of the alignment.
      */
     template <typename fn_type, typename first_range_type, typename second_range_type, typename delegate_type>
     //!\cond
-        requires std::Invocable<fn_type, first_range_type, second_range_type> &&
-                 std::Invocable<delegate_type, std::invoke_result_t<fn_type, first_range_type, second_range_type>>
+        requires std::Invocable<fn_type, size_t const, first_range_type, second_range_type> &&
+                 std::Invocable<delegate_type, std::invoke_result_t<fn_type,
+                                                                    size_t const,
+                                                                    first_range_type,
+                                                                    second_range_type>>
     //!\endcond
     void execute(fn_type && func,
+                 size_t const idx,
                  first_range_type && first_range,
                  second_range_type && second_range,
                  delegate_type && delegate)
     {
-        delegate(func(std::forward<first_range_type>(first_range), std::forward<second_range_type>(second_range)));
+        delegate(func(idx, std::forward<first_range_type>(first_range), std::forward<second_range_type>(second_range)));
     }
     //!\}
 };

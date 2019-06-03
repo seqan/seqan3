@@ -2,14 +2,12 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <sstream>
 
 #include <gtest/gtest.h>
-
-#include <range/v3/algorithm/equal.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
@@ -18,6 +16,7 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/algorithm>
 
 using namespace seqan3;
 
@@ -62,7 +61,7 @@ TEST_F(record_, definition_tuple_traits)
                                 dna4_vector>));
     EXPECT_EQ(std::tuple_size_v<record_type>, 2ul);
 
-    EXPECT_TRUE(tuple_like_concept<record_type>);
+    EXPECT_TRUE(TupleLike<record_type>);
 }
 
 TEST_F(record_, construction)

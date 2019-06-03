@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -42,12 +42,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr quality_base() noexcept : base_t{} {}
-    constexpr quality_base(quality_base const &) = default;
-    constexpr quality_base(quality_base &&) = default;
-    constexpr quality_base & operator=(quality_base const &) = default;
-    constexpr quality_base & operator=(quality_base &&) = default;
-    ~quality_base() = default;
+    constexpr quality_base()                                  noexcept = default; //!< Defaulted.
+    constexpr quality_base(quality_base const &)              noexcept = default; //!< Defaulted.
+    constexpr quality_base(quality_base &&)                   noexcept = default; //!< Defaulted.
+    constexpr quality_base & operator=(quality_base const &)  noexcept = default; //!< Defaulted.
+    constexpr quality_base & operator=(quality_base &&)       noexcept = default; //!< Defaulted.
+    ~quality_base()                                           noexcept = default; //!< Defaulted.
 
     //!\brief Allow construction from the phred value.
     constexpr quality_base(phred_type const p) noexcept
@@ -61,7 +61,7 @@ private:
 
 public:
     // Import from base type:
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_rank;
     using base_t::assign_rank;
     using typename base_t::char_type;
@@ -80,9 +80,7 @@ public:
     //!\endcond
     explicit constexpr quality_base(other_qual_type const & other) noexcept
     {
-        using seqan3::assign_phred;
-        using seqan3::to_phred;
-        assign_phred(static_cast<derived_type &>(*this), to_phred(other));
+        assign_phred_to(seqan3::to_phred(other), static_cast<derived_type &>(*this));
     }
     //!\}
 
@@ -110,7 +108,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::QualityAlphabet::assign_phred() requirement via the seqan3::assign_rank() wrapper.
+     * Satisfies the seqan3::WritableQualityAlphabet::assign_phred() requirement via the seqan3::assign_rank() wrapper.
      *
      * \par Complexity
      *
@@ -134,8 +132,8 @@ protected:
             {
                 if (i < derived_type::offset_phred)                     // map too-small to smallest possible
                     ret[static_cast<rank_type>(i)] = 0;
-                else if (i >= derived_type::offset_phred + value_size)  // map too-large to highest possible
-                    ret[static_cast<rank_type>(i)] = value_size - 1;
+                else if (i >= derived_type::offset_phred + alphabet_size)  // map too-large to highest possible
+                    ret[static_cast<rank_type>(i)] = alphabet_size - 1;
                 else                                                    // map valid range to identity
                     ret[static_cast<rank_type>(i)] = i - derived_type::offset_phred;
             }
@@ -154,8 +152,8 @@ protected:
             {
                 if (i < derived_type::offset_char)                     // map too-small to smallest possible
                     ret[static_cast<rank_type>(i)] = 0;
-                else if (i >= derived_type::offset_char + value_size)  // map too-large to highest possible
-                    ret[static_cast<rank_type>(i)] = value_size - 1;
+                else if (i >= derived_type::offset_char + alphabet_size)  // map too-large to highest possible
+                    ret[static_cast<rank_type>(i)] = alphabet_size - 1;
                 else                                                   // map valid range to identity
                     ret[static_cast<rank_type>(i)] = i - derived_type::offset_char;
             }

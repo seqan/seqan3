@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -18,7 +18,7 @@ using namespace seqan3;
 template <char char_v>
 struct foo : seqan3::detail::parse_condition_base<foo<char_v>>
 {
-    inline static constexpr constexpr_string msg{constexpr_string{"foo_"} + constexpr_string{char_v}};
+    inline static constexpr small_string msg{small_string{"foo_"} + small_string{char_v}};
 
     using base_t = seqan3::detail::parse_condition_base<foo<char_v>>;
 
@@ -46,7 +46,7 @@ TEST(parse_condition, parse_condition)
 
 TEST(parse_condition, parse_condition_msg)
 {
-    EXPECT_EQ(foo<'o'>::msg.string(), "foo_o"s);
+    EXPECT_EQ(foo<'o'>::msg.str(), "foo_o"s);
 }
 
 TEST(parse_condition, ParseCondition)
@@ -95,7 +95,7 @@ TEST(parse_condition, parse_condition_combiner_msg)
 {
     using namespace seqan3::detail;
     using or_t = detail::parse_condition_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
-    EXPECT_EQ(or_t::msg.string(),   "(foo_a || foo_A || foo_0)"s);
+    EXPECT_EQ(or_t::msg.str(),   "(foo_a || foo_A || foo_0)"s);
 }
 
 TEST(parse_condition, is_not)
@@ -116,7 +116,7 @@ TEST(parse_condition, is_not_msg)
 {
     using namespace seqan3::detail;
     using fn = decltype(!is_alpha);
-    EXPECT_EQ(fn::msg.string(), "!(is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
+    EXPECT_EQ(fn::msg.str(), "!(is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
 }
 
 TEST(parse_condition, is_in_interval)
@@ -134,7 +134,7 @@ TEST(parse_condition, is_in_interval)
 TEST(parse_condition, is_in_interval_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((detail::is_in_interval_type<'a', 'z'>::msg.string()), "is_in_interval<'a', 'z'>"s);
+    EXPECT_EQ((detail::is_in_interval_type<'a', 'z'>::msg.str()), "is_in_interval<'a', 'z'>"s);
 }
 
 TEST(parse_condition, is_in_alphabet)
@@ -171,7 +171,7 @@ TEST(parse_condition, is_in_alphabet)
 TEST(parse_condition, is_in_alphabet_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((detail::is_in_alphabet_type<dna4>::msg.string()), "is_in_alphabet<seqan3::dna4>"s);
+    EXPECT_EQ((detail::is_in_alphabet_type<dna4>::msg.str()), "is_in_alphabet<seqan3::dna4>"s);
 }
 
 TEST(parse_condition, is_char)
@@ -193,8 +193,8 @@ TEST(parse_condition, is_char)
 TEST(parse_condition, is_char_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_char<to_char('A'_dna4)>.msg.string()), "is_char<'A'>"s);
-    EXPECT_EQ((is_char<'\t'>.msg.string()), "is_char<'\t'>"s);
+    EXPECT_EQ((is_char<to_char('A'_dna4)>.msg.str()), "is_char<'A'>"s);
+    EXPECT_EQ((is_char<'\t'>.msg.str()), "is_char<'\t'>"s);
 }
 
 TEST(parse_condition, is_cntrl)

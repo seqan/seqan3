@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -29,9 +29,11 @@ class rna4;
 /*!\brief The four letter DNA alphabet of A,C,G,T.
  * \ingroup nucleotide
  * \implements seqan3::NucleotideAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \details
  * Note that you can assign 'U' as a character to dna4 and it will silently
@@ -61,12 +63,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dna4() noexcept : base_t{} {}
-    constexpr dna4(dna4 const &) = default;
-    constexpr dna4(dna4 &&) = default;
-    constexpr dna4 & operator=(dna4 const &) = default;
-    constexpr dna4 & operator=(dna4 &&) = default;
-    ~dna4() = default;
+    constexpr dna4()                          noexcept = default; //!< Defaulted.
+    constexpr dna4(dna4 const &)              noexcept = default; //!< Defaulted.
+    constexpr dna4(dna4 &&)                   noexcept = default; //!< Defaulted.
+    constexpr dna4 & operator=(dna4 const &)  noexcept = default; //!< Defaulted.
+    constexpr dna4 & operator=(dna4 &&)       noexcept = default; //!< Defaulted.
+    ~dna4()                                   noexcept = default; //!< Defaulted.
 
     using base_t::base_t;
 
@@ -82,7 +84,7 @@ protected:
     //!\privatesection
 
     //!\brief Value to char conversion table.
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'A',
         'C',
@@ -98,7 +100,7 @@ protected:
             std::array<rank_type, 256> ret{};
 
             // reverse mapping for characters and their lowercase
-            for (size_t rnk = 0u; rnk < value_size; ++rnk)
+            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
             {
                 ret[         rank_to_char[rnk] ] = rnk;
                 ret[to_lower(rank_to_char[rnk])] = rnk;
@@ -124,7 +126,7 @@ protected:
     };
 
     //!\brief The complement table.
-    static const std::array<dna4, value_size> complement_table;
+    static const std::array<dna4, alphabet_size> complement_table;
 };
 
 // ------------------------------------------------------------------
@@ -177,7 +179,7 @@ inline dna4_vector operator""_dna4(char const * s, std::size_t n)
 // dna4 (deferred definition)
 // ------------------------------------------------------------------
 
-constexpr std::array<dna4, dna4::value_size> dna4::complement_table
+constexpr std::array<dna4, dna4::alphabet_size> dna4::complement_table
 {
     'T'_dna4,    // complement of 'A'_dna4
     'G'_dna4,    // complement of 'C'_dna4

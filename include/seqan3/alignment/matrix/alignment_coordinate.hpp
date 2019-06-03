@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -14,8 +14,8 @@
 
 #include <type_traits>
 
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 
@@ -77,8 +77,10 @@ class advanceable_alignment_coordinate
 {
 public:
 
-    //!\name Member types
-    //!\{
+    /*!\name Member types
+     * \{
+     */
+
     //!\brief Defines the difference type to model the std::WeaklyIncrementable concept.
     using difference_type = std::make_signed_t<size_t>;
     //!\}
@@ -128,18 +130,41 @@ public:
     //!\}
 
      //!\cond
-     constexpr friend bool operator==(advanceable_alignment_coordinate const & lhs,
-                                      advanceable_alignment_coordinate const & rhs) noexcept
-     {
-         return (lhs.first == rhs.first) &&
-                (lhs.second == rhs.second);
-     }
+    constexpr friend bool operator==(advanceable_alignment_coordinate const & lhs,
+                                     advanceable_alignment_coordinate const & rhs) noexcept
+    {
+        return std::tie(lhs.first, lhs.second) == std::tie(rhs.first, rhs.second);
+    }
 
-     constexpr friend bool operator!=(advanceable_alignment_coordinate const & lhs,
-                                      advanceable_alignment_coordinate const & rhs) noexcept
-     {
-         return !(lhs == rhs);
-     }
+    constexpr friend bool operator!=(advanceable_alignment_coordinate const & lhs,
+                                     advanceable_alignment_coordinate const & rhs) noexcept
+    {
+        return std::tie(lhs.first, lhs.second) != std::tie(rhs.first, rhs.second);
+    }
+
+    constexpr friend bool operator<=(advanceable_alignment_coordinate const & lhs,
+                                     advanceable_alignment_coordinate const & rhs) noexcept
+    {
+        return std::tie(lhs.first, lhs.second) <= std::tie(rhs.first, rhs.second);
+    }
+
+    constexpr friend bool operator< (advanceable_alignment_coordinate const & lhs,
+                                     advanceable_alignment_coordinate const & rhs) noexcept
+    {
+        return std::tie(lhs.first, lhs.second) < std::tie(rhs.first, rhs.second);
+    }
+
+    constexpr friend bool operator>=(advanceable_alignment_coordinate const & lhs,
+                                     advanceable_alignment_coordinate const & rhs) noexcept
+    {
+        return std::tie(lhs.first, lhs.second) >= std::tie(rhs.first, rhs.second);
+    }
+
+    constexpr friend bool operator> (advanceable_alignment_coordinate const & lhs,
+                                     advanceable_alignment_coordinate const & rhs) noexcept
+    {
+        return std::tie(lhs.first, lhs.second) > std::tie(rhs.first, rhs.second);
+    }
      //!\endcond
 
     /*!\name Member functions
@@ -147,6 +172,10 @@ public:
      *        These member functions are not available if the non-type template parameter `state` was set to
      *        seqan3::detail::advanceable_alignment_coordinate_state::none.
      * \{
+     */
+
+    /*!\brief Increments the coordinate depending on the set policy by one.
+     * \return `*this`
      */
     constexpr advanceable_alignment_coordinate & operator++(/*pre-increment*/) noexcept
     //!\cond
@@ -160,6 +189,9 @@ public:
         return *this;
     }
 
+    /*!\brief Post-increments the coordinate depending on the set policy by one.
+     * \return a seqan3::detail::advanceable_alignment_coordinate that holds an unchanged value.
+     */
     constexpr advanceable_alignment_coordinate operator++(int /*post-increment*/) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -170,6 +202,9 @@ public:
         return tmp;
     }
 
+    /*!\brief Decrements the coordinate depending on the set policy by one.
+     * \return `*this`
+     */
     constexpr advanceable_alignment_coordinate & operator--(/*pre-decrement*/) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -182,6 +217,9 @@ public:
         return *this;
     }
 
+    /*!\brief Post-decrements the coordinate depending on the set policy by one.
+     * \return a seqan3::detail::advanceable_alignment_coordinate that holds an unchanged value.
+     */
     constexpr advanceable_alignment_coordinate operator--(int /*post-decrement*/) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -192,6 +230,10 @@ public:
         return tmp;
     }
 
+    /*!\brief Returns the coordinate which is advanced depending on the set policy by `offset`.
+     * \param offset The value to add to the coordinate.
+     * \return `*this`
+     */
     constexpr advanceable_alignment_coordinate & operator+=(difference_type const offset) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -204,6 +246,10 @@ public:
         return *this;
     }
 
+    /*!\brief Returns the coordinate which is advanced depending on the set policy by -`offset`.
+     * \param offset The value to subtract from the coordinate.
+     * \return `*this`
+     */
     constexpr advanceable_alignment_coordinate & operator-=(difference_type const offset) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -216,6 +262,10 @@ public:
         return *this;
     }
 
+    /*!\brief Returns a new coordinate which is advanced depending on the set policy by `offset`.
+     * \param offset The value to add to the coordinate.
+     * \return a seqan3::detail::advanceable_alignment_coordinate that holds the updated value.
+     */
     constexpr advanceable_alignment_coordinate operator+(difference_type const offset) const noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -226,6 +276,10 @@ public:
         return tmp;
     }
 
+    /*!\brief Returns a new coordinate which is advanced depending on the set policy by -`offset`.
+     * \param offset The value to subtract from the coordinate.
+     * \return a seqan3::detail::advanceable_alignment_coordinate that holds the updated value.
+     */
     constexpr advanceable_alignment_coordinate operator-(difference_type const offset) const noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -236,6 +290,10 @@ public:
         return tmp;
     }
 
+    /*!\brief Returns the difference of this and another coordinate depending on the set policy.
+     * \param other The other coordinate.
+     * \return the difference between the coordinates.
+     */
     constexpr difference_type operator-(advanceable_alignment_coordinate const & other) const noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -314,7 +372,7 @@ public:
     //!\brief Inherit the constructor from the base class.
     using base_t::base_t;
 
-    // !\brief Constructs from the seqan3::detail::advanceable_alignment_coordinate base class.
+    //!\brief Constructs from the seqan3::detail::advanceable_alignment_coordinate base class.
     constexpr alignment_coordinate(base_t const & base) : base_t{base}
     {}
 
@@ -346,10 +404,10 @@ public:
 template <typename coordinate_type>
 //!\cond
     requires std::Same<remove_cvref_t<coordinate_type>, alignment_coordinate> ||
-             detail::is_type_specialisation_of_v<remove_cvref_t<coordinate_type>,
-                                                 detail::advanceable_alignment_coordinate>
+             detail::is_value_specialisation_of_v<remove_cvref_t<coordinate_type>,
+                                                  detail::advanceable_alignment_coordinate>
 //!\endcond
-inline debug_stream_type & operator<<(debug_stream_type & s, coordinate_type const & c)
+inline debug_stream_type & operator<<(debug_stream_type & s, coordinate_type && c)
 {
     s << std::tie(c.first, c.second);
     return s;

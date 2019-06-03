@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -21,8 +21,11 @@
     #include <seqan3/contrib/stream/bz2_istream.hpp>
 #endif
 #ifdef SEQAN3_HAS_ZLIB
+    #include <seqan3/contrib/stream/bgzf_istream.hpp>
+    #include <seqan3/contrib/stream/bgzf_stream_util.hpp>
     #include <seqan3/contrib/stream/gz_istream.hpp>
 #endif
+#include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
@@ -40,11 +43,11 @@ inline bool starts_with(ref_t && reference, query_t && query)
     requires std::EqualityComparableWith<reference_t<ref_t>, reference_t<query_t>>
 //!\endcond
 {
-    auto rit  = begin(reference);
-    auto rend = end(reference);
+    auto rit  = std::ranges::begin(reference);
+    auto rend = std::ranges::end(reference);
 
-    auto qit  = begin(query);
-    auto qend = end(query);
+    auto qit  = std::ranges::begin(query);
+    auto qend = std::ranges::end(query);
 
     while (true)
     {
@@ -72,6 +75,8 @@ template <char_concept char_t>
 inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, std::filesystem::path & filename)
     -> std::unique_ptr<std::basic_istream<char_t>, std::function<void(std::basic_istream<char_t>*)>>
 {
+    assert(primary_stream.good());
+
     // don't assume ownership
     constexpr auto stream_deleter_noop     = [] (std::basic_istream<char_t> *) {};
     // assume ownership
@@ -79,25 +84,37 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
 
     // extract "magic header"
     std::istreambuf_iterator<char_t> it{primary_stream};
-    constexpr size_t magic_header_size = 4;
-    std::array<char, magic_header_size> magic_number;
-    for (size_t i = 0; i < magic_header_size; ++i)
+    std::array<char, magic_header<bgzf_compression>.size()> magic_number{}; // Largest magic header from bgzf
+    size_t read_chars = 0;
+    for (; read_chars < magic_number.size(); ++read_chars)
     {
-        if (it == std::istreambuf_iterator<char_t>{}) // file is smaller than 4 bytes -> not compressed, could be legal
-            return {&primary_stream, stream_deleter_noop};
+        if (it == std::istreambuf_iterator<char_t>{})
+            break;
 
-        magic_number[i] = *it;
+        magic_number[read_chars] = *it;
         ++it;
     }
 
-    // restore original stream content
-    for (size_t i = 0; i < magic_header_size; ++i)
-        primary_stream.putback(magic_number[magic_header_size - 1 - i]);
+    // unget all read chars.
+    for (size_t i = 0 ; i < read_chars; ++i)
+        primary_stream.unget();
 
     std::string const extension = filename.extension().string();
 
     // set return value appropriately
-    if (starts_with(magic_number, std::array{'\x1f', '\x8b', '\x08'})) // GZIP
+    if (read_chars == magic_number.size() && contrib::_bgzfCheckHeader(magic_number.data())) // BGZF
+    {
+    #ifdef SEQAN3_HAS_ZLIB
+        if ((extension == ".bgzf"))
+            filename.replace_extension();
+
+        return {new contrib::basic_bgzf_istream<char_t>{primary_stream},
+                stream_deleter_default};
+        #else
+            throw file_open_error{"Trying to read from a bgzf file, but no ZLIB available."};
+        #endif
+    }
+    else if (starts_with(magic_number, magic_header<gz_compression>)) // GZIP
     {
     #ifdef SEQAN3_HAS_ZLIB
         if ((extension == ".gz") || (extension == ".bgzf"))
@@ -108,7 +125,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         throw file_open_error{"Trying to read from a gzipped file, but no ZLIB available."};
     #endif
     }
-    else if (starts_with(magic_number, std::array{'\x42', '\x5a', '\x68'})) // BZip2
+    else if (starts_with(magic_number, magic_header<bz2_compression>)) // BZip2
     {
     #ifdef SEQAN3_HAS_BZIP2
         if (extension == ".bz2")
@@ -119,7 +136,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         throw file_open_error{"Trying to read from a bzipped file, but no libbz2 available."};
     #endif
     }
-    else if (starts_with(magic_number, std::array{'\x28', '\xb5', '\x2f', '\xfd'})) // ZStd
+    else if (starts_with(magic_number, magic_header<zstd_compression>)) // ZStd
     {
         throw file_open_error{"Trying to read from a zst'ed file, but SeqAn does not yet support this."};
     }

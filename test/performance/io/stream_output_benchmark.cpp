@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <benchmark/benchmark.h>
@@ -12,6 +12,7 @@
 #include <sstream>
 
 #ifdef SEQAN3_HAS_ZLIB
+    #include <seqan3/contrib/stream/bgzf_ostream.hpp>
     #include <seqan3/contrib/stream/gz_ostream.hpp>
 #endif
 
@@ -72,6 +73,7 @@ void compressed(benchmark::State & state)
 
 #ifdef SEQAN3_HAS_ZLIB
 BENCHMARK_TEMPLATE(compressed, contrib::gz_ostream);
+BENCHMARK_TEMPLATE(compressed, contrib::bgzf_ostream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed, contrib::bz2_ostream);
@@ -97,6 +99,7 @@ void compressed_type_erased(benchmark::State & state)
 
 #ifdef SEQAN3_HAS_ZLIB
 BENCHMARK_TEMPLATE(compressed_type_erased, contrib::gz_ostream);
+BENCHMARK_TEMPLATE(compressed_type_erased, contrib::bgzf_ostream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed_type_erased, contrib::bz2_ostream);
@@ -122,6 +125,7 @@ void compressed_type_erased2(benchmark::State & state)
 
 #ifdef SEQAN3_HAS_ZLIB
 BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::gz_ostream);
+BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::bgzf_ostream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
 BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::bz2_ostream);

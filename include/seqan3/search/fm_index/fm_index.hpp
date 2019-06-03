@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -22,6 +22,7 @@
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -120,8 +121,8 @@ struct fm_index_default_traits
  */
 template <std::ranges::RandomAccessRange text_t, FmIndexTraits fm_index_traits = fm_index_default_traits>
 //!\cond
-    requires Alphabet<innermost_value_type_t<text_t>> &&
-             alphabet_size_v<innermost_value_type_t<text_t>> <= 256
+    requires Semialphabet<innermost_value_type_t<text_t>> &&
+             alphabet_size<innermost_value_type_t<text_t>> <= 256
 //!\endcond
 class fm_index
 {
@@ -250,7 +251,7 @@ public:
                           | view::to_rank
                           | std::view::transform([] (uint8_t const r)
                           {
-                              if constexpr (alphabet_size_v<char_type> == 256)
+                              if constexpr (alphabet_size<char_type> == 256)
                               {
                                   if (r == 255)
                                       throw std::out_of_range("The input text cannot be indexed, because for full"
@@ -315,7 +316,7 @@ public:
 
         sdsl::int_vector<8> tmp_text(text_size - 1); // last text in collection needs no delimiter
 
-        uint8_t delimiter = alphabet_size_v<char_type> >= 255 ? 255 : alphabet_size_v<char_type> + 1;
+        uint8_t delimiter = alphabet_size<char_type> >= 255 ? 255 : alphabet_size<char_type> + 1;
 
         std::vector<uint8_t> tmp = text
                                    | view::deep{view::to_rank}
@@ -323,7 +324,7 @@ public:
                                    {
                                        std::view::transform([] (uint8_t const r)
                                        {
-                                           if constexpr (alphabet_size_v<char_type> >= 255)
+                                           if constexpr (alphabet_size<char_type> >= 255)
                                            {
                                                if (r >= 254)
                                                    throw std::out_of_range("The input text cannot be indexed, because"
@@ -388,17 +389,38 @@ public:
         return size() == 0;
     }
 
-    // operator== not implemented by sdsl indices yet
-    // bool operator==(fm_index const & rhs) const noexcept
-    // {
-    //     return index == rhs.index;
-    // }
+    /*!\brief Compares two indices.
+     * \returns `true` if the indices are equal, false otherwise.
+     *
+     * ### Complexity
+     *
+     * Linear.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    bool operator==(fm_index const & rhs) const noexcept
+    {
+        // (void) rhs;
+        return (index == rhs.index) && (text_begin == rhs.text_begin);
+    }
 
-    // operator== not implemented by sdsl indices yet
-    // bool operator!=(fm_index const & rhs) const noexcept
-    // {
-    //     return !(*this == rhs);
-    // }
+    /*!\brief Compares two indices.
+     * \returns `true` if the indices are unequal, false otherwise.
+     *
+     * ### Complexity
+     *
+     * Linear.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    bool operator!=(fm_index const & rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
 
     /*!\brief Returns a seqan3::fm_index_cursor on the index that can be used for searching.
      *        \if DEV
@@ -419,74 +441,24 @@ public:
         return {*this};
     }
 
-    /*!\brief Loads the index from disk. Temporary function until cereal is supported.
-     *        \todo cereal
-     * \returns `true` if the index was successfully loaded from disk.
+    /*!\cond DEV
+     * \brief Serialisation support function.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
+     * \param archive The archive being serialised from/to.
      *
-     * ### Complexity
-     *
-     * Linear.
-     *
-     * ### Exceptions
-     *
-     * Strong exception guarantee.
+     * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    bool load(std::filesystem::path const & path)
+    template <CerealArchive archive_t>
+    void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
-        std::filesystem::path tb_path{path};
-        std::filesystem::path tb_ss_path{path};
-        std::filesystem::path tb_rs_path{path};
-        tb_path += ".tb";
-        tb_ss_path += ".tbss";
-        tb_rs_path += ".tbrs";
-
-        sdsl_index_type tmp_index;
-        sdsl::sd_vector<> tmp_text_begin;
-        sdsl::select_support_sd<1> tmp_text_begin_ss;
-        sdsl::rank_support_sd<1> tmp_text_begin_rs;
-
-        if (sdsl::load_from_file(tmp_index, path) &&
-            sdsl::load_from_file(tmp_text_begin, tb_path) &&
-            sdsl::load_from_file(tmp_text_begin_ss, tb_ss_path) &&
-            sdsl::load_from_file(tmp_text_begin_rs, tb_rs_path))
-        {
-            std::swap(this->index, tmp_index);
-            std::swap(this->text_begin, tmp_text_begin);
-            std::swap(this->text_begin_ss, tmp_text_begin_ss);
-            std::swap(this->text_begin_rs, tmp_text_begin_rs);
-            text_begin_ss.set_vector(&text_begin);
-            text_begin_rs.set_vector(&text_begin);
-            return true;
-        }
-        return false;
+        archive(index);
+        archive(text_begin);
+        archive(text_begin_ss);
+        text_begin_ss.set_vector(&text_begin);
+        archive(text_begin_rs);
+        text_begin_rs.set_vector(&text_begin);
     }
-
-    /*!\brief Stores the index to disk. Temporary function until cereal is supported.
-     *        \todo cereal
-     * \returns `true` if the index was successfully stored to disk.
-     *
-     * ### Complexity
-     *
-     * Linear.
-     *
-     * ### Exceptions
-     *
-     * Strong exception guarantee.
-     */
-    bool store(std::filesystem::path const & path) const
-    {
-        std::filesystem::path tb_path{path};
-        std::filesystem::path tb_ss_path{path};
-        std::filesystem::path tb_rs_path{path};
-        tb_path += ".tb";
-        tb_ss_path += ".tbss";
-        tb_rs_path += ".tbrs";
-
-        return sdsl::store_to_file(index, path) &&
-               sdsl::store_to_file(text_begin, tb_path) &&
-               sdsl::store_to_file(text_begin_ss, tb_ss_path) &&
-               sdsl::store_to_file(text_begin_rs, tb_rs_path);
-    }
+    //!\endcond
 
 };
 

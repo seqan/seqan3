@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -43,7 +43,7 @@ template <size_t beg,
           size_t ... Is,
           typename ...ts>
 //!\cond
-    requires tuple_like_concept<tuple_t<ts...>> && tuple_like_concept<tuple_t<>>
+    requires TupleLike<tuple_t<ts...>> && TupleLike<tuple_t<>>
 //!\endcond
 constexpr auto tuple_split(tuple_t<ts...> const & t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
@@ -56,7 +56,7 @@ template <size_t beg,
           size_t ... Is,
           typename ...ts>
 //!\cond
-    requires tuple_like_concept<tuple_t<ts...>> && tuple_like_concept<tuple_t<>>
+    requires TupleLike<tuple_t<ts...>> && TupleLike<tuple_t<>>
 //!\endcond
 constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
@@ -100,7 +100,7 @@ namespace seqan3
  */
 template <size_t pivot_c, template <typename ...> typename tuple_t, typename ... ts>
 //!\cond
-    requires tuple_like_concept<tuple_t<ts...>>
+    requires TupleLike<tuple_t<ts...>>
 //!\endcond
 constexpr auto tuple_split(tuple_t<ts...> const & t)
 {
@@ -113,7 +113,7 @@ constexpr auto tuple_split(tuple_t<ts...> const & t)
 //!\copydoc seqan3::tuple_split
 template <size_t pivot_c, template <typename ...> typename tuple_t, typename ... ts>
 //!\cond
-    requires tuple_like_concept<tuple_t<ts...>>
+    requires TupleLike<tuple_t<ts...>>
 //!\endcond
 constexpr auto tuple_split(tuple_t<ts...> && t)
 {
@@ -131,9 +131,25 @@ constexpr auto tuple_split(tuple_t<ts...> && t)
  *
  * \returns A new tuple of tuples with the left side of the split and the right side of the split.
  *
- * \copydetails seqan3::tuple_split
+ * \details
+ *
+ * Splits a tuple into two tuples, while the element at the split position will be contained in the second tuple.
+ * Note, that the returned tuples can be empty. For this reason it is not possible to use tuple like objects,
+ * that cannot be empty, i.e. std::pair. Using such an object will emit an compiler error.
+ *
+ * ### example
+ *
+ * \snippet test/snippet/core/tuple_utility.cpp usage
+ *
+ * ### Complexity
+ *
+ * Linear in the number of elements.
+ *
+ * ### Thread safety
+ *
+ * Concurrent invocations of this functions are thread safe.
  */
-template <typename pivot_t, tuple_like_concept tuple_t>
+template <typename pivot_t, TupleLike tuple_t>
 constexpr auto tuple_split(tuple_t && t)
 {
     constexpr size_t pivot_c = meta::find_index<detail::tuple_type_list_t<remove_cvref_t<tuple_t>>, pivot_t>::value;
@@ -163,7 +179,7 @@ constexpr auto tuple_split(tuple_t && t)
  *
  * Concurrent invocations of this functions are thread safe.
  */
-template <tuple_like_concept tuple_t>
+template <TupleLike tuple_t>
 constexpr auto tuple_pop_front(tuple_t && t)
 {
     static_assert(std::tuple_size_v<remove_cvref_t<tuple_t>> > 0);
@@ -171,4 +187,5 @@ constexpr auto tuple_pop_front(tuple_t && t)
     return std::get<1>(tuple_split<1>(std::forward<tuple_t>(t)));
 }
 //!\}
+
 } // namespace seqan3

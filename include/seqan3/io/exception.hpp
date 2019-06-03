@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <ios>
 #include <stdexcept>
 
 #include <seqan3/core/platform.hpp>
@@ -19,6 +20,9 @@
 namespace seqan3
 {
 
+/*!\addtogroup io
+ * \{
+ */
 // ----------------------------------------------------------------------------
 // file open exceptions
 // ----------------------------------------------------------------------------
@@ -47,6 +51,19 @@ struct parse_error : std::runtime_error
     {}
 };
 
+//!\brief Thrown if there is an io error in low level io operations such as in std::basic_streambuf operations.
+struct io_error : std::ios_base::failure
+{
+    //!\brief Constructor that forwards the exception string.
+    io_error(std::string const & s,
+             std::error_code const & ec) : std::ios_base::failure{s, ec}
+    {}
+
+    //!\brief Constructor that forwards the exception string.
+    explicit io_error(std::string const & s) : io_error{s, std::error_code{std::io_errc::stream}}
+    {}
+};
+
 // ----------------------------------------------------------------------------
 // parse exceptions
 // ----------------------------------------------------------------------------
@@ -71,6 +88,6 @@ struct format_error : std::invalid_argument
     {}
 };
 
+//!\}
 
 }
-

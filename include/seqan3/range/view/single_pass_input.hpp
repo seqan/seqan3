@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -35,9 +35,11 @@ class single_pass_input_iterator;
  * \implements std::ranges::InputRange
  * \ingroup view
  */
+//![view_def]
 template <std::ranges::View urng_t>
-class single_pass_input_view : public ranges::view_interface<single_pass_input_view<urng_t>>
+class single_pass_input_view : public std::ranges::view_interface<single_pass_input_view<urng_t>>
 {
+//![view_def]
 private:
 
     //!\brief The iterator type for the underlying range.
@@ -319,6 +321,7 @@ protected:
 // View shortcut for functor.
 //-----------------------------------------------------------------------------
 
+//![adaptor_def]
 namespace seqan3::view
 {
 /*!\name General purpose views
@@ -339,6 +342,11 @@ namespace seqan3::view
  * Note, the view updates an internal state after moving the associated iterator.
  * Thus, the `const begin` and `const end` are explicitly deleted.
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/single_pass_input.hpp>
+ * ```
+ *
  * ### View properties
  *
  *
@@ -355,7 +363,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *lost*                                             |
+ * | seqan3::ConstIterableRange      |                                       | *lost*                                             |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
@@ -370,7 +378,8 @@ namespace seqan3::view
  * \snippet test/snippet/range/view/single_pass_input.cpp usage
  * \hideinitializer
  */
-inline constexpr auto single_pass_input = detail::generic_pipable_view_adaptor<detail::single_pass_input_view>{};
+inline constexpr auto single_pass_input = detail::adaptor_for_view_without_args<detail::single_pass_input_view>{};
 
 //!\}
 } // namespace seqan3::view
+//![adaptor_def]

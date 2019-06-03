@@ -2,20 +2,18 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <iostream>
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/take.hpp>
-
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 namespace seqan3::view
@@ -36,19 +34,19 @@ TEST(view_deep_reverse, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | view::deep{std::view::reverse};
+    dna5_vector v0 = foo | view::deep{std::view::reverse} | std::ranges::to<std::vector>;
     EXPECT_EQ(v0, "ATGCA"_dna5);
 
     // pipe notation
-    dna5_vector v = foo | view::deep_reverse;
+    dna5_vector v = foo | view::deep_reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v, "ATGCA"_dna5);
 
     // function notation
-    dna5_vector v2(view::deep_reverse(foo));
+    dna5_vector v2(view::deep_reverse(foo) | std::ranges::to<std::vector>);
     EXPECT_EQ(v2, "ATGCA"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_reverse | std::view::reverse;
+    dna5_vector v3 = foo | view::deep_reverse | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v3, "ACGTA"_dna5);
 }
 
@@ -73,7 +71,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_FALSE(std::ranges::View<decltype(vec)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), dna5_vector>));
 
     auto v1 = vec | view::deep_reverse;
@@ -84,7 +82,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5_vector>)); // view temporary returned in deep case
 
     auto v_elem = v1[0];
@@ -95,7 +93,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(std::ranges::View<decltype(v_elem)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(v_elem)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v_elem)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v_elem)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v_elem)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v_elem), dna5>));
 }
 
@@ -108,19 +106,19 @@ TEST(view_deep_take, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | view::deep{ranges::view::take}(2);
+    dna5_vector v0 = foo | view::deep{ranges::view::take}(2) | std::ranges::to<std::vector>;
     EXPECT_EQ(v0, "AC"_dna5);
 
     // pipe notation
-    dna5_vector v = foo | view::deep_take(2);
+    dna5_vector v = foo | view::deep_take(2) | std::ranges::to<std::vector>;
     EXPECT_EQ(v, "AC"_dna5);
 
     // function notation
-    dna5_vector v2(view::deep_take(foo, 2));
+    dna5_vector v2(view::deep_take(foo, 2) | std::ranges::to<std::vector>);
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_take(2) | std::view::reverse;
+    dna5_vector v3 = foo | view::deep_take(2) | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 
@@ -153,19 +151,19 @@ TEST(view_deep_take2, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | view::deep{ranges::view::take(2)};
+    dna5_vector v0 = foo | view::deep{ranges::view::take(2)} | std::ranges::to<std::vector>;
     EXPECT_EQ(v0, "AC"_dna5);
 
     // pipe notation
-    dna5_vector v = foo | view::deep_take2;
+    dna5_vector v = foo | view::deep_take2 | std::ranges::to<std::vector>;
     EXPECT_EQ(v, "AC"_dna5);
 
     // function notation
-    dna5_vector v2(view::deep_take2(foo));
+    dna5_vector v2(view::deep_take2(foo) | std::ranges::to<std::vector>);
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_take2 | std::view::reverse;
+    dna5_vector v3 = foo | view::deep_take2 | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 

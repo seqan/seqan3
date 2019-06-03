@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -15,7 +15,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
-#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 
 // ------------------------------------------------------------------
@@ -27,9 +27,11 @@ namespace seqan3
 
 /*!\brief The three letter RNA structure alphabet of the characters ".()".
  * \implements seqan3::RnaStructureAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \ingroup structure
  *
@@ -59,12 +61,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dot_bracket3() noexcept : base_t{} {}
-    constexpr dot_bracket3(dot_bracket3 const &) = default;
-    constexpr dot_bracket3(dot_bracket3 &&) = default;
-    constexpr dot_bracket3 & operator=(dot_bracket3 const &) = default;
-    constexpr dot_bracket3 & operator=(dot_bracket3 &&) = default;
-    ~dot_bracket3() = default;
+    constexpr dot_bracket3()                                 noexcept = default; //!< Defaulted.
+    constexpr dot_bracket3(dot_bracket3 const &)             noexcept = default; //!< Defaulted.
+    constexpr dot_bracket3(dot_bracket3 &&)                  noexcept = default; //!< Defaulted.
+    constexpr dot_bracket3 & operator=(dot_bracket3 const &) noexcept = default; //!< Defaulted.
+    constexpr dot_bracket3 & operator=(dot_bracket3 &&)      noexcept = default; //!< Defaulted.
+    ~dot_bracket3()                                          noexcept = default; //!< Defaulted.
     //!\}
 
     //!\name RNA structure properties
@@ -99,13 +101,25 @@ public:
      * pseudoknot support.
      */
     static constexpr uint8_t max_pseudoknot_depth{1u};
+
+    /*!\brief Get an identifier for a pseudoknotted interaction,
+     * where opening and closing brackets of the same type have the same id.
+     * \returns The pseudoknot id (always 0) if alph denotes an interaction, and no value otherwise.
+     */
+    constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
+    {
+        if (is_unpaired())
+            return std::nullopt;
+        else
+            return 0;
+    }
     //!\}
 
 protected:
     //!\privatesection
 
     //!\brief Value-to-char conversion table.
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         '.',
         '(',

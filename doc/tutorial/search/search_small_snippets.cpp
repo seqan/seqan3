@@ -1,10 +1,13 @@
 #include "cleanup.hpp"
 seqan3::cleanup index_file{"index.file"};
-seqan3::cleanup index_file_tb{"index.file.tb"};
-seqan3::cleanup index_file_tbrs{"index.file.tbrs"};
-seqan3::cleanup index_file_tbss{"index.file.tbss"};
 
-#include <seqan3/io/stream/debug_stream.hpp>
+#if SEQAN3_WITH_CEREAL
+#include <fstream>
+
+#include <cereal/archives/binary.hpp>
+#endif //SEQAN3_WITH_CEREAL
+
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/algorithm/search.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
@@ -26,20 +29,34 @@ bi_fm_index bi_index{text};
 //![text_collection]
 }
 
+#if SEQAN3_WITH_CEREAL
 {
 //![store]
+#include <fstream>                                  // for writing/reading files
+
+#include <cereal/archives/binary.hpp>               // for storing/loading indices via cereal
+
 std::string text{"Garfield the fat cat without a hat."};
 fm_index index{text};
-index.store("index.file");
+{
+    std::ofstream os{"index.file", std::ios::binary};
+    cereal::BinaryOutputArchive oarchive{os};
+    oarchive(index);
+}
 //![store]
 }
 
 {
 //![load]
 fm_index<std::string> index; // we need to specify the type manually
-index.load("index.file");
+{
+    std::ifstream is{"index.file", std::ios::binary};
+    cereal::BinaryInputArchive iarchive{is};
+    iarchive(index);
+}
 //![load]
 }
+#endif //SEQAN3_WITH_CEREAL
 
 {
 //![error_search]

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -22,10 +22,11 @@ namespace seqan3
 
 /*!\brief The alphabet of a gap character '-'
  * \ingroup gap
- * \implements seqan3::Alphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * The alphabet always has the same value ('-').
  *
@@ -48,12 +49,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr gap() noexcept : base_t{} {}
-    constexpr gap(gap const &) = default;
-    constexpr gap(gap &&) = default;
-    constexpr gap & operator=(gap const &) = default;
-    constexpr gap & operator=(gap &&) = default;
-    ~gap() = default;
+    constexpr gap() noexcept : base_t{} {}            //!< Defaulted.
+    constexpr gap(gap const &) = default;             //!< Defaulted.
+    constexpr gap(gap &&) = default;                  //!< Defaulted.
+    constexpr gap & operator=(gap const &) = default; //!< Defaulted.
+    constexpr gap & operator=(gap &&) = default;      //!< Defaulted.
+    ~gap() = default;                                 //!< Defaulted.
 
     using base_t::base_t;
     //!\}

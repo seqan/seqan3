@@ -11,7 +11,7 @@
 #include <seqan3/io/sequence_file/all.hpp>
 //![include]
 //![include_debug_stream]
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 //![include_debug_stream]
 #include <seqan3/range/detail/misc.hpp>
 //![include_ranges]
@@ -59,11 +59,11 @@ int main()
 
 {
 //![file_extensions]
-debug_stream << sequence_file_format_fastq::file_extensions << std::endl; // prints [fastq,fq]
+debug_stream << format_fastq::file_extensions << std::endl; // prints [fastq,fq]
 //![file_extensions]
 
 //![modify_file_extensions]
-sequence_file_format_fastq::file_extensions.push_back("qq");
+format_fastq::file_extensions.push_back("qq");
 sequence_file_input fin{"/tmp/my.qq"}; // detects FASTQ format
 //![modify_file_extensions]
 }
@@ -71,7 +71,7 @@ sequence_file_input fin{"/tmp/my.qq"}; // detects FASTQ format
 {
 /*
 //![construct_from_cin]
-sequence_file_input fin{std::cin, sequence_file_format_fasta{}};
+sequence_file_input fin{std::cin, format_fasta{}};
 //![construct_from_cin]
 */
 }

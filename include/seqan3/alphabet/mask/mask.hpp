@@ -2,28 +2,28 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- * \brief Create a mask composition which can be applied with another alphabet.
+ * \brief Create a mask composite which can be applied with another alphabet.
  */
 
 #pragma once
 
 #include <cassert>
-#include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
 
 namespace seqan3
 {
-/*!\brief Implementation of a masked alphabet to be used for cartesian compositions.
+/*!\brief Implementation of a masked alphabet to be used for tuple composites.
  * \ingroup mask
- * \implements seqan3::Semialphabet
- * \implements seqan3::detail::ConstexprSemialphabet
+ * \implements seqan3::WritableSemialphabet
+ * \if DEV \implements seqan3::detail::ConstexprWritableSemialphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \details
  * This alphabet is not usually used directly, but instead via seqan3::masked.
@@ -44,12 +44,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr mask() : base_t{} {}
-    constexpr mask(mask const &) = default;
-    constexpr mask(mask &&) = default;
-    constexpr mask & operator=(mask const &) = default;
-    constexpr mask & operator=(mask &&) = default;
-    ~mask() = default;
+    constexpr mask() : base_t{} {}                      //!< Defaulted.
+    constexpr mask(mask const &) = default;             //!< Defaulted.
+    constexpr mask(mask &&) = default;                  //!< Defaulted.
+    constexpr mask & operator=(mask const &) = default; //!< Defaulted.
+    constexpr mask & operator=(mask &&) = default;      //!< Defaulted.
+    ~mask() = default;                                  //!< Defaulted.
     //!\}
 
     /*!\name Boolean values

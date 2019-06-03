@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -36,10 +36,10 @@ namespace seqan3
 {
 
 /*!\brief Container that stores sequences concatenated internally.
- * \tparam inner_type The type of sequences that will be stored. Must satisfy seqan3::reservable_container_concept.
+ * \tparam inner_type The type of sequences that will be stored. Must satisfy seqan3::ReservableContainer.
  * \tparam data_delimiters_type A container that stores the begin/end positions in the inner_type. Must be
- * seqan3::reservable_container_concept and have inner_type's size_type as value_type.
- * \implements seqan3::reservable_container_concept
+ * seqan3::ReservableContainer and have inner_type's size_type as value_type.
+ * \implements seqan3::ReservableContainer
  * \ingroup container
  *
  * This class may be used whenever you would usually use `std::vector<std::vector<some_alphabet>>` or
@@ -82,8 +82,8 @@ namespace seqan3
 template <typename inner_type,
           typename data_delimiters_type = std::vector<typename inner_type::size_type>>
 //!\cond
-    requires reservable_container_concept<std::remove_reference_t<inner_type>> &&
-             reservable_container_concept<std::remove_reference_t<data_delimiters_type>> &&
+    requires ReservableContainer<std::remove_reference_t<inner_type>> &&
+             ReservableContainer<std::remove_reference_t<data_delimiters_type>> &&
              std::is_same_v<size_type_t<inner_type>, value_type_t<data_delimiters_type>>
 //!\endcond
 class concatenated_sequences
@@ -136,7 +136,7 @@ public:
 
 protected:
     /*!\name Compatibility
-     * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible_concept (which doesn't work for types during their definition).
+     * \brief Static constexpr variables that emulate/encapsulate seqan3::Compatible (which doesn't work for types during their definition).
      * \{
      */
     //!\cond
@@ -148,7 +148,7 @@ protected:
     static constexpr bool is_compatible_this_aux = true;
     //!\endcond
 
-    //!\brief Whether a type satisfies seqan3::compatible_concept with this class.
+    //!\brief Whether a type satisfies seqan3::Compatible with this class.
     //!\hideinitializer
     // cannot use the concept, because this class is not yet fully defined
     template <typename t>
@@ -157,11 +157,11 @@ protected:
                                                std::is_same_v<remove_cvref_t<t>, iterator>                  ||
                                                std::is_same_v<remove_cvref_t<t>, const_iterator>;
 
-    //!\brief Whether a type satisfies seqan3::compatible_concept with this class's value_type or reference type.
+    //!\brief Whether a type satisfies seqan3::Compatible with this class's value_type or reference type.
     //!\hideinitializer
     // we explicitly check same-ness, because these types may not be fully resolved, yet
     template <typename t>
-    static constexpr bool is_compatible_value = compatible_concept<value_type, t>                   ||
+    static constexpr bool is_compatible_value = Compatible<value_type, t>                           ||
                                                 std::is_same_v<remove_cvref_t<t>, value_type>       ||
                                                 std::is_same_v<remove_cvref_t<t>, reference>        ||
                                                 std::is_same_v<remove_cvref_t<t>, const_reference>;
@@ -1236,33 +1236,41 @@ public:
     }
     //!\}
 
-    //!\name Comparison operators
-    //!\{
+    /*!\name Comparison operators
+     * \{
+     */
+
+    //!\brief Checks whether `*this` is equal to `rhs`.
     constexpr bool operator==(concatenated_sequences const & rhs) const noexcept
     {
         return data() == rhs.data();
     }
 
+    //!\brief Checks whether `*this` is not equal to `rhs`.
     constexpr bool operator!=(concatenated_sequences const & rhs) const noexcept
     {
         return data() != rhs.data();
     }
 
+    //!\brief Checks whether `*this` is less than `rhs`.
     constexpr bool operator<(concatenated_sequences const & rhs) const noexcept
     {
         return data() < rhs.data();
     }
 
+    //!\brief Checks whether `*this` is greater than `rhs`.
     constexpr bool operator>(concatenated_sequences const & rhs) const noexcept
     {
         return data() > rhs.data();
     }
 
+    //!\brief Checks whether `*this` is less than or equal to `rhs`.
     constexpr bool operator<=(concatenated_sequences const & rhs) const noexcept
     {
         return data() <= rhs.data();
     }
 
+    //!\brief Checks whether `*this` is greater than or equal to `rhs`.
     constexpr bool operator>=(concatenated_sequences const & rhs) const noexcept
     {
         return data() >= rhs.data();

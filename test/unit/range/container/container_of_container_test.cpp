@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -10,21 +10,11 @@
 #include <range/v3/range_traits.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/to_char.hpp>
-
-#if SEQAN3_WITH_CEREAL
-#include <seqan3/test/tmp_filename.hpp>
-
-#include <fstream>
-
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/portable_binary.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/vector.hpp>
-#endif // SEQAN3_WITH_CEREAL
+#include <seqan3/test/cereal.hpp>
+#include <seqan3/test/pretty_printing.hpp>
 
 using namespace seqan3;
 
@@ -44,35 +34,34 @@ static_assert(std::Readable<In>);
 
 TYPED_TEST(container_of_container, concepts)
 {
-    EXPECT_TRUE(container_concept<TypeParam>);
-    EXPECT_TRUE(container_concept<value_type_t<TypeParam>>);
+    EXPECT_TRUE(Container<TypeParam>);
+    EXPECT_TRUE(Container<value_type_t<TypeParam>>);
 }
 
 TYPED_TEST(container_of_container, construction)
 {
     TypeParam t1;
     TypeParam t2{};
-//     EXPECT_EQ(t1, t2); // doesnt work because of conflict between ranges and gtest
-    EXPECT_TRUE(t1 == t2);
+    EXPECT_EQ(t1, t2);
 
     // initializer list
     TypeParam t3{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
     TypeParam t4 = {"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
-    EXPECT_TRUE(t3 == t4);
+    EXPECT_EQ(t3, t4);
 
     // n * value
     TypeParam t5{2, "ACGT"_dna4};
     // from another TypeParam's sub-range
     TypeParam t6{t3.begin(), t3.begin() + 2};
-    EXPECT_TRUE(t5 == t6);
+    EXPECT_EQ(t5, t6);
 
     std::vector<std::vector<dna4>> other_vector{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
     // direct from another container-of-container
     TypeParam t7{other_vector};
     // from another container-of-container's sub-range
     TypeParam t8{other_vector.cbegin(), other_vector.cend()};
-    EXPECT_TRUE(t3 == t7);
-    EXPECT_TRUE(t7 == t8);
+    EXPECT_EQ(t3, t7);
+    EXPECT_EQ(t7, t8);
 }
 
 TYPED_TEST(container_of_container, assign)
@@ -84,19 +73,19 @@ TYPED_TEST(container_of_container, assign)
     // n * value
     TypeParam t3;
     t3.assign(2, "ACGT"_dna4);
-    EXPECT_TRUE(t3 == t2);
+    EXPECT_EQ(t3, t2);
 
     // from another container-of-container's sub-range
     TypeParam t4;
     t4.assign(other_vector.cbegin(), other_vector.cend());
-    EXPECT_TRUE(t4 == t1);
+    EXPECT_EQ(t4, t1);
 
     // initializer list
     TypeParam t5, t6;
     t5.assign({"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4});
     t6 = {"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
-    EXPECT_TRUE(t5 == t1);
-    EXPECT_TRUE(t6 == t1);
+    EXPECT_EQ(t5, t1);
+    EXPECT_EQ(t6, t1);
 
     // direct from another container-of-container
     if constexpr (std::is_same_v<TypeParam, concatenated_sequences<std::vector<dna4>>>)
@@ -104,8 +93,8 @@ TYPED_TEST(container_of_container, assign)
         TypeParam t7, t8;
         t7.assign(other_vector);
         t8 = other_vector;
-        EXPECT_TRUE(t7 == t1);
-        EXPECT_TRUE(t8 == t1);
+        EXPECT_EQ(t7, t1);
+        EXPECT_EQ(t8, t1);
     }
 }
 
@@ -115,23 +104,23 @@ TYPED_TEST(container_of_container, iterators)
     TypeParam const t2{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     // begin
-    EXPECT_TRUE(dna4_vector(*t1.begin())  == "ACGT"_dna4);
-    EXPECT_TRUE(dna4_vector(*t1.cbegin()) == "ACGT"_dna4);
-    EXPECT_TRUE(dna4_vector(*t2.begin())  == "ACGT"_dna4);
-    EXPECT_TRUE(dna4_vector(*t2.cbegin()) == "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(*t1.begin()), "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(*t1.cbegin()), "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(*t2.begin()), "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(*t2.cbegin()), "ACGT"_dna4);
 
     // end and arithmetic
-    EXPECT_TRUE(dna4_vector(*(t1.end()  - 1)) == "GAGGA"_dna4);
-    EXPECT_TRUE(dna4_vector(*(t1.cend() - 1)) == "GAGGA"_dna4);
-    EXPECT_TRUE(dna4_vector(*(t2.end()  - 1)) == "GAGGA"_dna4);
-    EXPECT_TRUE(dna4_vector(*(t2.cend() - 1)) == "GAGGA"_dna4);
+    EXPECT_EQ(dna4_vector(*(t1.end()  - 1)), "GAGGA"_dna4);
+    EXPECT_EQ(dna4_vector(*(t1.cend() - 1)), "GAGGA"_dna4);
+    EXPECT_EQ(dna4_vector(*(t2.end()  - 1)), "GAGGA"_dna4);
+    EXPECT_EQ(dna4_vector(*(t2.cend() - 1)), "GAGGA"_dna4);
 
     // convertibility between const and non-const
     EXPECT_TRUE(t1.cend() == t1.end());
 
     // writability
     (*t1.begin())[0] = 'T'_dna4;
-    EXPECT_TRUE(dna4_vector(*t1.begin())  == "TCGT"_dna4);
+    EXPECT_EQ(dna4_vector(*t1.begin()), "TCGT"_dna4);
 }
 
 TYPED_TEST(container_of_container, element_access)
@@ -140,34 +129,34 @@ TYPED_TEST(container_of_container, element_access)
     TypeParam const t2{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     // at
-    EXPECT_TRUE(dna4_vector(t1.at(0)) == "ACGT"_dna4);
-    EXPECT_TRUE(dna4_vector(t2.at(0)) == "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(t1.at(0)), "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(t2.at(0)), "ACGT"_dna4);
     //TODO once we have throwing assert, check at's ability to throw
 
     // []
-    EXPECT_TRUE(dna4_vector(t1[0])    == "ACGT"_dna4);
-    EXPECT_TRUE(dna4_vector(t2[0])    == "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(t1[0]), "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(t2[0]), "ACGT"_dna4);
 
     // front
-    EXPECT_TRUE(dna4_vector(t1.front()) == "ACGT"_dna4);
-    EXPECT_TRUE(dna4_vector(t2.front()) == "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(t1.front()), "ACGT"_dna4);
+    EXPECT_EQ(dna4_vector(t2.front()), "ACGT"_dna4);
 
     // back
-    EXPECT_TRUE(dna4_vector(t1.back()) == "GAGGA"_dna4);
-    EXPECT_TRUE(dna4_vector(t2.back()) == "GAGGA"_dna4);
+    EXPECT_EQ(dna4_vector(t1.back()), "GAGGA"_dna4);
+    EXPECT_EQ(dna4_vector(t2.back()), "GAGGA"_dna4);
 
     if constexpr (std::is_same_v<TypeParam, concatenated_sequences<std::vector<dna4>>>)
     {
         using size_type = typename TypeParam::size_type;
         // concat
-        EXPECT_TRUE(dna4_vector(t1.concat()) == "ACGTACGTGAGGA"_dna4);
-        EXPECT_TRUE(dna4_vector(t2.concat()) == "ACGTACGTGAGGA"_dna4);
+        EXPECT_EQ(dna4_vector(t1.concat()), "ACGTACGTGAGGA"_dna4);
+        EXPECT_EQ(dna4_vector(t2.concat()), "ACGTACGTGAGGA"_dna4);
 
         // data
-        EXPECT_TRUE(std::get<0>(t1.data()) == "ACGTACGTGAGGA"_dna4);
-        EXPECT_TRUE(std::get<0>(t2.data()) == "ACGTACGTGAGGA"_dna4);
-        EXPECT_TRUE((std::get<1>(t1.data()) == std::vector<size_type>{0, 4, 8, 13}));
-        EXPECT_TRUE((std::get<1>(t2.data()) == std::vector<size_type>{0, 4, 8, 13}));
+        EXPECT_EQ(std::get<0>(t1.data()), "ACGTACGTGAGGA"_dna4);
+        EXPECT_EQ(std::get<0>(t2.data()), "ACGTACGTGAGGA"_dna4);
+        EXPECT_EQ(std::get<1>(t1.data()), (std::vector<size_type>{0, 4, 8, 13}));
+        EXPECT_EQ(std::get<1>(t2.data()), (std::vector<size_type>{0, 4, 8, 13}));
     }
 
 }
@@ -234,7 +223,7 @@ TYPED_TEST(container_of_container, clear)
     TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     t1.clear();
-    EXPECT_TRUE(t0 == t1);
+    EXPECT_EQ(t0, t1);
 }
 
 TYPED_TEST(container_of_container, insert)
@@ -246,7 +235,7 @@ TYPED_TEST(container_of_container, insert)
     t0.insert(t0.cend(), "ACGT"_dna4);
     t0.insert(t0.cend(), "GAGGA"_dna4);
     t0.insert(t0.cbegin() + 1, "ACGT"_dna4);
-    EXPECT_TRUE(t0 == t1);
+    EXPECT_EQ(t0, t1);
 
     // position, n times values
     t0.clear();
@@ -254,7 +243,7 @@ TYPED_TEST(container_of_container, insert)
     t0.insert(t0.cend(), 2, "ACGT"_dna4);
     t0.insert(t0.cend(), 1, "GAGGA"_dna4);
     t0.insert(t0.cbegin(), 1, "GAGGA"_dna4);
-    EXPECT_TRUE(t0 == t1);
+    EXPECT_EQ(t0, t1);
 
     // iterator pair
     t0.clear();
@@ -263,14 +252,14 @@ TYPED_TEST(container_of_container, insert)
 
     t0.insert(t0.cend(),   t1.cend() - 1, t1.cend());
     t0.insert(t0.cbegin(), t1.cend() - 1, t1.cend());
-    EXPECT_TRUE(t0 == t1);
+    EXPECT_EQ(t0, t1);
 
     // initializer list
     t0.clear();
     t1 = {"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
     t0.insert(t0.cend(), {"ACGT"_dna4, "GAGGA"_dna4});
     t0.insert(t0.cbegin() + 1, "ACGT"_dna4);
-    EXPECT_TRUE(t0 == t1);
+    EXPECT_EQ(t0, t1);
 }
 
 TYPED_TEST(container_of_container, erase)
@@ -279,12 +268,12 @@ TYPED_TEST(container_of_container, erase)
 
     // one element
     t1.erase(t1.begin());
-    EXPECT_TRUE((t1 == TypeParam{"ACGT"_dna4, "GAGGA"_dna4}));
+    EXPECT_EQ(t1, (TypeParam{"ACGT"_dna4, "GAGGA"_dna4}));
 
     // range
     t1 = {"GAGGA"_dna4, "ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
     t1.erase(t1.begin() + 1, t1.begin() + 3);
-    EXPECT_TRUE((t1 == TypeParam{"GAGGA"_dna4, "GAGGA"_dna4}));
+    EXPECT_EQ(t1, (TypeParam{"GAGGA"_dna4, "GAGGA"_dna4}));
 }
 
 TYPED_TEST(container_of_container, push_pop)
@@ -293,15 +282,15 @@ TYPED_TEST(container_of_container, push_pop)
 
     // push_back
     t0.push_back("ACGT"_dna4);
-    EXPECT_TRUE((t0 == TypeParam{"ACGT"_dna4}));
+    EXPECT_EQ(t0, (TypeParam{"ACGT"_dna4}));
     t0.push_back("GAGGA"_dna4);
-    EXPECT_TRUE((t0 == TypeParam{"ACGT"_dna4, "GAGGA"_dna4}));
+    EXPECT_EQ(t0, (TypeParam{"ACGT"_dna4, "GAGGA"_dna4}));
 
     // pop_back
     t0.pop_back();
-    EXPECT_TRUE(t0 == TypeParam{"ACGT"_dna4});
+    EXPECT_EQ(t0, (TypeParam{"ACGT"_dna4}));
     t0.pop_back();
-    EXPECT_TRUE(t0 == TypeParam{});
+    EXPECT_EQ(t0, TypeParam{});
 }
 
 TYPED_TEST(container_of_container, resize)
@@ -310,19 +299,19 @@ TYPED_TEST(container_of_container, resize)
 
     // enlarge without values
     t0.resize(3);
-    EXPECT_TRUE((t0 == TypeParam{{}, {}, {}}));
+    EXPECT_EQ(t0,( TypeParam{{}, {}, {}}));
 
     // enlarge with value
     t0.resize(5, "ACGT"_dna4);
-    EXPECT_TRUE((t0 == TypeParam{{}, {}, {}, "ACGT"_dna4, "ACGT"_dna4}));
+    EXPECT_EQ(t0, (TypeParam{{}, {}, {}, "ACGT"_dna4, "ACGT"_dna4}));
 
     // shrink with value
     t0.resize(4, "ACGT"_dna4);
-    EXPECT_TRUE((t0 == TypeParam{{}, {}, {}, "ACGT"_dna4}));
+    EXPECT_EQ(t0, (TypeParam{{}, {}, {}, "ACGT"_dna4}));
 
     // shrink without value
     t0.resize(2);
-    EXPECT_TRUE((t0 == TypeParam{{}, {}}));
+    EXPECT_EQ(t0, (TypeParam{{}, {}}));
 }
 
 TYPED_TEST(container_of_container, swap)
@@ -331,8 +320,8 @@ TYPED_TEST(container_of_container, swap)
     TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     t0.swap(t1);
-    EXPECT_TRUE((t0 == TypeParam{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4}));
-    EXPECT_TRUE((t1 == TypeParam{}));
+    EXPECT_EQ(t0, (TypeParam{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4}));
+    EXPECT_EQ(t1, TypeParam{});
 }
 
 TYPED_TEST(container_of_container, streamable)
@@ -353,38 +342,8 @@ TYPED_TEST(container_of_container, streamable)
     EXPECT_EQ(o.str(), "[], [ACGT,ACGT,GAGGA]");
 }
 
-#if SEQAN3_WITH_CEREAL
-template <typename in_archive_t, typename out_archive_t, typename TypeParam>
-void do_serialisation(TypeParam const l)
-{
-    // This makes sure the file is also deleted if an exception is thrown in one of the tests below
-    // Generate unique file name.
-    test::tmp_filename filename{"container_cereal_test"};
-    {
-        std::ofstream os{filename.get_path(), std::ios::binary};
-        out_archive_t oarchive{os};
-        oarchive(l);
-    }
-
-    {
-        TypeParam in_l{};
-        std::ifstream is{filename.get_path(), std::ios::binary};
-        in_archive_t iarchive{is};
-        iarchive(in_l);
-        EXPECT_TRUE(l == in_l);
-    }
-}
-
 TYPED_TEST(container_of_container, serialisation)
 {
-    if constexpr (!std::Same<TypeParam, concatenated_sequences<bitcompressed_vector<dna4>>>) // not serialisable, yet
-    {
-        TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
-
-        do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (t1);
-        do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(t1);
-        do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (t1);
-        do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (t1);
-    }
+    TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
+    test::do_serialisation(t1);
 }
-#endif // SEQAN3_WITH_CEREAL

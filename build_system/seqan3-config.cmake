@@ -2,7 +2,7 @@
 # Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 # Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 # This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-# shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+# shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 #
 # This CMake module will try to find SeqAn and its dependencies.  You can use
@@ -142,10 +142,10 @@ endmacro ()
 find_path (SEQAN3_CLONE_DIR NAMES build_system/seqan3-config.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/..")
 
 if (SEQAN3_CLONE_DIR)
-    message (STATUS "  Detected as running from a repository checkout…")
+    seqan3_config_print ("  Detected as running from a repository checkout…")
 
     if (NOT SEQAN3_INCLUDE_DIR AND IS_DIRECTORY "${SEQAN3_CLONE_DIR}/include")
-        message (STATUS "  …adding SeqAn3 include:     ${SEQAN3_CLONE_DIR}/include")
+        seqan3_config_print ("  …adding SeqAn3 include:     ${SEQAN3_CLONE_DIR}/include")
         set (SEQAN3_INCLUDE_DIR "${SEQAN3_CLONE_DIR}/include")
     endif ()
 
@@ -153,7 +153,7 @@ if (SEQAN3_CLONE_DIR)
         file (GLOB submodules ${SEQAN3_CLONE_DIR}/submodules/*/include)
         foreach (submodule ${submodules})
             if (IS_DIRECTORY ${submodule})
-                message (STATUS "  …adding submodule include:  ${submodule}")
+                seqan3_config_print ("  …adding submodule include:  ${submodule}")
                 set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${submodule} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
             endif ()
         endforeach ()
@@ -316,6 +316,7 @@ if (_SEQAN3_HAVE_FILESYSTEM)
         int main()
         {
             std::filesystem::path p{\"\tmp/\"};
+            throw std::filesystem::filesystem_error(\"Empty file name!\", std::make_error_code(std::errc::invalid_argument));
         }")
 elseif (_SEQAN3_HAVE_EXP_FILESYSTEM)
     seqan3_config_print ("C++ Filesystem header:      <experimental/filesystem>")
@@ -325,6 +326,7 @@ elseif (_SEQAN3_HAVE_EXP_FILESYSTEM)
         int main()
         {
             std::experimental::filesystem::path p{\"/tmp/\"};
+            throw std::experimental::filesystem::filesystem_error(\"Empty file name!\", std::make_error_code(std::errc::invalid_argument));
         }")
 else ()
     seqan3_config_error ("SeqAn3 requires C++17 filesystem support, but the filesystem header was not found.")
@@ -475,15 +477,6 @@ if ((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") OR
     (${CMAKE_SYSTEM_NAME} STREQUAL "kFreeBSD") OR
     (${CMAKE_SYSTEM_NAME} STREQUAL "GNU"))
     set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} rt)
-endif ()
-
-# libpthread TODO (h-2): re-evaluate whether we do complete static linking in the future
-if (UNIX AND NOT APPLE)
-    # pthread flag (without -l) also defines macros on some platforms
-    set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} -pthread")
-    # need to explicitly link lpthread with whole-archive because Debian strips bits from the library
-    # that are required for C++14 threading, resulting in broken static builds
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")
 endif ()
 
 # libexecinfo -- implicit

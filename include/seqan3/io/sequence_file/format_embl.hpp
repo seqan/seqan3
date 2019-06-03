@@ -2,11 +2,12 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::sequence_file_format_embl class.
+ * \brief Provides the seqan3::format_embl tag and the seqan3::sequence_file_input_format and
+ *        seqan3::sequence_file_output_format specialisation for this tag.
  * \author Mitra Darvish <mitra.darvish AT fu-berlin.de>
  */
 
@@ -23,21 +24,26 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
+#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/ranges>
 
 namespace seqan3
 {
-/*!\brief       The EMBL format.
+/*!\brief       The EMBL format (tag).
  * \implements  seqan3::SequenceFileInputFormat
  * \implements  seqan3::SequenceFileOutputFormat
  * \ingroup     sequence
@@ -66,29 +72,41 @@ namespace seqan3
  * Passed qualities to either the read or write function are ignored.
  *
  */
-class sequence_file_format_embl
+struct format_embl
 {
-public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-     //!\brief Default constructor is explicitly deleted, you need to provide a stream or file name.
-    sequence_file_format_embl() = default;
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the embl file.
-    sequence_file_format_embl(sequence_file_format_embl const &) = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the embl file.
-    sequence_file_format_embl & operator=(sequence_file_format_embl const &) = delete;
-    //!\brief Move construction is defaulted.
-    sequence_file_format_embl(sequence_file_format_embl &&) = default;
-    //!\brief Move assignment is defaulted.
-    sequence_file_format_embl & operator=(sequence_file_format_embl &&) = default;
-    //!\}
-
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
         { "embl" },
     };
+};
+
+} // namespace seqan
+
+namespace seqan3::detail
+{
+
+//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted EMBL input.
+//!\ingroup sequence
+template <>
+class sequence_file_input_format<format_embl>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_embl;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
+    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
@@ -102,10 +120,7 @@ public:
               id_type                                                                   & id,
               qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<char>{stream}),
-                                                 decltype(std::istreambuf_iterator<char>{})>
-                           {std::istreambuf_iterator<char>{stream},
-                            std::istreambuf_iterator<char>{}};
+        auto stream_view = view::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
 
         std::string idbuffer;
@@ -175,7 +190,7 @@ public:
                                         if (!is_legal_alph(c))
                                         {
                                             throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                              is_legal_alph.msg.string() +
+                                                              is_legal_alph.msg.str() +
                                                               " evaluated to false on " +
                                                               detail::make_printable(c)};
                                         }
@@ -193,6 +208,29 @@ public:
         ++stream_it;
         ++stream_it;
     }
+};
+
+//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted EMBL.
+//!\ingroup sequence
+template <>
+class sequence_file_output_format<format_embl>
+{
+public:
+    //!\brief Exposes the format tag that this class is specialised with.
+    using format_tag = format_embl;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
+    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
+    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    //!\}
 
     //!\copydoc SequenceFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
@@ -205,7 +243,7 @@ public:
                id_type                              && id,
                qual_type                            && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        std::ranges::ostreambuf_iterator stream_it{stream};
+        seqan3::ostreambuf_iterator stream_it{stream};
         [[maybe_unused]] size_t sequence_size = 0;
         [[maybe_unused]] char buffer[50];
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
@@ -274,4 +312,4 @@ public:
     }
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -18,8 +18,6 @@
 #include <variant>
 #include <vector>
 
-#include <range/v3/view/repeat_n.hpp>
-
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
@@ -29,6 +27,7 @@
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
+#include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/misc.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
@@ -39,6 +38,7 @@
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
+#include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
@@ -61,11 +61,9 @@ namespace seqan3
  * \{
  */
 /*!\typedef using sequence_alphabet
- * \memberof seqan3::AlignmentFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::SEQ; must model seqan3::Alphabet.
  */
 /*!\typedef using sequence_legal_alphabet
- * \memberof seqan3::AlignmentFileInputTraits
  * \brief Intermediate alphabet for seqan3::field::SEQ; must model seqan3::Alphabet and be convertible to
  * `sequence_alphabet`.
  *
@@ -77,30 +75,24 @@ namespace seqan3
  * character and produce an error.
  */
 /*!\typedef using sequence_container
- * \memberof seqan3::AlignmentFileInputTraits
  * \brief Type template of the seqan3::field::SEQ, a container template over `sequence_alphabet`;
- * must model seqan3::sequence_container_concept.
+ * must model seqan3::SequenceContainer.
  */
 /*!\typedef using id_alphabet
- * \memberof seqan3::AlignmentFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::ID; must model seqan3::Alphabet.
  */
 /*!\typedef using id_container
- * \memberof seqan3::AlignmentFileInputTraits
  * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
- * must model seqan3::sequence_container_concept.
+ * must model seqan3::SequenceContainer.
  */
 /*!\typedef using quality_alphabet
- * \memberof seqan3::AlignmentFileInputTraits
- * \brief Alphabet of the characters for the seqan3::field::QUAL; must model seqan3::QualityAlphabet.
+ * \brief Alphabet of the characters for the seqan3::field::QUAL; must model seqan3::WritableQualityAlphabet.
  */
 /*!\typedef using quality_container
- * \memberof seqan3::AlignmentFileInputTraits
  * \brief Type template of the seqan3::field::QUAL, a container template over `quality_alphabet`;
- * must model seqan3::sequence_container_concept.
+ * must model seqan3::SequenceContainer.
  */
 /*!\typedef using ref_sequences
- * \memberof seqan3::AlignmentFileInputTraits
  * \brief The type of range over reference sequences; must model std::ranges::ForwardRange,
  *        the value_type mus also model std::ranges::ForwardRange, and the value type of the value type
  *        must model seqan3::Alphabet (e.g. std::vector<std::vector<dna4>>).
@@ -110,7 +102,6 @@ namespace seqan3
  *            construction.
  */
 /*!\typedef using ref_ids
- * \memberof seqan3::AlignmentFileInputTraits
  * \brief The type of range over reference sequences; must model std::ranges::ForwardRange,
  *        the value_type mus also model std::ranges::ForwardRange, and the value type of the value type
  *        must model seqan3::Alphabet (e.g. std::vector<string>).
@@ -125,29 +116,31 @@ template <typename t>
 SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
 {
     // field::SEQ
-    requires Alphabet<typename t::sequence_alphabet>;
-    requires Alphabet<typename t::sequence_legal_alphabet>;
+    requires WritableAlphabet<typename t::sequence_alphabet>;
+    requires WritableAlphabet<typename t::sequence_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
-    requires sequence_container_concept<typename t::template sequence_container<typename t::sequence_alphabet>>;
+    requires SequenceContainer<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
     // field::ID
-    requires Alphabet<typename t::id_alphabet>;
-    requires sequence_container_concept<typename t::template id_container<typename t::id_alphabet>>;
+    requires WritableAlphabet<typename t::id_alphabet>;
+    requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
 
     // field::QUAL
-    requires QualityAlphabet<typename t::quality_alphabet>;
-    requires sequence_container_concept<typename t::template quality_container<typename t::quality_alphabet>>;
+    requires WritableQualityAlphabet<typename t::quality_alphabet>;
+    requires SequenceContainer<typename t::template quality_container<typename t::quality_alphabet>>;
 
     // field::REF_SEQ
     // either ref_info_not_given or a range over ranges over Alphabet (e.g. std::vector<dna4_vector>)
     requires std::Same<typename t::ref_sequences, ref_info_not_given> ||
          (std::ranges::ForwardRange<typename t::ref_sequences> &&
-         std::ranges::ForwardRange<detail::transformation_trait_or_t<value_type<typename t::ref_sequences>, dna4_vector>> &&
-         Alphabet<value_type_t<detail::transformation_trait_or_t<value_type<typename t::ref_sequences>, dna4_vector>>>);
+         std::ranges::ForwardRange<detail::transformation_trait_or_t<reference<typename t::ref_sequences>, dna4_vector>> &&
+         Alphabet<reference_t<detail::transformation_trait_or_t<reference<typename t::ref_sequences>, dna4_vector>>>);
 
     // field::REF_ID
-    requires Alphabet<value_type_t<value_type_t<typename t::ref_ids>>>;
-    requires std::ranges::ForwardRange<value_type_t<typename t::ref_ids>>;
+    requires Alphabet<reference_t<reference_t<typename t::ref_ids>>> &&
+             (!std::Same<typename t::ref_sequences, ref_info_not_given> ||
+              WritableAlphabet<reference_t<reference_t<typename t::ref_ids>>>);
+    requires std::ranges::ForwardRange<reference_t<typename t::ref_ids>>;
     requires std::ranges::ForwardRange<typename t::ref_ids>;
 
     // field::OFFSET is fixed to int32_t
@@ -163,7 +156,7 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
     // Type of tuple entry 1 (reference) is set to
     // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
-    // ranges::view::repeat_n(sequence_alphabet{}, size_t{}) | std::view::transform(detail::access_restrictor_fn{})
+    // view::repeat_n(sequence_alphabet{}, size_t{}) | std::view::transform(detail::access_restrictor_fn{})
     // Type of tuple entry 2 (query) is set to
     // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
@@ -196,20 +189,35 @@ struct alignment_file_input_default_traits
      * \brief Definitions to model seqan3::AlignmentFileInputTraits.
      * \{
      */
+
+    //!\brief The sequence alphabet is seqan3::dna5.
     using sequence_alphabet                     = dna5;
+
+    //!\brief The legal sequence alphabet for parsing is seqan3::dna15.
     using sequence_legal_alphabet               = dna15;
+
+    //!\brief The container for a sequence is std::vector.
     template <typename _sequence_alphabet>
     using sequence_container                    = std::vector<_sequence_alphabet>;
 
+    //!\brief The alphabet for an identifier string is char.
     using id_alphabet                           = char;
+
+    //!\brief The string type for an identifier is std::basic_string.
     template <typename _id_alphabet>
     using id_container                          = std::basic_string<_id_alphabet>;
 
+    //!\brief The alphabet for a quality annotation is seqan3::phred42.
     using quality_alphabet                      = phred42;
+
+    //!\brief The string type for a quality annotation is std::vector.
     template <typename _quality_alphabet>
     using quality_container                     = std::vector<_quality_alphabet>;
 
+    //!\brief The type of the reference sequences is deduced on construction.
     using ref_sequences                         = ref_sequences_t;
+
+    //!\brief The type of the reference identifiers is deduced on construction.
     using ref_ids                               = ref_ids_t;
     //!\}
 };
@@ -226,7 +234,7 @@ struct alignment_file_input_default_traits
  *                              must be in seqan3::alignment_file_input::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
  *                              seqan3::AlignmentFileInputFormat).
- * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::char_concept.
+ * \tparam stream_char_type     The type of the underlying stream device(s); must model std::Integral.
  *
  * \details
  *
@@ -260,7 +268,7 @@ struct alignment_file_input_default_traits
  * All of these fields are retrieved by default (and in that order).
  * Note that some of the fields are specific to the SAM format (e.g. seqan3::field::FLAG) while others are specific to
  * BLAST format (e.g. seqan3::field::BIT_SCORE). Please see the corresponding formats for more details
- * (seqan3::alignment_file_format_sam).
+ * (seqan3::format_sam).
  *
  * ### Construction and specialisation
  *
@@ -359,7 +367,7 @@ struct alignment_file_input_default_traits
  */
 template <
     AlignmentFileInputTraits                     traits_type_        = alignment_file_input_default_traits<>,
-    detail::fields_concept                       selected_field_ids_ = fields<field::SEQ,
+    detail::Fields                               selected_field_ids_ = fields<field::SEQ,
                                                                               field::ID,
                                                                               field::OFFSET,
                                                                               field::REF_SEQ,
@@ -374,8 +382,8 @@ template <
                                                                               field::EVALUE,
                                                                               field::BIT_SCORE,
                                                                               field::HEADER_PTR>,
-    detail::TypeListOfAlignmentFileInputFormats  valid_formats_ = type_list<alignment_file_format_sam>,
-    char_concept                                 stream_char_type_ = char>
+    detail::TypeListOfAlignmentFileInputFormats  valid_formats_    = type_list<format_sam, format_bam>,
+    std::Integral                                stream_char_type_ = char>
 class alignment_file_input
 {
 public:
@@ -395,7 +403,7 @@ public:
 
 private:
     //!\brief The dummy ref sequence type if no reference information were given.
-    using dummy_ref_type = decltype(ranges::view::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
+    using dummy_ref_type = decltype(view::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
                                     std::view::transform(detail::access_restrictor_fn{}));
 public:
     /*!\name Field types and record type
@@ -841,7 +849,7 @@ protected:
         static_assert(meta::in<valid_formats, format_type>::value,
                       "You selected a format that is not in the valid_formats of this file.");
 
-        format = format_type{};
+        format = detail::alignment_file_input_format<format_type>{};
         secondary_stream = detail::make_secondary_istream(*primary_stream);
 
         // buffer first record
@@ -878,7 +886,7 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::alignment_file_input_format>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
@@ -934,7 +942,7 @@ protected:
 
         auto call_read_func = [this] (auto & ref_seq_info)
         {
-            std::visit([&] (AlignmentFileInputFormat & f)
+            std::visit([&] (auto & f)
             {
                 f.read(*secondary_stream,
                        options,
@@ -977,7 +985,7 @@ protected:
 //!\brief Deduce selected fields, file_format and stream char type, default the rest.
 template <IStream2                 stream_type,
           AlignmentFileInputFormat file_format,
-          detail::fields_concept   selected_field_ids>
+          detail::Fields           selected_field_ids>
 alignment_file_input(stream_type && stream,
                      file_format const &,
                      selected_field_ids const &)
@@ -989,7 +997,7 @@ alignment_file_input(stream_type && stream,
 //!\brief Deduce selected fields, file_format and stream char type, default the rest.
 template <IStream2                 stream_type,
           AlignmentFileInputFormat file_format,
-          detail::fields_concept   selected_field_ids>
+          detail::Fields           selected_field_ids>
 alignment_file_input(stream_type & stream,
                      file_format const &,
                      selected_field_ids const &)
@@ -998,10 +1006,30 @@ alignment_file_input(stream_type & stream,
                             type_list<file_format>,
                             typename std::remove_reference_t<stream_type>::char_type>;
 
+//!\brief Deduce file_format and stream char type, default the rest.
+template <IStream2                 stream_type,
+          AlignmentFileInputFormat file_format>
+alignment_file_input(stream_type && stream,
+                     file_format const &)
+    -> alignment_file_input<typename alignment_file_input<>::traits_type,        // actually use the default
+                            typename alignment_file_input<>::selected_field_ids, // actually use the default
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_type>::char_type>;
+
+//!\brief Deduce file_format and stream char type, default the rest.
+template <IStream2                 stream_type,
+          AlignmentFileInputFormat file_format>
+alignment_file_input(stream_type & stream,
+                     file_format const &)
+    -> alignment_file_input<typename alignment_file_input<>::traits_type,        // actually use the default
+                            typename alignment_file_input<>::selected_field_ids, // actually use the default
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_type>::char_type>;
+
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, default the rest.
 template <std::ranges::ForwardRange           ref_ids_t,
           std::ranges::ForwardRange           ref_sequences_t,
-          detail::fields_concept              selected_field_ids>
+          detail::Fields                      selected_field_ids>
 alignment_file_input(std::filesystem::path path,
                      ref_ids_t &,
                      ref_sequences_t &,
@@ -1029,7 +1057,7 @@ template <IStream2                  stream_type,
           std::ranges::ForwardRange ref_ids_t,
           std::ranges::ForwardRange ref_sequences_t,
           AlignmentFileInputFormat  file_format,
-          detail::fields_concept    selected_field_ids>
+          detail::Fields            selected_field_ids>
 alignment_file_input(stream_type && stream,
                      ref_ids_t &,
                      ref_sequences_t &,
@@ -1046,7 +1074,7 @@ template <IStream2                  stream_type,
           std::ranges::ForwardRange ref_ids_t,
           std::ranges::ForwardRange ref_sequences_t,
           AlignmentFileInputFormat  file_format,
-          detail::fields_concept    selected_field_ids>
+          detail::Fields            selected_field_ids>
 alignment_file_input(stream_type & stream,
                      ref_ids_t &,
                      ref_sequences_t &,
@@ -1099,9 +1127,9 @@ namespace std
 {
 //!\brief std::tuple_size overload for column-like access. [metafunction specialisation for seqan3::alignment_file_input]
 template <seqan3::AlignmentFileInputTraits                    traits_type,
-          seqan3::detail::fields_concept                      selected_field_ids,
+          seqan3::detail::Fields                              selected_field_ids,
           seqan3::detail::TypeListOfAlignmentFileInputFormats valid_formats,
-          seqan3::char_concept                                stream_char_t>
+          std::Integral                                       stream_char_t>
 struct tuple_size<seqan3::alignment_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -1111,9 +1139,9 @@ struct tuple_size<seqan3::alignment_file_input<traits_type, selected_field_ids, 
 //!\brief std::tuple_element overload for column-like access. [metafunction specialisation for seqan3::alignment_file_input]
 template <size_t                                              elem_no,
           seqan3::AlignmentFileInputTraits                    traits_type,
-          seqan3::detail::fields_concept                      selected_field_ids,
+          seqan3::detail::Fields                              selected_field_ids,
           seqan3::detail::TypeListOfAlignmentFileInputFormats valid_formats,
-          seqan3::char_concept                                stream_char_t>
+          std::Integral                                       stream_char_t>
 struct tuple_element<elem_no, seqan3::alignment_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::alignment_file_input<traits_type,
                                                                selected_field_ids,

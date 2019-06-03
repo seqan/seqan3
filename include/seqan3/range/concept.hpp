@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -19,7 +19,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::const_iterable_concept <>
+/*!\interface seqan3::ConstIterableRange <>
  * \extends std::InputRange
  * \brief Specifies requirements of an input range type for which the `const` version of that type satisfies the
  * same strength input range concept as the non-const version.
@@ -39,12 +39,26 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT const_iterable_concept =
+SEQAN3_CONCEPT ConstIterableRange =
     std::ranges::InputRange<std::remove_const_t<type>> &&
     std::ranges::InputRange<type const> &&
     (std::ranges::ForwardRange<std::remove_const_t<type>>       == std::ranges::ForwardRange<type const>) &&
     (std::ranges::BidirectionalRange<std::remove_const_t<type>> == std::ranges::BidirectionalRange<type const>) &&
     (std::ranges::RandomAccessRange<std::remove_const_t<type>>  == std::ranges::RandomAccessRange<type const>);
+//!\endcond
+
+/*!\interface seqan3::ForwardingRange<>
+ * \extends std::Range
+ * \brief Specifies a range whose iterators may outlive the range and remain valid.
+ * \see http://eel.is/c++draft/range.req
+ */
+//!\cond
+template <typename type>
+SEQAN3_CONCEPT ForwardingRange = std::ranges::Range<type> && requires (type && val)
+{
+    std::ranges::begin(std::forward<type>(val));
+    std::ranges::end(std::forward<type>(val));
+};
 //!\endcond
 
 } // namespace seqan3

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -12,16 +12,32 @@
 
 #pragma once
 
-#include <range/v3/algorithm/equal.hpp>
+#include <variant>
 
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/exception.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/iterator>
 
 namespace seqan3::detail
 {
+
+//!\brief Base class to deduce the std::variant type from format tags.
+//!\ingroup io
+template <typename list_t, template <typename...> typename output_t>
+struct variant_from_tags;
+
+//!\brief Transfers a list of format tags (`...ts`) onto a std::variant by specialising output_t with each.
+//!\ingroup io
+template <template <typename...> typename output_t, typename ...ts>
+struct variant_from_tags<meta::list<ts...>, output_t>
+{
+    //!\brief the type of std::variant.
+    using type = std::variant<output_t<ts>...>;
+};
 
 /*!\brief Write `"\n"` or `"\r\n"` to the stream iterator, depending on arguments.
  * \tparam  it_t Type of the iterator; must satisfy std::output_Iterator with `char`.
@@ -62,8 +78,9 @@ void set_format(format_variant_type & format,
         meta::for_each(valid_formats{}, [&] (auto && fmt)
         {
             using fmt_type = remove_cvref_t<decltype(fmt)>;
+            using fmt_tag  = typename fmt_type::format_tag;
 
-            for (auto const & ext : fmt_type::file_extensions)
+            for (auto const & ext : fmt_tag::file_extensions)
             {
                 if (std::ranges::equal(ext, extension))
                 {

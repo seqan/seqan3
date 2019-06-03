@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -28,7 +28,7 @@
  * ### Scoring two letters
  *
  * Scoring two letters of a single alphabet (or two similar alphabets) is performed by scoring schemes. A scoring
- * scheme is any type that models seqan3::scoring_scheme_concept, i.e. it must provide a member function that
+ * scheme is any type that models seqan3::ScoringScheme, i.e. it must provide a member function that
  * takes the two letters and returns the scheme-specific score. Algorithms that expect a scoring scheme should check
  * this concept with their respective alphabet(s).
  *
@@ -41,10 +41,10 @@
  *
  * These also support scoring two nucleotides/amino acids of different types and they also support modification of
  * their scores via `set_()` functions and by returning references to their internal score matrix. You can however
- * add completely different types, as long as they model seqan3::scoring_scheme_concept.
+ * add completely different types, as long as they model seqan3::ScoringScheme.
  *
  * <small><i>The base type seqan3::scoring_scheme_base is only implementation detail and not required for most users.
- * Types that model seqan3::scoring_scheme_concept can (but don't need to!) inherit from it.</i></small>
+ * Types that model seqan3::ScoringScheme can (but don't need to!) inherit from it.</i></small>
  *
  * ### Scoring gaps
  *

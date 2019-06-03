@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -23,7 +23,7 @@ namespace std
  */
 template <typename alphabet_t>
     //!\cond
-    requires seqan3::Semialphabet<seqan3::delete_const_t<alphabet_t>>
+    requires seqan3::Semialphabet<alphabet_t>
     //!\endcond
 struct hash<alphabet_t>
 {
@@ -48,7 +48,7 @@ struct hash<alphabet_t>
  */
 template <ranges::InputRange urng_t>
     //!\cond
-    requires seqan3::Semialphabet<seqan3::delete_const_t<seqan3::reference_t<urng_t>>>
+    requires seqan3::Semialphabet<seqan3::reference_t<urng_t>>
     //!\endcond
 struct hash<urng_t>
 {
@@ -65,7 +65,7 @@ struct hash<urng_t>
         hash<alphabet_t> h{};
         for (auto const character : range)
         {
-            result *= seqan3::alphabet_size_v<alphabet_t>;
+            result *= seqan3::alphabet_size<alphabet_t>;
             result += h(character);
         }
         return result;

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -55,11 +55,9 @@ class config_element_base;
  * \{
  */
 /*!\var id
- * \memberof seqan3::detail::ConfigElement
  * \brief Algorithm specific static id used for internal validation checks.
  */
 /*!\var value
- * \memberof seqan3::detail::ConfigElement
  * \brief Member storing the configuration value.
  */
 //!\}

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -30,7 +30,7 @@ namespace seqan3::detail
  * \tparam derived_t   The derived alignment algorithm.
  * \tparam cell_t      The cell type of the dynamic programming matrix.
  */
-template <typename derived_t, typename cell_t>
+template <typename derived_t, typename cell_t, typename align_local_t = std::false_type>
 class affine_gap_policy
 {
 private:
@@ -89,6 +89,8 @@ private:
         {
             tmp = (tmp < vt_score) ? vt_score : tmp;
             tmp = (tmp < hz_score) ? hz_score : tmp;
+            if constexpr (align_local_t::value)
+                tmp = (tmp < 0) ? 0 : tmp;
         }
         else  // Compute any traceback
         {
@@ -96,6 +98,8 @@ private:
                                    : (trace_value = trace_directions::diagonal | vt_trace, tmp);
             tmp = (tmp < hz_score) ? (trace_value = hz_trace, hz_score)
                                    : (trace_value |= hz_trace, tmp);
+            if constexpr (align_local_t::value)
+                tmp = (tmp < 0) ? (trace_value = trace_directions::none, 0) : tmp;
         }
         // Cache the current main score for the next diagonal computation and update the current score.
         prev_score = main_score;

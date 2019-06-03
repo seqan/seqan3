@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
@@ -26,8 +26,8 @@ TYPED_TEST_CASE_P(aligned_sequence);
 
 TYPED_TEST_P(aligned_sequence, fulfills_concept)
 {
-    EXPECT_TRUE((aligned_sequence_concept<TypeParam>));
-    EXPECT_FALSE((aligned_sequence_concept<std::vector<dna4>>));
+    EXPECT_TRUE((AlignedSequence<TypeParam>));
+    EXPECT_FALSE((AlignedSequence<std::vector<dna4>>));
 }
 
 TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
@@ -35,7 +35,7 @@ TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
     using unaligned_seq_type = remove_cvref_t<detail::unaligned_seq_t<TypeParam>>;
     unaligned_seq_type unaligned{};
 
-    if constexpr (sequence_container_concept<unaligned_seq_type>)
+    if constexpr (SequenceContainer<unaligned_seq_type>)
     {
         unaligned.resize(seq.size());
         std::copy(seq.begin(), seq.end(), begin(unaligned));

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <range/v3/view/zip.hpp>
@@ -42,7 +42,7 @@ TEST(aa20, assign_char)
     };
 
     for (auto [ chr, alp ] : std::view::zip(chars, alphabets))
-        EXPECT_EQ((assign_char(aa20{}, chr)), alp);
+        EXPECT_EQ((assign_char_to(chr, aa20{})), alp);
 }
 
 TEST(aa20, to_char)

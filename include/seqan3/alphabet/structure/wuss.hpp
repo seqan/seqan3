@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -15,8 +15,8 @@
 #include <cmath>
 #include <vector>
 
-#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 
 // ------------------------------------------------------------------
@@ -30,9 +30,11 @@ namespace seqan3
  * \tparam SIZE The alphabet size defaults to 51 and must be an odd number in range 15..67.
  *              It determines the allowed pseudoknot depth by adding characters AaBb..Zz to the alphabet.
  * \implements seqan3::RnaStructureAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \ingroup structure
  *
@@ -65,7 +67,7 @@ private:
     friend base_t;
 
 public:
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using base_t::to_rank;
     using base_t::to_char;
     using typename base_t::rank_type;
@@ -74,12 +76,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr wuss() noexcept : base_t{} {}
-    constexpr wuss(wuss const &) = default;
-    constexpr wuss(wuss &&) = default;
-    constexpr wuss & operator=(wuss const &) = default;
-    constexpr wuss & operator=(wuss &&) = default;
-    ~wuss() = default;
+    constexpr wuss()                         noexcept = default; //!< Defaulted.
+    constexpr wuss(wuss const &)             noexcept = default; //!< Defaulted.
+    constexpr wuss(wuss &&)                  noexcept = default; //!< Defaulted.
+    constexpr wuss & operator=(wuss const &) noexcept = default; //!< Defaulted.
+    constexpr wuss & operator=(wuss &&)      noexcept = default; //!< Defaulted.
+    ~wuss()                                  noexcept = default; //!< Defaulted.
     //!\}
 
     /*!\name RNA structure properties
@@ -113,10 +115,10 @@ public:
      *        It is the number of distinct pairs of interaction symbols the format supports: 4..30 (depends on size)
      */
     // formula: (alphabet size - 7 unpaired characters) / 2, as every bracket exists as opening/closing pair
-    static constexpr uint8_t max_pseudoknot_depth{static_cast<uint8_t>((value_size - 7) / 2)};
+    static constexpr uint8_t max_pseudoknot_depth{static_cast<uint8_t>((alphabet_size - 7) / 2)};
 
-    /*!\brief Get an identifier for a pseudoknotted interaction.
-     * Opening and closing brackets of the same type have the same id.
+    /*!\brief Get an identifier for a pseudoknotted interaction,
+     * where opening and closing brackets of the same type have the same id.
      * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
      * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
      */
@@ -132,17 +134,17 @@ public:
 protected:
     //!\privatesection
     //!\brief Value-to-char conversion table.
-    static constexpr std::array<char_type, value_size> rank_to_char
+    static constexpr std::array<char_type, alphabet_size> rank_to_char
     {
         [] () constexpr
         {
-            std::array<char_type, value_size> chars
+            std::array<char_type, alphabet_size> chars
             {
                 '.', ':', ',', '-', '_', '~', ';', '<', '(', '[', '{', '>', ')', ']', '}'
             };
 
             // pseudoknot letters
-            for (rank_type rnk = 15u; rnk + 1u < value_size; rnk += 2u)
+            for (rank_type rnk = 15u; rnk + 1u < alphabet_size; rnk += 2u)
             {
                 char_type const off = static_cast<char_type>((rnk - 15u) / 2u);
                 chars[rnk] = 'A' + off;
@@ -165,7 +167,7 @@ protected:
                 rnk = 6u;
 
             // set alphabet values
-            for (rank_type rnk = 0u; rnk < value_size; ++rnk)
+            for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
                 rank_table[rank_to_char[rnk]] = rnk;
             return rank_table;
         } ()
@@ -180,7 +182,7 @@ protected:
 template <uint8_t SIZE>
 constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
 {
-    std::array<int8_t, value_size> interaction_table{};
+    std::array<int8_t, alphabet_size> interaction_table{};
     int cnt_open = 0;
     int cnt_close = 0;
 
@@ -199,7 +201,7 @@ constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
         interaction_table[rnk] = ++cnt_close;
     }
 
-    for (rank_type rnk = 15u; rnk + 1u < value_size; rnk += 2u)
+    for (rank_type rnk = 15u; rnk + 1u < alphabet_size; rnk += 2u)
     {
         interaction_table[rnk]      = --cnt_open;
         interaction_table[rnk + 1u] = ++cnt_close;
@@ -209,12 +211,14 @@ constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
 } ();
 
 //!\brief Alias for the default type wuss51.
-typedef wuss<51> wuss51;
+//!\relates seqan3::wuss
+using wuss51 = wuss<51>;
 
 /*!\name Literals
  * \{
- *
- * \brief The seqan3::wuss51 string literal.
+ */
+
+/*!\brief The seqan3::wuss51 string literal.
  * \relates seqan3::wuss
  * \param[in] str A pointer to the character string to assign.
  * \param[in] len The size of the character string to assign.

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -45,7 +45,7 @@ protected:
     //!\brief Iterator stores pointer to underlying container structure.
     typename std::add_pointer_t<range_type> host{nullptr};
     //!\brief Use container's size_type as a position.
-    using position_type = typename range_type::size_type;
+    using position_type = std::make_unsigned_t<typename range_type::difference_type>;
     //!\brief Store position index for container.
     position_type pos{static_cast<position_type>(0)};
 
@@ -116,6 +116,8 @@ public:
      * specialised in derived type.
      * \{
      */
+
+    //!\brief Checks whether `*this` is equal to `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -125,15 +127,17 @@ public:
         return pos == rhs.pos;
     }
 
+    //!\brief Checks whether `*this` is not equal to `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
     //!\endcond
     constexpr bool operator!=(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
-        return pos != rhs.pos;
+        return !(*this == rhs);
     }
 
+    //!\brief Checks whether `*this` is less than `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -143,6 +147,7 @@ public:
         return static_cast<bool>(pos < rhs.pos);
     }
 
+    //!\brief Checks whether `*this` is greater than `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -152,6 +157,7 @@ public:
         return pos > rhs.pos;
     }
 
+    //!\brief Checks whether `*this` is less than or equal to `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -161,6 +167,7 @@ public:
         return pos <= rhs.pos;
     }
 
+    //!\brief Checks whether `*this` is greater than or equal to `rhs`.
     template <typename range_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
@@ -278,13 +285,13 @@ public:
 private:
 
     //!\brief Cast this to derived type.
-    derived_t* this_derived()
+    constexpr derived_t* this_derived()
     {
         return static_cast<derived_t*>(this);
     }
 
     //!\copydoc this_derived
-    derived_t const * this_derived() const
+    constexpr derived_t const * this_derived() const
     {
         return static_cast<derived_t const *>(this);
     }

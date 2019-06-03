@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <list>
@@ -35,20 +35,4 @@ TEST(metafunction, remove_cvref_t)
     EXPECT_FALSE((std::is_same_v<int, remove_cvref_t<int[3]>>));    // type stays same
     EXPECT_FALSE((std::is_same_v<int*, remove_cvref_t<int[3]>>));   // type stays same
     // the last example would be true for std::decay_t
-}
-
-TEST(metafunction, delete_const_t)
-{
-    EXPECT_TRUE((std::is_same_v<int, 		 delete_const_t<int>>));
-    EXPECT_TRUE((std::is_same_v<int, 		 delete_const_t<int const>>));
-    EXPECT_TRUE((std::is_same_v<int volatile, 	 delete_const_t<int volatile>>));
-    EXPECT_TRUE((std::is_same_v<int &, 		 delete_const_t<int &>>));
-    EXPECT_TRUE((std::is_same_v<int &&, 	 delete_const_t<int &&>>));
-    EXPECT_TRUE((std::is_same_v<int &, 		 delete_const_t<int const &>>));
-    EXPECT_TRUE((std::is_same_v<int &&, 	 delete_const_t<int const &&>>));
-    EXPECT_TRUE((std::is_same_v<int volatile &&, delete_const_t<int const volatile &&>>));
-    EXPECT_TRUE((std::is_same_v<int *, 		 delete_const_t<int *>>));
-    EXPECT_TRUE((std::is_same_v<int *, 		 delete_const_t<int const *>>));
-    EXPECT_TRUE((std::is_same_v<int volatile *,  delete_const_t<int const volatile *>>));
-    EXPECT_TRUE((std::is_same_v<char const *, 	 delete_const_t<char const * const>>));
 }

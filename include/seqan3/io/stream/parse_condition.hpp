@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -14,7 +14,6 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/adaptation/concept.hpp>
 #include <seqan3/io/stream/parse_condition_detail.hpp>
 
 // ----------------------------------------------------------------------------
@@ -330,7 +329,7 @@ struct parse_asserter
     constexpr parse_asserter(condition_type const &) noexcept {}
 
     /*!\brief Checks if the given character satisfies the associated parse condition.
-     * \param[in] c The character to be checked. Must satisfy the seqan3::char_adaptation_concept.
+     * \param[in] c The character to be checked. Must model std::Integral.
      *
      * \details
      *
@@ -346,7 +345,7 @@ struct parse_asserter
      *
      * Thread-safe.
      */
-    template <char_adaptation_concept char_type>
+    template <std::Integral char_type>
     void operator()(char_type const c) const
     {
         if (!std::invoke(cond, c))

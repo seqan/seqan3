@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <iostream>
@@ -29,24 +29,24 @@ TEST(view_get, basic)
     std::vector<phred42> cmp1{phred42{0}, phred42{1}, phred42{2}, phred42{3}};
 
     //functor
-    dna4_vector functor0 = view::get<0>(qv);
-    std::vector<phred42> functor1 = view::get<1>(qv);
+    dna4_vector functor0 = view::get<0>(qv) | std::ranges::to<std::vector>;
+    std::vector<phred42> functor1 = view::get<1>(qv) | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp0, functor0);
     EXPECT_EQ(cmp1, functor1);
 
     // pipe notation
-    dna4_vector pipe0 = qv | view::get<0>;
-    std::vector<phred42> pipe1 = qv | view::get<1>;
+    dna4_vector pipe0 = qv | view::get<0> | std::ranges::to<std::vector>;
+    std::vector<phred42> pipe1 = qv | view::get<1> | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp0, pipe0);
     EXPECT_EQ(cmp1, pipe1);
 
     // combinability
     dna4_vector cmp2{"TGCA"_dna4};
-    dna4_vector comp = qv | view::get<0> | view::complement;
+    dna4_vector comp = qv | view::get<0> | view::complement | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp2, comp);
 
     std::string cmp3{"TGCA"};
-    std::string to_char_test = comp | view::to_char;
+    std::string to_char_test = comp | view::to_char | std::ranges::to<std::string>;
     EXPECT_EQ(cmp3, to_char_test);
 
     // reference return check
@@ -66,35 +66,35 @@ TEST(view_get, advanced)
     // functor notation
     std::vector<masked<dna4>> cmp0{{'A'_dna4, mask::MASKED}, {'C'_dna4, mask::UNMASKED},
                                   {'G'_dna4, mask::MASKED}, {'T'_dna4, mask::UNMASKED}};
-    std::vector<masked<dna4>> functor0 = view::get<0>(t);
+    std::vector<masked<dna4>> functor0 = view::get<0>(t) | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp0, functor0);
 
     std::vector<phred42> cmp1{phred42{0}, phred42{1}, phred42{2}, phred42{3}};
-    std::vector<phred42> functor1 = view::get<1>(t);
+    std::vector<phred42> functor1 = view::get<1>(t) | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp1, functor1);
 
     std::vector<dna4> cmp00{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
-    std::vector<dna4> functor00 = view::get<0>(view::get<0>(t));
+    std::vector<dna4> functor00 = view::get<0>(view::get<0>(t)) | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp00, functor00);
 
     // pipe notation
-    std::vector<masked<dna4>> pipe0 = t | view::get<0>;
+    std::vector<masked<dna4>> pipe0 = t | view::get<0> | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp0, pipe0);
 
-    std::vector<phred42> pipe1 = t | view::get<1>;
+    std::vector<phred42> pipe1 = t | view::get<1> | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp1, pipe1);
 
-    std::vector<dna4> pipe00 = t | view::get<0> | view::get<0>;
+    std::vector<dna4> pipe00 = t | view::get<0> | view::get<0> | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp00, pipe00);
 
     // combinability
     std::vector<masked<dna4>> cmprev{{'T'_dna4, mask::UNMASKED}, {'G'_dna4, mask::MASKED},
                                      {'C'_dna4, mask::UNMASKED}, {'A'_dna4, mask::MASKED}};
-    std::vector<masked<dna4>> revtest = t | view::get<0> | std::view::reverse;
+    std::vector<masked<dna4>> revtest = t | view::get<0> | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(cmprev, revtest);
 
     std::vector<dna4> cmprev2{'T'_dna4, 'G'_dna4, 'C'_dna4, 'A'_dna4};
-    std::vector<dna4> revtest2 = t | view::get<0> | view::get<0> | std::view::reverse;
+    std::vector<dna4> revtest2 = t | view::get<0> | view::get<0> | std::view::reverse | std::ranges::to<std::vector>;
     EXPECT_EQ(cmprev2, revtest2);
 
     // reference check
@@ -111,8 +111,8 @@ TEST(view_get, tuple_pair)
 
     // functor notation
     std::vector<int> cmp{0, 1, 2, 3};
-    std::vector<int> pair_func = view::get<0>(pair_test);
-    std::vector<int> tuple_func = view::get<0>(tuple_test);
+    std::vector<int> pair_func = view::get<0>(pair_test) | std::ranges::to<std::vector>;
+    std::vector<int> tuple_func = view::get<0>(tuple_test) | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp, pair_func);
     EXPECT_EQ(cmp, tuple_func);
 
@@ -125,8 +125,8 @@ TEST(view_get, tuple_pair)
 
     // pipe notation
     cmp[0] = 0;
-    std::vector<int> pair_pipe = pair_test | view::get<0>;
-    std::vector<int> tuple_pipe = tuple_test | view::get<0>;
+    std::vector<int> pair_pipe = pair_test | view::get<0> | std::ranges::to<std::vector>;
+    std::vector<int> tuple_pipe = tuple_test | view::get<0> | std::ranges::to<std::vector>;
     EXPECT_EQ(cmp, pair_pipe);
     EXPECT_EQ(cmp, tuple_pipe);
 }
@@ -141,7 +141,7 @@ TEST(view_get, concepts)
     EXPECT_FALSE(std::ranges::View<decltype(vec)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), std::tuple<int, int>>));
 
     auto v1 = vec | view::get<0>;
@@ -152,7 +152,7 @@ TEST(view_get, concepts)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), std::tuple<int, int>>));
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), int>));
 }

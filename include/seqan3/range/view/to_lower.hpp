@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -31,6 +31,11 @@ namespace seqan3::view
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/to_lower.hpp>
+ * ```
+ *
  * ### View properties
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
@@ -49,7 +54,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                  | *preserved*                                             |
  * | std::ranges::CommonRange        |                                  | *preserved*                                             |
  * | std::ranges::OutputRange        |                                  | *lost*                                                  |
- * | seqan3::const_iterable_concept  |                                  | *preserved*                                             |
+ * | seqan3::ConstIterableRange      |                                  | *preserved*                                             |
  * |                                 |                                  |                                                         |
  * | seqan3::reference_t             | seqan3::char_concept             | seqan3::remove_reference_t<seqan3::reference_t<urngt_>> |
  *
@@ -61,7 +66,7 @@ namespace seqan3::view
  */
 inline auto const to_lower = deep{std::view::transform([] (auto const in) noexcept
 {
-    static_assert(char_concept<remove_cvref_t<decltype(in)>>, 
+    static_assert(char_concept<remove_cvref_t<decltype(in)>>,
                   "The value type of seqan3::view::to_lower must model the seqan3::char_concept.");
     return seqan3::to_lower(in);
 })};

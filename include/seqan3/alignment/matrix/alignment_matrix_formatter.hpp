@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -19,7 +19,7 @@
 
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 namespace seqan3::detail
 {
@@ -52,6 +52,8 @@ struct alignment_matrix_format
     char const * row_sep{};
     //!\brief row separator symbol (a single symbol)
     char const * row_col_sep{};
+    //!\brief infinity symbol (a single symbol)
+    char const * inf{};
 
     /*!\brief Eight symbols for each combination of directions a trace can have (each entry can have multiple symbols).
      *
@@ -136,38 +138,38 @@ struct alignment_matrix_format
 
 constexpr alignment_matrix_format alignment_matrix_format::csv
 {
-    " ", ";", "", "",
+    " ", ";", "", "", "",
     {"N","D","U","DU","L","DL","UL","DUL"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::ascii
 {
-    " ", "|", "-", "/",
+    " ", "|", "-", "/", "INF",
     {" ","D","U","DU","L","DL","UL","DUL"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_block
 {
-    "ε", "║", "═", "╬",
+    "ε", "║", "═", "╬", "∞",
     {"█","▘","▝","▀","▖","▌","▞","▛"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_braille
 {
-    "ε", "║", "═", "╬",
+    "ε", "║", "═", "╬", "∞",
     {"⠀","⠁","⠈","⠉","⠄","⠅","⠌","⠍"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
 {
-    "ε", "║", "═", "╬",
+    "ε", "║", "═", "╬", "∞",
     {"↺","↖","↑","↖↑","←","↖←","↑←","↖↑←"}
 };
 
 /*!\brief Formats and prints trace and score matrices that satisfy the
- *        seqan3::detail::matrix_concept.
+ *        seqan3::detail::Matrix.
  * \ingroup alignment_matrix
- * \tparam alignment_matrix_t The matrix class which satisfies the seqan3::detail::matrix_concept
+ * \tparam alignment_matrix_t The matrix class which satisfies the seqan3::detail::Matrix
  *
  * \details
  *
@@ -178,7 +180,7 @@ constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
  * ### Output
  * \include test/snippet/alignment/matrix/alignment_score_matrix.out
  */
-template <matrix_concept alignment_matrix_t>
+template <Matrix alignment_matrix_t>
 class alignment_matrix_formatter
 {
 public:
@@ -213,7 +215,7 @@ public:
     {}
     //!\}
 
-    //!\brief \copydoc seqan3::detail::matrix_concept::entry_type
+    //!\brief \copydoc seqan3::detail::Matrix::entry_type
     using entry_type = typename alignment_matrix_type::entry_type;
 
     //!\brief Whether #alignment_matrix_type is a traceback matrix.
@@ -248,8 +250,8 @@ public:
      * \param[in,out]  cout            print formatted #matrix into this ostream
      * \param[in]      column_width    width of each cell, std::nullopt defaults to auto_width()
      */
-    template <typename database_t, typename query_t, typename char_t, typename traits_t>
-    void format(database_t && database, query_t && query, std::basic_ostream<char_t, traits_t> & cout, std::optional<size_t> const column_width) const noexcept
+    template <typename database_t, typename query_t, typename oostream_t>
+    void format(database_t && database, query_t && query, oostream_t & cout, std::optional<size_t> const column_width) const noexcept
     {
         size_t const _column_width = column_width.has_value() ? column_width.value() : auto_width();
 
@@ -326,6 +328,8 @@ private:
         else
         {
             entry_type entry = matrix.at(row, col);
+            if (entry == matrix_inf<entry_type>)
+                return as_string(symbols.inf);
             return as_string(entry);
         }
     }
@@ -372,10 +376,14 @@ private:
  * \relates seqan3::detail::alignment_matrix_formatter
  * \{
  */
+
+//!\brief Deduce the matrix type from the provided argument.
 template<typename alignment_matrix_t>
 alignment_matrix_formatter(alignment_matrix_t const &) -> alignment_matrix_formatter<alignment_matrix_t>;
 
+//!\brief Deduce the matrix type from the provided arguments.
 template<typename alignment_matrix_t>
 alignment_matrix_formatter(alignment_matrix_t const &, alignment_matrix_format) -> alignment_matrix_formatter<alignment_matrix_t>;
 //!\}
-} // namespace seqan3
+
+} // namespace seqan3::detail

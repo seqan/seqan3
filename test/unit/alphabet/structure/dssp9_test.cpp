@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <range/v3/view/zip.hpp>
@@ -35,7 +35,7 @@ TEST(dssp9, assign_char)
     };
 
     for (auto [ ch, cm ] : std::view::zip(input, cmp))
-        EXPECT_EQ((assign_char(dssp9{}, ch)), cm);
+        EXPECT_EQ((assign_char_to(ch, dssp9{})), cm);
 }
 
 // to_char functions

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -22,7 +22,7 @@
 #include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
-#include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/metafunction/deferred_crtp_base.hpp>
@@ -37,7 +37,7 @@ namespace seqan3::detail
 //!\ingroup pairwise_alignment
 template <typename value_t>
 SEQAN3_CONCEPT AlignPairwiseValue =
-    tuple_like_concept<value_t> &&
+    TupleLike<value_t> &&
     std::tuple_size_v<value_t> == 2 &&
     std::ranges::ForwardRange<std::tuple_element_t<0, value_t>> &&
     std::ranges::ForwardRange<std::tuple_element_t<1, value_t>>;
@@ -102,7 +102,7 @@ public:
     //!\brief Tests whether the value type of `range_type` is a tuple with exactly 2 members.
     constexpr static bool expects_tuple_like_value_type()
     {
-        return tuple_like_concept<alignment_config_type> &&
+        return TupleLike<alignment_config_type> &&
                std::tuple_size_v<value_type_t<std::ranges::iterator_t<unref_range_type>>> == 2;
     }
 
@@ -114,7 +114,7 @@ public:
             using scoring_type = std::remove_reference_t<
                                     decltype(get<align_cfg::scoring>(std::declval<alignment_config_type>()).value)
                                  >;
-            return static_cast<bool>(scoring_scheme_concept<scoring_type,
+            return static_cast<bool>(ScoringScheme<scoring_type,
                                                             value_type_t<first_seq_t>,
                                                             value_type_t<second_seq_t>>);
         }
@@ -278,7 +278,7 @@ public:
                                                                          std::remove_reference_t<second_seq_t>,
                                                                          config_t>::type>;
             // Define the function wrapper type.
-            using function_wrapper_t = std::function<result_t(first_seq_t &, second_seq_t &)>;
+            using function_wrapper_t = std::function<result_t(size_t const, first_seq_t &, second_seq_t &)>;
 
             // ----------------------------------------------------------------------------
             // Test some basic preconditions
@@ -292,7 +292,7 @@ public:
 
             static_assert(alignment_contract_t::expects_tuple_like_value_type(),
                           "Alignment configuration error: "
-                          "The value type of the sequence ranges must model the seqan3::detail::tuple_like_concept "
+                          "The value type of the sequence ranges must model the seqan3::detail::TupleLike "
                           "and must contain exactly 2 elements.");
 
             static_assert(alignment_contract_t::expects_valid_scoring_scheme(),
@@ -309,19 +309,22 @@ public:
             auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
             auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(free_ends_none);
 
-            // Only use edit distance if ...
-            if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
-                !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
-                align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
+            if constexpr (config_t::template exists<align_cfg::mode<detail::global_alignment_type>>())
             {
-                // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
-                //       option via the scheme.
-                if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
-                                                          nucleotide_scoring_scheme>)
+                // Only use edit distance if ...
+                if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
+                    !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
+                    align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
                 {
-                    if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
-                        (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
-                        return configure_edit_distance<function_wrapper_t>(cfg);
+                    // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
+                    //       option via the scheme.
+                    if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
+                                                              nucleotide_scoring_scheme>)
+                    {
+                        if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
+                            (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
+                            return configure_edit_distance<function_wrapper_t>(cfg);
+                    }
                 }
             }
 
@@ -363,7 +366,7 @@ private:
         auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(free_ends_none);
         using align_ends_cfg_t = remove_cvref_t<decltype(align_ends_cfg)>;
 
-        auto configure_edit_traits = [&](auto is_semi_global)
+        auto configure_edit_traits = [&] (auto is_semi_global)
         {
             struct edit_traits_type
             {
@@ -371,11 +374,12 @@ private:
                 using is_semi_global_type [[maybe_unused]] = remove_cvref_t<decltype(is_semi_global)>;
             };
 
-            return function_wrapper_t{edit_distance_wrapper<remove_cvref_t<config_t>, edit_traits_type>{cfg}};
+            edit_distance_algorithm<remove_cvref_t<config_t>, edit_traits_type> algorithm{cfg};
+            return function_wrapper_t{std::move(algorithm)};
         };
 
         // Check if it has free ends set for the first sequence trailing gaps.
-        auto has_free_ends_trailing = [&](auto first) constexpr
+        auto has_free_ends_trailing = [&] (auto first) constexpr
         {
             if constexpr (!decltype(first)::value)
             {
@@ -383,7 +387,12 @@ private:
             }
             else if constexpr (align_ends_cfg_t::template is_static<1>())
             {
+#if defined(__GNUC__) && __GNUC__ >= 9
+                constexpr bool free_ends_trailing = align_ends_cfg_t::template get_static<1>();
+                return configure_edit_traits(std::integral_constant<bool, free_ends_trailing>{});
+#else // ^^^ workaround / no workaround vvv
                 return configure_edit_traits(std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>{});
+#endif // defined(__GNUC__) && __GNUC__ >= 9
             }
             else // Resolve correct property at runtime.
             {
@@ -478,7 +487,8 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
     // affine gap kernel
     // ----------------------------------------------------------------------------
 
-    using affine_t = typename select_gap_policy<config_t, cell_type>::type;
+    using local_t = std::bool_constant<config_t::template exists<align_cfg::mode<detail::local_alignment_type>>()>;
+    using affine_t = typename select_gap_policy<config_t, cell_type, local_t>::type;
 
     // ----------------------------------------------------------------------------
     // configure initialisation policy
@@ -490,7 +500,7 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
 
     // This lambda augments the initialisation policy of the alignment algorithm
     // with the aligned_ends configuration from before.
-    auto configure_leading_both = [&](auto first_seq, auto second_seq) constexpr
+    auto configure_leading_both = [&] (auto first_seq, auto second_seq) constexpr
     {
         // Define the trait for the initialisation policy
         struct policy_trait_type
@@ -504,38 +514,46 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
         return configure_free_ends_optimum_search<function_wrapper_t, affine_t, dp_matrix_t, init_t>(cfg);
     };
 
-    // This lambda determines the initialisation configuration for the second sequence given
-    // the leading gap property for it.
-    auto configure_leading_second = [&](auto first) constexpr
+    if constexpr (local_t::value)
     {
-        // If possible use static information.
-        if constexpr (align_ends_cfg_t::template is_static<2>())
-        {
-            return configure_leading_both(first,
-                                          std::integral_constant<bool, align_ends_cfg_t::template get_static<2>()>{});
-        }
-        else
-        {   // Resolve correct property at runtime.
-            if (align_ends_cfg[2])
-                return configure_leading_both(first, std::true_type{});
-            else
-                return configure_leading_both(first, std::false_type{});
-        }
-    };
-
-    // Here the initialisation configuration for the first sequence is determined given
-    // the leading gap property for it.
-    // If possible use static information.
-    if constexpr (align_ends_cfg_t::template is_static<0>())
-    {
-        return configure_leading_second(std::integral_constant<bool, align_ends_cfg_t::template get_static<0>()>{});
+        return configure_leading_both(std::true_type{}, std::true_type{});
     }
     else
-    {  // Resolve correct property at runtime.
-        if (align_ends_cfg[0])
-            return configure_leading_second(std::true_type{});
+    {
+        // This lambda determines the initialisation configuration for the second sequence given
+        // the leading gap property for it.
+        auto configure_leading_second = [&] (auto first) constexpr
+        {
+            // If possible use static information.
+            if constexpr (align_ends_cfg_t::template is_static<2>())
+            {
+                using second_t = std::integral_constant<bool, align_ends_cfg_t::template get_static<2>()>;
+                return configure_leading_both(first, second_t{});
+            }
+            else
+            {   // Resolve correct property at runtime.
+                if (align_ends_cfg[2])
+                    return configure_leading_both(first, std::true_type{});
+                else
+                    return configure_leading_both(first, std::false_type{});
+            }
+        };
+
+        // Here the initialisation configuration for the first sequence is determined given
+        // the leading gap property for it.
+        // If possible use static information.
+        if constexpr (align_ends_cfg_t::template is_static<0>())
+        {
+            using first_t = std::integral_constant<bool, align_ends_cfg_t::template get_static<0>()>;
+            return configure_leading_second(first_t{});
+        }
         else
-            return configure_leading_second(std::false_type{});
+        {  // Resolve correct property at runtime.
+            if (align_ends_cfg[0])
+                return configure_leading_second(std::true_type{});
+            else
+                return configure_leading_second(std::false_type{});
+        }
     }
 }
 //!\endcond
@@ -550,13 +568,15 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_optimum
     auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(free_ends_none);
     using align_ends_cfg_t = decltype(align_ends_cfg);
 
+    using local_t = std::bool_constant<config_t::template exists<align_cfg::mode<detail::local_alignment_type>>()>;
+
     // This lambda augments the find optimum policy of the alignment algorithm with the
     // respective aligned_ends configuration.
-    auto configure_trailing_both = [&](auto first_seq, auto second_seq) constexpr
+    auto configure_trailing_both = [&] (auto first_seq, auto second_seq) constexpr
     {
         struct policy_trait_type
         {
-            using find_in_every_cell_type  [[maybe_unused]] = std::false_type;
+            using find_in_every_cell_type  [[maybe_unused]] = local_t;
             using find_in_last_row_type    [[maybe_unused]] = decltype(first_seq);
             using find_in_last_column_type [[maybe_unused]] = decltype(second_seq);
         };
@@ -565,38 +585,46 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_optimum
         return function_wrapper_t{alignment_algorithm<config_t, policies_t..., find_optimum_t>{cfg}};
     };
 
-    // This lambda determines the lookup configuration for the second sequence given
-    // the trailing gap property for it.
-    auto configure_trailing_second = [&](auto first) constexpr
+    if constexpr (local_t::value)
     {
-        // If possible use static information.
-        if constexpr (align_ends_cfg_t::template is_static<3>())
+        return configure_trailing_both(std::true_type{}, std::true_type{});
+    }
+    else
+    {
+        // This lambda determines the lookup configuration for the second sequence given
+        // the trailing gap property for it.
+        auto configure_trailing_second = [&] (auto first) constexpr
         {
-            return configure_trailing_both(first,
-                                           std::integral_constant<bool, align_ends_cfg_t::template get_static<3>()>{});
+            // If possible use static information.
+            if constexpr (align_ends_cfg_t::template is_static<3>())
+            {
+                using second_t = std::integral_constant<bool, align_ends_cfg_t::template get_static<3>()>;
+                return configure_trailing_both(first, second_t{});
+            }
+            else
+            { // Resolve correct property at runtime.
+                if (align_ends_cfg[3])
+                    return configure_trailing_both(first, std::true_type{});
+                else
+                    return configure_trailing_both(first, std::false_type{});
+            }
+        };
+
+        // Here the lookup configuration for the first sequence is determined given
+        // the trailing gap property for it.
+        // If possible use static information.
+        if constexpr (align_ends_cfg_t::template is_static<1>())
+        {
+            using first_t = std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>;
+            return configure_trailing_second(first_t{});
         }
         else
         { // Resolve correct property at runtime.
-            if (align_ends_cfg[3])
-                return configure_trailing_both(first, std::true_type{});
+            if (align_ends_cfg[1])
+                return configure_trailing_second(std::true_type{});
             else
-                return configure_trailing_both(first, std::false_type{});
+                return configure_trailing_second(std::false_type{});
         }
-    };
-
-    // Here the lookup configuration for the first sequence is determined given
-    // the trailing gap property for it.
-    // If possible use static information.
-    if constexpr (align_ends_cfg_t::template is_static<1>())
-    {
-        return configure_trailing_second(std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>{});
-    }
-    else
-    { // Resolve correct property at runtime.
-        if (align_ends_cfg[1])
-            return configure_trailing_second(std::true_type{});
-        else
-            return configure_trailing_second(std::false_type{});
     }
 }
 //!\endcond

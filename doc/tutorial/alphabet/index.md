@@ -69,12 +69,12 @@ unsigned type that is required for storing the values of the alphabet.
 
 Our alphabets also have a character representation because it is more intuitive to work
 with them than using the rank. Each alphabet symbol is represented by its respective character
-whenever possible (<code>A ⟼ 'A'</code>). Analogously to the rank, SeqAn provides the function 
+whenever possible (<code>A ⟼ 'A'</code>). Analogously to the rank, SeqAn provides the function
 seqan3::to_char for converting a symbol to its character representation.
 
 \snippet alphabet_main.cpp char
 
-Above you have seen that you can assign an alphabet symbol from a character with seqan3::from_char. 
+Above you have seen that you can assign an alphabet symbol from a character with seqan3::from_char.
 In contrast to the rank interface, this assignment is not a bijection because the whole spectrum of available
 chars is mapped to values inside the alphabet. For instance, assigning to seqan3::dna4 from any character other
 than `C`, `G` or `T` results in the value <code>'A'_dna4</code> and assigning from any character except
@@ -87,7 +87,7 @@ You can test the validity of a character by calling seqan3::char_is_valid_for.
 It returns true if the character is valid and false otherwise.
 
 ## Obtaining the alphabet size
-You can retrieve the alphabet size by accessing the class member variable `value_size`
+You can retrieve the alphabet size by accessing the class member variable `alphabet_size`
 which is implemented in most seqan3::Alphabet instances.
 
 \snippet alphabet_main.cpp size
@@ -95,7 +95,7 @@ which is implemented in most seqan3::Alphabet instances.
 ## Containers over alphabets
 
 In SeqAn you can use the STL containers to model e.g. sequences, sets or mappings with our alphabets.
-The following example shows some exemplary contexts for their use. 
+The following example shows some exemplary contexts for their use.
 For **sequences** we recommend the std::vector with one of SeqAn's alphabet types.
 Please note how easily a sequence can be created via the string literal.
 
@@ -114,7 +114,7 @@ equality and inequality of two values can be tested with `==` and `!=`.
 
 To wrap up this section on the nucleotide alphabet, the following exercise lets you
 practise the use of a SeqAn alphabet and its related functions.
-It will also show you a handy advantage of using a vector over an alphabet instead 
+It will also show you a handy advantage of using a vector over an alphabet instead
 of using `std::string`: The rank representation can be used straight as an array
 index (opposed to using a map with logarithmic access times, for example).
 
@@ -143,7 +143,7 @@ if your results are correct.
 
 Until now, we have focused on alphabets for nucleotides to introduce the properties of SeqAn's alphabet
 on a specific example. SeqAn implements, however, many more alphabets. In this section, we want to give you
-an overview to the existing alphabets and in the end you can implement an additional one yourself.
+an overview of the other existing alphabets.
 
 ## The amino acid alphabet
 
@@ -155,7 +155,7 @@ some wildcard characters. For details read the \ref aminoacid page.
 ## Structure and quality alphabets
 
 The alphabets for structure and quality are sequence *annotations* since they describe additional
-properties of the respective sequence. 
+properties of the respective sequence.
 We distinguish between three types:
 1. **Quality alphabet for nucleotides**. The values are produced by sequencing machines and represent the probability
    that a nucleobase was recorded incorrectly. The characters are most commonly found in FASTQ files.
@@ -166,7 +166,7 @@ We distinguish between three types:
 3. **Protein structure alphabet**. The [DSSP](\ref seqan3::dssp9) format represents secondary structure elements like
    alpha helices and turns.
 
-You can build a [Cartesian Composition](\ref seqan3::cartesian_composition) with a nucleotide and quality
+You can build an [Alphabet Tuple Composite](\ref seqan3::alphabet_tuple_base) with a nucleotide and quality
 alphabet, or nucleotide / amino acid and structure alphabet that stores both information together.
 For the use cases just described we offer pre-defined composites (seqan3::qualified, seqan3::structured_rna,
 seqan3::structured_aa). See our API documentation for a detailed description of each.
@@ -174,7 +174,7 @@ seqan3::structured_aa). See our API documentation for a detailed description of 
 ## Gap alphabet
 
 The seqan3::gap alphabet is the smallest alphabet in SeqAn, consisting only of the gap character.
-It is most often used in a [Union Composition](\ref seqan3::union_composition) with a nucleotide or amino acid alphabet
+It is most often used in an [Alphabet Variant](\ref seqan3::alphabet_variant) with a nucleotide or amino acid alphabet
 to represent gapped sequences, e.g. in alignments. To create a gapped alphabet simply use seqan3::gapped<> with
 the alphabet type you want to refine.
 

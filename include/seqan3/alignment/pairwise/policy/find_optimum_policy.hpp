@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -92,7 +92,7 @@ protected:
     {
         if constexpr (traits_type::find_in_every_cell_type::value)
         {
-            optimum = std::max(current, optimum, alignment_optimum_compare_less{});
+            optimum = std::max(optimum, current, alignment_optimum_compare_less{}); // if equal => optimum
         }
 
     }
@@ -113,7 +113,7 @@ protected:
                                         [[maybe_unused]] alignment_optimum<score_t> & optimum) const noexcept
     {
         if constexpr (traits_type::find_in_last_row_type::value)
-            optimum = std::max(current, optimum, alignment_optimum_compare_less{});
+            optimum = std::max(optimum, current, alignment_optimum_compare_less{});  // if equal => optimum
     }
 
     /*!\brief Checks the complete last column for the optimal score.
@@ -138,19 +138,19 @@ protected:
         {
             ranges::for_each(rng, [&](auto && entry)
             {
-                optimum = std::max(alignment_optimum<score_t>{get<0>(get<0>(entry)),
+                optimum = std::max(optimum,
+                                   alignment_optimum<score_t>{get<0>(get<0>(entry)),
                                                               static_cast<alignment_coordinate>(get<1>(entry))},
-                                   optimum,
-                                   alignment_optimum_compare_less{});
+                                   alignment_optimum_compare_less{});  // if equal => optimum
             });
         }
         else  // Only check the last cell for the global alignment.
         {
             auto && last = *std::ranges::prev(std::ranges::end(rng));
-            optimum = std::max(alignment_optimum<score_t>{get<0>(get<0>(last)),
+            optimum = std::max(optimum,
+                               alignment_optimum<score_t>{get<0>(get<0>(last)),
                                                           static_cast<alignment_coordinate>(get<1>(last))},
-                               optimum,
-                               alignment_optimum_compare_less{});
+                               alignment_optimum_compare_less{});  // if equal => optimum
         }
     }
 

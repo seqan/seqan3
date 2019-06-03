@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -25,6 +25,16 @@
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 
+namespace seqan3::detail
+{
+
+//!\brief The alignment file output format base class.
+template <typename t>
+class alignment_file_output_format
+{};
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -42,7 +52,7 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT AlignmentFileOutputFormat =
-    requires (t                                                                    & v,
+    requires (detail::alignment_file_output_format<t>                              & v,
               std::ofstream                                                        & stream,
               alignment_file_output_options                                        & options,
               alignment_file_header<>                                              & header,
@@ -56,7 +66,7 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
               std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>>      & align,
               uint16_t                                                             & flag,
               uint8_t                                                              & mapq,
-              std::tuple<std::optional<int32_t>, std::optional<int32_t>, uint32_t> & mate,
+              std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>  & mate,
               sam_tag_dictionary                                                   & tag_dict,
               double                                                               & e_value,
               double                                                               & bit_score)
@@ -108,7 +118,6 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
                   e_value_type                           && e_value,
                   bit_score_type                         && bit_score)
  * \brief Write the given fields to the specified stream.
- * \memberof seqan3::AlignmentFileOutputFormat
  * \tparam stream_type      Output stream, must model seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3
  * \tparam id_type          Type of the seqan3
@@ -173,7 +182,7 @@ constexpr bool is_type_list_of_alignment_file_output_formats_v<type_list<ts...>>
                 = (AlignmentFileOutputFormat<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::alignment_file_format_concept.
+ * seqan3::AlignmentFileOutputFormat.
  * \ingroup core
  * \see seqan3::is_type_list_of_alignment_file_formats_v
  */

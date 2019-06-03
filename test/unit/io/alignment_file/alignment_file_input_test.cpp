@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <sstream>
@@ -13,6 +13,7 @@
 #include <seqan3/io/alignment_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>
@@ -116,7 +117,7 @@ TEST_F(alignment_file_input_f, construct_by_filename)
 
         EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
                                                fields<field::SEQ>,
-                                               type_list<alignment_file_format_sam>,
+                                               type_list<format_sam>,
                                                char>{filename.get_path(), fields<field::SEQ>{}} ));
     }
 }
@@ -126,17 +127,17 @@ TEST_F(alignment_file_input_f, construct_from_stream)
     /* stream + format_tag */
     EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
                                            fields<field::SEQ, field::ID, field::QUAL>,
-                                           type_list<alignment_file_format_sam>,
+                                           type_list<format_sam>,
                                            char>{std::istringstream{input},
-                                                 alignment_file_format_sam{}} ));
+                                                 format_sam{}} ));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
                                            fields<field::SEQ, field::ID, field::QUAL>,
-                                           type_list<alignment_file_format_sam>,
+                                           type_list<format_sam>,
                                            char>{std::istringstream{input},
-                                                 alignment_file_format_sam{},
+                                                 format_sam{},
                                                  fields<field::SEQ, field::ID, field::QUAL>{}} ));
 }
 
@@ -147,7 +148,7 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
                          field::REF_ID, field::REF_OFFSET, field::ALIGNMENT,
                          field::MAPQ, field::QUAL, field::FLAG, field::MATE,
                          field::TAGS, field::EVALUE, field::BIT_SCORE, field::HEADER_PTR>;
-    using comp2 = type_list<alignment_file_format_sam>;
+    using comp2 = type_list<format_sam, format_bam>;
     using comp3 = char;
 
     /* default template args */
@@ -196,23 +197,23 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::istringstream ext{input};
-        alignment_file_input fin{ext, alignment_file_format_sam{}};
+        alignment_file_input fin{ext, format_sam{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream temporary constructor */
     {
-        alignment_file_input fin{std::istringstream{input}, alignment_file_format_sam{}};
+        alignment_file_input fin{std::istringstream{input}, format_sam{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -220,24 +221,24 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
     {
         auto winput = input | view::convert<wchar_t>;
         std::wistringstream ext{winput};
-        alignment_file_input fin{ext, alignment_file_format_sam{}, fields<field::SEQ>{}};
+        alignment_file_input fin{ext, format_sam{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
     }
 
     /* guided stream temporary constructor + custom fields + different stream char type */
     {
         auto winput = input | view::convert<wchar_t>;
-        alignment_file_input fin{std::wistringstream{winput}, alignment_file_format_sam{}, fields<field::SEQ>{}};
+        alignment_file_input fin{std::wistringstream{winput}, format_sam{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<alignment_file_format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
     }
 }
@@ -254,7 +255,7 @@ TEST_F(alignment_file_input_f, empty_file)
 
 TEST_F(alignment_file_input_f, empty_stream)
 {
-    alignment_file_input fin{std::istringstream{std::string{}}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{std::string{}}, format_sam{}};
 
     EXPECT_EQ(fin.begin(), fin.end());
 }
@@ -262,7 +263,7 @@ TEST_F(alignment_file_input_f, empty_stream)
 TEST_F(alignment_file_input_f, record_reading)
 {
     /* record based reading */
-    alignment_file_input fin{std::istringstream{input}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{input}, format_sam{}};
 
     size_t counter = 0;
     for (auto & rec : fin)
@@ -281,7 +282,7 @@ TEST_F(alignment_file_input_f, record_reading_custom_fields)
 {
     /* record based reading */
     alignment_file_input fin{std::istringstream{input},
-                             alignment_file_format_sam{},
+                             format_sam{},
                              fields<field::ID, field::SEQ>{}};
 
     size_t counter = 0;
@@ -298,7 +299,7 @@ TEST_F(alignment_file_input_f, record_reading_custom_fields)
 
 TEST_F(alignment_file_input_f, file_view)
 {
-    alignment_file_input fin{std::istringstream{input}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{input}, format_sam{}};
 
     auto minimum_length_filter = std::view::filter([] (auto const & rec)
     {
@@ -362,7 +363,7 @@ TEST_F(alignment_file_input_f, decompression_by_filename_gz)
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
 
-        std::copy(begin(input_gz), end(input_gz), std::ostreambuf_iterator<char>{of});
+        std::copy(input_gz.begin(), input_gz.end(), std::ostreambuf_iterator<char>{of});
     }
 
     alignment_file_input fin{filename.get_path()};
@@ -372,7 +373,7 @@ TEST_F(alignment_file_input_f, decompression_by_filename_gz)
 
 TEST_F(alignment_file_input_f, decompression_by_stream_gz)
 {
-    alignment_file_input fin{std::istringstream{input_gz}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{input_gz}, format_sam{}};
 
     decompression_impl(*this, fin);
 }
@@ -385,10 +386,70 @@ TEST_F(alignment_file_input_f, read_empty_gz_file)
         '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
     };
-    alignment_file_input fin{std::istringstream{empty_zipped_file}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{empty_zipped_file}, format_sam{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
+
+std::string input_bgzf
+{
+    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
+    '\x02', '\x00', '\xF2', '\x00', '\x6D', '\x8E', '\x5D', '\x4B', '\xC3', '\x40', '\x10', '\x45', '\x9F', '\x6F',
+    '\x7E', '\x45', '\x43', '\xC5', '\x6A', '\x8D', '\x31', '\xFB', '\x61', '\x0A', '\xF3', '\x94', '\x35', '\x81',
+    '\x55', '\x30', '\x9B', '\xCA', '\x06', '\x5F', '\x25', '\xD4', '\xA8', '\x45', '\xB3', '\x2B', '\x51', '\x51',
+    '\xFF', '\xBD', '\xE9', '\xEA', '\x8B', '\x50', '\x18', '\xB8', '\xDC', '\x61', '\xCE', '\x61', '\x8A', '\xCB',
+    '\x0A', '\xB7', '\x86', '\x58', '\x9A', '\xC3', '\x36', '\xF4', '\xE1', '\x9E', '\x9D', '\xFF', '\x74', '\xD0',
+    '\x0D', '\x39', '\xEF', '\xFA', '\xA8', '\xB0', '\x37', '\xB0', '\x86', '\xC6', '\xFE', '\x01', '\xD7', '\x86',
+    '\x84', '\x8C', '\x8A', '\xB5', '\xC6', '\x55', '\x45', '\xAF', '\xA3', '\x7F', '\x64', '\x58', '\x1B', '\xDA',
+    '\x78', '\xFF', '\x72', '\xB7', '\x6B', '\x63', '\x37', '\x44', '\x45', '\xD9', '\xA0', '\x7D', '\xDA', '\xBE',
+    '\xCD', '\xA6', '\xE9', '\x66', '\x1B', '\x3F', '\x0C', '\xBD', '\x7B', '\x4F', '\xA3', '\xB1', '\xEF', '\xEE',
+    '\x19', '\x24', '\xC3', '\x4E', '\xC3', '\x90', '\x33', '\x30', '\xCB', '\x6A', '\x56', '\xF1', '\xFA', '\x77',
+    '\x93', '\x41', '\x64', '\x19', '\x54', '\xA9', '\x5B', '\xC4', '\xF3', '\xF9', '\x01', '\x94', '\xA5', '\x2D',
+    '\x71', '\x98', '\x7A', '\x8A', '\x55', '\xA0', '\x39', '\x24', '\x0F', '\xB7', '\x1C', '\x39', '\xC7', '\x6A',
+    '\x62', '\x27', '\xDE', '\xFE', '\xA3', '\xB5', '\x2E', '\x5B', '\x6D', '\x94', '\x0E', '\x8A', '\xC3', '\xC5',
+    '\xD1', '\xF1', '\x12', '\x5F', '\xDF', '\x74', '\x41', '\x36', '\x11', '\x89', '\x4C', '\xCE', '\x83', '\x46',
+    '\x40', '\x8A', '\x00', '\x09', '\xE4', '\xE2', '\xEF', '\x09', '\xB9', '\x47', '\xA6', '\xB5', '\xD2', '\xAD',
+    '\x6A', '\x15', '\xE2', '\x78', '\x79', '\x92', '\x9C', '\xA6', '\x67', '\xD1', '\x0F', '\x72', '\x0E', '\xE3',
+    '\xE8', '\x26', '\x01', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00',
+    '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00',
+    '\x00', '\x00', '\x00', '\x00', '\x00'
+};
+
+TEST_F(alignment_file_input_f, decompression_by_filename_bgzf)
+{
+    test::tmp_filename filename{"alignment_file_output_test.sam.bgzf"};
+
+    {
+        std::ofstream of{filename.get_path(), std::ios::binary};
+
+        std::copy(input_bgzf.begin(), input_bgzf.end(), std::ostreambuf_iterator<char>{of});
+    }
+
+    alignment_file_input fin{filename.get_path()};
+
+    decompression_impl(*this, fin);
+}
+
+TEST_F(alignment_file_input_f, decompression_by_stream_bgzf)
+{
+    alignment_file_input fin{std::istringstream{input_bgzf}, format_sam{}};
+
+    decompression_impl(*this, fin);
+}
+
+TEST_F(alignment_file_input_f, read_empty_bgzf_file)
+{
+    std::string empty_bgzf_file
+    {
+        '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF',
+        '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
+    };
+    alignment_file_input fin{std::istringstream{empty_bgzf_file}, format_sam{}};
+
+    EXPECT_TRUE(fin.begin() == fin.end());
+}
+
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
@@ -414,7 +475,7 @@ TEST_F(alignment_file_input_f, decompression_by_filename_bz2)
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
 
-        std::copy(begin(input_bz2), end(input_bz2), std::ostreambuf_iterator<char>{of});
+        std::copy(input_bz2.begin(), input_bz2.end(), std::ostreambuf_iterator<char>{of});
     }
 
     alignment_file_input fin{filename.get_path()};
@@ -424,7 +485,7 @@ TEST_F(alignment_file_input_f, decompression_by_filename_bz2)
 
 TEST_F(alignment_file_input_f, decompression_by_stream_bz2)
 {
-    alignment_file_input fin{std::istringstream{input_bz2}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{input_bz2}, format_sam{}};
 
     decompression_impl(*this, fin);
 }
@@ -435,7 +496,7 @@ TEST_F(alignment_file_input_f, read_empty_bz2_file)
     {
         '\x42', '\x5a', '\x68', '\x39', '\x17', '\x72', '\x45', '\x38', '\x50', '\x90', '\x00', '\x00', '\x00', '\x00'
     };
-    alignment_file_input fin{std::istringstream{empty_zipped_file}, alignment_file_format_sam{}};
+    alignment_file_input fin{std::istringstream{empty_zipped_file}, format_sam{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -507,8 +568,7 @@ TEST_F(alignment_file_input_sam_format_f, construct_by_filename_and_read_alignme
 
 TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignments)
 {
-    alignment_file_input fin{std::istringstream{input}, ref_ids, ref_seqs,
-                             alignment_file_format_sam{}, fields<field::ALIGNMENT>{}};
+    alignment_file_input fin{std::istringstream{input}, ref_ids, ref_seqs, format_sam{}, fields<field::ALIGNMENT>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
 
@@ -526,12 +586,108 @@ TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignme
 
 TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignment_with_dummy)
 {
-    alignment_file_input fin{std::istringstream{input}, alignment_file_format_sam{}, fields<field::ALIGNMENT>{}};
+    alignment_file_input fin{std::istringstream{input}, format_sam{}, fields<field::ALIGNMENT>{}};
 
     size_t counter = 0;
     for (auto & [ alignment ] : fin)
     {
         EXPECT_EQ(get<1>(alignment), get<1>(alignments_expected[counter]));
+
+        counter++;
+    }
+
+    EXPECT_EQ(counter, 3u);
+}
+
+// ----------------------------------------------------------------------------
+// BAM format specificities
+// ----------------------------------------------------------------------------
+
+struct alignment_file_input_bam_format_f : public alignment_file_input_sam_format_f
+{
+    std::string binary_input{ // corresponds to 'input' from alignment_file_input_f fixture
+        '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42',
+        '\x43', '\x02', '\x00', '\x8D', '\x00', '\x73', '\x72', '\xF4', '\x65', '\x4C', '\x66', '\x60', '\x60',
+        '\x70', '\xF0', '\x70', '\xE1', '\x0C', '\xF3', '\xB3', '\x32', '\xD4', '\x33', '\xE3', '\x0C', '\xF6',
+        '\xB7', '\x2A', '\xCD', '\xCB', '\xCE', '\xCB', '\x2F', '\xCF', '\xE3', '\x74', '\xF7', '\xB7', '\xCA',
+        '\xCB', '\xCF', '\x4B', '\xE5', '\x72', '\x08', '\x0E', '\xE4', '\x0C', '\xF6', '\xB3', '\x2A', '\x4A',
+        '\x4D', '\xE3', '\xF4', '\xF1', '\xB3', '\x32', '\x36', '\xE1', '\x72', '\x08', '\x70', '\xE7', '\xF4',
+        '\x74', '\xB1', '\x2A', '\x28', '\xCA', '\x4F', '\x37', '\xE4', '\x0C', '\xF0', '\xB3', '\x4A', '\xCE',
+        '\xCF', '\xCF', '\x89', '\x07', '\xF1', '\x8A', '\x12', '\x73', '\xB9', '\x1C', '\x9C', '\xFD', '\x39',
+        '\x43', '\x32', '\x32', '\x8B', '\x15', '\x80', '\x28', '\x51', '\x21', '\x39', '\x3F', '\x37', '\x37',
+        '\x35', '\xAF', '\x44', '\x8F', '\x8B', '\x11', '\x68', '\x0D', '\x0B', '\x10', '\x03', '\x4D', '\x61',
+        '\x50', '\x02', '\xD2', '\x00', '\xF2', '\x5C', '\x8E', '\x8D', '\x7B', '\x00', '\x00', '\x00', '\x1F',
+        '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',
+        '\x02', '\x00', '\x9F', '\x00', '\x73', '\x61', '\x40', '\x00', '\x36', '\x5B', '\x4F', '\x21', '\x16',
+        '\x06', '\x4D', '\x06', '\x16', '\x28', '\x9F', '\x13', '\x88', '\x75', '\x18', '\x19', '\x18', '\x8A',
+        '\x52', '\x13', '\x53', '\x0C', '\x19', '\x44', '\x80', '\x3C', '\x01', '\x20', '\x16', '\x02', '\x62',
+        '\x05', '\x10', '\xED', '\xC1', '\xC0', '\xC4', '\xC4', '\xEC', '\x18', '\xEC', '\xCC', '\xE4', '\xE7',
+        '\xEB', '\xCC', '\x1E', '\x04', '\xD5', '\xC3', '\x08', '\x32', '\xC7', '\x0E', '\x64', '\x8E', '\x16',
+        '\x58', '\x3F', '\xBA', '\x39', '\x46', '\x0C', '\x05', '\x50', '\x33', '\x40', '\x66', '\x81', '\xCC',
+        '\x14', '\x71', '\x6A', '\xF9', '\xE8', '\x00', '\x32', '\x8A', '\x95', '\x8D', '\x9D', '\x83', '\xB3',
+        '\xA2', '\xD2', '\x29', '\x98', '\x19', '\x28', '\xCA', '\x0C', '\x74', '\x05', '\x2B', '\x83', '\x1F',
+        '\xD4', '\x04', '\x26', '\x90', '\xA9', '\xF6', '\x9E', '\x42', '\xEC', '\x0C', '\xDA', '\x0C', '\x1C',
+        '\x58', '\x4C', '\x35', '\x46', '\x71', '\x9D', '\x03', '\x9A', '\x0D', '\x2E', '\x22', '\x8D', '\x8D',
+        '\x40', '\xF5', '\x5C', '\xDC', '\x3C', '\xBC', '\x7C', '\x00', '\xC5', '\xFD', '\x4B', '\xCD', '\xF0',
+        '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF',
+        '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00', '\x00', '\x00', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00'
+    };
+};
+
+TEST_F(alignment_file_input_bam_format_f, construct_by_filename)
+{
+    test::tmp_filename filename{"alignment_file_input_constructor.bam"};
+    {
+        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+        filecreator << binary_input;
+    }
+
+    alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, fields<field::ID,
+                                                                            field::SEQ,
+                                                                            field::QUAL,
+                                                                            field::ALIGNMENT>{}};
+
+    EXPECT_EQ(fin.header().ref_ids(), ref_ids);
+    EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});
+
+    size_t counter = 0;
+    for (auto & [ id, seq, qual, alignment ] : fin)
+    {
+        EXPECT_EQ(id, id_comp[counter]);
+        EXPECT_EQ(seq, seq_comp[counter]);
+        EXPECT_EQ(qual, qual_comp[counter]);
+
+        EXPECT_TRUE(std::ranges::equal(get<0>(alignment), get<0>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(alignments_expected[counter])));
+
+        counter++;
+    }
+
+    EXPECT_EQ(counter, 3u);
+}
+
+TEST_F(alignment_file_input_bam_format_f, construct_by_stream)
+{
+    std::istringstream stream{binary_input};
+
+    alignment_file_input fin{stream, ref_ids, ref_seqs, format_bam{}, fields<field::ID,
+                                                                             field::SEQ,
+                                                                             field::QUAL,
+                                                                             field::ALIGNMENT>{}};
+
+    EXPECT_EQ(fin.header().ref_ids(), ref_ids);
+    EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});
+
+    size_t counter = 0;
+    for (auto & [ id, seq, qual, alignment ] : fin)
+    {
+        EXPECT_EQ(id, id_comp[counter]);
+        EXPECT_EQ(seq, seq_comp[counter]);
+        EXPECT_EQ(qual, qual_comp[counter]);
+
+        EXPECT_TRUE(std::ranges::equal(get<0>(alignment), get<0>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(alignments_expected[counter])));
 
         counter++;
     }

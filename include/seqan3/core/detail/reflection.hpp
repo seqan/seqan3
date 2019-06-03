@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -14,7 +14,7 @@
 
 #include <utility>
 
-#include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/range/container/small_string.hpp>
 
 namespace seqan3::detail
 {
@@ -100,7 +100,7 @@ private:
     static constexpr auto get_display_name_fn()
     {
         // Use a helper function to extract the size of the requested type.
-        constexpr_string<get_display_name_size_v<type>> tmp{};
+        constexpr auto name_length = get_display_name_size_v<type>;
 
         // Extract the type again.
         auto name_ptr = __PRETTY_FUNCTION__;
@@ -112,20 +112,16 @@ private:
         for (; *name_ptr == ' '; ++name_ptr)
         {}
 
-        for (unsigned i = 0; i < tmp.size(); ++i, ++name_ptr)
-        {
-            tmp[i] = *name_ptr;
-        }
-        return tmp;
+        return small_string<name_length>{name_ptr, name_ptr + name_length};
     };
 public:
     //!\brief Defines the display name of `type`.
-    static constexpr constexpr_string value = get_display_name_fn();
+    static constexpr small_string value = get_display_name_fn();
 };
 
 //!\brief Shortcut for accessing the display name of the given `type`.
 //!\see get_display_name
 //!\ingroup core
 template <typename type>
-constexpr constexpr_string get_display_name_v = get_display_name<type>::value;
+constexpr small_string get_display_name_v = get_display_name<type>::value;
 } // namespace seqan3::detail

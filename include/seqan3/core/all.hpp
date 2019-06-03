@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -20,6 +20,7 @@
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/concept/all.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/detail/all.hpp>
 #include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/core/platform.hpp>

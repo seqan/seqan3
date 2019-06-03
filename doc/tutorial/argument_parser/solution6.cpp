@@ -3,10 +3,10 @@
 
 #include <range/v3/view/split.hpp>
 
-#include <seqan3/argument_parser/all.hpp>     // includes all necessary headers
-#include <seqan3/io/stream/debug_stream.hpp>  // our custom output stream
-#include <seqan3/std/charconv>                // includes std::from_chars
-#include <seqan3/std/filesystem>              // use std::filesystem::path
+#include <seqan3/argument_parser/all.hpp> // includes all necessary headers
+#include <seqan3/core/debug_stream.hpp>   // our custom output stream
+#include <seqan3/std/charconv>            // includes std::from_chars
+#include <seqan3/std/filesystem>          // use std::filesystem::path
 
 using namespace seqan3;
 
@@ -78,10 +78,10 @@ void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
     parser.info.short_description = "Aggregate average Game of Thrones viewers by season.";
     parser.info.version = "1.0.0";
 
-    //![path_existence_validator]
-    parser.add_positional_option(args.file_path, "Please provide a tab separated data file.",
-                                 path_existence_validator{} | file_ext_validator({"tsv"}) );
-    //![path_existence_validator]
+    //![file_validator]
+    parser.add_positional_option(args.file_path, "Please provide a tab separated seasons file.",
+                                 regex_validator{".*seasons\\..+$"} | input_file_validator{{"tsv"}} );
+    //![file_validator]
 
     //![arithmetic_range_validator]
     parser.add_option(args.seasons, 's', "season", "Choose the seasons to aggregate.",
@@ -90,7 +90,7 @@ void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
 
     //![value_list_validator]
     parser.add_option(args.aggregate_by, 'a', "aggregate-by", "Choose your method of aggregation.",
-                      option_spec::DEFAULT, value_list_validator({"median", "mean"}));
+                      option_spec::DEFAULT, value_list_validator{{"median", "mean"}});
     //![value_list_validator]
 
     parser.add_flag(args.header_is_set, 'H', "header-is-set", "Let us know whether your data file contains a "
@@ -99,7 +99,7 @@ void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser("Game of Parsing", argc, argv);        // initialise myparser
+    argument_parser myparser{"Game of Parsing", argc, argv};        // initialise myparser
     cmd_arguments args{};
 
     initialize_argument_parser(myparser, args);

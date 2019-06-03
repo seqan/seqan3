@@ -53,7 +53,7 @@ structure_file_out fout{tmp_dir/"output.dbn"}; // Vienna format detected, std::o
 
 {
 //! [write_std_out]
-structure_file_out fout{std::cout, structure_file_format_vienna{}};
+structure_file_out fout{std::cout, format_vienna{}};
 //               ^ no need to specify the template arguments
 
 fout.emplace_back("AACGUU"_rna4, "example_id", ".(())."_wuss51); // default order for vienna: SEQ, ID, STRUCTURE

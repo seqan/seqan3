@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -29,9 +29,11 @@ class rna5;
 /*!\brief The five letter DNA alphabet of A,C,G,T and the unknown character N.
  * \ingroup nucleotide
  * \implements seqan3::NucleotideAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \details
  * Note that you can assign 'U' as a character to dna5 and it will silently
@@ -61,12 +63,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dna5() noexcept : base_t{} {}
-    constexpr dna5(dna5 const &) = default;
-    constexpr dna5(dna5 &&) = default;
-    constexpr dna5 & operator=(dna5 const &) = default;
-    constexpr dna5 & operator=(dna5 &&) = default;
-    ~dna5() = default;
+    constexpr dna5()                          noexcept = default; //!< Defaulted.
+    constexpr dna5(dna5 const &)              noexcept = default; //!< Defaulted.
+    constexpr dna5(dna5 &&)                   noexcept = default; //!< Defaulted.
+    constexpr dna5 & operator=(dna5 const &)  noexcept = default; //!< Defaulted.
+    constexpr dna5 & operator=(dna5 &&)       noexcept = default; //!< Defaulted.
+    ~dna5()                                   noexcept = default; //!< Defaulted.
 
     using base_t::base_t;
 
@@ -82,7 +84,7 @@ protected:
     //!\privatesection
 
     //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'A',
         'C',
@@ -103,7 +105,7 @@ protected:
                 c = 3; // == 'N'
 
             // reverse mapping for characters and their lowercase
-            for (size_t rnk = 0u; rnk < value_size; ++rnk)
+            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
             {
                 ret[         rank_to_char[rnk] ] = rnk;
                 ret[to_lower(rank_to_char[rnk])] = rnk;
@@ -118,7 +120,7 @@ protected:
     };
 
     //!\copydoc seqan3::dna4::complement_table
-    static const std::array<dna5, value_size> complement_table;
+    static const std::array<dna5, alphabet_size> complement_table;
 };
 
 // ------------------------------------------------------------------
@@ -171,7 +173,7 @@ inline dna5_vector operator""_dna5(char const * s, std::size_t n)
 // dna5 (deferred definition)
 // ------------------------------------------------------------------
 
-constexpr std::array<dna5, dna5::value_size> dna5::complement_table
+constexpr std::array<dna5, dna5::alphabet_size> dna5::complement_table
 {
     'T'_dna5,    // complement of 'A'_dna5
     'G'_dna5,    // complement of 'C'_dna5

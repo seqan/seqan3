@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include<seqan3/io/stream/debug_stream.hpp>
+#include<seqan3/core/debug_stream.hpp>
 
 namespace seqan3
 {
@@ -29,3 +29,11 @@ void PrintTo (t const & v, std::ostream * out)
 //!\endcond
 
 } // namespace seqan3
+
+namespace seqan3::detail
+{
+
+//!\brief Overload for the googletest PrintTo function that always delegates to our debug_stream.
+using ::seqan3::PrintTo;
+
+} // namespace seqan3::detail

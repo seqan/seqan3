@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -26,9 +26,11 @@ namespace seqan3
 
 /*!\brief The 15 letter RNA alphabet, containing all IUPAC smybols minus the gap.
  * \implements seqan3::NucleotideAlphabet
- * \implements seqan3::detail::ConstexprAlphabet
+ * \implements seqan3::WritableAlphabet
+ * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
+ * \implements std::Regular
  *
  * \ingroup nucleotide
  *
@@ -59,12 +61,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr rna15() noexcept : base_t{} {}
-    constexpr rna15(rna15 const &) = default;
-    constexpr rna15(rna15 &&) = default;
-    constexpr rna15 & operator=(rna15 const &) = default;
-    constexpr rna15 & operator=(rna15 &&) = default;
-    ~rna15() = default;
+    constexpr rna15()                           noexcept = default; //!< Defaulted.
+    constexpr rna15(rna15 const &)              noexcept = default; //!< Defaulted.
+    constexpr rna15(rna15 &&)                   noexcept = default; //!< Defaulted.
+    constexpr rna15 & operator=(rna15 const &)  noexcept = default; //!< Defaulted.
+    constexpr rna15 & operator=(rna15 &&)       noexcept = default; //!< Defaulted.
+    ~rna15()                                    noexcept = default; //!< Defaulted.
 
     using base_t::base_t;
 
@@ -79,7 +81,7 @@ protected:
     //!\privatesection
 
     //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char[value_size]
+    static constexpr char_type rank_to_char[alphabet_size]
     {
         'A',
         'B',
@@ -102,7 +104,7 @@ protected:
     static constexpr std::array<rank_type, 256> char_to_rank = dna15::char_to_rank;
 
     //!\copydoc seqan3::dna4::complement_table
-    static const std::array<rna15, value_size> complement_table;
+    static const std::array<rna15, alphabet_size> complement_table;
 };
 
 // ------------------------------------------------------------------
@@ -155,7 +157,7 @@ inline rna15_vector operator""_rna15(char const * s, std::size_t n)
 // rna15 (deferred definition)
 // ------------------------------------------------------------------
 
-constexpr std::array<rna15, rna15::value_size> rna15::complement_table
+constexpr std::array<rna15, rna15::alphabet_size> rna15::complement_table
 {
     'U'_rna15,    // complement of 'A'_rna15
     'V'_rna15,    // complement of 'B'_rna15

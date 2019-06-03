@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -16,6 +16,7 @@
 
 #include <seqan3/core/metafunction/iterator.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
@@ -23,6 +24,7 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/range/detail/inherited_iterator_base.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -74,41 +76,53 @@ private:
         using base_t      = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
 
         //!\brief The current position.
-        size_t pos;
+        size_t pos{};
 
         //!\brief The size parameter to the view.
-        size_t max_pos;
+        size_t max_pos{};
+
+        //!\brief A pointer to host, s.t. the size of the view can shrink on pure input ranges.
+        std::conditional_t<exactly && !std::ForwardIterator<base_base_t>, view_take *, detail::ignore_t> host_ptr;
 
     public:
         /*!\name Constructors, destructor and assignment
+         * \brief Exceptions specification is implicitly inherited.
          * \{
          */
-        iterator_type() = default;
-        constexpr iterator_type(iterator_type const & rhs) = default;
-        constexpr iterator_type(iterator_type && rhs) = default;
-        constexpr iterator_type & operator=(iterator_type const & rhs) = default;
-        constexpr iterator_type & operator=(iterator_type && rhs) = default;
-        ~iterator_type() = default;
+        constexpr iterator_type()                                      = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type const & rhs)             = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type && rhs)                  = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type const & rhs) = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type && rhs)      = default; //!< Defaulted.
+        ~iterator_type()                                               = default; //!< Defaulted.
 
         //!\brief Constructor that delegates to the CRTP layer.
-        iterator_type(base_base_t const & it) :
-            base_t{it}
+        constexpr iterator_type(base_base_t const & it) noexcept(noexcept(base_t{it})) :
+            base_t{std::move(it)}
         {}
 
         //!\brief Constructor that delegates to the CRTP layer and initialises the members.
-        iterator_type(base_base_t it, size_t const _pos, size_t const _max_pos) :
-            base_t{it}, pos{_pos}, max_pos(_max_pos)
-        {}
+        constexpr iterator_type(base_base_t it, size_t const _pos, size_t const _max_pos, view_take * host = nullptr) noexcept(noexcept(base_t{it})) :
+            base_t{std::move(it)}, pos{_pos}, max_pos(_max_pos)
+        {
+            host_ptr = host;
+        }
         //!\}
 
         /*!\name Associated types
          * \brief All are derived from the base_base_t.
          * \{
          */
+
+        //!\brief The difference type.
         using difference_type       = typename std::iterator_traits<base_base_t>::difference_type;
+        //!\brief The value type.
         using value_type            = typename std::iterator_traits<base_base_t>::value_type;
+        //!\brief The reference type.
         using reference             = typename std::iterator_traits<base_base_t>::reference;
+        //!\brief The pointer type.
         using pointer               = typename std::iterator_traits<base_base_t>::pointer;
+        //!\brief The iterator category tag.
         using iterator_category     = iterator_tag_t<base_base_t>;
         //!\}
 
@@ -116,31 +130,40 @@ private:
          * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
          * \{
          */
-        iterator_type & operator++() noexcept(noexcept(++base_base_t{}))
+
+        //!\brief Increments the iterator by one.
+        constexpr iterator_type & operator++() noexcept(noexcept(++std::declval<base_t &>()))
         {
-            base_base_t::operator++();
+            base_t::operator++();
             ++pos;
+            if constexpr (exactly && !std::ForwardIterator<base_base_t>)
+                --host_ptr->target_size;
             return *this;
         }
 
-        iterator_type operator++(int) noexcept(noexcept(++base_base_t{}))
+        //!\brief Returns an iterator incremented by one.
+        constexpr iterator_type operator++(int) noexcept(noexcept(++std::declval<iterator_type &>()) &&
+                                               std::is_nothrow_copy_constructible_v<iterator_type>)
         {
             iterator_type cpy{*this};
             ++(*this);
             return cpy;
         }
 
-        iterator_type & operator--() noexcept(noexcept(--base_base_t{}))
+        //!\brief Decrements the iterator by one.
+        constexpr iterator_type & operator--() noexcept(noexcept(--std::declval<base_base_t &>()))
         //!\cond
             requires std::BidirectionalIterator<base_base_t>
         //!\endcond
         {
-            base_base_t::operator--();
+            base_t::operator--();
             --pos;
             return *this;
         }
 
-        iterator_type operator--(int) noexcept(noexcept(--base_base_t{}))
+        //!\brief Returns an iterator decremented by one.
+        constexpr iterator_type operator--(int) noexcept(noexcept(--std::declval<iterator_type &>()) &&
+                                               std::is_nothrow_copy_constructible_v<iterator_type>)
         //!\cond
             requires std::BidirectionalIterator<base_base_t>
         //!\endcond
@@ -150,22 +173,24 @@ private:
             return cpy;
         }
 
-        iterator_type & operator+=(difference_type const skip) noexcept(noexcept(base_base_t{} += skip))
+        //!\brief Advances the iterator by skip positions.
+        constexpr iterator_type & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() += skip))
         //!\cond
             requires std::RandomAccessIterator<base_base_t>
         //!\endcond
         {
-            base_base_t::operator+=(skip);
+            base_t::operator+=(skip);
             pos += skip;
             return *this;
         }
 
-        iterator_type & operator-=(difference_type const skip) noexcept(noexcept(base_base_t{} -= skip))
+        //!\brief Advances the iterator by -skip positions.
+        constexpr iterator_type & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -= skip))
         //!\cond
             requires std::RandomAccessIterator<base_base_t>
         //!\endcond
         {
-            base_base_t::operator-=(skip);
+            base_t::operator-=(skip);
             pos -= skip;
             return *this;
         }
@@ -175,18 +200,25 @@ private:
          * \brief We define comparison against self and against the sentinel.
          * \{
          */
-        bool operator==(iterator_type const & rhs) const noexcept(!or_throw)
+
+        //!\brief Checks whether `*this` is equal to `rhs`.
+        constexpr bool operator==(iterator_type const & rhs) const
+            noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
+        //!\cond
             requires std::ForwardIterator<base_base_t>
+        //!\endcond
         {
-            return static_cast<base_base_t>(*this) == static_cast<base_base_t>(rhs);
+            return *base_t::this_to_base() == *rhs.this_to_base();
         }
 
-        bool operator==(sentinel_type const & rhs) const noexcept(!or_throw)
+        //!\copydoc operator==()
+        constexpr bool operator==(sentinel_type const & rhs) const
+            noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<sentinel_type &>()))
         {
             if (pos >= max_pos)
                 return true;
 
-            if (static_cast<base_base_t>(*this) == rhs)
+            if (*base_t::this_to_base() == rhs)
             {
                 if constexpr (or_throw)
                     throw unexpected_end_of_input{"Reached end of input before designated size."};
@@ -199,23 +231,31 @@ private:
             }
         }
 
-        friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs) noexcept(!or_throw)
+        //!\brief Checks whether `lhs` is equal to `rhs`.
+        constexpr friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs == lhs))
         {
             return rhs == lhs;
         }
 
-        bool operator!=(sentinel_type const & rhs) const noexcept(!or_throw)
+        //!\brief Checks whether `*this` is not equal to `rhs`.
+        constexpr bool operator!=(sentinel_type const & rhs) const
+            noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         {
             return !(*this == rhs);
         }
 
-        bool operator!=(iterator_type const & rhs) const noexcept(!or_throw)
+        //!\copydoc operator!=()
+        constexpr bool operator!=(iterator_type const & rhs) const
+            noexcept(noexcept(std::declval<iterator_type &>() == rhs))
+        //!\cond
             requires std::ForwardIterator<base_base_t>
+        //!\endcond
         {
-            return static_cast<base_base_t>(*this) != static_cast<base_base_t>(rhs);
+            return !(*this == rhs);
         }
 
-        friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(!or_throw)
+        //!\brief Checks whether `lhs` is not equal to `rhs`.
+        constexpr friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs != lhs))
         {
             return rhs != lhs;
         }
@@ -225,12 +265,17 @@ private:
          * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
          * \{
          */
-        reference operator[](std::make_unsigned_t<difference_type> const n) const noexcept(noexcept(base_base_t{}[0]))
+
+        /*!\brief Accesses an element by index.
+         * \param n Position relative to current location.
+         * \return A reference to the element at relative location.
+         */
+        constexpr reference operator[](std::make_unsigned_t<difference_type> const n) const
+            noexcept(noexcept(std::declval<base_base_t &>()[0]))
         //!\cond
             requires std::RandomAccessIterator<base_base_t>
         //!\endcond
         {
-            pos = n;
             return base_base_t::operator[](n);
         }
         //!\}
@@ -247,7 +292,9 @@ public:
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = value_type_t<urng_t>;
     //!\brief The size_type is `size_t` if the view is exact, otherwise `void`.
-    using size_type         = std::conditional_t<exactly, size_t, void>;
+    using size_type         = std::conditional_t<exactly,
+                                                 transformation_trait_or_t<seqan3::size_type<urng_t>, size_t>,
+                                                 void>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = difference_type_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
@@ -259,19 +306,19 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_take() = default;
-    constexpr view_take(view_take const & rhs) = default;
-    constexpr view_take(view_take && rhs) = default;
-    constexpr view_take & operator=(view_take const & rhs) = default;
-    constexpr view_take & operator=(view_take && rhs) = default;
-    ~view_take() = default;
+    constexpr view_take()                                  = default; //!< Defaulted.
+    constexpr view_take(view_take const & rhs)             = default; //!< Defaulted.
+    constexpr view_take(view_take && rhs)                  = default; //!< Defaulted.
+    constexpr view_take & operator=(view_take const & rhs) = default; //!< Defaulted.
+    constexpr view_take & operator=(view_take && rhs)      = default; //!< Defaulted.
+    ~view_take()                                           = default; //!< Defaulted.
 
     /*!\brief Construct from another View.
      * \param[in] _urange The underlying range.
      * \param[in] _size   The desired size (after which to stop returning elements).
      * \throws unexpected_end_of_input If `exactly && or_throw && seqan3::sized_range_concept<urng_t>`.
      */
-    view_take(urng_t _urange, size_t const _size)
+    constexpr view_take(urng_t _urange, size_t const _size)
         : urange{std::move(_urange)}, target_size{_size}
     {
         if constexpr (exactly && or_throw && std::ranges::SizedRange<urng_t>)
@@ -294,7 +341,7 @@ public:
     //!\cond
         requires std::Constructible<rng_t, std::ranges::all_view<rng_t>>
     //!\endcond
-    view_take(rng_t && _urange, size_t const _size)
+    constexpr view_take(rng_t && _urange, size_t const _size)
         : view_take{std::view::all(std::forward<rng_t>(_urange)), _size}
     {}
     //!\}
@@ -315,21 +362,21 @@ public:
      *
      * No-throw guarantee.
      */
-    iterator begin() noexcept
+    constexpr iterator begin() noexcept
     {
-        return {seqan3::begin(urange), 0, target_size};
+        return {seqan3::begin(urange), 0, target_size, &(*this)};
     }
 
     //!\copydoc begin()
-    const_iterator begin() const noexcept
-        requires const_iterable_concept<urng_t>
+    constexpr const_iterator begin() const noexcept
+        requires ConstIterableRange<urng_t>
     {
         return {seqan3::cbegin(urange), 0, target_size};
     }
 
     //!\copydoc begin()
-    const_iterator cbegin() const noexcept
-        requires const_iterable_concept<urng_t>
+    constexpr const_iterator cbegin() const noexcept
+        requires ConstIterableRange<urng_t>
     {
         return {seqan3::cbegin(urange), 0, target_size};
     }
@@ -347,21 +394,21 @@ public:
      *
      * No-throw guarantee.
      */
-    sentinel_type end() noexcept
+    constexpr sentinel_type end() noexcept
     {
         return {seqan3::end(urange)};
     }
 
     //!\copydoc end()
-    sentinel_type end() const noexcept
-        requires const_iterable_concept<urng_t>
+    constexpr sentinel_type end() const noexcept
+        requires ConstIterableRange<urng_t>
     {
         return {seqan3::cend(urange)};
     }
 
     //!\copydoc end()
-    sentinel_type cend() const noexcept
-        requires const_iterable_concept<urng_t>
+    constexpr sentinel_type cend() const noexcept
+        requires ConstIterableRange<urng_t>
     {
         return {seqan3::cend(urange)};
     }
@@ -378,38 +425,10 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type size() const noexcept
+    constexpr size_type size() const noexcept
         requires exactly
     {
         return target_size;
-    }
-
-    /*!\brief Convert this view into a container implicitly.
-     * \tparam container_t Type of the container to convert to; must satisfy seqan3::sequence_container_concept and the
-     *                     seqan3::reference_t of both must model std::CommonReference.
-     * \returns This view converted to container_t.
-     */
-    template <sequence_container_concept container_t>
-    operator container_t()
-    //!\cond
-        requires std::CommonReference<reference_t<container_t>, reference>
-    //!\endcond
-    {
-        container_t ret;
-        std::ranges::copy(begin(), end(), std::back_inserter(ret));
-        return ret;
-    }
-
-    //!\overload
-    template <sequence_container_concept container_t>
-    operator container_t() const
-    //!\cond
-        requires const_iterable_concept<urng_t> && std::CommonReference<reference_t<container_t>, const_reference>
-    //!\endcond
-    {
-        container_t ret;
-        std::ranges::copy(cbegin(), cend(), std::back_inserter(ret));
-        return ret;
     }
 };
 
@@ -428,104 +447,24 @@ view_take(urng_t && , size_t) -> view_take<std::ranges::all_view<urng_t>, exactl
  * \tparam or_throw Whether to throw an exception when the input is exhausted before the end is reached.
  */
 template <bool exactly, bool or_throw>
-class take_fn : public pipable_adaptor_base<take_fn<exactly, or_throw>>
+struct take_fn
 {
-private:
-    //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<take_fn<exactly, or_throw>>;
+    //!\brief Store the arguments and return a range adaptor closure object.
+    constexpr auto operator()(size_t const size) const
+    {
+        return adaptor_from_functor{*this, size};
+    }
 
-public:
-    //!\brief Inherit the base class's Constructors.
-    using base_t::base_t;
-
-private:
-    //!\brief Befriend the base class so it can call impl().
-    friend base_t;
-
-    /*!\brief       Call the view's constructor with the underlying view as argument.
-     * \returns     An instance of seqan3::detail::view_take.
+    /*!\brief Type erase if possible and return view_take if not.
+     * \returns An instance of std::span, std::basic_string_view, std::ranges::subrange or seqan3::detail::view_take.
      */
-    template <std::ranges::ViewableRange urng_t>
-    static auto impl(urng_t && urange, size_t target_size)
+    template <std::ranges::Range urng_t>
+    constexpr auto operator()(urng_t && urange, size_t target_size) const
     {
-        size_check(urange, target_size);
-        return view_take<std::ranges::all_view<urng_t>, exactly, or_throw>{std::forward<urng_t>(urange), target_size};
-    }
+        static_assert(std::ranges::ViewableRange<urng_t>,
+                      "The view::take adaptor can only be passed ViewableRanges, i.e. Views or &-to-non-View.");
 
-    /*!\brief       Overload for random-access, sized ranges.
-     * \returns     A std::span over the input.
-     */
-    template <std::ranges::ViewableRange urng_t>
-    //!\cond
-        requires std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t>
-    //!\endcond
-    static auto impl(urng_t && urange, size_t target_size)
-    {
-        size_check(urange, target_size);
-        return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>
-        {
-            std::ranges::begin(urange),
-            std::ranges::begin(urange) + target_size,
-            target_size
-        };
-    }
-
-    /*!\brief       Overload for contiguous, sized ranges.
-     * \returns     A std::span over the input.
-     */
-    template <std::ranges::ViewableRange urng_t>
-    //!\cond
-        requires std::ranges::ContiguousRange<urng_t> && std::ranges::SizedRange<urng_t>
-    //!\endcond
-    static auto impl(urng_t && urange, size_t target_size)
-    {
-        size_check(urange, target_size);
-        return std::span{std::ranges::data(urange), target_size};
-    }
-
-    /*!\brief       Overload for std::basic_string_view.
-     * \returns     A std::basic_string_view over the input.
-     */
-    template <std::ranges::ViewableRange urng_t>
-    //!\cond
-        requires std::ranges::ContiguousRange<urng_t> && std::ranges::SizedRange<urng_t> &&
-                 is_type_specialisation_of_v<std::remove_reference_t<urng_t>, std::basic_string_view>
-    //!\endcond
-    static auto impl(urng_t && urange, size_t target_size)
-    {
-        size_check(urange, target_size);
-        return urange.substr(0, target_size);
-    }
-
-    /*!\brief       Overload for std::basic_string.
-     * \returns     A std::basic_string_view over the input.
-     */
-    template <typename char_t, typename traits_t, typename alloc_t>
-    static std::basic_string_view<char_t, traits_t> impl(std::basic_string<char_t, traits_t, alloc_t> & urange,
-                                                         size_t target_size)
-    {
-        size_check(urange, target_size);
-        return {std::ranges::data(urange), target_size};
-    }
-
-    //!\overload
-    template <typename char_t, typename traits_t, typename alloc_t>
-    static std::basic_string_view<char_t, traits_t> impl(std::basic_string<char_t, traits_t, alloc_t> const & urange,
-                                                         size_t target_size)
-    {
-        size_check(urange, target_size);
-        return {std::ranges::data(urange), target_size};
-    }
-
-    //!\overload
-    template <typename char_t, typename traits_t, typename alloc_t>
-    static std::basic_string_view<char_t, traits_t> impl(std::basic_string<char_t, traits_t, alloc_t> const && urange,
-                                                         size_t target_size) = delete;
-
-    //!\brief Verify that size is valid for throwing adaptor and do round to bound for SizedRanges.
-    template <typename urng_t>
-    static void size_check(urng_t && urange, [[maybe_unused]] size_t & target_size)
-    {
+        // safeguard against wrong size
         if constexpr (std::ranges::SizedRange<urng_t>)
         {
             if constexpr (or_throw)
@@ -540,6 +479,46 @@ private:
             {
                 target_size = std::min(target_size, std::ranges::size(urange));
             }
+        }
+
+        // string_view
+        if constexpr (is_type_specialisation_of_v<remove_cvref_t<urng_t>, std::basic_string_view>)
+        {
+            return urange.substr(0, target_size);
+        }
+        // string const &
+        else if constexpr (is_type_specialisation_of_v<remove_cvref_t<urng_t>, std::basic_string> &&
+                           std::is_const_v<std::remove_reference_t<urng_t>>)
+        {
+            return std::basic_string_view{std::ranges::data(urange), target_size};
+        }
+        // contiguous
+        else if constexpr (ForwardingRange<urng_t> &&
+                           std::ranges::ContiguousRange<urng_t> &&
+                           std::ranges::SizedRange<urng_t>)
+        {
+            return std::span{std::ranges::data(urange), target_size};
+        }
+        // random_access
+        else if constexpr (ForwardingRange<urng_t> &&
+                           std::ranges::RandomAccessRange<urng_t> &&
+                           std::ranges::SizedRange<urng_t>)
+        {
+            return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>
+            {
+                std::ranges::begin(urange),
+                std::ranges::begin(urange) + target_size,
+                target_size
+            };
+        }
+        // our type
+        else
+        {
+            return view_take<std::ranges::all_view<urng_t>, exactly, or_throw>
+            {
+                std::forward<urng_t>(urange),
+                target_size
+            };
         }
     }
 };
@@ -568,35 +547,40 @@ namespace seqan3::view
  *
  * \details
  *
+ * **Header**
+ * ```cpp
+ *      #include <seqan3/range/view/take.hpp>
+ * ```
+ *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                      |
- * |---------------------------------|:-------------------------------------:|:---------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                         |
- * | std::ranges::ForwardRange       |                                       | *preserved*                                         |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                                         |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                                         |
- * | std::ranges::ContiguousRange    |                                       | *preserved*                                         |
- * |                                 |                                       |                                                     |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                        |
- * | std::ranges::View               |                                       | *guaranteed*                                        |
- * | std::ranges::SizedRange         |                                       | *preserved*                                         |
- * | std::ranges::CommonRange        |                                       | *preserved*                                         |
- * | std::ranges::OutputRange        |                                       | *preserved* unless `urng_t` is std::basic_string   |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                         |
- * |                                 |                                       |                                                     |
- * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                         |
+ * | range concepts and reference_t  | `urng_t` (underlying range type)   | `rrng_t` (returned range type)   |
+ * |---------------------------------|:----------------------------------:|:--------------------------------:|
+ * | std::ranges::InputRange         | *required*                         | *preserved*                      |
+ * | std::ranges::ForwardRange       |                                    | *preserved*                      |
+ * | std::ranges::BidirectionalRange |                                    | *preserved*                      |
+ * | std::ranges::RandomAccessRange  |                                    | *preserved*                      |
+ * | std::ranges::ContiguousRange    |                                    | *preserved*                      |
+ * |                                 |                                    |                                  |
+ * | std::ranges::ViewableRange      | *required*                         | *guaranteed*                     |
+ * | std::ranges::View               |                                    | *guaranteed*                     |
+ * | std::ranges::SizedRange         |                                    | *preserved*                      |
+ * | std::ranges::CommonRange        |                                    | *preserved*                      |
+ * | std::ranges::OutputRange        |                                    | *preserved*                      |
+ * | seqan3::ConstIterableRange      |                                    | *preserved*                      |
+ * |                                 |                                    |                                  |
+ * | seqan3::reference_t             |                                    | seqan3::reference_t<urng_t>      |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Return type
  *
- * | `urng_t` (underlying range type)                          | `rrng_t` (returned range type)                     |
- * |:---------------------------------------------------------:|:--------------------------------------------------:|
- * | std::basic_string *or* std::basic_string_view             | std::basic_string_view                             |
- * | std::ranges::SizedRange && std::ranges::ContiguousRange   | std::span                                          |
- * | std::ranges::SizedRange && std::ranges::RandomAccessRange | std::ranges::subrange                              |
- * | *else*                                                    | *implementation defined type*                      |
+ * | `urng_t` (underlying range type)                                                       | `rrng_t` (returned range type)  |
+ * |:--------------------------------------------------------------------------------------:|:-------------------------------:|
+ * | `std::basic_string const &` *or* `std::basic_string_view`                              | `std::basic_string_view`        |
+ * | `seqan3::ForwardingRange && std::ranges::SizedRange && std::ranges::ContiguousRange`   | `std::span`                     |
+ * | `seqan3::ForwardingRange && std::ranges::SizedRange && std::ranges::RandomAccessRange` | `std::ranges::subrange`         |
+ * | *else*                                                                                 | *implementation defined type*   |
  *
  * This adaptor is different from std::view::take in that it performs type erasure for some underlying ranges.
  * It returns exactly the type specified above.

@@ -40,7 +40,7 @@ sequence_file_output fout{tmp_dir/"my.fasta"}; // FastA format detected, std::of
 
 {
 //! [cout_write]
-sequence_file_output fout{std::cout, sequence_file_format_fasta{}};
+sequence_file_output fout{std::cout, format_fasta{}};
 //              ^ no need to specify the template arguments
 
 fout.emplace_back("ACGTN"_dna5, "example_id"); // default order for fasta: SEQ, ID

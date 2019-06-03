@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -16,11 +16,11 @@
 #include <seqan3/alphabet/mask/masked.hpp>
 
 /*!\defgroup mask Mask
- * \brief Contains the mask alphabet and functionality for creating masked compositions.
+ * \brief Contains the mask alphabet and functionality for creating masked composites.
  * \ingroup alphabet
  *
  * \par Introduction
- * Masks are useful as cartesian compositions when one wants to create a masked alphabet with
+ * Masks are useful as tuple composites when one wants to create a masked alphabet with
  * don't care positions, but does not want to use the seqan3::dna15 **N** or
  * seqan3::aa27 **X** because of loss of information. It will instead mark the specified characters as masked,
  * and display them as lowercase representations when printed.\n
@@ -28,6 +28,6 @@
  * "soft-masking", which is visualised by using lower-case instead of upper-case.
  * However because regular nucleotide and aminoacid alphabets discard case on assignment,
  * one needs to create additional alphabets to preserve this information (if desired).\n
- * This alphabet in itself is not useful to users directly, but instead the composition seqan3::masked may be used to
+ * This alphabet in itself is not useful to users directly, but instead the composite seqan3::masked may be used to
  * transform another alphabet into a new alphabet that can represent the original alphabet plus masking information.
  */

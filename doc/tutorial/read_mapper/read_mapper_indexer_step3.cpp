@@ -1,6 +1,13 @@
+#include <seqan3/core/platform.hpp>
+#if SEQAN3_WITH_CEREAL
+//![complete]
+#include <fstream>
+
+#include <cereal/archives/binary.hpp>
+
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 
 using namespace seqan3;
@@ -30,8 +37,11 @@ void create_index(std::filesystem::path const & index_path,
 //! [create_index]
 {
     bi_fm_index index{storage.seqs};
-    if (!index.store(index_path))
-        throw std::runtime_error{"Could not store the index"};
+    {
+        std::ofstream os{index_path, std::ios::binary};
+        cereal::BinaryOutputArchive oarchive{os};
+        oarchive(index);
+    }
 }
 
 void run_program(std::filesystem::path const & reference_path,
@@ -55,9 +65,9 @@ void initialise_argument_parser(argument_parser & parser, cmd_arguments & args)
     parser.info.short_description = "Creates an index over a reference.";
     parser.info.version = "1.0.0";
     parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.", option_spec::REQUIRED,
-                      file_ext_validator({"fa","fasta"}) | seqan3::path_existence_validator{});
+                      input_file_validator{{"fa","fasta"}});
     parser.add_option(args.index_path, 'o', "output", "The output index file path.", option_spec::DEFAULT,
-                      file_ext_validator{{"index"}});
+                      output_file_validator{{"index"}});
 }
 
 int main(int argc, char const ** argv)
@@ -81,3 +91,5 @@ int main(int argc, char const ** argv)
 
     return 0;
 }
+//![complete]
+#endif //SEQAN3_WITH_CEREAL

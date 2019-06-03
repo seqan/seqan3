@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <iterator>
@@ -61,6 +61,12 @@ TEST(structure_file_output_class, construct_by_filename)
         EXPECT_THROW(structure_file_out<>{filename.get_path()}, unhandled_extension_error);
     }
 
+    /* unknown file */
+    {
+        test::tmp_filename filename{"I/do/not/exist.dbn"};
+        EXPECT_THROW(structure_file_out<>{filename.get_path()}, file_open_error);
+    }
+
     /* non-existent file*/
     {
         EXPECT_THROW(structure_file_out<>{"/dev/nonexistant/foobarOOO"}, file_open_error);
@@ -70,7 +76,7 @@ TEST(structure_file_output_class, construct_by_filename)
     {
         test::tmp_filename filename{"structure_file_output_constructor.dbn"};
         EXPECT_NO_THROW((structure_file_out<fields<field::SEQ>,
-                                            type_list<structure_file_format_vienna>>
+                                            type_list<format_vienna>>
                                             {filename.get_path(), fields<field::SEQ>{}}));
     }
 }
@@ -79,20 +85,20 @@ TEST(structure_file_output_class, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW((structure_file_out<fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                        type_list<structure_file_format_vienna>>
-                                        {std::ostringstream{}, structure_file_format_vienna{}}));
+                                        type_list<format_vienna>>
+                                        {std::ostringstream{}, format_vienna{}}));
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW((structure_file_out<fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                        type_list<structure_file_format_vienna>>
-                     {std::ostringstream{}, structure_file_format_vienna{},
+                                        type_list<format_vienna>>
+                     {std::ostringstream{}, format_vienna{},
                       fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
 }
 
 TEST(structure_file_output_class, default_template_args_and_deduction_guides)
 {
     using comp1 = fields<field::SEQ, field::ID, field::STRUCTURE>;
-    using comp2 = type_list<structure_file_format_vienna>;
+    using comp2 = type_list<format_vienna>;
     using comp3 = char;
 
     /* default template args */
@@ -128,42 +134,42 @@ TEST(structure_file_output_class, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::ostringstream ext{};
-        structure_file_out fout{ext, structure_file_format_vienna{}};
+        structure_file_out fout{ext, format_vienna{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream temporary constructor */
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}};
+        structure_file_out fout{std::ostringstream{}, format_vienna{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream constructor + custom fields + different stream_char_type */
     {
         std::wostringstream ext{};
-        structure_file_out fout{ext, structure_file_format_vienna{}, fields<field::SEQ>{}};
+        structure_file_out fout{ext, format_vienna{}, fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
     }
 
     /* guided stream temporary constructor + custom fields + different stream_char_type */
     {
-        structure_file_out fout{std::wostringstream{}, structure_file_format_vienna{}, fields<field::SEQ>{}};
+        structure_file_out fout{std::wostringstream{}, format_vienna{}, fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
     }
 }
@@ -211,7 +217,7 @@ struct structure_file_output_row : public structure_file_output_write
     template <typename fn_t>
     void row_wise_impl(fn_t fn)
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}};
+        structure_file_out fout{std::ostringstream{}, format_vienna{}};
 
         for (size_t idx = 0ul; idx < num_records; ++idx)
             fn(fout, idx);
@@ -320,7 +326,7 @@ struct structure_file_output_rows : public structure_file_output_write
     template<typename source_t>
     void assign_impl(source_t && source)
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}};
+        structure_file_out fout{std::ostringstream{}, format_vienna{}};
         fout = source;
         fout.get_stream().flush();
         EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
@@ -371,7 +377,7 @@ TEST_F(structure_file_output_rows, assign_structure_file_in)
         "..(((((..(((...)))..)))))...\n"
     };
 
-    structure_file_in fin{std::istringstream{inp}, structure_file_format_vienna{},
+    structure_file_in fin{std::istringstream{inp}, format_vienna{},
                           fields<field::SEQ, field::ID, field::STRUCTURE>{}};
     assign_impl(fin);
 }
@@ -379,12 +385,12 @@ TEST_F(structure_file_output_rows, assign_structure_file_in)
 TEST_F(structure_file_output_rows, assign_structure_file_pipes)
 {
     // valid without assignment?
-    structure_file_in{std::istringstream{output_comp}, structure_file_format_vienna{}}
-              | structure_file_out{std::ostringstream{}, structure_file_format_vienna{}};
+    structure_file_in{std::istringstream{output_comp}, format_vienna{}}
+              | structure_file_out{std::ostringstream{}, format_vienna{}};
 
     // valid with assignment and check contents
-    auto fout = structure_file_in{std::istringstream{output_comp}, structure_file_format_vienna{}}
-              | structure_file_out{std::ostringstream{}, structure_file_format_vienna{}};
+    auto fout = structure_file_in{std::istringstream{output_comp}, format_vienna{}}
+              | structure_file_out{std::ostringstream{}, format_vienna{}};
 
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
@@ -417,11 +423,10 @@ TEST_F(structure_file_output_columns, assign_tuple_of_columns)
 #if defined(SEQAN3_HAS_ZLIB) || defined(SEQAN3_HAS_BZIP2)
 struct structure_file_output_compression : public structure_file_output_write
 {
-    void compression_by_filename_impl(test::tmp_filename & filename, std::string_view const expected)
+    std::string compression_by_filename_impl(test::tmp_filename & filename)
     {
         {
-            structure_file_out
-            fout{filename.get_path()};
+            structure_file_out fout{filename.get_path()};
 
             for (size_t idx = 0ul; idx < num_records; ++idx)
             {
@@ -430,18 +435,18 @@ struct structure_file_output_compression : public structure_file_output_write
                 fout.push_back(rec);
             }
         }
-        std::string buffer;
+        std::string buffer{};
         {
             std::ifstream fi{filename.get_path(), std::ios::binary};
             buffer = std::string{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
         }
-        EXPECT_EQ(buffer, expected);
+        return buffer;
     }
 
     template<typename comp_stream_t>
     void compression_by_stream_impl(comp_stream_t & stream)
     {
-        structure_file_out fout{stream, structure_file_format_vienna{}};
+        structure_file_out fout{stream, format_vienna{}};
         for (size_t idx = 0ul; idx < num_records; ++idx)
         {
             record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
@@ -455,7 +460,7 @@ struct structure_file_output_compression : public structure_file_output_write
 #ifdef SEQAN3_HAS_ZLIB
 std::string expected_gz
 {
-    '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x03','\x55','\x8E','\xC1','\x0A','\xC2','\x40',
+    '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x55','\x8E','\xC1','\x0A','\xC2','\x40',
     '\x0C','\x44','\xEF','\xF9','\x8A','\x3D','\x76','\x0F','\x5D','\x5B','\x14','\x7A','\x2B','\x84','\x20','\xF1',
     '\xA2','\x88','\x92','\xB3','\x14','\xD9','\x43','\x41','\x41','\xB4','\x14','\x3F','\xDF','\x64','\x23','\x52',
     '\x27','\xB0','\x64','\x1E','\x61','\x66','\xFB','\x70','\x4E','\xD7','\xFC','\xCC','\xF3','\xF8','\x1A','\x87',
@@ -468,10 +473,31 @@ std::string expected_gz
     '\xFC','\x00','\x00','\x00'
 };
 
+std::string expected_bgzf
+{
+    '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x00', '\x42', '\x43',
+    '\x02', '\x00', '\xAF', '\x00', '\x55', '\x4E', '\xB1', '\x0A', '\xC2', '\x50', '\x0C', '\xDC', '\xF3', '\x15',
+    '\x1D', '\x75', '\x68', '\x6C', '\x51', '\xE8', '\x56', '\x08', '\x41', '\xE2', '\xA2', '\x88', '\x92', '\x59',
+    '\x8A', '\xBC', '\xA1', '\xA0', '\x50', '\x54', '\xC4', '\xCF', '\xF7', '\xF2', '\x9E', '\x88', '\x5E', '\x86',
+    '\x7B', '\xB9', '\x5C', '\x72', '\xAF', '\xAF', '\x8E', '\x7C', '\x4E', '\xB7', '\xF4', '\x1C', '\xEF', '\xE3',
+    '\x90', '\x4E', '\x8F', '\xC3', '\x4E', '\xEA', '\xFD', '\x66', '\x5D', '\x6D', '\xDB', '\xA6', '\x5B', '\x35',
+    '\x8B', '\xB6', '\xEE', '\x96', '\x64', '\x6A', '\x26', '\xEE', '\x2E', '\xA6', '\xAE', '\x62', '\xEE', '\x86',
+    '\x1E', '\xA5', '\xA6', '\x68', '\x45', '\xDD', '\x04', '\x04', '\x43', '\xC8', '\xE6', '\x0A', '\x01', '\xE5',
+    '\x0A', '\x0D', '\x86', '\xB0', '\x60', '\x08', '\xB3', '\xD0', '\xAC', '\x80', '\x39', '\x98', '\x3F', '\x98',
+    '\x03', '\x7F', '\x02', '\x67', '\x25', '\xA6', '\xD9', '\xFE', '\x63', '\x8B', '\x41', '\x80', '\xA9', '\xAF',
+    '\xD2', '\x6B', '\xB8', '\x4E', '\x97', '\x44', '\x25', '\xD6', '\x91', '\xA3', '\x22', '\x39', '\x3B', '\x9E',
+    '\xAE', '\xF8', '\x8F', '\xD2', '\xF7', '\x44', '\xC9', '\x8B', '\xD5', '\x7C', '\x1D', '\xC4', '\xF4', '\x06',
+    '\xA0', '\x5A', '\xBE', '\x54', '\xFC', '\x00', '\x00', '\x00', '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00',
+    '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
+    '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
+};
+
 TEST_F(structure_file_output_compression, by_filename_gz)
 {
     test::tmp_filename filename{"structure_file_output_test.dbn.gz"};
-    compression_by_filename_impl(filename, expected_gz);
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
 }
 
 TEST_F(structure_file_output_compression, by_stream_gz)
@@ -481,7 +507,29 @@ TEST_F(structure_file_output_compression, by_stream_gz)
         contrib::gz_ostream compout{out};
         compression_by_stream_impl(compout);
     }
-    EXPECT_EQ(out.str(), expected_gz);
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_gz);
+}
+
+TEST_F(structure_file_output_compression, by_filename_bgzf)
+{
+    test::tmp_filename filename{"structure_file_output_test.dbn.bgzf"};
+    std::string buffer = compression_by_filename_impl(filename);
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
+}
+
+TEST_F(structure_file_output_compression, by_stream_bgzf)
+{
+    std::ostringstream out;
+    {
+        contrib::bgzf_ostream compout{out};
+        compression_by_stream_impl(compout);
+    }
+    std::string buffer = out.str();
+    buffer[9] = '\x00'; // zero out OS byte
+    EXPECT_EQ(buffer, expected_bgzf);
 }
 #endif
 
@@ -506,7 +554,8 @@ std::string expected_bz2
 TEST_F(structure_file_output_compression, by_filename_bz2)
 {
     test::tmp_filename filename{"structure_file_output_test.dbn.bz2"};
-    compression_by_filename_impl(filename, expected_bz2);
+    std::string buffer = compression_by_filename_impl(filename);
+    EXPECT_EQ(buffer, expected_bz2);
 }
 
 TEST_F(structure_file_output_compression, by_stream_bz2)

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\cond DEV
@@ -24,7 +24,7 @@ namespace seqan3::detail
 {
 
 // ----------------------------------------------------------------------------
-// fields_concept
+// Fields
 // ----------------------------------------------------------------------------
 
 /*!\brief Auxiliary concept that checks whether a type is a specialisation of seqan3::fields.
@@ -32,7 +32,7 @@ namespace seqan3::detail
  * \relates seqan3::fields
  */
 template <typename t>
-SEQAN3_CONCEPT fields_concept = is_value_specialisation_of_v<t, fields>;
+SEQAN3_CONCEPT Fields = is_value_specialisation_of_v<t, fields>;
 
 // ----------------------------------------------------------------------------
 // select_types_with_ids

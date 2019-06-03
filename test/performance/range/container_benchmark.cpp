@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 #include <algorithm>
@@ -38,7 +38,7 @@ static void push_back(benchmark::State& state)
 
     state.counters["sizeof"] = sizeof(alphabet_t);
     if constexpr (Alphabet<alphabet_t>)
-        state.counters["alph_size"] = seqan3::alphabet_size_v<alphabet_t>;
+        state.counters["alph_size"] = seqan3::alphabet_size<alphabet_t>;
 #if 0
     state.counters["preallocated_mem"] = reserve;
 #endif
@@ -60,7 +60,7 @@ BENCHMARK_TEMPLATE(push_back, std::vector, gapped<dna4>, false);
 BENCHMARK_TEMPLATE(push_back, std::vector, dna15, false);
 BENCHMARK_TEMPLATE(push_back, std::vector, aa27, false);
 BENCHMARK_TEMPLATE(push_back, std::vector, char, false);
-BENCHMARK_TEMPLATE(push_back, std::vector, union_composition<char, dna4>, false);
+BENCHMARK_TEMPLATE(push_back, std::vector, alphabet_variant<char, dna4>, false);
 
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, gap, false);
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, dna4, false);
@@ -68,7 +68,7 @@ BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, gapped<dna4>, false)
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, dna15, false);
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, aa27, false);
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, char, false);
-BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, union_composition<char, dna4>, false);
+BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, alphabet_variant<char, dna4>, false);
 
 // ============================================================================
 //  push_back with prealloc
@@ -91,7 +91,7 @@ BENCHMARK_TEMPLATE(push_back, std::vector, gapped<dna4>, true);
 BENCHMARK_TEMPLATE(push_back, std::vector, dna15, true);
 BENCHMARK_TEMPLATE(push_back, std::vector, aa27, true);
 BENCHMARK_TEMPLATE(push_back, std::vector, char, true);
-BENCHMARK_TEMPLATE(push_back, std::vector, union_composition<char, dna4>, true);
+BENCHMARK_TEMPLATE(push_back, std::vector, alphabet_variant<char, dna4>, true);
 
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, gap, true);
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, dna4, true);
@@ -99,7 +99,7 @@ BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, gapped<dna4>, true);
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, dna15, true);
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, aa27, true);
 BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, char, true);
-BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, union_composition<char, dna4>, true);
+BENCHMARK_TEMPLATE(push_back, seqan3::bitcompressed_vector, alphabet_variant<char, dna4>, true);
 #endif
 
 // ============================================================================
@@ -135,7 +135,7 @@ static void sequential_read(benchmark::State& state)
 
     state.counters["sizeof"] = sizeof(alphabet_t);
     if constexpr (Alphabet<alphabet_t>)
-        state.counters["alph_size"] = seqan3::alphabet_size_v<alphabet_t>;
+        state.counters["alph_size"] = seqan3::alphabet_size<alphabet_t>;
     state.counters["const"] = const_;
 }
 
@@ -155,7 +155,7 @@ BENCHMARK_TEMPLATE(sequential_read, std::vector, gapped<dna4>);
 BENCHMARK_TEMPLATE(sequential_read, std::vector, dna15);
 BENCHMARK_TEMPLATE(sequential_read, std::vector, aa27);
 BENCHMARK_TEMPLATE(sequential_read, std::vector, char);
-BENCHMARK_TEMPLATE(sequential_read, std::vector, union_composition<char, dna4>);
+BENCHMARK_TEMPLATE(sequential_read, std::vector, alphabet_variant<char, dna4>);
 
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, gap);
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, dna4);
@@ -163,7 +163,7 @@ BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, gapped<dna4>);
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, dna15);
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, aa27);
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, char);
-BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, union_composition<char, dna4, dna15>);
+BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, alphabet_variant<char, dna4, dna15>);
 
 // ============================================================================
 //  sequential_read (const)
@@ -185,7 +185,7 @@ BENCHMARK_TEMPLATE(sequential_read, std::vector, gapped<dna4>, true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector, dna15, true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector, aa27, true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector, char, true);
-BENCHMARK_TEMPLATE(sequential_read, std::vector, union_composition<char, dna4>, true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector, alphabet_variant<char, dna4>, true);
 
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, gap, true);
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, dna4, true);
@@ -193,7 +193,7 @@ BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, gapped<dna4>, 
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, dna15, true);
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, aa27, true);
 BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, char, true);
-BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, union_composition<char, dna4, dna15>, true);
+BENCHMARK_TEMPLATE(sequential_read, seqan3::bitcompressed_vector, alphabet_variant<char, dna4, dna15>, true);
 
 // ============================================================================
 //  sequential_write
@@ -224,7 +224,7 @@ static void sequential_write(benchmark::State& state)
 
     state.counters["sizeof"] = sizeof(alphabet_t);
     if constexpr (Alphabet<alphabet_t>)
-        state.counters["alph_size"] = seqan3::alphabet_size_v<alphabet_t>;
+        state.counters["alph_size"] = seqan3::alphabet_size<alphabet_t>;
 }
 
 BENCHMARK_TEMPLATE(sequential_write, std::vector, uint8_t);
@@ -243,7 +243,7 @@ BENCHMARK_TEMPLATE(sequential_write, std::vector, gapped<dna4>);
 BENCHMARK_TEMPLATE(sequential_write, std::vector, dna15);
 BENCHMARK_TEMPLATE(sequential_write, std::vector, aa27);
 BENCHMARK_TEMPLATE(sequential_write, std::vector, char);
-BENCHMARK_TEMPLATE(sequential_write, std::vector, union_composition<char, dna4>);
+BENCHMARK_TEMPLATE(sequential_write, std::vector, alphabet_variant<char, dna4>);
 
 BENCHMARK_TEMPLATE(sequential_write, seqan3::bitcompressed_vector, gap);
 BENCHMARK_TEMPLATE(sequential_write, seqan3::bitcompressed_vector, dna4);
@@ -251,7 +251,7 @@ BENCHMARK_TEMPLATE(sequential_write, seqan3::bitcompressed_vector, gapped<dna4>)
 BENCHMARK_TEMPLATE(sequential_write, seqan3::bitcompressed_vector, dna15);
 BENCHMARK_TEMPLATE(sequential_write, seqan3::bitcompressed_vector, aa27);
 BENCHMARK_TEMPLATE(sequential_write, seqan3::bitcompressed_vector, char);
-BENCHMARK_TEMPLATE(sequential_write, seqan3::bitcompressed_vector, union_composition<char, dna4>);
+BENCHMARK_TEMPLATE(sequential_write, seqan3::bitcompressed_vector, alphabet_variant<char, dna4>);
 
 // ============================================================================
 //  run

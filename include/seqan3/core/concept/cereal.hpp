@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -83,7 +83,7 @@ SEQAN3_CONCEPT CerealArchive = false;
 #endif
 //!\endcond
 
-/*!\interface seqan3::cereal_text_archive_concept <>
+/*!\interface seqan3::CerealTextArchive <>
  * \brief All text archives of the Cereal library satisfy this.
  * \extends seqan3::CerealArchive
  * \ingroup core
@@ -97,10 +97,10 @@ SEQAN3_CONCEPT CerealArchive = false;
 //!\cond
 #if SEQAN3_WITH_CEREAL
 template <typename t>
-SEQAN3_CONCEPT cereal_text_archive_concept = std::is_base_of_v<cereal::traits::TextArchive, t>;
+SEQAN3_CONCEPT CerealTextArchive = std::is_base_of_v<cereal::traits::TextArchive, t>;
 #else
 template <typename t>
-SEQAN3_CONCEPT cereal_text_archive_concept = false;
+SEQAN3_CONCEPT CerealTextArchive = false;
 #endif
 //!\endcond
 
@@ -142,7 +142,9 @@ SEQAN3_CONCEPT Cerealisable =
     cereal::traits::is_input_serializable<value_t, input_archive_t>::value &&
     cereal::traits::is_output_serializable<value_t, output_archive_t>::value;
 #else
-template <typename t>
+template <typename value_t,
+          typename input_archive_t = void,
+          typename output_archive_t = void>
 SEQAN3_CONCEPT Cerealisable = false;
 #endif
 //!\endcond

@@ -1,3 +1,10 @@
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+// -----------------------------------------------------------------------------------------------------
+
 #include <gtest/gtest.h>
 
 #include <seqan3/core/simd/all.hpp>
@@ -49,32 +56,32 @@ TEST(simd, standard_construction)
     EXPECT_TRUE((std::is_nothrow_swappable_v<int16x_t>));
 }
 
-template <simd_concept simd_t>
+template <Simd simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 1>)
 {
     simd = simd_t{a};
 }
 
-template <simd_concept simd_t>
+template <Simd simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 8>)
 {
     simd = simd_t{a, a, a, a, a, a, a, a};
 }
 
-template <simd_concept simd_t>
+template <Simd simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 16>)
 {
     simd = simd_t{a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a};
 }
 
-template <simd_concept simd_t>
+template <Simd simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 32>)
 {
     simd = simd_t{a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a,
                   a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a};
 }
 
-template <simd_concept simd_t>
+template <Simd simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 64>)
 {
     simd = simd_t{a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a,

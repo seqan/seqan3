@@ -1,7 +1,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alignment/matrix/alignment_matrix_formatter.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 int main()
 {
@@ -40,6 +40,7 @@ alignment_matrix_format format
     "|", // col_sep
     "-", // row_sep
     "/", // row_col_sep
+    "INF", // infinity
     {" ","D","U","DU","L","DL","UL","DUL"} // trace_dir
 };
 

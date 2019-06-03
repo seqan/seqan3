@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -31,14 +31,18 @@ namespace seqan3::detail
  * \ingroup alignment_policy
  * \tparam derived_type   The derived alignment algorithm.
  * \tparam cell_type      The cell type of the dynamic programming matrix.
+ * \tparam align_local_t  A bool constant that denotes whether local alignment is performed.
  */
-template <typename derived_type, typename cell_type>
-class affine_gap_banded_policy : public affine_gap_policy<affine_gap_banded_policy<derived_type, cell_type>, cell_type>
+template <typename derived_type, typename cell_type, typename align_local_t = std::false_type>
+class affine_gap_banded_policy :
+    public affine_gap_policy<affine_gap_banded_policy<derived_type, cell_type, align_local_t>, cell_type, align_local_t>
 {
 private:
 
     //!\brief The type of the base.
-    using base_t = affine_gap_policy<affine_gap_banded_policy<derived_type, cell_type>, cell_type>;
+    using base_t = affine_gap_policy<affine_gap_banded_policy<derived_type, cell_type, align_local_t>,
+                                     cell_type,
+                                     align_local_t>;
 
     //!\brief Befriend the derived type.
     friend derived_type;
@@ -90,6 +94,8 @@ private:
         {
             main_score = (main_score < vt_score) ? vt_score : main_score;
             main_score = (main_score < prev_hz_score) ? prev_hz_score : main_score;
+            if constexpr (align_local_t::value)
+                main_score = (main_score < 0) ? 0 : main_score;
         }
         else  // Compute any traceback
         {
@@ -97,6 +103,8 @@ private:
                                                  : (trace_value = trace_directions::diagonal | vt_trace, main_score);
             main_score = (main_score < prev_hz_score) ? (trace_value = prev_hz_trace, prev_hz_score)
                                                       : (trace_value |= prev_hz_trace, main_score);
+            if constexpr (align_local_t::value)
+                main_score = (main_score < 0) ? (trace_value = trace_directions::none, 0) : main_score;
         }
 
         // Check if this was the optimum. Possibly a noop.
@@ -150,11 +158,15 @@ private:
         if constexpr (decays_to_ignore_v<decltype(trace_value)>) // Don't compute a traceback
         {
             main_score = (main_score < prev_hz_score) ? prev_hz_score : main_score;
+            if constexpr (align_local_t::value)
+                main_score = (main_score < 0) ? 0 : main_score;
         }
         else
         {
             main_score = (main_score < prev_hz_score) ? (trace_value = prev_hz_trace, prev_hz_score)
                                    : (trace_value = trace_directions::diagonal, main_score);
+            if constexpr (align_local_t::value)
+                main_score = (main_score < 0) ? (trace_value = trace_directions::none, 0) : main_score;
         }
 
         // Check if this was the optimum. Possibly a noop.

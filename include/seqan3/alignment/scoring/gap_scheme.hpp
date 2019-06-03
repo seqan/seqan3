@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -40,6 +40,8 @@ struct gap_score : detail::strong_type<score_type, gap_score<score_type>, detail
  * \relates seqan3::gap_score
  * \{
  */
+
+//!\brief Deduce the score type from the given argument.
 template <Arithmetic score_type>
 gap_score(score_type &&) -> gap_score<score_type>;
 //!\}
@@ -64,6 +66,8 @@ struct gap_open_score : detail::strong_type<score_type, gap_open_score<score_typ
  * \relates seqan3::gap_open_score
  * \{
  */
+
+//!\brief Deduce the score type from the given argument.
 template <Arithmetic score_type>
 gap_open_score(score_type &&) -> gap_open_score<score_type>;
 //!\}
@@ -208,13 +212,17 @@ public:
     }
     //!\}
 
-    //!\name Comparison operators
-    //!\{
+    /*!\name Comparison operators
+     * \{
+     */
+
+    //!\brief Checks whether `*this` is equal to `rhs`.
     constexpr bool operator==(gap_scheme const & rhs) const noexcept
     {
         return std::tie(gap, gap_open) == std::tie(rhs.gap, rhs.gap_open);
     }
 
+    //!\brief Checks whether `*this` is not equal to `rhs`.
     constexpr bool operator!=(gap_scheme const & rhs) const noexcept
     {
         return !(*this == rhs);
@@ -247,6 +255,8 @@ private:
  * \relates seqan3::gap_scheme
  * \{
  */
+
+//!\brief Default constructed objects deduce to `int8_t`.
 gap_scheme() -> gap_scheme<int8_t>;
 
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `float`

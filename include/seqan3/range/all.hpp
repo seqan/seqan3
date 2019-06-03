@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -69,7 +69,7 @@
  * The storage behaviour is orthogonal to the range concepts defined by the iterators mentioned above, i.e. you
  * can have a container that satisfies std::ranges::RandomAccessRange (e.g. `std::vector` does, but `std::list`
  * does not) and you can have views or decorators that do so or don't. For some combinations of iterator capabilities
- * and storage behaviour there are extra concept definitions, e.g. seqan3::random_access_container_concept.
+ * and storage behaviour there are extra concept definitions, e.g. seqan3::RandomAccessContainer.
  *
  * \attention
  *

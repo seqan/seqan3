@@ -1,8 +1,8 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/view/get.hpp>
 #include <seqan3/std/ranges>
@@ -81,7 +81,7 @@ std::string input
 
 std::istringstream iss(input);
 
-sequence_file_input fin{std::move(iss), sequence_file_format_fasta{}};
+sequence_file_input fin{std::move(iss), format_fasta{}};
 //              ^ no need to specify the template arguments
 //! [istringstream]
 (void) fin;
@@ -110,7 +110,7 @@ std::istringstream iss(input);
 
 sequence_file_input<sequence_file_input_default_traits_aa /*Use amino acid traits here*/,
                     fields<field::SEQ, field::ID, field::QUAL>,
-                    type_list<sequence_file_format_fasta>, char> fin{iss, sequence_file_format_fasta{}};
+                    type_list<format_fasta>, char> fin{iss, format_fasta{}};
 //! [template_specification]
 (void) fin;
 }
