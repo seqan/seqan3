@@ -27,7 +27,7 @@ using namespace seqan3;
 //  read left to right (looped in case #ops exceeds sequence length)
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-static void read_left2right(benchmark::State& state)
+void read_left2right(benchmark::State& state)
 {
     // get target sequence length from current range state
     unsigned int seq_len = state.range(0);

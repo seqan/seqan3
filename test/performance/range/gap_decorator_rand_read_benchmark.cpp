@@ -27,7 +27,7 @@ using namespace seqan3;
 //  read at random position
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-static void read_random(benchmark::State& state)
+void read_random(benchmark::State& state)
 {
     unsigned int seq_len = state.range(0);
     using size_type = typename gap_decorator_t::size_type;

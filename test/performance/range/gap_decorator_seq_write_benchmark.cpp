@@ -27,7 +27,7 @@ using namespace seqan3;
 //  insert left to right
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-static void insert_left2right(benchmark::State& state)
+void insert_left2right(benchmark::State& state)
 {
     unsigned int seq_len = state.range(0);
     using size_type = typename gap_decorator_t::size_type;
@@ -73,7 +73,7 @@ BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, true)->Apply(Cu
 //  insert right to left
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-static void insert_right2left(benchmark::State& state)
+void insert_right2left(benchmark::State& state)
 {
     unsigned int seq_len = state.range(0);
     assert(seq_len > 0);

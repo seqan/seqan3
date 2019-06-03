@@ -46,7 +46,11 @@ static void CustomArguments(benchmark::internal::Benchmark* b) {
     for (long long int seq_len = 16; seq_len <= seq_len_max; seq_len <<= 2)
     {
         for (auto gap_percentage : gap_percentages)
-            b->Args({seq_len, gap_percentage});
+            b->Args(
+                {
+                    seq_len, gap_percentage
+                }
+            );
     }
 }
 

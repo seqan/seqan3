@@ -27,7 +27,7 @@ using namespace seqan3;
 //  insert at random position
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-static void insert_random(benchmark::State& state)
+void insert_random(benchmark::State& state)
 {
     unsigned int seq_len = state.range(0);
     using size_type = typename gap_decorator_t::size_type;
@@ -81,7 +81,7 @@ BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, true)->Apply(Custom
 //  delete at random position
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-static void delete_random(benchmark::State& state)
+void delete_random(benchmark::State& state)
 {
     unsigned int seq_len = state.range(0);
     using size_type = typename gap_decorator_t::size_type;
