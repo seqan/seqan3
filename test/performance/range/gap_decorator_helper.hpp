@@ -31,8 +31,8 @@ using namespace seqan3;
  *
  *  | flag                | sequence lengths | gap proportions
  *  | --------------------|------------------|---------------------
- *  !SEQAN3_LONG_TESTS    |  1 << [4:2:12]   | [1, 5, 50] %
- *  !SEQAN3_LONG_TESTS    |  1 << [4:2:18]   | [1, 5, 25, 50, 75] %
+ *  | !SEQAN3_LONG_TESTS  |  1 << [4:2:12]   | [1, 5, 50] %
+ *  | SEQAN3_LONG_TESTS   |  1 << [4:2:18]   | [1, 5, 25, 50, 75] %
  */
 static void CustomArguments(benchmark::internal::Benchmark* b) {
     std::vector<long long int> gap_percentages{1, 5, 50};
