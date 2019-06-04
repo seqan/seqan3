@@ -25,8 +25,8 @@ namespace seqan3::detail
  *        trace matrix.
  * \ingroup pairwise_alignment
  * \tparam word_t         \copydoc word_type
- * \tparam is_semi_global \copydoc pairwise_alignment_edit_distance_unbanded::is_semi_global
- * \tparam use_max_errors \copydoc pairwise_alignment_edit_distance_unbanded::use_max_errors
+ * \tparam is_semi_global \copydoc default_edit_distance_trait_type::is_semi_global
+ * \tparam use_max_errors \copydoc default_edit_distance_trait_type::use_max_errors
  */
 template <typename word_t, bool is_semi_global, bool use_max_errors>
 class edit_distance_trace_matrix_full
@@ -36,7 +36,7 @@ public:
     template <std::ranges::ViewableRange database_t,
               std::ranges::ViewableRange query_t,
               typename align_config_t,
-              EditDistanceTrait traits_t>
+              typename edit_traits>
     friend class pairwise_alignment_edit_distance_unbanded;
 
     /*!\name Constructors, destructor and assignment
@@ -59,10 +59,10 @@ public:
     //!\}
 
 public:
-    //!\copydoc pairwise_alignment_edit_distance_unbanded::word_type
+    //!\copydoc default_edit_distance_trait_type::word_type
     using word_type = word_t;
 
-    //!\copydoc pairwise_alignment_edit_distance_unbanded::word_size
+    //!\copydoc default_edit_distance_trait_type::word_size
     static constexpr auto word_size = sizeof_bits<word_type>;
 
     //!\copydoc seqan3::detail::Matrix::entry_type

@@ -25,8 +25,8 @@ namespace seqan3::detail
  * \ingroup pairwise_alignment
  * \tparam word_t         \copydoc word_type
  * \tparam score_t        \copydoc score_type
- * \tparam is_semi_global \copydoc pairwise_alignment_edit_distance_unbanded::is_semi_global
- * \tparam use_max_errors \copydoc pairwise_alignment_edit_distance_unbanded::use_max_errors
+ * \tparam is_semi_global \copydoc default_edit_distance_trait_type::is_semi_global
+ * \tparam use_max_errors \copydoc default_edit_distance_trait_type::use_max_errors
  */
 template <typename word_t, typename score_t, bool is_semi_global, bool use_max_errors>
 class edit_distance_score_matrix_full
@@ -36,7 +36,7 @@ public:
     template <std::ranges::ViewableRange database_t,
               std::ranges::ViewableRange query_t,
               typename align_config_t,
-              EditDistanceTrait traits_t>
+              typename edit_traits>
     friend class pairwise_alignment_edit_distance_unbanded;
 
     /*!\name Constructors, destructor and assignment
@@ -59,13 +59,13 @@ protected:
     //!\}
 
 public:
-    //!\copydoc pairwise_alignment_edit_distance_unbanded::word_type
+    //!\copydoc default_edit_distance_trait_type::word_type
     using word_type = word_t;
 
-    //!\copydoc pairwise_alignment_edit_distance_unbanded::word_size
+    //!\copydoc default_edit_distance_trait_type::word_size
     static constexpr auto word_size = sizeof_bits<word_type>;
 
-    //!\copydoc pairwise_alignment_edit_distance_unbanded::score_type
+    //!\copydoc default_edit_distance_trait_type::score_type
     using score_type = score_t;
 
     //!\copydoc seqan3::detail::Matrix::entry_type
@@ -90,9 +90,9 @@ public:
     /*!\brief Computes the number of max rows in the current column.
      * \tparam score_type \copybrief score_type
      * \param score_mask  \copybrief pairwise_alignment_edit_distance_unbanded::score_mask
-     * \param last_block  \copybrief pairwise_alignment_edit_distance_unbanded::last_block
+     * \param last_block  \copybrief edit_distance_unbanded_max_errors_policy::last_block
      * \param score       \copybrief pairwise_alignment_edit_distance_unbanded::_score
-     * \param max_errors  \copybrief pairwise_alignment_edit_distance_unbanded::max_errors
+     * \param max_errors  \copybrief edit_distance_unbanded_max_errors_policy::max_errors
      * \return Number of max rows in the current column.
      */
     template <typename score_type>
