@@ -1,7 +1,8 @@
-# Installing SeqAn3 {#setup}
+# Quick Setup (using CMake) {#setup}
 
 <b>Learning Objective:</b><br>
-In this short guide you will learn to set up SeqAn3 and how to compile a small example to test whether everything works.
+In this short guide you will learn how to set up SeqAn3 and how to compile a small example to test whether everything
+works.
 
 \tutorial_head{Easy, 30 Minutes, No prerequisites, }
 
@@ -95,7 +96,7 @@ To test whether everything works, we will now compile and run a small example.
 
 First we create the file `hello_world.cpp` in the `source` directory with the following contents:
 
-\include doc/setup/hello_world.cpp
+\include hello_world.cpp
 
 To compile it we first create a `CMakeLists.txt` file in the `source` directory:
 
