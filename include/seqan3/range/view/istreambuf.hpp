@@ -90,7 +90,7 @@ public:
         stream_buf{reinterpret_cast<stream_buffer_exposer<char_t, traits_t> *>(&ibuf)}
     {
         assert(stream_buf != nullptr);
-        stream_buf->sgetc(); // ensure the stream buffer has content on construction
+        stream_buf->underflow(); // ensure the stream buffer has content on construction
     }
     //!\}
 
@@ -101,7 +101,7 @@ public:
     fast_istreambuf_iterator & operator++()
     {
         assert(stream_buf != nullptr);
-        stream_buf->sbumpc(); //
+        stream_buf->snextc(); // move to then right, then underflow()
         return *this;
     }
 
