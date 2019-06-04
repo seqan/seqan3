@@ -163,7 +163,7 @@ namespace seqan3
 template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
               type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>,
-          char_concept stream_char_type_ = char>
+          Char stream_char_type_ = char>
 class sequence_file_output
 {
 public:

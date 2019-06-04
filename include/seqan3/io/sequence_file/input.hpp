@@ -223,7 +223,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * must be in seqan3::sequence_file_input::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
  * seqan3::SequenceFileInputFormat).
- * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::char_concept.
+ * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::Char.
  * \details
  *
  * ### Introduction
@@ -355,7 +355,7 @@ template <
                                                                                format_fastq,
                                                                                format_genbank,
                                                                                format_sam>,
-    char_concept                               stream_char_type_   = char>
+    Char                                       stream_char_type_   = char>
 class sequence_file_input
 {
 public:
@@ -851,7 +851,7 @@ namespace std
 template <seqan3::SequenceFileInputTraits                    traits_type,
           seqan3::detail::Fields                             selected_field_ids,
           seqan3::detail::TypeListOfSequenceFileInputFormats valid_formats,
-          seqan3::char_concept                               stream_char_t>
+          seqan3::Char                                       stream_char_t>
 struct tuple_size<seqan3::sequence_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -863,7 +863,7 @@ template <size_t                                             elem_no,
           seqan3::SequenceFileInputTraits                    traits_type,
           seqan3::detail::Fields                             selected_field_ids,
           seqan3::detail::TypeListOfSequenceFileInputFormats valid_formats,
-          seqan3::char_concept                               stream_char_t>
+          seqan3::Char                                       stream_char_t>
 struct tuple_element<elem_no, seqan3::sequence_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::sequence_file_input<traits_type,
                                                                selected_field_ids,

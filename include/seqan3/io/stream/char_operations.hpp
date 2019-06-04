@@ -68,7 +68,7 @@ namespace seqan3
  */
 
 /*!\brief Converts 'A'-'Z' to 'a'-'z' respectively; other characters are returned as is.
- * \tparam char_type Type of the parameter; must model seqan3::char_concept.
+ * \tparam char_type Type of the parameter; must model seqan3::Char.
  * \param c The parameter.
  * \returns The character converted to lower case.
  *
@@ -76,7 +76,7 @@ namespace seqan3
  *
  * In contrast to std::tolower this function is independent of locale and can be evaluated in a `constexpr` context.
  */
-template <char_concept char_type>
+template <Char char_type>
 constexpr char_type to_lower(char_type const c) noexcept
 {
     using u_t = std::make_unsigned_t<char_type>;
@@ -84,7 +84,7 @@ constexpr char_type to_lower(char_type const c) noexcept
 }
 
 /*!\brief Converts 'a'-'z' to 'A'-'Z' respectively; other characters are returned as is.
- * \tparam char_type Type of the parameter; must model seqan3::char_concept.
+ * \tparam char_type Type of the parameter; must model seqan3::Char.
  * \param c The parameter.
  * \returns The character converted to upper case.
  *
@@ -92,7 +92,7 @@ constexpr char_type to_lower(char_type const c) noexcept
  *
  * In contrast to std::to_upper this function is independent of locale and can be evaluated in a `constexpr` context.
  */
-template <char_concept char_type>
+template <Char char_type>
 constexpr char_type to_upper(char_type const c) noexcept
 {
     using u_t = std::make_unsigned_t<char_type>;

@@ -164,7 +164,7 @@ public:
      *                     regarded as a container).
      *                     See <a href="http://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
-     *                        value. Must satisfy seqan3::validator_concept.
+     *                        value. Must satisfy seqan3::Validator.
      *
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  short_id  The short identifier for the option (e.g. 'a').
@@ -173,7 +173,7 @@ public:
      * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      */
-    template <typename option_type, validator_concept validator_type = detail::default_validator<option_type>>
+    template <typename option_type, Validator validator_type = detail::default_validator<option_type>>
     //!\cond
         requires (IStream<std::istringstream, option_type> ||
                   IStream<std::istringstream, typename option_type::value_type>) &&
@@ -220,7 +220,7 @@ public:
      *                     regarded as a container).
      *                     See <a href="http://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
-     *                        value. Must satisfy seqan3::validator_concept.
+     *                        value. Must satisfy seqan3::Validator.
      *
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  desc      The description of the positional option to be shown in the help page.
@@ -232,7 +232,7 @@ public:
      *
      * The validator must be applicable to the given output variable (\p value).
      */
-    template <typename option_type, validator_concept validator_type = detail::default_validator<option_type>>
+    template <typename option_type, Validator validator_type = detail::default_validator<option_type>>
     //!\cond
         requires (IStream<std::istringstream, option_type> ||
                   IStream<std::istringstream, typename option_type::value_type>) &&

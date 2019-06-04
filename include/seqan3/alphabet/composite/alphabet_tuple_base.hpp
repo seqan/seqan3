@@ -689,7 +689,7 @@ namespace std
 
 //!\brief Obtains the type of the specified element.
 //!\relates seqan3::pod_tuple
-template <std::size_t i, seqan3::detail::alphabet_tuple_base_concept tuple_t>
+template <std::size_t i, seqan3::detail::AlphabetTupleBase tuple_t>
 struct tuple_element<i, tuple_t>
 {
     //!\brief Element type.
@@ -698,7 +698,7 @@ struct tuple_element<i, tuple_t>
 
 //!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
 //!\relates seqan3::pod_tuple
-template <seqan3::detail::alphabet_tuple_base_concept tuple_t>
+template <seqan3::detail::AlphabetTupleBase tuple_t>
 struct tuple_size<tuple_t> :
     public std::integral_constant<size_t, tuple_t::seqan3_tuple_components::size()>
 {};

@@ -20,10 +20,10 @@ namespace seqan3::detail
 {
 
 // ------------------------------------------------------------------
-// alphabet_tuple_base_concept
+// AlphabetTupleBase
 // ------------------------------------------------------------------
 
-/*!\interface seqan3::detail::alphabet_tuple_base_concept <>
+/*!\interface seqan3::detail::AlphabetTupleBase <>
  * \extends seqan3::Semialphabet
  * \brief seqan3::alphabet_tuple_base and its specialisations model this concept.
  * \ingroup alphabet
@@ -35,7 +35,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT alphabet_tuple_base_concept = requires
+SEQAN3_CONCEPT AlphabetTupleBase = requires
 {
     typename t::seqan3_tuple_components;
     typename t::seqan3_recursive_tuple_components;
@@ -58,7 +58,7 @@ struct tuple_components;
  * \extends seqan3::TransformationTrait
  * \ingroup alphabet
  */
-template <alphabet_tuple_base_concept t>
+template <AlphabetTupleBase t>
 struct tuple_components<t>
 {
     //!\brief The returned type.
@@ -82,7 +82,7 @@ struct recursive_tuple_components;
  * \extends seqan3::TransformationTrait
  * \ingroup alphabet
  */
-template <alphabet_tuple_base_concept t>
+template <AlphabetTupleBase t>
 struct recursive_tuple_components<t>
 {
     //!\brief The returned type.
