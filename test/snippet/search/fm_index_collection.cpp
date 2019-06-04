@@ -10,11 +10,11 @@ int main()
                                            "ACTGAGCTCGTC"_dna4, "TGCATGCACCCATCGACTGACTG"_dna4, "GTACGTACGTTACG"_dna4};
     fm_index index{genomes};                                  // build the index
 
-    auto it = index.begin();                                  // create an iterator
-    it.extend_right("CTGA"_dna4);                             // search the pattern "CTGA"
-    debug_stream << "Number of hits: " << it.count() << '\n'; // outputs: 5
+    auto cur = index.begin();                                  // create a cursor
+    cur.extend_right("CTGA"_dna4);                             // search the pattern "CTGA"
+    debug_stream << "Number of hits: " << cur.count() << '\n'; // outputs: 5
     debug_stream << "Positions in the genomes: ";
-    for (auto const & pos : it.locate())                      // outputs: (3,16) (2,1) (1,3) (0,2) (1,19)
+    for (auto const & pos : cur.locate())                      // outputs: (3,16) (2,1) (1,3) (0,2) (1,19)
         debug_stream << pos << ' ';
     debug_stream << '\n';
     return 0;

@@ -20,7 +20,7 @@ void run_text_single()
                                        align_cfg::aligned_ends{free_ends_first} |
                                        align_cfg::result{with_alignment};
 
-    auto results = search(index, query, search_config);
+    auto results = search(query, index, search_config);
 
     debug_stream << "There are " << results.size() << " hits.\n";
     debug_stream << "-----------------\n";
@@ -57,7 +57,7 @@ void run_text_collection()
                                        align_cfg::aligned_ends{free_ends_first} |
                                        align_cfg::result{with_alignment};
 
-    auto results = search(index, query, search_config);
+    auto results = search(query, index, search_config);
 
     debug_stream << "There are " << results.size() << " hits.\n";
     debug_stream << "-----------------\n";

@@ -8,7 +8,7 @@ void run_text_single()
     dna4_vector text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     fm_index index{text};
 
-    auto results = search(index, "GCT"_dna4);
+    auto results = search("GCT"_dna4, index);
     std::ranges::sort(results);
     debug_stream << "=====   Running on a single text   =====\n";
     debug_stream << "There are " << results.size() << " hits.\n";
@@ -22,7 +22,7 @@ void run_text_collection()
                                   "GGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     fm_index index{text};
 
-    auto results = search(index, "GCT"_dna4);
+    auto results = search("GCT"_dna4, index);
     std::ranges::sort(results);
     debug_stream << "===== Running on a text collection =====\n";
     debug_stream << "There are " << results.size() << " hits.\n";

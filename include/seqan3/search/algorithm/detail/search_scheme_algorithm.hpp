@@ -284,7 +284,8 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
 
         do
         {
-            bool const delta = cur.last_char() != query[(go_right ? rb : lb) - 1];
+            bool const delta = cur.template last_char<innermost_value_type_t<query_t>>() !=
+                               query[(go_right ? rb : lb) - 1];
 
             // skip if there are more min errors left in the current block than characters in the block
             // i.e. chars_left - 1 < min_error_left_in_block - delta

@@ -6,6 +6,6 @@ using namespace seqan3;
 int main()
 {
     std::string text{"Garfield the fat cat without a hat."};
-    fm_index index{text};
-    bi_fm_index bi_index{text};
+    fm_index index{text};        // unidirectional index on single text
+    bi_fm_index bi_index{text};  // bidirectional index on single text
 }
