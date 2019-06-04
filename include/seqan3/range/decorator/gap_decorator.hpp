@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::gap_decorator_anchor_set.
+ * \brief Provides seqan3::gap_decorator.
  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
@@ -40,7 +40,7 @@ namespace seqan3
  * \details
  *
  * This class may be used whenever you want to store or compute an alignment. The underlying (ungapped) sequence
- * remains unmodified, and is augmented with gap information. The seqan3::gap_decorator_anchor_set behaves just like a
+ * remains unmodified, and is augmented with gap information. The seqan3::gap_decorator behaves just like a
  * vector over a gapped alphabet when iterating over it, inserting/erasing gaps or accessing a position. The only
  * difference lies in the performance and size overhead (see below).
  *
@@ -66,9 +66,9 @@ namespace seqan3
  * Resolving random access requires logarithmic access into the set and inserting or removing a gap symbol additionally
  * entails updating all subsequent elements in the set to preserve correct cumulative sizes.
  *
- * ### The seqan3::gap_decorator_anchor_set::iterator type
+ * ### The seqan3::gap_decorator::iterator type
  *
- * \attention The iterator of the seqan3::gap_decorator_anchor_set does not model the
+ * \attention The iterator of the seqan3::gap_decorator does not model the
  *            [Cpp17InputIterator](https://en.cppreference.com/w/cpp/named_req/InputIterator) requirements of the
  *            STL because dereferencing the iterator returns a proxy and no operator-> is provided.
  *            Note that it does model the std::ranges::InputIterator.
@@ -79,10 +79,10 @@ template <std::ranges::ViewableRange inner_type>
     requires std::ranges::RandomAccessRange<inner_type> && std::ranges::SizedRange<inner_type> &&
              (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::View<inner_type>)
 //!\endcond
-class gap_decorator_anchor_set
+class gap_decorator
 {
 private:
-    /*!\brief The iterator that moves over the seqan3::gap_decorator_anchor_set.
+    /*!\brief The iterator that moves over the seqan3::gap_decorator.
      *
      * \details
      *
@@ -90,26 +90,26 @@ private:
      * requirements of [LegacyForwardIterator](https://en.cppreference.com/w/cpp/named_req/ForwardIterator). It does
      * model the C++20 std::BidirectionalIterator (and std::ForwardIterator implicitly).
      */
-    class gap_decorator_anchor_set_iterator
+    class gap_decorator_iterator
     {
     private:
         //!\brief Pointer to the underlying container structure.
-        typename std::add_pointer_t<gap_decorator_anchor_set const> host{nullptr};
-        //!\brief Stores the virtual position index for the seqan3::gap_decorator_anchor_set.
-        typename gap_decorator_anchor_set::size_type pos{0u};
+        typename std::add_pointer_t<gap_decorator const> host{nullptr};
+        //!\brief Stores the virtual position index for the seqan3::gap_decorator.
+        typename gap_decorator::size_type pos{0u};
         //!\brief Stores the physical position in the ungapped/underlying view.
         int64_t ungapped_view_pos{0}; // must be signed because we need this value to be -1 in case of leading gaps.
         //!\brief Stores the position (inkl. gaps) where the last (consecutive) gap that is still before the current
         //!       iterator position ends.
-        typename gap_decorator_anchor_set::size_type left_gap_end{0};
+        typename gap_decorator::size_type left_gap_end{0};
         //!\brief A pointer to the current anchor gap node. Note that the current tuple value at position 0 is the
         //!       start of the right gap that is still behind the current iterator position.
-        typename gap_decorator_anchor_set::set_iterator_type anchor_set_it{};
+        typename gap_decorator::set_iterator_type anchor_set_it{};
         //!\brief Caches whether the iterator points to a gap (true) or not (false).
         bool is_at_gap{true};
 
         //!\brief A helper function that performs the random access into the anchor set, updating all member variables.
-        void jump(typename gap_decorator_anchor_set::size_type const new_pos)
+        void jump(typename gap_decorator::size_type const new_pos)
         {
             assert(new_pos <= host->size());
             pos = new_pos;
@@ -119,7 +119,7 @@ private:
 
             if (anchor_set_it != host->anchors.begin())
             {
-                typename gap_decorator_anchor_set::set_iterator_type prev{std::prev(anchor_set_it)};
+                typename gap_decorator::set_iterator_type prev{std::prev(anchor_set_it)};
                 size_type gap_len{prev->second};
 
                 if (prev != host->anchors.begin())
@@ -142,11 +142,11 @@ private:
          * \{
          */
         //!\brief Type for distances between iterators.
-        using difference_type = typename gap_decorator_anchor_set::difference_type;
+        using difference_type = typename gap_decorator::difference_type;
         //!\brief Value type of container elements.
-        using value_type = typename gap_decorator_anchor_set::value_type;
+        using value_type = typename gap_decorator::value_type;
         //!\brief Const-reference type defined by container (which equals the reference type).
-        using reference = typename gap_decorator_anchor_set::const_reference; // = reference
+        using reference = typename gap_decorator::const_reference; // = reference
         //!\brief Equals reference type.
         using const_reference = reference;
         //!\brief Pointer of container value type.
@@ -159,20 +159,20 @@ private:
          * \{
          */
         //!\brief Default constructor.
-        constexpr gap_decorator_anchor_set_iterator() = default;
+        constexpr gap_decorator_iterator() = default;
         //!\brief Copy constructor.
-        constexpr gap_decorator_anchor_set_iterator(gap_decorator_anchor_set_iterator const &) = default;
+        constexpr gap_decorator_iterator(gap_decorator_iterator const &) = default;
         //!\brief Copy construction via assignment.
-        constexpr gap_decorator_anchor_set_iterator & operator=(gap_decorator_anchor_set_iterator const &) = default;
+        constexpr gap_decorator_iterator & operator=(gap_decorator_iterator const &) = default;
         //!\brief Move constructor.
-        constexpr gap_decorator_anchor_set_iterator (gap_decorator_anchor_set_iterator &&) = default;
+        constexpr gap_decorator_iterator (gap_decorator_iterator &&) = default;
         //!\brief Move assignment.
-        constexpr gap_decorator_anchor_set_iterator & operator=(gap_decorator_anchor_set_iterator &&) = default;
+        constexpr gap_decorator_iterator & operator=(gap_decorator_iterator &&) = default;
         //!\brief Use default deconstructor.
-        ~gap_decorator_anchor_set_iterator() = default;
+        ~gap_decorator_iterator() = default;
 
-        //!\brief Construct from seqan3::gap_decorator_anchor_set and initialise members.
-        explicit constexpr gap_decorator_anchor_set_iterator(gap_decorator_anchor_set const & host_) noexcept :
+        //!\brief Construct from seqan3::gap_decorator and initialise members.
+        explicit constexpr gap_decorator_iterator(gap_decorator const & host_) noexcept :
             host(&host_), anchor_set_it{host_.anchors.begin()}
         {
             if (host_.anchors.size() && (*host_.anchors.begin()).first == 0) // there are gaps at the very front
@@ -187,9 +187,9 @@ private:
             }
         }
 
-        //!\brief Construct from seqan3::gap_decorator_anchor_set and explicit position.
-        constexpr gap_decorator_anchor_set_iterator(gap_decorator_anchor_set const & host_,
-                                                    typename gap_decorator_anchor_set::size_type const pos_) noexcept :
+        //!\brief Construct from seqan3::gap_decorator and explicit position.
+        constexpr gap_decorator_iterator(gap_decorator const & host_,
+                                                    typename gap_decorator::size_type const pos_) noexcept :
              host(&host_)
         {
             jump(pos_); // random access to pos
@@ -200,7 +200,7 @@ private:
          * \{
         */
         //!\brief Pre-increment, returns updated iterator.
-        constexpr gap_decorator_anchor_set_iterator & operator++() noexcept
+        constexpr gap_decorator_iterator & operator++() noexcept
         {
             assert(host); // host is set
             ++pos;
@@ -227,7 +227,7 @@ private:
         }
 
         //!\brief Pre-decrement, returns updated iterator.
-        constexpr gap_decorator_anchor_set_iterator & operator--() noexcept
+        constexpr gap_decorator_iterator & operator--() noexcept
         {
             assert(host); // host is set
             --pos;
@@ -259,17 +259,17 @@ private:
         }
 
         //!\brief Post-increment, returns previous iterator state (delegates to pre-increment).
-        constexpr gap_decorator_anchor_set_iterator operator++(int) noexcept
+        constexpr gap_decorator_iterator operator++(int) noexcept
         {
-            gap_decorator_anchor_set_iterator cpy{*this};
+            gap_decorator_iterator cpy{*this};
             ++(*this);
             return cpy;
         }
 
         //!\brief Post-decrement, returns previous iterator state (delegates to pre-decrement).
-        constexpr gap_decorator_anchor_set_iterator operator--(int) noexcept
+        constexpr gap_decorator_iterator operator--(int) noexcept
         {
-            gap_decorator_anchor_set_iterator cpy{*this};
+            gap_decorator_iterator cpy{*this};
             --(*this);
             return cpy;
         }
@@ -292,43 +292,43 @@ private:
          */
 
         //!\brief Checks whether `*this` is equal to `rhs`.
-        constexpr friend bool operator==(gap_decorator_anchor_set_iterator const & lhs,
-                                         gap_decorator_anchor_set_iterator const & rhs)
+        constexpr friend bool operator==(gap_decorator_iterator const & lhs,
+                                         gap_decorator_iterator const & rhs)
         {
             return lhs.pos == rhs.pos;
         }
 
         //!\brief Checks whether `*this` is not equal to `rhs`.
-        constexpr friend bool operator!=(gap_decorator_anchor_set_iterator const & lhs,
-                                         gap_decorator_anchor_set_iterator const & rhs)
+        constexpr friend bool operator!=(gap_decorator_iterator const & lhs,
+                                         gap_decorator_iterator const & rhs)
         {
             return lhs.pos != rhs.pos;
         }
 
         //!\brief Checks whether `*this` is less than `rhs`.
-        constexpr friend bool operator<(gap_decorator_anchor_set_iterator const & lhs,
-                                        gap_decorator_anchor_set_iterator const & rhs)
+        constexpr friend bool operator<(gap_decorator_iterator const & lhs,
+                                        gap_decorator_iterator const & rhs)
         {
             return lhs.pos < rhs.pos;
         }
 
         //!\brief Checks whether `*this` is greater than `rhs`.
-        constexpr friend bool operator>(gap_decorator_anchor_set_iterator const & lhs,
-                                        gap_decorator_anchor_set_iterator const & rhs)
+        constexpr friend bool operator>(gap_decorator_iterator const & lhs,
+                                        gap_decorator_iterator const & rhs)
         {
             return lhs.pos > rhs.pos;
         }
 
         //!\brief Checks whether `*this` is less than or equal to `rhs`.
-        constexpr friend bool operator<=(gap_decorator_anchor_set_iterator const & lhs,
-                                         gap_decorator_anchor_set_iterator const & rhs)
+        constexpr friend bool operator<=(gap_decorator_iterator const & lhs,
+                                         gap_decorator_iterator const & rhs)
         {
             return lhs.pos <= rhs.pos;
         }
 
         //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-        constexpr friend bool operator>=(gap_decorator_anchor_set_iterator const & lhs,
-                                         gap_decorator_anchor_set_iterator const & rhs)
+        constexpr friend bool operator>=(gap_decorator_iterator const & lhs,
+                                         gap_decorator_iterator const & rhs)
         {
             return lhs.pos >= rhs.pos;
         }
@@ -351,7 +351,7 @@ public:
     //!\brief The difference type of the underlying sequence.
     using difference_type = difference_type_t<inner_type>;
     //!\brief The iterator type of this container (a bidirectional iterator).
-    using iterator = gap_decorator_anchor_set_iterator;
+    using iterator = gap_decorator_iterator;
     //!\brief The const_iterator equals the iterator type. Since no references are ever returned and thus the underlying
     //!        sequence cannot be modified through the iterator there is no need for const.
     using const_iterator = iterator;
@@ -365,26 +365,26 @@ public:
      */
     //!\brief Default constructor. Attention: all operations on a solely default constructed decorator,
     //!       except assigning a new range, are UB.
-    constexpr gap_decorator_anchor_set() = default;
+    constexpr gap_decorator() = default;
     //!\brief Copy constructor.
-    constexpr gap_decorator_anchor_set(gap_decorator_anchor_set const &) = default;
+    constexpr gap_decorator(gap_decorator const &) = default;
     //!\brief Copy construction via assignment.
-    constexpr gap_decorator_anchor_set & operator=(gap_decorator_anchor_set const &) = default;
+    constexpr gap_decorator & operator=(gap_decorator const &) = default;
     //!\brief Move constructor.
-    constexpr gap_decorator_anchor_set(gap_decorator_anchor_set && rhs) = default;
+    constexpr gap_decorator(gap_decorator && rhs) = default;
     //!\brief Move assignment.
-    constexpr gap_decorator_anchor_set & operator=(gap_decorator_anchor_set && rhs) = default;
+    constexpr gap_decorator & operator=(gap_decorator && rhs) = default;
     //!\brief Use default deconstructor.
-    ~gap_decorator_anchor_set() = default;
+    ~gap_decorator() = default;
 
     //!\brief Construct with the ungapped range type.
     template <typename other_range_t>
     //!\cond
-         requires !std::Same<other_range_t, gap_decorator_anchor_set> &&
+         requires !std::Same<other_range_t, gap_decorator> &&
                   std::Same<remove_cvref_t<other_range_t>, remove_cvref_t<inner_type>> &&
                   std::ranges::ViewableRange<other_range_t> // at end, otherwise it competes with the move ctor
     //!\endcond
-    gap_decorator_anchor_set(other_range_t && range) : ungapped_view{std::view::all(std::forward<inner_type>(range))}
+    gap_decorator(other_range_t && range) : ungapped_view{std::view::all(std::forward<inner_type>(range))}
     {} // TODO (@smehringer) only works for copyable views. Has to be changed once views are not required to be copyable anymore.
     // !\}
 
@@ -538,15 +538,15 @@ public:
         return iterator{*this, pos1};
     }
 
-    /*!\brief Assigns a new sequence of type seqan3:;gap_decorator_anchor_set::unaligned_seq_type to the decorator.
+    /*!\brief Assigns a new sequence of type seqan3:;gap_decorator::unaligned_seq_type to the decorator.
      * \param[in,out] dec       The decorator to modify.
      * \param[in]     unaligned The unaligned sequence to assign.
      */
     template <typename unaligned_seq_t> // generic template to use forwarding reference
     //!\cond
-        requires std::Constructible<gap_decorator_anchor_set, unaligned_seq_t>
+        requires std::Constructible<gap_decorator, unaligned_seq_t>
     //!\endcond
-    friend void assign_unaligned(gap_decorator_anchor_set & dec, unaligned_seq_t && unaligned)
+    friend void assign_unaligned(gap_decorator & dec, unaligned_seq_t && unaligned)
     {
         dec = unaligned;
     }
@@ -638,7 +638,7 @@ public:
      * \param i     The element to retrieve.
      * \returns     A reference of the gapped alphabet type.
      *
-     * This function delegates to an iterator seqan3::gap_decorator_anchor_set.
+     * This function delegates to an iterator seqan3::gap_decorator.
      *
      * ### Complexity
      *
@@ -652,7 +652,7 @@ public:
     //!\}
 
     /*!\name Comparison operators
-     * \brief Compares two seqan3::gap_decorator_anchor_set 's by underlying sequence and gaps.
+     * \brief Compares two seqan3::gap_decorator 's by underlying sequence and gaps.
      * \param[in] lhs The left-hand side gap decorator to compare.
      * \param[in] rhs The right-hand side gap decorator to compare.
      * \returns A boolean flag indicating (in)equality of the aligned sequences.
@@ -671,7 +671,7 @@ public:
      */
 
     //!\brief Checks whether `lhs` is equal to `rhs`.
-    friend bool operator==(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    friend bool operator==(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         if (lhs.size()  == rhs.size()  &&
             lhs.anchors == rhs.anchors &&
@@ -684,13 +684,13 @@ public:
     }
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
-    friend bool operator!=(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    friend bool operator!=(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     //!\brief Checks whether `lhs` is less than `rhs`.
-    friend bool operator<(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    friend bool operator<(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         auto lit = lhs.begin();
         auto rit = rhs.begin();
@@ -707,7 +707,7 @@ public:
     }
 
     //!\brief Checks whether `lhs` is less than or equal to `rhs`.
-    friend bool operator<=(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    friend bool operator<=(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         auto lit = lhs.begin();
         auto rit = rhs.begin();
@@ -724,13 +724,13 @@ public:
     }
 
     //!\brief Checks whether `lhs` is greater than `rhs`.
-    friend bool operator>(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    friend bool operator>(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         return !(lhs <= rhs);
     }
 
     //!\brief Checks whether `lhs` is greater than or equal to `rhs`.
-    friend bool operator>=(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    friend bool operator>=(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         return !(lhs < rhs);
     }
@@ -825,11 +825,11 @@ template <std::ranges::ViewableRange urng_t>
 //!\cond
     requires !std::ranges::View<std::remove_reference_t<urng_t>>
 //!\endcond
-gap_decorator_anchor_set(urng_t && range) -> gap_decorator_anchor_set<std::remove_reference_t<urng_t> const &>;
+gap_decorator(urng_t && range) -> gap_decorator<std::remove_reference_t<urng_t> const &>;
 
 //!\brief Views always deduce to their respective type because they are copied.
 template <std::ranges::View urng_t>
-gap_decorator_anchor_set(urng_t range) -> gap_decorator_anchor_set<urng_t>;
+gap_decorator(urng_t range) -> gap_decorator<urng_t>;
 //!\}
 
 } // namespace seqan
@@ -837,11 +837,11 @@ gap_decorator_anchor_set(urng_t range) -> gap_decorator_anchor_set<urng_t>;
 namespace seqan3::detail
 {
 
-//!\brief Type trait that declares any seqan3::gap_decorator_anchor_set to be **NOT a view**.
+//!\brief Type trait that declares any seqan3::gap_decorator to be **NOT a view**.
 template <typename type>
-constexpr int enable_view<seqan3::gap_decorator_anchor_set<type>> = 0;
+constexpr int enable_view<seqan3::gap_decorator<type>> = 0;
 
 template <typename type>
-constexpr int enable_view<seqan3::gap_decorator_anchor_set<type> const> = 0;
+constexpr int enable_view<seqan3::gap_decorator<type> const> = 0;
 
 } // namespace seqan3::detail

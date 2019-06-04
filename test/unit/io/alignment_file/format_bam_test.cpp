@@ -11,7 +11,7 @@
 
 #include <seqan3/contrib/stream/gz_istream.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
-#include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
+#include <seqan3/range/decorator/gap_decorator.hpp>
 
 #include "alignment_file_format_test_template.hpp"
 
@@ -478,7 +478,7 @@ TEST_F(bam_format, too_long_cigar_string_write)
     auto read = view::repeat_n('T'_dna5,  70'000);
     auto ref  = view::repeat_n('A'_dna5, 2 * read.size() - 1);
 
-    auto gapped_ref  = gap_decorator_anchor_set{ref};
+    auto gapped_ref  = gap_decorator{ref};
 
     // a gap_decorator on a repeat_n view also works but is slow when inserting gaps.
     std::vector<gapped<dna5>> gapped_read;

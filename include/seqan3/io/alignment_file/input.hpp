@@ -37,7 +37,7 @@
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
+#include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/std/concepts>
@@ -467,14 +467,14 @@ private:
     //!\brief The type of the aligned query sequence (second type of the pair of alignment_type).
     using alignment_query_type = std::conditional_t<
                                      selected_field_ids::contains(field::SEQ),
-                                     gap_decorator_anchor_set<
+                                     gap_decorator<
                                          decltype(std::declval<sequence_type &>() | view::slice(0, 0))>,
                                      typename traits_type::template sequence_container<
                                          gapped<typename traits_type::sequence_alphabet>>>;
 
 public:
     //!\brief The type of field::ALIGNMENT (default: std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>).
-    using alignment_type = std::pair<gap_decorator_anchor_set<ref_sequence_type>, alignment_query_type>;
+    using alignment_type = std::pair<gap_decorator<ref_sequence_type>, alignment_query_type>;
 
     //!\brief The previously defined types aggregated in a seqan3::type_list.
     using field_types = type_list<sequence_type,
