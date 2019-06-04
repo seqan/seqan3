@@ -17,8 +17,10 @@
 #include <type_traits>
 
 #include <seqan3/alignment/pairwise/execution/alignment_range.hpp>
+#include <seqan3/alignment/pairwise/execution/execution_handler_parallel.hpp>
 #include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/view/view_all.hpp>
@@ -96,13 +98,48 @@ public:
     alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default;    //!< Defaulted
     ~alignment_executor_two_way() = default;                                             //!< Defaulted
 
-    //!\brief Constructs this executor with the passed range of alignment instances.
+    /*!\brief Constructs this executor with the passed range of alignment instances.
+     * \param[in] resrc The underlying resource containing the sequence pairs to align.
+     * \param[in] fn    The alignment kernel to invoke on the sequences pairs.
+     *
+     * \details
+     *
+     * Forwards the resource range as a zipped view with an index view to provide internal ids for the alignments.
+     * If the execution handler is parallel it allocates a buffer of the size of the given resource range.
+     * Otherwise the buffer size is 1.
+     */
     alignment_executor_two_way(resource_t resrc,
                                alignment_algorithm_t fn) :
         resource{std::view::zip(std::forward<resource_t>(resrc), std::view::iota(0))},
         kernel{std::move(fn)}
     {
-        init_buffer();
+        if constexpr (std::Same<execution_handler_t, execution_handler_parallel>)
+            init_buffer(std::ranges::distance(resrc));
+        else
+            init_buffer(1);
+    }
+
+    /*!\brief Constructs this executor with the passed range of alignment instances.
+     * \param[in] resrc The underlying resource containing the sequence pairs to align.
+     * \param[in] fn    The alignment kernel to invoke on the sequences pairs.
+     * \param[in] exec  The execution policy to use.
+     *
+     * \details
+     *
+     * This constructor is used to type deduce the execution handler type from the passed execution policy.
+     * The given execution policy is ignored.
+     */
+    template <typename exec_policy_t>
+        requires is_execution_policy_v<exec_policy_t>
+    alignment_executor_two_way(resource_t resrc,
+                               alignment_algorithm_t fn,
+                               exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec)) :
+        alignment_executor_two_way{std::move(resrc), std::move(fn)}
+    {
+        static_assert(!std::Same<exec_policy_t, parallel_unsequenced_policy>,
+                      "Parallel unsequenced execution not supported!");
+        static_assert(!std::Same<exec_policy_t, unsequenced_policy>,
+                      "Unsequenced execution not supported!");
     }
     //!}
 
@@ -192,6 +229,8 @@ private:
                                  [write_to] (auto && res) { *write_to = std::move(res); });
         }
 
+        exec_handler.wait();
+
         // Update the available get position if the buffer was consumed completely.
         setg(std::ranges::begin(buffer), std::ranges::begin(buffer) + count);
 
@@ -203,10 +242,12 @@ private:
      * \{
      */
 
-    //!\brief Initialises the underlying buffer.
-    void init_buffer()
+    /*!\brief Initialises the underlying buffer.
+     * \param size The initial size of the buffer.
+     */
+    void init_buffer(size_t const size)
     {
-        buffer.resize(1);
+        buffer.resize(size);
         setg(std::ranges::end(buffer), std::ranges::end(buffer));
     }
     //!\}
@@ -239,6 +280,16 @@ private:
 template <typename resource_rng_t, typename func_t>
 alignment_executor_two_way(resource_rng_t &&, func_t) ->
     alignment_executor_two_way<resource_rng_t, func_t, execution_handler_sequential>;
+
+//!\brief Deduce the type from the provided arguments and set the sequential execution handler.
+template <typename resource_rng_t, typename func_t, typename exec_policy_t>
+    requires is_execution_policy_v<exec_policy_t>
+alignment_executor_two_way(resource_rng_t &&, func_t, exec_policy_t const &) ->
+    alignment_executor_two_way<resource_rng_t,
+                               func_t,
+                               std::conditional_t<std::Same<exec_policy_t, parallel_policy>,
+                                                  execution_handler_parallel,
+                                                  execution_handler_sequential>>;
 
 //!\}
 } // namespace seqan3::detail

@@ -45,7 +45,7 @@ TYPED_TEST_P(execution_handler, execute_w_lvalue)
     }
 
     size_t pos = 0;
-    // We need a function + id + range + range + delegate
+
     for (unsigned i = 0; i < SIZE; ++i, ++pos)
     {
         auto v1 = set1[i] | view::all;
@@ -85,7 +85,7 @@ TYPED_TEST_P(execution_handler, execute_w_rvalue)
     }
 
     size_t pos = 0;
-    // We need a function + id + range + range + delegate
+
     for (unsigned i = 0; i < SIZE; ++i, ++pos)
     {
         exec_handler.execute(callable, i, set1[i] | view::all, set2[i] | view::all,

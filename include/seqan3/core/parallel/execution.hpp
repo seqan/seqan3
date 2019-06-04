@@ -77,19 +77,19 @@ struct is_execution_policy : std::false_type
 
 //!\cond
 template<>
-struct is_execution_policy<execution::sequenced_policy> : std::true_type
+struct is_execution_policy<sequenced_policy> : std::true_type
 {};
 
 template<>
-struct is_execution_policy<execution::parallel_policy> : std::true_type
+struct is_execution_policy<parallel_policy> : std::true_type
 {};
 
 template<>
-struct is_execution_policy<execution::parallel_unsequenced_policy> : std::true_type
+struct is_execution_policy<parallel_unsequenced_policy> : std::true_type
 {};
 
 template<>
-struct is_execution_policy<execution::unsequenced_policy> : std::true_type
+struct is_execution_policy<unsequenced_policy> : std::true_type
 {};
 //!\endcond
 
