@@ -189,7 +189,7 @@ public:
     }
 
     /*!\brief Returns the actual alignment, i.e. the base pair matching.
-     * \return At least two gapped sequences, which represent the alignment.
+     * \return At least two aligned sequences, which represent the alignment.
      * \attention This function with fail the compilation, if the alignment was not requested in the alignment
      * configuration.
      */
