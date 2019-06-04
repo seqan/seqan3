@@ -51,11 +51,12 @@ private:
     //!\brief Befriend the derived class so it can instantiate.
     friend derived_type;
 
-public:
-
+protected:
     // Import from base:
     using typename base_t::char_type;
     using typename base_t::rank_type;
+
+public:
     using base_t::alphabet_size;
     using base_t::to_rank;
 
