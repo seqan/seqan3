@@ -9,12 +9,11 @@
 
 #include <string>
 
-#include <range/v3/algorithm/for_each.hpp>
-#include <range/v3/view/single.hpp>
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
 #include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/std/algorithm>
+#include <seqan3/std/ranges>
 #include <seqan3/test/pretty_printing.hpp>
 
 struct dummy_alignment
@@ -34,12 +33,14 @@ struct dummy_alignment
     }
 };
 
+using namespace seqan3;
+
 // Some globally defined test types
+using seq_type = all_view<std::string &>;
+
 inline static std::tuple single{std::string{"AACGTACGT"}, std::string{"ATCGTCCGT"}};
 inline static std::vector<decltype(single)> collection{5, single};
-inline static std::function<size_t(size_t const, std::string &, std::string &)> fn{dummy_alignment{}};
-
-using namespace seqan3;
+inline static std::function<size_t(size_t const, seq_type, seq_type)> fn{dummy_alignment{}};
 
 TEST(alignment_executor_two_way, construction)
 {

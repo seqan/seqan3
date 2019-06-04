@@ -21,6 +21,7 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
+#include <seqan3/range/view/view_all.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -43,7 +44,7 @@ template <std::ranges::ViewableRange resource_t,
           typename alignment_algorithm_t,
           typename execution_handler_t = execution_handler_sequential>
 //!\cond
-    requires std::ranges::InputRange<resource_t> &&
+    requires std::ranges::ForwardRange<resource_t> &&
              std::CopyConstructible<alignment_algorithm_t>
 //!\endcond
 class alignment_executor_two_way
@@ -176,14 +177,19 @@ private:
         setg(std::ranges::begin(buffer), std::ranges::end(buffer));
 
         // Apply the alignment execution.
-        // TODO: Adapt for async behavior for parallel execution handler.
         size_t count = 0;
+        size_t buffer_limit = in_avail();
         for (auto resource_iter = std::ranges::begin(resource);
-             count < in_avail() && !is_eof(); ++count, ++resource_iter, ++gptr)
+             count < buffer_limit && !is_eof(); ++count, ++resource_iter, ++gptr)
         {
             auto && [tpl, idx] = *resource_iter;
             auto && [first_seq, second_seq] = tpl;
-            exec_handler.execute(kernel, idx, first_seq, second_seq, [this](auto && res){ *gptr = std::move(res); });
+            buffer_pointer write_to = gptr;
+            exec_handler.execute(kernel,
+                                 idx,
+                                 first_seq | view::all,
+                                 second_seq | view::all,
+                                 [write_to] (auto && res) { *write_to = std::move(res); });
         }
 
         // Update the available get position if the buffer was consumed completely.

@@ -29,7 +29,7 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/view/view_all.hpp>
 
 namespace seqan3::detail
 {
@@ -115,8 +115,8 @@ public:
                                     decltype(get<align_cfg::scoring>(std::declval<alignment_config_type>()).value)
                                  >;
             return static_cast<bool>(ScoringScheme<scoring_type,
-                                                            value_type_t<first_seq_t>,
-                                                            value_type_t<second_seq_t>>);
+                                                   value_type_t<first_seq_t>,
+                                                   value_type_t<second_seq_t>>);
         }
         else
         {
@@ -270,15 +270,20 @@ public:
             // Configure the type-erased alignment function.
             // ----------------------------------------------------------------------------
 
-            using first_seq_t = std::tuple_element_t<0, value_type_t<std::remove_reference_t<sequences_t>>>;
-            using second_seq_t = std::tuple_element_t<1, value_type_t<std::remove_reference_t<sequences_t>>>;
+            using first_seq_t = std::tuple_element_t<0, value_type_t<sequences_t>>;
+            using second_seq_t = std::tuple_element_t<1, value_type_t<sequences_t>>;
+
+            using wrapped_first_t  = all_view<first_seq_t &>;
+            using wrapped_second_t = all_view<second_seq_t &>;
 
             // Select the result type based on the sequences and the configuration.
-            using result_t = alignment_result<typename align_result_selector<std::remove_reference_t<first_seq_t>,
-                                                                         std::remove_reference_t<second_seq_t>,
-                                                                         config_t>::type>;
+            using result_t = alignment_result<typename align_result_selector<std::remove_reference_t<wrapped_first_t>,
+                                                                             std::remove_reference_t<wrapped_second_t>,
+                                                                             config_t
+                                                                            >::type
+                                             >;
             // Define the function wrapper type.
-            using function_wrapper_t = std::function<result_t(size_t const, first_seq_t &, second_seq_t &)>;
+            using function_wrapper_t = std::function<result_t(size_t const, wrapped_first_t, wrapped_second_t)>;
 
             // ----------------------------------------------------------------------------
             // Test some basic preconditions
