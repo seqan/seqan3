@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+#include <fstream>
+
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/view/char_to.hpp>
@@ -16,6 +18,7 @@
 #include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/ranges>
+#include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
 
@@ -72,4 +75,24 @@ TEST(view_istreambuf, concepts)
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
     EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), char>));
+}
+
+TEST(view_istreambuf, big_file_stram)
+{
+    test::tmp_filename file_name{"istream_storage"};
+
+    {
+        std::ofstream os{file_name.get_path()};
+        for (size_t idx = 0; idx < 11000 ; ++idx)
+            os << "halloballo\n";
+    }
+
+    std::ifstream istream{file_name.get_path()};
+    auto v = view::istreambuf(istream);
+    while (v.begin() != v.end())
+    {
+        EXPECT_TRUE(std::ranges::equal(v | view::take_until_or_throw_and_consume(is_char<'\n'>),
+                                       std::string_view{"halloballo"}));
+    }
+
 }
