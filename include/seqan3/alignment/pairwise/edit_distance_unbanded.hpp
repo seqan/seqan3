@@ -652,6 +652,39 @@ private:
     //!\brief The end position of the database.
     database_iterator database_it_end{};
 
+    //!\brief The internal state needed to compute the trace matrix.
+    struct compute_state_trace_matrix
+    {
+        //!\brief The machine word which stores if trace_directions::diagonal is true.
+        proxy_reference<word_type> db{};
+    };
+
+    //!\brief The internal state needed to compute the alignment.
+    struct compute_state : enable_state_t<compute_trace_matrix, compute_state_trace_matrix>
+    {
+        //!\brief The type of hp.
+        using hp_type = std::conditional_t<compute_trace_matrix, proxy_reference<word_type>, word_type>;
+
+        //!\brief The machine word which stores wether the current character matches.
+        word_type b{};
+        //!\brief The machine word which stores the diagonal differences.
+        word_type d0{};
+        //!\brief The machine word which stores the positive horizontal differences.
+        hp_type hp{};
+        //!\brief The machine word which stores the negative horizontal differences.
+        word_type hn{};
+        //!\brief The machine word which stores the positive vertical differences.
+        proxy_reference<word_type> vp{};
+        //!\brief The machine word which stores the negative vertical differences.
+        proxy_reference<word_type> vn{};
+        //!\brief The carry-bit of d0.
+        word_type carry_d0{};
+        //!\brief The carry-bit of hp.
+        word_type carry_hp{hp0};
+        //!\brief The carry-bit of hn.
+        word_type carry_hn{};
+    };
+
     //!\brief Add a computation step
     void add_state()
     {
@@ -733,35 +766,52 @@ public:
 
 private:
 
-    //!\brief One compute step in one column.
-    template <typename carry_type>
-    void compute_step(word_type b, word_type & d0, word_type & hp, word_type & hn, word_type & vp, word_type & vn,
-                      carry_type carry_d0, carry_type carry_hp, carry_type carry_hn)
+    //!\brief A single compute step in the current column.
+    template <bool with_carry>
+    static void compute_step(compute_state & state) noexcept
     {
         word_type x, t;
-        assert(carry_d0 <= 1u);
-        assert(carry_hp <= 1u);
-        assert(carry_hn <= 1u);
+        assert(state.carry_d0 <= 1u);
+        assert(state.carry_hp <= 1u);
+        assert(state.carry_hn <= 1u);
 
-        x = b | vn;
-        t = vp + (x & vp) + carry_d0;
+        x = state.b | state.vn;
+        t = state.vp + (x & state.vp) + state.carry_d0;
 
-        d0 = (t ^ vp) | x;
-        hn = vp & d0;
-        hp = vn | ~(vp | d0);
+        state.d0 = (t ^ state.vp) | x;
+        state.hn = state.vp & state.d0;
+        state.hp = state.vn | ~(state.vp | state.d0);
 
-        if constexpr(std::Same<carry_type, word_type &>)
-            carry_d0 = (carry_d0 != 0u) ? t <= vp : t < vp;
+        if constexpr(with_carry)
+            state.carry_d0 = (state.carry_d0 != 0u) ? t <= state.vp : t < state.vp;
 
-        x = (hp << 1u) | carry_hp;
-        vn = x & d0;
-        vp = (hn << 1u) | ~(x | d0) | carry_hn;
+        x = (state.hp << 1u) | state.carry_hp;
+        state.vn = x & state.d0;
+        state.vp = (state.hn << 1u) | ~(x | state.d0) | state.carry_hn;
 
-        if constexpr(std::Same<carry_type, word_type &>)
+        if constexpr(with_carry)
         {
-            carry_hp = hp >> (word_size - 1u);
-            carry_hn = hn >> (word_size - 1u);
+            state.carry_hp = state.hp >> (word_size - 1u);
+            state.carry_hn = state.hn >> (word_size - 1u);
         }
+    }
+
+    //!\brief A single compute step in the current column at a given position.
+    template <bool with_carry>
+    void compute_kernel(compute_state & state, size_t block_offset, size_t current_block) noexcept
+    {
+        state.vp = proxy_reference<word_type>{this->vp[current_block]};
+        state.vn = proxy_reference<word_type>{this->vn[current_block]};
+        if constexpr(compute_trace_matrix)
+        {
+            state.hp = proxy_reference<word_type>{this->hp[current_block]};
+            state.db = proxy_reference<word_type>{this->db[current_block]};
+        }
+        state.b = bit_masks[block_offset + current_block];
+
+        compute_step<with_carry>(state);
+        if constexpr(compute_trace_matrix)
+            state.db = ~(state.b ^ state.d0);
     }
 
     //!\brief Increase or decrease the score.
@@ -870,29 +920,11 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
     // computing the blocks
     while (database_it != database_it_end)
     {
-        word_type d0, hn, hp;
-
-        word_type * vp_{};
-        word_type * vn_{};
-        word_type * hp_ = &hp;
-        [[maybe_unused]] word_type * db_{};
-
-        vp_ = &this->vp[0];
-        vn_ = &this->vn[0];
-        if constexpr(compute_trace_matrix)
-        {
-            hp_ = &this->hp[0];
-            db_ = &this->db[0];
-        }
-
+        compute_state state{};
         size_t const block_offset = to_rank((query_alphabet_type) *database_it);
 
-        word_type const b = bit_masks[block_offset];
-        compute_step<word_type>(b, d0, *hp_, hn, *vp_, *vn_, 0u, hp0, 0u);
-        if constexpr(compute_trace_matrix)
-            *db_ = ~(b ^ d0);
-
-        advance_score(*hp_, hn, score_mask);
+        compute_kernel<false>(state, block_offset, 0u);
+        advance_score(state.hp, state.hn, score_mask);
 
         // semi-global without max_errors guarantees that the score stays within the last row
         if constexpr(is_semi_global && !use_max_errors)
@@ -921,38 +953,18 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 {
     while (database_it != database_it_end)
     {
-        word_type d0, hn, hp;
-
-        word_type * vp_{};
-        word_type * vn_{};
-        word_type * hp_ = &hp;
-        [[maybe_unused]] word_type * db_{};
-
-        word_type carry_d0{0u}, carry_hp{hp0}, carry_hn{0u};
+        compute_state state{};
         size_t const block_offset = vp.size() * to_rank((query_alphabet_type) *database_it);
 
         size_t block_count = vp.size();
         if constexpr(use_max_errors)
             block_count = this->last_block + 1;
 
-        // computing the necessary blocks, carries between blocks following one another are stored
+        // compute each block in the current column; carries between blocks will be propagated.
         for (size_t current_block = 0u; current_block < block_count; current_block++)
-        {
-            vp_ = &this->vp[current_block];
-            vn_ = &this->vn[current_block];
-            if constexpr(compute_trace_matrix)
-            {
-                hp_ = &this->hp[current_block];
-                db_ = &this->db[current_block];
-            }
+            compute_kernel<true>(state, block_offset, current_block);
 
-            word_type const b = bit_masks[block_offset + current_block];
-            compute_step<word_type &>(b, d0, *hp_, hn, *vp_, *vn_,
-                                      carry_d0, carry_hp, carry_hn);
-            if constexpr(compute_trace_matrix)
-                *db_ = ~(b ^ d0);
-        }
-        advance_score(*hp_, hn, score_mask);
+        advance_score(state.hp, state.hn, score_mask);
 
         // semi-global without max_errors guarantees that the score stays within the last row
         if constexpr(is_semi_global && !use_max_errors)
@@ -960,9 +972,11 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 
         if constexpr(use_max_errors)
         {
-            // if the active cell is the last of it's block, one additional block has to be calculated
+            // if the last active cell reached the end within the current block we have to compute the next block.
             bool additional_block = score_mask >> (word_size - 1u);
-            if (this->last_block + 1u == vp.size())
+            bool reached_last_block = this->last_block + 1u == vp.size();
+            // If there is no next block we skip the computation.
+            if (reached_last_block)
                 additional_block = false;
 
             if (additional_block)
@@ -971,19 +985,7 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
                 // this might not be necessary, but carry_d0 = 1u might have an influence on the result of vn and vp.
                 vp[current_block] = vp0;
                 vn[current_block] = vn0;
-                vp_ = &this->vp[current_block];
-                vn_ = &this->vn[current_block];
-                if constexpr(compute_trace_matrix)
-                {
-                    hp_ = &this->hp[current_block];
-                    db_ = &this->db[current_block];
-                }
-
-                word_type const b = bit_masks[block_offset + current_block];
-                compute_step<word_type>(b, d0, *hp_, hn, *vp_, *vn_,
-                                        carry_d0, carry_hp, carry_hn);
-                if constexpr(compute_trace_matrix)
-                    *db_ = ~(b ^ d0);
+                compute_kernel<false>(state, block_offset, current_block);
             }
 
             // updating the last active cell
