@@ -501,6 +501,54 @@ public:
     //!\}
 };
 
+//!\brief The same as `T &` but it is default constructible and is re-assignable.
+template <typename T>
+struct proxy_reference
+{
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    proxy_reference() noexcept = default;                                    //!< Defaulted.
+    proxy_reference(proxy_reference const &) noexcept = default;             //!< Defaulted.
+    proxy_reference(proxy_reference &&) noexcept = default;                  //!< Defaulted.
+    proxy_reference & operator=(proxy_reference const &) noexcept = default; //!< Defaulted.
+    proxy_reference & operator=(proxy_reference &&) noexcept = default;      //!< Defaulted.
+    ~proxy_reference() = default;                                            //!< Defaulted.
+
+    //!\brief Use the lvalue `t` as the stored reference.
+    proxy_reference(T & t) noexcept
+        : ptr(std::addressof(t))
+    {}
+
+    proxy_reference(T &&) = delete; //!< Deleted.
+
+    //!\brief Assign a value to the stored reference.
+    template <typename U>
+    proxy_reference & operator=(U && u) noexcept
+    {
+        get() = std::forward<U>(u);
+        return *this;
+    }
+    //!\}
+
+    //!\brief Get the stored reference.
+    T & get() const noexcept
+    {
+        assert(ptr != nullptr);
+        return *ptr;
+    }
+
+    //!\brief Get the stored reference.
+    operator T & () const noexcept
+    {
+        return get();
+    }
+
+protected:
+    //!\brief The stored reference.
+    T * ptr{nullptr};
+};
+
 /*!\brief This calculates an alignment using the edit distance and without a band.
  * \ingroup pairwise_alignment
  * \tparam database_t     \copydoc default_edit_distance_trait_type::database_type

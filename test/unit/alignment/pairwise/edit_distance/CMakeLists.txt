@@ -1,4 +1,5 @@
 seqan3_test(global_edit_distance_max_errors_unbanded_test.cpp)
 seqan3_test(global_edit_distance_unbanded_test.cpp)
+seqan3_test(proxy_reference_test.cpp)
 seqan3_test(semi_global_edit_distance_max_errors_unbanded_test.cpp)
 seqan3_test(semi_global_edit_distance_unbanded_test.cpp)
