@@ -25,9 +25,9 @@
 #include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/metafunction/deferred_crtp_base.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
+#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/range/view/view_all.hpp>
 
@@ -132,6 +132,7 @@ public:
 };
 
 /*!\brief Configures the alignment algorithm given the sequences and the configuration object.
+ * \implements seqan3::TransformationTrait
  * \ingroup pairwise_alignment
  */
 struct alignment_configurator

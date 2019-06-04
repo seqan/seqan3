@@ -6,21 +6,21 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various metafunctions.
+ * \brief Provides various type traits.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
+
+/*!\defgroup type_traits Type Traits
+ * \brief Provides various type traits and their shortcuts.
+ * \ingroup core
  */
 
 #pragma once
 
-#include <seqan3/core/metafunction/pre.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/deferred_crtp_base.hpp>
-#include <seqan3/core/metafunction/iterator.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
-
-/*!\defgroup metafunction Metafunction
- * \brief Provide various metafunctions.
- * \ingroup core
- */
+#include <seqan3/core/type_traits/pre.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
+#include <seqan3/core/type_traits/iterator.hpp>
+#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>

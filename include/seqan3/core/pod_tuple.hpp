@@ -341,8 +341,11 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 }
 //!\endcond
 
-//!\brief Obtains the type of the specified element.
-//!\relates seqan3::pod_tuple
+/*!\brief Obtains the type of the specified element.
+ * \implements seqan3::TransformationTrait
+ * \relates seqan3::pod_tuple
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
+ */
 template <std::size_t i, template <typename...> typename t, typename ...types >
     requires i < sizeof...(types) &&
             std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
@@ -351,8 +354,11 @@ struct tuple_element<i, t<types...>>
     using type = meta::at_c<meta::list<types...>, i>;
 };
 
-//!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
-//!\relates seqan3::pod_tuple
+/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+ * \implements seqan3::UnaryTypeTrait
+ * \see std::tuple_size_v
+ * \relates seqan3::pod_tuple
+ */
 template <template <typename...> typename t, typename ...types >
     requires std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
 struct tuple_size<t<types...>> :

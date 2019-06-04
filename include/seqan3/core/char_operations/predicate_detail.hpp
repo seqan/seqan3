@@ -22,7 +22,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/reflection.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/range/container/small_string.hpp>
 
 namespace seqan3::detail

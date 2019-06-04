@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/metafunction/function.hpp>
+#include <seqan3/core/type_traits/function.hpp>
 
 constexpr
 int    constexpr_nonvoid_free_fun(int i) { return i; }
@@ -49,7 +49,7 @@ struct nonconstexpr_void_member_t
     {}
 };
 
-TEST(metafunction, is_constexpr_invocable)
+TEST(type_trait, is_constexpr_invocable)
 {
     int i = 32;
     int constexpr j = 42;

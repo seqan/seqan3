@@ -22,7 +22,7 @@
 #include <seqan3/alphabet/gap/all.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -104,7 +104,7 @@ namespace seqan3
  *
  * ### Concepts and doxygen
  *
- * The requirements for this concept are given as related functions and metafunctions.
+ * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
  */
 /*!\name Requirements for seqan3::AlignedSequence

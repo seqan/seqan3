@@ -125,13 +125,15 @@ protected:
 } // namespace seqan3
 
 // ------------------------------------------------------------------
-// metafunctions
+// type traits
 // ------------------------------------------------------------------
 
 namespace seqan3
 {
 
-//!\brief Helper metafunction that identifies aa27 as an amino acid alphabet.
+//!\brief Identifies aa27 as an amino acid alphabet (UnaryTypeTrait specialisation).
+//!\implements UnaryTypeTrait
+//!\see seqan3::is_aminoacid
 //!\ingroup aminoacid
 template <>
 struct is_aminoacid<aa27> : std::true_type {};

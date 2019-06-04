@@ -71,7 +71,7 @@ public:
                                          typename range_type::const_reference,
                                          typename range_type::reference>;
     //!\brief Use const reference type provided by container.
-    using const_reference = typename range_type::const_reference; //TODO: there is no metafunction for this, yet :o
+    using const_reference = typename range_type::const_reference; //TODO: there is no type trait for this, yet :o
     //!\brief Pointer type is pointer of container element type.
     using pointer = value_type *;
     //!\brief Tag this class as a random access iterator.

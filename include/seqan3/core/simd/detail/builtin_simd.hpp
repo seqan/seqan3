@@ -17,7 +17,7 @@
 
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/core/simd/detail/default_simd_length.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 

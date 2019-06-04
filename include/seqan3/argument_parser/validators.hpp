@@ -19,8 +19,8 @@
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/to_string.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/drop.hpp>
@@ -39,7 +39,7 @@ namespace seqan3
  *
  * ###Concepts and doxygen
  *
- * The requirements for this concept are given as related functions and metafunctions.
+ * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
 /*!\name Requirements for seqan3::Validator

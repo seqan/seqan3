@@ -18,15 +18,16 @@
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
 
-/*!\brief Helper metafunction to select the alignment result type based on the configuration.
+/*!\brief Exposes the alignment result type based on the configuration.
+ * \implements seqan3::TransformationTrait
  * \ingroup pairwise_alignment
  * \tparam first_bach_t    The type of the first sequence.
  * \tparam second_range_t  The type of the second sequence.

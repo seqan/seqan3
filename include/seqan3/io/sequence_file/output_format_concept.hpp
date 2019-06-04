@@ -42,7 +42,7 @@ namespace seqan3
  * \details
  *
  * The details of this concept are only relevant to developers who wish to implement their own format.
- * The requirements for this concept are given as related functions and metafunctions.
+ * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
 //!\cond

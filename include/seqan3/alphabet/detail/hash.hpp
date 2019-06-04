@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/ranges>
 
 namespace std

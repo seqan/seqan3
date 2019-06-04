@@ -14,7 +14,7 @@
 
 #include <type_traits>
 
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/algorithm/detail/search_common.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_precomputed.hpp>

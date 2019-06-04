@@ -209,7 +209,7 @@ templates.
 
 \include doc/tutorial/concepts/specialisation.cpp
 
-This is a typical example of a "type transformation trait" or "type metafunction".
+This is a typical example of a "type transformation trait".
 It maps one type to another type; in this case it returns a type that is able to represent the square root of the
 "input type".
 This can be used in generic algorithms to hold data in different types depending on the type of the input –

@@ -16,7 +16,7 @@
 
 #include <range/v3/view/repeat.hpp>
 
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/std/ranges>
 
@@ -38,7 +38,8 @@ SEQAN3_CONCEPT Fields = is_value_specialisation_of_v<t, fields>;
 // select_types_with_ids
 // ----------------------------------------------------------------------------
 
-/*!\brief A type metafunction that selects a subset of types based on their IDs.
+/*!\brief Exposes a subset of types as a seqan3::type_list selected based on their IDs.
+ * \implements seqan3::TransformationTrait
  * \ingroup io
  * \tparam field_types          The types of the fields available to the record in a seqan3::type_list.
  * \tparam field_types_as_ids   A seqan3::fields type with seqan3::field IDs corresponding to field_types.
@@ -49,7 +50,7 @@ SEQAN3_CONCEPT Fields = is_value_specialisation_of_v<t, fields>;
  * Given a list of types and corresponding IDs; and given a selection (and possibly different order) of IDs, return
  * the types corresponding to that selection and in that order.
  *
- * This metafunction recurses over the `selected_field_ids` and retrieves the corresponding typenames from
+ * This transformation trait recurses over the `selected_field_ids` and retrieves the corresponding typenames from
  * `field_types` via their identifer in `field_types_as_ids`. It recursively builds up `return_types` which it packs
  * into a seqan3::type_list once the end of selected_field_ids is reached.
  *
@@ -68,7 +69,7 @@ struct select_types_with_ids                               // unconstrained temp
     using type = type_list<return_types...>;
 };
 
-/*!\brief Type metafunction shortcut for seqan3::select_types_with_ids.
+/*!\brief Shortcut for seqan3::select_types_with_ids (TransformationTrait shortcut).
  * \ingroup io
  * \relates select_types_with_ids
  */
@@ -94,7 +95,7 @@ struct select_types_with_ids<field_types, field_types_as_ids, selected_field_ids
     static_assert(field_types_as_ids::contains(selected_field_ids::as_array[field_no]),
                   "You selected a field that was not in field_types_as_ids.");
 
-    // call this metafunction again, but increase index by one and append a type to the returned type list.
+    // call this type trait again, but increase index by one and append a type to the returned type list.
     using type = select_types_with_ids_t<field_types,
                                          field_types_as_ids,
                                          selected_field_ids,

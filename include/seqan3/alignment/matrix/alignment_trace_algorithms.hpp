@@ -18,7 +18,7 @@
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 
 namespace seqan3::detail
 {

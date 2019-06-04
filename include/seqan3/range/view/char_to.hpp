@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/std/ranges>
 

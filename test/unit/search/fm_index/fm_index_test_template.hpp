@@ -9,7 +9,7 @@
 
 #include <type_traits>
 
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/cereal.hpp>
 

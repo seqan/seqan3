@@ -46,8 +46,8 @@ SEQAN3_CONCEPT AlphabetTupleBase = requires
 // tuple_components
 // ------------------------------------------------------------------
 
-/*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list [base template].
- * \extends seqan3::TransformationTrait
+/*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list.
+ * \implements seqan3::TransformationTrait
  * \ingroup alphabet
  */
 template <typename t>
@@ -55,7 +55,7 @@ struct tuple_components;
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list
  *        [specialisation for seqan3::alphabet_tuple_base].
- * \extends seqan3::TransformationTrait
+ * \implements seqan3::TransformationTrait
  * \ingroup alphabet
  */
 template <AlphabetTupleBase t>
@@ -71,7 +71,7 @@ struct tuple_components<t>
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
  *        nested composites) as a meta::list [base template].
- * \extends seqan3::TransformationTrait
+ * \implements seqan3::TransformationTrait
  * \ingroup alphabet
  */
 template <typename t>
@@ -79,7 +79,7 @@ struct recursive_tuple_components;
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
  *        nested composites) as a meta::list [specialisation for seqan3::alphabet_tuple_base].
- * \extends seqan3::TransformationTrait
+ * \implements seqan3::TransformationTrait
  * \ingroup alphabet
  */
 template <AlphabetTupleBase t>

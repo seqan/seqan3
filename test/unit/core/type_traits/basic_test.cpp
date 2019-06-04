@@ -15,12 +15,12 @@
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/take_exactly.hpp>
 
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 
 using namespace seqan3;
 
-TEST(metafunction, remove_cvref_t)
+TEST(type_trait, remove_cvref_t)
 {
     EXPECT_TRUE((std::is_same_v<int, remove_cvref_t<int>>));
     EXPECT_TRUE((std::is_same_v<int, remove_cvref_t<int const>>));

@@ -18,13 +18,13 @@ namespace seqan3::detail
 {
 
 /*!\brief An invocable wrapper that defers the instantiation of a crtp_base class.
- * \ingroup metafunction
+ * \ingroup type_traits
  * \tparam crtp_base The crtp base class to be deferred. Must be a template template parameter.
  * \tparam args_t    A variadic template pack used to augment the `crtp_base` class.
  *
  * \details
  *
- * This metafunction wrapper allows to defer the template instantiation of crtp-base classes. This can be useful
+ * This transformation trait wrapper allows to defer the template instantiation of crtp-base classes. This can be useful
  * if the crtp_base class should be augmented with traits or other templates, especially when using variadic
  * crtp_bases. The help function seqan3::detail::invoke_deferred_crtp_base can be used to instantiate the
  * deferred crtp base with the respective derived type.
@@ -33,7 +33,7 @@ namespace seqan3::detail
  *
  * The following snippet demonstrates the use of the deferred crtp base class instantiation.
  *
- * \include test/snippet/core/metafunction/deferred_crtp_base.cpp
+ * \include test/snippet/core/type_traits/deferred_crtp_base.cpp
  *
  * \see seqan3::detail::invoke_deferred_crtp_base
  */
@@ -48,7 +48,7 @@ struct deferred_crtp_base
 };
 
 /*!\brief Template alias to instantiate the deferred crtp base with the derived class.
- * \ingroup metafunction
+ * \ingroup type_traits
  * \tparam deferred_crtp_base_t The deferred crtp base class.
  * \tparam derived_t            The derived type to instantiate the crtp base class with.
  *

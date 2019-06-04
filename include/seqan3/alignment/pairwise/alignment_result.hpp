@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3::detail
 {

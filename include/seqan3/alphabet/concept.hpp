@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Core alphabet concept and free function/metafunction wrappers.
+ * \brief Core alphabet concept and free function/type trait wrappers.
  */
 
 #pragma once
@@ -21,8 +21,8 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/core/detail/reflection.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/function.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/std/concepts>
 
 // ============================================================================

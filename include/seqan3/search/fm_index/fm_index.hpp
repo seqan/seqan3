@@ -14,7 +14,7 @@
 
 #include <sdsl/suffix_trees.hpp>
 
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/to_rank.hpp>

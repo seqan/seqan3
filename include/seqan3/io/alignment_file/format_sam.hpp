@@ -22,8 +22,8 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/detail/to_string.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>

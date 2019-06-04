@@ -1,4 +1,4 @@
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
 using namespace seqan3;

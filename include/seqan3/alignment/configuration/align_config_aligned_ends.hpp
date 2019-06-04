@@ -17,8 +17,8 @@
 #include <tuple>
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/algorithm/parameter_pack.hpp>
 

@@ -8,8 +8,8 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/core/metafunction/iterator.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/iterator.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/repeat.hpp>
 #include <seqan3/range/view/take.hpp>

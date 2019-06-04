@@ -19,8 +19,8 @@
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/algorithm/configuration_utility.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/std/concepts>
@@ -616,6 +616,8 @@ namespace std
 //!\cond DEV
 
 /*!\brief Returns the number of elements stored in seqan3::detail::configuration.
+ * \implements seqan3::UnaryTypeTrait
+ * \see std::tuple_size_v
  * \ingroup algorithm
  */
 template <seqan3::detail::ConfigElement ... configs_t>
@@ -626,6 +628,8 @@ struct tuple_size<seqan3::configuration<configs_t...>>
 };
 
 /*!\brief Returns the type of the element at the specified position within seqan3::configuration.
+ * \implements seqan3::TransformationTrait
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  * \ingroup algorithm
  */
 template <size_t pos, seqan3::detail::ConfigElement ... configs_t>

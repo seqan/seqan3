@@ -45,7 +45,7 @@
  * ### Alphabet size
  *
  * All alphabets in SeqAn have a fixed size. It
- * can be queried via the seqan3::alphabet_size metafunction and *optionally* also the `alphabet_size` static
+ * can be queried via the seqan3::alphabet_size type trait and *optionally* also the `alphabet_size` static
  * member of the alphabet (see below for "members VS free/global functions").
  *
  * In some areas we provide alphabets types with different sizes for the same purpose, e.g. seqan3::dna4
@@ -142,12 +142,12 @@
  *
  * The alphabet concept (as most concepts in SeqAn) looks for free/global functions, i.e. you need to be able
  * to call `seqan3::to_rank(my_letter)`, however *most* alphabets also provide a member function, i.e.
- * `my_letter.to_rank()`. The same is true for the metafunction seqan3::alphabet_size vs the static data member
+ * `my_letter.to_rank()`. The same is true for the type trait seqan3::alphabet_size vs the static data member
  * `alphabet_size`.
  *
  * Members are provided for convenience and if you are an application developer who works with a single concrete
  * alphabet type you are fine with using the member functions. If you, however, implement a generic function
- * that accepts different alphabet types, you need to use the free function / metafunction interface, because
+ * that accepts different alphabet types, you need to use the free function / type trait interface, because
  * it is the only interface guaranteed to exist (member functions are **not** required/enforced by the concept).
  *
  * # Containers over alphabets

@@ -16,7 +16,7 @@
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/to_char.hpp>
 

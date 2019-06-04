@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Free function/metafunction wrappers for alphabets with member functions/types.
+ * \brief Free function/type trait wrappers for alphabets with member functions/types.
  *
  * This shall not need be included manually, just include `alphabet/concept.hpp`.
  */
@@ -18,12 +18,12 @@
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/std/concepts>
 
 #if 0 // this is the alphabet_proxy I want, but GCC won't give me:
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 
 template <typename derived_type, typename alphabet_type>
 class alphabet_proxy : public alphabet_type

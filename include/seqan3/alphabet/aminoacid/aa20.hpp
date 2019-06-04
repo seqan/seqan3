@@ -143,13 +143,15 @@ protected:
 } // namespace seqan3
 
 // ------------------------------------------------------------------
-// metafunctions
+// type traits
 // ------------------------------------------------------------------
 
 namespace seqan3
 {
 
-//!\brief Helper metafunction that identifies aa20 as an amino acid alphabet.
+//!\brief Identifies aa20 as an amino acid alphabet (UnaryTypeTrait specialisation).
+//!\implements UnaryTypeTrait
+//!\see seqan3::is_aminoacid
 //!\ingroup aminoacid
 template <>
 struct is_aminoacid<aa20> : std::true_type {};

@@ -21,7 +21,7 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/range/view/take.hpp>
 #include <seqan3/std/algorithm>

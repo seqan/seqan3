@@ -13,7 +13,7 @@
 #include <meta/meta.hpp>
 
 
-#include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>

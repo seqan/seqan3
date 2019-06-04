@@ -20,7 +20,7 @@
 #include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>

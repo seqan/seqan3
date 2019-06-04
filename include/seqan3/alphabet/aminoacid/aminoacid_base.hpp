@@ -7,9 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Free function/metafunction wrappers for alphabets with member functions/types.
- *
- * This shall not need be included manually, just include `alphabet/concept.hpp`.
+ * \brief Provides seqan3::aminoacid_base.
  */
 
 #pragma once

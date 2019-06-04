@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/search/algorithm/configuration/all.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>

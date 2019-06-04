@@ -17,7 +17,7 @@
 #include <sdsl/suffix_trees.hpp>
 
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/std/ranges>

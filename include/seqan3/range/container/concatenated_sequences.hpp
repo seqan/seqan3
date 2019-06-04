@@ -21,7 +21,7 @@
 #include <range/v3/view/slice.hpp>
 
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>

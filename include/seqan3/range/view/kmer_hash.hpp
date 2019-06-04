@@ -15,7 +15,7 @@
 #include <range/v3/view/sliding.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/ranges>
 

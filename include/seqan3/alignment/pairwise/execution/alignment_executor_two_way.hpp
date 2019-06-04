@@ -19,8 +19,8 @@
 #include <seqan3/alignment/pairwise/execution/alignment_range.hpp>
 #include <seqan3/alignment/pairwise/execution/execution_handler_parallel.hpp>
 #include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
-#include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/parallel/execution.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/view/view_all.hpp>
