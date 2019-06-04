@@ -83,5 +83,76 @@ alignment_fixture(
 )
 -> alignment_fixture<sequence1_t, sequence2_t, config_t, score_t, detail::trace_directions>;
 
+template <typename config_t, typename alignment_fixture_t>
+struct alignment_fixture_collection
+{
+    config_t config;
+    std::vector<alignment_fixture_t> collection;
+
+    auto get_sequences() const
+    {
+        std::vector<decltype(collection[0].sequence1)> vec1;
+        std::vector<decltype(collection[0].sequence2)> vec2;
+
+        for (size_t i = 0; i < collection.size(); ++i)
+        {
+            vec1.push_back(collection[i].sequence1);
+            vec2.push_back(collection[i].sequence2);
+        }
+        return std::pair{vec1, vec2};
+    }
+
+    auto get_scores() const
+    {
+        std::vector<decltype(collection[0].score)> vec;
+        for (size_t i = 0; i < collection.size(); ++i)
+            vec.push_back(collection[i].score);
+
+        return vec;
+    }
+
+    auto get_back_coordinates() const
+    {
+        std::vector<decltype(collection[0].back_coordinate)> vec;
+        for (size_t i = 0; i < collection.size(); ++i)
+            vec.push_back(collection[i].back_coordinate);
+
+        return vec;
+    }
+
+    auto get_front_coordinates() const
+    {
+        std::vector<decltype(collection[0].front_coordinate)> vec;
+        for (size_t i = 0; i < collection.size(); ++i)
+            vec.push_back(collection[i].front_coordinate);
+
+        return vec;
+    }
+
+    auto get_aligned_sequences1() const
+    {
+        std::vector<decltype(collection[0].aligned_sequence1)> vec;
+        for (size_t i = 0; i < collection.size(); ++i)
+            vec.push_back(collection[i].aligned_sequence1);
+
+        return vec;
+    }
+
+    auto get_aligned_sequences2() const
+    {
+        std::vector<decltype(collection[0].aligned_sequence2)> vec;
+        for (size_t i = 0; i < collection.size(); ++i)
+            vec.push_back(collection[i].aligned_sequence2);
+
+        return vec;
+    }
+};
+
+template <typename config_t, typename fixture_t>
+alignment_fixture_collection(
+    config_t config,
+    std::vector<fixture_t> collection
+)
+-> alignment_fixture_collection<config_t, fixture_t>;
 
 } // namespace seqan3::test::alignment::fixture
