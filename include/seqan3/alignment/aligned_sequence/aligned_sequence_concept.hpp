@@ -177,7 +177,7 @@ namespace seqan3
  * \details
  *
  * An aligned sequence has to be assignable from its unaligned counter part. For example a
- * std::vector<seqan3::gapped<seqan3::dna4>> as well as a seqan3::gap_decorator_anchor_set<std::vector<seqan3::dna4>>
+ * std::vector<seqan3::gapped<seqan3::dna4>> as well as a seqan3::gap_decorator<std::vector<seqan3::dna4>>
  * can be assigned from s std::vector<seqan3::dna4> via seqan3::assign_unaligned.
  *
  * \attention This is a concept requirement, not an actual function (however types

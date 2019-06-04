@@ -337,7 +337,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 
 TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
 {
-    using dummy_type = gap_decorator_anchor_set<decltype(view::repeat_n(dna5{}, size_t{}) |
+    using dummy_type = gap_decorator<decltype(view::repeat_n(dna5{}, size_t{}) |
                                                          std::view::transform(detail::access_restrictor_fn{}))>;
     std::optional<int32_t> ref_id_in;
     std::pair<dummy_type, std::vector<gapped<dna5>>> alignment2;
@@ -418,7 +418,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
 
 TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_information)
 {
-    using dummy_type = gap_decorator_anchor_set<decltype(view::repeat_n(dna5{}, size_t{}) |
+    using dummy_type = gap_decorator<decltype(view::repeat_n(dna5{}, size_t{}) |
                                                          std::view::transform(detail::access_restrictor_fn{}))>;
     std::optional<int32_t> ref_id_in;
     std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;

@@ -1,1 +1,1 @@
-seqan3_test(gap_decorator_anchor_set_test.cpp)
+seqan3_test(gap_decorator_test.cpp)
