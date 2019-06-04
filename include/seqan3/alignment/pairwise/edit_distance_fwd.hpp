@@ -116,7 +116,7 @@ struct default_edit_distance_trait_type
     using score_matrix_type = edit_distance_score_matrix_full<word_type, score_type, is_semi_global, use_max_errors>;
 };
 
-//!\brief A base class for pairwise_alignment_edit_distance_unbanded.
+//!\brief A base class for edit_distance_unbanded.
 template <bool enable_policy,
           template<typename...> typename policy_t,
           typename edit_traits,
@@ -131,7 +131,7 @@ template <std::ranges::ViewableRange database_t,
           std::ranges::ViewableRange query_t,
           typename align_config_t,
           typename traits_t = default_edit_distance_trait_type<database_t, query_t, align_config_t, std::false_type>>
-class pairwise_alignment_edit_distance_unbanded; //forward declaration
+class edit_distance_unbanded; //forward declaration
 //!\endcond
 
 } // namespace seqan3::detail

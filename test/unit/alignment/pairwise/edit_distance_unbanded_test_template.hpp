@@ -67,10 +67,10 @@ struct semi_global_fixture : public global_fixture<_fixture, word_t>
 };
 
 template <typename fixture_t>
-class edit_distance_unbanded : public fixture_t
+class edit_distance_unbanded_test : public fixture_t
 {};
 
-TYPED_TEST_CASE_P(edit_distance_unbanded);
+TYPED_TEST_CASE_P(edit_distance_unbanded_test);
 
 template <template <bool, typename...> typename edit_traits_type,
           bool compute_score_matrix = false,
@@ -80,7 +80,7 @@ template <template <bool, typename...> typename edit_traits_type,
 auto edit_distance(database_t && database, query_t && query, align_cfg_t && align_cfg)
 {
     using edit_traits = edit_traits_type<compute_score_matrix, database_t, query_t, align_cfg_t>;
-    using algorithm_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_cfg_t, edit_traits>;
+    using algorithm_t = edit_distance_unbanded<database_t, query_t, align_cfg_t, edit_traits>;
     auto alignment = algorithm_t{database, query, align_cfg};
 
     // compute alignment
@@ -88,7 +88,7 @@ auto edit_distance(database_t && database, query_t && query, align_cfg_t && alig
     return alignment;
 }
 
-TYPED_TEST_P(edit_distance_unbanded, score)
+TYPED_TEST_P(edit_distance_unbanded_test, score)
 {
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_score};
@@ -100,7 +100,7 @@ TYPED_TEST_P(edit_distance_unbanded, score)
     EXPECT_EQ(alignment.score(), fixture.score);
 }
 
-TYPED_TEST_P(edit_distance_unbanded, score_matrix)
+TYPED_TEST_P(edit_distance_unbanded_test, score_matrix)
 {
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
@@ -117,7 +117,7 @@ TYPED_TEST_P(edit_distance_unbanded, score_matrix)
     EXPECT_EQ(alignment.score(), fixture.score);
 }
 
-TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
+TYPED_TEST_P(edit_distance_unbanded_test, trace_matrix)
 {
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
@@ -133,7 +133,7 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
     EXPECT_EQ(trace_matrix, fixture.trace_matrix());
 }
 
-TYPED_TEST_P(edit_distance_unbanded, back_coordinate)
+TYPED_TEST_P(edit_distance_unbanded_test, back_coordinate)
 {
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_back_coordinate};
@@ -147,7 +147,7 @@ TYPED_TEST_P(edit_distance_unbanded, back_coordinate)
     EXPECT_EQ(back_coordinate, fixture.back_coordinate);
 }
 
-TYPED_TEST_P(edit_distance_unbanded, front_coordinate)
+TYPED_TEST_P(edit_distance_unbanded_test, front_coordinate)
 {
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_front_coordinate};
@@ -161,7 +161,7 @@ TYPED_TEST_P(edit_distance_unbanded, front_coordinate)
     EXPECT_EQ(front_coordinate, fixture.front_coordinate);
 }
 
-TYPED_TEST_P(edit_distance_unbanded, alignment)
+TYPED_TEST_P(edit_distance_unbanded_test, alignment)
 {
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
@@ -176,7 +176,7 @@ TYPED_TEST_P(edit_distance_unbanded, alignment)
     EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.aligned_sequence2);
 }
 
-REGISTER_TYPED_TEST_CASE_P(edit_distance_unbanded,
+REGISTER_TYPED_TEST_CASE_P(edit_distance_unbanded_test,
                            score,
                            score_matrix,
                            trace_matrix,

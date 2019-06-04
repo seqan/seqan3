@@ -20,7 +20,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief The underlying data structure of seqan3::detail::pairwise_alignment_edit_distance_unbanded that represents the
+/*!\brief The underlying data structure of seqan3::detail::edit_distance_unbanded that represents the
  *        score matrix.
  * \ingroup pairwise_alignment
  * \tparam word_t         \copydoc word_type
@@ -37,7 +37,7 @@ public:
               std::ranges::ViewableRange query_t,
               typename align_config_t,
               typename edit_traits>
-    friend class pairwise_alignment_edit_distance_unbanded;
+    friend class edit_distance_unbanded;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -89,9 +89,9 @@ public:
 
     /*!\brief Computes the number of max rows in the current column.
      * \tparam score_type \copybrief score_type
-     * \param score_mask  \copybrief pairwise_alignment_edit_distance_unbanded::score_mask
+     * \param score_mask  \copybrief edit_distance_unbanded::score_mask
      * \param last_block  \copybrief edit_distance_unbanded_max_errors_policy::last_block
-     * \param score       \copybrief pairwise_alignment_edit_distance_unbanded::_score
+     * \param score       \copybrief edit_distance_unbanded::_score
      * \param max_errors  \copybrief edit_distance_unbanded_max_errors_policy::max_errors
      * \return Number of max rows in the current column.
      */
@@ -169,9 +169,9 @@ protected:
     //!\brief This information is needed to infer the score matrix.
     struct score_matrix_state
     {
-        //!\copydoc pairwise_alignment_edit_distance_unbanded::vp
+        //!\copydoc edit_distance_unbanded::vp
         std::vector<word_type> vp{};
-        //!\copydoc pairwise_alignment_edit_distance_unbanded::vn
+        //!\copydoc edit_distance_unbanded::vn
         std::vector<word_type> vn{};
     };
 

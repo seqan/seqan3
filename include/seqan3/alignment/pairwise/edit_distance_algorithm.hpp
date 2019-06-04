@@ -74,7 +74,7 @@ public:
                                                              second_range_t,
                                                              config_t,
                                                              typename traits_t::is_semi_global_type>;
-        pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, edit_traits{}};
+        edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, edit_traits{}};
         return algo(idx);
     }
 

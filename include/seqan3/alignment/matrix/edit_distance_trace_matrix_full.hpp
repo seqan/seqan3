@@ -21,7 +21,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief The underlying data structure of seqan3::detail::pairwise_alignment_edit_distance_unbanded that represents the
+/*!\brief The underlying data structure of seqan3::detail::edit_distance_unbanded that represents the
  *        trace matrix.
  * \ingroup pairwise_alignment
  * \tparam word_t         \copydoc word_type
@@ -37,7 +37,7 @@ public:
               std::ranges::ViewableRange query_t,
               typename align_config_t,
               typename edit_traits>
-    friend class pairwise_alignment_edit_distance_unbanded;
+    friend class edit_distance_unbanded;
 
     /*!\name Constructors, destructor and assignment
      * \{

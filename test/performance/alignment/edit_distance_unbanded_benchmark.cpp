@@ -65,7 +65,7 @@ void seqan3_edit_distance_dna4(benchmark::State & state)
 
     for (auto _ : state)
     {
-        detail::pairwise_alignment_edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
+        detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
         edit_distance(0u);
         score += edit_distance.score().value_or(0u);
     }
@@ -139,7 +139,7 @@ void seqan3_edit_distance_dna4_collection(benchmark::State & state)
     {
         for (auto && [seq1, seq2] : vec)
         {
-            detail::pairwise_alignment_edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
+            detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
             edit_distance(0u);
             score += edit_distance.score().value_or(0u);
         }

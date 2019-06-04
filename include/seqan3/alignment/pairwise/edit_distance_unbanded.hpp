@@ -421,9 +421,9 @@ protected:
      * \copydoc edit_distance_unbanded_trace_matrix_policy
      * \{
      */
-    //!\copydoc pairwise_alignment_edit_distance_unbanded::compute_state::hp
+    //!\copydoc edit_distance_unbanded::compute_state::hp
     std::vector<word_type> hp{};
-    //!\copydoc pairwise_alignment_edit_distance_unbanded::compute_state_trace_matrix::db
+    //!\copydoc edit_distance_unbanded::compute_state_trace_matrix::db
     std::vector<word_type> db{};
 
     //!\brief The trace matrix of the edit distance alignment.
@@ -564,34 +564,34 @@ template <std::ranges::ViewableRange database_t,
           std::ranges::ViewableRange query_t,
           typename align_config_t,
           typename edit_traits>
-class pairwise_alignment_edit_distance_unbanded :
+class edit_distance_unbanded :
 //!\cond
 // Hide this section in doxygen, because it messes up the inheritance.
     public edit_distance_base<
         edit_traits::use_max_errors,
         edit_distance_unbanded_max_errors_policy,
         edit_traits,
-        pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>,
+        edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>,
     public edit_distance_base<
         edit_traits::is_global,
         edit_distance_unbanded_global_policy,
         edit_traits,
-        pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>,
+        edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>,
     public edit_distance_base<
         edit_traits::is_semi_global,
         edit_distance_unbanded_semi_global_policy,
         edit_traits,
-        pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>,
+        edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>,
     public edit_distance_base<
         edit_traits::compute_score_matrix,
         edit_distance_unbanded_score_matrix_policy,
         edit_traits,
-        pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>,
+        edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>,
     public edit_distance_base<
         edit_traits::compute_trace_matrix,
         edit_distance_unbanded_trace_matrix_policy,
         edit_traits,
-        pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>
+        edit_distance_unbanded<database_t, query_t, align_config_t, edit_traits>>
 //!\endcond
 {
 public:
@@ -639,9 +639,9 @@ private:
     //!\brief The mask with a bit set at the position where the score change.
     //!\details If #use_max_errors is true this corresponds to the last active cell.
     word_type score_mask{0u};
-    //!\copydoc pairwise_alignment_edit_distance_unbanded::compute_state::vp
+    //!\copydoc edit_distance_unbanded::compute_state::vp
     std::vector<word_type> vp{};
-    //!\copydoc pairwise_alignment_edit_distance_unbanded::compute_state::vn
+    //!\copydoc edit_distance_unbanded::compute_state::vn
     std::vector<word_type> vn{};
     //!\brief The machine words which translate a letter of the query into a bit mask.
     //!\details Each bit position which is true (= 1) corresponds to a match of a letter in the query at this position.
@@ -709,15 +709,12 @@ public:
      * \{
      */
      //!\brief The class template parameter may resolve to an lvalue reference which prohibits default constructibility.
-     pairwise_alignment_edit_distance_unbanded() = delete;
-     //!\brief Defaulted
-     pairwise_alignment_edit_distance_unbanded(pairwise_alignment_edit_distance_unbanded const &) = default;
-     pairwise_alignment_edit_distance_unbanded(pairwise_alignment_edit_distance_unbanded &&) = default; //!< Defaulted
-     //!\brief Defaulted
-     pairwise_alignment_edit_distance_unbanded & operator=(pairwise_alignment_edit_distance_unbanded const &) = default;
-     //!\brief Defaulted
-     pairwise_alignment_edit_distance_unbanded & operator=(pairwise_alignment_edit_distance_unbanded &&) = default;
-     ~pairwise_alignment_edit_distance_unbanded() = default;                                           //!< Defaulted
+     edit_distance_unbanded() = delete;                                            //!< Defaulted
+     edit_distance_unbanded(edit_distance_unbanded const &) = default;             //!< Defaulted
+     edit_distance_unbanded(edit_distance_unbanded &&) = default;                  //!< Defaulted
+     edit_distance_unbanded & operator=(edit_distance_unbanded const &) = default; //!< Defaulted
+     edit_distance_unbanded & operator=(edit_distance_unbanded &&) = default;      //!< Defaulted
+     ~edit_distance_unbanded() = default;                                          //!< Defaulted
 
     /*!\brief Constructor
      * \param[in] _database \copydoc database
@@ -725,10 +722,10 @@ public:
      * \param[in] _config   \copydoc config
      * \param[in] _traits   The traits object. Only the type information will be used.
      */
-    pairwise_alignment_edit_distance_unbanded(database_t && _database,
-                                              query_t && _query,
-                                              align_config_t _config,
-                                              edit_traits const & SEQAN3_DOXYGEN_ONLY(_traits) = edit_traits{}) :
+    edit_distance_unbanded(database_t && _database,
+                           query_t && _query,
+                           align_config_t _config,
+                           edit_traits const & SEQAN3_DOXYGEN_ONLY(_traits) = edit_traits{}) :
         database{std::forward<database_t>(_database)},
         query{std::forward<query_t>(_query)},
         config{std::forward<align_config_t>(_config)},
@@ -915,7 +912,7 @@ public:
 };
 
 template <typename database_t, typename query_t, typename align_config_t, typename traits_t>
-bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::small_patterns()
+bool edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::small_patterns()
 {
     bool abort_computation = false;
 
@@ -946,7 +943,7 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 }
 
 template <typename database_t, typename query_t, typename align_config_t, typename traits_t>
-bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::large_patterns()
+bool edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::large_patterns()
 {
     bool abort_computation = false;
 
@@ -1002,19 +999,19 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 }
 
 /*!\name Type deduction guides
- * \relates seqan3::detail::pairwise_alignment_edit_distance_unbanded
+ * \relates seqan3::detail::edit_distance_unbanded
  * \{
  */
 
 //!\brief Deduce the type from the provided arguments.
 template<typename database_t, typename query_t, typename config_t>
-pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config)
-    -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t>;
+edit_distance_unbanded(database_t && database, query_t && query, config_t config)
+    -> edit_distance_unbanded<database_t, query_t, config_t>;
 
 //!\brief Deduce the type from the provided arguments.
 template<typename database_t, typename query_t, typename config_t, typename traits_t>
-pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config, traits_t)
-    -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t, traits_t>;
+edit_distance_unbanded(database_t && database, query_t && query, config_t config, traits_t)
+    -> edit_distance_unbanded<database_t, query_t, config_t, traits_t>;
 //!\}
 
 } // namespace seqan3::detail
