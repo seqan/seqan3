@@ -15,7 +15,7 @@
 
 using namespace seqan3;
 
-//NOTE(h-2): This class is extensively tested via *_file_out. This is just a minimal test.
+//NOTE(h-2): This class is extensively tested via *_file_output. This is just a minimal test.
 
 TEST(out_file_iterator, concepts)
 {

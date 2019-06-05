@@ -27,7 +27,7 @@ int main()
 {
 // First, make /tmp/input.dbn and /tmp/input_aa.dbn
 {
-structure_file_out fout{tmp_dir/"input.dbn"};
+structure_file_output fout{tmp_dir/"input.dbn"};
 fout.emplace_back("GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna4,
                   "S.cerevisiae_tRNA-PHE M10740/1-73",
                   "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51);
@@ -35,7 +35,7 @@ fout.emplace_back("UUGGAGUACACAACCUGUACACUCUUUC"_rna4,
                   "example",
                   "..(((((..(((...)))..)))))..."_wuss51);
 
-structure_file_out fout2{tmp_dir/"input_aa.dbn"};
+structure_file_output fout2{tmp_dir/"input_aa.dbn"};
 fout2.emplace_back("ACEWACEW"_aa20,
                   "S.cerevisiae_tRNA-PHE M10740/1-73",
                   "HGEBHHHH"_dssp9);

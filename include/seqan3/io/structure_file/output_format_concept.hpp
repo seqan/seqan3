@@ -126,7 +126,7 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_outpu
  *
  *   * The format must also accept std::ignore as parameter for any of the fields, however it shall throw an exception
  * if one of the fields required for writing the format is marked as such. [this shall be checked inside the function]
- *   * The format does not handle seqan3::field::STRUCTURED_SEQ, instead seqan3::structure_file_out splits it into
+ *   * The format does not handle seqan3::field::STRUCTURED_SEQ, instead seqan3::structure_file_output splits it into
  * two views and passes it to the format as if they were separate.
  */
 /*!\var static inline std::vector<std::string> seqan3::StructureFileOutputFormat::file_extensions
