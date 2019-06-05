@@ -302,7 +302,7 @@ struct alignment_file_input_default_traits
  * would have also worked, but for opening from stream it would not have.
  *
  * You can define your own traits type to further customise the types used by and returned by this class, see
- * seqan3::alignment_file_default_traits_sam for more details. As mentioned above, specifying at least one
+ * seqan3::alignment_file_input_default_traits for more details. As mentioned above, specifying at least one
  * template parameter yourself means that you loose automatic deduction. The following is equivalent to the automatic
  * type deduction example with a stream from above:
  *
@@ -590,7 +590,7 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_t      The stream type; must model seqan3::Istream2.
+     * \tparam stream_t      The stream type; must model seqan3::IStream2.
      * \tparam file_format   The format of the file in the stream, must model seqan3::AlignmentFileInputFormat.
      * \param[in] stream     The stream to operate on; must be derived of std::basic_istream.
      * \param[in] format_tag The file format tag.
@@ -663,7 +663,7 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_t           The stream type; must model seqan3::Istream2.
+     * \tparam stream_t           The stream type; must model seqan3::IStream2.
      * \tparam    file_format     The format of the file in the stream; must model seqan3::AlignmentFileInputFormat.
      * \param[in] stream          The stream to operate on; must be derived of std::basic_istream.
      * \param[in] ref_ids         A range containing the reference ids that correspond to the SAM/BAM file.
