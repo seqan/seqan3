@@ -77,7 +77,7 @@ struct argument_parser_meta_data // holds all meta information
      *!          since it will tell your users that the application is maintained.
      */
     std::string date;
-    //!\brief A link to github, your website or a wiki page.
+    //!\brief A link to  your github/gitlab project with the newest release.
     std::string url;
     //!\brief Brief copyright (and/or license) information.
     std::string short_copyright;
