@@ -34,25 +34,25 @@ auto cur = index.begin();                               // create a cursor
 // cur.cycle_back();                                    // cycle_back / cycle_front on begin() is undefined behaviour!
 cur.extend_right("AAC"_dna4);                           // search the sequence "AAC"
 debug_stream << cur.path_label(genome) << '\n';         // outputs "AAC"
-debug_stream << cur.template last_char<dna4>() << '\n'; // outputs 'C'
+debug_stream << cur.last_rank() << '\n';                // outputs 1
 
 // cur.cycle_front();                                   // undefined behaviour! only cycle_back() is allowed after extend_right()
 cur.cycle_back();                                       // search the sequence "AAT"
 debug_stream << cur.path_label(genome) << '\n';         // outputs "AAT"
-debug_stream << cur.template last_char<dna4>() << '\n'; // outputs 'T'
+debug_stream << cur.last_rank() << '\n';                // outputs 3
 
 cur.extend_left('G'_dna4);                              // search the sequence "GAAT"
 debug_stream << cur.path_label(genome) << '\n';         // outputs "GAAC"
-debug_stream << cur.template last_char<dna4>() << '\n'; // outputs 'G'
+debug_stream << cur.last_rank() << '\n';                // outputs 2
 
 // cur.cycle_back();                                    // undefined behaviour! only cycle_front() is allowed after extend_left()
 cur.cycle_front();                                      // search the sequence "TAAT"
 debug_stream << cur.path_label(genome) << '\n';         // outputs "TAAT"
-debug_stream << cur.template last_char<dna4>() << '\n'; // outputs 'T'
+debug_stream << cur.last_rank() << '\n';                // outputs 3
 
 cur.cycle_front();                                      // search the sequence "TAAT"
 debug_stream << cur.path_label(genome) << '\n';         // outputs "TAAT"
-debug_stream << cur.template last_char<dna4>() << '\n'; // outputs 'T'
+debug_stream << cur.last_rank() << '\n';                // outputs 3
 //! [cycle]
 }
 
@@ -70,11 +70,11 @@ debug_stream << uni_it.path_label(genome) << '\n';  // outputs "CAA"
 // Undefined behaviour! Cannot be called on the forward cursor if the last extension on the bidirectional
 // cursor was to the left:
 // cur.cycle_back();
-// debug_stream << cur.template last_char<dna4>() << '\n';
+// debug_stream << cur.last_rank() << '\n';
 
 uni_it.extend_right('G'_dna4);                             // search the sequence "AACG"
 debug_stream << uni_it.path_label(genome) << '\n';         // outputs "AACG"
-debug_stream << uni_it.template last_char<dna4>() << '\n'; // outputs 'G'
+debug_stream << uni_it.last_rank() << '\n';                // outputs 2
 uni_it.cycle_back();                                       // returns false since there is no sequence "AACT" in the text.
 //! [to_fwd_cursor]
 }
@@ -93,11 +93,11 @@ debug_stream << uni_it.path_label(genome) << '\n'; // outputs "CAA"
 // Undefined behaviour! Cannot be called on the reversed cursor if the last extension on the bidirectional
 // cursor was to the right:
 // cur.cycle_back();
-// debug_stream << cur.template last_char<dna4>() << '\n';
+// debug_stream << cur.last_rank() << '\n';
 
 uni_it.extend_right('G'_dna4);                             // search the sequence "CAAG"
 debug_stream << uni_it.path_label(genome) << '\n';         // outputs "CAAG"
-debug_stream << uni_it.template last_char<dna4>() << '\n'; // outputs 'G'
+debug_stream << uni_it.last_rank() << '\n';                // outputs 2
 uni_it.cycle_back();                                       // search the sequence "CAAT"
 //! [to_rev_cursor]
 }

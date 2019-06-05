@@ -41,7 +41,7 @@ class bi_fm_index_cursor;
  * \{
  */
 
-/*!\brief The default FM Index Configuration.
+/*!\brief The FM Index Configuration using a Wavelet Tree.
  *
  * \details
  *
@@ -71,23 +71,23 @@ class bi_fm_index_cursor;
  * \todo Asymptotic space consumption:
  *
  */
-using sdsl_index_default_type = sdsl::csa_wt<
-                                             sdsl::wt_blcd<
-                                                 sdsl::bit_vector,
-                                                 sdsl::rank_support_v<>,
-                                                 sdsl::select_support_scan<>,
-                                                 sdsl::select_support_scan<0>
-                                             >,
-                                             16,
-                                             10000000,
-                                             sdsl::sa_order_sa_sampling<>,
-                                             sdsl::isa_sampling<>,
-                                             sdsl::plain_byte_alphabet
-                                >;
+using sdsl_wt_index_type =
+    sdsl::csa_wt<sdsl::wt_blcd<sdsl::bit_vector,
+                               sdsl::rank_support_v<>,
+                               sdsl::select_support_scan<>,
+                               sdsl::select_support_scan<0>>,
+                 16,
+                 10000000,
+                 sdsl::sa_order_sa_sampling<>,
+                 sdsl::isa_sampling<>,
+                 sdsl::plain_byte_alphabet>;
+
+//!\brief The default FM Index Configuration.
+using default_sdsl_index_type = sdsl_wt_index_type;
 
 /*!\brief The SeqAn FM Index.
  * \implements seqan3::FmIndex
- * \tparam is_collection_ Indicates whether this index works on a text collection (`true`) or a single text (`false`)
+ * \tparam is_collection    Indicates whether this index works on a text collection (`true`) or a single text (`false`).
  * \tparam sdsl_index_type_ The type of the underlying SDSL index, must model seqan3::SdslIndex.
  * \details
  *
@@ -114,14 +114,15 @@ using sdsl_index_default_type = sdsl::csa_wt<
  *
  * \todo The underlying implementation of the FM Index (Rank data structure, sampling rates, etc.) can be specified ...
  */
-template <bool is_collection_ = false, detail::SdslIndex sdsl_index_type_ = sdsl_index_default_type>
+template <bool is_collection = false, detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
 class fm_index
 {
-public:
-    //!\brief Indicates whether index is built over a collection.
-    static constexpr bool is_collection{is_collection_};
-
 protected:
+    //!\brief The alphabet size of the text.
+    size_t sigma{0};
+    //!\brief Indicates whether index is built over a collection.
+    static constexpr bool is_collection_{is_collection};
+
     /*!\name Member types
      * \{
      */
@@ -152,11 +153,8 @@ public:
     //!\brief Type for representing positions in the indexed text.
     using size_type = typename sdsl_index_type::size_type;
     //!\brief The type of the (unidirectional) cursor.
-    using cursor_type = fm_index_cursor<fm_index<is_collection, sdsl_index_type>>;
+    using cursor_type = fm_index_cursor<fm_index<is_collection_, sdsl_index_type>>;
     //!\}
-
-    //!\brief The alphabet size of the text.
-    size_t sigma{0};
 
     template <typename bi_fm_index_t>
     friend class bi_fm_index_cursor;
@@ -177,24 +175,24 @@ public:
     fm_index & operator=(fm_index &&) = default;      //!< Move assignment.
     ~fm_index() = default;                            //!< Destructor.
 
-    /*!\brief Constructor that immediately constructs the index given a range.
-              The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.
-     * \tparam text_t The type of range to construct from; must model std::ranges::RandomAccessRange.
-     * \param[in] text The text to construct from.
+    /*!\brief Constructor that immediately constructs the index given a range. The range cannot be empty.
+     * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
+     * \param[in] text The text to construct from; must model std::ranges::BidirectionalRange.
      *
      * ### Complexity
      *
      * \todo At least linear.
      */
-    fm_index(auto const & text)
+    template <std::ranges::Range text_t>
+    fm_index(text_t && text)
     {
-        construct(text);
+        construct(std::forward<text_t>(text));
     }
     //!\}
 
     /*!\brief Constructs the index given a range.
               The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.
-     * \tparam text_t The type of range to construct from; must model std::ranges::RandomAccessRange.
+     * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
      * \param[in] text The text to construct from.
      *
      * \details \todo This has to be better implemented with regard to the memory peak due to not matching interfaces
@@ -209,12 +207,12 @@ public:
      * No guarantees.
      */
     template <std::ranges::Range text_t>
-    void construct(text_t const & text)
+    void construct(text_t && text)
         //!\cond
-        requires !is_collection
+        requires !is_collection_
         //!\endcond
     {
-        static_assert(std::ranges::RandomAccessRange<text_t>, "The text must be a RandomAccessRange.");
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must be a BidirectionalRange.");
         static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
         static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
 
@@ -257,12 +255,14 @@ public:
 
     //!\overload
     template <std::ranges::Range text_t>
-    void construct(text_t const & text)
+    void construct(text_t && text)
         //!\cond
-        requires is_collection
+        requires is_collection_
         //!\endcond
     {
-        static_assert(std::ranges::RandomAccessRange<text_t>, "The text collection must be a RandomAccessRange.");
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text collection must be a BidirectionalRange.");
+        static_assert(std::ranges::BidirectionalRange<reference_t<text_t>>,
+                      "The elements of the text collection must be a BidirectionalRange.");
         static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
         static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
 
@@ -442,9 +442,9 @@ public:
         archive(text_begin_rs);
         text_begin_rs.set_vector(&text_begin);
         archive(sigma);
-        bool tmp = is_collection;
+        bool tmp = is_collection_;
         archive(tmp);
-        assert(tmp == is_collection);
+        assert(tmp == is_collection_);
     }
     //!\endcond
 
@@ -454,8 +454,8 @@ public:
  * \{
  */
 //! \brief Deduces the dimensions of the text.
-template <typename text_t>
-fm_index(text_t) -> fm_index<dimension_v<text_t> != 1>;
+template <std::ranges::Range text_t>
+fm_index(text_t &&) -> fm_index<dimension_v<text_t> != 1>;
 //!\}
 
 //!\}

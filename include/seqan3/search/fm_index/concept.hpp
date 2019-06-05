@@ -99,7 +99,7 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
 
     // NOTE: circular dependency
     // requires FmIndexCursor<typename t::cursor_type>;
-    requires requires (t index, std::conditional_t<t::is_collection,
+    requires requires (t index, std::conditional_t<t::is_collection_,
                                                    std::vector<std::vector<dna4>>,
                                                    std::vector<dna4>> const text)
     {
@@ -156,7 +156,7 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
     requires requires (typename t::index_type const index) { { t(index) } };
 
     requires requires (t cur, dna4 const c, std::vector<dna4> const seq,
-                       std::conditional_t<t::index_type::is_collection,
+                       std::conditional_t<t::index_type::is_collection_,
                                           std::vector<std::vector<dna4>>,
                                           std::vector<dna4>> const text)
     {
@@ -167,11 +167,10 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
         { cur.path_label(text)  } -> auto;
     };
 
-    { cur.template last_char<dna4>() } -> dna4;
-
+    { cur.last_rank()    } -> typename t::size_type;
     { cur.query_length() } -> typename t::size_type;
     { cur.count()        } -> typename t::size_type;
-    { cur.locate()       } -> std::conditional_t<t::index_type::is_collection,
+    { cur.locate()       } -> std::conditional_t<t::index_type::is_collection_,
                                                 std::vector<std::pair<typename t::size_type, typename t::size_type>>,
                                                 std::vector<typename t::size_type>>;
     { cur.lazy_locate()  } -> auto;

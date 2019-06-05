@@ -8,6 +8,7 @@ int main()
 {
     std::vector<std::vector<dna4>> genomes{"ATCTGACGAAGGCTAGCTAGCTAAGGGA"_dna4, "TAGCTGAAGCCATTGGCATCTGATCGGACT"_dna4,
                                            "ACTGAGCTCGTC"_dna4, "TGCATGCACCCATCGACTGACTG"_dna4, "GTACGTACGTTACG"_dna4};
+
     fm_index index{genomes};                                  // build the index
 
     auto cur = index.begin();                                  // create a cursor

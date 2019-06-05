@@ -30,8 +30,8 @@ namespace seqan3
  * \tparam index_t    Must model seqan3::FmIndex.
  * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
  *                    a range of queries must additionally model std::ranges::ForwardRange.
- * \param[in] index   String index to be searched.
  * \param[in] queries A single query or a range of queries.
+ * \param[in] index   String index to be searched.
  * \param[in] cfg     A configuration object specifying the search parameters (e.g. number of errors, error types,
  *                    output format, etc.).
  * \returns An object modelling std::ranges::Range containing the hits (the type depends on the specification
@@ -123,8 +123,8 @@ inline auto search(std::initializer_list<char const * const> const & queries,
  * \tparam index_t    Must model seqan3::FmIndex.
  * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
  *                    a range of queries must additionally model std::ranges::ForwardRange.
- * \param[in] index   String index to be searched.
  * \param[in] queries A single query or a range of queries.
+ * \param[in] index   String index to be searched.
  * \returns An object modelling std::ranges::Range containing the hits as positions in the searched text.
  *
  * ### Complexity
@@ -142,7 +142,7 @@ template <FmIndex index_t, typename queries_t>
 //!\endcond
 inline auto search(queries_t && queries, index_t const & index)
 {
-    // assert(alphabet_size<innermost_value_type_t<queries_t>> == index.sigma);
+    assert(alphabet_size<innermost_value_type_t<queries_t>> == index.sigma);
 
     configuration const default_cfg = search_cfg::max_error{search_cfg::total{0},
                                                             search_cfg::substitution{0},

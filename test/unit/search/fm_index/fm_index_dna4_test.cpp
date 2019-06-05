@@ -16,5 +16,5 @@ INSTANTIATE_TYPED_TEST_CASE_P(dna4_collection, fm_index_collection_test, t2);
 
 TEST(fm_index_test, additional_concepts)
 {
-    EXPECT_TRUE(detail::SdslIndex<sdsl_index_default_type>);
+    EXPECT_TRUE(detail::SdslIndex<default_sdsl_index_type>);
 }

@@ -168,7 +168,7 @@ public:
 
     //! \brief Construct from given index.
     fm_index_cursor(index_t const & _index) noexcept : index(&_index), node({0, _index.index.size() - 1, 0, 0}),
-                                                       sigma(_index.index.sigma - index_t::is_collection)
+                                                       sigma(_index.index.sigma - index_t::is_collection_)
     {}
     //\}
 
@@ -288,7 +288,7 @@ public:
     }
 
     /*!\brief Tries to extend the query by `seq` to the right.
-    * \tparam seq_t The type of range of the sequence to search; must model std::ranges::RandomAccessRange.
+     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::ForwardRange.
      * \param[in] seq Sequence to extend the query with to the right.
      * \returns `true` if the cursor could extend the query successfully.
      *
@@ -303,11 +303,10 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::ranges::RandomAccessRange seq_t>
+    template <std::ranges::Range seq_t>
     bool extend_right(seq_t && seq) noexcept
     {
-        auto first = std::ranges::begin(seq);
-        auto last = std::ranges::end(seq);
+        static_assert(std::ranges::ForwardRange<seq_t>, "The query must be an ForwardRange.");
         assert(index != nullptr); // range must not be empty!
         assert(index->sigma == alphabet_size<innermost_value_type_t<seq_t>>);
 
@@ -315,8 +314,9 @@ public:
         size_type new_parent_lb = parent_lb, new_parent_rb = parent_rb;
 
         sdsl_char_type c{};
+        size_t len{0};
 
-        for (auto it = first; it != last; ++it)
+        for (auto it = std::ranges::begin(seq); it != std::ranges::end(seq); ++len, ++it)
         {
             c = to_rank(*it) + 1;
 
@@ -328,7 +328,7 @@ public:
 
         parent_lb = new_parent_lb;
         parent_rb = new_parent_rb;
-        node = {_lb, _rb, last - first + node.depth, c};
+        node = {_lb, _rb, len + node.depth, c};
         return true;
     }
 
@@ -380,8 +380,8 @@ public:
         return false;
     }
 
-    /*!\brief Outputs the rightmost character.
-     * \returns Rightmost character.
+    /*!\brief Outputs the rightmost rank.
+     * \returns Rightmost rank.
      *
      * Example:
      *
@@ -395,16 +395,12 @@ public:
      *
      * No-throw guarantee.
      */
-    template <Alphabet char_t>
-    char_t last_char() const noexcept
+    size_type last_rank() const noexcept
     {
         // parent_lb > parent_rb --> invalid interval
         assert(index != nullptr && query_length() > 0 && parent_lb <= parent_rb);
-        assert(index->sigma == alphabet_size<char_t>);
 
-        char_t c;
-        assign_rank_to(index->index.comp2char[node.last_char] - 1, c); // text is not allowed to contain ranks of 0
-        return c;
+        return index->index.comp2char[node.last_char] - 1; // text is not allowed to contain ranks of 0
     }
 
     /*!\brief Returns the length of the searched query.
@@ -430,10 +426,13 @@ public:
     }
 
     /*!\brief Returns the searched query.
-     *        \if DEV
-     *            Returns the concatenation of all edges from the root node to the cursors current node.
-     *        \endif
+     * \tparam text_t The type of the text used to build the index; must model std::ranges::InputRange.
+     * \param[in] text Text that was used to build the index.
      * \returns Searched query.
+     *
+     * \if DEV
+     * Returns the concatenation of all edges from the root node to the cursors current node.
+     * \endif
      *
      * ### Complexity
      *
@@ -446,10 +445,10 @@ public:
     template <std::ranges::Range text_t>
     auto path_label(text_t const & text) const noexcept
     //!\cond
-        requires !index_t::is_collection
+        requires !index_t::is_collection_
     //!\endcond
     {
-        static_assert(std::ranges::RandomAccessRange<text_t>, "The text must be a RandomAccessRange.");
+        static_assert(std::ranges::InputRange<text_t>, "The text must be a InputRange.");
         static_assert(!(dimension_v<text_t> != 1), "The input cannot be a text collection.");
         assert(index != nullptr);
         assert(index->sigma == alphabet_size<value_type_t<text_t>>);
@@ -462,10 +461,10 @@ public:
     template <std::ranges::Range text_t>
     auto path_label(text_t const & text) const noexcept
     //!\cond
-        requires index_t::is_collection
+        requires index_t::is_collection_
     //!\endcond
     {
-        static_assert(std::ranges::RandomAccessRange<text_t>, "The text collection must be a RandomAccessRange.");
+        static_assert(std::ranges::InputRange<text_t>, "The text collection must be a InputRange.");
         static_assert(!(dimension_v<text_t> != 2), "The input must be a text collection.");
         assert(index != nullptr);
         assert(index->sigma == alphabet_size<innermost_value_type_t<text_t>>);
@@ -506,7 +505,7 @@ public:
      */
     std::vector<size_type> locate() const
     //!\cond
-        requires !index_t::is_collection
+        requires !index_t::is_collection_
     //!\endcond
     {
         assert(index != nullptr);
@@ -522,7 +521,7 @@ public:
     //!\overload
     std::vector<std::pair<size_type, size_type>> locate() const
     //!\cond
-        requires index_t::is_collection
+        requires index_t::is_collection_
     //!\endcond
     {
         assert(index != nullptr);
@@ -553,7 +552,7 @@ public:
      */
     auto lazy_locate() const
     //!\cond
-        requires !index_t::is_collection
+        requires !index_t::is_collection_
     //!\endcond
     {
         assert(index != nullptr);
@@ -565,7 +564,7 @@ public:
     //!\overload
     auto lazy_locate() const
     //!\cond
-        requires index_t::is_collection
+        requires index_t::is_collection_
     //!\endcond
     {
         assert(index != nullptr);

@@ -236,15 +236,15 @@ TYPED_TEST_P(fm_index_cursor_test, query)
     EXPECT_TRUE(std::ranges::equal(it.path_label(text), "ACG"_dna4));
 }
 
-TYPED_TEST_P(fm_index_cursor_test, last_char)
+TYPED_TEST_P(fm_index_cursor_test, last_rank)
 {
     std::vector<dna4> text{"ACGACG"_dna4};
     typename TypeParam::index_type fm{text};
 
-    // last_char()
+    // last_rank()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("ACG"_dna4));
-    bool a = it.template last_char<dna4>() == 'G'_dna4;
+    bool a = it.last_rank() == to_rank('G'_dna4);
     EXPECT_TRUE(a);
 }
 
@@ -304,4 +304,4 @@ TYPED_TEST_P(fm_index_cursor_test, concept_check)
 
 REGISTER_TYPED_TEST_CASE_P(fm_index_cursor_test, ctr, begin, extend_right_range, extend_right_char,
                            extend_right_range_and_cycle, extend_right_char_and_cycle, extend_right_and_cycle, query,
-                           last_char, incomplete_alphabet, lazy_locate, concept_check);
+                           last_rank, incomplete_alphabet, lazy_locate, concept_check);
