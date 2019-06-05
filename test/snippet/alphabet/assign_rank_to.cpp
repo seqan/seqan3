@@ -5,7 +5,7 @@
 int main()
 {
     char c = '!';
-    seqan3::assign_rank_to(66, c);     // calls seqan3::adaptation::assign_rank_to(66, c); == 'B'
+    seqan3::assign_rank_to(66, c);     // calls seqan3::custom::assign_rank_to(66, c); == 'B'
 
     seqan3::dna5 d{};
     seqan3::assign_rank_to(2, d);     // calls .assign_rank(2) member; == 'G'_dna5

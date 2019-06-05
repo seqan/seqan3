@@ -4,7 +4,7 @@
 
 int main()
 {
-    bool b = seqan3::char_is_valid_for<char>('A');  // calls seqan3::adaptation::char_is_valid_for<char>('A'); always true
+    bool b = seqan3::char_is_valid_for<char>('A');  // calls seqan3::custom::char_is_valid_for<char>('A'); always true
 
     bool c = seqan3::char_is_valid_for<seqan3::dna5>('A');  // calls dna5::char_is_valid('A') member; == true
 

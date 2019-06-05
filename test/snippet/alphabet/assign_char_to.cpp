@@ -5,7 +5,7 @@
 int main()
 {
     char c = '!';
-    seqan3::assign_char_to('?', c);     // calls seqan3::adaptation::assign_char_to('A', c)
+    seqan3::assign_char_to('?', c);     // calls seqan3::custom::assign_char_to('A', c)
 
     seqan3::dna5 d{};
     seqan3::assign_char_to('A', d);     // calls .assign_char('A') member

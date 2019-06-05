@@ -40,6 +40,11 @@
  * \brief The main SeqAn3 namespace.
  */
 
+/*!\namespace seqan3::custom
+ * \brief A namespace for third party and standard library specialisations of SeqAn customisation points.
+ * \see \ref about_customisation
+ */
+
 /*!\cond DEV
  * \namespace seqan3::detail
  * \brief The internal SeqAn3 namespace.
