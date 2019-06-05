@@ -365,7 +365,7 @@ TEST_F(structure_file_output_rows, assign_range_of_tuples)
     assign_impl(range);
 }
 
-TEST_F(structure_file_output_rows, assign_structure_file_in)
+TEST_F(structure_file_output_rows, assign_structure_file_input)
 {
     std::string const inp // differs from output above by formatting
     {
@@ -377,19 +377,19 @@ TEST_F(structure_file_output_rows, assign_structure_file_in)
         "..(((((..(((...)))..)))))...\n"
     };
 
-    structure_file_in fin{std::istringstream{inp}, format_vienna{},
-                          fields<field::SEQ, field::ID, field::STRUCTURE>{}};
+    structure_file_input fin{std::istringstream{inp}, format_vienna{},
+                             fields<field::SEQ, field::ID, field::STRUCTURE>{}};
     assign_impl(fin);
 }
 
 TEST_F(structure_file_output_rows, assign_structure_file_pipes)
 {
     // valid without assignment?
-    structure_file_in{std::istringstream{output_comp}, format_vienna{}}
+    structure_file_input{std::istringstream{output_comp}, format_vienna{}}
               | structure_file_out{std::ostringstream{}, format_vienna{}};
 
     // valid with assignment and check contents
-    auto fout = structure_file_in{std::istringstream{output_comp}, format_vienna{}}
+    auto fout = structure_file_input{std::istringstream{output_comp}, format_vienna{}}
               | structure_file_out{std::ostringstream{}, format_vienna{}};
 
     fout.get_stream().flush();

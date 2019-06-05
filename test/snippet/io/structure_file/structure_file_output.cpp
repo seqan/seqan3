@@ -102,8 +102,8 @@ for (int i = 0; i < 10; i++)// ...
 {
 bool criteria = true;
 //! [pass_rec]
-structure_file_in  fin{tmp_dir/"input.dbn", fields<field::ID, field::SEQ, field::STRUCTURE>{}};
-structure_file_out fout{tmp_dir/"my_wrong.dbn"}; // doesn't have to match the configuration
+structure_file_input fin{tmp_dir/"input.dbn", fields<field::ID, field::SEQ, field::STRUCTURE>{}};
+structure_file_out   fout{tmp_dir/"my_wrong.dbn"}; // doesn't have to match the configuration
 
 for (auto & r : fin)
 {
@@ -133,20 +133,20 @@ fout = range; // will iterate over the records and write them
 {
 //! [file_conv]
 // file format conversion in one line:
-structure_file_out{tmp_dir/"output.dbn"} = structure_file_in{tmp_dir/"input.dbn"};
+structure_file_out{tmp_dir/"output.dbn"} = structure_file_input{tmp_dir/"input.dbn"};
 
 // with structure_file_out as a variable:
 structure_file_out fout{tmp_dir/"output.dbn"};
-fout = structure_file_in{tmp_dir/"input.dbn"};
+fout = structure_file_input{tmp_dir/"input.dbn"};
 
 // or in pipe notation:
-structure_file_in{tmp_dir/"input.dbn"} | structure_file_out{tmp_dir/"output.dbn"};
+structure_file_input{tmp_dir/"input.dbn"} | structure_file_out{tmp_dir/"output.dbn"};
 //! [file_conv]
 }
 
 {
 //! [pipeline]
-structure_file_in my_in{tmp_dir/"input.dbn"};
+structure_file_input my_in{tmp_dir/"input.dbn"};
 my_in | view::take(5) | structure_file_out{"output.dbn"};
 //! [pipeline]
 }
