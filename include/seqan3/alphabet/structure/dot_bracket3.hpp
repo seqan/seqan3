@@ -16,7 +16,7 @@
 
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/structure/concept.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 // ------------------------------------------------------------------
 // dot_bracket3

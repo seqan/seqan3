@@ -1,5 +1,5 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 
 using namespace seqan3;
 
@@ -92,21 +92,6 @@ auto constexpr my_cond = is_char<'%'> || is_digit;
 bool is_percent = my_cond(chr); // is_percent == true
 //! [operator]
 (void) is_percent;
-}
-
-{
-//! [parse_asserter]
-std::istringstream istr{"ATZE"};
-
-std::istream_iterator<char> it{istr};
-parse_asserter asserter{is_in_alphabet<dna4>};
-
-while (it != std::istream_iterator<char>{})
-{
-    SEQAN3_DOXYGEN_ONLY(asserter(*it));  // will throw when reading `Z` from the input stream.
-    ++it;
-}
-//! [parse_asserter]
 }
 
 }

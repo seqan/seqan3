@@ -14,7 +14,7 @@
 
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/test/tmp_filename.hpp>

@@ -15,9 +15,9 @@
 #include <map>
 #include <variant>
 
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/container/small_string.hpp>
 #include <seqan3/std/concepts>
 

@@ -14,7 +14,7 @@
 
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/drop.hpp>

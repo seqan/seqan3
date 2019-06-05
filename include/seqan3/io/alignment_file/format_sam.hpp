@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/reflection.hpp>
@@ -33,7 +34,6 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/iterator.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>

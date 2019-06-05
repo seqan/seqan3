@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides parse conditions for tokenization.
+ * \brief Provides character predicates for tokenisation.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
@@ -14,25 +14,25 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/io/stream/parse_condition_detail.hpp>
+#include <seqan3/core/char_operations/predicate_detail.hpp>
 
 // ----------------------------------------------------------------------------
-// General Purpose Parse Conditions
+// General Purpose Character Predicates
 // ----------------------------------------------------------------------------
 
 namespace seqan3
 {
 
-/*!\name Parse conditions
+/*!\name Character predicates
  * \brief A set of function objects to check if a character from an input source fulfills certain characteristics.
- * \ingroup stream
+ * \ingroup char_operations
  * \{
  */
 
 /*!\brief Checks whether a given letter is in the specified interval.
  * \tparam interval_first The first character for which to return true.
  * \tparam interval_last  The last character (inclusive) for which to return true.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -40,18 +40,18 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_in_interval
- *
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_in_interval
+ * \hideinitializer
  */
 template <uint8_t interval_first, uint8_t interval_last>
 //!\cond
     requires interval_first <= interval_last
 //!\endcond
-inline detail::is_in_interval_type<interval_first, interval_last> constexpr is_in_interval{};
+inline constexpr auto is_in_interval = detail::is_in_interval_type<interval_first, interval_last>{};
 
 /*!\brief Checks whether a given letter is valid for the specified seqan3::Alphabet.
  * \tparam alphabet_t The alphabet to check; must model seqan3::Alphabet.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -60,14 +60,15 @@ inline detail::is_in_interval_type<interval_first, interval_last> constexpr is_i
  * (but case is ignored).
  *
  * ### Example
- * \snippet test/snippet/io/stream/parse_condition.cpp is_in_alphabet
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_in_alphabet
+ * \hideinitializer
  */
 template <Alphabet alphabet_t>
-inline detail::is_in_alphabet_type<alphabet_t> constexpr is_in_alphabet{};
+inline constexpr auto is_in_alphabet = detail::is_in_alphabet_type<alphabet_t>{};
 
 /*!\brief Checks whether a given letter is the same as the template non-type argument.
  * \tparam char_v The letter to compare against.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -75,10 +76,11 @@ inline detail::is_in_alphabet_type<alphabet_t> constexpr is_in_alphabet{};
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_char
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_char
+ * \hideinitializer
  */
 template <int char_v>
-inline detail::is_char_type<char_v> constexpr is_char;
+inline constexpr auto is_char = detail::is_char_type<char_v>{};
 
 /*!\brief Checks whether a given letter is equal to the EOF constant defined in `<cstdio>`.
  *
@@ -88,12 +90,12 @@ inline detail::is_char_type<char_v> constexpr is_char;
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_eof
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_eof
  */
 inline auto constexpr is_eof = is_char<EOF>;
 
 /*!\brief Checks whether `c` is a control character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -103,13 +105,13 @@ inline auto constexpr is_eof = is_char<EOF>;
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_cntrl
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_cntrl
  */
 inline auto constexpr is_cntrl = is_in_interval<'\0', static_cast<char>(31)> ||
                                  is_char<static_cast<char>(127)>;
 
 /*!\brief Checks whether `c` is a printable character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -118,12 +120,12 @@ inline auto constexpr is_cntrl = is_in_interval<'\0', static_cast<char>(31)> ||
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_print
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_print
  */
 inline auto constexpr is_print = is_in_interval<' ', '~'> ;
 
 /*!\brief Checks whether `c` is a space character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -139,12 +141,12 @@ inline auto constexpr is_print = is_in_interval<' ', '~'> ;
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_space
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_space
  */
 inline auto constexpr is_space = is_in_interval<'\t', '\r'> || is_char<' '>;
 
 /*!\brief Checks whether `c` is a blank character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -156,12 +158,12 @@ inline auto constexpr is_space = is_in_interval<'\t', '\r'> || is_char<' '>;
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_blank
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_blank
  */
 inline auto constexpr is_blank = is_char<'\t'> || is_char<' '>;
 
 /*!\brief Checks whether `c` is a graphic character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -176,12 +178,12 @@ inline auto constexpr is_blank = is_char<'\t'> || is_char<' '>;
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_graph
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_graph
  */
 inline auto constexpr is_graph = is_in_interval<'!', '~'>;
 
 /*!\brief Checks whether `c` is a punctuation character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -192,7 +194,7 @@ inline auto constexpr is_graph = is_in_interval<'!', '~'>;
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_punct
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_punct
  */
 inline auto constexpr is_punct = is_in_interval<'!', '/'> ||
                                  is_in_interval<':', '@'> ||
@@ -200,7 +202,7 @@ inline auto constexpr is_punct = is_in_interval<'!', '/'> ||
                                  is_in_interval<'{', '~'>;
 
 /*!\brief Checks whether `c` is a alphanumeric character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -213,14 +215,14 @@ inline auto constexpr is_punct = is_in_interval<'!', '/'> ||
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_alnum
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_alnum
  */
 inline auto constexpr is_alnum = is_in_interval<'0','9'> ||
                                  is_in_interval<'A','Z'> ||
                                  is_in_interval<'a','z'>;
 
 /*!\brief Checks whether `c` is a alphabetical character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -232,12 +234,12 @@ inline auto constexpr is_alnum = is_in_interval<'0','9'> ||
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_alpha
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_alpha
  */
 inline auto constexpr is_alpha = is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>;
 
 /*!\brief Checks whether `c` is a upper case character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -248,12 +250,12 @@ inline auto constexpr is_alpha = is_in_interval<'A', 'Z'> || is_in_interval<'a',
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_upper
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_upper
  */
 inline auto constexpr is_upper = is_in_interval<'A', 'Z'>;
 
 /*!\brief Checks whether `c` is a lower case character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -264,12 +266,12 @@ inline auto constexpr is_upper = is_in_interval<'A', 'Z'>;
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_lower
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_lower
  */
 inline auto constexpr is_lower = is_in_interval<'a', 'z'>;
 
 /*!\brief Checks whether `c` is a digital character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -280,12 +282,12 @@ inline auto constexpr is_lower = is_in_interval<'a', 'z'>;
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_digit
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_digit
  */
 inline auto constexpr is_digit = is_in_interval<'0', '9'>;
 
 /*!\brief Checks whether `c` is a hexadecimal character.
- * \ingroup stream
+ * \ingroup char_operations
  *
  * \details
  *
@@ -298,73 +300,19 @@ inline auto constexpr is_digit = is_in_interval<'0', '9'>;
  *
  * ### Example
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp is_xdigit
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp is_xdigit
  */
 inline auto constexpr is_xdigit = is_in_interval<'0', '9'> ||
                                   is_in_interval<'A', 'F'> ||
                                   is_in_interval<'a', 'f'>;
 //!\}
 
-/*!\brief A condition checker, that wraps a parse condition and throws a specified exception if the condition was not
- *        met.
- * \ingroup stream
- * \tparam condition_type The wrapped parse condition type to be use for testing.
- *
+/*!\name Character predicates
+ * \ingroup char_operations
  * \details
  *
- * The `parse_asserter` type is used to enforce that a parsed character satisfies certain conditions.
- * For example, when reading an input fasta file and the expected alphabet is a dna4
- * but the actual data contained in the file is based on amino acids.
- * Thus, the condition would not be satisfied, causing the exception to be thrown.
- *
- * \snippet test/snippet/io/stream/parse_condition.cpp parse_asserter
- */
-template <typename condition_type>
-struct parse_asserter
-{
-    //!\brief Stores an instance of the stateless condition.
-    static condition_type constexpr cond{};
-
-    //!\brief Allow type deduction from constructor argument.
-    constexpr parse_asserter(condition_type const &) noexcept {}
-
-    /*!\brief Checks if the given character satisfies the associated parse condition.
-     * \param[in] c The character to be checked. Must model std::Integral.
-     *
-     * \details
-     *
-     * ### Complexity
-     *
-     * Depends on the underlying condition to be checked. In the regular case it is constant.
-     *
-     * ### Exception
-     *
-     * Throws seqan3::parse_error if the associated condition is not met.
-     *
-     * ### Concurrency
-     *
-     * Thread-safe.
-     */
-    template <std::Integral char_type>
-    void operator()(char_type const c) const
-    {
-        if (!std::invoke(cond, c))
-        {
-            using namespace std::literals;
-            // I can not assure that all parameters are convertible to c.
-            throw parse_error{"Parsed value <"s + detail::make_printable(to_char(c)) +
-                              "> which does not fulfill the following condition: "s  +
-                              cond.message()};
-        }
-    }
-};
-
-/*!\name Parse conditions
- * \ingroup stream
- * \details
- *
- * Parse conditions are function like objects that can be used to check if a character `c` fulfills certain
- * constraints. SeqAn3 implements all parse condition also available in the standard library and some more.
+ * Character predicates are function like objects that can be used to check if a character `c` fulfills certain
+ * constraints. SeqAn3 implements all predicates also available in the standard library and some more.
  *
  * ### Disjunction and Negation
  *
@@ -372,26 +320,26 @@ struct parse_asserter
  * joined efficiently, maintaining constant-time evaluation independent of the number of checks. Functors can be
  * combined with the `||-operator` or negated via the `!-operator`:
  *
- * \snippet test/snippet/io/stream/parse_condition.cpp operator
+ * \snippet test/snippet/core/char_operations/char_predicate.cpp operator
  *
  * Defining complex combinations and using them in e.g. input/output can increase speed significantly over checking
  * multiple functions: we measured speed-ups of 10x for a single check and speed-ups of
  * over 20x for complex combinations.
  *
- * ### Custom conditions
+ * ### Custom predicates
  *
  * * seqan3::is_in_alphabet: Checks if the given character is part of the specified alphabet.
  * * seqan3::is_in_interval: Checks if the given character is within specified range of ASCII characters.
  * * seqan3::is_char: Checks if the character is equal to the specified ASCII character.
  * * seqan3::is_eof: Checks if a character is the end-of-file marker.
  *
- * ### Standard library conditions
+ * ### Standard library predicates
  *
- * SeqAn offers the 12 conditions exactly
+ * SeqAn offers the 12 predicates exactly
  * [as defined in the standard library](https://en.cppreference.com/w/cpp/string/byte) except that we have introduced
  * an underscore in the name to be consistent with our other naming.
  *
- * The following table lists the predefined parse conditions and which constraints are associated with them.
+ * The following table lists the predefined character predicates and which constraints are associated with them.
  *
  *<table class="wikitable" style="background-color:#ededed;font-size:85%;text-align:center;border: 1px solid black;border-collapse: collapse">
  *

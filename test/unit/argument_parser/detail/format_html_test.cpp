@@ -12,7 +12,7 @@
 
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/argument_parser/detail/format_html.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 
 using namespace seqan3;
 

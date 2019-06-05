@@ -62,8 +62,8 @@
 #include <limits>
 #include <type_traits>
 
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail

@@ -13,10 +13,9 @@
 /*!\defgroup stream Stream
  * \brief The stream sub-module contains data structures and functions for streaming and tokenization.
  * \ingroup io
- * \todo write me!
  */
 
 #pragma once
 
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/io/stream/iterator.hpp>
