@@ -158,7 +158,7 @@ constexpr bool is_type_list_of_structure_file_output_formats_v<type_list<ts...>>
                 = (StructureFileOutputFormat<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::structure_file_format_concept.
+ * seqan3::StructureFileFormat.
  * \ingroup core
  * \see seqan3::is_type_list_of_structure_file_formats_v
  */
