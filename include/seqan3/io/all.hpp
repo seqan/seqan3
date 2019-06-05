@@ -12,8 +12,7 @@
  */
 
 /*!\defgroup io IO
- * \brief The IO module contains concepts, data structures and functions related to reading and writing formatted files,
- * streams, and serialisation.
+ * \brief The IO module provides stream handling formatted I/O.
  *
  * # Streams and (de-)compression {#io_compression}
  *
@@ -29,7 +28,7 @@
  * ² Some file formats like `.bam` or `.bcf` are implicitly BGZF-compressed without showing this in the
  * extension.</small>
  *
- * Support for these compression format is **optional** and depends on whether the respective dependency is available
+ * Support for these compression formats is **optional** and depends on whether the respective dependency is available
  * when you build your program (if you use CMake, this should happen automatically).
  *
  * SeqAn file types apply compression/decompression streams transparently, i.e. if the given file-extension or
@@ -37,7 +36,9 @@
  *
  * The (de)compression stream wrappers are currently only used internally and not part of the API.
  *
- * # Files and formats {#io_files}
+ * # Formatted I/O
+ *
+ * ## Files and formats {#io_files}
  *
  * SeqAn has the notion of *files* and *formats*. *File* is an abstraction level higher than *format*.
  * A file describes a common use-case and it typically supports multiple *formats*.
@@ -55,20 +56,46 @@
  * | seqan3::alignment_file_output | seqan3::format_sam, seqan3::format_bam                                                                       |
  * | seqan3::sequence_file_input   | seqan3::format_embl, seqan3::format_fasta, seqan3::format_fastq, seqan3::format_genbank, seqan3::format_sam  |
  * | seqan3::sequence_file_output  | seqan3::format_embl, seqan3::format_fasta, seqan3::format_fastq, seqan3::format_genbank, seqan3::format_sam  |
- * | seqan3::structure_file_input  | seqan3::format_vienna                                                                                        |
- * | seqan3::structure_file_output | seqan3::format_vienna                                                                                        |
- *
+ * | seqan3::structure_file_in  | seqan3::format_vienna                                                                                        |
+ * | seqan3::structure_file_out | seqan3::format_vienna                                                                                        |
  *
  * Some formats are available in multiple files, e.g. seqan3::format_sam can be read by seqan3::sequence_file_input
- * and by seqan3::alignment_file_input. This represents different use-cases of the same file.
+ * and by seqan3::alignment_file_input. This represents different use-cases of the same file format.
  *
  * Typically formats are supported for reading and writing, but this does not always have to be the case. See the above
  * links for more information.
  *
- * # Records and fields
+ * ## Records and fields
  *
+ * The main file interface that SeqAn offers is *record-based*, i.e. every file conceptionally is a range of
+ * records. And each record in turn behaves as a tuple of fields.
  *
- * \todo write me!
+ * The record type of all files is based on seqan3::record, but the composition of fields is different **per file**.
+ *
+ * Maybe a little more concrete:
+ *
+ *   * You can iterate over a seqan3::sequence_file_input just like you iterate over a std::vector.
+ *   * The element type is seqan3::record and for seqan3::sequence_file_input the records typically consist of three
+ *     fields: ID, sequence and qualities.
+ *   * Not every *format* may provide every field (e.g. all three fields can be extracted from a FastQ file, but only
+ *     ID and sequence can be extracted from a FastA file).
+ *   * This is not a problem when reading files; the format is detected at run-time and either it provides all desired
+ *     fields, or some of them will be empty.
+ *   * When writing files it depends on the format whether it allows certain fields to be unset; e.g. you can convert
+ *     a FastQ file to a FastA file, but not the other way around (at least not without providing placeholders for the
+ *     qualitites).
+ *
+ * Please have a look the tutorial for \ref tutorial_sequence_file and the API docs for seqan3::sequence_file_input
+ * to learn about this design in practice.
+ *
+ * # Serialisation {#serialisation}
+ *
+ * Besides formatted I/O which is realised via files and formats, SeqAn also supports object-level serialisation.
+ * This enables you to store data structures like indexes or sequences directly to disk.
+ *
+ * We use the [cereal library](https://github.com/USCiLab/cereal) to accomplish this.
+ * For more information see [cereal's documentation](http://uscilab.github.io/cereal/) or our tutorial on
+ * \ref tutorial_index_search which contains an example.
  */
 
 #pragma once
