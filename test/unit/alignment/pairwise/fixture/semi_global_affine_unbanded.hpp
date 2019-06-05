@@ -30,7 +30,7 @@ inline constexpr auto align_config = align_cfg::mode{global_alignment} |
 inline constexpr auto align_config_semi_seq1 = align_config | align_cfg::aligned_ends{free_ends_first};
 inline constexpr auto align_config_semi_seq2 = align_config | align_cfg::aligned_ends{free_ends_second};
 
-static auto dna4_01 = []()
+static auto dna4_01_semi_first = []()
 {
     using detail::column_index_type;
     using detail::row_index_type;
@@ -76,7 +76,7 @@ static auto dna4_01 = []()
     };
 }();
 
-static auto dna4_02 = []()
+static auto dna4_02_semi_first = []()
 {
     using detail::column_index_type;
     using detail::row_index_type;
@@ -122,7 +122,7 @@ static auto dna4_02 = []()
     };
 }();
 
-static auto dna4_03 = []()
+static auto dna4_03_semi_second = []()
 {
     using detail::column_index_type;
     using detail::row_index_type;
@@ -168,7 +168,7 @@ static auto dna4_03 = []()
     };
 }();
 
-static auto dna4_04 = []()
+static auto dna4_04_semi_second = []()
 {
     using detail::column_index_type;
     using detail::row_index_type;

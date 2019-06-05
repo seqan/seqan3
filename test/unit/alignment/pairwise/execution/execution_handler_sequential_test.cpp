@@ -7,15 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/pairwise/align_pairwise.hpp>
+#include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
 
-#include "fixture/global_affine_banded.hpp"
-#include "pairwise_alignment_single_test_template.hpp"
+#include "execution_handler_template.hpp"
 
-using pairwise_global_affine_unbanded_testing_types = ::testing::Types<
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::banded::dna4_01>
-    >;
+using namespace seqan3;
 
-INSTANTIATE_TYPED_TEST_CASE_P(pairwise_global_affine_unbanded,
-                              pairwise_alignment_test,
-                              pairwise_global_affine_unbanded_testing_types);
+INSTANTIATE_TYPED_TEST_CASE_P(execution_handler_sequential, execution_handler, detail::execution_handler_sequential);

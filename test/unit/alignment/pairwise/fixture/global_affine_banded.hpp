@@ -14,6 +14,7 @@
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
@@ -23,6 +24,9 @@
 
 namespace seqan3::test::alignment::fixture::global::affine::banded
 {
+
+using namespace seqan3;
+using namespace seqan3::detail;
 
 inline constexpr auto align_config = align_cfg::mode{global_alignment} |
                                      align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |

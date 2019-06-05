@@ -40,13 +40,14 @@ class latch
 public:
 
     /*!\name Constructors, destructor and assignment
+     * \brief Not default constructible nor copyable or movable.
      * \{
      */
     latch()                           = delete;  //!< Deleted.
     latch(latch const &)              = delete;  //!< Deleted.
-    latch(latch &&)                   = default; //!< Defaulted.
+    latch(latch &&)                   = delete;  //!< Deleted.
     latch & operator=(latch const &)  = delete;  //!< Deleted.
-    latch & operator=(latch &&)       = default; //!< Defaulted.
+    latch & operator=(latch &&)       = delete;  //!< Deleted.
 
     //!\brief Destructs the latch and waits for all participating threads to arrive.
     ~latch()

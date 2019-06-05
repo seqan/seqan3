@@ -20,6 +20,7 @@
 #include <string>
 
 #include <seqan3/std/iterator>
+#include <seqan3/std/concepts>
 
 // TODO:
 // * remove is_basic_string
@@ -113,8 +114,7 @@ SEQAN3_CONCEPT Container = requires (type val, type val2, type const cval, typen
     { val.cbegin()    } -> typename type::const_iterator;
     { val.cend()      } -> typename type::const_iterator;
 
-    { val == val2     } -> bool;
-    { val != val2     } -> bool;
+    requires !std::EqualityComparable<typename type::value_type> || std::EqualityComparable<type>;
 
     { val.swap(val2)  } -> void;
     { swap(val, val2) } -> void;

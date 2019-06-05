@@ -24,9 +24,25 @@
 
 using namespace seqan3;
 
-TEST(align_pairwise, single_rng_lvalue)
-{
+template <typename t>
+struct align_pairwise_test : ::testing::Test
+{};
 
+using testing_types = ::testing::Types<void, sequenced_policy, parallel_policy>;
+
+TYPED_TEST_CASE(align_pairwise_test, testing_types);
+
+template <typename type_param_t, typename seq_t, typename cfg_t>
+auto call_alignment(seq_t && seq, cfg_t && cfg)
+{
+    if constexpr (std::Same<type_param_t, void>)
+        return align_pairwise(std::forward<seq_t>(seq), std::forward<cfg_t>(cfg));
+    else
+        return align_pairwise(type_param_t{}, std::forward<seq_t>(seq), std::forward<cfg_t>(cfg));
+}
+
+TYPED_TEST(align_pairwise_test, single_pair)
+{
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
@@ -34,7 +50,8 @@ TEST(align_pairwise, single_rng_lvalue)
 
     {  // the score
         configuration cfg = align_cfg::edit | align_cfg::result{with_score};
-        for (auto && res : align_pairwise(p, cfg))
+
+        for (auto && res : call_alignment<TypeParam>(p, cfg))
         {
             EXPECT_EQ(res.score(), -4);
         }
@@ -43,7 +60,7 @@ TEST(align_pairwise, single_rng_lvalue)
     {  // the alignment
         configuration cfg = align_cfg::edit | align_cfg::result{with_alignment};
         unsigned idx = 0;
-        for (auto && res : align_pairwise(p, cfg))
+        for (auto && res : call_alignment<TypeParam>(p, cfg))
         {
             EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);
@@ -56,7 +73,7 @@ TEST(align_pairwise, single_rng_lvalue)
     }
 }
 
-TEST(align_pairwise, single_view_lvalue)
+TYPED_TEST(align_pairwise_test, single_view)
 {
 
     auto seq1 = "ACGTGATG"_dna4;
@@ -66,7 +83,7 @@ TEST(align_pairwise, single_view_lvalue)
 
     {  // the score
         configuration cfg = align_cfg::edit | align_cfg::result{with_score};
-        for (auto && res : align_pairwise(v, cfg))
+        for (auto && res : call_alignment<TypeParam>(v, cfg))
         {
              EXPECT_EQ(res.score(), -4);
         }
@@ -74,7 +91,7 @@ TEST(align_pairwise, single_view_lvalue)
     {  // the alignment
         configuration cfg = align_cfg::edit | align_cfg::result{with_alignment};
 
-        for (auto && res : align_pairwise(v, cfg))
+        for (auto && res : call_alignment<TypeParam>(v, cfg))
         {
             EXPECT_EQ(res.score(), -4);
             auto && [gap1, gap2] = res.alignment();
@@ -84,7 +101,7 @@ TEST(align_pairwise, single_view_lvalue)
     }
 }
 
-TEST(align_pairwise, multiple_rng_lvalue)
+TYPED_TEST(align_pairwise_test, collection)
 {
 
     auto seq1 = "ACGTGATG"_dna4;
@@ -94,7 +111,7 @@ TEST(align_pairwise, multiple_rng_lvalue)
     std::vector<decltype(p)> vec{10, p};
 
     configuration cfg = align_cfg::edit | align_cfg::result{with_alignment};
-    for (auto && res : align_pairwise(vec, cfg))
+    for (auto && res : call_alignment<TypeParam>(vec, cfg))
     {
         EXPECT_EQ(res.score(), -4);
         auto && [gap1, gap2] = res.alignment();
