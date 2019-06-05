@@ -381,7 +381,7 @@ protected:
 
 /*!\brief A validator that checks if a given path is a valid input file.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -456,7 +456,7 @@ public:
 
 /*!\brief A validator that checks if a given path is a valid output file.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -529,7 +529,7 @@ public:
 
 /*!\brief A validator that checks if a given path is a valid input directory.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -601,7 +601,7 @@ public:
 
 /*!\brief A validator that checks if a given path is a valid output directory.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
