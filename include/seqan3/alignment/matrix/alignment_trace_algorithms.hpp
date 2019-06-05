@@ -73,7 +73,7 @@ inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
         }
     }
 
-    return {column_index_type{std::max<size_t>(col, 1) - 1}, row_index_type{std::max<size_t>(row, 1) - 1}};
+    return {column_index_type{col}, row_index_type{row}};
 }
 
 /*!\brief Compute the trace from a trace matrix.
