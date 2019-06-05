@@ -14,7 +14,7 @@
 
 /*!\defgroup structure_file Structure File
  * \ingroup io
- * \brief Provides reading and writing of files that contain structured sequences in various formats.
+ * \brief Provides files and formats for handling structure data.
  */
 
 #include <seqan3/io/structure_file/format_vienna.hpp>
