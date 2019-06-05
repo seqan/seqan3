@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/concept/core_language.hpp>

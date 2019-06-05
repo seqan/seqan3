@@ -23,7 +23,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/metafunction/pack.hpp>
