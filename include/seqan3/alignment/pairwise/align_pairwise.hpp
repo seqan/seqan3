@@ -189,6 +189,14 @@ constexpr auto align_pairwise(exec_policy_t const & exec,
                               sequence_t && seq,
                               alignment_config_t const & config)
 {
+    using first_seq_t  = std::tuple_element_t<0, value_type_t<sequence_t>>;
+    using second_seq_t = std::tuple_element_t<1, value_type_t<sequence_t>>;
+
+    static_assert(std::ranges::RandomAccessRange<first_seq_t> && std::ranges::SizedRange<first_seq_t>,
+                  "Alignment configuration error: The sequence must model RandomAccessRange and SizedRange.");
+    static_assert(std::ranges::RandomAccessRange<second_seq_t> && std::ranges::SizedRange<second_seq_t>,
+                  "Alignment configuration error: The sequence must model RandomAccessRange and SizedRange.");
+
     // Pipe with view::persist to allow rvalue non-view ranges.
     auto seq_view = std::forward<sequence_t>(seq) | view::persist;
     // Configure the alignment algorithm.
