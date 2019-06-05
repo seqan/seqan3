@@ -16,7 +16,7 @@
 #include <optional>
 #include <type_traits>
 
-#include <seqan3/alignment/pairwise/execution/alignment_range.hpp>
+#include <seqan3/alignment/pairwise/alignment_range.hpp>
 #include <seqan3/alignment/pairwise/execution/execution_handler_parallel.hpp>
 #include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
 #include <seqan3/core/parallel/execution.hpp>

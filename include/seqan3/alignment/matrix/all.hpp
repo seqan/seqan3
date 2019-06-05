@@ -15,8 +15,7 @@
 /*!\defgroup alignment_matrix Matrix
  * \brief Provides data structures for representing alignment coordinates and alignments as a matrix.
  * \ingroup alignment
- *
- * \todo Write detailed landing page.
+ * \see alignment
  */
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>

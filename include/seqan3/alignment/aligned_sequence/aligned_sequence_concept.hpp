@@ -99,8 +99,8 @@ namespace seqan3
  * \brief     The generic concept for an aligned sequence.
  * \ingroup   aligned_sequence
  *
- * This concept describes the requirements a sequence must fulfil
- * in order to be part of the seqan3::alignment object.
+ * This concept describes the requirements a sequence must fulfil in order to be used inside of the alignment algorithm
+ * to store the final alignment.
  *
  * ### Concepts and doxygen
  *
