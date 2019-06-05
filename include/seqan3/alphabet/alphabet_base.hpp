@@ -33,14 +33,14 @@ namespace seqan3
  * You can use this class to define your own alphabet, but types are not required to be based on it to model
  * seqan3::Alphabet, it is purely a way to avoid code duplication.
  *
- * The base class represents the alphabet value as the rank and
- * automatically deduces the rank type from the size, it further defines all required member functions and types; the
- * derived type needs to define only the following two tables as static member variables:
+ * The base class represents the alphabet value as the rank and automatically deduces the rank type from the size and
+ * defines all required member functions. The derived type needs to define only the following two tables as static
+ * member variables (can be private if the base class is befriended):
  *
  *   * `static std::array<char_type, alphabet_size> constexpr rank_to_char` that defines for every possible rank value
  *     the corresponding char value.
  *   * `static std::array<rank_type, 256> constexpr char_to_rank` that defines for every possible character value the
- *     corresponding rank value.
+ *     corresponding rank value (adapt size if char_type isn't `char`).
  *
  * ### Example
  *
@@ -51,29 +51,28 @@ namespace seqan3
 template <typename derived_type, size_t size, typename char_t = char>
 class alphabet_base
 {
-public:
-    static_assert(size > 1, "It does not make sense to use the base class for alphabets of size <= 1.");
+protected:
+    static_assert(size != 0, "Alphabet size must be >= 1"); // == 1 is handled below in separate specialisation
 
     /*!\name Member types
      * \{
      */
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
-    using char_type = char_t;
-    //!\brief Equal to char_type in all relevant situations (needed only to make semi alphabet definitions legal).
-    using char_type_ = std::conditional_t<std::Same<char_type, void>, char, char_type>;
+    //!\brief The char representation; conditional needed to make semi alphabet definitions legal.
+    using char_type = std::conditional_t<std::Same<char_t, void>, char, char_t>;
     //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
     using rank_type = detail::min_viable_uint_t<size - 1>;
     //!\}
 
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alphabet_base() noexcept : rank{} {}                        //!< Defaulted.
-    constexpr alphabet_base(alphabet_base const &) = default;             //!< Defaulted.
-    constexpr alphabet_base(alphabet_base &&) = default;                  //!< Defaulted.
-    constexpr alphabet_base & operator=(alphabet_base const &) = default; //!< Defaulted.
-    constexpr alphabet_base & operator=(alphabet_base &&) = default;      //!< Defaulted.
-    ~alphabet_base() = default;                                           //!< Defaulted.
+    constexpr alphabet_base()                                   noexcept = default; //!< Defaulted.
+    constexpr alphabet_base(alphabet_base const &)              noexcept = default; //!< Defaulted.
+    constexpr alphabet_base(alphabet_base &&)                   noexcept = default; //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base const &)  noexcept = default; //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base &&)       noexcept = default; //!< Defaulted.
+    ~alphabet_base()                                            noexcept = default; //!< Defaulted.
     //!\}
 
     /*!\name Read functions
@@ -95,7 +94,7 @@ public:
      */
     constexpr char_type to_char() const noexcept
     //!\cond
-        requires !std::Same<char_type, void>
+        requires !std::Same<char_t, void>
     //!\endcond
     {
         return derived_type::rank_to_char[rank];
@@ -139,9 +138,9 @@ public:
      *
      * Guaranteed not to throw.
      */
-    constexpr derived_type & assign_char(char_type_ const c) noexcept
+    constexpr derived_type & assign_char(char_type const c) noexcept
     //!\cond
-        requires !std::Same<char_type, void>
+        requires !std::Same<char_t, void>
     //!\endcond
     {
         using index_t = std::make_unsigned_t<char_type>;
@@ -216,7 +215,7 @@ public:
 
 private:
     //!\brief The value of the alphabet letter is stored as the rank.
-    rank_type rank;
+    rank_type rank{};
 };
 
 /*!\brief Specialisation of seqan3::alphabet_base for alphabets of size 1.
@@ -233,27 +232,26 @@ private:
 template <typename derived_type, typename char_t>
 class alphabet_base<derived_type, 1ul, char_t>
 {
-public:
+protected:
     /*!\name Member types
      * \{
      */
     //!\copybrief seqan3::alphabet_base::char_type
-    using char_type = char_t;
-    //!\copybrief seqan3::alphabet_base::char_type_
-    using char_type_ = std::conditional_t<std::Same<char_type, void>, char, char_type>;
+    using char_type = std::conditional_t<std::Same<char_t, void>, char, char_t>;
     //!\copybrief seqan3::alphabet_base::rank_type
     using rank_type = bool;
     //!\}
 
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alphabet_base() noexcept = default;                         //!< Defaulted.
-    constexpr alphabet_base(alphabet_base const &) = default;             //!< Defaulted.
-    constexpr alphabet_base(alphabet_base &&) = default;                  //!< Defaulted.
-    constexpr alphabet_base & operator=(alphabet_base const &) = default; //!< Defaulted.
-    constexpr alphabet_base & operator=(alphabet_base &&) = default;      //!< Defaulted.
-    ~alphabet_base() = default;                                           //!< Defaulted.
+    constexpr alphabet_base()                                   noexcept = default; //!< Defaulted.
+    constexpr alphabet_base(alphabet_base const &)              noexcept = default; //!< Defaulted.
+    constexpr alphabet_base(alphabet_base &&)                   noexcept = default; //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base const &)  noexcept = default; //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base &&)       noexcept = default; //!< Defaulted.
+    ~alphabet_base()                                            noexcept = default; //!< Defaulted.
     //!\}
 
     /*!\name Read functions
@@ -262,7 +260,7 @@ public:
     //!\copybrief seqan3::alphabet_base::to_char
     constexpr char_type to_char() const noexcept
     //!\cond
-        requires !std::Same<char_type, void>
+        requires !std::Same<char_t, void>
     //!\endcond
     {
         return derived_type::char_value;
@@ -279,9 +277,9 @@ public:
      * \{
      */
     //!\copybrief seqan3::alphabet_base::assign_char
-    constexpr derived_type & assign_char(char_type_ const) noexcept
+    constexpr derived_type & assign_char(char_type const) noexcept
     //!\cond
-        requires !std::Same<char_type, void>
+        requires !std::Same<char_t, void>
     //!\endcond
     {
         return static_cast<derived_type &>(*this);
@@ -331,9 +329,9 @@ public:
     //!\}
 
 private:
-    //!\cond
-    bool _bug_workaround; // See GCC Bug-Report: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87113
-    //!\endcond
+#if SEQAN3_WORKAROUND_GCC_87113
+    bool _bug_workaround{};
+#endif
 };
 
 } // namespace seqan3

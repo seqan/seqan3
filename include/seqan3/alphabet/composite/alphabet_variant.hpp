@@ -23,7 +23,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/metafunction/pack.hpp>
@@ -221,13 +221,13 @@ private:
     static_assert(std::Same<alternatives, meta::unique<alternatives>>,
                   "All types in a alphabet_variant must be distinct.");
 
+    using typename base_t::char_type;
+    using typename base_t::rank_type;
 public:
     using base_t::alphabet_size;
     using base_t::to_char;
     using base_t::to_rank;
     using base_t::assign_rank;
-    using typename base_t::char_type;
-    using typename base_t::rank_type;
 
     /*!\brief Returns true if alternative_t is one of the given alternative types.
      * \tparam alternative_t The type to check.

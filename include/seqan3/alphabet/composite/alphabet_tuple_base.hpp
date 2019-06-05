@@ -19,7 +19,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/concept/core_language.hpp>
@@ -235,12 +235,6 @@ private:
                 + to_rank() * alphabet_tuple_base::cummulative_alph_sizes[index]);
         }
 
-    public:
-        //Import from base type:
-        using base_t::to_rank;
-        using base_t::alphabet_size;
-        using base_t::operator=;
-
         /*!\name Associated types
          * \{
          */
@@ -248,6 +242,12 @@ private:
         using typename base_t::char_type;
         using typename base_t::phred_type;
         //!\}
+
+    public:
+        //Import from base type:
+        using base_t::to_rank;
+        using base_t::alphabet_size;
+        using base_t::operator=;
 
         /*!\name Constructors, destructor and assignment
          * \{
@@ -284,10 +284,12 @@ private:
     //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
     friend derived_type;
 
+    // Import from base:
+    using typename base_t::rank_type;
+
 public:
     // Import from base:
     using base_t::alphabet_size;
-    using typename base_t::rank_type;
     using base_t::to_rank;
     using base_t::assign_rank;
 

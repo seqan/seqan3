@@ -15,7 +15,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 
 // ------------------------------------------------------------------
