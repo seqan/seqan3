@@ -34,8 +34,8 @@ set(SEQAN3_DOXYGEN_STD_TAGFILE "${PROJECT_BINARY_DIR}/cppreference-doxygen-web.t
 include(ExternalProject)
 ExternalProject_Add (
     download-cppreference-doxygen-web-tag
-    URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20190110/html-book-20190110.tar.xz"
-    URL_HASH SHA256=cb8d6724c8dde8b9a4fac0eedc070dfb7adca6b714267fef089094e670c1a0e6
+    URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20190602/html-book-20190602.tar.xz"
+    URL_HASH SHA256=cb06cb61206cf38c6b6d978d286f6dfa05052152397af2f0759fff33be2f6efc
     TLS_VERIFY ON
     DOWNLOAD_DIR "${PROJECT_BINARY_DIR}"
     DOWNLOAD_NAME "html-book.tar.xz"
