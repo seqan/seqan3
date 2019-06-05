@@ -10,8 +10,10 @@
  * \brief Meta-header for the FM index module.
  *
  * \defgroup submodule_fm_index FM Index
+ * \brief Provides seqan3:fm_index and seqan3:bi_fm_index as well as respective cursors.
  * \ingroup search
  *
+ * \details
  * # FM Indices
  *
  * FM indices are text indices similar to suffix trees or suffix arrays which are based on the Burrow Wheeler

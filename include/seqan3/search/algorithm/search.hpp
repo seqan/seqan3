@@ -28,7 +28,7 @@ namespace seqan3
 
 /*!\brief Search a query or a range of queries in an index.
  * \tparam index_t    Must model seqan3::FmIndex.
- * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam queries_t  Must model std::ranges::RandomAccessRange over the index's alphabet.
  *                    a range of queries must additionally model std::ranges::ForwardRange.
  * \param[in] queries A single query or a range of queries.
  * \param[in] index   String index to be searched.
@@ -121,7 +121,7 @@ inline auto search(std::initializer_list<char const * const> const & queries,
 /*!\brief Search a query or a range of queries in an index.
  *        It will not allow for any errors and will output all matches as positions in the text.
  * \tparam index_t    Must model seqan3::FmIndex.
- * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam queries_t  Must model std::ranges::RandomAccessRange over the index's alphabet.
  *                    a range of queries must additionally model std::ranges::ForwardRange.
  * \param[in] queries A single query or a range of queries.
  * \param[in] index   String index to be searched.

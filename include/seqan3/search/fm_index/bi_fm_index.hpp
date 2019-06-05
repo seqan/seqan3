@@ -109,7 +109,7 @@ public:
 
     /*!\brief Constructor that immediately constructs the index given a range. The range cannot be empty.
      * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
-     * \param[in] text The text to construct from; must model std::ranges::BidirectionalRange.
+     * \param[in] text The text to construct from.
      *
      * ### Complexity
      *
@@ -144,7 +144,7 @@ public:
         //!\endcond
     void construct(text_t && text)
     {
-        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must be a BidirectionalRange.");
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must model BidirectionalRange.");
         static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
         static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
 
@@ -166,9 +166,9 @@ public:
         //!\endcond
     void construct(text_t && text)
     {
-        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must be a BidirectionalRange.");
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must model BidirectionalRange.");
         static_assert(std::ranges::BidirectionalRange<reference_t<text_t>>,
-                      "The elements of the text collection must be a BidirectionalRange.");
+                      "The elements of the text collection must model BidirectionalRange.");
         static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
         static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
 

@@ -306,7 +306,7 @@ public:
     template <std::ranges::Range seq_t>
     bool extend_right(seq_t && seq) noexcept
     {
-        static_assert(std::ranges::ForwardRange<seq_t>, "The query must be an ForwardRange.");
+        static_assert(std::ranges::ForwardRange<seq_t>, "The query must model ForwardRange.");
         assert(index != nullptr); // range must not be empty!
         assert(index->sigma == alphabet_size<innermost_value_type_t<seq_t>>);
 
@@ -443,12 +443,12 @@ public:
      * No-throw guarantee.
      */
     template <std::ranges::Range text_t>
-    auto path_label(text_t const & text) const noexcept
+    auto path_label(text_t && text) const noexcept
     //!\cond
         requires !index_t::is_collection_
     //!\endcond
     {
-        static_assert(std::ranges::InputRange<text_t>, "The text must be a InputRange.");
+        static_assert(std::ranges::InputRange<text_t>, "The text must model InputRange.");
         static_assert(!(dimension_v<text_t> != 1), "The input cannot be a text collection.");
         assert(index != nullptr);
         assert(index->sigma == alphabet_size<value_type_t<text_t>>);
@@ -459,12 +459,12 @@ public:
 
     //!\overload
     template <std::ranges::Range text_t>
-    auto path_label(text_t const & text) const noexcept
+    auto path_label(text_t && text) const noexcept
     //!\cond
         requires index_t::is_collection_
     //!\endcond
     {
-        static_assert(std::ranges::InputRange<text_t>, "The text collection must be a InputRange.");
+        static_assert(std::ranges::InputRange<text_t>, "The text collection must model InputRange.");
         static_assert(!(dimension_v<text_t> != 2), "The input must be a text collection.");
         assert(index != nullptr);
         assert(index->sigma == alphabet_size<innermost_value_type_t<text_t>>);

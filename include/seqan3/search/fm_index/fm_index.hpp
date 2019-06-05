@@ -82,7 +82,10 @@ using sdsl_wt_index_type =
                  sdsl::isa_sampling<>,
                  sdsl::plain_byte_alphabet>;
 
-//!\brief The default FM Index Configuration.
+/*!\brief The default FM Index Configuration.
+ * \attention The default might be changed in a future release. If you rely on a stable API and on-disk-format,
+ *            please hard-code your sdsl_index_type to a concrete type.
+ */
 using default_sdsl_index_type = sdsl_wt_index_type;
 
 /*!\brief The SeqAn FM Index.
@@ -177,7 +180,7 @@ public:
 
     /*!\brief Constructor that immediately constructs the index given a range. The range cannot be empty.
      * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
-     * \param[in] text The text to construct from; must model std::ranges::BidirectionalRange.
+     * \param[in] text The text to construct from.
      *
      * ### Complexity
      *
@@ -212,7 +215,7 @@ public:
         requires !is_collection_
         //!\endcond
     {
-        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must be a BidirectionalRange.");
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must model BidirectionalRange.");
         static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
         static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
 
@@ -260,9 +263,9 @@ public:
         requires is_collection_
         //!\endcond
     {
-        static_assert(std::ranges::BidirectionalRange<text_t>, "The text collection must be a BidirectionalRange.");
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text collection must model BidirectionalRange.");
         static_assert(std::ranges::BidirectionalRange<reference_t<text_t>>,
-                      "The elements of the text collection must be a BidirectionalRange.");
+                      "The elements of the text collection must model BidirectionalRange.");
         static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
         static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
 
