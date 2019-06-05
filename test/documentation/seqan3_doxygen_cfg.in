@@ -1,6 +1,6 @@
 PROJECT_NAME           = "SeqAn3"
-PROJECT_BRIEF          = "The Modern C++ library for Sequence Analysis in Bioinformatics."
-PROJECT_LOGO           =
+PROJECT_BRIEF          = "The Modern C++ library for sequence analysis."
+PROJECT_LOGO           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan_logo.png
 LAYOUT_FILE            = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/DoxygenLayout.xml
 
 ## PATHS
@@ -23,6 +23,9 @@ DOT_GRAPH_MAX_NODES    = 500
 INTERACTIVE_SVG        = ${SEQAN3_DOXYGEN_HAVE_DOT}
 
 ## MISC OPTIONS
+GENERATE_LATEX         = NO
+HTML_TIMESTAMP         = YES
+EXT_LINKS_IN_WINDOW    = YES
 RECURSIVE              = YES
 DISABLE_INDEX          = YES
 GENERATE_TREEVIEW      = YES
