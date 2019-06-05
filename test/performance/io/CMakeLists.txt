@@ -1,4 +1,3 @@
 seqan3_benchmark(stream_input_benchmark.cpp)
 seqan3_benchmark(stream_output_benchmark.cpp)
-seqan3_benchmark(parse_condition_benchmark.cpp)
 seqan3_benchmark(format_fasta_benchmark.cpp)

@@ -1,5 +1,5 @@
+#include <seqan3/core/char_operations/predicate.hpp>// for is_char
 #include <seqan3/core/debug_stream.hpp>             // for debug_stream
-#include <seqan3/io/stream/parse_condition.hpp>     // for is_char
 #include <seqan3/range/view/single_pass_input.hpp>  // for view::single_pass_input
 #include <seqan3/range/view/take_until.hpp>         // for view::take_until*
 #include <seqan3/std/ranges>                        // for std::view::reverse

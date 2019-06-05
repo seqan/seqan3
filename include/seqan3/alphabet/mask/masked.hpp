@@ -14,8 +14,8 @@
 
 #include <seqan3/alphabet/mask/all.hpp>
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 namespace seqan3
 {

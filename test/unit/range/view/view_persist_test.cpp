@@ -12,7 +12,7 @@
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/view/unique.hpp>
 
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/std/concepts>

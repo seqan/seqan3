@@ -13,7 +13,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 
 using namespace seqan3;
 

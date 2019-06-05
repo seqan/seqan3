@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/io/stream/iterator.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>

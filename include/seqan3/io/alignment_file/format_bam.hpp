@@ -19,6 +19,7 @@
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/sam_dna16.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/reflection.hpp>
@@ -35,7 +36,6 @@
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/take_exactly.hpp>

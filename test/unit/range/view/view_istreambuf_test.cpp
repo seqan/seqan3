@@ -12,7 +12,7 @@
 #include <fstream>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/complement.hpp>
 #include <seqan3/range/view/istreambuf.hpp>
