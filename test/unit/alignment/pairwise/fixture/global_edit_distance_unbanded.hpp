@@ -86,48 +86,8 @@ static auto dna4_01T = []()
         "AACCGGTTAACCGGTT",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
-        std::vector
-        {
-        //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
-        /*e*/ -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,
-        /*A*/ -1, -0, -1, -2, -3, -4, -5, -6, -7, -8,
-        /*A*/ -2, -1, -1, -2, -3, -3, -4, -5, -6, -7,
-        /*C*/ -3, -2, -1, -2, -3, -4, -3, -4, -5, -6,
-        /*C*/ -4, -3, -2, -2, -3, -4, -4, -4, -5, -6,
-        /*G*/ -5, -4, -3, -2, -3, -4, -5, -4, -5, -6,
-        /*G*/ -6, -5, -4, -3, -3, -4, -5, -5, -5, -6,
-        /*T*/ -7, -6, -5, -4, -3, -4, -5, -6, -5, -6,
-        /*T*/ -8, -7, -6, -5, -4, -4, -5, -6, -6, -6,
-        /*A*/ -9, -8, -7, -6, -5, -4, -5, -6, -7, -6,
-        /*A*/-10, -9, -8, -7, -6, -5, -5, -6, -7, -7,
-        /*C*/-11,-10, -9, -8, -7, -6, -5, -6, -7, -8,
-        /*C*/-12,-11,-10, -9, -8, -7, -6, -6, -7, -8,
-        /*G*/-13,-12,-11,-10, -9, -8, -7, -6, -7, -8,
-        /*G*/-14,-13,-12,-11,-10, -9, -8, -7, -7, -8,
-        /*T*/-15,-14,-13,-12,-11,-10, -9, -8, -7, -8,
-        /*T*/-16,-15,-14,-13,-12,-11,-10, -9, -8, -8
-        },
-        std::vector
-        {
-        //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
-        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*A*/U  ,D  ,L  ,L  ,L  ,DL ,L  ,L  ,L  ,DL ,
-        /*A*/U  ,DU ,D  ,DL ,DL ,D  ,L  ,L  ,L  ,DL ,
-        /*C*/U  ,U  ,D  ,DL ,DL ,DUL,D  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,DL ,DL ,
-        /*G*/U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,DL ,DL ,
-        /*G*/U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,DL ,
-        /*T*/U  ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,DL ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,
-        /*A*/U  ,DU ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,
-        /*A*/U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,
-        /*C*/U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,
-        /*C*/U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,DL ,
-        /*G*/U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DL ,
-        /*G*/U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D
-        }
+        dna4_01.score_matrix().transpose_matrix(),
+        dna4_01.trace_matrix().transpose_matrix()
     };
 }();
 
@@ -176,6 +136,50 @@ static auto dna4_02 = []()
         /*T*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,UL ,DU ,DU ,D  ,DUL,DU ,D  ,D  ,DL ,
         /*A*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,DL ,D  ,DUL,D  ,DUL,DU ,DU ,D
         }
+    };
+}();
+
+static auto dna4_02_s10u_15u = []()
+{
+    return alignment_fixture
+    {
+        // score: 8 (7 insertions, 1 substitutions)
+        // alignment:
+        // AACCGGTAAACCGG-
+        // | | | || | ||
+        // A-C-G-TA--C-GTA
+        "AACCGGTAAACCGG"_dna4,
+        "ACGTACGTA"_dna4,
+        align_cfg::edit,
+        -8,
+        "AACCGGTAAACCGG-",
+        "A-C-G-TA--C-GTA",
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{13u}, row_index_type{8u}},
+        dna4_02.score_matrix().sub_matrix(10u, 15u),
+        dna4_02.trace_matrix().sub_matrix(10u, 15u)
+    };
+}();
+
+static auto dna4_02_s3u_15u = []()
+{
+    return alignment_fixture
+    {
+        // score: 14 (14 insertions)
+        // alignment:
+        // AACCGGTAAACCGG
+        // | |
+        // A-C-----------
+        "AACCGGTAAACCGG"_dna4,
+        "AC"_dna4,
+        align_cfg::edit,
+        -12,
+        "AACCGGTAAACCGG",
+        "A-C-----------",
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{13u}, row_index_type{1u}},
+        dna4_02.score_matrix().sub_matrix(3u, 15u),
+        dna4_02.trace_matrix().sub_matrix(3u, 15u)
     };
 }();
 
@@ -244,48 +248,8 @@ static auto aa27_01T = []()
         "UUWWRRIIUUWWRRII",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
-        std::vector
-        {
-        //     e,  U,  W,  R,  I,  U,  W,  R,  I,  U
-        /*e*/ -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,
-        /*U*/ -1, -0, -1, -2, -3, -4, -5, -6, -7, -8,
-        /*U*/ -2, -1, -1, -2, -3, -3, -4, -5, -6, -7,
-        /*W*/ -3, -2, -1, -2, -3, -4, -3, -4, -5, -6,
-        /*W*/ -4, -3, -2, -2, -3, -4, -4, -4, -5, -6,
-        /*R*/ -5, -4, -3, -2, -3, -4, -5, -4, -5, -6,
-        /*R*/ -6, -5, -4, -3, -3, -4, -5, -5, -5, -6,
-        /*I*/ -7, -6, -5, -4, -3, -4, -5, -6, -5, -6,
-        /*I*/ -8, -7, -6, -5, -4, -4, -5, -6, -6, -6,
-        /*U*/ -9, -8, -7, -6, -5, -4, -5, -6, -7, -6,
-        /*U*/-10, -9, -8, -7, -6, -5, -5, -6, -7, -7,
-        /*W*/-11,-10, -9, -8, -7, -6, -5, -6, -7, -8,
-        /*W*/-12,-11,-10, -9, -8, -7, -6, -6, -7, -8,
-        /*R*/-13,-12,-11,-10, -9, -8, -7, -6, -7, -8,
-        /*R*/-14,-13,-12,-11,-10, -9, -8, -7, -7, -8,
-        /*I*/-15,-14,-13,-12,-11,-10, -9, -8, -7, -8,
-        /*I*/-16,-15,-14,-13,-12,-11,-10, -9, -8, -8
-        },
-        std::vector
-        {
-        //     e,  U,  W,  R,  I,  U,  W,  R,  I,  U
-        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*U*/U  ,D  ,L  ,L  ,L  ,DL ,L  ,L  ,L  ,DL ,
-        /*U*/U  ,DU ,D  ,DL ,DL ,D  ,L  ,L  ,L  ,DL ,
-        /*W*/U  ,U  ,D  ,DL ,DL ,DUL,D  ,L  ,L  ,L  ,
-        /*W*/U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,DL ,DL ,
-        /*R*/U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,DL ,DL ,
-        /*R*/U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,DL ,
-        /*I*/U  ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,DL ,
-        /*I*/U  ,U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,
-        /*U*/U  ,DU ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,
-        /*U*/U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,
-        /*W*/U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,
-        /*W*/U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,DL ,
-        /*R*/U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DL ,
-        /*R*/U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,
-        /*I*/U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,
-        /*I*/U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D
-        }
+        aa27_01.score_matrix().transpose_matrix(),
+        aa27_01.trace_matrix().transpose_matrix()
     };
 }();
 

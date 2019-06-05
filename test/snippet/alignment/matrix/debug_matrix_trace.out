@@ -1,0 +1,29 @@
+database:	AACCGGTT
+query:		ACGT
+
+trace_matrix: 9 columns and 5 rows
+ ;  ;  ;  ;  ;  ;  ;  ;  ;  ;
+ ;N ;L ;L ;L ;L ;L ;L ;L ;L ;
+ ;U ;D ;DL;L ;L ;L ;L ;L ;L ;
+ ;U ;U ;D ;D ;DL;L ;L ;L ;L ;
+ ;U ;U ;DU;DU;D ;D ;DL;L ;L ;
+ ;U ;U ;DU;DU;DU;DU;D ;D ;DL;
+
+ ;  ;A ;A ;C ;C ;G ;G ;T ;T ;
+ ;N ;L ;L ;L ;L ;L ;L ;L ;L ;
+A;U ;D ;DL;L ;L ;L ;L ;L ;L ;
+C;U ;U ;D ;D ;DL;L ;L ;L ;L ;
+G;U ;U ;DU;DU;D ;D ;DL;L ;L ;
+T;U ;U ;DU;DU;DU;DU;D ;D ;DL;
+
+ ║ε ║A ║A ║C ║C ║G ║G ║T ║T ║
+ ╬══╬══╬══╬══╬══╬══╬══╬══╬══╬
+ε║↺ ║← ║← ║← ║← ║← ║← ║← ║← ║
+ ╬══╬══╬══╬══╬══╬══╬══╬══╬══╬
+A║↑ ║↖ ║↖←║← ║← ║← ║← ║← ║← ║
+ ╬══╬══╬══╬══╬══╬══╬══╬══╬══╬
+C║↑ ║↑ ║↖ ║↖ ║↖←║← ║← ║← ║← ║
+ ╬══╬══╬══╬══╬══╬══╬══╬══╬══╬
+G║↑ ║↑ ║↖↑║↖↑║↖ ║↖ ║↖←║← ║← ║
+ ╬══╬══╬══╬══╬══╬══╬══╬══╬══╬
+T║↑ ║↑ ║↖↑║↖↑║↖↑║↖↑║↖ ║↖ ║↖←║
