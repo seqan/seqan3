@@ -56,8 +56,8 @@
  * | seqan3::alignment_file_output | seqan3::format_sam, seqan3::format_bam                                                                       |
  * | seqan3::sequence_file_input   | seqan3::format_embl, seqan3::format_fasta, seqan3::format_fastq, seqan3::format_genbank, seqan3::format_sam  |
  * | seqan3::sequence_file_output  | seqan3::format_embl, seqan3::format_fasta, seqan3::format_fastq, seqan3::format_genbank, seqan3::format_sam  |
- * | seqan3::structure_file_in  | seqan3::format_vienna                                                                                        |
- * | seqan3::structure_file_out | seqan3::format_vienna                                                                                        |
+ * | seqan3::structure_file_input  | seqan3::format_vienna                                                                                        |
+ * | seqan3::structure_file_output | seqan3::format_vienna                                                                                        |
  *
  * Some formats are available in multiple files, e.g. seqan3::format_sam can be read by seqan3::sequence_file_input
  * and by seqan3::alignment_file_input. This represents different use-cases of the same file format.
@@ -72,7 +72,7 @@
  *
  * The record type of all files is based on seqan3::record, but the composition of fields is different **per file**.
  *
- * Maybe a little more concrete:
+ * In particular this means:
  *
  *   * You can iterate over a seqan3::sequence_file_input just like you iterate over a std::vector.
  *   * The element type is seqan3::record and for seqan3::sequence_file_input the records typically consist of three
