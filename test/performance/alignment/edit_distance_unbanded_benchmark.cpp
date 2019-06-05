@@ -83,8 +83,10 @@ void seqan3_edit_distance_dna4_selector(benchmark::State & state)
     int score = 0;
 
     for (auto _ : state)
+    {
         for (auto && rng : align_pairwise(std::tie(seq1, seq2), edit_distance_cfg))
             score += rng.score();
+    }
 
     state.counters["score"] = score;
     state.counters["cells"] = pairwise_cell_updates(ranges::view::single(std::tie(seq1, seq2)), edit_distance_cfg);
@@ -159,8 +161,10 @@ void seqan3_edit_distance_dna4_collection_selector(benchmark::State & state)
     int score = 0;
 
     for (auto _ : state)
+    {
         for (auto && rng : align_pairwise(vec, edit_distance_cfg))
             score += rng.score();
+    }
 
     state.counters["score"] = score;
     state.counters["cells"] = pairwise_cell_updates(vec, edit_distance_cfg);
@@ -177,8 +181,10 @@ void seqan2_edit_distance_dna4_collection(benchmark::State & state)
     int score = 0;
 
     for (auto _ : state)
+    {
         for (unsigned i = 0; i < set_size; ++i)
             score += global_edit_distance_seqan2(vec1[i], vec2[i]);
+    }
 
     state.counters["score"] = score;
     state.counters["cells"] = pairwise_cell_updates(ranges::view::zip(vec1, vec2), edit_distance_cfg);

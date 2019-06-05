@@ -30,19 +30,37 @@
 
 namespace seqan3::detail
 {
-//!\brief Only available when default_edit_distance_trait_type::use_max_errors is true.
-//!\extends default_edit_distance_trait_type
+/*!\brief Only available when default_edit_distance_trait_type::use_max_errors is true.
+ * \extends default_edit_distance_trait_type
+ */
 template <typename derived_t, typename edit_traits>
-struct edit_distance_unbanded_max_errors_policy :
+class edit_distance_unbanded_max_errors_policy :
 //!\cond
     edit_traits
 //!\endcond
 {
-protected:
+    static_assert(edit_traits::use_max_errors, "This policy assumes that edit_traits::use_max_errors is true.");
+
+    //!\brief Befriends the derived type.
+    friend derived_t;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    edit_distance_unbanded_max_errors_policy() noexcept = default;  //!< Defaulted.
+    edit_distance_unbanded_max_errors_policy(edit_distance_unbanded_max_errors_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_max_errors_policy(edit_distance_unbanded_max_errors_policy &&) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_max_errors_policy & operator=(edit_distance_unbanded_max_errors_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_max_errors_policy & operator=(edit_distance_unbanded_max_errors_policy &&) noexcept
+        = default; //!< Defaulted.
+    ~edit_distance_unbanded_max_errors_policy() noexcept = default; //!< Defaulted.
+    //!\}
+
     using typename edit_traits::word_type;
     using typename edit_traits::score_type;
-
-    static_assert(edit_traits::use_max_errors, "");
 
     /*!\name Max Error Policy: Protected Attributes
      * \copydoc edit_distance_unbanded_max_errors_policy
@@ -74,7 +92,7 @@ protected:
         // local_max_errors either stores the maximal number of _score (me.max_errors) or the needle size minus one. It
         // is used for the mask computation and setting the initial score (the minus one is there because of the Ukkonen
         // trick).
-        size_t const local_max_errors = std::min<size_t>(max_errors, self->query.size() - 1u);
+        size_t const local_max_errors = std::min<size_t>(max_errors, std::ranges::size(self->query) - 1u);
         self->score_mask = word_type{1u} << (local_max_errors % self->word_size);
         last_block = std::min(local_max_errors / self->word_size, last_block);
         self->_score = local_max_errors + 1u;
@@ -96,8 +114,10 @@ protected:
             return true;
 
         if constexpr (edit_traits::is_global)
+        {
             if (last_block == 0u)  // [[unlikely]]
                 return false;
+        }
 
         last_block--;
 
@@ -117,8 +137,9 @@ protected:
         last_block++;
     }
 
-    //!\brief Use the ukkonen trick and update the last active cell.
-    //!\returns True if computation should be aborted, False if computation should continue
+    /*!\brief Use the ukkonen trick and update the last active cell.
+     * \returns `true` if computation should be aborted, `false` if computation should continue.
+     */
     bool update_last_active_cell() noexcept
     {
         derived_t * self = static_cast<derived_t *>(this);
@@ -167,15 +188,36 @@ protected:
     }
 };
 
-//!\brief Only available when default_edit_distance_trait_type::is_global is true.
-//!\extends default_edit_distance_trait_type
+/*!\brief Only available when default_edit_distance_trait_type::is_global is true.
+ * \extends default_edit_distance_trait_type
+ */
 template <typename derived_t, typename edit_traits>
-struct edit_distance_unbanded_global_policy :
+class edit_distance_unbanded_global_policy :
 //!\cond
     edit_traits
 //!\endcond
 {
-protected:
+    static_assert(edit_traits::is_global || edit_traits::is_semi_global,
+                  "This policy assumes that edit_traits::is_global or edit_traits::is_semi_global is true.");
+
+    //!\brief Befriends the derived type.
+    friend derived_t;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    edit_distance_unbanded_global_policy() noexcept = default;  //!< Defaulted.
+    edit_distance_unbanded_global_policy(edit_distance_unbanded_global_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_global_policy(edit_distance_unbanded_global_policy &&) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_global_policy & operator=(edit_distance_unbanded_global_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_global_policy & operator=(edit_distance_unbanded_global_policy &&) noexcept
+        = default; //!< Defaulted.
+    ~edit_distance_unbanded_global_policy() noexcept = default; //!< Defaulted.
+    //!\}
+
     //!\copydoc default_edit_distance_trait_type::score_type
     using typename edit_traits::score_type;
 
@@ -221,7 +263,7 @@ protected:
     alignment_coordinate invalid_coordinate() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        return {column_index_type{self->database.size()}, row_index_type{self->query.size()}};
+        return {column_index_type{std::ranges::size(self->database)}, row_index_type{std::ranges::size(self->query)}};
     }
 
     //!\brief Update the current best known score if the current score is better.
@@ -235,7 +277,7 @@ protected:
     size_t best_score_column() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        return self->database.size() - 1u;
+        return std::ranges::size(self->database) - 1u;
     }
     //!\}
 
@@ -262,23 +304,42 @@ public:
     alignment_coordinate back_coordinate() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        static_assert(edit_traits::compute_back_coordinate, "back_coordinate() can only be computed if you specify the result type "
-                                               "within your alignment config.");
+        static_assert(edit_traits::compute_back_coordinate, "back_coordinate() can only be computed if you specify the"
+                                                            "result type within your alignment config.");
         if (!self->is_valid())
             return self->invalid_coordinate();
 
         size_t col = self->best_score_column();
-        return {column_index_type{col}, row_index_type{self->query.size() - 1u}};
+        return {column_index_type{col}, row_index_type{std::ranges::size(self->query) - 1u}};
     }
     //!\}
 };
 
 //!\brief Only available when default_edit_distance_trait_type::is_semi_global is true.
 template <typename derived_t, typename edit_traits>
-struct edit_distance_unbanded_semi_global_policy :
+class edit_distance_unbanded_semi_global_policy :
     public edit_distance_unbanded_global_policy<derived_t, edit_traits>
 {
-protected:
+    static_assert(edit_traits::is_semi_global, "This policy assumes that edit_traits::is_semi_global is true.");
+
+    //!\brief Befriends the derived type.
+    friend derived_t;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    edit_distance_unbanded_semi_global_policy() noexcept = default;  //!< Defaulted.
+    edit_distance_unbanded_semi_global_policy(edit_distance_unbanded_semi_global_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_semi_global_policy(edit_distance_unbanded_semi_global_policy &&) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_semi_global_policy & operator=(edit_distance_unbanded_semi_global_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_semi_global_policy & operator=(edit_distance_unbanded_semi_global_policy &&) noexcept
+        = default; //!< Defaulted.
+    ~edit_distance_unbanded_semi_global_policy() noexcept = default; //!< Defaulted.
+    //!\}
+
     //!\brief The base policy of this policy.
     using base_t = edit_distance_unbanded_global_policy<derived_t, edit_traits>;
     //!\cond
@@ -350,15 +411,36 @@ protected:
     //!\}
 };
 
-//!\brief Only available when default_edit_distance_trait_type::compute_score_matrix is true.
-//!\extends default_edit_distance_trait_type
+/*!\brief Only available when default_edit_distance_trait_type::compute_score_matrix is true.
+ * \extends default_edit_distance_trait_type
+ */
 template <typename derived_t, typename edit_traits>
-struct edit_distance_unbanded_score_matrix_policy :
+class edit_distance_unbanded_score_matrix_policy :
 //!\cond
     edit_traits
 //!\endcond
 {
-protected:
+    static_assert(edit_traits::compute_score_matrix,
+                  "This policy assumes that edit_traits::compute_score_matrix is true.");
+
+    //!\brief Befriends the derived type.
+    friend derived_t;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    edit_distance_unbanded_score_matrix_policy() noexcept = default;  //!< Defaulted.
+    edit_distance_unbanded_score_matrix_policy(edit_distance_unbanded_score_matrix_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_score_matrix_policy(edit_distance_unbanded_score_matrix_policy &&) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_score_matrix_policy & operator=(edit_distance_unbanded_score_matrix_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_score_matrix_policy & operator=(edit_distance_unbanded_score_matrix_policy &&) noexcept
+        = default; //!< Defaulted.
+    ~edit_distance_unbanded_score_matrix_policy() noexcept = default; //!< Defaulted.
+    //!\}
+
     using typename edit_traits::score_matrix_type;
 
     /*!\name Score Matrix Policy: Protected Attributes
@@ -374,7 +456,9 @@ protected:
      * \{
      */
     /*!\brief Initialises score-matrix policy.
+     *
      * \details
+     *
      * ### Exception
      *
      * Strong exception guarantee.
@@ -383,8 +467,8 @@ protected:
     {
         derived_t const * self = static_cast<derived_t const *>(this);
 
-        _score_matrix = score_matrix_type{self->query.size() + 1u};
-        _score_matrix.reserve(self->database.size() + 1u);
+        _score_matrix = score_matrix_type{std::ranges::size(self->query) + 1u};
+        _score_matrix.reserve(std::ranges::size(self->database) + 1u);
     }
     //!\}
 
@@ -393,26 +477,48 @@ public:
      * \copydoc edit_distance_unbanded_score_matrix_policy
      * \{
      */
-    //!\brief Return the score matrix of the alignment.
-    //!       Only available if default_edit_distance_trait_type::compute_score_matrix is true.
+    /*!\brief Return the score matrix of the alignment.
+     * Only available if default_edit_distance_trait_type::compute_score_matrix is true.
+     */
     score_matrix_type const & score_matrix() const noexcept
     {
-        static_assert(edit_traits::compute_score_matrix, "score_matrix() can only be computed if you specify the result type within "
-                                            "your alignment config.");
+        static_assert(edit_traits::compute_score_matrix, "score_matrix() can only be computed if you specify the "
+                                                         "result type within your alignment config.");
         return _score_matrix;
     }
     //!\}
 };
 
-//!\brief Only available when default_edit_distance_trait_type::compute_trace_matrix is true.
-//!\extends default_edit_distance_trait_type
+/*!\brief Only available when default_edit_distance_trait_type::compute_trace_matrix is true.
+ * \extends default_edit_distance_trait_type
+ */
 template <typename derived_t, typename edit_traits>
-struct edit_distance_unbanded_trace_matrix_policy :
+class edit_distance_unbanded_trace_matrix_policy :
 //!\cond
     edit_traits
 //!\endcond
 {
-protected:
+    static_assert(edit_traits::compute_trace_matrix,
+                  "This policy assumes that edit_traits::compute_trace_matrix is true.");
+
+    //!\brief Befriends the derived type.
+    friend derived_t;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    edit_distance_unbanded_trace_matrix_policy() noexcept = default;  //!< Defaulted.
+    edit_distance_unbanded_trace_matrix_policy(edit_distance_unbanded_trace_matrix_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_trace_matrix_policy(edit_distance_unbanded_trace_matrix_policy &&) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_trace_matrix_policy & operator=(edit_distance_unbanded_trace_matrix_policy const &) noexcept
+        = default; //!< Defaulted.
+    edit_distance_unbanded_trace_matrix_policy & operator=(edit_distance_unbanded_trace_matrix_policy &&) noexcept
+        = default; //!< Defaulted.
+    ~edit_distance_unbanded_trace_matrix_policy() noexcept = default; //!< Defaulted.
+    //!\}
+
     using typename edit_traits::word_type;
     using typename edit_traits::trace_matrix_type;
     using typename edit_traits::result_value_type;
@@ -435,7 +541,9 @@ protected:
      * \{
      */
     /*!\brief Initialises trace-matrix policy.
+     *
      * \details
+     *
      * ### Exception
      *
      * Strong exception guarantee.
@@ -444,8 +552,8 @@ protected:
     {
         derived_t const * self = static_cast<derived_t const *>(this);
 
-        _trace_matrix = trace_matrix_type{self->query.size() + 1u};
-        _trace_matrix.reserve(self->database.size() + 1u);
+        _trace_matrix = trace_matrix_type{std::ranges::size(self->query) + 1u};
+        _trace_matrix.reserve(std::ranges::size(self->database) + 1u);
 
         hp.resize(block_count, 0u);
         db.resize(block_count, 0u);
@@ -460,8 +568,8 @@ public:
     //!\brief Return the trace matrix of the alignment.
     trace_matrix_type const & trace_matrix() const noexcept
     {
-        static_assert(edit_traits::compute_trace_matrix, "trace_matrix() can only be computed if you specify the result type within "
-                                            "your alignment config.");
+        static_assert(edit_traits::compute_trace_matrix, "trace_matrix() can only be computed if you specify the "
+                                                         "result type within your alignment config.");
         return _trace_matrix;
     }
 
@@ -470,8 +578,8 @@ public:
     alignment_coordinate front_coordinate() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        static_assert(edit_traits::compute_front_coordinate, "front_coordinate() can only be computed if you specify the result type "
-                                                "within your alignment config.");
+        static_assert(edit_traits::compute_front_coordinate, "front_coordinate() can only be computed if you specify "
+                                                             "the result type within your alignment config.");
         if (!self->is_valid())
             return self->invalid_coordinate();
 
@@ -486,8 +594,8 @@ public:
         using alignment_t = decltype(result_value_type{}.alignment);
 
         derived_t const * self = static_cast<derived_t const *>(this);
-        static_assert(edit_traits::compute_sequence_alignment, "alignment() can only be computed if you specify the result type "
-                                                  "within your alignment config.");
+        static_assert(edit_traits::compute_sequence_alignment, "alignment() can only be computed if you specify the "
+                                                               "result type within your alignment config.");
 
         if (!self->is_valid())
             return alignment_t{};
@@ -501,10 +609,13 @@ public:
     //!\}
 };
 
-//!\brief The same as `T &` but it is default constructible and is re-assignable.
-template <typename T>
-struct proxy_reference
+/*!\brief The same as `value_t &` but it is default constructible and is re-assignable.
+ * \tparam value_t The value type of the reference.
+ */
+template <typename value_t>
+class proxy_reference
 {
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -516,37 +627,37 @@ struct proxy_reference
     ~proxy_reference() = default;                                            //!< Defaulted.
 
     //!\brief Use the lvalue `t` as the stored reference.
-    proxy_reference(T & t) noexcept
+    proxy_reference(value_t & t) noexcept
         : ptr(std::addressof(t))
     {}
 
-    proxy_reference(T &&) = delete; //!< Deleted.
+    proxy_reference(value_t &&) = delete; //!< Deleted.
 
     //!\brief Assign a value to the stored reference.
-    template <typename U>
-    proxy_reference & operator=(U && u) noexcept
+    template <std::ConvertibleTo<value_t> other_value_t>
+    proxy_reference & operator=(other_value_t && u) noexcept
     {
-        get() = std::forward<U>(u);
+        get() = std::forward<other_value_t>(u);
         return *this;
     }
     //!\}
 
     //!\brief Get the stored reference.
-    T & get() const noexcept
+    value_t & get() const noexcept
     {
         assert(ptr != nullptr);
         return *ptr;
     }
 
     //!\brief Get the stored reference.
-    operator T & () const noexcept
+    operator value_t & () const noexcept
     {
         return get();
     }
 
-protected:
+private:
     //!\brief The stored reference.
-    T * ptr{nullptr};
+    value_t * ptr{nullptr};
 };
 
 /*!\brief This calculates an alignment using the edit distance and without a band.
@@ -601,6 +712,7 @@ public:
     using typename edit_traits::query_type;
     using typename edit_traits::align_config_type;
     using edit_traits::word_size;
+
 private:
     using typename edit_traits::database_iterator;
     using typename edit_traits::query_alphabet_type;
@@ -636,15 +748,23 @@ private:
 
     //!\brief The score of the current column.
     score_type _score{};
-    //!\brief The mask with a bit set at the position where the score change.
-    //!\details If #use_max_errors is true this corresponds to the last active cell.
+    /*!\brief The mask with a bit set at the position where the score change.
+     *
+     * \details
+     *
+     * If #use_max_errors is true this corresponds to the last active cell.
+     */
     word_type score_mask{0u};
     //!\copydoc edit_distance_unbanded::compute_state::vp
     std::vector<word_type> vp{};
     //!\copydoc edit_distance_unbanded::compute_state::vn
     std::vector<word_type> vn{};
-    //!\brief The machine words which translate a letter of the query into a bit mask.
-    //!\details Each bit position which is true (= 1) corresponds to a match of a letter in the query at this position.
+    /*!\brief The machine words which translate a letter of the query into a bit mask.
+     *
+     * \details
+     *
+     * Each bit position which is true (= 1) corresponds to a match of a letter in the query at this position.
+     */
     std::vector<word_type> bit_masks{};
 
     //!\brief The current position in the database.
@@ -690,6 +810,7 @@ private:
     {
         if constexpr(!use_max_errors && compute_score_matrix)
             this->_score_matrix.add_column(vp, vn);
+
         if constexpr(!use_max_errors && compute_trace_matrix)
             this->_trace_matrix.add_column(this->hp, this->db, vp);
 
@@ -698,23 +819,23 @@ private:
             size_t max_rows = this->max_rows(score_mask, this->last_block, _score, this->max_errors);
             if constexpr(compute_score_matrix)
                 this->_score_matrix.add_column(vp, vn, max_rows);
+
             if constexpr(compute_trace_matrix)
                 this->_trace_matrix.add_column(this->hp, this->db, vp, max_rows);
         }
     }
 
 public:
-
     /*!\name Constructors, destructor and assignment
      * \{
      */
      //!\brief The class template parameter may resolve to an lvalue reference which prohibits default constructibility.
-     edit_distance_unbanded() = delete;                                            //!< Defaulted
-     edit_distance_unbanded(edit_distance_unbanded const &) = default;             //!< Defaulted
-     edit_distance_unbanded(edit_distance_unbanded &&) = default;                  //!< Defaulted
-     edit_distance_unbanded & operator=(edit_distance_unbanded const &) = default; //!< Defaulted
-     edit_distance_unbanded & operator=(edit_distance_unbanded &&) = default;      //!< Defaulted
-     ~edit_distance_unbanded() = default;                                          //!< Defaulted
+     edit_distance_unbanded() = delete;                                            //!< Defaulted.
+     edit_distance_unbanded(edit_distance_unbanded const &) = default;             //!< Defaulted.
+     edit_distance_unbanded(edit_distance_unbanded &&) = default;                  //!< Defaulted.
+     edit_distance_unbanded & operator=(edit_distance_unbanded const &) = default; //!< Defaulted.
+     edit_distance_unbanded & operator=(edit_distance_unbanded &&) = default;      //!< Defaulted.
+     ~edit_distance_unbanded() = default;                                          //!< Defaulted.
 
     /*!\brief Constructor
      * \param[in] _database \copydoc database
@@ -722,27 +843,29 @@ public:
      * \param[in] _config   \copydoc config
      * \param[in] _traits   The traits object. Only the type information will be used.
      */
-    edit_distance_unbanded(database_t && _database,
-                           query_t && _query,
+    edit_distance_unbanded(database_t _database,
+                           query_t _query,
                            align_config_t _config,
                            edit_traits const & SEQAN3_DOXYGEN_ONLY(_traits) = edit_traits{}) :
         database{std::forward<database_t>(_database)},
         query{std::forward<query_t>(_query)},
         config{std::forward<align_config_t>(_config)},
-        _score{static_cast<score_type>(query.size())},
+        _score{static_cast<score_type>(std::ranges::size(query))},
         database_it{ranges::begin(database)},
         database_it_end{ranges::end(database)}
     {
         static constexpr size_t alphabet_size_ = alphabet_size<query_alphabet_type>;
 
-        size_t const block_count = (query.size() - 1u + word_size) / word_size;
-        score_mask = word_type{1u} << ((query.size() - 1u + word_size) % word_size);
+        size_t const block_count = (std::ranges::size(query) - 1u + word_size) / word_size;
+        score_mask = word_type{1u} << ((std::ranges::size(query) - 1u + word_size) % word_size);
 
         this->score_init();
         if constexpr(use_max_errors)
             this->max_errors_init(block_count);
+
         if constexpr(compute_score_matrix)
             this->score_matrix_init();
+
         if constexpr(compute_trace_matrix)
             this->trace_matrix_init(block_count);
 
@@ -751,9 +874,9 @@ public:
         bit_masks.resize((alphabet_size_ + 1u) * block_count, 0u);
 
         // encoding the letters as bit-vectors
-        for (size_t j = 0u; j < query.size(); j++)
+        for (size_t j = 0u; j < std::ranges::size(query); j++)
         {
-            size_t const i = block_count * to_rank(query[j]) + j / word_size;
+            size_t const i = block_count * seqan3::to_rank(query[j]) + j / word_size;
             bit_masks[i] |= word_type{1u} << (j % word_size);
         }
 
@@ -762,7 +885,6 @@ public:
     //!\}
 
 private:
-
     //!\brief A single compute step in the current column.
     template <bool with_carry>
     static void compute_step(compute_state & state) noexcept
@@ -795,7 +917,7 @@ private:
 
     //!\brief A single compute step in the current column at a given position.
     template <bool with_carry>
-    void compute_kernel(compute_state & state, size_t block_offset, size_t current_block) noexcept
+    void compute_kernel(compute_state & state, size_t const block_offset, size_t const current_block) noexcept
     {
         state.vp = proxy_reference<word_type>{this->vp[current_block]};
         state.vn = proxy_reference<word_type>{this->vn[current_block]};
@@ -827,8 +949,7 @@ private:
         return false;
     }
 
-    //!\brief Pattern is small enough that it fits into one machine word. Use
-    //!faster computation with less overhead.
+    //!\brief Pattern is small enough that it fits into one machine word. Use faster computation with less overhead.
     inline bool small_patterns();
 
     //!\brief Pattern is larger than one machine word. Use overflow aware computation.
@@ -850,9 +971,9 @@ private:
             // ...
             // m ... 3 2 1 0 1 2 3 4 5
             // Thus, after |query| + max_errors entries the score will always be higher than max_errors.
-            size_t const max_length = query.size() + this->max_errors + 1u;
-            size_t const haystack_length = std::min(database.size(), max_length);
-            database_it_end -= database.size() - haystack_length;
+            size_t const max_length = std::ranges::size(query) + this->max_errors + 1u;
+            size_t const haystack_length = std::min(std::ranges::size(database), max_length);
+            database_it_end -= std::ranges::size(database) - haystack_length;
         }
 
         // distinguish between the version for needles not longer than
@@ -867,7 +988,6 @@ private:
     }
 
 public:
-
     /*!\brief Generic invocable interface.
      * \param[in]     idx The index of the currently processed sequence pair.
      * \returns A reference to the filled alignment result.
@@ -920,7 +1040,7 @@ bool edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::smal
     while (database_it != database_it_end)
     {
         compute_state state{};
-        size_t const block_offset = to_rank((query_alphabet_type) *database_it);
+        size_t const block_offset = seqan3::to_rank((query_alphabet_type) *database_it);
 
         compute_kernel<false>(state, block_offset, 0u);
         advance_score(state.hp, state.hn, score_mask);
@@ -950,7 +1070,7 @@ bool edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::larg
     while (database_it != database_it_end)
     {
         compute_state state{};
-        size_t const block_offset = vp.size() * to_rank((query_alphabet_type) *database_it);
+        size_t const block_offset = vp.size() * seqan3::to_rank((query_alphabet_type) *database_it);
 
         size_t block_count = vp.size();
         if constexpr(use_max_errors)

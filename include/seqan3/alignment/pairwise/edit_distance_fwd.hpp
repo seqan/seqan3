@@ -38,13 +38,14 @@ struct empty_state
 template <bool enabled, typename state_t>
 using enable_state_t = std::conditional_t<enabled, state_t, empty_state<state_t>>;
 
-//!\brief The same as std::conditional but for template template parameters
-//!\details
-//!If `B` is true, <tt>selector<B, T, F>::template select</tt> inherits `T`, otherwise `F`.
+/*!\brief The same as std::conditional but for template template parameters.
+ * \details
+ * If `B` is true, <tt>selector<B, T, F>::template select</tt> inherits `T`, otherwise `F`.
+ */
 template<bool B, template<typename...> typename T, template<typename...> typename F>
 struct selector
 {
-    //!\brief Depending on B, select is the template template parameter T or F.
+    //!\brief Depending on `B`, `select` is the template template parameter `T` or `F`.
     template <typename ...args_t>
     struct select : public std::conditional_t<B, T<args_t...>, F<args_t...>>
     {};
