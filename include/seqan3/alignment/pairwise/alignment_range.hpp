@@ -19,7 +19,7 @@ namespace seqan3
 {
 
 /*!\brief The alignment
- * \ingroup execution
+ * \ingroup pairwise_alignment
  * \tparam alignment_executor_type The buffer type for the alignment stream.
  *
  * \details

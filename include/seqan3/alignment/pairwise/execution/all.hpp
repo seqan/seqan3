@@ -13,10 +13,11 @@
 #pragma once
 
 #include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
-#include <seqan3/alignment/pairwise/execution/alignment_range.hpp>
 #include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
 
+//!\cond DEV
 /*!\defgroup execution Execution
  * \ingroup pairwise_alignment
  * \brief Provides execution handler and executors for pairwise alignments.
  */
+//!\endcond
