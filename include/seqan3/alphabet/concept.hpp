@@ -525,8 +525,7 @@ struct assign_char_strictly_to_fn
     decltype(auto) operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t & a) const
     {
         if (!seqan3::char_is_valid_for<alph_t>(r))
-            //TODO: instead of doing a narrowing cast here, add constructor overload for other chars?
-            throw seqan3::invalid_char_assignment{seqan3::detail::get_display_name_v<alph_t>, static_cast<char>(r)};
+            throw seqan3::invalid_char_assignment{seqan3::detail::get_display_name_v<alph_t>, r};
 
         return seqan3::assign_char_to(r, a);
     }
@@ -773,9 +772,9 @@ SEQAN3_CONCEPT Semialphabet =
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v)
+SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v, alphabet_rank_t<t> r)
 {
-    { seqan3::assign_rank_to(0, v) };
+    { seqan3::assign_rank_to(r, v) };
 };
 //!\endcond
 
@@ -872,11 +871,11 @@ SEQAN3_CONCEPT Alphabet = Semialphabet<t> && requires (t v)
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableAlphabet = Alphabet<t> && WritableSemialphabet<t> && requires (t v)
+SEQAN3_CONCEPT WritableAlphabet = Alphabet<t> && WritableSemialphabet<t> && requires (t v, alphabet_char_t<t> c)
 {
-    { seqan3::assign_char_to(0, v) };
+    { seqan3::assign_char_to(c, v) };
 
-    { seqan3::char_is_valid_for<t>(std::declval<decltype(seqan3::to_char(v))>()) };
+    { seqan3::char_is_valid_for<t>(c) };
 };
 //!\endcond
 
@@ -977,7 +976,7 @@ template <typename t>
 SEQAN3_CONCEPT WritableConstexprSemialphabet = ConstexprSemialphabet<t> && WritableSemialphabet<t> && requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
-    requires SEQAN3_IS_CONSTEXPR(seqan3::assign_rank_to(0, std::remove_reference_t<t>{}));
+    requires SEQAN3_IS_CONSTEXPR(seqan3::assign_rank_to(alphabet_rank_t<t>{}, std::remove_reference_t<t>{}));
 };
 //!\endcond
 
