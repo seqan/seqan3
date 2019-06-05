@@ -773,7 +773,7 @@ protected:
 
         std::visit([&] (auto & f)
         {
-            // use header from record if explicitly given, e.g. file_out = file_in
+            // use header from record if explicitly given, e.g. file_output = file_input
             if constexpr (!std::Same<record_header_ptr_t, std::nullptr_t>)
                 f.write(*secondary_stream, options, *record_header_ptr, std::forward<pack_type>(remainder)...);
             else if constexpr (std::Same<ref_ids_type, ref_info_not_given>)

@@ -27,7 +27,7 @@ int main()
 {
 
 { // Create a file /tmp/input.dbn for reading.
-structure_file_out fout{tmp_dir/"input.dbn"};
+structure_file_output fout{tmp_dir/"input.dbn"};
 fout.emplace_back("GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna4,
                   "S.cerevisiae_tRNA-PHE M10740/1-73",
                   "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51);
@@ -36,7 +36,7 @@ fout.emplace_back("UUGGAGUACACAACCUGUACACUCUUUC"_rna4,
                   "..(((((..(((...)))..)))))..."_wuss51);
 
 // Create a file /tmp/input_aa.dbn for reading.
-structure_file_out fout2{tmp_dir/"input_aa.dbn"};
+structure_file_output fout2{tmp_dir/"input_aa.dbn"};
 fout2.emplace_back("ACEWACEW"_aa20,
                   "S.cerevisiae_tRNA-PHE M10740/1-73",
                   "HGEBHHHH"_dssp9);
@@ -47,13 +47,13 @@ fout2.emplace_back("ACEWACEWACEWACEW"_aa20,
 
 {
 //! [temp_param_deduc]
-structure_file_out fout{tmp_dir/"output.dbn"}; // Vienna format detected, std::ofstream opened for file
+structure_file_output fout{tmp_dir/"output.dbn"}; // Vienna format detected, std::ofstream opened for file
 //! [temp_param_deduc]
 }
 
 {
 //! [write_std_out]
-structure_file_out fout{std::cout, format_vienna{}};
+structure_file_output fout{std::cout, format_vienna{}};
 //               ^ no need to specify the template arguments
 
 fout.emplace_back("AACGUU"_rna4, "example_id", ".(())."_wuss51); // default order for vienna: SEQ, ID, STRUCTURE
@@ -62,7 +62,7 @@ fout.emplace_back("AACGUU"_rna4, "example_id", ".(())."_wuss51); // default orde
 
 {
 //! [iter_by_rec]
-structure_file_out fout{tmp_dir/"my.dbn"};
+structure_file_output fout{tmp_dir/"my.dbn"};
 
 for (int i = 0; i < 10; i++) // ...
 {
@@ -83,7 +83,7 @@ for (int i = 0; i < 10; i++) // ...
 //! [write_fields]
 structured_rna<rna5, wuss51> sr{'G'_rna5, '.'_wuss51};
 
-structure_file_out fout{tmp_dir/"my.dbn", fields<field::ID, field::STRUCTURED_SEQ>{}};
+structure_file_output fout{tmp_dir/"my.dbn", fields<field::ID, field::STRUCTURED_SEQ>{}};
 
 for (int i = 0; i < 10; i++)// ...
 {
@@ -102,8 +102,8 @@ for (int i = 0; i < 10; i++)// ...
 {
 bool criteria = true;
 //! [pass_rec]
-structure_file_in  fin{tmp_dir/"input.dbn", fields<field::ID, field::SEQ, field::STRUCTURE>{}};
-structure_file_out fout{tmp_dir/"my_wrong.dbn"}; // doesn't have to match the configuration
+structure_file_input fin{tmp_dir/"input.dbn", fields<field::ID, field::SEQ, field::STRUCTURE>{}};
+structure_file_output   fout{tmp_dir/"my_wrong.dbn"}; // doesn't have to match the configuration
 
 for (auto & r : fin)
 {
@@ -117,7 +117,7 @@ for (auto & r : fin)
 
 {
 //! [mult_rec]
-structure_file_out fout{tmp_dir/"my.dbn"};
+structure_file_output fout{tmp_dir/"my.dbn"};
 
 std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range
 {
@@ -133,21 +133,21 @@ fout = range; // will iterate over the records and write them
 {
 //! [file_conv]
 // file format conversion in one line:
-structure_file_out{tmp_dir/"output.dbn"} = structure_file_in{tmp_dir/"input.dbn"};
+structure_file_output{tmp_dir/"output.dbn"} = structure_file_input{tmp_dir/"input.dbn"};
 
-// with structure_file_out as a variable:
-structure_file_out fout{tmp_dir/"output.dbn"};
-fout = structure_file_in{tmp_dir/"input.dbn"};
+// with structure_file_output as a variable:
+structure_file_output fout{tmp_dir/"output.dbn"};
+fout = structure_file_input{tmp_dir/"input.dbn"};
 
 // or in pipe notation:
-structure_file_in{tmp_dir/"input.dbn"} | structure_file_out{tmp_dir/"output.dbn"};
+structure_file_input{tmp_dir/"input.dbn"} | structure_file_output{tmp_dir/"output.dbn"};
 //! [file_conv]
 }
 
 {
 //! [pipeline]
-structure_file_in my_in{tmp_dir/"input.dbn"};
-my_in | view::take(5) | structure_file_out{"output.dbn"};
+structure_file_input my_in{tmp_dir/"input.dbn"};
+my_in | view::take(5) | structure_file_output{"output.dbn"};
 //! [pipeline]
 }
 
@@ -156,7 +156,7 @@ my_in | view::take(5) | structure_file_out{"output.dbn"};
 //! [col_based]
 // ... in your file writing function:
 
-structure_file_out fout{tmp_dir/"my.dbn"};
+structure_file_output fout{tmp_dir/"my.dbn"};
 
 fout = std::tie(data_storage.sequences, data_storage.ids, data_storage.structures);
 //! [col_based]
@@ -164,7 +164,7 @@ fout = std::tie(data_storage.sequences, data_storage.ids, data_storage.structure
 
 {
 //! [push_back]
-structure_file_out fout{tmp_dir/"my.dbn"};
+structure_file_output fout{tmp_dir/"my.dbn"};
 
 auto it = fout.begin();
 
@@ -186,7 +186,7 @@ for (int i = 0; i < 10; i++) // ...
 
 {
 //! [push_back_2]
-structure_file_out fout{tmp_dir/"my.dbn"};
+structure_file_output fout{tmp_dir/"my.dbn"};
 
 auto it = fout.begin();
 
@@ -205,7 +205,7 @@ for (int i = 0; i < 10; i++) // ...
 
 {
 //! [emplace_back]
-structure_file_out fout{tmp_dir/"my.dbn"};
+structure_file_output fout{tmp_dir/"my.dbn"};
 
 auto it = fout.begin();
 
@@ -224,7 +224,7 @@ for (int i = 0; i < 10; i++) // ...
 
 {
 //! [equal]
-structure_file_out fout{tmp_dir/"my.dbn"};
+structure_file_output fout{tmp_dir/"my.dbn"};
 
 std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range
 {
@@ -239,7 +239,7 @@ fout = range; // will iterate over the records and write them
 
 {
 //! [pipe_func]
-structure_file_out fout{tmp_dir/"my.dbn"};
+structure_file_output fout{tmp_dir/"my.dbn"};
 
 std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range
 {

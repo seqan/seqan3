@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::alignment_file_in_options.
+ * \brief Provides seqan3::alignment_file_input_options.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 

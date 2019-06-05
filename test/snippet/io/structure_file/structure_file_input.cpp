@@ -27,7 +27,7 @@ int main()
 {
 // First, make /tmp/input.dbn and /tmp/input_aa.dbn
 {
-structure_file_out fout{tmp_dir/"input.dbn"};
+structure_file_output fout{tmp_dir/"input.dbn"};
 fout.emplace_back("GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna4,
                   "S.cerevisiae_tRNA-PHE M10740/1-73",
                   "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51);
@@ -35,7 +35,7 @@ fout.emplace_back("UUGGAGUACACAACCUGUACACUCUUUC"_rna4,
                   "example",
                   "..(((((..(((...)))..)))))..."_wuss51);
 
-structure_file_out fout2{tmp_dir/"input_aa.dbn"};
+structure_file_output fout2{tmp_dir/"input_aa.dbn"};
 fout2.emplace_back("ACEWACEW"_aa20,
                   "S.cerevisiae_tRNA-PHE M10740/1-73",
                   "HGEBHHHH"_dssp9);
@@ -45,7 +45,7 @@ fout2.emplace_back("ACEWACEWACEWACEW"_aa20,
 }
 {
 //! [auto_temp_deduc]
-structure_file_in sf{tmp_dir/"input.dbn"}; // Vienna with RNA sequences assumed, regular std::ifstream taken as stream
+structure_file_input sf{tmp_dir/"input.dbn"}; // Vienna with RNA sequences assumed, use regular std::ifstream as stream
 //! [auto_temp_deduc]
 }
 
@@ -63,14 +63,14 @@ std::string const input
 
 std::istringstream iss(input);
 
-structure_file_in fin{iss, format_vienna{}};
-//              ^ no need to specify the template arguments
+structure_file_input fin{iss, format_vienna{}};
+//                 ^ no need to specify the template arguments
 //! [stringstream_read]
 }
 
 {
 //! [arg_spec]
-structure_file_in<structure_file_input_default_traits_rna> fin{tmp_dir/"input.dbn"};
+structure_file_input<structure_file_input_default_traits_rna> fin{tmp_dir/"input.dbn"};
 //! [arg_spec]
 }
 
@@ -89,18 +89,18 @@ std::string const input
 // ... input had amino acid sequences
 std::istringstream iss(input);
 
-structure_file_in<structure_file_input_default_traits_aa,
-                  fields<field::SEQ, field::ID, field::STRUCTURE>,
-                  type_list<format_vienna>,
-                  char> fin{iss, format_vienna{}};
+structure_file_input<structure_file_input_default_traits_aa,
+                     fields<field::SEQ, field::ID, field::STRUCTURE>,
+                     type_list<format_vienna>,
+                     char> fin{iss, format_vienna{}};
 //! [trait_def]
 }
 
 {
 //! [record_iter]
-structure_file_in<structure_file_input_default_traits_aa,
-                  fields<field::SEQ, field::ID, field::STRUCTURE>,
-                  type_list<format_vienna>> fin{tmp_dir/"input_aa.dbn"};
+structure_file_input<structure_file_input_default_traits_aa,
+                     fields<field::SEQ, field::ID, field::STRUCTURE>,
+                     type_list<format_vienna>> fin{tmp_dir/"input_aa.dbn"};
 
 for (auto & rec : fin)
 {
@@ -113,7 +113,7 @@ for (auto & rec : fin)
 
 {
 //! [data_out]
-structure_file_in fin{tmp_dir/"input.dbn"};
+structure_file_input fin{tmp_dir/"input.dbn"};
 
 using record_type = typename decltype(fin)::record_type;
 std::vector<record_type> records;
@@ -125,9 +125,9 @@ for (auto & rec : fin)
 
 {
 //! [structured_bindings]
-structure_file_in<structure_file_input_default_traits_aa,
-                  fields<field::SEQ, field::ID, field::STRUCTURE>,
-                  type_list<format_vienna>> fin{tmp_dir/"input_aa.dbn"};
+structure_file_input<structure_file_input_default_traits_aa,
+                     fields<field::SEQ, field::ID, field::STRUCTURE>,
+                     type_list<format_vienna>> fin{tmp_dir/"input_aa.dbn"};
 
 for (auto & [ seq, id, structure ] : fin)
 {
@@ -140,9 +140,10 @@ for (auto & [ seq, id, structure ] : fin)
 
 {
 //! [skip_fields]
-structure_file_in fin{tmp_dir/"input.dbn", fields<field::ID, field::STRUCTURED_SEQ>{}};
+structure_file_input fin{tmp_dir/"input.dbn", fields<field::ID, field::STRUCTURED_SEQ>{}};
 
-for (auto & [ id, structured_seq ] : fin) // note that the order is now different, "id" comes first, because it was specified first
+// note that the order is now different, "id" comes first, because it was specified first
+for (auto & [ id, structured_seq ] : fin)
 {
     debug_stream << "ID: " << id << '\n';
     // sequence and structure are part of the same vector, of type std::vector<structured_rna<rna5, wuss51>>
@@ -154,7 +155,7 @@ for (auto & [ id, structured_seq ] : fin) // note that the order is now differen
 
 {
 //! [filter_criteria]
-structure_file_in fin{tmp_dir/"input.dbn"};
+structure_file_input fin{tmp_dir/"input.dbn"};
 
 auto minimum_length5_filter = std::view::filter([] (auto const & rec)
 {
@@ -169,7 +170,7 @@ for (auto & rec : fin | minimum_length5_filter) // only record with sequence len
 }
 
 // For col_read snippet
-structure_file_in fin{tmp_dir/"input.dbn"};
+structure_file_input fin{tmp_dir/"input.dbn"};
 
 data_storage.sequences  = std::move(get<field::SEQ>(fin));       // we move the buffer directly into our storage
 data_storage.ids        = std::move(get<field::ID>(fin));        // we move the buffer directly into our storage
@@ -177,7 +178,7 @@ data_storage.structures = std::move(get<field::STRUCTURE>(fin)); // we move the 
 
 {
 //! [ref_return]
-structure_file_in fin{tmp_dir/"input.dbn"};
+structure_file_input fin{tmp_dir/"input.dbn"};
 auto it = begin(fin);
 
 // the following are equivalent:
@@ -192,7 +193,7 @@ auto & rec1 = fin.front();
 
 {
 //! [move]
-structure_file_in fin{tmp_dir/"input.dbn"};
+structure_file_input fin{tmp_dir/"input.dbn"};
 
 auto rec0 = std::move(fin.front());
 //! [move]
@@ -204,7 +205,7 @@ auto rec0 = std::move(fin.front());
 //! [col_read]
 // ... in your file reading function:
 
-structure_file_in fin{tmp_dir/"input.dbn"};
+structure_file_input fin{tmp_dir/"input.dbn"};
 
 data_storage.sequences  = std::move(get<field::SEQ>(fin));       // we move the buffer directly into our storage
 data_storage.ids        = std::move(get<field::ID>(fin));        // we move the buffer directly into our storage
