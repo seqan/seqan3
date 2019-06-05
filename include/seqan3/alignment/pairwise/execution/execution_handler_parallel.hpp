@@ -44,12 +44,10 @@ namespace seqan3::detail
 class execution_handler_parallel
 {
 private:
-
     //!\brief The type erased task type.
     using task_type = std::function<void()>;
 
 public:
-
     /*!\name Constructors, destructor and assignment
      * \brief Instances of this class are not copyable.
      * \{
@@ -147,8 +145,7 @@ public:
         }
     }
 
-public:
-
+private:
     //!\brief An internal state stored on the heap to allow safe move construction/assignment of the class.
     struct internal_state
     {
