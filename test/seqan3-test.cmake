@@ -176,6 +176,8 @@ macro (seqan3_require_benchmark)
     # force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
     list (APPEND gbenchmark_project_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
 
+    set (gbenchmark_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
+
     include (ExternalProject)
     ExternalProject_Add (
         gbenchmark_project
@@ -184,11 +186,10 @@ macro (seqan3_require_benchmark)
         GIT_TAG "v1.5.0"
         SOURCE_DIR "${SEQAN3_BENCHMARK_CLONE_DIR}"
         CMAKE_ARGS "${gbenchmark_project_args}"
+        BUILD_BYPRODUCTS "${gbenchmark_path}"
         UPDATE_DISCONNECTED yes
     )
     unset (gbenchmark_project_args)
-
-    set (gbenchmark_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
     add_library (gbenchmark STATIC IMPORTED)
     add_dependencies (gbenchmark gbenchmark_project)
@@ -207,6 +208,17 @@ macro (seqan3_require_test)
     # force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
     list (APPEND gtest_project_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
 
+    # google sets CMAKE_DEBUG_POSTFIX = "d"
+    set (gtest_main_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set (gtest_main_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_maind${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    endif ()
+
+    set (gtest_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set (gtest_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    endif ()
+
     include (ExternalProject)
     ExternalProject_Add (
         gtest_project
@@ -218,24 +230,14 @@ macro (seqan3_require_test)
         GIT_TAG "52f8183e7f3620cf03f321a2624eb0d4f7649f4c"
         SOURCE_DIR "${SEQAN3_TEST_CLONE_DIR}"
         CMAKE_ARGS "${gtest_project_args}"
+        BUILD_BYPRODUCTS "${gtest_main_path}" "${gtest_path}"
         UPDATE_DISCONNECTED yes
     )
     unset (gtest_project_args)
 
-    # google sets CMAKE_DEBUG_POSTFIX = "d"
-    set (gtest_main_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set (gtest_main_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_maind${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    endif ()
-
     add_library (gtest_main STATIC IMPORTED)
     add_dependencies (gtest_main gtest_project)
     set_target_properties (gtest_main PROPERTIES IMPORTED_LOCATION "${gtest_main_path}")
-
-    set (gtest_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set (gtest_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    endif ()
 
     add_library (gtest STATIC IMPORTED)
     add_dependencies (gtest gtest_main)
