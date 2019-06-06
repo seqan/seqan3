@@ -152,7 +152,7 @@ private:
         //!\brief The thread pool.
         std::vector<std::thread>                 thread_pool{};
         //!\brief The concurrent queue containing the alignments to process.
-        contrib::dynamic_buffer_queue<task_type> queue{};
+        contrib::fixed_buffer_queue<task_type>   queue{10000};
         //!\brief Flag to check if wait was already invoked.
         bool                                     is_waiting{false};
     };
