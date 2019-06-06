@@ -12,17 +12,23 @@
 
 #pragma once
 
+//!\cond DEV
+
 /*!\defgroup simd Simd
  * \brief The simd module contains a unified interface to provide simd types and functions used in seqan3.
  * \see https://en.wikipedia.org/wiki/SIMD
  * \ingroup core
  *
- * There are different simd implementations (backends), which are auto-selected by seqan3::simd::simd_type_t.
- * \cond DEV
- * Namely seqan3::detail::builtin_simd.
- * \endcond
+ * \todo Make this public again. We made this documentation internal-documentation only for the 3.0.0 release, because
+ * the API was not in shape yet. Remove the `cond DEV` and `todo` commands and remove `seqan3::simd` from
+ * SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS in `seqan3-doxygen.cmake`.
  *
- * \todo more details.
+ * There are different simd implementations (backends), which are auto-selected by seqan3::simd::simd_type_t.
+ * \if DEV
+ * Namely seqan3::detail::builtin_simd.
+ * \endif
+ *
+ * \todo Describe more what SIMD is and how to use it.
  */
 
 #include <seqan3/core/simd/concept.hpp>
@@ -36,3 +42,4 @@
  * \sa https://en.wikipedia.org/wiki/SIMD What is SIMD conceptually?
  * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
  */
+//!\endcond

@@ -21,6 +21,10 @@ namespace seqan3
 
 /*!\brief Overload for debug_stream for simd types.
  * \ingroup simd
+ * \private
+ * \todo Make this public again. We made this documentation internal-documentation only for the 3.0.0 release, because
+ * the API was not in shape yet. Remove the `private` and `todo` commands and remove `seqan3::simd` from
+ * SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS in `seqan3-doxygen.cmake`.
  */
 template <typename simd_t>
 //!\cond
