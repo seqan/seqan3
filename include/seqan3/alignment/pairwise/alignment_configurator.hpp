@@ -375,7 +375,6 @@ private:
         {
             struct edit_traits_type
             {
-                using word_type           [[maybe_unused]] = uint_fast64_t;
                 using is_semi_global_type [[maybe_unused]] = remove_cvref_t<decltype(is_semi_global)>;
             };
 

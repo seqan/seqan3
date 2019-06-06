@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 namespace seqan3::detail
 {
@@ -48,7 +49,6 @@ template <>
 constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_directions> = true;
 } // namespace seqan3
 
-#include <seqan3/core/debug_stream.hpp>
 namespace seqan3
 {
 
