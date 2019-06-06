@@ -34,7 +34,27 @@ namespace seqan3
  * \tparam sdsl_index_type_ The type of the underlying SDSL index, must model seqan3::SdslIndex.
  * \details
  *
- * \todo write me
+ * The seqan3::bi_fm_index is a fast and space-efficient bidirectional string index to search strings and
+ * collections of strings.
+ * In general, we recommend to favour the seqan3::bi_fm_index over the seqan3::fm_index if you want to allow multiple errors when
+ * searching.
+ *
+ * ### General information
+ *
+ * Here is a short example on how to build an index and search a pattern using an cursor. Please note that there is a
+ * very powerful search module with a high-level interface seqan3::search that encapsulates the use of cursors.
+ *
+ * \include test/snippet/search/bi_fm_index.cpp
+ *
+ * \attention When building an index for a **single text** over any alphabet, the symbol with rank 255 is reserved
+ *            and may not occur in the text.
+ *
+ * Here is an example using a collection of strings (e.g. a genome with multiple chromosomes or a protein database):
+ *
+ * \include test/snippet/search/bi_fm_index_collection.cpp
+ *
+ * \attention When building an index for a **text collection** over any alphabet, the symbols with rank 254 and 255
+ *            are reserved and may not be used in the text.
  */
 template <bool is_collection = false, detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
 class bi_fm_index
@@ -65,7 +85,7 @@ protected:
     //!\brief The type of the underlying FM index for the original text.
     using fm_index_type = fm_index<is_collection_, sdsl_index_type>;
 
-    //!\brief The type of the underlying FM index for the reversed text. \todo Overwrite sampling behaviour.
+    //!\brief The type of the underlying FM index for the reversed text.\if DEV \todo Change sampling behaviour. \endif
     using rev_fm_index_type = fm_index<is_collection_, sdsl_index_type>;
     //!\}
 
@@ -113,7 +133,7 @@ public:
      *
      * ### Complexity
      *
-     * \todo At least linear.
+     * \if DEV \todo \endif At least linear.
      */
     template <std::ranges::Range text_t>
     bi_fm_index(text_t && text)
@@ -127,16 +147,19 @@ public:
      * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
      * \param[in] text The text to construct from.
      *
-     * \details \todo This has to be better implemented with regard to the memory peak due to not matching interfaces
-     *                with the SDSL.
+     * \details
+     * \if DEV
+     * \todo This has to be better implemented with regard to the memory peak due to not matching interfaces
+     *       with the SDSL.
+     * \endif
      *
      * ### Complexity
      *
-     * \todo At least linear.
+     * \if DEV \todo \endif At least linear.
      *
      * ### Exceptions
      *
-     * No guarantee. \todo Ensure strong exception guarantee.
+     * No guarantee. \if DEV \todo Ensure strong exception guarantee. \endif
      */
     template <std::ranges::Range text_t>
         //!\cond

@@ -48,7 +48,8 @@ class bi_fm_index_cursor;
  * ### Running time / Space consumption
  *
  * \f$SAMPLING\_RATE = 16\f$
- * \f$\Sigma\f$: alphabet_size<char_type> where char_type is the seqan3 alphabet type (e.g. dna4 has an alphabet size of 4).
+ * \f$\Sigma\f$: alphabet_size<char_type> where char_type is the seqan3 alphabet type (e.g. dna4 has an alphabet size
+ *               of 4).
  *
  * For an index over a text collection a delimiter is added inbetween the texts. This causes sigma to increase by 1.
  * \attention For any alphabet, the symbol with rank 255 is not allowed to occur in the text. Addtionally,
@@ -68,7 +69,7 @@ class bi_fm_index_cursor;
  *
  * \f$T_{BACKWARD\_SEARCH}: O(\log \Sigma)\f$
  *
- * \todo Asymptotic space consumption:
+ * \if DEV \todo Asymptotic space consumption: \endif
  *
  */
 using sdsl_wt_index_type =
@@ -99,23 +100,29 @@ using default_sdsl_index_type = sdsl_wt_index_type;
  * ### General information
  *
  * Here is a short example on how to build an index and search a pattern using an cursor. Please note that there is a
- * very powerful search module with a high-level interface \todo seqan3::search that encapsulates the use of cursors.
+ * very powerful search module with a high-level interface seqan3::search that encapsulates the use of cursors.
  *
  * \include test/snippet/search/fm_index.cpp
  *
- * \attention When building an index for a text collection over any alphabet, the symbol with rank 255 is reserved
+ * \attention When building an index for a **single text** over any alphabet, the symbol with rank 255 is reserved
  *            and may not occur in the text.
  *
  * Here is an example using a collection of strings (e.g. a genome with multiple chromosomes or a protein database):
  *
  * \include test/snippet/search/fm_index_collection.cpp
  *
- * \attention When building an index for a text collection over any alphabet, the symbols with rank 254 and 255
-              are reserved and may not be used in the text.
+ * \attention When building an index for a **text collection** over any alphabet, the symbols with rank 254 and 255
+ *            are reserved and may not be used in the text.
  *
+ * \if DEV
  * ### Choosing an index implementation
  *
- * \todo The underlying implementation of the FM Index (Rank data structure, sampling rates, etc.) can be specified ...
+ * The underlying implementation of the FM Index (rank data structure, sampling rates, etc.) can be specified by
+ * passing a new SDSL index type as second template parameter:
+ *
+ * \todo Link to SDSL documentation or write our own once SDSL3 documentation is available somewhere....
+ *
+ * \endif
  */
 template <bool is_collection = false, detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
 class fm_index
@@ -184,7 +191,7 @@ public:
      *
      * ### Complexity
      *
-     * \todo At least linear.
+     * \if DEV \todo \endif At least linear.
      */
     template <std::ranges::Range text_t>
     fm_index(text_t && text)
@@ -198,16 +205,19 @@ public:
      * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
      * \param[in] text The text to construct from.
      *
-     * \details \todo This has to be better implemented with regard to the memory peak due to not matching interfaces
-     *                with the SDSL.
+     * \details
+     * \if DEV
+     * \todo This has to be better implemented with regard to the memory peak due to not matching interfaces
+     *       with the SDSL.
+     * \endif
      *
      * ### Complexity
      *
-     * \todo At least linear.
+     * \if DEV \todo \endif At least linear.
      *
      * ### Exceptions
      *
-     * No guarantees.
+     * No guarantee. \if DEV \todo Ensure strong exception guarantee. \endif
      */
     template <std::ranges::Range text_t>
     void construct(text_t && text)
@@ -332,7 +342,7 @@ public:
 
         std::ranges::copy((tmp | std::view::reverse), seqan3::begin(tmp_text));
 
-        //!\todo Replace with this once this does not cause debug builds to exceed max memory on travis
+        //!\if DEV \todo Replace with this once this does not cause debug builds to exceed max memory on travis \endif
         // std::ranges::copy(text
         //                   | view::deep{view::to_rank}
         //                   | view::deep{std::view::transform([] (uint8_t const r) { return r + 1; })} // increase rank

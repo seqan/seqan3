@@ -64,9 +64,6 @@ SEQAN3_CONCEPT SdslIndex = requires (t sdsl_index)
  *
  * \typedef typename t::size_type size_type
  * \brief Type for representing the size of the indexed text.
- *
- * \todo Write me.
- *
  * \}
  */
 
@@ -129,9 +126,6 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
  *
  * \typedef typename t::cursor_type cursor_type
  * \brief Type of the unidirectional FM index cursor.
- *
- * \todo Write me!
- *
  * \}
  */
 
@@ -186,9 +180,6 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
  *
  * \typedef typename t::size_type size_type
  * \brief Type for representing the size of the indexed text.
- *
- * \todo Write me!
- *
  * \}
  */
 
@@ -229,9 +220,6 @@ SEQAN3_CONCEPT BiFmIndex = FmIndex<t> && requires (t index)
  *
  * \typedef typename t::rev_cursor_type rev_cursor_type
  * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the reversed text.
- *
- * \todo Write me!
- *
  * \}
  */
 
@@ -273,9 +261,6 @@ SEQAN3_CONCEPT BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
  *
  * \typedef typename t::size_type size_type
  * \brief Type for representing the size of the indexed text.
- *
- * \todo Write me!
- *
  * \}
  */
 

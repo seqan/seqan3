@@ -37,8 +37,6 @@ namespace seqan3
  * \returns An object modelling std::ranges::Range containing the hits (the type depends on the specification
             in `cfg`), or `void` if an on_hit delegate has been specified.
  *
- * \todo Update concepts and documentation of `configuration_t` everywhere once it has been refactored by rrahn.
- *
  * ### Complexity
  *
  * Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$ where \f$e\f$ is the maximum number of errors.

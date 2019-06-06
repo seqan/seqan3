@@ -16,8 +16,8 @@
   * \details
   * # Search Algorithms
   *
-  * The Search module offers a simple unified interface that allows searching SeqAn3 indices such as FM indices or k-mer
-  * indices and choosing the best algorithm based on the index at hand.
+  * The Search module offers a simple unified interface that allows searching FM indices and choosing the best
+  * algorithm based on the index at hand.
   *
   * # FM Indices
   *
@@ -54,9 +54,11 @@
   * Optimum Search Schemes for Approximate String Matching Using Bidirectional FM-Index. bioRxiv, 301085.
   * https://doi.org/10.1101/301085
   *
+  * \if DEV
   * # K-mer Indices
   *
   * \todo Rewrite landing page.
+  * \endif
   *
   */
 
