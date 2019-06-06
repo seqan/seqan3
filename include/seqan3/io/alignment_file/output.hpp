@@ -308,7 +308,7 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_type   The type of stream to write to; must model seqan3::Ostream2.
+     * \tparam stream_type   The type of stream to write to; must model seqan3::OStream2.
      * \tparam file_format   The format of the file in the stream, must satisfy seqan3::AlignmentFileOutputFormat.
      * \param[out] stream    The stream to write to, must be derived of std::basic_ostream<stream_char_t>.
      * \param[in] format_tag The file format tag.
@@ -402,7 +402,7 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_type      The type of stream to write to; must model seqan3::Ostream2.
+     * \tparam stream_type      The type of stream to write to; must model seqan3::OStream2.
      * \tparam file_format      The format of the file in the stream, must model seqan3::AlignmentFileOutputFormat.
      * \tparam ref_ids_type_    The type of range over reference ids; must model std::ForwardRange.
      * \tparam ref_lengths_type The type of range over reference lengths; must model std::ForwardRange.
@@ -649,7 +649,7 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::std::ranges::InputRange and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
      *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.

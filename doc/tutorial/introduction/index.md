@@ -32,7 +32,7 @@ Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
 other statements implied by the text. You can copy'n'paste freely from these examples,
 this implies no copyright-obligations (however distributing SeqAn3 or an application
-using it does, see "[Copyright](http://docs.seqan.de/seqan/3-master-user/about_copyright.html) and [Citing](http://docs.seqan.de/seqan/3-master-user/about_citing.html)".
+using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html).
 
 You may ask, why we do not use std::cout or std::cerr for console output.
 Actually, for the given text it does not make a difference since seqan3::debug_stream prints to std::cerr as well.

@@ -91,7 +91,7 @@ SEQAN3_CONCEPT SequenceFileInputFormat = requires (detail::sequence_file_input_f
  * ### Additional requirements
  *
  *   * The function must also accept std::ignore as parameter for any of the fields.
- *     [this is enforced by the concept checker!]
+ *     [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  *   * Instead of passing the fields seqan3::field::SEQ and seqan3::field::QUAL, you may also pass
  *     seqan3::field::SEQ_QUAL to both parameters. If you do, the seqan3::value_type_t of the argument must be
