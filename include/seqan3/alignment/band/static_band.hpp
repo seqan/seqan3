@@ -12,55 +12,11 @@
 
 #pragma once
 
-#include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/detail/strong_type.hpp>
+#include <seqan3/core/algorithm/bound.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3
 {
-
-/*!\brief Type for a lower boundary.
- * \todo Put into core module. This might be useful in other places as well.
- * \ingroup alignment_band
- * \tparam value_t The underlying type of the lower bound; must model seqan3::Arithmetic.
- */
-template <seqan3::Arithmetic value_t>
-struct lower_bound : detail::strong_type<value_t, lower_bound<value_t>>
-{
-    //!\brief Inheriting constructors from base class.
-    using detail::strong_type<value_t, lower_bound<value_t>>::strong_type;
-};
-
-/*!\brief Type for an upper boundary.
- * \todo Put into core module. This might be useful in other places as well.
- * \ingroup alignment_band
- * \tparam value_t The underlying type of the upper bound; must model seqan3::Arithmetic.
- */
-template <seqan3::Arithmetic value_t>
-struct upper_bound : detail::strong_type<value_t, upper_bound<value_t>>
-{
-    //!\brief Inheriting constructors from base class.
-    using detail::strong_type<value_t, upper_bound<value_t>>::strong_type;
-};
-
-/*!\name Deduction guides
- * \brief Deduces template parameter from the argument.
- * \{
- */
-/*!\brief Deduces the underlying lower boundary type.
- * \relates seqan3::lower_bound
- * \tparam value_t The underlying type of the lower bound; must model seqan3::Arithmetic.
- */
-template <seqan3::Arithmetic value_t>
-lower_bound(value_t) -> lower_bound<value_t>;
-
-/*!\brief Deduces the underlying upper boundary type.
- * \relates seqan3::upper_bound
- * \tparam value_t The underlying type of the upper bound; must model seqan3::Arithmetic.
- */
-template <seqan3::Arithmetic value_t>
-upper_bound(value_t) -> upper_bound<value_t>;
-//!\}
 
 /*!\brief Data structure for a static band.
  * \ingroup alignment_band

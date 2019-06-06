@@ -46,8 +46,6 @@ namespace seqan3::align_cfg
  *
  * \snippet snippet/alignment/configuration/align_cfg_edit_example.cpp max_error
  *
- * \todo banded section
- *
  * \attention If the edit distance configuration is combined with any other configuration element or setting, the
  * algorithm falls back to the slower standard pairwise algorithm. For example the `cfg_slow` in the above example will
  * trigger the slower algorithm which can handle the case if the ends are free in the second sequence instead of the
