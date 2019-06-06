@@ -39,7 +39,9 @@ int main()
 
 {
 //![writing]
-    alignment_file_output fout{"/tmp/my.sam", fields<field::FLAG, field::MAPQ>{}};
+    auto filename = std::filesystem::temp_directory_path()/"out.sam";
+
+    alignment_file_output fout{filename, fields<field::FLAG, field::MAPQ>{}};
 
     size_t mymapq{60};
     uint8_t flag{0};
@@ -72,7 +74,9 @@ int main()
 
 {
 //![read_custom_fields]
-    alignment_file_input fin{"/tmp/my.sam", fields<field::ID, field::SEQ, field::FLAG>{}};
+    auto filename = std::filesystem::temp_directory_path()/"example.sam";
+
+    alignment_file_input fin{filename, fields<field::ID, field::SEQ, field::FLAG>{}};
 
     for (auto & [id, seq, flag /*order!*/] : fin)
     {
@@ -85,7 +89,9 @@ int main()
 
 {
 //![alignments_without_ref]
-    alignment_file_input fin{"/tmp/my.sam", fields<field::ID, field::ALIGNMENT>{}};
+    auto filename = std::filesystem::temp_directory_path()/"example.sam";
+
+    alignment_file_input fin{filename, fields<field::ID, field::ALIGNMENT>{}};
 
     for (auto & [ id, alignment ] : fin)
     {
@@ -96,10 +102,12 @@ int main()
 
 {
 //![alignments_with_ref]
+    auto filename = std::filesystem::temp_directory_path()/"example.sam";
+
     std::vector<std::string> ref_ids{"ref"}; // list of one reference name
     std::vector<dna5_vector> ref_sequences{"AGAGTTCGAGATCGAGGACTAGCGACGAGGCAGCGAGCGATCGAT"_dna5};
 
-    alignment_file_input fin{"/tmp/example.sam", ref_ids, ref_sequences, fields<field::ALIGNMENT>{}};
+    alignment_file_input fin{filename, ref_ids, ref_sequences, fields<field::ALIGNMENT>{}};
 
     for (auto & [ alignment ] : fin)
     {
