@@ -162,9 +162,9 @@ namespace seqan3
  *
  * ### Formats
  *
- * TODO give overview of formats, once they are all implemented
- *
- * \sa seqan3::format_sam
+ * We currently support writing the following formats:
+ *   * seqan3::format_sam
+ *   * seqan3::format_bam
  */
 template <detail::Fields selected_field_ids_ =
               fields<field::SEQ,
@@ -502,7 +502,7 @@ public:
      *
      * ### Complexity
      *
-     * Constant. TODO linear in the size of the written alignments?
+     * Constant.
      *
      * ### Exceptions
      *
@@ -550,7 +550,7 @@ public:
      *
      * ### Complexity
      *
-     * Constant. TODO linear in the size of the written alignments?
+     * Constant.
      *
      * ### Exceptions
      *
@@ -600,7 +600,7 @@ public:
      *
      * ### Complexity
      *
-     * Constant. TODO linear in the size of the written alignments?
+     * Constant.
      *
      * ### Exceptions
      *

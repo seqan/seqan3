@@ -31,7 +31,34 @@ namespace seqan3
  *
  * Some of the fields are shared between formats.
  *
- * \todo Table which files take which fields
+ * The following table shows the usage of fields in the respective files
+ * (Note that each valid format for a file must handle all of its fields):
+ *
+ * | Field          | Sequence IO | Alignment IO | Structure IO |
+ * | -------------- | ----------- | ------------ | ------------ |
+ * | SEQ            |      ✅      |      ✅       |       ✅      |
+ * | ID             |      ✅      |      ✅       |       ✅      |
+ * | QUAL           |      ✅      |      ✅       |       ✅      |
+ * | SEQ_QUAL       |      ✅      |      ✅       |       ✅      |
+ * | OFFSET         |             |      ✅       |       ✅      |
+ * | BPP            |             |              |       ✅      |
+ * | STRUCTURE      |             |              |       ✅      |
+ * | STRUCTURED_SEQ |             |              |       ✅      |
+ * | ENERGY         |             |              |       ✅      |
+ * | REACT          |             |              |       ✅      |
+ * | REACT_ERR      |             |              |       ✅      |
+ * | COMMENT        |             |              |       ✅      |
+ * | ALIGNMENT      |             |      ✅       |              |
+ * | REF_ID         |             |      ✅       |              |
+ * | REF_SEQ        |             |      ✅       |              |
+ * | REF_OFFSET     |             |      ✅       |              |
+ * | HEADER_PTR     |             |      ✅       |              |
+ * | FLAG           |             |      ✅       |              |
+ * | MATE           |             |      ✅       |              |
+ * | MAPQ           |             |      ✅       |              |
+ * | TAGS           |             |      ✅       |              |
+ * | BIT_SCORE      |             |      ✅       |              |
+ * | EVALUE         |             |      ✅       |              |
  */
 enum class field
 {
