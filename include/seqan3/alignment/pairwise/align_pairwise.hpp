@@ -23,7 +23,6 @@
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/execution/all.hpp>
-#include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/type_traits/basic.hpp>

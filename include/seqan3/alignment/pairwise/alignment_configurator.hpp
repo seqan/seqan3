@@ -23,7 +23,6 @@
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
-#include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 #include <seqan3/core/type_traits/range.hpp>

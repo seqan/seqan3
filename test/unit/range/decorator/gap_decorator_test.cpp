@@ -79,6 +79,8 @@ TYPED_TEST(gap_decorator_f, concept_checks)
     EXPECT_FALSE((ranges::enable_view<TypeParam &>));
 
     EXPECT_FALSE((std::ranges::View<TypeParam>));
+
+    EXPECT_TRUE((AlignedSequence<TypeParam>));
 }
 
 TYPED_TEST(gap_decorator_f, construction_general)

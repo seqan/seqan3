@@ -9,6 +9,9 @@
 
 #include <gtest/gtest.h>
 
+#include <vector>
+
+#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
@@ -80,4 +83,5 @@ TEST(gapped_test, fulfills_concepts)
     using alphabet_t = gapped<dna4>;
     EXPECT_TRUE((std::is_trivially_copyable_v<alphabet_t>));
     EXPECT_TRUE((std::is_standard_layout_v<alphabet_t>));
+    EXPECT_TRUE((AlignedSequence<std::vector<alphabet_t>>));
 }

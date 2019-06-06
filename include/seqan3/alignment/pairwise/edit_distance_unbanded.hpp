@@ -438,7 +438,12 @@ public:
 
         if constexpr (compute_sequence_alignment)
         {
-            res_vt.alignment = alignment_trace(database, query, trace_matrix(), res_vt.back_coordinate);
+            using res_type = decltype(res_vt.alignment);
+            res_vt.alignment = alignment_trace<res_type>(database,
+                                                         query,
+                                                         trace_matrix(),
+                                                         res_vt.back_coordinate,
+                                                         res_vt.front_coordinate);
         }
         return alignment_result<result_value_type>{std::move(res_vt)};
     }
@@ -493,7 +498,8 @@ public:
     {
         static_assert(compute_sequence_alignment, "alignment() can only be computed if you specify the result type "
                                                   "within your alignment config.");
-        return alignment_trace(database, query, trace_matrix(), back_coordinate());
+        using res_type = decltype(result_value_type{}.alignment);
+        return alignment_trace<res_type>(database, query, trace_matrix(), back_coordinate(), front_coordinate());
     }
 };
 

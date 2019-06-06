@@ -25,10 +25,11 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/view/view_all.hpp>
 
 using namespace seqan3;
 
-TEST(alignment_selector, align_result_selector)
+TEST(alignment_selector, align_result_selector_with_list)
 {
     using seq1_t = std::vector<dna4>;
     using seq2_t = std::list<dna4>;
@@ -65,4 +66,23 @@ TEST(alignment_selector, align_result_selector)
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().alignment()),
                                     std::tuple<gapped_seq1_t, gapped_seq2_t> const &>));
     }
+}
+
+TEST(alignment_selector, align_result_selector_with_vector)
+{
+    using seq_t = std::vector<dna4>;
+
+    auto cfg = align_cfg::edit | align_cfg::result{with_alignment};
+    using _t = alignment_result<typename detail::align_result_selector<seq_t, seq_t, decltype(cfg)>::type>;
+
+    using gapped_seq_t = gap_decorator<all_view<std::vector<dna4> &>>;
+
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().id()), uint32_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), int32_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().back_coordinate()),
+                                alignment_coordinate const &>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().front_coordinate()),
+                                alignment_coordinate const &>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().alignment()),
+                                std::tuple<gapped_seq_t, gapped_seq_t> const &>));
 }

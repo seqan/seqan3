@@ -24,6 +24,7 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/range/view/view_all.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
@@ -384,7 +385,7 @@ public:
                   std::Same<remove_cvref_t<other_range_t>, remove_cvref_t<inner_type>> &&
                   std::ranges::ViewableRange<other_range_t> // at end, otherwise it competes with the move ctor
     //!\endcond
-    gap_decorator(other_range_t && range) : ungapped_view{std::view::all(std::forward<inner_type>(range))}
+    gap_decorator(other_range_t && range) : ungapped_view{view::all(std::forward<inner_type>(range))}
     {} // TODO (@smehringer) only works for copyable views. Has to be changed once views are not required to be copyable anymore.
     // !\}
 
@@ -538,7 +539,7 @@ public:
         return iterator{*this, pos1};
     }
 
-    /*!\brief Assigns a new sequence of type seqan3:;gap_decorator::unaligned_seq_type to the decorator.
+    /*!\brief Assigns a new sequence of type seqan3::gap_decorator::unaligned_seq_type to the decorator.
      * \param[in,out] dec       The decorator to modify.
      * \param[in]     unaligned The unaligned sequence to assign.
      */
@@ -811,7 +812,7 @@ private:
     }
 
     //!\brief Stores a (copy of a) view to the ungapped, underlying sequence.
-    decltype(std::view::all(std::declval<inner_type &&>())) ungapped_view{};
+    decltype(view::all(std::declval<inner_type &&>())) ungapped_view{};
 
     //!\brief Set storing the anchor gaps.
     anchor_set_type anchors{};
