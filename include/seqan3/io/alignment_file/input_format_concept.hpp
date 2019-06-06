@@ -169,7 +169,7 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
  * ### Additional requirements
  *
  *   * The function must also accept std::ignore as parameter for any of the fields,
- *     except stream, options and header. [this is enforced by the concept checker!]
+ *     except stream, options and header. [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  */
  /*!\var static inline std::vector<std::string> seqan3::AlignmentFileInputFormat::file_extensions

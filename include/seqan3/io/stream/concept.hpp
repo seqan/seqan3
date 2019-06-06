@@ -24,7 +24,7 @@ namespace seqan3
  * \brief Concept for output streams.
  *
  * An object is an output stream if it inherits from the [std::ios_base](http://en.cppreference.com/w/cpp/io/ios_base)
- * and supports the (un)formatted output function (`operator<<``) for a l-value of a given `value_type`.
+ * and supports the (un)formatted output function (`operator<<`) for a l-value of a given `value_type`.
  * It further needs to define the public member types as described in the [STD](http://en.cppreference.com/w/cpp/io/basic_ios).
  */
 //!\cond

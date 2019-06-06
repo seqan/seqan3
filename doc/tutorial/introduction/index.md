@@ -32,7 +32,7 @@ Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
 other statements implied by the text. You can copy'n'paste freely from these examples,
 this implies no copyright-obligations (however distributing SeqAn3 or an application
-using it does, see "Copyright and Citing").
+using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html).
 
 You may ask, why we do not use std::cout or std::cerr for console output.
 Actually, for the given text it does not make a difference since seqan3::debug_stream prints to std::cerr as well.
@@ -106,7 +106,7 @@ The following code example demonstrates the interface of seqan3::sequence_file_i
 \snippet introduction_align.cpp sequence_input
 
 Can you imagine anything easier? After you have initialised the instance with a filename,
-you can simply step through the file in a for loop and retrieve the fields via 
+you can simply step through the file in a for loop and retrieve the fields via
 [structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding).
 The returned fields are `SEQ`, `ID` and `QUAL` to retrieve sequences, ids and qualities, respectively.
 The latter is empty unless you read FastQ files. The appropriate file format is detected by SeqAn from

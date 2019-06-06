@@ -30,7 +30,7 @@ namespace seqan3
 template <typename ...types>
 struct pod_tuple
 {};
-//!endcond
+//!\endcond
 
 /*!\brief Behaves like std::tuple but is an aggregate [PODType](http://en.cppreference.com/w/cpp/concept/PODType).
  * \ingroup core

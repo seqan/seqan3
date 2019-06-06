@@ -93,7 +93,7 @@ private:
     ref_ids_ptr_t ref_ids_ptr{new ref_ids_type{}, ref_ids_deleter_default};
 
 public:
-    /*!/brief The range of reference ids.
+    /*!\brief The range of reference ids.
      *
      * \details
      *
@@ -158,7 +158,7 @@ public:
     //!\brief The mapping of reference id to position in the ref_ids() range and the ref_id_info range.
     std::unordered_map<key_type, int32_t, std::hash<key_type>, detail::view_equality_fn> ref_dict{};
 
-    /*!\brief The Read Group Dictionary. (used by the SAM/BAM format)
+    /*!\brief The Read Group Dictionary (used by the SAM/BAM format).
      *
      * \details
      *

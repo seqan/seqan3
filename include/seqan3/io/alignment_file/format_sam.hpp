@@ -474,7 +474,7 @@ protected:
         }
     }
 
-    /*!\brief Construct the field::ALGIGNMENT depending on the given information.
+    /*!\brief Construct the field::ALIGNMENT depending on the given information.
      * \tparam align_type    The alignment type.
      * \tparam ref_seqs_type The type of reference sequences (might decay to ignore).
      * \param[in,out] align  The alignment (pair of aligned sequences) to fill.
