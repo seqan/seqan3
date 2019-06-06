@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various metafunctions for use on functions.
+ * \brief Provides various type traits for use on functions.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -19,7 +19,7 @@
 // ----------------------------------------------------------------------------
 
 /*!\brief Returns true if the expression passed to this macro can be evaluated at compile time, false otherwise.
- * \ingroup metafunction
+ * \ingroup type_traits
  * \returns true or false.
  */
 #define SEQAN3_IS_CONSTEXPR(...) std::integral_constant<bool, __builtin_constant_p((__VA_ARGS__, 0))>::value

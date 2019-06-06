@@ -11,8 +11,8 @@
 
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_score_trace_dp_matrix_policy.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 
 template <typename score_alloc_t, typename trace_alloc_t>
 struct policy_mock :

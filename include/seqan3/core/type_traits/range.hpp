@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various metafunctions used by the range module.
+ * \brief Provides various transformation traits used by the range module.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -15,9 +15,9 @@
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>
-#include <seqan3/core/metafunction/pre.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/iterator.hpp>
+#include <seqan3/core/type_traits/pre.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/iterator.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/iterator>
@@ -40,7 +40,7 @@ SEQAN3_CONCEPT has_value_type = requires { typename value_type_t<remove_cvref_t<
 namespace seqan3
 {
 
-/*!\addtogroup metafunction
+/*!\addtogroup type_traits
  * \{
  */
 
@@ -48,8 +48,9 @@ namespace seqan3
 // value_type
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `value_type` of another type [specialisation for input ranges].
- * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
+/*!\brief Exposes the `value_type` of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam t The type you wish to query; must model std::ranges::InputRange.
  */
 template <std::ranges::InputRange rng_t>
 //!\cond
@@ -65,8 +66,9 @@ struct value_type<rng_t>
 // reference
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `reference` of another type [specialisation for input ranges].
- * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
+/*!\brief Exposes the `reference` of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam t The type you wish to query; must model std::ranges::InputRange.
  */
 template <std::ranges::InputRange rng_t>
 //!\cond
@@ -82,8 +84,9 @@ struct reference<rng_t>
 // rvalue_reference
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `rvalue_reference` of another type [specialisation for input ranges].
- * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
+/*!\brief Exposes the `rvalue_reference` of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam t The type you wish to query; must model std::ranges::InputRange.
  */
 template <std::ranges::InputRange rng_t>
 //!\cond
@@ -99,8 +102,9 @@ struct rvalue_reference<rng_t>
 // const_reference
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `const_reference` of another type [specialisation for input ranges].
- * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
+/*!\brief Exposes the `const_reference` of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam t The type you wish to query; must model std::ranges::InputRange.
  */
 template <std::ranges::InputRange rng_t>
 //!\cond
@@ -116,8 +120,9 @@ struct const_reference<rng_t>
 // difference_type
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `difference_type` of another type [specialisation for ranges].
- * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
+/*!\brief Exposes the `difference_type` of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam t The type you wish to query; must model std::ranges::InputRange.
  */
 template <std::ranges::Range rng_t>
 //!\cond
@@ -133,8 +138,9 @@ struct difference_type<rng_t>
 // size_type
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `size_type` of another type [specialisation for sized ranges].
- * \tparam t The type you wish to query; must satisfy std::ranges::SizedRange.
+/*!\brief Exposes the `size_type` of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam t The type you wish to query; must model std::ranges::SizedRange.
  */
 template <std::ranges::SizedRange rng_t>
 //!\cond
@@ -152,12 +158,13 @@ struct size_type<rng_t>
 
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
-/*!\brief Recursively determines the `value_type` on containers and/or iterators [Type metafunction].
- * \tparam t The type to recurse on; must have `std::ranges::value_type_t<rng_t>`
+/*!\brief Recursively determines the `value_type` on containers and/or iterators.
+ * \implements seqan3::TransformationTrait
+ * \tparam t The type to recurse on; must have `std::ranges::value_type_t<rng_t>`.
  *
  * \details
  *
- * Attention, this metafunction implicitly removes cv-qualifiers on the all value_types except the one returned.
+ * Attention, this transformation trait implicitly removes cv-qualifiers on all value_types except the one returned.
  */
 template <typename t>
 //!\cond
@@ -178,7 +185,8 @@ struct innermost_value_type<t>
 };
 //!\endcond
 
-//!\brief Shortcut for seqan3::innermost_value_type.
+//!\brief Shortcut for seqan3::innermost_value_type (TransformationTrait shortcut).
+//!\see seqan3::innermost_value_type
 template <typename t>
 using innermost_value_type_t = typename innermost_value_type<t>::type;
 
@@ -188,12 +196,12 @@ using innermost_value_type_t = typename innermost_value_type<t>::type;
 
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
-/*!\brief Returns the number of times you can call `seqan3::value_type_t` recursively on t [Value metafunction].
+/*!\brief Returns the number of times you can call `seqan3::value_type_t` recursively on t (type trait).
  * \tparam t The type to be queried; must resolve `seqan3::value_type_t` at least once.
  *
  * \details
  *
- * Attention, this metafunction implicitly removes cv-qualifiers and reference from the types it recurses on and
+ * Attention, this type trait implicitly removes cv-qualifiers and reference from the types it recurses on and
  * returns.
  */
 template <typename t>
@@ -220,9 +228,9 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
  *
  * \details
  *
- * \snippet test/snippet/core/metafunction/range.cpp usage
+ * \snippet test/snippet/core/type_traits/range.cpp usage
  *
- * Attention, this metafunction implicitly removes cv-qualifiers and reference from the types it recurses on and
+ * Attention, this concept implicitly removes cv-qualifiers and reference from the types it recurses on and
  * compares.
  */
 //!\cond

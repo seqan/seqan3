@@ -16,7 +16,7 @@
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail

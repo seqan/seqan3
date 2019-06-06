@@ -37,10 +37,11 @@ template <typename algorithm_id_type>
 inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
 
 // ----------------------------------------------------------------------------
-// Metafunction is_configuration_valid
+// Type trait is_configuration_valid
 // ----------------------------------------------------------------------------
 
-/*!\brief Value metafunction which checks if a given type is compatible with a list of other types.
+/*!\brief Checks if a given type is compatible with a list of other types.
+ * \implements seqan3::UnaryTypeTrait
  * \ingroup algorithm
  * \tparam query_t       The type to check for compatibility.
  * \tparam compare_types The types to compare against.
@@ -49,8 +50,6 @@ inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
  *
  * Checks if the type is from the same algorithm configuration and if it can be combined with any of the
  * existing elements in the current configuration.
- *
- * \see seqan3::detail::is_configuration_valid_v
  */
 template <ConfigElement query_t, ConfigElement ... compare_types>
 struct is_configuration_valid :
@@ -64,9 +63,9 @@ struct is_configuration_valid :
     >
 {};
 
-/*!\brief Helper variable template to check for valid configuration composites.
+/*!\brief Helper variable template to check for valid configuration composites (UnaryTypeTrait shortcut).
+ * \relates seqan3::detail::is_configuration_valid
  * \ingroup algorithm
- * \see seqan3::detail::is_configuration_valid
  */
 template <typename query_t, typename ... compare_types>
 inline constexpr bool is_configuration_valid_v = is_configuration_valid<query_t, compare_types...>::value;

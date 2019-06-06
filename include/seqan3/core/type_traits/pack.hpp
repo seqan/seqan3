@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides various metafunctions on a set of types, usually provided as template argument pack.
+ * \brief Provides unary type traits on a set of types, usually provided as template argument pack.
  */
 
 #pragma once
@@ -19,10 +19,11 @@
 namespace seqan3::detail
 {
 
-//!\addtogroup metafunction
+//!\addtogroup type_traits
 //!\{
 
-//!\brief A type trait that indicates whether the first template argument is contained in the remaining.
+//!\brief Indicates whether the first template argument is contained in the remaining.
+//!\implements seqan3::UnaryTypeTrait
 template<typename target_t, typename ...pack>
 struct type_in_pack : std::false_type {};
 
@@ -34,7 +35,7 @@ template<typename target_t, typename pack1, typename ...pack>
 struct type_in_pack<target_t, pack1, pack...> : type_in_pack<target_t, pack...> {};
 //!\endcond
 
-//!\brief Shortcut for seqan3::detail::type_in_pack.
+//!\brief Shortcut for seqan3::detail::type_in_pack (UnaryTypeTrait shortcut).
 //!\relates seqan3::detail::type_in_pack
 template<typename target_t, typename ...pack>
 inline bool constexpr type_in_pack_v = type_in_pack<target_t, pack...>::value;

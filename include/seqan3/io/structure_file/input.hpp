@@ -29,7 +29,7 @@
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/filesystem>
@@ -1138,8 +1138,11 @@ structure_file_input(stream_type & stream, file_format const &, selected_field_i
 
 namespace std
 {
-/*!\brief std::tuple_size overload for column-like access.
- * [metafunction specialisation for seqan3::structure_file_input]
+
+/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+ * \implements seqan3::UnaryTypeTrait
+ * \ingroup structure_file
+ * \see std::tuple_size_v
  */
 template<seqan3::StructureFileInputTraits                    traits_type,
          seqan3::detail::Fields                              selected_field_ids,
@@ -1151,8 +1154,10 @@ struct tuple_size<seqan3::structure_file_input<traits_type, selected_field_ids, 
     static constexpr size_t value = selected_field_ids::as_array.size();
 };
 
-/*!\brief std::tuple_element overload for column-like access.
- * [metafunction specialisation for seqan3::structure_file_input]
+/*!\brief Obtains the type of the specified element.
+ * \implements seqan3::TransformationTrait
+ * \ingroup structure_file
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
 template<size_t                                              elem_no,
          seqan3::StructureFileInputTraits                    traits_type,

@@ -12,8 +12,8 @@
 #include <range/v3/view/bounded.hpp>
 
 #include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 

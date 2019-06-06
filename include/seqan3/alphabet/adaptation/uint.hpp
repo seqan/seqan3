@@ -9,7 +9,7 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides alphabet adaptations for standard uint types.
  * \details
- * This file provides function and metafunction overloads so that the following types
+ * This file provides function and type trait overloads so that the following types
  * fulfil the seqan3::Alphabet:
  *   * `uint8_t`
  *   * `uint16_t`

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various metafunctions on generic types.
+ * \brief Provides various type traits on generic types.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -15,12 +15,12 @@
 #include <tuple>
 #include <type_traits>
 
-#include <seqan3/core/metafunction/function.hpp>
+#include <seqan3/core/type_traits/function.hpp>
 
 namespace seqan3
 {
 
-/*!\addtogroup metafunction
+/*!\addtogroup type_traits
  * \{
  */
 
@@ -28,7 +28,7 @@ namespace seqan3
 // remove_cvref_t
 // ----------------------------------------------------------------------------
 
-/*!\brief Return the input type with `const`, `volatile` and references removed [Type metafunction].
+/*!\brief Return the input type with `const`, `volatile` and references removed (type trait).
  * \tparam t The type to operate on.
  */
 template <typename t>
@@ -38,7 +38,8 @@ using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<t>>;
 // remove_rvalue_reference
 // ----------------------------------------------------------------------------
 
-/*!\brief Return the input type with `&&` removed, but lvalue references preserved [Type metafunction].
+/*!\brief Return the input type with `&&` removed, but lvalue references preserved.
+ * \implements seqan3::TransformationTrait
  * \tparam t The type to operate on.
  * \see seqan3::remove_rvalue_reference_t
  */
@@ -49,7 +50,7 @@ struct remove_rvalue_reference
     using type = std::conditional_t<std::is_rvalue_reference_v<t>, std::remove_reference_t<t>, t>;
 };
 
-/*!\brief Return the input type with `&&` removed, but lvalue references preserved [Type metafunction, shortcut].
+/*!\brief Return the input type with `&&` removed, but lvalue references preserved (TransformationTrait shortcut).
  * \tparam t The type to operate on.
  * \see seqan3::remove_rvalue_reference
  */
@@ -60,15 +61,17 @@ using remove_rvalue_reference_t = typename remove_rvalue_reference<t>::type;
 // is_constexpr_default_constructible
 // ----------------------------------------------------------------------------
 
-/*!\brief Whether a type std::is_default_constructible in `constexpr`-context [UnaryTypeTrait].
+/*!\brief Whether a type std::is_default_constructible in `constexpr`-context.
+ * \implements seqan3::UnaryTypeTrait
  * \tparam t The type to operate on.
  */
 template <typename t>
 struct is_constexpr_default_constructible : std::false_type
 {};
 
-/*!\brief Whether a type std::is_default_constructible in `constexpr`-context [UnaryTypeTrait specialisation].
+/*!\brief Whether a type std::is_default_constructible in `constexpr`-context (UnaryTypeTrait specialisation).
  * \tparam t A type that std::is_default_constructible.
+ * \see seqan3::is_constexpr_default_constructible
  */
 template <typename t>
 //!\cond
@@ -77,9 +80,9 @@ template <typename t>
 struct is_constexpr_default_constructible<t> : std::integral_constant<bool, SEQAN3_IS_CONSTEXPR(t{})>
 {};
 
-/*!\brief Whether a type std::is_default_constructible in `constexpr`-context [UnaryTypeTrait shortcut].
+/*!\brief Whether a type std::is_default_constructible in `constexpr`-context (UnaryTypeTrait shortcut).
  * \tparam t The type to operate on.
- * \see seqan3::is_constexpr_default_constructible
+ * \relates seqan3::is_constexpr_default_constructible
  */
 template <typename t>
 inline constexpr bool is_constexpr_default_constructible_v = is_constexpr_default_constructible<t>::value;
@@ -90,7 +93,7 @@ inline constexpr bool is_constexpr_default_constructible_v = is_constexpr_defaul
 namespace seqan3::detail
 {
 
-/*!\addtogroup metafunction
+/*!\addtogroup type_traits
  * \{
  */
 
@@ -98,10 +101,11 @@ namespace seqan3::detail
 // deferred_type
 // ----------------------------------------------------------------------------
 
-/*!\brief Return the type identity; further arguments are ignored, but can make this type dependent if they are
- *        [TransformationTrait].
+/*!\brief Return the type identity; further arguments are ignored, but can make this type dependent if they are.
+ * \implements seqan3::TransformationTrait
  * \tparam t The type to operate on.
  * \tparam dependent_ts Any provided types are ignored.
+ * \see seqan3::detail::deferred_type_t
  */
 template <typename t, typename ...dependent_ts>
 struct deferred_type
@@ -111,10 +115,10 @@ struct deferred_type
 };
 
 /*!\brief Return the type identity; further arguments are ignored, but can make this type dependent if they are
- *        [TransformationTrait shortcut].
+ *        (TransformationTrait shortcut).
  * \tparam t The type to operate on.
  * \tparam dependent_ts Any provided types are ignored.
- * \see seqan3::deferred_type
+ * \see seqan3::detail::deferred_type
  */
 template <typename t, typename ...dependent_ts>
 using deferred_type_t = typename deferred_type<t, dependent_ts...>::type;
@@ -123,11 +127,11 @@ using deferred_type_t = typename deferred_type<t, dependent_ts...>::type;
 // remove_cvref_t
 // ----------------------------------------------------------------------------
 
-//!\brief Return the type of std::ignore with `const`, `volatile` and references removed [Type metafunction].
+//!\brief Return the type of std::ignore with `const`, `volatile` and references removed (type trait).
 using ignore_t = remove_cvref_t<decltype(std::ignore)>;
 
 /*!\brief Return whether the input type with `const`, `volatile` and references removed is std::ignore's type.
- * [Value metafunction].
+ * (type trait).
  * \tparam t The type to operate on.
  */
 template <typename t>

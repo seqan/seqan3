@@ -9,10 +9,21 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/concept.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_list.hpp>
 
 using namespace seqan3;
+
+TEST(template_inspect, concept_check)
+{
+    using tl = type_list<int, char, double>;
+
+    EXPECT_FALSE((TransformationTrait<detail::transfer_template_args_onto<int, std::tuple>>));
+    EXPECT_TRUE((TransformationTrait<detail::transfer_template_args_onto<tl, std::tuple>>));
+
+    EXPECT_TRUE((UnaryTypeTrait<detail::is_type_specialisation_of<int, type_list>>));
+}
 
 TEST(template_inspect, transfer_template_args_onto_t)
 {

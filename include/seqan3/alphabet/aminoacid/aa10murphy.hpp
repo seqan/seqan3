@@ -160,10 +160,12 @@ protected:
 };
 
 // ------------------------------------------------------------------
-// metafunctions
+// type traits
 // ------------------------------------------------------------------
 
-//!\brief Helper metafunction that identifies aa10murphy as an amino acid alphabet.
+//!\brief Identifies aa10murphy as an amino acid alphabet (UnaryTypeTrait specialisation).
+//!\implements UnaryTypeTrait
+//!\see seqan3::is_aminoacid
 //!\ingroup aminoacid
 template <>
 struct is_aminoacid<aa10murphy> : std::true_type {};

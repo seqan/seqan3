@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various metafunctions for use on iterators.
+ * \brief Provides various transformation traits for use on iterators.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -16,13 +16,13 @@
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>
-#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/std/iterator>
 
 namespace seqan3
 {
 
-/*!\addtogroup metafunction
+/*!\addtogroup type_traits
  * \{
  */
 
@@ -30,8 +30,9 @@ namespace seqan3
 // value_type
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `value_type` of another type [specialisation for input iterators].
- * \tparam it_t The type you wish to query; must satisfy std::input_Iterator.
+/*!\brief Exposes the `value_type` of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam it_t The type you wish to query; must model std::InputIterator.
  */
 template <std::InputIterator it_t>
 struct value_type<it_t>
@@ -40,14 +41,15 @@ struct value_type<it_t>
     using type = typename std::iterator_traits<std::remove_reference_t<it_t>>::value_type;
 };
 
-// see specialisation for ranges in core/metafunction/range.hpp
+// see specialisation for ranges in core/type_traits/range.hpp
 
 // ----------------------------------------------------------------------------
 // reference
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `reference` of another type [specialisation for input iterators].
- * \tparam it_t The type you wish to query; must satisfy std::input_Iterator.
+/*!\brief Exposes the `reference` type of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam it_t The type you wish to query; must model std::InputIterator.
  */
 template <std::InputIterator it_t>
 struct reference<it_t>
@@ -56,14 +58,15 @@ struct reference<it_t>
     using type = typename std::iterator_traits<std::remove_reference_t<it_t>>::reference;
 };
 
-// see specialisation for ranges in core/metafunction/range.hpp
+// see specialisation for ranges in core/type_traits/range.hpp
 
 // ----------------------------------------------------------------------------
 // rvalue_reference
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `rvalue_reference` of another type [specialisation for input iterators].
- * \tparam it_t The type you wish to query; must satisfy std::input_Iterator.
+/*!\brief Exposes the `rvalue_reference` type of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam it_t The type you wish to query; must model std::InputIterator.
  */
 template <std::InputIterator it_t>
 struct rvalue_reference<it_t>
@@ -72,7 +75,7 @@ struct rvalue_reference<it_t>
     using type = decltype(std::ranges::iter_move(std::declval<it_t &>()));
 };
 
-// see specialisation for ranges in core/metafunction/range.hpp
+// see specialisation for ranges in core/type_traits/range.hpp
 
 // ----------------------------------------------------------------------------
 // const_reference
@@ -84,8 +87,9 @@ struct rvalue_reference<it_t>
 // difference_type
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `difference_type` of another type [specialisation for iterators].
- * \tparam it_t The type you wish to query; must satisfy std::WeaklyIncrementable.
+/*!\brief Exposes the `difference_type` of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam it_t The type you wish to query; must model std::WeaklyIncrementable.
  */
 template <std::WeaklyIncrementable it_t>
 struct difference_type<it_t>
@@ -94,14 +98,15 @@ struct difference_type<it_t>
     using type = typename std::iterator_traits<std::remove_reference_t<it_t>>::difference_type;
 };
 
-// see specialisation for ranges in core/metafunction/range.hpp
+// see specialisation for ranges in core/type_traits/range.hpp
 
 // ----------------------------------------------------------------------------
 // size_type
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that returns the `size_type` of another type [specialisation for iterators].
- * \tparam it_t The type you wish to query; must satisfy std::WeaklyIncrementable.
+/*!\brief Exposes the `size_type` of another type.
+ * \implements seqan3::TransformationTrait
+ * \tparam it_t The type you wish to query; must model std::WeaklyIncrementable.
  */
 template <std::WeaklyIncrementable it_t>
 struct size_type<it_t>
@@ -110,16 +115,17 @@ struct size_type<it_t>
     using type = std::make_unsigned_t<difference_type_t<it_t>>;
 };
 
-// see specialisation for ranges in core/metafunction/range.hpp
+// see specialisation for ranges in core/type_traits/range.hpp
 
 // ----------------------------------------------------------------------------
 // iterator_tag
 // ----------------------------------------------------------------------------
 
-/*!\brief Type metafunction that deduces the
- * [iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_tags) from the modelled
- * concept [Type metafunction].
+/*!\brief Exposes the
+ * [iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_tags) from the modelled concept.
+ * \implements seqan3::TransformationTrait
  * \tparam it_t The type to operate on.
+ * \see seqan3::iterator_tag_t
  *
  * <table>
  *   <tr>
@@ -151,7 +157,7 @@ struct size_type<it_t>
  *
  * \attention
  * If [std::iterator_traits<it_t>::iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_traits)
- * is defined for a type `it_t`, this metafunction acts as an alias for it.
+ * is defined for a type `it_t`, this transformation trait acts as an alias for it.
  * If it is not defined and no concepts are modelled, iterator_tag<it_t>::type is not defined.
  */
 template <typename it_t>
@@ -208,14 +214,16 @@ struct iterator_tag<it_t>
 };
 //!\endcond
 
-/*!\brief Return the `iterator_category` type of the input type [Type metafunction, shortcut].
+/*!\brief Return the `iterator_category` type of the input type (TransformationTrait shortcut).
  * \tparam it_t The type to operate on.
+ * \see seqan3::iterator_tag
  */
 template <typename it_t>
 //!\cond
     requires requires { typename iterator_tag<it_t>::type; }
 //!\endcond
 using iterator_tag_t = typename iterator_tag<it_t>::type;
+
 //!\}
 
 } // namespace seqan3

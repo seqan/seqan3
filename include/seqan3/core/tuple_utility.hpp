@@ -19,8 +19,8 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3::detail
 {

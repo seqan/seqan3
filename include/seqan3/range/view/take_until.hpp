@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <seqan3/core/metafunction/iterator.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/iterator.hpp>
+#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/shortcuts.hpp>

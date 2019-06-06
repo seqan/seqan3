@@ -24,8 +24,8 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
@@ -1125,7 +1125,12 @@ alignment_file_input(stream_type & stream,
 
 namespace std
 {
-//!\brief std::tuple_size overload for column-like access. [metafunction specialisation for seqan3::alignment_file_input]
+
+/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+ * \implements seqan3::UnaryTypeTrait
+ * \ingroup alignment_file
+ * \see std::tuple_size_v
+ */
 template <seqan3::AlignmentFileInputTraits                    traits_type,
           seqan3::detail::Fields                              selected_field_ids,
           seqan3::detail::TypeListOfAlignmentFileInputFormats valid_formats,
@@ -1136,7 +1141,11 @@ struct tuple_size<seqan3::alignment_file_input<traits_type, selected_field_ids, 
     static constexpr size_t value = selected_field_ids::as_array.size();
 };
 
-//!\brief std::tuple_element overload for column-like access. [metafunction specialisation for seqan3::alignment_file_input]
+/*!\brief Obtains the type of the specified element.
+ * \implements seqan3::TransformationTrait
+ * \ingroup alignment_file
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
+ */
 template <size_t                                              elem_no,
           seqan3::AlignmentFileInputTraits                    traits_type,
           seqan3::detail::Fields                              selected_field_ids,

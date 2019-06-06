@@ -20,7 +20,7 @@
 #include <range/v3/view/slice.hpp>
 
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>

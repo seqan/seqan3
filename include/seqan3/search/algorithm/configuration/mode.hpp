@@ -15,7 +15,7 @@
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/search/algorithm/configuration/detail.hpp>
 
 /*!\addtogroup search

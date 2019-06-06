@@ -24,7 +24,7 @@ namespace seqan3
  *
  * \details
  *
- * If this metafunction is specialised for an enum, the binary operators `&`, `|`, `^`, `~`, `&=`, `|=`, `^=` will be
+ * If this type trait is specialised for an enum, the binary operators `&`, `|`, `^`, `~`, `&=`, `|=`, `^=` will be
  * added and behave just like for ints or unscoped enums.
  *
  * ### Example

@@ -16,7 +16,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
 #include <seqan3/std/ranges>
 

@@ -46,7 +46,7 @@ namespace seqan3
  *
  * The details of this concept are only relevant to developers who wish to
  * implement their own format. The requirements for this concept are given as
- * related functions and metafunctions. Types that model this concept are shown
+ * related functions and type traits. Types that model this concept are shown
  * as "implementing this interface".
  */
 //!\cond

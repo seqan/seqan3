@@ -26,9 +26,9 @@
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/core/metafunction/pack.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/pack.hpp>
+#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/type_traits>
@@ -115,7 +115,7 @@ inline bool constexpr one_alternative_is<target_t,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    //NO, it's not possible to use the value_type metafunction here
+    //NO, it's not possible to use the value_type type trait here
     requires requires { std::Same<typename target_t::value_type, alphabet_variant<alternatives...>>; }
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,

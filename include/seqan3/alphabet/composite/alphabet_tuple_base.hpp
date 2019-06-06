@@ -25,8 +25,8 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/core/metafunction/pack.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/pack.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/std/concepts>
 
@@ -689,8 +689,11 @@ constexpr bool operator>=(indirect_component_type const lhs,
 namespace std
 {
 
-//!\brief Obtains the type of the specified element.
-//!\relates seqan3::pod_tuple
+/*!\brief Obtains the type of the specified element.
+ * \implements seqan3::TransformationTrait
+ * \ingroup composite
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
+ */
 template <std::size_t i, seqan3::detail::AlphabetTupleBase tuple_t>
 struct tuple_element<i, tuple_t>
 {
@@ -698,8 +701,11 @@ struct tuple_element<i, tuple_t>
     using type = meta::at_c<typename tuple_t::seqan3_tuple_components, i>;
 };
 
-//!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
-//!\relates seqan3::pod_tuple
+/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+ * \implements seqan3::UnaryTypeTrait
+ * \ingroup composite
+ * \see std::tuple_size_v
+ */
 template <seqan3::detail::AlphabetTupleBase tuple_t>
 struct tuple_size<tuple_t> :
     public std::integral_constant<size_t, tuple_t::seqan3_tuple_components::size()>

@@ -9,7 +9,7 @@
 
 #include <type_traits>
 
-#include <seqan3/core/metafunction/deferred_crtp_base.hpp>
+#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 
 using namespace seqan3;
 
