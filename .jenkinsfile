@@ -151,15 +151,17 @@ for(int i = 0; i < axis_compiler.size(); ++i)
                     // For docker nodes we need to define the workspace explicitly, as they use a mounted
                     // volume on the filesystem which is shared by all docker instances. Since the docker executor
                     // doesn't know the other running instances it cannot locking the workspace.
-                    ws("$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$label")
+                    def workspace = "$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$label"
+                    ws("$workspace")
                     {
                         stage('install')
                         {
                             sh """
                                 sudo apt-get update
                                 sudo apt-get install -y $axis_compiler_value cmake git zlib1g-dev libbz2-dev
+                                export HOME=$workspace
+                                echo $HOME
                             """
-
                         }
                         run_unit_tests(env.DOCKER_SLAVE_NAME,
                                        axis_compiler_value,
