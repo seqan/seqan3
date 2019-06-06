@@ -41,7 +41,7 @@ class bi_fm_index_cursor;
  * \{
  */
 
-/*!\brief The default FM Index Configuration.
+/*!\brief The FM Index Configuration using a Wavelet Tree.
  *
  * \details
  *
@@ -61,9 +61,9 @@ class bi_fm_index_cursor;
  * cannot occur in the text.
  *
  * This index will only work for byte alphabets, i.e. alphabets with a size <= 256.
- * When switching to bigger alphabets, the requires clause of the seqan3::fm_index, the seqan3::fm_index_default_traits,
- * the delimiter choice and the transform view for the construction need to be adjusted. Additionally, all occurrences
- * of uint8_t should be double checked to make sure they also apply to bigger alphabets.
+ * When switching to bigger alphabets, the static_asserts, the delimiter choice and the transform view for the
+ * construction need to be adjusted. Additionally, all occurrences of uint8_t should be double checked to make sure
+ * they also apply to bigger alphabets.
  * \endif
  *
  * \f$T_{BACKWARD\_SEARCH}: O(\log \Sigma)\f$
@@ -71,29 +71,27 @@ class bi_fm_index_cursor;
  * \todo Asymptotic space consumption:
  *
  */
-struct fm_index_default_traits
-{
-    //!\brief Type of the underlying SDSL index.
-    using sdsl_index_type = sdsl::csa_wt<
-        sdsl::wt_blcd<
-            sdsl::bit_vector,
-            sdsl::rank_support_v<>,
-            sdsl::select_support_scan<>,
-            sdsl::select_support_scan<0>
-        >,
-        16,
-        10000000,
-        sdsl::sa_order_sa_sampling<>,
-        sdsl::isa_sampling<>,
-        sdsl::plain_byte_alphabet
-    >;
-};
+using sdsl_wt_index_type =
+    sdsl::csa_wt<sdsl::wt_blcd<sdsl::bit_vector,
+                               sdsl::rank_support_v<>,
+                               sdsl::select_support_scan<>,
+                               sdsl::select_support_scan<0>>,
+                 16,
+                 10000000,
+                 sdsl::sa_order_sa_sampling<>,
+                 sdsl::isa_sampling<>,
+                 sdsl::plain_byte_alphabet>;
+
+/*!\brief The default FM Index Configuration.
+ * \attention The default might be changed in a future release. If you rely on a stable API and on-disk-format,
+ *            please hard-code your sdsl_index_type to a concrete type.
+ */
+using default_sdsl_index_type = sdsl_wt_index_type;
 
 /*!\brief The SeqAn FM Index.
  * \implements seqan3::FmIndex
- * \tparam text_t The type of the text to be indexed; must model std::ranges::ForwardRange.
- * \tparam fm_index_traits The traits determining the implementation of the underlying SDSL index;
-                           must model seqan3::FmIndexTraits.
+ * \tparam is_collection    Indicates whether this index works on a text collection (`true`) or a single text (`false`).
+ * \tparam sdsl_index_type_ The type of the underlying SDSL index, must model seqan3::SdslIndex.
  * \details
  *
  * The seqan3::fm_index is a fast and space-efficient string index to search strings and collections of strings.
@@ -119,21 +117,20 @@ struct fm_index_default_traits
  *
  * \todo The underlying implementation of the FM Index (Rank data structure, sampling rates, etc.) can be specified ...
  */
-template <std::ranges::RandomAccessRange text_t, FmIndexTraits fm_index_traits = fm_index_default_traits>
-//!\cond
-    requires Semialphabet<innermost_value_type_t<text_t>> &&
-             alphabet_size<innermost_value_type_t<text_t>> <= 256
-//!\endcond
+template <bool is_collection = false, detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
 class fm_index
 {
 protected:
-    //!\privatesection
+    //!\brief The alphabet size of the text.
+    size_t sigma{0};
+    //!\brief Indicates whether index is built over a collection.
+    static constexpr bool is_collection_{is_collection};
 
     /*!\name Member types
      * \{
      */
     //!\brief The type of the underlying SDSL index.
-    using sdsl_index_type = typename fm_index_traits::sdsl_index_type;
+    using sdsl_index_type = sdsl_index_type_;
     /*!\brief The type of the reduced alphabet type. (The reduced alphabet might be smaller than the original alphabet
      *        in case not all possible characters occur in the indexed text.)
      */
@@ -144,8 +141,6 @@ protected:
 
     //!\brief Underlying index from the SDSL.
     sdsl_index_type index;
-    //!\brief Pointer to the indexed text.
-    text_t const * text = nullptr;
 
     //!\brief Bitvector storing begin positions for collections.
     sdsl::sd_vector<> text_begin;
@@ -158,21 +153,11 @@ public:
     /*!\name Member types
      * \{
      */
-    //!\brief The type of the indexed text.
-    using text_type = text_t;
-    //!\brief The type of the underlying character of text_type.
-    using char_type = innermost_value_type_t<text_t>;
     //!\brief Type for representing positions in the indexed text.
     using size_type = typename sdsl_index_type::size_type;
     //!\brief The type of the (unidirectional) cursor.
-    using cursor_type = fm_index_cursor<fm_index<text_t, fm_index_traits>>;
+    using cursor_type = fm_index_cursor<fm_index<is_collection_, sdsl_index_type>>;
     //!\}
-
-    static_assert(dimension_v<text_t> == 1 || dimension_v<text_t> == 2,
-                  "Only texts or collections of texts can be indexed.");
-
-    //!\brief Indicates whether index is built over a collection.
-    static bool constexpr is_collection = dimension_v<text_t> == 2;
 
     template <typename bi_fm_index_t>
     friend class bi_fm_index_cursor;
@@ -193,30 +178,24 @@ public:
     fm_index & operator=(fm_index &&) = default;      //!< Move assignment.
     ~fm_index() = default;                            //!< Destructor.
 
-    /*!\brief Constructor that immediately constructs the index given a range.
-              The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.
-     * \tparam text_t The type of range to construct from; must model std::ranges::RandomAccessRange.
+    /*!\brief Constructor that immediately constructs the index given a range. The range cannot be empty.
+     * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
      * \param[in] text The text to construct from.
      *
      * ### Complexity
      *
      * \todo At least linear.
      */
-    fm_index(text_t const & text)
+    template <std::ranges::Range text_t>
+    fm_index(text_t && text)
     {
-        construct(text);
+        construct(std::forward<text_t>(text));
     }
-
-    //!\overload
-    fm_index(text_t &&) = delete;
-
-    //!\overload
-    fm_index(text_t const &&) = delete;
     //!\}
 
     /*!\brief Constructs the index given a range.
               The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.
-     * \tparam text_t The type of range to construct from; must model std::ranges::RandomAccessRange.
+     * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
      * \param[in] text The text to construct from.
      *
      * \details \todo This has to be better implemented with regard to the memory peak due to not matching interfaces
@@ -230,16 +209,22 @@ public:
      *
      * No guarantees.
      */
-    void construct(text_t const & text)
+    template <std::ranges::Range text_t>
+    void construct(text_t && text)
         //!\cond
-        requires !is_collection
+        requires !is_collection_
         //!\endcond
     {
-         // text must not be empty
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must model BidirectionalRange.");
+        static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
+        static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
+
+        // text must not be empty
         if (std::ranges::begin(text) == std::ranges::end(text))
             throw std::invalid_argument("The text that is indexed cannot be empty.");
 
-        this->text = &text;
+        constexpr auto cexpr_sigma = alphabet_size<innermost_value_type_t<text_t>>;
+        sigma = cexpr_sigma;
         // TODO:
         // * check what happens in sdsl when constructed twice!
         // * choose between in-memory/external and construction algorithms
@@ -251,7 +236,7 @@ public:
                           | view::to_rank
                           | std::view::transform([] (uint8_t const r)
                           {
-                              if constexpr (alphabet_size<char_type> == 256)
+                              if constexpr (cexpr_sigma == 256)
                               {
                                   if (r == 255)
                                       throw std::out_of_range("The input text cannot be indexed, because for full"
@@ -272,11 +257,18 @@ public:
     }
 
     //!\overload
-    void construct(text_t const & text)
+    template <std::ranges::Range text_t>
+    void construct(text_t && text)
         //!\cond
-        requires is_collection
+        requires is_collection_
         //!\endcond
     {
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text collection must model BidirectionalRange.");
+        static_assert(std::ranges::BidirectionalRange<reference_t<text_t>>,
+                      "The elements of the text collection must model BidirectionalRange.");
+        static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
+        static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
+
         // text collection must not be empty
         if (std::ranges::begin(text) == std::ranges::end(text))
             throw std::invalid_argument("The text that is indexed cannot be empty.");
@@ -298,7 +290,8 @@ public:
         if (all_empty)
             throw std::invalid_argument("A text collection that only contains empty texts cannot be indexed.");
 
-        this->text = &text;
+        constexpr auto cexpr_sigma = alphabet_size<innermost_value_type_t<text_t>>;
+        sigma = cexpr_sigma;
 
         // bitvector where 1 marks the begin position of a single text from the collection in the concatenated text
         sdsl::bit_vector pos(text_size, 0);
@@ -316,7 +309,7 @@ public:
 
         sdsl::int_vector<8> tmp_text(text_size - 1); // last text in collection needs no delimiter
 
-        uint8_t delimiter = alphabet_size<char_type> >= 255 ? 255 : alphabet_size<char_type> + 1;
+        constexpr uint8_t delimiter = cexpr_sigma >= 255 ? 255 : cexpr_sigma + 1;
 
         std::vector<uint8_t> tmp = text
                                    | view::deep{view::to_rank}
@@ -324,7 +317,7 @@ public:
                                    {
                                        std::view::transform([] (uint8_t const r)
                                        {
-                                           if constexpr (alphabet_size<char_type> >= 255)
+                                           if constexpr (cexpr_sigma >= 255)
                                            {
                                                if (r >= 254)
                                                    throw std::out_of_range("The input text cannot be indexed, because"
@@ -350,12 +343,6 @@ public:
 
         sdsl::construct_im(index, tmp_text, 0);
     }
-
-    //!\overload
-    void construct(text_t &&) = delete;
-
-    //!\overload
-    void construct(text_t const &&) = delete;
 
     /*!\brief Returns the length of the indexed text including sentinel characters.
      * \returns Returns the length of the indexed text including sentinel characters.
@@ -457,11 +444,22 @@ public:
         text_begin_ss.set_vector(&text_begin);
         archive(text_begin_rs);
         text_begin_rs.set_vector(&text_begin);
+        archive(sigma);
+        bool tmp = is_collection_;
+        archive(tmp);
+        assert(tmp == is_collection_);
     }
     //!\endcond
 
 };
 
+/*!\name Template argument type deduction guides
+ * \{
+ */
+//! \brief Deduces the dimensions of the text.
+template <std::ranges::Range text_t>
+fm_index(text_t &&) -> fm_index<dimension_v<text_t> != 1>;
 //!\}
 
+//!\}
 } // namespace seqan3

@@ -5,19 +5,11 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include "fm_index_test_template.hpp"
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include "fm_index_collection_test_template.hpp"
+#include "fm_index_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(dna4, fm_index_test, bi_fm_index<std::vector<dna4>>);
-INSTANTIATE_TYPED_TEST_CASE_P(dna4_collection, fm_index_collection_test, bi_fm_index<std::vector<std::vector<dna4>>>);
-
-TEST(fm_index_test, additional_concepts)
-{
-    EXPECT_TRUE(BiFmIndexTraits<bi_fm_index_default_traits>);
-    EXPECT_TRUE(BiFmIndex<bi_fm_index<std::string>>);
-}
-
-TEST(fm_index_collection_test, additional_concepts)
-{
-    EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<std::string>>>);
-}
+using t1 = std::pair<bi_fm_index<false>, std::vector<dna4>>;
+INSTANTIATE_TYPED_TEST_CASE_P(dna4, fm_index_test, t1);
+using t2 = std::pair<bi_fm_index<true>, std::vector<std::vector<dna4>>>;
+INSTANTIATE_TYPED_TEST_CASE_P(dna4_collection, fm_index_collection_test, t2);

@@ -10,7 +10,9 @@
  * \brief Meta-header for the search module.
  *
  * \defgroup search Search
+ * \brief Contains datastructures and algorithms for searching.
  *
+ * \details
  * # Introduction
  *
  * Searching is a key component in many sequence analysis tools. The search module is a powerful and easy way to search

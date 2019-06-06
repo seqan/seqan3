@@ -17,9 +17,7 @@
 
 using namespace seqan3;
 
-struct fm_index_byte_alphabet_traits
-{
-    using sdsl_index_type = sdsl::csa_wt<
+using sdsl_byte_index_type = sdsl::csa_wt<
         sdsl::wt_blcd<
             sdsl::bit_vector,
             sdsl::rank_support_v<>,
@@ -32,13 +30,6 @@ struct fm_index_byte_alphabet_traits
         sdsl::isa_sampling<>,
         sdsl::byte_alphabet
     >;
-};
-
-struct bi_fm_index_byte_alphabet_traits
-{
-   using fm_index_traits = fm_index_byte_alphabet_traits;
-   using rev_fm_index_traits = fm_index_byte_alphabet_traits;
-};
 
 template <typename T>
 class fm_index_cursor_collection_test : public ::testing::Test
@@ -48,7 +39,7 @@ TYPED_TEST_CASE_P(fm_index_cursor_collection_test);
 
 TYPED_TEST_P(fm_index_cursor_collection_test, ctr)
 {
-    typename TypeParam::index_type::text_type text{"ACGACG"_dna4, "ACGACG"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "ACGACG"_dna4};
     typename TypeParam::index_type fm{text};
 
     // custom constructor
@@ -78,7 +69,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, ctr)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, begin)
 {
-    typename TypeParam::index_type::text_type text{"ACGACG"_dna4, "ACGACG"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "ACGACG"_dna4};
     typename TypeParam::index_type fm{text};
 
     // begin
@@ -93,7 +84,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, begin)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range)
 {
-    typename TypeParam::index_type::text_type text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right(range)
@@ -121,7 +112,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_empty_text)
 {
-    typename TypeParam::index_type::text_type text{"ACGACG"_dna4, ""_dna4, ""_dna4, "TGCGATCGA"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, ""_dna4, ""_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right(range)
@@ -150,7 +141,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_empty_text)
 // TODO: doesn't work with the current structure of typed tests
 // TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_convertible_range)
 // {
-//     typename TypeParam::index_type::text_type text{"ANGACGNN"_dna5};
+//     std::vector<std::vector<dna4>> text{"ANGACGNN"_dna5};
 //     typename TypeParam::index_type fm{text};
 //
 //     // successful extend_right(range) using a different alphabet
@@ -162,7 +153,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_empty_text)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char)
 {
-    typename TypeParam::index_type::text_type text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right(char)
@@ -184,7 +175,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char)
 // TODO: doesn't work with the current structure of typed tests
 // TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_convertible_char)
 // {
-//     typename TypeParam::index_type::text_type text{"ANGACGNN"_dna5};
+//     std::vector<std::vector<dna4>> text{"ANGACGNN"_dna5};
 //     typename TypeParam::index_type fm{text};
 //
 //     // successful extend_right(char) using a different alphabet
@@ -196,7 +187,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_and_cycle)
 {
-    typename TypeParam::index_type::text_type text{"ACGAACGC"_dna4, "TACGATCGA"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGAACGC"_dna4, "TACGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right() and cycle_back()
@@ -212,7 +203,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_and_cycle)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char_and_cycle)
 {
-    typename TypeParam::index_type::text_type text{"ACGAACGC"_dna4, "TGCGATCGA"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGAACGC"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right() and cycle_back()
@@ -228,7 +219,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char_and_cycle)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_and_cycle)
 {
-    typename TypeParam::index_type::text_type text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right() and cycle_back()
@@ -267,22 +258,32 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_and_cycle)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, query)
 {
-    typename TypeParam::index_type::text_type text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // query()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("ACG"_dna4));
-    EXPECT_TRUE(std::ranges::equal(*it, "ACG"_dna4));
-    EXPECT_TRUE(std::ranges::equal(it.query(), "ACG"_dna4));
+    EXPECT_TRUE(std::ranges::equal(it.path_label(text), "ACG"_dna4));
 }
 
-// TODO: test last_char()
+TYPED_TEST_P(fm_index_cursor_collection_test, last_rank)
+{
+    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    typename TypeParam::index_type fm{text};
+
+    // last_rank()
+    TypeParam it(fm);
+    EXPECT_TRUE(it.extend_right("ACG"_dna4));
+    bool a = it.last_rank() == to_rank('G'_dna4);
+    EXPECT_TRUE(a);
+}
+
 TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
 {
     // search a char that does not occur in the text (higher rank than largest char occurring in text)
     {
-        typename TypeParam::index_type::text_type text{"ACGACG"_dna4, "ACGACG"_dna4};
+        std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "ACGACG"_dna4};
         typename TypeParam::index_type fm{text};
         TypeParam it = TypeParam(fm);
         EXPECT_FALSE(it.extend_right("T"_dna4));
@@ -291,7 +292,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
 
     // search a char that does not occur in the text (smaller rank than smallest char occurring in text)
     {
-        typename TypeParam::index_type::text_type text{"CGTCGT"_dna4, "CGTCGT"_dna4};
+        std::vector<std::vector<dna4>> text{"CGTCGT"_dna4, "CGTCGT"_dna4};
         typename TypeParam::index_type fm{text};
         TypeParam it = TypeParam(fm);
         EXPECT_FALSE(it.extend_right("A"_dna4));
@@ -301,7 +302,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
     // search a char that does not occur in the text
     // (some rank that is neither the smallest nor the highest occurring in text)
     {
-        typename TypeParam::index_type::text_type text{"ATATAT"_dna4, "ATATAT"_dna4};
+        std::vector<std::vector<dna4>> text{"ATATAT"_dna4, "ATATAT"_dna4};
         typename TypeParam::index_type fm{text};
         TypeParam it = TypeParam(fm);
         EXPECT_FALSE(it.extend_right("C"_dna4));
@@ -312,13 +313,13 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
 
         EXPECT_TRUE(it.extend_right("A"_dna4));
         EXPECT_TRUE(it.cycle_back());
-        EXPECT_TRUE(std::ranges::equal(it.query(), "T"_dna4));
+        EXPECT_TRUE(std::ranges::equal(it.path_label(text), "T"_dna4));
     }
 }
 
 TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
 {
-    typename TypeParam::index_type::text_type text{"ACGTACGT"_dna4, "TGCGATACGA"_dna4};
+    std::vector<std::vector<dna4>> text{"ACGTACGT"_dna4, "TGCGATACGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     TypeParam it = TypeParam(fm);
@@ -334,5 +335,5 @@ TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
 
 REGISTER_TYPED_TEST_CASE_P(fm_index_cursor_collection_test, ctr, begin, extend_right_range,
                            extend_right_range_empty_text, extend_right_char, extend_right_range_and_cycle,
-                           extend_right_char_and_cycle, extend_right_and_cycle, query, incomplete_alphabet, lazy_locate,
-                           concept_check);
+                           extend_right_char_and_cycle, extend_right_and_cycle, query, last_rank, incomplete_alphabet,
+                           lazy_locate, concept_check);

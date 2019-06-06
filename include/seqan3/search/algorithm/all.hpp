@@ -10,6 +10,7 @@
   * \brief Meta-header for the Search Algorithm module.
   *
   * \defgroup submodule_search_algorithm Algorithm
+  * \brief Provides seqan3::search.
   * \ingroup search
   *
   * \details
