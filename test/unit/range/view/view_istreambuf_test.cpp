@@ -47,9 +47,8 @@ TEST(view_istreambuf, basic)
     is.clear();
     is.seekg(0, std::ios::beg);
     auto v3 = view::istreambuf(is) | view::char_to<dna5> | view::complement;
-    std::vector<dna5> out = v3;
     std::vector<dna5> comp{"TGCATATATATANTATATANAATNNNTATATT"_dna5};
-    EXPECT_TRUE(std::ranges::equal(out, comp));
+    EXPECT_TRUE(std::ranges::equal(v3, comp));
 
     // combinability 2
     is.clear();
@@ -57,7 +56,7 @@ TEST(view_istreambuf, basic)
     auto v4 = view::istreambuf(is) | view::take_until(is_space);
     std::string out2 = v4;
     std::string comp2 = "ACGTATATATAT";
-    EXPECT_TRUE(std::ranges::equal(out, comp));
+    EXPECT_TRUE(std::ranges::equal(out2, comp2));
 }
 
 TEST(view_istreambuf, concepts)
