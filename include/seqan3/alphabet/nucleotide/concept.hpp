@@ -21,12 +21,12 @@
 // ============================================================================
 
 //!\cond
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 
 void complement();
 
-} // namespace seqan3::adaptation
+} // namespace seqan3::custom
 //!\endcond
 
 // ============================================================================
@@ -41,7 +41,7 @@ struct complement_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, complement(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::complement(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::complement(v)     ) // customisation namespace
     SEQAN3_CPO_IMPL(0, v.complement()                    ) // member
 
 public:
@@ -84,7 +84,7 @@ namespace seqan3
  *   1. A free function `complement(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be `your_type`.
- *   2. A free function `complement(your_type const a)` in `namespace seqan3::adaptation`.
+ *   2. A free function `complement(your_type const a)` in `namespace seqan3::custom`.
  *      The same restrictions apply as above.
  *   3. A member function called `complement()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
@@ -98,7 +98,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point. To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto complement = detail::adl::only::complement_fn{};

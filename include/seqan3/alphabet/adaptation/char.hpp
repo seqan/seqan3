@@ -44,7 +44,7 @@ constexpr bool is_char_adaptation_v = std::Same<type_no_ref, char>     ||
 //!\}
 } // namespace seqan3::detail
 
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 
 /*!\name Free function wrappers for the char alphabet adaptation
@@ -126,4 +126,4 @@ constexpr char_type & assign_rank_to(decltype(to_rank(char_type{})) const rank, 
 }
 //!\}
 
-} // namespace seqan3::adaptation
+} // namespace seqan3::custom

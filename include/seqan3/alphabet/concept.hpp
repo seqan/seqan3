@@ -37,7 +37,7 @@ struct to_rank_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, to_rank(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::to_rank(v)   )    // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::to_rank(v)       )    // customisation namespace
     SEQAN3_CPO_IMPL(0, v.to_rank()                      )    // member
 
 public:
@@ -80,8 +80,8 @@ namespace seqan3
  *   1. A free function `to_rank(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be of the respective rank representation (usually a small integral type).
- *   2. A free function `to_rank(your_type const a)` in `namespace seqan3::adaptation`.
- *      Used only by the SeqAn library internally. The same restrictions apply as above.
+ *   2. A free function `to_rank(your_type const a)` in `namespace seqan3::custom`.
+ *      The same restrictions apply as above.
  *   3. A member function called `to_rank()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
  *      of the respective rank representation.
@@ -97,7 +97,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto to_rank = detail::adl::only::to_rank_fn{};
@@ -126,7 +126,7 @@ struct assign_rank_to_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, (assign_rank_to(args..., v)                           ))    // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::adaptation::assign_rank_to(args..., v)       ))    // customisation namespace
+    SEQAN3_CPO_IMPL(1, (seqan3::custom::assign_rank_to(args..., v)           ))    // customisation namespace
     SEQAN3_CPO_IMPL(0, (v.assign_rank(args...)                               ))    // member
 
 public:
@@ -184,7 +184,7 @@ namespace seqan3
  *      type (or as `friend`). The function must be marked `noexcept` (`constexpr` is not required,
  *      but recommended) and the return type be `your_type &`.
  *   2. A free function `assign_rank_to(rank_type const chr, your_type & a)` in
- *      `namespace seqan3::adaptation`. Used only by the SeqAn library internally. The same restrictions apply as above.
+ *      `namespace seqan3::custom`. The same restrictions apply as above.
  *   3. A member function called `assign_rank(rank_type const chr)` (not `assign_rank_to`).
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
  *      `your_type &`.
@@ -201,7 +201,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto assign_rank_to = detail::adl::only::assign_rank_to_fn{};
@@ -220,7 +220,7 @@ struct to_char_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, to_char(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::to_char(v)   )    // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::to_char(v)       )    // customisation namespace
     SEQAN3_CPO_IMPL(0, v.to_char()                      )    // member
 
 public:
@@ -263,7 +263,7 @@ namespace seqan3
  *      type (or as `friend`). The function must be marked `noexcept` (`constexpr` is not required,
  *      but recommended) and the return type be of the respective char representation (usually a small integral type).
  *   2. A free function `to_char(your_type const a)` in
- *      `namespace seqan3::adaptation`. Used only by the SeqAn library internally. The same restrictions apply as above.
+ *      `namespace seqan3::custom`. The same restrictions apply as above.
  *   3. A member function called `to_char()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
  *      of the respective char representation.
@@ -279,7 +279,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto to_char = detail::adl::only::to_char_fn{};
@@ -299,12 +299,12 @@ using alphabet_char_t = decltype(seqan3::to_char(std::declval<alphabet_type cons
 // assign_char_to()
 // ============================================================================
 
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 //!\cond
 void char_is_valid_for(); // forward
 //!\endcond
-} // seqan3::adaptation
+} // seqan3::custom
 
 namespace seqan3::detail::adl::only
 {
@@ -314,7 +314,7 @@ struct assign_char_to_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, (assign_char_to(args..., v)                           ))    // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::adaptation::assign_char_to(args..., v)       ))    // customisation namespace
+    SEQAN3_CPO_IMPL(1, (seqan3::custom::assign_char_to(args..., v)           ))    // customisation namespace
     SEQAN3_CPO_IMPL(0, (v.assign_char(args...)                               ))    // member
 
 public:
@@ -372,7 +372,7 @@ namespace seqan3
  *      type (or as `friend`). The function must be marked `noexcept` (`constexpr` is not required,
  *      but recommended) and the return type be `your_type &`.
  *   2. A free function `assign_char_to(char_type const chr, your_type & a)` in
- *      `namespace seqan3::adaptation`. Used only by the SeqAn library internally. The same restrictions apply as above.
+ *      `namespace seqan3::custom`. The same restrictions apply as above.
  *   3. A member function called `assign_char(char_type const chr)` (not `assign_char_to`).
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
  *      `your_type &`.
@@ -389,7 +389,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto assign_char_to = detail::adl::only::assign_char_to_fn{};
@@ -400,12 +400,12 @@ inline constexpr auto assign_char_to = detail::adl::only::assign_char_to_fn{};
 // char_is_valid_for()
 // ============================================================================
 
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 //!\cond
 void char_is_valid_for(); // forward
 //!\endcond
-} // seqan3::adaptation
+} // seqan3::custom
 
 namespace seqan3::detail::adl::only
 {
@@ -422,7 +422,7 @@ struct char_is_valid_for_fn
 {
 private:
     SEQAN3_CPO_IMPL(3, (char_is_valid_for(v, s_alph_t{})                                       ))    // ADL
-    SEQAN3_CPO_IMPL(2, (seqan3::adaptation::char_is_valid_for(v, s_alph_t{})                   ))    // customisation ns
+    SEQAN3_CPO_IMPL(2, (seqan3::custom::char_is_valid_for(v, s_alph_t{})                       ))    // customisation ns
     SEQAN3_CPO_IMPL(1, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::char_is_valid(v) ))    // member
     SEQAN3_CPO_IMPL(0, (to_char(assign_char_to(v, s_alph_t{})) == v                            ))    // fallback
 
@@ -472,7 +472,7 @@ namespace seqan3
  *      ignored, it is only used to select the function via
  *      [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
  *   2. A free function `char_is_valid_for(char_type const chr, your_type const &)` in
- *      `namespace seqan3::adaptation`. Used only by the SeqAn library internally. The same restrictions apply as above.
+ *      `namespace seqan3::custom`. The same restrictions apply as above.
  *   3. A `static` member function called `char_is_valid(char_type)` (not `char_is_valid_for`). It must
  *      be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be `bool`.
  *
@@ -491,7 +491,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 template <typename alph_t>
@@ -598,7 +598,7 @@ struct alphabet_size_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, (alphabet_size(v)                           ))    // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::adaptation::alphabet_size(v)       ))    // customisation namespace
+    SEQAN3_CPO_IMPL(1, (seqan3::custom::alphabet_size(v)           ))    // customisation namespace
     SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::alphabet_size )) // member
 
 public:
@@ -647,8 +647,8 @@ namespace seqan3
  *      type needs to be implicitly convertible to `size_t`. The value of the argument to the function shall be ignored,
  *      it is only used to select the function via
  *      [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
- *   2. A free function `alphabet_size(your_type const &)` in `namespace seqan3::adaptation` that returns
- *      the size as an integral value. Used only by the SeqAn library internally. The same restrictions apply as above.
+ *   2. A free function `alphabet_size(your_type const &)` in `namespace seqan3::custom` that returns
+ *      the size as an integral value. The same restrictions apply as above.
  *   3. A `static constexpr` data member called `alphabet_size` that is the size. It must
  *      be implicitly convertible to `size_t`.
  *
@@ -667,7 +667,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 template <typename alph_t>

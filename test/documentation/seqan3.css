@@ -43,6 +43,10 @@ div.contents {
     align-content: center;
 }
 
+#projectlogo {
+    padding: 10px;
+}
+
 hr.footer {
     display: none;
 }
