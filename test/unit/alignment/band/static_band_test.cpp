@@ -11,42 +11,6 @@
 
 using namespace seqan3;
 
-TEST(static_band, lower_bound)
-{
-    {
-        lower_bound lb{static_cast<int8_t>(-5)};
-        EXPECT_TRUE((std::is_same_v<decltype(lb), lower_bound<int8_t>>));
-    }
-
-    {
-        lower_bound lb{static_cast<int16_t>(-5)};
-        EXPECT_TRUE((std::is_same_v<decltype(lb), lower_bound<int16_t>>));
-    }
-
-    {
-        lower_bound lb{-5};
-        EXPECT_TRUE((std::is_same_v<decltype(lb), lower_bound<int>>));
-    }
-}
-
-TEST(static_band, upper_bound)
-{
-    {
-        upper_bound ub{static_cast<int8_t>(5)};
-        EXPECT_TRUE((std::is_same_v<decltype(ub), upper_bound<int8_t>>));
-    }
-
-    {
-        upper_bound ub{static_cast<int16_t>(5)};
-        EXPECT_TRUE((std::is_same_v<decltype(ub), upper_bound<int16_t>>));
-    }
-
-    {
-        upper_bound ub{5};
-        EXPECT_TRUE((std::is_same_v<decltype(ub), upper_bound<int>>));
-    }
-}
-
 TEST(static_band, construction)
 {
     static_band bs{lower_bound{-2}, upper_bound{2}};

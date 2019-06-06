@@ -15,8 +15,7 @@
 /*!\defgroup alignment_band Band
  * \brief Data structures for computing banded sequence alignments.
  * \ingroup alignment
- *
- * \todo Write detailed landing page.
+ * \see alignment
  */
 
 #include <seqan3/alignment/band/static_band.hpp>

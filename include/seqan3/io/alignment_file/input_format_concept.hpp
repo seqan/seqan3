@@ -41,7 +41,7 @@ namespace seqan3
 
 /*!\interface seqan3::AlignmentFileInputFormat <>
  * \brief The generic concept for alignment file input formats.
- * \ingroup alignment
+ * \ingroup alignment_file
  *
  * \details
  *

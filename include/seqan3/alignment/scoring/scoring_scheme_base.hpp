@@ -91,6 +91,9 @@ mismatch_score(score_type &&) -> mismatch_score<score_type>;
  * \details
  *
  * This type is never used directly, instead use seqan3::nucleotide_scoring_scheme or seqan3::aminoacid_scoring_scheme.
+ *
+ * <small><i>This class is only implementation detail and not required for most users.
+ * Types that model seqan3::ScoringScheme can (but don't need to!) inherit from it.</i></small>
  */
 template <typename derived_t, Alphabet alphabet_t, Arithmetic score_t>
 class scoring_scheme_base

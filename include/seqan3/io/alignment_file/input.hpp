@@ -53,7 +53,7 @@ namespace seqan3
 
 /*!\interface seqan3::AlignmentFileInputTraits <>
  * \brief The requirements a traits_type for seqan3::alignment_file_input must meet.
- * \ingroup alignment
+ * \ingroup alignment_file
  */
 /*!\name Requirements for seqan3::AlignmentFileInputTraits
  * \brief You can expect these **member types** of all types that model seqan3::AlignmentFileInputTraits.
@@ -169,7 +169,7 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
 
 /*!\brief The default traits for seqan3::alignment_file_input
  * \implements AlignmentFileInputTraits
- * \ingroup alignment
+ * \ingroup alignment_file
  * \tparam ref_sequences_t A range over reference sequences. This type is automatically deduced on construction.
  * \tparam ref_ids_t       A range over reference ids. This type is automatically deduced on construction.
  *

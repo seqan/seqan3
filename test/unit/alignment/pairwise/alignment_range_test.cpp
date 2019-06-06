@@ -11,7 +11,7 @@
 
 #include <range/v3/view/iota.hpp>
 
-#include <seqan3/alignment/pairwise/execution/alignment_range.hpp>
+#include <seqan3/alignment/pairwise/alignment_range.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/shortcuts.hpp>
 
