@@ -37,7 +37,7 @@ static auto dna4_01 = []()
         -5,
         "AC---CGGTT",
         "ACGTACG-TA",
-        alignment_coordinate{column_index_type{8u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
         std::vector
         {
@@ -147,7 +147,7 @@ static auto dna4_02 = []()
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{7u}, row_index_type{8u}},
         std::vector
         {
@@ -195,7 +195,7 @@ static auto dna4_02_s10u_15u = []()
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{7u}, row_index_type{8u}},
         dna4_02.score_matrix().sub_matrix(10u, 15u),
         dna4_02.trace_matrix().sub_matrix(10u, 15u)
@@ -217,7 +217,7 @@ static auto dna4_02_s3u_15u = []()
         0,
         "AC",
         "AC",
-        alignment_coordinate{column_index_type{8u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{10u}, row_index_type{1u}},
         dna4_02.score_matrix().sub_matrix(3u, 15u),
         dna4_02.trace_matrix().sub_matrix(3u, 15u)
@@ -239,7 +239,7 @@ static auto aa27_01 = []()
         -5,
         "UW---WRRII",
         "UWRIUWR-IU",
-        alignment_coordinate{column_index_type{8u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
         std::vector
         {
