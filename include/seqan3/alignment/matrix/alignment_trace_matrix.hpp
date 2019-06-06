@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains the declaration of seqan3::detail::alignment_trace_matrix.
+ * \brief Provides the declaration of seqan3::detail::alignment_trace_matrix.
  */
 
 #pragma once

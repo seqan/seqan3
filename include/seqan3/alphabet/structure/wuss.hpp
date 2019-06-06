@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the WUSS format for RNA structure.
+ * \brief Provides the WUSS format for RNA structure.
  */
 
 #pragma once

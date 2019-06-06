@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains a pairwise alignment algorithm for edit distance but without band.
+ * \brief Provides a pairwise alignment algorithm for edit distance but without band.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 

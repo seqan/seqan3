@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains an hacky overload for the googletest PrintTo function.
+ * \brief Provides an hacky overload for the googletest PrintTo function.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 

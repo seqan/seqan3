@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the composite of nucleotide with structure alphabets.
+ * \brief Provides the composite of nucleotide with structure alphabets.
  */
 
 #pragma once

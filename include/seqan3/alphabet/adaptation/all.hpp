@@ -16,6 +16,6 @@
 #include <seqan3/alphabet/adaptation/uint.hpp>
 
 /*!\defgroup adaptation Adaptation
- * \brief Contains alphabet adaptions of some standard char and uint types.
+ * \brief Provides alphabet adaptions of some standard char and uint types.
  * \ingroup alphabet
  */

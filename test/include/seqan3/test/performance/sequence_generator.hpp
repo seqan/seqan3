@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains test utilities for seqan3::simd::simd_type types.
+ * \brief Provides test utilities for seqan3::simd::simd_type types.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 

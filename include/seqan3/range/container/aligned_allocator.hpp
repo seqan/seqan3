@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains seqan3::aligned_allocator.
+ * \brief Provides seqan3::aligned_allocator.
  */
 
 #pragma once

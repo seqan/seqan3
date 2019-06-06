@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains some standard validators for (positional) options.
+ * \brief Provides some standard validators for (positional) options.
  */
 
 #pragma once

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains parser related exceptions.
+ * \brief Provides parser related exceptions.
  */
 
 #pragma once

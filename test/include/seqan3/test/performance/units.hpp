@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains predefined custom units for google benchmark.
+ * \brief Provides predefined custom units for google benchmark.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 

@@ -14,7 +14,7 @@
 
 /*!\defgroup algorithm Algorithm
  * \ingroup core
- * \brief Contains core functionality used to configure algorithms.
+ * \brief Provides core functionality used to configure algorithms.
  *
  * \details
  *

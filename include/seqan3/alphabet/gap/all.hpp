@@ -16,7 +16,7 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 
 /*!\defgroup gap Gap
- * \brief Contains the gap alphabet and functionality to make an alphabet a gapped alphabet.
+ * \brief Provides the gap alphabet and functionality to make an alphabet a gapped alphabet.
  * \ingroup alphabet
  *
  * \details

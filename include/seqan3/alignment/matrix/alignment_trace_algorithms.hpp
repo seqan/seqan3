@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains algorithms that operate on seqan3::detail::alignment_trace_matrix.
+ * \brief Provides algorithms that operate on seqan3::detail::alignment_trace_matrix.
  */
 
 #pragma once

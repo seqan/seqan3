@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
- * \brief Contains seqan3::phred42 quality scores.
+ * \brief Provides seqan3::phred42 quality scores.
  */
 
 #pragma once

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains the declaration of seqan3::detail::trace_directions.
+ * \brief Provides the declaration of seqan3::detail::trace_directions.
  */
 
 #pragma once

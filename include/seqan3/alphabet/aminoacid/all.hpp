@@ -21,7 +21,7 @@
 #include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>
 
 /*!\defgroup aminoacid Aminoacid
- * \brief Contains the amino acid alphabets and functionality for translation from nucleotide.
+ * \brief Provides the amino acid alphabets and functionality for translation from nucleotide.
  * \ingroup alphabet
  *
  * \details

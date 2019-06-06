@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains various shortcuts for common std::ranges functions.
+ * \brief Provides various shortcuts for common std::ranges functions.
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  */
 

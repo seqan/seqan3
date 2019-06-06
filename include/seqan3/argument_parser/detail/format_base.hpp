@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains the format_base struct containing all helper functions
+ * \brief Provides the format_base struct containing all helper functions
  *        that are needed in all formats.
  */
 

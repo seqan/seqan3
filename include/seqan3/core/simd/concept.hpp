@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains seqan3::simd::Simd
+ * \brief Provides seqan3::simd::Simd
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains auxiliary information.
+ * \brief Provides auxiliary information.
  */
 
 #pragma once

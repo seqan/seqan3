@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains seqan3::detail::alignment_matrix_formatter and seqan3::detail::alignment_matrix_format.
+ * \brief Provides seqan3::detail::alignment_matrix_formatter and seqan3::detail::alignment_matrix_format.
  */
 
 #pragma once

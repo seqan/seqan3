@@ -8,7 +8,7 @@
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
- * \brief Contains seqan3::gapped.
+ * \brief Provides seqan3::gapped.
  */
 
 #pragma once

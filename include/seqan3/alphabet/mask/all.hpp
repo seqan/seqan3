@@ -16,7 +16,7 @@
 #include <seqan3/alphabet/mask/masked.hpp>
 
 /*!\defgroup mask Mask
- * \brief Contains the mask alphabet and functionality for creating masked composites.
+ * \brief Provides the mask alphabet and functionality for creating masked composites.
  * \ingroup alphabet
  *
  * \details

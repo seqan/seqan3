@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains quality alphabet composites.
+ * \brief Provides quality alphabet composites.
  */
 
 #pragma once

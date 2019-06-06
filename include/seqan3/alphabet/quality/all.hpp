@@ -20,7 +20,7 @@
 #include <seqan3/alphabet/quality/phred68legacy.hpp>
 
 /*!\defgroup quality Quality
- * \brief Contains the various quality score types.
+ * \brief Provides the various quality score types.
  * \ingroup alphabet
  *
  * \details

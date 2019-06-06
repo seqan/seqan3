@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains seqan3::argument_parser class.
+ * \brief Provides seqan3::argument_parser class.
  */
 
 #pragma once

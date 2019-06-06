@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains the format_parse class.
+ * \brief Provides the format_parse class.
  */
 
 #pragma once
