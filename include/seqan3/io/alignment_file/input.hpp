@@ -363,7 +363,9 @@ struct alignment_file_input_default_traits
  *
  * ### Formats
  *
- * \todo give overview of formats, once they are all implemented
+ * We currently support reading the following formats:
+ *   * seqan3::format_sam
+ *   * seqan3::format_bam
  */
 template <
     AlignmentFileInputTraits                     traits_type_        = alignment_file_input_default_traits<>,

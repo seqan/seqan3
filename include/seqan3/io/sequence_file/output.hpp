@@ -157,7 +157,12 @@ namespace seqan3
  *
  * ### Formats
  *
- * TODO give overview of formats, once they are all implemented
+ * We currently support writing the following formats:
+ *   * seqan3::format_fasta
+ *   * seqan3::format_fastq
+ *   * seqan3::format_embl
+ *   * seqan3::format_genbank
+ *   * seqan3::format_sam
  */
 
 template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,

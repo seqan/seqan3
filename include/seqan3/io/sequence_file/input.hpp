@@ -342,7 +342,12 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * ### Formats
  *
- * TODO give overview of formats, once they are all implemented
+ * We currently support reading the following formats:
+ *   * seqan3::format_fasta
+ *   * seqan3::format_fastq
+ *   * seqan3::format_embl
+ *   * seqan3::format_genbank
+ *   * seqan3::format_sam
  */
 
 template <
