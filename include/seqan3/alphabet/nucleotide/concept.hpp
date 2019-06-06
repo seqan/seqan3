@@ -66,7 +66,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Nucleotide)
  * \{
  */
 

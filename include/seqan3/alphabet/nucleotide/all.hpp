@@ -24,7 +24,9 @@
  * \brief Contains the different DNA and RNA alphabet types.
  * \ingroup alphabet
  *
- * ###Introduction
+ * \details
+ *
+ * ### Introduction
  *
  * Nucleotide sequences are at the core of most bioinformatic data processing and while it is possible
  * to represent them in a regular std::string, it makes sense to have specialised data structures in most cases.

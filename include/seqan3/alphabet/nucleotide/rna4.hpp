@@ -37,8 +37,8 @@ namespace seqan3
  * This alphabet has the same internal representation as seqan3::dna4, the only difference is that it prints 'U' on
  * character conversion instead of 'T'. You can assign between values of seqan3::dna4 and seqan3::rna4.
  *
- * The alphabet may be brace initialized from the static letter members. Note that you cannot
- * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
+ * Instead initialise/assign from the character literal or use the
  * function seqan3::rna4::assign_char().
  *
  *\snippet test/snippet/alphabet/nucleotide/rna4.cpp code

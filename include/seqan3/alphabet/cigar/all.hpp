@@ -18,6 +18,8 @@
   * \brief Contains the CIGAR operation alphabet, along with the CIGAR cartesian composition.
   * \ingroup alphabet
   *
+  * \details
+  *
   * ###Introduction
   *
   * CIGAR strings are combinations of count values and CIGAR operations, representing an alignment as a sequence of

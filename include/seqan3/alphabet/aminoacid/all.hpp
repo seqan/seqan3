@@ -24,7 +24,10 @@
  * \brief Contains the amino acid alphabets and functionality for translation from nucleotide.
  * \ingroup alphabet
  *
+ * \details
+ *
  * ###Introduction
+ *
  * Amino acid sequences are an important part of bioinformatic data processing and used by many applications
  * and while it is possible to represent them in a regular std::string, it makes sense to have specialised data
  * structures in most cases. This sub-module offers the 27 letter aminoacid alphabet as well as three reduced versions

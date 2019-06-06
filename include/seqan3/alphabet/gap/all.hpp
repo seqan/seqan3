@@ -19,7 +19,10 @@
  * \brief Contains the gap alphabet and functionality to make an alphabet a gapped alphabet.
  * \ingroup alphabet
  *
- * ###Introduction
+ * \details
+ *
+ * ### Introduction
+ *
  * The gap symbol (`-`) is used in alignments to represent an interruption in an alignment, usually the result of an
  * insertion or deletion. The seqan3::gap alphabet represents this (single) gap symbol and satisfies the
  * seqan3::Alphabet.
