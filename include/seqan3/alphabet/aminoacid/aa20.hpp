@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- * \brief Contains seqan3::aa20, container aliases and string literals.
+ * \brief Provides seqan3::aa20, container aliases and string literals.
  */
 
 #pragma once

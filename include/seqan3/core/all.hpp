@@ -29,7 +29,7 @@
 #include <seqan3/core/type_list.hpp>
 
 /*!\defgroup core Core
- * \brief Contains core functionality used by multiple modules.
+ * \brief Provides core functionality used by multiple modules.
  *
  * The core module contains concepts, functions and some classes that
  * are used by multiple other modules, but that usually are not relevant

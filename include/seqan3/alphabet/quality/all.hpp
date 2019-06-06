@@ -20,10 +20,12 @@
 #include <seqan3/alphabet/quality/phred68legacy.hpp>
 
 /*!\defgroup quality Quality
- * \brief Contains the various quality score types.
+ * \brief Provides the various quality score types.
  * \ingroup alphabet
  *
- * ###Introduction
+ * \details
+ *
+ * ### Introduction
  *
  * Quality score sequences are usually output together with the DNA (or RNA)
  * sequence by sequencing machines like the Illumina Genome Analyzer. The

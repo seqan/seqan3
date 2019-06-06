@@ -20,7 +20,7 @@
 #include <seqan3/alignment/scoring/all.hpp>
 
 /*!\defgroup alignment Alignment
- * \brief Contains alignment functionality.
+ * \brief Provides alignment functionality.
  *
  * The alignment module contains concepts, functions and classes that are related to the computation of
  * pairwise and multiple sequence alignments.

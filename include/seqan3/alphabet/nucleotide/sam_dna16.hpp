@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains seqan3::sam_dna16.
+ * \brief Provides seqan3::sam_dna16.
  */
 
 #pragma once

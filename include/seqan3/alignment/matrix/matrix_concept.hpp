@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains seqan3::detail::Matrix.
+ * \brief Provides seqan3::detail::Matrix.
  */
 
 #pragma once

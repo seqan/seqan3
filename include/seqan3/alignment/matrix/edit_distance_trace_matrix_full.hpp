@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains seqan3::detail::edit_distance_trace_matrix_full.
+ * \brief Provides seqan3::detail::edit_distance_trace_matrix_full.
  */
 
 #pragma once

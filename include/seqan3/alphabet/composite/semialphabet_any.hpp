@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Contains seqan3::semialphabet_any.
+ * \brief Provides seqan3::semialphabet_any.
  */
 
 #pragma once

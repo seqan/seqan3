@@ -12,7 +12,7 @@
 #include <cstddef> // makes __GLIBCXX__ available
 
 /*!\file
- * \brief Contains platform and dependency checks.
+ * \brief Provides platform and dependency checks.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 

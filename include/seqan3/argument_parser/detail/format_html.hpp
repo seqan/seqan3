@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains the format_html struct and its helper functions.
+ * \brief Provides the format_html struct and its helper functions.
  */
 
 #pragma once

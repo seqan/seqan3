@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains the version check functionality.
+ * \brief Provides the version check functionality.
  */
 
 #pragma once

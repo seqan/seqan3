@@ -6,22 +6,18 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various shortcuts for common std::ranges functions.
- * \author Joshua Kim <joshua.kim AT fu-berlin.de>
+ * \brief Provides Character predicates for tokenization.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#include <seqan3/std/ranges>
+#pragma once
 
-namespace seqan3
-{
+#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/core/char_operations/pretty_print.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
-using std::ranges::begin;
-using std::ranges::end;
-
-using std::ranges::cbegin;
-using std::ranges::cend;
-
-using std::ranges::size;
-using std::ranges::empty;
-
-} // namespace seqan3
+/*!\defgroup char_operations Char operations
+ * \brief Provides various operations on character types.
+ * \ingroup core
+ */

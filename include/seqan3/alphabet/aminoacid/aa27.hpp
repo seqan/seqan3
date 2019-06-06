@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Contains seqan3::aa27, container aliases and string literals.
+ * \brief Provides seqan3::aa27, container aliases and string literals.
  */
 
 #pragma once
@@ -33,8 +33,8 @@ namespace seqan3
  * The alphabet consists of letters A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X,
  * Y, Z, *
  *
- * The alphabet may be brace initialized from the static letter members. Note that you cannot
- * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
+ * Instead initialise/assign from the character literal or use the
  * function seqan3::aa27::assign_char().
  *
  * \snippet test/snippet/alphabet/aminoacid/aa27.cpp construction

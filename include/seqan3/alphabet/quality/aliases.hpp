@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains aliases for qualified.
+ * \brief Provides aliases for qualified.
  */
 
 #pragma once

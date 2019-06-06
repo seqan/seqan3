@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Contains functions for translating a triplet of nucleotides into an amino acid.
+ * \brief Provides functions for translating a triplet of nucleotides into an amino acid.
  */
 
 #pragma once

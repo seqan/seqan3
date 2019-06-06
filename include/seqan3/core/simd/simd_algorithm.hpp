@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains algorithms to modify seqan3::simd::simd_type.
+ * \brief Provides algorithms to modify seqan3::simd::simd_type.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 

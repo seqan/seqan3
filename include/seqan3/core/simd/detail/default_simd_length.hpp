@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains seqan3::detail::default_simd_length and seqan3::detail::default_simd_max_length
+ * \brief Provides seqan3::detail::default_simd_length and seqan3::detail::default_simd_max_length
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the dssp format for protein structure.
+ * \brief Provides the dssp format for protein structure.
  */
 
 #pragma once

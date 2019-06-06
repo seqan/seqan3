@@ -72,7 +72,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 
@@ -149,7 +149,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 
@@ -226,7 +226,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 
@@ -321,7 +321,7 @@ inline constexpr auto max_pseudoknot_depth_obj = max_pseudoknot_depth_fn<alph_t>
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 
@@ -408,7 +408,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains the format_help struct that print the help page to the command line
+ * \brief Provides the format_help struct that print the help page to the command line
  *        and the two child formats (format_version, format_short_help) that print
  *        short help messages to the command line.
  */

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains basic data structure for strong types.
+ * \brief Provides basic data structure for strong types.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 

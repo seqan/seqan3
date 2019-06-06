@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains some standard validators for (positional) options.
+ * \brief Provides some standard validators for (positional) options.
  */
 
 #pragma once
@@ -37,7 +37,9 @@ namespace seqan3
  * \brief The concept for option validators passed to add_option/positional_option.
  * \ingroup argument_parser
  *
- * ###Concepts and doxygen
+ * \details
+ *
+ * ### Concepts and doxygen
  *
  * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
