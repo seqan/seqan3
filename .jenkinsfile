@@ -186,15 +186,17 @@ for(int i = 0; i < axis_compiler.size(); ++i)
                             sh """
                                 sudo apt-get update
                                 sudo apt-get install -y $axis_compiler_value cmake git zlib1g-dev libbz2-dev
-                                export HOME=$workspace
-                                echo $HOME
                             """
                         }
-                        run_unit_tests(env.DOCKER_SLAVE_NAME,
-                                       axis_compiler_value,
-                                       axis_build_type_value,
-                                       test_model,
-                                       axis_cereal_value)
+                        withEnv(["HOME=$workspace"])
+                        {
+                            sh "echo $HOME"
+                            run_unit_tests(env.DOCKER_SLAVE_NAME,
+                                           axis_compiler_value,
+                                           axis_build_type_value,
+                                           test_model,
+                                           axis_cereal_value)
+                        }
                     }
                 }
             }
