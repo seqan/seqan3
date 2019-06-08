@@ -29,7 +29,7 @@ struct version_check : public ::testing::Test
     std::chrono::duration<long int>::rep const TIME_NOW =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
-    std::string const APP_NAME = "test_version_check_" + std::to_string(TIME_NOW); // avoid name conflicts
+    std::string const APP_NAME = "test_version_check_" + app_name_component + "_" + std::to_string(TIME_NOW); // avoid name conflicts.
 
     std::filesystem::path const PATH = detail::version_checker::get_path();
 

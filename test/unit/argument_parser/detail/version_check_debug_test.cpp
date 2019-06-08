@@ -9,4 +9,10 @@
     #undef NDEBUG // test in debug mode
 #endif
 
+#include <string>
+
+// Define global app name component to disambiguate from release test
+// when tests are run in parallel.
+static const std::string app_name_component{"debug"};
+
 #include "version_check_test.hpp"
