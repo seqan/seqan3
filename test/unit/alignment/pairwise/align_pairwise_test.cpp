@@ -64,8 +64,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         {
             EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);
-            EXPECT_EQ(res.back_coordinate().first, 7u);
-            EXPECT_EQ(res.back_coordinate().second, 8u);
+            EXPECT_EQ(res.back_coordinate().first, 8u);
+            EXPECT_EQ(res.back_coordinate().second, 9u);
             auto && [gap1, gap2] = res.alignment();
             EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
             EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
@@ -75,7 +75,6 @@ TYPED_TEST(align_pairwise_test, single_pair)
 
 TYPED_TEST(align_pairwise_test, single_view)
 {
-
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
@@ -103,7 +102,6 @@ TYPED_TEST(align_pairwise_test, single_view)
 
 TYPED_TEST(align_pairwise_test, collection)
 {
-
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 

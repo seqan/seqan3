@@ -37,7 +37,7 @@ static auto dna4_01 = []()
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
+        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -85,7 +85,7 @@ static auto dna4_01T = []()
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
         dna4_01.score_matrix().transpose_matrix(),
         dna4_01.trace_matrix().transpose_matrix()
     };
@@ -107,7 +107,7 @@ static auto dna4_02 = []()
         "AACCGGTAAACCGGTT",
         "A-C-G-TA--C-G-TA",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
+        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  A,  A,  A,  C,  C,  G,  G,  T,  T,
@@ -155,7 +155,7 @@ static auto dna4_02_s10u_15u = []()
         "AACCGGTAAACCGG-",
         "A-C-G-TA--C-GTA",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{13u}, row_index_type{8u}},
+        alignment_coordinate{column_index_type{14u}, row_index_type{9u}},
         dna4_02.score_matrix().sub_matrix(10u, 15u),
         dna4_02.trace_matrix().sub_matrix(10u, 15u)
     };
@@ -177,7 +177,7 @@ static auto dna4_02_s3u_15u = []()
         "AACCGGTAAACCGG",
         "A-C-----------",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{13u}, row_index_type{1u}},
+        alignment_coordinate{column_index_type{14u}, row_index_type{2u}},
         dna4_02.score_matrix().sub_matrix(3u, 15u),
         dna4_02.trace_matrix().sub_matrix(3u, 15u)
     };
@@ -199,7 +199,7 @@ static auto aa27_01 = []()
         "UUWWRRIIUUWWRRII",
         "U-W-R-I-U-W-R-IU",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
+        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
         //     e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
@@ -247,7 +247,7 @@ static auto aa27_01T = []()
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
         aa27_01.score_matrix().transpose_matrix(),
         aa27_01.trace_matrix().transpose_matrix()
     };

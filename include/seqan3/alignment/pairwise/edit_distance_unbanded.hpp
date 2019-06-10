@@ -273,11 +273,11 @@ class edit_distance_unbanded_global_policy :
         _best_score = self->_score;
     }
 
-    //!\copydoc edit_distance_unbanded_semi_global_policy::_best_score_col
-    size_t best_score_column() const noexcept
+    //!\brief Returns the first component of the #back_coordinate.
+    size_t back_coordinate_first() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        return std::ranges::size(self->database) - 1u;
+        return std::ranges::size(self->database);
     }
     //!\}
 
@@ -309,8 +309,9 @@ public:
         if (!self->is_valid())
             return self->invalid_coordinate();
 
-        size_t col = self->best_score_column();
-        return {column_index_type{col}, row_index_type{std::ranges::size(self->query) - 1u}};
+        column_index_type const first{self->back_coordinate_first()};
+        row_index_type const second{std::ranges::size(self->query)};
+        return {first, second};
     }
     //!\}
 };
@@ -402,11 +403,11 @@ class edit_distance_unbanded_semi_global_policy :
         _best_score     = (self->_score <= _best_score) ? self->_score : _best_score;
     }
 
-    //!\copydoc edit_distance_unbanded_global_policy::best_score_column
-    size_t best_score_column() const noexcept
+    //!\copydoc edit_distance_unbanded_global_policy::back_coordinate_first
+    size_t back_coordinate_first() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        return std::ranges::distance(std::ranges::begin(self->database), _best_score_col);
+        return std::ranges::distance(std::ranges::begin(self->database), _best_score_col) + 1u;
     }
     //!\}
 };
