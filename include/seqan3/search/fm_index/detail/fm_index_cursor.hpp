@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <tuple>
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>

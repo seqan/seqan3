@@ -27,6 +27,8 @@
 #include <sdsl/sdsl_concepts.hpp>
 #include <sdsl/select_support.hpp>
 
+#include <seqan3/core/platform.hpp>
+
 namespace sdsl
 {
 
