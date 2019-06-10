@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 
 namespace seqan3::detail
 {
@@ -57,7 +57,8 @@ namespace seqan3
  * \param trace The trace direction.
  * \relates seqan3::debug_stream_type
  */
-inline debug_stream_type & operator<<(debug_stream_type & s, detail::trace_directions const trace)
+template <typename char_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, detail::trace_directions const trace)
 {
     static char const * unicode[8]{"↺", "↖", "↑", "↖↑", "←", "↖←", "↑←", "↖↑←"};
     static char const * csv[8]{"N", "D", "U", "DU", "L", "DL", "UL", "DUL"};

@@ -8,7 +8,6 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/debug_stream.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <seqan3/test/tmp_filename.hpp>

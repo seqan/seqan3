@@ -5,35 +5,23 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-
 #include <gtest/gtest.h>
 
-#include <seqan3/core/simd/all.hpp>
-
-#include <iostream>
-#include <sstream>
+#include <seqan3/alphabet/cigar/cigar.hpp>
 
 using namespace seqan3;
 
-TEST(debug_stream, simd_rvalue)
+TEST(debug_stream_test, cigar)
 {
-    using simd_type = simd_type_t<int16_t, 8>;
+    std::ostringstream o;
+    debug_stream_type my_stream{o};
 
-    std::stringstream strstream;
-    seqan3::debug_stream_type stream{strstream};
+    cigar c1{};
+    c1.assign_char("223M");
 
-    stream << iota<simd_type>(1);
-    EXPECT_EQ(strstream.str(), "[1,2,3,4,5,6,7,8]");
-}
+    my_stream << c1;
 
-TEST(debug_stream, simd_lvalue)
-{
-    using simd_type = simd_type_t<int16_t, 8>;
-
-    std::stringstream strstream;
-    seqan3::debug_stream_type stream{strstream};
-
-    simd_type simd = iota<simd_type>(1);
-    stream << simd;
-    EXPECT_EQ(strstream.str(), "[1,2,3,4,5,6,7,8]");
+    o.flush();
+    EXPECT_EQ(o.str().size(), 4u);
+    EXPECT_EQ(o.str(), "223M");
 }

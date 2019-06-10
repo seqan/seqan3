@@ -107,9 +107,9 @@ struct my_type
 namespace seqan3
 {
 
-template <typename my_type>
+template <typename my_type, typename char_t>
     requires std::Same<std::decay_t<my_type>, detail::my_type>
-inline debug_stream_type & operator<<(debug_stream_type & s, my_type && m)
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, my_type && m)
 {
     s << m.str;
     return s;
@@ -131,9 +131,9 @@ namespace seqan3
 struct your_type : public detail::my_type
 {};
 
-template <typename your_type>
+template <typename your_type, typename char_t>
     requires std::Same<std::decay_t<your_type>, ::seqan3::your_type>
-inline debug_stream_type & operator<<(debug_stream_type & s, your_type && m)
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, your_type && m)
 {
     s << m.str;
     return s;

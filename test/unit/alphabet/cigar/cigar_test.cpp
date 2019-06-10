@@ -42,18 +42,3 @@ TEST(cigar, assign_char_strictly_to)
     EXPECT_THROW(assign_char_strictly_to("FOO", cigar{}), invalid_char_assignment);
     EXPECT_THROW(assign_char_strictly_to("223MZ", cigar{}), invalid_char_assignment);
 }
-
-TEST(cigar, debug_streaming)
-{
-    std::ostringstream o;
-    debug_stream_type my_stream{o};
-
-    cigar c1{};
-    c1.assign_char("223M");
-
-    my_stream << c1;
-
-    o.flush();
-    EXPECT_EQ(o.str().size(), 4u);
-    EXPECT_EQ(o.str(), "223M");
-}
