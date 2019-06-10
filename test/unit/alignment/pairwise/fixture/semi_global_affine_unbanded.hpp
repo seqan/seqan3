@@ -24,6 +24,9 @@
 namespace seqan3::test::alignment::fixture::semi_global::affine::unbanded
 {
 
+using detail::column_index_type;
+using detail::row_index_type;
+
 inline constexpr auto align_config = align_cfg::mode{global_alignment} |
                                      align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}};
 
@@ -32,9 +35,6 @@ inline constexpr auto align_config_semi_seq2 = align_config | align_cfg::aligned
 
 static auto dna4_01_semi_first = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         "TTTTTACGTATGTCCCCC"_dna4,
@@ -82,9 +82,6 @@ static auto dna4_01_semi_first = []()
 
 static auto dna4_02_semi_first = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         "ACGTAAAACGT"_dna4,
@@ -146,9 +143,6 @@ static auto dna4_02_semi_first = []()
 
 static auto dna4_03_semi_second = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         "TTTTTACGTATGTCCCCC"_dna4,
@@ -159,46 +153,13 @@ static auto dna4_03_semi_second = []()
         "-----ACGTA--------",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{18u}, row_index_type{5u}},
-        std::vector
-        {
-        //      e,  T,  T,  T,  T,  T,  A,  C,  G,  T,  A,  T,  G,  T,  C,  C,  C,  C,  C
-        /*e*/ 0  ,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,-25,-26,-27,-28,
-        /*A*/ 0  ,-5 ,-12,-13,-14,-15,-11,-17,-18,-19,-15,-21,-22,-23,-24,-25,-26,-27,-28,
-        /*C*/ 0  ,-5 ,-10,-13,-14,-15,-16,-7 ,-18,-19,-20,-20,-22,-23,-19,-20,-21,-22,-23,
-        /*G*/ 0  ,-5 ,-10,-13,-14,-15,-16,-17,-3 ,-14,-15,-16,-16,-18,-19,-20,-21,-22,-23,
-        /*T*/ 0  ,4  ,-1 ,-6 ,-9 ,-10,-11,-12,-13,1  ,-10,-11,-12,-12,-14,-15,-16,-17,-18,
-        /*A*/ 0  ,-5 ,-1 ,-6 ,-11,-14,-6 ,-16,-15,-10,5  ,-6 ,-7 ,-8 ,-9 ,-10,-11,-12,-13,
-        /*A*/ 0  ,-5 ,-10,-6 ,-11,-15,-10,-11,-16,-11,-6 ,0  ,-11,-12,-13,-14,-15,-16,-17,
-        /*A*/ 0  ,-5 ,-10,-13,-11,-15,-11,-15,-16,-12,-7 ,-11,-5 ,-16,-17,-18,-19,-20,-21,
-        /*A*/ 0  ,-5 ,-10,-13,-14,-15,-11,-16,-18,-13,-8 ,-12,-16,-10,-21,-22,-23,-24,-25,
-        /*C*/ 0  ,-5 ,-10,-13,-14,-15,-16,-7 ,-18,-14,-9 ,-13,-17,-21,-6 ,-17,-18,-19,-20,
-        /*G*/ 0  ,-5 ,-10,-13,-14,-15,-16,-17,-3 ,-14,-10,-14,-9 ,-18,-17,-11,-21,-22,-23,
-        /*T*/ 0  ,4  ,-1 ,-6 ,-9 ,-10,-11,-12,-13,1  ,-10,-6 ,-12,-5 ,-14,-15,-16,-17,-18
-        },
-        std::vector
-        {
-        //      e,  T,  T,  T,  T,  T,  A,  C,  G,  T,  A,  T,  G,  T,  C,  C,  C,  C,  C
-        /*e*/ N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
-        /*A*/ N  ,DUL,l  ,l  ,l  ,l  ,DUl,l  ,l  ,l  ,DUl,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
-        /*C*/ N  ,DUL,DUl,l  ,l  ,l  ,l  ,DUl,l  ,l  ,l  ,DUl,l  ,l  ,DUl,DUl,DUl,DUl,DUl,
-        /*G*/ N  ,DUL,DUl,l  ,l  ,l  ,l  ,l  ,DUl,L  ,l  ,l  ,DUl,l  ,l  ,l  ,l  ,l  ,l  ,
-        /*T*/ N  ,DUL,DUL,DUl,DUl,DUl,l  ,l  ,l  ,DUl,L  ,DUl,l  ,DUl,l  ,l  ,l  ,l  ,l  ,
-        /*A*/ N  ,DUL,DUl,DUL,DUl,DUl,DUl,Dul,ul ,Ul ,DUl,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
-        /*A*/ N  ,DuL,DUl,DUl,Dul,l  ,DUl,Dul,ul ,ul ,DUl,DUL,DUL,DUl,DUl,DUl,DUl,DUl,DUl,
-        /*A*/ N  ,DuL,Dul,l  ,Dul,l  ,Dul,Dul,Dul,ul ,Dul,DUL,Dul,DuL,Dul,Dul,Dul,Dul,Dul,
-        /*A*/ N  ,DuL,Dul,l  ,l  ,l  ,Dul,Dul,ul ,ul ,Dul,DuL,DUl,Dul,DuL,Dul,Dul,Dul,Dul,
-        /*C*/ N  ,DuL,Dul,l  ,l  ,l  ,l  ,Dul,l  ,ul ,ul ,DuL,Dul,DUl,Dul,DuL,Dul,Dul,Dul,
-        /*G*/ N  ,DuL,Dul,l  ,l  ,l  ,l  ,l  ,Dul,L  ,ul ,Dul,Dul,l  ,Ul ,Dul,l  ,l  ,l  ,
-        /*T*/ N  ,DuL,DuL,Dul,Dul,DUl,l  ,l  ,l  ,Dul,L  ,Dul,l  ,Dul,l  ,l  ,Dul,l  ,l
-        }
+        dna4_02_semi_first.score_matrix().transpose_matrix(),
+        dna4_02_semi_first.trace_matrix().transpose_matrix()
     };
 }();
 
 static auto dna4_04_semi_second = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         "ACGTAAAACGT"_dna4,
@@ -209,52 +170,8 @@ static auto dna4_04_semi_second = []()
         "ACGT---ATGT",
         alignment_coordinate{column_index_type{0u}, row_index_type{5u}},
         alignment_coordinate{column_index_type{11u}, row_index_type{13u}},
-        std::vector
-        {
-        //      e,  A,  C,  G,  T,  A,  A,  A,  A,  C,  G,  T
-        /*e*/ 0  ,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,
-        /*T*/ 0  ,-5 ,-12,-13,-9 ,-15,-16,-17,-18,-19,-20,-16,
-        /*T*/ 0  ,-5 ,-10,-13,-9 ,-14,-16,-17,-18,-19,-20,-16,
-        /*T*/ 0  ,-5 ,-10,-13,-9 ,-14,-16,-17,-18,-19,-20,-16,
-        /*T*/ 0  ,-5 ,-10,-13,-9 ,-14,-16,-17,-18,-19,-20,-16,
-        /*T*/ 0  ,-5 ,-10,-13,-9 ,-14,-16,-17,-18,-19,-20,-16,
-        /*A*/ 0  ,4  ,-7 ,-8 ,-9 ,-5 ,-10,-12,-13,-14,-15,-16,
-        /*C*/ 0  ,-5 ,8  ,-3 ,-4 ,-5 ,-6 ,-7 ,-8 ,-9 ,-10,-11,
-        /*G*/ 0  ,-5 ,-3 ,12 ,1  ,0  ,-1 ,-2 ,-3 ,-4 ,-5 ,-6 ,
-        /*T*/ 0  ,-5 ,-4 ,1  ,16 ,5  ,4  ,3  ,2  ,1  ,0  ,-1 ,
-        /*A*/ 0  ,4  ,-5 ,0  ,5  ,20 ,9  ,8  ,7  ,6  ,5  ,4  ,
-        /*T*/ 0  ,-5 ,-1 ,-1 ,4  ,9  ,15 ,4  ,3  ,2  ,1  ,9  ,
-        /*G*/ 0  ,-5 ,-7 ,3  ,3  ,8  ,4  ,10 ,-1 ,-2 ,6  ,-2 ,
-        /*T*/ 0  ,-5 ,-8 ,-3 ,7  ,7  ,3  ,-1 ,5  ,-6 ,-5 ,10 ,
-        /*C*/ 0  ,-5 ,-1 ,-4 ,1  ,6  ,2  ,-2 ,-6 ,9  ,-2 ,-1 ,
-        /*C*/ 0  ,-5 ,-1 ,-5 ,0  ,5  ,1  ,-3 ,-7 ,-2 ,4  ,-2 ,
-        /*C*/ 0  ,-5 ,-1 ,-6 ,-1 ,4  ,0  ,-4 ,-8 ,-3 ,-7 ,-1 ,
-        /*C*/ 0  ,-5 ,-1 ,-6 ,-2 ,3  ,-1 ,-5 ,-9 ,-4 ,-8 ,-4 ,
-        /*C*/ 0  ,-5 ,-1 ,-6 ,-3 ,2  ,-2 ,-6 ,-10,-5 ,-9 ,-5 ,
-        },
-        std::vector
-        {
-        //      e,  A,  C,  G,  T,  A,  A,  A,  A,  C,  G,  T
-        /*e*/ N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
-        /*T*/ N  ,DUL,l  ,l  ,DUl,l  ,l  ,l  ,l  ,l  ,l  ,DUl,
-        /*T*/ N  ,DUL,DUl,l  ,DUl,DUl,l  ,l  ,l  ,l  ,l  ,DUl,
-        /*T*/ N  ,DUL,DUl,l  ,DUl,DUl,l  ,l  ,l  ,l  ,l  ,DUl,
-        /*T*/ N  ,DUL,DUl,l  ,DUl,DUl,l  ,l  ,l  ,l  ,l  ,DUl,
-        /*T*/ N  ,DUL,DUl,l  ,DUl,DUl,l  ,l  ,l  ,l  ,l  ,DUl,
-        /*A*/ N  ,DUL,L  ,l  ,l  ,DUl,DUl,DUl,DUl,l  ,l  ,l  ,
-        /*C*/ N  ,DUL,DUl,L  ,l  ,l  ,l  ,l  ,l  ,DUl,l  ,l  ,
-        /*G*/ N  ,DuL,Ul ,DUl,L  ,l  ,l  ,l  ,l  ,l  ,DUl,l  ,
-        /*T*/ N  ,DuL,ul ,Ul ,DUL,L  ,l  ,l  ,l  ,l  ,l  ,DUl,
-        /*A*/ N  ,DuL,uL ,ul ,Ul ,DUL,DUL,DUl,DUl,l  ,l  ,l  ,
-        /*T*/ N  ,DUL,Dul,uL ,DuL,UL ,DUL,DUL,DUl,DUl,DUl,DUl,
-        /*G*/ N  ,DuL,ul ,Dul,uL ,uL ,DUL,Dul,DuL,Dul,Dul,Ul ,
-        /*T*/ N  ,DuL,ul ,ul ,Dul,uL ,DuL,DUl,Dul,DuL,Ul ,Dul,
-        /*C*/ N  ,DuL,Dul,uL ,ul ,uL ,DuL,Dul,DUl,Dul,L  ,Ul ,
-        /*C*/ N  ,DuL,Dul,uL ,ul ,uL ,DuL,Dul,Dul,DUl,Dul,uL ,
-        /*C*/ N  ,DuL,Dul,DuL,ul ,uL ,DuL,Dul,Dul,Dul,DUl,Dul,
-        /*C*/ N  ,DuL,Dul,DuL,ul ,uL ,DuL,Dul,Dul,Dul,Dul,ul ,
-        /*C*/ N  ,DuL,DUl,DuL,ul ,ul ,DuL,Dul,Dul,Dul,Dul,ul ,
-        }
+        dna4_01_semi_first.score_matrix().transpose_matrix(),
+        dna4_02_semi_first.trace_matrix().transpose_matrix()
     };
 }();
 

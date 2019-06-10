@@ -98,48 +98,8 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_02 = []()
         "A---ACCGGTTAACCGGTT",
         seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
         seqan3::alignment_coordinate{seqan3::detail::column_index_type{9u}, seqan3::detail::row_index_type{16u}},
-        std::vector
-        {
-        //      e,  A,  C,  G,  T,  A,  C,  G,  T,  A
-        /*e*/ 0  ,-11,-12,-13,-14,-15,-16,-17,-18,-19,
-        /*A*/ -11,  4, -7, -8, -9,-10,-11,-12,-13,-14,
-        /*A*/ -12, -7, -1,-12,-13, -5,-15,-16,-17, -9,
-        /*C*/ -13, -8, -3, -6,-15,-16, -1,-12,-13,-14,
-        /*C*/ -14, -9, -4, -8,-11,-17,-12, -6,-17,-18,
-        /*G*/ -15,-10,-14,  0,-11,-12,-13, -8,-11,-16,
-        /*G*/ -16,-11,-15,-10, -5,-16,-14, -9,-13,-16,
-        /*T*/ -17,-12,-16,-12, -6,-10,-15,-19, -5,-16,
-        /*T*/ -18,-13,-17,-13, -8,-11,-15,-20,-15,-10,
-        /*A*/ -19,-14,-18,-14,-18, -4,-15,-16,-17,-11,
-        /*A*/ -20,-15,-19,-15,-19,-14, -9,-20,-18,-13,
-        /*C*/ -21,-16,-11,-16,-20,-16,-10,-14,-19,-23,
-        /*C*/ -22,-17,-12,-16,-21,-17,-12,-15,-19,-24,
-        /*G*/ -23,-18,-22, -8,-19,-18,-21, -8,-19,-20,
-        /*G*/ -24,-19,-23,-18,-13,-19,-22,-17,-13,-24,
-        /*T*/ -25,-20,-24,-20,-14,-18,-23,-20,-13,-18,
-        /*T*/ -26,-21,-25,-21,-16,-19,-23,-21,-16,-18
-        },
-        std::vector
-        {
-        //	    e,  A,  C,  G,  T,  A,  C,  G,  T,  A
-        /*e*/ N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
-        /*A*/ U  ,DUL,L  ,l  ,l  ,DUl,l  ,l  ,l  ,DUl,
-        /*A*/ u  ,DUL,DUL,DUL,DUl,DUl,DUl,DUl,DUl,DUl,
-        /*C*/ u  ,uL ,DUL,DuL,l  ,Ul ,Dul,L  ,l  ,l  ,
-        /*C*/ u  ,uL ,DuL,DUL,Dul,ul ,DUl,DUl,DUL,Dul,
-        /*G*/ u  ,uL ,DuL,Dul,L  ,l  ,ul ,DUl,Dul,l  ,
-        /*G*/ u  ,uL ,DuL,DUl,DUL,DuL,ul ,Dul,DUl,Dul,
-        /*T*/ u  ,uL ,DuL,ul ,DUL,DuL,ul ,Dul,Dul,L  ,
-        /*T*/ u  ,uL ,DuL,ul ,DuL,DuL,Dul,Dul,DUl,Dul,
-        /*A*/ u  ,DuL,DuL,ul ,DuL,Dul,L  ,l  ,ul ,DUl,
-        /*A*/ u  ,DuL,DuL,ul ,DuL,DUl,DuL,DuL,ul ,Dul,
-        /*C*/ u  ,uL ,DuL,uL ,Dul,ul ,Dul,DuL,ul ,Dul,
-        /*C*/ u  ,uL ,DuL,DuL,Dul,ul ,Dul,DuL,Dul,Dul,
-        /*G*/ u  ,uL ,DuL,Dul,L  ,ul ,ul ,Dul,L  ,l  ,
-        /*G*/ u  ,uL ,DuL,Dul,DuL,uL ,ul ,DUl,Dul,DuL,
-        /*T*/ u  ,uL ,DuL,ul ,DuL,DuL,ul ,ul ,Dul,DuL,
-        /*T*/ u  ,uL ,DuL,ul ,DuL,DuL,Dul,ul ,Dul,DuL,
-        }
+        dna4_01.score_matrix().transpose_matrix(),
+        dna4_01.trace_matrix().transpose_matrix()
     };
 }();
 
