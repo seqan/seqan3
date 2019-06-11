@@ -208,14 +208,21 @@ public:
         tmp_path = std::string{getenv("HOME")};
 #endif
         tmp_path /= ".config";
-        tmp_path /= "seqan";
 
-        // create directory if it does not already exist
+        // First, create .config if it does not already exist.
         std::error_code err;
-        std::filesystem::create_directory(tmp_path, err); // does nothing and err is zero if path already exists.
+        create_directory(tmp_path, err);
 
+        // If this did not fail we, create the seqan subdirectory.
+        if (!err)
+        {
+            tmp_path /= "seqan";
+            create_directory(tmp_path, err);
+        }
+
+        // .config/seqan cannot be created, try tmp directory.
         if (err)
-            tmp_path = std::filesystem::temp_directory_path(); // choose temp dir instead
+            tmp_path = temp_directory_path(); // choose temp dir instead
 
         // check if files can be written inside dir
         path dummy = tmp_path / "dummy.txt";
