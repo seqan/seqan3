@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <algorithm>
 #include <seqan3/range/container/small_vector.hpp>
 
 namespace seqan3

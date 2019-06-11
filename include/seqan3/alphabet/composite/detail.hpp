@@ -12,10 +12,7 @@
 
 #pragma once
 
-#include <type_traits>
-
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/platform.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 
 namespace seqan3::detail

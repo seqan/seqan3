@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <meta/meta.hpp>
-
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
 
 #include <seqan3/std/concepts>

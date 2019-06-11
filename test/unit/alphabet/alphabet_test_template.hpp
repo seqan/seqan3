@@ -9,7 +9,6 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/exception.hpp>
-#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 using namespace seqan3;

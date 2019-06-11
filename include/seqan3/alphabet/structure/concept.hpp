@@ -13,6 +13,7 @@
 #pragma once
 
 #include <optional>
+
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/std/concepts>

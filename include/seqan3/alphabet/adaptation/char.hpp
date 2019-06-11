@@ -25,13 +25,8 @@
 
 #pragma once
 
-#include <limits>
-
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {

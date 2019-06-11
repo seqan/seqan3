@@ -14,11 +14,9 @@
 
 #pragma once
 
-#include <algorithm>
 #include <array>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/quality/concept.hpp>
 
 // ============================================================================
 // conversion to/from char/rank types

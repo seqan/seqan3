@@ -17,9 +17,6 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/core/detail/reflection.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/core/type_traits/function.hpp>
-#include <seqan3/std/concepts>
 
 // ============================================================================
 // forwards
