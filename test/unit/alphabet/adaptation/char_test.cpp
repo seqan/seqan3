@@ -17,7 +17,7 @@
 using namespace seqan3;
 
 // char32_t and wchar_t, too slow
-using fast_char_types = ::testing::Types<char, char16_t/*, char32_t, wchar_t*/>;
+using fast_char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet, fast_char_types);
 INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet_constexpr, fast_char_types);
