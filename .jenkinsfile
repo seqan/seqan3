@@ -141,7 +141,7 @@ def run_unit_tests(slave_name, compiler, build_type, model, with_cereal)
 // Configure unit tests. Add platforms here but adapt the inner loop of the matrix setup to call instantiate and
 // setup the right agent.
 def axis_agent = ["ubuntu", "osx"]
-def axis_compiler = ["g++-7", "g++-8"] // g++-9, clang-concepts
+def axis_compiler = ["g++-7", "g++-8", "g++-9"] // clang-concepts
 def axis_cereal = [true, false]
 def axis_build_type =["Release", "Debug"]
 def tasks = [:]
