@@ -34,7 +34,7 @@ namespace seqan3::align_cfg
  *
  * ### Example
  *
- * \snippet test/snippet/alignment/configuration/align_cfg_gap_example.cpp example
+ * \include test/snippet/alignment/configuration/align_cfg_gap_example.cpp
  *
  * \see seqan3::gap_scheme
  */
