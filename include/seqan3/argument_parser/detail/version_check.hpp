@@ -429,15 +429,18 @@ private:
         return "powershell.exe -NoLogo -NonInteractive -Command \"& {Invoke-WebRequest -erroraction 'silentlycontinue' -OutFile";
 #else  // Unix based platforms.
         if (!system("wget --version > /dev/null 2>&1"))
-            return "wget -q -O";
+            return "wget --timeout=10 --tries=1 -q -O";
         else if (!system("curl --version > /dev/null 2>&1"))
-            return "curl -o";
-    #ifndef __linux  // ftp call does not work on linux
-        else if (!system("which ftp > /dev/null 2>&1"))
-            return "ftp -Vo";
-    #endif // __linux
-        else
+            return "curl --connect-timeout 10 -o";
+    // In case neither wget nor curl is available try ftp if system is OpenBSD or FreeBSD.
+    // Note, both systems have ftp command installed by default so we do not guard against it.
+    #if defined(__OpenBSD__) // In case
+            return "ftp -w10 -Vo";
+    #elseif defined(__FreeBSD__)
+            return "fetch --timeout=10 -o";
+    #else
             return "";
+    #endif // __OpenBSD__
 #endif  // defined(_WIN32)
     }
 
