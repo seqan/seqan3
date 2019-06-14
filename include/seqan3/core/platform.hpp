@@ -194,6 +194,15 @@
 #   endif
 #endif
 
+//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90897
+#ifndef SEQAN3_WORKAROUND_GCC_90897
+#   if defined(__GNUC__) && (__GNUC__ == 8)
+#       define SEQAN3_WORKAROUND_GCC_90897 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_90897 0
+#   endif
+#endif
+
 // ============================================================================
 //  Backmatter
 // ============================================================================
