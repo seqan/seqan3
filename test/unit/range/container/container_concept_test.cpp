@@ -16,7 +16,11 @@
 
 #include <sdsl/int_vector.hpp>
 
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
+#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concept.hpp>
 
 using namespace seqan3;
@@ -32,6 +36,8 @@ TEST(range_concept, ForwardRange)
 
     EXPECT_TRUE((std::ranges::ForwardRange<seqan3::concatenated_sequences<std::string>>));
     EXPECT_TRUE((std::ranges::ForwardRange<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((std::ranges::ForwardRange<bitcompressed_vector<dna4>>));
+    EXPECT_TRUE((std::ranges::ForwardRange<bitcompressed_vector<qualified<dna4, phred42>>>));
 }
 
 TEST(Container, Container)
@@ -137,6 +143,8 @@ TEST(Container, ReservableContainer)
     EXPECT_TRUE((seqan3::ReservableContainer<sdsl::int_vector<>>));
     EXPECT_TRUE((seqan3::ReservableContainer<sdsl::int_vector<13>>));
     EXPECT_TRUE((seqan3::ReservableContainer<sdsl::int_vector<64>>));
+    EXPECT_TRUE((seqan3::ReservableContainer<bitcompressed_vector<dna4>>));
+    EXPECT_TRUE((seqan3::ReservableContainer<bitcompressed_vector<qualified<dna4, phred42>>>));
 }
 
 /* Check the SDSL containers */
