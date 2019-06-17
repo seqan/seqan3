@@ -17,8 +17,7 @@
 using namespace seqan3;
 
 template <typename T>
-class quality_conversion : public ::testing::Test
-{};
+using quality_conversion = ::testing::Test;
 
 // add all alphabets from the quality sub module here
 using quality_conversion_types = type_list<phred42, phred63, phred68legacy>;

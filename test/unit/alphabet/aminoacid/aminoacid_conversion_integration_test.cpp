@@ -15,8 +15,7 @@
 using namespace seqan3;
 
 template <typename T>
-class aminoacid_conversion : public ::testing::Test
-{};
+using aminoacid_conversion = ::testing::Test;
 
 using aminoacid_types = type_list<aa10li, aa10murphy, aa20, aa27>; // needed for some tests
 using aminoacid_gtest_types = detail::transfer_template_args_onto_t<aminoacid_types, ::testing::Types>;

@@ -16,7 +16,7 @@
 #include <string>
 #include <utility>
 
-#include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/structure/dssp9.hpp>

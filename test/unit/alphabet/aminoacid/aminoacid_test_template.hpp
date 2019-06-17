@@ -16,8 +16,7 @@
 using namespace seqan3;
 
 template <typename T>
-class aminoacid : public ::testing::Test
-{};
+using aminoacid = ::testing::Test;
 
 TYPED_TEST_CASE_P(aminoacid);
 
@@ -25,6 +24,8 @@ TYPED_TEST_P(aminoacid, concept_check)
 {
     EXPECT_TRUE(AminoacidAlphabet<TypeParam>);
     EXPECT_TRUE(AminoacidAlphabet<TypeParam &>);
+    EXPECT_TRUE(AminoacidAlphabet<TypeParam const>);
+    EXPECT_TRUE(AminoacidAlphabet<TypeParam const &>);
 }
 
 // ------------------------------------------------------------------

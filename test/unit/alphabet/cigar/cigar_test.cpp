@@ -37,7 +37,7 @@ TEST(cigar, assign_char)
     EXPECT_EQ('M',           to_char(get<1>(c1)));
 }
 
-TEST(cigar, assign_char_strictly)
+TEST(cigar, assign_char_strictly_to)
 {
     EXPECT_THROW(assign_char_strictly_to("FOO", cigar{}), invalid_char_assignment);
     EXPECT_THROW(assign_char_strictly_to("223MZ", cigar{}), invalid_char_assignment);

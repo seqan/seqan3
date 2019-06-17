@@ -7,17 +7,17 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/mask/all.hpp>
+#include <seqan3/alphabet/mask/mask.hpp>
 
 using namespace seqan3;
 
-TEST(assignment, concept_check)
+TEST(mask, concept_check)
 {
     EXPECT_TRUE(Semialphabet<mask>);
     EXPECT_TRUE(detail::ConstexprSemialphabet<mask>);
 }
 
-TEST(assignment, assign_rank)
+TEST(mask, assign_rank)
 {
     // l-value
     mask lmask;
@@ -53,7 +53,7 @@ TEST(assignment, assign_rank)
 // ------------------------------------------------------------------
 // comparators
 // ------------------------------------------------------------------
-TEST(comparators, compare)
+TEST(mask, compare)
 {
     EXPECT_TRUE(mask::MASKED == mask::MASKED);
     EXPECT_TRUE(mask::MASKED != mask::UNMASKED);

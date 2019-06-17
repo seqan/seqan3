@@ -9,17 +9,48 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/exception.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 using namespace seqan3;
 
 template <typename T>
-class alphabet : public ::testing::Test
-{};
+using alphabet = ::testing::Test;
 
 constexpr size_t max_iterations = 65536u;
 
 TYPED_TEST_CASE_P(alphabet);
+
+TYPED_TEST_P(alphabet, concept_check)
+{
+    EXPECT_TRUE(Semialphabet<TypeParam>);
+    EXPECT_TRUE(Semialphabet<TypeParam &>);
+    EXPECT_TRUE(Semialphabet<TypeParam const>);
+    EXPECT_TRUE(Semialphabet<TypeParam const &>);
+
+    EXPECT_TRUE(WritableSemialphabet<TypeParam>);
+    EXPECT_TRUE(WritableSemialphabet<TypeParam &>);
+    EXPECT_FALSE(WritableSemialphabet<TypeParam const>);
+    EXPECT_FALSE(WritableSemialphabet<TypeParam const &>);
+
+    EXPECT_TRUE(Alphabet<TypeParam>);
+    EXPECT_TRUE(Alphabet<TypeParam &>);
+    EXPECT_TRUE(Alphabet<TypeParam const>);
+    EXPECT_TRUE(Alphabet<TypeParam const &>);
+
+    EXPECT_TRUE(WritableAlphabet<TypeParam>);
+    EXPECT_TRUE(WritableAlphabet<TypeParam &>);
+    EXPECT_FALSE(WritableAlphabet<TypeParam const>);
+    EXPECT_FALSE(WritableAlphabet<TypeParam const &>);
+}
+
+TYPED_TEST_P(alphabet, type_properties)
+{
+    // It is highly recommended that non-reference types that model this concept, also model:
+    EXPECT_TRUE((std::Regular<TypeParam>));
+    EXPECT_TRUE((seqan3::TriviallyCopyable<TypeParam>));
+    EXPECT_TRUE((seqan3::StandardLayout<TypeParam>));
+}
 
 TYPED_TEST_P(alphabet, alphabet_size_)
 {
@@ -32,7 +63,7 @@ TYPED_TEST_P(alphabet, default_value_constructor)
     [[maybe_unused]] TypeParam t2{};
 }
 
-TYPED_TEST_P(alphabet, global_assign_rank)
+TYPED_TEST_P(alphabet, global_assign_rank_to)
 {
     // this double checks the value initialisation
     EXPECT_EQ((assign_rank_to(0, TypeParam{})), TypeParam{});
@@ -124,7 +155,7 @@ TYPED_TEST_P(alphabet, swap)
     EXPECT_EQ(t1, t3);
 }
 
-TYPED_TEST_P(alphabet, global_assign_char)
+TYPED_TEST_P(alphabet, global_assign_char_to)
 {
     using char_t = alphabet_char_t<TypeParam>;
     if constexpr(std::Integral<char_t>)
@@ -149,7 +180,7 @@ TYPED_TEST_P(alphabet, global_char_is_valid_for) // only test negative example f
     }
 }
 
-TYPED_TEST_P(alphabet, global_assign_char_strict)
+TYPED_TEST_P(alphabet, global_assign_char_strictly_to)
 {
     using char_t = alphabet_char_t<TypeParam>;
     if constexpr(std::Integral<char_t>)
@@ -203,33 +234,7 @@ TYPED_TEST_P(alphabet, comparison_operators)
     }
 }
 
-TYPED_TEST_P(alphabet, concept_check)
-{
-    EXPECT_TRUE(Semialphabet<TypeParam>);
-    EXPECT_TRUE(Semialphabet<TypeParam &>);
-
-    EXPECT_TRUE(WritableSemialphabet<TypeParam>);
-    EXPECT_TRUE(WritableSemialphabet<TypeParam &>);
-
-    EXPECT_TRUE(Semialphabet<TypeParam const>);
-    EXPECT_TRUE(Semialphabet<TypeParam const &>);
-
-    EXPECT_FALSE(WritableSemialphabet<TypeParam const>);
-    EXPECT_FALSE(WritableSemialphabet<TypeParam const &>);
-
-    EXPECT_TRUE(Alphabet<TypeParam>);
-    EXPECT_TRUE(Alphabet<TypeParam &>);
-
-    EXPECT_TRUE(WritableAlphabet<TypeParam>);
-    EXPECT_TRUE(WritableAlphabet<TypeParam &>);
-
-    EXPECT_TRUE(Alphabet<TypeParam const>);
-    EXPECT_TRUE(Alphabet<TypeParam const &>);
-
-    EXPECT_FALSE(WritableAlphabet<TypeParam const>);
-    EXPECT_FALSE(WritableAlphabet<TypeParam const &>);
-}
-
-REGISTER_TYPED_TEST_CASE_P(alphabet, alphabet_size_, default_value_constructor, global_assign_rank, global_to_rank,
-    copy_constructor, move_constructor, copy_assignment, move_assignment, swap, global_assign_char, global_to_char,
-    global_char_is_valid_for, global_assign_char_strict, comparison_operators, concept_check);
+REGISTER_TYPED_TEST_CASE_P(alphabet, concept_check, type_properties, alphabet_size_, default_value_constructor,
+    global_assign_rank_to, global_to_rank, copy_constructor, move_constructor, copy_assignment, move_assignment, swap,
+    global_assign_char_to, global_to_char, global_char_is_valid_for, global_assign_char_strictly_to,
+    comparison_operators);
