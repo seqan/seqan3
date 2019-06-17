@@ -98,15 +98,6 @@ public:
         seqan3::assign_rank_to(is_lower(c), get<1>(*this));
         return *this;
     }
-
-    //!\brief Strict assign from a character.
-    masked & assign_char_strictly(char_type const c)
-    {
-        if (!char_is_valid(c))
-            throw invalid_char_assignment{detail::get_display_name_v<masked>, c};
-
-        return assign_char(c);
-    }
     //!\}
 
     /*!\name Read functions

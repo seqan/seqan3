@@ -110,13 +110,6 @@ public:
         seqan3::assign_char_to(c, get<0>(*this));
         return *this;
     }
-
-    //!\brief Strict assign from a nucleotide character. This modifies the internal sequence letter.
-    structured_rna & assign_char_strictly(char_type const c)
-    {
-        seqan3::assign_char_strictly_to(c, get<0>(*this));
-        return *this;
-    }
     //!\}
 
     //!\name Read functions
