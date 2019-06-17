@@ -80,7 +80,7 @@ namespace seqan3
 //!\cond
 template <typename t1, typename t2>
 SEQAN3_CONCEPT WeaklyOrderedWith = requires (std::remove_reference_t<t1> const & v1,
-                                                     std::remove_reference_t<t2> const & v2)
+                                             std::remove_reference_t<t2> const & v2)
 {
     { v1 <  v2 } -> bool &&;
     { v1 <= v2 } -> bool &&;
