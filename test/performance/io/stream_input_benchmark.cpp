@@ -11,6 +11,8 @@
 #include <memory>
 #include <sstream>
 
+#include <seqan3/io/stream/iterator.hpp>
+
 #ifdef SEQAN3_HAS_ZLIB
     #include <seqan3/contrib/stream/bgzf_istream.hpp>
     #include <seqan3/contrib/stream/bgzf_ostream.hpp>
@@ -72,8 +74,10 @@ std::string const input_comp<contrib::gz_istream>
     [] ()
     {
         std::ostringstream ret;
-        contrib::gz_ostream os{ret};
-        std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+        { // In scope to force flush of ostream on destruction.
+            contrib::gz_ostream os{ret};
+            std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+        }
         return ret.str();
     } ()
 };
@@ -84,14 +88,19 @@ std::string const input_comp<contrib::bgzf_istream>
     [] ()
     {
         std::ostringstream ret;
-        contrib::bgzf_ostream os{ret};
-        std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+        { // In scope to force flush of ostream on destruction.
+            contrib::bgzf_ostream os{ret};
+            std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+        }
         return ret.str();
     } ()
 };
 #ifdef SEQAN3_HAS_SEQAN2
 template <>
 std::string const & input_comp<seqan::GZFile> = input_comp<contrib::gz_istream>;
+
+template <>
+std::string const & input_comp<seqan::BgzfFile> = input_comp<contrib::bgzf_istream>;
 #endif
 #endif
 
@@ -102,8 +111,10 @@ std::string const input_comp<contrib::bz2_istream>
     [] ()
     {
         std::ostringstream ret;
-        contrib::bz2_ostream os{ret};
-        std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+        { // In scope to force flush of ostream on destruction.
+            contrib::bz2_ostream os{ret};
+            std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+        }
         return ret.str();
     } ()
 };
@@ -120,15 +131,18 @@ std::string const & input_comp<seqan::BZ2File> = input_comp<contrib::bz2_istream
 void uncompressed(benchmark::State & state)
 {
     std::istringstream s{input};
-    std::istreambuf_iterator<char> it{s};
     size_t i = 0;
     for (auto _ : state)
     {
-        i += *it;
-        ++it;
+        s.clear();
+        s.seekg(0, std::ios::beg);
+        seqan3::detail::fast_istreambuf_iterator<char> it{*s.rdbuf()};
+
+        for (; it != std::ranges::default_sentinel; ++it)
+            i += *it;
     }
 
-    [[maybe_unused]] volatile size_t j = i;
+    state.counters["iterations_per_run"] = i;
 }
 
 BENCHMARK(uncompressed);
@@ -141,17 +155,23 @@ template <typename compressed_istream_t>
 void compressed(benchmark::State & state)
 {
     std::istringstream s{input_comp<compressed_istream_t>};
-    compressed_istream_t comp{s};
-    std::istreambuf_iterator<char> it{comp};
 
     size_t i = 0;
     for (auto _ : state)
     {
-        i += *it;
-        ++it;
+        s.clear();
+        s.seekg(0, std::ios::beg);
+        compressed_istream_t comp{s};
+        seqan3::detail::fast_istreambuf_iterator<char> it{*comp.rdbuf()};
+
+        for (size_t v = 0; v < input_comp<compressed_istream_t>.size(); ++v)
+        {
+            i += *it;
+            ++it;
+        }
     }
 
-    [[maybe_unused]] volatile size_t j = i;
+    state.counters["iterations_per_run"] = i;
 }
 
 #ifdef SEQAN3_HAS_ZLIB
@@ -171,17 +191,22 @@ template <typename compressed_istream_t>
 void compressed_type_erased(benchmark::State & state)
 {
     std::istringstream s{input_comp<compressed_istream_t>};
-    std::unique_ptr<std::istream> comp{new compressed_istream_t{s}};
-    std::istreambuf_iterator<char> it{*comp};
-
     size_t i = 0;
     for (auto _ : state)
     {
-        i += *it;
-        ++it;
+        s.clear();
+        s.seekg(0, std::ios::beg);
+        std::unique_ptr<std::istream> comp{new compressed_istream_t{s}};
+        seqan3::detail::fast_istreambuf_iterator<char> it{*comp->rdbuf()};
+
+        for (size_t v = 0; v < input_comp<compressed_istream_t>.size(); ++v)
+        {
+            i += *it;
+            ++it;
+        }
     }
 
-    [[maybe_unused]] volatile size_t j = i;
+    state.counters["iterations_per_run"] = i;
 }
 
 #ifdef SEQAN3_HAS_ZLIB
@@ -200,17 +225,22 @@ template <typename compressed_istream_t>
 void compressed_type_erased2(benchmark::State & state)
 {
     std::unique_ptr<std::istream> s{new std::istringstream{input_comp<compressed_istream_t>}};
-    std::unique_ptr<std::istream> comp{new compressed_istream_t{*s}};
-    std::istreambuf_iterator<char> it{*comp};
-
     size_t i = 0;
     for (auto _ : state)
     {
-        i += *it;
-        ++it;
+        s->clear();
+        s->seekg(0, std::ios::beg);
+        std::unique_ptr<std::istream> comp{new compressed_istream_t{*s}};
+        seqan3::detail::fast_istreambuf_iterator<char> it{*comp->rdbuf()};
+
+        for (size_t v = 0; v < input_comp<compressed_istream_t>.size(); ++v)
+        {
+            i += *it;
+            ++it;
+        }
     }
 
-    [[maybe_unused]] volatile size_t j = i;
+    state.counters["iterations_per_run"] = i;
 }
 
 #ifdef SEQAN3_HAS_ZLIB
@@ -226,25 +256,68 @@ BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::bz2_istream);
 // ============================================================================
 
 #ifdef SEQAN3_HAS_SEQAN2
-template <typename compression_type>
-void seqan2_compressed(benchmark::State & state)
+
+void seqan2_uncompressed(benchmark::State & state)
 {
-    std::istringstream s{input_comp<compression_type>};
-    seqan::VirtualStream<char, seqan::Input> comp;
-    compression_type tag;
-    open(comp, s, tag);
-
-    auto it = seqan::directionIterator(comp, seqan::Input());
-
+    std::istringstream s{input};
     size_t i = 0;
     for (auto _ : state)
     {
-        i += *it;
-        ++it;
+        s.clear();
+        s.seekg(0, std::ios::beg);
+        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input> >(s);
+
+        for (size_t v = 0; v < input.size(); ++v)
+        {
+            i += *it;
+            ++it;
+        }
     }
 
-    [[maybe_unused]] volatile size_t j = i;
+    state.counters["iterations_per_run"] = i;
 }
+
+template <typename compression_t, typename stream_t>
+void seqan2_compressed_impl(benchmark::State & state)
+{
+    std::istringstream s{input_comp<compression_t>};
+    size_t i = 0;
+    for (auto _ : state)
+    {
+        s.clear();
+        s.seekg(0, std::ios::beg);
+        stream_t comp{s};
+        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input> >(comp);
+
+        for (size_t v = 0; v < input_comp<compression_t>.size(); ++v)
+        {
+            i += *it;
+            ++it;
+        }
+    }
+
+    state.counters["iterations_per_run"] = i;
+}
+
+template <typename compression_type>
+void seqan2_compressed(benchmark::State & state)
+{
+    #ifdef SEQAN_HAS_ZLIB
+    if constexpr (std::is_same_v<compression_type, seqan::GZFile>)
+        seqan2_compressed_impl<seqan::GZFile, zlib_stream::zip_istream>(state);
+    else if constexpr (std::is_same_v<compression_type, seqan::BgzfFile>)
+        seqan2_compressed_impl<seqan::BgzfFile, seqan::bgzf_istream>(state);
+    #endif // SEQAN_HAS_ZLIB
+
+    #ifdef SEQAN_HAS_BZIP2
+    if constexpr (std::is_same_v<compression_type, seqan::BZ2File>)
+        seqan2_compressed_impl<seqan::BZ2File, bzip2_stream::bzip2_istream>(state);
+    #endif // SEQAN_HAS_BZIP2
+
+    if constexpr (std::is_same_v<compression_type, seqan::Nothing>)
+        seqan2_uncompressed(state);
+}
+
 BENCHMARK_TEMPLATE(seqan2_compressed, seqan::Nothing);
 
 #ifdef SEQAN_HAS_ZLIB

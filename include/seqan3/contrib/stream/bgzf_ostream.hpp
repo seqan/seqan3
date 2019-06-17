@@ -352,9 +352,9 @@ public:
     {}
 
     // flush inner buffer and zipper buffer
-    basic_bgzf_ostream<Elem,Tr>& zflush()
+    basic_bgzf_ostream<Elem,Tr>& flush()
     {
-        this->flush(); this->rdbuf()->flush(); return *this;
+        ostream_type::flush(); this->rdbuf()->flush(); return *this;
     };
 
     ~basic_bgzf_ostream()
