@@ -241,6 +241,16 @@ public:
         return assign_rank_to(to_rank(), alphabet_type{});
     }
 
+    //!\brief Implicit conversion to types that the emulated type is convertible to.
+    template <typename other_t>
+    //!\cond
+        requires std::ConvertibleTo<alphabet_type, other_t>
+    //!\endcond
+    constexpr operator other_t() const noexcept
+    {
+        return operator alphabet_type();
+    }
+
     constexpr auto to_char() const noexcept
         requires Alphabet<alphabet_type>
     {
@@ -280,6 +290,48 @@ public:
         requires WritableAlphabet<alphabet_type>
     {
         return char_is_valid_for<alphabet_type>(c);
+    }
+    //!\}
+
+    /*!\name Comparison operators
+     * \brief These are only required if the emulated type allows comparison with types it is not convertible to,
+     *        e.g. seqan3::alphabet_variant.
+     * \{
+     */
+    //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
+    template <typename t>
+    friend constexpr auto operator==(derived_type const lhs, t const rhs) noexcept
+        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+                            bool>
+    {
+        return (static_cast<alphabet_type>(lhs) == rhs);
+    }
+
+    //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
+    template <typename t>
+    friend constexpr auto operator==(t const lhs, derived_type const rhs) noexcept
+        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+                            bool>
+    {
+        return (rhs == lhs);
+    }
+
+    //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
+    template <typename t>
+    friend constexpr auto operator!=(derived_type const lhs, t const rhs) noexcept
+        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+                            bool>
+    {
+        return !(lhs == rhs);
+    }
+
+    //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
+    template <typename t>
+    friend constexpr auto operator!=(t const lhs, derived_type const rhs) noexcept
+        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+                            bool>
+    {
+        return (rhs != lhs);
     }
     //!\}
 };
