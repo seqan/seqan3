@@ -32,6 +32,7 @@
 #include <range/v3/algorithm/move_backward.hpp>
 #include <range/v3/algorithm/move.hpp>
 #include <range/v3/algorithm/sort.hpp>
+#include <range/v3/algorithm/transform.hpp>
 
 #include <seqan3/core/platform.hpp>
 
@@ -92,6 +93,11 @@ using SEQAN3_DOXYGEN_ONLY(move =) ::ranges::move;
 * \brief Alias for ranges::sort. Sorts a range.
 */
 using SEQAN3_DOXYGEN_ONLY(sort =) ::ranges::sort;
+
+/*!\typedef std::ranges::transform
+* \brief Alias for ranges::transform. Transforms a range.
+*/
+using SEQAN3_DOXYGEN_ONLY(transform =) ::ranges::transform;
 
 } // namespace std::ranges
 #endif  // __cpp_lib_ranges
