@@ -48,7 +48,7 @@ fm_index index{text};
 
 {
 //![load]
-fm_index<false> index; // we need to tell the index that we work on a text collection or not before loading
+fm_index<text_layout::single> index; // we need to tell the index that we work on a single text before loading
 {
     std::ifstream is{"index.file", std::ios::binary};
     cereal::BinaryInputArchive iarchive{is};

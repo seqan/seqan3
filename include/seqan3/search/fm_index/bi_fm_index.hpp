@@ -24,13 +24,22 @@
 namespace seqan3
 {
 
+//!\cond
+SEQAN3_DEPRECATED_310
+void bi_fm_index_deprecation(bool);
+
+template <typename t>
+void bi_fm_index_deprecation(t);
+//!\endcond
+
 /*!\addtogroup submodule_fm_index
  * \{
  */
 
 /*!\brief The SeqAn Bidirectional FM Index
  * \implements seqan3::BiFmIndex
- * \tparam is_collection    Indicates whether this index works on a text collection (`true`) or a single text (`false`).
+ * \tparam is_collection    Indicates whether this index works on a text collection or a single text.
+ *                          See seqan3::text_layout.
  * \tparam sdsl_index_type_ The type of the underlying SDSL index, must model seqan3::SdslIndex.
  * \details
  *
@@ -55,8 +64,10 @@ namespace seqan3
  *
  * \attention When building an index for a **text collection** over any alphabet, the symbols with rank 254 and 255
  *            are reserved and may not be used in the text.
+ *
+ * \deprecated Use seqan3::text_layout to indicate single texts and text collections. The use of bool is deprecated.
  */
-template <bool is_collection = false, detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
+template <auto is_collection = text_layout::single, detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
 class bi_fm_index
 {
 protected:
@@ -83,10 +94,10 @@ protected:
     using sdsl_sigma_type = typename sdsl_index_type::alphabet_type::sigma_type;
 
     //!\brief The type of the underlying FM index for the original text.
-    using fm_index_type = fm_index<is_collection_, sdsl_index_type>;
+    using fm_index_type = fm_index<text_layout{is_collection_}, sdsl_index_type>;
 
     //!\brief The type of the underlying FM index for the reversed text.\if DEV \todo Change sampling behaviour. \endif
-    using rev_fm_index_type = fm_index<is_collection_, sdsl_index_type>;
+    using rev_fm_index_type = fm_index<text_layout{is_collection_}, sdsl_index_type>;
     //!\}
 
     //!\brief Underlying FM index for the original text.
@@ -94,6 +105,10 @@ protected:
 
     //!\brief Underlying FM index for the reversed text.
     rev_fm_index_type rev_fm;
+
+    //!\cond
+    using unused_t [[maybe_unused]] = decltype(bi_fm_index_deprecation(is_collection));
+    //!\endcond
 
 public:
     /*!\name Text types
@@ -107,7 +122,7 @@ public:
      * \{
      */
     //!\brief The type of the bidirectional cursor.
-    using cursor_type = bi_fm_index_cursor<bi_fm_index<is_collection_, sdsl_index_type>>;
+    using cursor_type = bi_fm_index_cursor<bi_fm_index<is_collection, sdsl_index_type>>;
     //!\brief The type of the unidirectional cursor on the original text.
     using fwd_cursor_type = fm_index_cursor<fm_index_type>;
     //!\brief The type of the unidirectional cursor on the reversed text.
@@ -163,7 +178,7 @@ public:
      */
     template <std::ranges::Range text_t>
         //!\cond
-        requires !is_collection_
+    requires !is_collection_
         //!\endcond
     void construct(text_t && text)
     {
@@ -346,7 +361,7 @@ public:
  */
 //! \brief Deduces the dimensions of the text.
 template <std::ranges::Range text_t>
-bi_fm_index(text_t &&) -> bi_fm_index<dimension_v<text_t> != 1>;
+bi_fm_index(text_t &&) -> bi_fm_index<text_layout{dimension_v<text_t> != 1}>;
 //!\}
 
 //!\}

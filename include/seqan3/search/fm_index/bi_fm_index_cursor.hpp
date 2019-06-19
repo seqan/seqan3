@@ -68,9 +68,11 @@ public:
      * \{
      */
     //!\brief Type for the unidirectional cursor on the original text.
-    using fwd_cursor = fm_index_cursor<fm_index<index_type::is_collection_, typename index_type::sdsl_index_type>>;
+    using fwd_cursor = fm_index_cursor<fm_index<text_layout{index_type::is_collection_},
+                                                typename index_type::sdsl_index_type>>;
     //!\brief Type for the unidirectional cursor on the reversed text.
-    using rev_cursor = fm_index_cursor<fm_index<index_type::is_collection_, typename index_type::sdsl_index_type>>;
+    using rev_cursor = fm_index_cursor<fm_index<text_layout{index_type::is_collection_},
+                                                typename index_type::sdsl_index_type>>;
     //!\}
 
 protected:
