@@ -423,8 +423,6 @@ public:
      */
     iterator insert_gap(iterator const it, size_type const count = 1)
     {
-        assert(ungapped_view.size());
-
         if (!count) // [[unlikely]]
             return it;
 
@@ -476,8 +474,6 @@ public:
     */
     iterator erase_gap(iterator const it)
     {
-        assert(ungapped_view.size());
-
         // check if [it, it+gap_len[ covers [first, last[
         if ((*it) != gap{}) // [[unlikely]]
             throw gap_erase_failure("The range to be erased does not correspond to a consecutive gap.");
@@ -501,8 +497,6 @@ public:
      */
     iterator erase_gap(iterator const first, iterator const last)
     {
-        assert(ungapped_view.size());
-
         size_type const pos1 = std::distance(begin(), first);
         size_type const pos2 = std::distance(begin(), last);
         set_iterator_type it = anchors.upper_bound(anchor_gap_t{pos1, bound_dummy}); // first element greater than pos1
@@ -545,7 +539,7 @@ public:
      */
     template <typename unaligned_seq_t> // generic template to use forwarding reference
     //!\cond
-        requires std::Constructible<gap_decorator, unaligned_seq_t>
+        requires std::Assignable<gap_decorator &, unaligned_seq_t>
     //!\endcond
     friend void assign_unaligned(gap_decorator & dec, unaligned_seq_t && unaligned)
     {

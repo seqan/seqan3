@@ -25,7 +25,7 @@ using namespace seqan3;
 
 using decorator_t = gap_decorator<std::vector<dna4> const &>;
 
-const std::vector<dna4> dummy_obj{}; // dummy lvalue for type declaration of views
+std::vector<dna4> const dummy_obj{}; // dummy lvalue for type declaration of views
 using decorator_t2 = gap_decorator<
                          decltype(std::ranges::subrange<decltype(dummy_obj.begin()),
                                                  decltype(dummy_obj.begin())>{dummy_obj.begin(), dummy_obj.end()})>;
