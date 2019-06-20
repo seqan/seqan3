@@ -14,9 +14,6 @@
 
 #include <type_traits>
 
-#include <meta/meta.hpp>
-
-#include <seqan3/core/platform.hpp>
 #include <seqan3/core/type_traits/concept.hpp>
 #include <seqan3/std/type_traits>
 
