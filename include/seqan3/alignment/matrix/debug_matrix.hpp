@@ -174,8 +174,10 @@ public:
 
         row_index_type const _row{!_transpose ? row : col};
         column_index_type const _col{!_transpose ? col : row};
+        row_index_type const _mask_row{_transpose == _transpose_mask ? row : col};
+        column_index_type const _mask_col{_transpose == _transpose_mask ? col : row};
 
-        if (!_masking_matrix.has_value() || _masking_matrix.value().at({_row, _col}))
+        if (!_masking_matrix.has_value() || _masking_matrix.value().at({_mask_row, _mask_col}))
         {
             entry_t const & entry = _matrix.at({_row, _col});
 
@@ -209,6 +211,9 @@ public:
      */
     debug_matrix & mask_matrix(row_wise_matrix<bool> masking_matrix) noexcept
     {
+        assert(masking_matrix.rows() == rows());
+        assert(masking_matrix.cols() == cols());
+        _transpose_mask = _transpose;
         _masking_matrix = std::move(masking_matrix);
         return *this;
     }
@@ -231,10 +236,18 @@ public:
      */
     debug_matrix & sub_matrix(size_t const new_rows, size_t const new_cols) noexcept
     {
-        assert(new_rows <= _matrix.rows());
-        assert(new_cols <= _matrix.cols());
-        _rows = new_rows;
-        _cols = new_cols;
+        assert(new_rows <= rows());
+        assert(new_cols <= cols());
+        if (!_transpose)
+        {
+            _rows = new_rows;
+            _cols = new_cols;
+        }
+        else
+        {
+            _rows = new_cols;
+            _cols = new_rows;
+        }
         return *this;
     }
 
@@ -440,6 +453,8 @@ protected:
     std::optional<row_wise_matrix<bool>> _masking_matrix{};
     //!\brief Whether the current matrix should be transposed.
     bool _transpose{};
+    //!\brief Whether the masking matrix should be transposed.
+    bool _transpose_mask{};
 };
 
 /*!\name Type deduction guides
