@@ -21,7 +21,7 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/view/slice.hpp>
 
 namespace seqan3::detail
 {
