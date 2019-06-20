@@ -86,6 +86,14 @@ class edit_distance_unbanded_max_errors_policy :
         max_errors = get<align_cfg::max_error>(self->config).value;
         assert(max_errors >= score_type{0});
 
+        if (std::ranges::empty(self->query)) // [[unlikely]]
+        {
+            last_block = 0u;
+            self->score_mask = 0u;
+            last_score_mask = self->score_mask;
+            return;
+        }
+
         last_block = block_count - 1u;
         last_score_mask = self->score_mask;
 
@@ -115,7 +123,7 @@ class edit_distance_unbanded_max_errors_policy :
 
         if constexpr (edit_traits::is_global)
         {
-            if (last_block == 0u)  // [[unlikely]]
+            if (last_block == 0u) // [[unlikely]]
                 return false;
         }
 
@@ -374,29 +382,14 @@ class edit_distance_unbanded_semi_global_policy :
         _best_score_col = self->database_it_end;
     }
 
-    //!\copydoc edit_distance_unbanded_global_policy::is_valid
-    bool is_valid() const noexcept
-    {
-        [[maybe_unused]] derived_t const * self = static_cast<derived_t const *>(this);
-        // This condition is obvious, because _best_score_col will only be set to a new position if the last active cell
-        // is within the last row AND score <= max_errors. And _best_score_col can't reach database_it_end again.
-        if constexpr(edit_traits::use_max_errors)
-            return _best_score_col != self->database_it_end;
-
-        // When not using max_errors there is always a valid alignment, because the last row will always be updated and
-        // with it the score.
-        return true;
-    }
-
     //!\copydoc edit_distance_unbanded_global_policy::update_best_score
     void update_best_score() noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        // we have to make sure that update_best_score is only called after a score update within the
-        // last row.
+        // we have to make sure that update_best_score is only called after a score update within the last row.
         if constexpr(edit_traits::use_max_errors)
         {
-            assert(self->is_last_active_cell_within_last_row());
+            assert(std::ranges::empty(self->query) || self->is_last_active_cell_within_last_row());
         }
 
         _best_score_col = (self->_score <= _best_score) ? self->database_it : _best_score_col;
@@ -407,7 +400,9 @@ class edit_distance_unbanded_semi_global_policy :
     size_t back_coordinate_first() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        return std::ranges::distance(std::ranges::begin(self->database), _best_score_col) + 1u;
+        // offset == 0u is a special case if database sequence is empty, because in this case the best column is zero.
+        size_t offset = std::ranges::empty(self->database) ? 0u : 1u;
+        return std::ranges::distance(std::ranges::begin(self->database), _best_score_col) + offset;
     }
     //!\}
 };
@@ -956,6 +951,30 @@ private:
     //!\brief Pattern is larger than one machine word. Use overflow aware computation.
     inline bool large_patterns();
 
+    //!\brief Special case if query sequence is empty.
+    inline void compute_empty_query_sequence()
+    {
+        assert(std::ranges::empty(query));
+
+        bool abort_computation = false;
+
+        for (; database_it != database_it_end; ++database_it)
+        {
+            if constexpr(is_global)
+                ++_score;
+            else // is_semi_global
+                this->update_best_score();
+
+            // call on_hit
+            if constexpr(use_max_errors)
+                abort_computation = on_hit();
+
+            this->add_state();
+            if (abort_computation)
+                break;
+        }
+    }
+
     //!\brief Compute the alignment.
     void compute()
     {
@@ -979,7 +998,10 @@ private:
 
         // distinguish between the version for needles not longer than
         // one machine word and the version for longer needles
-        if (vp.size() <= 1u)
+        // A special cases is if the second sequence is empty (vp.size() == 0u).
+        if (vp.size() == 0u) // [[unlikely]]
+            compute_empty_query_sequence();
+        else if (vp.size() == 1u)
             small_patterns();
         else
             large_patterns();
