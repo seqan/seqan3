@@ -988,7 +988,9 @@ public:
               typename align_type,
               typename qual_type,
               typename mate_type,
-              typename tag_dict_type>
+              typename tag_dict_type,
+              typename e_value_type,
+              typename bit_score_type>
     void write(stream_type                            &  stream,
                alignment_file_output_options const    &  options,
                header_type                            && header,
@@ -1004,8 +1006,8 @@ public:
                uint8_t                                   mapq,
                mate_type                              && mate,
                tag_dict_type                          && tag_dict,
-               double                                    SEQAN3_DOXYGEN_ONLY(e_value),
-               double                                    SEQAN3_DOXYGEN_ONLY(bit_score))
+               e_value_type                           && SEQAN3_DOXYGEN_ONLY(e_value),
+               bit_score_type                         && SEQAN3_DOXYGEN_ONLY(bit_score))
     {
         /* Note the following general things:
          *
@@ -1032,11 +1034,6 @@ public:
                       Alphabet<reference_t<id_type>>),
                       "The id object must be a std::ranges::ForwardRange over "
                       "letters that model seqan3::Alphabet.");
-
-        static_assert((std::ranges::ForwardRange<ref_seq_type>    &&
-                      Alphabet<reference_t<ref_seq_type>>),
-                      "The ref_seq object must be a std::ranges::ForwardRange "
-                      "over letters that model seqan3::Alphabet.");
 
         if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
         {
