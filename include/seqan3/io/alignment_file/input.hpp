@@ -78,11 +78,8 @@ namespace seqan3
  * \brief Type template of the seqan3::field::SEQ, a container template over `sequence_alphabet`;
  * must model seqan3::SequenceContainer.
  */
-/*!\typedef using id_alphabet
- * \brief Alphabet of the characters for the seqan3::field::ID; must model seqan3::Alphabet.
- */
 /*!\typedef using id_container
- * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
+ * \brief Type template of the seqan3::field::ID, a container template over `char`;
  * must model seqan3::SequenceContainer.
  */
 /*!\typedef using quality_alphabet
@@ -122,8 +119,7 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
     requires SequenceContainer<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
     // field::ID
-    requires WritableAlphabet<typename t::id_alphabet>;
-    requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
+    requires SequenceContainer<typename t::template id_container<char>>;
 
     // field::QUAL
     requires WritableQualityAlphabet<typename t::quality_alphabet>;
@@ -199,9 +195,6 @@ struct alignment_file_input_default_traits
     //!\brief The container for a sequence is std::vector.
     template <typename _sequence_alphabet>
     using sequence_container                    = std::vector<_sequence_alphabet>;
-
-    //!\brief The alphabet for an identifier string is char.
-    using id_alphabet                           = char;
 
     //!\brief The string type for an identifier is std::basic_string.
     template <typename _id_alphabet>
@@ -417,8 +410,7 @@ public:
     using sequence_type            = typename traits_type::template sequence_container<
                                          typename traits_type::sequence_alphabet>;
     //!\brief The type of field::ID (default std::string by default).
-    using id_type                  = typename traits_type::template id_container<
-                                         typename traits_type::id_alphabet>;
+    using id_type                  = typename traits_type::template id_container<char>;
     //!\brief The type of field::OFFSET is fixed to int32_t.
     using offset_type              = int32_t;
     /*!\brief The type of field::REF_SEQ (default depends on construction).
