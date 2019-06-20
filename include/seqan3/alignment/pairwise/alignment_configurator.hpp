@@ -243,7 +243,7 @@ public:
      * During this process some runtime configurations are converted to static configurations if required. The return
      * type is a std::function which is generated in the following way:
      *
-     * \snippet snippet/alignment/pairwise/alignment_configurator.cpp result
+     * \include snippet/alignment/pairwise/alignment_configurator.cpp
      *
      * The arguments to the function object are two ranges, which always need to be passed as lvalue references.
      * Note that even if they are not passed as const lvalue reference (which is not possible, since not all views are
