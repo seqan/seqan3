@@ -70,14 +70,7 @@ enum class aminoacid_similarity_matrix
  *
  * ### Example
  *
- * Score two letters:
- * \snippet test/snippet/alignment/scoring/aminoacid_scoring_scheme.cpp two letters
- *
- * You can "edit" a given matrix directly:
- * \snippet test/snippet/alignment/scoring/aminoacid_scoring_scheme.cpp edit matrix
- *
- * Score two sequences:
- * \snippet test/snippet/alignment/scoring/aminoacid_scoring_scheme.cpp score sequences
+ * \include test/snippet/alignment/scoring/aminoacid_scoring_scheme.cpp
  */
 template <Arithmetic score_type = int8_t>
 class aminoacid_scoring_scheme : public scoring_scheme_base<aminoacid_scoring_scheme<score_type>, aa27, score_type>
