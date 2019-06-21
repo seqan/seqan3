@@ -1,6 +1,6 @@
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 
 int main()
 {
@@ -14,5 +14,5 @@ int main()
     seqan3::dna5 d2 = seqan3::assign_rank_to(2, seqan3::dna5{});
 
     // too-large ranks are undefined behaviour:
-//    seqan3::dna5 d3 = seqan3::assign_rank_to(50, seqan3::dna5{});
+    // seqan3::dna5 d3 = seqan3::assign_rank_to(50, seqan3::dna5{});
 }

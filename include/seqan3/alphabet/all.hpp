@@ -71,7 +71,7 @@
  *
  * This leads to ambiguity when assigning and retrieving values:
  *
- * \snippet test/snippet/alphabet/all.cpp ambiguity
+ * \include test/snippet/alphabet/all_ambiguous.cpp
  *
  * To solve this problem, alphabets in SeqAn define two interfaces:
  *
@@ -89,21 +89,23 @@
  *
  * To prevent the aforementioned ambiguity, you can neither assign from rank or char representation via `operator=`,
  * nor can you cast the alphabet to either of it's representation forms, **you need to explicitly use the
- * interfaces**:
- * \snippet test/snippet/alphabet/all.cpp nonambiguous
+ * interfaces**.
  *
  * For efficiency, the representation saved internally is normally the rank representation, and the character
  * representation
  * is generated via conversion tables. This is, however, not required as long as both interfaces are provided
  * and all functions operate in constant time.
  *
- * The same applies for printing characters although seqan3::debug_stream provides some convenience:
- * \snippet test/snippet/alphabet/all.cpp print
+ * The same applies for printing characters although seqan3::debug_stream provides some convenience.
+ *
+ * Here is an example of explicit assignment of a rank and char, and how it can be printed via std::cout and
+ * seqan3::debug_stream:
+ * \include test/snippet/alphabet/all_nonambiguous.cpp
  *
  * To reduce the burden of calling `assign_char` often, most alphabets in SeqAn3 provide custom literals for
  * the alphabet and sequences over the alphabet:
  *
- * \snippet test/snippet/alphabet/all.cpp literal
+ * \include test/snippet/alphabet/all_literal.cpp
  *
  * Note, however, that literals **are not** required by the concept.
  *
