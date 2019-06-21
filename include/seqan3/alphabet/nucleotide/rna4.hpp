@@ -41,7 +41,7 @@ namespace seqan3
  * Instead initialise/assign from the character literal or use the
  * function seqan3::rna4::assign_char().
  *
- *\snippet test/snippet/alphabet/nucleotide/rna4.cpp code
+ *\include test/snippet/alphabet/nucleotide/rna4.cpp
  */
 class rna4 : public nucleotide_base<rna4, 4>
 {
@@ -128,7 +128,7 @@ constexpr rna4 operator""_rna4(char const c) noexcept
  *
  * You can use this string literal to easily assign to rna4_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/rna4.cpp operator""_rna4
+ * \include test/snippet/alphabet/nucleotide/rna4_literal.cpp
  *
  */
 inline rna4_vector operator""_rna4(char const * s, std::size_t n)

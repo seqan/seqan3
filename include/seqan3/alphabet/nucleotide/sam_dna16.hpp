@@ -155,7 +155,7 @@ constexpr sam_dna16 operator""_sam_dna16(char const c) noexcept
  *
  * You can use this string literal to easily assign to seqan3::sam_dna16_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/sam_dna16.cpp operator""_sam_dna16
+ * \include test/snippet/alphabet/nucleotide/sam_dna16_literal.cpp
  */
 inline sam_dna16_vector operator""_sam_dna16(char const * s, size_t n)
 {

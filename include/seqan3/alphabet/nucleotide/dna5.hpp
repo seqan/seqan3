@@ -43,7 +43,7 @@ class rna5;
  * Instead initialise/assign from the character literal or use the
  * function seqan3::dna5::assign_char().
  *
- *\snippet test/snippet/alphabet/nucleotide/dna5.cpp code
+ *\include test/snippet/alphabet/nucleotide/dna5.cpp
  */
 class dna5 : public nucleotide_base<dna5, 5>
 {
@@ -154,7 +154,7 @@ constexpr dna5 operator""_dna5(char const c) noexcept
  *
  * You can use this string literal to easily assign to dna5_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/dna5.cpp operator""_dna5
+ * \include test/snippet/alphabet/nucleotide/dna5_literal.cpp
  *
  */
 inline dna5_vector operator""_dna5(char const * s, std::size_t n)
