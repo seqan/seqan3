@@ -30,7 +30,7 @@ namespace seqan3
  *
  * The alphabet always has the same value ('-').
  *
- * \snippet test/snippet/alphabet/gap/gap.cpp general
+ * \include test/snippet/alphabet/gap/gap.cpp
  */
 
 class gap : public alphabet_base<gap, 1, char>

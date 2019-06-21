@@ -36,7 +36,7 @@ namespace seqan3
  * masked alphabet. It allows one to specify which portions of a sequence should be masked,
  * without losing additional information by replacing the sequence directly.
  *
- * \snippet test/snippet/alphabet/mask/masked.cpp general
+ * \include test/snippet/alphabet/mask/masked.cpp
  */
  template <typename sequence_alphabet_t>
 //!\cond

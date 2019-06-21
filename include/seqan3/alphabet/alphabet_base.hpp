@@ -45,7 +45,7 @@ namespace seqan3
  * ### Example
  *
  * This creates an alphabet called `ab` which has size two and the two letters 'A' and 'B':
- * \snippet test/snippet/alphabet/detail/alphabet_base.cpp example
+ * \include test/snippet/alphabet/detail/alphabet_base.cpp
  *
  */
 template <typename derived_type, size_t size, typename char_t = char>
