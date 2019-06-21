@@ -1,6 +1,5 @@
-//! [example]
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/convert.hpp>
 
@@ -26,4 +25,3 @@ int main()
 
     return 0;
 }
-//! [example]

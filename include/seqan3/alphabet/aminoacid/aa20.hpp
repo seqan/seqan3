@@ -56,7 +56,7 @@ namespace seqan3
  * in the human genome: a comparison with sense codon usage.
  * BMC Genomics, 17, 366. http://doi.org/10.1186/s12864-016-2692-4
  *
- * \snippet test/snippet/alphabet/aminoacid/aa20.cpp construction
+ * \include test/snippet/alphabet/aminoacid/aa20_construction.cpp
  */
 class aa20 : public aminoacid_base<aa20, 20>
 {
@@ -186,7 +186,7 @@ namespace seqan3
  * \relates seqan3::aa20
  * \returns seqan3::aa20
  *
- * \snippet test/snippet/alphabet/aminoacid/aa20.cpp char_literal
+ * \include test/snippet/alphabet/aminoacid/aa20_char_literal.cpp
  *
  */
 constexpr aa20 operator""_aa20(char const c) noexcept
@@ -202,7 +202,7 @@ constexpr aa20 operator""_aa20(char const c) noexcept
  *
  * You can use this string literal to easily assign to aa20_vector:
  *
- * \snippet test/snippet/alphabet/aminoacid/aa20.cpp literal
+ * \include test/snippet/alphabet/aminoacid/aa20_literal.cpp
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3!
