@@ -70,6 +70,9 @@ public:
 
     //!\brief Allow implicit construction from dna/rna of the same size.
     constexpr rna5(dna5 const & r) noexcept
+#if SEQAN3_WORKAROUND_GCC_90897
+        requires true
+#endif
     {
         assign_rank(r.to_rank());
     }
