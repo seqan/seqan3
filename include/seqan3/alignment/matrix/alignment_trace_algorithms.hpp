@@ -136,12 +136,12 @@ inline alignment_t alignment_trace(database_t && database,
         {
             coordinate.col = std::max<size_t>(coordinate.col, 1) - 1;
             --end_aligned_db;
-            insert_gap(std::get<1>(aligned_seq), end_aligned_qy);
+            end_aligned_qy = insert_gap(std::get<1>(aligned_seq), end_aligned_qy);
         }
         else if ((dir & U) == U)
         {
             coordinate.row = std::max<size_t>(coordinate.row, 1) - 1;
-            insert_gap(std::get<0>(aligned_seq), end_aligned_db);
+            end_aligned_db = insert_gap(std::get<0>(aligned_seq), end_aligned_db);
             --end_aligned_qy;
         }
         else if ((dir & D) == D)
