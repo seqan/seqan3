@@ -11,10 +11,12 @@
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
 #include <seqan3/std/iterator>
 
 using namespace seqan3;
+using seqan3::detail::to_string;
 
 template <typename T>
 class aligned_sequence : public ::testing::Test
@@ -33,23 +35,34 @@ TYPED_TEST_P(aligned_sequence, fulfills_concept)
 TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
 {
     using unaligned_seq_type = remove_cvref_t<detail::unaligned_seq_t<TypeParam>>;
-    unaligned_seq_type unaligned{};
+    unaligned_seq_type unaligned_seq{};
 
     if constexpr (SequenceContainer<unaligned_seq_type>)
     {
-        unaligned.resize(seq.size());
-        std::copy(seq.begin(), seq.end(), begin(unaligned));
+        unaligned_seq.resize(seq.size());
+        std::copy(seq.begin(), seq.end(), begin(unaligned_seq));
     }
     else // type is view, happens for gap_decorator tests
-        unaligned = unaligned_seq_type{seq};
+        unaligned_seq = unaligned_seq_type{seq};
 
-    TypeParam aligned{};
+    TypeParam aligned_seq{};
 
-    assign_unaligned(aligned, unaligned);
+    assign_unaligned(aligned_seq, unaligned_seq);
 
-    EXPECT_EQ(aligned.size(), unaligned.size());
-    EXPECT_EQ(*aligned.begin(), *unaligned.begin());
-    EXPECT_EQ(*std::ranges::next(begin(aligned)), *(unaligned.begin() + 1));
+    EXPECT_EQ(aligned_seq.size(), unaligned_seq.size());
+    EXPECT_TRUE((ranges::equal(aligned_seq, unaligned_seq)));
+}
+
+TYPED_TEST_P(aligned_sequence, assign_empty_unaligned_sequence)
+{
+    using unaligned_seq_type = remove_cvref_t<detail::unaligned_seq_t<TypeParam>>;
+    unaligned_seq_type unaligned_seq{};
+    TypeParam aligned_seq{};
+
+    assign_unaligned(aligned_seq, unaligned_seq);
+
+    EXPECT_EQ(aligned_seq.size(), unaligned_seq.size());
+    EXPECT_EQ(aligned_seq.size(), 0u);
 }
 
 TYPED_TEST_P(aligned_sequence, insert_one_gap)
@@ -60,10 +73,17 @@ TYPED_TEST_P(aligned_sequence, insert_one_gap)
     EXPECT_EQ(aligned_seq.size(), 4u);
 
     auto it = insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1));
-
     EXPECT_EQ(*it, gap{});
     EXPECT_EQ(aligned_seq[1], gap{});
     EXPECT_EQ(aligned_seq.size(), 5u);
+    EXPECT_EQ(to_string(aligned_seq), "A-CTA");
+
+    it = insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1));
+    EXPECT_EQ(*it, gap{});
+    EXPECT_EQ(aligned_seq[1], gap{});
+    EXPECT_EQ(aligned_seq[2], gap{});
+    EXPECT_EQ(aligned_seq.size(), 6u);
+    EXPECT_EQ(to_string(aligned_seq), "A--CTA");
 }
 
 TYPED_TEST_P(aligned_sequence, insert_multiple_gaps)
@@ -73,7 +93,6 @@ TYPED_TEST_P(aligned_sequence, insert_multiple_gaps)
     EXPECT_EQ(aligned_seq.size(), 4u);
 
     auto it = insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1), 2);
-
     EXPECT_EQ(*it, gap{});
     EXPECT_EQ(*++it, gap{});
     EXPECT_EQ(aligned_seq[1], gap{});
@@ -82,24 +101,15 @@ TYPED_TEST_P(aligned_sequence, insert_multiple_gaps)
 
     // insert a gap within another gap
     insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 2), 4);
-
-    std::ostringstream o;
-    debug_stream_type my_stream{o};
-    my_stream << aligned_seq;
-    o.flush();
-    EXPECT_EQ(o.str(), "A------CTA");
+    EXPECT_EQ(to_string(aligned_seq), "A------CTA");
 
     // insert at begin
     insert_gap(aligned_seq, begin(aligned_seq), 2);
-    my_stream << aligned_seq;
-    o.flush();
-    EXPECT_EQ(o.str(), "A------CTA--A------CTA");
+    EXPECT_EQ(to_string(aligned_seq), "--A------CTA");
 
     // insert at end
     insert_gap(aligned_seq, end(aligned_seq), 2);
-    my_stream << aligned_seq;
-    o.flush();
-    EXPECT_EQ(o.str(), "A------CTA--A------CTA--A------CTA--");
+    EXPECT_EQ(to_string(aligned_seq), "--A------CTA--");
 }
 
 TYPED_TEST_P(aligned_sequence, insert_zero_gaps)
@@ -109,11 +119,10 @@ TYPED_TEST_P(aligned_sequence, insert_zero_gaps)
     EXPECT_EQ(aligned_seq.size(), 4u);
 
     auto it = insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1), 0);
-
     typename TypeParam::value_type val{'C'_dna4};
-    val = 'C'_dna4;
     EXPECT_EQ(*it, val);
     EXPECT_TRUE((ranges::equal(aligned_seq, seq)));
+    EXPECT_EQ(to_string(aligned_seq), "ACTA");
 }
 
 TYPED_TEST_P(aligned_sequence, erase_one_gap)
@@ -122,20 +131,22 @@ TYPED_TEST_P(aligned_sequence, erase_one_gap)
     TypeParam aligned_seq;
     TestFixture::initialise_typed_test_container(aligned_seq, seq);
     EXPECT_EQ(aligned_seq.size(), 4u);
+    EXPECT_EQ(to_string(aligned_seq), "ACTA");
+
     insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1));
     EXPECT_EQ(aligned_seq.size(), 5u);
-
-    auto it = erase_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1));
-    EXPECT_EQ(aligned_seq.size(), 4u);
+    EXPECT_EQ(to_string(aligned_seq), "A-CTA");
 
     typename TypeParam::value_type val{'C'_dna4};
-    val = 'C'_dna4;
+    auto it = erase_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1));
     EXPECT_EQ(*it, val);
+    EXPECT_EQ(aligned_seq.size(), 4u);
+    EXPECT_EQ(to_string(aligned_seq), "ACTA");
 
     // 2) Removing a non-gap
     EXPECT_THROW(erase_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 2)), gap_erase_failure);
-
     EXPECT_EQ(aligned_seq.size(), 4u); // no change
+    EXPECT_EQ(to_string(aligned_seq), "ACTA");
 }
 
 TYPED_TEST_P(aligned_sequence, erase_multiple_gaps)
@@ -145,16 +156,18 @@ TYPED_TEST_P(aligned_sequence, erase_multiple_gaps)
     // 1) Removing a gap of length > 1
     TestFixture::initialise_typed_test_container(aligned_seq, seq);
     EXPECT_EQ(aligned_seq.size(), 4u);
+    EXPECT_EQ(to_string(aligned_seq), "ACTA");
+
     insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1), 2);
     EXPECT_EQ(aligned_seq.size(), 6u);
+    EXPECT_EQ(to_string(aligned_seq), "A--CTA");
 
+    typename TypeParam::value_type val{'C'_dna4};
     auto it = erase_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1),
                         std::ranges::next(begin(aligned_seq), 3));
-
     EXPECT_EQ(aligned_seq.size(), 4u);
-    typename TypeParam::value_type val{'C'_dna4};
-    val = 'C'_dna4;
     EXPECT_EQ(*it, val);
+    EXPECT_EQ(to_string(aligned_seq), "ACTA");
 
     // 2) Removing a non-gap
     TestFixture::initialise_typed_test_container(aligned_seq, seq); // reset
@@ -163,38 +176,68 @@ TYPED_TEST_P(aligned_sequence, erase_multiple_gaps)
                            std::ranges::next(begin(aligned_seq), 3)),
                  gap_erase_failure);
     EXPECT_EQ(aligned_seq.size(), seq.size()); // no change
+    EXPECT_EQ(to_string(aligned_seq), "ACTA");
 
     // 3) Remove a gap of length 1 within a gap of length 5
     TestFixture::initialise_typed_test_container(aligned_seq, seq);  // reset
     insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1), 5);
     EXPECT_EQ(aligned_seq.size(), seq.size() + 5);
+    EXPECT_EQ(to_string(aligned_seq), "A-----CTA");
 
     it = erase_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 3)); // erase one in the middle of 5
-
     EXPECT_EQ(aligned_seq.size(), seq.size() + 4);
     EXPECT_EQ(aligned_seq[5], val);
     EXPECT_EQ(*it, gap{});
+    EXPECT_EQ(to_string(aligned_seq), "A----CTA");
 
     // 4) Remove gaps two times
     TestFixture::initialise_typed_test_container(aligned_seq, seq);  // reset
     insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 3), 4);
     insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1), 5);
     EXPECT_EQ(aligned_seq.size(), seq.size() + 9);
+    EXPECT_EQ(to_string(aligned_seq), "A-----CT----A");
 
     erase_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 2), std::ranges::next(begin(aligned_seq), 4));
     erase_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 6), std::ranges::next(begin(aligned_seq), 10));
-
-    std::ostringstream o;
-    debug_stream_type my_stream{o};
-    my_stream << aligned_seq;
-    o.flush();
-    EXPECT_EQ(o.str(), "A---CTA");
+    EXPECT_EQ(to_string(aligned_seq), "A---CTA");
 
     // 5) Removing too much from a gap
     EXPECT_THROW(erase_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 2),
                            std::ranges::next(begin(aligned_seq), 5)),
                  gap_erase_failure);
     EXPECT_EQ(aligned_seq.size(), 7u); // no change
+    EXPECT_EQ(to_string(aligned_seq), "A---CTA");
+}
+
+TYPED_TEST_P(aligned_sequence, insert_erase_on_empty_sequence)
+{
+    using unaligned_seq_type = remove_cvref_t<detail::unaligned_seq_t<TypeParam>>;
+    unaligned_seq_type unaligned{};
+    TypeParam aligned_seq{};
+
+    assign_unaligned(aligned_seq, unaligned);
+
+    auto it = insert_gap(aligned_seq, begin(aligned_seq));
+    EXPECT_EQ(*it, gap{});
+    EXPECT_EQ(aligned_seq.size(), 1u);
+    EXPECT_EQ(to_string(aligned_seq), "-");
+
+    it = insert_gap(aligned_seq, end(aligned_seq), 3);
+    EXPECT_EQ(*it, gap{});
+    EXPECT_EQ(aligned_seq.size(), 4u);
+    EXPECT_EQ(to_string(aligned_seq), "----");
+
+    it = insert_gap(aligned_seq, end(aligned_seq), 0);
+    EXPECT_EQ(aligned_seq.size(), 4u);
+    EXPECT_EQ(to_string(aligned_seq), "----");
+
+    it = erase_gap(aligned_seq, begin(aligned_seq));
+    EXPECT_EQ(aligned_seq.size(), 3u);
+    EXPECT_EQ(to_string(aligned_seq), "---");
+
+    it = erase_gap(aligned_seq, begin(aligned_seq), end(aligned_seq));
+    EXPECT_EQ(aligned_seq.size(), 0u);
+    EXPECT_EQ(to_string(aligned_seq), "");
 }
 
 TYPED_TEST_P(aligned_sequence, cigar_string)
@@ -281,6 +324,8 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
 REGISTER_TYPED_TEST_CASE_P(aligned_sequence,
                            fulfills_concept,
                            assign_unaligned_sequence,
+                           assign_empty_unaligned_sequence,
+                           insert_erase_on_empty_sequence,
                            insert_one_gap,
                            insert_multiple_gaps,
                            insert_zero_gaps,
