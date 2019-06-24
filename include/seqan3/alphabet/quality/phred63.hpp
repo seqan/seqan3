@@ -36,7 +36,7 @@ namespace seqan3
  * [0..62] mapped to the ASCII range ['!' .. '~']. It represents the Sanger and
  * Illumina 1.8+ standard beyond the typical range of raw reads (0 to 41).
  *
- * \snippet test/snippet/alphabet/quality/phred63.cpp general
+ * \include test/snippet/alphabet/quality/phred63.cpp
  */
 class phred63 : public quality_base<phred63, 63>
 {

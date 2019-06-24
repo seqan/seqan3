@@ -51,7 +51,7 @@ namespace seqan3
  * alphabet letters in regular c++ tuple notation, i.e. `get<0>(t)` and objects
  * can be brace-initialised with the individual members.
  *
- * \snippet test/snippet/alphabet/quality/qualified.cpp general
+ * \include test/snippet/alphabet/quality/qualified.cpp
  *
  * This seqan3::alphabet_tuple_base itself fulfils both seqan3::WritableAlphabet and seqan3::WritableQualityAlphabet.
  */
