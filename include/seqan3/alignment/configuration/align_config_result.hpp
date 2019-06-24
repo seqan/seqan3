@@ -85,7 +85,7 @@ namespace seqan3::align_cfg
  *
  * ### Example
  *
- * \snippet test/snippet/alignment/configuration/align_cfg_result_example.cpp example
+ * \include test/snippet/alignment/configuration/align_cfg_result_example.cpp
  */
 template <typename with_type = detail::with_score_type>
 //!\cond

@@ -35,7 +35,7 @@ namespace seqan3::align_cfg
  *
  * ### Example
  *
- * \snippet test/snippet/alignment/configuration/align_cfg_band_example.cpp example
+ * \include test/snippet/alignment/configuration/align_cfg_band_example.cpp
  */
 template <typename band_t>
 //!\cond

@@ -7,18 +7,20 @@
 
 int main()
 {
-    using namespace seqan3;
+    // using namespace seqan3;
     using seqan3::detail::debug_matrix;
+    using seqan3::operator""_dna4;
+    using seqan3::operator|;
 
-    std::vector<dna4> database = "AACCGGTT"_dna4;
-    std::vector<dna4> query = "ACGT"_dna4;
+    std::vector<seqan3::dna4> database = "AACCGGTT"_dna4;
+    std::vector<seqan3::dna4> query = "ACGT"_dna4;
 
-    auto N = detail::trace_directions::none;
-    auto D = detail::trace_directions::diagonal;
-    auto U = detail::trace_directions::up;
-    auto L = detail::trace_directions::left;
+    auto N = seqan3::detail::trace_directions::none;
+    auto D = seqan3::detail::trace_directions::diagonal;
+    auto U = seqan3::detail::trace_directions::up;
+    auto L = seqan3::detail::trace_directions::left;
 
-    detail::row_wise_matrix trace_matrix
+    seqan3::detail::row_wise_matrix trace_matrix
     {
         std::vector
         {
@@ -32,16 +34,16 @@ int main()
         9u
     };
 
-    debug_stream << "database:\t" << database << std::endl;
-    debug_stream << "query:\t\t" << query << std::endl;
-    debug_stream << std::endl;
+    seqan3::debug_stream << "database:\t" << database << std::endl;
+    seqan3::debug_stream << "query:\t\t" << query << std::endl;
+    seqan3::debug_stream << std::endl;
 
-    debug_stream << "trace_matrix: " << trace_matrix.cols() << " columns and "
+    seqan3::debug_stream << "trace_matrix: " << trace_matrix.cols() << " columns and "
               << trace_matrix.rows() << " rows" << std::endl;
 
     // Prints out the matrix in a convenient way
-    debug_stream << trace_matrix << std::endl; // without sequences
-    debug_stream << debug_matrix{trace_matrix, database, query} << std::endl; // with sequences
-    debug_stream << fmtflags2::utf8 << debug_matrix{trace_matrix, database, query}; // as utf8
+    seqan3::debug_stream << trace_matrix << std::endl; // without sequences
+    seqan3::debug_stream << debug_matrix{trace_matrix, database, query} << std::endl; // with sequences
+    seqan3::debug_stream << seqan3::fmtflags2::utf8 << debug_matrix{trace_matrix, database, query}; // as utf8
     return 0;
 }
