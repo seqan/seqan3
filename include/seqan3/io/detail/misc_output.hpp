@@ -24,6 +24,7 @@
     #include <seqan3/contrib/stream/bgzf_ostream.hpp>
     #include <seqan3/contrib/stream/gz_ostream.hpp>
 #endif
+#include <seqan3/std/filesystem>
 
 namespace seqan3::detail
 {
