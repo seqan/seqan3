@@ -27,7 +27,7 @@
  * of other algoirthms.
  *
  * If no configuration is provided upon invoking the seqan3::search algorithm, a default configuration is provided:
- * \snippet test/snippet/search/configuration_default.cpp default
+ * \include test/snippet/search/configuration_default.cpp
  *
  * ### Combining configuration elements
  *

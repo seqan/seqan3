@@ -2,15 +2,12 @@
 
 int main()
 {
-    using namespace seqan3;
-//![default]
-// No errors, all hits as text position
-configuration const default_cfg = search_cfg::max_error{search_cfg::total{0},
-                                                        search_cfg::substitution{0},
-                                                        search_cfg::insertion{0},
-                                                        search_cfg::deletion{0}}
-                                  | search_cfg::output{search_cfg::text_position}
-                                  | search_cfg::mode{search_cfg::all};
-//![default]
+    // No errors, all hits as text position
+    seqan3::configuration const default_cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{0},
+                                                                            seqan3::search_cfg::substitution{0},
+                                                                            seqan3::search_cfg::insertion{0},
+                                                                            seqan3::search_cfg::deletion{0}} |
+                                              seqan3::search_cfg::output{seqan3::search_cfg::text_position} | 
+                                              seqan3::search_cfg::mode{seqan3::search_cfg::all};
     return 0;
 }
