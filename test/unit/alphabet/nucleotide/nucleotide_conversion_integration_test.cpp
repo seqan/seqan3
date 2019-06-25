@@ -15,8 +15,7 @@
 using namespace seqan3;
 
 template <typename T>
-class nucleotide_conversion : public ::testing::Test
-{};
+using nucleotide_conversion = ::testing::Test;
 
 using nucleotide_types = type_list<dna4, dna5, dna15, rna4, rna5, rna15>; // needed for some tests
 using nucleotide_gtest_types = detail::transfer_template_args_onto_t<nucleotide_types, ::testing::Types>;

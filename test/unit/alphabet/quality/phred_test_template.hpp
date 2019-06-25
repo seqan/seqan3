@@ -12,10 +12,23 @@
 using namespace seqan3;
 
 template <typename T>
-class phred : public ::testing::Test
-{};
+using phred = ::testing::Test;
 
 TYPED_TEST_CASE_P(phred);
+
+// test provision of data type `phred_type` and phred converter.
+TYPED_TEST_P(phred, concept_check)
+{
+    EXPECT_TRUE(QualityAlphabet<TypeParam>);
+    EXPECT_TRUE(QualityAlphabet<TypeParam &>);
+    EXPECT_TRUE(QualityAlphabet<TypeParam const>);
+    EXPECT_TRUE(QualityAlphabet<TypeParam const &>);
+
+    EXPECT_TRUE(WritableQualityAlphabet<TypeParam>);
+    EXPECT_TRUE(WritableQualityAlphabet<TypeParam &>);
+    EXPECT_FALSE(WritableQualityAlphabet<TypeParam const>);
+    EXPECT_FALSE(WritableQualityAlphabet<TypeParam const &>);
+}
 
 // more elaborate test of assign_char and to_char, basic test is in alphabet_test.cpp
 TYPED_TEST_P(phred, conversion_char)
@@ -65,11 +78,4 @@ TYPED_TEST_P(phred, conversion_rank)
     EXPECT_EQ(v2.to_rank(),  23 - TypeParam::offset_phred);
 }
 
-// test provision of data type `phred_type` and phred converter.
-TYPED_TEST_P(phred, concept_check)
-{
-    EXPECT_TRUE(QualityAlphabet<TypeParam>);
-    EXPECT_TRUE(WritableQualityAlphabet<TypeParam>);
-}
-
-REGISTER_TYPED_TEST_CASE_P(phred, conversion_char, conversion_phred, conversion_rank, concept_check);
+REGISTER_TYPED_TEST_CASE_P(phred, concept_check, conversion_char, conversion_phred, conversion_rank);

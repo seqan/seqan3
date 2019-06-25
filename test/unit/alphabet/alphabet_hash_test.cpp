@@ -15,8 +15,7 @@
 using namespace seqan3;
 
 template <typename T>
-class alphabet_hashing : public ::testing::Test
-{};
+using alphabet_hashing = ::testing::Test;
 
 using test_types = ::testing::Types<dna4, qualified<dna4, phred42>, gapped<dna4>>;
 

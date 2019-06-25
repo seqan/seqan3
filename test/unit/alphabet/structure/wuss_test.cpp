@@ -67,10 +67,23 @@ TEST(wuss, to_char)
 TEST(wuss, concept_check)
 {
     EXPECT_TRUE(RnaStructureAlphabet<wuss51>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss51 &>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss51 const>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss51 const &>);
     EXPECT_NE(max_pseudoknot_depth<wuss51>, 0);
 
     EXPECT_TRUE(RnaStructureAlphabet<wuss<>>);  // same as wuss51
+    EXPECT_TRUE(RnaStructureAlphabet<wuss<> &>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss<> const>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss<> const &>);
+    EXPECT_NE(max_pseudoknot_depth<wuss<>>, 0);
+
     EXPECT_TRUE(RnaStructureAlphabet<wuss<67>>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss<67> &>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss<67> const>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss<67> const &>);
+    EXPECT_NE(max_pseudoknot_depth<wuss<67>>, 0);
+
 }
 
 TEST(wuss, literals)

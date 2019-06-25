@@ -16,6 +16,17 @@
 INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet, dot_bracket3);
 INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet_constexpr, dot_bracket3);
 
+// concepts
+TEST(dot_bracket3, concept_check)
+{
+    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3>);
+    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3 &>);
+    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3 const>);
+    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3 const &>);
+
+    EXPECT_NE(max_pseudoknot_depth<dot_bracket3>, 0);
+}
+
 // assign_char functions
 TEST(dot_bracket3, assign_char)
 {
@@ -45,13 +56,6 @@ TEST(dot_bracket3, to_char)
     EXPECT_EQ(to_char('.'_db3), '.');
     EXPECT_EQ(to_char('('_db3), '(');
     EXPECT_EQ(to_char(')'_db3), ')');
-}
-
-// concepts
-TEST(dot_bracket3, concept_check)
-{
-    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3>);
-    EXPECT_NE(max_pseudoknot_depth<dot_bracket3>, 0);
 }
 
 TEST(dot_bracket3, literals)

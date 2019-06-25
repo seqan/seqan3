@@ -16,7 +16,7 @@
 #include <string>
 #include <utility>
 
-#include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/structure/dssp9.hpp>
@@ -54,12 +54,12 @@ template <WritableAlphabet sequence_alphabet_t = aa27, WritableAlphabet structur
 //!\endcond
 class structured_aa :
     public alphabet_tuple_base<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
-                                 sequence_alphabet_t, structure_alphabet_t>
+                               sequence_alphabet_t, structure_alphabet_t>
 {
 private:
     //!\brief The base type.
     using base_type = alphabet_tuple_base<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
-                                            sequence_alphabet_t, structure_alphabet_t>;
+                                          sequence_alphabet_t, structure_alphabet_t>;
 public:
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;

@@ -25,8 +25,7 @@
 using namespace seqan3;
 
 template <typename T>
-class alphabet_constexpr : public ::testing::Test
-{};
+using alphabet_constexpr = ::testing::Test;
 
 TYPED_TEST_CASE_P(alphabet_constexpr);
 

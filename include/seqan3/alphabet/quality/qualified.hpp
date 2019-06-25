@@ -117,13 +117,6 @@ public:
         return *this;
     }
 
-    //!\brief Strict assign from a character. This modifies the internal sequence letter.
-    qualified & assign_char_strictly(char_type const c)
-    {
-        seqan3::assign_char_strictly_to(c, get<0>(*this));
-        return *this;
-    }
-
     //!\brief Assign from a phred value. This modifies the internal quality letter.
     constexpr qualified & assign_phred(phred_type const c) noexcept
     {

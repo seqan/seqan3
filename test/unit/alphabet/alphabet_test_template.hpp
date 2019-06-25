@@ -9,16 +9,48 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/exception.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/test/pretty_printing.hpp>
-#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
 template <typename T>
-class alphabet : public ::testing::Test
-{};
+using alphabet = ::testing::Test;
+
+constexpr size_t max_iterations = 65536u;
 
 TYPED_TEST_CASE_P(alphabet);
+
+TYPED_TEST_P(alphabet, concept_check)
+{
+    EXPECT_TRUE(Semialphabet<TypeParam>);
+    EXPECT_TRUE(Semialphabet<TypeParam &>);
+    EXPECT_TRUE(Semialphabet<TypeParam const>);
+    EXPECT_TRUE(Semialphabet<TypeParam const &>);
+
+    EXPECT_TRUE(WritableSemialphabet<TypeParam>);
+    EXPECT_TRUE(WritableSemialphabet<TypeParam &>);
+    EXPECT_FALSE(WritableSemialphabet<TypeParam const>);
+    EXPECT_FALSE(WritableSemialphabet<TypeParam const &>);
+
+    EXPECT_TRUE(Alphabet<TypeParam>);
+    EXPECT_TRUE(Alphabet<TypeParam &>);
+    EXPECT_TRUE(Alphabet<TypeParam const>);
+    EXPECT_TRUE(Alphabet<TypeParam const &>);
+
+    EXPECT_TRUE(WritableAlphabet<TypeParam>);
+    EXPECT_TRUE(WritableAlphabet<TypeParam &>);
+    EXPECT_FALSE(WritableAlphabet<TypeParam const>);
+    EXPECT_FALSE(WritableAlphabet<TypeParam const &>);
+}
+
+TYPED_TEST_P(alphabet, type_properties)
+{
+    // It is highly recommended that non-reference types that model this concept, also model:
+    EXPECT_TRUE((std::Regular<TypeParam>));
+    EXPECT_TRUE((seqan3::TriviallyCopyable<TypeParam>));
+    EXPECT_TRUE((seqan3::StandardLayout<TypeParam>));
+}
 
 TYPED_TEST_P(alphabet, alphabet_size_)
 {
@@ -31,13 +63,13 @@ TYPED_TEST_P(alphabet, default_value_constructor)
     [[maybe_unused]] TypeParam t2{};
 }
 
-TYPED_TEST_P(alphabet, global_assign_rank)
+TYPED_TEST_P(alphabet, global_assign_rank_to)
 {
     // this double checks the value initialisation
     EXPECT_EQ((assign_rank_to(0, TypeParam{})), TypeParam{});
 
     TypeParam t0;
-    for (uint64_t i = 0; i < alphabet_size<TypeParam>; ++i)
+    for (size_t i = 0u; i < alphabet_size<TypeParam> && i < max_iterations; ++i)
         assign_rank_to(i, t0);
 
 // TODO(h-2): once we have a proper assert macro that throws instead of SIGABRTs:
@@ -53,7 +85,7 @@ TYPED_TEST_P(alphabet, global_to_rank)
     EXPECT_EQ(to_rank(TypeParam{}), 0u);
 
     TypeParam t0;
-    for (uint64_t i = 0; i < alphabet_size<TypeParam>; ++i)
+    for (size_t i = 0; i < alphabet_size<TypeParam> && i < max_iterations; ++i)
         EXPECT_EQ((to_rank(assign_rank_to(i, t0))), i);
 
     EXPECT_TRUE((std::is_same_v<decltype(to_rank(t0)), alphabet_rank_t<TypeParam>>));
@@ -123,18 +155,21 @@ TYPED_TEST_P(alphabet, swap)
     EXPECT_EQ(t1, t3);
 }
 
-TYPED_TEST_P(alphabet, global_assign_char)
+TYPED_TEST_P(alphabet, global_assign_char_to)
 {
     using char_t = alphabet_char_t<TypeParam>;
-    char_t i = std::numeric_limits<char_t>::min();
-    char_t j = std::numeric_limits<char_t>::max();
+    if constexpr(std::Integral<char_t>)
+    {
+        char_t i = std::numeric_limits<char_t>::min();
+        char_t j = std::numeric_limits<char_t>::max();
 
-    TypeParam t0;
-    for (; i < j; ++i)
-        assign_char_to(i, t0);
+        TypeParam t0;
+        for (size_t k = 0; i < j && k < max_iterations; ++i, ++k)
+            assign_char_to(i, t0);
 
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char_to(0, t0)), TypeParam &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char_to(0, TypeParam{})), TypeParam>));
+        EXPECT_TRUE((std::is_same_v<decltype(assign_char_to(0, t0)), TypeParam &>));
+        EXPECT_TRUE((std::is_same_v<decltype(assign_char_to(0, TypeParam{})), TypeParam>));
+    }
 }
 
 TYPED_TEST_P(alphabet, global_char_is_valid_for) // only test negative example for most; more inside specialised tests
@@ -145,16 +180,21 @@ TYPED_TEST_P(alphabet, global_char_is_valid_for) // only test negative example f
     }
 }
 
-TYPED_TEST_P(alphabet, global_assign_char_strict)
+TYPED_TEST_P(alphabet, global_assign_char_strictly_to)
 {
-    for (alphabet_char_t<TypeParam> c :
-         std::view::iota(ptrdiff_t{std::numeric_limits<alphabet_char_t<TypeParam>>::min()},
-                            ptrdiff_t{std::numeric_limits<alphabet_char_t<TypeParam>>::max()} + 1))
+    using char_t = alphabet_char_t<TypeParam>;
+    if constexpr(std::Integral<char_t>)
     {
-        if (char_is_valid_for<TypeParam>(c))
-            EXPECT_NO_THROW(assign_char_strictly_to(c, TypeParam{}));
-        else
-            EXPECT_THROW(assign_char_strictly_to(c, TypeParam{}), invalid_char_assignment);
+        char_t i = std::numeric_limits<char_t>::min();
+        char_t j = std::numeric_limits<char_t>::max();
+
+        for (size_t k = 0; i < j && k < max_iterations; ++i, ++k)
+        {
+            if (char_is_valid_for<TypeParam>(i))
+                EXPECT_NO_THROW(assign_char_strictly_to(i, TypeParam{}));
+            else
+                EXPECT_THROW(assign_char_strictly_to(i, TypeParam{}), invalid_char_assignment);
+        }
     }
 }
 
@@ -194,33 +234,7 @@ TYPED_TEST_P(alphabet, comparison_operators)
     }
 }
 
-TYPED_TEST_P(alphabet, concept_check)
-{
-    EXPECT_TRUE(Semialphabet<TypeParam>);
-    EXPECT_TRUE(Semialphabet<TypeParam &>);
-
-    EXPECT_TRUE(WritableSemialphabet<TypeParam>);
-    EXPECT_TRUE(WritableSemialphabet<TypeParam &>);
-
-    EXPECT_TRUE(Semialphabet<TypeParam const>);
-    EXPECT_TRUE(Semialphabet<TypeParam const &>);
-
-    EXPECT_FALSE(WritableSemialphabet<TypeParam const>);
-    EXPECT_FALSE(WritableSemialphabet<TypeParam const &>);
-
-    EXPECT_TRUE(Alphabet<TypeParam>);
-    EXPECT_TRUE(Alphabet<TypeParam &>);
-
-    EXPECT_TRUE(WritableAlphabet<TypeParam>);
-    EXPECT_TRUE(WritableAlphabet<TypeParam &>);
-
-    EXPECT_TRUE(Alphabet<TypeParam const>);
-    EXPECT_TRUE(Alphabet<TypeParam const &>);
-
-    EXPECT_FALSE(WritableAlphabet<TypeParam const>);
-    EXPECT_FALSE(WritableAlphabet<TypeParam const &>);
-}
-
-REGISTER_TYPED_TEST_CASE_P(alphabet, alphabet_size_, default_value_constructor, global_assign_rank, global_to_rank,
-    copy_constructor, move_constructor, copy_assignment, move_assignment, swap, global_assign_char, global_to_char,
-    global_char_is_valid_for, global_assign_char_strict, comparison_operators, concept_check);
+REGISTER_TYPED_TEST_CASE_P(alphabet, concept_check, type_properties, alphabet_size_, default_value_constructor,
+    global_assign_rank_to, global_to_rank, copy_constructor, move_constructor, copy_assignment, move_assignment, swap,
+    global_assign_char_to, global_to_char, global_char_is_valid_for, global_assign_char_strictly_to,
+    comparison_operators);

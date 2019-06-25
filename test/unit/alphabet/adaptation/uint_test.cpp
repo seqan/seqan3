@@ -23,12 +23,18 @@ INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, alphabet, fast_uint_types);
 INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, alphabet_constexpr, fast_uint_types);
 
 template <typename T>
-class uint_adaptation : public ::testing::Test
-{};
+using uint_adaptation = ::testing::Test;
 
 using uint_types = ::testing::Types<uint8_t, uint16_t, uint32_t>;
 
 TYPED_TEST_CASE(uint_adaptation, uint_types);
+
+TYPED_TEST(uint_adaptation, type_properties)
+{
+    EXPECT_TRUE((std::is_trivially_copyable_v<TypeParam>));
+    EXPECT_TRUE((std::is_trivially_default_constructible_v<TypeParam>));
+    EXPECT_TRUE((std::is_trivial_v<TypeParam>));
+}
 
 TYPED_TEST(uint_adaptation, alphabet_rank_t)
 {
@@ -85,7 +91,7 @@ TYPED_TEST(uint_adaptation, assign_char)
     EXPECT_EQ((assign_char_to('C', l)), TypeParam{67});
 }
 
-TYPED_TEST(uint_adaptation, assign_char_strict)
+TYPED_TEST(uint_adaptation, assign_char_strictly_to)
 {
     TypeParam l{65};
     EXPECT_TRUE((std::is_same_v<decltype(assign_char_strictly_to('A', l             )), alphabet_rank_t<TypeParam> &>));

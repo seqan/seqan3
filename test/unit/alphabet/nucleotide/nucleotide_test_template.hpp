@@ -18,10 +18,17 @@
 using namespace seqan3;
 
 template <typename T>
-class nucleotide : public ::testing::Test
-{};
+using nucleotide = ::testing::Test;
 
 TYPED_TEST_CASE_P(nucleotide);
+
+TYPED_TEST_P(nucleotide, concept_check)
+{
+    EXPECT_TRUE(NucleotideAlphabet<TypeParam>);
+    EXPECT_TRUE(NucleotideAlphabet<TypeParam &>);
+    EXPECT_TRUE(NucleotideAlphabet<TypeParam const>);
+    EXPECT_TRUE(NucleotideAlphabet<TypeParam const &>);
+}
 
 TYPED_TEST_P(nucleotide, global_complement)
 {
@@ -40,10 +47,4 @@ TYPED_TEST_P(nucleotide, global_complement)
     }
 }
 
-TYPED_TEST_P(nucleotide, concept_check)
-{
-    EXPECT_TRUE(NucleotideAlphabet<TypeParam>);
-    EXPECT_TRUE(NucleotideAlphabet<TypeParam &>);
-}
-
-REGISTER_TYPED_TEST_CASE_P(nucleotide, global_complement, concept_check);
+REGISTER_TYPED_TEST_CASE_P(nucleotide, concept_check, global_complement);

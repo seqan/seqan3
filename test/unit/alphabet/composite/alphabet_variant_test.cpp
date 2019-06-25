@@ -25,6 +25,11 @@ using alphabet_variant_types = ::testing::Types<alphabet_variant<dna4, gap>,
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet, alphabet_variant_types);
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet_constexpr, alphabet_variant_types);
 
+template <typename T>
+using alphabet_variant_test = ::testing::Test;
+
+TYPED_TEST_CASE(alphabet_variant_test, alphabet_variant_types);
+
 TEST(alphabet_variant_test, initialise_from_component_alphabet)
 {
     dna5 l('A'_rna5);
@@ -232,11 +237,6 @@ TEST(alphabet_variant_test, compare_to_component_alphabet_subtype)
     EXPECT_EQ('G'_rna4, letter0);
     EXPECT_NE('A'_rna4, letter0);
     EXPECT_NE('A'_rna5, letter0);
-}
-
-TEST(alphabet_variant_test, fulfills_concepts)
-{
-    EXPECT_TRUE((Alphabet<alphabet_variant<dna5, gap>>));
 }
 
 TEST(alphabet_variant_test, rank_type)

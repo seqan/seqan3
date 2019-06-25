@@ -17,18 +17,24 @@
 using namespace seqan3;
 
 // char32_t and wchar_t, too slow
-using fast_char_types = ::testing::Types<char, char16_t/*, char32_t, wchar_t*/>;
+using fast_char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet, fast_char_types);
 INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet_constexpr, fast_char_types);
 
 template <typename T>
-class char_adaptation : public ::testing::Test
-{};
+using char_adaptation = ::testing::Test;
 
 using char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
 TYPED_TEST_CASE(char_adaptation, char_types);
+
+TYPED_TEST(char_adaptation, type_properties)
+{
+    EXPECT_TRUE((std::is_trivially_copyable_v<TypeParam>));
+    EXPECT_TRUE((std::is_trivially_default_constructible_v<TypeParam>));
+    EXPECT_TRUE((std::is_trivial_v<TypeParam>));
+}
 
 TYPED_TEST(char_adaptation, alphabet_char_t)
 {
@@ -45,7 +51,7 @@ TYPED_TEST(char_adaptation, to_char)
     EXPECT_EQ(to_char(TypeParam{'A'}), l);
 }
 
-TYPED_TEST(char_adaptation, assign_char)
+TYPED_TEST(char_adaptation, assign_char_to)
 {
     TypeParam l{'A'};
     EXPECT_TRUE((std::is_same_v<decltype(assign_char_to('A', l             )), alphabet_char_t<TypeParam> &>));
@@ -54,7 +60,7 @@ TYPED_TEST(char_adaptation, assign_char)
     EXPECT_EQ((assign_char_to('C', l             )), TypeParam{'C'});
 }
 
-TYPED_TEST(char_adaptation, assign_char_strict)
+TYPED_TEST(char_adaptation, assign_char_strictly_to)
 {
     TypeParam l{'A'};
     EXPECT_TRUE((std::is_same_v<decltype(assign_char_strictly_to('A', l             )), alphabet_char_t<TypeParam> &>));
@@ -80,7 +86,7 @@ TYPED_TEST(char_adaptation, to_rank)
     EXPECT_EQ(to_rank(TypeParam{65}), cmp);
 }
 
-TYPED_TEST(char_adaptation, assign_rank)
+TYPED_TEST(char_adaptation, assign_rank_to)
 {
     TypeParam l{'A'};
     EXPECT_TRUE((std::is_same_v<decltype(assign_rank_to(65, l)), alphabet_char_t<TypeParam> &>));

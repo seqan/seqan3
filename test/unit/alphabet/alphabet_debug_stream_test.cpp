@@ -16,8 +16,7 @@
 using namespace seqan3;
 
 template <typename T>
-class alphabet_debug_stream : public ::testing::Test
-{};
+using alphabet_debug_stream = ::testing::Test;
 
 using test_types = ::testing::Types<dna4, qualified<dna4, phred42>, gapped<dna4>>;
 

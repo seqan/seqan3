@@ -277,9 +277,11 @@ SEQAN3_CONCEPT QualityAlphabet = Alphabet<t> && requires(t qual)
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableQualityAlphabet = WritableAlphabet<t> && QualityAlphabet<t> && requires(t qual)
+SEQAN3_CONCEPT WritableQualityAlphabet = WritableAlphabet<t> &&
+                                         QualityAlphabet<t> &&
+                                         requires(t v, alphabet_phred_t<t> c)
 {
-    { seqan3::assign_phred_to(typename t::rank_type{}, qual) };
+    { seqan3::assign_phred_to(c, v) };
 };
 //!\endcond
 
