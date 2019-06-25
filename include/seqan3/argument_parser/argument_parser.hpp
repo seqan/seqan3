@@ -72,7 +72,7 @@ namespace seqan3
  * the value from the command line and enable every other mechanism you need
  * to call the seqan3::argument_parser::parse function in the end.
  *
- * \snippet test/snippet/argument_parser/argument_parser_1.cpp usage
+ * \include test/snippet/argument_parser/argument_parser_1.cpp
  *
  * Now you can call your application via the command line:
  *
@@ -320,7 +320,7 @@ public:
      *
      * \note Since the argument parser may throw, you should always wrap `parse()` into a try-catch block.
      *
-     * \snippet test/snippet/argument_parser/argument_parser_2.cpp usage
+     * \include test/snippet/argument_parser/argument_parser_2.cpp
      *
      * The code above gives the following output when calling `--help`:
      *
@@ -442,7 +442,7 @@ public:
      * You can access the members directly:
      * (see seqan3::argument_parser_meta_data for a list of the info members)
      *
-     * \snippet test/snippet/argument_parser/argument_parser_3.cpp usage
+     * \include test/snippet/argument_parser/argument_parser_3.cpp
      *
      * This will produce a nice help page when the user calls `-h` or `--help`:
      *

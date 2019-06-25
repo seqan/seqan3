@@ -102,7 +102,7 @@ SEQAN3_CONCEPT Validator = std::Copyable<remove_cvref_t<validator_type>> &&
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever a given value does not lie inside the given min/max range.
  *
- * \snippet test/snippet/argument_parser/validators_1.cpp usage
+ * \include test/snippet/argument_parser/validators_1.cpp
  */
 class arithmetic_range_validator
 {
@@ -167,7 +167,7 @@ private:
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever a given value is not in the given list.
  *
- * \snippet test/snippet/argument_parser/validators_2.cpp usage
+ * \include test/snippet/argument_parser/validators_2.cpp
  */
 template <typename option_value_type>
 class value_list_validator
@@ -392,7 +392,7 @@ protected:
  * extension (std::filesystem::path) is not in the given list of valid file extensions, if the file does not exist, or
  * if the file does not have the proper read permissions.
  *
- * \snippet test/snippet/argument_parser/validators_input_file.cpp usage
+ * \include test/snippet/argument_parser/validators_input_file.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -467,7 +467,7 @@ public:
  * extension (sts::string) is not in the given list of valid file extensions, if the file already exist, or if the
  * parent path does not have the proper writer permissions.
  *
- * \snippet test/snippet/argument_parser/validators_output_file.cpp usage
+ * \include test/snippet/argument_parser/validators_output_file.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -539,7 +539,7 @@ public:
  * (std::filesystem::path) does not exist, the specified path is not a directory, or if the directory is not
  * readable.
  *
- * \snippet test/snippet/argument_parser/validators_input_directory.cpp usage
+ * \include test/snippet/argument_parser/validators_input_directory.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -611,7 +611,7 @@ public:
  * (std::filesystem::path) is not writable. This can happen if either the parent path does not exists, or the
  * path doesn't have the proper write permissions.
  *
- * \snippet test/snippet/argument_parser/validators_output_directory.cpp usage
+ * \include test/snippet/argument_parser/validators_output_directory.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -698,7 +698,7 @@ public:
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever string does not match the pattern.
  *
- * \snippet test/snippet/argument_parser/validators_4.cpp usage
+ * \include test/snippet/argument_parser/validators_4.cpp
  */
 class regex_validator
 {

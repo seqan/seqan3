@@ -29,7 +29,7 @@ namespace seqan3
  * All options and flags are set to option_spec::DEFAULT unless specified
  * otherwise by the developer, e.g. when calling argument_parser::add_option().
  *
- * \snippet test/snippet/argument_parser/auxiliary.cpp usage
+ * \include test/snippet/argument_parser/auxiliary.cpp
  */
 enum option_spec
 {
