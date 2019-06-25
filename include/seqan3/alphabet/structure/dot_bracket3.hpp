@@ -176,7 +176,7 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
  * \returns seqan3::dot_bracket3
  *
  * You can use this string literal to assign a seqan3::dot_bracket3 character:
- * \include test/snippet/alphabet/structure/dot_bracket3_literal.cpp
+ * \include test/snippet/alphabet/structure/dot_bracket3_char_literal.cpp
  */
 constexpr dot_bracket3 operator""_db3(char const ch) noexcept
 {

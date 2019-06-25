@@ -12,9 +12,9 @@ int main()
     using seqan3::get;
 
     seqan3::structured_rna<seqan3::rna4, seqan3::dot_bracket3> letter{'G'_rna4, '('_db3};
-    seqan3::debug_stream << int(seqan3::to_rank(letter)) << ' '
-                         << int(seqan3::to_rank(get<0>(letter))) << ' '
-                         << int(seqan3::to_rank(get<1>(letter))) << '\n';
+    seqan3::debug_stream << seqan3::to_rank(letter) << ' '
+                         << seqan3::to_rank(get<0>(letter)) << ' '
+                         << seqan3::to_rank(get<1>(letter)) << '\n';
     // 6 2 1
 
     seqan3::debug_stream << seqan3::to_char(letter) << ' '

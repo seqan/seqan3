@@ -245,7 +245,7 @@ inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
  *
  * You can use this string literal to assign a seqan3::wuss51 character.
  * For different wuss alphabet sizes the `assign_char` function must be used.
- * \include test/snippet/alphabet/structure/wuss_literal.cpp
+ * \include test/snippet/alphabet/structure/wuss_char_literal.cpp
  */
 constexpr wuss51 operator""_wuss51(char const ch) noexcept
 {

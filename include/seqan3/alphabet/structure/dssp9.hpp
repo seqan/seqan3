@@ -138,7 +138,7 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
  * \returns seqan3::dssp9
  *
  * You can use this string literal to assign a seqan3::dssp9 character:
- * \include test/snippet/alphabet/structure/dssp9_literal.cpp
+ * \include test/snippet/alphabet/structure/dssp9_char_literal.cpp
  */
 constexpr dssp9 operator""_dssp9(char const ch) noexcept
 {

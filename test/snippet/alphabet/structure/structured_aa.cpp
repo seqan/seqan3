@@ -7,12 +7,12 @@ int main()
     using seqan3::operator""_aa27;
     using seqan3::operator""_dssp9;
     using seqan3::get;
-    
+
     seqan3::structured_aa<seqan3::aa27, seqan3::dssp9> letter{'W'_aa27, 'B'_dssp9};
 
-    seqan3::debug_stream << int(seqan3::to_rank(letter)) << ' '
-                         << int(seqan3::to_rank(get<0>(letter))) << ' '
-                         << int(seqan3::to_rank(get<1>(letter))) << '\n';
+    seqan3::debug_stream << seqan3::to_rank(letter) << ' '
+                         << seqan3::to_rank(get<0>(letter)) << ' '
+                         << seqan3::to_rank(get<1>(letter)) << '\n';
     // 49 22 1
 
     seqan3::debug_stream << seqan3::to_char(letter) << ' '
