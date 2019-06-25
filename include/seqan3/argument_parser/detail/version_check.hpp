@@ -339,10 +339,11 @@ public:
 #######################################################################
 
 )";
-            char chr{};
-            std::cin >> chr;
+            std::string line{};
+            std::getline(std::cin, line);
+            line.resize(1); // ignore everything but the first char or resizes the empty string to the default
 
-            switch (chr)
+            switch (line[0])
             {
                 case 'y':
                 {
