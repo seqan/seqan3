@@ -63,7 +63,11 @@ enum option_spec
  */
 struct argument_parser_meta_data // holds all meta information
 {
-    //!\brief The application name that will be displayed on the help page.
+    /*!\brief The application name that will be displayed on the help page.
+     *
+     * The application name must only contain alpha-numeric characters, '_' or '-',
+     * i.e. the following regex must evaluate to true: `\"^[a-zA-Z0-9_-]+$\"`.
+     */
     std::string app_name;
     //!\brief The version information `MAJOR.MINOR.PATH` (e.g. 3.1.3)
     std::string version;

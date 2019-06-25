@@ -94,7 +94,7 @@ void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser{"Game of Parsing", argc, argv};        // initialise myparser
+    argument_parser myparser{"Game-of-Parsing", argc, argv};        // initialise myparser
     cmd_arguments args{};
 
     initialize_argument_parser(myparser, args);

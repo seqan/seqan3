@@ -12,7 +12,7 @@ void initialize_argument_parser(argument_parser & parser)
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser{"Game of Parsing", argc, argv};
+    argument_parser myparser{"Game-of-Parsing", argc, argv};
 
     // code from assignment 1
 }

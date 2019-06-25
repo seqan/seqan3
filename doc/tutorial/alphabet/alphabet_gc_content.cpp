@@ -13,7 +13,7 @@ using namespace seqan3;
 int main (int argc, char * argv[])
 {
     std::string input{};
-    seqan3::argument_parser parser("GC Content", argc, argv);
+    seqan3::argument_parser parser("GC-Content", argc, argv);
     parser.add_positional_option(input, "Specify an input sequence.");
     try
     {

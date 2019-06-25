@@ -75,6 +75,8 @@ public:
     version_checker(std::string name_, std::string const & version_, std::string const & app_url = std::string{}) :
         name{std::move(name_)}
     {
+        assert(std::regex_match(name, std::regex{"^[a-zA-Z0-9_-]+$"})); // check on construction of the argument parser
+
         if (!app_url.empty())
         {
             message_app_update.pop_back(); // remove second newline
