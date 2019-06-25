@@ -429,16 +429,16 @@ private:
 #if defined(_WIN32)
         return "powershell.exe -NoLogo -NonInteractive -Command \"& {Invoke-WebRequest -erroraction 'silentlycontinue' -OutFile";
 #else  // Unix based platforms.
-        if (!system("wget --version > /dev/null 2>&1"))
-            return "wget --timeout=10 --tries=1 -q -O";
-        else if (!system("curl --version > /dev/null 2>&1"))
-            return "curl --connect-timeout 10 -o";
+        if (!system("/usr/bin/env -i wget --version > /dev/null 2>&1"))
+            return "/usr/bin/env -i wget --timeout=10 --tries=1 -q -O";
+        else if (!system("/usr/bin/env -i curl --version > /dev/null 2>&1"))
+            return "/usr/bin/env -i curl --connect-timeout 10 -o";
     // In case neither wget nor curl is available try ftp/fetch if system is OpenBSD/FreeBSD.
     // Note, both systems have ftp/fetch command installed by default so we do not guard against it.
     #if defined(__OpenBSD__)
-        return "ftp -w10 -Vo";
+        return "/usr/bin/env -i ftp -w10 -Vo";
     #elseif defined(__FreeBSD__)
-        return "fetch --timeout=10 -o";
+        return "/usr/bin/env -i fetch --timeout=10 -o";
     #else
         return "";
     #endif // __OpenBSD__
