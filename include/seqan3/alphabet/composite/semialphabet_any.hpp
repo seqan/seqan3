@@ -39,7 +39,7 @@ namespace seqan3
  * \see https://en.wikipedia.org/wiki/Reification_(computer_science)
  *
  * ### Example
- * \snippet test/snippet/alphabet/composite/semialphabet_any.cpp example
+ * \include test/snippet/alphabet/composite/semialphabet_any.cpp
  */
 template <size_t size>
 class semialphabet_any : public alphabet_base<semialphabet_any<size>, size, void>
