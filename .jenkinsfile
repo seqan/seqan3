@@ -79,6 +79,13 @@ def run_unit_tests(slave_name, compiler, build_type, model, with_cereal)
     def workspace
     def platform
 
+    stage ('versions')
+    {
+        sh "$compiler --version"
+        sh "cmake --version"
+        sh 'if [ -x "$(command -v doxygen)" ]; then doxygen --version; fi'
+    }
+
     stage ('initialise')
     {
         workspace = pwd()
@@ -145,6 +152,7 @@ def axis_compiler = ["g++-7", "g++-8", "g++-9"] // clang-concepts
 def axis_cereal = [true, false]
 def axis_build_type =["Release", "Debug"]
 def tasks = [:]
+def CMAKE_VERSION = "3.7.2"
 
 // The following nested for loops define the compiler matrix for the unit tests.
 // First iterate over all supported compiler versions
@@ -209,11 +217,17 @@ for (int h = 0; h < axis_agent.size(); ++h)
                                 stage('install')
                                 {
                                     sh """
+                                        mkdir -p /tmp/cmake-download
+                                        wget --no-clobber --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+                                        tar -C /tmp/ -zxvf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+                                    """
+
+                                    sh """
                                         sudo apt-get update
-                                        sudo apt-get install -y $axis_compiler_value cmake git zlib1g-dev libbz2-dev
+                                        sudo apt-get install -y $axis_compiler_value make gcc git zlib1g-dev libbz2-dev
                                     """
                                 }
-                                withEnv(["HOME=$workspace"])
+                                withEnv(["HOME=$workspace","PATH+CMAKE_PATH=/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin"])
                                 {
                                     sh "echo $HOME"
                                     run_unit_tests(env.DOCKER_SLAVE_NAME,
