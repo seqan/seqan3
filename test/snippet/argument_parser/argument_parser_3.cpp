@@ -1,4 +1,3 @@
-//! [usage]
 #include <seqan3/argument_parser/all.hpp>
 
 int main(int argc, char ** argv)
@@ -38,4 +37,3 @@ int main(int argc, char ** argv)
 
     return 0;
 }
-//! [usage]
