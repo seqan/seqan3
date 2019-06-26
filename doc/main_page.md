@@ -18,7 +18,7 @@ acquiring funding for the future development and maintenance of SeqAn.
 
 Resources outside of this web-site that might be useful:
 
-  * The [project homepage](https:://www.seqan.de) with news and application pages.
+  * The [project homepage](https://www.seqan.de) with news and application pages.
   * The [GitHub repository](https://github.com/seqan/seqan3) with issue tracker and downloads.
 
 ### Some notes on using this documentation
