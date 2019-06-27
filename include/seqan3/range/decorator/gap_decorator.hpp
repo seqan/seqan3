@@ -222,6 +222,9 @@ private:
                                ((anchor_set_it != host->anchors.begin()) ? (std::prev(anchor_set_it))->second : 0);
                 ++anchor_set_it;
                 is_at_gap = true;
+
+                if (left_gap_end == host->size()) // very last gap
+                    ++ungapped_view_pos;
             }
 
             return *this;
