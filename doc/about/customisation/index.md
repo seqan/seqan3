@@ -28,7 +28,7 @@ in turn resolves to different possible implementations.
 To customise one of our customisation points, do one of the following:
 
   * Provide functionality as members *or* inside the namespace of your type (will be picked up via
-    [argument dependent lookup][https://en.cppreference.com/w/cpp/language/adl).
+    [argument dependent lookup](https://en.cppreference.com/w/cpp/language/adl)).
   * If you adapt a third party's type and you cannot add to that type's namespace, provide functionality inside the
     namespace `seqan3::custom` (this is the "upload namespace").
   * **Never** add names (types, functions, variables...) to namespace `seqan3` and never explicitly specialise one
