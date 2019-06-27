@@ -836,7 +836,7 @@ public:
                 /* block_size  */ 0,  // will be initialised right after
                 /* refID       */ -1, // will be initialised right after
                 /* pos         */ ref_offset.value_or(-1),
-                /* l_read_name */ std::max<uint8_t>(std::ranges::distance(id) + 1, 2) /* empty id is repr. by '*\0' */,
+                /* l_read_name */ std::max<uint8_t>(std::min<size_t>(std::ranges::distance(id) + 1, 255), 2),
                 /* mapq        */ mapq,
                 /* bin         */ reg2bin(ref_offset.value_or(-1), std::ranges::distance(get<1>(align))),
                 /* n_cigar_op  */ static_cast<uint16_t>(cigar.size()),
@@ -918,7 +918,7 @@ public:
             if (std::ranges::distance(id) == 0) // empty id is represented as * for backward compatibility
                 stream_it = '*';
             else
-                std::ranges::copy_n(std::ranges::begin(id), std::ranges::distance(id), stream_it); // write read id
+                std::ranges::copy_n(std::ranges::begin(id), core.l_read_name - 1, stream_it); // write read id
             stream_it = '\0';
 
             // write cigar
