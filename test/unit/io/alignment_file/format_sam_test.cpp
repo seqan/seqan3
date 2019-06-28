@@ -54,7 +54,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
                                                                              "\tbf:B:f,3.5,0.1,43.8\n"
         "read3\t43\tref\t3\t63\t1S1M1D1M1I1M1I1D1M1S\tref\t10\t300\tGGAGTATA\t!!*+,-./\n"};
 
-    std::string empty_input{"*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n"};
+    std::string empty_input{"@HD\tVN:1.6\n@SQ\tSN:ref\tLN:34\n*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n"};
 
     std::string empty_cigar{"read1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\n"};
 

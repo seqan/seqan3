@@ -461,6 +461,29 @@ TYPED_TEST_P(alignment_file_write, output_concept)
     EXPECT_TRUE((AlignmentFileOutputFormat<TypeParam>));
 }
 
+TYPED_TEST_P(alignment_file_write, write_empty_members)
+{
+    detail::alignment_file_output_format<TypeParam> format;
+
+    std::ostringstream ostream;
+    {
+        alignment_file_header header{std::vector<std::string>{this->ref_id}};
+        header.ref_id_info.push_back({this->ref_seq.size(), ""});
+        header.ref_dict[this->ref_id] = 0;
+
+        using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
+        using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
+
+        ASSERT_NO_THROW(format.write(ostream, output_options, header, std::string_view{}, std::string_view{},
+                                     std::string_view{}, 0, std::string_view{}, std::string_view{},
+                                     std::optional<int32_t>{std::nullopt}, default_align_t{}, 0, 0,
+                                     default_mate_t{}, sam_tag_dictionary{}, 0, 0));
+    }
+
+    ostream.flush();
+    EXPECT_EQ(ostream.str(), this->empty_input);
+}
+
 TYPED_TEST_P(alignment_file_write, default_options_all_members_specified)
 {
     detail::alignment_file_output_format<TypeParam> format;
@@ -636,6 +659,7 @@ REGISTER_TYPED_TEST_CASE_P(alignment_file_read,
                            format_error_ref_id_not_in_reference_information);
 
 REGISTER_TYPED_TEST_CASE_P(alignment_file_write,
+                           write_empty_members,
                            output_concept,
                            default_options_all_members_specified,
                            write_ref_id_with_different_types,
