@@ -12,7 +12,7 @@
 
 #pragma once
 
-/*!\defgroup algorithm algorithm
+/*!\defgroup std_algorithm algorithm
  * \ingroup std
  * \brief The \<algorithm\> header with additional ranges algorithm from C++20's standard library.
  */
