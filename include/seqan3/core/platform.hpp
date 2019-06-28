@@ -177,6 +177,15 @@
 #endif
 
 // ============================================================================
+//  Deprecation Messages
+// ============================================================================
+
+//!\brief Deprecation message for SeqAn 3.1.0 release.
+#if !defined(SEQAN3_DEPRECATED_310)
+#   define SEQAN3_DEPRECATED_310 [[deprecated("This will be removed in SeqAn-3.1.0; please see the documentation.")]]
+#endif
+
+// ============================================================================
 //  Workarounds
 // ============================================================================
 

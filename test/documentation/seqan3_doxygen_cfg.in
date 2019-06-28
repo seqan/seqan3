@@ -49,7 +49,7 @@ PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
                          "SEQAN3_DOXYGEN_ONLY(x)= x" \
                          "${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG}"
 
-EXPAND_AS_DEFINED      = SEQAN3_CPO_IMPL
+EXPAND_AS_DEFINED      = SEQAN3_CPO_IMPL SEQAN3_DEPRECATED_310
 
 TAGFILES               += "${SEQAN3_DOXYGEN_STD_TAGFILE}=http://en.cppreference.com/w/"
 
