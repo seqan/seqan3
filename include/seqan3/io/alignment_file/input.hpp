@@ -913,16 +913,27 @@ protected:
     template <std::ranges::ForwardRange ref_sequences_t>
     void set_references(typename traits_type::ref_ids & ref_ids, ref_sequences_t && ref_sequences)
     {
-        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_sequences));
+        assert(std::ranges::distance(ref_ids) == std::ranges::distance(ref_sequences));
 
         header_ptr = std::unique_ptr<header_type>{std::make_unique<header_type>(ref_ids)};
         reference_sequences_ptr = &ref_sequences;
 
         // initialise reference map and ref_dict if ref_ids are non-empty
-        for (size_t idx = 0; idx < ref_ids.size(); ++idx)
+        for (int32_t idx = 0; idx < std::ranges::distance(ref_ids); ++idx)
         {
-            header_ptr->ref_id_info.emplace_back(std::ranges::size(ref_sequences[idx]), "");
-            header_ptr->ref_dict[header_ptr->ref_ids()[idx]] = idx;
+            header_ptr->ref_id_info.emplace_back(std::ranges::distance(ref_sequences[idx]), "");
+
+            if constexpr (std::ranges::ContiguousRange<reference_t<typename traits_type::ref_ids>> &&
+                          std::ranges::SizedRange<reference_t<typename traits_type::ref_ids>> &&
+                          ForwardingRange<reference_t<typename traits_type::ref_ids>>)
+            {
+                auto && id = header_ptr->ref_ids()[idx];
+                header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;
+            }
+            else
+            {
+                header_ptr->ref_dict[header_ptr->ref_ids()[idx]] = idx;
+            }
         }
     }
     //!\}

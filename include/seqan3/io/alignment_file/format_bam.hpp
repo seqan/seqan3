@@ -866,7 +866,25 @@ public:
                     {
                         if (!std::ranges::empty(id_source)) // otherwise default will remain (-1)
                         {
-                            auto id_it = header.ref_dict.find(id_source);
+                            auto id_it = header.ref_dict.end();
+
+                            if constexpr (std::ranges::ContiguousRange<decltype(id_source)> &&
+                                          std::ranges::SizedRange<decltype(id_source)> &&
+                                          ForwardingRange<decltype(id_source)>)
+                            {
+                                id_it = header.ref_dict.find(std::span{std::ranges::data(id_source),
+                                                                       std::ranges::size(id_source)});
+                            }
+                            else
+                            {
+                                using header_ref_id_type = std::remove_reference_t<decltype(header.ref_ids()[0])>;
+
+                                static_assert(ImplicitlyConvertibleTo<decltype(id_source), header_ref_id_type>,
+                                  "The ref_id type is not convertible to the reference id information stored in the "
+                                  "reference dictionary of the header object.");
+
+                                id_it = header.ref_dict.find(id_source);
+                            }
 
                             if (id_it == header.ref_dict.end())
                             {
@@ -874,6 +892,7 @@ public:
                                                                      "not be found in BAM header ref_dict: ",
                                                                      header.ref_dict, ".")};
                             }
+
                             id_target = id_it->second;
                         }
                     }

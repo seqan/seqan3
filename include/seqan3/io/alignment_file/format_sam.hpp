@@ -838,7 +838,7 @@ protected:
             if (is_char<'S'>(*std::ranges::begin(stream_view)))              // SQ (sequence dictionary) tag
             {
                 ref_info_present_in_header = true;
-                std::string id;
+                value_type_t<decltype(hdr.ref_ids())> id;
                 std::tuple<int32_t, std::string> info{};
 
                 parse_tag_value(id);                                         // parse required SN (sequence name) tag
@@ -1100,15 +1100,31 @@ public:
                       !std::Integral<std::remove_reference_t<ref_id_type>> &&
                       !detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
         {
-            static_assert(ImplicitlyConvertibleTo<ref_id_type &, typename decltype(header.ref_dict)::key_type>,
-                      "The ref_id type is not convertible to the reference id information stored in the "
-                      "reference dictionary of the header object.");
 
             if (options.sam_require_header && !std::ranges::empty(ref_id))
             {
-                if ((header.ref_dict).count(ref_id) == 0) // no reference id matched
-                    throw format_error{std::string("The ref_id '") + std::string(ref_id) +
-                                       "' was not in the list of references"};
+                auto id_it = header.ref_dict.end();
+
+                if constexpr (std::ranges::ContiguousRange<decltype(ref_id)> &&
+                              std::ranges::SizedRange<decltype(ref_id)> &&
+                              ForwardingRange<decltype(ref_id)>)
+                {
+                    id_it = header.ref_dict.find(std::span{std::ranges::data(ref_id), std::ranges::size(ref_id)});
+                }
+                else
+                {
+                    using header_ref_id_type = std::remove_reference_t<decltype(header.ref_ids()[0])>;
+
+                    static_assert(ImplicitlyConvertibleTo<ref_id_type, header_ref_id_type>,
+                                  "The ref_id type is not convertible to the reference id information stored in the "
+                                  "reference dictionary of the header object.");
+
+                    id_it = header.ref_dict.find(ref_id);
+                }
+
+                if (id_it == header.ref_dict.end()) // no reference id matched
+                    throw format_error{detail::to_string("The ref_id '", ref_id, "' was not in the list of references:",
+                                                         header.ref_ids())};
             }
         }
 
