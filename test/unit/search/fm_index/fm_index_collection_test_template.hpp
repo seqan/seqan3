@@ -29,24 +29,42 @@ TYPED_TEST_P(fm_index_collection_test, ctr)
     text_t text{inner_text_type(10), inner_text_type(10)}; // initialized with smallest char
 
     // default/zero construction
-    index_t fm0;
+    index_t fm0, fm2, fm4;
     fm0.construct(text);
 
     // copy construction
     index_t fm1{fm0};
     EXPECT_EQ(fm0, fm1);
+    // Make sure rank and select support pointer are correct by using them.
+    auto it0 = fm0.begin();
+    it0.extend_right(inner_text_type(5));
+    auto it1 = fm1.begin();
+    it1.extend_right(inner_text_type(5));
+    EXPECT_EQ(it0.locate(), it1.locate());
 
     // copy assignment
-    index_t fm2 = fm0;
+    fm2 = fm0;
     EXPECT_EQ(fm0, fm2);
+    // Make sure rank and select support pointer are correct by using them.
+    auto it2 = fm2.begin();
+    it2.extend_right(inner_text_type(5));
+    EXPECT_EQ(it0.locate(), it2.locate());
 
     // move construction
     index_t fm3{std::move(fm1)};
     EXPECT_EQ(fm0, fm3);
+    // Make sure rank and select support pointer are correct by using them.
+    auto it3 = fm3.begin();
+    it3.extend_right(inner_text_type(5));
+    EXPECT_EQ(it0.locate(), it3.locate());
 
     // move assigment
-    index_t fm4 = std::move(fm2);
+    fm4 = std::move(fm2);
     EXPECT_EQ(fm0, fm4);
+    // Make sure rank and select support pointer are correct by using them.
+    auto it4 = fm4.begin();
+    it4.extend_right(inner_text_type(5));
+    EXPECT_EQ(it0.locate(), it4.locate());
 
     // container contructor
     index_t fm5{text};
@@ -76,6 +94,14 @@ TYPED_TEST_P(fm_index_collection_test, swap)
     EXPECT_EQ(fm0, fm1);
     EXPECT_EQ(fm2, fm3);
     EXPECT_NE(fm0, fm2);
+
+    std::swap(fm0, fm1);
+    // Make sure rank and select support pointer are correct by using them.
+    auto it0 = fm0.begin();
+    it0.extend_right(inner_text_type(5));
+    auto it1 = fm1.begin();
+    it1.extend_right(inner_text_type(5));
+    EXPECT_EQ(it0.locate(), it1.locate());
 }
 
 TYPED_TEST_P(fm_index_collection_test, size)

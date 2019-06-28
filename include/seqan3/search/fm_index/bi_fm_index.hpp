@@ -120,12 +120,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    bi_fm_index() = default;                                //!< Default constructor.
-    bi_fm_index(bi_fm_index const &) = default;             //!< Copy constructor.
-    bi_fm_index & operator=(bi_fm_index const &) = default; //!< Copy assignment.
-    bi_fm_index(bi_fm_index &&) = default;                  //!< Move constructor.
-    bi_fm_index & operator=(bi_fm_index &&) = default;      //!< Move assignment.
-    ~bi_fm_index() = default;                               //!< Destructor.
+    bi_fm_index() = default;                                //!< Defaulted.
+    bi_fm_index(bi_fm_index const &) = default;             //!< Defaulted.
+    bi_fm_index & operator=(bi_fm_index const &) = default; //!< Defaulted.
+    bi_fm_index(bi_fm_index &&) = default;                  //!< Defaulted.
+    bi_fm_index & operator=(bi_fm_index &&) = default;      //!< Defaulted.
+    ~bi_fm_index() = default;                               //!< Defaulted.
 
     /*!\brief Constructor that immediately constructs the index given a range. The range cannot be empty.
      * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
