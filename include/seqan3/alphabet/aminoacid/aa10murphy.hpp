@@ -74,7 +74,7 @@ namespace seqan3
  * in the human genome: a comparison with sense codon usage.
  * BMC Genomics, 17, 366. http://doi.org/10.1186/s12864-016-2692-4
  *
- * \snippet test/snippet/alphabet/aminoacid/aa10murphy.cpp example
+ * \include test/snippet/alphabet/aminoacid/aa10murphy.cpp
  */
 class aa10murphy : public aminoacid_base<aa10murphy, 10>
 {

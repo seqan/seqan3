@@ -43,7 +43,7 @@ class rna15;
  * Instead initialise/assign from the character literal or use the
  * function seqan3::dna15::assign_char().
  *
- *\snippet test/snippet/alphabet/nucleotide/dna15.cpp code
+ *\include test/snippet/alphabet/nucleotide/dna15.cpp
  */
 class dna15 : public nucleotide_base<dna15, 15>
 {
@@ -163,7 +163,7 @@ constexpr dna15 operator""_dna15(char const c) noexcept
  *
  * You can use this string literal to easily assign to dna15_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/dna15.cpp operator""_dna15
+ * \include test/snippet/alphabet/nucleotide/dna15_literal.cpp
  *
  */
 inline dna15_vector operator""_dna15(char const * s, std::size_t n)

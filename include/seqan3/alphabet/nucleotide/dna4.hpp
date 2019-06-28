@@ -43,7 +43,7 @@ class rna4;
  * Instead initialise/assign from the character literal or use the
  * function seqan3::dna4::assign_char().
  *
- * \snippet test/snippet/alphabet/nucleotide/dna4.cpp code
+ * \include test/snippet/alphabet/nucleotide/dna4.cpp
  */
 class dna4 : public nucleotide_base<dna4, 4>
 {
@@ -160,7 +160,7 @@ constexpr dna4 operator""_dna4(char const c) noexcept
  *
  * You can use this string literal to easily assign to dna4_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/dna4.cpp operator""_dna4
+ * \include test/snippet/alphabet/nucleotide/dna4_literal.cpp
  *
  */
 inline dna4_vector operator""_dna4(char const * s, std::size_t n)

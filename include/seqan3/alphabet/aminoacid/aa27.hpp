@@ -37,7 +37,7 @@ namespace seqan3
  * Instead initialise/assign from the character literal or use the
  * function seqan3::aa27::assign_char().
  *
- * \snippet test/snippet/alphabet/aminoacid/aa27.cpp construction
+ * \include test/snippet/alphabet/aminoacid/aa27_construction.cpp
  */
 
 class aa27 : public aminoacid_base<aa27, 27>
@@ -168,7 +168,7 @@ namespace seqan3
  * \relates seqan3::aa27
  * \returns seqan3::aa27
  *
- * \snippet test/snippet/alphabet/aminoacid/aa27.cpp char_literal
+ * \include test/snippet/alphabet/aminoacid/aa27_char_literal.cpp
  *
  */
 constexpr aa27 operator""_aa27(char const c) noexcept
@@ -184,7 +184,7 @@ constexpr aa27 operator""_aa27(char const c) noexcept
  *
  * You can use this string literal to easily assign to aa27_vector:
  *
- * \snippet test/snippet/alphabet/aminoacid/aa27.cpp literal
+ * \include test/snippet/alphabet/aminoacid/aa27_literal.cpp
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3!

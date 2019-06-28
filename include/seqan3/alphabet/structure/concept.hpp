@@ -100,7 +100,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/structure/wuss.cpp is_pair_open
+ * \include test/snippet/alphabet/structure/wuss_is_pair_open.cpp
  *
  * ### Customisation point
  *
@@ -177,7 +177,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/structure/wuss.cpp is_pair_close
+ * \include test/snippet/alphabet/structure/wuss_is_pair_close.cpp
  *
  * ### Customisation point
  *
@@ -254,7 +254,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/structure/wuss.cpp is_unpaired
+ * \include test/snippet/alphabet/structure/wuss_is_unpaired.cpp
  *
  * ### Customisation point
  *
@@ -355,7 +355,7 @@ namespace seqan3
  * ### Example
  *
  * These are the expressions to retrieve the value:
- * \snippet test/snippet/alphabet/structure/wuss.cpp max_pseudoknot_depth
+ * \include test/snippet/alphabet/structure/wuss_max_pseudoknot_depth.cpp
  *
  * ### Customisation point
  *
@@ -438,7 +438,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/structure/wuss.cpp pseudoknot_id
+ * \include test/snippet/alphabet/structure/wuss_pseudoknot_id.cpp
  *
  * ### Customisation point
  *

@@ -46,7 +46,7 @@ namespace seqan3
  *
  * ###Usage
  * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stderr.
- * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp general
+ * \include test/snippet/alphabet/structure/dot_bracket3_general.cpp
  */
 class dot_bracket3 : public alphabet_base<dot_bracket3, 3>
 {
@@ -157,7 +157,7 @@ protected:
  * \returns std::vector<seqan3::dot_bracket3>
  *
  * You can use this string literal to easily assign to a vector of seqan3::dot_bracket3 characters:
- * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp string_literal
+ * \include test/snippet/alphabet/structure/dot_bracket3_literal.cpp
  */
 inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t len)
 {
@@ -176,7 +176,7 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
  * \returns seqan3::dot_bracket3
  *
  * You can use this string literal to assign a seqan3::dot_bracket3 character:
- * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp char_literal
+ * \include test/snippet/alphabet/structure/dot_bracket3_char_literal.cpp
  */
 constexpr dot_bracket3 operator""_db3(char const ch) noexcept
 {

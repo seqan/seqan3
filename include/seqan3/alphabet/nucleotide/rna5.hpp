@@ -41,7 +41,7 @@ namespace seqan3
  * Instead initialise/assign from the character literal or use the
  * function seqan3::rna5::assign_char().
  *
- *\snippet test/snippet/alphabet/nucleotide/rna5.cpp code
+ *\include test/snippet/alphabet/nucleotide/rna5.cpp
  */
 class rna5 : public nucleotide_base<rna5, 5>
 {
@@ -129,7 +129,7 @@ constexpr rna5 operator""_rna5(char const c) noexcept
  *
  * You can use this string literal to easily assign to rna5_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/rna5.cpp operator""_rna5
+ * \include test/snippet/alphabet/nucleotide/rna5_literal.cpp
  *
  */
 inline rna5_vector operator""_rna5(char const * s, std::size_t n)

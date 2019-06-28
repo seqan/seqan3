@@ -1,6 +1,6 @@
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 
 int main()
 {
@@ -12,7 +12,4 @@ int main()
 
     // also works for temporaries:
     seqan3::dna5 d2 = seqan3::assign_char_strictly_to('A', seqan3::dna5{});
-
-    // invalid/unknown characters throw
-//     seqan3::dna5 d3 = seqan3::assign_char_strictly_to('!', seqan3::dna5{});
 }

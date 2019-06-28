@@ -38,7 +38,7 @@ namespace seqan3
  * intend to use phred scores exceeding 41, use the larger score type, namely
  * seqan3::phred63, otherwise on construction exceeding scores are mapped to 41.
  *
- * \snippet test/snippet/alphabet/quality/phred42.cpp general
+ * \include test/snippet/alphabet/quality/phred42.cpp
  */
 class phred42 : public quality_base<phred42, 42>
 {

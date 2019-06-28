@@ -171,7 +171,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp usage
+ * \include test/snippet/alphabet/composite/alphabet_variant.cpp
  *
  * ### The `char` representation of an alphabet_variant
  *
@@ -193,7 +193,7 @@ namespace seqan3
  * To explicitly assign via the character representation of a specific alphabet,
  * assign to that type first and then assign to the variant, e.g.
  *
- * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp char_representation
+ * \include test/snippet/alphabet/composite/alphabet_variant_char_representation.cpp
  */
 template <typename ...alternative_types>
 //!\cond
@@ -232,7 +232,7 @@ public:
     /*!\brief Returns true if alternative_t is one of the given alternative types.
      * \tparam alternative_t The type to check.
      *
-     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp holds_alternative
+     * \include test/snippet/alphabet/composite/alphabet_variant_holds_alternative.cpp
      */
     template <typename alternative_t>
     static constexpr bool holds_alternative() noexcept
@@ -254,7 +254,7 @@ public:
      * \tparam alternative_t One of the alternative types.
      * \param  alternative   The value of a alternative that should be assigned.
      *
-     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp value construction
+     * \include test/snippet/alphabet/composite/alphabet_variant_value_construction.cpp
      */
     template <typename alternative_t>
     //!\cond
@@ -269,7 +269,7 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternative types is constructible from.
      * \param  rhs The value that should be assigned.
      *
-     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp conversion
+     * \include test/snippet/alphabet/composite/alphabet_variant_conversion.cpp
      * \attention When selecting the alternative alphabet types which require only implicit conversion
      * or constructor calls, are preferred over those that require explicit ones.
      */
@@ -306,7 +306,7 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
      * \param  rhs The value of an alternative.
      *
-     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp subtype_construction
+     * \include test/snippet/alphabet/composite/alphabet_variant_subtype_construction.cpp
      */
     template <typename indirect_alternative_t>
     //!\cond

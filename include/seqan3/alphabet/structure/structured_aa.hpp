@@ -44,7 +44,7 @@ namespace seqan3
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
- * \snippet test/snippet/alphabet/structure/structured_aa.cpp general
+ * \include test/snippet/alphabet/structure/structured_aa.cpp
  *
  * This seqan3::alphabet_tuple_base itself fulfills seqan3::Alphabet.
  */

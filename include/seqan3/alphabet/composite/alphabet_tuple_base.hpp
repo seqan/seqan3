@@ -323,7 +323,7 @@ public:
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp value_construction
+     * \include test/snippet/alphabet/composite/alphabet_tuple_base_value_construction.cpp
      */
     template <typename component_type>
     //!\cond
@@ -345,7 +345,7 @@ public:
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp subtype_construction
+     * \include test/snippet/alphabet/composite/alphabet_tuple_base_subtype_construction.cpp
      */
     template <typename indirect_component_type>
     //!\cond
@@ -377,7 +377,7 @@ public:
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp value_assignment
+     * \include test/snippet/alphabet/composite/alphabet_tuple_base_value_assignment.cpp
      */
     template <typename component_type>
     //!\cond
@@ -396,7 +396,7 @@ public:
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp subtype_assignment
+     * \include test/snippet/alphabet/composite/alphabet_tuple_base_subtype_assignment.cpp
      */
     template <typename indirect_component_type>
     //!\cond

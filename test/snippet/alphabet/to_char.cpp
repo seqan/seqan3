@@ -1,6 +1,6 @@
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 
 using seqan3::operator""_dna5;
 

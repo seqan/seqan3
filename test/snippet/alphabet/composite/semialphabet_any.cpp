@@ -1,4 +1,3 @@
-//! [example]
 // This example illustrates how we can reduce the usage of templates (or the amount of different instantiations) via
 // type erasure. Having only one function generated for `algorithm()` is the only benefit of using `semialphabet_any`
 // here. Of course this only makes sense for your application if the part of the program that is agnostic of the
@@ -8,10 +7,9 @@
 #include <iostream>
 
 #include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/composite/semialphabet_any.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/view/convert.hpp>
-
-#include <seqan3/alphabet/composite/semialphabet_any.hpp>
 
 using seqan3::operator""_aa10murphy;
 using seqan3::operator""_aa10li;
@@ -61,5 +59,3 @@ int main()
     seqan3::aa10murphy_vector v2{"AVRSTXOUB"_aa10murphy};
     algo_pre(v2); // BIKSSSKCB
 }
-
-//! [example]
