@@ -23,7 +23,7 @@ namespace seqan3
  * \{
  */
 /*!\brief A std::variant can be printed by visiting the stream operator for the corresponding type.
- * \tparam    variant_type The underlying type of the variant.
+ * \tparam    variant_type The type of the variant.
  * \param[in] s            The seqan3::debug_stream.
  * \param[in] v            The variant.
  * \relates seqan3::debug_stream_type

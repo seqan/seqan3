@@ -22,8 +22,24 @@ namespace seqan3
 /*!\name Formatted output overloads
  * \{
  */
+/*!\brief Make std::nullopt_t printable.
+ * \tparam    optional_type This is std::nullopt_t.
+ * \param[in] s             The seqan3::debug_stream.
+ * \param[in] arg           This is std::nullopt.
+ * \relates seqan3::debug_stream_type
+ */
+template <typename optional_type, typename char_t>
+//!\cond
+   requires std::Same<remove_cvref_t<optional_type>, std::nullopt_t>
+//!\endcond
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, optional_type && SEQAN3_DOXYGEN_ONLY(arg))
+{
+   s << "<VALUELESS_OPTIONAL>";
+   return s;
+}
+
 /*!\brief A std::optional can be printed by printing its value or nothing if valueless.
- * \tparam    optional_type The underlying type of the optional.
+ * \tparam    optional_type The type of the optional.
  * \param[in] s             The seqan3::debug_stream.
  * \param[in] arg           The std::optional.
  * \relates seqan3::debug_stream_type

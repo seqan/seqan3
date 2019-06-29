@@ -32,6 +32,14 @@ void PrintTo (t const & v, std::ostream * out)
 
 } // namespace seqan3
 
+namespace std
+{
+
+//!\brief Overload for the googletest PrintTo function that always delegates to our debug_stream.
+using ::seqan3::PrintTo;
+
+} // namespace seqan3::detail
+
 namespace seqan3::detail
 {
 

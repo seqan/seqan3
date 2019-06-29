@@ -6,7 +6,9 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
+#include <optional>
 #include <ostream>
+#include <variant>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/test/pretty_printing.hpp>
@@ -37,11 +39,21 @@ TEST(pretty_printing, gtest_output)
 
     EXPECT_EQ(gtest_str(std::make_tuple<int, int>(42, -10)), "(42, -10)"s);
     EXPECT_EQ(debug_str(std::make_tuple<int, int>(42, -10)), "(42,-10)"s);
+}
 
-    EXPECT_EQ(gtest_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}),
-              "{ { 0, 1 }, { 2, 3 }, { 1, 2 }, { 0 } }"s);
-    EXPECT_EQ(debug_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}),
-              "[[0,1],[2,3],[1,2],[0]]"s);
+TEST(pretty_printing, std_output)
+{
+    EXPECT_EQ(gtest_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
+    EXPECT_EQ(debug_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
+
+    EXPECT_EQ(gtest_str(std::variant<int>{0}), "0"s);
+    EXPECT_EQ(debug_str(std::variant<int>{0}), "0"s);
+
+    EXPECT_EQ(gtest_str(std::optional<int>{}), "<VALUELESS_OPTIONAL>"s);
+    EXPECT_EQ(debug_str(std::optional<int>{}), "<VALUELESS_OPTIONAL>"s);
+
+    EXPECT_EQ(gtest_str(std::nullopt), "<VALUELESS_OPTIONAL>"s);
+    EXPECT_EQ(debug_str(std::nullopt), "<VALUELESS_OPTIONAL>"s);
 }
 
 TEST(pretty_printing, seqan3_output)
