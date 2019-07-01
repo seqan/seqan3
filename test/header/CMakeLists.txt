@@ -5,7 +5,7 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.7)
 project (seqan3_header_test CXX)
 
 include (../seqan3-test.cmake)
@@ -85,7 +85,7 @@ TEST(${header_test_name_safe}) {}")
                 target_compile_options (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_OPTIONS>)
                 target_compile_definitions (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_DEFINITIONS>)
                 target_include_directories (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_INCLUDE_DIRECTORIES>)
-                target_link_libraries (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_LINK_LIBRARIES>)
+                add_dependencies (${header_target} gtest gbenchmark)
             else ()
                 target_link_libraries (${header_target} seqan3::test::header)
             endif ()

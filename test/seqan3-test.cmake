@@ -9,7 +9,7 @@
 # SeqAn3. To build tests, run cmake on one of the sub-folders in this directory
 # which contain a CMakeLists.txt.
 
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.7)
 
 # require SeqAn3 package
 find_package (SeqAn3 REQUIRED
@@ -151,17 +151,12 @@ macro (seqan3_require_ccache)
         find_package_message (CCACHE_PROGRAM "Finding program ccache - Failed" "[${CCACHE_PROGRAM}]")
     else ()
         find_package_message (CCACHE_PROGRAM "Finding program ccache - Success" "[${CCACHE_PROGRAM}]")
-        if (CMAKE_VERSION VERSION_LESS 3.4)
-            set_property (GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-            set_property (GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
-        else ()
-            # New option since cmake >= 3.4:
-            # https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_LAUNCHER.html
-            set (CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+        # New option since cmake >= 3.4:
+        # https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_LAUNCHER.html
+        set (CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
 
-            # use ccache in external cmake projects
-            list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}")
-        endif ()
+        # use ccache in external cmake projects
+        list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}")
     endif ()
     unset (CCACHE_PROGRAM)
 endmacro ()

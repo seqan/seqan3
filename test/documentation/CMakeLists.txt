@@ -1,5 +1,5 @@
 # Minimum cmake version
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.7)
 
 # Name of project
 project(seqan3_documentation NONE)
