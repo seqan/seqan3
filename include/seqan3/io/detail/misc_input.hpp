@@ -105,14 +105,14 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     if (read_chars == magic_number.size() && contrib::_bgzfCheckHeader(magic_number.data())) // BGZF
     {
     #ifdef SEQAN3_HAS_ZLIB
-        if ((extension == ".bgzf"))
+        if ((extension == ".gz") || (extension == ".bgzf"))
             filename.replace_extension();
 
         return {new contrib::basic_bgzf_istream<char_t>{primary_stream},
                 stream_deleter_default};
-        #else
-            throw file_open_error{"Trying to read from a bgzf file, but no ZLIB available."};
-        #endif
+    #else
+        throw file_open_error{"Trying to read from a bgzf file, but no ZLIB available."};
+    #endif
     }
     else if (starts_with(magic_number, magic_header<gz_compression>)) // GZIP
     {
