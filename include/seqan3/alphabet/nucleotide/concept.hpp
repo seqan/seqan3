@@ -48,15 +48,15 @@ public:
     //!\brief Operator definition.
     template <typename nucleotide_t>
     //!\cond
-        requires requires (nucleotide_t const nucl) { { impl(priority_tag<2>{}, nucl) }; }
+        requires requires (nucleotide_t const nucl)
+        {
+            { impl(priority_tag<2>{}, nucl) };
+            requires noexcept(impl(priority_tag<2>{}, nucl));
+            requires std::Same<nucleotide_t, decltype(impl(priority_tag<2>{}, nucl))>;
+        }
     //!\endcond
-    constexpr auto operator()(nucleotide_t const nucl) const noexcept
+    constexpr nucleotide_t operator()(nucleotide_t const nucl) const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<2>{}, nucl)),
-            "Only overloads that are marked noexcept are picked up by seqan3::complement().");
-        static_assert(std::Same<nucleotide_t, decltype(impl(priority_tag<2>{}, nucl))>,
-            "The return type of your complement() implementation must be 'nucleotide_t'.");
-
         return impl(priority_tag<2>{}, nucl);
     }
 };
@@ -82,13 +82,11 @@ namespace seqan3
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `complement(your_type const a)` in the namespace of your type (or as `friend`).
- *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
- *      return type be `your_type`.
  *   2. A free function `complement(your_type const a)` in `namespace seqan3::custom`.
- *      The same restrictions apply as above.
  *   3. A member function called `complement()`.
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
- *      `your_type`.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type is `your_type`.
  *
  * Every nucleotide alphabet type must provide one of the above.
  *
