@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 //! [semialphabet]
-#include <seqan3/alphabet/concept.hpp>                   // for seqan3::Alphabet concept checks
+#include <seqan3/alphabet/concept.hpp>                   // alphabet concept checks
 
 struct dna2
 {
@@ -69,3 +69,12 @@ bool operator>=(dna2 const & lhs, dna2 const & rhs)
 static_assert(seqan3::Semialphabet<dna2>);               // ok
 static_assert(seqan3::WritableSemialphabet<dna2>);       // ok
 //! [writable_semialphabet_concept]
+
+//! [free_functions]
+int main ()
+{
+    dna2 chr{};
+    seqan3::assign_rank_to(1, chr);                      // chr is assigned rank 1
+    uint8_t rnk = seqan3::to_rank(chr);                  // query rank value  => 1
+}
+//! [free_functions]

@@ -98,7 +98,8 @@ seqan3::WritableSemialphabet:
 \snippet dna2_semialphabet.cpp writable_semialphabet_concept
 
 With this we can automatically use some free functions on our dna2 alphabet. If you are interested in how this works,
-read our section on [Customisation points](\ref about_customisation).
+read our section on [Customisation points](\ref about_customisation). Here is an example:
+\snippet dna2_semialphabet.cpp free_functions
 
 ## Alphabet
 
@@ -127,7 +128,8 @@ is fine because we implemented `assign_char` and `char_is_valid`.
 
 In reality, you do not need to define all the functions you have learned in this exercise manually.
 Instead, you can inherit your type from seqan3::alphabet_base and just define the char-rank conversion
-in both directions. Read the documentation of seqan3::alphabet_base for details and examples.
+in both directions. Read the documentation of seqan3::alphabet_base for details.
+\snippet dna2_inherit_base.cpp dna2
 
 # Further examples
 ## Implementation as enum class

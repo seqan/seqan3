@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 //! [writable_alphabet]
-#include <seqan3/alphabet/concept.hpp>                   // for seqan3::Alphabet concept checks
+#include <seqan3/alphabet/concept.hpp>                   // alphabet concept checks
 
 struct dna2
 {
@@ -28,6 +28,7 @@ struct dna2
 
     char to_char() const noexcept
     {
+        // map 0 => 'S' and 1 => 'W'
         char const rank_to_char[2] {'S', 'W'};
         return rank_to_char[rank];
     }
@@ -36,8 +37,9 @@ struct dna2
     {
         switch (ch)
         {
-            case 'W': rank = 1; break;
-            default:  rank = 0;
+            case 'W': rank = 1;
+            case 'w': rank = 1; break;                   // allow assignment from uppercase and lowercase
+            default:  rank = 0;                          // unknown characters are mapped to 0 (=> 'S')
         }
         return *this;
     }
