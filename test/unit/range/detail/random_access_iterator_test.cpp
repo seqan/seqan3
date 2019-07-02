@@ -12,6 +12,39 @@
 
 #include <seqan3/range/detail/random_access_iterator.hpp>
 
+#include "../iterator_test_template.hpp"
+
+// -----------------------------------------------------------------------------
+// test templates
+// -----------------------------------------------------------------------------
+
+using iterator_type = seqan3::detail::random_access_iterator<std::vector<int>>;
+using const_iterator_type = seqan3::detail::random_access_iterator<std::vector<int> const>;
+
+template <>
+struct iterator_fixture<iterator_type> : public ::testing::Test
+{
+    using iterator_tag = std::random_access_iterator_tag;
+    static constexpr bool const_iterable = true;
+
+    std::vector<int> range_to_compare{1, 2, 3, 4, 5, 6, 7, 8};
+    std::vector<int> const const_range{1, 2, 3, 4, 5, 6, 7, 8};
+
+    iterator_type begin_iterator{range_to_compare};
+    iterator_type end_iterator{range_to_compare, range_to_compare.size()};
+
+    const_iterator_type begin_const_iterator{const_range};
+    const_iterator_type end_const_iterator{const_range, const_range.size()};
+};
+
+using test_type = ::testing::Types<iterator_type>;
+
+INSTANTIATE_TYPED_TEST_CASE_P(iterator_fixture, iterator_fixture, test_type);
+
+// -----------------------------------------------------------------------------
+// individual tests
+// -----------------------------------------------------------------------------
+
 class random_access_iterator_test_fixture : public ::testing::Test
 {
 protected:
@@ -39,15 +72,6 @@ protected:
         a = {11, 22, 33};
     }
 };
-
-
-// concept checks
-
-TEST(random_access_iterator_test, concept_checks)
-{
-    EXPECT_TRUE((std::RandomAccessIterator<seqan3::detail::random_access_iterator<std::vector<int>>>));
-    EXPECT_TRUE((std::RandomAccessIterator<seqan3::detail::random_access_iterator<std::vector<int> const>>));
-}
 
 // default constructor
 TEST(random_access_iterator_test, default_constructor)
@@ -197,280 +221,4 @@ TEST_F(random_access_iterator_test_fixture, cp_destructor)
     iterator_type2 * it_ptr2 = &it2;
     it_ptr2->iterator_type2::~iterator_type2();
 
-}
-
-// equality operators compare internal container positions, not their contents!
-TEST_F(random_access_iterator_test_fixture, equality)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v), it_w(w);
-    EXPECT_TRUE(it_v == it_w);
-    ++it_v;
-    EXPECT_FALSE(it_v == it_w);
-    ++it_w;
-    EXPECT_TRUE(it_v == it_w);
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v_const), it_w2(w_const);
-    EXPECT_TRUE(it_v2 == it_w2);
-    ++it_v2;
-    EXPECT_FALSE(it_v2 == it_w2);
-    ++it_w2;
-    EXPECT_TRUE(it_v2 == it_w2);
-    // const vs non-const
-    EXPECT_TRUE(it_v2 == it_w);
-    EXPECT_TRUE(it_w == it_v2);
-}
-
-TEST_F(random_access_iterator_test_fixture, inequality)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v), it_w(w);
-    EXPECT_FALSE(it_v != it_w);
-    ++it_v;
-    EXPECT_TRUE(it_v != it_w);
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v_const), it_w2(w_const);
-    EXPECT_FALSE(it_v2 != it_w2);
-    ++it_v2;
-    EXPECT_TRUE(it_v2 != it_w2);
-    // const vs non-const
-    EXPECT_TRUE(it_v2 != it_w);
-    EXPECT_TRUE(it_w != it_v2);
-}
-
-
-TEST_F(random_access_iterator_test_fixture, less)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v), it_w(w);
-    EXPECT_FALSE(it_v < it_w);
-    ++it_w;
-    EXPECT_TRUE(it_v < it_w);
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v_const), it_w2(w_const);
-    EXPECT_FALSE(it_v2 < it_w2);
-    ++it_w2;
-    EXPECT_TRUE(it_v2 < it_w2);
-    // const vs non-const
-    EXPECT_TRUE(it_v2 < it_w);
-    EXPECT_TRUE(it_v < it_w2);
-}
-
-TEST_F(random_access_iterator_test_fixture, greater)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v2), it_w(w);
-    EXPECT_FALSE(it_v > it_w);
-    ++it_v;
-    EXPECT_TRUE(it_v > it_w);
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v2_const), it_w2(w_const);
-    EXPECT_FALSE(it_v2 > it_w2);
-    ++it_v2;
-    EXPECT_TRUE(it_v2 > it_w2);
-    // const vs non-const
-    EXPECT_TRUE(it_v2 > it_w);
-    EXPECT_TRUE(it_v > it_w2);
-}
-
-TEST_F(random_access_iterator_test_fixture, leq)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v3), it_w(w);
-    EXPECT_TRUE(it_v <= it_w);
-    ++it_v;
-    EXPECT_FALSE(it_v <= it_w);
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v3_const), it_w2(w_const);
-    EXPECT_TRUE(it_v2 <= it_w2);
-    ++it_v2;
-    EXPECT_FALSE(it_v2 <= it_w2);
-    // const vs non-const
-    EXPECT_FALSE(it_v2 <= it_w);
-    EXPECT_FALSE(it_v <= it_w2);
-}
-
-TEST_F(random_access_iterator_test_fixture, geq)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v2), it_w(w);
-    EXPECT_TRUE(it_v >= it_w);
-    ++it_v;
-    EXPECT_TRUE(it_v >= it_w);
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v2_const), it_w2(w_const);
-    EXPECT_TRUE(it_v2 >= it_w2);
-    ++it_v2;
-    EXPECT_TRUE(it_v2 >= it_w2);
-    // const vs non-const
-    EXPECT_TRUE(it_v >= it_w2);
-    EXPECT_FALSE(it_w2 >= it_v);
-}
-
-TEST_F(random_access_iterator_test_fixture, postfix_increment)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v2), it_w{w2};
-    EXPECT_TRUE(it_v == it_w);
-    it_v++;
-    EXPECT_FALSE(it_v == it_w);
-    it_w++;
-    EXPECT_TRUE(it_v == it_w);
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v2_const), it_w2{w2_const};
-    EXPECT_TRUE(it_v2 == it_w2);
-    it_v2++;
-    EXPECT_FALSE(it_v2 == it_w2);
-    it_w2++;
-    EXPECT_TRUE(it_v2 == it_w2);
-}
-
-TEST_F(random_access_iterator_test_fixture, prefix_decrement)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v), it_w{w};
-    --++it_v;
-    EXPECT_TRUE(it_v == it_w);
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v_const), it_w2{w_const};
-    --++it_v2;
-    EXPECT_TRUE(it_v2 == it_w2);
-}
-
-TEST_F(random_access_iterator_test_fixture, postfix_decrement)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v), it_w{w};
-    (++it_v)--;
-    EXPECT_TRUE(it_v == it_w);
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v_const), it_w2{w_const};
-    (++it_v2)--;
-    EXPECT_TRUE(it_v2 == it_w2);
-}
-
-TEST_F(random_access_iterator_test_fixture, dereference)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v2);
-    EXPECT_TRUE(*it_v == 'a');
-    ++it_v;
-    EXPECT_TRUE(*it_v == 'u');
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v2_const);
-    EXPECT_TRUE(*it_v2 == 'a');
-    ++it_v2;
-    EXPECT_TRUE(*it_v2 == 'u');
-}
-
-TEST_F(random_access_iterator_test_fixture, random_access_operator)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v2);
-    EXPECT_TRUE(it_v[0] == 'a');
-    EXPECT_TRUE(it_v[1] == 'u');
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v2_const);
-    EXPECT_TRUE(it_v2[0] == 'a');
-    EXPECT_TRUE(it_v2[1] == 'u');
-}
-
-TEST_F(random_access_iterator_test_fixture, operator_plus_assignment)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v4);
-    it_v += 1;
-    EXPECT_TRUE(*it_v == 'u');
-    it_v += 3;
-    EXPECT_TRUE(*it_v == 'x');
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v4_const);
-    it_v2 += 1;
-    EXPECT_TRUE(*it_v2 == 'u');
-    it_v2 += 3;
-    EXPECT_TRUE(*it_v2 == 'x');
-}
-
-// test operator+ and self-assignment
-TEST_F(random_access_iterator_test_fixture, operator_plus)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v4);
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_w = it_v + 2;
-    EXPECT_TRUE(*it_w == 'v');
-    it_v = it_v + 2;
-    EXPECT_TRUE(*it_v == 'v');
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v4_const);
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_w2 = it_v2 + 2;
-    EXPECT_TRUE(*it_w2 == 'v');
-    it_v2 = it_v2 + 2;
-    EXPECT_TRUE(*it_v2 == 'v');
-}
-
-// test operator+ and self-assignment
-TEST_F(random_access_iterator_test_fixture, friend_operator_plus)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v4);
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_w = 2 + it_v;
-    EXPECT_TRUE(*it_w == 'v');
-    it_v = 2 + it_v;
-    EXPECT_TRUE(*it_v == 'v');
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v4_const);
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_w2 = 2 + it_v2;
-    EXPECT_TRUE(*it_w2 == 'v');
-    it_v2 = 2 + it_v2;
-    EXPECT_TRUE(*it_v2 == 'v');
-}
-
-TEST_F(random_access_iterator_test_fixture, operator_minus_assignment)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v4);
-    it_v += 4;
-    it_v -= 3;
-    EXPECT_TRUE(*it_v == 'u');
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v4_const);
-    it_v2 += 4;
-    it_v2 -= 3;
-    EXPECT_TRUE(*it_v2 == 'u');
-}
-
-TEST_F(random_access_iterator_test_fixture, operator_minus)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v4);
-    it_v = it_v + 4;
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_w = it_v - 2;
-    EXPECT_TRUE(*it_w == 'v');
-    it_v = it_v - 1;
-    EXPECT_TRUE(*it_v == 'w');
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v4_const);
-    it_v2 = it_v2 + 4;
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_w2 = it_v2 - 2;
-    EXPECT_TRUE(*it_w2 == 'v');
-    it_v2 = it_v2 - 1;
-    EXPECT_TRUE(*it_v2 == 'w');
-}
-
-TEST_F(random_access_iterator_test_fixture, difference)
-{
-    // non-const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v4);
-    it_v += 4;
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_w(w);
-    it_w += 1;
-    EXPECT_TRUE(3 == (it_v - it_w));
-    EXPECT_TRUE(-3 == (it_w - it_v));
-    // const
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v4_const);
-    it_v2 += 4;
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_w2(w_const);
-    it_w2 += 1;
-    EXPECT_TRUE(3 == (it_v2 - it_w2));
-    EXPECT_TRUE(-3 == (it_w2 - it_v2));
 }
