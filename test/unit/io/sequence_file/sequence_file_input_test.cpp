@@ -474,7 +474,7 @@ std::string input_bgzf
     '\x00', '\x00', '\x00', '\x00', '\x00'
 };
 
-TEST_F(sequence_file_input_f, decompression_by_filename_bgzf)
+TEST_F(sequence_file_input_f, bgzf_decompression_by_filename_bgzf)
 {
     test::tmp_filename filename{"sequence_file_output_test.fasta.bgzf"};
 
@@ -486,6 +486,19 @@ TEST_F(sequence_file_input_f, decompression_by_filename_bgzf)
 
     sequence_file_input fin{filename.get_path()};
 
+    decompression_impl(*this, fin);
+}
+
+TEST_F(sequence_file_input_f, bgzf_decompression_by_filename_gz)
+{
+    test::tmp_filename filename{"sequence_file_output_test.fasta.gz"};
+
+    {
+        std::ofstream of{filename.get_path(), std::ios::binary};
+        std::copy(input_bgzf.begin(), input_bgzf.end(), std::ostreambuf_iterator<char>{of});
+    }
+
+    sequence_file_input fin{filename.get_path()};
     decompression_impl(*this, fin);
 }
 
