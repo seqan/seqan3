@@ -102,7 +102,8 @@ public:
         // build up command for server call
         if (!program.empty())
         {
-            command = program + " " + cookie_path.string() + "/" + name + ".version " + server_url;
+            std::filesystem::path out_file = cookie_path / (name + ".version");
+            command = program + " " + out_file.string() + " " + server_url;
 #if defined(_WIN32)
             command = command + "; exit  [int] -not $?}\" > nul 2>&1";
 #else
@@ -429,15 +430,18 @@ private:
         return "powershell.exe -NoLogo -NonInteractive -Command \"& {Invoke-WebRequest -erroraction 'silentlycontinue' -OutFile";
 #else  // Unix based platforms.
         if (!system("wget --version > /dev/null 2>&1"))
-            return "wget -q -O";
+            return "wget --timeout=10 --tries=1 -q -O";
         else if (!system("curl --version > /dev/null 2>&1"))
-            return "curl -o";
-    #ifndef __linux  // ftp call does not work on linux
-        else if (!system("which ftp > /dev/null 2>&1"))
-            return "ftp -Vo";
-    #endif // __linux
-        else
-            return "";
+            return "curl --connect-timeout 10 -o";
+    // In case neither wget nor curl is available try ftp/fetch if system is OpenBSD/FreeBSD.
+    // Note, both systems have ftp/fetch command installed by default so we do not guard against it.
+    #if defined(__OpenBSD__)
+        return "ftp -w10 -Vo";
+    #elseif defined(__FreeBSD__)
+        return "fetch --timeout=10 -o";
+    #else
+        return "";
+    #endif // __OpenBSD__
 #endif  // defined(_WIN32)
     }
 
