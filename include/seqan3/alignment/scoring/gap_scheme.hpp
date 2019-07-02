@@ -43,7 +43,7 @@ struct gap_score : detail::strong_type<score_type, gap_score<score_type>, detail
 
 //!\brief Deduce the score type from the given argument.
 template <Arithmetic score_type>
-gap_score(score_type &&) -> gap_score<score_type>;
+gap_score(score_type) -> gap_score<score_type>;
 //!\}
 
 // ------------------------------------------------------------------
@@ -69,7 +69,7 @@ struct gap_open_score : detail::strong_type<score_type, gap_open_score<score_typ
 
 //!\brief Deduce the score type from the given argument.
 template <Arithmetic score_type>
-gap_open_score(score_type &&) -> gap_open_score<score_type>;
+gap_open_score(score_type) -> gap_open_score<score_type>;
 //!\}
 
 // ------------------------------------------------------------------

@@ -50,7 +50,7 @@ struct match_score : detail::strong_type<score_type, match_score<score_type>, de
 
 //!\brief Deduce the score type from the provided argument.
 template <Arithmetic score_type>
-match_score(score_type &&) -> match_score<score_type>;
+match_score(score_type) -> match_score<score_type>;
 //!\}
 
 // ------------------------------------------------------------------
@@ -75,7 +75,7 @@ struct mismatch_score : detail::strong_type<score_type, mismatch_score<score_typ
 
 //!\brief Deduce the score type from the provided argument.
 template <Arithmetic score_type>
-mismatch_score(score_type &&) -> mismatch_score<score_type>;
+mismatch_score(score_type) -> mismatch_score<score_type>;
 //!\}
 
 // ------------------------------------------------------------------
