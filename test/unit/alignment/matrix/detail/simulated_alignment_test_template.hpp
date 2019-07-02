@@ -10,7 +10,7 @@
 #include <seqan3/std/algorithm>
 
 template <typename t>
-struct alignment_score_matrix_test : public ::testing::Test
+struct simulated_alignment_test : public ::testing::Test
 {
     using score_type = typename t::score_type;
 
@@ -39,48 +39,12 @@ struct alignment_score_matrix_test : public ::testing::Test
     }
 };
 
-TYPED_TEST_CASE_P(alignment_score_matrix_test);
+TYPED_TEST_CASE_P(simulated_alignment_test);
 
 using namespace seqan3;
 using namespace seqan3::detail;
 
-TYPED_TEST_P(alignment_score_matrix_test, range_concepts)
-{
-    using matrix_type = std::remove_reference_t<decltype(this->matrix())>;
-
-    using outer_it = std::ranges::iterator_t<matrix_type>;
-    using column_t = value_type_t<outer_it>;
-    using inner_it = std::ranges::iterator_t<column_t>;
-
-    EXPECT_TRUE(std::ranges::InputRange<matrix_type>);
-    EXPECT_TRUE(std::InputIterator<outer_it>);
-    EXPECT_TRUE(std::InputIterator<inner_it>);
-    EXPECT_TRUE(std::ranges::InputRange<column_t>);
-    EXPECT_TRUE(std::ranges::View<column_t>);
-}
-
-TYPED_TEST_P(alignment_score_matrix_test, begin_end)
-{
-    auto it = this->matrix().begin();
-    auto col = *it;
-    auto col_it = col.begin();
-
-    EXPECT_NE(col_it, col.end());
-    EXPECT_NE(it, this->matrix().end());
-}
-
-TYPED_TEST_P(alignment_score_matrix_test, basic_construction)
-{
-    using matrix_type = std::remove_reference_t<decltype(this->matrix())>;
-
-    EXPECT_TRUE(std::is_default_constructible_v<matrix_type>);
-    EXPECT_TRUE(std::is_copy_constructible_v<matrix_type>);
-    EXPECT_TRUE(std::is_move_constructible_v<matrix_type>);
-    EXPECT_TRUE(std::is_copy_assignable_v<matrix_type>);
-    EXPECT_TRUE(std::is_move_assignable_v<matrix_type>);
-}
-
-TYPED_TEST_P(alignment_score_matrix_test, simulated_alignment)
+TYPED_TEST_P(simulated_alignment_test, linear_alignment)
 {
     std::vector<typename TypeParam::score_type> cmp_matrix{};
     cmp_matrix.resize(this->gold_matrix().size());
@@ -173,5 +137,4 @@ TYPED_TEST_P(alignment_score_matrix_test, simulated_alignment)
     EXPECT_TRUE(std::equal(cmp_matrix.begin(), cmp_matrix.end(), this->gold_matrix().begin()));
 }
 
-REGISTER_TYPED_TEST_CASE_P(alignment_score_matrix_test,
-                           range_concepts, begin_end, basic_construction, simulated_alignment);
+REGISTER_TYPED_TEST_CASE_P(simulated_alignment_test, linear_alignment);
