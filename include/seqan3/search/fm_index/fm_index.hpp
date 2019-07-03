@@ -178,12 +178,39 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    fm_index() = default;                             //!< Default constructor.
-    fm_index(fm_index const &) = default;             //!< Copy constructor.
-    fm_index & operator=(fm_index const &) = default; //!< Copy assignment.
-    fm_index(fm_index &&) = default;                  //!< Move constructor.
-    fm_index & operator=(fm_index &&) = default;      //!< Move assignment.
-    ~fm_index() = default;                            //!< Destructor.
+    fm_index() = default;              //!< Defaulted.
+
+    fm_index(fm_index const & rhs) :   //!< When copy constructing, also update internal data structures.
+        sigma{rhs.sigma}, index{rhs.index}, text_begin{rhs.text_begin}, text_begin_ss{rhs.text_begin_ss},
+        text_begin_rs{rhs.text_begin_rs}
+    {
+        text_begin_ss.set_vector(&text_begin);
+        text_begin_rs.set_vector(&text_begin);
+    }
+
+    fm_index(fm_index && rhs) :        //!< When move constructing, also update internal data structures.
+        sigma{std::move(rhs.sigma)}, index{std::move(rhs.index)}, text_begin{std::move(rhs.text_begin)},
+        text_begin_ss{std::move(rhs.text_begin_ss)}, text_begin_rs{std::move(rhs.text_begin_rs)}
+    {
+        text_begin_ss.set_vector(&text_begin);
+        text_begin_rs.set_vector(&text_begin);
+    }
+
+    fm_index & operator=(fm_index rhs) //!< When copy/move assigning, also update internal data structures.
+    {
+        index = std::move(rhs.index);
+        sigma = std::move(rhs.sigma);
+        text_begin = std::move(rhs.text_begin);
+        text_begin_ss = std::move(rhs.text_begin_ss);
+        text_begin_rs = std::move(rhs.text_begin_rs);
+
+        text_begin_ss.set_vector(&text_begin);
+        text_begin_rs.set_vector(&text_begin);
+
+        return *this;
+    }
+
+    ~fm_index() = default;             //!< Defaulted.
 
     /*!\brief Constructor that immediately constructs the index given a range. The range cannot be empty.
      * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
