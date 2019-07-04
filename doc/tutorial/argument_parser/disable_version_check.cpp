@@ -4,6 +4,6 @@ using namespace seqan3;
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser{"Game of Parsing", argc, argv, false};
+    argument_parser myparser{"Game-of-Parsing", argc, argv, false};
     // disable version checks permanently --------------------^
 }

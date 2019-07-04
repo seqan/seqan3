@@ -19,6 +19,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <regex>
 
 // #include <seqan3/argument_parser/detail/format_ctd.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>
@@ -166,6 +167,11 @@ public:
      * \param[in] argv           The command line arguments to parse.
      * \param[in] version_check  Notify users about app version updates (default true).
      *
+     * \throws seqan3::parser_design_error if the application name contains illegal characters.
+     *
+     * The application name must only contain alpha-numeric characters, '_' or '-',
+     * i.e. the following regex must evaluate to true: `\"^[a-zA-Z0-9_-]+$\"`.
+     *
      * See the [argument parser tutorial](http://docs.seqan.de/seqan/3.0.0-master-dev/tutorial_argument_parser.html)
      * for more information about the version check functionality.
      */
@@ -175,6 +181,9 @@ public:
                     bool version_check = true) :
         version_check_dev_decision{version_check}
     {
+        if (!std::regex_match(app_name, app_name_regex))
+            throw parser_design_error{"The application name must only contain alpha-numeric characters "
+                                               "or '_' and '-' (regex: \"^[a-zA-Z0-9_-]+$\")."};
         info.app_name = std::move(app_name);
         init(argc, argv);
     }
@@ -491,6 +500,9 @@ private:
 
     //!\brief The future object that keeps track of the detached version check call thread.
     std::future<bool> version_check_future;
+
+    //!\brief Validates the application name to ensure an escaped server call
+    std::regex app_name_regex{"^[a-zA-Z0-9_-]+$"};
 
     /*!\brief Initializes the seqan3::argument_parser class on construction.
      *

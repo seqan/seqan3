@@ -75,6 +75,8 @@ public:
     version_checker(std::string name_, std::string const & version_, std::string const & app_url = std::string{}) :
         name{std::move(name_)}
     {
+        assert(std::regex_match(name, std::regex{"^[a-zA-Z0-9_-]+$"})); // check on construction of the argument parser
+
         if (!app_url.empty())
         {
             message_app_update.pop_back(); // remove second newline
@@ -88,27 +90,11 @@ public:
 #endif
         std::smatch versionMatch;
 
+        // Ensure version string is not corrupt
         if (!version_.empty() && /*regex allows version prefix instead of exact match */
             std::regex_search(version_, versionMatch, std::regex("^([[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+).*")))
         {
             version = versionMatch.str(1); // in case the git revision number is given take only version number
-        }
-
-        server_url = std::string{"http://seqan-update.informatik.uni-tuebingen.de/check/SeqAn3_"} +
-              get_os() + get_bit_sys() + name + "_" + version;
-
-        program = get_program();
-
-        // build up command for server call
-        if (!program.empty())
-        {
-            std::filesystem::path out_file = cookie_path / (name + ".version");
-            command = program + " " + out_file.string() + " " + server_url;
-#if defined(_WIN32)
-            command = command + "; exit  [int] -not $?}\" > nul 2>&1";
-#else
-            command = command + " > /dev/null 2>&1";
-#endif
         }
     }
     //!\}
@@ -190,11 +176,49 @@ public:
 
         std::cerr << std::flush;
 
+        std::string program = get_program();
+
         if (program.empty())
         {
             prom.set_value(false);
             return;
         }
+
+        // 'cookie_path' is no user input and `name` is escaped on construction of the argument parser.
+        std::filesystem::path out_file = cookie_path / (name + ".version");
+
+        // build up command for server call
+        std::string command = program +              // no user defined input
+                              " " +
+                              out_file.string() +
+                              " " +
+                              std::string{"http://seqan-update.informatik.uni-tuebingen.de/check/SeqAn3_"} +
+#ifdef __linux
+                              "Linux" +
+#elif __APPLE__
+                              "MacOS" +
+#elif defined(_WIN32)
+                              "Windows" +
+#elif __FreeBSD__
+                              "FreeBSD" +
+#elif __OpenBSD__
+                              "OpenBSD" +
+#else
+                              "unknown" +
+#endif
+#if __x86_64__ || __ppc64__
+                              "_64_" +
+#else
+                              "_32_" +
+#endif
+                              name +                 // !user input! escaped on construction of the argument parser
+                              "_" +
+                              version +              // !user input! escaped on construction of the version_checker
+#if defined(_WIN32)
+                              "; exit  [int] -not $?}\" > nul 2>&1"
+#else
+                              " > /dev/null 2>&1";
+#endif
 
         // launch a separate thread to not defer runtime.
         std::thread(call_server, command, std::move(prom)).detach();
@@ -405,18 +429,12 @@ public:
         "[APP INFO] :: If you don't wish to receive further notifications, set --version-check OFF.\n\n";
         /*Might be extended if a url is given on construction.*/
 
-    //!\brief The url to send the server request.
-    std::string server_url;
     //!\brief The application name.
     std::string name;
     //!\brief The version of the application.
     std::string version{"0.0.0"};
     //!\brief The regex to verify a valid version string.
     std::regex version_regex{"^[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+$"};
-    //!\brief The program used to perform the server call via a system call (wget, curl, ftp or Invoke-WebRequest).
-    std::string program;
-    //!\brief The hard coded system command that executes the `program` with the `server_url`.
-    std::string command;
     //!\brief The path to store timestamp and version files (either ~/.config/seqan or the tmp directory).
     std::filesystem::path cookie_path = get_path();
     //!\brief The timestamp filename.
@@ -429,48 +447,20 @@ private:
 #if defined(_WIN32)
         return "powershell.exe -NoLogo -NonInteractive -Command \"& {Invoke-WebRequest -erroraction 'silentlycontinue' -OutFile";
 #else  // Unix based platforms.
-        if (!system("wget --version > /dev/null 2>&1"))
-            return "wget --timeout=10 --tries=1 -q -O";
-        else if (!system("curl --version > /dev/null 2>&1"))
-            return "curl --connect-timeout 10 -o";
+        if (!system("/usr/bin/env -i wget --version > /dev/null 2>&1"))
+            return "/usr/bin/env -i wget --timeout=10 --tries=1 -q -O";
+        else if (!system("/usr/bin/env -i curl --version > /dev/null 2>&1"))
+            return "/usr/bin/env -i curl --connect-timeout 10 -o";
     // In case neither wget nor curl is available try ftp/fetch if system is OpenBSD/FreeBSD.
     // Note, both systems have ftp/fetch command installed by default so we do not guard against it.
     #if defined(__OpenBSD__)
-        return "ftp -w10 -Vo";
+        return "/usr/bin/env -i ftp -w10 -Vo";
     #elseif defined(__FreeBSD__)
-        return "fetch --timeout=10 -o";
+        return "/usr/bin/env -i fetch --timeout=10 -o";
     #else
         return "";
     #endif // __OpenBSD__
 #endif  // defined(_WIN32)
-    }
-
-    //!\brief Returns the name of the operation system (via macros).
-    static constexpr const char * get_os() noexcept
-    {
-#ifdef __linux
-        return "Linux";
-#elif __APPLE__
-        return "MacOS";
-#elif defined(_WIN32)
-        return "Windows";
-#elif __FreeBSD__
-        return "FreeBSD";
-#elif __OpenBSD__
-        return "OpenBSD";
-#else
-        return "unknown";
-#endif
-    }
-
-    //!\brief Returns either "_64_" or "_32_" depending on the hardware (via macros).
-    static constexpr const char * get_bit_sys() noexcept
-    {
-#if __x86_64__ || __ppc64__
-         return "_64_";
-#else
-        return "_32_";
-#endif
     }
 
     //!\brief Reads the timestamp file if possible and returns the time difference to the current time.

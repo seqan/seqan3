@@ -5,7 +5,7 @@ using namespace seqan3;
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser{"Game of Parsing", argc, argv};        // initialise myparser
+    argument_parser myparser{"Game-of-Parsing", argc, argv};        // initialise myparser
 
     // ... add information, options, flags and positional options
 
