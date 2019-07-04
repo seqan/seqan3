@@ -457,6 +457,15 @@ Add a seqan3::regex_validator to the first positional option that expects the `f
 \snippet doc/tutorial/argument_parser/solution6.cpp file_validator
 \endsolution
 
+# Full solution
+
+The following solution shows the complete code including all the little assignments of this tutorial
+that can serve as a copy'n'paste source for your application.
+
+\solution
+\include doc/tutorial/argument_parser/solution6.cpp
+\endsolution
+
 # Update Notifications
 
 When you run a SeqAn-based application for the first time, you will likely be asked about "update notifications".
