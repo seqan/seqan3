@@ -92,7 +92,7 @@ template <typename t>
 SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
 {
     typename t::size_type;
-    // typename t::cursor_type;
+    typename t::cursor_type;
 
     // NOTE: circular dependency
     // requires FmIndexCursor<typename t::cursor_type>;

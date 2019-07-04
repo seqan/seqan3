@@ -7,5 +7,5 @@
 
 #include "bi_fm_index_cursor_test_template.hpp"
 
-using it_t1 = bi_fm_index_cursor<bi_fm_index<false>>;
+using it_t1 = bi_fm_index_cursor<bi_fm_index<text_layout::single>>;
 INSTANTIATE_TYPED_TEST_CASE_P(dna4, bi_fm_index_cursor_test, it_t1);

@@ -89,9 +89,27 @@ using sdsl_wt_index_type =
  */
 using default_sdsl_index_type = sdsl_wt_index_type;
 
+//!\brief The possible text layouts (single, collection) the seqan3::fm_index and seqan3::bi_fm_index can support.
+enum text_layout : bool
+{
+    //!\brief The text is a single range.
+    single,
+    //!\brief The text is a range of ranges.
+    collection
+};
+
+//!\cond
+SEQAN3_DEPRECATED_310
+void fm_index_deprecation(bool);
+
+template <typename t>
+void fm_index_deprecation(t);
+//!\endcond
+
 /*!\brief The SeqAn FM Index.
  * \implements seqan3::FmIndex
- * \tparam is_collection    Indicates whether this index works on a text collection (`true`) or a single text (`false`).
+ * \tparam is_collection    Indicates whether this index works on a text collection or a single text.
+ *                          See seqan3::text_layout.
  * \tparam sdsl_index_type_ The type of the underlying SDSL index, must model seqan3::SdslIndex.
  * \details
  *
@@ -123,8 +141,10 @@ using default_sdsl_index_type = sdsl_wt_index_type;
  * \todo Link to SDSL documentation or write our own once SDSL3 documentation is available somewhere....
  *
  * \endif
+ *
+ * \deprecated Use seqan3::text_layout to indicate single texts and text collections. The use of bool is deprecated.
  */
-template <bool is_collection = false, detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
+template <auto is_collection = text_layout::single, detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
 class fm_index
 {
 protected:
@@ -156,6 +176,10 @@ protected:
     //!\brief Rank support for text_begin.
     sdsl::rank_support_sd<1> text_begin_rs;
 
+    //!\cond
+    using unused_t [[maybe_unused]] = decltype(fm_index_deprecation(is_collection));
+    //!\endcond
+
 public:
     /*!\name Member types
      * \{
@@ -163,7 +187,7 @@ public:
     //!\brief Type for representing positions in the indexed text.
     using size_type = typename sdsl_index_type::size_type;
     //!\brief The type of the (unidirectional) cursor.
-    using cursor_type = fm_index_cursor<fm_index<is_collection_, sdsl_index_type>>;
+    using cursor_type = fm_index_cursor<fm_index<is_collection, sdsl_index_type>>;
     //!\}
 
     template <typename bi_fm_index_t>
@@ -495,7 +519,7 @@ public:
  */
 //! \brief Deduces the dimensions of the text.
 template <std::ranges::Range text_t>
-fm_index(text_t &&) -> fm_index<dimension_v<text_t> != 1>;
+fm_index(text_t &&) -> fm_index<text_layout{dimension_v<text_t> != 1}>;
 //!\}
 
 //!\}

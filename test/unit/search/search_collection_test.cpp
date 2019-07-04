@@ -34,8 +34,8 @@ public:
     T index{text};
 };
 
-using fm_index_types        = ::testing::Types<fm_index<true>, bi_fm_index<true>>;
-using fm_index_string_types = ::testing::Types<fm_index<true>, bi_fm_index<true>>;
+using fm_index_types        = ::testing::Types<fm_index<text_layout::collection>, bi_fm_index<text_layout::collection>>;
+using fm_index_string_types = ::testing::Types<fm_index<text_layout::collection>, bi_fm_index<text_layout::collection>>;
 
 TYPED_TEST_CASE(search_test, fm_index_types);
 TYPED_TEST_CASE(search_string_test, fm_index_string_types);

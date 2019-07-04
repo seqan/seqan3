@@ -23,7 +23,7 @@ int main()
         oarchive(index);
     }
 
-    fm_index<false> index2; // we need to tell the index that we work on a text collection or not before loading
+    fm_index<text_layout::single> index2; // we need to tell the index that we work on a single text before loading
     {
         std::ifstream is{"index.file", std::ios::binary};
         cereal::BinaryInputArchive iarchive{is};
