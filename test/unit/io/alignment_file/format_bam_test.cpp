@@ -146,7 +146,7 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x00', '\x04', '\x00', '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00',
         '\x22', '\x00', '\x00', '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x02',
         '\x00', '\x48', '\x12', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\xFF',
-        '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00', '\x00', '\x00', '\x00', '\x2A', '\x00', '\x0A'
+        '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00', '\x00', '\x00', '\x00', '\x2A', '\x00'
     };
 
     std::string empty_cigar{

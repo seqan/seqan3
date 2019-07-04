@@ -39,7 +39,8 @@ constexpr std::array<out_t, alphabet_size<in_t>> convert_through_char_representa
     [] () constexpr
     {
         std::array<out_t, alphabet_size<in_t>> ret{};
-        for (typename in_t::rank_type i = 0; i < alphabet_size<in_t>; ++i)
+        // for (decltype(alphabet_size<in_t>) i = 0; ...) causes indefinite compilation :(
+        for (auto i = decltype(alphabet_size<in_t>){0}; i < alphabet_size<in_t>; ++i)
             assign_char_to(to_char(assign_rank_to(i, in_t{})), ret[i]);
         return ret;
     }()

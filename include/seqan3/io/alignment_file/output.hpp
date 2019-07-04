@@ -389,16 +389,7 @@ public:
         alignment_file_output{filename, selected_field_ids{}}
 
     {
-        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_lengths));
-
-        header_ptr = std::make_unique<alignment_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
-
-        // fill ref_dict
-        for (size_t idx = 0; idx < std::ranges::size(ref_ids); ++idx)
-        {
-            header_ptr->ref_id_info.push_back({ref_lengths[idx], ""});
-            header_ptr->ref_dict[(header_ptr->ref_ids()[idx])] = idx;
-        }
+        initialise_header_information(ref_ids, ref_lengths);
     }
 
     /*!\brief Construct from an existing stream and with specified format.
@@ -436,16 +427,7 @@ public:
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         alignment_file_output{std::forward<stream_type>(stream), file_format{}, selected_field_ids{}}
     {
-        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_lengths));
-
-        header_ptr = std::make_unique<alignment_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
-
-        // fill ref_dict
-        for (uint32_t idx = 0; idx < std::ranges::size(ref_ids); ++idx)
-        {
-            header_ptr->ref_id_info.emplace_back(ref_lengths[idx], "");
-            header_ptr->ref_dict[header_ptr->ref_ids()[idx]] = idx;
-        }
+        initialise_header_information(ref_ids, ref_lengths);
     }
     //!\}
 
@@ -762,6 +744,32 @@ protected:
 
     //!\brief The file header object (will be set on construction).
     std::unique_ptr<header_type> header_ptr;
+
+    //!\brief Fill the header reference dictionary, with the given info.
+    template <typename ref_ids_type_, typename ref_lengths_type>
+    void initialise_header_information(ref_ids_type_ && ref_ids, ref_lengths_type && ref_lengths)
+    {
+        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_lengths));
+
+        header_ptr = std::make_unique<alignment_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
+
+        for (int32_t idx = 0; idx < std::ranges::distance(ref_ids); ++idx)
+        {
+            header_ptr->ref_id_info.emplace_back(ref_lengths[idx], "");
+
+            if constexpr (std::ranges::ContiguousRange<reference_t<ref_ids_type_>> &&
+                          std::ranges::SizedRange<reference_t<ref_ids_type_>> &&
+                          ForwardingRange<reference_t<ref_ids_type_>>)
+            {
+                auto && id = header_ptr->ref_ids()[idx];
+                header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;
+            }
+            else
+            {
+                header_ptr->ref_dict[header_ptr->ref_ids()[idx]] = idx;
+            }
+        }
+    }
 
     //!\brief Write record to format.
     template <typename record_header_ptr_t, typename ...pack_type>

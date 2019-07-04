@@ -836,7 +836,7 @@ public:
                 /* block_size  */ 0,  // will be initialised right after
                 /* refID       */ -1, // will be initialised right after
                 /* pos         */ ref_offset.value_or(-1),
-                /* l_read_name */ static_cast<uint8_t>(std::ranges::distance(id) + 1),
+                /* l_read_name */ std::max<uint8_t>(std::min<size_t>(std::ranges::distance(id) + 1, 255), 2),
                 /* mapq        */ mapq,
                 /* bin         */ reg2bin(ref_offset.value_or(-1), std::ranges::distance(get<1>(align))),
                 /* n_cigar_op  */ static_cast<uint16_t>(cigar.size()),
@@ -866,7 +866,25 @@ public:
                     {
                         if (!std::ranges::empty(id_source)) // otherwise default will remain (-1)
                         {
-                            auto id_it = header.ref_dict.find(id_source);
+                            auto id_it = header.ref_dict.end();
+
+                            if constexpr (std::ranges::ContiguousRange<decltype(id_source)> &&
+                                          std::ranges::SizedRange<decltype(id_source)> &&
+                                          ForwardingRange<decltype(id_source)>)
+                            {
+                                id_it = header.ref_dict.find(std::span{std::ranges::data(id_source),
+                                                                       std::ranges::size(id_source)});
+                            }
+                            else
+                            {
+                                using header_ref_id_type = std::remove_reference_t<decltype(header.ref_ids()[0])>;
+
+                                static_assert(ImplicitlyConvertibleTo<decltype(id_source), header_ref_id_type>,
+                                  "The ref_id type is not convertible to the reference id information stored in the "
+                                  "reference dictionary of the header object.");
+
+                                id_it = header.ref_dict.find(id_source);
+                            }
 
                             if (id_it == header.ref_dict.end())
                             {
@@ -874,6 +892,7 @@ public:
                                                                      "not be found in BAM header ref_dict: ",
                                                                      header.ref_dict, ".")};
                             }
+
                             id_target = id_it->second;
                         }
                     }
@@ -896,7 +915,10 @@ public:
 
             std::ranges::copy_n(reinterpret_cast<char *>(&core), sizeof(core), stream_it);  // write core
 
-            std::ranges::copy_n(std::ranges::begin(id), std::ranges::distance(id), stream_it); // write read id
+            if (std::ranges::distance(id) == 0) // empty id is represented as * for backward compatibility
+                stream_it = '*';
+            else
+                std::ranges::copy_n(std::ranges::begin(id), core.l_read_name - 1, stream_it); // write read id
             stream_it = '\0';
 
             // write cigar
