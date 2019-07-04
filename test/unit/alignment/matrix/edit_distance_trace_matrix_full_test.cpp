@@ -38,7 +38,7 @@ std::vector<std::vector<detail::trace_directions>> as_row_wise_vector(auto matri
     {
         result.push_back({});
         for (unsigned col = 0; col < matrix.cols(); ++col)
-            result.back().push_back(matrix.at(row, col));
+            result.back().push_back(matrix.at({detail::row_index_type{row}, detail::column_index_type{col}}));
     }
     return result;
 }

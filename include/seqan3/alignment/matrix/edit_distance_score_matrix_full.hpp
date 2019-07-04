@@ -68,8 +68,14 @@ public:
     //!\copydoc default_edit_distance_trait_type::score_type
     using score_type = score_t;
 
-    //!\copydoc seqan3::detail::Matrix::entry_type
-    using entry_type = std::conditional_t<use_max_errors, std::optional<score_type>, score_type>;
+    //!\copydoc seqan3::detail::Matrix::value_type
+    using value_type = std::conditional_t<use_max_errors, std::optional<score_type>, score_type>;
+
+    //!\copydoc seqan3::detail::Matrix::reference
+    using reference = value_type;
+
+    //!\copydoc seqan3::detail::Matrix::size_type
+    using size_type = size_t;
 
     //!\brief A special score which represents infinity.
     static constexpr std::optional<score_type> inf = std::nullopt;
@@ -118,8 +124,11 @@ public:
 
 public:
     //!\copydoc seqan3::detail::Matrix::at
-    entry_type at(size_t const row, size_t const col) const noexcept
+    reference at(matrix_coordinate const & coordinate) const noexcept
     {
+        size_t col = coordinate.col;
+        size_t row = coordinate.row;
+
         assert(row < rows());
         assert(col < cols());
 

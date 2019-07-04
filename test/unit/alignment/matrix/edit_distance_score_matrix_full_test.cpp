@@ -41,7 +41,7 @@ std::vector<std::vector<int>> as_row_wise_vector(auto matrix)
         result.push_back({});
         for (unsigned col = 0; col < matrix.cols(); ++col)
         {
-            std::optional<int> entry = matrix.at(row, col);
+            std::optional<int> entry = matrix.at({detail::row_index_type{row}, detail::column_index_type{col}});
             result.back().push_back(entry.value_or(INF));
         }
     }

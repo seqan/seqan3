@@ -65,8 +65,14 @@ public:
     //!\copydoc default_edit_distance_trait_type::word_size
     static constexpr auto word_size = sizeof_bits<word_type>;
 
-    //!\copydoc seqan3::detail::Matrix::entry_type
-    using entry_type = detail::trace_directions;
+    //!\copydoc seqan3::detail::Matrix::value_type
+    using value_type = detail::trace_directions;
+
+    //!\copydoc seqan3::detail::Matrix::reference
+    using reference = value_type;
+
+    //!\copydoc seqan3::detail::Matrix::size_type
+    using size_type = size_t;
 
     /*!\brief Increase the capacity of the columns to a value that's greater or equal to `new_capacity`.
      * \param new_capacity The new capacity.
@@ -83,8 +89,11 @@ public:
 
 public:
     //!\copydoc seqan3::detail::Matrix::at
-    entry_type at(size_t const row, size_t const col) const noexcept
+    reference at(matrix_coordinate const & coordinate) const noexcept
     {
+        size_t row = coordinate.row;
+        size_t col = coordinate.col;
+
         assert(row < rows());
         assert(col < cols());
 
