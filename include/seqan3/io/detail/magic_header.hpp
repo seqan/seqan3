@@ -22,7 +22,7 @@ namespace seqan3::detail
 //!\brief Defines a magic byte sequence to disambiguate different compression formats. Default is empty.
 //!\ingroup io
 template <typename header_tag_t>
-inline constexpr std::array<int8_t, 0> magic_header{};
+inline constexpr std::array<char, 0> magic_header{};
 
 //!\brief A tag signifying a gz compressed file.
 //!\ingroup io
@@ -37,7 +37,7 @@ struct gz_compression
  * Specialises seqan3::detail::magic_header for seqan3::detail::gz_compression.
  */
 template <>
-inline constexpr std::array<int8_t, 3> magic_header<gz_compression>{'\x1f', '\x8b', '\x08'};
+inline constexpr std::array<char, 3> magic_header<gz_compression>{'\x1f', '\x8b', '\x08'};
 
 //!\brief A tag signifying a bz2 compressed file.
 //!\ingroup io
@@ -52,7 +52,7 @@ struct bz2_compression
  * Specialises seqan3::detail::magic_header for seqan3::detail::bz2_compression.
  */
 template <>
-inline constexpr std::array<int8_t, 3> magic_header<bz2_compression>{'\x42', '\x5a', '\x68'};
+inline constexpr std::array<char, 3> magic_header<bz2_compression>{'\x42', '\x5a', '\x68'};
 
 //!\brief A tag signifying a zstd compressed file.
 //!\ingroup io
@@ -67,7 +67,7 @@ struct zstd_compression
  * Specialises seqan3::detail::magic_header for seqan3::detail::zstd_compression.
  */
 template <>
-inline constexpr std::array<int8_t, 4> magic_header<zstd_compression>{'\x28', '\xb5', '\x2f', '\xfd'};
+inline constexpr std::array<char, 4> magic_header<zstd_compression>{'\x28', '\xb5', '\x2f', '\xfd'};
 
 //!\brief A tag signifying a bgzf compressed file.
 //!\ingroup io
@@ -82,7 +82,7 @@ struct bgzf_compression
  * Specialises seqan3::detail::magic_header for seqan3::detail::bgzf_compression.
  */
 template <>
-inline constexpr std::array<int8_t, 18> magic_header<bgzf_compression>
+inline constexpr std::array<char, 18> magic_header<bgzf_compression>
 {
 //  ID1                              ID2                              CM
     magic_header<gz_compression>[0], magic_header<gz_compression>[1], magic_header<gz_compression>[2],
