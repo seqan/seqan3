@@ -847,6 +847,8 @@ void from_chars(char const *, char const *, bool, int = 10) = delete;
 template <std::Integral value_type>
 inline std::to_chars_result to_chars(char * first, char * last, value_type value, int base) noexcept
 {
+    assert(first != nullptr);
+    assert(last != nullptr);
     assert(2 <= base && base <= 36);
     return seqan3::detail::to_chars_integral(first, last, value, base, is_signed<value_type>());
 }
@@ -856,7 +858,29 @@ inline std::to_chars_result to_chars(char * first, char * last, value_type value
 template <std::Integral value_type>
 inline std::to_chars_result to_chars(char * first, char * last, value_type value) noexcept
 {
+    assert(first != nullptr);
+    assert(last != nullptr);
     return seqan3::detail::to_chars_itoa(first, last, value, is_signed<value_type>());
+}
+
+//!\brief std::to_chars overload for floating point via a std::stringstream for default base = 10.
+//!\ingroup charconv
+template <seqan3::FloatingPoint floating_point_type>
+inline std::to_chars_result to_chars(char * first, char * last, floating_point_type value) noexcept
+{
+    assert(first != nullptr);
+    assert(last != nullptr);
+
+    std::ostringstream ss;
+    ss << value;
+    auto str = ss.str();
+
+    if (last - first < static_cast<std::ptrdiff_t>(str.size()))
+        return {last, std::errc::value_too_large};
+
+    std::copy(str.begin(), str.end(), first);
+
+    return {first + str.size(), std::errc{}};
 }
 
 // -----------------------------------------------------------------------------
