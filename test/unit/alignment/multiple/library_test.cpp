@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <sstream>
+#include <stdexcept>
 
 #include <seqan3/alignment/multiple/library.hpp>
 
@@ -99,6 +100,50 @@ TYPED_TEST(library_test, alignment_access)
     // element does not exist
     EXPECT_FALSE((lib[{1, 4}]));
     EXPECT_THROW((lib[{1, 4}].value()), std::bad_optional_access);
+}
+
+TYPED_TEST(library_test, empty_iterator)
+{
+    msa_library<TypeParam> lib{};
+    auto empty_it = lib.begin();
+    EXPECT_EQ(empty_it, lib.end());
+    EXPECT_THROW(*empty_it, std::out_of_range);
+}
+
+TYPED_TEST(library_test, iterator)
+{
+    auto lib = this->init_library_test();
+
+    // retrieve begin iterator
+    auto it = lib.begin();
+
+    // increment
+    ++it;
+
+    // verify the values
+    auto && [seq, pos, score] = *it;
+    EXPECT_EQ(seq, std::make_pair(1ul, 2ul));
+    EXPECT_EQ(pos, std::make_pair(5ul, 8ul));
+    EXPECT_EQ(score, static_cast<TypeParam>(3));
+
+    // assign to score and verify
+    score = 20;
+    EXPECT_EQ((lib[{1, 2, 5, 8}].value()), static_cast<TypeParam>(20));
+
+    // increment with switch to next sequence pair
+    it++;
+    EXPECT_EQ(std::get<0>(*it), std::make_pair(1ul, 3ul));
+
+    // reach the end
+    ++it;
+    EXPECT_EQ(it, lib.end());
+    EXPECT_THROW(*it, std::out_of_range);
+
+    // decrement until begin
+    it--;
+    --it;
+    --it;
+    EXPECT_EQ(it, lib.begin());
 }
 
 TYPED_TEST(library_test, stream)

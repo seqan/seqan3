@@ -15,6 +15,7 @@
 #include <map>
 #include <optional>
 #include <ostream>
+#include <stdexcept>
 
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
@@ -57,7 +58,160 @@ private:
         }
     }
 
+    class msa_library_iterator
+    {
+    private:
+        //!\brief Pointer to the underlying msa library.
+        typename std::add_pointer_t<msa_library> host{nullptr};
+        //!\brief Internal iterator for the position pair maps.
+        typename pos_score_type::iterator pos_it{};
+        //!\brief Internal iterator for the sequence pair map.
+        typename std::map<coord_type, pos_score_type>::iterator seq_it;
+        //!\brief Constant for the begin of the sequence pair map.
+        typename std::map<coord_type, pos_score_type>::iterator const seq_begin;
+        //!\brief Constant for the end of the sequence pair map.
+        typename std::map<coord_type, pos_score_type>::iterator const seq_end;
+
+    public:
+        //!\brief The reference type. As sequence and position pairs are constant, only the score is modifiable.
+        using reference = std::tuple<coord_type const &, coord_type const &, score_type &>;
+
+        /*!\name Constructors/Destructors
+         * \{
+         */
+        constexpr msa_library_iterator()                                             = delete;  //!< Deleted.
+        constexpr msa_library_iterator(msa_library_iterator const &)                 = default; //!< Defaulted.
+        constexpr msa_library_iterator (msa_library_iterator &&) noexcept            = default; //!< Defaulted.
+        constexpr msa_library_iterator & operator=(msa_library_iterator const &)     = default; //!< Defaulted.
+        constexpr msa_library_iterator & operator=(msa_library_iterator &&) noexcept = default; //!< Defaulted.
+        ~msa_library_iterator()                                                      = default; //!< Defaulted.
+
+        /*!\brief Construct from seqan3::msa_library and set members to the begin state.
+         * \param host_ A pointer to the underlying seqan3::msa_library.
+         */
+        explicit constexpr msa_library_iterator(msa_library * host_) noexcept :
+            host(host_),
+            seq_begin(host->data.begin()),
+            seq_end(host->data.end())
+        {
+            seq_it = host->data.begin();
+            if (seq_it != seq_end)
+                pos_it = seq_it->second.begin();
+        }
+
+        /*!\brief Construct from seqan3::msa_library and set members to the end state.
+         * \param host_ A pointer to the underlying seqan3::msa_library.
+         */
+        explicit constexpr msa_library_iterator(msa_library * host_, bool) noexcept :
+            host(host_),
+            seq_begin(host->data.begin()),
+            seq_end(host->data.end())
+        {
+            seq_it = host->data.end();
+            if (!host->data.empty())
+                pos_it = (--host->data.end())->second.end();
+        }
+        //!\}
+
+        /*!\name Arithmetic operators
+         * \{
+        */
+        //!\brief Pre-increment, returns updated iterator.
+        constexpr msa_library_iterator & operator++() noexcept
+        {
+            // We have to test whether seq_it is at end, because we may not be able to dereference it.
+            if (seq_it != seq_end && ++pos_it == seq_it->second.end() && ++seq_it != seq_end)
+                pos_it = seq_it->second.begin();
+            return *this;
+        }
+
+        //!\brief Pre-decrement, returns updated iterator.
+        constexpr msa_library_iterator & operator--() noexcept
+        {
+            // We have to test whether seq_it is invalid, because we may not be able to dereference it.
+            if ((seq_it == seq_end || pos_it == seq_it->second.begin()) && seq_it != seq_begin)
+                pos_it = (--seq_it)->second.end();
+
+            --pos_it;
+            return *this;
+        }
+
+        //!\brief Post-increment, returns previous iterator state.
+        constexpr msa_library_iterator operator++(int) noexcept
+        {
+            msa_library_iterator cpy{*this};
+            ++(*this);
+            return cpy;
+        }
+
+        //!\brief Post-decrement, returns previous iterator state.
+        constexpr msa_library_iterator operator--(int) noexcept
+        {
+            msa_library_iterator cpy{*this};
+            --(*this);
+            return cpy;
+        }
+        //!\}
+
+        /*!\name Reference/Dereference operators
+         * \{
+         */
+        //!\brief Dereference operator returns a std::tuple of sequence pair, position pair and score reference.
+        constexpr reference operator*() const
+        {
+            if (seq_it == seq_end)
+                throw std::out_of_range{"Trying to access the element behind the last one in msa_library."};
+
+            return std::tie(seq_it->first, pos_it->first, pos_it->second);
+        }
+
+        /*!\name Comparison operators
+         * \brief Compares iterators.
+         * \{
+         */
+
+        //!\brief Checks whether `*this` is equal to `rhs`.
+        constexpr friend bool operator==(msa_library_iterator const & lhs, msa_library_iterator const & rhs)
+        {
+            return lhs.seq_it == rhs.seq_it && lhs.pos_it == rhs.pos_it;
+        }
+
+        //!\brief Checks whether `*this` is not equal to `rhs`.
+        constexpr friend bool operator!=(msa_library_iterator const & lhs, msa_library_iterator const & rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        //!\brief Checks whether `*this` is less than `rhs`.
+        constexpr friend bool operator<(msa_library_iterator const & lhs, msa_library_iterator const & rhs)
+        {
+            return lhs.seq_it < rhs.seq_it || (lhs.seq_it == rhs.seq_it && lhs.pos_it < rhs.pos_it);
+        }
+
+        //!\brief Checks whether `*this` is less than or equal to `rhs`.
+        constexpr friend bool operator<=(msa_library_iterator const & lhs, msa_library_iterator const & rhs)
+        {
+            return lhs < rhs || lhs == rhs;
+        }
+
+        //!\brief Checks whether `*this` is greater than `rhs`.
+        constexpr friend bool operator>(msa_library_iterator const & lhs, msa_library_iterator const & rhs)
+        {
+            return !(lhs <= rhs);
+        }
+
+        //!\brief Checks whether `*this` is greater than or equal to `rhs`.
+        constexpr friend bool operator>=(msa_library_iterator const & lhs, msa_library_iterator const & rhs)
+        {
+            return !(lhs < rhs);
+        }
+        //!\}
+    }; // class msa_library_iterator
+
 public:
+    //!\brief The iterator type.
+    using iterator = msa_library_iterator;
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -138,6 +292,43 @@ public:
             return seq_it->second;
         else
             return {};
+    }
+
+    /*!\name Iterators
+     * \{
+     */
+    /*!\brief Returns an iterator to the first element of the library.
+     * \returns Iterator to the first element.
+     *
+     * If the container is empty, the returned iterator will be equal to end().
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    constexpr iterator begin() noexcept
+    {
+        return iterator(this);
+    }
+
+    /*!\brief Returns an iterator to the element following the last element of the library.
+     * \returns Iterator behind the last element.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    constexpr iterator end() noexcept
+    {
+        return iterator(this, true);
     }
 };
 
