@@ -347,16 +347,25 @@ public:
 /*!\brief Parse condition that checks if a given value is equal to `char_v`.
  * \ingroup stream
  * \implements seqan3::detail::CharPredicate
- * \tparam alphabet_t non-type template parameter with the value that should be checked against.
+ * \tparam char_v non-type template parameter with the value that should be checked against.
  */
 template <int char_v>
 struct is_char_type : public char_predicate_base<is_char_type<char_v>>
 {
     static_assert(char_v == EOF || static_cast<uint64_t>(char_v) < 256, "TODO");
 
+    //!\brief Helper function to handle char_v == EOF.
+    static constexpr auto get_string = [] ()
+    {
+        if constexpr (char_v == EOF)
+            return small_string{"EOF"};
+        else
+            return small_string{char_v};
+    };
+
     //!\brief The message representing this condition.
     static constexpr auto msg = small_string{"is_char<'"} +
-                                small_string{char_v}      +
+                                get_string()              +
                                 small_string("'>");
 
 
