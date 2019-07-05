@@ -14,8 +14,9 @@
 
 #include <type_traits>
 
-#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/std/concepts>
@@ -23,21 +24,6 @@
 
 namespace seqan3::detail
 {
-//!\brief A strong type for designated initialisation of the column index of the seqan3::detail::alignment_coordinate.
-//!\ingroup alignment_matrix
-struct column_index_type : detail::strong_type<size_t, column_index_type>
-{
-    //!!\brief Introduce base class constructor into this type's definition.
-    using detail::strong_type<size_t, column_index_type>::strong_type;
-};
-
-//!\brief A strong type for designated initialisation of the row index of the seqan3::detail::alignment_coordinate.
-//!\ingroup alignment_matrix
-struct row_index_type : detail::strong_type<size_t, row_index_type>
-{
-    //!!\brief Introduce base class constructor into this type's definition.
-    using detail::strong_type<size_t, row_index_type>::strong_type;
-};
 
 /*!\brief Represents a state to specify the implementation of the seqan3::detail::advanceable_alignment_coordinate.
  * \ingroup alignment_matrix
@@ -124,8 +110,8 @@ public:
      * \param c_idx The respective column index within the matrix. Of type seqan3::detail::column_index_type.
      * \param r_idx The respective row index within the matrix. Of type seqan3::detail::row_index_type.
      */
-    constexpr advanceable_alignment_coordinate(column_index_type const c_idx,
-                                               row_index_type const r_idx) noexcept :
+    constexpr advanceable_alignment_coordinate(column_index_type<size_t> const c_idx,
+                                               row_index_type<size_t> const r_idx) noexcept :
         first{c_idx.get()},
         second{r_idx.get()}
     {}
