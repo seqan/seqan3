@@ -10,7 +10,7 @@
 #include <seqan3/alphabet/alphabet_base.hpp>             // alphabet_base
 #include <seqan3/alphabet/concept.hpp>                   // alphabet concept checks
 
-// inherit from alphabet_base
+// derive from alphabet_base
 struct dna2 : public seqan3::alphabet_base<dna2, 2>
 {
 private:

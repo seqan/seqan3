@@ -12,6 +12,8 @@ struct dna2
 {
     uint8_t rank{};
 
+    // Semialphabet
+
     static constexpr size_t alphabet_size = 2;
 
     uint8_t to_rank() const noexcept
@@ -26,6 +28,8 @@ struct dna2
         return *this;
     }
 
+    // Alphabet
+
     char to_char() const noexcept
     {
         // map 0 => 'S' and 1 => 'W'
@@ -37,48 +41,53 @@ struct dna2
     {
         switch (ch)
         {
-            case 'W': rank = 1;
-            case 'w': rank = 1; break;                   // allow assignment from uppercase and lowercase
+            case 'W': case 'w': rank = 1; break;         // allow assignment from uppercase and lowercase
             default:  rank = 0;                          // unknown characters are mapped to 0 (=> 'S')
         }
         return *this;
     }
 
+    // Optional: Can be omitted.
+
     static bool char_is_valid(char const ch) noexcept
     {
         return (ch == dna2{}.assign_char(ch).to_char());
     }
+
+    // Equality and inequality operators
+
+    friend bool operator==(dna2 const & lhs, dna2 const & rhs) noexcept
+    {
+        return lhs.rank == rhs.rank;
+    }
+
+    friend bool operator!=(dna2 const & lhs, dna2 const & rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+
+    // Comparison operators
+
+    friend bool operator<(dna2 const & lhs, dna2 const & rhs) noexcept
+    {
+        return lhs.rank < rhs.rank;
+    }
+
+    friend bool operator<=(dna2 const & lhs, dna2 const & rhs) noexcept
+    {
+        return lhs.rank <= rhs.rank;
+    }
+
+    friend bool operator>(dna2 const & lhs, dna2 const & rhs) noexcept
+    {
+        return lhs.rank > rhs.rank;
+    }
+
+    friend bool operator>=(dna2 const & lhs, dna2 const & rhs) noexcept
+    {
+        return lhs.rank >= rhs.rank;
+    }
 };
-
-bool operator==(dna2 const & lhs, dna2 const & rhs)
-{
-    return lhs.rank == rhs.rank;
-}
-
-bool operator!=(dna2 const & lhs, dna2 const & rhs)
-{
-    return !(lhs == rhs);
-}
-
-bool operator<(dna2 const & lhs, dna2 const & rhs)
-{
-    return lhs.rank < rhs.rank;
-}
-
-bool operator<=(dna2 const & lhs, dna2 const & rhs)
-{
-    return lhs.rank <= rhs.rank;
-}
-
-bool operator>(dna2 const & lhs, dna2 const & rhs)
-{
-    return lhs.rank > rhs.rank;
-}
-
-bool operator>=(dna2 const & lhs, dna2 const & rhs)
-{
-    return lhs.rank >= rhs.rank;
-}
 //! [writable_alphabet]
 
 //! [writable_alphabet_concept]

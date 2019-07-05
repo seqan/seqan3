@@ -12,6 +12,8 @@ struct dna2
 {
     uint8_t rank{};
 
+    // Semialphabet
+
     static constexpr size_t alphabet_size = 2;
 
     uint8_t to_rank() const noexcept
@@ -25,42 +27,38 @@ struct dna2
         rank = rk;
         return *this;
     }
-};
 
-// Equality and inequality operators ...
-// Comparison operators ...
+    // Equality and inequality operators ...
+    // Comparison operators ...
+};
 //! [semialphabet]
 
-//! [equality]
-bool operator==(dna2 const & lhs, dna2 const & rhs)
+bool operator==(dna2 const & lhs, dna2 const & rhs) noexcept
 {
     return lhs.rank == rhs.rank;
 }
-//! [equality]
 
-//! [inequality]
-bool operator!=(dna2 const & lhs, dna2 const & rhs)
+bool operator!=(dna2 const & lhs, dna2 const & rhs) noexcept
 {
     return !(lhs == rhs);
 }
-//! [inequality]
 
-bool operator<(dna2 const & lhs, dna2 const & rhs)
+bool operator<(dna2 const & lhs, dna2 const & rhs) noexcept
 {
     return lhs.rank < rhs.rank;
 }
 
-bool operator<=(dna2 const & lhs, dna2 const & rhs)
+bool operator<=(dna2 const & lhs, dna2 const & rhs) noexcept
 {
     return lhs.rank <= rhs.rank;
 }
 
-bool operator>(dna2 const & lhs, dna2 const & rhs)
+bool operator>(dna2 const & lhs, dna2 const & rhs) noexcept
 {
     return lhs.rank > rhs.rank;
 }
 
-bool operator>=(dna2 const & lhs, dna2 const & rhs)
+bool operator>=(dna2 const & lhs, dna2 const & rhs) noexcept
 {
     return lhs.rank >= rhs.rank;
 }
