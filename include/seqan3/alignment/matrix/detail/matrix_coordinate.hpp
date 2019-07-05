@@ -88,7 +88,7 @@ struct matrix_index
      * \param col_idx The column index to set.
      */
     constexpr matrix_index(row_index_type<index_t> const row_idx,
-                                    column_index_type<index_t> const col_idx) noexcept
+                           column_index_type<index_t> const col_idx) noexcept
         : row{row_idx.get()}, col{col_idx.get()}
     {}
     //!\}
