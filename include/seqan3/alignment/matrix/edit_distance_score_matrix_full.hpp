@@ -99,7 +99,7 @@ public:
     static size_t max_rows(word_type const score_mask, unsigned const last_block,
                            score_type const score, score_type const max_errors) noexcept
     {
-        size_t const offset = score_mask == 0u ? 0u : bit_scan_reverse(score_mask) + 1u;
+        size_t const offset = score_mask == 0u ? 0u : most_significant_bit_set(score_mask) + 1u;
         size_t const active_row = word_size * last_block + offset;
         return active_row + (score <= max_errors);
     }
