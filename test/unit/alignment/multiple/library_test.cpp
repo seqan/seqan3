@@ -11,6 +11,7 @@
 #include <stdexcept>
 
 #include <seqan3/alignment/multiple/library.hpp>
+#include <seqan3/std/iterator>
 
 using namespace seqan3::detail;
 
@@ -57,28 +58,28 @@ TYPED_TEST(library_test, add_score_entry)
     auto lib = this->init_library_test();
 
     // increase or decrease existing values
+    auto elem = lib[{1, 2, 5, 7}]; // retrieve iterator to the element
     lib.add({1, 2}, {5, 7}, 10);
-    EXPECT_EQ((lib[{1, 2, 5, 7}].value()), static_cast<TypeParam>(13));
+    EXPECT_EQ(elem.score(), static_cast<TypeParam>(13)); // 3 + 10
     lib.add({1, 2}, {5, 7}, -5);
-    EXPECT_EQ((lib[{1, 2, 5, 7}].value()), static_cast<TypeParam>(8));
+    EXPECT_EQ(elem.score(), static_cast<TypeParam>(8));  // 13 - 5
 
     // add to non-existing entries
+    EXPECT_EQ((lib[{1, 2, 4, 5}]), lib.end()); // does not exist
     lib.add({1, 2}, {4, 5}, 10);
-    EXPECT_TRUE((lib[{1, 2, 4, 5}]));
-    EXPECT_EQ((lib[{1, 2, 4, 5}].value()), static_cast<TypeParam>(10));
+    EXPECT_NE((lib[{1, 2, 4, 5}]), lib.end()); // exists now with score 10
+    EXPECT_EQ((lib[{1, 2, 4, 5}].score()), static_cast<TypeParam>(10));
 }
 
-TYPED_TEST(library_test, score_access)
+TYPED_TEST(library_test, member_access)
 {
     auto lib = this->init_library_test();
 
-    // element exists
-    EXPECT_TRUE((lib[{1, 2, 5, 7}]));
-    EXPECT_EQ((lib[{1, 2, 5, 7}].value()), static_cast<TypeParam>(3));
-
-    // element does not exist
-    EXPECT_FALSE((lib[{1, 2, 5, 60}]));
-    EXPECT_THROW((lib[{1, 2, 5, 60}].value()), std::bad_optional_access);
+    auto elem = lib[{1, 2, 5, 7}];
+    EXPECT_NE(elem, lib.end()); // element exists
+    EXPECT_EQ(elem.score(), static_cast<TypeParam>(3));
+    EXPECT_EQ(elem.seq_pair(), std::make_pair(1ul, 2ul));
+    EXPECT_EQ(elem.pos_pair(), std::make_pair(5ul, 7ul));
 }
 
 TYPED_TEST(library_test, alignment_access)
@@ -87,15 +88,17 @@ TYPED_TEST(library_test, alignment_access)
 
     // element exists... check the values
     EXPECT_TRUE((lib[{1, 2}]));
-    auto pos_score_map = lib[{1, 2}].value();
-    EXPECT_EQ(pos_score_map.size(), 2ul);
-    auto map_it = pos_score_map.begin();
+    auto map_pos_score = lib[{1, 2}].value();
+    EXPECT_EQ(map_pos_score.size(), 2ul);
+
+    // examine the map of position pairs and score
+    auto map_it = map_pos_score.begin();
     EXPECT_EQ(map_it->first, std::make_pair(5ul, 7ul));
     EXPECT_EQ(map_it->second, static_cast<TypeParam>(3));
     ++map_it;
     EXPECT_EQ(map_it->first, std::make_pair(5ul, 8ul));
     EXPECT_EQ(map_it->second, static_cast<TypeParam>(3));
-    EXPECT_EQ(++map_it, pos_score_map.end());
+    EXPECT_EQ(++map_it, map_pos_score.end());
 
     // element does not exist
     EXPECT_FALSE((lib[{1, 4}]));
@@ -106,16 +109,17 @@ TYPED_TEST(library_test, empty_iterator)
 {
     msa_library<TypeParam> lib{};
     auto empty_it = lib.begin();
-    EXPECT_EQ(empty_it, lib.end());
-    EXPECT_THROW(*empty_it, std::out_of_range);
+    EXPECT_EQ(empty_it, lib.end()); // is at end
 }
 
+// TODO: use the iterator test template when available
 TYPED_TEST(library_test, iterator)
 {
     auto lib = this->init_library_test();
 
     // retrieve begin iterator
     auto it = lib.begin();
+    EXPECT_TRUE(std::BidirectionalIterator<decltype(it)>);
 
     // increment
     ++it;
@@ -128,16 +132,17 @@ TYPED_TEST(library_test, iterator)
 
     // assign to score and verify
     score = 20;
-    EXPECT_EQ((lib[{1, 2, 5, 8}].value()), static_cast<TypeParam>(20));
+    EXPECT_EQ((lib[{1, 2, 5, 8}].score()), static_cast<TypeParam>(20));
 
     // increment with switch to next sequence pair
     it++;
-    EXPECT_EQ(std::get<0>(*it), std::make_pair(1ul, 3ul));
+    EXPECT_EQ(it.seq_pair(), std::make_pair(1ul, 3ul));
+    EXPECT_EQ(it.pos_pair(), std::make_pair(5ul, 8ul));
+    EXPECT_EQ(it.score(), static_cast<TypeParam>(3));
 
     // reach the end
     ++it;
     EXPECT_EQ(it, lib.end());
-    EXPECT_THROW(*it, std::out_of_range);
 
     // decrement until begin
     it--;

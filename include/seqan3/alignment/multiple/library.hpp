@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <map>
 #include <optional>
 #include <ostream>
@@ -25,25 +26,30 @@
 namespace seqan3::detail
 {
 
+/*!\brief Library for multiple sequence alignments.
+ * \tparam score_type The type of the score values, must model std::Arithmetic.
+ *
+ * \details
+ * The library stores for each sequence pair a map of positions with associated scores.
+ * This class provides accessors, modifiers and an iterator to the underlying data.
+ */
 template <Arithmetic score_type>
 class msa_library
 {
-private:
+public:
     //!\brief The type of an index pair for sequences or positions.
     using coord_type = std::pair<size_t, size_t>;
-    //!\brief The type for the scores of pairwise alignment.
-    using pos_score_type = std::map<coord_type, score_type>;
+    //!\brief The type for the map of scores for each position in a pairwise alignment.
+    using map_pos_score_type = std::map<coord_type, score_type>;
 
-    /*!\brief Stream operator for the library.
-     * \tparam score_t The score type.
-     * \param stream   The stream where the library should be printed to.
-     * \return         The modified stream object.
-     */
-    template <typename score_t>
-    friend std::ostream & operator<<(std::ostream & stream, msa_library<score_t> const &);
+private:
+    //!\brief The iterator type for a sequence pair map.
+    using sequence_pair_iterator = typename std::map<coord_type, map_pos_score_type>::iterator;
+    //!\brief The iterator type for a position pair map.
+    using position_pair_iterator = typename map_pos_score_type::iterator;
 
     //!\brief A map where each sequence pair is assigned a map of position pairs and scores.
-    std::map<coord_type, pos_score_type> data;
+    std::map<coord_type, map_pos_score_type> data;
 
     /*!\brief Swap the order of both pairs if the first sequence index is greater than the second (to avoid duplicates).
      * \param[in,out] seq A pair of sequence indices.
@@ -58,58 +64,67 @@ private:
         }
     }
 
+    /*!\brief Stream operator for the library.
+     * \tparam score_t The score type.
+     * \param stream   The stream where the library should be printed to.
+     * \return         The modified stream object.
+     */
+    template <typename score_t>
+    friend std::ostream & operator<<(std::ostream & stream, msa_library<score_t> const &);
+
+    /*!\brief The iterator for seqan3::msa_library.
+     *        The elements are accessed in the order of sequence and position indices.
+     */
     class msa_library_iterator
     {
-    private:
-        //!\brief Pointer to the underlying msa library.
-        typename std::add_pointer_t<msa_library> host{nullptr};
-        //!\brief Internal iterator for the position pair maps.
-        typename pos_score_type::iterator pos_it{};
-        //!\brief Internal iterator for the sequence pair map.
-        typename std::map<coord_type, pos_score_type>::iterator seq_it;
-        //!\brief Constant for the begin of the sequence pair map.
-        typename std::map<coord_type, pos_score_type>::iterator const seq_begin;
-        //!\brief Constant for the end of the sequence pair map.
-        typename std::map<coord_type, pos_score_type>::iterator const seq_end;
-
     public:
         //!\brief The reference type. As sequence and position pairs are constant, only the score is modifiable.
         using reference = std::tuple<coord_type const &, coord_type const &, score_type &>;
+        //!\brief The value type is a std::tuple of sequence pair, position pair and the score.
+        using value_type = std::tuple<coord_type const, coord_type const, score_type>;
+        //!\brief The difference type of iterators.
+        using difference_type = std::ptrdiff_t;
 
+    private:
+        //!\brief Pointer to the underlying msa library.
+        typename std::add_pointer_t<msa_library> host{nullptr};
+        //!\brief Internal iterator for the sequence pair map.
+        sequence_pair_iterator seq_it{};
+        //!\brief Internal iterator for the position pair maps.
+        position_pair_iterator pos_it{};
+
+    public:
         /*!\name Constructors/Destructors
          * \{
          */
-        constexpr msa_library_iterator()                                             = delete;  //!< Deleted.
+        constexpr msa_library_iterator()                                             = default; //!< Defaulted.
         constexpr msa_library_iterator(msa_library_iterator const &)                 = default; //!< Defaulted.
         constexpr msa_library_iterator (msa_library_iterator &&) noexcept            = default; //!< Defaulted.
         constexpr msa_library_iterator & operator=(msa_library_iterator const &)     = default; //!< Defaulted.
         constexpr msa_library_iterator & operator=(msa_library_iterator &&) noexcept = default; //!< Defaulted.
         ~msa_library_iterator()                                                      = default; //!< Defaulted.
 
-        /*!\brief Construct from seqan3::msa_library and set members to the begin state.
-         * \param host_ A pointer to the underlying seqan3::msa_library.
+        /*!\brief Construct from seqan3::msa_library and set the inner iterator to the specified location.
+         * \param lib A pointer to the underlying seqan3::msa_library.
+         * \param s_it A sequence pair iterator to specify the location in the outer map.
+         * \param p_it A position pair iterator to specify the location in the inner map.
          */
-        explicit constexpr msa_library_iterator(msa_library * host_) noexcept :
-            host(host_),
-            seq_begin(host->data.begin()),
-            seq_end(host->data.end())
-        {
-            seq_it = host->data.begin();
-            if (seq_it != seq_end)
-                pos_it = seq_it->second.begin();
-        }
+        explicit constexpr msa_library_iterator(msa_library * lib,
+                                                sequence_pair_iterator const & s_it,
+                                                position_pair_iterator const & p_it) noexcept :
+            host(lib),
+            seq_it(s_it),
+            pos_it(p_it)
+        {}
 
-        /*!\brief Construct from seqan3::msa_library and set members to the end state.
-         * \param host_ A pointer to the underlying seqan3::msa_library.
+        /*!\brief Construct from seqan3::msa_library and set members to the begin state.
+         * \param lib A pointer to the underlying seqan3::msa_library.
          */
-        explicit constexpr msa_library_iterator(msa_library * host_, bool) noexcept :
-            host(host_),
-            seq_begin(host->data.begin()),
-            seq_end(host->data.end())
+        explicit constexpr msa_library_iterator(msa_library * lib) noexcept :
+            msa_library_iterator(lib, lib->data.begin(), {})
         {
-            seq_it = host->data.end();
-            if (!host->data.empty())
-                pos_it = (--host->data.end())->second.end();
+            if (seq_it != host->data.end())
+                pos_it = seq_it->second.begin();
         }
         //!\}
 
@@ -120,7 +135,7 @@ private:
         constexpr msa_library_iterator & operator++() noexcept
         {
             // We have to test whether seq_it is at end, because we may not be able to dereference it.
-            if (seq_it != seq_end && ++pos_it == seq_it->second.end() && ++seq_it != seq_end)
+            if (seq_it != host->data.end() && ++pos_it == seq_it->second.end() && ++seq_it != host->data.end())
                 pos_it = seq_it->second.begin();
             return *this;
         }
@@ -129,7 +144,7 @@ private:
         constexpr msa_library_iterator & operator--() noexcept
         {
             // We have to test whether seq_it is invalid, because we may not be able to dereference it.
-            if ((seq_it == seq_end || pos_it == seq_it->second.begin()) && seq_it != seq_begin)
+            if ((seq_it == host->data.end() || pos_it == seq_it->second.begin()) && seq_it != host->data.begin())
                 pos_it = (--seq_it)->second.end();
 
             --pos_it;
@@ -153,17 +168,38 @@ private:
         }
         //!\}
 
-        /*!\name Reference/Dereference operators
+        /*!\name Access to the data members.
          * \{
          */
         //!\brief Dereference operator returns a std::tuple of sequence pair, position pair and score reference.
-        constexpr reference operator*() const
+        constexpr reference operator*() const noexcept
         {
-            if (seq_it == seq_end)
-                throw std::out_of_range{"Trying to access the element behind the last one in msa_library."};
-
+            // throw std::out_of_range{"Trying to access the element behind the last one in msa_library."};
+            assert(seq_it != host->data.end());
             return std::tie(seq_it->first, pos_it->first, pos_it->second);
         }
+
+        //!\brief Returns the score of the current iterator.
+        constexpr score_type & score() const noexcept
+        {
+            assert(seq_it != host->data.end());
+            return pos_it->second;
+        }
+
+        //!\brief Returns the pair of sequence indices of the current iterator.
+        constexpr coord_type const & seq_pair() const noexcept
+        {
+            assert(seq_it != host->data.end());
+            return seq_it->first;
+        }
+
+        //!\brief Returns the pair of position indices of the current iterator.
+        constexpr coord_type const & pos_pair() const noexcept
+        {
+            assert(seq_it != host->data.end());
+            return pos_it->first;
+        }
+        //!\}
 
         /*!\name Comparison operators
          * \brief Compares iterators.
@@ -209,7 +245,7 @@ private:
     }; // class msa_library_iterator
 
 public:
-    //!\brief The iterator type.
+    //!\brief The bidirectional iterator that allows to visit all entries of the library.
     using iterator = msa_library_iterator;
 
     /*!\name Constructors, destructor and assignment
@@ -234,7 +270,7 @@ public:
         check_seq_order(seq, pos);
 
         // try to insert a new sequence pair
-        auto [iter, inserted] = data.try_emplace(seq, pos_score_type{{pos, score}});
+        auto [iter, inserted] = data.try_emplace(seq, map_pos_score_type{{pos, score}});
 
         if (inserted)    // we have added a new sequence pair with the entry
             return true;
@@ -253,18 +289,18 @@ public:
         check_seq_order(seq, pos);
 
         // try to insert a new sequence pair
-        auto [iter, inserted] = data.try_emplace(seq, pos_score_type{{pos, score}});
+        auto [iter, inserted] = data.try_emplace(seq, map_pos_score_type{{pos, score}});
 
         if (!inserted)   // append to an existing sequence pair
             iter->second[pos] += score;
     }
 
     /*!
-     * \brief Retrieve the score of pairing two positions in the specified sequences.
+     * \brief Retrieve the iterator that contains the score of pairing two positions in the specified sequences.
      * \param seq_pos A quadruple consisting of (seq1, seq2, pos1, pos2).
-     * \return A std::optional that contains the score if the specified entry exists and False otherwise.
+     * \return An iterator to the score if the specified entry exists and end() otherwise.
      */
-    std::optional<score_type> operator[](std::tuple<size_t, size_t, size_t, size_t> seq_pos) const noexcept
+    iterator operator[](std::tuple<size_t, size_t, size_t, size_t> seq_pos) noexcept
     {
         coord_type seq = {std::get<0>(seq_pos), std::get<1>(seq_pos)};
         coord_type pos = {std::get<2>(seq_pos), std::get<3>(seq_pos)};
@@ -274,16 +310,16 @@ public:
         {
             auto pos_it = seq_it->second.find(pos);
             if (pos_it != seq_it->second.end())
-                return pos_it->second;
+                return iterator(this, seq_it, pos_it);
         }
-        return {};
+        return end();
     }
 
     /*!\brief Retrieve a map of all scores in the two specified sequences.
      * \param seq A pair of sequence indices. The smaller index has to be in the first position of the pair.
      * \return A std::optional that contains a score map if the specified sequences exist and False otherwise.
      */
-    std::optional<pos_score_type> operator[](std::pair<size_t, size_t> seq) const noexcept
+    std::optional<map_pos_score_type> operator[](std::pair<size_t, size_t> seq) const noexcept
     {
         assert(seq.first < seq.second); // cannot swap the order without rewriting the resulting map
 
@@ -328,7 +364,11 @@ public:
      */
     constexpr iterator end() noexcept
     {
-        return iterator(this, true);
+        typename map_pos_score_type::iterator pos_it{};
+        if (!data.empty())
+            pos_it = (--data.end())->second.end();
+
+        return iterator(this, data.end(), pos_it);
     }
 };
 
