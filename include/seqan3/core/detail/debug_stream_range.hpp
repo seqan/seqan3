@@ -17,6 +17,52 @@
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/ranges>
 
+namespace seqan3::detail
+{
+/*!\brief A helper concept definition for ranges that can be streamed to the seqan3::debug_stream.
+ * \tparam rng_t The range type to check.
+ * \ingroup core
+ *
+ * \details
+ *
+ * This concept refines the std::ranges::InputRange concept to allow streaming the range object to the debug stream,
+ * with the following requirements:
+ *
+ * * `rng_t` is not the same type as `reference_t<rng_t>`,
+ * * `rng_t` is not a pointer or c-style array,
+ * * `reference_t<rng_t>` is not `char`.
+ *
+ * \note If you need to further refine this concept for your type ensure that this concept comes before any
+ *       additional refinement, otherwise your concept definition/requires clause is ill-formed according to the
+ *       subsumption rules for concepts.
+ */
+template <typename rng_t>
+SEQAN3_CONCEPT DebugStreamableRange =
+    !std::Same<remove_cvref_t<reference_t<rng_t>>, remove_cvref_t<rng_t>> && // prevent recursive instantiation
+    // exclude null-terminated strings:
+    !(std::is_pointer_v<std::decay_t<rng_t>> && std::Same<remove_cvref_t<reference_t<rng_t>>, char>);
+
+/*!\brief Helper template variable that checks if the reference type of a range can be streamed into an instance of
+ *        seqan3::debug_stream_type .
+ * \tparam rng_t The range type to check.
+ * \tparam char_t The char type of the stream.
+ * \ingroup core
+ *
+ * \details
+ *
+ * Evaluates to `true` if the following expression is valid: `debug_stream << *rng.begin();`, where rng is of  type
+ * rng_t. Otherwise false.
+ */
+template <std::ranges::Range rng_t, typename char_t>
+constexpr bool reference_type_is_streamable_v = false;
+
+//!\cond
+template <std::ranges::Range rng_t, typename char_t>
+    requires requires (reference_t<rng_t> l, debug_stream_type<char_t> s) { { s << l }; }
+constexpr bool reference_type_is_streamable_v<rng_t, char_t> = true;
+//!\endcond
+}
+
 namespace seqan3
 {
 /*!\name Formatted output overloads
@@ -35,17 +81,21 @@ namespace seqan3
  *
  * In all other cases the elements are comma separated and the range is enclosed in brackets, i.e.
  * `std::vector<int>{3, 1, 33, 7}` is printed as "[3,1,33,7]".
+ *
+ * \if DEV
+ * Note that overloads for range based streaming need to refine the seqan3::detail::DebugStreamableRange concept
+ * to avoid ambiguous function calls.
+ * \endif
  */
 template <std::ranges::InputRange rng_t, typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
 //!\cond
-    requires !std::Same<remove_cvref_t<reference_t<rng_t>>, remove_cvref_t<rng_t>> && // prevent recursive instantiation
-             requires (reference_t<rng_t> l) { { s << l }; } &&
-             // exclude null-terminated strings:
-             !(std::is_pointer_v<std::decay_t<rng_t>> &&
-               std::Same<remove_cvref_t<reference_t<rng_t>>, char>)
+    requires detail::DebugStreamableRange<rng_t>
 //!\endcond
 {
+    static_assert(detail::reference_type_is_streamable_v<rng_t, char_t>,
+                  "The reference type of the passed range cannot be streamed into the debug_stream.");
+
     if constexpr (Alphabet<reference_t<rng_t>> &&
                   !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<rng_t>>>)
     {
