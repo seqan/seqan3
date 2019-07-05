@@ -455,7 +455,7 @@ private:
     // Note, both systems have ftp/fetch command installed by default so we do not guard against it.
     #if defined(__OpenBSD__)
         return "/usr/bin/env -i ftp -w10 -Vo";
-    #elseif defined(__FreeBSD__)
+    #elif defined(__FreeBSD__)
         return "/usr/bin/env -i fetch --timeout=10 -o";
     #else
         return "";
