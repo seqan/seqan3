@@ -330,7 +330,7 @@ using subrange_kind = ::ranges::subrange_kind;
  *
  * ### Example
  *
- * \snippet test/snippet/std/view/subrange.cpp example
+ * \include test/snippet/std/view/subrange.cpp
  * \hideinitializer
  */
 template <std::Iterator it_t,

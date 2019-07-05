@@ -1,0 +1,30 @@
+#include <vector>
+
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
+
+int main()
+{
+    using seqan3::operator""_dna4;
+
+    seqan3::debug_stream << "Example to_rev_cursor()\n";
+
+    std::vector<seqan3::dna4> genome{"GAATTAACGAAC"_dna4};
+    seqan3::bi_fm_index index{genome};                         // build the bidirectional index
+
+    auto cur = index.begin();                                  // create a cursor
+    cur.extend_right("AAC"_dna4);                              // search the sequence "AAC"
+    seqan3::debug_stream << cur.path_label(genome) << '\n';    // outputs "AAC"
+    auto uni_it = cur.to_rev_cursor();                         // unidirectional cursor on the text "CAAGCAATTAAG"
+    seqan3::debug_stream << uni_it.path_label(genome) << '\n'; // outputs "CAA"
+    // Undefined behaviour! Cannot be called on the reversed cursor if the last extension on the bidirectional
+    // cursor was to the right:
+    // cur.cycle_back();
+    // seqan3::debug_stream << cur.last_rank() << '\n';
+
+    uni_it.extend_right('G'_dna4);                             // search the sequence "CAAG"
+    seqan3::debug_stream << uni_it.path_label(genome) << '\n'; // outputs "CAAG"
+    seqan3::debug_stream << uni_it.last_rank() << '\n';        // outputs 2
+    uni_it.cycle_back();                                       // search the sequence "CAAT"
+}

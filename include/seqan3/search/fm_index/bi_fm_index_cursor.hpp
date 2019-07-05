@@ -540,7 +540,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp extend_left_seq
+     * \include test/snippet/search/bi_fm_index_cursor_extend_left_seq.cpp
      *
      * ### Complexity
      *
@@ -608,7 +608,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp cycle
+     * \include test/snippet/search/bi_fm_index_cursor_cycle.cpp
      *
      * ### Complexity
      *
@@ -661,7 +661,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp cycle
+     * \include test/snippet/search/bi_fm_index_cursor_cycle.cpp
      *
      * ### Complexity
      *
@@ -707,7 +707,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp cycle
+     * \include test/snippet/search/bi_fm_index_cursor_cycle.cpp
      *
      * ### Complexity
      *
@@ -758,7 +758,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp to_fwd_cursor
+     * \include test/snippet/search/bi_fm_index_cursor_to_fwd_cursor.cpp
      *
      * ### Complexity
      *
@@ -800,11 +800,11 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp to_rev_cursor
+     * \include test/snippet/search/bi_fm_index_cursor_to_rev_cursor.cpp
      *
      * \attention When the index is built for text collections, the returned text IDs will be reversed.
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp to_rev_cursor_collection
+     * \include test/snippet/search/bi_fm_index_cursor_to_rev_cursor_collection.cpp
      * ### Complexity
      *
      * Constant.

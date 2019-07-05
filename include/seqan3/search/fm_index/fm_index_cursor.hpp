@@ -345,7 +345,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/fm_index_cursor.cpp cycle
+     * \include test/snippet/search/fm_index_cursor.cpp
      *
      * ### Complexity
      *
@@ -385,7 +385,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/fm_index_cursor.cpp cycle
+     * \include test/snippet/search/fm_index_cursor.cpp
      *
      * ### Complexity
      *
