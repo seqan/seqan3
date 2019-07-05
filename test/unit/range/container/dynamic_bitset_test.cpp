@@ -30,6 +30,8 @@ TEST(dynamic_bitset, standard_construction)
     EXPECT_TRUE((std::is_move_assignable_v<dynamic_bitset<58>>));
     EXPECT_TRUE((std::is_trivially_move_assignable_v<dynamic_bitset<58>>));
     EXPECT_TRUE((std::is_nothrow_move_assignable_v<dynamic_bitset<58>>));
+    EXPECT_THROW(dynamic_bitset{std::numeric_limits<uint64_t>::max()}, std::invalid_argument);
+    EXPECT_THROW(dynamic_bitset{"10101011x0101"}, std::invalid_argument);
 }
 
 TEST(dynamic_bitset, concepts)
@@ -80,6 +82,7 @@ TEST(dynamic_bitset, comparison)
 {
     constexpr bool b = comparison_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(comparison_test());
 }
 
 constexpr bool size_test()
@@ -106,6 +109,7 @@ TEST(dynamic_bitset, size)
 {
     constexpr bool b = size_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(size_test());
 }
 
 constexpr bool count_test()
@@ -132,6 +136,7 @@ TEST(dynamic_bitset, count)
 {
     constexpr bool b = count_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(count_test());
 }
 
 constexpr bool all_test()
@@ -158,6 +163,7 @@ TEST(dynamic_bitset, all)
 {
     constexpr bool b = all_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(all_test());
 }
 
 constexpr bool any_test()
@@ -184,6 +190,7 @@ TEST(dynamic_bitset, any)
 {
     constexpr bool b = any_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(any_test());
 }
 
 constexpr bool none_test()
@@ -210,6 +217,7 @@ TEST(dynamic_bitset, none)
 {
     constexpr bool b = none_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(none_test());
 }
 
 constexpr bool set_test()
@@ -232,6 +240,7 @@ TEST(dynamic_bitset, set)
 {
     constexpr bool b = set_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(set_test());
 }
 
 constexpr bool reset_test()
@@ -254,6 +263,7 @@ TEST(dynamic_bitset, reset)
 {
     constexpr bool b = reset_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(reset_test());
 }
 
 constexpr bool flip_test()
@@ -276,6 +286,7 @@ TEST(dynamic_bitset, flip)
 {
     constexpr bool b = flip_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(flip_test());
 }
 
 constexpr bool access_test()
@@ -284,7 +295,7 @@ constexpr bool access_test()
 
     dynamic_bitset t1{0b1111'0000'0000'0000};
     dynamic_bitset const t2{0b1111'0000'0000'0000};
-    dynamic_bitset expected{0b0111'0000'0000'0011};
+    dynamic_bitset expected{0b0111'0000'0000'0001};
     expected.resize(t1.size());
 
     for (size_t i = 0u; i < t1.size() - 4u; ++i)
@@ -306,9 +317,11 @@ constexpr bool access_test()
 
     t1[1] = true;
     res &= t1 == dynamic_bitset{0b1111'0000'0000'0010};
+    t1.at(1) = false;
+    res &= t1 == t2;
 
     t1.front() = true;
-    res &= t1 == dynamic_bitset{0b1111'0000'0000'0011};
+    res &= t1 == dynamic_bitset{0b1111'0000'0000'0001};
 
     t1.back() = false;
     res &= t1 == expected;
@@ -320,6 +333,7 @@ TEST(dynamic_bitset, access)
 {
     constexpr bool b = access_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(access_test());
 
     constexpr dynamic_bitset t1{0b1111'0000'0000'0000};
     EXPECT_THROW(t1.at(16), std::out_of_range);
@@ -343,6 +357,7 @@ TEST(dynamic_bitset, bitwise_and)
 {
     constexpr bool b = bitwise_and_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(bitwise_and_test());
 }
 
 constexpr bool bitwise_or_test()
@@ -362,6 +377,7 @@ TEST(dynamic_bitset, bitwise_or)
 {
     constexpr bool b = bitwise_or_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(bitwise_or_test());
 }
 
 constexpr bool bitwise_xor_test()
@@ -382,6 +398,7 @@ TEST(dynamic_bitset, bitwise_xor)
 {
     constexpr bool b = bitwise_xor_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(bitwise_xor_test());
 }
 
 constexpr bool bitwise_not_test()
@@ -397,6 +414,7 @@ TEST(dynamic_bitset, bitwise_not)
 {
     constexpr bool b = bitwise_not_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(bitwise_not_test());
 }
 
 constexpr bool swap_test()
@@ -424,6 +442,7 @@ TEST(dynamic_bitset, swap)
 {
     constexpr bool b = swap_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(swap_test());
 }
 
 constexpr bool assign_test()
@@ -451,6 +470,7 @@ TEST(dynamic_bitset, assign)
 {
     constexpr bool b = assign_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(assign_test());
 }
 
 constexpr bool iterator_test()
@@ -480,6 +500,7 @@ TEST(dynamic_bitset, iterators)
 {
     constexpr bool b = iterator_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(iterator_test());
 }
 
 constexpr bool capacity_test()
@@ -521,6 +542,7 @@ TEST(dynamic_bitset, capacity)
 {
     constexpr bool b = capacity_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(capacity_test());
 }
 
 constexpr bool clear_test()
@@ -537,6 +559,7 @@ TEST(dynamic_bitset, clear)
 {
     constexpr bool b = clear_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(clear_test());
 }
 
 constexpr bool insert_test()
@@ -556,6 +579,7 @@ constexpr bool insert_test()
     t0.insert(t0.cend(), 3, true);
     t0.insert(t0.cbegin() + 1, false);
     t0.insert(t0.cbegin() + 3, 2, false);
+    t0.insert(t0.cbegin() + 3, 0, false);
     res &= t0 == t1;
 
     return res;
@@ -565,6 +589,7 @@ TEST(dynamic_bitset, insert)
 {
     constexpr bool b = insert_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(insert_test());
 }
 
 constexpr bool erase_test()
@@ -587,6 +612,7 @@ TEST(dynamic_bitset, erase)
 {
     constexpr bool b = erase_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(erase_test());
 }
 
 constexpr bool push_pop_test()
@@ -614,6 +640,7 @@ TEST(dynamic_bitset, push_pop)
 {
     constexpr bool b = push_pop_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(push_pop_test());
 }
 
 constexpr bool resize_test()
@@ -639,6 +666,7 @@ TEST(dynamic_bitset, resize)
 {
     constexpr bool b = resize_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(resize_test());
 }
 
 TEST(dynamic_bitset, to_string)
@@ -666,6 +694,7 @@ TEST(dynamic_bitset, to_ulong)
 {
     constexpr bool b = to_ulong_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(to_ulong_test());
     if constexpr (std::numeric_limits<unsigned long>::max() < std::numeric_limits<size_t>::max())
     {
         dynamic_bitset t1{std::numeric_limits<unsigned long>::max() + 1};
@@ -685,6 +714,7 @@ TEST(dynamic_bitset, to_ullong)
 {
     constexpr bool b = to_ullong_test();
     EXPECT_TRUE(b);
+    EXPECT_TRUE(to_ullong_test());
     if constexpr (std::numeric_limits<unsigned long long>::max() < std::numeric_limits<size_t>::max())
     {
         dynamic_bitset t1{std::numeric_limits<unsigned long long>::max() + 1};
@@ -721,7 +751,7 @@ TEST(dynamic_bitset, input)
     }
 
     { // eof before capacity reached
-        dynamic_bitset t1{""};
+        dynamic_bitset t1{};
         std::istringstream is{"00110001"};
         is >> t1;
         EXPECT_EQ(t1, dynamic_bitset{"00110001"});

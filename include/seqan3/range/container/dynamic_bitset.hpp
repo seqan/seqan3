@@ -1425,8 +1425,6 @@ public:
             for (std::streamsize n = num_char; n > 0 && (is.peek() == is.widen('0') || is.peek() == is.widen('1')); --n)
             {
                 char c = is.get();
-                if (is.eof())
-                    break;
                 c == is.widen('0') ? arg.insert(arg.cbegin(), false) : arg.insert(arg.cbegin(), true);
             }
 
