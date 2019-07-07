@@ -214,13 +214,71 @@ static auto dna4_02_s3u_15u = []()
         "AACCGGTAAACCGG"_dna4,
         "AC"_dna4,
         align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
-        0,
+        -0,
         "AC",
         "AC",
         alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{11u}, row_index_type{2u}},
         dna4_02.score_matrix().sub_matrix(3u, 15u),
         dna4_02.trace_matrix().sub_matrix(3u, 15u)
+    };
+}();
+
+static auto dna4_02_s1u_15u = []()
+{
+    return alignment_fixture
+    {
+        // score: 0 - empty alignment
+        "AACCGGTAAACCGG"_dna4,
+        ""_dna4,
+        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        -0,
+        "",
+        "",
+        alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
+        dna4_02.score_matrix().sub_matrix(1u, 15u),
+        dna4_02.trace_matrix().sub_matrix(1u, 15u)
+    };
+}();
+
+static auto dna4_01T_s17u_1u = []()
+{
+    return alignment_fixture
+    {
+        // score: 16 (16 insertions)
+        // alignment:
+        // ----------------
+        //
+        // AACCGGTTAACCGGTT
+        ""_dna4,
+        "AACCGGTTAACCGGTT"_dna4,
+        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        -16,
+        "----------------",
+        "AACCGGTTAACCGGTT",
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{0u}, row_index_type{16u}},
+        dna4_01T.score_matrix().sub_matrix(17u, 1u),
+        dna4_01T.trace_matrix().sub_matrix(17u, 1u)
+    };
+}();
+
+static auto dna4_03 = []()
+{
+    return alignment_fixture
+    {
+        // score: 0
+        ""_dna4,
+        ""_dna4,
+        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        -0,
+        "",
+        "",
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        std::vector<int>{0},
+        std::vector<detail::trace_directions>{NON}
     };
 }();
 

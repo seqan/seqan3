@@ -35,6 +35,21 @@ using semi_global_edit_distance_unbanded_types
         semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_02_s3u_15u, uint32_t>,
         semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_02_s3u_15u, uint64_t>,
 
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_02_s1u_15u, uint8_t>,
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_02_s1u_15u, uint16_t>,
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_02_s1u_15u, uint32_t>,
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_02_s1u_15u, uint64_t>,
+
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_01T_s17u_1u, uint8_t>,
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_01T_s17u_1u, uint16_t>,
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_01T_s17u_1u, uint32_t>,
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_01T_s17u_1u, uint64_t>,
+
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_03, uint8_t>,
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_03, uint16_t>,
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_03, uint32_t>,
+        semi_global_fixture<&semi_global::edit_distance::unbanded::dna4_03, uint64_t>,
+
         semi_global_fixture<&semi_global::edit_distance::unbanded::aa27_01, uint8_t>,
         semi_global_fixture<&semi_global::edit_distance::unbanded::aa27_01, uint16_t>,
         semi_global_fixture<&semi_global::edit_distance::unbanded::aa27_01, uint32_t>,

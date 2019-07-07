@@ -140,6 +140,279 @@ static auto dna4_02_e255 = []()
     };
 }();
 
+static auto dna4_02_s10u_15u_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 4 (3 deletions, 1 insertion)
+        // alignment:
+        // AAC---CGGTAAAC---CGGTT
+        //  ||   || ||
+        // -ACGTACG-TA-----------
+        "AACCGGTAAACCGG"_dna4,
+        "ACGTACGTA"_dna4,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
+        -4,
+        "AC---CGGTA",
+        "ACGTACG-TA",
+        dna4_02_s10u_15u.front_coordinate,
+        dna4_02_s10u_15u.back_coordinate,
+        dna4_02_s10u_15u.score_vector,
+        dna4_02_s10u_15u.trace_vector
+    };
+}();
+
+static auto dna4_02_s10u_15u_e4 = []()
+{
+    std::vector<bool> masking_matrix
+    {
+    //    e, A, A, C, C, G, G, T, A, A, A, C, C, G, G
+    /*e*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*A*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*C*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*G*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*T*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*A*/ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*C*/ 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*G*/ 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*T*/ 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1,
+    /*A*/ 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+    };
+
+    return alignment_fixture
+    {
+        // score: INF no alignment
+        "AACCGGTAAACCGG"_dna4,
+        "ACGTACGTA"_dna4,
+        align_cfg::edit | align_cfg::max_error{4} | align_cfg::aligned_ends{free_ends_first},
+        -4,
+        "AC---CGGTA",
+        "ACGTACG-TA",
+        dna4_02_s10u_15u.front_coordinate,
+        dna4_02_s10u_15u.back_coordinate,
+        dna4_02_s10u_15u.score_matrix().mask_matrix(masking_matrix),
+        dna4_02_s10u_15u.trace_matrix().mask_matrix(masking_matrix)
+    };
+}();
+
+static auto dna4_02_s10u_15u_e3 = []()
+{
+    std::vector<bool> masking_matrix
+    {
+    //    e, A, A, C, C, G, G, T, A, A, A, C, C, G, G
+    /*e*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*A*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*C*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*G*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*T*/ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*A*/ 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*C*/ 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0,
+    /*G*/ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+    /*T*/ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    /*A*/ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    return alignment_fixture
+    {
+        // score: INF no alignment
+        "AACCGGTAAACCGG"_dna4,
+        "ACGTACGTA"_dna4,
+        align_cfg::edit | align_cfg::max_error{3} | align_cfg::aligned_ends{free_ends_first},
+        INF,
+        "",
+        "",
+        alignment_coordinate{column_index_type{14u}, row_index_type{9u}},
+        alignment_coordinate{column_index_type{14u}, row_index_type{9u}},
+        dna4_02_s10u_15u.score_matrix().mask_matrix(masking_matrix),
+        dna4_02_s10u_15u.trace_matrix().mask_matrix(masking_matrix)
+    };
+}();
+
+static auto dna4_02_s3u_15u_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 0 (0 deletions, 0 insertion)
+        // alignment:
+        // AACCGGTAAACCGGTT
+        //          ||
+        // ---------AC-----
+        "AACCGGTAAACCGG"_dna4,
+        "AC"_dna4,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
+        -0,
+        "AC",
+        "AC",
+        dna4_02_s3u_15u.front_coordinate,
+        dna4_02_s3u_15u.back_coordinate,
+        dna4_02_s3u_15u.score_vector,
+        dna4_02_s3u_15u.trace_vector
+    };
+}();
+
+static auto dna4_02_s3u_15u_e0 = []()
+{
+    std::vector<bool> masking_matrix
+    {
+    //    e, A, A, C, C, G, G, T, A, A, A, C, C, G, G
+    /*e*/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    /*A*/ 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,
+    /*C*/ 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
+    };
+
+    return alignment_fixture
+    {
+        // score: 0 (0 deletions, 0 insertion)
+        // alignment:
+        // AACCGGTAAACCGGTT
+        //          ||
+        // ---------AC-----
+        "AACCGGTAAACCGG"_dna4,
+        "AC"_dna4,
+        align_cfg::edit | align_cfg::max_error{0} | align_cfg::aligned_ends{free_ends_first},
+        -0,
+        "AC",
+        "AC",
+        dna4_02_s3u_15u.front_coordinate,
+        dna4_02_s3u_15u.back_coordinate,
+        dna4_02_s3u_15u.score_matrix().mask_matrix(masking_matrix),
+        dna4_02_s3u_15u.trace_matrix().mask_matrix(masking_matrix)
+    };
+}();
+
+static auto dna4_02_s1u_15u_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 0 - empty alignment
+        "AACCGGTAAACCGG"_dna4,
+        ""_dna4,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
+        -0,
+        "",
+        "",
+        dna4_02_s1u_15u.front_coordinate,
+        dna4_02_s1u_15u.back_coordinate,
+        dna4_02_s1u_15u.score_vector,
+        dna4_02_s1u_15u.trace_vector
+    };
+}();
+
+static auto dna4_02_s1u_15u_e0 = []()
+{
+    return alignment_fixture
+    {
+        // score: 0 - empty alignment
+        "AACCGGTAAACCGG"_dna4,
+        ""_dna4,
+        align_cfg::edit | align_cfg::max_error{0} | align_cfg::aligned_ends{free_ends_first},
+        -0,
+        "",
+        "",
+        dna4_02_s1u_15u.front_coordinate,
+        dna4_02_s1u_15u.back_coordinate,
+        dna4_02_s1u_15u.score_vector,
+        dna4_02_s1u_15u.trace_vector
+    };
+}();
+
+static auto dna4_01T_s17u_1u_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 16 (16 insertions)
+        // alignment:
+        // ----------------
+        //
+        // AACCGGTTAACCGGTT
+        ""_dna4,
+        "AACCGGTTAACCGGTT"_dna4,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
+        -16,
+        "----------------",
+        "AACCGGTTAACCGGTT",
+        dna4_01T_s17u_1u.front_coordinate,
+        dna4_01T_s17u_1u.back_coordinate,
+        dna4_01T_s17u_1u.score_vector,
+        dna4_01T_s17u_1u.trace_vector
+    };
+}();
+
+static auto dna4_01T_s17u_1u_e5 = []()
+{
+    std::vector<bool> masking_matrix
+    {
+    //    e,
+    /*e*/ 1,
+    /*A*/ 1,
+    /*A*/ 1,
+    /*C*/ 1,
+    /*C*/ 1,
+    /*G*/ 1,
+    /*G*/ 0,
+    /*T*/ 0,
+    /*T*/ 0,
+    /*A*/ 0,
+    /*A*/ 0,
+    /*C*/ 0,
+    /*C*/ 0,
+    /*G*/ 0,
+    /*G*/ 0,
+    /*T*/ 0,
+    /*T*/ 0,
+    };
+    return alignment_fixture
+    {
+        // score: INF - empty alignment
+        ""_dna4,
+        "AACCGGTTAACCGGTT"_dna4,
+        align_cfg::edit | align_cfg::max_error{5} | align_cfg::aligned_ends{free_ends_first},
+        INF,
+        "",
+        "",
+        alignment_coordinate{column_index_type{0u}, row_index_type{16u}},
+        alignment_coordinate{column_index_type{0u}, row_index_type{16u}},
+        dna4_01T_s17u_1u.score_matrix().mask_matrix(masking_matrix),
+        dna4_01T_s17u_1u.trace_matrix().mask_matrix(masking_matrix)
+    };
+}();
+
+static auto dna4_03_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 0
+        ""_dna4,
+        ""_dna4,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
+        -0,
+        "",
+        "",
+        dna4_03.front_coordinate,
+        dna4_03.back_coordinate,
+        dna4_03.score_vector,
+        dna4_03.trace_vector
+    };
+}();
+
+static auto dna4_03_e0 = []()
+{
+    return alignment_fixture
+    {
+        // score: 0
+        ""_dna4,
+        ""_dna4,
+        align_cfg::edit | align_cfg::max_error{0} | align_cfg::aligned_ends{free_ends_first},
+        -0,
+        "",
+        "",
+        dna4_03.front_coordinate,
+        dna4_03.back_coordinate,
+        dna4_03.score_vector,
+        dna4_03.trace_vector
+    };
+}();
+
 static auto aa27_01_e255 = []()
 {
     return alignment_fixture
