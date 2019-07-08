@@ -2,7 +2,7 @@
 
 [![build status](https://img.shields.io/travis/seqan/seqan3/master.svg?logo=travis)](https://travis-ci.org/seqan/seqan3)
 [![codecov](https://codecov.io/gh/seqan/seqan3/branch/master/graph/badge.svg?logo=codecov)](https://codecov.io/gh/seqan/seqan3)
-[![license](https://img.shields.io/badge/license-BSD-green.svg)](https://github.com/seqan/seqan3/LICENSE.md)
+[![license](https://img.shields.io/badge/license-BSD-green.svg)](https://docs.seqan.de/seqan/3-master-user/about_copyright.html)
 [![latest release](https://img.shields.io/github/release/seqan/seqan3.svg)](https://github.com/seqan/seqan3/releases/latest)
 [![platforms](https://img.shields.io/badge/platform-linux%20%7C%20bsd%20%7C%20osx-informational.svg)](https://docs.seqan.de/seqan/3-master-user/about_api.html)
 [![star](https://img.shields.io/github/stars/seqan/seqan3.svg?style=social)](https://github.com/seqan/seqan3/stargazers)
