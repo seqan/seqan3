@@ -21,8 +21,8 @@
 
 using namespace seqan3;
 
-#define SEQ_LEN_LONG 1<<18
-#define SEQ_LEN_SHORT 1<<12
+#define SEQAN3_LEN_LONG 1<<18
+#define SEQAN3_LEN_SHORT 1<<12
 
 /*
  * Apply benchmarks with custom ranges for grid parameters sequence length and gap
@@ -34,23 +34,19 @@ using namespace seqan3;
  *  | !SEQAN3_LONG_TESTS  |  1 << [4:2:12]   | [1, 5, 50] %
  *  | SEQAN3_LONG_TESTS   |  1 << [4:2:18]   | [1, 5, 25, 50, 75] %
  */
-static void CustomArguments(benchmark::internal::Benchmark* b) {
+void custom_arguments(benchmark::internal::Benchmark* b) {
     std::vector<long long int> gap_percentages{1, 5, 50};
-    long long int seq_len_max = SEQ_LEN_SHORT;
+    long long int seq_len_max = SEQAN3_LEN_SHORT;
 
     #ifdef SEQAN3_LONG_TESTS
-        seq_len_max = SEQ_LEN_LONG;
+        seq_len_max = SEQAN3_LEN_LONG;
         gap_percentages = {1, 5, 25, 50, 75};
     #endif
 
     for (long long int seq_len = 16; seq_len <= seq_len_max; seq_len <<= 2)
     {
         for (auto gap_percentage : gap_percentages)
-            b->Args(
-                {
-                    seq_len, gap_percentage
-                }
-            );
+            b->Args({seq_len, gap_percentage});
     }
 }
 
@@ -133,7 +129,6 @@ void resize(std::vector<size_type> & gaps, sequence_type & seq, unsigned int seq
 /* Helper function to prepare a gapped sequence for the benchmark (case gap_flag=true)
  *
  * Parameters:
- * size_type        size type of the sequence
  * gap_decorator_t  gap decorator type, e.g. gap_decorator_anchor_set
  *
  * Arguments:

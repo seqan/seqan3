@@ -27,7 +27,7 @@ using namespace seqan3;
 //  read left to right (looped in case #ops exceeds sequence length)
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-void read_left2right(benchmark::State& state)
+void read_left2right(benchmark::State & state)
 {
     // get target sequence length from current range state
     unsigned int seq_len = state.range(0);
@@ -51,21 +51,20 @@ void read_left2right(benchmark::State& state)
     if constexpr(gapped_flag)
         insert_gaps<gap_decorator_t>(gaps, gap_decorator, seq_len);
 
-    size_t op_ctr = 0;
-
+    auto it = std::ranges::begin(gap_decorator);
     for (auto _ : state)
     {
-        size_t pos = op_ctr % seq_len;
-        benchmark::DoNotOptimize(gap_decorator[pos]);
-        ++op_ctr;
+        benchmark::DoNotOptimize(*it++);
+        if (it == std::ranges::end(gap_decorator))
+            it = std::ranges::begin(gap_decorator);
     }
 }
 
 // Read from left to right in UNGAPPED sequence
-BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(CustomArguments);
-BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, false)->Apply(CustomArguments);
+BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
 // Read from left to right in GAPPED sequence
-BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(CustomArguments);
-BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, true)->Apply(CustomArguments);
+BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
 
 BENCHMARK_MAIN();

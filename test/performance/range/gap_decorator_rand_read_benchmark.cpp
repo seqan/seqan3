@@ -27,7 +27,7 @@ using namespace seqan3;
 //  read at random position
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-void read_random(benchmark::State& state)
+void read_random(benchmark::State & state)
 {
     unsigned int seq_len = state.range(0);
     using size_type = typename gap_decorator_t::size_type;
@@ -56,28 +56,25 @@ void read_random(benchmark::State& state)
     std::uniform_real_distribution<> uni_dis{0.0, static_cast<double>(seq_len)};
 
     // sample read positions in advance
-    std::vector<size_t> access_positions;
-    access_positions.resize(SEQ_LEN_SHORT);
-    #ifdef SEQAN3_LONG_TESTS
-        access_positions.resize(SEQ_LEN_LONG)
-    #endif
+    std::vector<size_t> access_positions(1 << 10);
+    std::generate(access_positions.begin(), access_positions.end(),
+        [&](){return uni_dis(generator);});
 
-    for (size_t i = 0; i < access_positions.size(); ++i)
-        access_positions[i] = uni_dis(generator);
-    size_t j = 0;
+    size_t j = 0, k;
     for (auto _ : state)
     {
-        benchmark::DoNotOptimize(gap_decorator[access_positions[j++]]);
-        if (j == access_positions.size())
-            j = 0;
+        for (k = 0; k < 10; ++k)
+            benchmark::DoNotOptimize(gap_decorator[access_positions[j + k]]);
+        ++j;
+        j %= (1 << 10) - 10;
     }
 }
 
 // Read at random position in UNGAPPED sequence
-BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(CustomArguments);
-BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, false)->Apply(CustomArguments);
+BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
 // Read at random position in GAPPED sequence
-BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(CustomArguments);
-BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, true)->Apply(CustomArguments);
+BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
 
 BENCHMARK_MAIN();
