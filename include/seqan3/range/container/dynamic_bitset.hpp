@@ -1422,11 +1422,15 @@ public:
                 ? std::min<std::streamsize>(is.width(), arg.max_size())
                 : arg.max_size();
             assert(num_char > 0);
+            std::vector<bool> tmp{};
+            tmp.reserve(num_char);
             for (std::streamsize n = num_char; n > 0 && (is.peek() == is.widen('0') || is.peek() == is.widen('1')); --n)
             {
                 char c = is.get();
-                c == is.widen('0') ? arg.insert(arg.cbegin(), false) : arg.insert(arg.cbegin(), true);
+                c == is.widen('0') ? tmp.push_back(false) : tmp.push_back(true);
             }
+
+            arg.assign(std::view::reverse(tmp));
 
             if (arg.size() == 0) // nothing extracted so we set the fail bit.
                 is.setstate(std::ios_base::failbit);
