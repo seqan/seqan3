@@ -45,7 +45,7 @@ private:
     };
 
     //!\brief Stores the actual data.
-    bitfield data_{};
+    bitfield data_{0u, 0u}; // Specifying values prevents ICE on gcc < 9 when comparing to default constructed bitset
 
     //!\brief Proxy data type returned by seqan3::dynamic_bitset as reference to the bit.
     class reference_proxy_type
