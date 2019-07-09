@@ -1,3 +1,4 @@
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/simd/all.hpp>
 
 using namespace seqan3;

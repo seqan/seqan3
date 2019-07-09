@@ -21,7 +21,7 @@
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/gap/all.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/slice.hpp>
@@ -442,8 +442,8 @@ namespace detail
  * \param[in] stream    The output stream that receives the formatted alignment.
  * \param[in] align     The alignment that shall be streamed.
  */
-template<TupleLike alignment_t, size_t ...idx>
-void stream_alignment(debug_stream_type & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
+template <typename char_t, TupleLike alignment_t, size_t ...idx>
+void stream_alignment(debug_stream_type<char_t> & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
     using std::get;
     size_t const alignment_size = get<0>(align).size();
@@ -511,11 +511,11 @@ inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (AlignedSeq
  * \param alignment The alignment that shall be formatted. All sequences must be equally long.
  * \return          The given stream to which the alignment representation is appended.
  */
-template <TupleLike tuple_t>
+template <TupleLike tuple_t, typename char_t>
 //!\cond
     requires detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<tuple_t>>
 //!\endcond
-inline debug_stream_type & operator<<(debug_stream_type & stream, tuple_t const & alignment)
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, tuple_t const & alignment)
 {
     static_assert(std::tuple_size_v<tuple_t> >= 2, "An alignment requires at least two sequences.");
     detail::stream_alignment(stream, alignment, std::make_index_sequence<std::tuple_size_v<tuple_t> - 1> {});

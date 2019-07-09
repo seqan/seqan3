@@ -12,30 +12,30 @@
 
 #pragma once
 
-#include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/core/detail/debug_stream_optional.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
-#include <seqan3/core/detail/debug_stream_variant.hpp>
-
-// forward declare
-//!\cond
-namespace std
-{
-extern ostream cerr;
-} // namespace std
-//!\endcond
+#include <seqan3/io/stream/concept.hpp>
 
 namespace seqan3
 {
+/*!\name Formatted output overloads
+ * \{
+ */
+/*!\brief All alphabets can be printed to the seqan3::debug_stream by their char representation.
+ * \tparam alphabet_t Type of the alphabet to be printed; must model seqan3::Alphabet.
+ * \param s The seqan3::debug_stream.
+ * \param l The alphabet letter.
+ * \relates seqan3::debug_stream_type
+ */
+template <Alphabet alphabet_t, typename char_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t const l)
+//!\cond
+    requires !OStream<std::basic_ostream<char_t>, alphabet_t>
+//!\endcond
+{
+    return s << to_char(l);
+}
 
-// ------------------------------------------------------------------
-// seqan3::debug_stream
-// ------------------------------------------------------------------
-
-//!\brief A global instance of seqan3::debug_stream_type.
-//!\ingroup stream
-inline debug_stream_type debug_stream{std::cerr};
+//!\}
 
 } // namespace seqan3

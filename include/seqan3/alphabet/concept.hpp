@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <iostream>
-
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/alphabet/exception.hpp>

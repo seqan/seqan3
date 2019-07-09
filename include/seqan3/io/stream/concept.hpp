@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <ios>
+#include <iosfwd>
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>

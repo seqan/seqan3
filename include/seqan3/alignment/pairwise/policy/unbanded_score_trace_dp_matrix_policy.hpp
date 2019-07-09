@@ -221,7 +221,8 @@ private:
     }
 
     //!\brief Helper function to print the trace matrix; for debugging only.
-    void print_trace_matrix()
+    template <typename char_t>
+    constexpr void print_trace_matrix(debug_stream_type<char_t> & debug_stream) const
     {
         auto printable = [](trace_directions dir)
         {

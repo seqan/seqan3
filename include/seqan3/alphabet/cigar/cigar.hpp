@@ -14,7 +14,7 @@
 
 #include <seqan3/alphabet/cigar/cigar_op.hpp>
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/std/charconv>
 
 // ------------------------------------------------------------------
@@ -136,7 +136,8 @@ public:
 };
 
 //!\brief Overload for the seqan3::debug_stream's operator.
-inline debug_stream_type & operator<<(debug_stream_type & s, cigar const c)
+template <typename char_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, cigar const c)
 {
     s << to_char(c);
     return s;

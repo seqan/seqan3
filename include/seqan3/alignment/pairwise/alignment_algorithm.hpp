@@ -27,7 +27,6 @@
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 #include <seqan3/range/view/get.hpp>
 #include <seqan3/range/view/slice.hpp>

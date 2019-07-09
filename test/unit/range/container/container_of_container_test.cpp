@@ -10,9 +10,8 @@
 #include <range/v3/range_traits.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/container/all.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/container/bitcompressed_vector.hpp>
+#include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
@@ -322,24 +321,6 @@ TYPED_TEST(container_of_container, swap)
     t0.swap(t1);
     EXPECT_EQ(t0, (TypeParam{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4}));
     EXPECT_EQ(t1, TypeParam{});
-}
-
-TYPED_TEST(container_of_container, streamable)
-{
-    TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
-
-    std::ostringstream o;
-    debug_stream_type my_stream{o};
-
-    my_stream << TypeParam{};
-
-    o.flush();
-    EXPECT_EQ(o.str(), "[]");
-
-    my_stream << ", " << t1;
-
-    o.flush();
-    EXPECT_EQ(o.str(), "[], [ACGT,ACGT,GAGGA]");
 }
 
 TYPED_TEST(container_of_container, serialisation)

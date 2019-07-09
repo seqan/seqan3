@@ -14,7 +14,7 @@ using namespace seqan3;
 
 namespace seqan3::detail
 {
-struct debug_matrix_print_test : public ::testing::Test
+struct debug_matrix_stream_test : public ::testing::Test
 {
     static constexpr auto inf = std::nullopt;
     std::vector<dna4> sequence1 = "AACACGTTAACCGGTT"_dna4;
@@ -214,10 +214,10 @@ struct debug_matrix_print_test : public ::testing::Test
 
 } // namespace seqan3::detail
 
-using typename seqan3::detail::debug_matrix_print_test;
-using debug_stream_test = seqan3::detail::debug_matrix_print_test;
+using typename seqan3::detail::debug_matrix_stream_test;
+using debug_stream_test = seqan3::detail::debug_matrix_stream_test;
 
-TEST_F(debug_matrix_print_test, unicode_str_length)
+TEST_F(debug_matrix_stream_test, unicode_str_length)
 {
     EXPECT_EQ(unicode_str_length(" "), 1u);
     EXPECT_EQ(unicode_str_length(";"), 1u);
@@ -270,18 +270,18 @@ TEST_F(debug_matrix_print_test, unicode_str_length)
     EXPECT_EQ(unicode_str_length("↖↑←"), 3u);
 }
 
-TEST_F(debug_matrix_print_test, score_matrix_ascii)
+TEST_F(debug_matrix_stream_test, score_matrix_ascii)
 {
     detail::debug_matrix matrix{score_matrix};
 
     fmtflags2 flags = fmtflags2::default_;
 
     std::stringstream stream;
-    matrix.print(stream, flags);
+    matrix.stream_matrix(stream, flags);
     EXPECT_EQ(stream.str(), score_matrix_ascii);
 }
 
-TEST_F(debug_matrix_print_test, score_matrix_ascii_with_sequences)
+TEST_F(debug_matrix_stream_test, score_matrix_ascii_with_sequences)
 {
     detail::debug_matrix matrix{score_matrix, sequence1, sequence2};
 
@@ -289,11 +289,11 @@ TEST_F(debug_matrix_print_test, score_matrix_ascii_with_sequences)
     EXPECT_EQ(matrix.auto_column_width(flags), 2u);
 
     std::stringstream stream;
-    matrix.print(stream, flags);
+    matrix.stream_matrix(stream, flags);
     EXPECT_EQ(stream.str(), score_matrix_ascii_with_sequences);
 }
 
-TEST_F(debug_matrix_print_test, score_matrix_unicode)
+TEST_F(debug_matrix_stream_test, score_matrix_unicode)
 {
     detail::debug_matrix matrix{score_matrix};
 
@@ -301,11 +301,11 @@ TEST_F(debug_matrix_print_test, score_matrix_unicode)
     EXPECT_EQ(matrix.auto_column_width(flags), 2u);
 
     std::stringstream stream;
-    matrix.print(stream, flags);
+    matrix.stream_matrix(stream, flags);
     EXPECT_EQ(stream.str(), score_matrix_unicode);
 }
 
-TEST_F(debug_matrix_print_test, score_matrix_unicode_with_sequences)
+TEST_F(debug_matrix_stream_test, score_matrix_unicode_with_sequences)
 {
     detail::debug_matrix matrix{score_matrix, sequence1, sequence2};
     matrix.column_width = 4u;
@@ -314,11 +314,11 @@ TEST_F(debug_matrix_print_test, score_matrix_unicode_with_sequences)
     EXPECT_EQ(matrix.auto_column_width(flags), 2u);
 
     std::stringstream stream;
-    matrix.print(stream, flags);
+    matrix.stream_matrix(stream, flags);
     EXPECT_EQ(stream.str(), score_matrix_unicode_with_sequences);
 }
 
-TEST_F(debug_matrix_print_test, trace_matrix_ascii)
+TEST_F(debug_matrix_stream_test, trace_matrix_ascii)
 {
     detail::debug_matrix matrix{trace_matrix};
     matrix.column_width = 4u;
@@ -328,11 +328,11 @@ TEST_F(debug_matrix_print_test, trace_matrix_ascii)
     EXPECT_EQ(matrix.auto_column_width(flags), 3u);
 
     std::stringstream stream;
-    matrix.print(stream, flags);
+    matrix.stream_matrix(stream, flags);
     EXPECT_EQ(stream.str(), trace_matrix_ascii);
 }
 
-TEST_F(debug_matrix_print_test, trace_matrix_ascii_with_sequences)
+TEST_F(debug_matrix_stream_test, trace_matrix_ascii_with_sequences)
 {
     detail::debug_matrix matrix{trace_matrix, sequence1, sequence2};
     matrix.column_width = 4u;
@@ -342,11 +342,11 @@ TEST_F(debug_matrix_print_test, trace_matrix_ascii_with_sequences)
     EXPECT_EQ(matrix.auto_column_width(flags), 3u);
 
     std::stringstream stream;
-    matrix.print(stream, flags);
+    matrix.stream_matrix(stream, flags);
     EXPECT_EQ(stream.str(), trace_matrix_ascii_with_sequences);
 }
 
-TEST_F(debug_matrix_print_test, trace_matrix_unicode)
+TEST_F(debug_matrix_stream_test, trace_matrix_unicode)
 {
     detail::debug_matrix matrix{trace_matrix};
 
@@ -354,11 +354,11 @@ TEST_F(debug_matrix_print_test, trace_matrix_unicode)
     EXPECT_EQ(matrix.auto_column_width(flags), 3u);
 
     std::stringstream stream;
-    matrix.print(stream, flags);
+    matrix.stream_matrix(stream, flags);
     EXPECT_EQ(stream.str(), trace_matrix_unicode);
 }
 
-TEST_F(debug_matrix_print_test, trace_matrix_unicode_with_sequences)
+TEST_F(debug_matrix_stream_test, trace_matrix_unicode_with_sequences)
 {
     detail::debug_matrix matrix{trace_matrix, sequence1, sequence2};
     matrix.column_width = 4u;
@@ -367,7 +367,7 @@ TEST_F(debug_matrix_print_test, trace_matrix_unicode_with_sequences)
     EXPECT_EQ(matrix.auto_column_width(flags), 3u);
 
     std::stringstream stream;
-    matrix.print(stream, flags);
+    matrix.stream_matrix(stream, flags);
     EXPECT_EQ(stream.str(), trace_matrix_unicode_with_sequences);
 }
 

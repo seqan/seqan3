@@ -12,7 +12,9 @@
 
 #pragma once
 
-#include<seqan3/core/debug_stream.hpp>
+#include <ios>
+
+#include <seqan3/core/debug_stream.hpp>
 
 namespace seqan3
 {
@@ -29,6 +31,14 @@ void PrintTo (t const & v, std::ostream * out)
 //!\endcond
 
 } // namespace seqan3
+
+namespace std
+{
+
+//!\brief Overload for the googletest PrintTo function that always delegates to our debug_stream.
+using ::seqan3::PrintTo;
+
+} // namespace seqan3::detail
 
 namespace seqan3::detail
 {

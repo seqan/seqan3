@@ -12,7 +12,8 @@
 
 #pragma once
 
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 
@@ -26,11 +27,11 @@ namespace seqan3
  * the API was not in shape yet. Remove the `private` and `todo` commands and remove `seqan3::simd` from
  * SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS in `seqan3-doxygen.cmake`.
  */
-template <typename simd_t>
+template <typename simd_t, typename char_t>
 //!\cond
     requires simd::Simd<remove_cvref_t<simd_t>>
 //!\endcond
-inline debug_stream_type & operator<<(debug_stream_type & s, simd_t && simd)
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, simd_t && simd)
 {
     using simd_type = remove_cvref_t<simd_t>;
     constexpr size_t length = simd::simd_traits<simd_type>::length;

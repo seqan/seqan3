@@ -14,8 +14,10 @@
 
 #include <type_traits>
 
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 
@@ -401,13 +403,13 @@ public:
  *
  * Prints the alignment coordinate as a tuple.
  */
-template <typename coordinate_type>
+template <typename coordinate_type, typename char_t>
 //!\cond
     requires std::Same<remove_cvref_t<coordinate_type>, alignment_coordinate> ||
              detail::is_value_specialisation_of_v<remove_cvref_t<coordinate_type>,
                                                   detail::advanceable_alignment_coordinate>
 //!\endcond
-inline debug_stream_type & operator<<(debug_stream_type & s, coordinate_type && c)
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, coordinate_type && c)
 {
     s << std::tie(c.first, c.second);
     return s;

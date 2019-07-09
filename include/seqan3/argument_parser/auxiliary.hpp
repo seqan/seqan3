@@ -15,7 +15,7 @@
 #include <sstream>
 #include <vector>
 
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/io/stream/concept.hpp>
 
 namespace seqan3

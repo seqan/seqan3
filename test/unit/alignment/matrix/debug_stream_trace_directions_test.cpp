@@ -20,7 +20,7 @@ static constexpr trace_directions D = trace_directions::diagonal;
 static constexpr trace_directions U = trace_directions::up;
 static constexpr trace_directions L = trace_directions::left;
 
-TEST(debug_stream, ascii)
+TEST(debug_stream_test, ascii)
 {
     std::stringstream s{};
     debug_stream_type stream{s};
@@ -29,7 +29,7 @@ TEST(debug_stream, ascii)
     EXPECT_EQ(s.str(), "N;D;U;L;DU;DL;UL;DUL");
 }
 
-TEST(debug_stream, unicode)
+TEST(debug_stream_test, unicode)
 {
     std::stringstream s{};
     debug_stream_type stream{s};

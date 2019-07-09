@@ -11,18 +11,18 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 
 using namespace seqan3;
 
 template <typename T>
-using alphabet_debug_stream = ::testing::Test;
+using debug_stream_test = ::testing::Test;
 
-using test_types = ::testing::Types<dna4, qualified<dna4, phred42>, gapped<dna4>>;
+using alphabet_types = ::testing::Types<dna4, qualified<dna4, phred42>, gapped<dna4>>;
 
-TYPED_TEST_CASE(alphabet_debug_stream, test_types);
+TYPED_TEST_CASE(debug_stream_test, alphabet_types);
 
-TYPED_TEST(alphabet_debug_stream, debug_streaming)
+TYPED_TEST(debug_stream_test, alphabet)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};

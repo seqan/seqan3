@@ -17,7 +17,10 @@
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/row_wise_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/core/detail/debug_stream_optional.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3::detail
 {
@@ -243,7 +246,7 @@ public:
      * otherwise.
      */
     template <typename ostream_t>
-    void print(ostream_t & cout, fmtflags2 const flags) const noexcept
+    void stream_matrix(ostream_t & cout, fmtflags2 const flags) const noexcept
     {
         format_type const & symbols = (flags & fmtflags2::utf8) == fmtflags2::utf8 ? unicode : csv;
         size_t const column_width = this->column_width.has_value() ?
@@ -451,13 +454,13 @@ namespace seqan3
  *
  * This prints out an alignment matrix which can be a score matrix or a trace matrix.
  */
-template <detail::Matrix alignment_matrix_t>
-inline debug_stream_type & operator<<(debug_stream_type & s, alignment_matrix_t && matrix)
+template <detail::Matrix alignment_matrix_t, typename char_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
 {
     detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
 
     std::stringstream sstream{};
-    debug.print(sstream, s.flags2());
+    debug.stream_matrix(sstream, s.flags2());
     s << sstream.str();
     return s;
 }
