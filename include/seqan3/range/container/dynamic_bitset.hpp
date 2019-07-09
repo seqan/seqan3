@@ -353,6 +353,7 @@ public:
         static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
         assert(_lit[N - 1] == '\0');
         uint64_t value{};
+
         for (size_t i = 0; i != N - 1; ++i)
         {
             if (_lit[i] == '0')
@@ -361,15 +362,12 @@ public:
             }
             else if (_lit[i] == '1')
             {
-                if (i != 0)
-                {
-                    value <<= 1;
-                }
+                value <<= 1;
                 value |= 1u;
             }
             else
             {
-                throw std::invalid_argument{"The string to construct a dynamic_bitset from May only contain 0 and 1."};
+                throw std::invalid_argument{"The string to construct a dynamic_bitset from may only contain 0 and 1."};
             }
         }
 
