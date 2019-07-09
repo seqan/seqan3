@@ -1435,7 +1435,7 @@ public:
             arg.assign(std::view::reverse(tmp));
 
             if (arg.size() == 0) // nothing extracted so we set the fail bit.
-                is.setstate(std::ios_base::failbit);
+                is.setstate(std::ios_base::failbit); // LCOV_EXCL_LINE
 
             is.width(0); // cancel the effects of std::setw, if any.
         }
