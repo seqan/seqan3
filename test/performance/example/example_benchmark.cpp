@@ -14,13 +14,13 @@
 
 using namespace seqan3::test;
 
-static void vector_copy_benchmark(benchmark::State& state) {
+static void vector_copy_benchmark(benchmark::State & state) {
     std::vector<int> x = {15, 13, 12, 10};
     for (auto _ : state)
         std::vector<int> copy{x};
 }
 
-static void memcpy_benchmark(benchmark::State& state) {
+static void memcpy_benchmark(benchmark::State & state) {
     unsigned size = state.range(0);
     char* src = new char[size];
     char* dst = new char[size];
@@ -34,7 +34,7 @@ static void memcpy_benchmark(benchmark::State& state) {
     delete[] dst;
 }
 
-static void copy_benchmark(benchmark::State& state) {
+static void copy_benchmark(benchmark::State & state) {
     unsigned size = state.range(0);
     char* src = new char[size];
     char* dst = new char[size];

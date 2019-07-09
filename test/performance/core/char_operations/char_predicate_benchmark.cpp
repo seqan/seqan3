@@ -18,7 +18,7 @@ using namespace seqan3;
 constexpr std::array<char, 1 << 20> arr{};
 
 template <bool stl>
-static void simple(benchmark::State& state)
+static void simple(benchmark::State & state)
 {
     size_t sum = 0;
     size_t i = 0;
@@ -40,7 +40,7 @@ BENCHMARK_TEMPLATE(simple, true);
 BENCHMARK_TEMPLATE(simple, false);
 
 template <bool stl>
-static void combined(benchmark::State& state)
+static void combined(benchmark::State & state)
 {
     size_t sum = 0;
     size_t i = 0;

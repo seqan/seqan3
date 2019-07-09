@@ -12,7 +12,7 @@
 #include <seqan3/core/bit_manipulation.hpp>
 
 template <typename size_type>
-static void is_power_of_two_popcount(benchmark::State& state) {
+static void is_power_of_two_popcount(benchmark::State & state) {
     std::srand(0);
     size_type n = 0;
     for (auto _ : state)
@@ -32,7 +32,7 @@ BENCHMARK_TEMPLATE(is_power_of_two_popcount, unsigned);
 BENCHMARK_TEMPLATE(is_power_of_two_popcount, unsigned long);
 BENCHMARK_TEMPLATE(is_power_of_two_popcount, unsigned long long);
 
-static void is_power_of_two_arithmetic(benchmark::State& state) {
+static void is_power_of_two_arithmetic(benchmark::State & state) {
     std::srand(0);
     size_t n = 0;
     for (auto _ : state)
@@ -43,7 +43,7 @@ static void is_power_of_two_arithmetic(benchmark::State& state) {
 }
 BENCHMARK(is_power_of_two_arithmetic);
 
-static void is_power_of_two_seqan3(benchmark::State& state) {
+static void is_power_of_two_seqan3(benchmark::State & state) {
     std::srand(0);
     size_t n = 0;
     for (auto _ : state)
@@ -54,7 +54,7 @@ static void is_power_of_two_seqan3(benchmark::State& state) {
 }
 BENCHMARK(is_power_of_two_seqan3);
 
-static void next_power_of_two_seqan3(benchmark::State& state) {
+static void next_power_of_two_seqan3(benchmark::State & state) {
     std::srand(0);
     size_t n = 0;
     for (auto _ : state)

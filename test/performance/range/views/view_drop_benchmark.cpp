@@ -24,7 +24,7 @@ using namespace seqan3;
 // ============================================================================
 
 template <typename container_t, typename adaptor_t, bool single_pass = false>
-void sequential_read(benchmark::State& state)
+void sequential_read(benchmark::State & state)
 {
     container_t c;
     c.resize(1'000'000);
