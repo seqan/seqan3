@@ -20,7 +20,30 @@
 #include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>
 
+#include "../iterator_test_template.hpp"
+
 using namespace seqan3;
+
+using iterator_type = decltype(view::istreambuf(std::declval<std::istringstream &>()).begin());
+
+template <>
+struct iterator_fixture<iterator_type> : public ::testing::Test
+{
+    using iterator_tag = std::input_iterator_tag;
+    static constexpr bool const_iterable = false;
+
+    std::string range_to_compare{"ACGTATATATAT ATATAT TTA \n AUAUAA"};
+    std::istringstream is{range_to_compare};
+
+    decltype(view::istreambuf(is)) v = view::istreambuf(is);
+
+    iterator_type begin_iterator{v.begin()};
+    decltype(view::istreambuf(is).end()) end_iterator{v.end()};
+};
+
+using test_type = ::testing::Types<iterator_type>;
+
+INSTANTIATE_TYPED_TEST_CASE_P(iterator_fixture, iterator_fixture, test_type);
 
 TEST(view_istreambuf, basic)
 {
