@@ -18,26 +18,30 @@
 // test templates
 // -----------------------------------------------------------------------------
 
-using iterator_type = seqan3::detail::random_access_iterator<std::vector<int>>;
-using const_iterator_type = seqan3::detail::random_access_iterator<std::vector<int> const>;
-
 template <>
-struct iterator_fixture<iterator_type> : public ::testing::Test
+struct iterator_fixture<seqan3::detail::random_access_iterator<std::vector<int>>> : public ::testing::Test
 {
     using iterator_tag = std::random_access_iterator_tag;
     static constexpr bool const_iterable = true;
 
-    std::vector<int> range_to_compare{1, 2, 3, 4, 5, 6, 7, 8};
-    std::vector<int> const const_range{1, 2, 3, 4, 5, 6, 7, 8};
+    struct expose_iterator
+    {
+        using iterator_type = seqan3::detail::random_access_iterator<std::vector<int>>;
+        using const_iterator_type = seqan3::detail::random_access_iterator<std::vector<int> const>;
 
-    iterator_type begin_iterator{range_to_compare};
-    iterator_type end_iterator{range_to_compare, range_to_compare.size()};
+        std::vector<int> rng{1, 2, 3, 4, 5, 6, 7, 8};
 
-    const_iterator_type begin_const_iterator{const_range};
-    const_iterator_type end_const_iterator{const_range, const_range.size()};
+        iterator_type begin() { return iterator_type{rng}; }
+        iterator_type end()   { return iterator_type{rng, rng.size()}; }
+        const_iterator_type cbegin(){ return const_iterator_type{rng}; }
+        const_iterator_type cend()  { return const_iterator_type{rng, rng.size()}; }
+    };
+
+    std::vector<int> expected_range{1, 2, 3, 4, 5, 6, 7, 8};
+    expose_iterator test_range{};
 };
 
-using test_type = ::testing::Types<iterator_type>;
+using test_type = ::testing::Types<seqan3::detail::random_access_iterator<std::vector<int>>>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(iterator_fixture, iterator_fixture, test_type);
 

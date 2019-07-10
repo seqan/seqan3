@@ -25,27 +25,19 @@ struct iterator_fixture : public ::testing::Test
                                                                // std::bidirectional_iterator_tag
                                                                // std::random_access_iterator_tag
 
-    static constexpr bool const_iterable = true/false;         // Also test const_iterability.
+    static constexpr bool const_iterable = true/false;         // Also test const_iterability. (cbegin/cend required)
 
-    range_t range_to_compare;                                  // Used to compare the iterator range with.
-
-    T begin_iterator;                                          // Begin of the iterator (range) to test.
-    T end_iterator;                                            // End of the iterator (range) to test.
-
-    --------------------------------------------------------------------------------------------------------------------
-    // Only need to be specified if const_iterable == true.
-    --------------------------------------------------------------------------------------------------------------------
-    const_T begin_const_iterator;                               // Begin of the const iterator (range) to test.
-    const_T end_const_iterator;                                 // end of the const iterator (range) to test.
+    t1 test_range;                                             // The range to test the iterators (begin/end required).
+    t2 expected_range;                                         // Used to compare the iterator range with.
 
     --------------------------------------------------------------------------------------------------------------------
     Note: if the reference type of your iterator is not comparable via operator==() to the reference type of
-          `range_to_compare you can additionally specify a custom expect_eq function:
+          `expected_range you can additionally specify a custom expect_eq function:
 
     template <typename A, typename B>
-    static void expect_eq(A && begin_iterator_value, B && range_to_compare_value)
+    static void expect_eq(A && begin_iterator_value, B && expected_range_value)
     {
-        EXPECT_EQ(begin_iterator_value, range_to_compare_value);
+        EXPECT_EQ(begin_iterator_value, expected_range_value);
     }
     */
 };
@@ -53,7 +45,7 @@ struct iterator_fixture : public ::testing::Test
 // Helper concept to check whether the test fixture has a member function expect_eq.
 template <typename T>
 SEQAN3_CONCEPT HasExpectEqualMemberFunction = requires(T a) {
-    { a.expect_eq(*a.begin_iterator, *a.range_to_compare.begin()) } -> void;
+    { a.expect_eq(*a.test_range.begin(), *a.expected_range.begin()) } -> void;
 };
 
 // Delegates to the test fixture member function `expect_eq` if available and falls back to EXPECT_EQ otherwise.
@@ -73,53 +65,53 @@ TYPED_TEST_P(iterator_fixture, concept_check)
     // Ensure that reference types are comparable if no equal_eq function was defined.
     if constexpr (!HasExpectEqualMemberFunction<iterator_fixture<TypeParam>>)
     {
-        static_assert(std::EqualityComparableWith<decltype(*this->begin_iterator),
-                                                  decltype(*this->range_to_compare.begin())>,
-                      "The reference types of begin_iterator and range_to_compare must be equality comparable. "
+        static_assert(std::EqualityComparableWith<decltype(*this->test_range.begin()),
+                                                  decltype(*this->expected_range.begin())>,
+                      "The reference types of begin_iterator and expected_range must be equality comparable. "
                       "If they are not, you may specify a custom void expect_eq(i1, r2) function in the fixture.");
     }
 
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::input_iterator_tag>)
     {
-        static_assert(std::InputIterator<decltype(this->range_to_compare.begin())>,
-                      "range_to_compare must have a begin member function and "
+        static_assert(std::InputIterator<decltype(this->expected_range.begin())>,
+                      "expected_range must have a begin member function and "
                       "the returned iterator must model std::InputIterator.");
         EXPECT_TRUE(std::InputIterator<TypeParam>);
     }
     else if constexpr (std::Same<typename TestFixture::iterator_tag, std::forward_iterator_tag>)
     {
-        static_assert(std::ForwardIterator<decltype(this->range_to_compare.begin())>,
-                      "range_to_compare must have a begin member function and "
+        static_assert(std::ForwardIterator<decltype(this->expected_range.begin())>,
+                      "expected_range must have a begin member function and "
                       "the returned iterator must model std::ForwardIterator.");
         EXPECT_TRUE(std::ForwardIterator<TypeParam>);
 
         if constexpr (TestFixture::const_iterable)
         {
-            EXPECT_TRUE(std::ForwardIterator<decltype(this->begin_const_iterator)>);
+            EXPECT_TRUE(std::ForwardIterator<decltype(this->test_range.cbegin())>);
         }
     }
     else if constexpr (std::Same<typename TestFixture::iterator_tag, std::bidirectional_iterator_tag>)
     {
-        static_assert(std::BidirectionalIterator<decltype(this->range_to_compare.begin())>,
-                      "range_to_compare must have a begin member function and "
+        static_assert(std::BidirectionalIterator<decltype(this->expected_range.begin())>,
+                      "expected_range must have a begin member function and "
                       "the returned iterator must model std::BidirectionalIterator.");
         EXPECT_TRUE(std::BidirectionalIterator<TypeParam>);
 
         if constexpr (TestFixture::const_iterable)
         {
-            EXPECT_TRUE(std::BidirectionalIterator<decltype(this->begin_const_iterator)>);
+            EXPECT_TRUE(std::BidirectionalIterator<decltype(this->test_range.cbegin())>);
         }
     }
     else if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        static_assert(std::RandomAccessIterator<decltype(this->range_to_compare.begin())>,
-                      "range_to_compare must have a begin member function and "
+        static_assert(std::RandomAccessIterator<decltype(this->expected_range.begin())>,
+                      "expected_range must have a begin member function and "
                       "the returned iterator must model std::RandomAccessIterator.");
         EXPECT_TRUE(std::RandomAccessIterator<TypeParam>);
 
         if constexpr (TestFixture::const_iterable)
         {
-            EXPECT_TRUE(std::RandomAccessIterator<decltype(this->begin_const_iterator)>);
+            EXPECT_TRUE(std::RandomAccessIterator<decltype(this->test_range.cbegin())>);
         }
     }
     else
@@ -133,12 +125,12 @@ TYPED_TEST_P(iterator_fixture, const_non_const_compatibility)
 {
     if constexpr (TestFixture::const_iterable)
     {
-        using const_iterator_type = decltype(this->begin_const_iterator);
+        using const_iterator_type = decltype(this->test_range.cbegin());
 
-        const_iterator_type it{this->begin_iterator};
+        const_iterator_type it{this->test_range.begin()};
 
         const_iterator_type it2{};
-        it2 = this->begin_iterator;
+        it2 = this->test_range.begin();
 
         EXPECT_EQ(it, it2);
     }
@@ -150,49 +142,49 @@ TYPED_TEST_P(iterator_fixture, const_non_const_compatibility)
 
 TYPED_TEST_P(iterator_fixture, dereference)
 {
-    expext_eq<TypeParam>(*this->begin_iterator, *this->range_to_compare.begin());
+    expext_eq<TypeParam>(*this->test_range.begin(), *this->expected_range.begin());
 
     if constexpr (TestFixture::const_iterable)
-        expext_eq<TypeParam>(*this->begin_const_iterator, *this->range_to_compare.begin());
+        expext_eq<TypeParam>(*this->test_range.cbegin(), *this->expected_range.begin());
 }
 
 TYPED_TEST_P(iterator_fixture, compare)
 {
-    EXPECT_FALSE(this->begin_iterator == this->end_iterator);
-    EXPECT_TRUE(this->begin_iterator  != this->end_iterator);
-    EXPECT_FALSE(this->end_iterator   == this->begin_iterator);
-    EXPECT_TRUE(this->end_iterator    != this->begin_iterator);
+    EXPECT_FALSE(this->test_range.begin() == this->test_range.end());
+    EXPECT_TRUE(this->test_range.begin()  != this->test_range.end());
+    EXPECT_FALSE(this->test_range.end()   == this->test_range.begin());
+    EXPECT_TRUE(this->test_range.end()    != this->test_range.begin());
 
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::forward_iterator_tag>) // iterate over it again
     {
-        EXPECT_TRUE(this->begin_iterator  == this->begin_iterator);
-        EXPECT_FALSE(this->begin_iterator != this->begin_iterator);
+        EXPECT_TRUE(this->test_range.begin()  == this->test_range.begin());
+        EXPECT_FALSE(this->test_range.begin() != this->test_range.begin());
     }
 
     if constexpr (TestFixture::const_iterable)
     {
-        EXPECT_TRUE(this->begin_const_iterator  == this->begin_const_iterator);
-        EXPECT_FALSE(this->begin_const_iterator != this->begin_const_iterator);
-        EXPECT_FALSE(this->begin_const_iterator == this->end_const_iterator);
-        EXPECT_TRUE(this->begin_const_iterator  != this->end_const_iterator);
-        EXPECT_FALSE(this->end_const_iterator   == this->begin_const_iterator);
-        EXPECT_TRUE(this->end_const_iterator    != this->begin_const_iterator);
+        EXPECT_TRUE(this->test_range.cbegin()  == this->test_range.cbegin());
+        EXPECT_FALSE(this->test_range.cbegin() != this->test_range.cbegin());
+        EXPECT_FALSE(this->test_range.cbegin() == this->test_range.cend());
+        EXPECT_TRUE(this->test_range.cbegin()  != this->test_range.cend());
+        EXPECT_FALSE(this->test_range.cend()   == this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.cend()    != this->test_range.cbegin());
 
         // (non-const lhs)
-        EXPECT_TRUE(this->begin_iterator  == this->begin_const_iterator);
-        EXPECT_FALSE(this->begin_iterator != this->begin_const_iterator);
-        EXPECT_FALSE(this->begin_iterator == this->end_const_iterator);
-        EXPECT_TRUE(this->begin_iterator  != this->end_const_iterator);
-        EXPECT_FALSE(this->end_iterator   == this->begin_const_iterator);
-        EXPECT_TRUE(this->end_iterator    != this->begin_const_iterator);
+        EXPECT_TRUE(this->test_range.begin()  == this->test_range.cbegin());
+        EXPECT_FALSE(this->test_range.begin() != this->test_range.cbegin());
+        EXPECT_FALSE(this->test_range.begin() == this->test_range.cend());
+        EXPECT_TRUE(this->test_range.begin()  != this->test_range.cend());
+        EXPECT_FALSE(this->test_range.end()   == this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.end()    != this->test_range.cbegin());
 
         // (non-const rhs)
-        EXPECT_TRUE(this->begin_const_iterator  == this->begin_iterator);
-        EXPECT_FALSE(this->begin_const_iterator != this->begin_iterator);
-        EXPECT_FALSE(this->end_const_iterator   == this->begin_iterator);
-        EXPECT_TRUE(this->end_const_iterator    != this->begin_iterator);
-        EXPECT_FALSE(this->begin_const_iterator == this->end_iterator);
-        EXPECT_TRUE(this->begin_const_iterator  != this->end_iterator);
+        EXPECT_TRUE(this->test_range.cbegin()  == this->test_range.begin());
+        EXPECT_FALSE(this->test_range.cbegin() != this->test_range.begin());
+        EXPECT_FALSE(this->test_range.cend()   == this->test_range.begin());
+        EXPECT_TRUE(this->test_range.cend()    != this->test_range.begin());
+        EXPECT_FALSE(this->test_range.cbegin() == this->test_range.end());
+        EXPECT_TRUE(this->test_range.cbegin()  != this->test_range.end());
     }
 }
 
@@ -216,24 +208,24 @@ inline void move_forward_post_test(it_begin_t && it_begin, it_sentinel_t && it_e
 
 TYPED_TEST_P(iterator_fixture, move_forward_pre)
 {
-    move_forward_pre_test<TypeParam>(this->begin_iterator, this->end_iterator, this->range_to_compare);
+    move_forward_pre_test<TypeParam>(this->test_range.begin(), this->test_range.end(), this->expected_range);
 
     if constexpr (!std::Same<typename TestFixture::iterator_tag, std::input_iterator_tag>) // iterate over it again
-        move_forward_pre_test<TypeParam>(this->begin_iterator, this->end_iterator, this->range_to_compare);
+        move_forward_pre_test<TypeParam>(this->test_range.begin(), this->test_range.end(), this->expected_range);
 
     if constexpr (TestFixture::const_iterable)
-        move_forward_pre_test<TypeParam>(this->begin_const_iterator, this->end_const_iterator, this->range_to_compare);
+        move_forward_pre_test<TypeParam>(this->test_range.cbegin(), this->test_range.cend(), this->expected_range);
 }
 
 TYPED_TEST_P(iterator_fixture, move_forward_post)
 {
-    move_forward_post_test<TypeParam>(this->begin_iterator, this->end_iterator, this->range_to_compare);
+    move_forward_post_test<TypeParam>(this->test_range.begin(), this->test_range.end(), this->expected_range);
 
     if constexpr (!std::Same<typename TestFixture::iterator_tag, std::input_iterator_tag>) // iterate over it again
-        move_forward_post_test<TypeParam>(this->begin_iterator, this->end_iterator, this->range_to_compare);
+        move_forward_post_test<TypeParam>(this->test_range.begin(), this->test_range.end(), this->expected_range);
 
     if constexpr (TestFixture::const_iterable)
-        move_forward_post_test<TypeParam>(this->begin_const_iterator, this->end_const_iterator, this->range_to_compare);
+        move_forward_post_test<TypeParam>(this->test_range.cbegin(), this->test_range.cend(), this->expected_range);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -264,10 +256,10 @@ TYPED_TEST_P(iterator_fixture, move_backward)
 {
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::bidirectional_iterator_tag>)
     {
-        move_backward_test<TypeParam>(this->begin_iterator, this->end_iterator, this->range_to_compare);
+        move_backward_test<TypeParam>(this->test_range.begin(), this->test_range.end(), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            move_backward_test<TypeParam>(this->begin_const_iterator, this->end_const_iterator, this->range_to_compare);
+            move_backward_test<TypeParam>(this->test_range.cbegin(), this->test_range.cend(), this->expected_range);
     }
 }
 
@@ -307,10 +299,10 @@ TYPED_TEST_P(iterator_fixture, jump_forward)
 {
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        jump_forward_test<TypeParam>(this->begin_iterator, this->range_to_compare);
+        jump_forward_test<TypeParam>(this->test_range.begin(), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            jump_forward_test<TypeParam>(this->begin_const_iterator, this->range_to_compare);
+            jump_forward_test<TypeParam>(this->test_range.cbegin(), this->expected_range);
     }
 }
 
@@ -348,10 +340,10 @@ TYPED_TEST_P(iterator_fixture, jump_backward)
 {
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        jump_backward_test<TypeParam>(this->begin_iterator, this->range_to_compare);
+        jump_backward_test<TypeParam>(this->test_range.begin(), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            jump_backward_test<TypeParam>(this->begin_const_iterator, this->range_to_compare);
+            jump_backward_test<TypeParam>(this->test_range.cbegin(), this->expected_range);
     }
 }
 
@@ -368,10 +360,10 @@ TYPED_TEST_P(iterator_fixture, jump_random)
 {
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        jump_random_test<TypeParam>(this->begin_iterator, this->range_to_compare);
+        jump_random_test<TypeParam>(this->test_range.begin(), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            jump_random_test<TypeParam>(this->begin_const_iterator, this->range_to_compare);
+            jump_random_test<TypeParam>(this->test_range.cbegin(), this->expected_range);
     }
 }
 
@@ -389,10 +381,10 @@ TYPED_TEST_P(iterator_fixture, difference)
 {
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        difference_test(this->begin_iterator, this->range_to_compare);
+        difference_test(this->test_range.begin(), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            difference_test(this->begin_const_iterator, this->range_to_compare);
+            difference_test(this->test_range.cbegin(), this->expected_range);
     }
 }
 
@@ -400,25 +392,25 @@ TYPED_TEST_P(iterator_fixture, compare_less)
 {
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        EXPECT_FALSE(this->begin_iterator < this->begin_iterator);
-        EXPECT_TRUE(this->begin_iterator < this->end_iterator);
-        EXPECT_TRUE(this->begin_iterator < std::ranges::next(this->begin_iterator));
+        EXPECT_FALSE(this->test_range.begin() < this->test_range.begin());
+        EXPECT_TRUE(this->test_range.begin() < this->test_range.end());
+        EXPECT_TRUE(this->test_range.begin() < std::ranges::next(this->test_range.begin()));
     }
 
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag> &&
                   TestFixture::const_iterable)
     {
-        EXPECT_FALSE(this->begin_const_iterator < this->begin_const_iterator);
-        EXPECT_TRUE(this->begin_const_iterator < this->end_const_iterator);
-        EXPECT_TRUE(this->begin_const_iterator < std::ranges::next(this->begin_const_iterator));
+        EXPECT_FALSE(this->test_range.cbegin() < this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.cbegin() < this->test_range.cend());
+        EXPECT_TRUE(this->test_range.cbegin() < std::ranges::next(this->test_range.cbegin()));
 
         // mix
-        EXPECT_FALSE(this->begin_iterator < this->begin_const_iterator);
-        EXPECT_TRUE(this->begin_iterator < this->end_const_iterator);
-        EXPECT_TRUE(this->begin_iterator < std::ranges::next(this->begin_const_iterator));
-        EXPECT_FALSE(this->begin_const_iterator < this->begin_iterator);
-        EXPECT_TRUE(this->begin_const_iterator < this->end_iterator);
-        EXPECT_TRUE(this->begin_const_iterator < std::ranges::next(this->begin_iterator));
+        EXPECT_FALSE(this->test_range.begin() < this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.begin() < this->test_range.cend());
+        EXPECT_TRUE(this->test_range.begin() < std::ranges::next(this->test_range.cbegin()));
+        EXPECT_FALSE(this->test_range.cbegin() < this->test_range.begin());
+        EXPECT_TRUE(this->test_range.cbegin() < this->test_range.end());
+        EXPECT_TRUE(this->test_range.cbegin() < std::ranges::next(this->test_range.begin()));
     }
 }
 
@@ -426,25 +418,25 @@ TYPED_TEST_P(iterator_fixture, compare_greater)
 {
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        EXPECT_FALSE(this->begin_iterator > this->begin_iterator);
-        EXPECT_TRUE(this->end_iterator > this->begin_iterator);
-        EXPECT_FALSE(this->begin_iterator > std::ranges::next(this->begin_iterator));
+        EXPECT_FALSE(this->test_range.begin() > this->test_range.begin());
+        EXPECT_TRUE(this->test_range.end() > this->test_range.begin());
+        EXPECT_FALSE(this->test_range.begin() > std::ranges::next(this->test_range.begin()));
     }
 
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag> &&
                   TestFixture::const_iterable)
     {
-        EXPECT_FALSE(this->begin_const_iterator > this->begin_const_iterator);
-        EXPECT_TRUE(this->end_const_iterator > this->begin_const_iterator);
-        EXPECT_FALSE(this->begin_const_iterator > std::ranges::next(this->begin_const_iterator));
+        EXPECT_FALSE(this->test_range.cbegin() > this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.cend() > this->test_range.cbegin());
+        EXPECT_FALSE(this->test_range.cbegin() > std::ranges::next(this->test_range.cbegin()));
 
         // mix
-        EXPECT_FALSE(this->begin_iterator > this->begin_const_iterator);
-        EXPECT_TRUE(this->end_iterator > this->begin_const_iterator);
-        EXPECT_FALSE(this->begin_iterator > std::ranges::next(this->begin_const_iterator));
-        EXPECT_FALSE(this->begin_const_iterator > this->begin_iterator);
-        EXPECT_TRUE(this->end_const_iterator > this->begin_iterator);
-        EXPECT_FALSE(this->begin_const_iterator > std::ranges::next(this->begin_iterator));
+        EXPECT_FALSE(this->test_range.begin() > this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.end() > this->test_range.cbegin());
+        EXPECT_FALSE(this->test_range.begin() > std::ranges::next(this->test_range.cbegin()));
+        EXPECT_FALSE(this->test_range.cbegin() > this->test_range.begin());
+        EXPECT_TRUE(this->test_range.cend() > this->test_range.begin());
+        EXPECT_FALSE(this->test_range.cbegin() > std::ranges::next(this->test_range.begin()));
     }
 }
 
@@ -452,25 +444,25 @@ TYPED_TEST_P(iterator_fixture, compare_leq)
 {
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        EXPECT_TRUE(this->begin_iterator <= this->begin_iterator);
-        EXPECT_TRUE(this->begin_iterator <= this->end_iterator);
-        EXPECT_TRUE(this->begin_iterator <= std::ranges::next(this->begin_iterator));
+        EXPECT_TRUE(this->test_range.begin() <= this->test_range.begin());
+        EXPECT_TRUE(this->test_range.begin() <= this->test_range.end());
+        EXPECT_TRUE(this->test_range.begin() <= std::ranges::next(this->test_range.begin()));
     }
 
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag> &&
                   TestFixture::const_iterable)
     {
-        EXPECT_TRUE(this->begin_const_iterator <= this->begin_const_iterator);
-        EXPECT_TRUE(this->begin_const_iterator <= this->end_const_iterator);
-        EXPECT_TRUE(this->begin_const_iterator <= std::ranges::next(this->begin_const_iterator));
+        EXPECT_TRUE(this->test_range.cbegin() <= this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.cbegin() <= this->test_range.cend());
+        EXPECT_TRUE(this->test_range.cbegin() <= std::ranges::next(this->test_range.cbegin()));
 
         // mix
-        EXPECT_TRUE(this->begin_iterator <= this->begin_const_iterator);
-        EXPECT_TRUE(this->begin_iterator <= this->end_const_iterator);
-        EXPECT_TRUE(this->begin_iterator <= std::ranges::next(this->begin_const_iterator));
-        EXPECT_TRUE(this->begin_const_iterator <= this->begin_iterator);
-        EXPECT_TRUE(this->begin_const_iterator <= this->end_iterator);
-        EXPECT_TRUE(this->begin_const_iterator <= std::ranges::next(this->begin_iterator));
+        EXPECT_TRUE(this->test_range.begin() <= this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.begin() <= this->test_range.cend());
+        EXPECT_TRUE(this->test_range.begin() <= std::ranges::next(this->test_range.cbegin()));
+        EXPECT_TRUE(this->test_range.cbegin() <= this->test_range.begin());
+        EXPECT_TRUE(this->test_range.cbegin() <= this->test_range.end());
+        EXPECT_TRUE(this->test_range.cbegin() <= std::ranges::next(this->test_range.begin()));
     }
 }
 
@@ -478,25 +470,25 @@ TYPED_TEST_P(iterator_fixture, compare_geq)
 {
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        EXPECT_TRUE(this->begin_iterator >= this->begin_iterator);
-        EXPECT_TRUE(this->end_iterator >= this->begin_iterator);
-        EXPECT_FALSE(this->begin_iterator >= std::ranges::next(this->begin_iterator));
+        EXPECT_TRUE(this->test_range.begin() >= this->test_range.begin());
+        EXPECT_TRUE(this->test_range.end() >= this->test_range.begin());
+        EXPECT_FALSE(this->test_range.begin() >= std::ranges::next(this->test_range.begin()));
     }
 
     if constexpr (std::Same<typename TestFixture::iterator_tag, std::random_access_iterator_tag> &&
                   TestFixture::const_iterable)
     {
-        EXPECT_TRUE(this->begin_const_iterator >= this->begin_const_iterator);
-        EXPECT_TRUE(this->end_const_iterator >= this->begin_const_iterator);
-        EXPECT_FALSE(this->begin_const_iterator >= std::ranges::next(this->begin_const_iterator));
+        EXPECT_TRUE(this->test_range.cbegin() >= this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.cend() >= this->test_range.cbegin());
+        EXPECT_FALSE(this->test_range.cbegin() >= std::ranges::next(this->test_range.cbegin()));
 
         // mix
-        EXPECT_TRUE(this->begin_iterator >= this->begin_const_iterator);
-        EXPECT_TRUE(this->end_iterator >= this->begin_const_iterator);
-        EXPECT_FALSE(this->begin_iterator >= std::ranges::next(this->begin_const_iterator));
-        EXPECT_TRUE(this->begin_const_iterator >= this->begin_iterator);
-        EXPECT_TRUE(this->end_const_iterator >= this->begin_iterator);
-        EXPECT_FALSE(this->begin_const_iterator >= std::ranges::next(this->begin_iterator));
+        EXPECT_TRUE(this->test_range.begin() >= this->test_range.cbegin());
+        EXPECT_TRUE(this->test_range.end() >= this->test_range.cbegin());
+        EXPECT_FALSE(this->test_range.begin() >= std::ranges::next(this->test_range.cbegin()));
+        EXPECT_TRUE(this->test_range.cbegin() >= this->test_range.begin());
+        EXPECT_TRUE(this->test_range.cend() >= this->test_range.begin());
+        EXPECT_FALSE(this->test_range.cbegin() >= std::ranges::next(this->test_range.begin()));
     }
 }
 

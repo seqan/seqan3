@@ -32,13 +32,10 @@ struct iterator_fixture<iterator_type> : public ::testing::Test
     using iterator_tag = std::input_iterator_tag;
     static constexpr bool const_iterable = false;
 
-    std::string range_to_compare{"ACGTATATATAT ATATAT TTA \n AUAUAA"};
-    std::istringstream is{range_to_compare};
+    std::string expected_range{"ACGTATATATAT ATATAT TTA \n AUAUAA"};
+    std::istringstream is{expected_range};
 
-    decltype(view::istreambuf(is)) v = view::istreambuf(is);
-
-    iterator_type begin_iterator{v.begin()};
-    decltype(view::istreambuf(is).end()) end_iterator{v.end()};
+    decltype(view::istreambuf(is)) test_range = view::istreambuf(is);
 };
 
 using test_type = ::testing::Types<iterator_type>;
