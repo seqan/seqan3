@@ -38,11 +38,15 @@ In this section we want to implement a seqan3::Alphabet that consists of the cha
 strong and weak nucleobases.
 
 Let's start with a simple struct that only holds the alphabet's numerical representation, namely the **rank** value.
+It is not specified how the value of an alphabet is stored internally, however alphabets typically store the rank as a
+member variable.
 \snippet dna2_only_rank.cpp struct
 
 \note
-As our alphabet has just two letters we could model it as well with `bool` instead of `uint8_t`.
-However, for this first example we believe that a numerical type is better to comprehend.
+The type of the member variable is typically the smallest unsigned integer type that can hold the maximum rank.
+In our case we have only two values so `bool` would be sufficient.
+However `bool` is not actually smaller than `uint8_t` and does not always behave like an unsigned integral type
+so we use `uint8_t` here. You only need a different type if your alphabet has an alphabet size >=255.
 
 If you want SeqAn's algorithms to accept it as an alphabet, you need to make sure that your type
 satisfies the requirements of the seqan3::Alphabet concept. A quick check can reveal that this is not the case:
@@ -109,24 +113,23 @@ As you can see from the `static_assert` our dna2 alphabet now models seqan3::Sem
 seqan3::WritableSemialphabet:
 \snippet dna2_semialphabet.cpp writable_semialphabet_concept
 
-With this we can automatically use some free functions on our dna2 alphabet. Here is an example:
+You can also try out the customisation points directly (they appear like free functions). Here is an example:
 \snippet dna2_semialphabet.cpp free_functions
 
 ## Alphabet
 
 Now that you have a feeling for concepts, have a look at seqan3::Alphabet and seqan3::WritableAlphabet and make
-your type also model these concepts. If you keep the suggested namings, SeqAn will automatically
-expose the members to the respective global functions as we have seen above.
+your type also model these concepts.
 
 \assignment{Excercise}
-1. Implement the member function `char to_char(void)` which returns the char 'S' or 'W' depending on the rank value.
+1. Implement the member function `char %to_char()` which returns the char 'S' or 'W' depending on the rank value.
 2. Implement the member function `dna2 & assign_char(char const)`.
-3. If a seqan3::WritableAlphabet has a member function `bool char_is_valid` it can be used to determine
-   whether a given character is an actual representation of the alphabet. For the `dna2` alphabet 'S' and 'W'
-   as well as 's' and 'w' should be valid, but nothing else. The member function is optional, because SeqAn provides
-   a fallback implementation for seqan3::char_is_valid_for (see its documentation for details).
+3. There is a function object that tells us which characters are valid for a given alphabet: seqan3::char_is_valid_for.
+   By default, all characters are "valid" that are preserved when being assigned from and then be converted back.
+   But in some cases you want to change the default behaviour, e.g. declaring lower-case letters to be valid, as well.
    <br>
-   **Optional task:** Implement the static member function `bool char_is_valid(char const)`.
+   **Optional task:** Implement the static member function `bool char_is_valid(char const)` in order to allow
+   also 's' and 'w' as valid characters.
 \endassignment
 \solution
 \snippet dna2_alphabet.cpp writable_alphabet
@@ -141,7 +144,7 @@ is fine because we implemented `assign_char` and `char_is_valid`.
 Often it is not required to implement the entire class yourself, instead you can derive from seqan3::alphabet_base
 which defines most things for you if you provide certain conversion tables. Read the documentation of
 seqan3::alphabet_base for details. This implementation deduces `bool` as the smallest possible rank type.
-\snippet dna2_inherit_base.cpp dna2
+\snippet dna2_derive_from_base.cpp dna2
 
 # Further examples
 ## Implementation as enum class
@@ -158,6 +161,14 @@ to model the functionality.
 
 This is an example of a custom alphabet that is not default-constructible and that has a non-default overload for
 seqan3::char_is_valid_for.
+
+Please note that for the overloads of seqan3::alphabet_size and seqan3::char_is_valid_for our alphabet type has to
+be wrapped into `std::type_identity<>` to be recognised by the customisation point objects, because our type does
+not model std::is_nothrow_default_constructible after we have deleted the default constructor.
+
+With the overload of seqan3::char_is_valid_for we allow assignment to the underlying boolean type
+from '1', 't' and 'T' for value 1 as well as from '0', 'f' and 'F' for value 0.
+
 \snippet test/unit/alphabet/custom_alphabet2_test.cpp my_alph
 
 \note
