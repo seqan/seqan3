@@ -14,6 +14,8 @@
 
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/cereal.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/range/view/interleave.hpp>
 #include <seqan3/range/view/repeat_n.hpp>
 
 namespace seqan3
@@ -1440,6 +1442,22 @@ public:
             is.width(0); // cancel the effects of std::setw, if any.
         }
         return is;
+    }
+
+    /*!\brief Formatted debug output for the seqan3::dynamic_bitset.
+     * \param[in,out] s   The seqan3::debug_stream to write to.
+     * \param[in]     arg The seqan3::dynamic_bitset to read from.
+     * \returns `s`.
+     *
+     * \details
+     *
+     * Internally calls \ref to_string() "arg.to_string()" and inserts a <code>'</code> at every fourth position.
+     */
+    template <typename char_t>
+    friend debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, dynamic_bitset arg)
+    {
+        s << (std::string_view{arg.to_string()} | view::interleave(4, std::string_view{"'"}) | ranges::to<std::string>);
+        return s;
     }
     //!\}
 

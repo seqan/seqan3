@@ -759,6 +759,28 @@ TEST(dynamic_bitset, input)
     }
 }
 
+TEST(dynamic_bitset, debug_stream)
+{
+    std::ostringstream o;
+    debug_stream_type my_stream{o};
+
+    dynamic_bitset t1{0b1100'1110'1010'1111};
+
+    my_stream << t1;
+    o.flush();
+    EXPECT_EQ(o.str(), "1100'1110'1010'1111");
+
+    dynamic_bitset const t2{0b1011'1010'1111'0000};
+
+    my_stream << t2;
+    o.flush();
+    EXPECT_EQ(o.str(), "1100'1110'1010'11111011'1010'1111'0000");
+
+    my_stream << dynamic_bitset{0b0101'1110'0101'1001}; // The leftmost 0 will be stripped
+    o.flush();
+    EXPECT_EQ(o.str(), "1100'1110'1010'11111011'1010'1111'00001011'1100'1011'001");
+}
+
 TEST(dynamic_bitset, serialisation)
 {
     dynamic_bitset t1{0b100101};
