@@ -540,7 +540,9 @@ public:
     {
         assert(count > 0);
         assert(count < size());
-        data_.bits << count;
+        uint8_t offset = 58 - size() + count;
+        data_.bits <<= offset;
+        data_.bits >>= offset - count;
         return *this;
     }
 
@@ -549,7 +551,7 @@ public:
     {
         assert(count > 0);
         assert(count < size());
-        data_.bits >> count;
+        data_.bits >>= count;
         return *this;
     }
 

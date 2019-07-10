@@ -418,6 +418,42 @@ TEST(dynamic_bitset, bitwise_not)
     EXPECT_TRUE(bitwise_not_test());
 }
 
+constexpr bool shift_left_test()
+{
+    dynamic_bitset t1{0b1111'0001'0000'1100};
+
+    bool res = t1 << 3 == dynamic_bitset{0b1000'1000'0110'0000};
+    t1 <<= 4;
+    res &= t1 == dynamic_bitset{"0001000011000000"};
+
+    return res;
+}
+
+TEST(dynamic_bitset, shift_left)
+{
+    constexpr bool b = shift_left_test();
+    EXPECT_TRUE(b);
+    EXPECT_TRUE(shift_left_test());
+}
+
+constexpr bool shift_right_test()
+{
+    dynamic_bitset t1{0b1111'0001'0000'1100};
+
+    bool res = t1 >> 3 == dynamic_bitset{"0001111000100001"};
+    t1 >>= 4;
+    res &= t1 == dynamic_bitset{"0000111100010000"};
+
+    return res;
+}
+
+TEST(dynamic_bitset, shift_right)
+{
+    constexpr bool b = shift_right_test();
+    EXPECT_TRUE(b);
+    EXPECT_TRUE(shift_right_test());
+}
+
 constexpr bool swap_test()
 {
     dynamic_bitset t1{0b1111'0001'0000'1100};
