@@ -57,7 +57,8 @@ private:
         constexpr reference_proxy_type(reference_proxy_type const &)             noexcept = default; //!< Defaulted.
         constexpr reference_proxy_type(reference_proxy_type &&)                  noexcept = default; //!< Defaulted.
 
-        constexpr reference_proxy_type & operator=(reference_proxy_type rhs) noexcept                //!< Assign value.
+        //!\brief Assign the value of the bit.
+        constexpr reference_proxy_type & operator=(reference_proxy_type rhs) noexcept
         {
             rhs ? set() : reset();
             return *this;
@@ -113,7 +114,7 @@ private:
         }
 
     private:
-        //!\brief The proxy of the underlying data type; wrapped in semiregular_t, because it isn't semiregular itself.
+        //!\brief The proxy of the underlying data type.
         bitfield & internal;
         //!\brief Bitmask to access one specific bit.
         uint64_t mask;
@@ -503,7 +504,28 @@ public:
     /*!\name Bit manipulation
      * \{
      */
-    //!\brief Sets the bits to the result of binary AND on corresponding pairs of bits of *this and rhs.
+    /*!\brief Sets the bits to the result of binary AND on corresponding pairs of bits of *this and rhs.
+     * \param[in] rhs dynamic_bitset to perform binary AND with.
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_bitwise_and_member.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset & operator&=(dynamic_bitset const & rhs) noexcept
     {
         assert(size() == rhs.size());
@@ -511,7 +533,28 @@ public:
         return *this;
     }
 
-    //!\brief Sets the bits to the result of binary OR on corresponding pairs of bits of *this and rhs.
+    /*!\brief Sets the bits to the result of binary OR on corresponding pairs of bits of *this and rhs.
+     * \param[in] rhs dynamic_bitset to perform binary OR with.
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_bitwise_or_member.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset & operator|=(dynamic_bitset const & rhs) noexcept
     {
         assert(size() == rhs.size());
@@ -519,7 +562,28 @@ public:
         return *this;
     }
 
-    //!\brief Sets the bits to the result of binary XOR on corresponding pairs of bits of *this and rhs.
+    /*!\brief Sets the bits to the result of binary XOR on corresponding pairs of bits of *this and rhs.
+     * \param[in] rhs dynamic_bitset to perform binary XOR with.
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_bitwise_xor_member.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset & operator^=(dynamic_bitset const & rhs) noexcept
     {
         assert(size() == rhs.size());
@@ -527,7 +591,27 @@ public:
         return *this;
     }
 
-    //!\brief Returns a temporary copy of *this with all bits flipped (binary NOT).
+    /*!\brief Returns a temporary copy of *this with all bits flipped (binary NOT).
+     * \returns Copy of *this with all bits flipped.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_flip.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Thread safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset operator~() const noexcept
     {
         dynamic_bitset tmp{*this};
@@ -535,7 +619,28 @@ public:
         return tmp;
     }
 
-    //!\brief Performs binary shift left on the current object.
+    /*!\brief Performs binary shift left on the current object.
+     * \param[in] count Amount to shift to the left.
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_shift_left_inplace.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset & operator<<=(size_t const count) noexcept
     {
         assert(count > 0);
@@ -546,7 +651,28 @@ public:
         return *this;
     }
 
-    //!\brief Performs binary shift right on the current object.
+    /*!\brief Performs binary shift right on the current object.
+     * \param[in] count Amount to shift to the right.
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_shift_right_inplace.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset & operator>>=(size_t const count) noexcept
     {
         assert(count > 0);
@@ -555,7 +681,28 @@ public:
         return *this;
     }
 
-    //!\brief Performs binary shift right.
+    /*!\brief Performs binary shift right.
+     * \param[in] count Amount to shift to the right.
+     * \returns Copy of *this with bits shifted count to the right.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_shift_right_copy.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset operator>>(size_t const count) const noexcept
     {
         assert(count > 0);
@@ -565,7 +712,28 @@ public:
         return tmp;
     }
 
-    //!\brief Performs binary shift left.
+    /*!\brief Performs binary shift left.
+     * \param[in] count Amount to shift to the left.
+     * \returns Copy of *this with bits shifted count to the left.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_shift_left_copy.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset operator<<(size_t const count) const noexcept
     {
         assert(count > 0);
@@ -575,7 +743,27 @@ public:
         return tmp;
     }
 
-    //!\brief Sets all bits to 1.
+    /*!\brief Sets all bits to 1.
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_set_all.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset & set() noexcept
     {
         data_.bits = ~0ULL >> 6;
@@ -586,14 +774,25 @@ public:
      * \param[in] i Index of the bit to value.
      * \param[in] value Value to set. Default true.
      * \throws std::out_of_range if you access an element behind the last.
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_set_pos.cpp
+     *
+     * ### Exception
+     *
+     * Throws std::out_of_range if `i >= size()`.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
      *
      * ### Complexity
      *
      * Constant.
-     *
-     * ### Exceptions
-     *
-     * Throws std::out_of_range if `i >= size()`.
      */
     constexpr dynamic_bitset & set(size_t const i, bool const value = true)
     {
@@ -601,7 +800,30 @@ public:
         return *this;
     }
 
-    //!\brief Sets all bits to 0.
+    /*!\brief Sets all bits to 0.
+     * \returns *this
+     *
+     * \details
+     *
+     * \attention
+     * In contrast to clear(), this method does not modify the size.
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_reset_all.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset & reset() noexcept
     {
         data_.bits = 0u;
@@ -611,14 +833,25 @@ public:
     /*!\brief Sets the i'th bit to false.
      * \param[in] i Index of the bit to value.
      * \throws std::out_of_range if you access an element behind the last.
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_reset_pos.cpp
+     *
+     * ### Exception
+     *
+     * Throws std::out_of_range if `i >= size()`.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
      *
      * ### Complexity
      *
      * Constant.
-     *
-     * ### Exceptions
-     *
-     * Throws std::out_of_range if `i >= size()`.
      */
     constexpr dynamic_bitset & reset(size_t const i)
     {
@@ -626,7 +859,27 @@ public:
         return *this;
     }
 
-    //!\brief Flips all bits. (binary NOT)
+    /*!\brief Flips all bits (binary NOT).
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_flip_all.cpp
+     *
+     * ### Exception
+     *
+     * No-throw guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
     constexpr dynamic_bitset & flip() noexcept
     {
         uint8_t offset = 58 - size();
@@ -634,17 +887,28 @@ public:
         return *this;
     }
 
-    /*!\brief Flips the i'th bit. (binary NOT)
+    /*!\brief Flips the i'th bit (binary NOT).
      * \param[in] i Index of the bit to flip.
      * \throws std::out_of_range if you access an element behind the last.
+     * \returns *this
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_flip_pos.cpp
+     *
+     * ### Exception
+     *
+     * Throws std::out_of_range if `i >= size()`.
+     *
+     * ### Thread-safety
+     *
+     * Not thread-safe.
      *
      * ### Complexity
      *
      * Constant.
-     *
-     * ### Exceptions
-     *
-     * Throws std::out_of_range if `i >= size()`.
      */
     constexpr dynamic_bitset & flip(size_t const i)
     {
@@ -689,7 +953,7 @@ public:
         return detail::popcount(data_.bits);
     }
 
-    /*!\brief Return the i-th element.
+    /*!\brief Returns the i-th element.
      * \param[in] i Index of the element to retrieve.
      * \throws std::out_of_range If you access an element behind the last.
      * \returns A reference to the value at position `i`.
@@ -725,7 +989,7 @@ public:
         return at(i);
     }
 
-    /*!\brief Return the i-th element.
+    /*!\brief Returns the i-th element.
      * \param i The element to retrieve.
      * \returns A reference to the value at position `i`.
      *
@@ -753,7 +1017,7 @@ public:
         return data_.bits << (63u - i) >> 63u;
     }
 
-    /*!\brief Return the first element. Calling front on an empty container is undefined.
+    /*!\brief Returns the first element. Calling front on an empty container is undefined.
      * \returns A reference to the value at the first position.
      *
      * Calling front on an empty container is undefined. In debug mode an assertion checks the size of the container.
@@ -779,7 +1043,7 @@ public:
         return (*this)[0];
     }
 
-    /*!\brief Return the last element.
+    /*!\brief Returns the last element.
      * \returns A reference to the value at the last position.
      *
      * Calling back on an empty container is undefined. In debug mode an assertion checks the size of the container.
@@ -905,6 +1169,9 @@ public:
      * \{
      */
     /*!\brief Removes all elements from the container.
+     *
+     * \attention
+     * In contrast to reset(), this method also sets the size to 0.
      *
      * ### Complexity
      *
@@ -1249,6 +1516,7 @@ public:
 
     //!\name Comparison operators
     //!\{
+
     //!\brief Performs element-wise comparison.
     template <size_t cap2>
     //!\cond
