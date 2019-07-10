@@ -34,7 +34,7 @@ R"(@HD	VN:1.6
 @SQ	SN:ref	LN:34
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
 read2	42	ref	2	62	1H7M1D1M1S	=	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
-read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
+read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
 )"};
 
     std::string verbose_reads_input{
@@ -52,7 +52,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
                                                                              "\tbi:B:i,-3,200,-66000"
                                                                              "\tbI:B:I,294967296"
                                                                              "\tbf:B:f,3.5,0.1,43.8\n"
-        "read3\t43\tref\t3\t63\t1S1M1D1M1I1M1I1D1M1S\tref\t10\t300\tGGAGTATA\t!!*+,-./\n"};
+        "read3\t43\tref\t3\t63\t1S1M1P1M1I1M1I1D1M1S\tref\t10\t300\tGGAGTATA\t!!*+,-./\n"};
 
     std::string empty_input{"@HD\tVN:1.6\n@SQ\tSN:ref\tLN:34\n*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n"};
 
@@ -71,7 +71,7 @@ R"(@HD	VN:1.6
 @SQ	SN:ref	LN:34
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
 read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
-read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )"};
 
     std::string verbose_output{
@@ -82,7 +82,7 @@ R"(@HD	VN:1.6	SO:unknown	GO:none
 @CO	This is a comment.
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	CC:i:300	NM:i:-7	aa:A:c	cc:i:-300	ff:f:3.1	zz:Z:str
 read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	bC:B:C,3,200	bI:B:I,294967296	bS:B:S,300,40,500	bc:B:c,-3	bf:B:f,3.5,0.1,43.8	bi:B:i,-3,200,-66000	bs:B:s,-3,200,-300
-read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )"};
 
     std::string special_output{
@@ -260,19 +260,11 @@ TEST_F(sam_format, format_error_invalid_cigar)
 {
     detail::alignment_file_input_format<format_sam> format;
 
-    // operation P is not supported yet
-    std::istringstream istream(std::string("*\t0\t*\t0\t0\t5P\t*\t0\t0\t*\t*\n"));
-
     alignment_file_header header{};
     std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
 
-    EXPECT_THROW(format.read(istream, input_options, this->ref_sequences, header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
-
     // unkown operation
-    istream = std::istringstream(std::string("*\t0\t*\t0\t0\t5Z\t*\t0\t0\t*\t*\n"));
+    std::istringstream istream(std::string("*\t0\t*\t0\t0\t5Z\t*\t0\t0\t*\t*\n"));
     EXPECT_THROW(format.read(istream, input_options, this->ref_sequences, header, std::ignore, std::ignore, std::ignore,
                              std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore, std::ignore,
                              std::ignore, std::ignore, std::ignore, std::ignore),

@@ -376,12 +376,13 @@ parse_cigar(cigar_input_type && cigar_input)
             {
                 seq_length += cigar_count;
             }
+            else if (is_char<'P'>(cigar_op))
+            {
+                // no op (padding does not increase either length)
+            }
             else // illegal character
             {
-                if (is_char<'P'>(cigar_op))
-                    throw format_error{"We do currently not support cigar operation 'P'."};
-                else
-                    throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
+                throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
             }
         };
 
@@ -484,12 +485,13 @@ auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op)
             {
                 seq_length += cigar_count;
             }
+            else if (is_char<'P'>(cigar_op))
+            {
+                // no op (padding does not increase either length)
+            }
             else // illegal character
             {
-                if (is_char<'P'>(cigar_op))
-                    throw format_error{"We do currently not support cigar operation 'P'."};
-                else
-                    throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
+                throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
             }
         };
 
@@ -601,12 +603,17 @@ void alignment_from_cigar(alignment_type & alignment, std::vector<std::pair<char
             ++current_ref_pos;
             std::ranges::advance(current_read_pos, cigar_count);
         }
+        else if (is_char<'P'>(cigar_op)) // skip padding
+        {
+            current_ref_pos = insert_gap(get<0>(alignment), current_ref_pos, cigar_count);
+            ++current_ref_pos;
+
+            current_read_pos = insert_gap(get<1>(alignment), current_read_pos, cigar_count);
+            ++current_read_pos;
+        }
         else // illegal character
         {
-            if (is_char<'P'>(cigar_op))
-                throw format_error{"We do currently not support cigar operation 'P'."};
-            else
-                throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
+            throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
         }
     }
 }
