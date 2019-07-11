@@ -75,7 +75,8 @@ TEST(html_format, full_information_information)
     std::string expected;
     int option_value{5};
     bool flag_value;
-    std::vector<std::string> pos_opt_value{};
+    int8_t non_list_pos_opt_value{1};
+    std::vector<std::string> list_pos_opt_value{};
 
    // Full html help page.
    const char * argv0[] = {"./help_add_test --version-check 0", "--export-help", "html"};
@@ -93,8 +94,8 @@ TEST(html_format, full_information_information)
    parser1.add_option(option_value, 'j', "jint", "this is a int option.");
    parser1.add_flag(flag_value, 'f', "flag", "this is a flag.");
    parser1.add_flag(flag_value, 'k', "kflag", "this is a flag.");
-   parser1.add_positional_option(pos_opt_value, "this is a positional option.");
-   parser1.add_positional_option(pos_opt_value, "this is a positional option.");
+   parser1.add_positional_option(non_list_pos_opt_value, "this is a positional option.");
+   parser1.add_positional_option(list_pos_opt_value, "this is a positional option.");
    parser1.info.examples.push_back("example");
    parser1.info.examples.push_back("example2");
    testing::internal::CaptureStdout();
@@ -126,8 +127,8 @@ TEST(html_format, full_information_information)
                           "</p>\n"
                           "<h2>Positional Arguments</h2>\n"
                           "<dl>\n"
-                          "<dt><strong>ARGUMENT-1</strong> (<em>List</em> of <em>std::string</em>'s)</dt>\n"
-                          "<dd>this is a positional option. Default: []. </dd>\n"
+                          "<dt><strong>ARGUMENT-1</strong> (<em>signed 8 bit integer</em>)</dt>\n"
+                          "<dd>this is a positional option. Default: 1. </dd>\n"
                           "<dt><strong>ARGUMENT-2</strong> (<em>List</em> of <em>std::string</em>'s)</dt>\n"
                           "<dd>this is a positional option. Default: []. </dd>\n"
                           "</dl>\n"
