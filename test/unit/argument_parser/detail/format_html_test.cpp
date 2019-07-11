@@ -91,7 +91,7 @@ TEST(html_format, full_information_information)
    parser1.info.long_copyright = "long_copyright";
    parser1.info.citation = "citation";
    parser1.add_option(option_value, 'i', "int", "this is a int option.");
-   parser1.add_option(option_value, 'j', "jint", "this is a int option.");
+   parser1.add_option(option_value, 'j', "jint", "this is a required int option.", option_spec::REQUIRED);
    parser1.add_flag(flag_value, 'f', "flag", "this is a flag.");
    parser1.add_flag(flag_value, 'k', "kflag", "this is a flag.");
    parser1.add_positional_option(non_list_pos_opt_value, "this is a positional option.");
@@ -128,7 +128,7 @@ TEST(html_format, full_information_information)
                           "<h2>Positional Arguments</h2>\n"
                           "<dl>\n"
                           "<dt><strong>ARGUMENT-1</strong> (<em>signed 8 bit integer</em>)</dt>\n"
-                          "<dd>this is a positional option. Default: 1. </dd>\n"
+                          "<dd>this is a positional option. </dd>\n"
                           "<dt><strong>ARGUMENT-2</strong> (<em>List</em> of <em>std::string</em>'s)</dt>\n"
                           "<dd>this is a positional option. Default: []. </dd>\n"
                           "</dl>\n"
@@ -153,7 +153,7 @@ TEST(html_format, full_information_information)
                           "<dt><strong>-i</strong>, <strong>--int</strong> (<em>signed 32 bit integer</em>)</dt>\n"
                           "<dd>this is a int option. Default: 5. </dd>\n"
                           "<dt><strong>-j</strong>, <strong>--jint</strong> (<em>signed 32 bit integer</em>)</dt>\n"
-                          "<dd>this is a int option. Default: 5. </dd>\n"
+                          "<dd>this is a required int option. </dd>\n"
                           "<dt><strong>-f</strong>, <strong>--flag</strong></dt>\n"
                           "<dd>this is a flag.</dd>\n"
                           "<dt><strong>-k</strong>, <strong>--kflag</strong></dt>\n"

@@ -197,6 +197,9 @@ TEST(help_page_printing, do_not_print_hidden_options)
 
 TEST(help_page_printing, full_information)
 {
+    int8_t required_option{};
+    int8_t non_list_optional{1};
+
     // Add synopsis, description, short description, positional option, option, flag, and example.
     argument_parser parser6{"test_parser", 2, argv1};
     parser6.info.synopsis.push_back("./some_binary_name synopsis");
@@ -205,10 +208,12 @@ TEST(help_page_printing, full_information)
     parser6.info.description.push_back("description2");
     parser6.info.short_description = "so short";
     parser6.add_option(option_value, 'i', "int", "this is a int option.");
+    parser6.add_option(required_option, 'r', "required-int", "this is another int option.", option_spec::REQUIRED);
     parser6.add_section("Flags");
     parser6.add_subsection("SubFlags");
     parser6.add_line("here come all the flags");
     parser6.add_flag(flag_value, 'f', "flag", "this is a flag.");
+    parser6.add_positional_option(non_list_optional, "this is not a list.");
     parser6.add_positional_option(pos_opt_value, "this is a positional option.");
     parser6.info.examples.push_back("example");
     parser6.info.examples.push_back("example2");
@@ -224,11 +229,15 @@ TEST(help_page_printing, full_information)
                "description\n"
                "description2\n"
                "POSITIONAL ARGUMENTS\n"
-               "ARGUMENT-1 (List of std::string's)\n"
-               "this is a positional option. Default: [].\n" +
+               "ARGUMENT-1 (signed 8 bit integer)\n"
+               "this is not a list.\n"
+               "ARGUMENT-2 (List of std::string's)\n"
+               "this is a positional option. Default: []. \n" +
                basic_options_str +
                "-i, --int (signed 32 bit integer)\n"
                "this is a int option. Default: 5.\n"
+               "-r, --required-int (signed 8 bit integer)\n"
+               "this is another int option.\n"
                "FLAGS\n"
                "SubFlags\n"
                "here come all the flags\n"
