@@ -533,12 +533,12 @@ public:
      *
      * \details
      *
+     * \attention
+     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     *
      * ### Example
      *
      * \include test/snippet/range/container/dynamic_bitset_bitwise_and_member.cpp
-     *
-     * \attention
-     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
      *
      * ### Exception
      *
@@ -565,12 +565,12 @@ public:
      *
      * \details
      *
+     * \attention
+     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     *
      * ### Example
      *
      * \include test/snippet/range/container/dynamic_bitset_bitwise_or_member.cpp
-     *
-     * \attention
-     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
      *
      * ### Exception
      *
@@ -597,12 +597,12 @@ public:
      *
      * \details
      *
+     * \attention
+     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     *
      * ### Example
      *
      * \include test/snippet/range/container/dynamic_bitset_bitwise_xor_member.cpp
-     *
-     * \attention
-     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
      *
      * ### Exception
      *
