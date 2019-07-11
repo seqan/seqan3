@@ -296,8 +296,7 @@ constexpr bool access_test()
 
     dynamic_bitset t1{0b1111'0000'0000'0000};
     dynamic_bitset const t2{0b1111'0000'0000'0000};
-    dynamic_bitset expected{0b0111'0000'0000'0001};
-    expected.resize(t1.size());
+    dynamic_bitset expected{"0111000000000001"};
 
     for (size_t i = 0u; i < t1.size() - 4u; ++i)
     {
@@ -385,8 +384,7 @@ constexpr bool bitwise_xor_test()
 {
     dynamic_bitset t1{0b1111'0001'0000'1100};
     dynamic_bitset t2{0b1010'0001'0000'0011};
-    dynamic_bitset expected{0b0101'0000'0000'1111};
-    expected.resize(t1.size());
+    dynamic_bitset expected{"0101000000001111"};
 
     bool res = (t1 ^ t2) == expected;
     t1 ^= t2;
@@ -405,8 +403,7 @@ TEST(dynamic_bitset, bitwise_xor)
 constexpr bool bitwise_not_test()
 {
     dynamic_bitset t1{0b1111'0001'0000'1100};
-    dynamic_bitset expected{0b0000'1110'1111'0011};
-    expected.resize(t1.size());
+    dynamic_bitset expected{"0000111011110011"};
 
     return ~t1 == expected;
 }
@@ -585,11 +582,10 @@ TEST(dynamic_bitset, capacity)
 constexpr bool clear_test()
 {
     dynamic_bitset t1{0b1111'0001'0000'1100};
-    dynamic_bitset expected{};
 
     t1.clear();
 
-    return t1 == expected;
+    return t1 == dynamic_bitset{};
 }
 
 TEST(dynamic_bitset, clear)
