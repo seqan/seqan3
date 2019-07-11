@@ -16,6 +16,7 @@
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/algorithm>
@@ -376,12 +377,13 @@ parse_cigar(cigar_input_type && cigar_input)
             {
                 seq_length += cigar_count;
             }
+            else if (is_char<'P'>(cigar_op))
+            {
+                // no op (padding does not increase either length)
+            }
             else // illegal character
             {
-                if (is_char<'P'>(cigar_op))
-                    throw format_error{"We do currently not support cigar operation 'P'."};
-                else
-                    throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
+                throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
             }
         };
 
@@ -484,12 +486,13 @@ auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op)
             {
                 seq_length += cigar_count;
             }
+            else if (is_char<'P'>(cigar_op))
+            {
+                // no op (padding does not increase either length)
+            }
             else // illegal character
             {
-                if (is_char<'P'>(cigar_op))
-                    throw format_error{"We do currently not support cigar operation 'P'."};
-                else
-                    throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
+                throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
             }
         };
 
@@ -497,7 +500,6 @@ auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op)
         return std::tuple{operations, ref_length, seq_length, sc_begin_count, sc_end_count};
 
     std::ranges::copy_n(std::ranges::begin(cigar_input), sizeof(o_and_c), reinterpret_cast<char*>(&o_and_c));
-    assert((o_and_c & CIGAR_MASK) <= 8u);
     cigar_op = CIGAR_MAPPING[o_and_c & CIGAR_MASK];
     cigar_count = o_and_c >> 4;
     --n_cigar_op;
@@ -508,7 +510,6 @@ auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op)
             return std::tuple{operations, ref_length, seq_length, sc_begin_count, sc_end_count};
 
         std::ranges::copy_n(std::ranges::begin(cigar_input), sizeof(o_and_c), reinterpret_cast<char*>(&o_and_c));
-        assert((o_and_c & CIGAR_MASK) <= 8u);
         cigar_op = CIGAR_MAPPING[o_and_c & CIGAR_MASK];
         cigar_count = o_and_c >> 4;
         --n_cigar_op;
@@ -529,7 +530,6 @@ auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op)
     while (n_cigar_op > 0) // until stream is not empty
     {
         std::ranges::copy_n(std::ranges::begin(cigar_input), sizeof(o_and_c), reinterpret_cast<char*>(&o_and_c));
-        assert((o_and_c & CIGAR_MASK) <= 8u);
         cigar_op = CIGAR_MAPPING[o_and_c & CIGAR_MASK];
         cigar_count = o_and_c >> 4;
 
@@ -582,6 +582,9 @@ void alignment_from_cigar(alignment_type & alignment, std::vector<std::pair<char
 
     for (auto [cigar_op, cigar_count] : cigar)
     {
+        assert(is_char<'M'>(cigar_op) || is_char<'='>(cigar_op) || is_char<'X'>(cigar_op) || is_char<'D'>(cigar_op) ||
+               is_char<'N'>(cigar_op) || is_char<'I'>(cigar_op) || is_char<'P'>(cigar_op)); // checked during IO
+
         if (is_char<'M'>(cigar_op) || is_char<'='>(cigar_op) || is_char<'X'>(cigar_op))
         {
             std::ranges::advance(current_ref_pos , cigar_count);
@@ -601,12 +604,13 @@ void alignment_from_cigar(alignment_type & alignment, std::vector<std::pair<char
             ++current_ref_pos;
             std::ranges::advance(current_read_pos, cigar_count);
         }
-        else // illegal character
+        else if (is_char<'P'>(cigar_op)) // skip padding
         {
-            if (is_char<'P'>(cigar_op))
-                throw format_error{"We do currently not support cigar operation 'P'."};
-            else
-                throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
+            current_ref_pos = insert_gap(get<0>(alignment), current_ref_pos, cigar_count);
+            ++current_ref_pos;
+
+            current_read_pos = insert_gap(get<1>(alignment), current_read_pos, cigar_count);
+            ++current_read_pos;
         }
     }
 }

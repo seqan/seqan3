@@ -66,8 +66,8 @@ struct alignment_file_data : public ::testing::Test
     std::vector<gapped<dna5>> ref_seq_gapped1 = {'A'_dna5, 'C'_dna5, 'T'_dna5, gap{}};
     std::vector<gapped<dna5>> ref_seq_gapped2 = {'C'_dna5, 'T'_dna5, 'G'_dna5, 'A'_dna5,
                                                  'T'_dna5, 'C'_dna5, 'G'_dna5, 'A'_dna5, 'G'_dna5};
-    std::vector<gapped<dna5>> ref_seq_gapped3 = {'T'_dna5, 'G'_dna5, 'A'_dna5, gap{},
-                                                 'T'_dna5, gap{}, 'C'_dna5, 'G'_dna5,};
+    std::vector<gapped<dna5>> ref_seq_gapped3 = {'T'_dna5, gap{}, 'G'_dna5, gap{}, 'A'_dna5,
+                                                 gap{}, 'T'_dna5, 'C'_dna5};
 
     std::string ref_id = "ref";
 
