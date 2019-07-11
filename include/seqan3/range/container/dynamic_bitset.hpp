@@ -196,6 +196,12 @@ public:
      * \param[in]      value The uint64_t to construct/assign from.
      * \throws std::invalid_argument if value has bits set past the 58'th.
      *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_construct_uint64_t.cpp
+     *
      * ### Complexity
      *
      * Constant.
@@ -298,8 +304,18 @@ public:
      * \param _lit The literal to construct the string for. May only contain '0' and '1'.
      * \throws std::invalid_argument if any character is not '0' or '1'.
      *
+     * \details
+     *
      * The `char` literal is expected to be null-terminated (asserted in debug-mode). If it is not, the last character
      * will be lost when copying to the instance of `dynamic_bitset`.
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_construct_string.cpp
+     *
+     * ### Complexity
+     *
+     * Linear in the size of _lit.
      *
      * ### Exceptions
      *
@@ -464,7 +480,14 @@ public:
     /*!\name Iterators
      * \{
      */
-    //!\brief Returns the begin to the dynamic_bitset.
+    /*!\brief Returns the begin to the dynamic_bitset.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_begin.cpp
+     */
     constexpr iterator begin() noexcept
     {
         return iterator{*this};
@@ -514,6 +537,9 @@ public:
      *
      * \include test/snippet/range/container/dynamic_bitset_bitwise_and_member.cpp
      *
+     * \attention
+     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     *
      * ### Exception
      *
      * No-throw guarantee.
@@ -543,6 +569,9 @@ public:
      *
      * \include test/snippet/range/container/dynamic_bitset_bitwise_or_member.cpp
      *
+     * \attention
+     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     *
      * ### Exception
      *
      * No-throw guarantee.
@@ -571,6 +600,9 @@ public:
      * ### Example
      *
      * \include test/snippet/range/container/dynamic_bitset_bitwise_xor_member.cpp
+     *
+     * \attention
+     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
      *
      * ### Exception
      *
@@ -993,8 +1025,14 @@ public:
      * \param i The element to retrieve.
      * \returns A reference to the value at position `i`.
      *
+     * \details
+     *
      * Accessing an element behind the last causes undefined behaviour. In debug mode an assertion checks the size of
      * the container.
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_subscript.cpp
      *
      * ### Complexity
      *
@@ -1394,14 +1432,20 @@ public:
      * \param[in] count The new size.
      * \param[in] value Append copies of value when resizing, default = false.
      *
+     * \details
+     *
      * If count is greater than capacity this is undefined behaviour.
      * If the dynamic_bitset is enlarged, bits in [0, size()) stay the same and bits in [size(), count)
      * are set to value.
      * If the dynamic_bitset is shrunk, bits in [0, count) stay the same and bits in [count, size()) are set to 0.
      *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_resize.cpp
+     *
      * ### Complexity
      *
-     * Constant.
+     * Constant if enlarging and `value == false`. Linear in absolute difference betweeen size and count otherwise.
      *
      * ### Exceptions
      *
@@ -1474,7 +1518,11 @@ public:
     /*!\name Bitwise operators
      * \{
      */
-    //!\brief Returns dynamic_bitset containing the result of binary AND on corresponding pairs of bits of lhs and rhs.
+    /*!\brief Returns dynamic_bitset containing the result of binary AND on corresponding pairs of bits of lhs and rhs.
+     *
+     * \attention
+     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     */
     template <size_t cap2>
     //!\cond
         requires cap2 <= capacity_
@@ -1487,7 +1535,11 @@ public:
         return tmp;
     }
 
-    //!\brief Returns dynamic_bitset containing the result of binary XOR on corresponding pairs of bits of lhs and rhs.
+    /*!\brief Returns dynamic_bitset containing the result of binary XOR on corresponding pairs of bits of lhs and rhs.
+     *
+     * \attention
+     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     */
     template <size_t cap2>
     //!\cond
         requires cap2 <= capacity_
@@ -1500,7 +1552,11 @@ public:
         return tmp;
     }
 
-    //!\brief Returns dynamic_bitset containing the result of binary OR on corresponding pairs of bits of lhs and rhs.
+    /*!\brief Returns dynamic_bitset containing the result of binary OR on corresponding pairs of bits of lhs and rhs.
+     *
+     * \attention
+     * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     */
     template <size_t cap2>
     //!\cond
         requires cap2 <= capacity_
@@ -1514,9 +1570,9 @@ public:
     }
     //!\}
 
-    //!\name Comparison operators
-    //!\{
-
+    /*!\name Comparison operators
+     * \{
+     */
     //!\brief Performs element-wise comparison.
     template <size_t cap2>
     //!\cond
@@ -1588,8 +1644,8 @@ public:
      * \throws std::bad_alloc from the the std::string constructor.
      * \returns A std::string representing the dynamic_bitset.
      *
-     * \attention This is the only function of this class that is **not** constexpr because std::string is not
-     *            constexpr.
+     * \attention
+     * This is the only function of this class that is **not** constexpr because std::string is not constexpr.
      *
      * ### Complexity
      *
@@ -1737,7 +1793,8 @@ private:
      * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
      * \param archive The archive being serialised from/to.
      *
-     * \attention These functions are never called directly, see \ref serialisation for more details.
+     * \attention
+     * These functions are never called directly, see \ref serialisation for more details.
      */
     template <CerealArchive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
