@@ -64,7 +64,7 @@ TYPED_TEST_P(iterator_fixture, concept_check)
 {
     using iterator_type = decltype(this->test_range.begin());
     // Ensure that reference types are comparable if no equal_eq function was defined.
-    if constexpr (!HasExpectEqualMemberFunction<iterator_fixture<iterator_type>>)
+    if constexpr (!HasExpectEqualMemberFunction<iterator_fixture<TypeParam>>)
     {
         static_assert(std::EqualityComparableWith<decltype(*this->test_range.begin()),
                                                   decltype(*this->expected_range.begin())>,
