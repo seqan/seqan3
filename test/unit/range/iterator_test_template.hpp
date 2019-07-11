@@ -62,8 +62,9 @@ TYPED_TEST_CASE_P(iterator_fixture);
 
 TYPED_TEST_P(iterator_fixture, concept_check)
 {
+    using iterator_type = decltype(this->test_range.begin());
     // Ensure that reference types are comparable if no equal_eq function was defined.
-    if constexpr (!HasExpectEqualMemberFunction<iterator_fixture<TypeParam>>)
+    if constexpr (!HasExpectEqualMemberFunction<iterator_fixture<iterator_type>>)
     {
         static_assert(std::EqualityComparableWith<decltype(*this->test_range.begin()),
                                                   decltype(*this->expected_range.begin())>,
@@ -76,14 +77,14 @@ TYPED_TEST_P(iterator_fixture, concept_check)
         static_assert(std::InputIterator<decltype(this->expected_range.begin())>,
                       "expected_range must have a begin member function and "
                       "the returned iterator must model std::InputIterator.");
-        EXPECT_TRUE(std::InputIterator<TypeParam>);
+        EXPECT_TRUE(std::InputIterator<iterator_type>);
     }
     else if constexpr (std::Same<typename TestFixture::iterator_tag, std::forward_iterator_tag>)
     {
         static_assert(std::ForwardIterator<decltype(this->expected_range.begin())>,
                       "expected_range must have a begin member function and "
                       "the returned iterator must model std::ForwardIterator.");
-        EXPECT_TRUE(std::ForwardIterator<TypeParam>);
+        EXPECT_TRUE(std::ForwardIterator<iterator_type>);
 
         if constexpr (TestFixture::const_iterable)
         {
@@ -95,7 +96,7 @@ TYPED_TEST_P(iterator_fixture, concept_check)
         static_assert(std::BidirectionalIterator<decltype(this->expected_range.begin())>,
                       "expected_range must have a begin member function and "
                       "the returned iterator must model std::BidirectionalIterator.");
-        EXPECT_TRUE(std::BidirectionalIterator<TypeParam>);
+        EXPECT_TRUE(std::BidirectionalIterator<iterator_type>);
 
         if constexpr (TestFixture::const_iterable)
         {
@@ -107,7 +108,7 @@ TYPED_TEST_P(iterator_fixture, concept_check)
         static_assert(std::RandomAccessIterator<decltype(this->expected_range.begin())>,
                       "expected_range must have a begin member function and "
                       "the returned iterator must model std::RandomAccessIterator.");
-        EXPECT_TRUE(std::RandomAccessIterator<TypeParam>);
+        EXPECT_TRUE(std::RandomAccessIterator<iterator_type>);
 
         if constexpr (TestFixture::const_iterable)
         {
