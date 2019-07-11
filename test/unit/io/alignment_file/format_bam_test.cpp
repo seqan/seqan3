@@ -390,6 +390,39 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
     }
 }
 
+TEST_F(bam_format, invalid_cigar_op)
+{
+    dna5_vector seq;
+    std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
+    sam_tag_dictionary tag_dict;
+
+    {
+        std::string wrong_char_in_tag{// "1D" replaced by "1?" (D is encoded as 2, but 2 was replaced by 14)
+            // @HD  VN:1.6
+            // @SQ SN:ref  LN:34
+            // read1   41  ref 1   61  1S1M1D1M1I  ref 10  300 ACGT    !##$    AS:i:2  NM:i:7
+            '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
+            '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A',
+            '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00',
+            '\x00', '\x04', '\x00', '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00',
+            '\x48', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06',
+            '\x3D', '\x49', '\x12', '\x05', '\x00', '\x29', '\x00', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00',
+            '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61',
+            '\x64', '\x31', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x1E', '\x00',
+            '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12', '\x48', '\x00',
+            '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02', '\x4E', '\x4D', '\x43', '\x07'
+        };
+
+        std::istringstream stream{wrong_char_in_tag};
+        detail::alignment_file_input_format<format_bam> format{};
+
+        EXPECT_THROW(format.read(stream, input_options, this->ref_sequences, this->header, seq, std::ignore,
+                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, alignment,
+                                 std::ignore, std::ignore, std::ignore, tag_dict, std::ignore, std::ignore),
+                     format_error);
+    }
+}
+
 TEST_F(bam_format, too_long_cigar_string_read)
 {
     std::string sam_file_with_too_long_cigar_string{
