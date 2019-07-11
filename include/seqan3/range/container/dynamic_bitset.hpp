@@ -1810,3 +1810,28 @@ private:
 };
 
 } // namespace seqan3
+
+namespace std
+{
+
+/*!\brief Struct for hashing a seqan3::dynamic_bitset.
+ * \ingroup container
+ * \tparam cap Capacity of the seqan3::dynamic_bitset.
+ */
+template <size_t cap>
+struct hash<seqan3::dynamic_bitset<cap>>
+{
+    /*!\brief Compute the hash for a seqan3::dynamic_bitset.
+     * \ingroup container
+     * \param[in] arg The seqan3::dynamic_bitset to process.
+     *
+     * \returns size_t.
+     * \sa seqan3::dynamic_bitset.to_ullong().
+     */
+    size_t operator()(seqan3::dynamic_bitset<cap> const arg) const noexcept
+    {
+        return static_cast<size_t>(arg.to_ullong());
+    }
+};
+
+} //namespace std

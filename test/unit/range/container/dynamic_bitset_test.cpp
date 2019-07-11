@@ -813,6 +813,16 @@ TEST(dynamic_bitset, debug_stream)
     EXPECT_EQ(o.str(), "1100'1110'1010'11111011'1010'1111'00001011'1100'1011'001");
 }
 
+TEST(dynamic_bitset, std_hash)
+{
+    dynamic_bitset t1{"0011000"};
+    dynamic_bitset t2{0b001100};
+    std::hash<dynamic_bitset<58>> hasher{};
+
+    EXPECT_EQ(hasher(t1), 24ULL);
+    EXPECT_EQ(hasher(t2), 12ULL);
+}
+
 TEST(dynamic_bitset, serialisation)
 {
     dynamic_bitset t1{0b100101};
