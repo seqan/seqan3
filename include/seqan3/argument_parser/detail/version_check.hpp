@@ -215,7 +215,7 @@ public:
                               "_" +
                               version +              // !user input! escaped on construction of the version_checker
 #if defined(_WIN32)
-                              "; exit  [int] -not $?}\" > nul 2>&1"
+                              "; exit  [int] -not $?}\" > nul 2>&1";
 #else
                               " > /dev/null 2>&1";
 #endif
