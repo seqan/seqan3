@@ -48,13 +48,13 @@ inline static uint64_t bgzf_thread_count = std::thread::hardware_concurrency();
 
 // Special end-of-file marker defined by the BGZF compression format.
 // See: https://samtools.github.io/hts-specs/SAMv1.pdf
-static constexpr std::array<int8_t, 28> BGZF_END_OF_FILE_MARKER {{'\x1f', '\x8b', '\x08', '\x04',
-                                                                  '\x00', '\x00', '\x00', '\x00',
-                                                                  '\x00', '\xff', '\x06', '\x00',
-                                                                  '\x42', '\x43', '\x02', '\x00',
-                                                                  '\x1b', '\x00', '\x03', '\x00',
-                                                                  '\x00', '\x00', '\x00', '\x00',
-                                                                  '\x00', '\x00', '\x00', '\x00'}};
+static constexpr std::array<char, 28> BGZF_END_OF_FILE_MARKER {{'\x1f', '\x8b', '\x08', '\x04',
+                                                                '\x00', '\x00', '\x00', '\x00',
+                                                                '\x00', '\xff', '\x06', '\x00',
+                                                                '\x42', '\x43', '\x02', '\x00',
+                                                                '\x1b', '\x00', '\x03', '\x00',
+                                                                '\x00', '\x00', '\x00', '\x00',
+                                                                '\x00', '\x00', '\x00', '\x00'}};
 
 template <typename TAlgTag>
 struct CompressionContext {};
