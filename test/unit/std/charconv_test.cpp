@@ -13,6 +13,10 @@
 #include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
 
+// =============================================================================
+// std::from_chars for integral types
+// =============================================================================
+
 template <typename T>
 class integral_from_char_test: public ::testing::Test { };
 
@@ -220,14 +224,31 @@ TYPED_TEST(integral_from_char_test, hexadicimal_number)
     }
 }
 
-TYPED_TEST(integral_from_char_test, to_char)
+// =============================================================================
+// std::to_chars for integral types
+// =============================================================================
+
+TYPED_TEST(integral_from_char_test, to_chars)
 {
     TypeParam val{120};
-    char buffer[10];
+    std::array<char, 10> buffer{};
 
-        // buffer.clear();
-    [[maybe_unused]] auto res = std::to_chars(&buffer[0], &buffer[0] + sizeof(buffer), val);
+    auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
 
+    EXPECT_EQ(res.ptr, &buffer[3]);
+    EXPECT_EQ(res.ec, std::errc{});
+    EXPECT_EQ((std::string_view{buffer.data(), 3}), std::string_view{"120"});
+}
+
+TYPED_TEST(integral_from_char_test, to_chars_error)
+{
+    TypeParam val{120};
+    std::array<char, 1> buffer{};
+
+    auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
+
+    EXPECT_EQ(res.ptr, buffer.data() + buffer.size());
+    EXPECT_EQ(res.ec, std::errc::value_too_large);
 }
 
 // =============================================================================
@@ -482,4 +503,20 @@ TYPED_TEST(from_char_real_test, non_valid_strings)
         EXPECT_FLOAT_EQ(val, TypeParam{42});
         EXPECT_EQ(res.ec, std::errc::invalid_argument);
     }
+}
+
+// =============================================================================
+// std::to_chars for float, double and long double
+// =============================================================================
+
+TYPED_TEST(from_char_real_test, to_chars)
+{
+    TypeParam val{120.3};
+    std::array<char, 10> buffer{};
+
+    auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
+
+    EXPECT_EQ(res.ptr, &buffer[5]);
+    EXPECT_EQ(res.ec, std::errc{});
+    EXPECT_EQ((std::string_view{buffer.data(), 5}), std::string_view{"120.3"});
 }
