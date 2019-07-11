@@ -43,7 +43,7 @@ constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
 // ------------------------------------------------------------------
 
 /*!\brief A "pretty printer" for most SeqAn data structures and related types.
- * \ingroup stream
+ * \ingroup core
  * \details
  *
  * A global instance of this type exists as seqan3::debug_stream. You can stream to it as you would to std::cout or
