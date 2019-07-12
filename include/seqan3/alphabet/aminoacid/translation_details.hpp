@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Contains translation details for nucleotide to aminoacid translation.
+ * \brief Provides translation details for nucleotide to aminoacid translation.
  */
 
 #pragma once

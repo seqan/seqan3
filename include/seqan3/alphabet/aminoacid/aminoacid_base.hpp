@@ -7,17 +7,15 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Free function/metafunction wrappers for alphabets with member functions/types.
- *
- * This shall not need be included manually, just include `alphabet/concept.hpp`.
+ * \brief Provides seqan3::aminoacid_base.
  */
 
 #pragma once
 
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/aminoacid/concept.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 namespace seqan3
 {
@@ -51,11 +49,12 @@ private:
     //!\brief Befriend the derived class so it can instantiate.
     friend derived_type;
 
-public:
-
+protected:
     // Import from base:
     using typename base_t::char_type;
     using typename base_t::rank_type;
+
+public:
     using base_t::alphabet_size;
     using base_t::to_rank;
 
@@ -87,11 +86,11 @@ public:
      *
      * Behaviour specific to amino acids: True also for lower case letters that silently convert to their upper case.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */

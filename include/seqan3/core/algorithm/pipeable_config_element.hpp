@@ -16,7 +16,7 @@
 #include <type_traits>
 
 #include <seqan3/core/algorithm/concept.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 
 namespace seqan3
 {

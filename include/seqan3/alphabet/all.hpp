@@ -45,7 +45,7 @@
  * ### Alphabet size
  *
  * All alphabets in SeqAn have a fixed size. It
- * can be queried via the seqan3::alphabet_size metafunction and *optionally* also the `alphabet_size` static
+ * can be queried via the seqan3::alphabet_size type trait and *optionally* also the `alphabet_size` static
  * member of the alphabet (see below for "members VS free/global functions").
  *
  * In some areas we provide alphabets types with different sizes for the same purpose, e.g. seqan3::dna4
@@ -55,8 +55,8 @@
  * A main reason for choosing a smaller alphabet over a bigger one is the possibility of **optimising for
  * space efficiency**. Note, however, that a single letter by itself can never be smaller than a byte for
  * architectural reasons. Actual space improvements are realised via secondary structures, e.g. when
- * using a seqan3::bitcompressed_vector<seqan3::dna4> instead of std::vector<seqan3::dna4>. Also
- * the single letter quality composite seqan3::qualified<seqan3::dna4, seqan3::phred42> fits into one byte, because
+ * using a `seqan3::bitcompressed_vector<seqan3::dna4>` instead of `std::vector<seqan3::dna4>`. Also
+ * the single letter quality composite `seqan3::qualified<seqan3::dna4, seqan3::phred42>` fits into one byte, because
  * the product of the alphabet sizes (4 * 42) is smaller than 256; whereas the same composite
  * with seqan3::dna15 requires two bytes per letter (15 * 42 > 256).
  *
@@ -71,7 +71,7 @@
  *
  * This leads to ambiguity when assigning and retrieving values:
  *
- * \snippet test/snippet/alphabet/all.cpp ambiguity
+ * \include test/snippet/alphabet/all_ambiguous.cpp
  *
  * To solve this problem, alphabets in SeqAn define two interfaces:
  *
@@ -89,21 +89,23 @@
  *
  * To prevent the aforementioned ambiguity, you can neither assign from rank or char representation via `operator=`,
  * nor can you cast the alphabet to either of it's representation forms, **you need to explicitly use the
- * interfaces**:
- * \snippet test/snippet/alphabet/all.cpp nonambiguous
+ * interfaces**.
  *
  * For efficiency, the representation saved internally is normally the rank representation, and the character
  * representation
  * is generated via conversion tables. This is, however, not required as long as both interfaces are provided
  * and all functions operate in constant time.
  *
- * The same applies for printing characters although seqan3::debug_stream provides some convenience:
- * \snippet test/snippet/alphabet/all.cpp print
+ * The same applies for printing characters although seqan3::debug_stream provides some convenience.
+ *
+ * Here is an example of explicit assignment of a rank and char, and how it can be printed via std::cout and
+ * seqan3::debug_stream:
+ * \include test/snippet/alphabet/all_nonambiguous.cpp
  *
  * To reduce the burden of calling `assign_char` often, most alphabets in SeqAn3 provide custom literals for
  * the alphabet and sequences over the alphabet:
  *
- * \snippet test/snippet/alphabet/all.cpp literal
+ * \include test/snippet/alphabet/all_literal.cpp
  *
  * Note, however, that literals **are not** required by the concept.
  *
@@ -142,12 +144,12 @@
  *
  * The alphabet concept (as most concepts in SeqAn) looks for free/global functions, i.e. you need to be able
  * to call `seqan3::to_rank(my_letter)`, however *most* alphabets also provide a member function, i.e.
- * `my_letter.to_rank()`. The same is true for the metafunction seqan3::alphabet_size vs the static data member
+ * `my_letter.to_rank()`. The same is true for the type trait seqan3::alphabet_size vs the static data member
  * `alphabet_size`.
  *
  * Members are provided for convenience and if you are an application developer who works with a single concrete
  * alphabet type you are fine with using the member functions. If you, however, implement a generic function
- * that accepts different alphabet types, you need to use the free function / metafunction interface, because
+ * that accepts different alphabet types, you need to use the free function / type trait interface, because
  * it is the only interface guaranteed to exist (member functions are **not** required/enforced by the concept).
  *
  * # Containers over alphabets

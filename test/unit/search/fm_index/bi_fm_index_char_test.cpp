@@ -8,14 +8,14 @@
 #include "fm_index_test_template.hpp"
 #include "fm_index_collection_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(char, fm_index_test, bi_fm_index<std::vector<unsigned char>>);
-INSTANTIATE_TYPED_TEST_CASE_P(char_collection, fm_index_collection_test,
-                              bi_fm_index<std::vector<std::vector<unsigned char>>>);
-
+using t1 = std::pair<bi_fm_index<text_layout::single>, std::vector<unsigned char>>;
+INSTANTIATE_TYPED_TEST_CASE_P(char, fm_index_test, t1);
+using t2 = std::pair<bi_fm_index<text_layout::collection>, std::vector<std::vector<unsigned char>>>;
+INSTANTIATE_TYPED_TEST_CASE_P(char_collection, fm_index_collection_test, t2);
 
 TEST(char, throw_on_reserved_char)
 {
-    using bi_fm_index_t = bi_fm_index<std::vector<unsigned char>>;
+    using bi_fm_index_t = bi_fm_index<text_layout::single>;
 
     unsigned char c = 255;
     std::vector<unsigned char> text{'a', 'u', ',', c, '0'};
@@ -25,7 +25,7 @@ TEST(char, throw_on_reserved_char)
 
 TEST(char_collection, throw_on_reserved_char)
 {
-    using bi_fm_index_t = bi_fm_index<std::vector<std::vector<unsigned char>>>;
+    using bi_fm_index_t = bi_fm_index<text_layout::collection>;
 
     {
         unsigned char c = 255;

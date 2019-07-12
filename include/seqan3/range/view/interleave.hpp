@@ -16,8 +16,8 @@
 
 #include <range/v3/view/chunk.hpp>
 
-#include <seqan3/core/metafunction/pre.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/pre.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/range/view/persist.hpp>

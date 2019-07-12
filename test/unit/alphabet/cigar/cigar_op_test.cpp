@@ -33,7 +33,7 @@ TEST(cigar_op, char_literal)
     EXPECT_EQ(to_char(cigar_op{'='_cigar_op}), '=');
 }
 
-TEST(cigar_op, assign_char_strict)
+TEST(cigar_op, assign_char_strictly_to)
 {
     EXPECT_THROW(assign_char_strictly_to('A', cigar_op{}), invalid_char_assignment);
 }

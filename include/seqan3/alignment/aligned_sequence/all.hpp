@@ -16,6 +16,5 @@
 
 /*!\defgroup aligned_sequence Aligned Sequence
  * \ingroup alignment
- * \brief Provides seqan3::AlignedSequence, as well as various ranges
- * that model it.
+ * \brief Provides seqan3::AlignedSequence, as well as various ranges that model it.
  */

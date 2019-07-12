@@ -1,5 +1,5 @@
 # Minimum cmake version
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.7)
 
 # Name of project
 project(seqan3_documentation NONE)
@@ -25,7 +25,7 @@ find_package(PythonInterp REQUIRED)
 enable_testing()
 
 set (SEQAN3_DOXYGEN_TEST_SCRIPT "
-    output=\$(${DOXYGEN_EXECUTABLE} 2>&1 > /dev/null);
+    output=\$(${DOXYGEN_EXECUTABLE} 2>&1 > /dev/null | sort);
     echo \"\$output\";
     test -z \"\$output\"")
 

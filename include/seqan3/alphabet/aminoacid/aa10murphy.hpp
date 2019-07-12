@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Contains seqan3::aa10murphy, container aliases and string literals.
+ * \brief Provides seqan3::aa10murphy, container aliases and string literals.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 
 #include <seqan3/alphabet/aminoacid/aminoacid_base.hpp>
 #include <seqan3/alphabet/aminoacid/concept.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 namespace seqan3
 {
@@ -74,7 +74,7 @@ namespace seqan3
  * in the human genome: a comparison with sense codon usage.
  * BMC Genomics, 17, 366. http://doi.org/10.1186/s12864-016-2692-4
  *
- * \snippet test/snippet/alphabet/aminoacid/aa10murphy.cpp example
+ * \include test/snippet/alphabet/aminoacid/aa10murphy.cpp
  */
 class aa10murphy : public aminoacid_base<aa10murphy, 10>
 {
@@ -160,10 +160,12 @@ protected:
 };
 
 // ------------------------------------------------------------------
-// metafunctions
+// type traits
 // ------------------------------------------------------------------
 
-//!\brief Helper metafunction that identifies aa10murphy as an amino acid alphabet.
+//!\brief Identifies aa10murphy as an amino acid alphabet (UnaryTypeTrait specialisation).
+//!\implements UnaryTypeTrait
+//!\see seqan3::is_aminoacid
 //!\ingroup aminoacid
 template <>
 struct is_aminoacid<aa10murphy> : std::true_type {};

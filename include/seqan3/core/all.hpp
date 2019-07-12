@@ -22,14 +22,14 @@
 #include <seqan3/core/concept/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/detail/all.hpp>
-#include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/core/type_list.hpp>
 
 /*!\defgroup core Core
- * \brief Contains core functionality used by multiple modules.
+ * \brief Provides core functionality used by multiple modules.
  *
  * The core module contains concepts, functions and some classes that
  * are used by multiple other modules, but that usually are not relevant
@@ -38,6 +38,11 @@
 
 /*!\namespace seqan3
  * \brief The main SeqAn3 namespace.
+ */
+
+/*!\namespace seqan3::custom
+ * \brief A namespace for third party and standard library specialisations of SeqAn customisation points.
+ * \see \ref about_customisation
  */
 
 /*!\cond DEV

@@ -24,8 +24,8 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
@@ -37,7 +37,7 @@
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
+#include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/std/concepts>
@@ -53,7 +53,7 @@ namespace seqan3
 
 /*!\interface seqan3::AlignmentFileInputTraits <>
  * \brief The requirements a traits_type for seqan3::alignment_file_input must meet.
- * \ingroup alignment
+ * \ingroup alignment_file
  */
 /*!\name Requirements for seqan3::AlignmentFileInputTraits
  * \brief You can expect these **member types** of all types that model seqan3::AlignmentFileInputTraits.
@@ -78,11 +78,8 @@ namespace seqan3
  * \brief Type template of the seqan3::field::SEQ, a container template over `sequence_alphabet`;
  * must model seqan3::SequenceContainer.
  */
-/*!\typedef using id_alphabet
- * \brief Alphabet of the characters for the seqan3::field::ID; must model seqan3::Alphabet.
- */
 /*!\typedef using id_container
- * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
+ * \brief Type template of the seqan3::field::ID, a container template over `char`;
  * must model seqan3::SequenceContainer.
  */
 /*!\typedef using quality_alphabet
@@ -94,7 +91,7 @@ namespace seqan3
  */
 /*!\typedef using ref_sequences
  * \brief The type of range over reference sequences; must model std::ranges::ForwardRange,
- *        the value_type mus also model std::ranges::ForwardRange, and the value type of the value type
+ *        the value_type must also model std::ranges::ForwardRange, and the value type of the value type
  *        must model seqan3::Alphabet (e.g. std::vector<std::vector<dna4>>).
  *
  * \attention This type is the first template parameter of the alignment_file_default_traits and should not be manually
@@ -103,7 +100,7 @@ namespace seqan3
  */
 /*!\typedef using ref_ids
  * \brief The type of range over reference sequences; must model std::ranges::ForwardRange,
- *        the value_type mus also model std::ranges::ForwardRange, and the value type of the value type
+ *        the value_type must also model std::ranges::ForwardRange, and the value type of the value type
  *        must model seqan3::Alphabet (e.g. std::vector<string>).
  *
  * \attention This type is the second template parameter of the alignment_file_default_traits and should not be manually
@@ -122,8 +119,7 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
     requires SequenceContainer<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
     // field::ID
-    requires WritableAlphabet<typename t::id_alphabet>;
-    requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
+    requires SequenceContainer<typename t::template id_container<char>>;
 
     // field::QUAL
     requires WritableQualityAlphabet<typename t::quality_alphabet>;
@@ -169,7 +165,7 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
 
 /*!\brief The default traits for seqan3::alignment_file_input
  * \implements AlignmentFileInputTraits
- * \ingroup alignment
+ * \ingroup alignment_file
  * \tparam ref_sequences_t A range over reference sequences. This type is automatically deduced on construction.
  * \tparam ref_ids_t       A range over reference ids. This type is automatically deduced on construction.
  *
@@ -199,9 +195,6 @@ struct alignment_file_input_default_traits
     //!\brief The container for a sequence is std::vector.
     template <typename _sequence_alphabet>
     using sequence_container                    = std::vector<_sequence_alphabet>;
-
-    //!\brief The alphabet for an identifier string is char.
-    using id_alphabet                           = char;
 
     //!\brief The string type for an identifier is std::basic_string.
     template <typename _id_alphabet>
@@ -302,7 +295,7 @@ struct alignment_file_input_default_traits
  * would have also worked, but for opening from stream it would not have.
  *
  * You can define your own traits type to further customise the types used by and returned by this class, see
- * seqan3::alignment_file_default_traits_sam for more details. As mentioned above, specifying at least one
+ * seqan3::alignment_file_input_default_traits for more details. As mentioned above, specifying at least one
  * template parameter yourself means that you loose automatic deduction. The following is equivalent to the automatic
  * type deduction example with a stream from above:
  *
@@ -363,7 +356,9 @@ struct alignment_file_input_default_traits
  *
  * ### Formats
  *
- * \todo give overview of formats, once they are all implemented
+ * We currently support reading the following formats:
+ *   * seqan3::format_sam
+ *   * seqan3::format_bam
  */
 template <
     AlignmentFileInputTraits                     traits_type_        = alignment_file_input_default_traits<>,
@@ -415,8 +410,7 @@ public:
     using sequence_type            = typename traits_type::template sequence_container<
                                          typename traits_type::sequence_alphabet>;
     //!\brief The type of field::ID (default std::string by default).
-    using id_type                  = typename traits_type::template id_container<
-                                         typename traits_type::id_alphabet>;
+    using id_type                  = typename traits_type::template id_container<char>;
     //!\brief The type of field::OFFSET is fixed to int32_t.
     using offset_type              = int32_t;
     /*!\brief The type of field::REF_SEQ (default depends on construction).
@@ -467,14 +461,14 @@ private:
     //!\brief The type of the aligned query sequence (second type of the pair of alignment_type).
     using alignment_query_type = std::conditional_t<
                                      selected_field_ids::contains(field::SEQ),
-                                     gap_decorator_anchor_set<
+                                     gap_decorator<
                                          decltype(std::declval<sequence_type &>() | view::slice(0, 0))>,
                                      typename traits_type::template sequence_container<
                                          gapped<typename traits_type::sequence_alphabet>>>;
 
 public:
     //!\brief The type of field::ALIGNMENT (default: std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>).
-    using alignment_type = std::pair<gap_decorator_anchor_set<ref_sequence_type>, alignment_query_type>;
+    using alignment_type = std::tuple<gap_decorator<ref_sequence_type>, alignment_query_type>;
 
     //!\brief The previously defined types aggregated in a seqan3::type_list.
     using field_types = type_list<sequence_type,
@@ -590,7 +584,7 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_t      The stream type; must model seqan3::Istream2.
+     * \tparam stream_t      The stream type; must model seqan3::IStream2.
      * \tparam file_format   The format of the file in the stream, must model seqan3::AlignmentFileInputFormat.
      * \param[in] stream     The stream to operate on; must be derived of std::basic_istream.
      * \param[in] format_tag The file format tag.
@@ -663,7 +657,7 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_t           The stream type; must model seqan3::Istream2.
+     * \tparam stream_t           The stream type; must model seqan3::IStream2.
      * \tparam    file_format     The format of the file in the stream; must model seqan3::AlignmentFileInputFormat.
      * \param[in] stream          The stream to operate on; must be derived of std::basic_istream.
      * \param[in] ref_ids         A range containing the reference ids that correspond to the SAM/BAM file.
@@ -911,16 +905,27 @@ protected:
     template <std::ranges::ForwardRange ref_sequences_t>
     void set_references(typename traits_type::ref_ids & ref_ids, ref_sequences_t && ref_sequences)
     {
-        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_sequences));
+        assert(std::ranges::distance(ref_ids) == std::ranges::distance(ref_sequences));
 
         header_ptr = std::unique_ptr<header_type>{std::make_unique<header_type>(ref_ids)};
         reference_sequences_ptr = &ref_sequences;
 
         // initialise reference map and ref_dict if ref_ids are non-empty
-        for (size_t idx = 0; idx < ref_ids.size(); ++idx)
+        for (int32_t idx = 0; idx < std::ranges::distance(ref_ids); ++idx)
         {
-            header_ptr->ref_id_info.emplace_back(std::ranges::size(ref_sequences[idx]), "");
-            header_ptr->ref_dict[header_ptr->ref_ids()[idx]] = idx;
+            header_ptr->ref_id_info.emplace_back(std::ranges::distance(ref_sequences[idx]), "");
+
+            if constexpr (std::ranges::ContiguousRange<reference_t<typename traits_type::ref_ids>> &&
+                          std::ranges::SizedRange<reference_t<typename traits_type::ref_ids>> &&
+                          ForwardingRange<reference_t<typename traits_type::ref_ids>>)
+            {
+                auto && id = header_ptr->ref_ids()[idx];
+                header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;
+            }
+            else
+            {
+                header_ptr->ref_dict[header_ptr->ref_ids()[idx]] = idx;
+            }
         }
     }
     //!\}
@@ -1125,7 +1130,12 @@ alignment_file_input(stream_type & stream,
 
 namespace std
 {
-//!\brief std::tuple_size overload for column-like access. [metafunction specialisation for seqan3::alignment_file_input]
+
+/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+ * \implements seqan3::UnaryTypeTrait
+ * \ingroup alignment_file
+ * \see std::tuple_size_v
+ */
 template <seqan3::AlignmentFileInputTraits                    traits_type,
           seqan3::detail::Fields                              selected_field_ids,
           seqan3::detail::TypeListOfAlignmentFileInputFormats valid_formats,
@@ -1136,7 +1146,11 @@ struct tuple_size<seqan3::alignment_file_input<traits_type, selected_field_ids, 
     static constexpr size_t value = selected_field_ids::as_array.size();
 };
 
-//!\brief std::tuple_element overload for column-like access. [metafunction specialisation for seqan3::alignment_file_input]
+/*!\brief Obtains the type of the specified element.
+ * \implements seqan3::TransformationTrait
+ * \ingroup alignment_file
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
+ */
 template <size_t                                              elem_no,
           seqan3::AlignmentFileInputTraits                    traits_type,
           seqan3::detail::Fields                              selected_field_ids,

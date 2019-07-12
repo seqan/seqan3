@@ -8,7 +8,7 @@ using namespace seqan3;
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser("Vector implementations comparison", argc, argv);
+    argument_parser myparser("Vector-implementations-comparison", argc, argv);
     size_t size{};
     bool use_bitvector{};
     myparser.add_positional_option(size, "Size of vector");

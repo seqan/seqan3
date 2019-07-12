@@ -11,7 +11,7 @@
 #include <random>
 #include <type_traits>
 
-#include <seqan3/core/metafunction/function.hpp>
+#include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 

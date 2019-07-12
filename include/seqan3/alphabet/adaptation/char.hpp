@@ -9,7 +9,7 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides alphabet adaptations for standard char types.
  * \details
- * This file provides function and metafunction overloads so that the following types
+ * This file provides function and type trait overloads so that the following types
  * fulfil the seqan3::Alphabet:
  *   * `char`
  *   * `char16_t`
@@ -35,7 +35,7 @@ namespace seqan3::detail
 //!\addtogroup adaptation
 //!\{
 
-//!\brief Whether a type is `char`, `char16_t`, `char32_t` or `wchar_t`.
+//!\brief Whether a type is `char`, `char16_t`, `char32_t` or `wchar_t` (type trait).
 template <typename type, typename type_no_ref = std::remove_reference_t<type>>
 constexpr bool is_char_adaptation_v = std::Same<type_no_ref, char>     ||
                                       std::Same<type_no_ref, char16_t> ||
@@ -44,7 +44,7 @@ constexpr bool is_char_adaptation_v = std::Same<type_no_ref, char>     ||
 //!\}
 } // namespace seqan3::detail
 
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 
 /*!\name Free function wrappers for the char alphabet adaptation
@@ -126,4 +126,4 @@ constexpr char_type & assign_rank_to(decltype(to_rank(char_type{})) const rank, 
 }
 //!\}
 
-} // namespace seqan3::adaptation
+} // namespace seqan3::custom

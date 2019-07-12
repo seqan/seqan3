@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- * \brief Contains seqan3::aa20, container aliases and string literals.
+ * \brief Provides seqan3::aa20, container aliases and string literals.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 
 #include <seqan3/alphabet/aminoacid/aminoacid_base.hpp>
 #include <seqan3/alphabet/aminoacid/concept.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 namespace seqan3
 {
@@ -56,7 +56,7 @@ namespace seqan3
  * in the human genome: a comparison with sense codon usage.
  * BMC Genomics, 17, 366. http://doi.org/10.1186/s12864-016-2692-4
  *
- * \snippet test/snippet/alphabet/aminoacid/aa20.cpp construction
+ * \include test/snippet/alphabet/aminoacid/aa20_construction.cpp
  */
 class aa20 : public aminoacid_base<aa20, 20>
 {
@@ -143,13 +143,15 @@ protected:
 } // namespace seqan3
 
 // ------------------------------------------------------------------
-// metafunctions
+// type traits
 // ------------------------------------------------------------------
 
 namespace seqan3
 {
 
-//!\brief Helper metafunction that identifies aa20 as an amino acid alphabet.
+//!\brief Identifies aa20 as an amino acid alphabet (UnaryTypeTrait specialisation).
+//!\implements UnaryTypeTrait
+//!\see seqan3::is_aminoacid
 //!\ingroup aminoacid
 template <>
 struct is_aminoacid<aa20> : std::true_type {};
@@ -184,7 +186,7 @@ namespace seqan3
  * \relates seqan3::aa20
  * \returns seqan3::aa20
  *
- * \snippet test/snippet/alphabet/aminoacid/aa20.cpp char_literal
+ * \include test/snippet/alphabet/aminoacid/aa20_char_literal.cpp
  *
  */
 constexpr aa20 operator""_aa20(char const c) noexcept
@@ -200,7 +202,7 @@ constexpr aa20 operator""_aa20(char const c) noexcept
  *
  * You can use this string literal to easily assign to aa20_vector:
  *
- * \snippet test/snippet/alphabet/aminoacid/aa20.cpp literal
+ * \include test/snippet/alphabet/aminoacid/aa20_literal.cpp
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3!

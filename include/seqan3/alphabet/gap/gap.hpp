@@ -8,14 +8,14 @@
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
- * \brief Contains seqan3::gap.
+ * \brief Provides seqan3::gap.
  */
 
 #pragma once
 
 #include <cassert>
 
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 
 namespace seqan3
 {
@@ -30,7 +30,7 @@ namespace seqan3
  *
  * The alphabet always has the same value ('-').
  *
- * \snippet test/snippet/alphabet/gap/gap.cpp general
+ * \include test/snippet/alphabet/gap/gap.cpp
  */
 
 class gap : public alphabet_base<gap, 1, char>

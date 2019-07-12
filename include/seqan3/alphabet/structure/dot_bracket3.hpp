@@ -7,16 +7,16 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the dot bracket format for RNA structure.
+ * \brief Provides the dot bracket format for RNA structure.
  */
 
 #pragma once
 
 #include <vector>
 
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/structure/concept.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 // ------------------------------------------------------------------
 // dot_bracket3
@@ -44,9 +44,9 @@ namespace seqan3
  *     (((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).
  *```
  *
- * \par Usage
+ * ###Usage
  * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stderr.
- * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp general
+ * \include test/snippet/alphabet/structure/dot_bracket3_general.cpp
  */
 class dot_bracket3 : public alphabet_base<dot_bracket3, 3>
 {
@@ -157,7 +157,7 @@ protected:
  * \returns std::vector<seqan3::dot_bracket3>
  *
  * You can use this string literal to easily assign to a vector of seqan3::dot_bracket3 characters:
- * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp string_literal
+ * \include test/snippet/alphabet/structure/dot_bracket3_literal.cpp
  */
 inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t len)
 {
@@ -176,7 +176,7 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
  * \returns seqan3::dot_bracket3
  *
  * You can use this string literal to assign a seqan3::dot_bracket3 character:
- * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp char_literal
+ * \include test/snippet/alphabet/structure/dot_bracket3_char_literal.cpp
  */
 constexpr dot_bracket3 operator""_db3(char const ch) noexcept
 {

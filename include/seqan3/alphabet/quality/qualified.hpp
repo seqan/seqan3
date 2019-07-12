@@ -7,14 +7,10 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains quality alphabet composites.
+ * \brief Provides quality alphabet composites.
  */
 
 #pragma once
-
-#include <iostream>
-#include <string>
-#include <utility>
 
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
@@ -51,7 +47,7 @@ namespace seqan3
  * alphabet letters in regular c++ tuple notation, i.e. `get<0>(t)` and objects
  * can be brace-initialised with the individual members.
  *
- * \snippet test/snippet/alphabet/quality/qualified.cpp general
+ * \include test/snippet/alphabet/quality/qualified.cpp
  *
  * This seqan3::alphabet_tuple_base itself fulfils both seqan3::WritableAlphabet and seqan3::WritableQualityAlphabet.
  */
@@ -114,13 +110,6 @@ public:
     constexpr qualified & assign_char(char_type const c) noexcept
     {
         seqan3::assign_char_to(c, get<0>(*this));
-        return *this;
-    }
-
-    //!\brief Strict assign from a character. This modifies the internal sequence letter.
-    qualified & assign_char_strictly(char_type const c)
-    {
-        seqan3::assign_char_strictly_to(c, get<0>(*this));
         return *this;
     }
 

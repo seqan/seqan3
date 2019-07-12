@@ -23,7 +23,7 @@
 // ============================================================================
 
 //!\cond
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 
 void is_pair_open();
@@ -32,7 +32,7 @@ void is_unpaired();
 void max_pseudoknot_depth();
 void pseudoknot_id();
 
-} // namespace seqan3::adaptation
+} // namespace seqan3::custom
 //!\endcond
 
 // ============================================================================
@@ -47,7 +47,7 @@ struct is_pair_open_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, is_pair_open(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::is_pair_open(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::is_pair_open(v)     ) // customisation namespace
     SEQAN3_CPO_IMPL(0, v.is_pair_open()                    ) // member
 
 public:
@@ -72,7 +72,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 
@@ -90,7 +90,7 @@ namespace seqan3
  *   1. A free function `is_pair_open(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be `bool`.
- *   2. A free function `is_pair_open(your_type const a)` in `namespace seqan3::adaptation`.
+ *   2. A free function `is_pair_open(your_type const a)` in `namespace seqan3::custom`.
  *      The same restrictions apply as above.
  *   3. A member function called `is_pair_open()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
@@ -100,11 +100,11 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/structure/wuss.cpp is_pair_open
+ * \include test/snippet/alphabet/structure/wuss_is_pair_open.cpp
  *
  * ### Customisation point
  *
- * This is a customisation point. To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto is_pair_open = detail::adl::only::is_pair_open_fn{};
@@ -124,7 +124,7 @@ struct is_pair_close_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, is_pair_close(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::is_pair_close(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::is_pair_close(v)     ) // customisation namespace
     SEQAN3_CPO_IMPL(0, v.is_pair_close()                    ) // member
 
 public:
@@ -149,7 +149,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 
@@ -167,7 +167,7 @@ namespace seqan3
  *   1. A free function `is_pair_close(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be `bool`.
- *   2. A free function `is_pair_close(your_type const a)` in `namespace seqan3::adaptation`.
+ *   2. A free function `is_pair_close(your_type const a)` in `namespace seqan3::custom`.
  *      The same restrictions apply as above.
  *   3. A member function called `is_pair_close()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
@@ -177,11 +177,11 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/structure/wuss.cpp is_pair_close
+ * \include test/snippet/alphabet/structure/wuss_is_pair_close.cpp
  *
  * ### Customisation point
  *
- * This is a customisation point. To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto is_pair_close = detail::adl::only::is_pair_close_fn{};
@@ -201,7 +201,7 @@ struct is_unpaired_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, is_unpaired(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::is_unpaired(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::is_unpaired(v)     ) // customisation namespace
     SEQAN3_CPO_IMPL(0, v.is_unpaired()                    ) // member
 
 public:
@@ -226,7 +226,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 
@@ -244,7 +244,7 @@ namespace seqan3
  *   1. A free function `is_unpaired(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be `bool`.
- *   2. A free function `is_unpaired(your_type const a)` in `namespace seqan3::adaptation`.
+ *   2. A free function `is_unpaired(your_type const a)` in `namespace seqan3::custom`.
  *      The same restrictions apply as above.
  *   3. A member function called `is_unpaired()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
@@ -254,11 +254,11 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/structure/wuss.cpp is_unpaired
+ * \include test/snippet/alphabet/structure/wuss_is_unpaired.cpp
  *
  * ### Customisation point
  *
- * This is a customisation point. To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto is_unpaired = detail::adl::only::is_unpaired_fn{};
@@ -287,7 +287,7 @@ struct max_pseudoknot_depth_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, (max_pseudoknot_depth(v)                                                    )) // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::adaptation::max_pseudoknot_depth(v)                                )) // custom nsp
+    SEQAN3_CPO_IMPL(1, (seqan3::custom::max_pseudoknot_depth(v)                                    )) // custom nsp
     SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::max_pseudoknot_depth )) // member
 
 public:
@@ -321,7 +321,7 @@ inline constexpr auto max_pseudoknot_depth_obj = max_pseudoknot_depth_fn<alph_t>
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 
@@ -346,7 +346,7 @@ namespace seqan3
  *      The function must be marked `constexpr` and `noexcept` and the return type must be convertible to `size_t`.
  *      The value of the argument to the function shall be ignored, it is only used to select the function via
  *      [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
- *   2. A free function `max_pseudoknot_depth(your_type const)` in `namespace seqan3::adaptation`.
+ *   2. A free function `max_pseudoknot_depth(your_type const)` in `namespace seqan3::custom`.
  *      The same restrictions apply as above.
  *   3. A `static constexpr` data member of a type implicitly convertible to `size_t` called `max_pseudoknot_depth`.
  *
@@ -355,11 +355,11 @@ namespace seqan3
  * ### Example
  *
  * These are the expressions to retrieve the value:
- * \snippet test/snippet/alphabet/structure/wuss.cpp max_pseudoknot_depth
+ * \include test/snippet/alphabet/structure/wuss_max_pseudoknot_depth.cpp
  *
  * ### Customisation point
  *
- * This is a customisation point. To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 template <typename alph_t>
@@ -383,7 +383,7 @@ struct pseudoknot_id_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, pseudoknot_id(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::pseudoknot_id(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::pseudoknot_id(v)     ) // customisation namespace
     SEQAN3_CPO_IMPL(0, v.pseudoknot_id()                    ) // member
 
 public:
@@ -408,7 +408,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Structure)
  * \{
  */
 
@@ -428,7 +428,7 @@ namespace seqan3
  *   1. A free function `pseudoknot_id(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type must be convertible to `size_t`.
- *   2. A free function `pseudoknot_id(your_type const a)` in `namespace seqan3::adaptation`.
+ *   2. A free function `pseudoknot_id(your_type const a)` in `namespace seqan3::custom`.
  *      The same restrictions apply as above.
  *   3. A member function called `pseudoknot_id()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type
@@ -438,11 +438,11 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/structure/wuss.cpp pseudoknot_id
+ * \include test/snippet/alphabet/structure/wuss_pseudoknot_id.cpp
  *
  * ### Customisation point
  *
- * This is a customisation point. To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto pseudoknot_id = detail::adl::only::pseudoknot_id_fn{};

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains the format_help struct that print the help page to the command line
+ * \brief Provides the format_help struct that print the help page to the command line
  *        and the two child formats (format_version, format_short_help) that print
  *        short help messages to the command line.
  */
@@ -20,7 +20,7 @@
 #include <range/v3/view/repeat_n.hpp>
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/terminal.hpp>
 #include <seqan3/version.hpp>
 
@@ -431,7 +431,7 @@ protected:
  *
  * The short help message printing is not done immediately, because the user cannot provide
  * meta information (e.g. app_name) on construction of the parser. Thus the meta information is collected
- * and only evaluated when calling seqan3::format_version::parse.
+ * and only evaluated when calling seqan3::detail::format_version::parse.
  */
 class format_short_help : public format_help
 {
@@ -487,7 +487,7 @@ public:
  *
  * The copyright message printing is not done immediately, because the user cannot provide
  * meta information (e.g. long_copyright) on construction of the parser. Thus the meta information is collected
- * and only evaluated when calling seqan3::format_version::parse.
+ * and only evaluated when calling seqan3::detail::format_version::parse.
  */
 class format_copyright : public format_help
 {

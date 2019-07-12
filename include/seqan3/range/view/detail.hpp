@@ -15,8 +15,8 @@
 
 #include <tuple>
 
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -118,7 +118,8 @@ public:
     ~adaptor_base()                                             noexcept = default; //!< Defaulted.
 
     //!\brief Constructor with possible arguments; becomes a default constructor for adaptors without args.
-    constexpr adaptor_base(stored_args_ts ... args) :
+    constexpr adaptor_base(stored_args_ts ... args)
+        noexcept(noexcept(std::tuple<stored_args_ts...>{std::forward<stored_args_ts>(args)...})) :
         arguments{std::forward<stored_args_ts>(args)...}
     {}
     //!\}
@@ -239,8 +240,19 @@ private:
     }
 
 public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr combined_adaptor()                                              = default; //!< Defaulted.
+    constexpr combined_adaptor(combined_adaptor const &)             noexcept = default; //!< Defaulted.
+    constexpr combined_adaptor(combined_adaptor &&)                  noexcept = default; //!< Defaulted.
+    constexpr combined_adaptor & operator=(combined_adaptor const &) noexcept = default; //!< Defaulted.
+    constexpr combined_adaptor & operator=(combined_adaptor &&)      noexcept = default; //!< Defaulted.
+    ~combined_adaptor()                                              noexcept = default; //!< Defaulted.
+
     //!\brief Inherit the base type's constructors.
     using base_type::base_type;
+    //!\}
 
     //!\brief Store both arguments in the adaptor.
     combined_adaptor(left_adaptor_t l, right_adaptor_t r) :
@@ -298,8 +310,25 @@ private:
     }
 
 public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    //!\brief Defaulted.
+    constexpr adaptor_for_view_without_args()                                                           = default;
+    //!\brief Defaulted.
+    constexpr adaptor_for_view_without_args(adaptor_for_view_without_args const &)             noexcept = default;
+    //!\brief Defaulted.
+    constexpr adaptor_for_view_without_args(adaptor_for_view_without_args &&)                  noexcept = default;
+    //!\brief Defaulted.
+    constexpr adaptor_for_view_without_args & operator=(adaptor_for_view_without_args const &) noexcept = default;
+    //!\brief Defaulted.
+    constexpr adaptor_for_view_without_args & operator=(adaptor_for_view_without_args &&)      noexcept = default;
+    //!\brief Defaulted.
+    ~adaptor_for_view_without_args()                                                           noexcept = default;
+
     //!\brief Inherit the base type's constructors.
     using base_type::base_type;
+    //!\}
 };
 
 // ============================================================================
@@ -365,10 +394,21 @@ private:
     }
 
 public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr adaptor_from_functor()                                                  = default; //!< Defaulted.
+    constexpr adaptor_from_functor(adaptor_from_functor const &)             noexcept = default; //!< Defaulted.
+    constexpr adaptor_from_functor(adaptor_from_functor &&)                  noexcept = default; //!< Defaulted.
+    constexpr adaptor_from_functor & operator=(adaptor_from_functor const &) noexcept = default; //!< Defaulted.
+    constexpr adaptor_from_functor & operator=(adaptor_from_functor &&)      noexcept = default; //!< Defaulted.
+    ~adaptor_from_functor()                                                  noexcept = default; //!< Defaulted.
+
     //!\brief Construct from functor and possibly arguments.
     constexpr adaptor_from_functor(functor_type f, stored_args_ts ... args) :
         base_type{std::forward<stored_args_ts>(args)...}, fun{std::move(f)}
     {}
+    //!\}
 };
 
 } // namespace seqan3::detail

@@ -7,23 +7,23 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Free function/metafunction wrappers for alphabets with member functions/types.
+ * \brief Free function/type trait wrappers for alphabets with member functions/types.
  *
  * This shall not need be included manually, just include `alphabet/concept.hpp`.
  */
 
 #pragma once
 
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/std/concepts>
 
 #if 0 // this is the alphabet_proxy I want, but GCC won't give me:
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 
 template <typename derived_type, typename alphabet_type>
 class alphabet_proxy : public alphabet_type
@@ -241,6 +241,16 @@ public:
         return assign_rank_to(to_rank(), alphabet_type{});
     }
 
+    //!\brief Implicit conversion to types that the emulated type is convertible to.
+    template <typename other_t>
+    //!\cond
+        requires std::ConvertibleTo<alphabet_type, other_t>
+    //!\endcond
+    constexpr operator other_t() const noexcept
+    {
+        return operator alphabet_type();
+    }
+
     constexpr auto to_char() const noexcept
         requires Alphabet<alphabet_type>
     {
@@ -280,6 +290,48 @@ public:
         requires WritableAlphabet<alphabet_type>
     {
         return char_is_valid_for<alphabet_type>(c);
+    }
+    //!\}
+
+    /*!\name Comparison operators
+     * \brief These are only required if the emulated type allows comparison with types it is not convertible to,
+     *        e.g. seqan3::alphabet_variant.
+     * \{
+     */
+    //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
+    template <typename t>
+    friend constexpr auto operator==(derived_type const lhs, t const rhs) noexcept
+        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+                            bool>
+    {
+        return (static_cast<alphabet_type>(lhs) == rhs);
+    }
+
+    //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
+    template <typename t>
+    friend constexpr auto operator==(t const lhs, derived_type const rhs) noexcept
+        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+                            bool>
+    {
+        return (rhs == lhs);
+    }
+
+    //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
+    template <typename t>
+    friend constexpr auto operator!=(derived_type const lhs, t const rhs) noexcept
+        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+                            bool>
+    {
+        return !(lhs == rhs);
+    }
+
+    //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
+    template <typename t>
+    friend constexpr auto operator!=(t const lhs, derived_type const rhs) noexcept
+        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+                            bool>
+    {
+        return (rhs != lhs);
     }
     //!\}
 };

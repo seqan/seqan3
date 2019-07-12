@@ -15,9 +15,9 @@
 #include <map>
 #include <variant>
 
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/container/small_string.hpp>
 #include <seqan3/std/concepts>
 
@@ -267,7 +267,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  * type with value 3.
  * In seqan3, the types for
  * [known](https://samtools.github.io/hts-specs/SAMtags.pdf) SAM tags
- * are pre-defined by a metafunction called seqan3::sam_tag_type. You can access
+ * are pre-defined by a type trait called seqan3::sam_tag_type. You can access
  * the type via:
  *
  * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag_type_t
@@ -306,13 +306,13 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  *            user defined, but note that for unknown tags the return type is an
  *            [std::variant](https://en.cppreference.com/w/cpp/utility/variant).
  *            If you want specify the return type of your custom tag, you need
- *            to overload the seqan3::sam_tag_type metafunction.
+ *            to overload the seqan3::sam_tag_type type trait.
  *
  * Unknown Tag Example:
  *
  * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/unknown_tag.cpp all
  *
- * As mentioned before you can either overload the metafunction seqan3::sam_tag_type
+ * As mentioned before you can either overload the type trait seqan3::sam_tag_type
  * for the tag "XZ" or learn more about an std::variant at
  * https://en.cppreference.com/w/cpp/utility/variant.
  *
@@ -341,7 +341,7 @@ public:
      * See the seqan3::sam_tag_dictionary detailed documentation below for an example.
      *
      * \attention This function is only available for tags that have an
-     *            seqan3::sam_tag_type<tag>::type overload. See the metafunction
+     *            seqan3::sam_tag_type<tag>::type overload. See the type trait
      *            documentation for further details.
      * \{
      */

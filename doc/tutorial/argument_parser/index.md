@@ -213,7 +213,7 @@ Take a look at the help page again after you've done all of the above. You will 
 
 # List options {#tutorial_argument_parser_list_options}
 
-In some use cases you may want to allow the user to specify an option multiple times and store the values in a list. With the seqan3::argument_parser this behaviour can be achieved simply by choosing your input variable to be of a container type (e.g. std::vector). The parser registers the container type through the seqan3::container_concept and will adapt the parsing of command line arguments accordingly.
+In some use cases you may want to allow the user to specify an option multiple times and store the values in a list. With the seqan3::argument_parser this behaviour can be achieved simply by choosing your input variable to be of a container type (e.g. std::vector). The parser registers the container type through seqan3::Container and will adapt the parsing of command line arguments accordingly.
 
 Example:
 
@@ -456,3 +456,12 @@ Add a seqan3::regex_validator to the first positional option that expects the `f
 \solution
 \snippet doc/tutorial/argument_parser/solution6.cpp file_validator
 \endsolution
+
+# Update Notifications
+
+When you run a SeqAn-based application for the first time, you will likely be asked about "update notifications".
+This is a feature that helps inform users about updates
+and helps the SeqAn project get a rough estimate on which SeqAn-based apps are popular.
+
+See the API documentation of seqan3::argument_parser for information on how to configure (or turn off) this feature.
+See our [wiki entry](https://github.com/seqan/seqan3/wiki/Update-Notifications) for more information on how it works and our privacy policy.

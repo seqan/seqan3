@@ -20,7 +20,8 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
@@ -28,7 +29,6 @@
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/iterator.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>

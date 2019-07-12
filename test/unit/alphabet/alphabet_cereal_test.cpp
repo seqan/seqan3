@@ -16,8 +16,7 @@
 using namespace seqan3;
 
 template <typename T>
-class alphabet_cereal : public ::testing::Test
-{};
+using alphabet_cereal = ::testing::Test;
 
 using test_types = ::testing::Types<dna4, qualified<dna4, phred42>, gapped<dna4>>;
 

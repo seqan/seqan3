@@ -16,7 +16,8 @@
 
 #include <sdsl/suffix_arrays.hpp>
 
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 
@@ -63,9 +64,6 @@ SEQAN3_CONCEPT SdslIndex = requires (t sdsl_index)
  *
  * \typedef typename t::size_type size_type
  * \brief Type for representing the size of the indexed text.
- *
- * \todo Write me.
- *
  * \}
  */
 
@@ -81,35 +79,6 @@ namespace seqan3
  */
 
 // ============================================================================
-//  FmIndexTraits
-// ============================================================================
-
-/*!\interface seqan3::FmIndexTraits <>
- * \brief Concept for unidirectional FM Index traits.
- *
- * The traits object must contain an index type of the SDSL namespace.
- */
-//!\cond
-template <typename t>
-SEQAN3_CONCEPT FmIndexTraits = requires (t v)
-{
-    typename t::sdsl_index_type;
-
-    requires detail::SdslIndex<typename t::sdsl_index_type>;
-};
-//!\endcond
-/*!\name Requirements for seqan3::FmIndexTraits
- * \relates seqan3::FmIndexTraits
- * \brief The SDSL index must support the following interface to work with SeqAn3.
- * \{
- *
- * \typedef typename t::sdsl_index_type sdsl_index_type
- * \brief Declares the type of the underlying SDSL index. Must satisfy the seqan3::detail::SdslIndex.
- *
- * \}
- */
-
-// ============================================================================
 //  FmIndex
 // ============================================================================
 
@@ -122,17 +91,14 @@ SEQAN3_CONCEPT FmIndexTraits = requires (t v)
 template <typename t>
 SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
 {
-    typename t::text_type;
-    typename t::char_type;
     typename t::size_type;
     typename t::cursor_type;
 
-    requires SequenceContainer<typename t::text_type>;
-
     // NOTE: circular dependency
     // requires FmIndexCursor<typename t::cursor_type>;
-
-    requires requires (t index, typename t::text_type const text)
+    requires requires (t index, std::conditional_t<t::is_collection_,
+                                                   std::vector<std::vector<dna4>>,
+                                                   std::vector<dna4>> const text)
     {
         { t(text) };
         { index.construct(text) } -> void;
@@ -160,9 +126,6 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
  *
  * \typedef typename t::cursor_type cursor_type
  * \brief Type of the unidirectional FM index cursor.
- *
- * \todo Write me!
- *
  * \}
  */
 
@@ -186,21 +149,22 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
 
     requires requires (typename t::index_type const index) { { t(index) } };
 
-    requires requires (t cur, typename t::index_type::char_type const c,
-                       std::vector<typename t::index_type::char_type> const seq)
+    requires requires (t cur, dna4 const c, std::vector<dna4> const seq,
+                       std::conditional_t<t::index_type::is_collection_,
+                                          std::vector<std::vector<dna4>>,
+                                          std::vector<dna4>> const text)
     {
         { cur.extend_right()    } -> bool;
         { cur.extend_right(c)   } -> bool;
         { cur.extend_right(seq) } -> bool;
         { cur.cycle_back()      } -> bool;
+        { cur.path_label(text)  } -> auto;
     };
 
-    { cur.last_char()    } -> typename t::index_type::char_type;
+    { cur.last_rank()    } -> typename t::size_type;
     { cur.query_length() } -> typename t::size_type;
-    { cur.query()        } -> auto;
-    { *cur               } -> auto;
     { cur.count()        } -> typename t::size_type;
-    { cur.locate()       } -> std::conditional_t<t::index_type::is_collection,
+    { cur.locate()       } -> std::conditional_t<t::index_type::is_collection_,
                                                 std::vector<std::pair<typename t::size_type, typename t::size_type>>,
                                                 std::vector<typename t::size_type>>;
     { cur.lazy_locate()  } -> auto;
@@ -216,45 +180,6 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
  *
  * \typedef typename t::size_type size_type
  * \brief Type for representing the size of the indexed text.
- *
- * \todo Write me!
- *
- * \}
- */
-
-// ============================================================================
-//  BiFmIndexTraits
-// ============================================================================
-
-/*!\interface seqan3::BiFmIndexTraits <>
- * \brief Concept for bidirectional FM Index traits.
- *
- * The traits object must contain two unidirectional FM Index traits.
- */
-//!\cond
-template <typename t>
-SEQAN3_CONCEPT BiFmIndexTraits = requires (t v)
-{
-    requires FmIndexTraits<typename t::fm_index_traits>;
-    requires FmIndexTraits<typename t::rev_fm_index_traits>;
-
-    requires std::Same<typename t::fm_index_traits::sdsl_index_type::size_type,
-                       typename t::rev_fm_index_traits::sdsl_index_type::size_type>;
-};
-//!\endcond
-/*!\name Requirements for seqan3::BiFmIndexTraits
- * \relates seqan3::BiFmIndexTraits
- * \brief The bidirectional FM index traits must provide the following types:
- * \{
- *
- * \typedef typename t::fm_index_traits fm_index_traits
- * \brief Declares the type of the underlying unidirectional FM index on the original text.
- *        Must satisfy seqan3::FmIndexTraits.
- *
- * \typedef typename t::rev_fm_index_traits rev_fm_index_traits
- * \brief Declares the type of the underlying unidirectional FM index on the reversed text.
- *        Must satisfy seqan3::FmIndexTraits.
- *
  * \}
  */
 
@@ -295,9 +220,6 @@ SEQAN3_CONCEPT BiFmIndex = FmIndex<t> && requires (t index)
  *
  * \typedef typename t::rev_cursor_type rev_cursor_type
  * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the reversed text.
- *
- * \todo Write me!
- *
  * \}
  */
 
@@ -318,8 +240,7 @@ SEQAN3_CONCEPT BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
 
     requires requires (typename t::index_type const index) { { t(index) } };
 
-    requires requires (t cur, typename t::index_type::char_type const c,
-                       std::vector<typename t::index_type::char_type> const seq)
+    requires requires (t cur, dna4 const c, std::vector<dna4> const seq)
     {
         { cur.extend_left()    } -> bool;
         { cur.extend_left(c)   } -> bool;
@@ -340,9 +261,6 @@ SEQAN3_CONCEPT BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
  *
  * \typedef typename t::size_type size_type
  * \brief Type for representing the size of the indexed text.
- *
- * \todo Write me!
- *
  * \}
  */
 

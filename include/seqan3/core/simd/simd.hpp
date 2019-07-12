@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains seqan3::simd::simd_type
+ * \brief Provides seqan3::simd::simd_type
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -34,7 +34,7 @@ inline namespace simd
  *
  * All implementations support *[u]intX_t* types, e.g. *uint8_t*.
  *
- * \par Helper types
+ * ###Helper types
  *   seqan3::simd::simd_type_t as a shorthand for seqan3::simd::simd_type::type
  * \sa https://en.wikipedia.org/wiki/SIMD What is SIMD conceptually?
  * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?

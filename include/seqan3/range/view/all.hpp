@@ -156,7 +156,7 @@
  * not actually contain a `&` (see below). For many SeqAn specific views additional concept requirements are defined
  * for the input range's reference type, e.g. seqan3::view::complement can only operate on ranges whose elements are
  * nucleotides (meet seqan3::NucleotideAlphabet_check). In some case the type may even be a specific type or the result
- * of a metafunction.
+ * of a type trait.
  *
  * **Returned range's reference type:** Conversely certain views make guarantees on the concepts satisfied by the
  * return range's reference type or even always have a fixed type, e.g. seqan3::view::complement operates on

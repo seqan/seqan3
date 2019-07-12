@@ -13,7 +13,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 

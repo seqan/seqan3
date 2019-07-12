@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the WUSS format for RNA structure.
+ * \brief Provides the WUSS format for RNA structure.
  */
 
 #pragma once
@@ -15,9 +15,9 @@
 #include <cmath>
 #include <vector>
 
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/structure/concept.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 // ------------------------------------------------------------------
 // wuss
@@ -49,9 +49,9 @@ namespace seqan3
  * <<<<_AAAA____>>>>aaaa
  *```
  *
- * \par Usage
+ * ###Usage
  * The following code example creates a wuss vector, modifies it, and prints the result to stderr.
- * \snippet test/snippet/alphabet/structure/wuss.cpp general
+ * \include test/snippet/alphabet/structure/wuss_general.cpp
  */
 template <uint8_t SIZE = 51>
 class wuss : public alphabet_base<wuss<SIZE>, SIZE>
@@ -225,7 +225,7 @@ using wuss51 = wuss<51>;
  * \returns std::vector<seqan3::wuss51>
  *
  * You can use this string literal to easily assign to a vector of seqan3::wuss51 characters:
- * \snippet test/snippet/alphabet/structure/wuss.cpp string_literal
+ * \include test/snippet/alphabet/structure/wuss_literal.cpp
  */
 inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
 {
@@ -245,7 +245,7 @@ inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
  *
  * You can use this string literal to assign a seqan3::wuss51 character.
  * For different wuss alphabet sizes the `assign_char` function must be used.
- * \snippet test/snippet/alphabet/structure/wuss.cpp char_literal
+ * \include test/snippet/alphabet/structure/wuss_char_literal.cpp
  */
 constexpr wuss51 operator""_wuss51(char const ch) noexcept
 {

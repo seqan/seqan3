@@ -12,10 +12,8 @@
 #include <range/v3/view/take.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/container/all.hpp>
-#include <seqan3/range/view/convert.hpp>
-#include <seqan3/std/algorithm>
+#include <seqan3/range/container/bitcompressed_vector.hpp>
+#include <seqan3/range/container/small_vector.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
@@ -315,24 +313,6 @@ TYPED_TEST(container, resize)
     // shrink without value
     t0.resize(2);
     EXPECT_EQ(t0, (TypeParam{'A'_dna4, 'A'_dna4}));
-}
-
-TYPED_TEST(container, streamable)
-{
-    TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
-
-    std::ostringstream o;
-    debug_stream_type my_stream{o};
-
-    my_stream << TypeParam{};
-
-    o.flush();
-    EXPECT_EQ(o.str(), "");
-
-    my_stream << t1;
-
-    o.flush();
-    EXPECT_EQ(o.str(), "ACCGT");
 }
 
 TYPED_TEST(container, serialisation)

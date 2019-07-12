@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains some standard validators for (positional) options.
+ * \brief Provides some standard validators for (positional) options.
  */
 
 #pragma once
@@ -19,8 +19,8 @@
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/to_string.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/drop.hpp>
@@ -33,33 +33,35 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::validator_concept <>
+/*!\interface seqan3::Validator <>
  * \brief The concept for option validators passed to add_option/positional_option.
  * \ingroup argument_parser
  *
- * \par Concepts and doxygen
+ * \details
  *
- * The requirements for this concept are given as related functions and metafunctions.
+ * ### Concepts and doxygen
+ *
+ * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
-/*!\name Requirements for seqan3::validator_concept
- * \brief You can expect these (meta-)functions on all types that implement seqan3::validator_concept.
+/*!\name Requirements for seqan3::Validator
+ * \brief You can expect these (meta-)functions on all types that implement seqan3::Validator.
  * \{
  */
 /*!\typedef     using value_type
  * \brief       The type of value on which the validator is called on.
- * \relates     seqan3::validator_concept
+ * \relates     seqan3::Validator
  *
  * \details
  * \attention This is a concept requirement, not an actual typedef (however types satisfying this concept
  * will provide an implementation).
  */
 /*!\fn              void operator()(value_type const & cmp) const
- * \brief           Validates the value 'cmp' and throws a seqan3::validation_error on failure.
+ * \brief           Validates the value 'cmp' and throws a seqan3::validation_failed on failure.
  * \tparam          value_type The type of the value to be validated.
  * \param[in,out]   cmp The value to be validated.
- * \relates         seqan3::validator_concept
- * \throws          seqan3::validation_error if value 'cmp' does not pass validation.
+ * \relates         seqan3::Validator
+ * \throws          seqan3::validation_failed if value 'cmp' does not pass validation.
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
@@ -67,7 +69,7 @@ namespace seqan3
  */
 /*!\fn              std::string get_help_page_message() const
  * \brief           Returns a message that can be appended to the (positional) options help page info.
- * \relates         seqan3::validator_concept
+ * \relates         seqan3::Validator
  * \returns         A string that contains information on the performed validation.
  *
  * \details
@@ -77,9 +79,9 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename validator_type>
-SEQAN3_CONCEPT validator_concept = std::Copyable<remove_cvref_t<validator_type>> &&
-                                   requires(validator_type validator,
-                                            typename std::remove_reference_t<validator_type>::value_type value)
+SEQAN3_CONCEPT Validator = std::Copyable<remove_cvref_t<validator_type>> &&
+                           requires(validator_type validator,
+                                    typename std::remove_reference_t<validator_type>::value_type value)
 {
     typename std::remove_reference_t<validator_type>::value_type;
 
@@ -90,7 +92,7 @@ SEQAN3_CONCEPT validator_concept = std::Copyable<remove_cvref_t<validator_type>>
 
 /*!\brief A validator that checks whether a number is inside a given range.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \tparam option_value_type Must be a (container of) arithmetic type(s).
  *
@@ -100,7 +102,7 @@ SEQAN3_CONCEPT validator_concept = std::Copyable<remove_cvref_t<validator_type>>
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever a given value does not lie inside the given min/max range.
  *
- * \snippet test/snippet/argument_parser/validators_1.cpp usage
+ * \include test/snippet/argument_parser/validators_1.cpp
  */
 class arithmetic_range_validator
 {
@@ -157,7 +159,7 @@ private:
 
 /*!\brief A validator that checks whether a value is inside a list of valid values.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -165,7 +167,7 @@ private:
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever a given value is not in the given list.
  *
- * \snippet test/snippet/argument_parser/validators_2.cpp usage
+ * \include test/snippet/argument_parser/validators_2.cpp
  */
 template <typename option_value_type>
 class value_list_validator
@@ -381,16 +383,16 @@ protected:
 
 /*!\brief A validator that checks if a given path is a valid input file.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
  * On construction, the validator can receive a list (std::vector over std::string) of valid file extensions.
  * The struct acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given filename's
- * extension (sts::filesystem::path) is not in the given list of valid file extensions, if the file does not exist, or
+ * extension (std::filesystem::path) is not in the given list of valid file extensions, if the file does not exist, or
  * if the file does not have the proper read permissions.
  *
- * \snippet test/snippet/argument_parser/validators_input_file.cpp usage
+ * \include test/snippet/argument_parser/validators_input_file.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -456,7 +458,7 @@ public:
 
 /*!\brief A validator that checks if a given path is a valid output file.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -465,7 +467,7 @@ public:
  * extension (sts::string) is not in the given list of valid file extensions, if the file already exist, or if the
  * parent path does not have the proper writer permissions.
  *
- * \snippet test/snippet/argument_parser/validators_output_file.cpp usage
+ * \include test/snippet/argument_parser/validators_output_file.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -529,7 +531,7 @@ public:
 
 /*!\brief A validator that checks if a given path is a valid input directory.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -537,7 +539,7 @@ public:
  * (std::filesystem::path) does not exist, the specified path is not a directory, or if the directory is not
  * readable.
  *
- * \snippet test/snippet/argument_parser/validators_input_directory.cpp usage
+ * \include test/snippet/argument_parser/validators_input_directory.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -601,7 +603,7 @@ public:
 
 /*!\brief A validator that checks if a given path is a valid output directory.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -609,7 +611,7 @@ public:
  * (std::filesystem::path) is not writable. This can happen if either the parent path does not exists, or the
  * path doesn't have the proper write permissions.
  *
- * \snippet test/snippet/argument_parser/validators_output_directory.cpp usage
+ * \include test/snippet/argument_parser/validators_output_directory.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -683,7 +685,7 @@ public:
 
 /*!\brief A validator that checks if a matches a regular expression pattern.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -696,7 +698,7 @@ public:
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever string does not match the pattern.
  *
- * \snippet test/snippet/argument_parser/validators_4.cpp usage
+ * \include test/snippet/argument_parser/validators_4.cpp
  */
 class regex_validator
 {
@@ -753,7 +755,7 @@ namespace detail
 
 /*!\brief Validator that always returns true.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -779,7 +781,7 @@ struct default_validator
 
 /*!\brief A helper struct to chain validators recursively via the pipe operator.
  *\ingroup argument_parser
- *\implements seqan3::validator_concept
+ *\implements seqan3::Validator
  *
  *\details
  *
@@ -788,7 +790,7 @@ struct default_validator
  * call is well-formed. (add_option(val, ...., validator) requires
  * that val is of same type as validator::value_type).
  */
-template <validator_concept validator1_type, validator_concept validator2_type>
+template <Validator validator1_type, Validator validator2_type>
 //!\cond
     requires std::Same<typename validator1_type::value_type, typename validator2_type::value_type>
 //!\endcond
@@ -853,12 +855,12 @@ private:
 } // namespace detail
 
 /*!\brief Enables the chaining of validators.
- *!\ingroup argument_parser
+ * \ingroup argument_parser
  * \tparam validator1_type The type of the fist validator;
- *                         Must satisfy the seqan3::validator_concept and the
+ *                         Must satisfy the seqan3::Validator and the
  *                         same value_type as the second validator type.
  * \tparam validator2_type The type of the second validator;
- *                         Must satisfy the seqan3::validator_concept and the
+ *                         Must satisfy the seqan3::Validator and the
  *                         same value_type as the fist validator type.
  * \param[in] vali1 The first validator to chain.
  * \param[in] vali2 The second validator to chain.
@@ -879,7 +881,7 @@ private:
  * You can chain as many validators as you want which will be evaluated one after
  * the other from left to right (first to last).
  */
-template <validator_concept validator1_type, validator_concept validator2_type>
+template <Validator validator1_type, Validator validator2_type>
 //!\cond
     requires std::Same<typename std::remove_reference_t<validator1_type>::value_type,
                        typename std::remove_reference_t<validator2_type>::value_type>

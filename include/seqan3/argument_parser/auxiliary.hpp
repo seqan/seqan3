@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains auxiliary information.
+ * \brief Provides auxiliary information.
  */
 
 #pragma once
@@ -15,7 +15,7 @@
 #include <sstream>
 #include <vector>
 
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/io/stream/concept.hpp>
 
 namespace seqan3
@@ -29,7 +29,7 @@ namespace seqan3
  * All options and flags are set to option_spec::DEFAULT unless specified
  * otherwise by the developer, e.g. when calling argument_parser::add_option().
  *
- * \snippet test/snippet/argument_parser/auxiliary.cpp usage
+ * \include test/snippet/argument_parser/auxiliary.cpp
  */
 enum option_spec
 {
@@ -63,7 +63,11 @@ enum option_spec
  */
 struct argument_parser_meta_data // holds all meta information
 {
-    //!\brief The application name that will be displayed on the help page.
+    /*!\brief The application name that will be displayed on the help page.
+     *
+     * The application name must only contain alpha-numeric characters, '_' or '-',
+     * i.e. the following regex must evaluate to true: `\"^[a-zA-Z0-9_-]+$\"`.
+     */
     std::string app_name;
     //!\brief The version information `MAJOR.MINOR.PATH` (e.g. 3.1.3)
     std::string version;
@@ -77,7 +81,7 @@ struct argument_parser_meta_data // holds all meta information
      *!          since it will tell your users that the application is maintained.
      */
     std::string date;
-    //!\brief A link to github, your website or a wiki page.
+    //!\brief A link to  your github/gitlab project with the newest release.
     std::string url;
     //!\brief Brief copyright (and/or license) information.
     std::string short_copyright;

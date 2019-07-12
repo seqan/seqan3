@@ -14,7 +14,7 @@
 
 #include <type_traits>
 
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/algorithm/detail/search_common.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_precomputed.hpp>
@@ -136,7 +136,7 @@ inline bool search_ss(cursor_t cur, query_t & query,
  *        Sub-function for searching the remaining part of the current block without any errors.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
  * \tparam cursor_t         Must model seqan3::BiFmIndexCursor.
- * \tparam query_t          Must be a std::ranges::RandomAccessRange over the index's alphabet of the cursor.
+ * \tparam query_t          Must model std::ranges::RandomAccessRange over the index's alphabet.
  * \tparam search_t         Is of type `seqan3::detail::search<>` or `seqan3::detail::search_dyn<>`.
  * \tparam blocks_length_t  Is of type `std::array` or `std::vector` of unsigned integers.
  * \tparam delegate_t       Takes `cursor_t` as argument.
@@ -284,7 +284,7 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
 
         do
         {
-            bool const delta = cur.last_char() != query[(go_right ? rb : lb) - 1];
+            bool const delta = cur.last_rank() != to_rank(query[(go_right ? rb : lb) - 1]);
 
             // skip if there are more min errors left in the current block than characters in the block
             // i.e. chars_left - 1 < min_error_left_in_block - delta
@@ -436,7 +436,7 @@ inline bool search_ss(cursor_t cur, query_t & query,
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
  * \tparam index_t          Must model seqan3::BiFmIndex.
- * \tparam query_t          Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam query_t          Must model std::ranges::RandomAccessRange over the index's alphabet.
  * \tparam search_scheme_t  Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
  * \tparam delegate_t       Takes `typename index_t::cursor_type` as argument.
  * \param[in] index         String index built on the text that will be searched.
@@ -487,7 +487,7 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
 /*!\brief Searches a query sequence in a bidirectional index.
  * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
  * \tparam index_t         Must model seqan3::BiFmIndex.
- * \tparam query_t         Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam query_t         Must model std::ranges::RandomAccessRange over the index's alphabet.
  * \tparam delegate_t      Takes `typename index_t::cursor_type` as argument.
  * \param[in] index        String index built on the text that will be searched.
  * \param[in] query        Query sequence to be searched in the index.

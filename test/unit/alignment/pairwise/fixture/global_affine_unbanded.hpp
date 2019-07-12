@@ -13,6 +13,7 @@
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
@@ -23,14 +24,14 @@
 namespace seqan3::test::alignment::fixture::global::affine::unbanded
 {
 
+using namespace seqan3;
+using namespace seqan3::detail;
+
 inline constexpr auto align_config = align_cfg::mode{global_alignment} |
                                      align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}};
 
 static auto dna4_01 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -79,9 +80,6 @@ static auto dna4_01 = []()
 
 static auto dna4_02 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         "ACGTACGTA"_dna4,

@@ -1,6 +1,6 @@
 PROJECT_NAME           = "SeqAn3"
-PROJECT_BRIEF          = "The Modern C++ library for Sequence Analysis in Bioinformatics."
-PROJECT_LOGO           =
+PROJECT_BRIEF          = "The Modern C++ library for sequence analysis."
+PROJECT_LOGO           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan_logo.png
 LAYOUT_FILE            = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/DoxygenLayout.xml
 
 ## PATHS
@@ -23,6 +23,9 @@ DOT_GRAPH_MAX_NODES    = 500
 INTERACTIVE_SVG        = ${SEQAN3_DOXYGEN_HAVE_DOT}
 
 ## MISC OPTIONS
+GENERATE_LATEX         = NO
+HTML_TIMESTAMP         = YES
+EXT_LINKS_IN_WINDOW    = YES
 RECURSIVE              = YES
 DISABLE_INDEX          = YES
 GENERATE_TREEVIEW      = YES
@@ -46,7 +49,7 @@ PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
                          "SEQAN3_DOXYGEN_ONLY(x)= x" \
                          "${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG}"
 
-EXPAND_AS_DEFINED      = SEQAN3_CPO_IMPL
+EXPAND_AS_DEFINED      = SEQAN3_CPO_IMPL SEQAN3_DEPRECATED_310
 
 TAGFILES               += "${SEQAN3_DOXYGEN_STD_TAGFILE}=http://en.cppreference.com/w/"
 
@@ -82,3 +85,7 @@ ALIASES += strike{1}="\htmlonly<div style='color:red;text-decoration:line-throug
 ALIASES += noapi="\warning This documentation item is not guaranteed to exist in future SeqAn3 releases. Do not rely on the interface in your applications."
 
 ALIASES += experimental="\warning The interface of this documentation item is not yet stable and might change until the next release of SeqAn3. Do not rely on it in stable releases of your application."
+
+### Extra files that we can link to
+
+HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/alignment_file/example.sam

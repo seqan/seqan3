@@ -9,12 +9,11 @@
 
 #include <string>
 
-#include <range/v3/algorithm/for_each.hpp>
-#include <range/v3/view/single.hpp>
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
 #include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/std/algorithm>
+#include <seqan3/std/ranges>
 #include <seqan3/test/pretty_printing.hpp>
 
 struct dummy_alignment
@@ -34,16 +33,27 @@ struct dummy_alignment
     }
 };
 
-// Some globally defined test types
-inline static std::tuple single{std::string{"AACGTACGT"}, std::string{"ATCGTCCGT"}};
-inline static std::vector<decltype(single)> collection{5, single};
-inline static std::function<size_t(size_t const, std::string &, std::string &)> fn{dummy_alignment{}};
-
 using namespace seqan3;
 
-TEST(alignment_executor_two_way, construction)
+template <typename t>
+struct alignment_executor_two_way_test : public ::testing::Test
+{};
+
+using testing_types = ::testing::Types<detail::execution_handler_sequential, detail::execution_handler_parallel>;
+TYPED_TEST_CASE(alignment_executor_two_way_test, testing_types);
+
+// Some globally defined test types
+using seq_type = all_view<std::string &>;
+
+inline static std::tuple single{std::string{"AACGTACGT"}, std::string{"ATCGTCCGT"}};
+inline static std::vector<decltype(single)> collection{5, single};
+inline static std::function<size_t(size_t const, seq_type, seq_type)> fn{dummy_alignment{}};
+
+TYPED_TEST(alignment_executor_two_way_test, construction)
 {
-    using type = detail::alignment_executor_two_way<std::add_lvalue_reference_t<decltype(collection)>, decltype(fn)>;
+    using type = detail::alignment_executor_two_way<std::add_lvalue_reference_t<decltype(collection)>,
+                                                    decltype(fn),
+                                                    TypeParam>;
 
     EXPECT_FALSE(std::is_default_constructible_v<type>);
     EXPECT_FALSE(std::is_copy_constructible_v<type>);
@@ -52,9 +62,11 @@ TEST(alignment_executor_two_way, construction)
     EXPECT_TRUE(std::is_move_assignable_v<type>);
 }
 
-TEST(alignment_executor_two_way, is_eof)
+TYPED_TEST(alignment_executor_two_way_test, is_eof)
 {
-    using type = detail::alignment_executor_two_way<std::add_lvalue_reference_t<decltype(collection)>, decltype(fn)>;
+    using type = detail::alignment_executor_two_way<std::add_lvalue_reference_t<decltype(collection)>,
+                                                    decltype(fn),
+                                                    TypeParam>;
     type exec{collection, fn};
     EXPECT_FALSE(exec.is_eof());
 }
@@ -65,9 +77,10 @@ TEST(alignment_executor_two_way, type_deduction)
     EXPECT_FALSE(exec.is_eof());
 }
 
-TEST(alignment_executor_two_way, bump)
+TYPED_TEST(alignment_executor_two_way_test, bump)
 {
-    detail::alignment_executor_two_way exec{collection, fn};
+    using t = detail::alignment_executor_two_way<decltype(collection) &, decltype(fn), TypeParam>;
+    t exec{collection, fn};
 
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
@@ -77,32 +90,41 @@ TEST(alignment_executor_two_way, bump)
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TEST(alignment_executor_two_way, in_avail)
+TYPED_TEST(alignment_executor_two_way_test, in_avail)
 {
-    detail::alignment_executor_two_way exec{collection, fn};
+    using t = detail::alignment_executor_two_way<decltype(collection) &, decltype(fn), TypeParam>;
+    t exec{collection, fn};
+
     EXPECT_EQ(exec.in_avail(), 0u);
     EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.in_avail(), 0u);
+    if constexpr (std::Same<TypeParam, detail::execution_handler_parallel>)
+        EXPECT_EQ(exec.in_avail(), 4u);
+    else
+        EXPECT_EQ(exec.in_avail(), 0u);
 }
 
-TEST(alignment_executor_two_way, lvalue_single_view)
+TYPED_TEST(alignment_executor_two_way_test, lvalue_single_view)
 {
     auto v = ranges::view::single(single);
-    detail::alignment_executor_two_way exec{v, fn};
+    using t = detail::alignment_executor_two_way<decltype(v), decltype(fn), TypeParam>;
+
+    t exec{v, fn};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TEST(alignment_executor_two_way, rvalue_single_view)
+TYPED_TEST(alignment_executor_two_way_test, rvalue_single_view)
 {
-    detail::alignment_executor_two_way exec{ranges::view::single(single), fn};
+    using t = detail::alignment_executor_two_way<decltype(ranges::view::single(single)), decltype(fn), TypeParam>;
+    t exec{ranges::view::single(single), fn};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TEST(alignment_executor_two_way, lvalue_collection)
+TYPED_TEST(alignment_executor_two_way_test, lvalue_collection)
 {
-    detail::alignment_executor_two_way exec{collection, fn};
+    using t = detail::alignment_executor_two_way<decltype(collection) &, decltype(fn), TypeParam>;
+    t exec{collection, fn};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
@@ -111,9 +133,10 @@ TEST(alignment_executor_two_way, lvalue_collection)
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TEST(alignment_executor_two_way, rvalue_collection_view)
+TYPED_TEST(alignment_executor_two_way_test, rvalue_collection_view)
 {
-    detail::alignment_executor_two_way exec{collection | view::persist, fn};
+    using t = detail::alignment_executor_two_way<decltype(collection | view::persist), decltype(fn), TypeParam>;
+    t exec{collection | view::persist, fn};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);

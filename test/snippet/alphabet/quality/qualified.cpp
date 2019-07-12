@@ -3,32 +3,29 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using namespace seqan3;
-
 int main()
 {
-//! [general]
-qualified<dna4, phred42> letter{'A'_dna4, phred42{7}};
-debug_stream << int(to_rank(letter)) << ' '
-          << int(to_rank(get<0>(letter))) << ' '
-          << int(to_rank(get<1>(letter))) << '\n';
-// 28 0 7
+    using seqan3::operator""_dna4;
+    using seqan3::get;
 
-debug_stream << to_char(letter) << ' '
-          << to_char(get<0>(letter)) << ' '
-          << to_char(get<1>(letter)) << '\n';
-// A A (
+    seqan3::qualified<seqan3::dna4, seqan3::phred42> letter{'A'_dna4, seqan3::phred42{7}};
+    seqan3::debug_stream << int(seqan3::to_rank(letter)) << ' '
+                         << int(seqan3::to_rank(get<0>(letter))) << ' '
+                         << int(seqan3::to_rank(get<1>(letter))) << '\n';
+    // 28 0 7
 
-debug_stream << int(to_phred(letter)) << ' '
-//        << int(to_phred(get<0>(letter))) << ' ' // dna4 doesn't have a phred
-          << int(to_phred(get<1>(letter))) << '\n';
-// 7 7
+    seqan3::debug_stream << seqan3::to_char(letter) << ' '
+                         << seqan3::to_char(get<0>(letter)) << ' '
+                         << seqan3::to_char(get<1>(letter)) << '\n';
+    // A A (
 
-// modify via structured bindings and references:
-auto & [ seq_l, qual_l ] = letter;
-seq_l = 'G'_dna4;
-debug_stream << to_char(letter) << '\n';
-// G
-//! [general]
-(void) qual_l;
+    seqan3::debug_stream << seqan3::to_phred(letter) << ' '
+                         << seqan3::to_phred(get<1>(letter)) << '\n';
+    // 7 7
+
+    // modify via structured bindings and references:
+    auto & [ seq_l, qual_l ] = letter;
+    seq_l = 'G'_dna4;
+    seqan3::debug_stream << seqan3::to_char(letter) << '\n';
+    // G
 }

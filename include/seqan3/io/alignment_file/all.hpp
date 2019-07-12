@@ -14,7 +14,7 @@
 
 /*!\defgroup alignment_file Alignment File
  * \ingroup io
- * \brief \todo document at a later point in time
+ * \brief Provides files and formats for handling alignment data.
  */
 
 #include <seqan3/io/alignment_file/format_sam.hpp>

@@ -34,10 +34,8 @@ public:
     T index{text};
 };
 
-using fm_index_types        = ::testing::Types<fm_index<std::vector<std::vector<dna4>>>,
-                                               bi_fm_index<std::vector<std::vector<dna4>>>>;
-using fm_index_string_types = ::testing::Types<fm_index<std::vector<std::string>>,
-                                               bi_fm_index<std::vector<std::string>>>;
+using fm_index_types        = ::testing::Types<fm_index<text_layout::collection>, bi_fm_index<text_layout::collection>>;
+using fm_index_string_types = ::testing::Types<fm_index<text_layout::collection>, bi_fm_index<text_layout::collection>>;
 
 TYPED_TEST_CASE(search_test, fm_index_types);
 TYPED_TEST_CASE(search_string_test, fm_index_string_types);
@@ -49,65 +47,65 @@ TYPED_TEST(search_test, error_free)
 
     {
         // successful and unsuccesful exact search without cfg
-        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
                                                                              {1, 0}, {1, 4}, {1, 8}}));
-        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search with empty cfg
         configuration const cfg;
-        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
                                                                                   {1, 0}, {1, 4}, {1, 8}}));
-        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using empty max_total_error
         configuration const cfg = max_error{};
-        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
                                                                                   {1, 0}, {1, 4}, {1, 8}}));
-        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using short version of max_total_error
         configuration const cfg = max_error{total{0}};
-        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
                                                                                   {1, 0}, {1, 4}, {1, 8}}));
-        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using max_total_error
         configuration const cfg = max_error{total{0}, substitution{0}, insertion{0}, deletion{0}};
-        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
                                                                                   {1, 0}, {1, 4}, {1, 8}}));
-        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using empty max_total_error_rate
         configuration const cfg = max_error_rate{};
-        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
                                                                                   {1, 0}, {1, 4}, {1, 8}}));
-        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using short version of max_total_error_rate
         configuration const cfg = max_error_rate{total{.0}};
-        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
                                                                                   {1, 0}, {1, 4}, {1, 8}}));
-        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using max_total_error_rate
         configuration const cfg = max_error_rate{total{.0}, substitution{.0}, insertion{.0}, deletion{.0}};
-        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8},
                                                                                   {1, 0}, {1, 4}, {1, 8}}));
-        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), (hits_result_t{}));
     }
 }
 
@@ -118,7 +116,7 @@ TYPED_TEST(search_test, multiple_queries)
     std::vector<std::vector<dna4>> const queries{{"GG"_dna4, "ACGTACGTACGT"_dna4, "ACGTA"_dna4}};
 
     configuration const cfg = max_error_rate{total{.0}, substitution{.0}, insertion{.0}, deletion{.0}};
-    EXPECT_EQ(uniquify(search(this->index, queries, cfg)), (hits_result_t{{},
+    EXPECT_EQ(uniquify(search(queries, this->index, cfg)), (hits_result_t{{},
                                                                           {{0, 0}, {1, 0}},
                                                                           {{0, 0}, {0, 4}, {1, 0}, {1, 4}}}));
 }
@@ -130,8 +128,8 @@ TYPED_TEST(search_string_test, error_free_string)
 
     {
         // successful and unsuccesful exact search without cfg
-        EXPECT_EQ(uniquify(search(this->index, "at"s)), (hits_result_t{{0, 14}, {0, 18}, {1, 17}}));
-        EXPECT_EQ(uniquify(search(this->index, "Jon"s)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("at"s, this->index)), (hits_result_t{{0, 14}, {0, 18}, {1, 17}}));
+        EXPECT_EQ(uniquify(search("Jon"s, this->index)), (hits_result_t{}));
     }
 }
 
@@ -142,8 +140,8 @@ TYPED_TEST(search_string_test, error_free_raw)
 
     {
         // successful and unsuccesful exact search without cfg
-        EXPECT_EQ(uniquify(search(this->index, "at")), (hits_result_t{{0, 14}, {0, 18}, {1, 17}}));
-        EXPECT_EQ(uniquify(search(this->index, "Jon")), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search("at", this->index)), (hits_result_t{{0, 14}, {0, 18}, {1, 17}}));
+        EXPECT_EQ(uniquify(search("Jon", this->index)), (hits_result_t{}));
     }
 }
 
@@ -154,7 +152,7 @@ TYPED_TEST(search_string_test, multiple_queries_string)
 
     std::vector<std::string> const queries{"at", "Jon"};
 
-    EXPECT_EQ(uniquify(search(this->index, queries)), (hits_result_t{{{0, 14}, {0, 18}, {1, 17}},
+    EXPECT_EQ(uniquify(search(queries, this->index)), (hits_result_t{{{0, 14}, {0, 18}, {1, 17}},
                                                                      {}})); // 3 and 0 hits
 }
 
@@ -163,6 +161,6 @@ TYPED_TEST(search_string_test, multiple_queries_raw)
     using result_t = std::vector<std::pair<typename TypeParam::size_type, typename TypeParam::size_type>>;
     using hits_result_t = std::vector<result_t>;
 
-    EXPECT_EQ(uniquify(search(this->index, {"at", "Jon"})), (hits_result_t{{{0, 14}, {0, 18}, {1, 17}},
+    EXPECT_EQ(uniquify(search({"at", "Jon"}, this->index)), (hits_result_t{{{0, 14}, {0, 18}, {1, 17}},
                                                                            {}})); // 3 and 0 hits
 }

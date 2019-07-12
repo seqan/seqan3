@@ -12,7 +12,7 @@
 #include <cstddef> // makes __GLIBCXX__ available
 
 /*!\file
- * \brief Contains platform and dependency checks.
+ * \brief Provides platform and dependency checks.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -177,12 +177,39 @@
 #endif
 
 // ============================================================================
+//  Deprecation Messages
+// ============================================================================
+
+//!\brief Deprecation message for SeqAn 3.1.0 release.
+#if !defined(SEQAN3_DEPRECATED_310)
+#   define SEQAN3_DEPRECATED_310 [[deprecated("This will be removed in SeqAn-3.1.0; please see the documentation.")]]
+#endif
+
+// ============================================================================
 //  Workarounds
 // ============================================================================
 
 #ifndef SEQAN3_WORKAROUND_VIEW_PERFORMANCE
 //!\brief Performance of views, especially filter and join is currently bad, especially in I/O.
 #   define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
+#endif
+
+//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87113
+#ifndef SEQAN3_WORKAROUND_GCC_87113
+#   if defined(__GNUC_MINOR__) && ((__GNUC__ == 7) || ((__GNUC__ == 8) && (__GNUC_MINOR__ < 3)))
+#       define SEQAN3_WORKAROUND_GCC_87113 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_87113 0
+#   endif
+#endif
+
+//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90897
+#ifndef SEQAN3_WORKAROUND_GCC_90897
+#   if defined(__GNUC__) && (__GNUC__ == 8)
+#       define SEQAN3_WORKAROUND_GCC_90897 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_90897 0
+#   endif
 #endif
 
 // ============================================================================

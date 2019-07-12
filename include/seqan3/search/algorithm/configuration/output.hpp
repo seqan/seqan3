@@ -13,9 +13,10 @@
 
 #pragma once
 
+#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/search/algorithm/configuration/detail.hpp>
 
 /*!\addtogroup search
@@ -42,6 +43,13 @@ inline detail::search_output_text_position constexpr text_position;
 
 /*!\brief Configuration element to determine the output type of hits.
  * \ingroup search_configuration
+ *
+ * \details
+ * This configuration element can be used to determine the output type.
+ *
+ * ### Example
+ *
+ * \include test/snippet/search/configuration_output.cpp
  */
 template <typename output_t>
 //!\cond

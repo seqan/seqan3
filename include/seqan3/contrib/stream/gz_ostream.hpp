@@ -426,13 +426,13 @@ public:
 
     ~basic_gz_ostream()
     {
-        this->flush(); this->rdbuf()->flush_finalize();
+        ostream_type::flush(); this->rdbuf()->flush_finalize();
     }
 
     // flush inner buffer and zipper buffer
-    basic_gz_ostream<Elem, Tr> & zflush()
+    basic_gz_ostream<Elem, Tr> & flush()
     {
-        this->flush(); this->rdbuf()->flush(); return *this;
+        ostream_type::flush(); this->rdbuf()->flush(); return *this;
     }
 
 #ifdef _WIN32

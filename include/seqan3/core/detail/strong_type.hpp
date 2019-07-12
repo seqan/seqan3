@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains basic data structure for strong types.
+ * \brief Provides basic data structure for strong types.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -15,7 +15,7 @@
 #include <type_traits>
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail

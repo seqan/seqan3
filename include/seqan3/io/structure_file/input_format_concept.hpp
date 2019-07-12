@@ -44,7 +44,7 @@ namespace seqan3
  * \details
  *
  * The details of this concept are only relevant to developers who wish to implement their own format.
- * The requirements for this concept are given as related functions and metafunctions.
+ * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
 //!\cond
@@ -97,7 +97,7 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_
  *               comment_type & comment,
  *               offset_type & offset)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
+ * \tparam stream_type      Input stream, must satisfy seqan3::Istream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
@@ -129,7 +129,7 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_
  * ### Additional requirements
  *
  *   * The function must also accept std::ignore as parameter for any of the fields.
- *     [this is enforced by the concept checker!]
+ *     [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  *   * Instead of passing the fields seqan3::field::SEQ and seqan3::field::STRUCTURE, you may also pass
  *     seqan3::field::STRUCTURED_SEQ to both parameters. If you do, the seqan3::value_type_t of the argument must be
@@ -147,7 +147,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::structure_file_format_concept [default is false].
+ * seqan3::StructureFileInputFormat [default is false].
  * \ingroup core
  * \see seqan3::TypeListOfStructureFileInputFormats
  */

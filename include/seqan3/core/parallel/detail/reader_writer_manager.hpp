@@ -66,7 +66,8 @@ struct reader_count : public detail::strong_type<size_t, reader_count>
  * The class offers functions to register participating producer and consumer threads, which will signal if they are
  * done when their destructor is called.
  *
- * The reader_writer_manager class is move-only and cannot be default constructed.
+ * The reader_writer_manager class is neither copyable nor movable due to internal members used for inter thread
+ * synchronisation. Accordingly, the class is not default constructible.
  */
 class reader_writer_manager
 {
@@ -77,6 +78,7 @@ private:
     {
     public:
         /*!\name Constructors, destructor and assignment
+         * \brief Not default constructible nor copyable or movable.
          * \{
          */
         scoped_writer_type() = delete;                                           //!< Deleted.
@@ -138,9 +140,9 @@ public:
      */
     reader_writer_manager()                                          = delete;  //!< Deleted.
     reader_writer_manager(reader_writer_manager const &)             = delete;  //!< Deleted.
-    reader_writer_manager(reader_writer_manager &&)                  = default; //!< Defaulted.
+    reader_writer_manager(reader_writer_manager &&)                  = delete;  //!< Deleted.
     reader_writer_manager & operator=(reader_writer_manager const &) = delete;  //!< Deleted.
-    reader_writer_manager & operator=(reader_writer_manager &&)      = default; //!< Defaulted.
+    reader_writer_manager & operator=(reader_writer_manager &&)      = delete;  //!< Deleted.
     ~reader_writer_manager()                                         = default; //!< Defaulted.
 
     /*!\brief Constructs the reader_writer_manager with the reader count, writer count and the associated data structure.
@@ -304,14 +306,15 @@ public:
     }
 
 private:
+
     //!\brief The internal latch for consumer threads.
-    alignas(std::hardware_destructive_interference_size) latch reader_latch;
+    alignas(std::hardware_destructive_interference_size) latch          reader_latch;
     //!\brief The internal latch for producer threads.
-    alignas(std::hardware_destructive_interference_size) latch writer_latch;
-    //!\brief The stored completion function.
-    std::function<void()>                                      completion_fn;
+    alignas(std::hardware_destructive_interference_size) latch          writer_latch;
     //!\brief This flag ensures that the completion phase is invoked only once.
-    std::once_flag                                             flag;
+    alignas(std::hardware_destructive_interference_size) std::once_flag flag;
+    //!\brief The stored completion function.
+    std::function<void()>                                               completion_fn;
 };
 
 } // namespace seqan3::detail

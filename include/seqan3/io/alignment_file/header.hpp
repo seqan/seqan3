@@ -16,8 +16,11 @@
 #include <unordered_map>
 #include <vector>
 
-#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/detail/hash.hpp>
+#include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
+#include <seqan3/range/view/view_all.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -88,12 +91,14 @@ private:
     //!\brief Stream deleter with default behaviour (ownership assumed).
     static void ref_ids_deleter_default(ref_ids_type * ptr) { delete ptr; }
     //!\brief The key's type of ref_dict.
-    using key_type = std::ranges::all_view<reference_t<ref_ids_type>>;
+    using key_type = std::conditional_t<std::ranges::ContiguousRange<reference_t<ref_ids_type>>,
+                        std::span<innermost_value_type_t<ref_ids_type> const>,
+                        all_view<reference_t<ref_ids_type>>>;
     //!\brief The pointer to reference ids information (non-owning if reference information is given).
     ref_ids_ptr_t ref_ids_ptr{new ref_ids_type{}, ref_ids_deleter_default};
 
 public:
-    /*!/brief The range of reference ids.
+    /*!\brief The range of reference ids.
      *
      * \details
      *
@@ -158,7 +163,7 @@ public:
     //!\brief The mapping of reference id to position in the ref_ids() range and the ref_id_info range.
     std::unordered_map<key_type, int32_t, std::hash<key_type>, detail::view_equality_fn> ref_dict{};
 
-    /*!\brief The Read Group Dictionary. (used by the SAM/BAM format)
+    /*!\brief The Read Group Dictionary (used by the SAM/BAM format).
      *
      * \details
      *

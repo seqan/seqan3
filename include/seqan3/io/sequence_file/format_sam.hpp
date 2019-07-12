@@ -18,26 +18,11 @@
 #include <string_view>
 #include <vector>
 
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
-#include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
-#include <seqan3/io/stream/iterator.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
-#include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/view/char_to.hpp>
-#include <seqan3/range/view/to_char.hpp>
-#include <seqan3/range/view/get.hpp>
-#include <seqan3/range/view/take.hpp>
-#include <seqan3/range/view/take_exactly.hpp>
-#include <seqan3/range/view/take_line.hpp>
-#include <seqan3/range/view/take_until.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

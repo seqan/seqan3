@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/std/ranges>
 
@@ -56,7 +56,7 @@ namespace seqan3::view
  * | std::ranges::OutputRange        |                                  | *lost*                                                  |
  * | seqan3::ConstIterableRange      |                                  | *preserved*                                             |
  * |                                 |                                  |                                                         |
- * | seqan3::reference_t             | seqan3::char_concept             | seqan3::remove_reference_t<seqan3::reference_t<urngt_>> |
+ * | seqan3::reference_t             | seqan3::Char                     | seqan3::remove_reference_t<seqan3::reference_t<urngt_>> |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -66,8 +66,8 @@ namespace seqan3::view
  */
 inline auto const to_lower = deep{std::view::transform([] (auto const in) noexcept
 {
-    static_assert(char_concept<remove_cvref_t<decltype(in)>>,
-                  "The value type of seqan3::view::to_lower must model the seqan3::char_concept.");
+    static_assert(Char<remove_cvref_t<decltype(in)>>,
+                  "The value type of seqan3::view::to_lower must model seqan3::Char.");
     return seqan3::to_lower(in);
 })};
 

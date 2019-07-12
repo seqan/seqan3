@@ -7,12 +7,10 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Core alphabet concept and free function/metafunction wrappers.
+ * \brief Core alphabet concept and free function/type trait wrappers.
  */
 
 #pragma once
-
-#include <iostream>
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
@@ -21,8 +19,8 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/core/detail/reflection.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/function.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/std/concepts>
 
 // ============================================================================
@@ -37,22 +35,22 @@ struct to_rank_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, to_rank(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::to_rank(v)   )    // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::to_rank(v)       )    // customisation namespace
     SEQAN3_CPO_IMPL(0, v.to_rank()                      )    // member
 
 public:
     //!\brief Operator definition.
     template <typename alph_t>
     //!\cond
-        requires requires (alph_t const a) { { impl(priority_tag<2>{}, a) }; }
+        requires requires (alph_t const a)
+        {
+            { impl(priority_tag<2>{}, a) };
+            requires noexcept(impl(priority_tag<2>{}, a));
+            requires std::Integral<decltype(impl(priority_tag<2>{}, a))>;
+        }
     //!\endcond
     constexpr auto operator()(alph_t const a) const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<2>{}, a)),
-            "Only overloads that are marked noexcept are picked up by seqan3::to_rank().");
-        static_assert(std::Constructible<size_t, decltype(impl(priority_tag<2>{}, a))>,
-            "The return type of your to_rank() implementation must be convertible to size_t.");
-
         return impl(priority_tag<2>{}, a);
     }
 };
@@ -78,13 +76,11 @@ namespace seqan3
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `to_rank(your_type const a)` in the namespace of your type (or as `friend`).
- *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
- *      return type be of the respective rank representation (usually a small integral type).
- *   2. A free function `to_rank(your_type const a)` in `namespace seqan3::adaptation`.
- *      Used only by the SeqAn library internally. The same restrictions apply as above.
+ *   2. A free function `to_rank(your_type const a)` in `namespace seqan3::custom`.
  *   3. A member function called `to_rank()`.
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
- *      of the respective rank representation.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type models std::Integral.
  *
  * Every (semi-)alphabet type must provide one of the above.
  *
@@ -97,7 +93,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto to_rank = detail::adl::only::to_rank_fn{};
@@ -126,35 +122,23 @@ struct assign_rank_to_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, (assign_rank_to(args..., v)                           ))    // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::adaptation::assign_rank_to(args..., v)       ))    // customisation namespace
+    SEQAN3_CPO_IMPL(1, (seqan3::custom::assign_rank_to(args..., v)           ))    // customisation namespace
     SEQAN3_CPO_IMPL(0, (v.assign_rank(args...)                               ))    // member
 
 public:
-    //!\brief Operator definition for lvalues.
+    //!\brief Operator definition.
     template <typename alph_t>
     //!\cond
         requires requires (seqan3::alphabet_rank_t<alph_t> const r, alph_t & a)
-            { { impl(priority_tag<2>{}, a, r) }; }
-    //!\endcond
-    constexpr alph_t & operator()(seqan3::alphabet_rank_t<alph_t> const r, alph_t & a) const noexcept
-    {
-        static_assert(noexcept(impl(priority_tag<2>{}, a, r)),
-            "Only overloads that are marked noexcept are picked up by seqan3::assign_rank_to().");
-        static_assert(std::Same<alph_t &, decltype(impl(priority_tag<2>{}, a, r))>,
-            "The return type of your assign_rank_to() implementation must be 'alph_t &'.");
-
-        return impl(priority_tag<2>{}, a, r);
-    }
-
-    //!\brief Operator definition for rvalues.
-    template <typename alph_t>
-    //!\cond
-        requires requires (seqan3::alphabet_rank_t<alph_t> const r, alph_t & a)
-            { { impl(priority_tag<2>{}, a, r) }; } && (!std::is_lvalue_reference_v<alph_t>)
+            {
+                { impl(priority_tag<2>{}, a, r) };
+                requires noexcept(impl(priority_tag<2>{}, a, r));
+                requires std::Same<alph_t &, decltype(impl(priority_tag<2>{}, a, r))>;
+            }
     //!\endcond
     constexpr alph_t operator()(seqan3::alphabet_rank_t<alph_t> const r, alph_t && a) const noexcept
     {
-        return (*this)(r, a); // call above function but return by value
+        return impl(priority_tag<2>{}, a, r);
     }
 };
 
@@ -181,13 +165,13 @@ namespace seqan3
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `assign_rank_to(rank_type const chr, your_type & a)` in the namespace of your
- *      type (or as `friend`). The function must be marked `noexcept` (`constexpr` is not required,
- *      but recommended) and the return type be `your_type &`.
+ *      type (or as `friend`).
  *   2. A free function `assign_rank_to(rank_type const chr, your_type & a)` in
- *      `namespace seqan3::adaptation`. Used only by the SeqAn library internally. The same restrictions apply as above.
+ *      `namespace seqan3::custom`.
  *   3. A member function called `assign_rank(rank_type const chr)` (not `assign_rank_to`).
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
- *      `your_type &`.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type is `your_type &`.
  *
  * Every (semi-)alphabet type must provide one of the above. *Note* that temporaries of `your_type` are handled
  * by this function object and **do not** require an additional overload.
@@ -201,7 +185,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto assign_rank_to = detail::adl::only::assign_rank_to_fn{};
@@ -220,20 +204,21 @@ struct to_char_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, to_char(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::to_char(v)   )    // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::to_char(v)       )    // customisation namespace
     SEQAN3_CPO_IMPL(0, v.to_char()                      )    // member
 
 public:
     //!\brief Operator definition.
     template <typename alph_t>
     //!\cond
-        requires requires (alph_t const a) { { impl(priority_tag<2>{}, a) }; }
+        requires requires (alph_t const a)
+        {
+            { impl(priority_tag<2>{}, a) };
+            requires noexcept(impl(priority_tag<2>{}, a));
+        }
     //!\endcond
     constexpr decltype(auto) operator()(alph_t const a) const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<2>{}, a)),
-            "Only overloads that are marked noexcept are picked up by seqan3::to_char().");
-
         return impl(priority_tag<2>{}, a);
     }
 };
@@ -259,14 +244,12 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `to_char(your_type const a)` in the namespace of your
- *      type (or as `friend`). The function must be marked `noexcept` (`constexpr` is not required,
- *      but recommended) and the return type be of the respective char representation (usually a small integral type).
- *   2. A free function `to_char(your_type const a)` in
- *      `namespace seqan3::adaptation`. Used only by the SeqAn library internally. The same restrictions apply as above.
+ *   1. A free function `to_char(your_type const a)` in the namespace of your type (or as `friend`).
+ *   2. A free function `to_char(your_type const a)` in `namespace seqan3::custom`.
  *   3. A member function called `to_char()`.
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
- *      of the respective char representation.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended).
  *
  * Every alphabet type must provide one of the above.
  *
@@ -279,7 +262,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto to_char = detail::adl::only::to_char_fn{};
@@ -299,12 +282,12 @@ using alphabet_char_t = decltype(seqan3::to_char(std::declval<alphabet_type cons
 // assign_char_to()
 // ============================================================================
 
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 //!\cond
 void char_is_valid_for(); // forward
 //!\endcond
-} // seqan3::adaptation
+} // seqan3::custom
 
 namespace seqan3::detail::adl::only
 {
@@ -314,35 +297,23 @@ struct assign_char_to_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, (assign_char_to(args..., v)                           ))    // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::adaptation::assign_char_to(args..., v)       ))    // customisation namespace
+    SEQAN3_CPO_IMPL(1, (seqan3::custom::assign_char_to(args..., v)           ))    // customisation namespace
     SEQAN3_CPO_IMPL(0, (v.assign_char(args...)                               ))    // member
 
 public:
-    //!\brief Operator definition for lvalues.
+    //!\brief Operator definition.
     template <typename alph_t>
     //!\cond
         requires requires (seqan3::alphabet_char_t<alph_t> const r, alph_t & a)
-            { { impl(priority_tag<2>{}, a, r) }; }
-    //!\endcond
-    constexpr alph_t & operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t & a) const noexcept
-    {
-        static_assert(noexcept(impl(priority_tag<2>{}, a, r)),
-            "Only overloads that are marked noexcept are picked up by seqan3::assign_char_to().");
-        static_assert(std::Same<alph_t &, decltype(impl(priority_tag<2>{}, a, r))>,
-            "The return type of your assign_char_to() implementation must be 'alph_t &'.");
-
-        return impl(priority_tag<2>{}, a, r);
-    }
-
-    //!\brief Operator definition for rvalues.
-    template <typename alph_t>
-    //!\cond
-        requires requires (seqan3::alphabet_char_t<alph_t> const r, alph_t & a)
-            { { impl(priority_tag<2>{}, a, r) }; } && (!std::is_lvalue_reference_v<alph_t>)
+            {
+                { impl(priority_tag<2>{}, a, r) };
+                requires noexcept(impl(priority_tag<2>{}, a, r));
+                requires std::Same<alph_t &, decltype(impl(priority_tag<2>{}, a, r))>;
+            }
     //!\endcond
     constexpr alph_t operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t && a) const noexcept
     {
-        return (*this)(r, a); // call above function but return by value
+        return impl(priority_tag<2>{}, a, r);
     }
 };
 
@@ -369,13 +340,13 @@ namespace seqan3
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `assign_char_to(char_type const chr, your_type & a)` in the namespace of your
- *      type (or as `friend`). The function must be marked `noexcept` (`constexpr` is not required,
- *      but recommended) and the return type be `your_type &`.
+ *      type (or as `friend`).
  *   2. A free function `assign_char_to(char_type const chr, your_type & a)` in
- *      `namespace seqan3::adaptation`. Used only by the SeqAn library internally. The same restrictions apply as above.
+ *      `namespace seqan3::custom`.
  *   3. A member function called `assign_char(char_type const chr)` (not `assign_char_to`).
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
- *      `your_type &`.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type is `your_type &`.
  *
  * Every alphabet type must provide one of the above. *Note* that temporaries of `your_type` are handled
  * by this function object and **do not** require an additional overload.
@@ -389,7 +360,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto assign_char_to = detail::adl::only::assign_char_to_fn{};
@@ -400,12 +371,12 @@ inline constexpr auto assign_char_to = detail::adl::only::assign_char_to_fn{};
 // char_is_valid_for()
 // ============================================================================
 
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 //!\cond
 void char_is_valid_for(); // forward
 //!\endcond
-} // seqan3::adaptation
+} // seqan3::custom
 
 namespace seqan3::detail::adl::only
 {
@@ -422,7 +393,7 @@ struct char_is_valid_for_fn
 {
 private:
     SEQAN3_CPO_IMPL(3, (char_is_valid_for(v, s_alph_t{})                                       ))    // ADL
-    SEQAN3_CPO_IMPL(2, (seqan3::adaptation::char_is_valid_for(v, s_alph_t{})                   ))    // customisation ns
+    SEQAN3_CPO_IMPL(2, (seqan3::custom::char_is_valid_for(v, s_alph_t{})                       ))    // customisation ns
     SEQAN3_CPO_IMPL(1, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::char_is_valid(v) ))    // member
     SEQAN3_CPO_IMPL(0, (to_char(assign_char_to(v, s_alph_t{})) == v                            ))    // fallback
 
@@ -430,15 +401,15 @@ public:
     //!\brief Operator definition.
     template <typename dummy = int> // need to make this a template to enforce deferred instantiation
     //!\cond
-        requires requires (alphabet_char_t<alph_t> const a) { { impl(priority_tag<3>{}, a, dummy{}) }; }
+        requires requires (alphabet_char_t<alph_t> const a)
+        {
+            { impl(priority_tag<3>{}, a, dummy{}) };
+            requires noexcept(impl(priority_tag<3>{}, a));
+            requires std::ConvertibleTo<decltype(impl(priority_tag<3>{}, a)), bool>;
+        }
     //!\endcond
     constexpr bool operator()(alphabet_char_t<alph_t> const a) const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<3>{}, a)),
-            "Only overloads that are marked noexcept are picked up by seqan3::char_is_valid_for().");
-        static_assert(std::Same<bool, decltype(impl(priority_tag<3>{}, a))>,
-            "The return type of your char_is_valid_for() implementation must be 'bool'.");
-
         return impl(priority_tag<3>{}, a);
     }
 };
@@ -467,14 +438,15 @@ namespace seqan3
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
  *   1. A free function `char_is_valid_for(char_type const chr, your_type const &)` in the namespace of your
- *      type (or as `friend`). The function must be marked `noexcept` (`constexpr` is not required,
- *      but recommended) and the return type be `bool`. The value of the second argument to the function shall be
- *      ignored, it is only used to select the function via
- *      [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
+ *      type (or as `friend`).
  *   2. A free function `char_is_valid_for(char_type const chr, your_type const &)` in
- *      `namespace seqan3::adaptation`. Used only by the SeqAn library internally. The same restrictions apply as above.
- *   3. A `static` member function called `char_is_valid(char_type)` (not `char_is_valid_for`). It must
- *      be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be `bool`.
+ *      `namespace seqan3::custom`.
+ *   3. A `static` member function called `char_is_valid(char_type)` (not `char_is_valid_for`).
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type is convertible to `bool`. For 1. and 2. the value of the second argument
+ * to the function shall be ignored, it is only used to select the function via
+ * [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
  *
  * An alphabet type *may* provide one of the above. If none is provided, this function will declare every character
  * `c` as valid for whom it holds that `seqan3::to_char(seqan3::assign_char_to(c, alph_t{})) == c`, i.e. converting
@@ -491,7 +463,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 template <typename alph_t>
@@ -525,8 +497,7 @@ struct assign_char_strictly_to_fn
     decltype(auto) operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t & a) const
     {
         if (!seqan3::char_is_valid_for<alph_t>(r))
-            //TODO: instead of doing a narrowing cast here, add constructor overload for other chars?
-            throw seqan3::invalid_char_assignment{seqan3::detail::get_display_name_v<alph_t>, static_cast<char>(r)};
+            throw seqan3::invalid_char_assignment{seqan3::detail::get_display_name_v<alph_t>, r};
 
         return seqan3::assign_char_to(r, a);
     }
@@ -599,24 +570,26 @@ struct alphabet_size_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, (alphabet_size(v)                           ))    // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::adaptation::alphabet_size(v)       ))    // customisation namespace
+    SEQAN3_CPO_IMPL(1, (seqan3::custom::alphabet_size(v)           ))    // customisation namespace
     SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::alphabet_size )) // member
 
 public:
     //!\brief Operator definition.
     template <typename dummy = int> // need to make this a template to enforce deferred instantiation
     //!\cond
-        requires requires { { impl(priority_tag<2>{}, s_alph_t{}, dummy{}) }; }
+        requires requires
+        {
+            { impl(priority_tag<2>{}, s_alph_t{}, dummy{}) };
+            requires noexcept(impl(priority_tag<2>{}, s_alph_t{}, dummy{}));
+            requires std::Integral<remove_cvref_t<decltype(impl(priority_tag<2>{}, s_alph_t{}, dummy{}))>>;
+        }
     //!\endcond
     constexpr auto operator()() const noexcept
     {
-        static_assert(noexcept(impl(priority_tag<2>{}, s_alph_t{})),
-            "Only overloads that are marked noexcept are picked up by seqan3::alphabet_size.");
-        static_assert(std::Constructible<size_t, decltype(impl(priority_tag<2>{}, s_alph_t{}))>,
-            "The return type of your alphabet_size implementation must be convertible to size_t.");
+        // The following cannot be added to the list of constraints, because it is not properly deferred
+        // for incomplete types which leads to breakage.
         static_assert(SEQAN3_IS_CONSTEXPR(impl(priority_tag<2>{}, s_alph_t{})),
             "Only overloads that are marked constexpr are picked up by seqan3::alphabet_size.");
-
         return impl(priority_tag<2>{}, s_alph_t{});
     }
 };
@@ -644,14 +617,15 @@ namespace seqan3
  * It is only defined for types that provide one of the following (checked in this order):
  *
  *   1. A free function `alphabet_size(your_type const &)` in the namespace of your type (or as `friend`) that
- *      returns the size as an integral value. The function must be marked `constexpr` and `noexcept` and the return
- *      type needs to be implicitly convertible to `size_t`. The value of the argument to the function shall be ignored,
- *      it is only used to select the function via
- *      [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
- *   2. A free function `alphabet_size(your_type const &)` in `namespace seqan3::adaptation` that returns
- *      the size as an integral value. Used only by the SeqAn library internally. The same restrictions apply as above.
- *   3. A `static constexpr` data member called `alphabet_size` that is the size. It must
- *      be implicitly convertible to `size_t`.
+ *      returns the size.
+ *   2. A free function `alphabet_size(your_type const &)` in `namespace seqan3::custom` that returns
+ *      the size.
+ *   3. A `static constexpr` data member called `alphabet_size` that is the size.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` **and** `constexpr` and
+ * if the returned type models std::Integral. For 1. and 2. the value of the argument to the function shall be
+ * ignored, the argument is only used to select the function via
+ * [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
  *
  * Every (semi-)alphabet type must provide one of the above.
  *
@@ -668,13 +642,13 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point (TODO link to manual). To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 template <typename alph_t>
 //!\cond
     requires requires { { detail::adl::only::alphabet_size_fn<alph_t>{} }; } &&
-             requires { { detail::adl::only::alphabet_size_obj<alph_t>() }; }
+             requires { { detail::adl::only::alphabet_size_obj<alph_t>() }; } // ICE workarounds
 //!\endcond
 inline constexpr auto alphabet_size = detail::adl::only::alphabet_size_obj<alph_t>();
 
@@ -773,9 +747,9 @@ SEQAN3_CONCEPT Semialphabet =
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v)
+SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v, alphabet_rank_t<t> r)
 {
-    { seqan3::assign_rank_to(0, v) };
+    { seqan3::assign_rank_to(r, v) };
 };
 //!\endcond
 
@@ -872,11 +846,11 @@ SEQAN3_CONCEPT Alphabet = Semialphabet<t> && requires (t v)
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableAlphabet = Alphabet<t> && WritableSemialphabet<t> && requires (t v)
+SEQAN3_CONCEPT WritableAlphabet = Alphabet<t> && WritableSemialphabet<t> && requires (t v, alphabet_char_t<t> c)
 {
-    { seqan3::assign_char_to(0, v) };
+    { seqan3::assign_char_to(c, v) };
 
-    { seqan3::char_is_valid_for<t>(std::declval<decltype(seqan3::to_char(v))>()) };
+    { seqan3::char_is_valid_for<t>(c) };
 };
 //!\endcond
 
@@ -899,7 +873,7 @@ SEQAN3_CONCEPT WritableAlphabet = Alphabet<t> && WritableSemialphabet<t> && requ
  *
  * \details
  *
- * Delegates to seqan3::Semialphabet::to_rank.
+ * Delegates to seqan3::to_rank.
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
@@ -918,7 +892,7 @@ alphabet_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &,
  *
  * \details
  *
- * Delegates to seqan3::Semialphabet::assign_rank.
+ * Delegates to seqan3::assign_rank.
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
@@ -977,7 +951,7 @@ template <typename t>
 SEQAN3_CONCEPT WritableConstexprSemialphabet = ConstexprSemialphabet<t> && WritableSemialphabet<t> && requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
-    requires SEQAN3_IS_CONSTEXPR(seqan3::assign_rank_to(0, std::remove_reference_t<t>{}));
+    requires SEQAN3_IS_CONSTEXPR(seqan3::assign_rank_to(alphabet_rank_t<t>{}, std::remove_reference_t<t>{}));
 };
 //!\endcond
 

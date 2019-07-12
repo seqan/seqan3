@@ -15,7 +15,7 @@
 
 using namespace seqan3;
 
-//NOTE(h-2): This class is extensively tested via *_file_in. This is just a minimal test.
+//NOTE(h-2): This class is extensively tested via *_file_input. This is just a minimal test.
 
 struct fake_file_t : std::vector<int>
 {

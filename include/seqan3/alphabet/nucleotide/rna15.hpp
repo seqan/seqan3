@@ -39,11 +39,11 @@ namespace seqan3
  * This alphabet has the same internal representation as seqan3::dna15, the only difference is that it prints 'U' on
  * character conversion instead of 'T'. You can assign between values of seqan3::dna15 and seqan3::rna15.
  *
- * The alphabet may be brace initialized from the static letter members. Note that you cannot
- * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
+ * Instead initialise/assign from the character literal or use the
  * function seqan3::rna15::assign_char().
  *
- *\snippet test/snippet/alphabet/nucleotide/rna15.cpp code
+ *\include test/snippet/alphabet/nucleotide/rna15.cpp
  */
 class rna15 : public nucleotide_base<rna15, 15>
 {
@@ -72,6 +72,9 @@ public:
 
     //!\brief Allow implicit construction from dna/rna of the same size.
     constexpr rna15(dna15 const & r) noexcept
+#if SEQAN3_WORKAROUND_GCC_90897
+        requires true
+#endif
     {
         assign_rank(r.to_rank());
     }
@@ -138,7 +141,7 @@ constexpr rna15 operator""_rna15(char const c) noexcept
  *
  * You can use this string literal to easily assign to rna15_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/rna15.cpp operator""_rna15
+ * \include test/snippet/alphabet/nucleotide/rna15_literal.cpp
  *
  */
 inline rna15_vector operator""_rna15(char const * s, std::size_t n)

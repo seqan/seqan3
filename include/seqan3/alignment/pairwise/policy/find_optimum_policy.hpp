@@ -17,7 +17,7 @@
 #include <range/v3/algorithm/for_each.hpp>
 
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
-#include <seqan3/core/metafunction/deferred_crtp_base.hpp>
+#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>

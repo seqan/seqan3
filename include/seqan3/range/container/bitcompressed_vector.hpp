@@ -18,7 +18,7 @@
 
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -30,9 +30,6 @@
 
 namespace seqan3
 {
-
-// forward
-class debug_stream_type;
 
 /*!\brief A space-optimised version of std::vector that compresses multiple letters into a single byte.
  * \tparam alphabet_type The value type of the container, must satisfy seqan3::Alphabet and not be `&`.
@@ -90,16 +87,8 @@ private:
         //!\brief Befriend the base type so it can call our #on_update().
         friend base_t;
 
-        //!\brief For certain sizes sdsl::int_vector doesn't return a proxy and sdsl::int_vector_reference
-        //!       would be invalid; ranges::semiregular_t triggers this so we workaround here.
-        static uint8_t constexpr safe_bits_per_letter = (bits_per_letter ==  8 ||
-                                                         bits_per_letter == 16 ||
-                                                         bits_per_letter == 32) ? 64 : bits_per_letter;
-
-        //!\brief Type of the the internal proxy
-        using internal_proxy_type = sdsl::int_vector_reference<sdsl::int_vector<safe_bits_per_letter>>;
         //!\brief The proxy of the underlying data type; wrapped in semiregular_t, because it isn't semiregular itself.
-        ranges::semiregular_t<internal_proxy_type> internal_proxy;
+        ranges::semiregular_t<reference_t<data_type>> internal_proxy;
 
         //!\brief Update the sdsl-proxy.
         constexpr void on_update() noexcept
@@ -122,7 +111,7 @@ private:
         ~reference_proxy_type()                                                  noexcept = default; //!< Defaulted.
 
         //!\brief Initialise from internal proxy type.
-        reference_proxy_type(internal_proxy_type const & internal) noexcept :
+        reference_proxy_type(reference_t<data_type> const & internal) noexcept :
             internal_proxy{internal}
         {
             static_cast<base_t &>(*this).assign_rank(internal);
@@ -145,9 +134,7 @@ public:
     //!\brief Equals the alphabet_type.
     using value_type        = alphabet_type;
     //!\brief A proxy type that enables assignment, if the underlying data structure also provides a proxy.
-    using reference         = std::conditional_t<std::is_lvalue_reference_v<reference_t<data_type>>,
-                                                 reference_t<data_type>,
-                                                 reference_proxy_type>;
+    using reference         = reference_proxy_type;
     //!\brief Equals the alphabet_type / value_type.
     using const_reference   = alphabet_type;
     //!\brief The iterator type of this container (a random access iterator).

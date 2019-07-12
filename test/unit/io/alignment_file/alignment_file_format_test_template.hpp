@@ -337,7 +337,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 
 TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
 {
-    using dummy_type = gap_decorator_anchor_set<decltype(view::repeat_n(dna5{}, size_t{}) |
+    using dummy_type = gap_decorator<decltype(view::repeat_n(dna5{}, size_t{}) |
                                                          std::view::transform(detail::access_restrictor_fn{}))>;
     std::optional<int32_t> ref_id_in;
     std::pair<dummy_type, std::vector<gapped<dna5>>> alignment2;
@@ -418,7 +418,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
 
 TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_information)
 {
-    using dummy_type = gap_decorator_anchor_set<decltype(view::repeat_n(dna5{}, size_t{}) |
+    using dummy_type = gap_decorator<decltype(view::repeat_n(dna5{}, size_t{}) |
                                                          std::view::transform(detail::access_restrictor_fn{}))>;
     std::optional<int32_t> ref_id_in;
     std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
@@ -461,6 +461,29 @@ TYPED_TEST_P(alignment_file_write, output_concept)
     EXPECT_TRUE((AlignmentFileOutputFormat<TypeParam>));
 }
 
+TYPED_TEST_P(alignment_file_write, write_empty_members)
+{
+    detail::alignment_file_output_format<TypeParam> format;
+
+    std::ostringstream ostream;
+    {
+        alignment_file_header header{std::vector<std::string>{this->ref_id}};
+        header.ref_id_info.push_back({this->ref_seq.size(), ""});
+        header.ref_dict[this->ref_id] = 0;
+
+        using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
+        using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
+
+        ASSERT_NO_THROW(format.write(ostream, output_options, header, std::string_view{}, std::string_view{},
+                                     std::string_view{}, 0, std::string_view{}, std::string_view{},
+                                     std::optional<int32_t>{std::nullopt}, default_align_t{}, 0, 0,
+                                     default_mate_t{}, sam_tag_dictionary{}, 0, 0));
+    }
+
+    ostream.flush();
+    EXPECT_EQ(ostream.str(), this->empty_input);
+}
+
 TYPED_TEST_P(alignment_file_write, default_options_all_members_specified)
 {
     detail::alignment_file_output_format<TypeParam> format;
@@ -479,6 +502,47 @@ TYPED_TEST_P(alignment_file_write, default_options_all_members_specified)
         ASSERT_NO_THROW(format.write(ostream, output_options, header, this->seqs[i], this->quals[i], this->ids[i],
                                      this->offsets[i], std::string{}, 0, this->ref_offsets[i], this->alignments[i],
                                      this->flags[i], this->mapqs[i], this->mates[i], this->tag_dicts[i], 0, 0));
+
+    ostream.flush();
+
+    EXPECT_EQ(ostream.str(), this->simple_three_reads_output);
+}
+
+TYPED_TEST_P(alignment_file_write, write_ref_id_with_different_types)
+{
+    detail::alignment_file_output_format<TypeParam> format;
+
+    std::ostringstream ostream;
+
+    alignment_file_header header{std::vector<std::string>{this->ref_id}};
+    header.ref_id_info.push_back({this->ref_seq.size(), ""});
+    header.ref_dict[this->ref_id] = 0;
+
+    this->tag_dicts[0]["NM"_tag] = 7;
+    this->tag_dicts[0]["AS"_tag] = 2;
+    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
+
+    // header ref_id_type is std::string
+
+    // std::string
+    ASSERT_NO_THROW(format.write(ostream, output_options, header, this->seqs[0], this->quals[0], this->ids[0],
+                                 this->offsets[0], std::string{},
+    /*----------------------->*/ this->ref_id,
+                                 this->ref_offsets[0], this->alignments[0],
+                                 this->flags[0], this->mapqs[0], this->mates[0], this->tag_dicts[0], 0, 0));
+    // std::string_view
+    ASSERT_NO_THROW(format.write(ostream, output_options, header, this->seqs[1], this->quals[1], this->ids[1],
+                                 this->offsets[1], std::string{},
+    /*----------------------->*/ std::string_view{this->ref_id},
+                                 this->ref_offsets[1], this->alignments[1],
+                                 this->flags[1], this->mapqs[1], this->mates[1], this->tag_dicts[1], 0, 0));
+
+    // view on string
+    ASSERT_NO_THROW(format.write(ostream, output_options, header, this->seqs[2], this->quals[2], this->ids[2],
+                                 this->offsets[2], std::string{},
+    /*----------------------->*/ this->ref_id | view::take(20),
+                                 this->ref_offsets[2], this->alignments[2],
+                                 this->flags[2], this->mapqs[2], this->mates[2], this->tag_dicts[2], 0, 0));
 
     ostream.flush();
 
@@ -595,8 +659,10 @@ REGISTER_TYPED_TEST_CASE_P(alignment_file_read,
                            format_error_ref_id_not_in_reference_information);
 
 REGISTER_TYPED_TEST_CASE_P(alignment_file_write,
+                           write_empty_members,
                            output_concept,
                            default_options_all_members_specified,
+                           write_ref_id_with_different_types,
                            with_header,
                            special_cases,
                            format_errors);

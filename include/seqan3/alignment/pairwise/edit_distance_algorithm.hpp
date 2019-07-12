@@ -70,7 +70,11 @@ public:
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
     constexpr auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
     {
-        pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, traits_t{}};
+        using edit_traits = default_edit_distance_trait_type<first_range_t,
+                                                             second_range_t,
+                                                             config_t,
+                                                             typename traits_t::is_semi_global_type>;
+        edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, edit_traits{}};
         return algo(idx);
     }
 

@@ -14,7 +14,9 @@
 
 /*!\defgroup sequence Sequence File
  * \ingroup io
- * \brief \todo document at a later point in time
+ * \brief Provides files and formats for handling sequence data.
+ * \see \ref io
+ * \see \ref tutorial_sequence_file
  */
 
 #include <seqan3/io/sequence_file/format_fasta.hpp>

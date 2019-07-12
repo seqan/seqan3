@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains seqan3::detail::default_simd_length and seqan3::detail::default_simd_max_length
+ * \brief Provides seqan3::detail::default_simd_length and seqan3::detail::default_simd_max_length
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -31,7 +31,7 @@ namespace seqan3::detail
 template <template <typename, size_t> typename simd_backend_t>
 constexpr auto default_simd_max_length = 0u;
 
-/*!\brief seqan3::default_simd_length returns the default *length* depending
+/*!\brief seqan3::detail::default_simd_length returns the default *length* depending
  * on the given *scalar_t* type, which is used in seqan3::simd::simd_type.
  * \ingroup simd
  * \tparam scalar_t The underlying type of a simd vector

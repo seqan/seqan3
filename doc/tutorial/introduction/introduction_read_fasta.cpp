@@ -11,7 +11,7 @@ int main(int argc, char * argv[])
 {
     // Receive the filename as program argument.
     std::string filename{};
-    seqan3::argument_parser parser("My first program", argc, argv);
+    seqan3::argument_parser parser("My-first-program", argc, argv);
     parser.add_positional_option(filename, "The filename of the file to read.");
     try
     {

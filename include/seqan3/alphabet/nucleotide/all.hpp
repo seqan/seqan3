@@ -21,10 +21,12 @@
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 
 /*!\defgroup nucleotide Nucleotide
- * \brief Contains the different DNA and RNA alphabet types.
+ * \brief Provides the different DNA and RNA alphabet types.
  * \ingroup alphabet
  *
- * \par Introduction
+ * \details
+ *
+ * ### Introduction
  *
  * Nucleotide sequences are at the core of most bioinformatic data processing and while it is possible
  * to represent them in a regular std::string, it makes sense to have specialised data structures in most cases.
@@ -66,7 +68,7 @@
  *   5. to actually save space from using smaller alphabets, you need a compressed container (e.g.
  *      seqan3::bitcompressed_vector)
  *
- * \par Printing and conversion to char
+ * ###Printing and conversion to char
  *
  * As with all alphabets in SeqAn3, none of the nucleotide alphabets can be directly converted to char or printed.
  * You need to explicitly call seqan3::to_char to convert to char. The only exception is seqan3::debug_stream
@@ -75,7 +77,7 @@
  * `T` and `U` are represented by the same rank and you cannot differentiate between them. The only difference between
  * e.g. seqan3::dna4 and seqan3::rna4 is the output when calling to_char().
  *
- * \par Assignment and conversions between nucleotide types
+ * ###Assignment and conversions between nucleotide types
  *
  *   * Nucleotide types defined here are **implicitly** convertible to each other if they have the same size
  *     (e.g. seqan3::dna4 ↔ seqan3::rna4).
@@ -95,19 +97,19 @@
  * `char` values that are none of the IUPAC symbols, e.g. 'P', are always converted to the equivalent of assigning 'N',
  * i.e. they result in 'A' for seqan3::dna4 and seqan3::rna4, and in 'N' for the other alphabets.
  *
- * \par Literals
+ * ###Literals
  *
- * To avoid writing `dna4{}.assign_char('C')` every time, you may instead use the literal `'C'_dna4`.
+ * To avoid writing ``dna4{}.assign_char('C')`` every time, you may instead use the literal ``'C'_dna4``.
  * All nucleotide types defined here have character literals and also string literals which return a vector of the
  * respective type.
  *
- * \par Concept
+ * ###Concept
  *
  * The nucleotide submodule defines seqan3::NucleotideAlphabet which encompasses all the alphabets defined in the
  * submodule and refines seqan3::Alphabet. The only additional requirement is that their values can be
  * complemented, see below.
  *
- * \par Complement
+ * ###Complement
  *
  * | Letter   | Description            | Complement |
  * |:--------:|------------------------|:----------:|

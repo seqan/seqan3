@@ -37,8 +37,8 @@ static auto dna4_01 = []()
         -5,
         "AC---CGGTT",
         "ACGTACG-TA",
-        alignment_coordinate{column_index_type{8u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -86,7 +86,7 @@ static auto dna4_01T = []()
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
         std::vector
         {
         //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
@@ -147,8 +147,8 @@ static auto dna4_02 = []()
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{7u}, row_index_type{8u}},
+        alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{8u}, row_index_type{9u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  A,  A,  A,  C,  C,  G,  G,  T,  T,
@@ -165,7 +165,7 @@ static auto dna4_02 = []()
         },
         std::vector
         {
-        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
+        //     e,  A,  A,  C,  C,  G,  G,  T,  A,  A,  A,  C,  C,  G,  G,  T,  T,
         /*e*/NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,
         /*A*/U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,
         /*C*/U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,U  ,DU ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,
@@ -177,6 +177,50 @@ static auto dna4_02 = []()
         /*T*/U  ,U  ,U  ,U  ,DU ,U  ,D  ,D  ,UL ,DU ,DU ,DU ,DU ,U  ,D  ,D  ,DL ,
         /*A*/U  ,DU ,DU ,U  ,DU ,U  ,DU ,DU ,D  ,DL ,D  ,DUL,DU ,U  ,DU ,DU ,D
         }
+    };
+}();
+
+static auto dna4_02_s10u_15u = []()
+{
+    return alignment_fixture
+    {
+        // score: 4 (3 deletions, 1 insertion)
+        // alignment:
+        // AAC---CGGTAAAC---CGGTT
+        //  ||   || ||
+        // -ACGTACG-TA-----------
+        "AACCGGTAAACCGG"_dna4,
+        "ACGTACGTA"_dna4,
+        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        -4,
+        "AC---CGGTA",
+        "ACGTACG-TA",
+        alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{8u}, row_index_type{9u}},
+        dna4_02.score_matrix().sub_matrix(10u, 15u),
+        dna4_02.trace_matrix().sub_matrix(10u, 15u)
+    };
+}();
+
+static auto dna4_02_s3u_15u = []()
+{
+    return alignment_fixture
+    {
+        // score: 0 (0 deletions, 0 insertion)
+        // alignment:
+        // AACCGGTAAACCGGTT
+        //          ||
+        // ---------AC-----
+        "AACCGGTAAACCGG"_dna4,
+        "AC"_dna4,
+        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        0,
+        "AC",
+        "AC",
+        alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{11u}, row_index_type{2u}},
+        dna4_02.score_matrix().sub_matrix(3u, 15u),
+        dna4_02.trace_matrix().sub_matrix(3u, 15u)
     };
 }();
 
@@ -195,8 +239,8 @@ static auto aa27_01 = []()
         -5,
         "UW---WRRII",
         "UWRIUWR-IU",
-        alignment_coordinate{column_index_type{8u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
         //     e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
@@ -244,7 +288,7 @@ static auto aa27_01T = []()
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
         std::vector
         {
         //     e,  U,  W,  R,  I,  U,  W,  R,  I,  U

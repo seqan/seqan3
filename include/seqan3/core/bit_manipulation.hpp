@@ -15,6 +15,8 @@
 
 #include <meta/meta.hpp>
 
+#include <sdsl/bits.hpp>
+
 #include <climits>
 #include <utility>
 
@@ -77,7 +79,127 @@ constexpr size_t next_power_of_two(size_t n)
     return n + 1;
 }
 
-/*!\brief Returns the position of the most significant bit (counting from right to left).
+/*!\brief Returns the number of 1-bits.
+* \ingroup core
+*
+* \param[in] n An unsigned integer.
+*
+* \returns The number of 1-bits.
+*
+* ### Example
+*
+* \include test/snippet/core/detail/popcount.cpp
+*
+* ### Exception
+*
+* No-throw guarantee.
+*
+* ### Thread-safety
+*
+* Thread safe.
+*
+* ### Complexity
+*
+* Constant.
+*/
+template <std::UnsignedIntegral unsigned_t>
+constexpr uint8_t popcount(unsigned_t const n) noexcept
+{
+#if defined(__GNUC__)
+    if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
+        return __builtin_popcountll(n);
+    else if constexpr (sizeof(unsigned_t) == sizeof(unsigned long))
+        return __builtin_popcountl(n);
+    else
+        return __builtin_popcount(n);
+#else
+    return sdsl::bits::cnt(n);
+#endif
+}
+
+/*!\brief Returns the number of leading 0-bits, starting at the most significant bit position.
+* \ingroup core
+*
+* \param[in] n An unsigned integer.
+*
+* \attention *n = 0* is a special case and is undefined behaviour.
+*
+* \returns The number of leading 0-bits.
+*
+* ### Example
+*
+* \include test/snippet/core/detail/count_leading_zeros.cpp
+*
+* ### Exception
+*
+* No-throw guarantee.
+*
+* ### Thread-safety
+*
+* Thread safe.
+*
+* ### Complexity
+*
+* Constant.
+*/
+template <std::UnsignedIntegral unsigned_t>
+constexpr uint8_t count_leading_zeros(unsigned_t const n) noexcept
+{
+    assert(n > 0); // n == 0 might have undefined behaviour
+#if defined(__GNUC__)
+    if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
+        return __builtin_clzll(n);
+    else if constexpr (sizeof(unsigned_t) == sizeof(unsigned long))
+        return __builtin_clzl(n);
+    else
+        return __builtin_clz(n) + sizeof_bits<unsigned_t> - sizeof_bits<unsigned int>;
+#else
+    return sizeof_bits<unsigned_t> - sdsl::bits::hi(n) - 1;
+#endif
+}
+
+/*!\brief Returns the number of trailing 0-bits, starting at the least significant bit position.
+ * \ingroup core
+ *
+ * \param[in] n An unsigned integer.
+ *
+ * \attention *n = 0* is a special case and is undefined behaviour.
+ *
+ * \returns The number of trailing 0-bits.
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/detail/count_trailing_zeros.cpp
+ *
+ * ### Exception
+ *
+ * No-throw guarantee.
+ *
+ * ### Thread-safety
+ *
+ * Thread safe.
+ *
+ * ### Complexity
+ *
+ * Constant.
+ */
+template <std::UnsignedIntegral unsigned_t>
+constexpr uint8_t count_trailing_zeros(unsigned_t const n) noexcept
+{
+    assert(n > 0); // n == 0 might have undefined behaviour
+#if defined(__GNUC__)
+    if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
+        return __builtin_ctzll(n);
+    else if constexpr (sizeof(unsigned_t) == sizeof(unsigned long))
+        return __builtin_ctzl(n);
+    else
+        return __builtin_ctz(n);
+#else
+    return sdsl::bits::lo(n);
+#endif
+}
+
+/*!\brief Returns the position (0-based) of the most significant bit.
  * \ingroup core
  *
  * \param[in] n An unsigned integer.
@@ -85,22 +207,31 @@ constexpr size_t next_power_of_two(size_t n)
  * \attention *n = 0* is a special case and is undefined behaviour.
  *
  * \returns The position of the most significant bit.
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/detail/most_significant_bit_set.cpp
+ *
+ * ### Exception
+ *
+ * No-throw guarantee.
+ *
+ * ### Thread-safety
+ *
+ * Thread safe.
+ *
+ * ### Complexity
+ *
+ * Constant.
  */
 template <std::UnsignedIntegral unsigned_t>
-constexpr uint8_t bit_scan_reverse(unsigned_t n)
+constexpr uint8_t most_significant_bit_set(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
 #if defined(__GNUC__)
-    if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
-        return sizeof_bits<unsigned long long> - __builtin_clzll(n) - 1;
-    else if constexpr (sizeof(unsigned_t) == sizeof(unsigned long))
-        return sizeof_bits<unsigned long> - __builtin_clzl(n) - 1;
-    else
-        return sizeof_bits<unsigned> - __builtin_clz(n) - 1;
+    return sizeof_bits<unsigned_t> - count_leading_zeros(n) - 1;
 #else
-    uint8_t i = 0;
-    for (; n != 0; n >>= 1, ++i);
-    return i - 1;
+    return sdsl::bits::hi(n);
 #endif
 }
 

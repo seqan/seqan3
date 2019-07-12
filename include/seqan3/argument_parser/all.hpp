@@ -32,7 +32,7 @@
  * # Argument Validation
  *
  * The SeqAn 3 Argument Parser offers a validation mechanism for (positional_)options
- * via callables. You can pass any functor that fulfils the seqan3::validator_concept
+ * via callables. You can pass any functor that fulfils the seqan3::Validator
  * and takes the value passed to the add_(positional_)option function call as
  * a parameter. We provide some commonly used functor that might come in handy:
  *

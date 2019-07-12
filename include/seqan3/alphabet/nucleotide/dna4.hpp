@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains seqan3::dna4, container aliases and string literals.
+ * \brief Provides seqan3::dna4, container aliases and string literals.
  */
 
 #pragma once
@@ -15,7 +15,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/nucleotide_base.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 // ------------------------------------------------------------------
 // dna4
@@ -39,11 +39,11 @@ class rna4;
  * Note that you can assign 'U' as a character to dna4 and it will silently
  * be converted to 'T'.
  *
- * The alphabet may be brace initialized from the static letter members. Note that you cannot
- * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
+ * Instead initialise/assign from the character literal or use the
  * function seqan3::dna4::assign_char().
  *
- * \snippet test/snippet/alphabet/nucleotide/dna4.cpp code
+ * \include test/snippet/alphabet/nucleotide/dna4.cpp
  */
 class dna4 : public nucleotide_base<dna4, 4>
 {
@@ -160,7 +160,7 @@ constexpr dna4 operator""_dna4(char const c) noexcept
  *
  * You can use this string literal to easily assign to dna4_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/dna4.cpp operator""_dna4
+ * \include test/snippet/alphabet/nucleotide/dna4_literal.cpp
  *
  */
 inline dna4_vector operator""_dna4(char const * s, std::size_t n)

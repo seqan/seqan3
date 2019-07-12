@@ -9,7 +9,7 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides alphabet adaptations for standard uint types.
  * \details
- * This file provides function and metafunction overloads so that the following types
+ * This file provides function and type trait overloads so that the following types
  * fulfil the seqan3::Alphabet:
  *   * `uint8_t`
  *   * `uint16_t`
@@ -43,7 +43,7 @@ constexpr bool is_uint_adaptation_v = std::Same<type2, uint8_t>  ||
 //!\}
 } // namespace seqan3::detail
 
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 
 /*!\name Free function wrappers for the uint alphabet adaptation
@@ -130,4 +130,4 @@ constexpr uint_type & assign_rank_to(uint_type const intgr2, uint_type & intgr) 
 }
 
 //!\}
-} // namespace seqan3::adaptation
+} // namespace seqan3::custom

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains the format_parse class.
+ * \brief Provides the format_parse class.
  */
 
 #pragma once
@@ -58,18 +58,15 @@ public:
     format_parse & operator=(format_parse const & pf) = default; //!< Defaulted.
     format_parse(format_parse &&) = default;                     //!< Defaulted.
     format_parse & operator=(format_parse &&) = default;         //!< Defaulted.
+    ~format_parse() = default;                                   //!< Defaulted.
 
     /*!\brief The constructor of the parse format.
      * \param[in] argc_ The number of command line arguments.
      * \param[in] argv_ The command line arguments to parse.
      */
-    format_parse(int const argc_, char const * const * const  argv_) :
-        argc(argc_ - 1)
-    {
-        init(argc_, argv_);
-    }
-
-    ~format_parse() = default;
+    format_parse(int const argc_, std::vector<std::string> && argv_) :
+        argc{argc_ - 1}, argv{std::move(argv_)}
+    {}
     //!\}
 
     /*!\brief Adds an seqan3::detail::get_option call to be evaluated later on.
@@ -80,7 +77,7 @@ public:
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  short_id  The short identifier for the option (e.g. 'i').
      * \param[in]  long_id   The long identifier for the option (e.g. "integer").
-     * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
+     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
      * \throws seqan3::parser_design_error
@@ -183,22 +180,6 @@ public:
     }
 
 private:
-    /*!\brief Initializes the format_parse on construction.
-     *
-     * \param[in] argc_ Number of command line arguments.
-     * \param[in] argv_ Vector of command line arguments.
-     *
-     * \details
-     * Adds all command line arguments to the member format_parse::argv,
-     * but splits all values (options) containing an equality sign.
-     */
-    void init(int argc_, char const * const * const  argv_)
-    {
-        argv.resize(argc_ - 1); // -1 because of the binary name
-
-        for(int i = 1; i < argc_; ++i) // start at 1 to skip binary name
-            argv.push_back(argv_[i]);
-    }
 
     /*!\brief Appends a double dash to a long identifier and returns it.
     * \param[in] long_id The name of the long identifier.
@@ -598,7 +579,7 @@ private:
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  short_id  The short identifier for the option (e.g. 'i').
      * \param[in]  long_id   The long identifier for the option (e.g. "integer").
-     * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
+     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
      * \throws seqan3::option_declared_multiple_times
@@ -611,7 +592,7 @@ private:
      * - checks if the option is required but not set,
      * - retrieves any value found by the short or long identifier,
      * - throws on (mis)use of both identifiers for non-container type values,
-     * - re-throws the validation exception with appended option information
+     * - re-throws the validation exception with appended option information.
      */
     template <typename option_type, typename validator_type>
     void get_option(option_type & value,
@@ -687,7 +668,7 @@ private:
      * - retrieves the next(no container type) or all (container type),
      *   remaining non empty value/s in argv,
      * - re-throws the value cast exception with appended positional option information,
-     * - and re-throws the validation exception with appended positional option information
+     * - and re-throws the validation exception with appended positional option information.
      */
     template <typename option_type, typename validator_type>
     void get_positional_option(option_type & value,
@@ -756,10 +737,10 @@ private:
     std::vector<std::function<void()>> positional_option_calls;
     //!\brief Keeps track of the number of specified positional options.
     unsigned positional_option_count{0};
-    //!\brief Vector of command line arguments.
-    std::vector<std::string> argv;
     //!\brief Number of command line arguments.
     int argc;
+    //!\brief Vector of command line arguments.
+    std::vector<std::string> argv;
     //!\brief Artificial end of argv if \-- was seen.
     std::vector<std::string>::iterator end_of_options_it;
 };

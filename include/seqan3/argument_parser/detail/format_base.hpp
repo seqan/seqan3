@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains the format_base struct containing all helper functions
+ * \brief Provides the format_base struct containing all helper functions
  *        that are needed in all formats.
  */
 
@@ -231,7 +231,7 @@ public:
      * \param[in]  short_id  The short identifier for the option (e.g. 'i').
      * \param[in]  long_id   The long identifier for the option (e.g. "integer").
      * \param[in]  desc      The description of the option.
-     * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
+     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      */
     template <typename option_type, typename validator_type>
@@ -257,7 +257,7 @@ public:
      * \param[in]  short_id The short identifier for the flag (e.g. 'i').
      * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      * \param[in]  desc     The description of the flag.
-     * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
+     * \param[in]  spec     Advanced flag specification, see seqan3::option_spec.
      */
     void add_flag(bool & /*value*/,
                   char const short_id,

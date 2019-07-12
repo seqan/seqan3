@@ -1,32 +1,28 @@
 #include <vector>
+
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 
-using namespace seqan3;
-
 int main()
 {
+    using seqan3::operator""_dna4;
 
-// TODO(comments): outputs [A, A, G] instead of AAG
+    std::vector<seqan3::dna4> genome{"AATAATAAC"_dna4};
+    seqan3::fm_index index{genome};                                 // build the index
 
-//! [cycle]
-std::vector<dna4> genome{"AATAATAAC"_dna4};
-fm_index index{genome};              // build the index
+    auto cur = index.begin();                                       // create a cursor
+    // cur.cycle_back();                                            // cycle_back on begin() is undefined behaviour!
+    cur.extend_right("AAC"_dna4);                                   // search the sequence "AAC"
+    seqan3::debug_stream << cur.path_label(genome) << '\n';         // outputs "AAC"
+    seqan3::debug_stream << cur.last_rank() << '\n';                // outputs 1
 
-auto cur = index.begin();             // create an cursor
-// cur.cycle_back();                  // cycle_back on begin() is undefined behaviour!
-cur.extend_right("AAC"_dna4);         // search the sequence "AAC"
-debug_stream << cur.query() << '\n';     // outputs "AAC"
-debug_stream << cur.last_char() << '\n'; // outputs 'C'
+    cur.cycle_back();                                               // search the sequence "AAT"
+    seqan3::debug_stream << cur.path_label(genome) << '\n';         // outputs "AAT"
+    seqan3::debug_stream << cur.last_rank() << '\n';                // outputs 3
 
-cur.cycle_back();                     // search the sequence "AAT"
-debug_stream << cur.query() << '\n';     // outputs "AAT"
-debug_stream << cur.last_char() << '\n'; // outputs 'T'
-
-cur.cycle_back();                     // "cur" doesn't change because the rightmost char is already the largest dna4 char.
-debug_stream << cur.query() << '\n';     // outputs "AAT"
-debug_stream << cur.last_char() << '\n'; // outputs 'T'
-//! [cycle]
-
-return 0;
+    cur.cycle_back();                                               // "cur" doesn't change because the rightmost char
+                                                                    // is already the largest dna4 char.
+    seqan3::debug_stream << cur.path_label(genome) << '\n';         // outputs "AAT"
+    seqan3::debug_stream << cur.last_rank() << '\n';                // outputs 3
 }

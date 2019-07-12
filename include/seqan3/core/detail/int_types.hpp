@@ -13,7 +13,7 @@
 #include <seqan3/std/concepts>
 
 /*!\file
- * \brief Contains metaprogramming utilities for integer types.
+ * \brief Provides metaprogramming utilities for integer types.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 

@@ -19,7 +19,9 @@
  * \brief Provides data structures joining multiple alphabets into a single alphabet.
  * \ingroup alphabet
  *
- * \par Introduction
+ * \details
+ *
+ * ### Introduction
  *
  * This module provides various class templates that allow you to combine existing alphabets into new ones. For example,
  * you can add new characters to existing alphabets by using seqan3::alphabet_variant or combine alphabets with quality

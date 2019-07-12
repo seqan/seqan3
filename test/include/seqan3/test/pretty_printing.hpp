@@ -6,13 +6,15 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains an hacky overload for the googletest PrintTo function.
+ * \brief Provides an hacky overload for the googletest PrintTo function.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
-#include<seqan3/core/debug_stream.hpp>
+#include <ios>
+
+#include <seqan3/core/debug_stream.hpp>
 
 namespace seqan3
 {
@@ -29,6 +31,14 @@ void PrintTo (t const & v, std::ostream * out)
 //!\endcond
 
 } // namespace seqan3
+
+namespace std
+{
+
+//!\brief Overload for the googletest PrintTo function that always delegates to our debug_stream.
+using ::seqan3::PrintTo;
+
+} // namespace seqan3::detail
 
 namespace seqan3::detail
 {

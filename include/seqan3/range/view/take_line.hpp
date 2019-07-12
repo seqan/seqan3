@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/view/take_until.hpp>
 
 // ============================================================================

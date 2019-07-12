@@ -10,8 +10,10 @@
  * \brief Meta-header for the FM index module.
  *
  * \defgroup submodule_fm_index FM Index
+ * \brief Provides seqan3:fm_index and seqan3:bi_fm_index as well as respective cursors.
  * \ingroup search
  *
+ * \details
  * # FM Indices
  *
  * FM indices are text indices similar to suffix trees or suffix arrays which are based on the Burrow Wheeler
@@ -30,7 +32,7 @@
  * and affix trees, i.e. a combination of suffix and prefix trees being able to search a pattern from left to
  * right, right to left and character by character in any arbitrary order). Roughly speaking bidirectional
  * FM indices are more powerful for approximate string matching at the cost of a higher space consumption
- * \todo (between a factor of X and Y depending on the configuration).
+ * (between a factor of 5 and 9 of the input size depending on the configuration).
  *
  * # FM Index Cursors
  *

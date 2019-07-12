@@ -14,7 +14,7 @@
 
 #include <utility>
 
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
@@ -24,79 +24,66 @@
 namespace seqan3
 {
 
+//!\cond
+SEQAN3_DEPRECATED_310
+void bi_fm_index_deprecation(bool);
+
+template <typename t>
+void bi_fm_index_deprecation(t);
+//!\endcond
+
 /*!\addtogroup submodule_fm_index
  * \{
  */
 
-/*!\brief The default Bidirectional FM Index Configuration.
- *
- * \details
- *
- * \todo write me
- *
- */
-struct bi_fm_index_default_traits
-{
-    //!\brief Type of the underlying forward SDSL index.
-    using fm_index_traits = fm_index_default_traits;
-
-    //!\brief Type of the underlying reverse SDSL index.
-    using rev_fm_index_traits = fm_index_default_traits; // TODO: trait object without sampling.
-};
-
 /*!\brief The SeqAn Bidirectional FM Index
  * \implements seqan3::BiFmIndex
- * \tparam text_t The type of the text to be indexed; must model std::ranges::RandomAccessRange.
- * \tparam bi_fm_index_traits The traits determining the implementation of the underlying SDSL indices;
-                              must model seqan3::BiFmIndexTraits.
+ * \tparam is_collection    Indicates whether this index works on a text collection or a single text.
+ *                          See seqan3::text_layout.
+ * \tparam sdsl_index_type_ The type of the underlying SDSL index, must model seqan3::SdslIndex.
  * \details
  *
- * \todo write me
+ * The seqan3::bi_fm_index is a fast and space-efficient bidirectional string index to search strings and
+ * collections of strings.
+ * In general, we recommend to favour the seqan3::bi_fm_index over the seqan3::fm_index if you want to allow multiple errors when
+ * searching.
+ *
+ * ### General information
+ *
+ * Here is a short example on how to build an index and search a pattern using an cursor. Please note that there is a
+ * very powerful search module with a high-level interface seqan3::search that encapsulates the use of cursors.
+ *
+ * \include test/snippet/search/bi_fm_index.cpp
+ *
+ * \attention When building an index for a **single text** over any alphabet, the symbol with rank 255 is reserved
+ *            and may not occur in the text.
+ *
+ * Here is an example using a collection of strings (e.g. a genome with multiple chromosomes or a protein database):
+ *
+ * \include test/snippet/search/bi_fm_index_collection.cpp
+ *
+ * \attention When building an index for a **text collection** over any alphabet, the symbols with rank 254 and 255
+ *            are reserved and may not be used in the text.
+ *
+ * \deprecated Use seqan3::text_layout to indicate single texts and text collections. The use of bool is deprecated.
  */
-template <std::ranges::RandomAccessRange text_t, BiFmIndexTraits index_traits_t = bi_fm_index_default_traits>
-//!\cond
-    requires Semialphabet<innermost_value_type_t<text_t>> &&
-             std::Same<alphabet_rank_t<innermost_value_type_t<text_t>>, uint8_t>
-//!\endcond
+template <auto is_collection = text_layout::single, detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
 class bi_fm_index
 {
 protected:
-    //!\privatesection
-
-    //!\brief Pointer to the indexed text.
-    text_t const * text = nullptr;
-
-public:
-
-    static_assert(dimension_v<text_t> == 1 || dimension_v<text_t> == 2,
-                  "Only texts or collections of texts can be indexed.");
-
+    //!\brief The alphabet size of the text.
+    size_t sigma{0};
     //!\brief Indicates whether index is built over a collection.
-    static bool constexpr is_collection = dimension_v<text_t> == 2;
-
-    /*!\name Text types
-     * \{
-     */
-    //!\brief The type of the forward indexed text.
-    using text_type = text_t;
-    //!\brief The type of the forward indexed text.
-    using rev_text_type = std::conditional_t<is_collection,
-                                             decltype(*text | view::deep{std::view::reverse} | view::deep{view::persist}
-                                                            | std::view::reverse),
-                                             decltype(*text | std::view::reverse)>;
-    //!\}
-
-protected:
-    //!\privatesection
+    static constexpr bool is_collection_{is_collection};
 
     /*!\name Index types
      * \{
      */
     //!\brief The type of the underlying SDSL index for the original text.
-    using sdsl_index_type = typename index_traits_t::fm_index_traits::sdsl_index_type;
+    using sdsl_index_type = sdsl_index_type_;
 
     //!\brief The type of the underlying SDSL index for the reversed text.
-    using rev_sdsl_index_type = typename index_traits_t::rev_fm_index_traits::sdsl_index_type;
+    using rev_sdsl_index_type = sdsl_index_type_;
 
     /*!\brief The type of the reduced alphabet type. (The reduced alphabet might be smaller than the original alphabet
      *        in case not all possible characters occur in the indexed text.)
@@ -107,15 +94,11 @@ protected:
     using sdsl_sigma_type = typename sdsl_index_type::alphabet_type::sigma_type;
 
     //!\brief The type of the underlying FM index for the original text.
-    using fm_index_type = fm_index<text_t, typename index_traits_t::fm_index_traits>;
+    using fm_index_type = fm_index<text_layout{is_collection_}, sdsl_index_type>;
 
-    //!\brief The type of the underlying FM index for the reversed text.
-    using rev_fm_index_type = fm_index<rev_text_type, typename index_traits_t::rev_fm_index_traits>;
+    //!\brief The type of the underlying FM index for the reversed text.\if DEV \todo Change sampling behaviour. \endif
+    using rev_fm_index_type = fm_index<text_layout{is_collection_}, sdsl_index_type>;
     //!\}
-
-    //!\brief Access to a reversed view of the text. Needed when a unidirectional cursor on the reversed text is
-    //        constructed from the bidirectional index.
-    rev_text_type rev_text;
 
     //!\brief Underlying FM index for the original text.
     fm_index_type fwd_fm;
@@ -123,33 +106,28 @@ protected:
     //!\brief Underlying FM index for the reversed text.
     rev_fm_index_type rev_fm;
 
-public:
+    //!\cond
+    using unused_t [[maybe_unused]] = decltype(bi_fm_index_deprecation(is_collection));
+    //!\endcond
 
+public:
     /*!\name Text types
      * \{
      */
-    //!\brief The type of the underlying character of text_type.
-    using char_type = innermost_value_type_t<text_t>;
     //!\brief Type for representing positions in the indexed text.
     using size_type = typename sdsl_index_type::size_type;
     //!\}
-
-    //!\brief The index traits object.
-    using index_traits = index_traits_t;
 
     /*!\name Cursor types
      * \{
      */
     //!\brief The type of the bidirectional cursor.
-    using cursor_type = bi_fm_index_cursor<bi_fm_index<text_t, index_traits_t>>;
+    using cursor_type = bi_fm_index_cursor<bi_fm_index<is_collection, sdsl_index_type>>;
     //!\brief The type of the unidirectional cursor on the original text.
     using fwd_cursor_type = fm_index_cursor<fm_index_type>;
     //!\brief The type of the unidirectional cursor on the reversed text.
     using rev_cursor_type = fm_index_cursor<rev_fm_index_type>;
     //!\}
-
-    template <typename bi_fm_index_t>
-    friend class bi_fm_index_cursor;
 
     template <typename fm_index_t>
     friend class fm_index_cursor;
@@ -157,80 +135,91 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    bi_fm_index() = default;                                //!< Default constructor.
-    bi_fm_index(bi_fm_index const &) = default;             //!< Copy constructor.
-    bi_fm_index & operator=(bi_fm_index const &) = default; //!< Copy assignment.
-    bi_fm_index(bi_fm_index &&) = default;                  //!< Move constructor.
-    bi_fm_index & operator=(bi_fm_index &&) = default;      //!< Move assignment.
-    ~bi_fm_index() = default;                               //!< Destructor.
+    bi_fm_index() = default;                                //!< Defaulted.
+    bi_fm_index(bi_fm_index const &) = default;             //!< Defaulted.
+    bi_fm_index & operator=(bi_fm_index const &) = default; //!< Defaulted.
+    bi_fm_index(bi_fm_index &&) = default;                  //!< Defaulted.
+    bi_fm_index & operator=(bi_fm_index &&) = default;      //!< Defaulted.
+    ~bi_fm_index() = default;                               //!< Defaulted.
 
-    /*!\brief Constructor that immediately constructs the index given a range.
-     *        The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.
-     * \tparam text_t The type of range to construct from; must model std::ranges::RandomAccessRange.
+    /*!\brief Constructor that immediately constructs the index given a range. The range cannot be empty.
+     * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
      * \param[in] text The text to construct from.
      *
      * ### Complexity
      *
-     * \todo At least linear.
+     * \if DEV \todo \endif At least linear.
      */
-    bi_fm_index(text_t const & text)
+    template <std::ranges::Range text_t>
+    bi_fm_index(text_t && text)
     {
-        construct(text);
+        construct(std::forward<decltype(text)>(text));
     }
-
-    //!\overload
-    bi_fm_index(text_t &&) = delete;
-
-    //!\overload
-    bi_fm_index(text_t const &&) = delete;
     //!\}
 
     /*!\brief Constructs the index given a range.
      *        The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.
-     * \tparam text_t The type of range to construct from; must model std::ranges::RandomAccessRange.
+     * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
      * \param[in] text The text to construct from.
      *
-     * \details \todo This has to be better implemented with regard to the memory peak due to not matching interfaces
-     *                with the SDSL.
+     * \details
+     * \if DEV
+     * \todo This has to be better implemented with regard to the memory peak due to not matching interfaces
+     *       with the SDSL.
+     * \endif
      *
      * ### Complexity
      *
-     * \todo At least linear.
+     * \if DEV \todo \endif At least linear.
      *
      * ### Exceptions
      *
-     * No guarantee. \todo Ensure strong exception guarantee.
+     * No guarantee. \if DEV \todo Ensure strong exception guarantee. \endif
      */
-    void construct(text_t const & text)
+    template <std::ranges::Range text_t>
+        //!\cond
+    requires !is_collection_
+        //!\endcond
+    void construct(text_t && text)
     {
-         // text must not be empty
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must model BidirectionalRange.");
+        static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
+        static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
+
+        // text must not be empty
         if (std::ranges::begin(text) == std::ranges::end(text))
             throw std::invalid_argument("The text that is indexed cannot be empty.");
 
-        this->text = &text;
-        if constexpr(is_collection)
-            rev_text = text | view::deep{std::view::reverse} | view::deep{view::persist} | std::view::reverse;
-        else
-            rev_text = std::view::reverse(text);
+        auto rev_text = std::view::reverse(text);
         fwd_fm.construct(text);
         rev_fm.construct(rev_text);
 
-        // does not work yet. segmentation fault in bi_fm_index_cursor snippet
-        // bi_fm_index tmp;
-        // tmp.text = &text;
-        // tmp.rev_text = std::view::reverse(*tmp.text);
-        // tmp.fwd_fm.construct(*tmp.text);
-        // tmp.rev_fm.construct(tmp.rev_text);
-        // std::swap(*this, tmp);
-        // this->text = &text;
-        // rev_text = std::view::reverse(text);
+        sigma = fwd_fm.sigma;
     }
 
     //!\overload
-    void construct(text_t &&) = delete;
+    template <std::ranges::Range text_t>
+        //!\cond
+        requires is_collection_
+        //!\endcond
+    void construct(text_t && text)
+    {
+        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must model BidirectionalRange.");
+        static_assert(std::ranges::BidirectionalRange<reference_t<text_t>>,
+                      "The elements of the text collection must model BidirectionalRange.");
+        static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
+        static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
 
-    //!\overload
-    void construct(text_t const &&) = delete;
+        // text must not be empty
+        if (std::ranges::begin(text) == std::ranges::end(text))
+            throw std::invalid_argument("The text that is indexed cannot be empty.");
+
+        auto rev_text = text | view::deep{std::view::reverse} | std::view::reverse;
+        fwd_fm.construct(text);
+        rev_fm.construct(rev_text);
+
+        sigma = fwd_fm.sigma;
+    }
 
     /*!\brief Returns the length of the indexed text including sentinel characters.
      * \returns Returns the length of the indexed text including sentinel characters.
@@ -366,6 +355,14 @@ public:
     }
     //!\endcond
 };
+
+/*!\name Template argument type deduction guides
+ * \{
+ */
+//! \brief Deduces the dimensions of the text.
+template <std::ranges::Range text_t>
+bi_fm_index(text_t &&) -> bi_fm_index<text_layout{dimension_v<text_t> != 1}>;
+//!\}
 
 //!\}
 

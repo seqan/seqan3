@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Contains seqan3::aa27, container aliases and string literals.
+ * \brief Provides seqan3::aa27, container aliases and string literals.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 
 #include <seqan3/alphabet/aminoacid/aminoacid_base.hpp>
 #include <seqan3/alphabet/aminoacid/concept.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 namespace seqan3
 {
@@ -33,11 +33,11 @@ namespace seqan3
  * The alphabet consists of letters A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X,
  * Y, Z, *
  *
- * The alphabet may be brace initialized from the static letter members. Note that you cannot
- * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
+ * Instead initialise/assign from the character literal or use the
  * function seqan3::aa27::assign_char().
  *
- * \snippet test/snippet/alphabet/aminoacid/aa27.cpp construction
+ * \include test/snippet/alphabet/aminoacid/aa27_construction.cpp
  */
 
 class aa27 : public aminoacid_base<aa27, 27>
@@ -125,13 +125,15 @@ protected:
 } // namespace seqan3
 
 // ------------------------------------------------------------------
-// metafunctions
+// type traits
 // ------------------------------------------------------------------
 
 namespace seqan3
 {
 
-//!\brief Helper metafunction that identifies aa27 as an amino acid alphabet.
+//!\brief Identifies aa27 as an amino acid alphabet (UnaryTypeTrait specialisation).
+//!\implements UnaryTypeTrait
+//!\see seqan3::is_aminoacid
 //!\ingroup aminoacid
 template <>
 struct is_aminoacid<aa27> : std::true_type {};
@@ -166,7 +168,7 @@ namespace seqan3
  * \relates seqan3::aa27
  * \returns seqan3::aa27
  *
- * \snippet test/snippet/alphabet/aminoacid/aa27.cpp char_literal
+ * \include test/snippet/alphabet/aminoacid/aa27_char_literal.cpp
  *
  */
 constexpr aa27 operator""_aa27(char const c) noexcept
@@ -182,7 +184,7 @@ constexpr aa27 operator""_aa27(char const c) noexcept
  *
  * You can use this string literal to easily assign to aa27_vector:
  *
- * \snippet test/snippet/alphabet/aminoacid/aa27.cpp literal
+ * \include test/snippet/alphabet/aminoacid/aa27_literal.cpp
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3!

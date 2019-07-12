@@ -18,7 +18,7 @@
 
 using namespace seqan3;
 
-TEST(debug_stream, basic)
+TEST(debug_stream_test, basic)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};
@@ -41,7 +41,27 @@ TEST(debug_stream, basic)
     EXPECT_EQ(o.str(), "aAGA427");
 }
 
-TEST(debug_stream, range)
+TEST(debug_stream_test, capture_std_error)
+{
+    testing::internal::CaptureStderr();
+    debug_stream << 'a';
+    EXPECT_EQ(testing::internal::GetCapturedStderr(), "a");
+
+    testing::internal::CaptureStderr();
+    debug_stream << "AGA";
+    EXPECT_EQ(testing::internal::GetCapturedStderr(), "AGA");
+
+    testing::internal::CaptureStderr();
+    debug_stream << 42;
+    EXPECT_EQ(testing::internal::GetCapturedStderr(), "42");
+
+    testing::internal::CaptureStderr();
+    int const i = 7;
+    debug_stream << i;
+    EXPECT_EQ(testing::internal::GetCapturedStderr(), "7");
+}
+
+TEST(debug_stream_test, range)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};
@@ -57,7 +77,7 @@ TEST(debug_stream, range)
     EXPECT_EQ(o.str(), "[1,4,5,7,32,321][[1,2,33],[22,11]]");
 }
 
-TEST(debug_stream, alphabet)
+TEST(debug_stream_test, alphabet)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};
@@ -77,7 +97,7 @@ TEST(debug_stream, alphabet)
     EXPECT_EQ(o.str(), "ANN");
 }
 
-TEST(debug_stream, range_of_alphabet)
+TEST(debug_stream_test, range_of_alphabet)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};
@@ -105,7 +125,7 @@ TEST(debug_stream, range_of_alphabet)
     EXPECT_EQ(o.str(), "AGGATACAGGATACAGGATAC[ACGT,GAGGA]");
 }
 
-TEST(debug_stream, std_endl)
+TEST(debug_stream_test, std_endl)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};
@@ -115,7 +135,7 @@ TEST(debug_stream, std_endl)
     EXPECT_EQ(o.str(), "foo\nbar");
 }
 
-TEST(debug_stream, path)
+TEST(debug_stream_test, path)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};
@@ -127,7 +147,7 @@ TEST(debug_stream, path)
     EXPECT_EQ(o.str(), "\"my/path/my_file.txt\"");
 }
 
-TEST(debug_stream, tuple)
+TEST(debug_stream_test, tuple)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};
@@ -148,7 +168,7 @@ TEST(debug_stream, tuple)
     EXPECT_EQ(o.str(), "(32,dummy)(32)(2,(3,2))");
 }
 
-TEST(debug_stream, variant)
+TEST(debug_stream_test, variant)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};
@@ -177,7 +197,7 @@ TEST(debug_stream, variant)
     EXPECT_EQ(o.str(), "3.3foobar4.2tmp");
 }
 
-TEST(debug_stream, optional)
+TEST(debug_stream_test, optional)
 {
     std::ostringstream o;
     debug_stream_type my_stream{o};

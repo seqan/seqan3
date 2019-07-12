@@ -21,7 +21,7 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/range/view/take.hpp>
 #include <seqan3/std/algorithm>
@@ -31,7 +31,7 @@ namespace seqan3
 {
 
 /*!\brief A constexpr vector implementation with dynamic size at compile time.
- * \implements seqan3::reservable_container_concept
+ * \implements seqan3::ReservableContainer
  * \implements seqan3::Cerealisable
  * \ingroup container
  * \tparam value_type_ The underlying value type stored in the vector.

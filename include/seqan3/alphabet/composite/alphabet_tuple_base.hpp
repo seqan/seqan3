@@ -19,14 +19,14 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/core/metafunction/pack.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/pack.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/std/concepts>
 
@@ -235,12 +235,6 @@ private:
                 + to_rank() * alphabet_tuple_base::cummulative_alph_sizes[index]);
         }
 
-    public:
-        //Import from base type:
-        using base_t::to_rank;
-        using base_t::alphabet_size;
-        using base_t::operator=;
-
         /*!\name Associated types
          * \{
          */
@@ -248,6 +242,12 @@ private:
         using typename base_t::char_type;
         using typename base_t::phred_type;
         //!\}
+
+    public:
+        //Import from base type:
+        using base_t::to_rank;
+        using base_t::alphabet_size;
+        using base_t::operator=;
 
         /*!\name Constructors, destructor and assignment
          * \{
@@ -280,14 +280,16 @@ private:
     using base_t::base_t;
     //!\}
 
-    //!\brief befriend the derived type so that it can instantiate
+    //!\brief Befriend the derived type so that it can instantiate.
     //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
     friend derived_type;
+
+    // Import from base:
+    using typename base_t::rank_type;
 
 public:
     // Import from base:
     using base_t::alphabet_size;
-    using typename base_t::rank_type;
     using base_t::to_rank;
     using base_t::assign_rank;
 
@@ -321,7 +323,7 @@ public:
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp value_construction
+     * \include test/snippet/alphabet/composite/alphabet_tuple_base_value_construction.cpp
      */
     template <typename component_type>
     //!\cond
@@ -333,17 +335,17 @@ public:
     }
 
     /*!\brief Construction via a value of a subtype that is assignable to one of the components.
-     * \tparam indirect_component_type Type that models the seqan3::is_assignable_concept for
+     * \tparam indirect_component_type Type that models seqan3::WeaklyAssignable for
      *                                 one of the component types.
      * \param  alph                    The value that should be assigned.
      *
      * Note that the value will be assigned to the **FIRST** type T that fulfils
-     * the `assignable_concept<T, indirect_component_type>`, regardless if other types are also
+     * `Assignable<T, indirect_component_type>`, regardless if other types are also
      * fit for assignment.
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp subtype_construction
+     * \include test/snippet/alphabet/composite/alphabet_tuple_base_subtype_construction.cpp
      */
     template <typename indirect_component_type>
     //!\cond
@@ -375,7 +377,7 @@ public:
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp value_assignment
+     * \include test/snippet/alphabet/composite/alphabet_tuple_base_value_assignment.cpp
      */
     template <typename component_type>
     //!\cond
@@ -388,13 +390,13 @@ public:
     }
 
     /*!\brief Assignment via a value of a subtype that is assignable to one of the components.
-     * \tparam indirect_component_type Type that models the seqan3::is_assignable_concept for
+     * \tparam indirect_component_type Type that models seqan3::WeaklyAssignable for
      *                                 one of the component types.
      * \param  alph                    The value of a component that should be assigned.
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp subtype_assignment
+     * \include test/snippet/alphabet/composite/alphabet_tuple_base_subtype_assignment.cpp
      */
     template <typename indirect_component_type>
     //!\cond
@@ -575,7 +577,7 @@ private:
         return (to_rank() / cummulative_alph_sizes[index]) % seqan3::alphabet_size<meta::at_c<component_list, index>>;
     }
 
-    //!\brief the cumulative alphabet size products are cached
+    //!\brief The cumulative alphabet size products are cached.
     static constexpr std::array<rank_type, component_list::size()> cummulative_alph_sizes
     {
         [] () constexpr
@@ -687,18 +689,24 @@ constexpr bool operator>=(indirect_component_type const lhs,
 namespace std
 {
 
-//!\brief Obtains the type of the specified element.
-//!\relates seqan3::pod_tuple
-template <std::size_t i, seqan3::detail::alphabet_tuple_base_concept tuple_t>
+/*!\brief Obtains the type of the specified element.
+ * \implements seqan3::TransformationTrait
+ * \ingroup composite
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
+ */
+template <std::size_t i, seqan3::detail::AlphabetTupleBase tuple_t>
 struct tuple_element<i, tuple_t>
 {
     //!\brief Element type.
     using type = meta::at_c<typename tuple_t::seqan3_tuple_components, i>;
 };
 
-//!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
-//!\relates seqan3::pod_tuple
-template <seqan3::detail::alphabet_tuple_base_concept tuple_t>
+/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+ * \implements seqan3::UnaryTypeTrait
+ * \ingroup composite
+ * \see std::tuple_size_v
+ */
+template <seqan3::detail::AlphabetTupleBase tuple_t>
 struct tuple_size<tuple_t> :
     public std::integral_constant<size_t, tuple_t::seqan3_tuple_components::size()>
 {};

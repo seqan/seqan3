@@ -13,7 +13,7 @@
 #pragma once
 
 #include <cassert>
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 
 namespace seqan3
 {
@@ -29,7 +29,7 @@ namespace seqan3
  * This alphabet is not usually used directly, but instead via seqan3::masked.
  * For more information see the \link mask Mask submodule \endlink.
  *
- * \snippet test/snippet/alphabet/mask/mask.cpp general
+ * \include test/snippet/alphabet/mask/mask.cpp
  */
 class mask : public alphabet_base<mask, 2, void>
 {

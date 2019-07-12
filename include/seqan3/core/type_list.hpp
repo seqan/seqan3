@@ -7,14 +7,14 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::type_list and auxiliary metafunctions.
+ * \brief Provides seqan3::type_list and auxiliary type traits.
  */
 
 #pragma once
 
 #include <meta/meta.hpp>
 
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3
 {

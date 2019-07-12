@@ -17,7 +17,7 @@
 #include <sdsl/suffix_trees.hpp>
 
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/std/ranges>
@@ -53,9 +53,7 @@ namespace seqan3
 template <typename index_t>
 class bi_fm_index_cursor
 {
-
 public:
-
     //!\brief Type of the index.
     using index_type = index_t;
 
@@ -70,14 +68,14 @@ public:
      * \{
      */
     //!\brief Type for the unidirectional cursor on the original text.
-    using fwd_cursor = fm_index_cursor<fm_index<typename index_type::text_type, typename index_type::index_traits::fm_index_traits>>;
+    using fwd_cursor = fm_index_cursor<fm_index<text_layout{index_type::is_collection_},
+                                                typename index_type::sdsl_index_type>>;
     //!\brief Type for the unidirectional cursor on the reversed text.
-    using rev_cursor = fm_index_cursor<fm_index<typename index_type::rev_text_type, typename index_type::index_traits::fm_index_traits>>;
+    using rev_cursor = fm_index_cursor<fm_index<text_layout{index_type::is_collection_},
+                                                typename index_type::sdsl_index_type>>;
     //!\}
 
 protected:
-    //!\privatesection
-
     //!\brief Type of the representation of characters in the underlying SDSL index.
     using sdsl_char_type = typename index_type::sdsl_char_type;
     //!\brief Type of the alphabet size in the underlying SDSL index.
@@ -101,9 +99,6 @@ protected:
 
     //!\brief Alphabet size of the index without delimiters
     sdsl_sigma_type sigma;
-
-    //!\brief Indicates whether index is built over a collection
-    static bool constexpr is_collection = dimension_v<typename index_type::text_type> == 2;
 
     /*!\name Information for on cycle_back() and cycle_front()
      * \brief Only stored for the cursor that has been used last to go down an edge because once one cursor is
@@ -253,7 +248,7 @@ public:
     bi_fm_index_cursor(index_t const & _index) noexcept : index(&_index),
                                                           fwd_lb(0), fwd_rb(_index.size() - 1),
                                                           rev_lb(0), rev_rb(_index.size() - 1),
-                                                          sigma(_index.fwd_fm.index.sigma - is_collection),
+                                                          sigma(_index.fwd_fm.index.sigma - index_t::is_collection_),
                                                           depth(0)
     {}
     //\}
@@ -411,9 +406,6 @@ public:
      * No-throw guarantee.
      */
     template <Alphabet char_t>
-    //!\cond
-        requires ImplicitlyConvertibleTo<char_t, typename index_t::char_type>
-    //!\endcond
     bool extend_right(char_t const c) noexcept
     {
     #ifndef NDEBUG
@@ -421,6 +413,7 @@ public:
     #endif
 
         assert(index != nullptr);
+        assert(index->fwd_fm.sigma == alphabet_size<char_t>);
 
         size_type new_parent_lb = fwd_lb, new_parent_rb = fwd_rb;
 
@@ -453,9 +446,6 @@ public:
      * No-throw guarantee.
      */
     template <Alphabet char_t>
-    //!\cond
-       requires ImplicitlyConvertibleTo<char_t, typename index_t::char_type>
-    //!\endcond
     bool extend_left(char_t const c) noexcept
     {
     #ifndef NDEBUG
@@ -463,6 +453,7 @@ public:
     #endif
 
         assert(index != nullptr);
+        assert(index->fwd_fm.sigma == alphabet_size<char_t>);
 
         size_type new_parent_lb = rev_lb, new_parent_rb = rev_rb;
 
@@ -481,7 +472,7 @@ public:
     }
 
     /*!\brief Tries to extend the query by `seq` to the right.
-     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::RandomAccessRange.
+     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::ForwardRange.
      * \param[in] seq Sequence to extend the query with to the right.
      * \returns `true` if the cursor could extend the query successfully.
      *
@@ -496,13 +487,12 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::ranges::RandomAccessRange seq_t>
-    //!\cond
-        requires ImplicitlyConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>
-    //!\endcond
+    template <std::ranges::Range seq_t>
     bool extend_right(seq_t && seq) noexcept
     {
+        static_assert(std::ranges::ForwardRange<seq_t>, "The query must model ForwardRange.");
         assert(index != nullptr);
+        assert(index->fwd_fm.sigma == alphabet_size<innermost_value_type_t<seq_t>>);
 
         auto first = std::ranges::begin(seq);
         auto last = std::ranges::end(seq);
@@ -514,8 +504,9 @@ public:
         size_type _fwd_lb = fwd_lb, _fwd_rb = fwd_rb, _rev_lb = rev_lb, _rev_rb = rev_rb;
         size_type new_parent_lb = parent_lb, new_parent_rb = parent_rb;
         sdsl_char_type c = _last_char;
+        size_t len{0};
 
-        for (auto it = first; it != last; ++it)
+        for (auto it = first; it != last; ++len, ++it)
         {
             c = to_rank(*it) + 1;
 
@@ -534,13 +525,13 @@ public:
         parent_rb = new_parent_rb;
 
         _last_char = c;
-        depth += last - first;
+        depth += len;
 
         return true;
     }
 
     /*!\brief Tries to extend the query by `seq` to the left.
-     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::RandomAccessRange.
+     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::BidirectionalRange.
      * \param[in] seq Sequence to extend the query with to the left (starting from right to left, see example).
      * \returns `true` if the cursor could extend the query successfully.
      *
@@ -549,7 +540,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp extend_left_seq
+     * \include test/snippet/search/bi_fm_index_cursor_extend_left_seq.cpp
      *
      * ### Complexity
      *
@@ -559,13 +550,12 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::ranges::RandomAccessRange seq_t>
-    //!\cond
-       requires ImplicitlyConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>
-    //!\endcond
+    template <std::ranges::Range seq_t>
     bool extend_left(seq_t && seq) noexcept
     {
+        static_assert(std::ranges::BidirectionalRange<seq_t>, "The query must model BidirectionalRange.");
         assert(index != nullptr);
+        assert(index->fwd_fm.sigma == alphabet_size<innermost_value_type_t<seq_t>>);
 
         auto rev_seq = std::view::reverse(seq);
         auto first = std::ranges::begin(rev_seq);
@@ -580,8 +570,9 @@ public:
                   _rev_lb = rev_lb, _rev_rb = rev_rb;
         size_type new_parent_lb = parent_lb, new_parent_rb = parent_rb;
         sdsl_char_type c = _last_char;
+        size_t len{0};
 
-        for (auto it = first; it != last; ++it)
+        for (auto it = first; it != last; ++len, ++it)
         {
             c = to_rank(*it) + 1;
 
@@ -599,7 +590,7 @@ public:
         parent_lb = new_parent_lb;
         parent_rb = new_parent_rb;
         _last_char = c;
-        depth += last - first;
+        depth += len;
 
         return true;
     }
@@ -617,7 +608,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp cycle
+     * \include test/snippet/search/bi_fm_index_cursor_cycle.cpp
      *
      * ### Complexity
      *
@@ -670,7 +661,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp cycle
+     * \include test/snippet/search/bi_fm_index_cursor_cycle.cpp
      *
      * ### Complexity
      *
@@ -710,13 +701,13 @@ public:
     }
 
 
-    /*!\brief Outputs the rightmost respectively leftmost character depending on whether extend_right() or extend_left()
+    /*!\brief Outputs the rightmost respectively leftmost rank depending on whether extend_right() or extend_left()
      *        has been called last.
-     * \returns Rightmost or leftmost character.
+     * \returns Rightmost or leftmost rank.
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp cycle
+     * \include test/snippet/search/bi_fm_index_cursor_cycle.cpp
      *
      * ### Complexity
      *
@@ -726,13 +717,11 @@ public:
      *
      * No-throw guarantee.
      */
-    typename index_t::char_type last_char() noexcept
+    size_type last_rank() noexcept
     {
         assert(index != nullptr && query_length() > 0);
 
-        typename index_t::char_type c;
-        assign_rank_to(index->fwd_fm.index.comp2char[_last_char] - 1, c); // text is not allowed to contain ranks of 0
-        return c;
+        return index->fwd_fm.index.comp2char[_last_char] - 1; // text is not allowed to contain ranks of 0
     }
 
     /*!\brief Returns the depth of the cursor node in the implicit suffix tree, i.e. the length of the sequence
@@ -760,8 +749,8 @@ public:
         return depth;
     }
 
-    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the original text. query() on the returned
-     *        unidirectional index cursor will be equal to query() on the bidirectional index cursor.
+    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the original text. path_label() on the returned
+     *        unidirectional index cursor will be equal to path_label() on the bidirectional index cursor.
      *        cycle_back() and last_char() will be undefined behavior if the last extension on the bidirectional
      *        FM index has been to the left. The behavior will be well-defined after the first extension to the right
      *        on the unidirectional index.
@@ -769,7 +758,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp to_fwd_cursor
+     * \include test/snippet/search/bi_fm_index_cursor_to_fwd_cursor.cpp
      *
      * ### Complexity
      *
@@ -800,8 +789,8 @@ public:
         return cur;
     }
 
-    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the reversed text. query() on the returned
-     *        unidirectional index cursor will be equal to reversing query() on the bidirectional index cursor.
+    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the reversed text. path_label() on the returned
+     *        unidirectional index cursor will be equal to reversing path_label() on the bidirectional index cursor.
      *        Note that because of the text being reversed, extend_right() resp. cycle_back()
      *        correspond to extend_left() resp. cycle_front() on the bidirectional index cursor.
      *        Furthermore cycle_back() and last_char() will be undefined behavior if the last extension on the
@@ -811,11 +800,11 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp to_rev_cursor
+     * \include test/snippet/search/bi_fm_index_cursor_to_rev_cursor.cpp
      *
      * \attention When the index is built for text collections, the returned text IDs will be reversed.
      *
-     * \snippet test/snippet/search/bi_fm_index_cursor.cpp to_rev_cursor_collection
+     * \include test/snippet/search/bi_fm_index_cursor_to_rev_cursor_collection.cpp
      * ### Complexity
      *
      * Constant.
@@ -846,9 +835,12 @@ public:
     }
 
     /*!\brief Returns the searched query.
-     *        \if DEV
-     *            Returns the concatenation of all edges from the root node to the cursors current node.
-     *        \endif
+     * \tparam text_t The type of the text used to build the index; must model std::ranges::InputRange.
+     * \param[in] text Text that was used to build the index.
+     *
+     * \if DEV
+     * Returns the concatenation of all edges from the root node to the cursors current node.
+     * \endif
      *
      * ### Complexity
      *
@@ -858,36 +850,36 @@ public:
      *
      * No-throw guarantee.
      */
-    auto query() const noexcept
+    template <std::ranges::Range text_t>
+    auto path_label(text_t && text) const noexcept
     //!\cond
-        requires !is_collection
+        requires !index_t::is_collection_
     //!\endcond
     {
-        assert(index != nullptr && index->text != nullptr);
+        static_assert(std::ranges::InputRange<text_t>, "The text must model InputRange.");
+        static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
+        assert(index != nullptr);
+        assert(index->fwd_fm.sigma == alphabet_size<value_type_t<text_t>>);
 
         size_type const query_begin = offset() - index->fwd_fm.index[fwd_lb];
-        return *index->text | view::slice(query_begin, query_begin + query_length());
+        return text | view::slice(query_begin, query_begin + query_length());
     }
 
     //!\overload
-    auto query() const noexcept
+    template <std::ranges::Range text_t>
+    auto path_label(text_t && text) const noexcept
     //!\cond
-        requires is_collection
+        requires index_t::is_collection_
     //!\endcond
     {
-        assert(index != nullptr && index->text != nullptr);
+        static_assert(std::ranges::InputRange<text_t>, "The text collection must model InputRange.");
+        static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
+        assert(index != nullptr);
+        assert(index->fwd_fm.sigma == alphabet_size<innermost_value_type_t<text_t>>);
 
         size_type const loc = offset() - index->fwd_fm.index[fwd_lb];
         size_type const query_begin = loc - index->fwd_fm.text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return *index->text | std::view::join | view::slice(query_begin, query_begin + query_length());
-    }
-
-    //!\copydoc query()
-    auto operator*() const noexcept
-    {
-        assert(index != nullptr && index->text != nullptr);
-
-        return query();
+        return text | std::view::join | view::slice(query_begin, query_begin + query_length());
     }
 
     /*!\brief Counts the number of occurrences of the searched query in the text.
@@ -921,7 +913,7 @@ public:
      */
     std::vector<size_type> locate() const
     //!\cond
-        requires !is_collection
+        requires !index_t::is_collection_
     //!\endcond
     {
         assert(index != nullptr);
@@ -937,7 +929,7 @@ public:
     //!\overload
     std::vector<std::pair<size_type, size_type>> locate() const
     //!\cond
-        requires is_collection
+        requires index_t::is_collection_
     //!\endcond
     {
         assert(index != nullptr);
@@ -968,7 +960,7 @@ public:
      */
     auto lazy_locate() const
     //!\cond
-        requires !is_collection
+        requires !index_t::is_collection_
     //!\endcond
     {
         assert(index != nullptr);
@@ -983,7 +975,7 @@ public:
     //!\overload
     auto lazy_locate() const
     //!\cond
-        requires is_collection
+        requires index_t::is_collection_
     //!\endcond
     {
         assert(index != nullptr);

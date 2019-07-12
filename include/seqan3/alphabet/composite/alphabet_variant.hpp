@@ -8,7 +8,7 @@
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
- * \brief Contains seqan3::alphabet_variant.
+ * \brief Provides seqan3::alphabet_variant.
  */
 
 #pragma once
@@ -23,12 +23,12 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/core/metafunction/pack.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/pack.hpp>
+#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/type_traits>
@@ -38,7 +38,7 @@ namespace seqan3::detail
 
 /*!\brief Evaluates to true if the one of the alternatives of the seqan3::alphabet_variant satisifes a compile-time
  *        predicate.
- * \tparam variantt_t A specialisation of seqan3::alphabet_variant.
+ * \tparam variant_t A specialisation of seqan3::alphabet_variant.
  * \tparam fun_t    A template template that takes target_t as argument and exposes an `invoke` member type that
  *                  evaluates some predicate and returns `std::true_type` or `std::false_type`.
  * \tparam target_t The type you wish query.
@@ -86,7 +86,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires alphabet_tuple_base_concept<target_t> &&
+    requires AlphabetTupleBase<target_t> &&
              meta::in<detail::transformation_trait_or_t<recursive_tuple_components<target_t>, meta::list<>>,
                       alphabet_variant<alternatives...>>::value
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
@@ -115,7 +115,7 @@ inline bool constexpr one_alternative_is<target_t,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    //NO, it's not possible to use the value_type metafunction here
+    //NO, it's not possible to use the value_type type trait here
     requires requires { std::Same<typename target_t::value_type, alphabet_variant<alternatives...>>; }
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
@@ -126,7 +126,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires TupleSize<target_t> && !alphabet_tuple_base_concept<target_t>
+    requires TupleSize<target_t> && !AlphabetTupleBase<target_t>
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
@@ -171,7 +171,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp usage
+ * \include test/snippet/alphabet/composite/alphabet_variant.cpp
  *
  * ### The `char` representation of an alphabet_variant
  *
@@ -193,7 +193,7 @@ namespace seqan3
  * To explicitly assign via the character representation of a specific alphabet,
  * assign to that type first and then assign to the variant, e.g.
  *
- * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp char_representation
+ * \include test/snippet/alphabet/composite/alphabet_variant_char_representation.cpp
  */
 template <typename ...alternative_types>
 //!\cond
@@ -221,18 +221,18 @@ private:
     static_assert(std::Same<alternatives, meta::unique<alternatives>>,
                   "All types in a alphabet_variant must be distinct.");
 
+    using typename base_t::char_type;
+    using typename base_t::rank_type;
 public:
     using base_t::alphabet_size;
     using base_t::to_char;
     using base_t::to_rank;
     using base_t::assign_rank;
-    using typename base_t::char_type;
-    using typename base_t::rank_type;
 
     /*!\brief Returns true if alternative_t is one of the given alternative types.
      * \tparam alternative_t The type to check.
      *
-     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp holds_alternative
+     * \include test/snippet/alphabet/composite/alphabet_variant_holds_alternative.cpp
      */
     template <typename alternative_t>
     static constexpr bool holds_alternative() noexcept
@@ -254,7 +254,7 @@ public:
      * \tparam alternative_t One of the alternative types.
      * \param  alternative   The value of a alternative that should be assigned.
      *
-     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp value construction
+     * \include test/snippet/alphabet/composite/alphabet_variant_value_construction.cpp
      */
     template <typename alternative_t>
     //!\cond
@@ -269,7 +269,7 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternative types is constructible from.
      * \param  rhs The value that should be assigned.
      *
-     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp conversion
+     * \include test/snippet/alphabet/composite/alphabet_variant_conversion.cpp
      * \attention When selecting the alternative alphabet types which require only implicit conversion
      * or constructor calls, are preferred over those that require explicit ones.
      */
@@ -306,7 +306,7 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
      * \param  rhs The value of an alternative.
      *
-     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp subtype_construction
+     * \include test/snippet/alphabet/composite/alphabet_variant_subtype_construction.cpp
      */
     template <typename indirect_alternative_t>
     //!\cond

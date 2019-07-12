@@ -9,7 +9,6 @@
 
 #include <type_traits>
 
-#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/cereal.hpp>
 
@@ -23,42 +22,48 @@ TYPED_TEST_CASE_P(fm_index_test);
 
 TYPED_TEST_P(fm_index_test, ctr)
 {
-    typename TypeParam::text_type text(10); // initialized with smallest char
+    using index_t = typename TypeParam::first_type;
+    using text_t = typename TypeParam::second_type;
+
+    text_t text(10); // initialized with smallest char
 
     // default/zero construction
-    TypeParam fm0;
+    index_t fm0;
     fm0.construct(text);
 
     // copy construction
-    TypeParam fm1{fm0};
+    index_t fm1{fm0};
     EXPECT_EQ(fm0, fm1);
 
     // copy assignment
-    TypeParam fm2 = fm0;
+    index_t fm2 = fm0;
     EXPECT_EQ(fm0, fm2);
 
     // move construction
-    TypeParam fm3{std::move(fm1)};
+    index_t fm3{std::move(fm1)};
     EXPECT_EQ(fm0, fm3);
 
     // move assigment
-    TypeParam fm4 = std::move(fm2);
+    index_t fm4 = std::move(fm2);
     EXPECT_EQ(fm0, fm4);
 
     // container contructor
-    TypeParam fm5{text};
+    index_t fm5{text};
     EXPECT_EQ(fm0, fm5);
 }
 
 TYPED_TEST_P(fm_index_test, swap)
 {
-    typename TypeParam::text_type textA(10);
-    typename TypeParam::text_type textB(20);
+    using index_t = typename TypeParam::first_type;
+    using text_t = typename TypeParam::second_type;
 
-    TypeParam fm0{textA};
-    TypeParam fm1{textB};
-    TypeParam fm2{fm0};
-    TypeParam fm3{fm1};
+    text_t textA(10);
+    text_t textB(20);
+
+    index_t fm0{textA};
+    index_t fm1{textB};
+    index_t fm2{fm0};
+    index_t fm3{fm1};
 
     EXPECT_EQ(fm0, fm2);
     EXPECT_EQ(fm1, fm3);
@@ -73,34 +78,44 @@ TYPED_TEST_P(fm_index_test, swap)
 
 TYPED_TEST_P(fm_index_test, size)
 {
-    TypeParam fm;
+    using index_t = typename TypeParam::first_type;
+    using text_t = typename TypeParam::second_type;
+
+    index_t fm;
     EXPECT_TRUE(fm.empty());
 
-    typename TypeParam::text_type text(8);
+    text_t text(8);
     fm.construct(text);
     EXPECT_EQ(fm.size(), 9u); // including a sentinel character
 }
 
 TYPED_TEST_P(fm_index_test, concept_check)
 {
-    EXPECT_TRUE(FmIndex<TypeParam>);
-    if constexpr (detail::is_type_specialisation_of_v<TypeParam, bi_fm_index>)
+    using index_t = typename TypeParam::first_type;
+    EXPECT_TRUE(FmIndex<index_t>);
+    if constexpr (std::Same<index_t, bi_fm_index<text_layout::single>>)
     {
-        EXPECT_TRUE(BiFmIndex<TypeParam>);
+        EXPECT_TRUE(BiFmIndex<index_t>);
     }
 }
 
 TYPED_TEST_P(fm_index_test, empty_text)
 {
-    typename TypeParam::text_type text{};
-    EXPECT_THROW(TypeParam index{text}, std::invalid_argument);
+    using index_t = typename TypeParam::first_type;
+    using text_t = typename TypeParam::second_type;
+
+    text_t text{};
+    EXPECT_THROW(index_t index{text}, std::invalid_argument);
 }
 
 TYPED_TEST_P(fm_index_test, serialisation)
 {
-    typename TypeParam::text_type text(10);
+    using index_t = typename TypeParam::first_type;
+    using text_t = typename TypeParam::second_type;
 
-    TypeParam fm{text};
+    text_t text(10);
+
+    index_t fm{text};
     test::do_serialisation(fm);
 }
 

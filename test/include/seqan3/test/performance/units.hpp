@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains predefined custom units for google benchmark.
+ * \brief Provides predefined custom units for google benchmark.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -15,7 +15,7 @@
 #include <benchmark/benchmark.h>
 
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/std/ranges>
 

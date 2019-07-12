@@ -14,8 +14,8 @@
 
 #include <seqan3/alphabet/mask/all.hpp>
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 namespace seqan3
 {
@@ -36,7 +36,7 @@ namespace seqan3
  * masked alphabet. It allows one to specify which portions of a sequence should be masked,
  * without losing additional information by replacing the sequence directly.
  *
- * \snippet test/snippet/alphabet/mask/masked.cpp general
+ * \include test/snippet/alphabet/mask/masked.cpp
  */
  template <typename sequence_alphabet_t>
 //!\cond
@@ -98,15 +98,6 @@ public:
         seqan3::assign_rank_to(is_lower(c), get<1>(*this));
         return *this;
     }
-
-    //!\brief Strict assign from a character.
-    masked & assign_char_strictly(char_type const c)
-    {
-        if (!char_is_valid(c))
-            throw invalid_char_assignment{detail::get_display_name_v<masked>, c};
-
-        return assign_char(c);
-    }
     //!\}
 
     /*!\name Read functions
@@ -136,11 +127,11 @@ public:
      * Default implementation: True for all character values that are reproduced by #to_char() after being assigned
      * to the alphabet.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */

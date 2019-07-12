@@ -32,7 +32,7 @@ inline constexpr auto align_config = align_cfg::mode{global_alignment} |
 inline constexpr auto align_config_semi_seq1 = align_config | align_cfg::aligned_ends{free_ends_first};
 inline constexpr auto align_config_semi_seq2 = align_config | align_cfg::aligned_ends{free_ends_second};
 
-static auto dna4_semi_seq1_a = []()
+static auto dna4_01_semi_first = []()
 {
     return alignment_fixture
     {
@@ -50,7 +50,7 @@ static auto dna4_semi_seq1_a = []()
 // TODO: Fix the computation of the trailing gap, which depends on whether the score in the last cell
 // was a gap or not (the gap must be extended in this case.) -> or throw invalid_alignment_configuration if
 // the score cannot be computed.
-// static auto dna4_semi_seq1_b = []()
+// static auto dna4_02_semi_first = []()
 // {
 //     return alignment_fixture
 //     {
@@ -65,7 +65,7 @@ static auto dna4_semi_seq1_a = []()
 //     };
 // }();
 
-static auto dna4_semi_seq2_a = []()
+static auto dna4_03_semi_second = []()
 {
     return alignment_fixture
     {
@@ -80,7 +80,7 @@ static auto dna4_semi_seq2_a = []()
     };
 }();
 
-static auto dna4_semi_seq2_b = []()
+static auto dna4_04_semi_second = []()
 {
     return alignment_fixture
     {
@@ -95,4 +95,4 @@ static auto dna4_semi_seq2_b = []()
     };
 }();
 
-} // namespace seqan3::test::alignment::fixture::global::affine::unbanded
+} // namespace seqan3::test::alignment::fixture::global::affine::banded

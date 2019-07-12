@@ -56,7 +56,7 @@ Now we are going to call seqan3::align_pairwise. This interface requires two arg
 with exactly two elements and the configuration object. Independent of the number of pairwise alignment jobs submitted
 to the algorithm it always returns a range over seqan3::alignment_result. Later we will see how we can use a
 continuation interface which calls a user-defined function rather than iterating over the results sequentially.
-Finally we output the score for the computed alignment.
+Finally, we output the score for the computed alignment.
 
 \attention Just calling `pairwise_align` does nothing as it returns a range which is evaluated in a lazy manner.
            Only when calling begin or incrementing the iterator over the range the alignment computation is invoked.
@@ -187,7 +187,7 @@ enumeration class.
 
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp scoring_scheme
 
-\note You can also provide your own scoring scheme implementation if it models the seqan3::scoring_scheme_concept.
+\note You can also provide your own scoring scheme implementation if it models seqan3::ScoringScheme.
 
 Similarly to the scoring scheme, you can use the seqan3::gap_scheme to set the gap penalties used for the alignment
 computation. The default constructed seqan3::gap_scheme sets the score for a gap to `-1` and for a gap opening to `0`.
@@ -336,7 +336,7 @@ some combinations would result in an invalid alignment configuration. To explici
 details. First, if a combination is invalid (for example by providing the same configuration more than once) a static
 assert will inform you about the invalid combination. \ref configuration "Here" you can find a
 table depicting the valid configurations. Further, if the seqan3::align_pairwise is called, it checks if the input
-data can be used with the given configuration. For example, a static assertion is emitted if the alphabet types of the sequences together with the provided scoring scheme do not model the seqan3::scoring_scheme_concept.
+data can be used with the given configuration. For example, a static assertion is emitted if the alphabet types of the sequences together with the provided scoring scheme do not model seqan3::ScoringScheme.
 Other possible errors are invalid band settings where the initialised band does not intersect with the actual alignment
 matrix (the lower diagonal starts beyond the end of the first sequence).
 

@@ -12,8 +12,9 @@
 
 #pragma once
 
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/std/ranges>
+#include <functional>
+
+#include <seqan3/alphabet/concept.hpp>
 
 namespace std
 {

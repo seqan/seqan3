@@ -508,13 +508,6 @@ TEST_F(alignment_file_input_f, read_empty_bz2_file)
 
 struct alignment_file_input_sam_format_f : public alignment_file_input_f
 {
-    std::vector<unsigned> offsets
-    {
-        1,
-        0,
-        1
-    };
-
     std::vector<dna4_vector> const ref_seqs = {"ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna4};
     std::vector<std::string> const ref_ids = {"ref"};
 
@@ -524,13 +517,6 @@ struct alignment_file_input_sam_format_f : public alignment_file_input_f
                                                  'G'_dna4};
     std::vector<gapped<dna4>> ref_seq_gapped3 = {'T'_dna4, 'G'_dna4, 'A'_dna4, 'T'_dna4,
                                                  'C'_dna4, 'G'_dna4, 'A'_dna4, 'G'_dna4,};
-
-    std::vector<unsigned> ref_offsets
-    {
-        0,
-        1,
-        2
-    };
 
     std::vector<std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna5>>>> alignments_expected
     {

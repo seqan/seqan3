@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the dssp format for protein structure.
+ * \brief Provides the dssp format for protein structure.
  */
 
 #pragma once
@@ -15,8 +15,8 @@
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 // ------------------------------------------------------------------
 // dssp9
@@ -53,9 +53,9 @@ namespace seqan3
  * C = coil/loop
  * X = unknown
  *
- * \par Usage
+ * ###Usage
  * The following code example creates a dssp9 vector, modifies it, and prints the result to stderr.
- * \snippet test/snippet/alphabet/structure/dssp9.cpp general
+ * \include test/snippet/alphabet/structure/dssp9_general.cpp
  */
 class dssp9 : public alphabet_base<dssp9, 9>
 {
@@ -119,7 +119,7 @@ protected:
  * \returns std::vector<seqan3::dssp9>
  *
  * You can use this string literal to easily assign to a vector of seqan3::dssp9 characters:
- * \snippet test/snippet/alphabet/structure/dssp9.cpp string_literal
+ * \include test/snippet/alphabet/structure/dssp9_literal.cpp
  */
 inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
 {
@@ -138,7 +138,7 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
  * \returns seqan3::dssp9
  *
  * You can use this string literal to assign a seqan3::dssp9 character:
- * \snippet test/snippet/alphabet/structure/dssp9.cpp char_literal
+ * \include test/snippet/alphabet/structure/dssp9_char_literal.cpp
  */
 constexpr dssp9 operator""_dssp9(char const ch) noexcept
 {

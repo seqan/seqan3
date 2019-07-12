@@ -18,13 +18,37 @@
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/core/type_list.hpp>
+#include <seqan3/range/decorator/gap_decorator.hpp>
+#include <seqan3/range/view/view_all.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
+
+/*!\brief A helper class to define the alignment return type.
+ * \tparam first_t  Type of the first sequence.
+ * \tparam second_t Type of the second sequence.
+ * \details
+ * The type uses the gap decorator if RandomAccessRange and SizedRange are met for both input sequences.
+ */
+template <typename first_t, typename second_t>
+struct alignment_type;
+
+//!\overload
+template <typename first_t, typename second_t>
+    requires std::ranges::RandomAccessRange<first_t> &&
+             std::ranges::SizedRange<first_t> &&
+             std::ranges::RandomAccessRange<second_t> &&
+             std::ranges::SizedRange<second_t>
+struct alignment_type<first_t, second_t>
+{
+    //!\brief The alignment type with gap decorator.
+    using type = std::tuple<gap_decorator<all_view<first_t &>>, gap_decorator<all_view<second_t &>>>;
+};
 
 /*!\brief Helper metafunction to select the alignment result type based on the configuration.
  * \ingroup pairwise_alignment
@@ -43,8 +67,6 @@ struct align_result_selector
     //!\brief Helper function to determine the actual result type.
     static constexpr auto _determine()
     {
-        using first_seq_value_type  = gapped<value_type_t<first_range_t>>;
-        using second_seq_value_type = gapped<value_type_t<second_range_t>>;
         using score_type            = int32_t;
 
         if constexpr (std::remove_reference_t<configuration_t>::template exists<align_cfg::result>())
@@ -67,12 +89,21 @@ struct align_result_selector
             else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                          with_alignment_type>)
             {
+                // Due to an error with gcc8 we define these types beforehand.
+                using first_gapped_seq_type = gapped<value_type_t<first_range_t>>;
+                using second_gapped_seq_type = gapped<value_type_t<second_range_t>>;
+
+                // We use vectors of gapped sequence if the gap decorator cannot be used.
+                using fallback_t = std::tuple<std::vector<first_gapped_seq_type>, std::vector<second_gapped_seq_type>>;
+
+                // If the ranges are RandomAccess and Sized we can use the Gap Decorator, otherwise fallback_t.
+                using decorator_t = alignment_type<first_range_t, second_range_t>;
+
                 return alignment_result_value_type<uint32_t,
                                                    score_type,
                                                    alignment_coordinate,
                                                    alignment_coordinate,
-                                                   std::tuple<std::vector<first_seq_value_type>,
-                                                              std::vector<second_seq_value_type>>>{};
+                                                   detail::transformation_trait_or_t<decorator_t, fallback_t>>{};
             }
             else
             {
@@ -88,4 +119,5 @@ struct align_result_selector
     //!\brief The determined result type.
     using type = decltype(_determine());
 };
+
 } // namespace seqan3::detail

@@ -22,12 +22,12 @@ struct custom_validator
 };
 //![validator]
 
-static_assert(seqan3::validator_concept<custom_validator>);
+static_assert(seqan3::Validator<custom_validator>);
 
 //![main]
 int main(int argc, char ** argv)
 {
-    seqan3::argument_parser myparser("Test Parser", argc, argv);
+    seqan3::argument_parser myparser("Test-Parser", argc, argv);
 
     int32_t variable{};
     int16_t variable2{};

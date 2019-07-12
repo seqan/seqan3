@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Contains the format_man struct and its helper functions.
+ * \brief Provides the format_man struct and its helper functions.
  */
 
 #pragma once
@@ -30,7 +30,7 @@ namespace seqan3::detail
  * provide meta information, positional options, etc. in the correct order.
  * In addition the needed order would be different from the parse format.
  * Thus the calls are stored (parser_set_up_calls and positional_option_calls)
- * and only evaluated when calling seqan3::format_help::parse.
+ * and only evaluated when calling seqan3::detail::format_help_base::parse.
  */
 class format_man : public format_help_base<format_man>
 {

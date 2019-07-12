@@ -20,10 +20,12 @@
 #include <seqan3/alphabet/quality/phred68legacy.hpp>
 
 /*!\defgroup quality Quality
- * \brief Contains the various quality score types.
+ * \brief Provides the various quality score types.
  * \ingroup alphabet
  *
- * \par Introduction
+ * \details
+ *
+ * ### Introduction
  *
  * Quality score sequences are usually output together with the DNA (or RNA)
  * sequence by sequencing machines like the Illumina Genome Analyzer. The
@@ -47,7 +49,7 @@
  * This sub-module provides multiple quality alphabets that can be used in
  * combination with regular containers and ranges.
  *
- * \par Encoding Schemes
+ * ###Encoding Schemes
  *
  * | Format                      | Quality Type          | Phred Score Range  | Rank Range   | ASCII Range  | Assert                    |
  * |:---------------------------:|:----------------------|:------------------:|:------------:|:------------:|:-------------------------:|
@@ -66,7 +68,7 @@
  * An overview of all the score formats and their encodings can be found here:
  * https://en.wikipedia.org/wiki/FASTQ_format#Encoding.
  *
- * \par Concept
+ * ###Concept
  *
  * The quality submodule defines the seqan3::WritableQualityAlphabet which encompasses
  * all the alphabets, defined in the submodule, and refines the
@@ -75,7 +77,7 @@
  * Additionally, this submodule defines the seqan3::QualityAlphabet, which only requires
  * readablity and not assignability.
  *
- * \par Assignment and Conversion
+ * ###Assignment and Conversion
  *
  * Quality alphabets can be converted to their char and rank representation via
  * `seqan3::to_char` and `seqan3::to_rank` respectively (like all other alphabets). Additionally

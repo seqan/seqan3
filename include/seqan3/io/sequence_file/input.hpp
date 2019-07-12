@@ -25,7 +25,7 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/filesystem>
@@ -223,7 +223,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * must be in seqan3::sequence_file_input::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
  * seqan3::SequenceFileInputFormat).
- * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::char_concept.
+ * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::Char.
  * \details
  *
  * ### Introduction
@@ -342,7 +342,12 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * ### Formats
  *
- * TODO give overview of formats, once they are all implemented
+ * We currently support reading the following formats:
+ *   * seqan3::format_fasta
+ *   * seqan3::format_fastq
+ *   * seqan3::format_embl
+ *   * seqan3::format_genbank
+ *   * seqan3::format_sam
  */
 
 template <
@@ -355,7 +360,7 @@ template <
                                                                                format_fastq,
                                                                                format_genbank,
                                                                                format_sam>,
-    char_concept                               stream_char_type_   = char>
+    Char                                       stream_char_type_   = char>
 class sequence_file_input
 {
 public:
@@ -847,23 +852,31 @@ sequence_file_input(stream_type & stream,
 
 namespace std
 {
-//!\brief std::tuple_size overload for column-like access. [metafunction specialisation for seqan3::sequence_file_input]
+/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+ * \implements seqan3::UnaryTypeTrait
+ * \ingroup sequence
+ * \see std::tuple_size_v
+ */
 template <seqan3::SequenceFileInputTraits                    traits_type,
           seqan3::detail::Fields                             selected_field_ids,
           seqan3::detail::TypeListOfSequenceFileInputFormats valid_formats,
-          seqan3::char_concept                               stream_char_t>
+          seqan3::Char                                       stream_char_t>
 struct tuple_size<seqan3::sequence_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
     static constexpr size_t value = selected_field_ids::as_array.size();
 };
 
-//!\brief std::tuple_element overload for column-like access. [metafunction specialisation for seqan3::sequence_file_input]
+/*!\brief Obtains the type of the specified element.
+ * \implements seqan3::TransformationTrait
+ * \ingroup sequence
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
+ */
 template <size_t                                             elem_no,
           seqan3::SequenceFileInputTraits                    traits_type,
           seqan3::detail::Fields                             selected_field_ids,
           seqan3::detail::TypeListOfSequenceFileInputFormats valid_formats,
-          seqan3::char_concept                               stream_char_t>
+          seqan3::Char                                       stream_char_t>
 struct tuple_element<elem_no, seqan3::sequence_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::sequence_file_input<traits_type,
                                                                selected_field_ids,

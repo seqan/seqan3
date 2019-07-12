@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Contains seqan3::dna15, container aliases and string literals.
+ * \brief Provides seqan3::dna15, container aliases and string literals.
  */
 
 #pragma once
@@ -15,7 +15,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/nucleotide_base.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 // ------------------------------------------------------------------
 // dna15
@@ -39,11 +39,11 @@ class rna15;
  * Note that you can assign 'U' as a character to dna15 and it will silently
  * be converted to 'T'.
  *
- * The alphabet may be brace initialized from the static letter members. Note that you cannot
- * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
+ * Instead initialise/assign from the character literal or use the
  * function seqan3::dna15::assign_char().
  *
- *\snippet test/snippet/alphabet/nucleotide/dna15.cpp code
+ *\include test/snippet/alphabet/nucleotide/dna15.cpp
  */
 class dna15 : public nucleotide_base<dna15, 15>
 {
@@ -163,7 +163,7 @@ constexpr dna15 operator""_dna15(char const c) noexcept
  *
  * You can use this string literal to easily assign to dna15_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/dna15.cpp operator""_dna15
+ * \include test/snippet/alphabet/nucleotide/dna15_literal.cpp
  *
  */
 inline dna15_vector operator""_dna15(char const * s, std::size_t n)

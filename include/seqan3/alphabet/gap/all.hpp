@@ -16,10 +16,13 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 
 /*!\defgroup gap Gap
- * \brief Contains the gap alphabet and functionality to make an alphabet a gapped alphabet.
+ * \brief Provides the gap alphabet and functionality to make an alphabet a gapped alphabet.
  * \ingroup alphabet
  *
- * \par Introduction
+ * \details
+ *
+ * ### Introduction
+ *
  * The gap symbol (`-`) is used in alignments to represent an interruption in an alignment, usually the result of an
  * insertion or deletion. The seqan3::gap alphabet represents this (single) gap symbol and satisfies the
  * seqan3::Alphabet.

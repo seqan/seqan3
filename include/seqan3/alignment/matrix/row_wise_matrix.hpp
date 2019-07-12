@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains seqan3::detail::row_wise_matrix.
+ * \brief Provides seqan3::detail::row_wise_matrix.
  */
 
 #pragma once
@@ -39,12 +39,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-     row_wise_matrix() = default;                                    //!< Defaulted
-     row_wise_matrix(row_wise_matrix const &) = default;             //!< Defaulted
-     row_wise_matrix(row_wise_matrix &&) = default;                  //!< Defaulted
-     row_wise_matrix & operator=(row_wise_matrix const &) = default; //!< Defaulted
-     row_wise_matrix & operator=(row_wise_matrix &&) = default;      //!< Defaulted
-     ~row_wise_matrix() = default;                                   //!< Defaulted
+    row_wise_matrix() = default;                                    //!< Defaulted
+    row_wise_matrix(row_wise_matrix const &) = default;             //!< Defaulted
+    row_wise_matrix(row_wise_matrix &&) = default;                  //!< Defaulted
+    row_wise_matrix & operator=(row_wise_matrix const &) = default; //!< Defaulted
+    row_wise_matrix & operator=(row_wise_matrix &&) = default;      //!< Defaulted
+    ~row_wise_matrix() = default;                                   //!< Defaulted
     /*!\brief Construct the matrix out of the *entries*, the *rows*,
      *        and the *cols*.
      * \param entries The entry values as a flat std::vector <#entry_type>.
@@ -81,10 +81,10 @@ private:
     std::vector<entry_type> _entries;
 
     //!\copydoc seqan3::detail::Matrix::rows
-    size_t const _rows;
+    size_t _rows;
 
     //!\copydoc seqan3::detail::Matrix::cols
-    size_t const _cols;
+    size_t _cols;
 };
 
 } // namespace seqan3::detail

@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/ranges>
@@ -118,7 +118,7 @@ namespace seqan3::view
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * \par Example
+ * ###Example
  *
  * Operating on a range of seqan3::phred42:
  * \snippet test/snippet/range/view/trim.cpp phred42

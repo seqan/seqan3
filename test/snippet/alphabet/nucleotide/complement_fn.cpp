@@ -1,5 +1,5 @@
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
 
 using seqan3::operator""_rna5;
 

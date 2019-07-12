@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/search/algorithm/configuration/all.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
@@ -27,7 +27,7 @@ namespace seqan3::detail
 
 /*!\brief Search a single query in an index.
  * \tparam index_t   Must model seqan3::FmIndex.
- * \tparam queries_t Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam queries_t Must model std::ranges::RandomAccessRange over the index's alphabet.
  * \param[in] index  String index to be searched.
  * \param[in] query  A single query.
  * \param[in] cfg    A configuration object specifying the search parameters.
@@ -130,7 +130,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     }
     else
     {
-        using hit_t = std::conditional_t<index_t::is_collection,
+        using hit_t = std::conditional_t<index_t::is_collection_,
                                          std::pair<typename index_t::size_type, typename index_t::size_type>,
                                          typename index_t::size_type>;
         std::vector<hit_t> hits;
@@ -160,7 +160,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 
 /*!\brief Search a query or a range of queries in an index.
  * \tparam index_t    Must model seqan3::FmIndex.
- * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam queries_t  Must model std::ranges::RandomAccessRange over the index's alphabet.
  *                    a range of queries must additionally model std::ranges::ForwardRange.
  * \param[in] index   String index to be searched.
  * \param[in] queries A single query or a range of queries.
@@ -184,7 +184,7 @@ inline auto search_all(index_t const & index, queries_t & queries, configuration
     // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
     //                  duplicates. more efficient to call delegate once with one vector instead of calling
     //                  delegate for each hit separately at once.
-    using text_pos_t = std::conditional_t<index_t::is_collection,
+    using text_pos_t = std::conditional_t<index_t::is_collection_,
                                           std::pair<typename index_t::size_type, typename index_t::size_type>,
                                           typename index_t::size_type>;
     using hit_t = std::conditional_t<cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>(),

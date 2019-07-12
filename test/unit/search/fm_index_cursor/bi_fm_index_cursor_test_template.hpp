@@ -25,17 +25,13 @@ TYPED_TEST_CASE_P(bi_fm_index_cursor_test);
 
 TYPED_TEST_P(bi_fm_index_cursor_test, begin)
 {
-    using text_t = typename TypeParam::index_type::text_type;
-    text_t text{"AACGATCGGA"_dna4};
+    std::vector<dna4> text{"AACGATCGGA"_dna4};
     auto rev_text = ranges::view::reverse(text);
-    // using rev_text_t = decltype(ranges::view::reverse(text_t{}));
 
-    using fm_fwd_t = fm_index<text_t>;
-    using fm_rev_t = fm_index<decltype(rev_text)>;
 
     typename TypeParam::index_type bi_fm{text};
-    fm_fwd_t fm_fwd{text};
-    fm_rev_t fm_rev{rev_text};
+    fm_index fm_fwd{text};
+    fm_index fm_rev{rev_text};
 
     TypeParam bi_it = bi_fm.begin();
     EXPECT_EQ(uniquify(bi_it.locate()), uniquify(bi_fm.fwd_begin().locate()));
@@ -44,7 +40,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, begin)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend)
 {
-    typename TypeParam::index_type::text_type text{"ACGGTAGGACG"_dna4};
+    std::vector<dna4> text{"ACGGTAGGACG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
     auto it = bi_fm.begin();
@@ -64,7 +60,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend_char)
 {
-    typename TypeParam::index_type::text_type text{"ACGGTAGGACG"_dna4};
+    std::vector<dna4> text{"ACGGTAGGACG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
     auto it = bi_fm.begin();
@@ -92,7 +88,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_char)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend_range)
 {
-    typename TypeParam::index_type::text_type text{"ACGGTAGGACG"_dna4};
+    std::vector<dna4> text{"ACGGTAGGACG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
     auto it = bi_fm.begin();
@@ -111,7 +107,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_range)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend_and_cycle)
 {
-    typename TypeParam::index_type::text_type text{"ACGGTAGGACG"_dna4};
+    std::vector<dna4> text{"ACGGTAGGACG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
     auto it = bi_fm.begin();
@@ -132,7 +128,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_and_cycle)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, extend_range_and_cycle)
 {
-    typename TypeParam::index_type::text_type text{"ACGGTAGGACGTAG"_dna4};
+    std::vector<dna4> text{"ACGGTAGGACGTAG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
     auto it = bi_fm.begin();
@@ -158,7 +154,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_range_and_cycle)
 
 TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
 {
-    typename TypeParam::index_type::text_type text{"ACGGTAGGACGTAGC"_dna4};
+    std::vector<dna4> text{"ACGGTAGGACGTAGC"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
     {
@@ -169,7 +165,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
         auto fwd_it = it.to_fwd_cursor();
         EXPECT_TRUE(fwd_it.cycle_back()); // "GTAGG"
         EXPECT_EQ(uniquify(fwd_it.locate()), (std::vector<uint64_t>{3}));
-        EXPECT_TRUE(std::ranges::equal(*fwd_it, "GTAGG"_dna4));
+        EXPECT_TRUE(std::ranges::equal(fwd_it.path_label(text), "GTAGG"_dna4));
         EXPECT_FALSE(fwd_it.cycle_back());
     }
 
@@ -184,16 +180,17 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
     #endif
         EXPECT_TRUE(fwd_it.extend_right());
         EXPECT_EQ(uniquify(fwd_it.locate()), (std::vector<uint64_t>{10}));
-        EXPECT_TRUE(std::ranges::equal(*fwd_it, "GTAGC"_dna4));
+        EXPECT_TRUE(std::ranges::equal(fwd_it.path_label(text), "GTAGC"_dna4));
         EXPECT_TRUE(fwd_it.cycle_back());
         EXPECT_EQ(uniquify(fwd_it.locate()), (std::vector<uint64_t>{3}));
-        EXPECT_TRUE(std::ranges::equal(*fwd_it, "GTAGG"_dna4));
+        EXPECT_TRUE(std::ranges::equal(fwd_it.path_label(text), "GTAGG"_dna4));
     }
 }
 
 TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
 {
-    typename TypeParam::index_type::text_type text{"ACGGTAGGACGTAGC"_dna4};
+    std::vector<dna4> text{"ACGGTAGGACGTAGC"_dna4};
+    std::vector<dna4> rev_text{text | std::view::reverse};
     typename TypeParam::index_type bi_fm{text};
 
     {
@@ -203,10 +200,10 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
 
         auto rev_it = it.to_rev_cursor(); // text "CGATGCAGGATGGCA"
         EXPECT_EQ(uniquify(rev_it.locate()), (std::vector<uint64_t>{1}));
-        EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGC"_dna4));
+        EXPECT_TRUE(std::ranges::equal(rev_it.path_label(rev_text), "GATGC"_dna4));
         EXPECT_TRUE(rev_it.cycle_back()); // "GATGG"
         EXPECT_EQ(uniquify(rev_it.locate()), (std::vector<uint64_t>{8}));
-        EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGG"_dna4));
+        EXPECT_TRUE(std::ranges::equal(rev_it.path_label(rev_text), "GATGG"_dna4));
         EXPECT_FALSE(rev_it.cycle_back());
     }
 
@@ -221,10 +218,10 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
     #endif
         EXPECT_TRUE(rev_it.extend_right()); // "CGTAG" resp. "GATGC"
         EXPECT_EQ(uniquify(rev_it.locate()), (std::vector<uint64_t>{1}));
-        EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGC"_dna4));
+        EXPECT_TRUE(std::ranges::equal(rev_it.path_label(rev_text), "GATGC"_dna4));
         EXPECT_TRUE(rev_it.cycle_back()); // "GGTAG" resp. "GATGG"
         EXPECT_EQ(uniquify(rev_it.locate()), (std::vector<uint64_t>{8}));
-        EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGG"_dna4));
+        EXPECT_TRUE(std::ranges::equal(rev_it.path_label(rev_text), "GATGG"_dna4));
     }
 }
 

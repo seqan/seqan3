@@ -82,6 +82,18 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), int>));
 
+    auto v3 = vec | std::view::transform([] (auto && v) { return v; }) | adaptor;
+
+    EXPECT_TRUE(std::ranges::InputRange<decltype(v3)>);
+    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v3)>);
+    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v3)>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v3)>);
+    EXPECT_TRUE(std::ranges::View<decltype(v3)>);
+    EXPECT_TRUE(std::ranges::SizedRange<decltype(v3)>);
+    EXPECT_FALSE(std::ranges::CommonRange<decltype(v3)>);
+    EXPECT_FALSE(ConstIterableRange<decltype(v3)>);
+    EXPECT_FALSE((std::ranges::OutputRange<decltype(v3), int>));
+
     auto v2 = vec | view::single_pass_input | adaptor;
 
     EXPECT_TRUE(std::ranges::InputRange<decltype(v2)>);

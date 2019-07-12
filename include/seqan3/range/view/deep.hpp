@@ -111,6 +111,13 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
+    constexpr deep()                         noexcept = default; //!< Defaulted.
+    constexpr deep(deep const &)             noexcept = default; //!< Defaulted.
+    constexpr deep(deep &&)                  noexcept = default; //!< Defaulted.
+    constexpr deep & operator=(deep const &) noexcept = default; //!< Defaulted.
+    constexpr deep & operator=(deep &&)      noexcept = default; //!< Defaulted.
+    ~deep()                                  noexcept = default; //!< Defaulted.
+
     using base_type::base_type;
     //!\}
 

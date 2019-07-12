@@ -14,7 +14,7 @@
 
 /*!\defgroup algorithm Algorithm
  * \ingroup core
- * \brief Contains core functionality used to configure algorithms.
+ * \brief Provides core functionality used to configure algorithms.
  *
  * \details
  *
@@ -71,6 +71,7 @@
  *
  * \snippet test/snippet/core/algorithm/configuration.cpp value_or
  */
+ #include <seqan3/core/algorithm/bound.hpp>
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/algorithm/configuration_utility.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>

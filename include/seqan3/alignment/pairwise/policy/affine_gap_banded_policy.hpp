@@ -16,8 +16,8 @@
 #include <type_traits>
 
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail

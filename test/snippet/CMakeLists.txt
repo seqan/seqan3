@@ -5,7 +5,7 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.7)
 project (seqan3_test_snippet CXX)
 
 include (../seqan3-test.cmake)
@@ -18,7 +18,7 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
 
     add_executable (${target} "${snippet_base_path}/${snippet}")
     target_link_libraries (${target} seqan3::test::unit)
-    target_compile_options (${target} PUBLIC "-Wno-unused-variable")
+    target_compile_options (${target} PUBLIC "-Wno-unused")
     set_target_properties(${target}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${snippet_target_path}"

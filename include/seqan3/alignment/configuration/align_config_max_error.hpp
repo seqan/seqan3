@@ -31,7 +31,7 @@ namespace seqan3::align_cfg
  *
  * ### Example
  *
- * \snippet test/snippet/alignment/configuration/align_cfg_max_error_example.cpp example
+ * \include test/snippet/alignment/configuration/align_cfg_max_error_example.cpp
  */
 struct max_error : public pipeable_config_element<max_error, uint32_t>
 {

@@ -480,7 +480,7 @@ TEST(rows, assign_range_of_tuples)
     assign_impl(range);
 }
 
-TEST(rows, assign_alignment_file_in)
+TEST(rows, assign_alignment_file_input)
 {
     std::vector<std::string> ref_ids{"ref"};
     std::vector<dna4_vector> ref_seqs{"ACTAGCTAGGAGGACTAGCATCGATC"_dna4};

@@ -12,10 +12,10 @@
 
 #pragma once
 
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/core/char_operations/transform.hpp>
 
 namespace seqan3
 {
@@ -57,10 +57,12 @@ private:
     //! Befriend the derived_type so it can instantiate.
     friend derived_type;
 
-public:
+protected:
     // Import from base:
     using typename base_t::char_type;
     using typename base_t::rank_type;
+
+public:
     using base_t::alphabet_size;
     using base_t::to_rank;
 
@@ -95,11 +97,11 @@ public:
      *
      * Provides an implementation for seqan3::complement, required to model seqan3::NucleotideAlphabet.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */
@@ -120,11 +122,11 @@ public:
      * **and** true also for U/T respectively, e.g. 'U' is a valid character for seqan3::dna4, because its informational
      * content is identical to 'T'.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ###Exceptions
      *
      * Guaranteed not to throw.
      */

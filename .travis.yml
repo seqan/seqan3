@@ -46,19 +46,23 @@ matrix:
     env:
       - BUILD=coverage
       - BUILD_TYPE=Debug
+      - CMAKE_VERSION=3.7.2
   - << : *linux-gcc-9
     env:
       - BUILD=unit
       - BUILD_TYPE=Release
       - CXXFLAGS="-std=c++2a"
+      - CMAKE_VERSION=3.7.2
   - << : *linux-gcc-8
     env:
       - BUILD=unit
       - BUILD_TYPE=Release
+      - CMAKE_VERSION=3.7.2
   - << : *linux-gcc-7
     env:
       - BUILD=unit
       - BUILD_TYPE=Release
+      - CMAKE_VERSION=3.7.2
   # To reduce build time we disable debug builds of unit tests, because they
   # are completely contained in coverage test.
   # - << : *linux-gcc-7
@@ -69,14 +73,17 @@ matrix:
     env:
       - BUILD=performance
       - BUILD_TYPE=Release
+      - CMAKE_VERSION=3.7.2
   - << : *linux-gcc-7
     env:
       - BUILD=header
       - BUILD_TYPE=Release
+      - CMAKE_VERSION=3.7.2
   - << : *linux-gcc-7
     env:
       - BUILD=snippet
       - BUILD_TYPE=Release
+      - CMAKE_VERSION=3.7.2
   - os: linux
     compiler: 'doxygen'
     addons:
@@ -85,6 +92,7 @@ matrix:
         packages: ['texlive-font-utils', 'ghostscript', 'texlive-latex-base']
     env:
       - BUILD=documentation
+      - CMAKE_VERSION=3.7.2
     cache:
       directories:
           - /tmp/doxygen-download
@@ -98,14 +106,22 @@ matrix:
        - doxygen --version
 
 install:
+  - |
+    HOME_BIN_PATH=`realpath ~/bin`
+    mkdir -p ${HOME_BIN_PATH}
+  - |
+    # install cmake
+    mkdir -p /tmp/cmake-download
+    wget --no-clobber --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+    tar -C /tmp/ -zxvf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+    export PATH="/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin:${PATH}"
   - ccache --version
   - $CXX -v
   - cmake --version
   - |
     # use gcov7 matching the g++7 compiler
     if [[ "${BUILD}" =~ ^(coverage)$ ]]; then
-      GCOV_PATH=`realpath ~/bin`
-      mkdir -p ${GCOV_PATH}
+      GCOV_PATH=${HOME_BIN_PATH}
       ln -s `which gcov-7` ${GCOV_PATH}/gcov
       export PATH="${GCOV_PATH}:${PATH}"
     fi
@@ -124,6 +140,7 @@ before_script:
     fi
 
 script:
+  - export SEQAN3_NO_VERSION_CHECK=1
   - make -k -j2
   - |
     if test coverage != "${BUILD}"; then

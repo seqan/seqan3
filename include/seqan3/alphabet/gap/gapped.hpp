@@ -8,7 +8,7 @@
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
- * \brief Contains seqan3::gapped.
+ * \brief Provides seqan3::gapped.
  */
 
 #pragma once
@@ -31,7 +31,7 @@ namespace seqan3
  * seqan3::gap alphabet. Note that you cannot assign the alphabet by using letters of type `char`, but you instead have
  * to use the function assign_char() of the underlying alphabet or seqan3::gap::assign_char().
  *
- * \snippet test/snippet/alphabet/gap/gapped.cpp general
+ * \include test/snippet/alphabet/gap/gapped.cpp
  *
  * \sa For more details see alphabet_variant, which is the base class and more general than the gapped alphabet.
  */

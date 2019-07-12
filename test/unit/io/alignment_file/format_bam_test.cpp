@@ -11,7 +11,7 @@
 
 #include <seqan3/contrib/stream/gz_istream.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
-#include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
+#include <seqan3/range/decorator/gap_decorator.hpp>
 
 #include "alignment_file_format_test_template.hpp"
 
@@ -146,7 +146,7 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x00', '\x04', '\x00', '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00',
         '\x22', '\x00', '\x00', '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x02',
         '\x00', '\x48', '\x12', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\xFF',
-        '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00', '\x00', '\x00', '\x00', '\x2A', '\x00', '\x0A'
+        '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00', '\x00', '\x00', '\x00', '\x2A', '\x00'
     };
 
     std::string empty_cigar{
@@ -478,7 +478,7 @@ TEST_F(bam_format, too_long_cigar_string_write)
     auto read = view::repeat_n('T'_dna5,  70'000);
     auto ref  = view::repeat_n('A'_dna5, 2 * read.size() - 1);
 
-    auto gapped_ref  = gap_decorator_anchor_set{ref};
+    auto gapped_ref  = gap_decorator{ref};
 
     // a gap_decorator on a repeat_n view also works but is slow when inserting gaps.
     std::vector<gapped<dna5>> gapped_read;

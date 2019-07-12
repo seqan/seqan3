@@ -7,14 +7,10 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains aliases for qualified.
+ * \brief Provides aliases for qualified.
  */
 
 #pragma once
-
-#include <iostream>
-#include <string>
-#include <utility>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>

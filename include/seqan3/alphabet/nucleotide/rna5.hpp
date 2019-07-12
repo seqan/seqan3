@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains seqan3::rna5, container aliases and string literals.
+ * \brief Provides seqan3::rna5, container aliases and string literals.
  */
 
 #pragma once
@@ -37,11 +37,11 @@ namespace seqan3
  * This alphabet has the same internal representation as seqan3::dna5, the only difference is that it prints 'U' on
  * character conversion instead of 'T'. You can assign between values of seqan3::dna5 and seqan3::rna5.
  *
- * The alphabet may be brace initialized from the static letter members. Note that you cannot
- * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
+ * Instead initialise/assign from the character literal or use the
  * function seqan3::rna5::assign_char().
  *
- *\snippet test/snippet/alphabet/nucleotide/rna5.cpp code
+ *\include test/snippet/alphabet/nucleotide/rna5.cpp
  */
 class rna5 : public nucleotide_base<rna5, 5>
 {
@@ -70,6 +70,9 @@ public:
 
     //!\brief Allow implicit construction from dna/rna of the same size.
     constexpr rna5(dna5 const & r) noexcept
+#if SEQAN3_WORKAROUND_GCC_90897
+        requires true
+#endif
     {
         assign_rank(r.to_rank());
     }
@@ -126,7 +129,7 @@ constexpr rna5 operator""_rna5(char const c) noexcept
  *
  * You can use this string literal to easily assign to rna5_vector:
  *
- * \snippet test/snippet/alphabet/nucleotide/rna5.cpp operator""_rna5
+ * \include test/snippet/alphabet/nucleotide/rna5_literal.cpp
  *
  */
 inline rna5_vector operator""_rna5(char const * s, std::size_t n)

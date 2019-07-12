@@ -5,7 +5,7 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.7)
 
 ### Find doxygen and dependency to DOT tool
 message (STATUS "Searching for doxygen.")
@@ -34,8 +34,8 @@ set(SEQAN3_DOXYGEN_STD_TAGFILE "${PROJECT_BINARY_DIR}/cppreference-doxygen-web.t
 include(ExternalProject)
 ExternalProject_Add (
     download-cppreference-doxygen-web-tag
-    URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20190110/html-book-20190110.tar.xz"
-    URL_HASH SHA256=cb8d6724c8dde8b9a4fac0eedc070dfb7adca6b714267fef089094e670c1a0e6
+    URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20190602/html-book-20190602.tar.xz"
+    URL_HASH SHA256=cb06cb61206cf38c6b6d978d286f6dfa05052152397af2f0759fff33be2f6efc
     TLS_VERIFY ON
     DOWNLOAD_DIR "${PROJECT_BINARY_DIR}"
     DOWNLOAD_NAME "html-book.tar.xz"
@@ -51,7 +51,7 @@ if (SEQAN3_USER_DOC)
 
     set (SEQAN3_DOXYGEN_OUTPUT_DIR "${PROJECT_BINARY_DIR}/doc_usr")
     set (SEQAN3_DOXYGEN_SOURCE_DIR "${SEQAN3_INCLUDE_DIR}/..")
-    set (SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS "detail") #/""
+    set (SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS "detail seqan3::simd") #/""
     set (SEQAN3_DOXYGEN_PREDEFINED_NDEBUG "-NDEBUG") #/""
     set (SEQAN3_DOXYGEN_ENABLED_SECTIONS "") #/"DEV"
     set (SEQAN3_DOXYGEN_EXTRACT_PRIVATE "NO") #/"YES":

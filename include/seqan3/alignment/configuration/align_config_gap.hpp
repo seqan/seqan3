@@ -14,15 +14,16 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/alignment/scoring/gap_scheme_concept.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
 namespace seqan3::align_cfg
 {
 /*!\brief A configuration element for the gap scheme.
  * \ingroup alignment_configuration
- * \tparam gap_scheme_t The type of the underlying gap scheme. Must satisfy the seqan3::GapScheme.
+ * \tparam gap_scheme_t The type of the underlying gap scheme; must be of type seqan3::gap_scheme.
  *
  * \details
  *
@@ -33,13 +34,15 @@ namespace seqan3::align_cfg
  *
  * ### Example
  *
- * \snippet test/snippet/alignment/configuration/align_cfg_gap_example.cpp example
+ * \include test/snippet/alignment/configuration/align_cfg_gap_example.cpp
  *
  * \see seqan3::gap_scheme
  */
-template <GapScheme gap_scheme_t>
+template <typename gap_scheme_t>
 struct gap : public pipeable_config_element<gap<gap_scheme_t>, gap_scheme_t>
 {
+    static_assert(detail::is_type_specialisation_of_v<gap_scheme_t, gap_scheme>,
+                  "Expects seqan3::gap_scheme class.");
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::gap};
@@ -50,8 +53,8 @@ struct gap : public pipeable_config_element<gap<gap_scheme_t>, gap_scheme_t>
  * \{
  */
 //!\brief Deduces the gap scheme from the constructor argument.
-template <GapScheme scheme_t>
-gap(scheme_t) -> gap<remove_cvref_t<scheme_t>>;
+template <typename scheme_t>
+gap(scheme_t) -> gap<scheme_t>;
 //!\}
 
 } // namespace seqan3::align_cfg

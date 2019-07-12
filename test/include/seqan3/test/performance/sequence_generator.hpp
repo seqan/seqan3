@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains test utilities for seqan3::simd::simd_type types.
+ * \brief Provides test utilities for seqan3::simd::simd_type types.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -18,8 +18,8 @@
 #include <seqan3/test/seqan2.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-    #include <seqan/basic.h>
-    #include <seqan/sequence.h>
+#include <seqan/basic.h>
+#include <seqan/sequence.h>
 #endif
 
 namespace seqan3::test
@@ -43,6 +43,23 @@ auto generate_sequence(size_t const len = 500,
     return sequence;
 }
 
+template <typename alphabet_t>
+auto generate_sequence_pairs(size_t const sequence_length, size_t const set_size)
+{
+    using sequence_t = decltype(generate_sequence<alphabet_t>());
+
+    std::vector<std::pair<sequence_t, sequence_t>> vec;
+
+    for (unsigned i = 0; i < set_size; ++i)
+    {
+        sequence_t seq1 = generate_sequence<alphabet_t>(sequence_length, 0, i);
+        sequence_t seq2 = generate_sequence<alphabet_t>(sequence_length, 0, i + set_size);
+        vec.push_back(std::pair{seq1, seq2});
+    }
+
+    return vec;
+}
+
 #ifdef SEQAN3_HAS_SEQAN2
 template <typename alphabet_t>
 auto generate_sequence_seqan2(size_t const len = 500,
@@ -55,10 +72,30 @@ auto generate_sequence_seqan2(size_t const len = 500,
 
     seqan::String<alphabet_t> sequence;
     size_t length = dis_length(gen);
+
     for (size_t l = 0; l < length; ++l)
         appendValue(sequence, alphabet_t{dis_alpha(gen)});
 
     return sequence;
+}
+
+template <typename alphabet_t>
+auto generate_sequence_pairs_seqan2(size_t const sequence_length, size_t const set_size)
+{
+    using sequence_t = decltype(generate_sequence_seqan2<alphabet_t>());
+
+    seqan::StringSet<sequence_t> vec1;
+    seqan::StringSet<sequence_t> vec2;
+
+    for (unsigned i = 0; i < set_size; ++i)
+    {
+        sequence_t seq1 = generate_sequence_seqan2<alphabet_t>(sequence_length, 0, i);
+        sequence_t seq2 = generate_sequence_seqan2<alphabet_t>(sequence_length, 0, i + set_size);
+        appendValue(vec1, seq1);
+        appendValue(vec2, seq2);
+    }
+
+    return std::tuple{vec1, vec2};
 }
 #endif // generate seqan2 data.
 

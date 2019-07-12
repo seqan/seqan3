@@ -43,6 +43,10 @@ div.contents {
     align-content: center;
 }
 
+#projectlogo {
+    padding: 10px;
+}
+
 hr.footer {
     display: none;
 }
@@ -68,10 +72,10 @@ div.fragment {
 
 /* inline code */
 code {
-    font-size: 12pt;
-    line-height: 15px;
+    font-size: 11pt;
+    line-height: 30px;
     font-family: "Ubuntu Mono", "SFMono-Regular",source-code-pro,Menlo,Monaco,Consolas,"Roboto Mono","Droid Sans Mono","Liberation Mono",Consolas,"Courier New",Courier,monospace;
-    padding: 2px;
+    padding: 1px 0px 1px 0px;
     border-radius: 1px;
     background-color: #F6F8FA;
     border: 1px solid #F6F8FA;

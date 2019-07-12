@@ -49,7 +49,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet snippet/alignment/configuration/align_cfg_mode_example.cpp global
+ * \include snippet/alignment/configuration/align_cfg_global_mode_example.cpp
  */
 inline constexpr detail::global_alignment_type global_alignment;
 
@@ -60,7 +60,7 @@ inline constexpr detail::global_alignment_type global_alignment;
  *
  * ### Example
  *
- * \snippet snippet/alignment/configuration/align_cfg_mode_example.cpp local
+ * \include snippet/alignment/configuration/align_cfg_local_mode_example.cpp
  */
 inline constexpr detail::local_alignment_type local_alignment;
 

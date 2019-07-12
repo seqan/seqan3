@@ -7,12 +7,12 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Contains seqan3::semialphabet_any.
+ * \brief Provides seqan3::semialphabet_any.
  */
 
 #pragma once
 
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 
 namespace seqan3
 {
@@ -39,7 +39,7 @@ namespace seqan3
  * \see https://en.wikipedia.org/wiki/Reification_(computer_science)
  *
  * ### Example
- * \snippet test/snippet/alphabet/composite/semialphabet_any.cpp example
+ * \include test/snippet/alphabet/composite/semialphabet_any.cpp
  */
 template <size_t size>
 class semialphabet_any : public alphabet_base<semialphabet_any<size>, size, void>

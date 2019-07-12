@@ -11,7 +11,7 @@ int main()
 
     configuration const cfg = search_cfg::max_error{search_cfg::substitution{1}};
 
-    auto results = search(index, "GCT"_dna4, cfg);
+    auto results = search("GCT"_dna4, index, cfg);
     std::ranges::sort(results);
 
     debug_stream << "There are " << results.size() << " hits.\n";

@@ -31,14 +31,7 @@ namespace seqan3
  *
  * ### Example
  *
- * Score two letters:
- * \snippet test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp two letters
- *
- * You can "edit" a given matrix directly:
- * \snippet test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp edit matrix
- *
- * Score two sequences:
- * \snippet test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp score sequences
+ * \include test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp
  */
 template <Arithmetic score_type = int8_t>
 class nucleotide_scoring_scheme : public scoring_scheme_base<nucleotide_scoring_scheme<score_type>, dna15, score_type>

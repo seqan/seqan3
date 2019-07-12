@@ -11,6 +11,19 @@
 
 using namespace seqan3;
 
+TEST(parser_design_error, app_name_validation)
+{
+    const char * argv[] = {"./argument_parser_test"};
+
+    EXPECT_NO_THROW((argument_parser{"test_parser", 1, argv}));
+    EXPECT_NO_THROW((argument_parser{"test-parser1234_foo", 1, argv}));
+
+    EXPECT_THROW((argument_parser{"test parser", 1, argv}),       parser_design_error);
+    EXPECT_THROW((argument_parser{"test;", 1, argv}),             parser_design_error);
+    EXPECT_THROW((argument_parser{";", 1, argv}),                 parser_design_error);
+    EXPECT_THROW((argument_parser{"test;bad script:D", 1, argv}), parser_design_error);
+}
+
 TEST(parse_test, parser_design_error)
 {
     int option_value;

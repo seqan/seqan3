@@ -17,8 +17,8 @@
 #include <tuple>
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/algorithm/parameter_pack.hpp>
 
@@ -224,7 +224,7 @@ back_end_second(value_t) -> back_end_second<value_t>;
  * used. If it was static the function end_gaps::get_static can be used to obtain the respective value at compile time.
  * Note that both functions are static and thus need to be called on the type and not on an instance of the type.
  *
- * \snippet snippet/alignment/configuration/align_cfg_aligned_ends_example.cpp access
+ * \include snippet/alignment/configuration/align_cfg_aligned_ends_access.cpp
  *
  * To get the respective value at runtime use the \ref operator[]() "[]-operator". This function returns always the
  * respective value independent of whether the value was provided by a static variable or a runtime variable.
@@ -538,7 +538,7 @@ namespace seqan3::align_cfg
  *
  * ### Example
  *
- * \snippet snippet/alignment/configuration/align_cfg_aligned_ends_example.cpp aligned_ends
+ * \include snippet/alignment/configuration/align_cfg_aligned_ends.cpp
  */
 template <typename end_gaps_t>
 //!\cond

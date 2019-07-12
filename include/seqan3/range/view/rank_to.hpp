@@ -60,7 +60,7 @@ namespace seqan3::view
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * \par Example
+ * ###Example
  * \snippet test/snippet/range/view/rank_char.cpp rank_to
  * \hideinitializer
  */

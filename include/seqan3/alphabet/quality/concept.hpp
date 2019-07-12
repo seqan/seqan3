@@ -13,9 +13,6 @@
 
 #pragma once
 
-#include <iostream>
-#include <string>
-
 #include <seqan3/alphabet/concept.hpp>
 
 // ============================================================================
@@ -23,13 +20,13 @@
 // ============================================================================
 
 //!\cond
-namespace seqan3::adaptation
+namespace seqan3::custom
 {
 
 void to_phred();
 void assign_phred_to();
 
-} // namespace seqan3::adaptation
+} // namespace seqan3::custom
 //!\endcond
 
 // ============================================================================
@@ -44,7 +41,7 @@ struct to_phred_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, to_phred(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::adaptation::to_phred(v) ) // customisation namespace
+    SEQAN3_CPO_IMPL(1, seqan3::custom::to_phred(v)     ) // customisation namespace
     SEQAN3_CPO_IMPL(0, v.to_phred()                    ) // member
 
 public:
@@ -69,7 +66,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Quality)
  * \{
  */
 
@@ -88,7 +85,7 @@ namespace seqan3
  *   1. A free function `to_phred(your_type const a)` in the namespace of your type (or as `friend`).
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be of the respective phred representation (usually a small integral type).
- *   2. A free function `to_phred(your_type const a)` in `namespace seqan3::adaptation`.
+ *   2. A free function `to_phred(your_type const a)` in `namespace seqan3::custom`.
  *      The same restrictions apply as above.
  *   3. A member function called `to_phred()`.
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be of
@@ -98,7 +95,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point. To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto to_phred = detail::adl::only::to_phred_fn{};
@@ -128,7 +125,7 @@ struct assign_phred_to_fn
 {
 private:
     SEQAN3_CPO_IMPL(2, (assign_phred_to(args..., v)                     )) // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::adaptation::assign_phred_to(args..., v) )) // customisation namespace
+    SEQAN3_CPO_IMPL(1, (seqan3::custom::assign_phred_to(args..., v)     )) // customisation namespace
     SEQAN3_CPO_IMPL(0, (v.assign_phred(args...)                         )) // member
 
 public:
@@ -165,7 +162,7 @@ public:
 namespace seqan3
 {
 
-/*!\name Function objects
+/*!\name Function objects (Quality)
  * \{
  */
 
@@ -185,7 +182,7 @@ namespace seqan3
  *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
  *      return type be `your_type &`.
  *   2. A free function `assign_phred_to(phred_type const chr, your_type & a)` in
- *      `namespace seqan3::adaptation`. The same restrictions apply as above.
+ *      `namespace seqan3::custom`. The same restrictions apply as above.
  *   3. A member function called `assign_phred(phred_type const chr)` (not `assign_phred_to`).
  *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
  *      `your_type &`.
@@ -195,7 +192,7 @@ namespace seqan3
  *
  * ### Customisation point
  *
- * This is a customisation point. To specify the behaviour for your own alphabet type,
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
 inline constexpr auto assign_phred_to = detail::adl::only::assign_phred_to_fn{};
@@ -220,6 +217,7 @@ namespace seqan3
  * In addition to the requirements for seqan3::Alphabet, the
  * QualityAlphabet introduces a requirement for conversion functions from and to
  * a Phred score.
+ * ### Concepts and doxygen
  *
  * ### Requirements
  *
@@ -276,9 +274,11 @@ SEQAN3_CONCEPT QualityAlphabet = Alphabet<t> && requires(t qual)
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableQualityAlphabet = WritableAlphabet<t> && QualityAlphabet<t> && requires(t qual)
+SEQAN3_CONCEPT WritableQualityAlphabet = WritableAlphabet<t> &&
+                                         QualityAlphabet<t> &&
+                                         requires(t v, alphabet_phred_t<t> c)
 {
-    { seqan3::assign_phred_to(typename t::rank_type{}, qual) };
+    { seqan3::assign_phred_to(c, v) };
 };
 //!\endcond
 

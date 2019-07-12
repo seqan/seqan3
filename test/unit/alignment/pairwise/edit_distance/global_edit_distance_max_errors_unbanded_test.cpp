@@ -15,6 +15,21 @@ using global_edit_distance_max_errors_unbanded_types
         global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e255, uint32_t>,
         global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e255, uint64_t>,
 
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e8, uint8_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e8, uint16_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e8, uint32_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e8, uint64_t>,
+
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e7, uint8_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e7, uint16_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e7, uint32_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e7, uint64_t>,
+
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e5, uint8_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e5, uint16_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e5, uint32_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01_e5, uint64_t>,
+
         global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01T_e255, uint8_t>,
         global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01T_e255, uint16_t>,
         global_fixture<&global::edit_distance::max_errors::unbanded::dna4_01T_e255, uint32_t>,
@@ -24,6 +39,21 @@ using global_edit_distance_max_errors_unbanded_types
         global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e255, uint16_t>,
         global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e255, uint32_t>,
         global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e255, uint64_t>,
+
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e8, uint8_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e8, uint16_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e8, uint32_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e8, uint64_t>,
+
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e4, uint8_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e4, uint16_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e4, uint32_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_e4, uint64_t>,
+
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_s10u_15u_e7, uint8_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_s10u_15u_e7, uint16_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_s10u_15u_e7, uint32_t>,
+        global_fixture<&global::edit_distance::max_errors::unbanded::dna4_02_s10u_15u_e7, uint64_t>,
 
         global_fixture<&global::edit_distance::max_errors::unbanded::aa27_01_e255, uint8_t>,
         global_fixture<&global::edit_distance::max_errors::unbanded::aa27_01_e255, uint16_t>,
@@ -36,4 +66,4 @@ using global_edit_distance_max_errors_unbanded_types
         global_fixture<&global::edit_distance::max_errors::unbanded::aa27_01T_e255, uint64_t>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(global, edit_distance_unbanded, global_edit_distance_max_errors_unbanded_types);
+INSTANTIATE_TYPED_TEST_CASE_P(global, edit_distance_unbanded_test, global_edit_distance_max_errors_unbanded_types);

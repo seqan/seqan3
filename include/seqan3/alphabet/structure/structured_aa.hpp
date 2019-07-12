@@ -7,16 +7,12 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the composite of aminoacid with structure alphabets.
+ * \brief Provides the composite of aminoacid with structure alphabets.
  */
 
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <utility>
-
-#include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/structure/dssp9.hpp>
@@ -44,7 +40,7 @@ namespace seqan3
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
- * \snippet test/snippet/alphabet/structure/structured_aa.cpp general
+ * \include test/snippet/alphabet/structure/structured_aa.cpp
  *
  * This seqan3::alphabet_tuple_base itself fulfills seqan3::Alphabet.
  */
@@ -54,12 +50,12 @@ template <WritableAlphabet sequence_alphabet_t = aa27, WritableAlphabet structur
 //!\endcond
 class structured_aa :
     public alphabet_tuple_base<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
-                                 sequence_alphabet_t, structure_alphabet_t>
+                               sequence_alphabet_t, structure_alphabet_t>
 {
 private:
     //!\brief The base type.
     using base_type = alphabet_tuple_base<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
-                                            sequence_alphabet_t, structure_alphabet_t>;
+                                          sequence_alphabet_t, structure_alphabet_t>;
 public:
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;

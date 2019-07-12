@@ -7,15 +7,10 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the composite of nucleotide with structure alphabets.
+ * \brief Provides the composite of nucleotide with structure alphabets.
  */
 
 #pragma once
-
-#include <iostream>
-#include <optional>
-#include <string>
-#include <utility>
 
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
@@ -46,7 +41,7 @@ namespace seqan3
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
- * \snippet test/snippet/alphabet/structure/structured_rna.cpp general
+ * \include test/snippet/alphabet/structure/structured_rna.cpp
  *
  * This seqan3::alphabet_tuple_base itself models both seqan3::NucleotideAlphabet and seqan3::RnaStructureAlphabet.
  */
@@ -110,13 +105,6 @@ public:
         seqan3::assign_char_to(c, get<0>(*this));
         return *this;
     }
-
-    //!\brief Strict assign from a nucleotide character. This modifies the internal sequence letter.
-    structured_rna & assign_char_strictly(char_type const c)
-    {
-        seqan3::assign_char_strictly_to(c, get<0>(*this));
-        return *this;
-    }
     //!\}
 
     //!\name Read functions
@@ -133,9 +121,9 @@ public:
      * See \ref nucleotide for the actual values.
      * Satisfies the seqan3::NucleotideAlphabet::complement() requirement via the seqan3::complement() wrapper.
      * The structure letter is not modified.
-     * \par Complexity
+     * ###Complexity
      * Constant.
-     * \par Exceptions
+     * ###Exceptions
      * Guaranteed not to throw.
      */
     constexpr structured_rna complement() const noexcept

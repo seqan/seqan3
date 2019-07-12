@@ -7,12 +7,12 @@
 
 /*!\file
  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
- * \brief Contains seqan3::phred42 quality scores.
+ * \brief Provides seqan3::phred42 quality scores.
  */
 
 #pragma once
 
-#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 
@@ -110,7 +110,7 @@ public:
      *
      * Satisfies the seqan3::WritableQualityAlphabet::assign_phred() requirement via the seqan3::assign_rank() wrapper.
      *
-     * \par Complexity
+     * ###Complexity
      *
      * Constant.
      */

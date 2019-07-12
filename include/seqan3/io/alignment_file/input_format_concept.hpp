@@ -40,13 +40,13 @@ namespace seqan3
 {
 
 /*!\interface seqan3::AlignmentFileInputFormat <>
- * \brief The generic concept for alignment_file_in formats.
- * \ingroup alignment
+ * \brief The generic concept for alignment file input formats.
+ * \ingroup alignment_file
  *
  * \details
  *
  * The details of this concept are only relevant to developers who wish to implement their own format.
- * The requirements for this concept are given as related functions and metafunctions.
+ * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
 //!\cond
@@ -169,7 +169,7 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
  * ### Additional requirements
  *
  *   * The function must also accept std::ignore as parameter for any of the fields,
- *     except stream, options and header. [this is enforced by the concept checker!]
+ *     except stream, options and header. [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  */
  /*!\var static inline std::vector<std::string> seqan3::AlignmentFileInputFormat::file_extensions
@@ -185,7 +185,7 @@ namespace seqan3::detail
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::AlignmentFileInputFormat [default is false].
  * \ingroup core
- * \see seqan3::type_list_of_alignment_file_input_formats_concept
+ * \see seqan3::TypeListOfAlignmentFileInputFormats
  */
 template <typename t>
 constexpr bool is_type_list_of_alignment_file_input_formats_v = false;
@@ -193,7 +193,7 @@ constexpr bool is_type_list_of_alignment_file_input_formats_v = false;
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::AlignmentFileInputFormat [overload].
  * \ingroup core
-  * \see seqan3::type_list_of_alignment_file_input_formats_concept
+  * \see seqan3::TypeListOfAlignmentFileInputFormats
  */
 template <typename ... ts>
 constexpr bool is_type_list_of_alignment_file_input_formats_v<type_list<ts...>> =

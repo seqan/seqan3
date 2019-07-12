@@ -61,6 +61,9 @@ just state "Please squash commits" in the PR and we will take care of the rest.*
 When you are done with committing changes to your branch and you have tested your changes, open a pull request.
 We have continuous integration in place that should inform you of test failures. Please try to resolve any
 breakage that your pull request introduces.
+
+[Here is a guide for setting up unit tests locally.](https://docs.seqan.de/seqan/3-master-user/setup_tests.html)
+
 If there are test failures that you don't understand, clearly indicate that you have seen the errors, but cannot resolve
 them – then the first reviewer will have a look at them. Otherwise the PR will be treated as still being
 work-in-progress.

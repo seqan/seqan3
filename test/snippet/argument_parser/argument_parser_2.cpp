@@ -1,4 +1,3 @@
-//! [usage]
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
@@ -23,4 +22,3 @@ int main(int argc, char ** argv)
     seqan3::debug_stream << "integer given by user: " << age << std::endl;
     return 0;
 }
-//! [usage]

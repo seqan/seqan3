@@ -9,6 +9,9 @@
 
 #include <gtest/gtest.h>
 
+#include <vector>
+
+#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
@@ -24,6 +27,16 @@ using gapped_types = ::testing::Types<gapped<dna4>, gapped<dna15>, gapped<qualif
 
 INSTANTIATE_TYPED_TEST_CASE_P(gapped, alphabet, gapped_types);
 INSTANTIATE_TYPED_TEST_CASE_P(gapped, alphabet_constexpr, gapped_types);
+
+template <typename t>
+using gapped_test = ::testing::Test;
+
+TYPED_TEST_CASE(gapped_test, gapped_types);
+
+TYPED_TEST(gapped_test, concept_check)
+{
+    EXPECT_TRUE((AlignedSequence<std::vector<TypeParam>>));
+}
 
 TEST(gapped_test, initialise_from_component_alphabet)
 {
@@ -73,11 +86,4 @@ TEST(gapped_test, assign_from_component_alphabet)
 
     letter = {static_cast<alphabet_t>('T'_dna4)};
     EXPECT_EQ(letter.to_rank(), 3);
-}
-
-TEST(gapped_test, fulfills_concepts)
-{
-    using alphabet_t = gapped<dna4>;
-    EXPECT_TRUE((std::is_trivially_copyable_v<alphabet_t>));
-    EXPECT_TRUE((std::is_standard_layout_v<alphabet_t>));
 }

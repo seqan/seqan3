@@ -5,7 +5,10 @@
         <tab type="mainpage" visible="yes" title=""/>
     <!--     <tab type="pages" visible="yes" title="" intro=""/> -->
 
-        <tab type="user" visible="yes" title="Setup" url="@ref setup" intro=""/>
+        <tab type="usergroup" visible="yes" title="Setup" intro="">
+            <tab type="user" visible="yes" title="Quick-Setup (CMake)"  url="\ref setup" intro=""/>
+            <tab type="user" visible="yes" title="Library tests"        url="\ref setup_tests" intro=""/>
+        </tab>
         <tab type="usergroup" visible="yes" title="Tutorial" intro="">
             <tab type="user"  visible="yes" title="First steps"     url="@ref tutorial_first_example" intro=""/>
             <tab type="user"  visible="yes" title="Parsing command line arguments"       url="@ref tutorial_argument_parser"     intro=""/>
@@ -15,10 +18,12 @@
             <tab type="user"  visible="yes" title="Sequence file I/O" url="@ref tutorial_sequence_file" intro=""/>
             <tab type="user"  visible="yes" title="Computing pairwise alignments"  url="@ref tutorial_pairwise_alignment" intro=""/>
             <tab type="user"  visible="yes" title="Index and Search"       url="@ref tutorial_index_search"     intro=""/>
+            <tab type="user"  visible="yes" title="Alignment file I/O" url="@ref tutorial_alignment_file" intro=""/>
             <tab type="user"  visible="yes" title="Implement your own read mapper"  url="@ref tutorial_read_mapper" intro=""/>
         </tab>
-        <tab type="usergroup" visible="yes" title="HowTos" intro="">
+        <tab type="usergroup" visible="yes" title="How-To" intro="">
             <tab type="user" visible="yes" title="Write your own view" url="\ref howto_write_a_view" intro=""/>
+            <tab type="user" visible="yes" title="Port from SeqAn2"     url="\ref howto_porting"       intro=""/>
         </tab>
         <tab type="usergroup" visible="yes" title="About" intro="">
             <tab type="user" visible="yes" title="API/ABI stability"    url="\ref about_api"           intro=""/>
@@ -26,6 +31,7 @@
             <tab type="user" visible="yes" title="Copyright"            url="\ref about_copyright"     intro=""/>
             <tab type="user" visible="yes" title="Code of Conduct"      url="\ref about_code_of_conduct" intro=""/>
             <tab type="user" visible="yes" title="Contributing"         url="\ref about_contributing"  intro=""/>
+            <tab type="user" visible="yes" title="Customisation"        url="\ref about_customisation" intro=""/>
         </tab>
         <tab type="modules" visible="yes" title="API Reference (Modules)" intro=""/>
         <tab type="usergroup" visible="yes" title="API Reference (details)" intro="">

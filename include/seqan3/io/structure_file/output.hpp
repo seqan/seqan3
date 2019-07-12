@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::structure_file_out and corresponding traits classes.
+ * \brief Provides seqan3::structure_file_output and corresponding traits classes.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -24,8 +24,8 @@
 #include <range/v3/view/zip.hpp>
 
 #include <seqan3/alphabet/structure/all.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
@@ -45,7 +45,7 @@ namespace seqan3
 {
 
 // ----------------------------------------------------------------------------
-// structure_file_out
+// structure_file_output
 // ----------------------------------------------------------------------------
 
 /*!\brief A class for writing structured sequence files, e.g. Stockholm, Connect, Vienna, ViennaRNA bpp matrix ...
@@ -54,7 +54,7 @@ namespace seqan3
  *                            can't be deduced.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
  *                            seqan3::StructureFileOutputFormat).
- * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::char_concept.
+ * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::Char.
  * \details
  *
  * ### Introduction
@@ -97,7 +97,7 @@ namespace seqan3
  *
  * \snippet test/snippet/io/structure_file/structure_file_output.cpp write_std_out
  *
- * Note that this is not the same as writing `structure_file_out<>` (with angle brackets). In the latter case they are
+ * Note that this is not the same as writing `structure_file_output<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
  * [automatic deduction](http://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
  * chooses different parameters depending on the constructor arguments. Prefer deduction over explicit defaults.
@@ -123,7 +123,7 @@ namespace seqan3
  *
  * If you want to pass a combined object for SEQ and STRUCTURE fields to push_back() / emplace_back(), or if you want
  * to change the order of the parameters, you can pass a non-empty fields trait object to the
- * structure_file_out constructor to select the fields that are used for interpreting the arguments.
+ * structure_file_output constructor to select the fields that are used for interpreting the arguments.
  *
  * The following snippets demonstrates the usage of such a fields trait object.
  *
@@ -169,8 +169,8 @@ namespace seqan3
 
 template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
           detail::TypeListOfStructureFileOutputFormats valid_formats_ = type_list<format_vienna>,
-          char_concept stream_char_type_ = char>
-class structure_file_out
+          Char stream_char_type_ = char>
+class structure_file_output
 {
 public:
     /*!\name Template arguments
@@ -205,7 +205,7 @@ public:
                       return true;
                   }(),
                   "You selected a field that is not valid for structure files, please refer to the documentation "
-                  "of structure_file_out::field_ids for the accepted values.");
+                  "of structure_file_output::field_ids for the accepted values.");
 
     static_assert([] () constexpr
                   {
@@ -231,7 +231,7 @@ public:
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ptrdiff_t;
     //!\brief The iterator type of this view (an output iterator).
-    using iterator          = detail::out_file_iterator<structure_file_out>;
+    using iterator          = detail::out_file_iterator<structure_file_output>;
     //!\brief The const iterator type is void, because files are not const-iterable.
     using const_iterator    = void;
     //!\brief The type returned by end().
@@ -242,17 +242,17 @@ public:
      * \{
      */
     //!\brief Default constructor is explicitly deleted, you need to give a stream or file name.
-    structure_file_out() = delete;
+    structure_file_output()                                          = delete;
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    structure_file_out(structure_file_out const &) = delete;
+    structure_file_output(structure_file_output const &)             = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    structure_file_out & operator=(structure_file_out const &) = delete;
+    structure_file_output & operator=(structure_file_output const &) = delete;
     //!\brief Move construction is defaulted.
-    structure_file_out(structure_file_out &&) = default;
+    structure_file_output(structure_file_output &&)                  = default;
     //!\brief Move assignment is defaulted.
-    structure_file_out & operator=(structure_file_out &&) = default;
+    structure_file_output & operator=(structure_file_output &&)      = default;
     //!\brief Destructor is defaulted.
-    ~structure_file_out() = default;
+    ~structure_file_output()                                         = default;
 
     /*!\brief Construct from filename.
      * \param[in] filename Path to the file you wish to open.
@@ -269,8 +269,8 @@ public:
      * the given file extension suggests the user wants this.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    structure_file_out(std::filesystem::path filename,
-                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    structure_file_output(std::filesystem::path filename,
+                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new std::ofstream{filename, std::ios_base::out | std::ios::binary}, stream_deleter_default}
     {
         if (!primary_stream->good())
@@ -300,9 +300,9 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     template <OStream2 stream_t, StructureFileOutputFormat file_format>
-    structure_file_out(stream_t & stream,
-                       file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    structure_file_output(stream_t & stream,
+                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
         format{detail::structure_file_output_format<file_format>{}}
@@ -313,9 +313,9 @@ public:
 
     //!\overload
     template <OStream2 stream_t, StructureFileOutputFormat file_format>
-    structure_file_out(stream_t && stream,
-                       file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    structure_file_output(stream_t && stream,
+                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
         format{detail::structure_file_output_format<file_format>{}}
@@ -494,7 +494,7 @@ public:
      * \snippet test/snippet/io/structure_file/structure_file_output.cpp equal
      */
     template <std::ranges::InputRange rng_t>
-    structure_file_out & operator=(rng_t && range)
+    structure_file_output & operator=(rng_t && range)
         requires TupleLike<reference_t<rng_t>>
     {
         for (auto && record : range)
@@ -510,7 +510,7 @@ public:
      *
      * \details
      *
-     * This operator enables structure_file_out to be at the end of a piping operation. It just calls
+     * This operator enables structure_file_output to be at the end of a piping operation. It just calls
      * operator=() internally.
      *
      * ### Complexity
@@ -530,7 +530,7 @@ public:
      * \snippet test/snippet/io/structure_file/structure_file_output.cpp pipeline
      */
     template <std::ranges::InputRange rng_t>
-    friend structure_file_out & operator|(rng_t && range, structure_file_out & f)
+    friend structure_file_output & operator|(rng_t && range, structure_file_output & f)
         requires TupleLike<reference_t<rng_t>>
     {
         f = range;
@@ -539,7 +539,7 @@ public:
 
     //!\overload
     template <std::ranges::InputRange rng_t>
-    friend structure_file_out operator|(rng_t && range, structure_file_out && f)
+    friend structure_file_output operator|(rng_t && range, structure_file_output && f)
         requires TupleLike<reference_t<rng_t>>
     {
         f = range;
@@ -574,7 +574,7 @@ public:
      * \snippet test/snippet/io/structure_file/structure_file_output.cpp col_based
      */
     template <typename typelist, typename field_ids>
-    structure_file_out & operator=(record<typelist, field_ids> const & r)
+    structure_file_output & operator=(record<typelist, field_ids> const & r)
     {
         write_columns(detail::range_wrap_ignore(detail::get_or_ignore<field::SEQ>(r)),
                       detail::range_wrap_ignore(detail::get_or_ignore<field::ID>(r)),
@@ -612,7 +612,7 @@ public:
      *
      */
     template <typename ... arg_types>
-    structure_file_out & operator=(std::tuple<arg_types...> const & t)
+    structure_file_output & operator=(std::tuple<arg_types...> const & t)
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_columns(
@@ -804,7 +804,7 @@ protected:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::structure_file_out
+ * \relates seqan3::structure_file_output
  * \{
  */
 
@@ -812,19 +812,19 @@ protected:
 template <OStream2                  stream_t,
           StructureFileOutputFormat file_format,
           detail::Fields            selected_field_ids>
-structure_file_out(stream_t &&, file_format const &, selected_field_ids const &)
-    -> structure_file_out<selected_field_ids,
-                          type_list<file_format>,
-                          typename std::remove_reference_t<stream_t>::char_type>;
+structure_file_output(stream_t &&, file_format const &, selected_field_ids const &)
+    -> structure_file_output<selected_field_ids,
+                             type_list<file_format>,
+                             typename std::remove_reference_t<stream_t>::char_type>;
 
 //!\overload
 template <OStream2                  stream_t,
           StructureFileOutputFormat file_format,
           detail::Fields            selected_field_ids>
-structure_file_out(stream_t &, file_format const &, selected_field_ids const &)
-    -> structure_file_out<selected_field_ids,
-                          type_list<file_format>,
-                          typename std::remove_reference_t<stream_t>::char_type>;
+structure_file_output(stream_t &, file_format const &, selected_field_ids const &)
+    -> structure_file_output<selected_field_ids,
+                             type_list<file_format>,
+                             typename std::remove_reference_t<stream_t>::char_type>;
 //!\}
 
 } // namespace seqan3

@@ -20,8 +20,8 @@
 #include <vector>
 
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
@@ -50,7 +50,7 @@ namespace seqan3
  *                              fields IDs; only relevant if these can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each
  *                              must model seqan3::AlignmentFileOutputFormat).
- * \tparam stream_char_type     The type of character of the underlying stream, must model seqan3::char_concept.
+ * \tparam stream_char_type     The type of character of the underlying stream, must model seqan3::Char.
  *
  * \details
  *
@@ -162,9 +162,9 @@ namespace seqan3
  *
  * ### Formats
  *
- * TODO give overview of formats, once they are all implemented
- *
- * \sa seqan3::format_sam
+ * We currently support writing the following formats:
+ *   * seqan3::format_sam
+ *   * seqan3::format_bam
  */
 template <detail::Fields selected_field_ids_ =
               fields<field::SEQ,
@@ -183,7 +183,7 @@ template <detail::Fields selected_field_ids_ =
                      field::BIT_SCORE,
                      field::HEADER_PTR>,
           detail::TypeListOfAlignmentFileOutputFormats valid_formats_ = type_list<format_sam, format_bam>,
-          char_concept stream_char_type_ = char,
+          Char stream_char_type_ = char,
           typename ref_ids_type = ref_info_not_given>
 class alignment_file_output
 {
@@ -308,7 +308,7 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_type   The type of stream to write to; must model seqan3::Ostream2.
+     * \tparam stream_type   The type of stream to write to; must model seqan3::OStream2.
      * \tparam file_format   The format of the file in the stream, must satisfy seqan3::AlignmentFileOutputFormat.
      * \param[out] stream    The stream to write to, must be derived of std::basic_ostream<stream_char_t>.
      * \param[in] format_tag The file format tag.
@@ -389,20 +389,11 @@ public:
         alignment_file_output{filename, selected_field_ids{}}
 
     {
-        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_lengths));
-
-        header_ptr = std::make_unique<alignment_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
-
-        // fill ref_dict
-        for (size_t idx = 0; idx < std::ranges::size(ref_ids); ++idx)
-        {
-            header_ptr->ref_id_info.push_back({ref_lengths[idx], ""});
-            header_ptr->ref_dict[(header_ptr->ref_ids()[idx])] = idx;
-        }
+        initialise_header_information(ref_ids, ref_lengths);
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_type      The type of stream to write to; must model seqan3::Ostream2.
+     * \tparam stream_type      The type of stream to write to; must model seqan3::OStream2.
      * \tparam file_format      The format of the file in the stream, must model seqan3::AlignmentFileOutputFormat.
      * \tparam ref_ids_type_    The type of range over reference ids; must model std::ForwardRange.
      * \tparam ref_lengths_type The type of range over reference lengths; must model std::ForwardRange.
@@ -436,16 +427,7 @@ public:
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         alignment_file_output{std::forward<stream_type>(stream), file_format{}, selected_field_ids{}}
     {
-        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_lengths));
-
-        header_ptr = std::make_unique<alignment_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
-
-        // fill ref_dict
-        for (uint32_t idx = 0; idx < std::ranges::size(ref_ids); ++idx)
-        {
-            header_ptr->ref_id_info.emplace_back(ref_lengths[idx], "");
-            header_ptr->ref_dict[header_ptr->ref_ids()[idx]] = idx;
-        }
+        initialise_header_information(ref_ids, ref_lengths);
     }
     //!\}
 
@@ -502,7 +484,7 @@ public:
      *
      * ### Complexity
      *
-     * Constant. TODO linear in the size of the written alignments?
+     * Constant.
      *
      * ### Exceptions
      *
@@ -550,7 +532,7 @@ public:
      *
      * ### Complexity
      *
-     * Constant. TODO linear in the size of the written alignments?
+     * Constant.
      *
      * ### Exceptions
      *
@@ -600,7 +582,7 @@ public:
      *
      * ### Complexity
      *
-     * Constant. TODO linear in the size of the written alignments?
+     * Constant.
      *
      * ### Exceptions
      *
@@ -617,7 +599,7 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::output_range_concept and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy seqan3::OutputRange and have a reference type that
      *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      *
@@ -649,7 +631,7 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::std::ranges::InputRange and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
      *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
@@ -763,6 +745,32 @@ protected:
     //!\brief The file header object (will be set on construction).
     std::unique_ptr<header_type> header_ptr;
 
+    //!\brief Fill the header reference dictionary, with the given info.
+    template <typename ref_ids_type_, typename ref_lengths_type>
+    void initialise_header_information(ref_ids_type_ && ref_ids, ref_lengths_type && ref_lengths)
+    {
+        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_lengths));
+
+        header_ptr = std::make_unique<alignment_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
+
+        for (int32_t idx = 0; idx < std::ranges::distance(ref_ids); ++idx)
+        {
+            header_ptr->ref_id_info.emplace_back(ref_lengths[idx], "");
+
+            if constexpr (std::ranges::ContiguousRange<reference_t<ref_ids_type_>> &&
+                          std::ranges::SizedRange<reference_t<ref_ids_type_>> &&
+                          ForwardingRange<reference_t<ref_ids_type_>>)
+            {
+                auto && id = header_ptr->ref_ids()[idx];
+                header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;
+            }
+            else
+            {
+                header_ptr->ref_dict[header_ptr->ref_ids()[idx]] = idx;
+            }
+        }
+    }
+
     //!\brief Write record to format.
     template <typename record_header_ptr_t, typename ...pack_type>
     void write_record(record_header_ptr_t && record_header_ptr, pack_type && ...remainder)
@@ -773,7 +781,7 @@ protected:
 
         std::visit([&] (auto & f)
         {
-            // use header from record if explicitly given, e.g. file_out = file_in
+            // use header from record if explicitly given, e.g. file_output = file_input
             if constexpr (!std::Same<record_header_ptr_t, std::nullptr_t>)
                 f.write(*secondary_stream, options, *record_header_ptr, std::forward<pack_type>(remainder)...);
             else if constexpr (std::Same<ref_ids_type, ref_info_not_given>)

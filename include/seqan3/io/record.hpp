@@ -17,7 +17,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3
 {
@@ -31,7 +31,34 @@ namespace seqan3
  *
  * Some of the fields are shared between formats.
  *
- * \todo Table which files take which fields
+ * The following table shows the usage of fields in the respective files
+ * (Note that each valid format for a file must handle all of its fields):
+ *
+ * | Field          | Sequence IO | Alignment IO | Structure IO |
+ * | -------------- | ----------- | ------------ | ------------ |
+ * | SEQ            |      ✅      |      ✅       |       ✅      |
+ * | ID             |      ✅      |      ✅       |       ✅      |
+ * | QUAL           |      ✅      |      ✅       |       ✅      |
+ * | SEQ_QUAL       |      ✅      |      ✅       |       ✅      |
+ * | OFFSET         |             |      ✅       |       ✅      |
+ * | BPP            |             |              |       ✅      |
+ * | STRUCTURE      |             |              |       ✅      |
+ * | STRUCTURED_SEQ |             |              |       ✅      |
+ * | ENERGY         |             |              |       ✅      |
+ * | REACT          |             |              |       ✅      |
+ * | REACT_ERR      |             |              |       ✅      |
+ * | COMMENT        |             |              |       ✅      |
+ * | ALIGNMENT      |             |      ✅       |              |
+ * | REF_ID         |             |      ✅       |              |
+ * | REF_SEQ        |             |      ✅       |              |
+ * | REF_OFFSET     |             |      ✅       |              |
+ * | HEADER_PTR     |             |      ✅       |              |
+ * | FLAG           |             |      ✅       |              |
+ * | MATE           |             |      ✅       |              |
+ * | MAPQ           |             |      ✅       |              |
+ * | TAGS           |             |      ✅       |              |
+ * | BIT_SCORE      |             |      ✅       |              |
+ * | EVALUE         |             |      ✅       |              |
  */
 enum class field
 {
@@ -199,8 +226,10 @@ private:
 namespace std
 {
 
-/*!\brief Value metafunction specialisation for seqan3::record; returns number of elements in record.
- * \see seqan3::record
+/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+ * \implements seqan3::UnaryTypeTrait
+ * \relates seqan3::record
+ * \see std::tuple_size_v
  */
 template <typename field_types, typename field_ids>
 struct tuple_size<seqan3::record<field_types, field_ids>>
@@ -209,8 +238,10 @@ struct tuple_size<seqan3::record<field_types, field_ids>>
     static constexpr size_t value = tuple_size_v<typename seqan3::record<field_types, field_ids>::base_type>;
 };
 
-/*!\brief Value metafunction specialisation for seqan3::record; returns the type of an element in the record.
- * \see seqan3::record
+/*!\brief Obtains the type of the specified element.
+ * \implements seqan3::TransformationTrait
+ * \relates seqan3::record
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
 template <size_t elem_no, typename field_types, typename field_ids>
 struct tuple_element<elem_no, seqan3::record<field_types, field_ids>>

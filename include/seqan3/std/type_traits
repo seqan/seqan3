@@ -17,14 +17,14 @@
 namespace std
 {
 
-/*!\defgroup type_traits type_traits
+/*!\defgroup std_type_traits type_traits
  * \ingroup std
  * \brief The \<concepts\> header from C++20's standard library.
  */
 
 /*!\brief The identity transformation (a TransformationTrait that returns the input).
  * \see https://en.cppreference.com/w/cpp/types/type_identity
- * \ingroup type_traits
+ * \ingroup std_type_traits
  */
 template <typename t>
 struct type_identity;
@@ -40,7 +40,7 @@ struct type_identity<t>
 //!\endcond
 
 //!\brief A shortcut for std::type_identity.
-//!\ingroup type_traits
+//!\ingroup std_type_traits
 template <typename t>
 using type_identity_t = typename type_identity<t>::type;
 

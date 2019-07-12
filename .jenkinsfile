@@ -8,7 +8,6 @@ import hudson.triggers.TimerTrigger;
 // Start build every night between 1:00-4:59
 // Keep only last 10 builds
 properties([
-    disableConcurrentBuilds(),
     pipelineTriggers(
         [cron(env.BRANCH_NAME == 'master' ? 'H H(1-4) * * *' : '')]
     ),
@@ -16,6 +15,34 @@ properties([
         logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10')
     )
 ])
+
+// ============================================================================
+// Stop current build if superseded by new one.
+// ============================================================================
+
+// Cancels active build if there was a new one.
+@NonCPS
+def cancel_previous_builds()
+{
+    def job_name = env.JOB_NAME
+    def build_number = env.BUILD_NUMBER.toInteger()
+    // Get job name
+    def currentJob = Jenkins.instance.getItemByFullName(job_name)
+
+    // Iterating over the builds for specific job
+    for (def build : currentJob.builds)
+    {
+        // If there is a build that is currently running and it's not current build
+        if (build.isBuilding() && build.number.toInteger() != build_number)
+            build.doStop()
+    }
+}
+
+cancel_previous_builds()
+
+// ============================================================================
+// Nightly execution
+// ============================================================================
 
 // Checks whether the current build was triggered by cron job.
 // We need this to check, whether we want to trigger a deployment
@@ -51,6 +78,13 @@ def run_unit_tests(slave_name, compiler, build_type, model, with_cereal)
     def disable_cereal
     def workspace
     def platform
+
+    stage ('versions')
+    {
+        sh "$compiler --version"
+        sh "cmake --version"
+        sh 'if [ -x "$(command -v doxygen)" ]; then doxygen --version; fi'
+    }
 
     stage ('initialise')
     {
@@ -113,67 +147,105 @@ def run_unit_tests(slave_name, compiler, build_type, model, with_cereal)
 
 // Configure unit tests. Add platforms here but adapt the inner loop of the matrix setup to call instantiate and
 // setup the right agent.
-def axis_agent = ["ubuntu"]
-def axis_compiler = ["g++-7", "g++-8"] // g++-9, clang-concepts
+def axis_agent = ["ubuntu", "osx"]
+def axis_compiler = ["g++-7", "g++-8", "g++-9"] // clang-concepts
 def axis_cereal = [true, false]
 def axis_build_type =["Release", "Debug"]
 def tasks = [:]
+def CMAKE_VERSION = "3.7.2"
 
 // The following nested for loops define the compiler matrix for the unit tests.
 // First iterate over all supported compiler versions
 // If the compilers do not match on the respective platform either use a different scope to
 // iterate over them or define some kind of map to point to the right compiler name per platform.
-for(int i = 0; i < axis_compiler.size(); ++i)
+for (int h = 0; h < axis_agent.size(); ++h)
 {
-    def axis_compiler_value = axis_compiler[i]
-    def subTasks = [:] // defines subtask per compiler; later we can make it per platform.
-    for(int j = 0; j < axis_cereal.size(); ++j)  // Whether to use cereal or not
+    def agent = axis_agent[h];
+    for(int i = 0; i < axis_compiler.size(); ++i)
     {
-        def axis_cereal_value = axis_cereal[j]
-        for (int k = 0; k < axis_build_type.size(); ++k) // Whether to build in release or debug mode
+        def axis_compiler_value = axis_compiler[i]
+        def subTasks = [:] // defines subtask per platform & compiler;
+        for(int j = 0; j < axis_cereal.size(); ++j)  // Whether to use cereal or not
         {
-            def axis_build_type_value = axis_build_type[k]
-            // Only build nightlies in debug and release mode
-            if (!is_nightly && (axis_build_type_value == "Release"))
+            def axis_cereal_value = axis_cereal[j]
+            // Only build nightlies with cereal disabled
+            if (!is_nightly && !axis_cereal_value)
                 continue
 
-            def test_model = is_nightly ? 'Nightly' : 'Continuous'
-            def label = "ubuntu_${axis_compiler_value}_cereal-${axis_cereal_value}_$axis_build_type_value"
-            subTasks[label] =
+            for (int k = 0; k < axis_build_type.size(); ++k) // Whether to build in release or debug mode
             {
-                // Add node per platform here.
-                // They might differ in the usage and setup.
-                // Run on nodes matching labels 'ubuntu' and the compiler axis value.
-                // Only run g++-8 on ubuntu 1804 due to some linker errors on the ported package from ubuntu 1604
-                def platform = (axis_compiler_value == 'g++-8' ? 'ubuntu_1804' : 'ubuntu')
-                node("$platform && $axis_compiler_value")
-                {
-                    // For docker nodes we need to define the workspace explicitly, as they use a mounted
-                    // volume on the filesystem which is shared by all docker instances. Since the docker executor
-                    // doesn't know the other running instances it cannot locking the workspace.
-                    ws("$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$label")
-                    {
-                        stage('install')
-                        {
-                            sh """
-                                sudo apt-get update
-                                sudo apt-get install -y $axis_compiler_value cmake git zlib1g-dev libbz2-dev
-                            """
+                def axis_build_type_value = axis_build_type[k]
+                // Only build nightlies in debug mode
+                if (!is_nightly && (axis_build_type_value == "Debug"))
+                    continue
 
+                // Skip g++-8 builds on osx for now: https://github.com/seqan/seqan3/issues/1089
+                if (agent == "osx" && axis_compiler_value == "g++-8")
+                    continue
+
+                def test_model = is_nightly ? 'Nightly' : 'Continuous'
+
+                def label = "${agent}_${axis_compiler_value}_cereal-${axis_cereal_value}_$axis_build_type_value"
+                subTasks[label] =
+                {
+                    if (agent == "osx") // build on macos
+                    {
+                        node("$agent && $axis_compiler_value")
+                        {
+                            run_unit_tests(env.NODE_NAME,
+                                           axis_compiler_value,
+                                           axis_build_type_value,
+                                           test_model,
+                                           axis_cereal_value)
                         }
-                        run_unit_tests(env.DOCKER_SLAVE_NAME,
-                                       axis_compiler_value,
-                                       axis_build_type_value,
-                                       test_model,
-                                       axis_cereal_value)
+                    }
+                    else  // build ubuntu
+                    {
+                        // Add node per platform here.
+                        // They might differ in the usage and setup.
+                        // Run on nodes matching labels 'ubuntu' and the compiler axis value.
+                        // Only run g++-8 on ubuntu 1804 due to some linker errors on the ported package from ubuntu 1604
+                        def platform = (axis_compiler_value == 'g++-8' ? 'ubuntu_1804' : 'ubuntu')
+                        node("$platform && $axis_compiler_value")
+                        {
+                            // For docker nodes we need to define the workspace explicitly, as they use a mounted
+                            // volume on the filesystem which is shared by all docker instances. Since the docker executor
+                            // doesn't know the other running instances it cannot lock the workspace.
+                            def workspace = "$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$env.BUILD_NUMBER/$label"
+                            ws("$workspace")
+                            {
+                                stage('install')
+                                {
+                                    sh """
+                                        mkdir -p /tmp/cmake-download
+                                        wget --no-clobber --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+                                        tar -C /tmp/ -zxvf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+                                    """
+
+                                    sh """
+                                        sudo apt-get update
+                                        sudo apt-get install -y $axis_compiler_value make gcc git zlib1g-dev libbz2-dev
+                                    """
+                                }
+                                withEnv(["HOME=$workspace","PATH+CMAKE_PATH=/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin"])
+                                {
+                                    sh "echo $HOME"
+                                    run_unit_tests(env.DOCKER_SLAVE_NAME,
+                                                   axis_compiler_value,
+                                                   axis_build_type_value,
+                                                   test_model,
+                                                   axis_cereal_value)
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-    tasks["ubuntu-${axis_compiler_value}"] =
-    {
-        parallel subTasks
+        tasks["${agent}-${axis_compiler_value}"] =
+        {
+            parallel subTasks
+        }
     }
 }
 
@@ -218,7 +290,7 @@ if (is_nightly)
 {
     stage ("cleanup")
     {
-        // On the docker nodes we need to regularly check if the a pull request was closed in order
+        // On the docker nodes we need to regularly check if a pull request was closed in order
         // to remove the workspace which is stored persistently on the docker server.
         node("ubuntu_1604 || ubuntu_1804")
         {

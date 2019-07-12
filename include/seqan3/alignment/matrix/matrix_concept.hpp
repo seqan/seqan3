@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains seqan3::detail::Matrix.
+ * \brief Provides seqan3::detail::Matrix.
  */
 
 #pragma once
@@ -44,7 +44,7 @@ SEQAN3_CONCEPT Matrix = requires(matrix_t m)
     /*!\typedef typedef IMPLEMENTATION_DEFINED entry_type;
      * \brief The type of an entry in the matrix.
      */
-    typename matrix_t::entry_type;
+    typename std::remove_reference_t<matrix_t>::entry_type;
 
     /*!\fn size_t cols() const noexcept;
      * \brief The number of columns in the matrix.
@@ -59,7 +59,7 @@ SEQAN3_CONCEPT Matrix = requires(matrix_t m)
     /*!\fn entry_type at(size_t row, size_t col) const noexcept;
      * \brief The entry of the matrix at position (\a row, \a col), e.g. `matrix[row][col]`.
      */
-    { m.at(size_t{0u}, size_t{0u}) } -> typename matrix_t::entry_type;
+    { m.at(size_t{0u}, size_t{0u}) } -> typename std::remove_reference_t<matrix_t>::entry_type;
 //!\cond
 };
 //!\endcond

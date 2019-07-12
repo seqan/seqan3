@@ -21,7 +21,7 @@
 #include <range/v3/view/zip.hpp>
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/span>
 #include <seqan3/std/ranges>

@@ -80,7 +80,7 @@ namespace seqan3
 //!\cond
 template <typename t1, typename t2>
 SEQAN3_CONCEPT WeaklyOrderedWith = requires (std::remove_reference_t<t1> const & v1,
-                                                     std::remove_reference_t<t2> const & v2)
+                                             std::remove_reference_t<t2> const & v2)
 {
     { v1 <  v2 } -> bool &&;
     { v1 <= v2 } -> bool &&;
@@ -124,7 +124,7 @@ template <typename t>
 SEQAN3_CONCEPT FloatingPoint = Arithmetic<t> && std::is_floating_point_v<t>;
 //!\endcond
 
-/*!\interface   seqan3::char_concept <>
+/*!\interface   seqan3::Char <>
  * \extends     std::Integral
  * \brief       This concept encompasses exactly the types `char`, `signed char`, `unsigned char`, `wchar_t`,
  *              `char16_t` and `char32_t`.
@@ -132,12 +132,12 @@ SEQAN3_CONCEPT FloatingPoint = Arithmetic<t> && std::is_floating_point_v<t>;
 //!\cond
 
 template <typename t>
-SEQAN3_CONCEPT char_concept = std::Integral<t> &&
-                       (std::Same<t, char> || std::Same<t, unsigned char> || std::Same<t, signed char> ||
+SEQAN3_CONCEPT Char = std::Integral<t> &&
+                      (std::Same<t, char> || std::Same<t, unsigned char> || std::Same<t, signed char> ||
 #ifdef __cpp_char8_t
-                        std::Same<t, char8_t> ||
+                       std::Same<t, char8_t> ||
 #endif
-                        std::Same<t, char16_t> || std::Same<t, char32_t> || std::Same<t, wchar_t>);
+                       std::Same<t, char16_t> || std::Same<t, char32_t> || std::Same<t, wchar_t>);
 //!\endcond
 
 /*!\interface   seqan3::TriviallyDestructible <>

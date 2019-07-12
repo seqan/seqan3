@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::structure_file_in and corresponding traits classes.
+ * \brief Provides seqan3::structure_file_input and corresponding traits classes.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -29,7 +29,7 @@
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/filesystem>
@@ -49,7 +49,7 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\interface seqan3::StructureFileInputTraits <>
- * \brief The requirements a traits_type for seqan3::structure_file_in must meet.
+ * \brief The requirements a traits_type for seqan3::structure_file_input must meet.
  * \ingroup structure_file
  */
 /*!\name Requirements for seqan3::StructureFileInputTraits
@@ -271,7 +271,7 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
 // structure_file_input_default_traits
 // ----------------------------------------------------------------------------
 
-/*!\brief The default traits for seqan3::structure_file_in
+/*!\brief The default traits for seqan3::structure_file_input
  * \implements StructureFileInputTraits
  * \ingroup structure_file
  *
@@ -439,7 +439,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
 };
 
 // ----------------------------------------------------------------------------
-// structure_file_in
+// structure_file_input
 // ----------------------------------------------------------------------------
 
 /*!\brief A class for reading structured sequence files, e.g. Stockholm, Connect, Vienna, ViennaRNA bpp matrix ...
@@ -447,10 +447,10 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * \tparam traits_type        An auxiliary type that defines certain member types and constants, must satisfy
  *                            seqan3::StructureFileInputTraits.
  * \tparam selected_field_ids A seqan3::fields type with the list and order of desired record entries; all fields
- *                            must be in seqan3::structure_file_in::field_ids.
+ *                            must be in seqan3::structure_file_input::field_ids.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
  *                            seqan3::StructureFileInputFormat).
- * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::char_concept.
+ * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::Char.
  * \details
  *
  * ### Introduction
@@ -493,10 +493,10 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *
  * \snippet test/snippet/io/structure_file/structure_file_input.cpp stringstream_read
  *
- * Note that this is not the same as writing `structure_file_in<>` (with angle brackets). In the latter case they are
+ * Note that this is not the same as writing `structure_file_input<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
  * [automatic deduction](http://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
- * chooses different parameters depending on the constructor arguments. For opening from file, `structure_file_in<>`
+ * chooses different parameters depending on the constructor arguments. For opening from file, `structure_file_input<>`
  * would have also worked, but for opening from stream it would not have.
  *
  * In some cases, you do need to specify the arguments, e.g. if you want to read amino acids:
@@ -542,7 +542,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * ### Reading record-wise (custom fields)
  *
  * If you want to skip specific fields from the record you can pass a non-empty fields trait object to the
- * structure_file_in constructor to select the fields that should be read from the input. For example to choose a
+ * structure_file_input constructor to select the fields that should be read from the input. For example to choose a
  * combined field for SEQ and STRUCTURE (see above). Or to never actually read the STRUCTURE, if you don't need it.
  * The following snippets demonstrate the usage of such a fields trait object.
  *
@@ -585,8 +585,8 @@ template<StructureFileInputTraits traits_type_ = structure_file_input_default_tr
          detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
          detail::TypeListOfStructureFileInputFormats valid_formats_
              = type_list<format_vienna>,
-         char_concept stream_char_type_ = char>
-class structure_file_in
+         Char stream_char_type_ = char>
+class structure_file_input
 {
 public:
     /*!\name Template arguments
@@ -625,7 +625,7 @@ public:
                       return true;
                   }(),
                   "You selected a field that is not valid for structure files, please refer to the documentation "
-                  "of structure_file_in::field_ids for the accepted values.");
+                  "of structure_file_input::field_ids for the accepted values.");
 
     static_assert([]() constexpr
                   {
@@ -731,7 +731,7 @@ public:
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type = std::make_signed_t<size_t>;
     //!\brief The iterator type of this view (an input iterator).
-    using iterator        = detail::in_file_iterator<structure_file_in>;
+    using iterator        = detail::in_file_iterator<structure_file_input>;
     //!\brief The const iterator type is void, because files are not const-iterable.
     using const_iterator  = void;
     //!\brief The type returned by end().
@@ -742,17 +742,17 @@ public:
      * \{
      */
     //!\brief Default constructor is explicitly deleted, you need to give a stream or file name.
-    structure_file_in() = delete;
+    structure_file_input()                                         = delete;
     //!\brief Copy construction is explicitly deleted, because you cannot have multiple access to the same file.
-    structure_file_in(structure_file_in const &) = delete;
+    structure_file_input(structure_file_input const &)             = delete;
     //!\brief Copy assignment is explicitly deleted, because you cannot have multiple access to the same file.
-    structure_file_in & operator=(structure_file_in const &) = delete;
+    structure_file_input & operator=(structure_file_input const &) = delete;
     //!\brief Move construction is defaulted.
-    structure_file_in(structure_file_in &&) = default;
+    structure_file_input(structure_file_input &&)                  = default;
     //!\brief Move assignment is defaulted.
-    structure_file_in & operator=(structure_file_in &&) = default;
+    structure_file_input & operator=(structure_file_input &&)      = default;
     //!\brief Destructor is defaulted.
-    ~structure_file_in() = default;
+    ~structure_file_input()                                        = default;
 
     /*!\brief Construct from filename.
      * \param[in] filename Path to the file you wish to open.
@@ -770,8 +770,8 @@ public:
      * the file is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    structure_file_in(std::filesystem::path filename,
-                      selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    structure_file_input(std::filesystem::path filename,
+                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary}, stream_deleter_default}
     {
         if (!primary_stream->good())
@@ -803,9 +803,9 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     template<IStream2 stream_t, StructureFileInputFormat file_format>
-    structure_file_in(stream_t & stream,
-                      file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                      selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    structure_file_input(stream_t & stream,
+                         file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         format{detail::structure_file_input_format<file_format>{}}
     {
@@ -821,9 +821,9 @@ public:
 
     //!\overload
     template<IStream2 stream_t, StructureFileInputFormat file_format>
-    structure_file_in(stream_t && stream,
-                      file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                      selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    structure_file_input(stream_t && stream,
+                         file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         format{detail::structure_file_input_format<file_format>{}}
     {
@@ -913,9 +913,9 @@ public:
      */
     //!\brief Read the entire file into internal buffers and retrieve the specified column.
     template<field f>
-    friend auto & get(structure_file_in & file)
+    friend auto & get(structure_file_input & file)
     {
-        static_assert(structure_file_in::selected_field_ids::contains(f),
+        static_assert(structure_file_input::selected_field_ids::contains(f),
                       "You requested a field via get that was not selected for the file.");
 
         file.read_columns();
@@ -925,16 +925,16 @@ public:
 
     //!\copydoc get
     template<field f>
-    friend auto && get(structure_file_in && file)
+    friend auto && get(structure_file_input && file)
     {
         return std::move(get<f>(file));
     }
 
     //!\copydoc get
     template<size_t i>
-    friend auto & get(structure_file_in & file)
+    friend auto & get(structure_file_input & file)
     {
-        static_assert(i < structure_file_in::selected_field_ids::as_array.size(),
+        static_assert(i < structure_file_input::selected_field_ids::as_array.size(),
                       "You requested a field number larger than the number of selected fields for the file.");
         file.read_columns();
 
@@ -943,14 +943,14 @@ public:
 
     //!\copydoc get
     template<size_t i>
-    friend auto && get(structure_file_in && file)
+    friend auto && get(structure_file_input && file)
     {
         return std::move(get<i>(file));
     }
 
     //!\copydoc get
     template<typename t>
-    friend auto & get(structure_file_in & file)
+    friend auto & get(structure_file_input & file)
     {
         file.read_columns();
 
@@ -959,7 +959,7 @@ public:
 
     //!\copydoc get
     template<typename t>
-    friend auto && get(structure_file_in && file)
+    friend auto && get(structure_file_input && file)
     {
         return std::move(get<t>(file));
     }
@@ -1105,7 +1105,7 @@ protected:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::structure_file_in
+ * \relates seqan3::structure_file_input
  * \{
  */
 
@@ -1113,21 +1113,21 @@ protected:
 template <IStream2                 stream_type,
           StructureFileInputFormat file_format,
           detail::Fields           selected_field_ids>
-structure_file_in(stream_type && stream, file_format const &, selected_field_ids const &)
-    -> structure_file_in<typename structure_file_in<>::traits_type,       // actually use the default
-                         selected_field_ids,
-                         type_list<file_format>,
-                         typename std::remove_reference_t<stream_type>::char_type>;
+structure_file_input(stream_type && stream, file_format const &, selected_field_ids const &)
+    -> structure_file_input<typename structure_file_input<>::traits_type,       // actually use the default
+                            selected_field_ids,
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_type>::char_type>;
 
 //!\overload
 template <IStream2                 stream_type,
           StructureFileInputFormat file_format,
           detail::Fields           selected_field_ids>
-structure_file_in(stream_type & stream, file_format const &, selected_field_ids const &)
-    -> structure_file_in<typename structure_file_in<>::traits_type,       // actually use the default
-                         selected_field_ids,
-                         type_list<file_format>,
-                         typename std::remove_reference_t<stream_type>::char_type>;
+structure_file_input(stream_type & stream, file_format const &, selected_field_ids const &)
+    -> structure_file_input<typename structure_file_input<>::traits_type,       // actually use the default
+                            selected_field_ids,
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_type>::char_type>;
 //!\}
 
 } // namespace seqan3
@@ -1138,32 +1138,38 @@ structure_file_in(stream_type & stream, file_format const &, selected_field_ids 
 
 namespace std
 {
-/*!\brief std::tuple_size overload for column-like access.
- * [metafunction specialisation for seqan3::structure_file_in]
+
+/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+ * \implements seqan3::UnaryTypeTrait
+ * \ingroup structure_file
+ * \see std::tuple_size_v
  */
 template<seqan3::StructureFileInputTraits                    traits_type,
          seqan3::detail::Fields                              selected_field_ids,
          seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::char_concept                                stream_char_t>
-struct tuple_size<seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_char_t>>
+         seqan3::Char                                        stream_char_t>
+struct tuple_size<seqan3::structure_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
     static constexpr size_t value = selected_field_ids::as_array.size();
 };
 
-/*!\brief std::tuple_element overload for column-like access.
- * [metafunction specialisation for seqan3::structure_file_in]
+/*!\brief Obtains the type of the specified element.
+ * \implements seqan3::TransformationTrait
+ * \ingroup structure_file
+ * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
 template<size_t                                              elem_no,
          seqan3::StructureFileInputTraits                    traits_type,
          seqan3::detail::Fields                              selected_field_ids,
          seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::char_concept                                stream_char_t>
-struct tuple_element<elem_no, seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_char_t>>
-    : tuple_element<elem_no, typename seqan3::structure_file_in<traits_type,
-                                                                selected_field_ids,
-                                                                valid_formats,
-                                                                stream_char_t>::file_as_tuple_type>
+         seqan3::Char                                        stream_char_t>
+struct tuple_element<elem_no,
+                     seqan3::structure_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
+    : tuple_element<elem_no, typename seqan3::structure_file_input<traits_type,
+                                                                   selected_field_ids,
+                                                                   valid_formats,
+                                                                   stream_char_t>::file_as_tuple_type>
 {};
 
 } // namespace std

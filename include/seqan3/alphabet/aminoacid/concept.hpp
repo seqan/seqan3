@@ -21,19 +21,20 @@
 namespace seqan3
 {
 
-/*!\brief Helper metafunction that identifies amino acid alphabets.
+/*!\brief Identifies amino acid alphabets.
+ * \implements seqan3::UnaryTypeTrait
  * \ingroup aminoacid
  *
  * \details
  *
  * Since an amino acid alphabet has no specific characteristics (like the complement
  * function for nucleotide alphabets), we distinguish an amino acid alphabet by
- * the seqan3::is_aminoacid metafunction.
+ * the seqan3::is_aminoacid unary type trait.
  *
  * ### Customisation point
  *
  * If you define your own alphabet and want it to be recognised as an amino acid
- * alphabet by SeqAn, you need to specialise this metafunction for your type and
+ * alphabet by SeqAn, you need to specialise this type trait for your type and
  * have it inherit std::true_type.
  *
  * \include test/snippet/alphabet/aminoacid/is_aminoacid.cpp
@@ -41,7 +42,8 @@ namespace seqan3
 template <typename type>
 struct is_aminoacid : std::false_type {};
 
-//!\brief Helper variable that delegates to seqan3::is_aminoacid<type>::value.
+//!\brief Helper variable that delegates to seqan3::is_aminoacid<type>::value (UnaryTypeTrait shortcut).
+//!\relates seqan3::is_aminoacid
 //!\ingroup aminoacid
 template <typename type>
 constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
@@ -53,10 +55,10 @@ constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
  *
  * Since an amino acid alphabet has no specific characteristics (like the complement
  * function for nucleotide alphabets), we distinguish an amino acid alphabet by
- * the seqan3::is_aminoacid metafunction.
+ * the seqan3::is_aminoacid type trait.
  *
- * \par Concepts and doxygen
- * The requirements for this concept are given as related functions and metafunctions.
+ * ###Concepts and doxygen
+ * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
 //!\cond

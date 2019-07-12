@@ -14,10 +14,10 @@
 
 #include <range/v3/algorithm/copy.hpp>
 
-#include <seqan3/core/metafunction/iterator.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/iterator.hpp>
+#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/shortcuts.hpp>
@@ -61,9 +61,6 @@ private:
     //!\brief The desired target_size.
     size_t target_size;
 
-    //!\brief The sentinel type is identical to that of the underlying range.
-    using sentinel_type = std::ranges::sentinel_t<urng_t>;
-
     //!\brief The iterator type inherits from the underlying type, but overwrites several operators.
     //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
     template <typename rng_t>
@@ -74,6 +71,9 @@ private:
         using base_base_t = std::ranges::iterator_t<rng_t>;
         //!\brief The CRTP wrapper type.
         using base_t      = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
+
+        //!\brief The sentinel type is identical to that of the underlying range.
+        using sentinel_type = std::ranges::sentinel_t<urng_t>;
 
         //!\brief The current position.
         size_t pos{};
@@ -213,7 +213,7 @@ private:
 
         //!\copydoc operator==()
         constexpr bool operator==(sentinel_type const & rhs) const
-            noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<sentinel_type &>()))
+            noexcept(!or_throw && noexcept(std::declval<base_base_t const &>() == std::declval<sentinel_type const &>()))
         {
             if (pos >= max_pos)
                 return true;
@@ -292,7 +292,7 @@ public:
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = value_type_t<urng_t>;
     //!\brief The size_type is `size_t` if the view is exact, otherwise `void`.
-    using size_type         = std::conditional_t<exactly,
+    using size_type         = std::conditional_t<exactly || std::ranges::SizedRange<urng_t>,
                                                  transformation_trait_or_t<seqan3::size_type<urng_t>, size_t>,
                                                  void>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
@@ -316,7 +316,7 @@ public:
     /*!\brief Construct from another View.
      * \param[in] _urange The underlying range.
      * \param[in] _size   The desired size (after which to stop returning elements).
-     * \throws unexpected_end_of_input If `exactly && or_throw && seqan3::sized_range_concept<urng_t>`.
+     * \throws unexpected_end_of_input If `exactly && or_throw && seqan3::SizedRange<urng_t>`.
      */
     constexpr view_take(urng_t _urange, size_t const _size)
         : urange{std::move(_urange)}, target_size{_size}
@@ -335,7 +335,7 @@ public:
      * \tparam rng_t      Type of the passed range; `urng_t` must be constructible from this.
      * \param[in] _urange The underlying range.
      * \param[in] _size   The desired size (after which to stop returning elements).
-     * \throws unexpected_end_of_input If `exactly && or_throw && seqan3::sized_range_concept<urng_t>`.
+     * \throws unexpected_end_of_input If `exactly && or_throw && seqan3::SizedRange<urng_t>`.
      */
     template<std::ranges::ViewableRange rng_t>
     //!\cond
@@ -394,28 +394,31 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr sentinel_type end() noexcept
+    constexpr auto end() noexcept
     {
-        return {seqan3::end(urange)};
+        return seqan3::end(urange);
     }
 
     //!\copydoc end()
-    constexpr sentinel_type end() const noexcept
+    constexpr auto end() const noexcept
         requires ConstIterableRange<urng_t>
     {
-        return {seqan3::cend(urange)};
+        return seqan3::cend(urange);
     }
 
     //!\copydoc end()
-    constexpr sentinel_type cend() const noexcept
+    constexpr auto cend() const noexcept
         requires ConstIterableRange<urng_t>
     {
-        return {seqan3::cend(urange)};
+        return seqan3::cend(urange);
     }
     //!\}
 
-    /*!\brief Returns the number of elements in the view (only available for "exactly" specialisation!).
+    /*!\brief Returns the number of elements in the view.
      * \returns The number of elements in the view.
+     *
+     * This overload is only available if the underlying range models std::ranges::SizedRange or for
+     * specialisation that have the `exactly` template parameter set.
      *
      * ### Complexity
      *
@@ -429,6 +432,20 @@ public:
         requires exactly
     {
         return target_size;
+    }
+
+    //!\overload
+    constexpr size_type size() noexcept
+        requires (!exactly) && std::ranges::SizedRange<urng_t>
+    {
+        return std::min<size_type>(target_size, std::ranges::size(urange));
+    }
+
+    //!\overload
+    constexpr size_type size() const noexcept
+        requires (!exactly) && std::ranges::SizedRange<urng_t const>
+    {
+        return std::min<size_type>(target_size, std::ranges::size(urange));
     }
 };
 

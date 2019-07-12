@@ -48,7 +48,7 @@ fm_index index{text};
 
 {
 //![load]
-fm_index<std::string> index; // we need to specify the type manually
+fm_index<text_layout::single> index; // we need to tell the index that we work on a single text before loading
 {
     std::ifstream is{"index.file", std::ios::binary};
     cereal::BinaryInputArchive iarchive{is};
@@ -66,7 +66,7 @@ configuration const cfg = search_cfg::max_error{search_cfg::total{1},
                                                 search_cfg::substitution{0},
                                                 search_cfg::insertion{1},
                                                 search_cfg::deletion{1}};
-debug_stream << search(index, "cat"s, cfg) << '\n'; // [14,17,18,32]
+debug_stream << search("cat"s, index, cfg) << '\n'; // [14,17,18,32]
 //![error_search]
 }
 
@@ -75,7 +75,7 @@ debug_stream << search(index, "cat"s, cfg) << '\n'; // [14,17,18,32]
 std::string text{"Garfield the fat cat without a hat."};
 fm_index index{text};
 std::vector<std::string> query{"cat"s, "hat"s};
-debug_stream << search(index, query) << '\n'; // [[17],[31]]
+debug_stream << search(query, index) << '\n'; // [[17],[31]]
 //![multiple_queries]
 }
 

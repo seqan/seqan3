@@ -14,7 +14,7 @@
 
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>
-#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/drop.hpp>
@@ -27,10 +27,10 @@ std::string expected;
 int option_value{5};
 bool flag_value{};
 std::vector<std::string> pos_opt_value{};
-const char * argv0[] = {"./help_add_test"};
-const char * argv1[] = {"./help_add_test", "-h"};
-const char * argv2[] = {"./help_add_test", "-hh"};
-const char * argv3[] = {"./help_add_test", "--version"};
+const char * argv0[] = {"./help_add_test --version-check 0"};
+const char * argv1[] = {"./help_add_test --version-check 0", "-h"};
+const char * argv2[] = {"./help_add_test --version-check 0", "-hh"};
+const char * argv3[] = {"./help_add_test --version-check 0", "--version"};
 
 std::string const basic_options_str = "OPTIONS"
                                       "Basic options:"
@@ -39,7 +39,9 @@ std::string const basic_options_str = "OPTIONS"
                                       "--version Prints the version information."
                                       "--copyright Prints the copyright/license information."
                                       "--export-help (std::string) Export the help page information. "
-                                                                   "Value must be one of [html, man].";
+                                                                   "Value must be one of [html, man]."
+                                      "--version-check (bool)"
+                                                "Whether to to check for the newest app version. Default: 1.";
 
 std::string const version_str = std::to_string(SEQAN3_VERSION_MAJOR) + "."
                                 + std::to_string(SEQAN3_VERSION_MINOR) + "."
@@ -213,27 +215,27 @@ TEST(help_page_printing, full_information)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser6.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = "test_parser - so short"
-               "======================"
-               "SYNOPSIS"
-               "./some_binary_name synopsis"
-               "./some_binary_name synopsis2"
-               "DESCRIPTION"
-               "description"
-               "description2"
-               "POSITIONAL ARGUMENTS"
-               "ARGUMENT-1 (List of std::string's)"
-               "this is a positional option. Default: []." +
+    expected = "test_parser - so short\n"
+               "======================\n"
+               "SYNOPSIS\n"
+               "./some_binary_name synopsis\n"
+               "./some_binary_name synopsis2\n"
+               "DESCRIPTION\n"
+               "description\n"
+               "description2\n"
+               "POSITIONAL ARGUMENTS\n"
+               "ARGUMENT-1 (List of std::string's)\n"
+               "this is a positional option. Default: [].\n" +
                basic_options_str +
-               "-i, --int (signed 32 bit integer)"
-               "this is a int option. Default: 5."
-               "FLAGS"
-               "SubFlags"
-               "here come all the flags"
-               "-f, --flag"
-               "this is a flag."
-               "EXAMPLES"
-               "example"
+               "-i, --int (signed 32 bit integer)\n"
+               "this is a int option. Default: 5.\n"
+               "FLAGS\n"
+               "SubFlags\n"
+               "here come all the flags\n"
+               "-f, --flag\n"
+               "this is a flag.\n"
+               "EXAMPLES\n"
+               "example\n"
                "example2" +
                basic_version_str;
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));

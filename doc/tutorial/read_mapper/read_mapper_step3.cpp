@@ -39,7 +39,7 @@ void map_reads(std::filesystem::path const & query_path,
                reference_storage_t & storage,
                uint8_t const errors)
 {
-    bi_fm_index<std::vector<std::vector<dna5>>> index;
+    bi_fm_index<text_layout::collection> index; // we need to know if we work on a text collection before loading
     {
         std::ifstream is{index_path, std::ios::binary};
         cereal::BinaryInputArchive iarchive{is};
@@ -59,7 +59,7 @@ void map_reads(std::filesystem::path const & query_path,
 
     for (auto & [query, id, qual] : query_in | view::take(20))
     {
-        auto positions = search(index, query, search_config);
+        auto positions = search(query, index, search_config);
         for (auto & [idx, pos] : positions)
         {
             size_t start = pos ? pos - 1 : 0;

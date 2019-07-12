@@ -14,6 +14,7 @@
 
 #include <array>
 #include <cstring>
+#include <memory>
 #include <thread>
 
 #if SEQAN3_HAS_ZLIB
@@ -24,7 +25,7 @@
 #endif  // SEQAN3_HAS_ZLIB
 
 #include <seqan3/core/bit_manipulation.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/algorithm>
@@ -139,13 +140,17 @@ compressInit(CompressionContext<detail::bgzf_compression> & ctx)
 inline uint16_t
 _bgzfUnpack16(char const * buffer)
 {
-    return detail::to_little_endian(*reinterpret_cast<uint16_t const *>(buffer));
+    uint16_t tmp;
+    std::uninitialized_copy(buffer, buffer + sizeof(uint16_t), reinterpret_cast<char *>(&tmp));
+    return detail::to_little_endian(tmp);
 }
 
 inline uint32_t
 _bgzfUnpack32(char const * buffer)
 {
-    return detail::to_little_endian(*reinterpret_cast<uint32_t const *>(buffer));
+    uint32_t tmp;
+    std::uninitialized_copy(buffer, buffer + sizeof(uint32_t), reinterpret_cast<char *>(&tmp));
+    return detail::to_little_endian(tmp);
 }
 
 // ----------------------------------------------------------------------------
@@ -155,13 +160,19 @@ _bgzfUnpack32(char const * buffer)
 inline void
 _bgzfPack16(char * buffer, uint16_t value)
 {
-    *reinterpret_cast<uint16_t *>(buffer) = detail::to_little_endian(value);
+    value = detail::to_little_endian(value);
+    std::uninitialized_copy(reinterpret_cast<char *>(&value),
+                            reinterpret_cast<char *>(&value) + sizeof(uint16_t),
+                            buffer);
 }
 
 inline void
 _bgzfPack32(char * buffer, uint32_t value)
 {
-    *reinterpret_cast<uint32_t *>(buffer) = detail::to_little_endian(value);
+    value = detail::to_little_endian(value);
+    std::uninitialized_copy(reinterpret_cast<char *>(&value),
+                            reinterpret_cast<char *>(&value) + sizeof(uint32_t),
+                            buffer);
 }
 
 // ----------------------------------------------------------------------------

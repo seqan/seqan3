@@ -15,6 +15,7 @@
 
 #include <range/v3/numeric/accumulate.hpp>
 
+#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/range/view/slice.hpp>
@@ -95,7 +96,23 @@ public:
      *
      * \details
      *
-     * \todo write me
+     * \details
+     *
+     * This configuration can be used to specify the total rates of error types.
+     * It restricts the rates of substitutions, insertions, deletions and total errors within the search to the given
+     * values and will behave as follows:
+     * |                                  |                              |                           |                        |                       |                                       |                                      |                                   |
+     * |----------------------------------|:----------------------------:|:-------------------------:|:----------------------:|:---------------------:|:-------------------------------------:|:------------------------------------:|:---------------------------------:|
+     * | **Behaviour**                    | Set all error types to total | Set total to substitution | Set total to insertion | Set total to deletion | Set total to substitution + insertion | Set total to substitution + deletion | Set total to insertion + deletion |
+     * | seqan3::search_cfg::total        |               ✅              |                           |                        |                       |                                       |                                      |                                   |
+     * | seqan3::search_cfg::substitution |                              |             ✅             |                        |                       |                   ✅                   |                   ✅                  |                                   |
+     * | seqan3::search_cfg::insertion    |                              |                           |            ✅           |                       |                   ✅                   |                                      |                 ✅                 |
+     * | seqan3::search_cfg::deletion     |                              |                           |                        |           ✅           |                                       |                   ✅                  |                 ✅                 |
+     * If seqan3::search_cfg::total and any other error type are specified, all types are set to the respective values.
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/configuration_error_rate.cpp
      */
     constexpr max_error_rate(errors_t && ...errors)
     //!\cond

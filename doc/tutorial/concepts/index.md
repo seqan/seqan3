@@ -209,7 +209,7 @@ templates.
 
 \include doc/tutorial/concepts/specialisation.cpp
 
-This is a typical example of a "type transformation trait" or "type metafunction".
+This is a typical example of a "type transformation trait".
 It maps one type to another type; in this case it returns a type that is able to represent the square root of the
 "input type".
 This can be used in generic algorithms to hold data in different types depending on the type of the input –
@@ -232,26 +232,26 @@ That's why it's important to read the detailed documentation section where all r
 
 Have a look at the documentation of seqan3::argument_parser::add_positional_option().
 It has two template parameters, one seems unconstrained (`typename` in the signature) and one is constrained
-(`validator_concept` in the signature).
+(`Validator` in the signature).
 But in fact both are constrained as the detailed documentation reveals.
 
-Now, follow the link to seqan3::validator_concept. We will check in the next section whether you understand the
+Now, follow the link to seqan3::Validator. We will check in the next section whether you understand the
 documentation for the concept.
 
 # How to make your own type model a concept
 
-## seqan3::validator_concept
+## seqan3::Validator
 
 Remember the tutorial on \ref tutorial_argument_parser ? Let's implement our own validator that checks
 if a numeric argument is an integral square (i.e. the user shall only be allowed to enter 0, 1, 4, 9...).
 
 ### Understanding the requirements
 
-In the previous section you analysed seqan3::validator_concept.
+In the previous section you analysed seqan3::Validator.
 Do you understand the requirements formulated on that page?
 
 \hint
-In order to model the seqan3::validator_concept, your custom validator must provide the following:
+In order to model the seqan3::Validator, your custom validator must provide the following:
 
   1. It needs to expose a `value_type` type member which identifies the type of variable the validator works on.
      Currently, the SeqAn3 validators either have value_type `double` or `std::string`.
@@ -267,7 +267,7 @@ In order to model the seqan3::validator_concept, your custom validator must prov
 
 ### Formally satisfying the requirements
 
-As we have noted previously, you can check if your type models seqan3::validator_concept in the following way:
+As we have noted previously, you can check if your type models seqan3::Validator in the following way:
 
 ```cpp
 struct custom_validator
@@ -275,14 +275,14 @@ struct custom_validator
     // ...
 };
 
-static_assert(seqan3::validator_concept<custom_validator>);
+static_assert(seqan3::Validator<custom_validator>);
 ```
 
 To formally satisfy the requirements, your functions don't need the correct behaviour, yet.
 Only the signatures need to be fully specified.
 
 \assignment{Exercise: Custom validator I}
-Implement enough of the above mentioned `struct custom_validator` for it to model seqan3::validator_concept and pass
+Implement enough of the above mentioned `struct custom_validator` for it to model seqan3::Validator and pass
 the check. You can use an empty `main()`-function for now.
 \endassignment
 \solution
@@ -314,6 +314,3 @@ Also give a nice description for the help page.
 
 You have now written your own type that is compatible with our constrained interfaces!
 
-## seqan3::Alphabet
-
-TODO

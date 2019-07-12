@@ -16,6 +16,7 @@
 
 #include <seqan3/core/platform.hpp>
 #include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -27,14 +28,11 @@ struct execution_handler_sequential
 {
 public:
 
-    /*!\name Execution
-     * \{
-     */
     /*!\brief Invokes the passed alignment instance in a blocking manner.
      * \tparam fn_type           The callable that needs to be invoked; must model std::Invocable with first_range_type
      *                           and second_range_type.
-     * \tparam first_range_type  The type of the first range.
-     * \tparam second_range_type The type of the second range.
+     * \tparam first_range_type  The type of the first range; must model std::ranges::View.
+     * \tparam second_range_type The type of the second range; must model std::ranges::View.
      * \tparam delegate_type     The type of the callable invoked on the std::invoke_result of `fn_type`; must model
      *                           std::Invocable.
      *
@@ -54,13 +52,21 @@ public:
     //!\endcond
     void execute(fn_type && func,
                  size_t const idx,
-                 first_range_type && first_range,
-                 second_range_type && second_range,
+                 first_range_type first_range,
+                 second_range_type second_range,
                  delegate_type && delegate)
     {
-        delegate(func(idx, std::forward<first_range_type>(first_range), std::forward<second_range_type>(second_range)));
+        static_assert(std::ranges::View<first_range_type>, "Expected a view!");
+        static_assert(std::ranges::View<second_range_type>, "Expected a view!");
+
+        delegate(func(idx, std::move(first_range), std::move(second_range)));
     }
-    //!\}
+
+    //!\brief Waits for the submitted alignments jobs to finish. (Noop).
+    void wait() noexcept
+    {
+        // noop
+    }
 };
 
 } // namespace seqan3

@@ -16,6 +16,7 @@
 #include <range/v3/view/drop_exactly.hpp>
 #include <range/v3/view/zip.hpp>
 
+#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
@@ -25,9 +26,10 @@
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/core/metafunction/deferred_crtp_base.hpp>
+#include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 #include <seqan3/range/view/get.hpp>
+#include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
@@ -518,59 +520,53 @@ private:
                            second_range_t & second_range,
                            alignment_coordinate back_coordinate)
     {
-        using first_seq_value_type = value_type_t<first_range_t>;
-        using second_seq_value_type = value_type_t<second_range_t>;
-
         // Parse the traceback
         auto [front_coordinate, first_gap_segments, second_gap_segments] = this->parse_traceback(back_coordinate);
 
-        auto fill_aligned_sequence = [](auto & aligned_sequence, auto & gap_segments, size_t const normalise)
+        using result_type = typename align_result_selector<first_range_t, second_range_t, config_t>::type;
+        using aligned_seq_type = decltype(result_type{}.alignment);
+
+        // If we compute the traceback the aligned sequences must be provided.
+        if constexpr (seqan3::TupleLike<aligned_seq_type>)
         {
-            assert(std::ranges::empty(gap_segments) || normalise <= gap_segments[0].position);
-
-            size_t offset = 0;
-            for (auto const & gap_elem : gap_segments)
+            auto fill_aligned_sequence = [] (auto & aligned_sequence, auto & gap_segments, size_t const normalise)
             {
-                // insert_gap(aligned_sequence, gap.position + offset, gap.size);
-                auto it = std::ranges::begin(aligned_sequence);
-                std::ranges::advance(it, (gap_elem.position - normalise) + offset);
-                aligned_sequence.insert(it, gap_elem.size, gap{});
-                offset += gap_elem.size;
-            }
-        };
+                assert(std::ranges::empty(gap_segments) || normalise <= gap_segments[0].position);
 
-        // In banded case we need to refine the back coordinate to map to the correct position within the
-        // second range.
-        if constexpr (is_banded)
-            back_coordinate = this->map_banded_coordinate_to_range_position(back_coordinate);
+                size_t offset = 0;
+                for (auto const & gap_elem : gap_segments)
+                {
+                    auto it = std::ranges::begin(aligned_sequence);
+                    std::ranges::advance(it, (gap_elem.position - normalise) + offset);
+                    insert_gap(aligned_sequence, it, gap_elem.size);
+                    offset += gap_elem.size;
+                }
+            };
 
-        // Get the subrange over the first sequence according to the front and back coordinate.
-        auto it_first_seq_begin = std::ranges::begin(first_range);
-        std::ranges::advance(it_first_seq_begin, front_coordinate.first);
-        auto it_first_seq_end = std::ranges::begin(first_range);
-        std::ranges::advance(it_first_seq_end, back_coordinate.first);
+            // In banded case we need to refine the back coordinate to map to the correct position within the
+            // second range.
+            if constexpr (is_banded)
+                back_coordinate = this->map_banded_coordinate_to_range_position(back_coordinate);
 
-        using first_subrange_type = std::ranges::subrange<decltype(it_first_seq_begin), decltype(it_first_seq_end)>;
-        auto first_subrange = first_subrange_type{it_first_seq_begin, it_first_seq_end};
+            // Get the subrange over the first sequence according to the front and back coordinate.
+            auto first_subrange = view::slice(first_range, front_coordinate.first, back_coordinate.first);
 
-        // Create and fill the aligned_sequence for the first sequence.
-        std::vector<gapped<first_seq_value_type>> first_aligned_seq{first_subrange};
-        fill_aligned_sequence(first_aligned_seq, first_gap_segments, front_coordinate.first);
+            // Get the subrange over the second sequence according to the front and back coordinate.
+            auto second_subrange = view::slice(second_range, front_coordinate.second, back_coordinate.second);
 
-        // Get the subrange over the second sequence according to the front and back coordinate.
-        auto it_second_seq_begin = std::ranges::begin(second_range);
-        std::ranges::advance(it_second_seq_begin, front_coordinate.second);
-        auto it_second_seq_end = std::ranges::begin(second_range);
-        std::ranges::advance(it_second_seq_end, back_coordinate.second);
+            // Create and fill the aligned_sequences.
+            aligned_seq_type aligned_seq;
+            assign_unaligned(std::get<0>(aligned_seq), first_subrange);
+            assign_unaligned(std::get<1>(aligned_seq), second_subrange);
+            fill_aligned_sequence(std::get<0>(aligned_seq), first_gap_segments, front_coordinate.first);
+            fill_aligned_sequence(std::get<1>(aligned_seq), second_gap_segments, front_coordinate.second);
 
-        using second_subrange_type = std::ranges::subrange<decltype(it_second_seq_begin), decltype(it_second_seq_end)>;
-        auto second_subrange = second_subrange_type{it_second_seq_begin, it_second_seq_end};
-
-        // Create and fill the aligned_sequence for the second sequence.
-        std::vector<gapped<second_seq_value_type>> second_aligned_seq{second_subrange};
-        fill_aligned_sequence(second_aligned_seq, second_gap_segments, front_coordinate.second);
-
-        return std::tuple{front_coordinate, std::tuple{first_aligned_seq, second_aligned_seq}};
+            return std::tuple{front_coordinate, aligned_seq};
+        }
+        else
+        {
+            return std::tuple{front_coordinate, std::ignore};
+        }
     }
 
     //!\brief The alignment configuration stored on the heap.

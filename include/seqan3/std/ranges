@@ -38,7 +38,7 @@
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/zip.hpp>
 
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 
@@ -330,7 +330,7 @@ using subrange_kind = ::ranges::subrange_kind;
  *
  * ### Example
  *
- * \snippet test/snippet/std/view/subrange.cpp example
+ * \include test/snippet/std/view/subrange.cpp
  * \hideinitializer
  */
 template <std::Iterator it_t,

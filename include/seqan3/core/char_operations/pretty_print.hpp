@@ -26,6 +26,7 @@ namespace seqan3::detail
 /*!\brief Returns a printable value for the given character `c`.
  * \param[in] c The character to be represented as printable string.
  * \return    a std::string containing a printable version of the given character `c`.
+ * \ingroup char_operations
  *
  * \details
  *

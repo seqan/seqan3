@@ -23,11 +23,31 @@
 
 #include <range/v3/utility/common_type.hpp>
 
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 
 /*!\defgroup std std
- * \brief A subset of the C++20 standard library, either aliased directly from the standard library or
- *        (if not available) implemented via the range-v3 library.
+ * \brief A subset of the C++20 standard library made available in pre-C++20 contexts.
+ *
+ * \details
+ *
+ * This module provides many parts of the C++20 standard library (and some parts of the C++17 standard library
+ * not available in GCC). They are only defined if not found in the compiler's standard library and are called exactly
+ * like the originals so they can be used interchangeably. The actual implementation is provided by us or aliased
+ * from the range-v3 library.
+ *
+ * \attention All of this sub-module is subject to change!
+ *
+ * In particular:
+ *
+ *   * We do not provide all C++20 library features, only those that are used by SeqAn.
+ *   * All of these might change or be removed until C++20 is published.
+ *   * The documentation of this module will likely be removed entirely in favour of links to
+ *     https://en.cppreference.com
+ *
+ * It is best you consider every entity in this module as:
+ *
+ * \noapi
+ *
  */
 
 namespace std

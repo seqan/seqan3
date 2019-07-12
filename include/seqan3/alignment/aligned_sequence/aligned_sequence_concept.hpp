@@ -21,8 +21,8 @@
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/gap/all.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -99,12 +99,12 @@ namespace seqan3
  * \brief     The generic concept for an aligned sequence.
  * \ingroup   aligned_sequence
  *
- * This concept describes the requirements a sequence must fulfil
- * in order to be part of the seqan3::alignment object.
+ * This concept describes the requirements a sequence must fulfil in order to be used inside of the alignment algorithm
+ * to store the final alignment.
  *
  * ### Concepts and doxygen
  *
- * The requirements for this concept are given as related functions and metafunctions.
+ * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
  */
 /*!\name Requirements for seqan3::AlignedSequence
@@ -177,7 +177,7 @@ namespace seqan3
  * \details
  *
  * An aligned sequence has to be assignable from its unaligned counter part. For example a
- * std::vector<seqan3::gapped<seqan3::dna4>> as well as a seqan3::gap_decorator_anchor_set<std::vector<seqan3::dna4>>
+ * std::vector<seqan3::gapped<seqan3::dna4>> as well as a seqan3::gap_decorator<std::vector<seqan3::dna4>>
  * can be assigned from s std::vector<seqan3::dna4> via seqan3::assign_unaligned.
  *
  * \attention This is a concept requirement, not an actual function (however types
@@ -319,7 +319,7 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  * \ingroup aligned_sequence
  * \tparam        aligned_seq_t     Type of the container to reassign; must model seqan3::SequenceContainer;
  *                                  the value type must be a seqan3::gapped alphabet.
- * \tparam        unaligned_seq_t   Type of the container to assign from; must model std::ranges::ForwardRange;
+ * \tparam        unaligned_seq_t   Type of the container to assign from; must model std::ranges::ForwardRange.
  * \param[in,out] aligned_seq       The gapped sequence container to assign to.
  * \param[in,out] unaligned_seq     The unaligned sequence container to assign from.
  *
@@ -386,7 +386,7 @@ typename range_type::iterator insert_gap(range_type & rng,
 
 /*!\brief An implementation of seqan3::AlignedSequence::erase_gap for ranges with the corresponding
  *        member function erase_gap(it).
- * \ingroup seqan3::AlignedSequence
+ * \ingroup aligned_sequence
  * \tparam range_type   Type of the range to modify; must have an erase_gap(it) member function.
  * \param[in,out] rng   The range to modify.
  * \param[in] it        The iterator pointing to the position where to erase one gap.
@@ -442,8 +442,8 @@ namespace detail
  * \param[in] stream    The output stream that receives the formatted alignment.
  * \param[in] align     The alignment that shall be streamed.
  */
-template<TupleLike alignment_t, size_t ...idx>
-void stream_alignment(debug_stream_type & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
+template <typename char_t, TupleLike alignment_t, size_t ...idx>
+void stream_alignment(debug_stream_type<char_t> & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
     using std::get;
     size_t const alignment_size = get<0>(align).size();
@@ -511,11 +511,11 @@ inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (AlignedSeq
  * \param alignment The alignment that shall be formatted. All sequences must be equally long.
  * \return          The given stream to which the alignment representation is appended.
  */
-template <TupleLike tuple_t>
+template <TupleLike tuple_t, typename char_t>
 //!\cond
     requires detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<tuple_t>>
 //!\endcond
-inline debug_stream_type & operator<<(debug_stream_type & stream, tuple_t const & alignment)
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, tuple_t const & alignment)
 {
     static_assert(std::tuple_size_v<tuple_t> >= 2, "An alignment requires at least two sequences.");
     detail::stream_alignment(stream, alignment, std::make_index_sequence<std::tuple_size_v<tuple_t> - 1> {});

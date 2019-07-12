@@ -21,8 +21,8 @@
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/view/zip.hpp>
 
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
@@ -157,13 +157,18 @@ namespace seqan3
  *
  * ### Formats
  *
- * TODO give overview of formats, once they are all implemented
+ * We currently support writing the following formats:
+ *   * seqan3::format_fasta
+ *   * seqan3::format_fastq
+ *   * seqan3::format_embl
+ *   * seqan3::format_genbank
+ *   * seqan3::format_sam
  */
 
 template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
               type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>,
-          char_concept stream_char_type_ = char>
+          Char stream_char_type_ = char>
 class sequence_file_output
 {
 public:

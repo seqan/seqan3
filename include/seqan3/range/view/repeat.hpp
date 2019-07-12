@@ -14,8 +14,8 @@
 
 #include <range/v3/view/single.hpp>
 
-#include <seqan3/core/metafunction/iterator.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/type_traits/iterator.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/std/ranges>
 

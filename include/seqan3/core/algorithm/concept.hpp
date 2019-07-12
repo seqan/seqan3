@@ -17,7 +17,7 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3

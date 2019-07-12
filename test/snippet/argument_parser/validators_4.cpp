@@ -1,4 +1,3 @@
-//! [usage]
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
@@ -29,4 +28,3 @@ int main(int argc, const char ** argv)
     seqan3::debug_stream << "email address given by user passed validation: " << my_string << "\n";
     return 0;
 }
-//! [usage]

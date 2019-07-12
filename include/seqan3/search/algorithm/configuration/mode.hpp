@@ -13,9 +13,10 @@
 
 #pragma once
 
+#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/search/algorithm/configuration/detail.hpp>
 
 /*!\addtogroup search
@@ -57,6 +58,20 @@ struct strata : detail::strong_type<uint8_t, strata, detail::strong_type_skill::
 
 /*!\brief Configuration element to determine the search mode.
  * \ingroup search_configuration
+ *
+ * \details
+ * This configuration element can be used to determine which hits are supported.
+ * Currently these modes are available:
+ * | Mode                         | Behaviour                                                           |
+ * |------------------------------|---------------------------------------------------------------------|
+ * | seqan3::search_cfg::all      | Report all hits within error bounds.                                |
+ * | seqan3::search_cfg::all_best | Report all hits with the lowest number of errors within the bounds. |
+ * | seqan3::search_cfg::best     | Report one best hit (hit with lowest error) within bounds.          |
+ * | seqan3::search_cfg::strata   | Report all hits within best + x errors.                             |
+ *
+ * ### Example
+ *
+ * \include test/snippet/search/configuration_modes.cpp
  */
 template <typename mode_t>
 //!\cond

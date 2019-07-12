@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
- * \brief Contains seqan3::phred68legacy quality scores.
+ * \brief Provides seqan3::phred68legacy quality scores.
  */
 
 #pragma once
@@ -36,7 +36,7 @@ namespace seqan3
  * [-5..62] mapped to the ASCII range [';' .. '~']. It represents the Solexa and
  * the Illumina [1.0;1.8[ standard.
  *
- * \snippet test/snippet/alphabet/quality/phred68legacy.cpp general
+ * \include test/snippet/alphabet/quality/phred68legacy.cpp
  */
 class phred68legacy : public quality_base<phred68legacy, 68>
 {

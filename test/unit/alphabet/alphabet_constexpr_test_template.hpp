@@ -8,7 +8,6 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/debug_stream.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <seqan3/test/tmp_filename.hpp>
@@ -25,8 +24,7 @@
 using namespace seqan3;
 
 template <typename T>
-class alphabet_constexpr : public ::testing::Test
-{};
+using alphabet_constexpr = ::testing::Test;
 
 TYPED_TEST_CASE_P(alphabet_constexpr);
 

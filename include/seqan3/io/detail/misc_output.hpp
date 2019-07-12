@@ -24,6 +24,7 @@
     #include <seqan3/contrib/stream/bgzf_ostream.hpp>
     #include <seqan3/contrib/stream/gz_ostream.hpp>
 #endif
+#include <seqan3/std/filesystem>
 
 namespace seqan3::detail
 {
@@ -34,7 +35,7 @@ namespace seqan3::detail
  * \returns A pointer to the secondary stream with defaulted or NOP'ed deleter.
  * \throws seqan3::file_open_error If a compression-extension is used, but is not supported/available.
  */
-template<char_concept char_t>
+template<Char char_t>
 inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, std::filesystem::path & filename)
     -> std::unique_ptr<std::basic_ostream<char_t>, std::function<void(std::basic_ostream<char_t>*)>>
 {
