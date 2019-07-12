@@ -249,16 +249,8 @@ struct bam_format : public alignment_file_data
 
 TEST_F(bam_format, wrong_magic_bytes)
 {
-    std::string cam1_bute_str{'\x43', '\x41', '\x4D', '\x01' /*CAM\1*/};
-
-    std::istringstream stream{cam1_bute_str};
-    detail::alignment_file_input_format<format_bam> format{};
-
-    EXPECT_THROW(format.read(stream, input_options, std::ignore, this->header, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
-
+    std::istringstream stream{std::string{'\x43', '\x41', '\x4D', '\x01' /*CAM\1*/}};
+    EXPECT_THROW((alignment_file_input{stream, format_bam{}}), format_error);
 }
 
 TEST_F(bam_format, unknown_ref_in_header)
@@ -273,12 +265,7 @@ TEST_F(bam_format, unknown_ref_in_header)
     };
 
     std::istringstream stream{unknown_ref};
-    detail::alignment_file_input_format<format_bam> format{};
-
-    EXPECT_THROW(format.read(stream, input_options, this->ref_sequences, this->header, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
 }
 
 TEST_F(bam_format, wrong_ref_length_in_header)
@@ -293,22 +280,13 @@ TEST_F(bam_format, wrong_ref_length_in_header)
     };
 
     std::istringstream stream{wrong_ref_length};
-    detail::alignment_file_input_format<format_bam> format{};
-
-    EXPECT_THROW(format.read(stream, input_options, this->ref_sequences, this->header, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
 }
 
 TEST_F(bam_format, wrong_order_in_header)
 {
     std::vector<std::string> rids = {"ref", "raf"};
-    alignment_file_header hdr{rids};
-    hdr.ref_id_info.emplace_back(34, "");
-    hdr.ref_id_info.emplace_back(30, "");
-    hdr.ref_dict[hdr.ref_ids()[0]] = 0;
-    hdr.ref_dict[hdr.ref_ids()[1]] = 1;
+    std::vector<dna5_vector> rseqs = {"ATCGAGATCGATCGATCGAGAGCTAGCGATCGAG"_dna5, "ATCGAGATCGATCGATCGAGAGCTAGCGAT"_dna5};
 
     std::string wrong_order{ // raf is first in file but second in hdr
         // @HD     VN:1.6
@@ -324,20 +302,11 @@ TEST_F(bam_format, wrong_order_in_header)
     };
 
     std::istringstream stream{wrong_order};
-    detail::alignment_file_input_format<format_bam> format{};
-
-    EXPECT_THROW(format.read(stream, input_options, this->ref_sequences, hdr, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{stream, rids, rseqs, format_bam{}}), format_error);
 }
 
 TEST_F(bam_format, wrong_char_as_tag_identifier)
 {
-    dna5_vector seq;
-    std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
-    sam_tag_dictionary tag_dict;
-
     {
         std::string wrong_char_in_tag{ // Y in CG tag
             // @HD     VN:1.0
@@ -356,12 +325,7 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        detail::alignment_file_input_format<format_bam> format{};
-
-        EXPECT_THROW(format.read(stream, input_options, this->ref_sequences, this->header, seq, std::ignore,
-                                    std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore,
-                                    std::ignore, std::ignore, tag_dict, std::ignore, std::ignore),
-                    format_error);
+        EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
     }
     {
         std::string wrong_char_in_tag{ // Y in CG:B array tag
@@ -381,21 +345,12 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        detail::alignment_file_input_format<format_bam> format{};
-
-        EXPECT_THROW(format.read(stream, input_options, this->ref_sequences, this->header, seq, std::ignore,
-                                    std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore,
-                                    std::ignore, std::ignore, tag_dict, std::ignore, std::ignore),
-                    format_error);
+        EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
     }
 }
 
 TEST_F(bam_format, invalid_cigar_op)
 {
-    dna5_vector seq;
-    std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
-    sam_tag_dictionary tag_dict;
-
     {
         std::string wrong_char_in_tag{// "1D" replaced by "1?" (D is encoded as 2, but 2 was replaced by 14)
             // @HD  VN:1.6
@@ -414,12 +369,7 @@ TEST_F(bam_format, invalid_cigar_op)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        detail::alignment_file_input_format<format_bam> format{};
-
-        EXPECT_THROW(format.read(stream, input_options, this->ref_sequences, this->header, seq, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, alignment,
-                                 std::ignore, std::ignore, std::ignore, tag_dict, std::ignore, std::ignore),
-                     format_error);
+        EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
     }
 }
 
@@ -441,42 +391,27 @@ TEST_F(bam_format, too_long_cigar_string_read)
         '\x31', '\x4D', '\x31', '\x49', '\x00'
     };
 
-    dna5_vector seq;
-    std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
-    sam_tag_dictionary tag_dict;
-
     {   // successful reading
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        detail::alignment_file_input_format<format_bam> format{};
+        alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
 
-        ASSERT_NO_THROW(format.read(stream, input_options, this->ref_sequences, this->header, seq, std::ignore,
-                                    std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore,
-                                    std::ignore, std::ignore, tag_dict, std::ignore, std::ignore));
-
-        EXPECT_EQ(get<0>(alignment), get<0>(this->alignments[0]));
-        EXPECT_EQ(get<1>(alignment), get<1>(this->alignments[0]));
-        EXPECT_EQ(tag_dict.size(), 0u); // redundant CG tag is removed
+        EXPECT_TRUE(std::ranges::equal(get<0>(get<field::ALIGNMENT>(*fin.begin())), get<0>(this->alignments[0])));
+        EXPECT_TRUE(std::ranges::equal(get<1>(get<field::ALIGNMENT>(*fin.begin())), get<1>(this->alignments[0])));
+        EXPECT_EQ(get<field::TAGS>(*fin.begin()).size(), 0u); // redundant CG tag is removed
     }
 
     {   // error: sam_tag_dictionary is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        detail::alignment_file_input_format<format_bam> format{};
-
-        ASSERT_THROW(format.read(stream, input_options, this->ref_sequences, this->header, seq, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore), format_error);
+        ASSERT_THROW((alignment_file_input{stream, format_bam{}, fields<field::ALIGNMENT>{}}), format_error);
     }
 
     {   // error: sequence is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        detail::alignment_file_input_format<format_bam> format{};
-
-        ASSERT_THROW(format.read(stream, input_options, this->ref_sequences, this->header, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore,
-                                 std::ignore, std::ignore, tag_dict, std::ignore, std::ignore), format_error);
+        ASSERT_THROW((alignment_file_input{stream, format_bam{}, fields<field::ALIGNMENT, field::TAGS>{}}),
+                     format_error);
     }
 
     {   // error no CG tag
@@ -495,12 +430,7 @@ TEST_F(bam_format, too_long_cigar_string_read)
             '\x00', '\x02', '\x02', '\x03'
         }};
 
-        detail::alignment_file_input_format<format_bam> format{};
-        tag_dict.clear();
-
-        ASSERT_THROW(format.read(stream, input_options, this->ref_sequences, this->header, seq, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore,
-                                 std::ignore, std::ignore, tag_dict, std::ignore, std::ignore), format_error);
+        ASSERT_THROW((alignment_file_input{stream, format_bam{}}), format_error);
     }
 }
 
@@ -556,13 +486,19 @@ TEST_F(bam_format, too_long_cigar_string_write)
     header.ref_id_info.push_back({ref.size(), ""});
     header.ref_dict[this->ref_id] = 0;
 
-    using default_mate_t  = std::tuple<std::string, std::optional<int32_t>, int32_t>;
+    {
+        alignment_file_output fout{os, format_bam{}, fields<field::HEADER_PTR,
+                                                            field::ID,
+                                                            field::SEQ,
+                                                            field::REF_ID,
+                                                            field::REF_OFFSET,
+                                                            field::ALIGNMENT,
+                                                            field::MAPQ>{}};
 
-    detail::alignment_file_output_format<format_bam> format;
+        fout.emplace_back(&header, std::string{"long_read"}, read, 0, 0, alignment, 255);
+    }
 
-    format.write(os, output_options, header, read, std::array<char, 0>{}/*empty qual*/,
-                 std::string{"long_read"}, 0/*offset*/, std::string{}, 0/*ref_id*/, 0/*ref_offset*/, alignment,
-                 0, 255, default_mate_t{}, sam_tag_dictionary{}, 0, 0);
+    os.flush();
 
     EXPECT_TRUE(os.str() == expected); // do not use EXPECT_EQ because if this fails the output will be huge :D
 }
