@@ -214,7 +214,7 @@ public:
         value_type_t<decltype(header.ref_ids())> ref_id_tmp{};
         [[maybe_unused]] int32_t offset_tmp{};
         [[maybe_unused]] int32_t soft_clipping_end{};
-        [[maybe_unused]] std::vector<std::pair<char, size_t>> cigar{};
+        [[maybe_unused]] std::vector<cigar> cigar_vector{};
         [[maybe_unused]] int32_t ref_length{0}, seq_length{0}; // length of aligned part for ref and query
 
         // Header
@@ -254,7 +254,7 @@ public:
         {
             if (!is_char<'*'>(*std::ranges::begin(stream_view))) // no cigar information given
             {
-                std::tie(cigar, ref_length, seq_length, offset_tmp, soft_clipping_end) = parse_cigar(field_view);
+                std::tie(cigar_vector, ref_length, seq_length, offset_tmp, soft_clipping_end) = parse_cigar(field_view);
             }
             else
             {
@@ -329,7 +329,7 @@ public:
                                   "If you want to read ALIGNMENT but not SEQ, the alignment"
                                   " object must store a sequence container at the second (query) position.");
 
-                    if (!cigar.empty()) // only parse alignment if cigar information was given
+                    if (!cigar_vector.empty()) // only parse alignment if cigar information was given
                     {
 
                         auto tmp_iter = std::ranges::begin(seq_stream);
@@ -359,7 +359,7 @@ public:
 
                 if constexpr (!detail::decays_to_ignore_v<align_type>)
                 {
-                    if (!cigar.empty()) // if no alignment info is given, the field::ALIGNMENT should remain empty
+                    if (!cigar_vector.empty()) // if no alignment info is given, the field::ALIGNMENT should remain empty
                     {
                         assign_unaligned(get<1>(align),
                                          seq | views::slice(static_cast<decltype(std::ranges::size(seq))>(offset_tmp),
@@ -415,7 +415,7 @@ public:
                 }
             }
 
-            construct_alignment(align, cigar, ref_idx, ref_seqs, ref_offset_tmp, ref_length);
+            construct_alignment(align, cigar_vector, ref_idx, ref_seqs, ref_offset_tmp, ref_length);
         }
     }
 
@@ -479,25 +479,25 @@ protected:
     }
 
     /*!\brief Construct the field::ALIGNMENT depending on the given information.
-     * \tparam align_type    The alignment type.
-     * \tparam ref_seqs_type The type of reference sequences (might decay to ignore).
-     * \param[in,out] align  The alignment (pair of aligned sequences) to fill.
-     * \param[in] cigar      The cigar information to convert to an alignment.
-     * \param[in] rid        The index of the reference sequence in header.ref_ids().
-     * \param[in] ref_seqs   The reference sequence information.
-     * \param[in] ref_start  The start position of the alignment in the reference sequence.
-     * \param[in] ref_length The length of the aligned reference sequence.
+     * \tparam align_type      The alignment type.
+     * \tparam ref_seqs_type   The type of reference sequences (might decay to ignore).
+     * \param[in,out] align    The alignment (pair of aligned sequences) to fill.
+     * \param[in] cigar_vector The cigar information to convert to an alignment.
+     * \param[in] rid          The index of the reference sequence in header.ref_ids().
+     * \param[in] ref_seqs     The reference sequence information.
+     * \param[in] ref_start    The start position of the alignment in the reference sequence.
+     * \param[in] ref_length   The length of the aligned reference sequence.
      */
     template <typename align_type, typename ref_seqs_type>
     void construct_alignment(align_type                           & align,
-                             std::vector<std::pair<char, size_t>> & cigar,
+                             std::vector<cigar>                   & cigar_vector,
                              [[maybe_unused]] int32_t               rid,
                              [[maybe_unused]] ref_seqs_type       & ref_seqs,
                              [[maybe_unused]] int32_t               ref_start,
                              size_t                                 ref_length)
     {
         if (rid > -1 && ref_start > -1 &&       // read is mapped
-            !cigar.empty() &&                   // alignment field was not empty
+            !cigar_vector.empty() &&                   // alignment field was not empty
             !std::ranges::empty(get<1>(align))) // seq field was not empty
         {
             if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>)
@@ -521,7 +521,7 @@ protected:
             }
 
             // insert gaps according to the cigar information
-            detail::alignment_from_cigar(align, cigar);
+            detail::alignment_from_cigar(align, cigar_vector);
         }
         else // not enough information for an alignment, assign an empty view/dummy_sequence
         {
