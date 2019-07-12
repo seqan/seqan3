@@ -1,4 +1,4 @@
-#include <seqan3/search/algorithm/configuration/max_error_rate.hpp>
+#include <seqan3/search/configuration/max_error_rate.hpp>
 
 int main()
 {
