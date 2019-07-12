@@ -553,6 +553,8 @@ private:
             return;
         }
 
+        bool special_format_was_set{false};
+
         for(int i = 1, argv_len = argc; i < argv_len; ++i) // start at 1 to skip binary name
         {
             std::string arg{argv[i]};
@@ -561,18 +563,18 @@ private:
             {
                 format = detail::format_help{false};
                 init_standard_options();
-                return;
+                special_format_was_set = true;
             }
             else if (arg == "-hh" || arg == "--advanced-help")
             {
                 format = detail::format_help{true};
                 init_standard_options();
-                return;
+                special_format_was_set = true;
             }
             else if (arg == "--version")
             {
                 format = detail::format_version{};
-                return;
+                special_format_was_set = true;
             }
             else if (arg.substr(0, 13) == "--export-help") // --export-help=man is also allowed
             {
@@ -600,12 +602,12 @@ private:
                     throw validation_failed{"Validation failed for option --export-help: "
                                             "Value must be one of [html, man]"};
                 init_standard_options();
-                return;
+                special_format_was_set = true;
             }
             else if (arg == "--copyright")
             {
                 format = detail::format_copyright{};
-                return;
+                special_format_was_set = true;
             }
             else if (arg == "--version-check")
             {
@@ -629,7 +631,8 @@ private:
             }
         }
 
-        format = detail::format_parse(argc, std::move(argv_new));
+        if (!special_format_was_set)
+            format = detail::format_parse(argc, std::move(argv_new));
     }
 
     //!\brief Adds standard options to the help page.
