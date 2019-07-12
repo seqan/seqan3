@@ -62,11 +62,11 @@ void insert_left2right(benchmark::State& state)
 }
 
 // Insert gaps of length 1 from left to right into UNGAPPED sequence
-BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_left2right, gap_decorator<const std::vector<dna4> &>, false)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
 
 // Insert gaps of length 1 from left to right into GAPPED sequence
-BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_left2right, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
 
 // ============================================================================
@@ -110,10 +110,10 @@ void insert_right2left(benchmark::State & state)
 }
 
 // Insert gaps of length 1 from left to right into UNGAPPED sequence
-BENCHMARK_TEMPLATE(insert_right2left, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_right2left, gap_decorator<const std::vector<dna4> &>, false)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
 // Insert gaps of length 1 from left to right into GAPPED sequence
-BENCHMARK_TEMPLATE(insert_right2left, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_right2left, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
 
 BENCHMARK_MAIN();

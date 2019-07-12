@@ -61,10 +61,10 @@ void read_left2right(benchmark::State & state)
 }
 
 // Read from left to right in UNGAPPED sequence
-BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_left2right, gap_decorator<const std::vector<dna4> &>, false)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
 // Read from left to right in GAPPED sequence
-BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_left2right, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
 
 BENCHMARK_MAIN();

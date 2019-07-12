@@ -71,10 +71,10 @@ void read_random(benchmark::State & state)
 }
 
 // Read at random position in UNGAPPED sequence
-BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_random, gap_decorator<const std::vector<dna4> &>, false)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
 // Read at random position in GAPPED sequence
-BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_random, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
 
 BENCHMARK_MAIN();

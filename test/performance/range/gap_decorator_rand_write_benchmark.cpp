@@ -73,10 +73,10 @@ void insert_random(benchmark::State & state)
 }
 
 // Insert gaps of length 1 at random position into UNGAPPED sequence
-BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, gap_decorator<const std::vector<dna4> &>, false)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
 // Insert gaps of length 1 at random position into GAPPED sequence
-BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
 
 // ============================================================================
@@ -135,7 +135,7 @@ void delete_random(benchmark::State & state)
 }
 
 // Erase gaps at random position from initially GAPPED sequence
-BENCHMARK_TEMPLATE(delete_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(delete_random, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
 BENCHMARK_TEMPLATE(delete_random, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
 
 BENCHMARK_MAIN();

@@ -129,7 +129,7 @@ void resize(std::vector<size_type> & gaps, sequence_type & seq, unsigned int seq
 /* Helper function to prepare a gapped sequence for the benchmark (case gap_flag=true)
  *
  * Parameters:
- * gap_decorator_t  gap decorator type, e.g. gap_decorator_anchor_set
+ * gap_decorator_t  gap decorator type, e.g. gap_decorator
  *
  * Arguments:
  * gaps             reference to gap vector
