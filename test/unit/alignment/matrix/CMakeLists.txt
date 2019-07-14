@@ -4,7 +4,5 @@ seqan3_test(debug_matrix_test.cpp)
 seqan3_test(debug_stream_alignment_coordinate_test.cpp)
 seqan3_test(debug_stream_debug_matrix_test.cpp)
 seqan3_test(debug_stream_trace_directions_test.cpp)
-seqan3_test(edit_distance_score_matrix_full_test.cpp)
-seqan3_test(edit_distance_trace_matrix_full_test.cpp)
 
 add_subdirectories()
