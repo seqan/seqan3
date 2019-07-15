@@ -7,7 +7,7 @@ int main()
 
     // begin() refers to the rightmost position.
     for (auto it = t1.begin(); it != t1.end(); ++it)
-        seqan3::debug_stream << *it; // 111100011101
+        seqan3::debug_stream << *it; // 1111'0001'1101
 
     seqan3::debug_stream << '\n';
 }

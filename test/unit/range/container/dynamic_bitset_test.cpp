@@ -228,11 +228,16 @@ constexpr bool set_test()
     t1.set();
     res &= t1.all();
 
-    dynamic_bitset t2{0b11'1111'1111'1111'1111'1111'1101'1111'1111'1111'1111'1111'1111'1111'1110};
+    dynamic_bitset t2{0b1110'1111'1111'1111'1111'1100'1111'1111'1111'1111'1111'1111'1111'1110};
     res &= !t2.all();
-    t2.set(0, true);
-    t2.set(33, true);
+    t2.set();
     res &= t2.all();
+
+    dynamic_bitset t3{0b11'1111'1111'1111'1111'1111'1101'1111'1111'1111'1111'1111'1111'1111'1110};
+    res &= !t3.all();
+    t3.set(0, true);
+    t3.set(33, true);
+    res &= t3.all();
 
     return res;
 }

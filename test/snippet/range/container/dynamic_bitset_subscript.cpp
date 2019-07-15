@@ -7,7 +7,7 @@ int main()
 
     // Positions are 0-based and start at the rightmost bit.
     for (size_t i = 0; i < t1.size(); ++i)
-        seqan3::debug_stream << t1[i]; // 111100011101
+        seqan3::debug_stream << t1[i]; // 1111'0001'1101
 
     seqan3::debug_stream << '\n';
 }

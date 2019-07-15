@@ -677,9 +677,8 @@ public:
     {
         assert(count > 0);
         assert(count < size());
-        uint8_t offset = 58 - size() + count;
-        data_.bits <<= offset;
-        data_.bits >>= offset - count;
+        data_.bits <<= count;
+        data_.bits &= (1ULL << size()) - 1ULL;
         return *this;
     }
 
@@ -798,7 +797,7 @@ public:
      */
     constexpr dynamic_bitset & set() noexcept
     {
-        data_.bits = ~0ULL >> 6;
+        data_.bits |= (1ULL << size()) - 1ULL;
         return *this;
     }
 
@@ -914,8 +913,8 @@ public:
      */
     constexpr dynamic_bitset & flip() noexcept
     {
-        uint8_t offset = 58 - size();
-        data_.bits = ~data_.bits << offset >> offset;
+        data_.bits = ~data_.bits;
+        data_.bits &= (1ULL << size()) - 1ULL;
         return *this;
     }
 
@@ -1044,15 +1043,15 @@ public:
      */
     constexpr reference operator[](size_t i)
     {
-        assert(i <= size());
+        assert(i < size());
         return {data_, i};
     }
 
     //!\copydoc operator[]()
     constexpr const_reference operator[](size_t i) const
     {
-        assert(i <= size());
-        return data_.bits << (63u - i) >> 63u;
+        assert(i < size());
+        return data_.bits & 1ULL << i;
     }
 
     /*!\brief Returns the first element. Calling front on an empty container is undefined.
@@ -1445,7 +1444,7 @@ public:
      *
      * ### Complexity
      *
-     * Constant if enlarging and `value == false`. Linear in absolute difference betweeen size and count otherwise.
+     * Constant.
      *
      * ### Exceptions
      *
@@ -1454,16 +1453,12 @@ public:
     constexpr void resize(size_type const count, value_type const value = false) noexcept
     {
         assert(count <= capacity_);
-        // In case of enlarging, we need the original size after setting the size bits.
-        size_t tmp_size{size()};
-        // Shrinking.
-        for (size_t i = tmp_size; i > count; --i)
-            (*this)[i - 1] = false;
+        // Enlarging.
+        data_.bits |= value && count > size() ? ((1ULL << (count - size())) - 1) << size() : 0ULL;
         // Set size bits.
         data_.size = count;
-        // Enlarging, only needed when we have to set bits.
-        for (size_t i = tmp_size; value && i < count; ++i)
-            (*this)[i] = value;
+        // Shrinking.
+        data_.bits &= (1ULL << size()) - 1ULL;
     }
 
     /*!\brief Swap contents with another instance.
