@@ -5,7 +5,7 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-// !\author: Clemens Cords <clemens.cords@fu-berlin.de>
+//!\author: Clemens Cords <clemens.cords@fu-berlin.de>
 
 #include <benchmark/benchmark.h>
 #include <cstring>
@@ -27,19 +27,21 @@
 
 using namespace seqan3;
 
-constexpr unsigned seed = 1234u;
+constexpr unsigned default_seed = 1234u;
 
 // ============================================================================
 // generate fastq file
 // ============================================================================
 constexpr size_t default_sequence_length = 50; //length of nucleotide and quality sequence
 
-std::string get_file(size_t n_entries)
+std::string generate_fastq_file(size_t const entries_size)
 {
     std::string file{};
     std::string const id{"@name"};
 
-    for (size_t i = 0; i < n_entries; ++i)
+    auto seed = default_seed;
+
+    for (size_t i = 0; i < entries_size; ++i, ++seed)
     {
         auto seq = test::generate_sequence<dna5>(default_sequence_length, 0, seed);
         std::string seq_string = seq | view::to_char;
@@ -64,8 +66,8 @@ void fastq_write_to_stream(benchmark::State & state)
     sequence_file_output_options options{};
 
     std::string const id{"@name"};
-    auto seq = test::generate_sequence<dna5>(default_sequence_length, 0, seed);
-    auto qual = test::generate_sequence<phred42>(default_sequence_length, 0, seed);
+    auto seq = test::generate_sequence<dna5>(default_sequence_length, 0, default_seed);
+    auto qual = test::generate_sequence<phred42>(default_sequence_length, 0, default_seed);
 
     for (auto _ : state)
     {
@@ -86,7 +88,7 @@ void fastq_read_from_stream(benchmark::State & state)
     std::vector<phred42> qual{};
 
     size_t n_entries_in_file = state.range(0);
-    auto file = get_file(n_entries_in_file);
+    auto file = generate_fastq_file(n_entries_in_file);
 
     for (auto _ : state)
     {
@@ -113,7 +115,7 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
 
     std::istringstream istream{};
     size_t n_entries_in_file = state.range(0);
-    auto file = get_file(n_entries_in_file);
+    auto file = generate_fastq_file(n_entries_in_file);
 
     auto restart_iterator = [&istream, &file]()    // c.f. format_fasta_benchmark
     {
@@ -156,14 +158,10 @@ void fastq_read_from_disk(benchmark::State & state)
     auto tmp_path = file_name.get_path();
 
     std::ofstream ostream{tmp_path};
-    ostream << get_file(state.range(0));
+    ostream << generate_fastq_file(state.range(0));
     ostream.close();
 
     // benchmark
-    std::string id{};
-    std::vector<dna5> seq{};
-    std::vector<phred42> qual{};
-
     for (auto _ : state)
     {
         sequence_file_input fin{tmp_path};
@@ -189,8 +187,7 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
     auto tmp_path = file_name.get_path();
 
     std::ofstream ostream{tmp_path};
-    size_t n_entries_in_file = state.range(0);
-    ostream << get_file(n_entries_in_file);
+    ostream << generate_fastq_file(state.range(0));
     ostream.close();
 
     // benchmark
@@ -238,5 +235,3 @@ BENCHMARK(fastq_read_from_disk_seqan2)->Arg(100000);
 #endif
 
 BENCHMARK_MAIN();
-
-
