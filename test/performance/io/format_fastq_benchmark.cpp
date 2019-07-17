@@ -116,7 +116,7 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
     size_t n_entries_in_file = state.range(0);
     auto file = generate_fastq_file(n_entries_in_file);
 
-    auto restart_iterator = [&istream, &file]()    // c.f. format_fasta_benchmark
+    auto restart_iterator = [&istream, &file]()    // cf. format_fasta_benchmark
     {
         istream = std::istringstream{file};
         // same constant as seqan3 benchmark
