@@ -156,11 +156,11 @@ void fastq_read_from_disk(benchmark::State & state)
     test::tmp_filename file_name{"tmp.fastq"};
     auto tmp_path = file_name.get_path();
 
+    // fill temporary file with a fastq file
     std::ofstream ostream{tmp_path};
     ostream << generate_fastq_file(state.range(0));
     ostream.close();
 
-    // benchmark
     for (auto _ : state)
     {
         sequence_file_input fin{tmp_path};
@@ -181,7 +181,6 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
 {
     using namespace seqan;
 
-    // temporary file
     test::tmp_filename file_name{"tmp.fastq"};
     auto tmp_path = file_name.get_path();
 
@@ -189,7 +188,6 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
     ostream << generate_fastq_file(state.range(0));
     ostream.close();
 
-    // benchmark
     StringSet<String<char>> ids{};
     StringSet<String<Dna5>> seqs{};
     StringSet<String<char>> quals{};
