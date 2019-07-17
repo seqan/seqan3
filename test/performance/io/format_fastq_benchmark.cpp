@@ -93,8 +93,7 @@ void fastq_read_from_stream(benchmark::State & state)
     for (auto _ : state)
     {
         std::istringstream istream{file};
-        // refilling streams introduces the same constant to
-        // both seqan3 and 2 benchmark runtime so they are still comparable
+        // same constant as seqan2 benchmark
 
         for (size_t i = 0; i < n_entries_in_file; ++i)
             format.read(istream, options, seq, id, qual);
