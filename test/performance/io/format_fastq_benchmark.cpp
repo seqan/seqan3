@@ -87,15 +87,15 @@ void fastq_read_from_stream(benchmark::State & state)
     std::vector<dna5> seq{};
     std::vector<phred42> qual{};
 
-    size_t n_entries_in_file = state.range(0);
-    auto file = generate_fastq_file(n_entries_in_file);
+    size_t entries_size = state.range(0);
+    auto file = generate_fastq_file(entries_size);
 
     for (auto _ : state)
     {
         std::istringstream istream{file};
         // same constant as seqan2 benchmark
 
-        for (size_t i = 0; i < n_entries_in_file; ++i)
+        for (size_t i = 0; i < entries_size; ++i)
             format.read(istream, options, seq, id, qual);
 
         id.clear();
@@ -113,8 +113,8 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
     using namespace seqan;
 
     std::istringstream istream{};
-    size_t n_entries_in_file = state.range(0);
-    auto file = generate_fastq_file(n_entries_in_file);
+    size_t entries_size = state.range(0);
+    auto file = generate_fastq_file(entries_size);
 
     auto restart_iterator = [&istream, &file]()    // cf. format_fasta_benchmark
     {
@@ -134,7 +134,7 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
     {
         auto it = restart_iterator();
 
-        for (size_t i = 0; i < n_entries_in_file; ++i)
+        for (size_t i = 0; i < entries_size; ++i)
             readRecord(id, seq, qual, it, seqan::Fastq{});
 
         clear(id);
