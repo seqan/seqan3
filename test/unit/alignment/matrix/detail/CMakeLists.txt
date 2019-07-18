@@ -1,0 +1,5 @@
+seqan3_test (alignment_matrix_column_major_range_test.cpp)
+seqan3_test (alignment_score_matrix_one_column_banded_test.cpp)
+seqan3_test (alignment_score_matrix_one_column_test.cpp)
+seqan3_test (alignment_trace_matrix_full_banded_test.cpp)
+seqan3_test (alignment_trace_matrix_full_test.cpp)
