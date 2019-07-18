@@ -38,16 +38,16 @@ add_custom_command (
     # Cleanup lcov (resetting code coverage counters to zero)
     COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --zerocounters
     # Create baseline to make sure untouched files show up in the report
-    COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --capture --initial --output-file seqan3_coverage.baseline
+    COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --capture --initial --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage.baseline
 
     # Run tests
     COMMAND ${CMAKE_CTEST_COMMAND}
 
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --capture --output-file seqan3_coverage.captured
+    COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --capture --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage.captured
     # merge baseline counters and captured counters
-    COMMAND ${LCOV_COMMAND} -a seqan3_coverage.baseline -a seqan3_coverage.captured --output-file seqan3_coverage.total
-    COMMAND ${LCOV_COMMAND} --remove seqan3_coverage.total ${TEST_COVERAGE_EXCLUDE_FILES} --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage
+    COMMAND ${LCOV_COMMAND} -a ${PROJECT_BINARY_DIR}/seqan3_coverage.baseline -a ${PROJECT_BINARY_DIR}/seqan3_coverage.captured --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage.total
+    COMMAND ${LCOV_COMMAND} --remove ${PROJECT_BINARY_DIR}/seqan3_coverage.total ${TEST_COVERAGE_EXCLUDE_FILES} --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage
 
     BYPRODUCTS seqan3_coverage.baseline seqan3_coverage.captured seqan3_coverage.total
 
