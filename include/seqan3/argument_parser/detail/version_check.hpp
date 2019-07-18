@@ -341,7 +341,7 @@ public:
         // nor did the the cookie tell us what to do. We will now ask the user if possible or do the check by default.
         write_cookie("ASK"); // Ask again next time when we read the cookie, if this is not overwritten.
 
-        if (detail::is_terminal())
+        if (detail::is_terminal()) // LCOV_EXCL_START
         {
             std::cerr << R"(
 #######################################################################
@@ -403,7 +403,7 @@ public:
 )";
             return true; // default: check version if you cannot ask the user
         }
-    }
+    } // LCOV_EXCL_STOP
 
     //!\brief The identification string that may appear in the version file if an app is unregistered.
     static constexpr std::string_view unregistered_app = "UNREGISTERED_APP";
