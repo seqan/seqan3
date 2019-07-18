@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <seqan3/search/configuration/default_configuration.hpp>
 /*!\defgroup search_configuration Configuration
  * \brief Data structures and utility functions for configuring search algorithm.
  * \ingroup search
