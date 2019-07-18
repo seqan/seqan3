@@ -93,7 +93,7 @@ TYPED_TEST(nucleotide, view_translate)
 
     // default parameter translation_frames
     auto v2 = vec | view::translate();
-    // == [[T,Y,V,R]]
+    // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
     EXPECT_EQ(v2.size(), cmp4.size());
     for (unsigned i = 0; i < v2.size(); i++)
         EXPECT_TRUE((std::ranges::equal(v2[i], cmp4[i])));
@@ -156,7 +156,7 @@ TYPED_TEST(nucleotide, view_translate)
 
     // combinability and function syntax
     auto v11 = detail::view_translate(view::complement(vec), translation_frames::FWD_REV_0);
-    // == [[T,Y,V,R],[Y,V,R,T]]
+    // == [[C,M,H,A],[M,H,A,C]]
     EXPECT_EQ(v11.size(), cmp6.size());
     for (unsigned i = 0; i < v11.size(); i++)
         EXPECT_TRUE((std::ranges::equal(v11[i], cmp6[i])));
