@@ -12,20 +12,33 @@
 
 #pragma once
 
+#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
+#include <seqan3/search/configuration/detail.hpp>
+#include <seqan3/search/configuration/max_error.hpp>
+#include <seqan3/search/configuration/max_error_rate.hpp>
+#include <seqan3/search/configuration/mode.hpp>
+#include <seqan3/search/configuration/output.hpp>
+
+/*!\namespace seqan3::search_cfg
+ * \brief A special sub namespace for the search configurations.
+ */
+
 /*!\defgroup search_configuration Configuration
- * \brief Data structures and utility functions for configuring search algorithm.
  * \ingroup search
+ * \brief Data structures and utility functions for configuring search algorithm.
+ * \see search
  *
  * \details
+ *
  * ### Introduction
  *
  * In SeqAn the search algorithm uses a configuration object to determine the desired
  * \ref seqan3::search_cfg::max_error "number"/\ref seqan3::search_cfg::max_error_rate "rate" of errors,
  * what hits are considered as \ref seqan3::search_cfg::mode "results", and how to
  * \ref seqan3::search_cfg::output "output" the result.
- * These configurations exist in their own namespace, namely seqan3::search_cfg, to disambiguate them from the configuration
- * of other algoirthms.
+ * These configurations exist in their own namespace, namely seqan3::search_cfg, to disambiguate them from the
+ * configuration of other algorithms.
  *
  * If no configuration is provided upon invoking the seqan3::search algorithm, a default configuration is provided:
  * \include test/snippet/search/configuration_default.cpp
@@ -44,15 +57,4 @@
  * | \ref seqan3::search_cfg::max_error_rate "1: Max error rate" |   ❌   |   ❌   |   ✅   |  ✅    |
  * | \ref seqan3::search_cfg::output "2: Output"                 |   ✅    |   ✅    |   ❌   |  ✅    |
  * | \ref seqan3::search_cfg::mode "3: Mode"                     |   ✅    |   ✅    |   ✅   |  ❌    |
- */
-
-#include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/search/configuration/detail.hpp>
-#include <seqan3/search/configuration/max_error.hpp>
-#include <seqan3/search/configuration/max_error_rate.hpp>
-#include <seqan3/search/configuration/mode.hpp>
-#include <seqan3/search/configuration/output.hpp>
-
-/*!\namespace seqan3::search_cfg
- * \brief A special sub namespace for the search configurations.
  */

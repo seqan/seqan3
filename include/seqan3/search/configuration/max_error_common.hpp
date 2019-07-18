@@ -20,8 +20,8 @@ namespace seqan3::search_cfg
 {
 
 /*!\brief A strong type of underlying type `uint8_t` or `double` that represents the number or rate of total errors.
- * \tparam value_t The underlying type
  * \ingroup search_configuration
+ * \tparam value_t The underlying type.
  */
 template <typename value_t>
 //!\cond
@@ -54,8 +54,8 @@ total(value_t) -> total<double>;
 
 /*!\brief A strong type of underlying type `uint8_t` or `double` that represents the number or rate of
  *        substitutions.
- * \tparam value_t The underlying type
  * \ingroup search_configuration
+ * \tparam value_t The underlying type.
  */
 template <typename value_t>
 //!\cond
@@ -87,8 +87,8 @@ substitution(value_t) -> substitution<double>;
 //!\}
 
 /*!\brief A strong type of underlying type `uint8_t` or `double` that represents the number or rate of insertions.
- * \tparam value_t The underlying type
  * \ingroup search_configuration
+ * \tparam value_t The underlying type.
  */
 template <typename value_t>
 //!\cond
@@ -120,8 +120,8 @@ insertion(value_t) -> insertion<double>;
 //!\}
 
 /*!\brief A strong type of underlying type `uint8_t` or `double` that represents the number or rate of deletions.
- * \tparam value_t The underlying type
  * \ingroup search_configuration
+ * \tparam value_t The underlying type.
  */
 template <typename value_t>
 //!\cond
