@@ -16,6 +16,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/dna3bs.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
@@ -32,25 +33,25 @@
  * to represent them in a regular std::string, it makes sense to have specialised data structures in most cases.
  * This sub-module offers multiple nucleotide alphabets that can be used with regular containers and ranges.
  *
- * | Letter   | Description            |                   seqan3::dna15        |                   seqan3::dna5         |                  seqan3::dna4          |                seqan3::rna15           |                    seqan3::rna5        |                 seqan3::rna4           |
- * |:--------:|------------------------|:--------------------------------------:|:--------------------------------------:|:--------------------------------------:|:--------------------------------------:|:--------------------------------------:|:--------------------------------------:|
- * |   A      | Adenine                |                              A         |                              A         |                              A         |                              A         |                              A         |                              A         |
- * |   C      | Cytosine               |                              C         |                              C         |                              C         |                              C         |                              C         |                              C         |
- * |   G      | Guanine                |                              G         |                              G         |                              G         |                              G         |                              G         |                              G         |
- * |   T      | Thymine (DNA)          |                              T         |                              T         |                              T         | <span style="color:LightGrey">U</span> | <span style="color:LightGrey">U</span> | <span style="color:LightGrey">U</span> |
- * |   U      | Uracil (RNA)           | <span style="color:LightGrey">T</span> | <span style="color:LightGrey">T</span> | <span style="color:LightGrey">T</span> |                              U         |                              U         |                              U         |
- * |   M      | A *or* C               |                              M         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |                              M         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
- * |   R      | A *or* G               |                              R         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |                              R         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
- * |   W      | A *or* T               |                              W         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |                              W         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
- * |   Y      | C *or* T               |                              Y         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">C</span> |                              Y         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">C</span> |
- * |   S      | C *or* G               |                              S         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">C</span> |                              S         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">C</span> |
- * |   K      | G *or* T               |                              K         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">G</span> |                              K         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">G</span> |
- * |   V      | A *or* C *or* G        |                              V         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |                              V         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
- * |   H      | A *or* C *or* T        |                              H         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |                              H         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
- * |   D      | A *or* G *or* T        |                              D         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |                              D         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
- * |   B      | C *or* G *or* T        |                              B         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">C</span> |                              B         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">C</span> |
- * |   N      | A *or* C *or* G *or* T |                              N         |                              N         | <span style="color:LightGrey">A</span> |                              N         |                              N         | <span style="color:LightGrey">A</span> |
- * | **Size** |                        |     15                                 |      5                                 |      4                                 |     15                                 |      5                                 |      4                                 |
+ * | Letter   | Description            |                   seqan3::dna15        |                   seqan3::dna5         |                  seqan3::dna4          |                  seqan3::dna3bs          |                seqan3::rna15           |                    seqan3::rna5        |                 seqan3::rna4           |
+ * |:--------:|------------------------|:--------------------------------------:|:--------------------------------------:|:--------------------------------------:|:--------------------------------------:|:--------------------------------------:|:--------------------------------------:|:--------------------------------------:|
+ * |   A      | Adenine                |                              A         |                              A         |                              A         |                              A         |                              A         |                              A         |                              A         |
+ * |   C      | Cytosine               |                              C         |                              C         |                              C         |                              T         |                              C         |                              C         |                              C         |
+ * |   G      | Guanine                |                              G         |                              G         |                              G         |                              G         |                              G         |                              G         |                              G         |
+ * |   T      | Thymine (DNA)          |                              T         |                              T         |                              T         |                              T         | <span style="color:LightGrey">U</span> | <span style="color:LightGrey">U</span> | <span style="color:LightGrey">U</span> |
+ * |   U      | Uracil (RNA)           | <span style="color:LightGrey">T</span> | <span style="color:LightGrey">T</span> | <span style="color:LightGrey">T</span> | <span style="color:LightGrey">T</span> |                              U         |                              U         |                              U         |
+ * |   M      | A *or* C               |                              M         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> | <span style="color:LightGrey">A</span> |                              M         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
+ * |   R      | A *or* G               |                              R         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> | <span style="color:LightGrey">A</span> |                              R         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
+ * |   W      | A *or* T               |                              W         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> | <span style="color:LightGrey">A</span> |                              W         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
+ * |   Y      | C *or* T               |                              Y         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">T</span> | <span style="color:LightGrey">C</span> |                              Y         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">C</span> |
+ * |   S      | C *or* G               |                              S         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">T</span> | <span style="color:LightGrey">C</span> |                              S         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">C</span> |
+ * |   K      | G *or* T               |                              K         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">G</span> | <span style="color:LightGrey">G</span> |                              K         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">G</span> |
+ * |   V      | A *or* C *or* G        |                              V         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> | <span style="color:LightGrey">A</span> |                              V         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
+ * |   H      | A *or* C *or* T        |                              H         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> | <span style="color:LightGrey">A</span> |                              H         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
+ * |   D      | A *or* G *or* T        |                              D         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> | <span style="color:LightGrey">A</span> |                              D         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">A</span> |
+ * |   B      | C *or* G *or* T        |                              B         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">T</span> | <span style="color:LightGrey">C</span> |                              B         | <span style="color:LightGrey">N</span> | <span style="color:LightGrey">C</span> |
+ * |   N      | A *or* C *or* G *or* T |                              N         |                              N         | <span style="color:LightGrey">A</span> | <span style="color:LightGrey">A</span> |                              N         |                              N         | <span style="color:LightGrey">A</span> |
+ * | **Size** |                        |     15                                 |      5                                 |      3                                 |      4                                 |     15                                 |      5                                 |      4                                 |
  *
  * Keep in mind, that while we think of "the nucleotide alphabet" as consisting of four bases, there are indeed
  * more characters defined with different levels of ambiguity. Depending on your application it will make sense
@@ -67,6 +68,7 @@
  *   4. if you are doing only RNA input/output, use the respective seqan3::rna* type
  *   5. to actually save space from using smaller alphabets, you need a compressed container (e.g.
  *      seqan3::bitcompressed_vector)
+ *   6. if you are working with bisulfite data use dna3bs
  *
  * ###Printing and conversion to char
  *
@@ -133,6 +135,10 @@
  * In the typical structure of DNA molecules (or double-stranded RNA), each nucleotide has a complement that it
  * pairs with. To generate the complement value of a nucleotide letter, you can call an implementation of
  * seqan3::NucleotideAlphabet::complement() on it.
+ *
+ * The only exception to this table is dna3bs alphabet as the defined complement for 'G' is also 'T' as 'C' and 'T'
+ * are treates as the same letters. However, it is in general not recommended using the complement of dna3bs but rather
+ * using the complement of another dna alphabet and afterwards transforming into dna3bs.
  *
  * For the ambiguous letters, the complement is the (possibly also ambiguous) letter representing the variant of the
  * individual complements.
