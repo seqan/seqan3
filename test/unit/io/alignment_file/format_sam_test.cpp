@@ -110,18 +110,13 @@ struct sam_format : public alignment_file_data
 // since BAM uses the same read header function from SAM, it only needs to be tested once
 TEST_F(sam_format, header_errors)
 {
-    detail::alignment_file_input_format<format_sam> format;
-
     {
         std::string header_str
         {
             "@HD\tVN:1.0\tTT:this is not a valid tag\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW(format.read(istream, input_options, std::ignore, this->header,  std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                     format_error);
+        EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
     }
     {
         std::string header_str
@@ -129,10 +124,7 @@ TEST_F(sam_format, header_errors)
             "@HD\tVN:1.0\tSI:this is not a valid tag starting with S\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW(format.read(istream, input_options, std::ignore, this->header,  std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                     format_error);
+        EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
     }
     {
         std::string header_str
@@ -141,10 +133,7 @@ TEST_F(sam_format, header_errors)
             "@TT\tthis is not a valid tag\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW(format.read(istream, input_options, std::ignore, this->header,  std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                     format_error);
+        EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
     }
     {
         std::string header_str
@@ -153,10 +142,7 @@ TEST_F(sam_format, header_errors)
             "@PG\tID:prog\tTT:this is not a valid tag\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW(format.read(istream, input_options, std::ignore, this->header, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                     format_error);
+        EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
     }
     {
         std::string header_str
@@ -165,10 +151,7 @@ TEST_F(sam_format, header_errors)
             "@SQ\tSN:unknown_ref\tLN:0\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW(format.read(istream, input_options, this->ref_sequences, this->header, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                     format_error);
+        EXPECT_THROW((alignment_file_input{istream, this->ref_ids, this->ref_sequences, format_sam{}}), format_error);
     }
     {
         std::string header_str
@@ -177,153 +160,78 @@ TEST_F(sam_format, header_errors)
             "@SQ\tSN:ref\tLN:0\n" /*wrong length*/
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW(format.read(istream, input_options, this->ref_sequences, this->header, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                                 std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,  std::ignore),
-                     format_error);
+        EXPECT_THROW((alignment_file_input{istream, this->ref_ids, this->ref_sequences, format_sam{}}), format_error);
     }
 }
 
 TEST_F(sam_format, windows_file)
 {
-    detail::alignment_file_input_format<format_sam> format;
-    std::string id;
     std::istringstream istream(std::string("read1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\r\n"));
+    alignment_file_input fin{istream, format_sam{}, fields<field::ID>{}};
 
-    // with reference sequence information
-    ASSERT_NO_THROW(format.read(istream, input_options, this->ref_sequences, this->header, std::ignore, std::ignore,
-                                id, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                                std::ignore, std::ignore, std::ignore, std::ignore, std::ignore));
-
-    EXPECT_EQ(id, std::string{"read1"});
+    EXPECT_EQ(get<field::ID>(*fin.begin()), std::string{"read1"});
 }
-
 
 TEST_F(sam_format, format_error_illegal_character_in_seq)
 {
-    detail::alignment_file_input_format<format_sam> format;
-
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\tAC!T\t*\n"));
 
-    alignment_file_header header{};
-    std::string seq;
-
-    EXPECT_THROW(format.read(istream, input_options, std::ignore, header, seq,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 }
 
 TEST_F(sam_format, format_error_invalid_arithmetic_value)
 {
-    detail::alignment_file_input_format<format_sam> format;
-
     // invalid value
     std::istringstream istream(std::string("*\t0\t*\t1abc\t0\t*\t*\t0\t0\t*\t*\n"));
-
-    alignment_file_header header{};
-    std::optional<int32_t> ref_offset;
-
-    EXPECT_THROW(format.read(istream, input_options, std::ignore, header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, ref_offset,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 
     // overflow error
     istream = std::istringstream(std::string("*\t0\t*\t2147483650\t0\t*\t*\t0\t0\t*\t*\n"));
-
-    EXPECT_THROW(format.read(istream, input_options, std::ignore, header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, ref_offset,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 
     // negative value as ref_offset
     istream = std::istringstream(std::string("*\t0\t*\t-3\t0\t*\t*\t0\t0\t*\t*\n"));
-
-    EXPECT_THROW(format.read(istream, input_options, std::ignore, header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, ref_offset,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 
     // negative value as mate mapping position
-    std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate;
     istream = std::istringstream(std::string("*\t0\t*\t0\t0\t*\t*\t-3\t0\t*\t*\n"));
-
-    EXPECT_THROW(format.read(istream, input_options, std::ignore, header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                             mate, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 }
 
 
 TEST_F(sam_format, format_error_invalid_cigar)
 {
-    detail::alignment_file_input_format<format_sam> format;
-
-    alignment_file_header header{};
-    std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>> alignment;
-
     // unkown operation
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t5Z\t*\t0\t0\t*\t*\n"));
-    EXPECT_THROW(format.read(istream, input_options, this->ref_sequences, header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 
     // negative number as operation count
     istream = std::istringstream(std::string("*\t0\t*\t0\t0\t-5M\t*\t0\t0\t*\t*\n"));
-    EXPECT_THROW(format.read(istream, input_options, this->ref_sequences, header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 
     istream = std::istringstream(std::string("*\t0\t*\t0\t0\t3S4M1I-5M2D2M\t*\t0\t0\t*\t*\n"));
-    EXPECT_THROW(format.read(istream, input_options, this->ref_sequences, header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, alignment, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 }
 
 TEST_F(sam_format, format_error_invalid_sam_tag_format)
 {
-    detail::alignment_file_input_format<format_sam> format;
-
     // type identifier is wrong
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\tNM:X:3\n"));
-
-    alignment_file_header header{};
-    sam_tag_dictionary dict;
-
-    EXPECT_THROW(format.read(istream, input_options, std::ignore, this->header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                             std::ignore, dict, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 
     // Array subtype identifier is wrong
     istream = std::istringstream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\tNM:B:x3,4\n"));
-
-    EXPECT_THROW(format.read(istream, input_options, std::ignore, this->header, std::ignore, std::ignore, std::ignore,
-                             std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                             std::ignore, dict, std::ignore, std::ignore),
-                 format_error);
+    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
 }
 
 TEST_F(sam_format, write_different_header)
 {
     std::ostringstream ostream;
 
-    alignment_file_header header{std::vector<std::string>{this->ref_id}};
-    header.ref_id_info.push_back({this->ref_seq.size(), ""});
-    header.ref_dict[this->ref_id] = 0;
-
     auto write_header = [&] ()
     {
-        detail::alignment_file_output_format<format_sam> format;
-
-        ASSERT_NO_THROW(format.write(ostream, output_options, header, "", std::vector<phred42>{}, "", 0, "", 0, 0,
-                                     std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>{}, 0, 0,
-                                     std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>{},
-                                     sam_tag_dictionary{}, 0, 0));
+        alignment_file_output fout{ostream, format_sam{}, fields<field::HEADER_PTR, field::REF_ID, field::REF_OFFSET>{}};
+        ASSERT_NO_THROW(fout.emplace_back(&header, this->ref_id, 0));
     };
 
     header.sorting = "unsorted";
