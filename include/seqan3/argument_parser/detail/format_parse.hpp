@@ -683,8 +683,7 @@ private:
 
         if (SequenceContainer<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
         {
-            if (positional_option_count != (positional_option_calls.size()))
-                throw parser_design_error("Lists are only allowed as the last positional option!");
+            assert(positional_option_count == positional_option_calls.size()); // checked on set up.
 
             while (it != argv.end())
             {

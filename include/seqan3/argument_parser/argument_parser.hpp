@@ -287,6 +287,13 @@ public:
                                std::string const & desc,
                                validator_type validator = validator_type{}) // copy to bind rvalues
     {
+        if (has_positional_list_option)
+            throw parser_design_error{"You added a positional option with a list value before so you cannot add "
+                                      "any other positional options."};
+
+        if constexpr (SequenceContainer<option_type> && !std::Same<option_type, std::string>)
+            has_positional_list_option = true; // keep track of a list option because there must be only one!
+
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
         std::visit([=, &value] (auto & f) { f.add_positional_option(value, desc, validator); }, format);
@@ -491,6 +498,9 @@ public:
 private:
     //!\brief Keeps track of whether the parse function has been called already.
     bool parse_was_called{false};
+
+    //!\brief Keeps track of whether the user has added a positional list option to check if this was the very last.
+    bool has_positional_list_option{false};
 
     //!\brief Set on construction and indicates whether the developer deactivates the version check calls completely.
     bool version_check_dev_decision{};

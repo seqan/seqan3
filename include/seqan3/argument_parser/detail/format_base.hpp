@@ -247,7 +247,10 @@ public:
             if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
                   derived_t().print_list_item(prep_id_for_help(short_id, long_id) +
                                               " " + option_type_and_list_info(value),
-                                              desc + detail::to_string(" Default: ", value, ". ") +
+                                              desc +
+                                              ((spec & option_spec::REQUIRED)
+                                                  ? std::string{" "}
+                                                  : detail::to_string(" Default: ", value, ". ")) +
                                               validator.get_help_page_message());
         });
     }
@@ -291,7 +294,11 @@ public:
             ++positional_option_count;
             derived_t().print_list_item(detail::to_string("\\fBARGUMENT-", positional_option_count, "\\fP ",
                                                           option_type_and_list_info(value)),
-                                        desc + detail::to_string(" Default: ", value, ". ") +
+                                        desc +
+                                        // a list at the end may be empty and thus have a default value
+                                        ((SequenceContainer<option_type> && !std::Same<option_type, std::string>)
+                                            ? detail::to_string(" Default: ", value, ". ")
+                                            : std::string{" "}) +
                                         validator.get_help_page_message());
         });
     }

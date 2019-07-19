@@ -135,7 +135,7 @@ TEST(validator_test, input_file)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Default: \"\". Valid input file formats: fa, sam, fasta."} +
+                               "          desc Valid input file formats: fa, sam, fasta."} +
                                basic_options_str +
                                basic_version_str;
         EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
@@ -220,7 +220,7 @@ TEST(validator_test, output_file)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Default: \"\". Valid output file formats: fa, sam, fasta."} +
+                               "          desc Valid output file formats: fa, sam, fasta."} +
                                basic_options_str +
                                basic_version_str;
         EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
@@ -274,7 +274,7 @@ TEST(validator_test, input_directory)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Default: \"\". An existing, readable path for the input directory."} +
+                               "          desc An existing, readable path for the input directory."} +
                                basic_options_str +
                                basic_version_str;
 
@@ -319,7 +319,7 @@ TEST(validator_test, output_directory)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Default: \"\". A valid path for the output directory."} +
+                               "          desc A valid path for the output directory."} +
                                basic_options_str +
                                basic_version_str;
 

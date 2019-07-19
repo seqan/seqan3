@@ -70,8 +70,7 @@ TEST(parse_test, parser_design_error)
     std::vector<int> vec;
     argument_parser parser7{"test_parser", 4, argv2};
     parser7.add_positional_option(vec, "oh oh list not at the end.");
-    parser7.add_positional_option(option_value, "desc.");
-    EXPECT_THROW(parser7.parse(), parser_design_error);
+    EXPECT_THROW(parser7.add_positional_option(option_value, "desc."), parser_design_error);
 
     // using h, help, advanced-help, and export-help
     argument_parser parser8{"test_parser", 1, argv};
@@ -105,8 +104,8 @@ TEST(parse_test, parse_called_twice)
 {
     std::string option_value;
 
-    const char * argv[] = {"./argument_parser_test", "-s", "option_string"};
-    argument_parser parser{"test_parser", 3, argv};
+    const char * argv[] = {"./argument_parser_test", "--version-check", "0", "-s", "option_string"};
+    argument_parser parser{"test_parser", 5, argv};
     parser.add_option(option_value, 's', "string-option", "this is a string option.");
 
     testing::internal::CaptureStderr();
