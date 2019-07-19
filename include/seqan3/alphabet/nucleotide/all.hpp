@@ -68,7 +68,7 @@
  *   4. if you are doing only RNA input/output, use the respective seqan3::rna* type
  *   5. to actually save space from using smaller alphabets, you need a compressed container (e.g.
  *      seqan3::bitcompressed_vector)
- *   6. if you are working with bisulfite data use dna3bs
+ *   6. if you are working with bisulfite data use seqan3::dna3bs
  *
  * ###Printing and conversion to char
  *
@@ -136,9 +136,9 @@
  * pairs with. To generate the complement value of a nucleotide letter, you can call an implementation of
  * seqan3::NucleotideAlphabet::complement() on it.
  *
- * The only exception to this table is dna3bs alphabet as the defined complement for 'G' is also 'T' as 'C' and 'T'
- * are treates as the same letters. However, it is in general not recommended using the complement of dna3bs but rather
- * using the complement of another dna alphabet and afterwards transforming into dna3bs.
+ * The only exception to this table is the seqan3::dna3bs alphabet. The complement for 'G' is defined as 'T' since 'C' and 'T'
+ * are treated as the same letters. However, it is not recommended to use the complement of seqan3::dna3bs but rather
+ * use the complement of another dna alphabet and afterwards transform it into seqan3::dna3bs.
  *
  * For the ambiguous letters, the complement is the (possibly also ambiguous) letter representing the variant of the
  * individual complements.

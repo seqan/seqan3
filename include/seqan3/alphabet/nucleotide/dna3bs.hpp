@@ -33,19 +33,18 @@ namespace seqan3
  * \implements std::Regular
  *
  * \details
- * Note that you can assign 'U' as a character to dna3bs and it will silently
- * be converted to 'T'.
  * This alphabet represents a reduced version that can be used when dealing with bisulfite-converted data.
- * For this purpose, all Cs are converted to a T in order to allow comparison of normal sequences with
+ * All 'C's are converted to a 'T' in order to allow comparison of normal sequences with
  * bisulfite-converted sequences.
- * For completeness this nucleotide alphabet has a complement table, however it is not recommended to use
+ * For completeness, this nucleotide alphabet has a complement table, however, it is not recommended to use
  * it when dealing with bisulfite data because the complement of T is ambiguous in reads from bisulfite
- * sequencing. A 'T' can represent a true thymidine or an unmethylated 'C' that was converted into a 'T'. Therefore,
- * it is recommended that when working with bisulfite data the reverse complement from dna4/5/15 is used prior
- * to conversion into dna3bs in order to avoid simplifying the data by automatically setting A as the complement
- * of C. As an example: The sequence 'ACGTGC' in dna4 would be 'ATGTGT' in dna3bs. The complement of this dna3bs
- * sequence would be 'TATATA', however when complementing the sequence in dna4 before transforming into dna3bs,
- * it would be 'TGTATG' which preserves more information from the original sequence.
+ * sequencing. A 'T' can represent a true thymidine or an unmethylated 'C' that was converted into a 'T'.
+ * Therefore, complementing a dna4bs sequence will further reduce the alphabet to only 'T' and 'A', thereby
+ * loosing all information about 'G'. When working with bisulfite data, we recommend to create the reverse
+ * complement of the dna4/5/15 range first and convert to dna3bs later. This avoids simplifying the data by automatically
+ * setting 'A' as the complement of 'C'. As an example: The sequence 'ACGTGC' in dna4 would be 'ATGTGT' in dna3bs.
+ * The complement of this dna3bs sequence would be 'TATATA', however when complementing the dna4 sequence first
+ * and afterwards transforming it into dna3bs, it would be 'TGTATG' which preserves more information from the original sequence.
  *
  * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
  * Instead initialise/assign from the character literal or use the
@@ -77,6 +76,7 @@ public:
     ~dna3bs()                                     noexcept = default; //!< Defaulted.
 
     using base_t::base_t;
+    //!\}
 
 protected:
     //!\privatesection
@@ -108,16 +108,16 @@ protected:
             ret['U'] = ret['T']; ret['u'] = ret['t'];
 
             // iupac characters get special treatment, because there is no N
-            ret['R'] = ret['A']; ret['r'] = ret['A']; // or G
-            ret['Y'] = ret['T']; ret['y'] = ret['T']; // or T
-            ret['S'] = ret['T']; ret['s'] = ret['T']; // or G
-            ret['W'] = ret['A']; ret['w'] = ret['A']; // or T
-            ret['K'] = ret['G']; ret['k'] = ret['G']; // or T
-            ret['M'] = ret['A']; ret['m'] = ret['A']; // or T
-            ret['B'] = ret['T']; ret['b'] = ret['T']; // or G or T
-            ret['D'] = ret['A']; ret['d'] = ret['A']; // or G or T
-            ret['H'] = ret['A']; ret['h'] = ret['A']; // or C or T
-            ret['V'] = ret['A']; ret['v'] = ret['A']; // or C or G
+            ret['R'] = ret['A']; ret['r'] = ret['A']; // A or G becomes A
+            ret['Y'] = ret['T']; ret['y'] = ret['T']; // C or T becomes T
+            ret['S'] = ret['T']; ret['s'] = ret['T']; // C or G becomes T
+            ret['W'] = ret['A']; ret['w'] = ret['A']; // A or T becomes A
+            ret['K'] = ret['G']; ret['k'] = ret['G']; // G or T becomes G
+            ret['M'] = ret['A']; ret['m'] = ret['A']; // A or C becomes A
+            ret['B'] = ret['T']; ret['b'] = ret['T']; // C or G or T becomes T
+            ret['D'] = ret['A']; ret['d'] = ret['A']; // A or G or T becomes A
+            ret['H'] = ret['A']; ret['h'] = ret['A']; // A or C or T becomes A
+            ret['V'] = ret['A']; ret['v'] = ret['A']; // A or C or G  becomes A
 
             return ret;
         }()
