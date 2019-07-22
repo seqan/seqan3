@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <fstream>
 #include <string>
 #include <vector>
 
@@ -29,7 +28,7 @@ namespace seqan3::detail
 {
 
 //!\brief The alignment file output format base class.
-template <typename t>
+template <typename format_type, typename stream_char_type = char>
 class alignment_file_output_format
 {};
 
@@ -53,7 +52,6 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT AlignmentFileOutputFormat =
     requires (detail::alignment_file_output_format<t>                              & v,
-              std::ofstream                                                        & stream,
               alignment_file_output_options                                        & options,
               alignment_file_header<>                                              & header,
               dna5_vector                                                          & seq,
@@ -73,8 +71,7 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
 {
     t::file_extensions;
 
-    { v.write(stream,
-              options,
+    { v.write(options,
               header,
               seq,
               qual,
@@ -100,8 +97,7 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
  * \{
  */
 
-/*!\fn void write(stream_type                            &  stream,
-                  alignment_file_output_options const    &  options,
+/*!\fn void write(alignment_file_output_options const    &  options,
                   alignment_file_header<>                & header,
                   seq_type                               && seq,
                   qual_type                              && qual,
@@ -118,7 +114,6 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
                   e_value_type                           && e_value,
                   bit_score_type                         && bit_score)
  * \brief Write the given fields to the specified stream.
- * \tparam stream_type      Output stream, must model seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3
  * \tparam id_type          Type of the seqan3
  * \tparam offset_type      Type of the seqan3
@@ -134,7 +129,6 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
  * \tparam e_value_type     Type of the seqan3
  * \tparam bit_score_type   Type of the seqan3
  *
- * \param[in,out] stream     The output stream to write into.
  * \param[in]     options    File specific options passed to the format.
  * \param[in]     header     A pointer to the header object of the file.
  * \param[in]     seq        The data for seqan3::field::SEQ, i.e. the query sequence.

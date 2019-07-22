@@ -52,20 +52,21 @@ struct read_sam : public ::testing::Test
         { "!!!!!!!"_phred42 },
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
     std::vector<phred42> qual;
+
     void do_read_test(std::string const & input)
     {
         std::stringstream istream{input};
+        detail::sequence_file_input_format<format_sam> format{istream};
         for (unsigned i = 0; i < 3; ++i)
         {
             id.clear();
             seq.clear();
             qual.clear();
-            EXPECT_NO_THROW(( format.read(istream, options, seq, id, qual) ));
+            EXPECT_NO_THROW(( format.read(options, seq, id, qual) ));
             EXPECT_EQ(seq,expected_seqs[i]);
             EXPECT_EQ(id,expected_ids[i]);
             EXPECT_EQ(qual,expected_quals[i]);
@@ -121,6 +122,7 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!	TI:i:2
     };
 
     std::stringstream istream{input};
+    detail::sequence_file_input_format<format_sam> format{istream};
 
     std::vector<qualified<dna5, phred42>> seq_qual;
     sequence_file_input_options<dna5, true> options2;
@@ -130,7 +132,7 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!	TI:i:2
         id.clear();
         seq_qual.clear();
 
-        format.read(istream, options2, seq_qual, id, seq_qual);
+        format.read(options2, seq_qual, id, seq_qual);
 
         EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
         EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<dna5>, expected_seqs[i])));
@@ -162,17 +164,17 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
     std::stringstream istream{input};
+    detail::sequence_file_input_format<format_sam> format{istream};
 
     for (unsigned i = 0; i < 3; ++i)
     {
         id.clear();
         seq.clear();
-        EXPECT_NO_THROW(( format.read(istream, options, seq, id, std::ignore) ));
+        EXPECT_NO_THROW(( format.read(options, seq, id, std::ignore) ));
         EXPECT_EQ(seq,expected_seqs[i]);
         EXPECT_EQ(id,expected_ids[i]);
     }
@@ -186,14 +188,14 @@ R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
     std::vector<phred42> qual;
     std::stringstream istream{input};
+    detail::sequence_file_input_format<format_sam> format{istream};
 
-    EXPECT_THROW((format.read(istream, options, seq, id, qual)), format_error );
+    EXPECT_THROW((format.read(options, seq, id, qual)), format_error );
 }
 
 TEST_F(read_sam, qual_too_long)
@@ -204,14 +206,14 @@ R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-+
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
     std::vector<phred42> qual;
     std::stringstream istream{input};
+    detail::sequence_file_input_format<format_sam> format{istream};
 
-    EXPECT_THROW((format.read(istream, options, seq, id, qual)), format_error );
+    EXPECT_THROW((format.read(options, seq, id, qual)), format_error );
 }
 
 TEST_F(read_sam, wrong_qual3)
@@ -222,14 +224,14 @@ R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*a,-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
     std::vector<phred42> qual;
     std::stringstream istream{input};
+    detail::sequence_file_input_format<format_sam> format{istream};
 
-    /*EXPECT_THROW(*/(format.read(istream, options, seq, id, qual))/*, unexpected_end_of_input )*/;
+    /*EXPECT_THROW(*/(format.read(options, seq, id, qual))/*, unexpected_end_of_input )*/;
 }
 
 TEST_F(read_sam, no_id)
@@ -240,12 +242,12 @@ R"(*	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     std::stringstream istream{input};
+    detail::sequence_file_input_format<format_sam> format{istream};
 
-    EXPECT_THROW((format.read(istream, options, std::ignore, id, std::ignore)), format_error );
+    EXPECT_THROW((format.read(options, std::ignore, id, std::ignore)), format_error );
 }
 
 TEST_F(read_sam, no_seq)
@@ -256,12 +258,12 @@ R"(ID 1	0	*	0	0	*	*	0	0	*	!##$%&'()*+,-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     dna5_vector seq;
     std::stringstream istream{input};
+    detail::sequence_file_input_format<format_sam> format{istream};
 
-    EXPECT_THROW((format.read(istream, options, seq, std::ignore, std::ignore)), format_error );
+    EXPECT_THROW((format.read(options, seq, std::ignore, std::ignore)), format_error );
 }
 
 TEST_F(read_sam, ignore_seq)
@@ -274,17 +276,17 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     std::vector<phred42> qual;
     std::stringstream istream{input};
+    detail::sequence_file_input_format<format_sam> format{istream};
 
     for (unsigned i = 0; i < 3; ++i)
     {
         id.clear();
         qual.clear();
-        EXPECT_NO_THROW(( format.read(istream, options, std::ignore, id, qual) ));
+        EXPECT_NO_THROW(( format.read(options, std::ignore, id, qual) ));
         EXPECT_EQ(id,expected_ids[i]);
         EXPECT_EQ(qual,expected_quals[i]);
     }
@@ -298,12 +300,12 @@ R"(ID 1	0	*	0	0	*	*	0	0	ACGTTTTT?TTTTTTTTT	!##$%&'()*+,-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     dna5_vector seq;
     std::stringstream istream{input};
+    detail::sequence_file_input_format<format_sam> format{istream};
 
-    EXPECT_THROW((format.read(istream, options, seq, std::ignore, std::ignore)), format_error );
+    EXPECT_THROW((format.read(options, seq, std::ignore, std::ignore)), format_error );
 }
 
 TEST_F(read_sam, from_stream_file)
@@ -375,36 +377,38 @@ struct write : public ::testing::Test
         { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE"_phred42 },
         { "!!*+,-./+*+,-./+!!FF!!"_phred42 },
     };
-    detail::sequence_file_output_format<format_sam> format;
     sequence_file_output_options options;
     std::ostringstream ostream;
+    detail::sequence_file_output_format<format_sam> format{ostream};
+
     void do_write_test()
     {
         for (unsigned i = 0; i < 3; ++i)
-            EXPECT_NO_THROW(( format.write(ostream, options, seqs[i], ids[i], quals[i]) ));
+            EXPECT_NO_THROW(( format.write(options, seqs[i], ids[i], quals[i]) ));
         ostream.flush();
     }
+
     void do_write_test_no_qual()
     {
         for (unsigned i = 0; i < 3; ++i)
-            EXPECT_NO_THROW(( format.write(ostream, options, seqs[i], ids[i],""_phred42) ));
+            EXPECT_NO_THROW(( format.write(options, seqs[i], ids[i],""_phred42) ));
         ostream.flush();
     }
 };
 
 TEST_F(write, arg_handling_id_missing)
 {
-    EXPECT_NO_THROW( (format.write(ostream, options, seqs[0], std::ignore, quals[0])));
+    EXPECT_NO_THROW( (format.write(options, seqs[0], std::ignore, quals[0])));
 }
 
 TEST_F(write, arg_handling_seq_missing)
 {
-    EXPECT_NO_THROW( (format.write(ostream, options, std::ignore, ids[0], quals[0])));
+    EXPECT_NO_THROW( (format.write(options, std::ignore, ids[0], quals[0])));
 }
 
 TEST_F(write, arg_handling_qual_missing)
 {
-    EXPECT_NO_THROW( (format.write(ostream, options, seqs[0], ids[0], std::ignore)));
+    EXPECT_NO_THROW( (format.write(options, seqs[0], ids[0], std::ignore)));
 }
 
 TEST_F(write, default_options)

@@ -26,18 +26,44 @@
 namespace seqan3::detail
 {
 
+//!\brief Stream deleter that does nothing (no ownership assumed).
+template <typename stream_char_type>
+static void istream_deleter_noop(std::basic_istream<stream_char_type> *) {}
+
+//!\brief Stream deleter that does nothing (no ownership assumed).
+template <typename stream_char_type>
+static void ostream_deleter_noop(std::basic_ostream<stream_char_type> *) {}
+
+//!\brief Stream deleter with default behaviour (ownership assumed).
+template <typename stream_char_type>
+static void istream_deleter_default(std::basic_istream<stream_char_type> * ptr) { delete ptr; }
+
+//!\brief Stream deleter with default behaviour (ownership assumed).
+template <typename stream_char_type>
+static void ostream_deleter_default(std::basic_ostream<stream_char_type> * ptr) { delete ptr; }
+
+//!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
+template <typename stream_char_type>
+using istream_ptr_type = std::unique_ptr<std::basic_istream<stream_char_type>,
+                                         std::function<void(std::basic_istream<stream_char_type>*)>>;
+
+//!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
+template <typename stream_char_type>
+using ostream_ptr_type = std::unique_ptr<std::basic_ostream<stream_char_type>,
+                                         std::function<void(std::basic_ostream<stream_char_type>*)>>;
+
 //!\brief Base class to deduce the std::variant type from format tags.
 //!\ingroup io
-template <typename list_t, template <typename...> typename output_t>
+template <typename list_t, template <typename...> typename output_t, typename stream_char_type>
 struct variant_from_tags;
 
 //!\brief Transfers a list of format tags (`...ts`) onto a std::variant by specialising output_t with each.
 //!\ingroup io
-template <template <typename...> typename output_t, typename ...ts>
-struct variant_from_tags<meta::list<ts...>, output_t>
+template <template <typename...> typename output_t, typename stream_char_type, typename ...ts>
+struct variant_from_tags<meta::list<ts...>, output_t, stream_char_type>
 {
     //!\brief the type of std::variant.
-    using type = std::variant<output_t<ts>...>;
+    using type = std::variant<output_t<ts, stream_char_type>...>;
 };
 
 /*!\brief Write `"\n"` or `"\r\n"` to the stream iterator, depending on arguments.
@@ -58,15 +84,18 @@ constexpr void write_eol(it_t & it, bool const add_cr)
 /*!\brief Sets the file format according to the file name extension.
  * \ingroup io
  * \tparam     format_variant_type The variant type of the format to set.
+ * \tparam     stream_type         The variant type of stream to initialise the format with.
  * \param[out] format              The format to set.
+ * \param[in]  stream              The stream to initialise the format with.
  * \param[in]  file_name           The file name to extract the extension from.
  *
  * \throws seqan3::unhandled_extension_error If the extension in file_name does
  *         not occur in any valid extensions of the formats specified in the
  *         \p format_variant_type template argument list.
  */
-template <typename format_variant_type>
+template <typename format_variant_type, typename stream_type>
 void set_format(format_variant_type & format,
+                stream_type & stream,
                 std::filesystem::path const & file_name)
 {
     using valid_formats = detail::transfer_template_args_onto_t<format_variant_type, type_list>;
@@ -85,7 +114,7 @@ void set_format(format_variant_type & format,
             {
                 if (std::ranges::equal(ext, extension))
                 {
-                    format = fmt_type{};
+                    format = fmt_type{stream};
                     format_found = true;
                     return;
                 }

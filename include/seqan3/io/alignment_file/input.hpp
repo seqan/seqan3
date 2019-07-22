@@ -578,7 +578,8 @@ public:
      */
     alignment_file_input(std::filesystem::path filename,
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary}, stream_deleter_default}
+        primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary},
+                       detail::istream_deleter_default<stream_char_type>}
     {
         init(filename);
     }
@@ -606,7 +607,7 @@ public:
     alignment_file_input(stream_t                 & stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{&stream, stream_deleter_noop}
+        primary_stream{&stream, detail::istream_deleter_noop<stream_char_type>}
     {
         init(file_format{});
     }
@@ -616,7 +617,7 @@ public:
     alignment_file_input(stream_t                && stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new stream_t{std::move(stream)}, stream_deleter_default}
+        primary_stream{new stream_t{std::move(stream)}, detail::istream_deleter_default<stream_char_type>}
     {
         init(file_format{});
     }
@@ -648,7 +649,8 @@ public:
                          typename traits_type::ref_ids & ref_ids,
                          typename traits_type::ref_sequences & ref_sequences,
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary}, stream_deleter_default}
+        primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary},
+                       detail::istream_deleter_default<stream_char_type>}
     {
         // initialize reference information
         set_references(ref_ids, ref_sequences);
@@ -687,7 +689,7 @@ public:
                          typename traits_type::ref_sequences & ref_sequences,
                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{&stream, stream_deleter_noop}
+        primary_stream{&stream, detail::istream_deleter_noop<stream_char_type>}
     {
         // initialize reference information
         set_references(ref_ids, ref_sequences);
@@ -702,7 +704,7 @@ public:
                          typename traits_type::ref_sequences & ref_sequences,
                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new stream_t{std::move(stream)}, stream_deleter_default}
+        primary_stream{new stream_t{std::move(stream)}, detail::istream_deleter_default<stream_char_type>}
     {
         // initialize reference information
         set_references(ref_ids, ref_sequences);
@@ -830,7 +832,12 @@ protected:
             throw file_open_error{"Could not open file " + filename.string() + " for reading."};
 
         secondary_stream = detail::make_secondary_istream(*primary_stream, filename);
-        detail::set_format(format, filename);
+
+        if (std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
+            std::istreambuf_iterator<stream_char_type>{})
+            at_end = true;
+
+        detail::set_format(format, *secondary_stream, filename);
 
         // buffer first record
         read_next_record();
@@ -843,8 +850,15 @@ protected:
         static_assert(meta::in<valid_formats, format_type>::value,
                       "You selected a format that is not in the valid_formats of this file.");
 
-        format = detail::alignment_file_input_format<format_type>{};
-        secondary_stream = detail::make_secondary_istream(*primary_stream);
+        // forward dummy file name to ensure format specific compression handling
+        std::filesystem::path dummy_filename{"dummy." + format_type::file_extensions[0]};
+        secondary_stream = detail::make_secondary_istream(*primary_stream, dummy_filename);
+
+        if (std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
+            std::istreambuf_iterator<stream_char_type>{})
+            at_end = true;
+
+        format = detail::alignment_file_input_format<format_type, stream_char_type>{*secondary_stream};
 
         // buffer first record
         read_next_record();
@@ -863,24 +877,18 @@ protected:
     /*!\name Stream / file access
      * \{
      */
-    //!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
-    using stream_ptr_t = std::unique_ptr<std::basic_istream<stream_char_type>,
-                                         std::function<void(std::basic_istream<stream_char_type>*)>>;
-    //!\brief Stream deleter that does nothing (no ownership assumed).
-    static void stream_deleter_noop(std::basic_istream<stream_char_type> *) {}
-    //!\brief Stream deleter with default behaviour (ownership assumed).
-    static void stream_deleter_default(std::basic_istream<stream_char_type> * ptr) { delete ptr; }
-
     //!\brief The primary stream is the user provided stream or the file stream if constructed from filename.
-    stream_ptr_t primary_stream{nullptr, stream_deleter_noop};
+    detail::istream_ptr_type<stream_char_type> primary_stream{nullptr, detail::istream_deleter_noop<stream_char_type>};
     //!\brief The secondary stream is a compression layer on the primary or just points to the primary (no compression).
-    stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
+    detail::istream_ptr_type<stream_char_type> secondary_stream{nullptr, detail::istream_deleter_noop<stream_char_type>};
 
     //!\brief File is one position behind the last record.
     bool at_end{false};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::alignment_file_input_format>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats,
+                                                           detail::alignment_file_input_format,
+                                                           stream_char_type>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
@@ -937,36 +945,27 @@ protected:
         record_buffer.clear();
         detail::get_or_ignore<field::HEADER_PTR>(record_buffer) = header_ptr.get();
 
-        // at end if we could not read further
-        if (std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
-            std::istreambuf_iterator<stream_char_type>{})
-        {
-            at_end = true;
-            return;
-        }
-
         auto call_read_func = [this] (auto & ref_seq_info)
         {
             std::visit([&] (auto & f)
             {
-                f.read(*secondary_stream,
-                       options,
-                       ref_seq_info,
-                       *header_ptr,
-                       detail::get_or_ignore<field::SEQ>(record_buffer),
-                       detail::get_or_ignore<field::QUAL>(record_buffer),
-                       detail::get_or_ignore<field::ID>(record_buffer),
-                       detail::get_or_ignore<field::OFFSET>(record_buffer),
-                       detail::get_or_ignore<field::REF_SEQ>(record_buffer),
-                       detail::get_or_ignore<field::REF_ID>(record_buffer),
-                       detail::get_or_ignore<field::REF_OFFSET>(record_buffer),
-                       detail::get_or_ignore<field::ALIGNMENT>(record_buffer),
-                       detail::get_or_ignore<field::FLAG>(record_buffer),
-                       detail::get_or_ignore<field::MAPQ>(record_buffer),
-                       detail::get_or_ignore<field::MATE>(record_buffer),
-                       detail::get_or_ignore<field::TAGS>(record_buffer),
-                       detail::get_or_ignore<field::EVALUE>(record_buffer),
-                       detail::get_or_ignore<field::BIT_SCORE>(record_buffer));
+                at_end = f.read(options,
+                                ref_seq_info,
+                                *header_ptr,
+                                detail::get_or_ignore<field::SEQ>(record_buffer),
+                                detail::get_or_ignore<field::QUAL>(record_buffer),
+                                detail::get_or_ignore<field::ID>(record_buffer),
+                                detail::get_or_ignore<field::OFFSET>(record_buffer),
+                                detail::get_or_ignore<field::REF_SEQ>(record_buffer),
+                                detail::get_or_ignore<field::REF_ID>(record_buffer),
+                                detail::get_or_ignore<field::REF_OFFSET>(record_buffer),
+                                detail::get_or_ignore<field::ALIGNMENT>(record_buffer),
+                                detail::get_or_ignore<field::FLAG>(record_buffer),
+                                detail::get_or_ignore<field::MAPQ>(record_buffer),
+                                detail::get_or_ignore<field::MATE>(record_buffer),
+                                detail::get_or_ignore<field::TAGS>(record_buffer),
+                                detail::get_or_ignore<field::EVALUE>(record_buffer),
+                                detail::get_or_ignore<field::BIT_SCORE>(record_buffer));
 
             }, format);
         };

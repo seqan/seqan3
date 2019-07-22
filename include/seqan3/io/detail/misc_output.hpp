@@ -46,11 +46,10 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
 
     std::string extension = filename.extension().string();
 
-    if ((extension == ".gz") || (extension == ".bgzf") || (extension == ".bam"))
+    if ((extension == ".gz") || (extension == ".bgzf"))
     {
     #ifdef SEQAN3_HAS_ZLIB
-        if (extension != ".bam") // remove extension except for bam
-            filename.replace_extension("");
+        filename.replace_extension("");
 
         return {new contrib::basic_bgzf_ostream<char_t>{primary_stream},
                 stream_deleter_default};

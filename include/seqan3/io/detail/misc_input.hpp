@@ -26,13 +26,13 @@
     #include <seqan3/contrib/stream/gz_istream.hpp>
 #endif
 #include <seqan3/io/detail/magic_header.hpp>
+#include <seqan3/io/detail/misc.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
-
 /*!\brief Check whether the query range is a prefix of the reference range.
  * \param[in] reference The range that is expected to be the longer one.
  * \param[in] query     The range that is expected to be the shorter one.
@@ -77,11 +77,6 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
 {
     assert(primary_stream.good());
 
-    // don't assume ownership
-    constexpr auto stream_deleter_noop     = [] (std::basic_istream<char_t> *) {};
-    // assume ownership
-    [[maybe_unused]] constexpr auto stream_deleter_default  = [] (std::basic_istream<char_t> * ptr) { delete ptr; };
-
     // extract "magic header"
     std::istreambuf_iterator<char_t> it{primary_stream};
     std::array<char, bgzf_compression::magic_header.size()> magic_number{}; // Largest magic header from bgzf
@@ -99,9 +94,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     for (size_t i = 0 ; i < read_chars; ++i)
         primary_stream.unget();
 
-    std::string extension{};
-    if (filename.has_extension())
-        extension = filename.extension().string().substr(1);
+    std::string extension = (filename.has_extension()) ? filename.extension().string().substr(1) : std::string{};
 
     // tests whether the given extension matches with one of the given compression tags.
     auto contains_extension = [] (auto compression_tag, auto const & extension)
@@ -111,25 +104,24 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     };
 
     // set return value appropriately
-    if (read_chars == magic_number.size() && contrib::_bgzfCheckHeader(magic_number.data())) // BGZF
-    {
+    if (read_chars == magic_number.size() && contrib::_bgzfCheckHeader(magic_number.data()) && extension != "bam")
+    {  // BGZF
     #ifdef SEQAN3_HAS_ZLIB
         if (contains_extension(gz_compression{}, extension) || contains_extension(bgzf_compression{}, extension))
             filename.replace_extension();
 
-        return {new contrib::basic_bgzf_istream<char_t>{primary_stream},
-                stream_deleter_default};
+        return {new contrib::basic_bgzf_istream<char_t>{primary_stream}, detail::istream_deleter_default<char_t>};
     #else
         throw file_open_error{"Trying to read from a bgzf file, but no ZLIB available."};
     #endif
     }
-    else if (starts_with(magic_number, gz_compression::magic_header)) // GZIP
+    else if (starts_with(magic_number, gz_compression::magic_header) && extension != "bam") // GZIP
     {
     #ifdef SEQAN3_HAS_ZLIB
         if (contains_extension(gz_compression{}, extension) || contains_extension(bgzf_compression{}, extension))
             filename.replace_extension();
 
-        return {new contrib::basic_gz_istream<char_t>{primary_stream}, stream_deleter_default};
+        return {new contrib::basic_gz_istream<char_t>{primary_stream}, detail::istream_deleter_default<char_t>};
     #else
         throw file_open_error{"Trying to read from a gzipped file, but no ZLIB available."};
     #endif
@@ -140,7 +132,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         if (contains_extension(bz2_compression{}, extension))
             filename.replace_extension();
 
-        return {new contrib::basic_bz2_istream<char_t>{primary_stream}, stream_deleter_default};
+        return {new contrib::basic_bz2_istream<char_t>{primary_stream}, detail::istream_deleter_default<char_t>};
     #else
         throw file_open_error{"Trying to read from a bzipped file, but no libbz2 available."};
     #endif
@@ -150,7 +142,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         throw file_open_error{"Trying to read from a zst'ed file, but SeqAn does not yet support this."};
     }
 
-    return {&primary_stream, stream_deleter_noop};
+    return {&primary_stream, detail::istream_deleter_noop<char_t>};
 }
 
 //!\overload

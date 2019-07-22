@@ -294,7 +294,8 @@ public:
      */
     alignment_file_output(std::filesystem::path filename,
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new std::ofstream{filename, std::ios_base::out | std::ios::binary}, stream_deleter_default}
+        primary_stream{new std::ofstream{filename, std::ios_base::out | std::ios::binary},
+                       detail::ostream_deleter_default<stream_char_type>}
     {
         // open stream
         if (!primary_stream->good())
@@ -304,7 +305,7 @@ public:
         secondary_stream = detail::make_secondary_ostream(*primary_stream, filename);
 
         // initialise format handler or throw if format is not found
-        detail::set_format(format, filename);
+        detail::set_format(format, *secondary_stream, filename);
     }
 
     /*!\brief Construct from an existing stream and with specified format.
@@ -327,9 +328,9 @@ public:
     alignment_file_output(stream_type              & stream,
                           file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{&stream, stream_deleter_noop},
-        secondary_stream{&stream, stream_deleter_noop},
-        format{detail::alignment_file_output_format<file_format>{}}
+        primary_stream{&stream, detail::ostream_deleter_noop<stream_char_type>},
+        secondary_stream{&stream, detail::ostream_deleter_noop<stream_char_type>},
+        format{detail::alignment_file_output_format<file_format, stream_char_type>{*secondary_stream}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -340,9 +341,9 @@ public:
     alignment_file_output(stream_type             && stream,
                           file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new stream_type{std::move(stream)}, stream_deleter_default},
-        secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{detail::alignment_file_output_format<file_format>{}}
+        primary_stream{new stream_type{std::move(stream)}, detail::ostream_deleter_default<stream_char_type>},
+        secondary_stream{&*primary_stream, detail::ostream_deleter_noop<stream_char_type>},
+        format{detail::alignment_file_output_format<file_format, stream_char_type>{*secondary_stream}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -717,21 +718,15 @@ protected:
     /*!\name Stream / file access
      * \{
      */
-    //!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
-    using stream_ptr_t = std::unique_ptr<std::basic_ostream<stream_char_type>,
-                                         std::function<void(std::basic_ostream<stream_char_type>*)>>;
-    //!\brief Stream deleter that does nothing (no ownership assumed).
-    static void stream_deleter_noop(std::basic_ostream<stream_char_type> *) {}
-    //!\brief Stream deleter with default behaviour (ownership assumed).
-    static void stream_deleter_default(std::basic_ostream<stream_char_type> * ptr) { delete ptr; }
-
     //!\brief The primary stream is the user provided stream or the file stream if constructed from filename.
-    stream_ptr_t primary_stream{nullptr, stream_deleter_noop};
+    detail::ostream_ptr_type<stream_char_type> primary_stream{nullptr, detail::ostream_deleter_noop<stream_char_type>};
     //!\brief The secondary stream is a compression layer on the primary or just points to the primary (no compression).
-    stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
+    detail::ostream_ptr_type<stream_char_type> secondary_stream{nullptr, detail::ostream_deleter_noop<stream_char_type>};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::alignment_file_output_format>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats,
+                                                           detail::alignment_file_output_format,
+                                                           stream_char_type>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
@@ -783,11 +778,11 @@ protected:
         {
             // use header from record if explicitly given, e.g. file_output = file_input
             if constexpr (!std::Same<record_header_ptr_t, std::nullptr_t>)
-                f.write(*secondary_stream, options, *record_header_ptr, std::forward<pack_type>(remainder)...);
+                f.write(options, *record_header_ptr, std::forward<pack_type>(remainder)...);
             else if constexpr (std::Same<ref_ids_type, ref_info_not_given>)
-                f.write(*secondary_stream, options, std::ignore, std::forward<pack_type>(remainder)...);
+                f.write(options, std::ignore, std::forward<pack_type>(remainder)...);
             else
-                f.write(*secondary_stream, options, *header_ptr, std::forward<pack_type>(remainder)...);
+                f.write(options, *header_ptr, std::forward<pack_type>(remainder)...);
         }, format);
     }
 

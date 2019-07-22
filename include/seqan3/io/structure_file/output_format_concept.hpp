@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <fstream>
 #include <set>
 #include <string>
 #include <vector>
@@ -26,7 +25,7 @@ namespace seqan3::detail
 {
 
 //!\brief The structure file output format base class.
-template <typename t>
+template <typename format_tag, typename stream_char_type = char>
 class structure_file_output_format
 {};
 
@@ -48,7 +47,6 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_output_format<t> & v,
-                                                    std::ofstream & f,
                                                     structure_file_output_options & options,
                                                     rna5_vector & seq,
                                                     std::string & id,
@@ -63,14 +61,14 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_outpu
 {
     t::file_extensions;
 
-    { v.write(f, options, seq,            id,          bpp,         structure,
-                          energy,         react,       react_err,   comment,        offset)      } -> void;
-    { v.write(f, options, seq,            id,          bpp,         std::ignore,
-                          std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
-    { v.write(f, options, structured_seq, id,          std::ignore, structured_seq,
-                          energy,         std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
-    { v.write(f, options, std::ignore,    std::ignore, std::ignore, std::ignore,
-                          std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
+    { v.write(options, seq,            id,          bpp,         structure,
+                       energy,         react,       react_err,   comment,        offset)      } -> void;
+    { v.write(options, seq,            id,          bpp,         std::ignore,
+                       std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
+    { v.write(options, structured_seq, id,          std::ignore, structured_seq,
+                       energy,         std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
+    { v.write(options, std::ignore,    std::ignore, std::ignore, std::ignore,
+                       std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
     // the last is required to be compile time valid, but should always throw at run-time.
 };
 //!\endcond
@@ -81,8 +79,7 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_outpu
  * \{
  */
 
-/*!\fn void write(stream_type & stream,
- *                structure_file_output_options const & options,
+/*!\fn void write(structure_file_output_options const & options,
  *                seq_type && seq,
  *                id_type && id,
  *                bpp_type && bpp,
@@ -93,7 +90,6 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_outpu
  *                comment_type && comment,
  *                offset_type && offset)
  * \brief Write the given fields to the specified stream.
- * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange
@@ -108,7 +104,6 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_outpu
  * \tparam comment_type     Type of the seqan3::field::COMMENT output; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam offset_type      Type of the seqan3::field::OFFSET output; must satisfy std::numeric_limits::is_integer.
- * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.
  * \param[in]     seq       The data for seqan3::field::SEQ output, i.e. the "sequence".
  * \param[in]     id        The data for seqan3::field::ID output, e.g. the header line.

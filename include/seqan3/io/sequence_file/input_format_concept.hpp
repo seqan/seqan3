@@ -13,7 +13,6 @@
 
 #pragma once
 
-#include <fstream>
 #include <string>
 #include <vector>
 
@@ -27,7 +26,7 @@ namespace seqan3::detail
 {
 
 //!\brief The sequence file input format base class.
-template <typename format_tag>
+template <typename format_tag, typename stream_char_type = char>
 class sequence_file_input_format
 {};
 
@@ -49,7 +48,6 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT SequenceFileInputFormat = requires (detail::sequence_file_input_format<t>    & v,
-                                                   std::ifstream                            & f,
                                                    sequence_file_input_options<dna5, false> & options,
                                                    dna5_vector                              & seq,
                                                    std::string                              & id,
@@ -58,9 +56,9 @@ SEQAN3_CONCEPT SequenceFileInputFormat = requires (detail::sequence_file_input_f
 {
     t::file_extensions;
 
-    { v.read(f, options, seq,         id,          qual)        } -> void;
-    { v.read(f, options, seq_qual,    id,          seq_qual)    } -> void;
-    { v.read(f, options, std::ignore, std::ignore, std::ignore) } -> void;
+    { v.read(options, seq,         id,          qual)        } -> bool;
+    { v.read(options, seq_qual,    id,          seq_qual)    } -> bool;
+    { v.read(options, std::ignore, std::ignore, std::ignore) } -> bool;
 };
 //!\endcond
 
@@ -70,17 +68,15 @@ SEQAN3_CONCEPT SequenceFileInputFormat = requires (detail::sequence_file_input_f
  * \{
  */
 
-/*!\fn void read(stream_type & stream, seqan3::sequence_file_input_options const & options, seq_type & sequence,
+/*!\fn void read(seqan3::sequence_file_input_options const & options, seq_type & sequence,
  *               id_type & id, qual_type & qualities)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \tparam stream_type      Input stream, must satisfy seqan3::IStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy std::ranges::OutputRange
  * over a seqan3::WritableQualityAlphabet.
- * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
  * \param[out]    sequence  The buffer for seqan3::field::SEQ input, i.e. the "sequence".
  * \param[out]    id        The buffer for seqan3::field::ID input, e.g. the header line in FastA.

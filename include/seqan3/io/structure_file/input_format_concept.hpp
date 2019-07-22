@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <fstream>
 #include <set>
 #include <string>
 #include <utility>
@@ -28,7 +27,7 @@ namespace seqan3::detail
 {
 
 //!\brief The structure file input format base class.
-template <typename format_tag>
+template <typename format_tag, typename stream_char_type = char>
 class structure_file_input_format
 {};
 
@@ -50,7 +49,6 @@ namespace seqan3
 //!\cond
 template<typename t>
 SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_format<t> & v,
-                                                   std::ifstream & f,
                                                    structure_file_input_options<rna5, false> & options,
                                                    rna5_vector & seq,
                                                    std::string & id,
@@ -65,17 +63,17 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_
 {
     t::file_extensions;
 
-    { v.read(f, options, seq,            id,          bpp,         structure,
-                         energy,         react,       react_err,   comment,        offset)      } -> void;
+    { v.read(options, seq,            id,          bpp,         structure,
+                      energy,         react,       react_err,   comment,        offset)      } -> bool;
 
-    { v.read(f, options, seq,            id,          bpp,         std::ignore,
-                         std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
+    { v.read(options, seq,            id,          bpp,         std::ignore,
+                      std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> bool;
 
-    { v.read(f, options, structured_seq, id,          std::ignore, structured_seq,
-                         energy,         std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
+    { v.read(options, structured_seq, id,          std::ignore, structured_seq,
+                      energy,         std::ignore, std::ignore, std::ignore,    std::ignore) } -> bool;
 
-    { v.read(f, options, std::ignore,    std::ignore, std::ignore, std::ignore,
-                         std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
+    { v.read(options, std::ignore,    std::ignore, std::ignore, std::ignore,
+                      std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> bool;
     // the last is required to be compile time valid, but should always throw at run-time.
 };
 //!\endcond
@@ -85,8 +83,7 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_
  * \memberof seqan3::StructureFileInputFormat
  * \{
  */
-/*!\fn void read(stream_type & stream,
- *               structure_file_input_options<seq_legal_alph_type, structured_seq_combined> const & options,
+/*!\fn void read(structure_file_input_options<seq_legal_alph_type, structured_seq_combined> const & options,
  *               seq_type & seq,
  *               id_type & id,
  *               bpp_type & bpp,
@@ -97,7 +94,6 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_
  *               comment_type & comment,
  *               offset_type & offset)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \tparam stream_type      Input stream, must satisfy seqan3::Istream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
@@ -112,7 +108,6 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(detail::structure_file_input_
  * \tparam comment_type     Type of the seqan3::field::COMMENT input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam offset_type      Type of the seqan3::field::OFFSET input; must satisfy std::numeric_limits::is_integer.
- * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
  * \param[out]    seq       The buffer for seqan3::field::SEQ input, i.e. the "sequence".
  * \param[out]    id        The buffer for seqan3::field::ID input, e.g. the header line.

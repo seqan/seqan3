@@ -28,6 +28,7 @@ namespace seqan3::detail
 {
 
 /*!\brief The seqan3::sequence_file_input_format specialisation that handles formatted SAM input.
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
  * \ingroup sequence
  *
  * \details
@@ -44,8 +45,8 @@ namespace seqan3::detail
  * See seqan3::format_sam
  *
  */
-template <>
-class sequence_file_input_format<format_sam>
+template <typename stream_char_type>
+class sequence_file_input_format<format_sam, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -62,16 +63,19 @@ public:
     sequence_file_input_format(sequence_file_input_format &&)                   = default; //!< Defaulted.
     sequence_file_input_format & operator=(sequence_file_input_format &&)       = default; //!< Defaulted.
     ~sequence_file_input_format()                                               = default; //!< Defaulted.
+
+    //!\brief Construct the format given an input stream to read from.
+    sequence_file_input_format(std::basic_istream<stream_char_type> & stream) :
+        align_format{stream}
+    {}
     //!\}
 
     //!\copydoc SequenceFileInputFormat::read
-    template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type, bool seq_qual_combined,
-              typename seq_type,        // other constraints checked inside function
+    template <typename seq_legal_alph_type, bool seq_qual_combined,
+              typename seq_type,        // constraints checked by file, other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void read(stream_type                                                               & stream,
-              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & SEQAN3_DOXYGEN_ONLY(options),
+    bool read(sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & SEQAN3_DOXYGEN_ONLY(options),
               seq_type                                                                  & sequence,
               id_type                                                                   & id,
               qual_type                                                                 & qualities)
@@ -81,18 +85,20 @@ public:
         if constexpr (seq_qual_combined)
         {
             tmp_qual.clear();
-            align_format.read(stream, align_options, std::ignore, default_header, sequence, tmp_qual, id,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
+            if (align_format.read(align_options, std::ignore, default_header, sequence, tmp_qual, id,
+                                  std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
+                                  std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore))
+                return true; // no more records to read (and no record was read)
 
             for (auto sit = tmp_qual.begin(), dit = std::ranges::begin(sequence); sit != tmp_qual.end(); ++sit, ++dit)
                 get<1>(*dit).assign_char(*sit);
         }
         else
         {
-            align_format.read(stream, align_options, std::ignore, default_header, sequence, qualities, id,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
+            if (align_format.read(align_options, std::ignore, default_header, sequence, qualities, id,
+                                  std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
+                                  std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore))
+                return true;
         }
 
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
@@ -101,6 +107,8 @@ public:
         if constexpr (!detail::decays_to_ignore_v<id_type>)
             if (std::distance(std::ranges::begin(id), std::ranges::end(id)) == 0)
                 throw format_error{"The sequence information must not be empty."};
+
+        return false;
     }
 
 private:
@@ -114,10 +122,12 @@ private:
     std::string tmp_qual{};
 };
 
-//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted SAM.
-//!\ingroup sequence
-template <>
-class sequence_file_output_format<format_sam>
+/*!\brief The seqan3::sequence_file_output_format specialisation that can write formatted SAM.
+ * \ingroup sequence
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class sequence_file_output_format<format_sam, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -134,15 +144,18 @@ public:
     sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
     sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
     ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+
+    //!\brief Construct from an output stream to write to.
+    sequence_file_output_format(std::basic_ostream<stream_char_type> & stream) :
+        align_format{stream}
+    {}
     //!\}
 
     //!\copydoc SequenceFileOutputFormat::write
-    template <typename stream_type,     // constraints checked by file
-              typename seq_type,        // other constraints checked inside function
+    template <typename seq_type,        // constraints checked by file, other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void write(stream_type                        & stream,
-               sequence_file_output_options const & SEQAN3_DOXYGEN_ONLY(options),
+    void write(sequence_file_output_options const & SEQAN3_DOXYGEN_ONLY(options),
                seq_type                           && sequence,
                id_type                            && id,
                qual_type                          && qualities)
@@ -152,7 +165,7 @@ public:
 
         alignment_file_output_options output_options;
 
-        align_format.write(stream, output_options, std::ignore,
+        align_format.write(output_options, std::ignore,
                            default_or(sequence), default_or(qualities), default_or(id),
                            0, std::string_view{}, std::string_view{}, -1, default_align_t{}, 0, 0,
                            default_mate_t{}, sam_tag_dictionary{}, 0, 0);

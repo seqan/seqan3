@@ -15,6 +15,19 @@
 
 #include "alignment_file_format_test_template.hpp"
 
+std::string compress(std::string const & raw)
+{
+    std::ostringstream os;
+
+    {
+        contrib::bgzf_ostream bos{os};
+        bos << raw;
+    }
+
+    os.flush();
+    return os.str();
+}
+
 template <>
 struct alignment_file_read<format_bam> : public alignment_file_data
 {
@@ -26,7 +39,7 @@ struct alignment_file_read<format_bam> : public alignment_file_data
 
     using stream_type = std::istringstream;
 
-    std::string big_header_input{
+    std::string big_header_input = compress(std::string{
         '\x42', '\x41', '\x4D', '\x01', '\xB7', '\x01', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
         '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x09', '\x53', '\x4F', '\x3A', '\x63', '\x6F', '\x6F', '\x72',
         '\x64', '\x69', '\x6E', '\x61', '\x74', '\x65', '\x09', '\x53', '\x53', '\x3A', '\x63', '\x6F', '\x6F',
@@ -64,9 +77,9 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x6D', '\x65', '\x6E', '\x74', '\x0A', '\x02', '\x00', '\x00', '\x00', '\x04', '\x00', '\x00', '\x00',
         '\x72', '\x65', '\x66', '\x00', '\x3D', '\x43', '\xDB', '\x0E', '\x05', '\x00', '\x00', '\x00', '\x72',
         '\x65', '\x66', '\x32', '\x00', '\x8D', '\xED', '\x7E', '\x0E'
-    };
+    });
 
-    std::string simple_three_reads_input{
+    std::string simple_three_reads_input = compress(std::string{
         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
         '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A',
         '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00',
@@ -91,9 +104,9 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00',
         '\x00', '\x00', '\x12', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00', '\x00',
         '\x00', '\x44', '\x14', '\x81', '\x81', '\x00', '\x00', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E'
-    };
+    });
 
-    std::string verbose_reads_input{
+    std::string verbose_reads_input = compress(std::string{
         '\x42', '\x41', '\x4D', '\x01', '\xA3', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
         '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x09', '\x53', '\x4F', '\x3A', '\x75', '\x6E', '\x6B', '\x6E',
         '\x6F', '\x77', '\x6E', '\x09', '\x47', '\x4F', '\x3A', '\x6E', '\x6F', '\x6E', '\x65', '\x0A', '\x40',
@@ -137,9 +150,9 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x11', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12',
         '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00', '\x00', '\x00', '\x44', '\x14',
         '\x81', '\x81', '\x00', '\x00', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E'
-    };
+    });
 
-    std::string empty_input{
+    std::string empty_input = compress(std::string{
         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
         '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A',
         '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00',
@@ -147,9 +160,9 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x22', '\x00', '\x00', '\x00', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x02',
         '\x00', '\x48', '\x12', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\xFF',
         '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\x00', '\x00', '\x00', '\x00', '\x2A', '\x00'
-    };
+    });
 
-    std::string empty_cigar{
+    std::string empty_cigar = compress(std::string{
         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
         '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A',
         '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00',
@@ -159,9 +172,9 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61',
         '\x64', '\x31', '\x00', '\x12', '\x48', '\x00', '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02',
         '\x4E', '\x4D', '\x43', '\x07'
-    };
+    });
 
-    std::string unknown_ref{
+    std::string unknown_ref = compress(std::string{
         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
         '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A',
         '\x72', '\x61', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00',
@@ -173,10 +186,10 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12', '\x48', '\x00',
         '\x02', '\x02', '\x03', '\x61', '\x61', '\x41', '\x63', '\x41', '\x53', '\x43', '\x02', '\x66', '\x66',
         '\x66', '\x66', '\x66', '\x46', '\x40', '\x7A', '\x7A', '\x5A', '\x73', '\x74', '\x72', '\x00'
-    };
+    });
 
     /* bytes were modified to a ref id of 8448: \x00 \x00 \x21 \x00*/
-    std::string unknown_ref_header{
+    std::string unknown_ref_header = compress(std::string{
         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
         '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A',
         '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00',
@@ -188,9 +201,9 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12', '\x48', '\x00',
         '\x02', '\x02', '\x03', '\x61', '\x61', '\x41', '\x63', '\x41', '\x53', '\x43', '\x02', '\x66', '\x66',
         '\x66', '\x66', '\x66', '\x46', '\x40', '\x7A', '\x7A', '\x5A', '\x73', '\x74', '\x72', '\x00', '\x0A'
-    };
+    });
 
-    std::string simple_three_reads_output{ // no hard clipping in output
+    std::string simple_three_reads_output = compress(std::string{ // no hard clipping in output
         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
         '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A',
         '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00',
@@ -215,11 +228,11 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12', '\x00',
         '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x14', '\x00', '\x00', '\x00', '\x44', '\x14', '\x81',
         '\x81', '\x00', '\x00', '\x09', '\x0A', '\x0B', '\x0C', '\x0D', '\x0E'
-    };
+    });
 
     std::string verbose_output{verbose_reads_input};
 
-    std::string special_output{
+    std::string special_output = compress(std::string{
         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
         '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A',
         '\x72', '\x65', '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x33', '\x34', '\x0A', '\x01', '\x00', '\x00',
@@ -230,7 +243,7 @@ struct alignment_file_read<format_bam> : public alignment_file_data
         '\x64', '\x31', '\x00', '\x14', '\x00', '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x12', '\x00',
         '\x00', '\x00', '\x10', '\x00', '\x00', '\x00', '\x11', '\x00', '\x00', '\x00', '\x12', '\x48', '\x00',
         '\x02', '\x02', '\x03'
-    };
+    });
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -249,7 +262,7 @@ struct bam_format : public alignment_file_data
 
 TEST_F(bam_format, wrong_magic_bytes)
 {
-    std::istringstream stream{std::string{'\x43', '\x41', '\x4D', '\x01' /*CAM\1*/}};
+    std::istringstream stream{compress(std::string{'\x43', '\x41', '\x4D', '\x01' /*CAM\1*/})};
     EXPECT_THROW((alignment_file_input{stream, format_bam{}}), format_error);
 }
 
@@ -264,7 +277,7 @@ TEST_F(bam_format, unknown_ref_in_header)
         '\x00', '\x04', '\x00', '\x00', '\x00', '\x72', '\x61', '\x66', '\x00', '\x22', '\x00', '\x00', '\x00',
     };
 
-    std::istringstream stream{unknown_ref};
+    std::istringstream stream{compress(unknown_ref)};
     EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
 }
 
@@ -279,7 +292,7 @@ TEST_F(bam_format, wrong_ref_length_in_header)
         '\x00', '\x04', '\x00', '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x23', '\x00', '\x00', '\x00',
     };
 
-    std::istringstream stream{wrong_ref_length};
+    std::istringstream stream{compress(wrong_ref_length)};
     EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
 }
 
@@ -301,7 +314,7 @@ TEST_F(bam_format, wrong_order_in_header)
         '\x00', '\x00', '\x00'
     };
 
-    std::istringstream stream{wrong_order};
+    std::istringstream stream{compress(wrong_order)};
     EXPECT_THROW((alignment_file_input{stream, rids, rseqs, format_bam{}}), format_error);
 }
 
@@ -324,7 +337,7 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
             '\x31', '\x4D', '\x31', '\x49', '\x00'
         };
 
-        std::istringstream stream{wrong_char_in_tag};
+        std::istringstream stream{compress(wrong_char_in_tag)};
         EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
     }
     {
@@ -344,7 +357,7 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
             '\x31', '\x4D', '\x31', '\x49', '\x00'
         };
 
-        std::istringstream stream{wrong_char_in_tag};
+        std::istringstream stream{compress(wrong_char_in_tag)};
         EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
     }
 }
@@ -368,7 +381,7 @@ TEST_F(bam_format, invalid_cigar_op)
             '\x02', '\x02', '\x03', '\x41', '\x53', '\x43', '\x02', '\x4E', '\x4D', '\x43', '\x07'
         };
 
-        std::istringstream stream{wrong_char_in_tag};
+        std::istringstream stream{compress(wrong_char_in_tag)};
         EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
     }
 }
@@ -392,7 +405,7 @@ TEST_F(bam_format, too_long_cigar_string_read)
     };
 
     {   // successful reading
-        std::istringstream stream{sam_file_with_too_long_cigar_string};
+        std::istringstream stream{compress(sam_file_with_too_long_cigar_string)};
 
         alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
 
@@ -402,20 +415,20 @@ TEST_F(bam_format, too_long_cigar_string_read)
     }
 
     {   // error: sam_tag_dictionary is not read
-        std::istringstream stream{sam_file_with_too_long_cigar_string};
+        std::istringstream stream{compress(sam_file_with_too_long_cigar_string)};
 
         ASSERT_THROW((alignment_file_input{stream, format_bam{}, fields<field::ALIGNMENT>{}}), format_error);
     }
 
     {   // error: sequence is not read
-        std::istringstream stream{sam_file_with_too_long_cigar_string};
+        std::istringstream stream{compress(sam_file_with_too_long_cigar_string)};
 
         ASSERT_THROW((alignment_file_input{stream, format_bam{}, fields<field::ALIGNMENT, field::TAGS>{}}),
                      format_error);
     }
 
     {   // error no CG tag
-        std::istringstream stream{std::string{
+        std::istringstream stream{compress(std::string{
             // @HD     VN:1.0
             // @SQ     SN:ref  LN:34
             // read1   41      ref     1       61      4S3N    =       10      300     ACGT    !##$
@@ -428,7 +441,7 @@ TEST_F(bam_format, too_long_cigar_string_read)
             '\x00', '\x00', '\x09', '\x00', '\x00', '\x00', '\x2C', '\x01', '\x00', '\x00', '\x72', '\x65', '\x61',
             '\x64', '\x31', '\x00', '\x44', '\x00', '\x00', '\x00', '\x33', '\x00', '\x00', '\x00', '\x12', '\x48',
             '\x00', '\x02', '\x02', '\x03'
-        }};
+        })};
 
         ASSERT_THROW((alignment_file_input{stream, format_bam{}}), format_error);
     }
@@ -500,5 +513,5 @@ TEST_F(bam_format, too_long_cigar_string_write)
 
     os.flush();
 
-    EXPECT_TRUE(os.str() == expected); // do not use EXPECT_EQ because if this fails the output will be huge :D
+    EXPECT_TRUE(os.str() == compress(expected)); // do not use EXPECT_EQ because if this fails the output will be huge
 }

@@ -18,6 +18,8 @@
 
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/sam_dna16.hpp>
+#include <seqan3/contrib/stream/bgzf_istream.hpp>
+#include <seqan3/contrib/stream/bgzf_ostream.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
@@ -37,6 +39,7 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/range/detail/misc.hpp>
+#include <seqan3/range/view/istreambuf.hpp>
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/range/view/take_until.hpp>
@@ -87,11 +90,18 @@ struct alignment_record_core
     int32_t tlen;           //!< The template length of the read and its mate.
 };
 
-//!\brief The seqan3::alignment_file_input_format specialisation that handles formatted BAM input.
-//!\ingroup alignment_file
-template <>
-class alignment_file_input_format<format_bam> : alignment_file_input_format<format_sam>
+/*!\brief The seqan3::alignment_file_input_format specialisation that handles formatted BAM input.
+ * \ingroup alignment_file
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class alignment_file_input_format<format_bam, stream_char_type> :
+    alignment_file_input_format<format_sam, stream_char_type>
 {
+private:
+    //!\brief The SAM format type that this class inherits from.
+    using sam_fmt = alignment_file_input_format<format_sam, stream_char_type>;
+
 public:
     //!\brief Exposes the format tag that this class is specialised with
     using format_tag = format_bam;
@@ -99,7 +109,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    alignment_file_input_format()                                                noexcept = default; //!< Defaulted.
+    alignment_file_input_format()                                                         = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     alignment_file_input_format(alignment_file_input_format const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
@@ -107,11 +117,14 @@ public:
     alignment_file_input_format(alignment_file_input_format &&)                  noexcept = default; //!< Defaulted.
     alignment_file_input_format & operator=(alignment_file_input_format &&)      noexcept = default; //!< Defaulted.
     ~alignment_file_input_format()                                               noexcept = default; //!< Defaulted.
+
+    alignment_file_input_format(std::basic_istream<stream_char_type> & stream) :
+        stream_ptr{new contrib::basic_bgzf_istream<stream_char_type>{stream}}
+    {}
     //!\}
 
     //!\copydoc AlignmentFileInputFormat::read
-    template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type,
+    template <typename seq_legal_alph_type,
               typename ref_seqs_type,
               typename ref_ids_type,
               typename seq_type,
@@ -128,8 +141,7 @@ public:
               typename tag_dict_type,
               typename e_value_type,
               typename bit_score_type>
-    void read(stream_type                                             & stream,
-              alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
+    bool read(alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
               ref_seqs_type                                           & ref_seqs,
               alignment_file_header<ref_ids_type>                     & header,
               seq_type                                                & seq,
@@ -157,9 +169,11 @@ public:
         static_assert(detail::decays_to_ignore_v<flag_type> || std::Same<flag_type, uint16_t>,
                       "The type of field::FLAG must be uint8_t.");
 
-        using stream_buf_t = std::istreambuf_iterator<typename stream_type::char_type>;
-        auto stream_view = std::ranges::subrange<decltype(stream_buf_t{stream}), decltype(stream_buf_t{})>
-                               {stream_buf_t{stream}, stream_buf_t{}};
+        assert(stream_ptr != nullptr);
+        auto stream_view = view::istreambuf(*stream_ptr);
+
+        if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // no records follow
+            return true;
 
         // these variables need to be stored to compute the ALIGNMENT
         [[maybe_unused]] int32_t offset_tmp{};
@@ -179,10 +193,10 @@ public:
             read_field(stream_view, tmp32);
 
             if (tmp32 > 0) // header text is present
-                read_header(stream_view | view::take_exactly_or_throw(tmp32)
-                                        | view::take_until_and_consume(is_char<'\0'>),
-                            header,
-                            ref_seqs);
+                sam_fmt::read_header(stream_view | view::take_exactly_or_throw(tmp32)
+                                                 | view::take_until_and_consume(is_char<'\0'>),
+                                     header,
+                                     ref_seqs);
 
             int32_t n_ref;
             read_field(stream_view, n_ref);
@@ -220,8 +234,8 @@ public:
 
             header_was_read = true;
 
-            if (stream_buf_t{stream} == stream_buf_t{}) // no records follow
-                return;
+            if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // no records follow
+                return true;
         }
 
         // read alignment record into buffer
@@ -419,12 +433,16 @@ public:
             }
 
             // Alignment object construction
-            construct_alignment(align, cigar, core.refID, ref_seqs, core.pos, ref_length); // inherited from SAM format
+            sam_fmt::construct_alignment(align, cigar, core.refID, ref_seqs, core.pos, ref_length);
         }
+
+        return false;
     }
 
 protected:
     //!\privatesection
+    //!\brief A pointer to the bgzf uncompressed stream.
+    std::unique_ptr<std::basic_istream<stream_char_type>> stream_ptr{nullptr};
 
     //!\brief A variable that tracks whether the content of header has been read or not.
     bool header_was_read{false};
@@ -433,7 +451,7 @@ protected:
     std::string string_buffer{};
 
     // inherit read_field function from format_sam
-    using alignment_file_input_format<format_sam>::read_field;
+    using sam_fmt::read_field;
 
     /*!\brief Reads a arithmetic field from binary stream by directly reinterpreting the bits.
      * \tparam stream_view_type  The type of the stream as a view.
@@ -459,7 +477,7 @@ protected:
         std::ranges::copy_n(std::ranges::begin(stream_view), sizeof(int32_t), reinterpret_cast<char *>(&target));
     }
 
-    //!\copydoc seqan3::detail::alignment_file_input_format<format_sam>::read_sam_dict_vector
+    //!\copydoc seqan3::detail::alignment_file_input_format<format_sam,stream_char_type>::read_sam_dict_vector
     template <typename stream_view_type, typename value_type>
     void read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant,
                               stream_view_type && stream_view,
@@ -643,11 +661,18 @@ protected:
     }
 };
 
-//!\brief The seqan3::alignment_file_output_format specialisation that can write formatted SAM.
-//!\ingroup alignment_file
-template <>
-class alignment_file_output_format<format_bam> : alignment_file_output_format<format_sam>
+/*!\brief The seqan3::alignment_file_output_format specialisation that can write formatted BAM.
+ * \ingroup alignment_file
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class alignment_file_output_format<format_bam, stream_char_type> :
+    alignment_file_output_format<format_sam, stream_char_type>
 {
+private:
+    //!\brief The SAM format type that this class inherits from.
+    using sam_fmt = alignment_file_output_format<format_sam, stream_char_type>;
+
 public:
     //!\brief Exposes the format tag that this class is specialised with
     using format_tag = format_bam;
@@ -655,7 +680,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    alignment_file_output_format()                                                 noexcept = default; //!< Defaulted.
+    alignment_file_output_format()                                                          = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     alignment_file_output_format(alignment_file_output_format const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
@@ -663,11 +688,15 @@ public:
     alignment_file_output_format(alignment_file_output_format &&)                  noexcept = default; //!< Defaulted.
     alignment_file_output_format & operator=(alignment_file_output_format &&)      noexcept = default; //!< Defaulted.
     ~alignment_file_output_format()                                                noexcept = default; //!< Defaulted.
+
+    //!\brief Construct from an output stream to write to.
+    alignment_file_output_format(std::basic_ostream<stream_char_type> & stream) :
+        stream_ptr{new contrib::basic_bgzf_ostream<stream_char_type>{stream}}
+    {}
     //!\}
 
     //!\copydoc AlignmentFileOutputFormat::write
-    template <typename stream_type,
-              typename header_type,
+    template <typename header_type,
               typename seq_type,
               typename id_type,
               typename ref_seq_type,
@@ -676,8 +705,7 @@ public:
               typename qual_type,
               typename mate_type,
               typename tag_dict_type>
-    void write([[maybe_unused]] stream_type                            &  stream,
-               [[maybe_unused]] alignment_file_output_options const    &  options,
+    void write([[maybe_unused]] alignment_file_output_options const    &  options,
                [[maybe_unused]] header_type                            && header,
                [[maybe_unused]] seq_type                               && seq,
                [[maybe_unused]] qual_type                              && qual,
@@ -771,20 +799,21 @@ public:
             if (ref_offset.has_value() && (ref_offset.value() + 1) < 0)
                 throw format_error{detail::to_string("The ref_offset object must be >= -1 but is: ", ref_offset)};
 
-            seqan3::ostreambuf_iterator stream_it{stream};
+            seqan3::ostreambuf_iterator stream_it{*stream_ptr};
 
             // ---------------------------------------------------------------------
             // Writing the Header on first call
             // ---------------------------------------------------------------------
-            if (!written_header)
+            if (!sam_fmt::written_header)
             {
-                stream << "BAM\1";
+                std::ranges::copy(std::string_view{"BAM\1"}, stream_it);
                 std::ostringstream os;
-                write_header(os, options, header); // write header to temporary stream to query the size.
+                sam_fmt sf{os};
+                sf.write_header(options, header); // write header to temporary stream to query the size.
                 int32_t l_text{static_cast<int32_t>(os.str().size())};
                 std::ranges::copy_n(reinterpret_cast<char *>(&l_text), 4, stream_it); // write read id
 
-                stream  << os.str();
+                std::ranges::copy(os.str(), stream_it);
 
                 int32_t n_ref{static_cast<int32_t>(header.ref_ids().size())};
                 std::ranges::copy_n(reinterpret_cast<char *>(&n_ref), 4, stream_it); // write read id
@@ -800,7 +829,7 @@ public:
                     std::ranges::copy_n(reinterpret_cast<char *>(&get<0>(header.ref_id_info[ridx])), 4, stream_it);
                 }
 
-                written_header = true;
+                sam_fmt::written_header = true;
             }
 
             // ---------------------------------------------------------------------
@@ -959,9 +988,13 @@ public:
             }
 
             // write optional fields
-            stream << tag_dict_binary_str;
+            std::ranges::copy_n(tag_dict_binary_str.begin(), tag_dict_binary_str.size(), stream_it);
         } // if constexpr (!detail::decays_to_ignore_v<header_type>)
     }
+
+private:
+    //!\brief A pointer to the bgzf uncompressed stream.
+    std::unique_ptr<std::basic_ostream<stream_char_type>> stream_ptr{nullptr};
 
     //!\brief Converts a cigar op character to the rank according to the official BAM specifications.
     static constexpr std::array<uint8_t, 256> char_to_sam_rank

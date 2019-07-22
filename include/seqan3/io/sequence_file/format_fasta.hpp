@@ -95,10 +95,12 @@ struct format_fasta
 namespace seqan3::detail
 {
 
-//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted FASTA input.
-//!\ingroup sequence
-template <>
-class sequence_file_input_format<format_fasta>
+/*!\brief The seqan3::sequence_file_input_format specialisation that handles formatted FASTA input.
+ * \ingroup sequence
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class sequence_file_input_format<format_fasta, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -107,45 +109,52 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    sequence_file_input_format()                                                        = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     sequence_file_input_format(sequence_file_input_format const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
     sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
     sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
     sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.                                //!< Defaulted.
+    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
+
+    //!\brief Construct the format given an input stream to read from.
+    sequence_file_input_format(std::basic_istream<stream_char_type> & stream) :
+        stream_view{view::istreambuf(stream)}
+    {}
     //!\}
 
     //!\copydoc SequenceFileInputFormat::read
-    template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type, bool seq_qual_combined,
-              typename seq_type,        // other constraints checked inside function
+    template <typename seq_legal_alph_type, bool seq_qual_combined,
+              typename seq_type,        // constraints checked by file, other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void read(stream_type                                                               & stream,
-              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
+    bool read(sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
               seq_type                                                                  & sequence,
               id_type                                                                   & id,
               qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = view::istreambuf(stream);
+        if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // file has no records any more
+            return true;
 
         // ID
-        read_id(stream_view, options, id);
+        read_id(options, id);
 
         // Sequence
-        read_seq(stream_view, options, sequence);
+        read_seq(options, sequence);
+
+        return false;
     }
 
 protected:
     //!\privatesection
+    //!\brief A view over the file stream.
+    decltype(view::istreambuf(std::declval<std::basic_istream<stream_char_type> &>())) stream_view{};
+
     //!\brief Implementation of reading the ID.
-    template <typename stream_view_t,
-              typename seq_legal_alph_type, bool seq_qual_combined,
+    template <typename seq_legal_alph_type, bool seq_qual_combined,
               typename id_type>
-    void read_id(stream_view_t                                                          & stream_view,
-                 sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
+    void read_id(sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
                  id_type                                                                & id)
     {
         auto const is_id = is_char<'>'> || is_char<';'>;
@@ -232,11 +241,9 @@ protected:
     }
 
     //!\brief Implementation of reading the sequence.
-    template <typename stream_view_t,
-              typename seq_legal_alph_type, bool seq_qual_combined,
+    template <typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type>
-    void read_seq(stream_view_t                                                          & stream_view,
-                  sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const &,
+    void read_seq(sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const &,
                   seq_type                                                               & seq)
     {
         auto constexpr is_id = is_char<'>'> || is_char<';'>;
@@ -289,10 +296,13 @@ protected:
     }
 };
 
-//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted FASTA.
-//!\ingroup sequence
-template <>
-class sequence_file_output_format<format_fasta>
+
+/*!\brief The seqan3::sequence_file_output_format specialisation that can write formatted FASTA.
+ * \ingroup sequence
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class sequence_file_output_format<format_fasta, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -309,22 +319,22 @@ public:
     sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
     sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
     ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+
+    //!\brief Construct from an output stream to write to.
+    sequence_file_output_format(std::basic_ostream<stream_char_type> & stream) :
+        stream_it{stream}
+    {}
     //!\}
 
     //!\copydoc SequenceFileOutputFormat::write
-    template <typename stream_type,     // constraints checked by file
-              typename seq_type,        // other constraints checked inside function
+    template <typename seq_type,        // constraints checked by file, other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void write(stream_type                        & stream,
-               sequence_file_output_options const & options,
+    void write(sequence_file_output_options const & options,
                seq_type                          && sequence,
                id_type                           && id,
                qual_type                         && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-
-        seqan3::ostreambuf_iterator stream_it{stream};
-
         // ID
         if constexpr (detail::decays_to_ignore_v<id_type>)
         {
@@ -335,7 +345,7 @@ public:
             if (empty(id)) //[[unlikely]]
                 throw std::runtime_error{"The ID field may not be empty when writing FASTA files."};
 
-            write_id(stream_it, options, id);
+            write_id(options, id);
         }
 
         // Sequence
@@ -348,16 +358,17 @@ public:
             if (empty(sequence)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing FASTA files."};
 
-            write_seq(stream_it, options, sequence);
+            write_seq(options, sequence);
         }
     }
 
+private:
+    //!\brief An ostreambuf iterator to the output stream to write to.
+    seqan3::ostreambuf_iterator<stream_char_type> stream_it{};
+
     //!\brief Implementation of writing the ID.
-    template <typename stream_it_t,
-              typename id_type>
-    void write_id(stream_it_t                     & stream_it,
-                  sequence_file_output_options const & options,
-                  id_type                        && id)
+    template <typename id_type>
+    void write_id(sequence_file_output_options const & options, id_type && id)
     {
         if (options.fasta_legacy_id_marker)
             stream_it = ';';
@@ -373,11 +384,8 @@ public:
     }
 
     //!\brief Implementation of writing the sequence.
-    template <typename stream_it_t,
-              typename seq_type>
-    void write_seq(stream_it_t                    & stream_it,
-                  sequence_file_output_options const & options,
-                  seq_type                       && seq)
+    template <typename seq_type>
+    void write_seq(sequence_file_output_options const & options, seq_type && seq)
     {
         if (options.fasta_letters_per_line > 0)
         {

@@ -103,10 +103,12 @@ struct format_vienna
 namespace seqan3::detail
 {
 
-//!\brief The seqan3::structure_file_input_format specialisation that can handle formatted VIENNA input.
-//!\ingroup structure_file
-template <>
-class structure_file_input_format<format_vienna>
+/*!\brief The seqan3::structure_file_input_format specialisation that can handle formatted VIENNA input.
+ * \ingroup structure_file
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class structure_file_input_format<format_vienna, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -115,19 +117,22 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    structure_file_input_format()                                                noexcept = default; //!< Defaulted.
+    structure_file_input_format()                                                         = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     structure_file_input_format(structure_file_input_format const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
     structure_file_input_format & operator=(structure_file_input_format const &)          = delete;
-    structure_file_input_format(structure_file_input_format &&)                  noexcept = default; //!< Defaulted.
-    structure_file_input_format & operator=(structure_file_input_format &&)      noexcept = default; //!< Defaulted.
-    ~structure_file_input_format()                                               noexcept = default; //!< Defaulted.
+    structure_file_input_format(structure_file_input_format &&)                           = default; //!< Defaulted.
+    structure_file_input_format & operator=(structure_file_input_format &&)               = default; //!< Defaulted.
+    ~structure_file_input_format()                                                        = default; //!< Defaulted.
+
+    structure_file_input_format(std::basic_istream<stream_char_type> & stream) :
+        stream_view{view::istreambuf(stream)}
+    {}
     //!\}
 
     //!\copydoc seqan3::StructureFileInputFormat::read
-    template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type,
+    template <typename seq_legal_alph_type,  // constraints checked by file
               bool     structured_seq_combined,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
@@ -137,8 +142,7 @@ public:
               typename react_type,
               typename comment_type,
               typename offset_type>
-    void read(stream_type & stream,
-              structure_file_input_options<seq_legal_alph_type, structured_seq_combined> const & options,
+    bool read(structure_file_input_options<seq_legal_alph_type, structured_seq_combined> const & options,
               seq_type & seq,
               id_type & id,
               bpp_type & bpp,
@@ -149,7 +153,8 @@ public:
               comment_type & SEQAN3_DOXYGEN_ONLY(comment),
               offset_type & SEQAN3_DOXYGEN_ONLY(offset))
     {
-        auto stream_view = view::istreambuf(stream);
+        if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // file has no records
+            return true;
 
         // READ ID (if present)
         auto constexpr is_id = is_char<'>'>;
@@ -270,12 +275,17 @@ public:
         {
             detail::consume(stream_view | view::take_line);
         }
+
         detail::consume(stream_view | view::take_until(!is_space));
+
+        return false;
     }
 
 private:
-    /*!
-     * \brief Extract the structure string from the given stream.
+    //!\brief A view over the file stream.
+    decltype(view::istreambuf(std::declval<std::basic_istream<stream_char_type> &>())) stream_view{};
+
+    /*!\brief Extract the structure string from the given stream.
      * \tparam alph_type        The alphabet type the structure is converted to.
      * \tparam stream_view_type The type of the input stream.
      * \param stream_view       The input stream to be read.
@@ -301,10 +311,12 @@ private:
     }
 };
 
-//!\brief The seqan3::structure_file_output_format specialisation that can write formatted VIENNA.
-//!\ingroup structure_file
-template <>
-class structure_file_output_format<format_vienna>
+/*!\brief The seqan3::structure_file_output_format specialisation that can write formatted VIENNA.
+ * \ingroup structure_file
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class structure_file_output_format<format_vienna, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -313,28 +325,31 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    structure_file_output_format()                                                 noexcept = default; //!< Defaulted.
+    structure_file_output_format()                                                          = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     structure_file_output_format(structure_file_output_format const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
     structure_file_output_format & operator=(structure_file_output_format const &)          = delete;
-    structure_file_output_format(structure_file_output_format &&)                  noexcept = default; //!< Defaulted.
-    structure_file_output_format & operator=(structure_file_output_format &&)      noexcept = default; //!< Defaulted.
-    ~structure_file_output_format()                                                noexcept = default; //!< Defaulted.
+    structure_file_output_format(structure_file_output_format &&)                           = default; //!< Defaulted.
+    structure_file_output_format & operator=(structure_file_output_format &&)               = default; //!< Defaulted.
+    ~structure_file_output_format()                                                         = default; //!< Defaulted.
+
+    //!\brief Construct from an output stream to write to.
+    structure_file_output_format(std::basic_ostream<stream_char_type> & stream) :
+        stream_it{stream}
+    {}
     //!\}
 
     //!\copydoc seqan3::StructureFileOutputFormat::write
-    template <typename stream_type,     // constraints checked by file
-              typename seq_type,        // other constraints checked inside function
-              typename id_type,
+    template <typename seq_type,        // constraints checked by file
+              typename id_type,         // other constraints checked inside function
               typename bpp_type,
               typename structure_type,
               typename energy_type,
               typename react_type,
               typename comment_type,
               typename offset_type>
-    void write(stream_type & stream,
-               structure_file_output_options const & options,
+    void write(structure_file_output_options const & options,
                seq_type && seq,
                id_type && id,
                bpp_type && SEQAN3_DOXYGEN_ONLY(bpp),
@@ -345,8 +360,6 @@ public:
                comment_type && SEQAN3_DOXYGEN_ONLY(comment),
                offset_type && SEQAN3_DOXYGEN_ONLY(offset))
     {
-        seqan3::ostreambuf_iterator stream_it{stream};
-
         // WRITE ID (optional)
         if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
@@ -415,6 +428,9 @@ public:
             throw std::logic_error{"The ENERGY field cannot be written to a Vienna file without providing STRUCTURE."};
         }
     }
+private:
+    //!\brief An iterator over the stream.
+    seqan3::ostreambuf_iterator<stream_char_type> stream_it{};
 };
 
 } // namespace seqan3::detail

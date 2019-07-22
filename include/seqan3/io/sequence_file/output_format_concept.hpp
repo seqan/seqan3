@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <fstream>
 #include <string>
 #include <vector>
 
@@ -26,7 +25,7 @@ namespace seqan3::detail
 {
 
 //!\brief The sequence file output format base class.
-template <typename t>
+template <typename format_tag, typename stream_char_type = char>
 class sequence_file_output_format
 {};
 
@@ -48,7 +47,6 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT SequenceFileOutputFormat = requires (detail::sequence_file_output_format<t> & v,
-                                                    std::ofstream                  & f,
                                                     sequence_file_output_options   & options,
                                                     dna5_vector                    & seq,
                                                     std::string                    & id,
@@ -57,9 +55,9 @@ SEQAN3_CONCEPT SequenceFileOutputFormat = requires (detail::sequence_file_output
 {
     t::file_extensions;
 
-    { v.write(f, options, seq,         id,          qual)        } -> void;
-    { v.write(f, options, std::ignore, id,          std::ignore) } -> void;
-    { v.write(f, options, std::ignore, std::ignore, std::ignore) } -> void;
+    { v.write(options, seq,         id,          qual)        } -> void;
+    { v.write(options, std::ignore, id,          std::ignore) } -> void;
+    { v.write(options, std::ignore, std::ignore, std::ignore) } -> void;
     // the last is required to be compile time valid, but should always throw at run-time.
 };
 //!\endcond
@@ -70,17 +68,15 @@ SEQAN3_CONCEPT SequenceFileOutputFormat = requires (detail::sequence_file_output
  * \{
  */
 
-/*!\fn void write(stream_type & stream, seqan3::sequence_file_output_options const & options, seq_type && sequence,
+/*!\fn void write(seqan3::sequence_file_output_options const & options, seq_type && sequence,
  *                id_type && id, qual_type && qualities)
  * \brief Write the given fields to the specified stream.
- * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
  * \tparam qual_type        Type of the seqan3::field::QUAL output; must satisfy std::ranges::OutputRange
  * over a seqan3::QualityAlphabet.
- * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.
  * \param[in]     sequence  The data for seqan3::field::SEQ, i.e. the "sequence".
  * \param[in]     id        The data for seqan3::field::ID, e.g. the header line in FastA.

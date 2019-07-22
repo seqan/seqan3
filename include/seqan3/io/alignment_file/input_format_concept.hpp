@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <fstream>
 #include <string>
 #include <vector>
 
@@ -30,7 +29,7 @@ namespace seqan3::detail
 {
 
 //!\brief The alignment file input format base class.
-template <typename t>
+template <typename format_t, typename stream_char_t = char>
 class alignment_file_input_format
 {};
 
@@ -53,7 +52,6 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT AlignmentFileInputFormat =
     requires (detail::alignment_file_input_format<t>                              & v,
-              std::ifstream                                                       & stream,
               alignment_file_input_options<dna5>                                  & options,
               std::vector<dna5_vector>                                            & ref_sequences,
               alignment_file_header<>                                             & header,
@@ -75,8 +73,7 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
     t::file_extensions;
     // std::Same<decltype(t::file_extensions), std::vector<std::string>>;
 
-    { v.read(stream,
-             options,
+    { v.read(options,
              ref_sequences,
              header,
              seq,
@@ -94,8 +91,7 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
              e_value,
              bit_score)};
 
-    { v.read(stream,
-             options,
+    { v.read(options,
              std::ignore,
              header,
              std::ignore,
@@ -121,14 +117,13 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
  * \{
  */
 
-/*!\fn void read(stream_type & stream, alignment_file_input_options<seq_legal_alph_type> const & options,
+/*!\fn void read(alignment_file_input_options<seq_legal_alph_type> const & options,
  *               ref_seqs_type & ref_seqs, header_type & header,
  *               seq_type & seq, qual_type & qual, id_type & id, offset_type & offset, ref_seq_type & ref_seq,
  *               ref_id_type & ref_id, ref_offset_type & ref_offset, align_type & align, flag_type & flag,
  *               mapq_type & mapq, mate_type & mate, tag_dict_type & tag_dict, e_value_type & e_value,
  *               bit_score_type & bit_score)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \tparam stream_type        The input stream type; Must be derived from std::ostream.
  * \tparam ref_seqs_type      e.g. std::deque<ref_sequence_type> or decltype(std::ignore).
  * \tparam seq_type           Type of the seqan3::field::SEQ input (see seqan3::AlignmentFileInputTraits).
  * \tparam qual_type          Type of the seqan3::field::QUAL input (see seqan3::AlignmentFileInputTraits).
@@ -145,7 +140,6 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
  * \tparam e_value_type       Type of the seqan3::field::EVALUE input (see seqan3::AlignmentFileInputTraits).
  * \tparam bit_score_type     Type of the seqan3::field::BIT_SCORE input (see seqan3::AlignmentFileInputTraits).
  *
- * \param[in,out] stream      The input stream to read from.
  * \param[in]     options     File specific options passed to the format.
  * \param[out]    ref_seqs    The reference sequences to the corresponding alignments.
  * \param[out]    header      A pointer to the seqan3::alignment_file_header object.
@@ -169,7 +163,7 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
  * ### Additional requirements
  *
  *   * The function must also accept std::ignore as parameter for any of the fields,
- *     except stream, options and header. [This is enforced by the concept checker!]
+ *     except options and header. [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  */
  /*!\var static inline std::vector<std::string> seqan3::AlignmentFileInputFormat::file_extensions

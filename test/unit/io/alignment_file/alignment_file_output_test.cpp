@@ -519,15 +519,15 @@ read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
 read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
 read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )";
+    std::ostringstream os{};
 
     alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, format_sam{}};
-    alignment_file_output fout{std::ostringstream{}, format_sam{}};
+    alignment_file_output fout{os, format_sam{}};
 
     fin | fout;
 
-    fout.get_stream().flush();
-
-    EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), comp);
+    os.flush();
+    EXPECT_EQ(os.str(), comp);
 }
 
 TEST(rows, write_bam_file)
@@ -553,14 +553,15 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
         fin | fout;
     }
 
+    std::ostringstream os{};
+
     alignment_file_input fin2{filename.get_path(), ref_ids, ref_seqs};
-    alignment_file_output fout2{std::ostringstream{}, format_sam{}};
+    alignment_file_output fout2{os, format_sam{}};
 
     fin2 | fout2;
 
-    fout2.get_stream().flush();
-
-    EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout2.get_stream()).str(), comp);
+    os.flush();
+    EXPECT_EQ(os.str(), comp);
 }
 
 TEST(rows, convert_sam_to_blast)

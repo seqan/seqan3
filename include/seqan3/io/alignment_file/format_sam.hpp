@@ -140,10 +140,12 @@ struct format_sam
 namespace seqan3::detail
 {
 
-//!\brief The seqan3::alignment_file_input_format specialisation that handles formatted SAM input.
-//!\ingroup alignment_file
-template <>
-class alignment_file_input_format<format_sam>
+/*!\brief The seqan3::alignment_file_input_format specialisation that handles formatted SAM input.
+ * \ingroup alignment_file
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class alignment_file_input_format<format_sam, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with
@@ -152,7 +154,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    alignment_file_input_format()                                                noexcept = default; //!< Defaulted.
+    alignment_file_input_format()                                                         = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     alignment_file_input_format(alignment_file_input_format const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
@@ -160,11 +162,14 @@ public:
     alignment_file_input_format(alignment_file_input_format &&)                  noexcept = default; //!< Defaulted.
     alignment_file_input_format & operator=(alignment_file_input_format &&)      noexcept = default; //!< Defaulted.
     ~alignment_file_input_format()                                               noexcept = default; //!< Defaulted.
+
+    alignment_file_input_format(std::basic_istream<stream_char_type> & stream) :
+        stream_view{view::istreambuf(stream)}
+    {}
     //!\}
 
     //!\copydoc AlignmentFileInputFormat::read
-    template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type,
+    template <typename seq_legal_alph_type,
               typename ref_seqs_type,
               typename ref_ids_type,
               typename seq_type,
@@ -181,8 +186,7 @@ public:
               typename tag_dict_type,
               typename e_value_type,
               typename bit_score_type>
-    void read(stream_type                                             & stream,
-              alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
+    bool read(alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
               ref_seqs_type                                           & ref_seqs,
               alignment_file_header<ref_ids_type>                     & header,
               seq_type                                                & seq,
@@ -204,7 +208,9 @@ public:
                       detail::is_type_specialisation_of_v<ref_offset_type, std::optional>,
                       "The ref_offset must be a specialisation of std::optional.");
 
-        auto stream_view = view::istreambuf(stream);
+        if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // file has no records
+            return true;
+
         auto field_view = stream_view | view::take_until_or_throw_and_consume(is_char<'\t'>);
 
         // these variables need to be stored to compute the ALIGNMENT
@@ -222,7 +228,7 @@ public:
             read_header(stream_view, header, ref_seqs);
 
             if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // file has no records
-                return;
+                return true;
         }
 
         // Fields 1-5: ID FLAG REF_ID REF_OFFSET MAPQ
@@ -415,10 +421,15 @@ public:
 
             construct_alignment(align, cigar, ref_idx, ref_seqs, ref_offset_tmp, ref_length);
         }
+
+        return false;
     }
 
 protected:
     //!\privatesection
+    //!\brief A view over the file stream.
+    decltype(view::istreambuf(std::declval<std::basic_istream<stream_char_type> &>())) stream_view{};
+
     //!\brief A buffer used when parsing arithmetic values with std::from_chars.
     std::array<char, 316> buffer{}; // Doubles can be up to 316 characters
 
@@ -956,10 +967,12 @@ protected:
     }
 };
 
-//!\brief The seqan3::alignment_file_output_format specialisation that can write formatted SAM.
-//!\ingroup alignment_file
-template <>
-class alignment_file_output_format<format_sam>
+/*!\brief The seqan3::alignment_file_output_format specialisation that can write formatted SAM.
+ * \ingroup alignment_file
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class alignment_file_output_format<format_sam, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with
@@ -976,11 +989,15 @@ public:
     alignment_file_output_format(alignment_file_output_format &&)                  noexcept = default; //!< Defaulted.
     alignment_file_output_format & operator=(alignment_file_output_format &&)      noexcept = default; //!< Defaulted.
     ~alignment_file_output_format()                                                noexcept = default; //!< Defaulted.
+
+    //!\brief Construct from an output stream to write to.
+    alignment_file_output_format(std::basic_ostream<stream_char_type> & stream) :
+        stream_it{stream}
+    {}
     //!\}
 
     //!\copydoc AlignmentFileOutputFormat::write
-    template <typename stream_type,
-              typename header_type,
+    template <typename header_type,
               typename seq_type,
               typename id_type,
               typename ref_seq_type,
@@ -991,8 +1008,7 @@ public:
               typename tag_dict_type,
               typename e_value_type,
               typename bit_score_type>
-    void write(stream_type                            &  stream,
-               alignment_file_output_options const    &  options,
+    void write(alignment_file_output_options const    &  options,
                header_type                            && header,
                seq_type                               && seq,
                qual_type                              && qual,
@@ -1016,7 +1032,7 @@ public:
          * - Arithmetic values default to 0 while all others default to '*'
          *
          * - Because of the former, arithmetic values can be directly streamed
-         *   into 'stream' as operator<< is defined for all arithmetic types
+         *   into '*stream_ptr' as operator<< is defined for all arithmetic types
          *   and the default value (0) is also the SAM default.
          *
          * - All other non-arithmetic values need to be checked for emptiness
@@ -1135,7 +1151,7 @@ public:
         {
             if (options.sam_require_header && !written_header)
             {
-                write_header(stream, options, header);
+                write_header(options, header);
                 written_header = true;
             }
         }
@@ -1143,44 +1159,45 @@ public:
         // ---------------------------------------------------------------------
         // Writing the Record
         // ---------------------------------------------------------------------
-        seqan3::ostreambuf_iterator stream_it{stream};
         char const separator{'\t'};
 
-        write_range(stream_it, std::forward<id_type>(id));
+        write_range(std::forward<id_type>(id));
+        stream_it = separator;
 
-        stream << separator;
-
-        stream << flag << separator;
+        write_field(flag);
+        stream_it = separator;
 
         if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
         {
             if constexpr (std::Integral<std::remove_reference_t<ref_id_type>>)
             {
-                write_range(stream_it, (header.ref_ids())[ref_id]);
+                write_range((header.ref_ids())[ref_id]);
             }
             else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
             {
                 if (ref_id.has_value())
-                    write_range(stream_it, (header.ref_ids())[ref_id.value()]);
+                    write_range((header.ref_ids())[ref_id.value()]);
                 else
-                    stream << '*';
+                    stream_it = '*';
             }
             else
             {
-                write_range(stream_it, std::forward<ref_id_type>(ref_id));
+                write_range(std::forward<ref_id_type>(ref_id));
             }
         }
         else
         {
-            stream << '*';
+            stream_it = '*';
         }
 
-        stream << separator;
+        stream_it = separator;
 
         // SAM is 1 based, 0 indicates unmapped read if optional is not set
-        stream << (ref_offset.value_or(-1) + 1) << separator;
+        write_field((ref_offset.value_or(-1) + 1));
+        stream_it = separator;
 
-        stream << static_cast<unsigned>(mapq) << separator;
+        write_field(mapq);
+        stream_it = separator;
 
         if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
         {
@@ -1194,77 +1211,77 @@ public:
                     ++off_end;
             off_end -= std::ranges::size(get<1>(align));
 
-            write_range(stream_it, detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));
+            write_range(detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));
         }
         else
         {
-            stream << '*';
+            stream_it = '*';
         }
 
-        stream << separator;
+        stream_it = separator;
 
         if constexpr (std::Integral<std::remove_reference_t<decltype(get<0>(mate))>>)
         {
-            write_range(stream_it, (header.ref_ids())[get<0>(mate)]);
+            write_range((header.ref_ids())[get<0>(mate)]);
         }
         else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<decltype(get<0>(mate))>, std::optional>)
         {
             if (get<0>(mate).has_value())
                 // value_or(0) instead of value() (which is equivalent here) as a
                 // workaround for a ubsan false-positive in GCC8: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90058
-                write_range(stream_it, header.ref_ids()[get<0>(mate).value_or(0)]);
+                write_range(header.ref_ids()[get<0>(mate).value_or(0)]);
             else
-                stream << '*';
+                stream_it = '*';
         }
         else
         {
-            write_range(stream_it, get<0>(mate));
+            write_range(get<0>(mate));
         }
 
-        stream << separator;
+        stream_it = separator;
 
         if constexpr (detail::is_type_specialisation_of_v<remove_cvref_t<decltype(get<1>(mate))>, std::optional>)
         {
             // SAM is 1 based, 0 indicates unmapped read if optional is not set
-            stream << (get<1>(mate).value_or(-1) + 1) << separator;
+            write_field((get<1>(mate).value_or(-1) + 1));
         }
         else
         {
-            stream << get<1>(mate) << separator;
+            write_field(get<1>(mate));
         }
+        stream_it = separator;
 
-        stream << get<2>(mate) << separator;
+        write_field(get<2>(mate));
+        stream_it = separator;
 
-        write_range(stream_it, std::forward<seq_type>(seq));
+        write_range(std::forward<seq_type>(seq));
 
-        stream << separator;
+        stream_it = separator;
 
-        write_range(stream_it, std::forward<qual_type>(qual));
+        write_range(std::forward<qual_type>(qual));
 
-        write_tag_fields(stream, std::forward<tag_dict_type>(tag_dict), separator);
+        write_tag_fields(std::forward<tag_dict_type>(tag_dict), separator);
 
         detail::write_eol(stream_it, options.add_carriage_return);
     }
 
 protected:
     //!\privatesection
+    //!\brief An ostreambuf iterator to the output stream to write to.
+    seqan3::ostreambuf_iterator<stream_char_type> stream_it{};
     //!\brief The format version string.
     static constexpr char format_version[4] = "1.6";
+    //!\brief A buffer used when parsing arithmetic values with std::from_chars.
+    std::array<char, 316> buffer{}; // Doubles can be up to 316 characters
     //!\brief A variable that tracks whether the content of header has been written or not.
     bool written_header{false};
 
     /*!\brief Writes a field value to the stream.
-     * \tparam stream_it_t The stream iterator type.
      * \tparam field_type  The type of the field value. Must model std::ranges::ForwardRange.
-     *
-     * \param[in,out] stream_it   The stream iterator to print to.
      * \param[in]     field_value The value to print.
      */
-    template <typename stream_it_t, typename field_type>
-    //!\cond
-        requires std::ranges::ForwardRange<field_type>
-    //!\endcond
-    void write_range(stream_it_t & stream_it, field_type && field_value)
+    template <std::ranges::ForwardRange field_type>
+    void write_range(field_type && field_value)
     {
         if (std::ranges::empty(field_value))
             stream_it = '*';
@@ -1273,49 +1290,44 @@ protected:
     }
 
     /*!\brief Writes a field value to the stream.
-     * \tparam stream_it_t The stream iterator type.
-     *
-     * \param[in,out] stream_it   The stream iterator to print to.
      * \param[in]     field_value The value to print.
      */
-    template <typename stream_it_t>
-    void write_range(stream_it_t & stream_it, char const * const field_value)
+    void write_range(char const * const field_value)
     {
-        write_range(stream_it, std::string_view{field_value});
+        write_range(std::string_view{field_value});
     }
 
     /*!\brief Writes a field value to the stream.
-     * \tparam stream_t           The stream type.
-     * \param[in,out] stream      The stream to print to.
      * \param[in]     field_value The value to print.
      */
-    template <typename stream_t, Arithmetic field_type>
-    void write_field(stream_t & stream, field_type field_value)
+    template <Arithmetic field_type>
+    void write_field(field_type field_value)
     {
-        // TODO: replace this with to_chars for efficiency
-        if constexpr (std::Same<field_type, int8_t> || std::Same<field_type, uint8_t>)
-            stream << static_cast<int16_t>(field_value);
-        else
-            stream << field_value;
+        auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), field_value);
+        std::ranges::copy(buffer.data(), res.ptr, stream_it);
     }
 
     /*!\brief Writes the optional fields of the seqan3::sam_tag_dictionary.
-     * \tparam stream_t   The stream type.
-     *
-     * \param[in,out] stream    The stream to print to.
      * \param[in]     tag_dict  The tag dictionary to print.
      * \param[in]     separator The field separator to append.
      */
-    template <typename stream_t>
-    void write_tag_fields(stream_t & stream, sam_tag_dictionary const & tag_dict, char const separator)
+    void write_tag_fields(sam_tag_dictionary const & tag_dict, char const separator)
     {
-        auto stream_variant_fn = [this, &stream] (auto && arg) // helper to print an std::variant
+        auto stream_variant_fn = [this] (auto && arg) // helper to print an std::variant
         {
             using T = remove_cvref_t<decltype(arg)>;
 
-            if constexpr (!Container<T> || std::Same<T, std::string>)
+            if constexpr (std::Same<T, char>)
             {
-                stream << arg;
+                stream_it = arg;
+            }
+            else if constexpr (std::Same<T, std::string>)
+            {
+                std::ranges::copy(arg, stream_it);
+            }
+            else if constexpr (!Container<T>)
+            {
+                write_field(arg);
             }
             else
             {
@@ -1323,35 +1335,36 @@ protected:
                 {
                     for (auto it = arg.begin(); it != (arg.end() - 1); ++it)
                     {
-                        write_field(stream, *it);
-                        stream << ',';
+                        write_field(*it);
+                        stream_it = ',';
                     }
 
-                    write_field(stream, *(arg.end() - 1)); // write last value without trailing ','
+                    write_field(*(arg.end() - 1)); // write last value without trailing ','
                 }
             }
         };
 
         for (auto & [tag, variant] : tag_dict)
         {
-            stream << separator;
+            stream_it = separator;
 
-            char char0 = tag / 256;
-            char char1 = tag % 256;
-
-            stream << char0 << char1 << ':' << detail::sam_tag_type_char[variant.index()] << ':';
+            stream_it = tag / 256;
+            stream_it = tag % 256;
+            stream_it = ':';
+            stream_it = detail::sam_tag_type_char[variant.index()];
+            stream_it = ':';
 
             if (detail::sam_tag_type_char_extra[variant.index()] != '\0')
-                stream << detail::sam_tag_type_char_extra[variant.index()] << ',';
+            {
+                stream_it = detail::sam_tag_type_char_extra[variant.index()];
+                stream_it = ',';
+            }
 
             std::visit(stream_variant_fn, variant);
         }
     }
 
     /*!\brief Writes the SAM header.
-     * \tparam stream_t   The stream type.
-     *
-     * \param[in,out] stream  The stream to print to.
      * \param[in]     options The options to alter printing.
      * \param[in]     header  The header to print.
      *
@@ -1364,10 +1377,8 @@ protected:
      * according to the rules of the official
      * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
      */
-    template <typename stream_t, typename ref_ids_type>
-    void write_header(stream_t & stream,
-                      alignment_file_output_options const & options,
-                      alignment_file_header<ref_ids_type> & header)
+    template <typename ref_ids_type>
+    void write_header(alignment_file_output_options const & options, alignment_file_header<ref_ids_type> & header)
     {
         // -----------------------------------------------------------------
         // Check Header
@@ -1404,34 +1415,32 @@ protected:
         // -----------------------------------------------------------------
         // Write Header
         // -----------------------------------------------------------------
-        seqan3::ostreambuf_iterator stream_it{stream};
-
         // (@HD) Write header line [required].
-        stream << "@HD\tVN:";
-        stream << format_sam::format_version;
+        std::ranges::copy(std::string_view{"@HD\tVN:"}, stream_it);
+        std::ranges::copy(std::string_view{format_sam::format_version}, stream_it);
 
         if (!header.sorting.empty())
-            stream << "\tSO:" << header.sorting;
+            std::ranges::copy("\tSO:" + header.sorting, stream_it);
 
         if (!header.subsorting.empty())
-            stream << "\tSS:" << header.subsorting;
+            std::ranges::copy("\tSS:" + header.subsorting, stream_it);
 
         if (!header.grouping.empty())
-            stream << "\tGO:" << header.grouping;
+            std::ranges::copy("\tGO:" + header.grouping, stream_it);
 
         detail::write_eol(stream_it, options.add_carriage_return);
 
         // (@SQ) Write Reference Sequence Dictionary lines [required].
         for (auto const & [ref_name, ref_info] : std::view::zip(header.ref_ids(), header.ref_id_info))
         {
-            stream << "@SQ\tSN:";
-
+            std::ranges::copy(std::string_view{"@SQ\tSN:"}, stream_it);
             std::ranges::copy(ref_name, stream_it);
 
-            stream << "\tLN:" << get<0>(ref_info);
+            std::ranges::copy(std::string_view{"\tLN:"}, stream_it);
+            write_field(get<0>(ref_info));
 
             if (!get<1>(ref_info).empty())
-                stream << "\t" << get<1>(ref_info);
+                std::ranges::copy("\t" + get<1>(ref_info), stream_it);
 
             detail::write_eol(stream_it, options.add_carriage_return);
         }
@@ -1439,11 +1448,11 @@ protected:
         // Write read group (@RG) lines if specified.
         for (auto const & read_group : header.read_groups)
         {
-            stream << "@RG"
-                   << "\tID:" << get<0>(read_group);
+            std::ranges::copy(std::string_view{"@RG\tID:"}, stream_it);
+            std::ranges::copy(get<0>(read_group), stream_it);
 
             if (!get<1>(read_group).empty())
-                stream << "\t" << get<1>(read_group);
+                std::ranges::copy("\t" + get<1>(read_group), stream_it);
 
             detail::write_eol(stream_it, options.add_carriage_return);
         }
@@ -1451,23 +1460,23 @@ protected:
         // Write program (@PG) lines if specified.
         for (auto const & program : header.program_infos)
         {
-            stream << "@PG"
-                   << "\tID:" << program.id;
+            std::ranges::copy(std::string_view{"@PG\tID:"}, stream_it);
+            std::ranges::copy(program.id, stream_it);
 
             if (!program.name.empty())
-                stream << "\tPN:" << program.name;
+                std::ranges::copy("\tPN:" + program.name, stream_it);
 
             if (!program.command_line_call.empty())
-                stream << "\tCL:" << program.command_line_call;
+                std::ranges::copy("\tCL:" + program.command_line_call, stream_it);
 
             if (!program.previous.empty())
-                stream << "\tPP:" << program.previous;
+                std::ranges::copy("\tPP:" + program.previous, stream_it);
 
             if (!program.description.empty())
-                stream << "\tDS:" << program.description;
+                std::ranges::copy("\tDS:" + program.description, stream_it);
 
             if (!program.version.empty())
-                stream << "\tVN:" << program.version;
+                std::ranges::copy("\tVN:" + program.version, stream_it);
 
             detail::write_eol(stream_it, options.add_carriage_return);
         }
@@ -1475,7 +1484,8 @@ protected:
         // Write comment (@CO) lines if specified.
         for (auto const & comment : header.comments)
         {
-            stream << "@CO\t" << comment;
+            std::ranges::copy(std::string_view{"@CO\t"}, stream_it);
+            std::ranges::copy(comment, stream_it);
             detail::write_eol(stream_it, options.add_carriage_return);
         }
     }

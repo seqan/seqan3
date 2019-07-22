@@ -86,10 +86,12 @@ struct format_embl
 namespace seqan3::detail
 {
 
-//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted EMBL input.
-//!\ingroup sequence
-template <>
-class sequence_file_input_format<format_embl>
+/*!\brief The seqan3::sequence_file_input_format specialisation that handles formatted EMBL input.
+ * \ingroup sequence
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class sequence_file_input_format<format_embl, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -98,7 +100,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    sequence_file_input_format()                                                        = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     sequence_file_input_format(sequence_file_input_format const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
@@ -106,21 +108,26 @@ public:
     sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
     sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
     ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
+
+    //!\brief Construct the format given an input stream to read from.
+    sequence_file_input_format(std::basic_istream<stream_char_type> & stream) :
+        stream_view{view::istreambuf(stream)}
+    {}
     //!\}
 
     //!\copydoc SequenceFileInputFormat::read
-    template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type, bool seq_qual_combined,
-              typename seq_type,        // other constraints checked inside function
+    template <typename seq_legal_alph_type, bool seq_qual_combined,
+              typename seq_type,        // constraints checked by file, other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void read(stream_type                                                               & stream,
-              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
+    bool read(sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
               seq_type                                                                  & sequence,
               id_type                                                                   & id,
               qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = view::istreambuf(stream);
+        if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // file has no records any more
+            return true;
+
         auto stream_it = std::ranges::begin(stream_view);
 
         std::string idbuffer;
@@ -207,13 +214,22 @@ public:
         ++stream_it;
         ++stream_it;
         ++stream_it;
+
+        return false;
     }
+
+private:
+    //!\privatesection
+    //!\brief A view over the file stream.
+    decltype(view::istreambuf(std::declval<std::basic_istream<stream_char_type> &>())) stream_view{};
 };
 
-//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted EMBL.
-//!\ingroup sequence
-template <>
-class sequence_file_output_format<format_embl>
+/*!\brief The seqan3::sequence_file_output_format specialisation that can write formatted EMBL.
+ * \ingroup sequence
+ * \tparam stream_char_type The underlying character type of the stream (usually `char`).
+ */
+template <typename stream_char_type>
+class sequence_file_output_format<format_embl, stream_char_type>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -230,20 +246,22 @@ public:
     sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
     sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
     ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+
+    //!\brief Construct from an output stream to write to.
+    sequence_file_output_format(std::basic_ostream<stream_char_type> & stream) :
+        stream_it{stream}
+    {}
     //!\}
 
     //!\copydoc SequenceFileOutputFormat::write
-    template <typename stream_type,     // constraints checked by file
-              typename seq_type,        // other constraints checked inside function
+    template <typename seq_type,        // constraints checked by file, other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void write(stream_type                          & stream,
-               sequence_file_output_options const   & options,
+    void write(sequence_file_output_options const   & options,
                seq_type                             && sequence,
                id_type                              && id,
                qual_type                            && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        seqan3::ostreambuf_iterator stream_it{stream};
         [[maybe_unused]] size_t sequence_size = 0;
         [[maybe_unused]] char buffer[50];
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
@@ -310,6 +328,11 @@ public:
             stream_it = '\n';
         }
     }
+
+private:
+    //!\privatesection
+    //!\brief An ostreambuf iterator to the output stream to write to.
+    seqan3::ostreambuf_iterator<stream_char_type> stream_it{};
 };
 
 } // namespace seqan3::detail
