@@ -299,19 +299,16 @@ template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range qu
  * \param[in]  cigar_input  The single pass input view over the cigar string to parse.
  *
  * \returns A tuple of size five containing (1) std::vector over seqan3::cigar, that describes
- *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length, (4) The number of
- *          soft clipped bases at the start of the alignment and (5) the number of bases at the end of the alignment.
+ *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length.
  *
  * \details
  *
- * For example, the view over the cigar string "1S4M1D2M2S" will return `{[(M,4), (D,1), (M,2)], 7, 6, 1, 2}`.
+ * For example, the view over the cigar string "1H4M1D2M2S" will return `{[(H,1), (M,4), (D,1), (M,2), (S,2)], 7, 6}`.
  */
 template <std::ranges::input_range cigar_input_type>
-std::tuple<std::vector<cigar>, size_t, size_t, size_t, size_t> parse_cigar(cigar_input_type && cigar_input)
+std::tuple<std::vector<cigar>, size_t, size_t> parse_cigar(cigar_input_type && cigar_input)
 {
     std::vector<cigar> operations{};
-    size_t sc_begin_count{}; // number of soft clipped bases at the beginning
-    size_t sc_end_count{};   // number of soft clipped bases at the end
     std::array<char, 20> buffer{}; // buffer to parse numbers with from_chars. Biggest number should fit in uint64_t
     char cigar_operation{'\0'};
     uint32_t cigar_count{};
@@ -332,9 +329,9 @@ std::tuple<std::vector<cigar>, size_t, size_t, size_t, size_t> parse_cigar(cigar
             {
                 seq_length += cigar_count;
             }
-            else if (is_char<'P'>(cigar_operation))
+            else if (is_char<'H'>(cigar_operation) || is_char<'S'>(cigar_operation) || is_char<'P'>(cigar_operation))
             {
-                // no op (padding does not increase either length)
+                // no op (soft clipping or padding does not increase either length)
             }
             else // illegal character
             {
@@ -345,58 +342,22 @@ std::tuple<std::vector<cigar>, size_t, size_t, size_t, size_t> parse_cigar(cigar
     // transform input into a signle input view if it isn't already
     auto cigar_view = cigar_input | views::single_pass_input;
 
-    // check hard/soft clipping at the beginning manually
-    // -----------------------------------------------------------------------------------------------------------------
-    auto [ignore, buffer_end] = std::ranges::copy(cigar_view | views::take_until_or_throw(!is_digit), buffer.data());
-    (void) ignore;
-
-    cigar_operation = *std::ranges::begin(cigar_view);
-    std::ranges::next(std::ranges::begin(cigar_view));
-
-    if (is_char<'H'>(cigar_operation)) // hard clipping is ignored. parse the next operation
-    {
-        auto [ignore2, buffer_end2] = std::ranges::copy(cigar_view
-                                                        | views::take_until_or_throw(!is_digit), buffer.data());
-        buffer_end = buffer_end2;
-        (void) ignore2;
-
-        cigar_operation = *std::ranges::begin(cigar_view);
-        std::ranges::next(std::ranges::begin(cigar_view));
-    }
-
-    if (std::from_chars(buffer.begin(), buffer_end, cigar_count).ec != std::errc{})
-        throw format_error{"Corrupted cigar string encountered"};
-
-    if (is_char<'S'>(cigar_operation)) // check for soft clipping at the beginning
-    {
-        sc_begin_count = cigar_count;
-    }
-    else
-    {
-        update_lengths_fn();
-        operations.emplace_back(cigar_count, cigar_op{}.assign_char(cigar_operation));
-    }
-
     // parse the rest of the cigar
     // -----------------------------------------------------------------------------------------------------------------
     while (std::ranges::begin(cigar_view) != std::ranges::end(cigar_view)) // until stream is not empty
     {
-        buffer_end = (std::ranges::copy(cigar_view | views::take_until_or_throw(!is_digit), buffer.data())).out;
+        auto buffer_end = (std::ranges::copy(cigar_view | views::take_until_or_throw(!is_digit), buffer.data())).out;
         cigar_operation = *std::ranges::begin(cigar_view);
         std::ranges::next(std::ranges::begin(cigar_view));
 
         if (std::from_chars(buffer.begin(), buffer_end, cigar_count).ec != std::errc{})
             throw format_error{"Corrupted cigar string encountered"};
 
-        if (is_char<'S'>(cigar_operation)) // we are at the end, hard clipping afterwards can be ignored
-        {
-            sc_end_count = cigar_count;
-            return {operations, ref_length, seq_length, sc_begin_count, sc_end_count};
-        }
         update_lengths_fn();
         operations.emplace_back(cigar_count, cigar_op{}.assign_char(cigar_operation));
     }
-    return {operations, ref_length, seq_length, sc_begin_count, sc_end_count};
+
+    return {operations, ref_length, seq_length};
 }
 
 /*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
@@ -407,19 +368,16 @@ std::tuple<std::vector<cigar>, size_t, size_t, size_t, size_t> parse_cigar(cigar
  * \param[in]  n_cigar_op   number of cigar operations to expect in the input.
  *
  * \returns A tuple of size five containing (1) std::vector over seqan3::cigar, that describes
- *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length, (4) The number of
- *          soft clipped bases at the start of the alignment and (5) at the end of the alignment.
+ *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length.
  *
  * \details
  *
- * For example, the view over the cigar string "1S4M1D2M2S" will return `{[(M,4), (D,1), (M,2)], 7, 6, 1, 2}`.
+ * For example, the view over the cigar string "1H4M1D2M2S" will return `{[(H,1), (M,4), (D,1), (M,2), (S,2)], 7, 6}`.
  */
 template <std::ranges::input_range cigar_input_type>
 inline auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op)
 {
     std::vector<cigar> operations{};
-    size_t sc_begin_count{}; // number of soft clipped bases at the beginning
-    size_t sc_end_count{};   // number of soft clipped bases at the end
     char cigar_operation{'\0'};
     uint32_t cigar_count{};
     size_t ref_length{}, seq_length{};
@@ -442,7 +400,7 @@ inline auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar
             {
                 seq_length += cigar_count;
             }
-            else if (is_char<'P'>(cigar_operation))
+            else if (is_char<'H'>(cigar_operation) || is_char<'S'>(cigar_operation) || is_char<'P'>(cigar_operation))
             {
                 // no op (padding does not increase either length)
             }
@@ -453,33 +411,7 @@ inline auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar
         };
 
     if (n_cigar_op == 0) // [[unlikely]]
-        return std::tuple{operations, ref_length, seq_length, sc_begin_count, sc_end_count};
-
-    std::ranges::copy_n(std::ranges::begin(cigar_input), sizeof(o_and_c), reinterpret_cast<char*>(&o_and_c));
-    cigar_operation = CIGAR_MAPPING[o_and_c & CIGAR_MASK];
-    cigar_count = o_and_c >> 4;
-    --n_cigar_op;
-
-    if (is_char<'H'>(cigar_operation)) // hard clipping is ignored. parse the next operation
-    {
-        if (n_cigar_op == 0)
-            return std::tuple{operations, ref_length, seq_length, sc_begin_count, sc_end_count};
-
-        std::ranges::copy_n(std::ranges::begin(cigar_input), sizeof(o_and_c), reinterpret_cast<char*>(&o_and_c));
-        cigar_operation = CIGAR_MAPPING[o_and_c & CIGAR_MASK];
-        cigar_count = o_and_c >> 4;
-        --n_cigar_op;
-    }
-
-    if (is_char<'S'>(cigar_operation)) // check for soft clipping at the beginning
-    {
-        sc_begin_count = cigar_count;
-    }
-    else
-    {
-        update_lengths_fn();
-        operations.emplace_back(cigar_count, cigar_op{}.assign_char(cigar_operation));
-    }
+        return std::tuple{operations, ref_length, seq_length};
 
     // parse the rest of the cigar
     // -----------------------------------------------------------------------------------------------------------------
@@ -489,17 +421,12 @@ inline auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar
         cigar_operation = CIGAR_MAPPING[o_and_c & CIGAR_MASK];
         cigar_count = o_and_c >> 4;
 
-        if (is_char<'S'>(cigar_operation)) // we are at the end, hard clipping afterwards can be ignored
-        {
-            sc_end_count = cigar_count;
-            return std::tuple{operations, ref_length, seq_length, sc_begin_count, sc_end_count};
-        }
-
         update_lengths_fn();
         operations.emplace_back(cigar_count, cigar_op{}.assign_char(cigar_operation));
         --n_cigar_op;
     }
-    return std::tuple{operations, ref_length, seq_length, sc_begin_count, sc_end_count};
+
+    return std::tuple{operations, ref_length, seq_length};
 }
 
 /*!\brief Transforms a std::vector of operation-count pairs (representing the cigar string).
@@ -538,6 +465,10 @@ inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> 
 
     for (auto [cigar_count, cigar_operation] : cigar_vector)
     {
+        // ignore since alignment shall contain sliced sequences
+        if (('S'_cigar_op == cigar_operation) || ('H'_cigar_op == cigar_operation))
+            continue;
+
         assert(('M'_cigar_op == cigar_operation) || ('='_cigar_op == cigar_operation) ||
                ('X'_cigar_op == cigar_operation) || ('D'_cigar_op == cigar_operation) ||
                ('N'_cigar_op == cigar_operation) || ('I'_cigar_op == cigar_operation) ||

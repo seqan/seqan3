@@ -265,8 +265,8 @@ public:
         // -------------------------------------------------------------------------------------------------------------
         if constexpr (!detail::decays_to_ignore_v<align_type>)
         {
-            std::tie(cigar_vector, ref_length, seq_length, offset_tmp, soft_clipping_end) =
-                detail::parse_binary_cigar(stream_view, core.n_cigar_op);
+            std::tie(cigar_vector, ref_length, seq_length) = detail::parse_binary_cigar(stream_view, core.n_cigar_op);
+            transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
         }
         else
         {
@@ -410,8 +410,10 @@ public:
                                        "record.")};
 
                     auto cigar_view = std::views::all(std::get<std::string>(it->second));
-                    std::tie(cigar_vector, ref_length, seq_length, offset_tmp, soft_clipping_end) =
-                        detail::parse_cigar(cigar_view);
+                    std::tie(cigar_vector, ref_length, seq_length) = detail::parse_cigar(cigar_view);
+                    offset_tmp = 0, soft_clipping_end = 0;
+                    transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
+
                     assign_unaligned(get<1>(align),
                                      seq | views::slice(static_cast<decltype(std::ranges::distance(seq))>(offset_tmp),
                                                        std::ranges::distance(seq) - soft_clipping_end));

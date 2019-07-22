@@ -254,7 +254,8 @@ public:
         {
             if (!is_char<'*'>(*std::ranges::begin(stream_view))) // no cigar information given
             {
-                std::tie(cigar_vector, ref_length, seq_length, offset_tmp, soft_clipping_end) = parse_cigar(field_view);
+                std::tie(cigar_vector, ref_length, seq_length) = parse_cigar(field_view);
+                transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
             }
             else
             {
@@ -476,6 +477,26 @@ protected:
                 ref_id = search->second;
             }
         }
+    }
+
+    /*!\brief Transfer soft clipping information from the \p cigar_vector to \p sc_begin and \p sc_end.
+     * \param[in] cigar_vector The cigar information to parse for soft-clipping.
+     * \param[in,out] sc_begin The soft clipping at the beginning of the alignment to set.
+     * \param[in,out] sc_end   The soft clipping at the end of the alignment to set.
+     */
+    void transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector, int32_t & sc_begin, int32_t & sc_end) const
+    {
+        // check for soft clipping at the first two positions
+        if (!cigar_vector.empty() && 'S'_cigar_op == cigar_vector[0])
+            sc_begin = get<0>(cigar_vector[0]);
+        else if (cigar_vector.size() > 1 && 'S'_cigar_op == cigar_vector[1])
+            sc_begin = get<0>(cigar_vector[1]);
+
+        // check for soft clipping at the last two positions
+        if (cigar_vector.size() > 1 && 'S'_cigar_op == cigar_vector[cigar_vector.size() - 1])
+            sc_end = get<0>(cigar_vector[cigar_vector.size() - 1]);
+        else if (cigar_vector.size() > 2 && 'S'_cigar_op == cigar_vector[cigar_vector.size() - 2])
+            sc_end = get<0>(cigar_vector[cigar_vector.size() - 2]);
     }
 
     /*!\brief Construct the field::ALIGNMENT depending on the given information.
