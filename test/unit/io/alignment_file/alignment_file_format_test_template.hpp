@@ -332,6 +332,24 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
     }
 }
 
+TYPED_TEST_P(alignment_file_read, cigar_vector)
+{
+    std::vector<std::vector<cigar>> expected
+    {
+        {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op}},
+        {{1, 'H'_cigar_op}, {7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}},
+        {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'P'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op},
+         {1, 'M'_cigar_op}, {1, 'I'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}}
+    };
+
+    typename TestFixture::stream_type istream{this->simple_three_reads_input};
+    alignment_file_input fin{istream, TypeParam{}, fields<field::CIGAR>{}};
+
+    size_t i{0};
+    for (auto & [cigar_v] : fin)
+        EXPECT_EQ(cigar_v, expected[i++]);
+}
+
 TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_information)
 {
     {   // with reference information given
@@ -548,6 +566,7 @@ REGISTER_TYPED_TEST_CASE_P(alignment_file_read,
                            read_in_alignment_only_without_ref,
                            read_mate_but_not_ref_id_with_ref,
                            read_mate_but_not_ref_id_without_ref,
+                           cigar_vector,
                            format_error_ref_id_not_in_reference_information);
 
 REGISTER_TYPED_TEST_CASE_P(alignment_file_write,

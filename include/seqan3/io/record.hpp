@@ -56,6 +56,7 @@ namespace seqan3
  * | FLAG           |             |      ✅       |              |
  * | MATE           |             |      ✅       |              |
  * | MAPQ           |             |      ✅       |              |
+ * | CIGAR          |             |      ✅       |              |
  * | TAGS           |             |      ✅       |              |
  * | BIT_SCORE      |             |      ✅       |              |
  * | EVALUE         |             |      ✅       |              |
@@ -88,6 +89,7 @@ enum class field
     FLAG,           //!< The alignment flag (bit information), `uint16_t` value.
     MATE,           //!< The mate pair information given as a std::tuple of reference name, offset and template length.
     MAPQ,           //!< The mapping quality of the SEQ alignment, usually a ohred-scaled score.
+    CIGAR,          //!< The cigar vector (std::vector<seqan3::cigar>) representing the alignment in SAM/BAM format.
     TAGS,           //!< The optional tags in the SAM format, stored in a dictionary.
 
     BIT_SCORE,      //!< The bit score (statistical significance indicator), unsigned value.

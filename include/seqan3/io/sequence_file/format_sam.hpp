@@ -86,7 +86,7 @@ public:
         {
             tmp_qual.clear();
             align_format.read(stream, align_options, std::ignore, default_header, sequence, tmp_qual, id,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
+                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
                               std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
 
             for (auto sit = tmp_qual.begin(), dit = std::ranges::begin(sequence); sit != tmp_qual.end(); ++sit, ++dit)
@@ -95,7 +95,7 @@ public:
         else
         {
             align_format.read(stream, align_options, std::ignore, default_header, sequence, qualities, id,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
+                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
                               std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
         }
 

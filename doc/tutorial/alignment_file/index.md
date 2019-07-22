@@ -265,6 +265,13 @@ r004 mapped against 1 with 0 gaps in the read sequence and 0 gaps in the referen
 
 \endsolution
 
+## Reading the CIGAR string
+
+If you are accustomed to the raw CIGAR information, we also provide reading the cigar information into a
+`std::vector<seqan3::cigar>` if you specify the `seqan3::field::CIGAR`.
+
+\snippet doc/tutorial/alignment_file/alignment_file_read_cigar.cpp solution
+
 # Writing alignment files
 
 ## Writing records
