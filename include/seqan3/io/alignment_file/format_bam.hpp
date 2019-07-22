@@ -92,6 +92,9 @@ struct alignment_record_core
 template <>
 class alignment_file_input_format_REMOVEME<format_bam> : alignment_file_input_format_REMOVEME<format_sam>
 {
+private:
+    //!\brief The SAM format that this (BAM) format inherits from to reuse detail functions.
+    using sam_fmt = alignment_file_input_format_REMOVEME<format_sam>;
 public:
     //!\brief Exposes the format tag that this class is specialised with
     using format_tag = format_bam;
@@ -265,7 +268,7 @@ public:
         // -------------------------------------------------------------------------------------------------------------
         if constexpr (!detail::decays_to_ignore_v<align_type>)
         {
-            std::tie(cigar_vector, ref_length, seq_length) = detail::parse_binary_cigar(stream_view, core.n_cigar_op);
+            std::tie(cigar_vector, ref_length, seq_length) = parse_cigar(stream_view, core.n_cigar_op);
             transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
         }
         else
@@ -410,7 +413,7 @@ public:
                                        "record.")};
 
                     auto cigar_view = std::views::all(std::get<std::string>(it->second));
-                    std::tie(cigar_vector, ref_length, seq_length) = detail::parse_cigar(cigar_view);
+                    std::tie(cigar_vector, ref_length, seq_length) = sam_fmt::parse_cigar(cigar_view);
                     offset_tmp = 0, soft_clipping_end = 0;
                     transfer_soft_clipping_to(cigar_vector, offset_tmp, soft_clipping_end);
 
@@ -435,8 +438,54 @@ protected:
     //!\brief Local buffer to read into while avoiding reallocation.
     std::string string_buffer{};
 
+    /*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
+     * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
+     *                          std::ranges::input_range.
+     * \param[in] cigar_input The single pass input view over the cigar string to parse.
+     * \param[in] n_cigar_op  The number of cigar elements to read from the cigar_input.
+     *
+     * \returns A tuple of size three containing (1) std::vector over seqan3::cigar, that describes
+     *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length.
+     *
+     * \details
+     *
+     * For example, the view over the cigar string "1H4M1D2M2S" will return
+     * `{[(H,1), (M,4), (D,1), (M,2), (S,2)], 7, 6}`.
+     */
+    template <typename cigar_input_type>
+    [[nodiscard]] auto parse_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op) const
+    {
+        std::vector<cigar> operations{};
+        char operation{'\0'};
+        uint32_t count{};
+        int32_t ref_length{}, seq_length{};
+        uint32_t operation_and_count{}; // in BAM operation and count values are stored within one 32 bit integer
+        constexpr char const * cigar_mapping = "MIDNSHP=X*******";
+        constexpr uint32_t cigar_mask = 0x0f; // 0000000000001111
+
+        if (n_cigar_op == 0) // [[unlikely]]
+            return std::tuple{operations, ref_length, seq_length};
+
+        // parse the rest of the cigar
+        // -------------------------------------------------------------------------------------------------------------
+        while (n_cigar_op > 0) // until stream is not empty
+        {
+            std::ranges::copy_n(std::ranges::begin(cigar_input),
+                                sizeof(operation_and_count),
+                                reinterpret_cast<char*>(&operation_and_count));
+            operation = cigar_mapping[operation_and_count & cigar_mask];
+            count = operation_and_count >> 4;
+
+            update_alignment_lengths(ref_length, seq_length, operation, count);
+            operations.emplace_back(count, cigar_op{}.assign_char(operation));
+            --n_cigar_op;
+        }
+
+        return std::tuple{operations, ref_length, seq_length};
+    }
+
     // inherit read_field function from format_sam
-    using alignment_file_input_format_REMOVEME<format_sam>::read_field;
+    using sam_fmt::read_field;
 
     /*!\brief Reads a arithmetic field from binary stream by directly reinterpreting the bits.
      * \tparam stream_view_type  The type of the stream as a view.
