@@ -44,6 +44,7 @@ enum struct search_config_id : uint8_t
     max_error_rate,
     output,
     mode,
+    itv_threshold,
     //!\cond
     // ATTENTION: Must always be the last item; will be used to determine the number of ids.
     SIZE
@@ -69,11 +70,12 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(search_config_
                             static_cast<uint8_t>(search_config_id::SIZE)> compatibility_table<search_config_id> =
 {
     {
-        // max_error, max_error_rate, output, mode
-        { 0, 0, 1, 1 },
-        { 0, 0, 1, 1 },
-        { 1, 1, 0, 1 },
-        { 1, 1, 1, 0 }
+        // max_error, max_error_rate, output, mode, itv
+        { 0, 0, 1, 1, 1 },
+        { 0, 0, 1, 1, 1 },
+        { 1, 1, 0, 1, 1 },
+        { 1, 1, 1, 0, 1 },
+        { 1, 1, 1, 1, 0 }
     }
 };
 

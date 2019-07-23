@@ -19,8 +19,7 @@
 namespace seqan3::detail
 {
 
-//!\brief Object grouping numbers of errors for different kind of error types.
-struct search_param
+struct search_error_param
 {
     //!\brief Total number of errors (upper bound over all error types).
     uint8_t total;
@@ -30,6 +29,13 @@ struct search_param
     uint8_t insertion;
     //!\brief Total number of deletion errors.
     uint8_t deletion;
+};
+
+//!\brief Object grouping numbers of errors for different kind of error types.
+struct search_param : public search_error_param
+{
+    uint16_t itv_threshold;
+    uint16_t min_step;
 };
 
 } // namespace seqan3::detail

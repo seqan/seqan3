@@ -532,24 +532,25 @@ inline void search_algo_bi(index_t const & index, query_t & query, search_param 
  *
  * \copydetails search_algo_bi
  */
-template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
-inline void search_algo_uni(index_t const & index, query_t & query, search_param const error_left,
-                            delegate_t && delegate)
+template <bool abort_on_hit, typename index_t, typename text_t, typename query_t, typename delegate_t, typename delegate_itv_t>
+inline void search_algo_uni(index_t const & index, text_t const & text, query_t & query, search_param const error_left,
+                            delegate_t && delegate, delegate_itv_t && internal_itv_delegate)
 {
-    search_trivial<abort_on_hit>(index, query, error_left, delegate);
+    search_trivial<abort_on_hit>(index, text, query, error_left, delegate, internal_itv_delegate);
 }
 
 /*!\brief Searches a query sequence in an index.
  *
  * \copydetails search_algo_bi
  */
-template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
-inline void search_algo(index_t const & index, query_t & query, search_param const error_left, delegate_t && delegate)
+template <bool abort_on_hit, typename index_t, typename text_t, typename query_t, typename delegate_t, typename delegate_itv_t>
+inline void search_algo(index_t const & index, text_t const & text, query_t & query, search_param const error_left,
+                        delegate_t && delegate, delegate_itv_t && internal_itv_delegate)
 {
     if constexpr (BiFmIndex<index_t>)
         search_algo_bi<abort_on_hit>(index, query, error_left, delegate);
     else
-        search_algo_uni<abort_on_hit>(index, query, error_left, delegate);
+        search_algo_uni<abort_on_hit>(index, text, query, error_left, delegate, internal_itv_delegate);
 }
 
 //!\}

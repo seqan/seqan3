@@ -49,6 +49,7 @@
 #include <seqan3/search/algorithm/configuration/detail.hpp>
 #include <seqan3/search/algorithm/configuration/max_error.hpp>
 #include <seqan3/search/algorithm/configuration/max_error_rate.hpp>
+#include <seqan3/search/algorithm/configuration/itv_threshold.hpp>
 #include <seqan3/search/algorithm/configuration/mode.hpp>
 #include <seqan3/search/algorithm/configuration/output.hpp>
 

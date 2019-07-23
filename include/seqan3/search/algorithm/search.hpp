@@ -55,6 +55,7 @@ template <FmIndex index_t, typename queries_t, typename configuration_t>
 //!\endcond
 inline auto search(queries_t && queries, index_t const & index, configuration_t const & cfg)
 {
+    std::vector<dna4> text; // add empty text
     assert(alphabet_size<innermost_value_type_t<queries_t>> == index.sigma);
 
     using cfg_t = remove_cvref_t<configuration_t>;
@@ -83,17 +84,100 @@ inline auto search(queries_t && queries, index_t const & index, configuration_t 
     if constexpr (cfg_t::template exists<search_cfg::mode>())
     {
         if constexpr (cfg_t::template exists<search_cfg::output>())
-            return detail::search_all(index, queries, cfg);
+            return detail::search_all(index, text, queries, cfg);
         else
-            return detail::search_all(index, queries, cfg | search_cfg::output{search_cfg::text_position});
+            return detail::search_all(index, text, queries, cfg | search_cfg::output{search_cfg::text_position});
     }
     else
     {
         configuration const cfg2 = cfg | search_cfg::mode{search_cfg::all};
         if constexpr (cfg_t::template exists<search_cfg::output>())
-            return detail::search_all(index, queries, cfg2);
+            return detail::search_all(index, text, queries, cfg2);
         else
-            return detail::search_all(index, queries, cfg2 | search_cfg::output{search_cfg::text_position});
+            return detail::search_all(index, text, queries, cfg2 | search_cfg::output{search_cfg::text_position});
+    }
+}
+
+/*!\addtogroup submodule_search_algorithm
+ * \{
+ */
+
+/*!\brief Search a query or a range of queries in an index.
+ * \tparam index_t    Must model seqan3::FmIndex.
+ * \tparam queries_t  Must model std::ranges::RandomAccessRange over the index's alphabet.
+ *                    a range of queries must additionally model std::ranges::ForwardRange.
+ * \param[in] queries A single query or a range of queries.
+ * \param[in] index   String index to be searched.
+ * \param[in] text    The string to be searched (used for in text verification).
+ * \param[in] cfg     A configuration object specifying the search parameters (e.g. number of errors, error types,
+ *                    output format, etc.).
+ * \returns An object modelling std::ranges::Range containing the hits (the type depends on the specification
+            in `cfg`), or `void` if an on_hit delegate has been specified.
+ *
+ * ### Complexity
+ *
+ * Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$ where \f$e\f$ is the maximum number of errors.
+ *
+ * ### Exceptions
+ *
+ * Strong exception guarantee if iterating the query does not change its state and if invoking a possible delegate
+ * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
+ */
+template <FmIndex index_t, typename text_t, typename queries_t, typename configuration_t>
+//!\cond
+    requires
+        (std::ranges::RandomAccessRange<queries_t> ||
+            (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)) &&
+        detail::is_type_specialisation_of_v<remove_cvref_t<configuration_t>, configuration>
+//!\endcond
+inline auto search(queries_t && queries, index_t const & index, text_t const & text, configuration_t const & cfg)
+{
+    assert(alphabet_size<innermost_value_type_t<queries_t>> == index.sigma);
+
+    using cfg_t = remove_cvref_t<configuration_t>;
+
+    // If cursor are return using in text verification is of disadvantage.
+    if constexpr (cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>())
+    {
+        text_t text_tmp;
+        text = text_tmp;
+    }
+
+    if constexpr (cfg_t::template exists<search_cfg::max_error>())
+    {
+        auto & [total, subs, ins, del] = get<search_cfg::max_error>(cfg).value;
+        if (subs > total)
+            throw std::invalid_argument("The substitution error threshold is higher than the total error threshold.");
+        if (ins > total)
+            throw std::invalid_argument("The insertion error threshold is higher than the total error threshold.");
+        if (del > total)
+            throw std::invalid_argument("The deletion error threshold is higher than the total error threshold.");
+    }
+    else if constexpr (cfg_t::template exists<search_cfg::max_error_rate>())
+    {
+        auto & [total, subs, ins, del] = get<search_cfg::max_error_rate>(cfg).value;
+        if (subs > total)
+            throw std::invalid_argument("The substitution error threshold is higher than the total error threshold.");
+        if (ins > total)
+            throw std::invalid_argument("The insertion error threshold is higher than the total error threshold.");
+        if (del > total)
+            throw std::invalid_argument("The deletion error threshold is higher than the total error threshold.");
+    }
+
+    if constexpr (cfg_t::template exists<search_cfg::mode>())
+    {
+        if constexpr (cfg_t::template exists<search_cfg::output>())
+            return detail::search_all(index, text, queries, cfg);
+        else
+            return detail::search_all(index, text, queries, cfg | search_cfg::output{search_cfg::text_position});
+    }
+    else
+    {
+        configuration const cfg2 = cfg | search_cfg::mode{search_cfg::all};
+        if constexpr (cfg_t::template exists<search_cfg::output>())
+            return detail::search_all(index, text, queries, cfg2);
+        else
+            return detail::search_all(index, text, queries, cfg2 | search_cfg::output{search_cfg::text_position});
     }
 }
 
