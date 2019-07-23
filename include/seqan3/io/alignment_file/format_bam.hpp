@@ -731,6 +731,7 @@ public:
               typename ref_seq_type,
               typename ref_id_type,
               typename align_type,
+              typename cigar_type,
               typename qual_type,
               typename mate_type,
               typename tag_dict_type>
@@ -745,6 +746,7 @@ public:
                [[maybe_unused]] ref_id_type                            && ref_id,
                [[maybe_unused]] std::optional<int32_t>                    ref_offset,
                [[maybe_unused]] align_type                             && align,
+               [[maybe_unused]] cigar_type                             && cigar_vector,
                [[maybe_unused]] uint16_t                                  flag,
                [[maybe_unused]] uint8_t                                   mapq,
                [[maybe_unused]] mate_type                              && mate,
@@ -864,24 +866,40 @@ public:
             // ---------------------------------------------------------------------
             // Writing the Record
             // ---------------------------------------------------------------------
+            int32_t ref_length{};
 
-            // compute possible distance from alignment end to sequence end
-            // which indicates soft clipping at the end.
-            // This should be replaced by a free count_gaps function for
-            // aligned sequences which is more efficient if possible.
-            auto off_end{std::ranges::distance(seq) - offset};
-
-            for (auto chr : get<1>(align))
-                if (chr == gap{})
-                    ++off_end;
-
-            off_end -= std::ranges::distance(get<1>(align));
-
-            std::vector<cigar> cigar_vector = detail::get_cigar_vector(align, offset, off_end);
-
-            if (cigar_vector.size() > 65535) // cannot be represented with 16bits, must be written into the sam tag CG
+            // if alignment is non-empty, replace cigar_vector.
+            // else, compute the ref_length from given cigar_vector which is needed to fill field `bin`.
+            if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
             {
-                tag_dict["CG"_tag] = detail::get_cigar_string(align, offset, off_end);
+                ref_length = std::ranges::distance(get<1>(align));
+
+                // compute possible distance from alignment end to sequence end
+                // which indicates soft clipping at the end.
+                // This should be replaced by a free count_gaps function for
+                // aligned sequences which is more efficient if possible.
+                int32_t off_end{static_cast<int32_t>(std::ranges::distance(seq)) - offset};
+
+                for (auto chr : get<1>(align))
+                    if (chr == gap{})
+                        ++off_end;
+
+                off_end -= ref_length;
+                cigar_vector = detail::get_cigar_vector(align, offset, off_end);
+            }
+            else
+            {
+                int32_t dummy_seq_length{};
+                for (auto & [count, operation] : cigar_vector)
+                    alignment_file_input_format_REMOVEME<format_sam>::update_alignment_lengths(ref_length,
+                                                                                               dummy_seq_length,
+                                                                                               operation.to_char(),
+                                                                                               count);
+            }
+
+            if (cigar_vector.size() >= (1 << 16)) // must be written into the sam tag CG
+            {
+                tag_dict["CG"_tag] = detail::get_cigar_string(cigar_vector);
                 cigar_vector.resize(2);
                 cigar_vector[0] = cigar{static_cast<uint32_t>(std::ranges::distance(seq)), 'S'_cigar_op};
                 cigar_vector[1] = cigar{static_cast<uint32_t>(std::ranges::distance(get<1>(align))), 'N'_cigar_op};
@@ -896,7 +914,7 @@ public:
                 /* pos         */ ref_offset.value_or(-1),
                 /* l_read_name */ std::max<uint8_t>(std::min<size_t>(std::ranges::distance(id) + 1, 255), 2),
                 /* mapq        */ mapq,
-                /* bin         */ reg2bin(ref_offset.value_or(-1), std::ranges::distance(get<1>(align))),
+                /* bin         */ reg2bin(ref_offset.value_or(-1), ref_length),
                 /* n_cigar_op  */ static_cast<uint16_t>(cigar_vector.size()),
                 /* flag        */ flag,
                 /* l_seq       */ static_cast<int32_t>(std::ranges::distance(seq)),

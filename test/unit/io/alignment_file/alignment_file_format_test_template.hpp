@@ -497,6 +497,47 @@ TYPED_TEST_P(alignment_file_write, with_header)
     EXPECT_EQ(this->ostream.str(), this->verbose_output);
 }
 
+TYPED_TEST_P(alignment_file_write, cigar_vector)
+{
+    std::vector<std::vector<cigar>> cigar_v
+    {
+        {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op}},
+        {{7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}},
+        {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'P'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op},
+         {1, 'M'_cigar_op}, {1, 'I'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}}
+    };
+
+    {
+        this->tag_dicts[0]["NM"_tag] = 7;
+        this->tag_dicts[0]["AS"_tag] = 2;
+        this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
+
+        alignment_file_output fout{this->ostream, TypeParam{}, fields<field::HEADER_PTR,
+                                                                      field::ID,
+                                                                      field::FLAG,
+                                                                      field::REF_ID,
+                                                                      field::REF_OFFSET,
+                                                                      field::MAPQ,
+                                                                      field::CIGAR, // cigar instead of alignment
+                                                                      field::OFFSET,
+                                                                      field::MATE,
+                                                                      field::SEQ,
+                                                                      field::QUAL,
+                                                                      field::TAGS>{}};
+
+        for (size_t i = 0ul; i < 3ul; ++i)
+        {
+            ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[i], this->flags[i], 0/*ref_id*/,
+                                              this->ref_offsets[i], this->mapqs[i], cigar_v[i],
+                                              this->offsets[i], this->mates[i], this->seqs[i], this->quals[i],
+                                              this->tag_dicts[i]));
+        }
+    }
+
+    this->ostream.flush();
+    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_output);
+}
+
 TYPED_TEST_P(alignment_file_write, special_cases)
 {
     std::optional<int32_t> rid;
@@ -575,5 +616,6 @@ REGISTER_TYPED_TEST_CASE_P(alignment_file_write,
                            default_options_all_members_specified,
                            write_ref_id_with_different_types,
                            with_header,
+                           cigar_vector,
                            special_cases,
                            format_errors);

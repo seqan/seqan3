@@ -159,10 +159,9 @@ public:
 
         alignment_file_output_options output_options;
 
-        align_format.write(stream, output_options, std::ignore,
-                           default_or(sequence), default_or(qualities), default_or(id),
-                           0, std::string_view{}, std::string_view{}, -1, default_align_t{}, 0, 0,
-                           default_mate_t{}, sam_tag_dictionary{}, 0, 0);
+        align_format.write(stream, output_options, std::ignore, default_or(sequence), default_or(qualities),
+                           default_or(id), 0, std::string_view{}, std::string_view{}, -1, default_align_t{},
+                           std::vector<cigar>{}, 0, 0, default_mate_t{}, sam_tag_dictionary{}, 0, 0);
     }
 
 private:

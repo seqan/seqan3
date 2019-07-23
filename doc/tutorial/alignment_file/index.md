@@ -80,19 +80,19 @@ but you needn't deal with this field manually.
 Note that some of the fields are specific to the SAM format, while some are specific to BLAST.
 To make things clearer, here is the table of SAM columns connected to the corresponding alignment file field:
 
-| #  | SAM Column ID |  FIELD name                                       |
-|:--:|:--------------|:--------------------------------------------------|
-| 1  | QNAME         | seqan3::field::ID                                 |
-| 2  | FLAG          | seqan3::field::FLAG                               |
-| 3  | RNAME         | seqan3::field::REF_ID                             |
-| 4  | POS           | seqan3::field::REF_OFFSET                         |
-| 5  | MAPQ          | seqan3::field::MAPQ                               |
-| 6  | CIGAR         | implicitly stored in seqan3::field::ALIGNMENT     |
-| 7  | RNEXT         | seqan3::field::MATE (tuple pos 0)                 |
-| 8  | PNEXT         | seqan3::field::MATE (tuple pos 1)                 |
-| 9  | TLEN          | seqan3::field::MATE (tuple pos 2)                 |
-| 10 | SEQ           | seqan3::field::SEQ                                |
-| 11 | QUAL          | seqan3::field::QUAL                               |
+| #  | SAM Column ID |  FIELD name                                                                       |
+|:--:|:--------------|:----------------------------------------------------------------------------------|
+| 1  | QNAME         | seqan3::field::ID                                                                 |
+| 2  | FLAG          | seqan3::field::FLAG                                                               |
+| 3  | RNAME         | seqan3::field::REF_ID                                                             |
+| 4  | POS           | seqan3::field::REF_OFFSET                                                         |
+| 5  | MAPQ          | seqan3::field::MAPQ                                                               |
+| 6  | CIGAR         | implicitly stored in seqan3::field::ALIGNMENT or directly in seqan3::field::CIGAR |
+| 7  | RNEXT         | seqan3::field::MATE (tuple pos 0)                                                 |
+| 8  | PNEXT         | seqan3::field::MATE (tuple pos 1)                                                 |
+| 9  | TLEN          | seqan3::field::MATE (tuple pos 2)                                                 |
+| 10 | SEQ           | seqan3::field::SEQ                                                                |
+| 11 | QUAL          | seqan3::field::QUAL                                                               |
 
 ## File extensions
 
@@ -270,7 +270,7 @@ r004 mapped against 1 with 0 gaps in the read sequence and 0 gaps in the referen
 If you are accustomed to the raw CIGAR information, we also provide reading the cigar information into a
 `std::vector<seqan3::cigar>` if you specify the `seqan3::field::CIGAR`.
 
-\snippet doc/tutorial/alignment_file/alignment_file_read_cigar.cpp solution
+\snippet doc/tutorial/alignment_file/alignment_file_read_cigar.cpp code
 
 # Writing alignment files
 

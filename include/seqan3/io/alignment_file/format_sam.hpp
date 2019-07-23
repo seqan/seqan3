@@ -1095,6 +1095,7 @@ public:
                ref_id_type                            && ref_id,
                std::optional<int32_t>                    ref_offset,
                align_type                             && align,
+               std::vector<cigar>                const & cigar_vector,
                uint16_t                                  flag,
                uint8_t                                   mapq,
                mate_type                              && mate,
@@ -1288,6 +1289,11 @@ public:
             off_end -= std::ranges::size(get<1>(align));
 
             write_range(stream_it, detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));
+        }
+        else if (!cigar_vector.empty())
+        {
+            for (auto & c : cigar_vector)
+                stream << c.to_string(); // returns a small_vector instead of char so write_range doesn't work
         }
         else
         {

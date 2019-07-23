@@ -32,6 +32,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 * Asynchronous input (background file reading) supported via seqan3::view::async_input_buffer.
 * Reading field::CIGAR into a vector over seqan3::cigar is supported via seqan3::alignment_file_input.
+* Writing field::CIGAR into a vector over seqan3::cigar is supported via seqan3::alignment_file_output.
 
 ## API changes
 

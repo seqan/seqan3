@@ -193,6 +193,22 @@ template <tuple_like alignment_type>
     return result;
 }
 
+/*!\brief Transforms a vector of cigar elements into a string representation.
+ * \ingroup alignment_file
+ * \param  cigar_vector The std::vector of seqan3::cigar elements to be transformed into a std::string.
+ * \returns The cigar string (std::string).
+ *
+ * \details
+ *
+ * The transformation is done by printing the vector with the seqan3::debug_stream.
+ */
+[[nodiscard]] inline std::string get_cigar_string(std::vector<cigar> const & cigar_vector)
+{
+    std::string result{};
+    std::ranges::for_each(cigar_vector, [&result] (auto & cig) { result.append(cig.to_string()); });
+    return result;
+}
+
 /*!\brief Creates a cigar string (SAM format) given an alignment represented by two aligned sequences.
  * \ingroup alignment_file
  *
@@ -236,10 +252,7 @@ template <tuple_like alignment_type>
     requires std::tuple_size_v<remove_cvref_t<alignment_type>> == 2
 //!\endcond
 {
-    std::string result{};
-    for (auto cig : get_cigar_vector(alignment, query_start_pos, query_end_pos, extended_cigar))
-        result.append(cig.to_string());
-    return result;
+    return get_cigar_string(get_cigar_vector(alignment, query_start_pos, query_end_pos, extended_cigar));
 }
 
 /*!\brief Transforms an alignment represented by two aligned sequences into the

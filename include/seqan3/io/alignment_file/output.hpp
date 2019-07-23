@@ -75,6 +75,7 @@ namespace seqan3
  *   12. field::TAGS
  *   13. field::EVALUE
  *   14. field::BIT_SCORE
+ *   15. field::CIGAR
  *
  * There is an additional field called seqan3::field::HEADER_PTR. It is used to transfer
  * header information from seqan3::alignment_file_input to seqan3::alignment_file_output,
@@ -209,6 +210,7 @@ public:
                                          field::REF_ID,
                                          field::REF_OFFSET,
                                          field::ALIGNMENT,
+                                         field::CIGAR,
                                          field::MAPQ,
                                          field::FLAG,
                                          field::QUAL,
@@ -227,6 +229,13 @@ public:
                   "You selected a field that is not valid for alignment files, "
                   "please refer to the documentation of "
                   "seqan3::alignment_file_output::field_ids for the accepted values.");
+
+    static_assert([] () constexpr
+                  {
+                      return !(selected_field_ids::contains(field::ALIGNMENT) &&
+                               selected_field_ids::contains(field::CIGAR));
+                  }(),
+                  "You may not select field::ALIGNMENT and field::CIGAR at the same time.");
 
     /*!\name Range associated types
      * \brief Most of the range associated types are `void` for output ranges.
@@ -513,6 +522,7 @@ public:
                      detail::get_or<field::REF_ID>(r, std::ignore),
                      detail::get_or<field::REF_OFFSET>(r, std::optional<int32_t>{}),
                      detail::get_or<field::ALIGNMENT>(r, default_align_t{}),
+                     detail::get_or<field::CIGAR>(r, std::vector<cigar>{}),
                      detail::get_or<field::FLAG>(r, 0u),
                      detail::get_or<field::MAPQ>(r, 0u),
                      detail::get_or<field::MATE>(r, default_mate_t{}),
@@ -561,6 +571,7 @@ public:
                      detail::get_or<selected_field_ids::index_of(field::REF_ID)>(t, std::ignore),
                      detail::get_or<selected_field_ids::index_of(field::REF_OFFSET)>(t, std::optional<int32_t>{}),
                      detail::get_or<selected_field_ids::index_of(field::ALIGNMENT)>(t, default_align_t{}),
+                     detail::get_or<selected_field_ids::index_of(field::CIGAR)>(t, std::vector<cigar>{}),
                      detail::get_or<selected_field_ids::index_of(field::FLAG)>(t, 0u),
                      detail::get_or<selected_field_ids::index_of(field::MAPQ)>(t, 0u),
                      detail::get_or<selected_field_ids::index_of(field::MATE)>(t, default_mate_t{}),
@@ -775,7 +786,7 @@ protected:
     template <typename record_header_ptr_t, typename ...pack_type>
     void write_record(record_header_ptr_t && record_header_ptr, pack_type && ...remainder)
     {
-        static_assert((sizeof...(pack_type) == 14), "Wrong parameter list passed to write_record.");
+        static_assert((sizeof...(pack_type) == 15), "Wrong parameter list passed to write_record.");
 
         assert(!format.valueless_by_exception());
 
