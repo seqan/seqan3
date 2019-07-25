@@ -120,7 +120,7 @@ enum class field
  *
  * ### Example
  *
- * \snippet test/snippet/io/record.cpp usage_1
+ * \include test/snippet/io/record_1.cpp
  *
  */
 template <field ...fs>
@@ -181,7 +181,7 @@ struct fields
  *
  * This is how it works:
  *
- * \snippet test/snippet/io/record.cpp usage_2
+ * \include test/snippet/io/record_2.cpp
  */
 template <typename field_types, typename field_ids>
 struct record : detail::transfer_template_args_onto_t<field_types, std::tuple>
