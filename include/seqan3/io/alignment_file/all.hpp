@@ -17,6 +17,7 @@
  * \brief Provides files and formats for handling alignment data.
  */
 
+#include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/input.hpp>
