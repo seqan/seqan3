@@ -1,27 +1,31 @@
-//! [all]
-#include <seqan3/io/alignment_file/all.hpp>
+#include <sstream>
+#include <string>
+#include <vector>
 
-using namespace seqan3;
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/io/alignment_file/output.hpp>
 
 int main()
 {
-    alignment_file_output fout{std::filesystem::temp_directory_path()/"my.sam"};
+    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     std::string ref_id;
     std::string read_id;
 
-    std::vector<dna5> read;
+    std::vector<seqan3::dna5> read;
 
     // ... e.g. compute and alignment
 
-    using alignment_type = std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>;
+    using alignment_type = std::pair<std::vector<seqan3::gapped<seqan3::dna5>>,
+                                     std::vector<seqan3::gapped<seqan3::dna5>>>;
 
     alignment_type dummy_alignment{}; // an empty dummy alignment
 
-    using types        = type_list<std::vector<dna5>, std::string, alignment_type>;
-    using types_as_ids = fields<field::SEQ, field::ID, field::ALIGNMENT>;
+    using types        = seqan3::type_list<std::vector<seqan3::dna5>, std::string, alignment_type>;
+    using types_as_ids = seqan3::fields<seqan3::field::SEQ, seqan3::field::ID, seqan3::field::ALIGNMENT>;
     // the record type specifies the fields we want to write
-    using record_type  = record<types, types_as_ids>;
+    using record_type  = seqan3::record<types, types_as_ids>;
 
     // initialize record
     record_type rec{read, ref_id, dummy_alignment};
@@ -34,4 +38,3 @@ int main()
 
     // as all our fields are empty so this would print an
 }
-//! [all]

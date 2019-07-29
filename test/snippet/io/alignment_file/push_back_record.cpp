@@ -1,18 +1,16 @@
-//! [all]
-#include <seqan3/io/alignment_file/all.hpp>
+#include <sstream>
+#include <string>
 
-using namespace seqan3;
+#include <seqan3/io/alignment_file/output.hpp>
+#include <seqan3/core/type_list/type_list.hpp>
 
 int main()
 {
-    alignment_file_output fout{std::filesystem::temp_directory_path()/"my.sam"};
+    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
-    auto it = fout.begin();
-
-    record<type_list<uint32_t, std::string>, fields<field::MAPQ, field::ID>> r;
+    seqan3::record<seqan3::type_list<uint32_t, std::string>, seqan3::fields<seqan3::field::MAPQ, seqan3::field::ID>> r;
 
     // ...
 
     fout.push_back(r);
 }
-//! [all]

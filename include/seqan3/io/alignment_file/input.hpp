@@ -176,7 +176,7 @@ SEQAN3_CONCEPT AlignmentFileInputTraits = requires (t v)
  *
  * This example will make the file read into a smaller alphabet and a compressed container:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp my_traits
+ * \include test/snippet/io/alignment_file/alignment_file_input_my_traits.cpp
  */
 template <typename ref_sequences_t = ref_info_not_given, typename ref_ids_t = std::deque<std::string>>
 struct alignment_file_input_default_traits
@@ -282,11 +282,11 @@ struct alignment_file_input_default_traits
  *
  * In most cases the template parameters are deduced automatically:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp construction_from_filename
+ * \include test/snippet/io/alignment_file/alignment_file_input_construction_from_filename.cpp
  *
  * Reading from an std::istringstream:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp construction_from_stream
+ * \include test/snippet/io/alignment_file/alignment_file_input_construction_from_stream.cpp
  *
  * Note that this is not the same as writing `alignment_file_input<>` (with angle brackets). In the latter case they
  * are explicitly set to their default values, in the former case
@@ -299,13 +299,13 @@ struct alignment_file_input_default_traits
  * template parameter yourself means that you loose automatic deduction. The following is equivalent to the automatic
  * type deduction example with a stream from above:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp construction_without_automatic_type_deduction
+ * \include test/snippet/io/alignment_file/alignment_file_input_construction_without_automatic_type_deduction.cpp
  *
  * ### Reading record-wise
  *
  * You can iterate over this file record-wise:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp reading_range_based_for_loop
+ * \include test/snippet/io/alignment_file/alignment_file_input_reading_range_based_for_loop.cpp
  *
  * In the above example, `rec` has the type \ref record_type which is a specialisation of seqan3::record and behaves
  * like an std::tuple (that's why we can access it via `get`). Instead of using the seqan3::field based interface on
@@ -316,7 +316,7 @@ struct alignment_file_input_default_traits
  * Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
  * to store it somewhere without copying:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp reading_move_record
+ * \include test/snippet/io/alignment_file/alignment_file_input_reading_move_record.cpp
  *
  * ### Reading record-wise (custom fields)
  *
@@ -325,7 +325,7 @@ struct alignment_file_input_default_traits
  * you may only be interested in the mapping flag and mapping quality of your SAM data to get some statistics.
  * The following snippets demonstrate the usage of such a fields trait object.
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp reading_custom_fields
+ * \include test/snippet/io/alignment_file/alignment_file_input_reading_custom_fields.cpp
  *
  * When reading a file, all fields not present in the file (but requested implicitly or via the `selected_field_ids`
  * parameter) are ignored and the respective value in the record stays empty.
@@ -337,7 +337,7 @@ struct alignment_file_input_default_traits
  * to decompose the record into its elements. Considering the example of reading only the flag and mapping quality
  * like before you can also write:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp reading_structured_bindings
+ * \include test/snippet/io/alignment_file/alignment_file_input_reading_structured_bindings.cpp
  *
  * In this case you immediately get the two elements of the tuple: `flag` of \ref flag_type and `mapq` of
  * \ref mapq_type. **But beware: with structured bindings you do need to get the order of elements correctly!**
@@ -347,7 +347,7 @@ struct alignment_file_input_default_traits
  * Since SeqAn files are ranges, you can also create views over files. A useful example is to filter the records
  * based on certain criteria, e.g. minimum length of the sequence field:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp reading_filter
+ * \include test/snippet/io/alignment_file/alignment_file_input_reading_filter.cpp
  *
  * ### End of file
  *
@@ -735,7 +735,7 @@ public:
      *
      * Equals end() if the file is at end.
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp begin_and_front
+     * \include test/snippet/io/alignment_file/alignment_file_input_begin_and_front.cpp
      *
      * ### Complexity
      *
@@ -774,14 +774,14 @@ public:
      * This function returns a reference to the currently buffered record, it is identical to dereferencing begin(),
      * and begin also always points to the current record on single pass input ranges:
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp begin_and_front
+     * \include test/snippet/io/alignment_file/alignment_file_input_begin_and_front.cpp
      *
      * In most situations using the iterator interface or a range-based for-loop are preferable to using front(),
      * because you can only move to the next record via the iterator.
      *
      * In any case, don't forget the reference! If you want to save the data from the record elsewhere, use move:
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp front
+     * \include test/snippet/io/alignment_file/alignment_file_input_front.cpp
      *
      * ### Complexity
      *
@@ -808,9 +808,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp sam_file
-     *
-     * \snippet test/snippet/io/alignment_file/alignment_file_input.cpp get_header
+     * \include test/snippet/io/alignment_file/alignment_file_input_get_header.cpp
      *
      * \sa seqan3::alignment_file_header
      */

@@ -94,11 +94,11 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction
+ * \include test/snippet/io/alignment_file/alignment_file_output_filename_construction.cpp
  *
  * Writing to std::cout:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
+ * \include test/snippet/io/alignment_file/alignment_file_output_cout_write.cpp
  *
  * Note that this is not the same as writing `alignment_file_output<>`
  * (with angle brackets). In the latter case they are explicitly set to their
@@ -110,7 +110,7 @@ namespace seqan3
  *
  * ### Writing record-wise
  *
- * \snippet test/snippet/io/alignment_file/record_based_writing.cpp all
+ * \include test/snippet/io/alignment_file/record_based_writing.cpp
  *
  * The easiest way to write to an alignment file is to use the push_back() member functions. These
  * work similarly to how they work on an std::vector.
@@ -130,14 +130,14 @@ namespace seqan3
  *
  * The following snippets demonstrates the usage of such a field_traits object.
  *
- * \snippet test/snippet/io/alignment_file/record_based_writing2.cpp all
+ * \include test/snippet/io/alignment_file/record_based_writing2.cpp
  *
  * A different way of passing custom fields to the file is to pass a seqan3::record – instead of a tuple – to
  * push_back(). The seqan3::record clearly indicates which of its elements has which seqan3::field so **the file will
  * use that information instead of the template argument**. This is especially handy when reading from one file and
  * writing to another, because you don't have to configure the output file to match the input file, it will just work:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp custom_fields
+ * \include test/snippet/io/alignment_file/alignment_file_output_custom_fields.cpp
  *
  * This will copy the FLAG and REF_OFFSET value into the new output file. Note that the other SAM columns in the
  * output file will be defaulted, so unless you specify to read all SAM columns (see seqan3::format_sam)
@@ -147,18 +147,18 @@ namespace seqan3
  *
  * You can write multiple records at once, by assigning to the file:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp write_range
+ * \include test/snippet/io/alignment_file/alignment_file_output_write_range.cpp
  *
  * ### File I/O pipelines
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
  * files are also input ranges in SeqAn3:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp input_range
+ * \include test/snippet/io/alignment_file/alignment_file_output_input_range.cpp
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
- * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp io_pipeline
+ * \include test/snippet/io/alignment_file/alignment_file_output_io_pipeline.cpp
  *
  * ### Formats
  *
@@ -286,11 +286,11 @@ public:
      *
      * In most cases the template parameters are deduced completely automatically:
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction
+     * \include test/snippet/io/alignment_file/alignment_file_output_filename_construction.cpp
      *
      * Writing with custom selected fields:
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
+     * \include test/snippet/io/alignment_file/alignment_file_output_format_construction.cpp
      */
     alignment_file_output(std::filesystem::path filename,
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -372,11 +372,11 @@ public:
      *
      * In most cases the template parameters are deduced completely automatically:
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction_with_ref_info
+     * \include test/snippet/io/alignment_file/alignment_file_output_filename_construction_with_ref_info.cpp
      *
      * Writing with custom selected fields:
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
+     * \include test/snippet/io/alignment_file/alignment_file_output_format_construction.cpp
      */
     template <typename ref_ids_type_, std::ranges::ForwardRange ref_lengths_type>
     //!\cond
@@ -450,7 +450,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/begin_iterator.cpp all
+     * \include test/snippet/io/alignment_file/begin_iterator.cpp
      */
     iterator begin() noexcept
     {
@@ -492,7 +492,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/push_back_record.cpp all
+     * \include test/snippet/io/alignment_file/push_back_record.cpp
      */
     template <typename record_t>
     void push_back(record_t && r)
@@ -540,7 +540,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/push_back_tuple.cpp all
+     * \include test/snippet/io/alignment_file/push_back_tuple.cpp
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
@@ -590,7 +590,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/emplace_back.cpp all
+     * \include test/snippet/io/alignment_file/emplace_back.cpp
      */
     template <typename arg_t, typename ... arg_types>
     void emplace_back(arg_t && arg, arg_types && ... args)
@@ -617,7 +617,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp range
+     * \include test/snippet/io/alignment_file/alignment_file_output_write_range.cpp
      */
     template <typename rng_t>
     alignment_file_output & operator=(rng_t && range)
@@ -651,11 +651,11 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp write_range
+     * \include test/snippet/io/alignment_file/alignment_file_output_write_range.cpp
      *
      * This is especially useful in combination with file-based filters:
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp io_pipeline
+     * \include test/snippet/io/alignment_file/alignment_file_output_io_pipeline.cpp
      *
      */
     template <typename rng_t>
@@ -698,7 +698,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp set_header
+     * \include test/snippet/io/alignment_file/alignment_file_output_set_header.cpp
      *
      * \sa seqan3::alignment_file_header
      */
