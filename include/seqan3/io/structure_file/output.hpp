@@ -91,11 +91,11 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp temp_param_deduc
+ * \include test/snippet/io/structure_file/structure_file_output_temp_param_deduc.cpp
  *
  * Writing to std::cout:
  *
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp write_std_out
+ * \include test/snippet/io/structure_file/structure_file_output_write_std_out.cpp
  *
  * Note that this is not the same as writing `structure_file_output<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
@@ -106,7 +106,7 @@ namespace seqan3
  *
  * You can iterate over this file record-wise:
  *
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp iter_by_rec
+ * \include test/snippet/io/structure_file/structure_file_output_iter_by_rec.cpp
  *
  * The easiest way to write to a sequence file is to use the push_back() or emplace_back() member functions. These
  * work similarly to how they work on an std::vector. If you pass a tuple to push_back() or give arguments to
@@ -127,30 +127,26 @@ namespace seqan3
  *
  * The following snippets demonstrates the usage of such a fields trait object.
  *
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp write_fields
+ * \include test/snippet/io/structure_file/structure_file_output_write_fields.cpp
  *
  * A different way of passing custom fields to the file is to pass a seqan3::record – instead of a tuple – to
  * push_back(). The seqan3::record clearly indicates which of its elements has which seqan3::field ID so the file will
  * use that information instead of the template argument. This is especially handy when reading from one file and
  * writing to another, because you don't have to configure the output file to match the input file, it will just work:
  *
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp pass_rec
+ * \include test/snippet/io/structure_file/structure_file_output_pass_rec.cpp
  *
  * ### Writing record-wise in batches
  *
  * You can write multiple records at once, by assigning to the file:
  *
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp mult_rec
+ * \include test/snippet/io/structure_file/structure_file_output_mult_rec.cpp
  * ### File I/O pipelines
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
- * files are also input ranges in SeqAn:
+ * files are also input ranges in SeqAn. This can be combined with file-based views to create I/O pipelines:
  *
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp file_conv
- *
- * This can be combined with file-based views to create I/O pipelines:
- *
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp pipeline
+ * \include test/snippet/io/structure_file/structure_file_output_pipeline.cpp
  *
  * ### Column-based writing
  *
@@ -159,8 +155,7 @@ namespace seqan3
  *
  * You can use column-based writing in that case, it uses operator=() :
  *
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp data_storage
- * \snippet test/snippet/io/structure_file/structure_file_output.cpp col_based
+ * \include test/snippet/io/structure_file/structure_file_output_col_based.cpp
  *
  * ### Formats
  *
@@ -344,7 +339,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/structure_file/structure_file_output.cpp push_back
+     * \include test/snippet/io/structure_file/structure_file_output_push_back.cpp
      */
     iterator begin() noexcept
     {
@@ -386,7 +381,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/structure_file/structure_file_output.cpp pass_rec
+     * \include test/snippet/io/structure_file/structure_file_output_pass_rec.cpp
      */
     template <typename record_t>
     void push_back(record_t && r)
@@ -424,7 +419,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/structure_file/structure_file_output.cpp push_back_2
+     * \include test/snippet/io/structure_file/structure_file_output_push_back_2.cpp
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
@@ -464,7 +459,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/structure_file/structure_file_output.cpp emplace_back
+     * \include test/snippet/io/structure_file/structure_file_output_emplace_back.cpp
      */
     template <typename arg_t, typename ... arg_types>
     void emplace_back(arg_t && arg, arg_types && ... args)
@@ -491,7 +486,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/structure_file/structure_file_output.cpp equal
+     * \include test/snippet/io/structure_file/structure_file_output_equal.cpp
      */
     template <std::ranges::InputRange rng_t>
     structure_file_output & operator=(rng_t && range)
@@ -523,11 +518,11 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/structure_file/structure_file_output.cpp pipe_func
+     * \include test/snippet/io/structure_file/structure_file_output_pipe_func.cpp
      *
      * This is especially useful in combination with file-based filters:
      *
-     * \snippet test/snippet/io/structure_file/structure_file_output.cpp pipeline
+     * \include test/snippet/io/structure_file/structure_file_output_pipeline.cpp
      */
     template <std::ranges::InputRange rng_t>
     friend structure_file_output & operator|(rng_t && range, structure_file_output & f)
@@ -571,7 +566,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/structure_file/structure_file_output.cpp col_based
+     * \include test/snippet/io/structure_file/structure_file_output_col_based.cpp
      */
     template <typename typelist, typename field_ids>
     structure_file_output & operator=(record<typelist, field_ids> const & r)
@@ -608,7 +603,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/structure_file/structure_file_output.cpp col_based
+     * \include test/snippet/io/structure_file/structure_file_output_col_based.cpp
      *
      */
     template <typename ... arg_types>

@@ -282,7 +282,7 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
  *
  * This example will make the file read into a smaller alphabet:
  *
- * \snippet test/unit/io/structure_file/structure_file_input_test.cpp structure_file_input_class mod_traits
+ * \include test/snippet/io/structure_file/structure_file_input_mod_traits.cpp
  */
 struct structure_file_input_default_traits_rna
 {
@@ -486,12 +486,8 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * that you want to read from and/or if you cannot use file-extension based detection, but know that your input
  * file has a certain format.
  *
- * In most cases the template parameters are deduced completely automatically:
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp auto_temp_deduc
- *
- * Reading from an std::istringstream:
- *
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp stringstream_read
+ * In most cases the template parameters are deduced completely automatically, e.g. reading from a std::istringstream:
+ * \include test/snippet/io/structure_file/structure_file_input_auto_temp_deduc.cpp
  *
  * Note that this is not the same as writing `structure_file_input<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
@@ -501,20 +497,20 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *
  * In some cases, you do need to specify the arguments, e.g. if you want to read amino acids:
  *
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp arg_spec
+ * \include test/snippet/io/structure_file/structure_file_input_arg_spec.cpp
  *
  * You can define your own traits type to further customise the types used by and returned by this class, see
  * seqan3::structure_file_default_traits_rna for more details. As mentioned above, specifying at least one
  * template parameter yourself means that you loose automatic deduction so if you want to read amino acids **and**
  * want to read from a string stream you need to give all types yourself:
  *
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp trait_def
+ * \include test/snippet/io/structure_file/structure_file_input_trait_def.cpp
  *
  * ### Reading record-wise
  *
  * You can iterate over this file record-wise:
  *
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp record_iter
+ * \include test/snippet/io/structure_file/structure_file_input_record_iter.cpp
  *
  * In the above example, rec has the type \ref record_type which is a specialisation of seqan3::record and behaves
  * like an std::tuple (that's why we can access it via get). Instead of using the seqan3::field based interface on
@@ -525,7 +521,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
  * to store it somewhere without copying:
  *
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp data_out
+ * \include test/snippet/io/structure_file/structure_file_input_data_out.cpp
  *
  * ### Reading record-wise (decomposed records)
  *
@@ -533,7 +529,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * [structured bindings](http://en.cppreference.com/w/cpp/language/structured_binding)
  * to decompose the record into its elements:
  *
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp structured_bindings
+ * \include test/snippet/io/structure_file/structure_file_input_structured_bindings.cpp
  *
  * In this case you immediately get the three elements of the tuple: `seq` of \ref seq_type, `id` of
  * \ref id_type and `structure` of \ref structure_type. **But beware: with structured bindings you do need
@@ -546,7 +542,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * combined field for SEQ and STRUCTURE (see above). Or to never actually read the STRUCTURE, if you don't need it.
  * The following snippets demonstrate the usage of such a fields trait object.
  *
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp skip_fields
+ * \include test/snippet/io/structure_file/structure_file_input_skip_fields.cpp
  *
  * When reading a file, all fields not present in the file (but requested implicitly or via the `selected_field_ids`
  * parameter) are ignored.
@@ -556,7 +552,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * Since SeqAn files are ranges, you can also create views over files. A useful example is to filter the records
  * based on certain criteria, e.g. minimum length of the sequence field:
  *
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp filter_criteria
+ * \include test/snippet/io/structure_file/structure_file_input_filter_criteria.cpp
  *
  * ### End of file
  *
@@ -570,8 +566,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * This interface is less flexible, but can save you copy operations in certain scenarios, given that
  * you have sufficient memory to load the entire file at once:
  *
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp data_storage
- * \snippet test/snippet/io/structure_file/structure_file_input.cpp col_read
+ * \include test/snippet/io/structure_file/structure_file_input_col_read.cpp
  *
  * Note that for this to make sense, your storage data types need to be identical to the corresponding column types
  * of the file. If you require different column types you can specify you own traits, see
@@ -884,14 +879,14 @@ public:
      * This function returns a reference to the currently buffered record, it is identical to dereferencing begin(),
      * but begin also always points to the current record on single pass input ranges:
      *
-     * \snippet test/snippet/io/structure_file/structure_file_input.cpp ref_return
+     * \include test/snippet/io/structure_file/structure_file_input_ref_return.cpp
      *
      * It most situations using the iterator interface or a range-based for-loop are preferable to using front(),
      * because you can only move to the next record via the iterator.
      *
      * In any case, don't forget the reference! If you want to save the data from the record elsewhere, use move:
      *
-     * \snippet test/snippet/io/structure_file/structure_file_input.cpp move
+     * \include test/snippet/io/structure_file/structure_file_input_move.cpp
      *
      * ### Complexity
      *
