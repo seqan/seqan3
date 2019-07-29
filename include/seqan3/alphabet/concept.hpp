@@ -781,21 +781,6 @@ SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v, alphabet
  *   * `t &`
  *   * `t const`
  *   * `t const &`
- *
- * ### Writing your own alphabet
- *
- * This is an example of a minimal custom alphabet that provides implementations for all necessary customisation
- * points:
- *
- * \snippet test/unit/alphabet/custom_alphabet_test.cpp my_alph
- *
- * This is an example of a custom alphabet that is not default-constructible and that has a non-default overload for
- * seqan3::char_is_valid_for:
- *
- * \snippet test/unit/alphabet/custom_alphabet2_test.cpp my_alph
- *
- * (Note that you should really make your alphabet types no-throw-default-constructible if you can!)
- *
  */
 //!\cond
 template <typename t>

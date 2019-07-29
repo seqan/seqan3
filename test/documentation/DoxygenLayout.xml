@@ -23,6 +23,7 @@
         </tab>
         <tab type="usergroup" visible="yes" title="How-To" intro="">
             <tab type="user" visible="yes" title="Write your own view" url="\ref howto_write_a_view" intro=""/>
+            <tab type="user" visible="yes" title="Write your own alphabet" url="\ref howto_write_an_alphabet" intro=""/>
             <tab type="user" visible="yes" title="Port from SeqAn2"     url="\ref howto_porting"       intro=""/>
         </tab>
         <tab type="usergroup" visible="yes" title="About" intro="">
