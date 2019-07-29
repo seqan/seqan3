@@ -148,7 +148,7 @@ SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
  *
  * This example will make the file read into a smaller alphabet and a compressed container:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp trait_overwrite
+ * \include test/snippet/io/sequence_file/sequence_file_input_trait_overwrite.cpp
  */
 struct sequence_file_input_default_traits_dna
 {
@@ -254,9 +254,9 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp template_deduction
+ * \include test/snippet/io/sequence_file/sequence_file_input_template_deduction.cpp
  * Reading from an std::istringstream:
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp istringstream
+ * \include test/snippet/io/sequence_file/sequence_file_input_istringstream.cpp
  *
  * Note that this is not the same as writing `sequence_file_input<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
@@ -266,20 +266,20 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * In some cases, you do need to specify the arguments, e.g. if you want to read amino acids:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp aminoacid
+ * \include test/snippet/io/sequence_file/sequence_file_input_aminoacid.cpp
  *
  * You can define your own traits type to further customise the types used by and returned by this class, see
  * seqan3::sequence_file_default_traits_dna for more details. As mentioned above, specifying at least one
  * template parameter yourself means that you loose automatic deduction so if you want to read amino acids **and**
  * want to read from a string stream you need to give all types yourself:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp template_specification
+ * \include test/snippet/io/sequence_file/sequence_file_input_template_specification.cpp
  *
  * ### Reading record-wise
  *
  * You can iterate over this file record-wise:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp record_iter
+ * \include test/snippet/io/sequence_file/sequence_file_input_record_iter.cpp
  *
  * In the above example, rec has the type \ref record_type which is a specialisation of seqan3::record and behaves
  * like an std::tuple (that's why we can access it via get). Instead of using the seqan3::field based interface on
@@ -290,7 +290,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
  * to store it somewhere without copying:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp auto_ref
+ * \include test/snippet/io/sequence_file/sequence_file_input_auto_ref.cpp
  *
  * ### Reading record-wise (decomposed records)
  *
@@ -298,7 +298,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * [structured bindings](http://en.cppreference.com/w/cpp/language/structured_binding)
  * to decompose the record into its elements:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp decomposed
+ * \include test/snippet/io/sequence_file/sequence_file_input_decomposed.cpp
  *
  * In this case you immediately get the two elements of the tuple: `seq` of \ref sequence_type and `id` of
  * \ref id_type. **But beware: with structured bindings you do need to get the order of elements correctly!**
@@ -310,7 +310,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * combined field for SEQ and QUAL (see above). Or to never actually read the QUAL, if you don't need it.
  * The following snippets demonstrate the usage of such a fields trait object.
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp custom_fields
+ * \include test/snippet/io/sequence_file/sequence_file_input_custom_fields.cpp
  *
  * When reading a file, all fields not present in the file (but requested implicitly or via the `selected_field_ids`
  * parameter) are ignored.
@@ -320,7 +320,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * Since SeqAn files are ranges, you can also create views over files. A useful example is to filter the records
  * based on certain criteria, e.g. minimum length of the sequence field:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp file_view
+ * \include test/snippet/io/sequence_file/sequence_file_input_file_view.cpp
  *
  * ### End of file
  *
@@ -334,8 +334,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * This interface is less flexible, but can save you copy operations in certain scenarios, given that
  * you have sufficient memory to load the entire file at once:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp data_storage
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp col_read
+ * \include test/snippet/io/sequence_file/sequence_file_input_col_read.cpp
  *
  * Note that for this to make sense, your storage data types need to be identical to the corresponding column types
  * of the file. If you require different column types you can specify you own traits, see
@@ -629,14 +628,14 @@ public:
      * This function returns a reference to the currently buffered record, it is identical to dereferencing begin(),
      * but begin also always points to the current record on single pass input ranges:
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp return_record
+     * \include test/snippet/io/sequence_file/sequence_file_input_return_record.cpp
      *
      * It most situations using the iterator interface or a range-based for-loop are preferable to using front(),
      * because you can only move to the next record via the iterator.
      *
      * In any case, don't forget the reference! If you want to save the data from the record elsewhere, use move:
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp record_move
+     * \include test/snippet/io/sequence_file/sequence_file_input_record_move.cpp
      *
      * ### Complexity
      *
