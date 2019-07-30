@@ -90,7 +90,7 @@ constexpr size_t get_display_name_size_v = get_display_name_size<type>::value;
  * ### Example
  *
  * The following snippet demonstrates the usage:
- * \snippet test/snippet/core/detail/reflection.cpp usage
+ * \include test/snippet/core/detail/reflection.cpp
  */
 template <typename type>
 struct get_display_name
