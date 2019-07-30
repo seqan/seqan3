@@ -56,11 +56,11 @@ constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
  *
  *  Simple usage:
  *
- * \snippet test/snippet/core/debug_stream.cpp usage
+ * \include test/snippet/core/debug_stream_usage.cpp
  *
  * Changing flags:
  *
- * \snippet test/snippet/core/debug_stream.cpp flags
+ * \include test/snippet/core/debug_stream_flags.cpp
  *
  * See seqan3::fmtflags2 for more details.
  *
@@ -100,11 +100,11 @@ public:
      * the underlying stream so you need to take special care that its object lifetime does not end before the
      * debug_stream's.
      *
-     * \snippet test/snippet/core/debug_stream.cpp set_underlying_stream
+     * \include test/snippet/core/debug_stream_set_underlying_stream.cpp
      *
      * In the case where you wish to print to some stream object locally, instead create you own debug stream:
      *
-     * \snippet test/snippet/core/debug_stream.cpp set_underlying_stream2
+     * \include test/snippet/core/debug_stream_set_underlying_stream2.cpp
      */
     void set_underlying_stream(std::basic_ostream<char_t> & out)
     {

@@ -29,7 +29,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/core/add_enum_bitwise_operators.cpp usage
+ * \include test/snippet/core/add_enum_bitwise_operators.cpp
  */
 template <typename t>
 constexpr bool add_enum_bitwise_operators = false;

@@ -49,7 +49,7 @@ struct pod_tuple
  * [structured bindings](http://en.cppreference.com/w/cpp/language/declarations#Structured_binding_declaration)
  * to access the elements in the tuple.
  *
- * \snippet test/snippet/core/pod_tuple.cpp usage
+ * \include test/snippet/core/pod_tuple.cpp
  *
  */
 template <typename type0, typename ...types>

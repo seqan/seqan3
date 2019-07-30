@@ -143,7 +143,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/core/algorithm/configuration.cpp value_or
+     * \include test/snippet/core/algorithm/configuration_value_or.cpp
      *
      * ### Exception
      *
@@ -553,7 +553,7 @@ configuration(pipeable_config_element<derived_t, value_t> const &) -> configurat
  *
  * The following snippet demonstrates the various versions of get that can be used.
  *
- * \snippet test/snippet/core/algorithm/configuration.cpp get
+ * \include test/snippet/core/algorithm/configuration_get.cpp
  *
  * ### Exception
  *
