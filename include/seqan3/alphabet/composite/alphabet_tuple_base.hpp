@@ -621,7 +621,7 @@ template <typename indirect_component_type, typename derived_type, typename ...c
              !detail::weakly_equality_comparable_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator==(indirect_component_type const lhs,
-                          alphabet_tuple_base<derived_type, component_types...> const rhs) noexcept
+                          alphabet_tuple_base<derived_type, component_types...> const & rhs) noexcept
 {
     return rhs == lhs;
 }
@@ -632,7 +632,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_equality_comparable_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator!=(indirect_component_type const lhs,
-                          alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
+                          alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs != lhs;
 }
@@ -643,7 +643,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_ordered_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<(indirect_component_type const lhs,
-                         alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
+                         alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs > lhs;
 }
@@ -654,7 +654,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_ordered_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>(indirect_component_type const lhs,
-                         alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
+                         alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs < lhs;
 }
@@ -665,7 +665,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_ordered_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<=(indirect_component_type const lhs,
-                          alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
+                          alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs >= lhs;
 }
@@ -676,7 +676,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_ordered_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>=(indirect_component_type const lhs,
-                          alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
+                          alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs <= lhs;
 }
