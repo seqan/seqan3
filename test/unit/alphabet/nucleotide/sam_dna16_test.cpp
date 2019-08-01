@@ -21,6 +21,11 @@ using namespace seqan3;
 INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, alphabet_, sam_dna16);
 INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, alphabet_constexpr, sam_dna16);
 
+struct sam_dna16_accessor : public sam_dna16
+{
+    using sam_dna16::rank_to_char;
+};
+
 // nucleotide test: (because the complement is not bijective for sam_dna16 we need to test it manually)
 TEST(sam_dna16, nucleotide)
 {
@@ -47,7 +52,7 @@ TEST(sam_dna16, nucleotide)
 
 TEST(sam_dna16, to_char_assign_char)
 {
-    for (char chr : sam_dna16::rank_to_char)
+    for (char chr : sam_dna16_accessor::rank_to_char)
         EXPECT_EQ(to_char(sam_dna16{}.assign_char(chr)), chr);
 
     EXPECT_EQ(to_char(sam_dna16{}.assign_char('a')), 'A');
