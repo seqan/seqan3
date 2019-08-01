@@ -250,9 +250,9 @@ TEST(alphabet_variant_test, rank_type)
     using alphabet2_t = alphabet_variant<gap, dna5, dna4>;
     using alphabet3_t = alphabet_variant<char, gap>;
 
-    EXPECT_TRUE((std::is_same_v<alphabet1_t::rank_type, uint8_t>));
-    EXPECT_TRUE((std::is_same_v<alphabet2_t::rank_type, uint8_t>));
-    EXPECT_TRUE((std::is_same_v<alphabet3_t::rank_type, uint16_t>));
+    EXPECT_TRUE((std::is_same_v<alphabet_rank_t<alphabet1_t>, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<alphabet_rank_t<alphabet2_t>, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<alphabet_rank_t<alphabet3_t>, uint16_t>));
 }
 
 TEST(alphabet_variant_test, alphabet_size_)
