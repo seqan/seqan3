@@ -78,7 +78,7 @@ void to_rank(args_t ...) = delete;
 //!\brief Functor definition for seqan3::to_rank.
 struct to_rank_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::to_rank(v))    // explicit customisation
     SEQAN3_CPO_IMPL(1, to_rank(v)                                       )    // ADL
     SEQAN3_CPO_IMPL(0, v.to_rank()                                      )    // member
@@ -169,7 +169,7 @@ void assign_rank_to(args_t ...) = delete;
 //!\ingroup alphabet
 struct assign_rank_to_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, (seqan3::custom::alphabet<decltype(v)>::assign_rank_to(args..., v))) // explicit customisation
     SEQAN3_CPO_IMPL(1, (assign_rank_to(args..., v)                                       )) // ADL
     SEQAN3_CPO_IMPL(0, (v.assign_rank(args...)                                           )) // member
@@ -255,7 +255,7 @@ void to_char(args_t ...) = delete;
 //!\brief Functor definition for seqan3::to_char.
 struct to_char_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::to_char(v))    // explicit customisation
     SEQAN3_CPO_IMPL(1, to_char(v)                                       )    // ADL
     SEQAN3_CPO_IMPL(0, v.to_char()                                      )    // member
@@ -346,7 +346,7 @@ void assign_char_to(args_t ...) = delete;
 //!\ingroup alphabet
 struct assign_char_to_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, (seqan3::custom::alphabet<decltype(v)>::assign_char_to(args..., v))) // explicit customisation
     SEQAN3_CPO_IMPL(1, (assign_char_to(args..., v)                                       )) // ADL
     SEQAN3_CPO_IMPL(0, (v.assign_char(args...)                                           )) // member
@@ -436,7 +436,7 @@ void char_is_valid_for(args_t ...) = delete;
 template <typename alph_t>
 struct char_is_valid_for_fn
 {
-private:
+public:
     //!\brief `alph_t` with cvref removed and possibly wrapped in std::type_identity.
     using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<alph_t>>,
                                         remove_cvref_t<alph_t>,
@@ -617,7 +617,7 @@ void alphabet_size(args_t ...) = delete;
 template <typename alph_t>
 struct alphabet_size_fn
 {
-private:
+public:
     //!\brief `alph_t` with cvref removed and possibly wrapped in std::type_identity.
     using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<alph_t>> &&
                                         seqan3::is_constexpr_default_constructible_v<remove_cvref_t<alph_t>>,

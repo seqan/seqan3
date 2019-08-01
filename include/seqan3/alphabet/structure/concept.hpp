@@ -32,7 +32,7 @@ void is_pair_open(args_t ...) = delete;
 //!\brief Functor definition for seqan3::is_pair_open.
 struct is_pair_open_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::is_pair_open(v)) // explicit customisation
     SEQAN3_CPO_IMPL(1, is_pair_open(v)                                       ) // ADL
     SEQAN3_CPO_IMPL(0, v.is_pair_open()                                      ) // member
@@ -111,7 +111,7 @@ void is_pair_close(args_t ...) = delete;
 //!\brief Functor definition for seqan3::is_pair_close.
 struct is_pair_close_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::is_pair_close(v)) // explicit customisation
     SEQAN3_CPO_IMPL(1, is_pair_close(v)                                       ) // ADL
     SEQAN3_CPO_IMPL(0, v.is_pair_close()                                      ) // member
@@ -190,7 +190,7 @@ void is_unpaired(args_t ...) = delete;
 //!\brief Functor definition for seqan3::is_unpaired.
 struct is_unpaired_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::is_unpaired(v)) // explicit customisation
     SEQAN3_CPO_IMPL(1, is_unpaired(v)                                       ) // ADL
     SEQAN3_CPO_IMPL(0, v.is_unpaired()                                      ) // member
@@ -278,7 +278,7 @@ template <typename alph_t,
                                                  std::type_identity<alph_t>>>
 struct max_pseudoknot_depth_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::max_pseudoknot_depth)) // custom
     SEQAN3_CPO_IMPL(1, (max_pseudoknot_depth(v)                                                             )) // ADL
     SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::max_pseudoknot_depth          )) // member
@@ -379,7 +379,7 @@ void pseudoknot_id(args_t ...) = delete;
 //!\brief Functor definition for seqan3::pseudoknot_id.
 struct pseudoknot_id_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::pseudoknot_id(v)) // explicit customisation
     SEQAN3_CPO_IMPL(1, pseudoknot_id(v)                                       ) // ADL
     SEQAN3_CPO_IMPL(0, v.pseudoknot_id()                                      ) // member
