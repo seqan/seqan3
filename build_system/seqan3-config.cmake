@@ -363,6 +363,24 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
+# thread support (pthread, windows threads)
+# ----------------------------------------------------------------------------
+
+set (THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package (Threads QUIET)
+
+if (Threads_FOUND)
+    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} Threads::Threads)
+    if ("${CMAKE_THREAD_LIBS_INIT}" STREQUAL "")
+        seqan3_config_print ("Thread support:             builtin.")
+    else ()
+        seqan3_config_print ("Thread support:             via ${CMAKE_THREAD_LIBS_INIT}")
+    endif ()
+else ()
+    seqan3_config_print ("Thread support:             not found.")
+endif ()
+
+# ----------------------------------------------------------------------------
 # Require Ranges and SDSL
 # ----------------------------------------------------------------------------
 
