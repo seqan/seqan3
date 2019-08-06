@@ -49,6 +49,10 @@ private:
     small_vector<translation_frames, 6> selected_frames{};
 
 protected:
+    //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
+    template <typename, typename>
+    friend class detail::random_access_iterator_base;
+
     /*!\name Associated types
      * \{
      */
