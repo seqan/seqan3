@@ -20,6 +20,22 @@ using namespace seqan3;
 // test fixtures
 //------------------------------------------------------------------------------
 
+struct argument_parser_accessor : public argument_parser
+{
+public:
+    using argument_parser::version_check_future;
+};
+
+bool wait_for(argument_parser & parser)
+{
+    auto & future = reinterpret_cast<argument_parser_accessor &>(parser)
+                    .version_check_future;
+
+    if (future.valid())
+        return future.get();
+    return false;
+}
+
 struct version_check : public ::testing::Test
 {
     char const * const OPTION_VERSION_CHECK = "--version-check";
@@ -71,8 +87,7 @@ struct version_check : public ::testing::Test
 
         // call future.get() to artificially wait for the thread to finish and avoid
         // any interference with following tests
-        if (parser.version_check_future.valid())
-            app_call_succeeded = parser.version_check_future.get();
+        app_call_succeeded = wait_for(parser);
 
         if (env != nullptr)
             setenv("SEQAN3_NO_VERSION_CHECK", env, 1);
@@ -238,8 +253,9 @@ TEST_F(version_check, environment_variable_set)
     std::string out = testing::internal::GetCapturedStdout();
     std::string err = testing::internal::GetCapturedStderr();
 
-    if (parser.version_check_future.valid())
-        parser.version_check_future.get();
+    // call future.get() to artificially wait for the thread to finish and avoid
+    // any interference with following tests
+    wait_for(parser);
 
     EXPECT_EQ(out, "");
     EXPECT_EQ(err, "");
@@ -415,8 +431,7 @@ TEST_F(version_check, smaller_app_version_custom_url)
 
     // call future.get() to artificially wait for the thread to finish and avoid
     // any interference with following tests
-    if (parser.version_check_future.valid())
-        parser.version_check_future.get();
+    wait_for(parser);
 
     EXPECT_EQ(out, "");
     EXPECT_EQ(err, (detail::version_checker{APP_NAME, parser.info.version, parser.info.url}.message_app_update));

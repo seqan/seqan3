@@ -523,7 +523,7 @@ public:
      */
     argument_parser_meta_data info;
 
-private:
+protected:
     //!\brief Keeps track of whether the parse function has been called already.
     bool parse_was_called{false};
 
