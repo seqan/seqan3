@@ -64,9 +64,9 @@ public:
     buffer_queue() : buffer_queue{0u}
     {}
     buffer_queue(buffer_queue const &)             = delete;
-    buffer_queue(buffer_queue &&)                  = default;
+    buffer_queue(buffer_queue &&)                  = delete;
     buffer_queue & operator=(buffer_queue const &) = delete;
-    buffer_queue & operator=(buffer_queue &&)      = default;
+    buffer_queue & operator=(buffer_queue &&)      = delete;
     ~buffer_queue()                                = default;
 
     // you can set the initial capacity here
