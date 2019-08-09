@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/type_list.hpp>
+#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 
 using namespace seqan3;

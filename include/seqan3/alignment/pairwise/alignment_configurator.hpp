@@ -27,7 +27,7 @@
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/core/type_list.hpp>
+#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/range/view/view_all.hpp>
 
 namespace seqan3::detail

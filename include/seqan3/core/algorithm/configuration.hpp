@@ -22,7 +22,7 @@
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/tuple_utility.hpp>
-#include <seqan3/core/type_list.hpp>
+#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3

@@ -19,7 +19,7 @@
 
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
-#include <seqan3/core/type_list.hpp>
+#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 
 namespace seqan3::detail
