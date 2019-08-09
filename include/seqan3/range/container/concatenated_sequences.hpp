@@ -64,7 +64,7 @@ namespace seqan3
  *
  * ###Example
  *
- * \snippet test/snippet/range/container/concatenated_sequences.cpp usage
+ * \include test/snippet/range/container/concatenated_sequences.cpp
  *
  * ###Exceptions
  *
@@ -844,7 +844,7 @@ public:
      *
      * ###Example
      *
-     * \snippet test/snippet/range/container/concatenated_sequences.cpp insert
+     * \include test/snippet/range/container/concatenated_sequences_insert.cpp
      */
     template <std::ranges::ForwardRange rng_type>
     iterator insert(const_iterator pos, rng_type && value)
@@ -876,7 +876,7 @@ public:
      *
      * ###Example
      *
-     * \snippet test/snippet/range/container/concatenated_sequences.cpp insert2
+     * \include test/snippet/range/container/concatenated_sequences_insert2.cpp
      */
     template <std::ranges::ForwardRange rng_type>
     iterator insert(const_iterator pos, size_type const count, rng_type && value)
