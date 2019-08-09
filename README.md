@@ -62,7 +62,7 @@ g++-7 -O3 -DNDEBUG -Wall -Wextra                                \
     -isystem /path/to/seqan3/submodules/range-v3/include        \
     -isystem /path/to/seqan3/submodules/sdsl-lite/include       \
     -isystem /path/to/seqan3/submodules/cereal/include          \
-    -DSEQAN3_HAS_ZLIB=1                                         \
-    -DSEQAN3_HAS_BZIP2=1                                        \
+    -DSEQAN3_HAS_ZLIB=1 -DSEQAN3_HAS_BZIP2=1                    \
+    -lz -lbz2 -lstdc++fs -pthread                               \
   your_file.cpp
 ```
