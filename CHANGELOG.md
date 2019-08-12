@@ -40,6 +40,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * **The `type_list` header has moved:**
   If you included `<seqan3/core/type_list.hpp>` you need to change the path to `<seqan3/core/type_list/type_list.hpp>`.
 
+#### Range
+
+* **The `seqan3::concatenated_sequences::data()` function has been deprecated:**
+  Use `seqan3::concatenated_sequences::raw_data()` instead.
+
 ## Notable Bug-fixes
 
 # 3.0.0 ("Escala")

@@ -53,7 +53,7 @@ namespace seqan3
  * * Better cache locality when parsing the sequences linearly (and often also on random access).
  * * Constant time access to the concatenation of the sequences via concat().
  * * This access is also writable so that certain transformations can be done globally, instead of element-wise.
- * * Also direct access to the delimiters via data() [this is used by some algorithms].
+ * * Also direct access to the delimiters via raw_data() [this is used by some algorithms].
  *
  * The disadvantages are:
  *
@@ -600,17 +600,35 @@ public:
     /*!\brief Provides direct, unsafe access to underlying data structures.
      * \returns An std::pair of the concatenated sequences and the delimiter string.
      *
-     * This exact representation of the data is implementation defined. Do not rely on it for API stability.
+     * \details
+     *
+     * \noapi
+     *
+     * The exact representation of the data is implementation defined. Do not rely on it for API stability.
      */
-    std::pair<decltype(data_values) &, decltype(data_delimiters) &> data()
+    std::pair<decltype(data_values) &, decltype(data_delimiters) &> raw_data()
     {
         return {data_values, data_delimiters};
     }
 
-    //!\copydoc data()
-    std::pair<decltype(data_values) const &, decltype(data_delimiters) const &> data() const
+    //!\copydoc raw_data()
+    std::pair<decltype(data_values) const &, decltype(data_delimiters) const &> raw_data() const
     {
         return {std::as_const(data_values), std::as_const(data_delimiters)};
+    }
+
+    //!\copydoc raw_data()
+    //!\deprecated Use raw_data() instead.
+    SEQAN3_DEPRECATED_310 std::pair<decltype(data_values) &, decltype(data_delimiters) &> data()
+    {
+        return raw_data();
+    }
+
+    //!\copydoc raw_data()
+    //!\deprecated Use raw_data() instead.
+    SEQAN3_DEPRECATED_310 std::pair<decltype(data_values) const &, decltype(data_delimiters) const &> data() const
+    {
+        return raw_data();
     }
     //!\}
 
@@ -1243,37 +1261,37 @@ public:
     //!\brief Checks whether `*this` is equal to `rhs`.
     constexpr bool operator==(concatenated_sequences const & rhs) const noexcept
     {
-        return data() == rhs.data();
+        return raw_data() == rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
     constexpr bool operator!=(concatenated_sequences const & rhs) const noexcept
     {
-        return data() != rhs.data();
+        return raw_data() != rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is less than `rhs`.
     constexpr bool operator<(concatenated_sequences const & rhs) const noexcept
     {
-        return data() < rhs.data();
+        return raw_data() < rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
     constexpr bool operator>(concatenated_sequences const & rhs) const noexcept
     {
-        return data() > rhs.data();
+        return raw_data() > rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
     constexpr bool operator<=(concatenated_sequences const & rhs) const noexcept
     {
-        return data() <= rhs.data();
+        return raw_data() <= rhs.data();
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
     constexpr bool operator>=(concatenated_sequences const & rhs) const noexcept
     {
-        return data() >= rhs.data();
+        return raw_data() >= rhs.raw_data();
     }
     //!\}
 
