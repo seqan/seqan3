@@ -58,7 +58,7 @@ private:
     };
 
     //!\brief Stores the actual data.
-    bitfield data_{0u, 0u}; // Specifying values prevents ICE on gcc < 9 when comparing to default constructed bitset
+    bitfield data{0u, 0u}; // Specifying values prevents ICE on gcc < 9 when comparing to default constructed bitset
 
     //!\brief Proxy data type returned by seqan3::dynamic_bitset as reference to the bit.
     class reference_proxy_type
@@ -209,8 +209,8 @@ public:
     {
         if (detail::popcount(value >> 58) != 0)
             throw std::invalid_argument{"The dynamic_bitset can be at most 58 long."};
-        data_.bits |= value;
-        data_.size |= value ? detail::most_significant_bit_set(value) + 1 : 0u;
+        data.bits |= value;
+        data.size |= value ? detail::most_significant_bit_set(value) + 1 : 0u;
     }
 
     /*!\brief Construct from two iterators.
@@ -576,7 +576,7 @@ public:
     constexpr dynamic_bitset & operator&=(dynamic_bitset const & rhs) noexcept
     {
         assert(size() == rhs.size());
-        data_.bits &= rhs.data_.bits;
+        data.bits &= rhs.data.bits;
         return *this;
     }
 
@@ -608,7 +608,7 @@ public:
     constexpr dynamic_bitset & operator|=(dynamic_bitset const & rhs) noexcept
     {
         assert(size() == rhs.size());
-        data_.bits |= rhs.data_.bits;
+        data.bits |= rhs.data.bits;
         return *this;
     }
 
@@ -640,7 +640,7 @@ public:
     constexpr dynamic_bitset & operator^=(dynamic_bitset const & rhs) noexcept
     {
         assert(size() == rhs.size());
-        data_.bits ^= rhs.data_.bits;
+        data.bits ^= rhs.data.bits;
         return *this;
     }
 
@@ -698,8 +698,8 @@ public:
     {
         assert(count > 0);
         assert(count < size());
-        data_.bits <<= count;
-        data_.bits &= (1ULL << size()) - 1ULL;
+        data.bits <<= count;
+        data.bits &= (1ULL << size()) - 1ULL;
         return *this;
     }
 
@@ -729,7 +729,7 @@ public:
     {
         assert(count > 0);
         assert(count < size());
-        data_.bits >>= count;
+        data.bits >>= count;
         return *this;
     }
 
@@ -818,7 +818,7 @@ public:
      */
     constexpr dynamic_bitset & set() noexcept
     {
-        data_.bits |= (1ULL << size()) - 1ULL;
+        data.bits |= (1ULL << size()) - 1ULL;
         return *this;
     }
 
@@ -878,7 +878,7 @@ public:
      */
     constexpr dynamic_bitset & reset() noexcept
     {
-        data_.bits = 0u;
+        data.bits = 0u;
         return *this;
     }
 
@@ -934,8 +934,8 @@ public:
      */
     constexpr dynamic_bitset & flip() noexcept
     {
-        data_.bits = ~data_.bits;
-        data_.bits &= (1ULL << size()) - 1ULL;
+        data.bits = ~data.bits;
+        data.bits &= (1ULL << size()) - 1ULL;
         return *this;
     }
 
@@ -999,7 +999,7 @@ public:
     //!\brief Returns the number of set bits.
     constexpr size_type count() const noexcept
     {
-        return detail::popcount(data_.bits);
+        return detail::popcount(data.bits);
     }
 
     /*!\brief Returns the i-th element.
@@ -1064,14 +1064,14 @@ public:
     constexpr reference operator[](size_t const i) noexcept
     {
         assert(i < size());
-        return {data_, i};
+        return {data, i};
     }
 
     //!\copydoc operator[]()
     constexpr const_reference operator[](size_t const i) const noexcept
     {
         assert(i < size());
-        return data_.bits & 1ULL << i;
+        return data.bits & 1ULL << i;
     }
 
     /*!\brief Returns the first element. Calling front on an empty container is undefined.
@@ -1131,15 +1131,15 @@ public:
     }
 
     //!\brief Direct access to the underlying bit field.
-    constexpr bitfield * data() noexcept
+    constexpr bitfield * raw_data() noexcept
     {
-        return data_;
+        return data;
     }
 
-    //!\copydoc data()
-    constexpr bitfield const * data() const noexcept
+    //!\copydoc raw_data()
+    constexpr bitfield const * raw_data() const noexcept
     {
-        return data_;
+        return data;
     }
     //!\}
 
@@ -1179,7 +1179,7 @@ public:
      */
     constexpr size_type size() const noexcept
     {
-        return data_.size;
+        return data.size;
     }
 
     /*!\brief Returns the maximum number of elements the container is able to hold and resolves to `capacity_`.
@@ -1254,8 +1254,8 @@ public:
      */
     constexpr void clear() noexcept
     {
-        data_.size &= 0ULL;
-        data_.bits &= 0ULL;
+        data.size &= 0ULL;
+        data.bits &= 0ULL;
     }
 
     /*!\brief Inserts `value` before `pos` in the container.
@@ -1504,11 +1504,11 @@ public:
     {
         assert(count <= capacity_);
         // Enlarging.
-        data_.bits |= value && count > size() ? ((1ULL << (count - size())) - 1) << size() : 0ULL;
+        data.bits |= value && count > size() ? ((1ULL << (count - size())) - 1) << size() : 0ULL;
         // Set size bits.
-        data_.size = count;
+        data.size = count;
         // Shrinking.
-        data_.bits &= (1ULL << size()) - 1ULL;
+        data.bits &= (1ULL << size()) - 1ULL;
     }
 
     /*!\brief Swap contents with another instance.
@@ -1526,15 +1526,15 @@ public:
      */
     constexpr void swap(dynamic_bitset & rhs) noexcept
     {
-        bitfield tmp = std::move(data_);
-        data_ = std::move(rhs.data_);
-        rhs.data_ = std::move(tmp);
+        bitfield tmp = std::move(data);
+        data = std::move(rhs.data);
+        rhs.data = std::move(tmp);
     }
 
     //!\overload
     constexpr void swap(dynamic_bitset && rhs) noexcept
     {
-        data_ = std::move(rhs.data_);
+        data = std::move(rhs.data);
     }
 
     //!\}
@@ -1632,7 +1632,7 @@ public:
     //!\endcond
     friend constexpr bool operator==(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
     {
-        return lhs.data_.size == rhs.data_.size && lhs.data_.bits == rhs.data_.bits;
+        return lhs.data.size == rhs.data.size && lhs.data.bits == rhs.data.bits;
     }
 
     //!\brief Performs element-wise comparison.
@@ -1652,7 +1652,7 @@ public:
     //!\endcond
     friend constexpr bool operator<(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
     {
-        return lhs.data_.bits < rhs.data_.bits;
+        return lhs.data.bits < rhs.data.bits;
     }
 
     //!\brief Performs element-wise comparison.
@@ -1662,7 +1662,7 @@ public:
     //!\endcond
     friend constexpr bool operator>(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
     {
-        return lhs.data_.bits > rhs.data_.bits;
+        return lhs.data.bits > rhs.data.bits;
     }
 
     //!\brief Performs element-wise comparison.
@@ -1738,11 +1738,11 @@ public:
     {
         if constexpr (std::numeric_limits<unsigned long>::max() < std::numeric_limits<size_t>::max())
         {
-            if (data_.bits > std::numeric_limits<unsigned long>::max())
+            if (data.bits > std::numeric_limits<unsigned long>::max())
                 throw std::overflow_error{"seqan3::dynamic_bitset cannot be represented as unsigned long."};
         }
 
-        return static_cast<unsigned long>(data_.bits);
+        return static_cast<unsigned long>(data.bits);
     }
 
     /*!\brief Converts the dynamic_bitset to an `unsigned long long` integer.
@@ -1763,11 +1763,11 @@ public:
     {
         if constexpr (std::numeric_limits<unsigned long long>::max() < std::numeric_limits<size_t>::max())
         {
-            if (data_.bits >= std::numeric_limits<unsigned long long>::max())
+            if (data.bits >= std::numeric_limits<unsigned long long>::max())
                 throw std::overflow_error{"seqan3::dynamic_bitset cannot be represented as unsigned long long."};
         }
 
-        return static_cast<unsigned long long>(data_.bits);
+        return static_cast<unsigned long long>(data.bits);
     }
     //!\}
 
@@ -1860,12 +1860,12 @@ private:
     template <CerealArchive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
-        uint64_t size = data_.size;
+        uint64_t size = data.size;
         archive(size);
-        data_.size = size;
-        uint64_t bits = data_.bits;
+        data.size = size;
+        uint64_t bits = data.bits;
         archive(bits);
-        data_.bits = bits;
+        data.bits = bits;
     }
     //!\endcond
 };
