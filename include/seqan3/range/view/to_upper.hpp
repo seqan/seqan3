@@ -61,7 +61,7 @@ namespace seqan3::view
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
- * \snippet test/snippet/range/view/to_case.cpp to_upper
+ * \include test/snippet/range/view/to_upper.cpp
  * \hideinitializer
  */
 inline auto const to_upper = deep{std::view::transform([] (auto const in) noexcept

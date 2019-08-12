@@ -63,7 +63,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/rank_char.cpp char_to
+ * \include test/snippet/range/view/char_to.cpp
  * \hideinitializer
  */
 template <Alphabet alphabet_type>

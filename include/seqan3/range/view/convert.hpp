@@ -57,10 +57,10 @@ namespace seqan3::view
  * ### Example
  *
  * Convert from `int` to `bool`:
- * \snippet test/snippet/range/view/convert.cpp int_to_bool
+ * \include test/snippet/range/view/convert_int_to_bool.cpp
  *
  * Convert from seqan3::dna15 to seqan3::dna5:
- * \snippet test/snippet/range/view/convert.cpp 15_to_5
+ * \include test/snippet/range/view/convert_15_to_5.cpp
  * \hideinitializer
  */
 template <typename out_t>

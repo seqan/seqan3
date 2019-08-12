@@ -375,7 +375,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/single_pass_input.cpp usage
+ * \include test/snippet/range/view/single_pass_input.cpp
  * \hideinitializer
  */
 inline constexpr auto single_pass_input = detail::adaptor_for_view_without_args<detail::single_pass_input_view>{};

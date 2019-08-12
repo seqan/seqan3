@@ -620,7 +620,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/take.cpp usage
+ * \include test/snippet/range/view/take.cpp
  *
  * \hideinitializer
  */

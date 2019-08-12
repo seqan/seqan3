@@ -59,7 +59,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/get.cpp usage
+ * \include test/snippet/range/view/get.cpp
  * \hideinitializer
  */
 template <auto index>
