@@ -27,17 +27,28 @@ namespace seqan3
  * \ingroup container
  * \tparam capacity_   The capacity of the dynamic bitset
  *
+ * \details
+ *
  * This implementation of a bitset can be constructed, accessed and modified at compile time.
  * It has a fixed capacity but a dynamic size and provides all functionality of a sequence container. Note
  * that it also models a reservable sequence container but all associated member functions are no-op because the
  * capacity is fixed.
+ *
+ * ### Example
+ *
+ * \include test/snippet/range/container/dynamic_bitset_usage.cpp
+ *
+ * ### Thread safety
+ *
+ * This container provides no thread-safety beyond the promise given also by the STL that all
+ * calls to `const` member function are safe from multiple threads (as long as no thread calls
+ * a non-`const` member function at the same time).
  */
-
 template <size_t capacity_ = 58>
 class dynamic_bitset
 {
 private:
-    //!\brief A bit field representing size and bit information stored in one uint64_t.
+    //!\brief A bit field representing size and bit information stored in one `uint64_t`.
     struct bitfield
     {
         //!\brief 6 bits representing the size information.
@@ -53,21 +64,32 @@ private:
     class reference_proxy_type
     {
     public:
-        constexpr reference_proxy_type()                                         noexcept = default; //!< Defaulted.
-        constexpr reference_proxy_type(reference_proxy_type const &)             noexcept = default; //!< Defaulted.
-        constexpr reference_proxy_type(reference_proxy_type &&)                  noexcept = default; //!< Defaulted.
+        /*!\name Constructors, destructor and assignment
+         * \{
+         */
+        constexpr reference_proxy_type() noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type(reference_proxy_type const &) noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type(reference_proxy_type &&) noexcept = default; //!< Defaulted.
 
         //!\brief Assign the value of the bit.
-        constexpr reference_proxy_type & operator=(reference_proxy_type rhs) noexcept
+        constexpr reference_proxy_type & operator=(reference_proxy_type const rhs) noexcept
         {
             rhs ? set() : reset();
             return *this;
         }
 
-        ~reference_proxy_type()                                                  noexcept = default; //!< Defaulted.
+        //!\brief Sets the referenced bit to `value`.
+        constexpr reference_proxy_type & operator=(bool const value) noexcept
+        {
+            value ? set() : reset();
+            return *this;
+        }
+
+        ~reference_proxy_type() noexcept = default; //!< Defaulted.
+        //!\}
 
         //!\brief Initialise from seqan3::dynamic_bitset's underlying data and a bit position.
-        constexpr reference_proxy_type(bitfield & internal_, size_t pos) noexcept :
+        constexpr reference_proxy_type(bitfield & internal_, size_t const pos) noexcept :
             internal{internal_}, mask{1ULL<<pos}
         {}
 
@@ -83,30 +105,26 @@ private:
             return !static_cast<bool>(internal.bits & mask);
         }
 
-        //!\brief Sets the referenced bit to value.
-        constexpr reference_proxy_type & operator=(bool const value)
-        {
-            value ? set() : reset();
-            return *this;
-        }
 
-        //!\brief Sets the referenced bit to the result of a bitwise or with value.
+        //!\brief Sets the referenced bit to the result of a binary OR with `value`.
         constexpr reference_proxy_type & operator|=(bool const value)
         {
             if (value)
                 set();
+
             return *this;
         }
 
-        //!\brief Sets the referenced bit to the result of a bitwise and with value.
+        //!\brief Sets the referenced bit to the result of a binary AND with `value`.
         constexpr reference_proxy_type & operator&=(bool const value)
         {
             if (!value)
                 reset();
+
             return *this;
         }
 
-        //!\brief Sets the referenced bit to the result of a bitwise xor with value.
+        //!\brief Sets the referenced bit to the result of a binary XOR with `value`.
         constexpr reference_proxy_type & operator^=(bool const value)
         {
             operator bool() && value ? reset() : set();
@@ -119,13 +137,13 @@ private:
         //!\brief Bitmask to access one specific bit.
         uint64_t mask;
 
-        //!\brief Sets the referenced bit to 1.
+        //!\brief Sets the referenced bit to `1`.
         constexpr void set() noexcept
         {
             internal.bits |= mask;
         }
 
-        //!\brief Sets the referenced bit to 0.
+        //!\brief Sets the referenced bit to `0`.
         constexpr void reset() noexcept
         {
             internal.bits &= ~mask;
@@ -138,7 +156,7 @@ public:
     /*!\name Associated types
      * \{
      */
-    //!\brief Equals bool.
+    //!\brief Equals `bool`.
     using value_type      = bool;
     //!\brief A proxy type that enables assignment.
     using reference       = reference_proxy_type;
@@ -146,11 +164,11 @@ public:
     using const_reference = bool;
     //!\brief The iterator type of this container (a random access iterator).
     using iterator        = detail::random_access_iterator<dynamic_bitset>;
-    //!\brief The const_iterator type of this container (a random access iterator).
+    //!\brief The `const_iterator` type of this container (a random access iterator).
     using const_iterator  = detail::random_access_iterator<dynamic_bitset const>;
     //!\brief A std::ptrdiff_t.
     using difference_type = ptrdiff_t;
-    //!\brief An unsigned integer type (usually std::size_t)
+    //!\brief An unsigned integer type (usually std::size_t).
     using size_type       = detail::min_viable_uint_t<capacity_>;
     //!\}
 
@@ -169,32 +187,9 @@ public:
     constexpr dynamic_bitset & operator=(dynamic_bitset &&)      noexcept = default; //!< Defaulted.
     ~dynamic_bitset()                                            noexcept = default; //!< Defaulted.
 
-    /*!\brief Construct from an integral type.
-     * \tparam t The type of range to construct from; must satisfy std::Integral and must be at most 64 bits long.
-     * \param[in]      value The integral to construct/assign from.
-     * \throws std::invalid_argument if uint64_t representation of value has bits set past the 58'th.
-     *
-     * Delegates to the seqan3::dynamic_bitset(uint64_t value) constructor.
-     *
-     * ### Complexity
-     *
-     * Constant.
-     *
-     * ### Exceptions
-     *
-     * Throws std::invalid_argument if uint64_t representation of value has a set bit past the 58 one,
-     * i.e. only bits in [0,58) may be set.
-     */
-    template <std::Integral t>
-    //!\cond
-        requires detail::sizeof_bits<t> <= 64
-    //!\endcond
-    constexpr dynamic_bitset(t value) : dynamic_bitset(static_cast<uint64_t>(value))
-    {}
-
-    /*!\brief Construct from an uint64_t.
-     * \param[in]      value The uint64_t to construct/assign from.
-     * \throws std::invalid_argument if value has bits set past the 58'th.
+    /*!\brief Construct from an `uint64_t`.
+     * \param[in] value The `uint64_t` to construct/assign from.
+     * \throws std::invalid_argument if value has bits set outside of [0, 58).
      *
      * \details
      *
@@ -222,8 +217,10 @@ public:
      * \tparam begin_it_type Must model std::ForwardIterator and `value_type` must be constructible from
      *                       the reference type of begin_it_type.
      * \tparam   end_it_type Must model std::Sentinel.
-     * \param[in]         begin_it Begin of range to construct/assign from.
-     * \param[in]           end_it End of range to construct/assign from.
+     * \param[in] begin_it Begin of range to construct/assign from.
+     * \param[in] end_it End of range to construct/assign from.
+     *
+     * \details
      *
      * ### Complexity
      *
@@ -235,7 +232,7 @@ public:
      */
     template <std::ForwardIterator begin_it_type, std::Sentinel<begin_it_type> end_it_type>
     //!\cond
-        requires std::Constructible<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
+        requires std::Constructible<value_type, reference_t<begin_it_type>>
     //!\endcond
     constexpr dynamic_bitset(begin_it_type begin_it, end_it_type end_it) noexcept:
         dynamic_bitset{}
@@ -248,6 +245,8 @@ public:
      *                       must be constructible from reference_t<other_range_t>.
      * \param[in]      range The sequence to construct/assign from.
      *
+     * \details
+     *
      * ### Complexity
      *
      * Linear in the size of `range`.
@@ -258,8 +257,7 @@ public:
      */
     template <std::ranges::InputRange other_range_t>
     //!\cond
-        requires !std::is_same_v<remove_cvref_t<other_range_t>, dynamic_bitset>
-                 /*ICE: && std::Constructible<value_type, reference_t<other_range_t>>*/
+        requires !std::Same<remove_cvref_t<other_range_t>, dynamic_bitset>
     //!\endcond
     explicit constexpr dynamic_bitset(other_range_t && range) noexcept :
         dynamic_bitset{std::ranges::begin(range), std::ranges::end(range)}
@@ -269,6 +267,8 @@ public:
      * \param[in] n     Number of elements.
      * \param[in] value The initial value to be assigned.
      *
+     * \details
+     *
      * ### Complexity
      *
      * Linear in `n`.
@@ -277,7 +277,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr dynamic_bitset(size_type n, value_type value) noexcept :
+    constexpr dynamic_bitset(size_type const n, value_type const value) noexcept :
         dynamic_bitset{}
     {
         assign(n, value);
@@ -285,6 +285,8 @@ public:
 
     /*!\brief Assign from `std::initializer_list`.
      * \param[in] ilist A `std::initializer_list` of value_type.
+     *
+     * \details
      *
      * ### Complexity
      *
@@ -294,14 +296,14 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr dynamic_bitset & operator=(std::initializer_list<value_type> ilist) noexcept
+    constexpr dynamic_bitset & operator=(std::initializer_list<value_type> const ilist) noexcept
     {
         assign(std::ranges::begin(ilist), std::ranges::end(ilist));
         return *this;
     }
 
     /*!\brief Construction from literal.
-     * \param _lit The literal to construct the string for. May only contain '0' and '1'.
+     * \param lit The literal to construct the string for. May only contain '0' and '1'.
      * \throws std::invalid_argument if any character is not '0' or '1'.
      *
      * \details
@@ -315,71 +317,75 @@ public:
      *
      * ### Complexity
      *
-     * Linear in the size of _lit.
+     * Linear in the size of lit.
      *
      * ### Exceptions
      *
      * Throws std::invalid_argument if any character is not '0' or '1'.
      */
     template <size_t N>
-    constexpr dynamic_bitset(char const (&_lit)[N]) : dynamic_bitset{}
+    constexpr dynamic_bitset(char const (&lit)[N]) : dynamic_bitset{}
     {
         static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
-        assign(_lit);
+        assign(lit);
     }
 
     /*!\brief Assign from literal.
-     * \param _lit The literal to assign the string from. May only contain '0' and '1'.
+     * \param lit The literal to assign the string from. May only contain '0' and '1'.
      * \throws std::invalid_argument if any character is not '0' or '1'.
+     *
+     * \details
      *
      * The `char` literal is expected to be null-terminated (asserted in debug-mode). If it is not, the last character
      * will be lost when copying to the instance of `dynamic_bitset`.
      *
      * ### Complexity
      *
-     * Linear in the size of _lit.
+     * Linear in the size of lit.
      *
      * ### Exceptions
      *
      * Throws std::invalid_argument if any character is not '0' or '1'.
      */
     template <size_t N>
-    constexpr dynamic_bitset & operator=(char const (&_lit)[N])
+    constexpr dynamic_bitset & operator=(char const (&lit)[N])
     {
         static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
-        assign(_lit);
+        assign(lit);
         return *this;
     }
 
     /*!\brief Assign from literal.
-     * \param _lit The literal to assign the string from. May only contain '0' and '1'.
+     * \param lit The literal to assign the string from. May only contain '0' and '1'.
      * \throws std::invalid_argument if any character is not '0' or '1'.
+     *
+     * \details
      *
      * The `char` literal is expected to be null-terminated (asserted in debug-mode). If it is not, the last character
      * will be lost when copying to the instance of `dynamic_bitset`.
      *
      * ### Complexity
      *
-     * Linear in the size of _lit.
+     * Linear in the size of lit.
      *
      * ### Exceptions
      *
      * Throws std::invalid_argument if any character is not '0' or '1'.
      */
     template <size_t N>
-    constexpr void assign(char const (&_lit)[N])
+    constexpr void assign(char const (&lit)[N])
     {
         static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
-        assert(_lit[N - 1] == '\0');
+        assert(lit[N - 1] == '\0');
         uint64_t value{};
 
         for (size_t i = 0; i != N - 1; ++i)
         {
-            if (_lit[i] == '0')
+            if (lit[i] == '0')
             {
                 value <<= 1;
             }
-            else if (_lit[i] == '1')
+            else if (lit[i] == '1')
             {
                 value <<= 1;
                 value |= 1u;
@@ -390,12 +396,14 @@ public:
             }
         }
 
-        (*this) = value;
+        *this = value;
         resize(N - 1);
     }
 
     /*!\brief Assign from `std::initializer_list`.
      * \param[in] ilist A `std::initializer_list` of value_type.
+     *
+     * \details
      *
      * ### Complexity
      *
@@ -405,7 +413,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr void assign(std::initializer_list<value_type> ilist) noexcept
+    constexpr void assign(std::initializer_list<value_type> const ilist) noexcept
     {
         assign(std::ranges::begin(ilist), std::ranges::end(ilist));
     }
@@ -414,9 +422,11 @@ public:
      * \param[in] count Number of elements.
      * \param[in] value The initial value to be assigned.
      *
+     * \details
+     *
      * ### Complexity
      *
-     * In \f$O(count)\f$.
+     * Linear in `count`.
      *
      * ### Exceptions
      *
@@ -434,6 +444,8 @@ public:
      *                       must be constructible from reference_t<other_range_t>.
      * \param[in]      range The sequences to construct/assign from.
      *
+     * \details
+     *
      * ### Complexity
      *
      * Linear in the size of `range`.
@@ -444,7 +456,7 @@ public:
      */
     template <std::ranges::InputRange other_range_t>
     //!\cond
-        requires std::Constructible<value_type, /*ranges::range_reference_t*/reference_t<other_range_t>>
+        requires std::Constructible<value_type, reference_t<other_range_t>>
     //!\endcond
     constexpr void assign(other_range_t && range) noexcept
     {
@@ -458,6 +470,8 @@ public:
      * \param[in]   begin_it Begin of range to construct/assign from.
      * \param[in]     end_it End of range to construct/assign from.
      *
+     * \details
+     *
      * ### Complexity
      *
      * Linear in the distance between `begin_it` and `end_it`.
@@ -467,10 +481,10 @@ public:
      * No-throw guarantee.
      */
     template <std::ForwardIterator begin_it_type, std::Sentinel<begin_it_type> end_it_type>
-    constexpr void assign(begin_it_type begin_it, end_it_type end_it) noexcept
     //!\cond
-        requires std::Constructible<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
+        requires std::Constructible<value_type, reference_t<begin_it_type>>
     //!\endcond
+    constexpr void assign(begin_it_type begin_it, end_it_type end_it) noexcept
     {
         clear();
         insert(cbegin(), begin_it, end_it);
@@ -502,10 +516,17 @@ public:
     //!\copydoc begin()
     constexpr const_iterator cbegin() const noexcept
     {
-        return const_iterator{*this};
+        return begin();
     }
 
-    //!\brief Returns iterator past the end of the dynamic_bitset.
+    /*!\brief Returns iterator past the end of the dynamic_bitset.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/range/container/dynamic_bitset_begin.cpp
+     */
     constexpr iterator end() noexcept
     {
         return iterator{*this, size()};
@@ -520,14 +541,14 @@ public:
     //!\copydoc end()
     constexpr const_iterator cend() const noexcept
     {
-        return const_iterator{*this, size()};
+        return end();
     }
     //!\}
 
     /*!\name Bit manipulation
      * \{
      */
-    /*!\brief Sets the bits to the result of binary AND on corresponding pairs of bits of *this and rhs.
+    /*!\brief Sets the bits to the result of binary AND on corresponding pairs of bits of `*this` and `rhs`.
      * \param[in] rhs dynamic_bitset to perform binary AND with.
      * \returns *this
      *
@@ -538,7 +559,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_bitwise_and_member.cpp
+     * \include test/snippet/range/container/dynamic_bitset_binary_and_member.cpp
      *
      * ### Exception
      *
@@ -559,7 +580,7 @@ public:
         return *this;
     }
 
-    /*!\brief Sets the bits to the result of binary OR on corresponding pairs of bits of *this and rhs.
+    /*!\brief Sets the bits to the result of binary OR on corresponding pairs of bits of `*this` and `rhs`.
      * \param[in] rhs dynamic_bitset to perform binary OR with.
      * \returns *this
      *
@@ -570,7 +591,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_bitwise_or_member.cpp
+     * \include test/snippet/range/container/dynamic_bitset_binary_or_member.cpp
      *
      * ### Exception
      *
@@ -591,7 +612,7 @@ public:
         return *this;
     }
 
-    /*!\brief Sets the bits to the result of binary XOR on corresponding pairs of bits of *this and rhs.
+    /*!\brief Sets the bits to the result of binary XOR on corresponding pairs of bits of `*this` and `rhs`.
      * \param[in] rhs dynamic_bitset to perform binary XOR with.
      * \returns *this
      *
@@ -602,7 +623,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_bitwise_xor_member.cpp
+     * \include test/snippet/range/container/dynamic_bitset_binary_xor_member.cpp
      *
      * ### Exception
      *
@@ -623,7 +644,7 @@ public:
         return *this;
     }
 
-    /*!\brief Returns a temporary copy of *this with all bits flipped (binary NOT).
+    /*!\brief Returns a temporary copy of `*this` with all bits flipped (binary NOT).
      * \returns Copy of *this with all bits flipped.
      *
      * \details
@@ -774,7 +795,7 @@ public:
         return tmp;
     }
 
-    /*!\brief Sets all bits to 1.
+    /*!\brief Sets all bits to `1`.
      * \returns *this
      *
      * \details
@@ -801,8 +822,8 @@ public:
         return *this;
     }
 
-    /*!\brief Sets the i'th bit to value.
-     * \param[in] i Index of the bit to value.
+    /*!\brief Sets the i'th bit to `value`.
+     * \param[in] i Index of the bit to set.
      * \param[in] value Value to set. Default true.
      * \throws std::out_of_range if you access an element behind the last.
      * \returns *this
@@ -831,7 +852,7 @@ public:
         return *this;
     }
 
-    /*!\brief Sets all bits to 0.
+    /*!\brief Sets all bits to `0`.
      * \returns *this
      *
      * \details
@@ -862,7 +883,7 @@ public:
     }
 
     /*!\brief Sets the i'th bit to false.
-     * \param[in] i Index of the bit to value.
+     * \param[in] i Index of the bit to reset.
      * \throws std::out_of_range if you access an element behind the last.
      * \returns *this
      *
@@ -952,7 +973,6 @@ public:
      * \{
      */
     /*!\brief Checks if all bit are set.
-     *
      * \returns `true` if all bits are set or the bitset is empty, `false` otherwise.
      */
     constexpr bool all() const noexcept
@@ -961,7 +981,6 @@ public:
     }
 
     /*!\brief Checks if any bit is set.
-     *
      * \returns `true` if any bit is set, `false` otherwise.
      */
     constexpr bool any() const noexcept
@@ -970,7 +989,6 @@ public:
     }
 
     /*!\brief Checks if no bit is set.
-     *
      * \returns `true` if no bit is set, `false` otherwise.
      */
     constexpr bool none() const noexcept
@@ -989,6 +1007,8 @@ public:
      * \throws std::out_of_range If you access an element behind the last.
      * \returns A reference to the value at position `i`.
      *
+     * \details
+     *
      * ### Complexity
      *
      * Constant.
@@ -997,7 +1017,7 @@ public:
      *
      * Throws std::out_of_range if `i >= size()`.
      */
-    constexpr reference at(size_t i)
+    constexpr reference at(size_t const i)
     {
         if (i >= size()) // [[unlikely]]
             throw std::out_of_range{"Trying to access position " + std::to_string(i) +
@@ -1006,7 +1026,7 @@ public:
     }
 
     //!\copydoc at()
-    constexpr const_reference at(size_t i) const
+    constexpr const_reference at(size_t const i) const
     {
         if (i >= size()) // [[unlikely]]
             throw std::out_of_range{"Trying to access position " + std::to_string(i) +
@@ -1015,7 +1035,7 @@ public:
     }
 
     //!\copydoc at()
-    constexpr const_reference test(size_t i) const
+    constexpr const_reference test(size_t const i) const
     {
         return at(i);
     }
@@ -1041,14 +1061,14 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr reference operator[](size_t i)
+    constexpr reference operator[](size_t const i) noexcept
     {
         assert(i < size());
         return {data_, i};
     }
 
     //!\copydoc operator[]()
-    constexpr const_reference operator[](size_t i) const
+    constexpr const_reference operator[](size_t const i) const noexcept
     {
         assert(i < size());
         return data_.bits & 1ULL << i;
@@ -1056,6 +1076,8 @@ public:
 
     /*!\brief Returns the first element. Calling front on an empty container is undefined.
      * \returns A reference to the value at the first position.
+     *
+     * \details
      *
      * Calling front on an empty container is undefined. In debug mode an assertion checks the size of the container.
      *
@@ -1083,6 +1105,8 @@ public:
     /*!\brief Returns the last element.
      * \returns A reference to the value at the last position.
      *
+     * \details
+     *
      * Calling back on an empty container is undefined. In debug mode an assertion checks the size of the container.
      *
      * ### Complexity
@@ -1096,14 +1120,14 @@ public:
     constexpr reference back() noexcept
     {
         assert(size() > 0);
-        return (*this)[size()-1];
+        return (*this)[size() - 1];
     }
 
     //!\copydoc back()
     constexpr const_reference back() const noexcept
     {
         assert(size() > 0);
-        return (*this)[size()-1];
+        return (*this)[size() - 1];
     }
 
     //!\brief Direct access to the underlying bit field.
@@ -1125,6 +1149,8 @@ public:
     /*!\brief Checks whether the container is empty.
      * \returns `true` if the container is empty, `false` otherwise.
      *
+     * \details
+     *
      * ### Complexity
      *
      * Constant.
@@ -1141,6 +1167,8 @@ public:
     /*!\brief Returns the number of elements in the container, i.e. std::distance(begin(), end()).
      * \returns The number of elements in the container.
      *
+     * \details
+     *
      * ### Complexity
      *
      * Constant.
@@ -1156,6 +1184,8 @@ public:
 
     /*!\brief Returns the maximum number of elements the container is able to hold and resolves to `capacity_`.
      * \returns The number of elements in the container.
+     *
+     * \details
      *
      * This value typically reflects the theoretical limit on the size of the container. At runtime, the size
      * of the container may be limited to a value smaller than max_size() by the amount of RAM available.
@@ -1175,6 +1205,8 @@ public:
 
     /*!\brief Returns the number of elements that the container is able to hold and resolves to `capacity_`.
      * \returns The capacity of the currently allocated storage.
+     *
+     * \details
      *
      * ### Complexity
      *
@@ -1207,6 +1239,8 @@ public:
      */
     /*!\brief Removes all elements from the container.
      *
+     * \details
+     *
      * \attention
      * In contrast to reset(), this method also sets the size to 0.
      *
@@ -1224,10 +1258,12 @@ public:
         data_.bits &= 0ULL;
     }
 
-    /*!\brief Inserts value before position in the container.
+    /*!\brief Inserts `value` before `pos` in the container.
      * \param   pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param value Element value to insert.
      * \returns     Iterator pointing to the inserted value.
+     *
+     * \details
      *
      * Inserting a value although the maximum capacity is reached is undefined behaviour.
      *
@@ -1244,11 +1280,13 @@ public:
         return insert(pos, 1, value);
     }
 
-    /*!\brief Inserts count copies of value before position in the container.
+    /*!\brief Inserts `count` copies of `value` before position in the container.
      * \param   pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param count Number of copies.
      * \param value Element value to insert.
      * \returns     Iterator pointing to the first element inserted, or `pos` if `count==0`.
+     *
+     * \details
      *
      * If `size()` + `count` > `capacity()` this function results in undefined behaviour.
      *
@@ -1266,7 +1304,7 @@ public:
         return insert(pos, std::ranges::begin(tmp), std::ranges::end(tmp));
     }
 
-    /*!\brief Inserts elements from range `[begin_it, end_it)` before position in the container.
+    /*!\brief Inserts elements from range `[begin_it, end_it)` before `pos` in the container.
      * \tparam begin_it_type Must satisfy std::ForwardIterator and the `value_type` must be constructible from
      *                       the reference type of begin_it_type.
      * \tparam   end_it_type Must satisfy std::Sentinel.
@@ -1275,7 +1313,9 @@ public:
      * \param[in]     end_it End of range to construct/assign from.
      * \returns              Iterator pointing to the first element inserted, or `pos` if `begin_it==end_it`.
      *
-     * The behaviour is undefined if begin_it and end_it are iterators into `*this` or if, given the size `n` of the
+     * \details
+     *
+     * The behaviour is undefined if `begin_it` and `end_it` are iterators into `*this` or if, given the size `n` of the
      * range represented by [begin_t, end_it), `size()` + `n` > `capacity()`.
      *
      * ### Complexity
@@ -1311,10 +1351,12 @@ public:
         return begin() + pos_as_num;
     }
 
-    /*!\brief Inserts elements from initializer list before position in the container.
+    /*!\brief Inserts elements from initializer list before `pos` in the container.
      * \param   pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param ilist Initializer list with values to insert.
      * \returns     Iterator pointing to the first element inserted, or `pos` if `ilist` is empty.
+     *
+     * \details
      *
      * Given the size `n` of `ilist`, this function results in undefined behaviour if `size()` + `n` > `capacity()`.
      *
@@ -1336,6 +1378,8 @@ public:
      * \param   end_it Behind the end of range to erase.
      * \returns        Iterator following the last element removed. If the iterator `pos` refers to the last element,
      *                 the end() iterator is returned.
+     *
+     * \details
      *
      * Invalidates iterators and references at or after the point of the erase, including the end() iterator.
      *
@@ -1369,6 +1413,8 @@ public:
      * \returns     Iterator following the last element removed. If the iterator `pos` refers to the last element,
      *              the end() iterator is returned.
      *
+     * \details
+     *
      * Invalidates iterators and references at or after the point of the erase, including the end() iterator.
      *
      * The iterator `pos` must be valid and dereferenceable. Thus the end() iterator (which is valid, but is not
@@ -1387,8 +1433,10 @@ public:
        return erase(pos, pos + 1);
     }
 
-    /*!\brief Appends the given element value to the end of the container.
+    /*!\brief Appends the given element `value` to the end of the container.
      * \param value The value to append.
+     *
+     * \details
      *
      * If the new size() is greater than capacity() this is undefined behaviour.
      *
@@ -1408,6 +1456,8 @@ public:
     }
 
     /*!\brief Removes the last element of the container.
+     *
+    * \details
      *
      * Calling pop_back() on an empty container is undefined. In debug mode an assertion will be thrown.
      *
@@ -1464,6 +1514,8 @@ public:
     /*!\brief Swap contents with another instance.
      * \param rhs The other instance to swap with.
      *
+     * \details
+     *
      * ### Complexity
      *
      * Linear in the size of both containers.
@@ -1491,6 +1543,8 @@ public:
      * \param lhs The first instance.
      * \param rhs The other instance to swap with.
      *
+     * \details
+     *
      * ### Complexity
      *
      * Linear in the size of both containers.
@@ -1504,16 +1558,13 @@ public:
         lhs.swap(rhs);
     }
 
-    //!\overload
-    friend constexpr void swap(dynamic_bitset && lhs, dynamic_bitset && rhs) noexcept
-    {
-        lhs.swap(rhs);
-    }
-
-    /*!\name Bitwise operators
+    /*!\name Binary operators
      * \{
      */
-    /*!\brief Returns dynamic_bitset containing the result of binary AND on corresponding pairs of bits of lhs and rhs.
+    /*!\brief Returns dynamic_bitset containing the result of binary AND on corresponding pairs of bits of
+     *        `lhs` and `rhs`.
+     *
+     * \details
      *
      * \attention
      * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
@@ -1530,7 +1581,10 @@ public:
         return tmp;
     }
 
-    /*!\brief Returns dynamic_bitset containing the result of binary XOR on corresponding pairs of bits of lhs and rhs.
+    /*!\brief Returns dynamic_bitset containing the result of binary XOR on corresponding pairs of bits of
+     *        `lhs` and `rhs`.
+     *
+     * \details
      *
      * \attention
      * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
@@ -1547,7 +1601,10 @@ public:
         return tmp;
     }
 
-    /*!\brief Returns dynamic_bitset containing the result of binary OR on corresponding pairs of bits of lhs and rhs.
+    /*!\brief Returns dynamic_bitset containing the result of binary OR on corresponding pairs of bits of
+     *        `lhs` and `rhs`.
+     *
+     * \details
      *
      * \attention
      * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
@@ -1639,6 +1696,8 @@ public:
      * \throws std::bad_alloc from the the std::string constructor.
      * \returns A std::string representing the dynamic_bitset.
      *
+     * \details
+     *
      * \attention
      * This is the only function of this class that is **not** constexpr because std::string is not constexpr.
      *
@@ -1657,12 +1716,15 @@ public:
         str.reserve(size());
         for (bool const bit : std::view::reverse(*this))
             bit ? str.push_back(one) : str.push_back(zero);
+
         return str;
     }
 
     /*!\brief Converts the dynamic_bitset to an `unsigned long` integer.
      * \throws std::overflow_error if the value cannot be represented in `unsigned long`.
      * \returns A `unsigned long` representing the dynamic_bitset.
+     *
+     * \details
      *
      * ### Complexity
      *
@@ -1686,6 +1748,8 @@ public:
     /*!\brief Converts the dynamic_bitset to an `unsigned long long` integer.
      * \throws std::overflow_error if the value cannot be represented in `unsigned long long`.
      * \returns A `unsigned long long` representing the dynamic_bitset.
+     *
+     * \details
      *
      * ### Complexity
      *
@@ -1788,6 +1852,8 @@ private:
      * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
      * \param archive The archive being serialised from/to.
      *
+     * \details
+     *
      * \attention
      * These functions are never called directly, see \ref serialisation for more details.
      */
@@ -1819,7 +1885,6 @@ struct hash<seqan3::dynamic_bitset<cap>>
     /*!\brief Compute the hash for a seqan3::dynamic_bitset.
      * \ingroup container
      * \param[in] arg The seqan3::dynamic_bitset to process.
-     *
      * \returns size_t.
      * \sa seqan3::dynamic_bitset.to_ullong().
      */

@@ -471,9 +471,6 @@ constexpr bool swap_test()
     t2.swap(std::move(t1));
     res &= t2 == expected;
 
-    swap(std::move(t1), std::move(t2));
-    res &= t1 == expected;
-
     return res;
 }
 
