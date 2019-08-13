@@ -66,13 +66,13 @@ tutorial
 └── seqan3
 ```
 
-To set these directories up you can follow this script (note the <b>\--recursive</b> when cloning SeqAn3):
+To set these directories up you can follow this script (note the <b>\--recurse-submodules</b> when cloning SeqAn3):
 ```
 mkdir tutorial
 cd tutorial
 mkdir build
 mkdir source
-git clone --recursive https://github.com/seqan/seqan3.git
+git clone --recurse-submodules https://github.com/seqan/seqan3.git
 ```
 
 The directory should now look like this:
