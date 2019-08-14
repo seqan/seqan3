@@ -17,18 +17,16 @@
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/search/algorithm/configuration/detail.hpp>
-
-/*!\addtogroup search
- * \{
- */
+#include <seqan3/search/configuration/detail.hpp>
 
 namespace seqan3::detail
 {
 
 //!\brief Type for the "index_cursor" value for the configuration element "output".
+//!\ingroup search_configuration
 struct search_output_index_cursor {};
 //!\brief Type for the "text_position" value for the configuration element "output".
+//!\ingroup search_configuration
 struct search_output_text_position {};
 
 } // namespace seqan3::detail
@@ -37,8 +35,10 @@ namespace seqan3::search_cfg
 {
 
 //!\brief Configuration element to receive all hits within the error bounds.
+//!\ingroup search_configuration
 inline detail::search_output_index_cursor constexpr index_cursor;
 //!\brief Configuration element to receive all hits within the lowest number of errors.
+//!\ingroup search_configuration
 inline detail::search_output_text_position constexpr text_position;
 
 /*!\brief Configuration element to determine the output type of hits.
@@ -74,5 +74,3 @@ output(output_t) -> output<remove_cvref_t<output_t>>;
 //!\}
 
 } // namespace seqan3::search_cfg
-
-//!\}

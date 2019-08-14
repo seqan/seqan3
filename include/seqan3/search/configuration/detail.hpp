@@ -22,7 +22,7 @@ namespace seqan3::detail
 // ----------------------------------------------------------------------------
 
 /*!\brief Specifies an id for every configuration element.
- * \ingroup configuration
+ * \ingroup search_configuration
  *
  * \details
  *
@@ -55,7 +55,7 @@ enum struct search_config_id : uint8_t
 // ----------------------------------------------------------------------------
 
 /*!\brief Compatibility matrix to check how search configuration elements can be combined.
- * \ingroup configuration
+ * \ingroup search_configuration
  *
  * \details
  *

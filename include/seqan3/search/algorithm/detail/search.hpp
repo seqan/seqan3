@@ -13,9 +13,9 @@
 #pragma once
 
 #include <seqan3/core/type_traits/pre.hpp>
-#include <seqan3/search/algorithm/configuration/all.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
+#include <seqan3/search/configuration/all.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 
 namespace seqan3::detail

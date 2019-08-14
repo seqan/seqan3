@@ -64,5 +64,5 @@
 
 #pragma once
 
-#include <seqan3/search/algorithm/configuration/all.hpp>
 #include <seqan3/search/algorithm/search.hpp>
+#include <seqan3/search/configuration/all.hpp>
