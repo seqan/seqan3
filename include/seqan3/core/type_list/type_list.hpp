@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::type_list and auxiliary type traits.
+ * \brief Provides seqan3::type_list.
  */
 
 #pragma once
@@ -19,9 +19,13 @@
 namespace seqan3
 {
 
+// ----------------------------------------------------------------------------
+// type_list class
+// ----------------------------------------------------------------------------
+
 /*!\brief Type that contains multiple types, an alias for
  * [meta::list](https://ericniebler.github.io/range-v3/structmeta_1_1list.html).
- * \ingroup core
+ * \ingroup type_list
  */
 template <typename ... types>
 using type_list = meta::list<types...>;
@@ -31,8 +35,12 @@ using type_list = meta::list<types...>;
 namespace seqan3::detail
 {
 
+// ----------------------------------------------------------------------------
+// TypeList concept
+// ----------------------------------------------------------------------------
+
 /*!\brief Auxiliary concept that checks whether a type is a specialisation of seqan3::type_list.
- * \ingroup core
+ * \ingroup type_list
  */
 template <typename t>
 SEQAN3_CONCEPT TypeList = is_type_specialisation_of_v<t, type_list>;

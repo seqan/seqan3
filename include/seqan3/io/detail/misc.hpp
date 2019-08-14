@@ -15,7 +15,7 @@
 #include <variant>
 
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/core/type_list.hpp>
+#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/std/algorithm>

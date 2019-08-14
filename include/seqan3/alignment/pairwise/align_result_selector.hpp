@@ -21,7 +21,7 @@
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
-#include <seqan3/core/type_list.hpp>
+#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/view/view_all.hpp>
 #include <seqan3/std/ranges>
