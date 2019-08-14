@@ -25,7 +25,7 @@ namespace seqan3
  * \implements seqan3::ReservableContainer
  * \implements seqan3::Cerealisable
  * \ingroup container
- * \tparam capacity_   The capacity of the dynamic bitset
+ * \tparam bit_capacity The capacity of the dynamic bitset
  *
  * \details
  *
@@ -41,10 +41,10 @@ namespace seqan3
  * ### Thread safety
  *
  * This container provides no thread-safety beyond the promise given also by the STL that all
- * calls to `const` member function are safe from multiple threads (as long as no thread calls
+ * calls to `const` member functions are safe from multiple threads (as long as no thread calls
  * a non-`const` member function at the same time).
  */
-template <size_t capacity_ = 58>
+template <size_t bit_capacity = 58>
 class dynamic_bitset
 {
 private:
@@ -151,7 +151,7 @@ private:
     };
 
 public:
-    static_assert(capacity_ <= 58, "The capacity of the dynamic_bitset exceeds the limit of 58.");
+    static_assert(bit_capacity <= 58, "The capacity of the dynamic_bitset exceeds the limit of 58.");
 
     /*!\name Associated types
      * \{
@@ -169,7 +169,7 @@ public:
     //!\brief A std::ptrdiff_t.
     using difference_type = ptrdiff_t;
     //!\brief An unsigned integer type (usually std::size_t).
-    using size_type       = detail::min_viable_uint_t<capacity_>;
+    using size_type       = detail::min_viable_uint_t<bit_capacity>;
     //!\}
 
     //!\cond
@@ -326,7 +326,7 @@ public:
     template <size_t N>
     constexpr dynamic_bitset(char const (&lit)[N]) : dynamic_bitset{}
     {
-        static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
+        static_assert(N <= bit_capacity + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
         assign(lit);
     }
 
@@ -350,7 +350,7 @@ public:
     template <size_t N>
     constexpr dynamic_bitset & operator=(char const (&lit)[N])
     {
-        static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
+        static_assert(N <= bit_capacity + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
         assign(lit);
         return *this;
     }
@@ -375,7 +375,7 @@ public:
     template <size_t N>
     constexpr void assign(char const (&lit)[N])
     {
-        static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
+        static_assert(N <= bit_capacity + 1, "Length of string literal exceeds capacity of dynamic_bitset.");
         assert(lit[N - 1] == '\0');
         uint64_t value{};
 
@@ -1182,7 +1182,7 @@ public:
         return data.size;
     }
 
-    /*!\brief Returns the maximum number of elements the container is able to hold and resolves to `capacity_`.
+    /*!\brief Returns the maximum number of elements the container is able to hold and resolves to `bit_capacity`.
      * \returns The number of elements in the container.
      *
      * \details
@@ -1203,7 +1203,7 @@ public:
         return capacity();
     }
 
-    /*!\brief Returns the number of elements that the container is able to hold and resolves to `capacity_`.
+    /*!\brief Returns the number of elements that the container is able to hold and resolves to `bit_capacity`.
      * \returns The capacity of the currently allocated storage.
      *
      * \details
@@ -1218,7 +1218,7 @@ public:
      */
     constexpr size_type capacity() const noexcept
     {
-        return capacity_;
+        return bit_capacity;
     }
 
     //!\brief Since the capacity is fixed on compile time, this is a no-op.
@@ -1450,7 +1450,7 @@ public:
      */
     constexpr void push_back(value_type const value) noexcept
     {
-        assert(size() < capacity_);
+        assert(size() < bit_capacity);
         resize(size() + 1);
         (*this)[size() - 1] = value;
     }
@@ -1502,7 +1502,7 @@ public:
      */
     constexpr void resize(size_type const count, value_type const value = false) noexcept
     {
-        assert(count <= capacity_);
+        assert(count <= bit_capacity);
         // Enlarging.
         data.bits |= value && count > size() ? ((1ULL << (count - size())) - 1) << size() : 0ULL;
         // Set size bits.
@@ -1569,11 +1569,11 @@ public:
      * \attention
      * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
      */
-    template <size_t cap2>
+    template <size_t cap>
     //!\cond
-        requires cap2 <= capacity_
+        requires cap <= bit_capacity
     //!\endcond
-    friend constexpr dynamic_bitset operator&(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
+    friend constexpr dynamic_bitset operator&(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         assert(lhs.size() == rhs.size());
         dynamic_bitset tmp{lhs};
@@ -1589,11 +1589,11 @@ public:
      * \attention
      * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
      */
-    template <size_t cap2>
+    template <size_t cap>
     //!\cond
-        requires cap2 <= capacity_
+        requires cap <= bit_capacity
     //!\endcond
-    friend constexpr dynamic_bitset operator^(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
+    friend constexpr dynamic_bitset operator^(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         assert(lhs.size() == rhs.size());
         dynamic_bitset tmp{lhs};
@@ -1609,11 +1609,11 @@ public:
      * \attention
      * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
      */
-    template <size_t cap2>
+    template <size_t cap>
     //!\cond
-        requires cap2 <= capacity_
+        requires cap <= bit_capacity
     //!\endcond
-    friend constexpr dynamic_bitset operator|(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
+    friend constexpr dynamic_bitset operator|(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         assert(lhs.size() == rhs.size());
         dynamic_bitset tmp{lhs};
@@ -1626,61 +1626,61 @@ public:
      * \{
      */
     //!\brief Performs element-wise comparison.
-    template <size_t cap2>
+    template <size_t cap>
     //!\cond
-        requires cap2 <= capacity_ /* resolves ambiguousness when comparing two dynamic_bitsets of unequal capacity */
+        requires cap <= bit_capacity /* resolves ambiguousness when comparing two dynamic_bitsets of unequal capacity */
     //!\endcond
-    friend constexpr bool operator==(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
+    friend constexpr bool operator==(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return lhs.data.size == rhs.data.size && lhs.data.bits == rhs.data.bits;
     }
 
     //!\brief Performs element-wise comparison.
-    template <size_t cap2>
+    template <size_t cap>
     //!\cond
-        requires cap2 <= capacity_
+        requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator!=(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
+    friend constexpr bool operator!=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     //!\brief Performs element-wise comparison.
-    template <size_t cap2>
+    template <size_t cap>
     //!\cond
-        requires cap2 <= capacity_
+        requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator<(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
+    friend constexpr bool operator<(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return lhs.data.bits < rhs.data.bits;
     }
 
     //!\brief Performs element-wise comparison.
-    template <size_t cap2>
+    template <size_t cap>
     //!\cond
-        requires cap2 <= capacity_
+        requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator>(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
+    friend constexpr bool operator>(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return lhs.data.bits > rhs.data.bits;
     }
 
     //!\brief Performs element-wise comparison.
-    template <size_t cap2>
+    template <size_t cap>
     //!\cond
-        requires cap2 <= capacity_
+        requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator<=(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
+    friend constexpr bool operator<=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs > rhs);
     }
 
     //!\brief Performs element-wise comparison.
-    template <size_t cap2>
+    template <size_t cap>
     //!\cond
-        requires cap2 <= capacity_
+        requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator>=(dynamic_bitset const & lhs, dynamic_bitset<cap2> const & rhs) noexcept
+    friend constexpr bool operator>=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs < rhs);
     }
