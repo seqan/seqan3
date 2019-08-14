@@ -105,7 +105,6 @@ private:
             return !static_cast<bool>(internal.bits & mask);
         }
 
-
         //!\brief Sets the referenced bit to the result of a binary OR with `value`.
         constexpr reference_proxy_type & operator|=(bool const value)
         {
@@ -166,9 +165,9 @@ public:
     using iterator        = detail::random_access_iterator<dynamic_bitset>;
     //!\brief The `const_iterator` type of this container (a random access iterator).
     using const_iterator  = detail::random_access_iterator<dynamic_bitset const>;
-    //!\brief A std::ptrdiff_t.
+    //!\brief A `std::ptrdiff_t`.
     using difference_type = ptrdiff_t;
-    //!\brief An unsigned integer type (usually std::size_t).
+    //!\brief An unsigned integer type (usually `std::size_t`).
     using size_type       = detail::min_viable_uint_t<bit_capacity>;
     //!\}
 
@@ -215,10 +214,10 @@ public:
 
     /*!\brief Construct from two iterators.
      * \tparam begin_it_type Must model std::ForwardIterator and `value_type` must be constructible from
-     *                       the reference type of begin_it_type.
-     * \tparam   end_it_type Must model std::Sentinel.
+     *                       the reference type of `begin_it_type`.
+     * \tparam end_it_type   Must model std::Sentinel.
      * \param[in] begin_it Begin of range to construct/assign from.
-     * \param[in] end_it End of range to construct/assign from.
+     * \param[in] end_it   End of range to construct/assign from.
      *
      * \details
      *
@@ -242,8 +241,8 @@ public:
 
     /*!\brief Construct from a different range.
      * \tparam other_range_t The type of range to be inserted; must satisfy std::ranges::InputRange and `value_type`
-     *                       must be constructible from reference_t<other_range_t>.
-     * \param[in]      range The sequence to construct/assign from.
+     *                       must be constructible from `reference_t<other_range_t>`.
+     * \param[in] range The sequence to construct/assign from.
      *
      * \details
      *
@@ -284,7 +283,7 @@ public:
     }
 
     /*!\brief Assign from `std::initializer_list`.
-     * \param[in] ilist A `std::initializer_list` of value_type.
+     * \param[in] ilist A `std::initializer_list` of `value_type`.
      *
      * \details
      *
@@ -303,8 +302,8 @@ public:
     }
 
     /*!\brief Construction from literal.
-     * \param lit The literal to construct the string for. May only contain '0' and '1'.
-     * \throws std::invalid_argument if any character is not '0' or '1'.
+     * \param[in] lit The literal to construct the string for. May only contain <code>'0'</code> and <code>'1'</code>.
+     * \throws std::invalid_argument if any character is not <code>'0'</code> or <code>'1'</code>.
      *
      * \details
      *
@@ -317,11 +316,11 @@ public:
      *
      * ### Complexity
      *
-     * Linear in the size of lit.
+     * Linear in the size of `lit`.
      *
      * ### Exceptions
      *
-     * Throws std::invalid_argument if any character is not '0' or '1'.
+     * Throws std::invalid_argument if any character is not <code>'0'</code> or <code>'1'</code>.
      */
     template <size_t N>
     constexpr dynamic_bitset(char const (&lit)[N]) : dynamic_bitset{}
@@ -331,8 +330,8 @@ public:
     }
 
     /*!\brief Assign from literal.
-     * \param lit The literal to assign the string from. May only contain '0' and '1'.
-     * \throws std::invalid_argument if any character is not '0' or '1'.
+     * \param[in] lit The literal to assign the string from. May only contain <code>'0'</code> and <code>'1'</code>.
+     * \throws std::invalid_argument if any character is not <code>'0'</code> or <code>'1'</code>.
      *
      * \details
      *
@@ -341,11 +340,11 @@ public:
      *
      * ### Complexity
      *
-     * Linear in the size of lit.
+     * Linear in the size of `lit`.
      *
      * ### Exceptions
      *
-     * Throws std::invalid_argument if any character is not '0' or '1'.
+     * Throws std::invalid_argument if any character is not <code>'0'</code> or <code>'1'</code>.
      */
     template <size_t N>
     constexpr dynamic_bitset & operator=(char const (&lit)[N])
@@ -356,8 +355,8 @@ public:
     }
 
     /*!\brief Assign from literal.
-     * \param lit The literal to assign the string from. May only contain '0' and '1'.
-     * \throws std::invalid_argument if any character is not '0' or '1'.
+     * \param[in] lit The literal to assign the string from. May only contain <code>'0'</code> and <code>'1'</code>.
+     * \throws std::invalid_argument if any character is not <code>'0'</code> or <code>'1'</code>.
      *
      * \details
      *
@@ -366,11 +365,11 @@ public:
      *
      * ### Complexity
      *
-     * Linear in the size of lit.
+     * Linear in the size of `lit`.
      *
      * ### Exceptions
      *
-     * Throws std::invalid_argument if any character is not '0' or '1'.
+     * Throws std::invalid_argument if any character is not <code>'0'</code> or <code>'1'</code>.
      */
     template <size_t N>
     constexpr void assign(char const (&lit)[N])
@@ -401,7 +400,7 @@ public:
     }
 
     /*!\brief Assign from `std::initializer_list`.
-     * \param[in] ilist A `std::initializer_list` of value_type.
+     * \param[in] ilist A `std::initializer_list` of `value_type`.
      *
      * \details
      *
@@ -441,8 +440,8 @@ public:
 
     /*!\brief Assign from a different range.
      * \tparam other_range_t The type of range to be inserted; must satisfy std::ranges::InputRange and `value_type`
-     *                       must be constructible from reference_t<other_range_t>.
-     * \param[in]      range The sequences to construct/assign from.
+     *                       must be constructible from `reference_t<other_range_t>`.
+     * \param[in] range The sequences to construct/assign from.
      *
      * \details
      *
@@ -464,11 +463,11 @@ public:
     }
 
     /*!\brief Assign from pair of iterators.
-     * \tparam begin_it_type Must satisfy std::ForwardIterator and the `value_type` must be constructible from
-     *                       the reference type of begin_it_type.
-     * \tparam   end_it_type Must satisfy std::Sentinel.
-     * \param[in]   begin_it Begin of range to construct/assign from.
-     * \param[in]     end_it End of range to construct/assign from.
+     * \tparam begin_it_type Must model std::ForwardIterator and the `value_type` must be constructible from
+     *                       the reference type of `begin_it_type`.
+     * \tparam end_it_type   Must model std::Sentinel.
+     * \param[in] begin_it Begin of range to construct/assign from.
+     * \param[in] end_it   End of range to construct/assign from.
      *
      * \details
      *
@@ -494,7 +493,7 @@ public:
     /*!\name Iterators
      * \{
      */
-    /*!\brief Returns the begin to the dynamic_bitset.
+    /*!\brief Returns the begin to the `dynamic_bitset`.
      *
      * \details
      *
@@ -519,7 +518,7 @@ public:
         return begin();
     }
 
-    /*!\brief Returns iterator past the end of the dynamic_bitset.
+    /*!\brief Returns iterator past the end of the `dynamic_bitset`.
      *
      * \details
      *
@@ -565,10 +564,6 @@ public:
      *
      * No-throw guarantee.
      *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
-     *
      * ### Complexity
      *
      * Constant.
@@ -597,10 +592,6 @@ public:
      *
      * No-throw guarantee.
      *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
-     *
      * ### Complexity
      *
      * Constant.
@@ -628,10 +619,6 @@ public:
      * ### Exception
      *
      * No-throw guarantee.
-     *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
      *
      * ### Complexity
      *
@@ -686,10 +673,6 @@ public:
      *
      * No-throw guarantee.
      *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
-     *
      * ### Complexity
      *
      * Constant.
@@ -717,10 +700,6 @@ public:
      *
      * No-throw guarantee.
      *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
-     *
      * ### Complexity
      *
      * Constant.
@@ -746,10 +725,6 @@ public:
      * ### Exception
      *
      * No-throw guarantee.
-     *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
      *
      * ### Complexity
      *
@@ -778,10 +753,6 @@ public:
      *
      * No-throw guarantee.
      *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
-     *
      * ### Complexity
      *
      * Constant.
@@ -808,10 +779,6 @@ public:
      *
      * No-throw guarantee.
      *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
-     *
      * ### Complexity
      *
      * Constant.
@@ -823,7 +790,7 @@ public:
     }
 
     /*!\brief Sets the i'th bit to `value`.
-     * \param[in] i Index of the bit to set.
+     * \param[in] i     Index of the bit to set.
      * \param[in] value Value to set. Default true.
      * \throws std::out_of_range if you access an element behind the last.
      * \returns *this
@@ -837,10 +804,6 @@ public:
      * ### Exception
      *
      * Throws std::out_of_range if `i >= size()`.
-     *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
      *
      * ### Complexity
      *
@@ -858,7 +821,7 @@ public:
      * \details
      *
      * \attention
-     * In contrast to clear(), this method does not modify the size.
+     * In contrast to `clear()`, this method does not modify the size.
      *
      * ### Example
      *
@@ -867,10 +830,6 @@ public:
      * ### Exception
      *
      * No-throw guarantee.
-     *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
      *
      * ### Complexity
      *
@@ -897,10 +856,6 @@ public:
      *
      * Throws std::out_of_range if `i >= size()`.
      *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
-     *
      * ### Complexity
      *
      * Constant.
@@ -923,10 +878,6 @@ public:
      * ### Exception
      *
      * No-throw guarantee.
-     *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
      *
      * ### Complexity
      *
@@ -953,10 +904,6 @@ public:
      * ### Exception
      *
      * Throws std::out_of_range if `i >= size()`.
-     *
-     * ### Thread-safety
-     *
-     * Not thread-safe.
      *
      * ### Complexity
      *
@@ -1041,7 +988,7 @@ public:
     }
 
     /*!\brief Returns the i-th element.
-     * \param i The element to retrieve.
+     * \param[in] i The element to retrieve.
      * \returns A reference to the value at position `i`.
      *
      * \details
@@ -1074,12 +1021,13 @@ public:
         return data.bits & 1ULL << i;
     }
 
-    /*!\brief Returns the first element. Calling front on an empty container is undefined.
+    /*!\brief Returns the first element.
      * \returns A reference to the value at the first position.
      *
      * \details
      *
-     * Calling front on an empty container is undefined. In debug mode an assertion checks the size of the container.
+     * Calling `front()` on an empty container is undefined. In debug mode an assertion checks
+     * the size of the container.
      *
      * ### Complexity
      *
@@ -1107,7 +1055,7 @@ public:
      *
      * \details
      *
-     * Calling back on an empty container is undefined. In debug mode an assertion checks the size of the container.
+     * Calling `back()` on an empty container is undefined. In debug mode an assertion checks the size of the container.
      *
      * ### Complexity
      *
@@ -1164,7 +1112,7 @@ public:
         return size() == 0;
     }
 
-    /*!\brief Returns the number of elements in the container, i.e. std::distance(begin(), end()).
+    /*!\brief Returns the number of elements in the container, i.e. `std::distance(begin(), end())`.
      * \returns The number of elements in the container.
      *
      * \details
@@ -1188,7 +1136,9 @@ public:
      * \details
      *
      * This value typically reflects the theoretical limit on the size of the container. At runtime, the size
-     * of the container may be limited to a value smaller than max_size() by the amount of RAM available.
+     * of the container may be limited to a value smaller than `max_size()` by the amount of RAM available.
+     *
+     * For the `dynamic_bitset` holds: `max_size() = capacity()`.
      *
      * ### Complexity
      *
@@ -1242,7 +1192,7 @@ public:
      * \details
      *
      * \attention
-     * In contrast to reset(), this method also sets the size to 0.
+     * In contrast to `reset()`, this method also sets the size to 0.
      *
      * ### Complexity
      *
@@ -1259,9 +1209,9 @@ public:
     }
 
     /*!\brief Inserts `value` before `pos` in the container.
-     * \param   pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
-     * \param value Element value to insert.
-     * \returns     Iterator pointing to the inserted value.
+     * \param[in] pos   Iterator before which the content will be inserted. `pos` may be the `end()` iterator.
+     * \param[in] value Element value to insert.
+     * \returns Iterator pointing to the inserted value.
      *
      * \details
      *
@@ -1269,7 +1219,7 @@ public:
      *
      * ### Complexity
      *
-     * Worst-case linear in size().
+     * Worst-case linear in `size()`.
      *
      * ### Exceptions
      *
@@ -1281,10 +1231,10 @@ public:
     }
 
     /*!\brief Inserts `count` copies of `value` before position in the container.
-     * \param   pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
-     * \param count Number of copies.
-     * \param value Element value to insert.
-     * \returns     Iterator pointing to the first element inserted, or `pos` if `count==0`.
+     * \param[in] pos   Iterator before which the content will be inserted. `pos` may be the `end()` iterator.
+     * \param[in] count Number of copies.
+     * \param[in] value Element value to insert.
+     * \returns Iterator pointing to the first element inserted, or `pos` if `count==0`.
      *
      * \details
      *
@@ -1292,7 +1242,7 @@ public:
      *
      * ### Complexity
      *
-     * Worst-case linear in size().
+     * Worst-case linear in `size()`.
      *
      * ### Exceptions
      *
@@ -1305,22 +1255,22 @@ public:
     }
 
     /*!\brief Inserts elements from range `[begin_it, end_it)` before `pos` in the container.
-     * \tparam begin_it_type Must satisfy std::ForwardIterator and the `value_type` must be constructible from
+     * \tparam begin_it_type Must model std::ForwardIterator and the `value_type` must be constructible from
      *                       the reference type of begin_it_type.
-     * \tparam   end_it_type Must satisfy std::Sentinel.
-     * \param[in]        pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
-     * \param[in]   begin_it Begin of range to construct/assign from.
-     * \param[in]     end_it End of range to construct/assign from.
-     * \returns              Iterator pointing to the first element inserted, or `pos` if `begin_it==end_it`.
+     * \tparam end_it_type   Must model std::Sentinel.
+     * \param[in] pos      Iterator before which the content will be inserted. `pos` may be the `end()` iterator.
+     * \param[in] begin_it Begin of range to construct/assign from.
+     * \param[in] end_it   End of range to construct/assign from.
+     * \returns Iterator pointing to the first element inserted, or `pos` if `begin_it==end_it`.
      *
      * \details
      *
      * The behaviour is undefined if `begin_it` and `end_it` are iterators into `*this` or if, given the size `n` of the
-     * range represented by [begin_t, end_it), `size()` + `n` > `capacity()`.
+     * range represented by [`begin_t`, `end_it`), `size()` + `n` > `capacity()`.
      *
      * ### Complexity
      *
-     * Worst-case linear in size().
+     * Worst-case linear in `size()`.
      *
      * ### Exceptions
      *
@@ -1352,9 +1302,9 @@ public:
     }
 
     /*!\brief Inserts elements from initializer list before `pos` in the container.
-     * \param   pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
-     * \param ilist Initializer list with values to insert.
-     * \returns     Iterator pointing to the first element inserted, or `pos` if `ilist` is empty.
+     * \param[in] pos   Iterator before which the content will be inserted. `pos` may be the `end()` iterator.
+     * \param[in] ilist Initializer list with values to insert.
+     * \returns Iterator pointing to the first element inserted, or `pos` if `ilist` is empty.
      *
      * \details
      *
@@ -1362,7 +1312,7 @@ public:
      *
      * ### Complexity
      *
-     * Worst-case linear in size().
+     * Worst-case linear in `size()`.
      *
      * ### Exceptions
      *
@@ -1374,20 +1324,21 @@ public:
     }
 
     /*!\brief Removes specified elements from the container.
-     * \param begin_it Begin of range to erase.
-     * \param   end_it Behind the end of range to erase.
-     * \returns        Iterator following the last element removed. If the iterator `pos` refers to the last element,
-     *                 the end() iterator is returned.
+     * \param[in] begin_it Begin of range to erase.
+     * \param[in] end_it   Behind the end of range to erase.
+     * \returns Iterator following the last element removed. If the iterator `pos` refers to the last element,
+     *          the `end()` iterator is returned.
      *
      * \details
      *
-     * Invalidates iterators and references at or after the point of the erase, including the end() iterator.
+     * Invalidates iterators and references at or after the point of the erase, including the `end()` iterator.
      *
-     * The iterator begin_it does not need to be dereferenceable if begin_it==end_it: erasing an empty range is a no-op.
+     * The iterator begin_it does not need to be dereferenceable if `begin_it==end_it`:
+     * erasing an empty range is a no-op.
      *
      * ### Complexity
      *
-     * Linear in size().
+     * Linear in `size()`.
      *
      * ### Exceptions
      *
@@ -1409,20 +1360,20 @@ public:
     }
 
     /*!\brief Removes specified elements from the container.
-     * \param   pos Remove the element at pos.
-     * \returns     Iterator following the last element removed. If the iterator `pos` refers to the last element,
-     *              the end() iterator is returned.
+     * \param[in] pos Remove the element at pos.
+     * \returns Iterator following the last element removed. If the iterator `pos` refers to the last element,
+     *          the `end()` iterator is returned.
      *
      * \details
      *
-     * Invalidates iterators and references at or after the point of the erase, including the end() iterator.
+     * Invalidates iterators and references at or after the point of the erase, including the `end()` iterator.
      *
-     * The iterator `pos` must be valid and dereferenceable. Thus the end() iterator (which is valid, but is not
-     * dereferencable) cannot be used as a value for pos.
+     * The iterator `pos` must be valid and dereferenceable. Thus the `end()` iterator (which is valid, but is not
+     * dereferencable) cannot be used as a value for `pos`.
      *
      * ### Complexity
      *
-     * Linear in size().
+     * Linear in `size()`.
      *
      * ### Exceptions
      *
@@ -1434,11 +1385,11 @@ public:
     }
 
     /*!\brief Appends the given element `value` to the end of the container.
-     * \param value The value to append.
+     * \param[in] value The value to append.
      *
      * \details
      *
-     * If the new size() is greater than capacity() this is undefined behaviour.
+     * If the new `size(`) is greater than `capacity()` this is undefined behaviour.
      *
      * ### Complexity
      *
@@ -1459,9 +1410,9 @@ public:
      *
     * \details
      *
-     * Calling pop_back() on an empty container is undefined. In debug mode an assertion will be thrown.
+     * Calling `pop_back()` on an empty container is undefined. In debug mode an assertion will be thrown.
      *
-     * No iterators or references except for back() and end() are invalidated.
+     * No iterators or references except for `back()` and `end()` are invalidated.
      *
      * ### Complexity
      *
@@ -1479,14 +1430,15 @@ public:
 
     /*!\brief Resizes the container to contain count elements.
      * \param[in] count The new size.
-     * \param[in] value Append copies of value when resizing, default = false.
+     * \param[in] value Append copies of `value` when resizing, default = `false`.
      *
      * \details
      *
-     * If count is greater than capacity this is undefined behaviour.
-     * If the dynamic_bitset is enlarged, bits in [0, size()) stay the same and bits in [size(), count)
-     * are set to value.
-     * If the dynamic_bitset is shrunk, bits in [0, count) stay the same and bits in [count, size()) are set to 0.
+     * If `count` is greater than `capacity()` this is undefined behaviour.
+     * If the `dynamic_bitset` is enlarged, bits in [0, `size()`) stay the same and bits in [`size()`, `count`)
+     * are set to `value`.
+     * If the `dynamic_bitset` is shrunk, bits in [0, `count`) stay the same and bits in [`count`, `size()`) are
+     * set to `0`.
      *
      * ### Example
      *
@@ -1512,7 +1464,7 @@ public:
     }
 
     /*!\brief Swap contents with another instance.
-     * \param rhs The other instance to swap with.
+     * \param[in] rhs The other instance to swap with.
      *
      * \details
      *
@@ -1540,8 +1492,8 @@ public:
     //!\}
 
     /*!\brief Swap contents with another instance.
-     * \param lhs The first instance.
-     * \param rhs The other instance to swap with.
+     * \param[in] lhs The first instance.
+     * \param[in] rhs The other instance to swap with.
      *
      * \details
      *
@@ -1689,25 +1641,25 @@ public:
     /*!\name Conversions
      * \{
      */
-    /*!\brief Converts the dynamic_bitset to a std::string.
+    /*!\brief Converts the `dynamic_bitset` to a `std::string`.
      * \tparam char_t Character type; must model seqan3::Char.
-     * \param[in] zero Character of type char_t representing `false`. Default '0'.
-     * \param[in] one Character of type char_t representing `true`. Default '1'.
+     * \param[in] zero Character of type char_t representing `false`. Default <code>'0'</code>.
+     * \param[in] one  Character of type char_t representing `true`. Default <code>'1'</code>.
      * \throws std::bad_alloc from the the std::string constructor.
-     * \returns A std::string representing the dynamic_bitset.
+     * \returns A `std::string` representing the `dynamic_bitset`.
      *
      * \details
      *
      * \attention
-     * This is the only function of this class that is **not** constexpr because std::string is not constexpr.
+     * This is the only function of this class that is **not** constexpr because `std::string` is not constexpr.
      *
      * ### Complexity
      *
-     * Linear in size().
+     * Linear in `size()`.
      *
      * ### Exceptions
      *
-     * Throws std::bad_alloc from the std::string constructor.
+     * Throws std::bad_alloc from the `std::string` constructor.
      */
     template <typename char_t = char>
     std::string to_string(char_t zero = char_t{'0'}, char_t one = char_t{'1'}) const
@@ -1720,9 +1672,9 @@ public:
         return str;
     }
 
-    /*!\brief Converts the dynamic_bitset to an `unsigned long` integer.
+    /*!\brief Converts the `dynamic_bitset` to an `unsigned long` integer.
      * \throws std::overflow_error if the value cannot be represented in `unsigned long`.
-     * \returns A `unsigned long` representing the dynamic_bitset.
+     * \returns A `unsigned long` representing the `dynamic_bitset`.
      *
      * \details
      *
@@ -1745,9 +1697,9 @@ public:
         return static_cast<unsigned long>(data.bits);
     }
 
-    /*!\brief Converts the dynamic_bitset to an `unsigned long long` integer.
+    /*!\brief Converts the `dynamic_bitset` to an `unsigned long long` integer.
      * \throws std::overflow_error if the value cannot be represented in `unsigned long long`.
-     * \returns A `unsigned long long` representing the dynamic_bitset.
+     * \returns A `unsigned long long` representing the `dynamic_bitset`.
      *
      * \details
      *
@@ -1774,9 +1726,9 @@ public:
     /*!\name Input/output
      * \{
      */
-    /*!\brief Formatted output for the seqan3::dynamic_bitset.
-     * \param[in,out] os  The std::basic_ostream to write to.
-     * \param[in]     arg The seqan3::dynamic_bitset to read from.
+    /*!\brief Formatted output for the `seqan3::dynamic_bitset`.
+     * \param[in,out] os  The `std::basic_ostream` to write to.
+     * \param[in]     arg The `seqan3::dynamic_bitset` to read from.
      * \returns `os`.
      *
      * \details
@@ -1789,15 +1741,15 @@ public:
         return os;
     }
 
-    /*!\brief Formatted input for the seqan3::dynamic_bitset.
-     * \param[in,out] is  The std::basic_istream to read from.
-     * \param[out]    arg The seqan3::dynamic_bitset to write to.
+    /*!\brief Formatted input for the `seqan3::dynamic_bitset`.
+     * \param[in,out] is  The `std::basic_istream` to read from.
+     * \param[out]    arg The `seqan3::dynamic_bitset` to write to.
      * \returns `is`.
      *
      * \details
      *
-     * Reads at most seqan3::dynamic_bitset::max_size characters from the stream.
-     * If a stream error occurred or no characters could be extracted the std::ios_base::failbit is set.
+     * Reads at most `seqan3::dynamic_bitset::max_size()` characters from the stream.
+     * If a stream error occurred or no characters could be extracted the `std::ios_base::failbit` is set.
      * This may throw an exception.
      */
     friend std::istream & operator>>(std::istream & is, dynamic_bitset & arg)
@@ -1829,9 +1781,9 @@ public:
         return is;
     }
 
-    /*!\brief Formatted debug output for the seqan3::dynamic_bitset.
-     * \param[in,out] s   The seqan3::debug_stream to write to.
-     * \param[in]     arg The seqan3::dynamic_bitset to read from.
+    /*!\brief Formatted debug output for the `seqan3::dynamic_bitset`.
+     * \param[in,out] s   The `seqan3::debug_stream` to write to.
+     * \param[in]     arg The `seqan3::dynamic_bitset` to read from.
      * \returns `s`.
      *
      * \details
@@ -1850,7 +1802,7 @@ private:
     //!\cond DEV
     /*!\brief Serialisation support function.
      * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
-     * \param archive The archive being serialised from/to.
+     * \param[in] archive The archive being serialised from/to.
      *
      * \details
      *
@@ -1875,17 +1827,17 @@ private:
 namespace std
 {
 
-/*!\brief Struct for hashing a seqan3::dynamic_bitset.
+/*!\brief Struct for hashing a `seqan3::dynamic_bitset`.
  * \ingroup container
- * \tparam cap Capacity of the seqan3::dynamic_bitset.
+ * \tparam cap Capacity of the `seqan3::dynamic_bitset`.
  */
 template <size_t cap>
 struct hash<seqan3::dynamic_bitset<cap>>
 {
-    /*!\brief Compute the hash for a seqan3::dynamic_bitset.
+    /*!\brief Compute the hash for a `seqan3::dynamic_bitset`.
      * \ingroup container
-     * \param[in] arg The seqan3::dynamic_bitset to process.
-     * \returns size_t.
+     * \param[in] arg The `seqan3::dynamic_bitset` to process.
+     * \returns `size_t`.
      * \sa seqan3::dynamic_bitset.to_ullong().
      */
     size_t operator()(seqan3::dynamic_bitset<cap> const arg) const noexcept
