@@ -4,7 +4,7 @@
 
 This changelog contains a top-level entry for each release with sections on new features, API changes and notable
 bug-fixes (not all bug-fixes will be listed).
-See the documentation on [api stability](http://docs.seqan.de/seqan/3-master-user/about_api.html) to learn about
+See the documentation on [API stability](http://docs.seqan.de/seqan/3-master-user/about_api.html) to learn about
 when API changes are allowed.
 
 <!--
@@ -59,6 +59,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   instead.
 
 ## Notable Bug-fixes
+
+* Copying and moving the `seqan3::fm_index` and `seqan3::bi_fm_index` now work properly.
 
 # 3.0.0 ("Escala")
 
