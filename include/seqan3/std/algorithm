@@ -21,6 +21,7 @@
 
 #ifndef __cpp_lib_ranges  // If not C++20 ranges available, implement via range-v3.
 
+#include <range/v3/algorithm/all_of.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/copy_n.hpp>
 #include <range/v3/algorithm/equal.hpp>
@@ -29,6 +30,7 @@
 #include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/algorithm/find.hpp>
 #include <range/v3/algorithm/for_each.hpp>
+#include <range/v3/algorithm/max_element.hpp>
 #include <range/v3/algorithm/move_backward.hpp>
 #include <range/v3/algorithm/move.hpp>
 #include <range/v3/algorithm/sort.hpp>
@@ -37,6 +39,11 @@
 
 namespace std::ranges
 {
+
+/*!\typedef std::ranges::all_of
+ * \brief Alias for ranges::all_of. Checks if unary predicate `p` returns `true` for all elements in the range.
+ */
+using SEQAN3_DOXYGEN_ONLY(all_of =) ::ranges::all_of;
 
 /*!\typedef std::ranges::copy
  * \brief Alias for ranges::copy. Copies a range of elements to a new location.
@@ -77,6 +84,11 @@ using SEQAN3_DOXYGEN_ONLY(find =) ::ranges::find;
  * \brief Alias for ranges::for_each. Applies a function object to the elements of a range.
  */
 using SEQAN3_DOXYGEN_ONLY(for_each =) ::ranges::for_each;
+
+/*!\typedef std::ranges::max_element
+ * \brief Alias for ranges::max_element. Finds the greatest element in the range.
+ */
+using SEQAN3_DOXYGEN_ONLY(max_element =) ::ranges::max_element;
 
 /*!\typedef std::ranges::move_backward
  * \brief Alias for ranges::move_backward. Moves a range of elements backward to a new location starting from the end.
