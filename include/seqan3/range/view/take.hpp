@@ -281,7 +281,6 @@ private:
         //!\}
     }; // class iterator_type
 
-public:
     /*!\name Associated types
      * \{
      */
@@ -303,6 +302,7 @@ public:
     using const_iterator    = detail::transformation_trait_or_t<std::type_identity<iterator_type<urng_t const>>, void>;
     //!\}
 
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -321,12 +321,22 @@ public:
     constexpr view_take(urng_t _urange, size_t const _size)
         : urange{std::move(_urange)}, target_size{_size}
     {
-        if constexpr (exactly && or_throw && std::ranges::SizedRange<urng_t>)
+        if constexpr (std::ranges::SizedRange<urng_t>)
         {
-            if (seqan3::size(_urange) < _size)
+            if (std::ranges::size(urange) < target_size)
             {
-                throw std::invalid_argument{
-                    "You are trying to construct a view::take_exactly_or_throw from a range that is strictly smaller."};
+                if constexpr (exactly && or_throw)
+                {
+                    throw std::invalid_argument
+                    {
+                        "You are trying to construct a view::take_exactly_or_throw from a range that is strictly "
+                        "smaller."
+                    };
+                }
+                else
+                {
+                    target_size = std::ranges::size(urange);
+                }
             }
         }
     }
@@ -362,23 +372,32 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr iterator begin() noexcept
+    constexpr auto begin() noexcept
     {
-        return {seqan3::begin(urange), 0, target_size, &(*this)};
+        if constexpr (std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t>)
+            return std::ranges::begin(urange);
+        else
+            return iterator{std::ranges::begin(urange), 0, target_size, this};
     }
 
     //!\copydoc begin()
-    constexpr const_iterator begin() const noexcept
+    constexpr auto begin() const noexcept
         requires ConstIterableRange<urng_t>
     {
-        return {seqan3::cbegin(urange), 0, target_size};
+        if constexpr (std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t>)
+            return std::ranges::cbegin(urange);
+        else
+            return const_iterator{std::ranges::cbegin(urange), 0, target_size};
     }
 
     //!\copydoc begin()
-    constexpr const_iterator cbegin() const noexcept
+    constexpr auto cbegin() const noexcept
         requires ConstIterableRange<urng_t>
     {
-        return {seqan3::cbegin(urange), 0, target_size};
+        if constexpr (std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t>)
+            return std::ranges::cbegin(urange);
+        else
+            return const_iterator{std::ranges::cbegin(urange), 0, target_size};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -396,21 +415,30 @@ public:
      */
     constexpr auto end() noexcept
     {
-        return seqan3::end(urange);
+        if constexpr (std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t>)
+            return std::ranges::begin(urange) + target_size;
+        else
+            return std::ranges::end(urange);
     }
 
     //!\copydoc end()
     constexpr auto end() const noexcept
         requires ConstIterableRange<urng_t>
     {
-        return seqan3::cend(urange);
+        if constexpr (std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t>)
+            return std::ranges::cbegin(urange) + target_size;
+        else
+            return std::ranges::cend(urange);
     }
 
     //!\copydoc end()
     constexpr auto cend() const noexcept
         requires ConstIterableRange<urng_t>
     {
-        return seqan3::cend(urange);
+        if constexpr (std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t>)
+            return std::ranges::cbegin(urange) + target_size;
+        else
+            return std::ranges::cend(urange);
     }
     //!\}
 
@@ -429,23 +457,9 @@ public:
      * No-throw guarantee.
      */
     constexpr size_type size() const noexcept
-        requires exactly
+        requires exactly || std::ranges::SizedRange<urng_t>
     {
         return target_size;
-    }
-
-    //!\overload
-    constexpr size_type size() noexcept
-        requires (!exactly) && std::ranges::SizedRange<urng_t>
-    {
-        return std::min<size_type>(target_size, std::ranges::size(urange));
-    }
-
-    //!\overload
-    constexpr size_type size() const noexcept
-        requires (!exactly) && std::ranges::SizedRange<urng_t const>
-    {
-        return std::min<size_type>(target_size, std::ranges::size(urange));
     }
 };
 
