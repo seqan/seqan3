@@ -5,10 +5,13 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <list>
 #include <type_traits>
+#include <vector>
 
 #include <gtest/gtest.h>
 
+#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 
@@ -29,6 +32,36 @@ TEST(pack_traits, size)
 {
     EXPECT_EQ((pack_traits::size<int, bool &, double const>),
                3u);
+}
+
+TEST(pack_traits, count)
+{
+    EXPECT_EQ((pack_traits::count<int>),
+               0u);
+    EXPECT_EQ((pack_traits::count<int, bool &, double const>),
+               0u);
+    EXPECT_EQ((pack_traits::count<int, bool &, int, double const, int>),
+               2u);
+}
+
+TEST(pack_traits, find)
+{
+    EXPECT_EQ((pack_traits::find<int>),
+               -1ll);
+    EXPECT_EQ((pack_traits::find<int, bool &, double const>),
+               -1ll);
+    EXPECT_EQ((pack_traits::find<int, bool &, int, double const, int>),
+               1u);
+}
+
+TEST(pack_traits, contains)
+{
+    EXPECT_EQ((pack_traits::contains<int>),
+               false);
+    EXPECT_EQ((pack_traits::contains<int, bool &, double const>),
+               false);
+    EXPECT_EQ((pack_traits::contains<int, bool &, int, double const, int>),
+               true);
 }
 
 TEST(pack_traits, at)
@@ -55,6 +88,16 @@ TEST(pack_traits, drop_front)
 {
     EXPECT_TRUE((std::is_same_v<pack_traits::drop_front<int, bool &, double const, long, float>,
                                 type_list<bool &, double const, long, float>>));
+}
+
+TEST(pack_traits, transform)
+{
+    EXPECT_TRUE((std::is_same_v<pack_traits::transform<value_type_t>,
+                                type_list<>>));
+    EXPECT_TRUE((std::is_same_v<pack_traits::transform<value_type_t, std::vector<int>, std::list<bool>>,
+                                type_list<int, bool>>));
+    EXPECT_TRUE((std::is_same_v<pack_traits::transform<reference_t, std::vector<int>, std::list<bool>>,
+                                type_list<int &, bool &>>));
 }
 
 TEST(pack_traits, take)
@@ -127,6 +170,36 @@ TEST(list_traits, size)
 {
     EXPECT_EQ((list_traits::size<type_list<int, bool &, double const>>),
                3u);
+}
+
+TEST(list_traits, count)
+{
+    EXPECT_EQ((list_traits::count<int, type_list<>>),
+               0u);
+    EXPECT_EQ((list_traits::count<int, type_list<bool &, double const>>),
+               0u);
+    EXPECT_EQ((list_traits::count<int, type_list<bool &, int, double const, int>>),
+               2u);
+}
+
+TEST(list_traits, find)
+{
+    EXPECT_EQ((list_traits::find<int, type_list<>>),
+               -1ll);
+    EXPECT_EQ((list_traits::find<int, type_list<bool &, double const>>),
+               -1ll);
+    EXPECT_EQ((list_traits::find<int, type_list<bool &, int, double const, int>>),
+               1u);
+}
+
+TEST(list_traits, contains)
+{
+    EXPECT_EQ((list_traits::contains<int, type_list<>>),
+               false);
+    EXPECT_EQ((list_traits::contains<int, type_list<bool &, double const>>),
+               false);
+    EXPECT_EQ((list_traits::contains<int, type_list<bool &, int, double const, int>>),
+               true);
 }
 
 TEST(list_traits, at)
@@ -221,4 +294,14 @@ TEST(list_traits, split_after)
                                 type_list<int, bool &, double const, long, float>>));
     EXPECT_TRUE((std::is_same_v<typename split5::second_type,
                                 type_list<>>));
+}
+
+TEST(list_traits, transform)
+{
+    EXPECT_TRUE((std::is_same_v<list_traits::transform<value_type_t, type_list<>>,
+                                type_list<>>));
+    EXPECT_TRUE((std::is_same_v<list_traits::transform<value_type_t, type_list<std::vector<int>, std::list<bool>>>,
+                                type_list<int, bool>>));
+    EXPECT_TRUE((std::is_same_v<list_traits::transform<reference_t, type_list<std::vector<int>, std::list<bool>>>,
+                                type_list<int &, bool &>>));
 }

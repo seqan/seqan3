@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 
 // ----------------------------------------------------------------------------
 // seqan3::pack_traits::detail
@@ -20,6 +21,19 @@
 
 namespace seqan3::pack_traits::detail
 {
+
+/*!\brief Implementation for seqan3::pack_traits::find.
+ * \tparam query_t  The type you are searching for.
+ * \tparam pack_t   The type pack.
+ * \returns The position of the first occurence of `query_t` in `pack_t` or `-1` if it is not contained.
+ * \ingroup type_list
+ */
+template <typename query_t, typename ...pack_t>
+constexpr ptrdiff_t find()
+{
+    ptrdiff_t i = 0;
+    return ((SEQAN3_IS_SAME(query_t, pack_t) ? false : ++i) && ...) ? -1 : i;
+}
 
 /*!\brief Implementation for seqan3::pack_traits::at.
  * \tparam idx      The index.
@@ -33,7 +47,7 @@ auto at()
     if constexpr (idx == 0)
         return std::type_identity<head_t>{};
     else if constexpr (idx > 0)
-#if __clang__
+#ifdef __clang__
         return std::type_identity<__type_pack_element<idx - 1, tail_t...>>;
 #else
         return at<idx - 1, tail_t...>();
@@ -80,11 +94,59 @@ namespace seqan3::pack_traits
  *
  * ### (Compile-time) Complexity
  *
- * Constant
+ * * Number of template instantiations: O(1)
+ * * Other operations: O(1)
  */
 template <typename ...pack_t>
 inline constexpr size_t size = sizeof...(pack_t);
 
+/*!\brief Count the occurrences of a type in a pack.
+ * \tparam query_t  The type you are searching for.
+ * \tparam pack_t   The type pack.
+ * \returns The number of occurrences of the `query_t` in `pack_t`.
+ * \ingroup type_list
+ *
+ * \details
+ *
+ * ### (Compile-time) Complexity
+ *
+ * * Number of template instantiations: O(1)
+ * * Other operations: O(n)
+ */
+template <typename query_t, typename ...pack_t>
+inline constexpr ptrdiff_t count =  (SEQAN3_IS_SAME(query_t, pack_t) + ... + 0);
+
+/*!\brief Get the index of the first occurrence of a type in a pack.
+ * \tparam query_t  The type you are searching for.
+ * \tparam pack_t   The type pack.
+ * \returns The position of the first occurrence of `query_t` in `pack_t` or `-1` if it is not contained.
+ * \ingroup type_list
+ *
+ * \details
+ *
+ * ### (Compile-time) Complexity
+ *
+ * * Number of template instantiations: O(1)
+ * * Other operations: O(n), possibly == `i`, where `i` is the return value
+ */
+template <typename query_t, typename ...pack_t>
+inline constexpr ptrdiff_t find = seqan3::pack_traits::detail::find<query_t, pack_t...>();
+
+/*!\brief Whether a type occurs in a pack or not.
+ * \tparam query_t  The type you are searching for.
+ * \tparam pack_t   The type pack.
+ * \returns `true` or `false`.
+ * \ingroup type_list
+ *
+ * \details
+ *
+ * ### (Compile-time) Complexity
+ *
+ * * Number of template instantiations: O(1)
+ * * Other operations: O(n), possibly == `i`, where `i` is the index of the first occurrence
+ */
+template <typename query_t, typename ...pack_t>
+inline constexpr bool contains = (find<query_t, pack_t...> != -1);
 //!\}
 
 /*!\name Type pack traits (return a single type)
@@ -102,7 +164,8 @@ inline constexpr size_t size = sizeof...(pack_t);
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `idx` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
 template <ptrdiff_t idx, typename ...pack_t>
 //!\cond
@@ -119,7 +182,8 @@ using at = typename decltype(detail::at<idx, pack_t...>())::type;
  *
  * ### (Compile-time) Complexity
  *
- * Constant.
+ * * Number of template instantiations: O(1)
+ * * Other operations: O(1)
  */
 template <typename ...pack_t>
 //!\cond
@@ -135,7 +199,11 @@ using front = typename decltype(detail::front<pack_t...>())::type;
  *
  * ### (Compile-time) Complexity
  *
- * Constant.
+ * * Number of template instantiations: O(n) (possibly O(1))
+ * * Other operations: O(1)
+ *
+ * Notably faster than `seqan3::pack_traits::at<size<pack...> - 1, pack...>` (no recursive template
+ * instantiations).
  */
 template <typename ...pack_t>
 //!\cond
@@ -157,13 +225,32 @@ using back = typename decltype((std::type_identity<pack_t>{}, ...))::type; // us
  *
  * ### (Compile-time) Complexity
  *
- * Constant.
+ * * Number of template instantiations: O(1)
+ * * Other operations: O(1)
  */
 template <typename ...pack_t>
 //!\cond
     requires (sizeof...(pack_t) > 0)
 //!\endcond
 using drop_front = typename decltype(detail::drop_front<pack_t...>())::type;
+
+/*!\brief Apply a transformation trait to every type in the pack and return a seqan3::type_list of the results.
+ * \tparam trait_t The transformation trait, **can be an alias template**, e.g. a transformation trait shortcut.
+ * \tparam pack_t  The type pack.
+ * \ingroup type_list
+ *
+ * \details
+ *
+ * The transformation trait given as first argument can be an alias template, e.g. std::type_identity_t, not
+ * std::type_identity. The alias must take exactly one argument and be defined for all types in the pack.
+ *
+ * ### (Compile-time) Complexity
+ *
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(1)
+ */
+template <template <typename> typename trait_t, typename ...pack_t>
+using transform = seqan3::type_list<trait_t<pack_t>...>;
 
 //!\}
 
@@ -234,6 +321,14 @@ auto split_after(type_list<pack1_t...>, type_list<head_t, pack2_t...>)
         return split_after<idx - 1>(type_list<pack1_t..., head_t>{}, type_list<pack2_t...>{});
 }
 
+/*!\brief Implementation for transform.
+ * \tparam trait_t The trait to transform, **must be an alias template**, e.g. a transformation trait shortcut.
+ * \tparam pack_t  The type pack.
+ * \ingroup type_list
+ */
+template <template <typename> typename trait_t, typename ...pack_t>
+type_list<trait_t<pack_t>...> transform(type_list<pack_t...>);
+
 } // namespace seqan3::list_traits::detail
 
 // ----------------------------------------------------------------------------
@@ -246,28 +341,53 @@ auto split_after(type_list<pack1_t...>, type_list<head_t, pack2_t...>)
 namespace seqan3::list_traits
 {
 
+/*!\name Type list traits (return a value)
+ * \{
+ */
+
 //!\cond
 template <seqan3::detail::TypeList list_t>
 inline constexpr size_t size = 0;
 //!\endcond
 
-/*!\name Type list traits (return a value)
- * \{
- */
-
 /*!\brief The size of a type list.
- * \tparam pack_t Types in the list.
- * \returns `sizeof...(pack_t)`
  * \ingroup type_list
- *
- * \details
- *
- * ### (Compile-time) Complexity
- *
- * Constant
+ * \copydetails seqan3::pack_traits::size
  */
 template <typename ...pack_t>
 inline constexpr size_t size<type_list<pack_t...>> = sizeof...(pack_t);
+
+//!\cond
+template <typename query_t, seqan3::detail::TypeList list_t>
+inline constexpr ptrdiff_t count = -1;
+//!\endcond
+
+/*!\brief Count the occurrences of a type in a type list.
+ * \ingroup type_list
+ * \copydetails seqan3::pack_traits::count
+ */
+template <typename query_t, typename ...pack_t>
+inline constexpr ptrdiff_t count<query_t, type_list<pack_t...>> =
+    seqan3::pack_traits::count<query_t, pack_t...>;
+
+//!\cond
+template <typename query_t, seqan3::detail::TypeList list_t>
+inline constexpr ptrdiff_t find = -1;
+//!\endcond
+
+/*!\brief Get the index of the first occurrence of a type in a type list.
+ * \ingroup type_list
+ * \copydetails seqan3::pack_traits::find
+ */
+template <typename query_t, typename ...pack_t>
+inline constexpr ptrdiff_t find<query_t,type_list<pack_t...>> = seqan3::pack_traits::detail::find<query_t, pack_t...>();
+
+/*!\brief Whether a type occurs in a type list or not.
+ * \ingroup type_list
+ * \copydetails seqan3::pack_traits::contains
+ */
+template <typename query_t, seqan3::detail::TypeList list_t>
+inline constexpr bool contains = (find<query_t, list_t> != -1);
 
 //!\}
 
@@ -286,7 +406,8 @@ inline constexpr size_t size<type_list<pack_t...>> = sizeof...(pack_t);
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `idx` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
 template <ptrdiff_t idx, seqan3::detail::TypeList list_t>
 //!\cond
@@ -302,7 +423,8 @@ using at = typename decltype(detail::at<idx>(list_t{}))::type;
  *
  * ### (Compile-time) Complexity
  *
- * Constant.
+ * * Number of template instantiations: O(1)
+ * * Other operations: O(1)
  */
 template <seqan3::detail::TypeList list_t>
 //!\cond
@@ -318,7 +440,11 @@ using front = typename decltype(detail::front(list_t{}))::type;
  *
  * ### (Compile-time) Complexity
  *
- * Constant.
+ * * Number of template instantiations: O(n) (possibly O(1))
+ * * Other operations: O(1)
+ *
+ * Notably faster than `seqan3::pack_traits::at<size<pack...> - 1, pack...>` (no recursive template
+ * instantiations).
  */
 template <seqan3::detail::TypeList list_t>
 //!\cond
@@ -341,7 +467,8 @@ using back = typename decltype(detail::back(list_t{}))::type;
  *
  * ### (Compile-time) Complexity
  *
- * Constant.
+ * * Number of template instantiations: O(1)
+ * * Other operations: O(1)
  */
 template <seqan3::detail::TypeList list1_t, seqan3::detail::TypeList list2_t>
 using concat = decltype(detail::concat(list1_t{}, list2_t{}));
@@ -354,7 +481,8 @@ using concat = decltype(detail::concat(list1_t{}, list2_t{}));
  *
  * ### (Compile-time) Complexity
  *
- * Constant.
+ * * Number of template instantiations: O(1)
+ * * Other operations: O(1)
  */
 template <seqan3::detail::TypeList list_t>
 //!\cond
@@ -363,7 +491,7 @@ template <seqan3::detail::TypeList list_t>
 using drop_front = decltype(detail::drop_front(list_t{}));
 
 /*!\brief Return a seqan3::type_list of the first `n` types in the input type list.
- * \tparam n        The target size; must be >= 0 and <= the size of the input type list.
+ * \tparam i        The target size; must be >= 0 and <= the size of the input type list.
  * \tparam list_t   The (input) type list.
  * \ingroup type_list
  *
@@ -371,16 +499,17 @@ using drop_front = decltype(detail::drop_front(list_t{}));
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `n` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::TypeList list_t>
 //!\cond
-    requires (n >= 0 && n <= size<list_t>)
+    requires (i >= 0 && i <= size<list_t>)
 //!\endcond
-using take = typename decltype(detail::split_after<n>(type_list<>{}, list_t{}))::first_type;
+using take = typename decltype(detail::split_after<i>(type_list<>{}, list_t{}))::first_type;
 
 /*!\brief Return a seqan3::type_list of the types in the input type list, except the first `n`.
- * \tparam n        The amount to drop; must be >= 0 and <= the size of the input type list.
+ * \tparam i        The amount to drop; must be >= 0 and <= the size of the input type list.
  * \tparam list_t   The (input) type list.
  * \ingroup type_list
  *
@@ -388,16 +517,17 @@ using take = typename decltype(detail::split_after<n>(type_list<>{}, list_t{})):
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `n` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::TypeList list_t>
 //!\cond
-    requires (n >= 0 && n <= size<list_t>)
+    requires (i >= 0 && i <= size<list_t>)
 //!\endcond
-using drop = typename decltype(detail::split_after<n>(type_list<>{}, list_t{}))::second_type;
+using drop = typename decltype(detail::split_after<i>(type_list<>{}, list_t{}))::second_type;
 
 /*!\brief Return a seqan3::type_list of the last `n` types in the input type list.
- * \tparam n        The target size; must be >= 0 and <= the size of the input type list.
+ * \tparam i        The target size; must be >= 0 and <= the size of the input type list.
  * \tparam list_t   The (input) type list.
  * \ingroup type_list
  *
@@ -405,16 +535,17 @@ using drop = typename decltype(detail::split_after<n>(type_list<>{}, list_t{})):
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `size<list_t> - n` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::TypeList list_t>
 //!\cond
-    requires (n >= 0 && n <= size<list_t>)
+    requires (i >= 0 && i <= size<list_t>)
 //!\endcond
-using take_last = drop<size<list_t> - n, list_t>;
+using take_last = drop<size<list_t> - i, list_t>;
 
 /*!\brief Return a seqan3::type_list of the types the input type list, except the last `n`.
- * \tparam n        The amount to drop; must be >= 0 and <= the size of the input type list.
+ * \tparam i        The amount to drop; must be >= 0 and <= the size of the input type list.
  * \tparam list_t   The (input) type list.
  * \ingroup type_list
  *
@@ -422,16 +553,17 @@ using take_last = drop<size<list_t> - n, list_t>;
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `size<list_t> - n` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::TypeList list_t>
 //!\cond
-    requires (n >= 0 && n <= size<list_t>)
+    requires (i >= 0 && i <= size<list_t>)
 //!\endcond
-using drop_last = take<size<list_t> - n, list_t>;
+using drop_last = take<size<list_t> - i, list_t>;
 
 /*!\brief Split a seqan3::type_list into two parts returned as a pair of seqan3::type_list.
- * \tparam n        The number of elements after which to split; must be >= 0 and <= the size of the input type list.
+ * \tparam i        The number of elements after which to split; must be >= 0 and <= the size of the input type list.
  * \tparam list_t   The (input) type list.
  * \ingroup type_list
  *
@@ -439,13 +571,32 @@ using drop_last = take<size<list_t> - n, list_t>;
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `n` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::TypeList list_t>
 //!\cond
-    requires (n >= 0 && n <= size<list_t>)
+    requires (i >= 0 && i <= size<list_t>)
 //!\endcond
-using split_after = decltype(detail::split_after<n>(type_list<>{}, list_t{}));
+using split_after = decltype(detail::split_after<i>(type_list<>{}, list_t{}));
+
+/*!\brief Apply a transformation trait to every type in the list and return a seqan3::type_list of the results.
+ * \tparam trait_t The trait to transform, **must be an alias template**, e.g. a transformation trait shortcut.
+ * \tparam list_t  The (input) type list.
+ * \ingroup type_list
+ *
+ * \details
+ *
+ * The transformation trait given as first argument must be an alias template, e.g. std::type_identity_t, not
+ * std::type_identity. The alias must take exactly one argument and be defined for all types in the input list.
+ *
+ * ### (Compile-time) Complexity
+ *
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
+ */
+template <template <typename> typename trait_t, seqan3::detail::TypeList list_t>
+using transform = decltype(detail::transform<trait_t>(list_t{}));
 
 //!\}
 
@@ -463,7 +614,7 @@ namespace seqan3::pack_traits
  */
 
 /*!\brief Return a seqan3::type_list of the first `n` types in the type pack.
- * \tparam n        The target size; must be >= 0 and <= the size of the type pack.
+ * \tparam i        The target size; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
  * \ingroup type_list
  *
@@ -471,16 +622,17 @@ namespace seqan3::pack_traits
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `n` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, typename ...pack_t>
+template <ptrdiff_t i, typename ...pack_t>
 //!\cond
-    requires (n >= 0 && n <= sizeof...(pack_t))
+    requires (i >= 0 && i <= sizeof...(pack_t))
 //!\endcond
-using take = seqan3::list_traits::take<n, type_list<pack_t...>>;
+using take = seqan3::list_traits::take<i, type_list<pack_t...>>;
 
 /*!\brief Return a seqan3::type_list of the types in the type pack, except the first `n`.
- * \tparam n        The amount to drop; must be >= 0 and <= the size of the type pack.
+ * \tparam i        The amount to drop; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
  * \ingroup type_list
  *
@@ -488,16 +640,17 @@ using take = seqan3::list_traits::take<n, type_list<pack_t...>>;
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `n` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, typename ...pack_t>
+template <ptrdiff_t i, typename ...pack_t>
 //!\cond
-    requires (n >= 0 && n <= sizeof...(pack_t))
+    requires (i >= 0 && i <= sizeof...(pack_t))
 //!\endcond
-using drop = seqan3::list_traits::drop<n, type_list<pack_t...>>;
+using drop = seqan3::list_traits::drop<i, type_list<pack_t...>>;
 
 /*!\brief Return a seqan3::type_list of the last `n` types in the type pack.
- * \tparam n        The target size; must be >= 0 and <= the size of the type pack.
+ * \tparam i        The target size; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
  * \ingroup type_list
  *
@@ -505,16 +658,17 @@ using drop = seqan3::list_traits::drop<n, type_list<pack_t...>>;
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `sizeof...(pack_t) - n` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, typename ...pack_t>
+template <ptrdiff_t i, typename ...pack_t>
 //!\cond
-    requires (n >= 0 && n <= sizeof...(pack_t))
+    requires (i >= 0 && i <= sizeof...(pack_t))
 //!\endcond
-using take_last = seqan3::list_traits::take_last<n, type_list<pack_t...>>;
+using take_last = seqan3::list_traits::take_last<i, type_list<pack_t...>>;
 
 /*!\brief Return a seqan3::type_list of the types the type pack, except the last `n`.
- * \tparam n        The amount to drop; must be >= 0 and <= the size of the type pack.
+ * \tparam i        The amount to drop; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
  * \ingroup type_list
  *
@@ -522,16 +676,17 @@ using take_last = seqan3::list_traits::take_last<n, type_list<pack_t...>>;
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `sizeof...(pack_t) - n (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, typename ...pack_t>
+template <ptrdiff_t i, typename ...pack_t>
 //!\cond
-    requires (n >= 0 && n <= sizeof...(pack_t))
+    requires (i >= 0 && i <= sizeof...(pack_t))
 //!\endcond
-using drop_last = seqan3::list_traits::drop_last<n, type_list<pack_t...>>;
+using drop_last = seqan3::list_traits::drop_last<i, type_list<pack_t...>>;
 
 /*!\brief Split a type pack into two parts returned as a pair of seqan3::type_list.
- * \tparam n        The number of elements after which to split; must be >= 0 and <= the size of the type pack.
+ * \tparam i        The number of elements after which to split; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
  * \ingroup type_list
  *
@@ -539,13 +694,14 @@ using drop_last = seqan3::list_traits::drop_last<n, type_list<pack_t...>>;
  *
  * ### (Compile-time) Complexity
  *
- * Equal to `n` (linear).
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
  */
-template <ptrdiff_t n, typename ...pack_t>
+template <ptrdiff_t i, typename ...pack_t>
 //!\cond
-    requires (n >= 0 && n <= sizeof...(pack_t))
+    requires (i >= 0 && i <= sizeof...(pack_t))
 //!\endcond
-using split_after = seqan3::list_traits::split_after<n, type_list<pack_t...>>;
+using split_after = seqan3::list_traits::split_after<i, type_list<pack_t...>>;
 
 //!\}
 

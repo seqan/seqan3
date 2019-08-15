@@ -140,3 +140,19 @@ constexpr bool decays_to_ignore_v = std::is_same_v<remove_cvref_t<t>, ignore_t>;
 //!\}
 
 } // namespace seqan3::detail
+
+// ----------------------------------------------------------------------------
+// SEQAN3_IS_SAME
+// ----------------------------------------------------------------------------
+
+/*!\brief A macro that behaves like std::is_same_v, except that it doesn't need to instantiate the template on GCC and
+ *        Clang.
+ * \ingroup type_traits
+ */
+#if defined(__clang__)
+#   define SEQAN3_IS_SAME(...)              __is_same(__VA_ARGS__)
+#elif defined(__GNUC__)
+#   define SEQAN3_IS_SAME(...)              __is_same_as(__VA_ARGS__)
+#else
+#   define SEQAN3_IS_SAME(...)              std::is_same_v<__VA_ARGS__>
+#endif
