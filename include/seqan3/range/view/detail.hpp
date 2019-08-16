@@ -356,9 +356,8 @@ public:
  *
  * \snippet include/seqan3/range/view/kmer_hash.hpp adaptor_def
  *
- * This is the full proto-adaptor, first look at the second member function: it handles range **and** argument
- * input and returns a range (in other cases this would delegate to the view's constructor if you have
- * your own view type declared).
+ * This is the full proto-adaptor, first look at the second member function: it handles range and argument input and
+ * delegates to the view's constructor. In other, simpler cases you could invoke other adaptors here.
  *
  * And it provides an `operator()` that takes only the argument and returns a range adaptor closure object
  * with the argument wrapped (first member function). The proto-adaptor is passed to the closure object, as well, so
