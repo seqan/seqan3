@@ -1835,7 +1835,6 @@ template <size_t cap>
 struct hash<seqan3::dynamic_bitset<cap>>
 {
     /*!\brief Compute the hash for a `seqan3::dynamic_bitset`.
-     * \ingroup container
      * \param[in] arg The `seqan3::dynamic_bitset` to process.
      * \returns `size_t`.
      * \sa seqan3::dynamic_bitset.to_ullong().
