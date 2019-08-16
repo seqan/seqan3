@@ -29,7 +29,6 @@ template <typename alphabet_t>
 struct hash<alphabet_t>
 {
     /*!\brief Compute the hash for a character.
-     * \ingroup alphabet
      * \param[in] character The character to process. Must model seqan3::Semialphabet.
      *
      * \returns size_t.
@@ -54,7 +53,6 @@ template <ranges::InputRange urng_t>
 struct hash<urng_t>
 {
     /*!\brief Compute the hash for a range of characters.
-     * \ingroup alphabet
      * \param[in] range The input range to process. Must model std::ranges::InputRange and the reference type of the
                         range of the range must model seqan3::Semialphabet.
      * \returns size_t.
