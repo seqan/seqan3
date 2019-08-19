@@ -21,13 +21,24 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## New features
 
-* Traits for "metaprogramming" with `seqan3::type_list` and type packs have been added.
+#### Argument parser
+* Simplified reading file extensions from formatted files in the input/output file validators.
+
+#### Core
+* Added traits for "metaprogramming" with `seqan3::type_list` and type packs.
 
 ## API changes
 
-### The `type_list` header has moved
+#### Argument parser
 
-If you included `<seqan3/core/type_list.hpp>` you need to change the path to `<seqan3/core/type_list/type_list.hpp>`.
+* **Changed class signature of input/output file validators:**
+  Most user code will be unaffected; to fix possible compiler errors you need to add an empty template parameter list to
+  the respective instances (e.g. change `input_file_validator` to `input_file_validator<>`).
+
+#### Core
+
+* **The `type_list` header has moved:**
+  If you included `<seqan3/core/type_list.hpp>` you need to change the path to `<seqan3/core/type_list/type_list.hpp>`.
 
 ## Notable Bug-fixes
 

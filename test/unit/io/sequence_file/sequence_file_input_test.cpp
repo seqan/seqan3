@@ -186,11 +186,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_embl,
-                                                                              format_fasta,
-                                                                              format_fastq,
-                                                                              format_genbank,
-                                                                              format_sam>>));                // changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -201,11 +197,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_embl,
-                                                                              format_fasta,
-                                                                              format_fastq,
-                                                                              format_genbank,
-                                                                              format_sam>>));                // changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 

@@ -84,7 +84,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
 
     // extract "magic header"
     std::istreambuf_iterator<char_t> it{primary_stream};
-    std::array<char, magic_header<bgzf_compression>.size()> magic_number{}; // Largest magic header from bgzf
+    std::array<char, bgzf_compression::magic_header.size()> magic_number{}; // Largest magic header from bgzf
     size_t read_chars = 0;
     for (; read_chars < magic_number.size(); ++read_chars)
     {
@@ -99,13 +99,22 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     for (size_t i = 0 ; i < read_chars; ++i)
         primary_stream.unget();
 
-    std::string const extension = filename.extension().string();
+    std::string extension{};
+    if (filename.has_extension())
+        extension = filename.extension().string().substr(1);
+
+    // tests whether the given extension matches with one of the given compression tags.
+    auto contains_extension = [] (auto compression_tag, auto const & extension)
+    {
+        return std::ranges::find(decltype(compression_tag)::file_extensions, extension) !=
+               std::ranges::end(decltype(compression_tag)::file_extensions);
+    };
 
     // set return value appropriately
     if (read_chars == magic_number.size() && contrib::_bgzfCheckHeader(magic_number.data())) // BGZF
     {
     #ifdef SEQAN3_HAS_ZLIB
-        if ((extension == ".gz") || (extension == ".bgzf"))
+        if (contains_extension(gz_compression{}, extension) || contains_extension(bgzf_compression{}, extension))
             filename.replace_extension();
 
         return {new contrib::basic_bgzf_istream<char_t>{primary_stream},
@@ -114,10 +123,10 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         throw file_open_error{"Trying to read from a bgzf file, but no ZLIB available."};
     #endif
     }
-    else if (starts_with(magic_number, magic_header<gz_compression>)) // GZIP
+    else if (starts_with(magic_number, gz_compression::magic_header)) // GZIP
     {
     #ifdef SEQAN3_HAS_ZLIB
-        if ((extension == ".gz") || (extension == ".bgzf"))
+        if (contains_extension(gz_compression{}, extension) || contains_extension(bgzf_compression{}, extension))
             filename.replace_extension();
 
         return {new contrib::basic_gz_istream<char_t>{primary_stream}, stream_deleter_default};
@@ -125,10 +134,10 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         throw file_open_error{"Trying to read from a gzipped file, but no ZLIB available."};
     #endif
     }
-    else if (starts_with(magic_number, magic_header<bz2_compression>)) // BZip2
+    else if (starts_with(magic_number, bz2_compression::magic_header)) // BZip2
     {
     #ifdef SEQAN3_HAS_BZIP2
-        if (extension == ".bz2")
+        if (contains_extension(bz2_compression{}, extension))
             filename.replace_extension();
 
         return {new contrib::basic_bz2_istream<char_t>{primary_stream}, stream_deleter_default};
@@ -136,7 +145,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         throw file_open_error{"Trying to read from a bzipped file, but no libbz2 available."};
     #endif
     }
-    else if (starts_with(magic_number, magic_header<zstd_compression>)) // ZStd
+    else if (starts_with(magic_number, zstd_compression::magic_header)) // ZStd
     {
         throw file_open_error{"Trying to read from a zst'ed file, but SeqAn does not yet support this."};
     }

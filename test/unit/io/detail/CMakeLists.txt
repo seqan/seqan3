@@ -1,4 +1,5 @@
 seqan3_test(in_file_iterator_test.cpp)
+seqan3_test(misc_test.cpp)
 seqan3_test(out_file_iterator_test.cpp)
 seqan3_test(ignore_output_iterator_test.cpp)
 seqan3_test(safe_filesystem_entry_test.cpp)

@@ -25,6 +25,7 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
+#include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
@@ -819,7 +820,27 @@ protected:
  * \{
  */
 
-//!\brief Deduction of the selected fields, the file format and the stream type.
+//!\brief Deduces the sequence input file type from the stream and the format.
+template <IStream2                           stream_type,
+          SequenceFileInputFormat            file_format>
+sequence_file_input(stream_type & stream,
+                    file_format const &)
+    -> sequence_file_input<typename sequence_file_input<>::traits_type,         // actually use the default
+                           typename sequence_file_input<>::selected_field_ids,  // default field ids.
+                           type_list<file_format>,
+                           typename std::remove_reference_t<stream_type>::char_type>;
+
+//!\overload
+template <IStream2                           stream_type,
+          SequenceFileInputFormat            file_format>
+sequence_file_input(stream_type && stream,
+                    file_format const &)
+   -> sequence_file_input<typename sequence_file_input<>::traits_type,         // actually use the default
+                          typename sequence_file_input<>::selected_field_ids,  // default field ids.
+                          type_list<file_format>,
+                          typename std::remove_reference_t<stream_type>::char_type>;
+
+//!\brief Deduces the sequence input file type from the stream, the format and the field ids.
 template <IStream2                           stream_type,
           SequenceFileInputFormat            file_format,
           detail::Fields                     selected_field_ids>

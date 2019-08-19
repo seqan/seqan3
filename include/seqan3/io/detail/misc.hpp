@@ -14,6 +14,7 @@
 
 #include <variant>
 
+#include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/io/exception.hpp>
@@ -96,4 +97,64 @@ void set_format(format_variant_type & format,
         throw unhandled_extension_error("No valid format found for this extension.");
 }
 
+/*!\brief Helper function to determine if all types in a format type list have a static member `file_extensions`.
+ * \tparam list_t The type of the template parameter list.
+ * \returns `true` if `type::file_extensions` for all expanded types of `list_t` is valid, otherwise `false`.
+ */
+template <typename list_t>
+inline constexpr bool has_member_file_extensions = false;
+
+//!\cond
+template <template <typename ...> typename list_t, typename ...ts>
+    requires (requires { ts::file_extensions; }, ..., true)
+inline constexpr bool has_member_file_extensions<list_t<ts...>> = true;
+//!\endcond
+
+/*!\brief Helper function to determine if a type has a static member `valid_formats`.
+ * \tparam query_t The type to query.
+ * \returns `true` if `query_t::valid_formats` is valid, otherwise `false`.
+ */
+template <typename query_t>
+inline constexpr bool has_type_valid_formats = false;
+
+//!\cond
+template <typename query_t>
+    requires requires { typename query_t::valid_formats; }
+inline constexpr bool has_type_valid_formats<query_t> = true;
+//!\endcond
+
+/*!\brief Returns a list of valid file extensions.
+ * \ingroup io
+ * \tparam formats_t The list of formats to parse; seqan3::detail::all_formats_have_file_extensions must return `true`.
+ * \returns `std::vector<std::string>` with all valid file extensions specified by `valid_formats`.
+ *
+ * \details
+ *
+ * ### Complexity
+ *
+ * Linear in the number of file extensions.
+ *
+ * ### Thread-safety
+ *
+ * Thread-safe.
+ *
+ * ### Exception
+ *
+ * Strong exception guarantee. No input is modified. Might throw std::bad_alloc.
+ */
+template <typename formats_t>
+inline std::vector<std::string> valid_file_extensions()
+{
+    static_assert(has_member_file_extensions<formats_t>,
+                  "Expects that all formats have a static member file_extensions storing the extensions in a range");
+
+    std::vector<std::string> extensions;
+    detail::for_each_type([&extensions] (auto t_identity)
+    {
+        using format_t = typename decltype(t_identity)::type;
+        std::ranges::copy(format_t::file_extensions, std::back_inserter(extensions));
+    }, formats_t{});
+
+    return extensions;
+}
 } // namespace seqan3::detail
