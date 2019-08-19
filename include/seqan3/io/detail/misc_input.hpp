@@ -29,6 +29,7 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
+#include <seqan3/std/span>
 
 namespace seqan3::detail
 {
@@ -104,14 +105,14 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         extension = filename.extension().string().substr(1);
 
     // tests whether the given extension matches with one of the given compression tags.
-    auto contains_extension = [] (auto compression_tag, auto const & extension)
+    [[maybe_unused]] auto contains_extension = [] (auto compression_tag, auto const & extension) constexpr
     {
         return std::ranges::find(decltype(compression_tag)::file_extensions, extension) !=
                std::ranges::end(decltype(compression_tag)::file_extensions);
     };
 
     // set return value appropriately
-    if (read_chars == magic_number.size() && contrib::_bgzfCheckHeader(magic_number.data())) // BGZF
+    if (read_chars == magic_number.size() && bgzf_compression::validate_header(std::span{magic_number})) // BGZF
     {
     #ifdef SEQAN3_HAS_ZLIB
         if (contains_extension(gz_compression{}, extension) || contains_extension(bgzf_compression{}, extension))
