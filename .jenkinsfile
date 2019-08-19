@@ -164,7 +164,8 @@ for (int h = 0; h < axis_agent.size(); ++h)
     for(int i = 0; i < axis_compiler.size(); ++i)
     {
         def axis_compiler_value = axis_compiler[i]
-        def subTasks = [:] // defines subtask per platform & compiler;
+        // TODO: Enable once nested parallel sections can be displayed properly: https://issues.jenkins-ci.org/browse/JENKINS-54010
+        // def subTasks = [:] // defines subtask per platform & compiler;
         for(int j = 0; j < axis_cereal.size(); ++j)  // Whether to use cereal or not
         {
             def axis_cereal_value = axis_cereal[j]
@@ -186,7 +187,7 @@ for (int h = 0; h < axis_agent.size(); ++h)
                 def test_model = is_nightly ? 'Nightly' : 'Continuous'
 
                 def label = "${agent}_${axis_compiler_value}_cereal-${axis_cereal_value}_$axis_build_type_value"
-                subTasks[label] =
+                tasks[label] =
                 {
                     if (agent == "osx") // build on macos
                     {
@@ -242,10 +243,11 @@ for (int h = 0; h < axis_agent.size(); ++h)
                 }
             }
         }
-        tasks["${agent}-${axis_compiler_value}"] =
-        {
-            parallel subTasks
-        }
+        // TODO: Enable once nested parallel sections can be displayed properly: https://issues.jenkins-ci.org/browse/JENKINS-54010
+        // tasks["${agent}-${axis_compiler_value}"] =
+        // {
+        //     parallel subTasks
+        // }
     }
 }
 
