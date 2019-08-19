@@ -530,6 +530,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), comp);
 }
 
+#if SEQAN3_HAS_ZLIB
 TEST(rows, write_bam_file)
 {
     test::tmp_filename const filename{"in_out.bam"};
@@ -562,6 +563,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 
     EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout2.get_stream()).str(), comp);
 }
+#endif // SEQAN3_HAS_ZLIB
 
 TEST(rows, convert_sam_to_blast)
 {
