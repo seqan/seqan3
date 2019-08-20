@@ -31,13 +31,9 @@ namespace seqan3::detail
  * * `rng_t` is not the same type as `reference_t<rng_t>`,
  * * `rng_t` is not a pointer or c-style array,
  * * `reference_t<rng_t>` is not `char`.
- *
- * \note If you need to further refine this concept for your type ensure that this concept comes before any
- *       additional refinement, otherwise your concept definition/requires clause is ill-formed according to the
- *       subsumption rules for concepts.
  */
 template <typename rng_t>
-SEQAN3_CONCEPT DebugStreamableRange =
+SEQAN3_CONCEPT debug_stream_range_guard =
     !std::Same<remove_cvref_t<reference_t<rng_t>>, remove_cvref_t<rng_t>> && // prevent recursive instantiation
     // exclude null-terminated strings:
     !(std::is_pointer_v<std::decay_t<rng_t>> && std::Same<remove_cvref_t<reference_t<rng_t>>, char>);
@@ -83,14 +79,14 @@ namespace seqan3
  * `std::vector<int>{3, 1, 33, 7}` is printed as "[3,1,33,7]".
  *
  * \if DEV
- * Note that overloads for range based streaming need to refine the seqan3::detail::DebugStreamableRange concept
+ * Note that overloads for range based streaming need to refine the seqan3::detail::debug_stream_range_guard concept
  * to avoid ambiguous function calls.
  * \endif
  */
 template <std::ranges::InputRange rng_t, typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
 //!\cond
-    requires detail::DebugStreamableRange<rng_t>
+    requires detail::debug_stream_range_guard<rng_t>
 //!\endcond
 {
     static_assert(detail::reference_type_is_streamable_v<rng_t, char_t>,

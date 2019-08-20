@@ -486,7 +486,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, ali
 //!\overload
 template <std::ranges::InputRange alignment_matrix_t, typename char_t>
 //!\cond
-    requires detail::DebugStreamableRange<alignment_matrix_t> && detail::Matrix<alignment_matrix_t>
+    requires detail::debug_stream_range_guard<alignment_matrix_t> && detail::Matrix<alignment_matrix_t>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
 {
