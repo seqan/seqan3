@@ -90,7 +90,34 @@ struct iterator_fixture<decorator_t::iterator> : public ::testing::Test
         }();
 };
 
-using test_type = ::testing::Types<decorator_t::iterator>;
+template <>
+struct iterator_fixture<decorator_t::iterator_ra> : iterator_fixture<decorator_t::iterator>
+{
+    using iterator_tag = std::random_access_iterator_tag;
+    static constexpr bool const_iterable = true;
+
+    // expected_range is inherited
+
+    struct expose_random_access_iterator
+    {
+        std::vector<dna4> const vec{"ACTGACTG"_dna4};
+        decorator_t range = [this] ()
+            {
+                decorator_t tmp{vec};
+                iterator_fixture<decorator_t::iterator>::initialise_with_gaps(tmp);
+                return tmp;
+            }();
+
+        decorator_t::iterator_ra begin() { return range.begin_ra(); }
+        decorator_t::iterator_ra end()   { return range.end_ra(); }
+        decorator_t::const_iterator_ra cbegin(){ return range.cbegin_ra(); }
+        decorator_t::const_iterator_ra cend()  { return range.cend_ra(); }
+    };
+
+    expose_random_access_iterator test_range{};
+};
+
+using test_type = ::testing::Types<decorator_t::iterator, decorator_t::iterator_ra>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator, iterator_fixture, test_type);
 
