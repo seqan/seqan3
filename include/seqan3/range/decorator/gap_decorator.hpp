@@ -70,9 +70,9 @@ namespace seqan3
  * ### The seqan3::gap_decorator::iterator type
  *
  * \attention The iterator of the seqan3::gap_decorator does not model the
- *            [Cpp17InputIterator](https://en.cppreference.com/w/cpp/named_req/InputIterator) requirements of the
- *            STL because dereferencing the iterator returns a proxy and no operator-> is provided.
- *            Note that it does model the std::ranges::InputIterator.
+ *            [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator)
+ *            requirements of the STL because dereferencing the iterator returns a proxy and no operator-> is provided.
+ *            It does model the C++20 std::BidirectionalIterator.
  *
  */
 template <std::ranges::ViewableRange inner_type>
@@ -88,8 +88,8 @@ private:
      * \details
      *
      * This iterator returns values when dereferenced, not references, i.e. it does not satisfy the semantic
-     * requirements of [LegacyForwardIterator](https://en.cppreference.com/w/cpp/named_req/ForwardIterator). It does
-     * model the C++20 std::BidirectionalIterator (and std::ForwardIterator implicitly).
+     * requirements of [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator).
+     * It does model the C++20 std::BidirectionalIterator.
      */
     class gap_decorator_iterator
     {
@@ -138,7 +138,7 @@ private:
         }
 
     public:
-        /*!\name Member types
+        /*!\name Associated types
          * \brief Make the parent's member types visible.
          * \{
          */
@@ -156,7 +156,7 @@ private:
         using iterator_category = std::bidirectional_iterator_tag;
         //!\}
 
-        /*!\name Constructors/Destructors
+        /*!\name Constructors, destructor and assignment
          * \{
          */
         //!\brief Default constructor.
@@ -279,7 +279,7 @@ private:
         }
         //!\}
 
-        /*!\name Reference/Dereference operators
+        /*!\name Element access
          * \{
         */
         //!\brief Dereference operator returns a copy of the element currently pointed at.
@@ -339,6 +339,12 @@ private:
         //!\}
     };
 
+    //!\brief The iterator type of this container (a bidirectional iterator).
+    using iterator = gap_decorator_iterator;
+    //!\brief The const_iterator equals the iterator type. Since no references are ever returned and thus the underlying
+    //!        sequence cannot be modified through the iterator there is no need for const.
+    using const_iterator = iterator;
+
 public:
     /*!\name Range-associated member types
      * \{
@@ -354,17 +360,12 @@ public:
     using size_type = size_type_t<inner_type>;
     //!\brief The difference type of the underlying sequence.
     using difference_type = difference_type_t<inner_type>;
-    //!\brief The iterator type of this container (a bidirectional iterator).
-    using iterator = gap_decorator_iterator;
-    //!\brief The const_iterator equals the iterator type. Since no references are ever returned and thus the underlying
-    //!        sequence cannot be modified through the iterator there is no need for const.
-    using const_iterator = iterator;
     //!\}
 
     //!\brief The underlying ungapped range type.
     using unaligned_seq_type = inner_type;
 
-    /*!\name Constructors, destructor and assignment.
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     //!\brief Default constructor. Attention: all operations on a solely default constructed decorator,
@@ -566,7 +567,7 @@ public:
      *
      * No-throw guarantee.
      */
-    iterator begin() const noexcept
+    const_iterator begin() const noexcept
     {
         return iterator{*this};
     }
@@ -590,7 +591,7 @@ public:
      *
      * No-throw guarantee.
      */
-    iterator end() const noexcept
+    const_iterator end() const noexcept
     {
         return iterator{*this, size()};
     }
