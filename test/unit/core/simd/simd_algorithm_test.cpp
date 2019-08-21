@@ -7,11 +7,14 @@
 
 #include <gtest/gtest.h>
 
+#include <iostream>
+#include <numeric>
+
+#include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/simd/simd_algorithm.hpp>
 #include <seqan3/test/simd_utility.hpp>
 
-#include <iostream>
 
 using namespace seqan3;
 
@@ -37,4 +40,198 @@ TEST(simd_algorithm, iota)
 
     constexpr simd_type result = iota<simd_type>(0);
     SIMD_EQ(result, expect);
+}
+
+TEST(simd_algorithm, transpose)
+{
+    using simd_t = simd_type_t<uint8_t>;
+
+    if constexpr (simd_traits<simd_t>::length > 1)
+    {
+        std::array<simd_t, simd_traits<simd_t>::length> matrix;
+
+        for (size_t i = 0; i < matrix.size(); ++i)
+            matrix[i] = simd::iota<simd_t>(0);
+
+        simd::transpose(matrix);
+
+        for (size_t i = 0; i < matrix.size(); ++i)
+            SIMD_EQ(matrix[i], simd::fill<simd_t>(i));
+    }
+}
+
+//-----------------------------------------------------------------------------
+// Algorithm load
+//-----------------------------------------------------------------------------
+
+template <typename simd_t>
+struct simd_algorithm_load : ::testing::Test
+{
+
+    void SetUp()
+    {
+        memory.resize(100);
+        std::iota(memory.begin(), memory.end(), 0);
+    }
+
+    std::vector<typename simd_traits<simd_t>::scalar_type> memory;
+};
+
+using simd_load_types = ::testing::Types<simd_type_t<int8_t>,
+                                         simd_type_t<uint8_t>,
+                                         simd_type_t<int16_t>,
+                                         simd_type_t<uint16_t>,
+                                         simd_type_t<int32_t>,
+                                         simd_type_t<uint32_t>,
+                                         simd_type_t<int64_t>,
+                                         simd_type_t<uint64_t>>;
+
+TYPED_TEST_CASE(simd_algorithm_load, simd_load_types);
+
+TYPED_TEST(simd_algorithm_load, load)
+{
+    SIMD_EQ(simd::load<TypeParam>(this->memory.data()), simd::iota<TypeParam>(0));
+    SIMD_EQ(simd::load<TypeParam>(this->memory.data() + 10), simd::iota<TypeParam>(10));
+}
+
+//-----------------------------------------------------------------------------
+// Algorithm extract
+//-----------------------------------------------------------------------------
+
+template <typename simd_t>
+struct simd_algorithm_extract : ::testing::Test
+{
+    static constexpr bool simd_length = simd_traits<simd_t>::length;
+};
+
+using simd_extract_types = ::testing::Types<simd_type_t<uint8_t>,
+                                            simd_type_t<uint16_t>,
+                                            simd_type_t<int32_t>,
+                                            simd_type_t<int64_t>>;
+TYPED_TEST_CASE(simd_algorithm_extract, simd_extract_types);
+
+TYPED_TEST(simd_algorithm_extract, extract_halve)
+{
+    TypeParam vec = simd::iota<TypeParam>(0);
+
+    // + 1 needed for emulated types without arch specification (simd length = 1).
+    for (size_t idx = 0; idx < (TestFixture::simd_length + 1)/ 2; ++idx)
+    {
+        EXPECT_EQ(detail::extract_halve<0>(vec)[idx], vec[idx]);
+        EXPECT_EQ(detail::extract_halve<1>(vec)[idx], vec[idx + TestFixture::simd_length / 2]);
+    }
+}
+
+TYPED_TEST(simd_algorithm_extract, extract_quarter)
+{
+    TypeParam vec = simd::iota<TypeParam>(0);
+
+    // + 1 needed for emulated types without arch specification (simd length = 1).
+    for (size_t idx = 0; idx < (TestFixture::simd_length + 1) / 4; ++idx)
+    {
+        EXPECT_EQ(detail::extract_quarter<0>(vec)[idx], vec[idx + TestFixture::simd_length / 4 * 0]);
+        EXPECT_EQ(detail::extract_quarter<1>(vec)[idx], vec[idx + TestFixture::simd_length / 4 * 1]);
+        EXPECT_EQ(detail::extract_quarter<2>(vec)[idx], vec[idx + TestFixture::simd_length / 4 * 2]);
+        EXPECT_EQ(detail::extract_quarter<3>(vec)[idx], vec[idx + TestFixture::simd_length / 4 * 3]);
+    }
+}
+
+TYPED_TEST(simd_algorithm_extract, extract_eighth)
+{
+    TypeParam vec = simd::iota<TypeParam>(0);
+
+    // + 1 needed for emulated types without arch specification (simd length = 1).
+    for (size_t idx = 0; idx < (TestFixture::simd_length + 1) / 8; ++idx)
+    {
+        EXPECT_EQ(detail::extract_eighth<0>(vec)[idx], vec[idx + TestFixture::simd_length / 8 * 0]);
+        EXPECT_EQ(detail::extract_eighth<1>(vec)[idx], vec[idx + TestFixture::simd_length / 8 * 1]);
+        EXPECT_EQ(detail::extract_eighth<2>(vec)[idx], vec[idx + TestFixture::simd_length / 8 * 2]);
+        EXPECT_EQ(detail::extract_eighth<3>(vec)[idx], vec[idx + TestFixture::simd_length / 8 * 3]);
+        EXPECT_EQ(detail::extract_eighth<4>(vec)[idx], vec[idx + TestFixture::simd_length / 8 * 4]);
+        EXPECT_EQ(detail::extract_eighth<5>(vec)[idx], vec[idx + TestFixture::simd_length / 8 * 5]);
+        EXPECT_EQ(detail::extract_eighth<6>(vec)[idx], vec[idx + TestFixture::simd_length / 8 * 6]);
+        EXPECT_EQ(detail::extract_eighth<7>(vec)[idx], vec[idx + TestFixture::simd_length / 8 * 7]);
+    }
+}
+
+//-----------------------------------------------------------------------------
+// Algorithm upcast
+//-----------------------------------------------------------------------------
+
+template <typename t>
+class simd_algorithm_upcast : public ::testing::Test
+{
+public:
+
+    static constexpr auto target_list_signed()
+    {
+        if constexpr (sizeof(t) == 1)
+            return type_list_signed_8{};
+        else if constexpr (sizeof(t) == 2)
+            return type_list_signed_16{};
+        else
+            return type_list_signed_32{};
+    }
+
+    static constexpr auto target_list_unsigned()
+    {
+        if constexpr (sizeof(t) == 1)
+            return type_list_unsigned_8{};
+        else if constexpr (sizeof(t) == 2)
+            return type_list_unsigned_16{};
+        else
+            return type_list_unsigned_32{};
+    }
+
+    using target_list_signed_t = decltype(target_list_signed());
+    using target_list_unsigned_t = decltype(target_list_unsigned());
+
+    using type_list_signed_8  = type_list<int8_t, int16_t, int32_t, int64_t>;
+    using type_list_signed_16 = type_list<int16_t, int32_t, int64_t>;
+    using type_list_signed_32 = type_list<int32_t, int64_t>;
+
+    using type_list_unsigned_8  = type_list<uint8_t, uint16_t, uint32_t, uint64_t>;
+    using type_list_unsigned_16 = type_list<uint16_t, uint32_t, uint64_t>;
+    using type_list_unsigned_32 = type_list<uint32_t, uint64_t>;
+};
+
+using upcast_test_types = ::testing::Types<int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t>;
+TYPED_TEST_CASE(simd_algorithm_upcast, upcast_test_types);
+
+TYPED_TEST(simd_algorithm_upcast, signed)
+{
+    using list = typename TestFixture::target_list_signed_t;
+
+    detail::for_each_type([this] (auto type_id)
+    {
+        using target_type = typename decltype(type_id)::type;
+        using src_simd_t = simd_type_t<TypeParam>;
+        using target_simd_t = simd_type_t<target_type>;
+
+        src_simd_t s = fill<src_simd_t>(-10);
+        target_simd_t t = upcast<target_simd_t>(s);
+
+        // Need to compare elementwise since the simd types are not equal and not comparable with `SIMD_EQ`.
+        for (size_t i  = 0; i < simd_traits<target_simd_t>::length; ++i)
+            EXPECT_EQ(t[i], static_cast<target_type>(static_cast<TypeParam>(-10)));
+    }, list{});
+}
+
+TYPED_TEST(simd_algorithm_upcast, unsigned)
+{
+    using list = typename TestFixture::target_list_unsigned_t;
+
+    detail::for_each_type([this] (auto type_id)
+    {
+        using target_type = typename decltype(type_id)::type;
+        using src_simd_t = simd_type_t<TypeParam>;
+        using target_simd_t = simd_type_t<target_type>;
+
+        src_simd_t s = fill<src_simd_t>(-10);
+        target_simd_t t = upcast<target_simd_t>(s);
+
+        // Need to compare elementwise since the simd types are not equal and not comparable with `SIMD_EQ`.
+        for (size_t i  = 0; i < simd_traits<target_simd_t>::length; ++i)
+            EXPECT_EQ(t[i], static_cast<target_type>(static_cast<TypeParam>(-10)));
+    }, list{});
 }

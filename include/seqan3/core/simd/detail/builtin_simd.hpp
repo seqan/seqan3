@@ -101,14 +101,15 @@ struct builtin_simd_traits_helper<builtin_simd_t>
 
     //!\brief Whether builtin_simd_t is a builtin type or not?
     //!\hideinitializer
-    static constexpr bool value = is_power_of_two(length) && std::is_same_v<builtin_simd_t, transformation_trait_or_t<builtin_simd<scalar_type, length>, void>>;
+    static constexpr bool value = is_power_of_two(length) &&
+                                  std::is_same_v<builtin_simd_t,
+                                                 transformation_trait_or_t<builtin_simd<scalar_type, length>, void>>;
 };
 
 /*!\brief This class inherits from std::true_type, **iff**
  * seqan3::detail::builtin_simd<scalar_t, length>::type is a builtin simd type.
  * \ingroup simd
- * \tparam scalar_type The underlying type of a simd vector
- * \tparam length_v The number of packed values in a simd vector
+ * \tparam builtin_simd_t The type to check.
  *
  * \include test/snippet/core/simd/detail/is_builtin_simd.cpp
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
@@ -116,6 +117,14 @@ struct builtin_simd_traits_helper<builtin_simd_t>
 template <typename builtin_simd_t>
 struct is_builtin_simd : std::bool_constant<builtin_simd_traits_helper<builtin_simd_t>::value>
 {};
+
+/*!\brief Helper variable to test whether a type is a simd builtin type.
+ * \ingroup simd
+ * \tparam builtin_simd_t The type to check.
+ * \see seqan3::detail::is_builtin_simd
+ */
+template <typename builtin_simd_t>
+constexpr bool is_builtin_simd_v = is_builtin_simd<builtin_simd_t>::value;
 
 /*!\brief This function specializes seqan3::detail::default_simd_max_length for
  * seqan3::detail::builtin_simd.
@@ -138,6 +147,36 @@ constexpr auto default_simd_max_length<builtin_simd> = []()
     return min_viable_uint_v<0u>;
 #endif
 }();
+
+/*!\brief This class inherits from std::true_type, **iff** the builtin simd type is supported by the current
+ *        architecture.
+ * \ingroup simd
+ * \tparam builtin_simd_t The type to check.
+ *
+ * \details
+ *
+ * A builtin simd type is native if the following conditions are true:
+ * * the default simd max length is not equal to `0`.
+ * * the max length of the simd type is at least 16 (SSE4)
+ * * the max length of the simd type is at most 64 (AVX512)
+ */
+template <typename builtin_simd_t>
+struct is_native_builtin_simd :
+    std::bool_constant<(default_simd_max_length<builtin_simd> != 0) &&
+                       ((builtin_simd_traits_helper<builtin_simd_t>::length *
+                            sizeof(typename builtin_simd_traits_helper<builtin_simd_t>::scalar_type)) >= 16) &&
+                       ((builtin_simd_traits_helper<builtin_simd_t>::length *
+                            sizeof(typename builtin_simd_traits_helper<builtin_simd_t>::scalar_type)) <= 64)>
+{};
+
+
+/*!\brief Helper variable to test whether a type is a native simd builtin type.
+ * \ingroup simd
+ * \tparam builtin_simd_t The type to check.
+ * \see seqan3::detail::is_native_builtin_simd_v
+ */
+template <typename builtin_simd_t>
+constexpr bool is_native_builtin_simd_v = is_native_builtin_simd<builtin_simd_t>::value;
 
 } // namespace seqan3::detail
 

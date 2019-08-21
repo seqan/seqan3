@@ -31,34 +31,34 @@ namespace seqan3::detail
 template <typename simd_t>
 SEQAN3_CONCEPT Simd = requires (simd_t a, simd_t b)
 {
-    typename simd_traits<simd_t>::scalar_type;
-    typename simd_traits<simd_t>::mask_type;
-    typename simd_traits<simd_t>::swizzle_type;
+    typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type;
+    typename simd_traits<std::remove_reference_t<simd_t>>::mask_type;
+    typename simd_traits<std::remove_reference_t<simd_t>>::swizzle_type;
 
     // require that static member variables are defined
-    requires std::Integral<decltype(simd_traits<simd_t>::length)>;
-    requires std::Integral<decltype(simd_traits<simd_t>::max_length)>;
+    requires std::Integral<decltype(simd_traits<std::remove_reference_t<simd_t>>::length)>;
+    requires std::Integral<decltype(simd_traits<std::remove_reference_t<simd_t>>::max_length)>;
 
     // assume array access that returns a scalar_type type
-    { a[0] } -> typename simd_traits<simd_t>::scalar_type;
+    { a[0] } -> typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type;
 
     // require comparison operators
-    requires std::Same<decltype(a == b), typename simd_traits<simd_t>::mask_type>;
-    requires std::Same<decltype(a != b), typename simd_traits<simd_t>::mask_type>;
-    requires std::Same<decltype(a <  b), typename simd_traits<simd_t>::mask_type>;
-    requires std::Same<decltype(a >  b), typename simd_traits<simd_t>::mask_type>;
-    requires std::Same<decltype(a <= b), typename simd_traits<simd_t>::mask_type>;
-    requires std::Same<decltype(a >= b), typename simd_traits<simd_t>::mask_type>;
+    requires std::Same<decltype(a == b), typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    requires std::Same<decltype(a != b), typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    requires std::Same<decltype(a <  b), typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    requires std::Same<decltype(a >  b), typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    requires std::Same<decltype(a <= b), typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
+    requires std::Same<decltype(a >= b), typename simd_traits<std::remove_reference_t<simd_t>>::mask_type>;
 
     // require arithmetic operators
-    requires std::Same<decltype(a + b), simd_t>;
-    requires std::Same<decltype(a - b), simd_t>;
-    requires std::Same<decltype(a * b), simd_t>;
-    requires std::Same<decltype(a / b), simd_t>;
-    requires std::Same<decltype(a += b), simd_t &>;
-    requires std::Same<decltype(a -= b), simd_t &>;
-    requires std::Same<decltype(a *= b), simd_t &>;
-    requires std::Same<decltype(a /= b), simd_t &>;
+    requires std::Same<decltype(a + b), std::remove_reference_t<simd_t>>;
+    requires std::Same<decltype(a - b), std::remove_reference_t<simd_t>>;
+    requires std::Same<decltype(a * b), std::remove_reference_t<simd_t>>;
+    requires std::Same<decltype(a / b), std::remove_reference_t<simd_t>>;
+    requires std::Same<decltype(a += b), std::remove_reference_t<simd_t> &>;
+    requires std::Same<decltype(a -= b), std::remove_reference_t<simd_t> &>;
+    requires std::Same<decltype(a *= b), std::remove_reference_t<simd_t> &>;
+    requires std::Same<decltype(a /= b), std::remove_reference_t<simd_t> &>;
 };
 //!\endcond
 
