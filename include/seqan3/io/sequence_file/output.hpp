@@ -22,7 +22,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/concept/tuple.hpp>

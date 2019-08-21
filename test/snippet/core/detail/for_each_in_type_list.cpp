@@ -1,4 +1,7 @@
-#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <string>
+
+#include <seqan3/core/detail/pack_algorithm.hpp>
+#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
 namespace incomplete
@@ -36,7 +39,8 @@ int main()
     };
 
     // prints each type name, i.e. "int, float, bool, incomplete::type, \n"
-    seqan3::detail::for_each_type<int, float, bool, incomplete::type>(fn);
+    using types = seqan3::type_list<int, float, bool, incomplete::type>;
+    seqan3::detail::for_each<types>(fn);
     seqan3::debug_stream << "\n";
 
     // is the same as explicitly writing

@@ -46,3 +46,90 @@ TEST(pack_algorithm, all_of_values)
     EXPECT_TRUE((detail::all_of(is_value_type_integral, int8_t{}, int16_t{}, uint32_t{})));
     EXPECT_FALSE((detail::all_of(is_value_type_integral, int8_t{}, int16_t{}, uint32_t{}, float{})));
 }
+
+//-----------------------------------------------------------------------------
+// for_each
+//-----------------------------------------------------------------------------
+
+TEST(pack_algorithm, for_each_value)
+{
+    int i = 0;
+    auto fn = [&i](int arg)
+    {
+        EXPECT_EQ(i, arg);
+        ++i;
+    };
+
+    detail::for_each(fn);
+    EXPECT_EQ(i, 0);
+    detail::for_each(fn, 0);
+    EXPECT_EQ(i, 1);
+    detail::for_each(fn, 1, 2);
+    EXPECT_EQ(i, 3);
+    detail::for_each(fn, 3, 4, 5);
+    EXPECT_EQ(i, 6);
+}
+
+TEST(pack_algorithm, for_each_value2)
+{
+    std::stringstream stream{};
+
+    auto fn = [&stream](auto const & arg)
+    {
+        if constexpr(alphabet<decltype(arg)>)
+            stream << to_char(arg) << ";";
+        else
+            stream << arg << ";";
+    };
+
+    detail::for_each(fn);
+    detail::for_each(fn, 0);
+    detail::for_each(fn, 1.0, '2');
+    detail::for_each(fn, "3;4", -5, 'C'_dna4);
+
+    EXPECT_EQ(stream.str(), "0;1;2;3;4;-5;C;");
+}
+
+template <typename type>
+void print_to_stream(std::stringstream & stream, std::type_identity<type>)
+{
+    if constexpr (std::is_same_v<type, bool>)
+        stream << type{0} << ";";
+    if constexpr (std::is_same_v<type, uint8_t>)
+        stream << unsigned{1} << ";";
+    if constexpr (std::is_same_v<type, int8_t>)
+        stream << int{-1} << ";";
+    if constexpr (std::is_same_v<type, uint16_t>)
+        stream << type{2} << ";";
+    if constexpr (std::is_same_v<type, int16_t>)
+        stream << type{-2} << ";";
+    if constexpr (std::is_same_v<type, uint32_t>)
+        stream << type{3} << ";";
+    if constexpr (std::is_same_v<type, int32_t>)
+        stream << type{-3} << ";";
+    if constexpr (std::is_same_v<type, uint64_t>)
+        stream << type{4} << ";";
+    if constexpr (std::is_same_v<type, int64_t>)
+        stream << type{-4} << ";";
+}
+
+TEST(pack_algorithm, for_each_type_in_type_list)
+{
+    std::stringstream stream{};
+
+    auto fn = [&stream](auto id)
+    {
+        print_to_stream(stream, id);
+    };
+
+    using types = type_list<bool, uint8_t, int8_t, uint16_t, int16_t,
+                            uint32_t, int32_t, uint64_t, int64_t>;
+    detail::for_each<types>(fn);
+
+    EXPECT_EQ(stream.str(), "0;1;-1;2;-2;3;-3;4;-4;");
+
+    stream.str("");
+    detail::for_each<types>(fn);
+
+    EXPECT_EQ(stream.str(), "0;1;-1;2;-2;3;-3;4;-4;");
+}

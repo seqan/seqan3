@@ -14,7 +14,7 @@
 
 #include <variant>
 
-#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/io/exception.hpp>
@@ -149,11 +149,11 @@ inline std::vector<std::string> valid_file_extensions()
                   "Expects that all formats have a static member file_extensions storing the extensions in a range");
 
     std::vector<std::string> extensions;
-    detail::for_each_type([&extensions] (auto t_identity)
+    detail::for_each<formats_t>([&extensions] (auto t_identity)
     {
         using format_t = typename decltype(t_identity)::type;
         std::ranges::copy(format_t::file_extensions, std::ranges::back_inserter(extensions));
-    }, formats_t{});
+    });
 
     return extensions;
 }

@@ -77,7 +77,7 @@ struct type_list_expander<type_list_t<args_t...>>
  * \ingroup core
  *
  * \tparam unary_predicate_t The function type, like function pointers, functors and lambdas;
- *                           must model std::Predicate expanded on each argument type.
+ *                           must model std::predicate expanded on each argument type.
  * \tparam pack_t The parameter pack of the arguments (each argument type can be different).
  *
  * \param[in] fn The predicate to evaluate for every argument.
@@ -155,6 +155,92 @@ template <typename type_list_t, typename unary_predicate_t>
     return type_list_expander<type_list_t>::invoke_on_type_identities([&] (auto && ...type_identities)
     {
         return all_of(fn, std::forward<decltype(type_identities)>(type_identities)...);
+    });
+}
+
+//-----------------------------------------------------------------------------
+// for_each
+//-----------------------------------------------------------------------------
+
+/*!\brief Applies a function to each element of the given function parameter pack.
+ * \ingroup core
+ *
+ * \tparam unary_function_t The function type, like function pointers, functors and lambdas.
+ * \tparam pack_t The parameter pack of the arguments (each argument type can be different).
+ *
+ * \param[in] fn The function to call on every argument.
+ * \param[in] args The parameter pack.
+ *
+ * \details
+ *
+ * This function behaves like std::for_each but on parameter packs. The invocation(s) will be done without any loop.
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/detail/for_each_in_pack.cpp
+ *
+ * ### Complexity
+ *
+ * Linear in the number of elements in the pack.
+ *
+ * \attention Opposed to the std::for_each the argument order is changed, such that the first argument is the unary
+ * function to invoke on each argument followed by the arguments.
+ * This is due to a constraint in the c++ language regarding parameter packs.
+ *
+ * \sa https://en.cppreference.com/w/cpp/language/parameter_pack
+ */
+template <typename unary_function_t, typename ...pack_t>
+//!\cond
+    requires (std::invocable<unary_function_t, pack_t> && ...)
+//!\endcond
+constexpr void for_each(unary_function_t && fn, pack_t && ...args)
+{
+    (fn(std::forward<pack_t>(args)), ...);
+}
+
+/*!\brief Applies a function element wise to all types of a type list.
+ * \ingroup core
+ *
+ * \tparam list_t A type list; must model seqan3::detail::type_list_specialisation.
+ * \tparam unary_function_t The function type, like function pointers, functors and lambdas; must model
+ *                          std::invocable on each type of the type list wrapped in std::type_identity.
+ *
+ * \param[in] fn The function to call on every type contained in the list.
+ *
+ * \details
+ *
+ * This function operates on types instead of values.
+ * The following steps are performed to call the passed unary function on the types contained in the type list:
+ *
+ *  * expand the types within the type list
+ *  * wrap each type in std::identity and instantiate it (i.e. transform a type into a value)
+ *  * call the parameter pack version of seqan3::detail::for_each with the instances of std::identity (as a pack).
+ *
+ * Note that wrapping the types in std::type_identity is a technical trick to make a type representable as a value.
+ * Instantiating a type might not work because they might not be std::default_constructible.
+ * In addition, it is possible to invoke the unary function on incomplete types.
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/detail/for_each_in_type_list.cpp
+ *
+ * ### Complexity
+ *
+ * Linear in the number of types in the seqan3::type_list.
+ *
+ * [Compile-time complexity: Linear number of template instantiations.]
+ *
+ * \sa seqan3::detail::for_each
+ */
+template <typename type_list_t, typename unary_function_t>
+//!\cond
+    requires type_list_specialisation<type_list_t>
+//!\endcond
+constexpr void for_each(unary_function_t && fn)
+{
+    type_list_expander<type_list_t>::invoke_on_type_identities([&] (auto && ...type_identities)
+    {
+        for_each(fn, std::forward<decltype(type_identities)>(type_identities)...);
     });
 }
 

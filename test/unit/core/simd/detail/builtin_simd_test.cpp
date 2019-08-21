@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/detail/builtin_simd.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
@@ -108,10 +108,10 @@ TEST(builtin_simd, is_builtin_simd)
         EXPECT_FALSE(detail::is_builtin_simd<type>::value);
     };
 
-    detail::for_each_type(is_not_builtin_simd, subscript_types<short>{});
-    detail::for_each_type(is_not_builtin_simd, subscript_types<int>{});
-    detail::for_each_type(is_not_builtin_simd, subscript_types<incomplete::type>{});
-    detail::for_each_type(is_not_builtin_simd, subscript_types<incomplete::template_type<int>>{});
+    detail::for_each<subscript_types<short>>(is_not_builtin_simd);
+    detail::for_each<subscript_types<int>>(is_not_builtin_simd);
+    detail::for_each<subscript_types<incomplete::type>>(is_not_builtin_simd);
+    detail::for_each<subscript_types<incomplete::template_type<int>>>(is_not_builtin_simd);
 
     EXPECT_TRUE(detail::is_builtin_simd<int16x8_t>::value);
     EXPECT_TRUE(detail::is_builtin_simd<int32x4_t>::value);
@@ -200,10 +200,10 @@ TEST(builtin_simd, simd)
         EXPECT_FALSE(simd::simd_concept<type>);
     };
 
-    detail::for_each_type(fails_simd, subscript_types<short>{});
-    detail::for_each_type(fails_simd, subscript_types<int>{});
-    detail::for_each_type(fails_simd, subscript_types<incomplete::type>{});
-    detail::for_each_type(fails_simd, subscript_types<incomplete::template_type<int>>{});
+    detail::for_each<subscript_types<short>>(fails_simd);
+    detail::for_each<subscript_types<int>>(fails_simd);
+    detail::for_each<subscript_types<incomplete::type>>(fails_simd);
+    detail::for_each<subscript_types<incomplete::template_type<int>>>(fails_simd);
 
     EXPECT_TRUE(simd::simd_concept<int16x8_t>);
     EXPECT_TRUE(simd::simd_concept<int32x4_t>);

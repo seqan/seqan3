@@ -17,10 +17,10 @@
 #include <tuple>
 
 #include <seqan3/alignment/configuration/detail.hpp>
+#include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
-#include <seqan3/core/algorithm/parameter_pack.hpp>
 
 namespace seqan3
 {
@@ -297,7 +297,7 @@ public:
     constexpr end_gaps(ends_t const ...args) noexcept
         requires sizeof...(ends_t) > 0
     {
-        detail::for_each_value([this](auto e)
+        detail::for_each([this](auto e)
         {
             values[remove_cvref_t<decltype(e)>::id()] = e();
         }, args...);
@@ -376,7 +376,7 @@ private:
         [](auto ...ends) constexpr
         {
             std::array<bool, 4> tmp{false, false, false, false};
-            detail::for_each_value([&tmp](auto v)
+            detail::for_each([&tmp](auto v)
             {
                 tmp[decltype(v)::id()] = decltype(v)::is_static;
             }, ends...);
@@ -390,7 +390,7 @@ private:
         [](auto ...ends) constexpr
         {
             std::array<bool, 4> tmp{false, false, false, false};
-            detail::for_each_value([&tmp](auto v)
+            detail::for_each([&tmp](auto v)
             {
                 tmp[decltype(v)::id()] = decltype(v)::static_value;
             }, ends...);

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/simd_algorithm.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>

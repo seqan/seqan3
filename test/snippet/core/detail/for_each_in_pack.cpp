@@ -1,6 +1,6 @@
 #include <string>
 
-#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
 int main()
@@ -11,7 +11,7 @@ int main()
     };
 
     // prints each argument, i.e. "0, 1, 2, 3\n"
-    seqan3::detail::for_each_value(fn, 0, ", ", 1.0, ", ", std::string{"2, 3"}, '\n');
+    seqan3::detail::for_each(fn, 0, ", ", 1.0, ", ", std::string{"2, 3"}, '\n');
 
     // is the same as explicitly writing
     fn(0);
