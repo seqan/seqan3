@@ -22,6 +22,7 @@ struct debug_matrix_stream_test : public ::testing::Test
 
     detail::row_wise_matrix<std::optional<int>> score_matrix
     {
+        number_rows{9u}, number_cols{17u}, std::vector<std::optional<int>>
         {
             0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
             1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
@@ -32,7 +33,7 @@ struct debug_matrix_stream_test : public ::testing::Test
             6,  5,  4,  3,  4,  3,  4,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
             7,  6,  5,  4,  4,  4,  3,  4,  5,  6,  6,  6,  6,  6,  7,  8,  9,
             inf,7,  6,  5,  5,  5,  4,  3,  4,  5,  6,  7,  7,  7,  7,  7,  8
-        }, 9u, 17u
+        }
     };
 
     detail::trace_directions N{},
@@ -43,6 +44,7 @@ struct debug_matrix_stream_test : public ::testing::Test
 
     detail::row_wise_matrix<detail::trace_directions> trace_matrix
     {
+        number_rows{9u}, number_cols{17u}, std::vector
         {
             N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
             U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
@@ -53,7 +55,7 @@ struct debug_matrix_stream_test : public ::testing::Test
             U,  U,  U,  D,  UL, D,  L,  DUL,DU, DU, D,  D,  DL, L,  L,  L,  L,
             U,  U,  U,  U,  D,  U,  D,  L,  L,  DUL,DU, DU, D,  D,  DL, L,  L,
             N,  U,  U,  U,  DU, DU, U,  D,  DL, L,  L,  DUL,DU, DU, D,  D,  DL
-        }, 9u, 17u
+        }
     };
 
     std::string score_matrix_ascii

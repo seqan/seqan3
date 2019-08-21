@@ -19,13 +19,23 @@ using namespace seqan3;
 TEST(advanceable_alignment_coordinate, column_index_type)
 {
     detail::column_index_type ci{1u};
-    EXPECT_EQ(ci.get(), static_cast<size_t>(1));
+    EXPECT_EQ(ci.get(), 1u);
+    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(ci.get())>, size_t>));
+
+    detail::column_index_type ci2{1};
+    EXPECT_EQ(ci2.get(), 1);
+    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(ci2.get())>, std::ptrdiff_t>));
 }
 
 TEST(advanceable_alignment_coordinate, row_index_type)
 {
     detail::row_index_type ri{1u};
-    EXPECT_EQ(ri.get(), static_cast<size_t>(1));
+    EXPECT_EQ(ri.get(), 1u);
+    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(ri.get())>, size_t>));
+
+    detail::row_index_type ri2{1};
+    EXPECT_EQ(ri2.get(), 1);
+    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(ri2.get())>, std::ptrdiff_t>));
 }
 
 TEST(advanceable_alignment_coordinate, construction)
@@ -45,8 +55,8 @@ TEST(advanceable_alignment_coordinate, construction_with_different_state)
 
     detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none> no{ro};
 
-    EXPECT_EQ(no.first, static_cast<size_t>(2));
-    EXPECT_EQ(no.second, static_cast<size_t>(3));
+    EXPECT_EQ(no.first, 2u);
+    EXPECT_EQ(no.second, 3u);
 }
 
 TEST(advanceable_alignment_coordinate, type_deduction)
@@ -63,12 +73,12 @@ TEST(advanceable_alignment_coordinate, type_deduction)
 TEST(advanceable_alignment_coordinate, access)
 {
     detail::advanceable_alignment_coordinate def_co{};
-    EXPECT_EQ(def_co.first, static_cast<size_t>(0));
-    EXPECT_EQ(def_co.second, static_cast<size_t>(0));
+    EXPECT_EQ(def_co.first, 0u);
+    EXPECT_EQ(def_co.second, 0u);
 
     detail::advanceable_alignment_coordinate co{detail::column_index_type{2u}, detail::row_index_type{3u}};
-    EXPECT_EQ(co.first, static_cast<size_t>(2));
-    EXPECT_EQ(co.second, static_cast<size_t>(3));
+    EXPECT_EQ(co.first, 2u);
+    EXPECT_EQ(co.second, 3u);
 }
 
 TEST(advanceable_alignment_coordinate, weakly_equality_comparable_concept)

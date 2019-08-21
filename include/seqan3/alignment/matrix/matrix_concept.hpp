@@ -15,6 +15,7 @@
 #include <cstddef>
 #include <limits>
 
+#include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail
@@ -37,29 +38,38 @@ constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
  */
 //!\cond
 template <typename matrix_t>
-SEQAN3_CONCEPT Matrix = requires(matrix_t m)
+SEQAN3_CONCEPT Matrix = requires(remove_cvref_t<matrix_t> m)
 {
 //!\endcond
 
-    /*!\typedef typedef IMPLEMENTATION_DEFINED entry_type;
+    /*!\typedef typedef IMPLEMENTATION_DEFINED value_type;
      * \brief The type of an entry in the matrix.
      */
-    typename std::remove_reference_t<matrix_t>::entry_type;
+    typename remove_cvref_t<matrix_t>::value_type;
+    /*!\typedef typedef IMPLEMENTATION_DEFINED reference;
+     * \brief The type of a reference to an entry in the matrix.
+     */
+    typename remove_cvref_t<matrix_t>::reference;
+    /*!\typedef typedef IMPLEMENTATION_DEFINED size_type;
+     * \brief The size type of the matrix.
+     */
+    typename remove_cvref_t<matrix_t>::size_type;
 
-    /*!\fn size_t cols() const noexcept;
+    /*!\fn size_type cols() const noexcept;
      * \brief The number of columns in the matrix.
      */
-    { m.cols() } -> size_t;
+    { m.cols() } -> typename remove_cvref_t<matrix_t>::size_type;
 
-    /*!\fn size_t rows() const noexcept;
+    /*!\fn size_type rows() const noexcept;
      * \brief The number of rows in the matrix.
      */
-    { m.rows() } -> size_t;
+    { m.rows() } -> typename remove_cvref_t<matrix_t>::size_type;
 
-    /*!\fn entry_type at(size_t row, size_t col) const noexcept;
-     * \brief The entry of the matrix at position (\a row, \a col), e.g. `matrix[row][col]`.
+    /*!\fn reference at(matrix_coordinate coordinate) noexcept;
+     * \brief A reference to the entry of the matrix at the given coordinate.
      */
-    { m.at(size_t{0u}, size_t{0u}) } -> typename std::remove_reference_t<matrix_t>::entry_type;
+    { m.at(matrix_coordinate{}) } -> typename remove_cvref_t<matrix_t>::reference;
+
 //!\cond
 };
 //!\endcond
@@ -78,7 +88,7 @@ SEQAN3_CONCEPT Matrix = requires(matrix_t m)
  */
 template <Matrix matrix1_t, Matrix matrix2_t>
 //!\cond
-    requires std::EqualityComparableWith<typename matrix1_t::entry_type, typename matrix2_t::entry_type>
+    requires std::EqualityComparableWith<typename matrix1_t::reference, typename matrix2_t::reference>
 //!\endcond
 inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {
@@ -90,7 +100,7 @@ inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 
     for (size_t row = 0u; row < lhs.rows(); ++row)
         for (size_t col = 0u; col < lhs.cols(); ++col)
-            if (lhs.at(row, col) != rhs.at(row, col))
+            if (matrix_coordinate co{row_index_type{row}, column_index_type{col}}; lhs.at(co) != rhs.at(co))
                 return false;
 
     return true;
@@ -104,7 +114,7 @@ inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
  */
 template <Matrix matrix1_t, Matrix matrix2_t>
 //!\cond
-    requires std::EqualityComparableWith<typename matrix1_t::entry_type, typename matrix2_t::entry_type>
+    requires std::EqualityComparableWith<typename matrix1_t::reference, typename matrix2_t::reference>
 //!\endcond
 inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {

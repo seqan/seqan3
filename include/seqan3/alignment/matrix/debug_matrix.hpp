@@ -18,6 +18,7 @@
 #include <seqan3/alignment/matrix/row_wise_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/debug_stream_optional.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
@@ -64,18 +65,29 @@ protected:
     static constexpr bool has_first_sequence = !std::is_same_v<std::decay_t<first_sequence_t>, std::nullopt_t>;
     //!\brief Whether the current debug_matrix was given a second_sequence.
     static constexpr bool has_second_sequence = !std::is_same_v<std::decay_t<second_sequence_t>, std::nullopt_t>;
-    //!\copydoc seqan3::detail::Matrix::entry_type
-    using entry_t = typename std::remove_reference_t<matrix_t>::entry_type;
-    //!\brief Whether the entry_type is trace_directions.
+    //!\brief The entry type.
+    using entry_t = typename std::remove_reference_t<matrix_t>::value_type;
+    //!\brief Whether the value_type is trace_directions.
     static constexpr bool is_traceback_matrix = std::is_same_v<std::decay_t<entry_t>, trace_directions>;
     //!\brief Whether a score matrix already returns std::optional scores. (Where std::nullopt means
     //!       unset/invalid/infinite score)
     static constexpr bool is_optional_score = is_type_specialisation_of_v<entry_t, std::optional>;
 public:
-    //!\copydoc seqan3::detail::Matrix::entry_type
-    using entry_type = std::conditional_t<is_traceback_matrix || is_optional_score,
+
+    /*!\name Associated types
+     * \{
+     */
+    //!\copydoc seqan3::detail::Matrix::value_type
+    using value_type = std::conditional_t<is_traceback_matrix || is_optional_score,
                                           entry_t,
                                           std::optional<entry_t>>;
+    //!\copydoc seqan3::detail::Matrix::reference
+    using reference = value_type;
+    //!\brief The const reference type.
+    using const_reference = reference;
+    //!\brief The size type.
+    using size_type = typename std::remove_reference_t<matrix_t>::size_type;
+    //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -153,16 +165,19 @@ public:
     }
 
     //!\copydoc seqan3::detail::Matrix::at
-    entry_type at(size_t const row, size_t const col) const noexcept
+    const_reference at(matrix_coordinate const & coordinate) const noexcept
     {
+        size_t row = coordinate.row;
+        size_t col = coordinate.col;
+
         assert(row < rows() && col < cols());
 
-        size_t const _row = !_transpose ? row : col;
-        size_t const _col = !_transpose ? col : row;
+        row_index_type const _row{!_transpose ? row : col};
+        column_index_type const _col{!_transpose ? col : row};
 
-        if (!_masking_matrix.has_value() || _masking_matrix.value().at(_row, _col))
+        if (!_masking_matrix.has_value() || _masking_matrix.value().at({_row, _col}))
         {
-            entry_t const & entry = _matrix.at(_row, _col);
+            entry_t const & entry = _matrix.at({_row, _col});
 
             if (!is_traceback_matrix || !_transpose)
                 return entry;
@@ -194,7 +209,7 @@ public:
      */
     debug_matrix & mask_matrix(row_wise_matrix<bool> masking_matrix) noexcept
     {
-        _masking_matrix = masking_matrix;
+        _masking_matrix = std::move(masking_matrix);
         return *this;
     }
 
@@ -204,7 +219,9 @@ public:
      */
     debug_matrix & mask_matrix(std::vector<bool> masking_vector) noexcept
     {
-        return mask_matrix(row_wise_matrix<bool>{masking_vector, rows(), cols()});
+        return mask_matrix(row_wise_matrix<bool>{number_rows{rows()},
+                                                 number_cols{cols()},
+                                                 std::move(masking_vector)});
     }
 
     /*!\brief Limits the view port of the current matrix.
@@ -325,7 +342,7 @@ public:
                 print_first_cell(char_second_sequence(row - 1));
 
             for (size_t col = 0; col < cols(); ++col)
-                print_cell(entry_at(row, col, flags));
+                print_cell(entry_at({row_index_type{row}, column_index_type{col}}, flags));
 
             cout << "\n";
         }
@@ -337,27 +354,28 @@ public:
         size_t col_width = 1;
         for (size_t row = 0; row < rows(); ++row)
             for (size_t col = 0; col < cols(); ++col)
-                col_width = std::max(col_width, unicode_str_length(entry_at(row, col, flags)));
+                col_width = std::max(col_width,
+                                     unicode_str_length(entry_at({row_index_type{row}, column_index_type{col}}, flags)));
 
         return col_width;
     }
 
 protected:
-    //!\brief Same as at(*row*, *col*), but as string.
-    std::string entry_at(size_t const row, size_t const col, fmtflags2 flags) const noexcept
+    //!\brief Same as at(*coordinate*), but as string.
+    std::string entry_at(matrix_coordinate const coordinate, fmtflags2 flags) const noexcept
     {
         format_type const & symbols = (flags & fmtflags2::utf8) == fmtflags2::utf8 ? unicode : csv;
 
-        entry_type const & entry = at(row, col);
-        if (!is_traceback_matrix && entry == matrix_inf<entry_type>)
+        value_type const & entry = at(coordinate);
+        if (!is_traceback_matrix && entry == matrix_inf<value_type>)
             return symbols.inf;
 
         return as_string(entry, flags);
     }
 
     //!\brief Convert a value into a std::string.
-    template <typename entry_type>
-    static std::string as_string(entry_type && entry, fmtflags2 const flags) noexcept
+    template <typename value_type>
+    static std::string as_string(value_type && entry, fmtflags2 const flags) noexcept
     {
         std::stringstream strstream;
         debug_stream_type stream{strstream};
@@ -463,6 +481,16 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, ali
     debug.stream_matrix(sstream, s.flags2());
     s << sstream.str();
     return s;
+}
+
+//!\overload
+template <std::ranges::InputRange alignment_matrix_t, typename char_t>
+//!\cond
+    requires detail::debug_stream_range_guard<alignment_matrix_t> && detail::Matrix<alignment_matrix_t>
+//!\endcond
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
+{
+    return s << detail::debug_matrix{std::forward<alignment_matrix_t>(matrix)};
 }
 
 } // namespace seqan3

@@ -47,10 +47,13 @@ struct debug_matrix_test : public ::testing::Test
        -8, -7, -6, -5, -5, -5, -4, -3, -4, -5, -6, -7, -7, -7, -7, -7, -8
     };
 
-    row_wise_matrix<int> score_matrix{scores, 9u, 17u};
+    row_wise_matrix<int> score_matrix{number_rows{9u}, number_cols{17u}, scores};
 
     row_wise_matrix<int> transposed_score_matrix
     {
+        number_rows{17u},
+        number_cols{9u},
+        std::vector
         {
            -0, -1, -2, -3, -4, -5, -6, -7, -8,
            -1, -0, -1, -2, -3, -4, -5, -6, -7,
@@ -69,11 +72,14 @@ struct debug_matrix_test : public ::testing::Test
           -14,-13,-12,-11,-10, -9, -8, -7, -7,
           -15,-14,-13,-12,-11,-10, -9, -8, -7,
           -16,-15,-14,-13,-12,-11,-10, -9, -8
-        }, 17u, 9u
+        }
     };
 
     row_wise_matrix<std::optional<int>> masked_score_matrix
     {
+        number_rows{9u},
+        number_cols{17u},
+        std::vector<std::optional<int>>
         {
             -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
             -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
@@ -84,11 +90,14 @@ struct debug_matrix_test : public ::testing::Test
            inf,inf, -4, -3, -4, -3,inf,inf,inf,inf,inf, -5, -6, -7,inf,inf,-10,
            inf,inf,inf, -4, -4,inf,inf,inf,inf,inf,inf,inf, -6, -6,inf,inf, -9,
            inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf,inf, -8
-        }, 9u, 17u
+        }
     };
 
     row_wise_matrix<int> score_matrix_s9u_7u
     {
+        number_rows{9u},
+        number_cols{7u},
+        std::vector
         {
            -0, -1, -2, -3, -4, -5, -6,
            -1, -0, -1, -2, -3, -4, -5,
@@ -99,17 +108,20 @@ struct debug_matrix_test : public ::testing::Test
            -6, -5, -4, -3, -4, -3, -4,
            -7, -6, -5, -4, -4, -4, -3,
            -8, -7, -6, -5, -5, -5, -4
-        }, 9u, 7u
+        }
     };
 
     row_wise_matrix<int> score_matrix_s4u_17u
     {
+        number_rows{4u},
+        number_cols{17u},
+        std::vector
         {
            -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,
            -1, -0, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,-15,
            -2, -1, -1, -1, -2, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13,-14,
            -3, -2, -2, -2, -2, -3, -3, -4, -5, -6, -7, -8, -9,-10,-11,-12,-13
-        }, 4u, 17u
+        }
     };
 
     trace_directions N{},
@@ -131,10 +143,13 @@ struct debug_matrix_test : public ::testing::Test
         U,  U,  U,  U,  DU, DU, U,  D,  DL, L,  L,  DUL,DU, DU, D,  D,  DL
     };
 
-    row_wise_matrix<trace_directions> trace_matrix{traces, 9u, 17u};
+    row_wise_matrix<trace_directions> trace_matrix{number_rows{9u}, number_cols{17u}, traces};
 
     row_wise_matrix<trace_directions> transposed_trace_matrix
     {
+        number_rows{17u},
+        number_cols{9u},
+        std::vector
         {
             N,  L,  L,  L,  L,  L,  L,  L,  L,
             U,  D,  L,  L,  L,  DL, L,  L,  L,
@@ -153,11 +168,14 @@ struct debug_matrix_test : public ::testing::Test
             U,  U,  U,  DU, U,  U,  U,  DU, D,
             U,  U,  U,  U,  DU, U,  U,  U,  D,
             U,  U,  U,  U,  DU, U,  U,  U,  DU
-        }, 17u, 9u
+        }
     };
 
     row_wise_matrix<trace_directions> masked_trace_matrix
     {
+        number_rows{9u},
+        number_cols{17u},
+        std::vector
         {
             N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
             U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
@@ -168,11 +186,14 @@ struct debug_matrix_test : public ::testing::Test
             N,  N,  U,  D,  UL, D,  N,  N,  N,  N,  N,  D,  DL, L,  N,  N,  L,
             N,  N,  N,  U,  D,  N,  N,  N,  N,  N,  N,  N,  D,  D,  N,  N,  L,
             N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N,  N , N,  N,  DL
-        }, 9u, 17u
+        }
     };
 
     row_wise_matrix<trace_directions> trace_matrix_s9u_7u
     {
+        number_rows{9u},
+        number_cols{7u},
+        std::vector
         {
             N,  L,  L,  L,  L,  L,  L,
             U,  D,  DL, L,  DL, L,  L,
@@ -183,17 +204,20 @@ struct debug_matrix_test : public ::testing::Test
             U,  U,  U,  D,  UL, D,  L,
             U,  U,  U,  U,  D,  U,  D,
             U,  U,  U,  U,  DU, DU, U
-        }, 9u, 7u
+        }
     };
 
     row_wise_matrix<trace_directions> trace_matrix_s4u_17u
     {
+        number_rows{4u},
+        number_cols{17u},
+        std::vector
         {
             N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
             U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
             U,  U,  D,  D,  L,  DL, L,  L,  L,  L,  L,  DL, DL, L,  L,  L,  L,
             U,  U,  DU, DU, D,  DL, D,  L,  L,  L,  L,  L,  L,  DL, DL, L,  L
-        }, 4u, 17u
+        }
     };
 
     template <typename score_matrix_t>
@@ -202,25 +226,25 @@ struct debug_matrix_test : public ::testing::Test
         EXPECT_EQ(matrix.cols(), 17u);
         EXPECT_EQ(matrix.rows(), 9u);
 
-        EXPECT_EQ(matrix.at(0, 0), -0);
-        EXPECT_EQ(matrix.at(0, 6), -6);
-        EXPECT_EQ(matrix.at(0, 16), -16);
+        EXPECT_EQ(matrix.at({row_index_type{0u}, column_index_type{0u}}), -0);
+        EXPECT_EQ(matrix.at({row_index_type{0u}, column_index_type{6u}}), -6);
+        EXPECT_EQ(matrix.at({row_index_type{0u}, column_index_type{16u}}), -16);
 
-        EXPECT_EQ(matrix.at(3, 0), -3);
-        EXPECT_EQ(matrix.at(3, 6), -3);
-        EXPECT_EQ(matrix.at(3, 16), -13);
+        EXPECT_EQ(matrix.at({row_index_type{3u}, column_index_type{0u}}), -3);
+        EXPECT_EQ(matrix.at({row_index_type{3u}, column_index_type{6u}}), -3);
+        EXPECT_EQ(matrix.at({row_index_type{3u}, column_index_type{16u}}), -13);
 
-        EXPECT_EQ(matrix.at(4, 0), -4);
-        EXPECT_EQ(matrix.at(4, 6), -4);
-        EXPECT_EQ(matrix.at(4, 16), -12);
+        EXPECT_EQ(matrix.at({row_index_type{4u}, column_index_type{0u}}), -4);
+        EXPECT_EQ(matrix.at({row_index_type{4u}, column_index_type{6u}}), -4);
+        EXPECT_EQ(matrix.at({row_index_type{4u}, column_index_type{16u}}), -12);
 
-        EXPECT_EQ(matrix.at(8, 0), -8);
-        EXPECT_EQ(matrix.at(8, 6), -4);
-        EXPECT_EQ(matrix.at(8, 16), -8);
+        EXPECT_EQ(matrix.at({row_index_type{8u}, column_index_type{0u}}), -8);
+        EXPECT_EQ(matrix.at({row_index_type{8u}, column_index_type{6u}}), -4);
+        EXPECT_EQ(matrix.at({row_index_type{8u}, column_index_type{16u}}), -8);
 
         for (size_t row = 0; row < matrix.rows(); row++)
             for (size_t col = 0; col < matrix.cols(); col++)
-                EXPECT_EQ(matrix.at(row, col), scores[row * matrix.cols() + col]);
+                EXPECT_EQ((matrix.at({row_index_type{row}, column_index_type{col}})), scores[row * matrix.cols() + col]);
     }
 
     template <typename trace_matrix_t>
@@ -229,18 +253,18 @@ struct debug_matrix_test : public ::testing::Test
         EXPECT_EQ(matrix.cols(), 17u);
         EXPECT_EQ(matrix.rows(), 9u);
 
-        EXPECT_EQ(matrix.at(0, 0), N);
-        EXPECT_EQ(matrix.at(3, 6), D);
-        EXPECT_EQ(matrix.at(3, 0), U);
-        EXPECT_EQ(matrix.at(0, 6), L);
-        EXPECT_EQ(matrix.at(8, 5), DU);
-        EXPECT_EQ(matrix.at(2, 5), DL);
-        EXPECT_EQ(matrix.at(6, 4), UL);
-        EXPECT_EQ(matrix.at(4, 6), DUL);
+        EXPECT_EQ(matrix.at({row_index_type{0u}, column_index_type{0u}}), N);
+        EXPECT_EQ(matrix.at({row_index_type{3u}, column_index_type{6u}}), D);
+        EXPECT_EQ(matrix.at({row_index_type{3u}, column_index_type{0u}}), U);
+        EXPECT_EQ(matrix.at({row_index_type{0u}, column_index_type{6u}}), L);
+        EXPECT_EQ(matrix.at({row_index_type{8u}, column_index_type{5u}}), DU);
+        EXPECT_EQ(matrix.at({row_index_type{2u}, column_index_type{5u}}), DL);
+        EXPECT_EQ(matrix.at({row_index_type{6u}, column_index_type{4u}}), UL);
+        EXPECT_EQ(matrix.at({row_index_type{4u}, column_index_type{6u}}), DUL);
 
         for (size_t row = 0; row < matrix.rows(); row++)
             for (size_t col = 0; col < matrix.cols(); col++)
-                EXPECT_EQ(matrix.at(row, col), traces[row * matrix.cols() + col]);
+                EXPECT_EQ(matrix.at({row_index_type{row}, column_index_type{col}}), traces[row * matrix.cols() + col]);
     }
 };
 
@@ -317,7 +341,7 @@ TEST_F(score_matrix_test, equal)
     // last entry of second row
     std::vector<int> scores_unequal{scores};
     scores_unequal[2 * 16] = -16;
-    row_wise_matrix<int> score_matrix_unequal{std::move(scores_unequal), 9u, 17u};
+    row_wise_matrix<int> score_matrix_unequal{number_rows{9u}, number_cols{17u}, std::move(scores_unequal)};
 
     debug_matrix matrix{score_matrix};
 
@@ -333,7 +357,7 @@ TEST_F(score_matrix_test, not_equal)
     // last entry of second row
     std::vector<int> scores_unequal{scores};
     scores_unequal[2 * 16] = -16;
-    row_wise_matrix<int> score_matrix_unequal{std::move(scores_unequal), 9u, 17u};
+    row_wise_matrix<int> score_matrix_unequal{number_rows{9u}, number_cols{17u}, std::move(scores_unequal)};
 
     debug_matrix matrix{score_matrix};
 
@@ -457,7 +481,9 @@ TEST_F(trace_matrix_test, equal)
     // last entry of second row
     std::vector<trace_directions> traces_unequal{traces};
     traces_unequal[2 * 16] = trace_directions::up;
-    row_wise_matrix<trace_directions> trace_matrix_unequal{std::move(traces_unequal), 9u, 17u};
+    row_wise_matrix<trace_directions> trace_matrix_unequal{number_rows{9u},
+                                                           number_cols{17u},
+                                                           std::move(traces_unequal)};
 
     debug_matrix matrix{trace_matrix};
 
@@ -473,7 +499,9 @@ TEST_F(trace_matrix_test, not_equal)
     // last entry of second row
     std::vector<trace_directions> traces_unequal{traces};
     traces_unequal[2 * 16] = trace_directions::up;
-    row_wise_matrix<trace_directions> trace_matrix_unequal{std::move(traces_unequal), 9u, 17u};
+    row_wise_matrix<trace_directions> trace_matrix_unequal{number_rows{9u},
+                                                           number_cols{17u},
+                                                           std::move(traces_unequal)};
 
     debug_matrix matrix{trace_matrix};
 

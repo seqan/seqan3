@@ -13,8 +13,10 @@ int main()
     std::vector<seqan3::dna4> database = "AACCGGTT"_dna4;
     std::vector<seqan3::dna4> query = "ACGT"_dna4;
 
-    seqan3::detail::row_wise_matrix score_matrix
+    seqan3::detail::row_wise_matrix<int> score_matrix
     {
+        seqan3::detail::number_rows{5u},
+        seqan3::detail::number_cols{9u},
         std::vector
         {
             -0, -1, -2, -3, -4, -5, -6, -7, -8,
@@ -22,9 +24,7 @@ int main()
             -2, -1, -1, -1, -2, -3, -4, -5, -6,
             -3, -2, -2, -2, -2, -2, -3, -4, -5,
             -4, -3, -3, -3, -3, -3, -3, -3, -4
-        },
-        5u,
-        9u
+        }
     };
 
     seqan3::debug_stream << "database:\t" << database << std::endl;

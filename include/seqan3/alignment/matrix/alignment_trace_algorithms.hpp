@@ -36,7 +36,7 @@ namespace seqan3::detail
  template <typename trace_matrix_t>
  //!\cond
      requires Matrix<remove_cvref_t<trace_matrix_t>> &&
-              std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
+              std::Same<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions>
  //!\endcond
 inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
                                                        alignment_coordinate const back_coordinate)
@@ -44,39 +44,39 @@ inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    size_t row = back_coordinate.second;
-    size_t col = back_coordinate.first;
 
-    assert(row < matrix.rows());
-    assert(col < matrix.cols());
+    matrix_coordinate coordinate{row_index_type{back_coordinate.second}, column_index_type{back_coordinate.first}};
+
+    assert(coordinate.row < matrix.rows());
+    assert(coordinate.col < matrix.cols());
 
     while (true)
     {
-        trace_directions dir = matrix.at(row, col);
+        trace_directions dir = matrix.at(coordinate);
         if ((dir & L) == L)
         {
-            col = std::max<size_t>(col, 1) - 1;
+            coordinate.col = std::max<size_t>(coordinate.col, 1) - 1;
         }
         else if ((dir & U) == U)
         {
-            row = std::max<size_t>(row, 1) - 1;
+            coordinate.row = std::max<size_t>(coordinate.row, 1) - 1;
         }
         else if ((dir & D) == D)
         {
-            row = std::max<size_t>(row, 1) - 1;
-            col = std::max<size_t>(col, 1) - 1;
+            coordinate.row = std::max<size_t>(coordinate.row, 1) - 1;
+            coordinate.col = std::max<size_t>(coordinate.col, 1) - 1;
         }
         else
         {
 #ifndef NDEBUG
-            if (!(row == 0 || col == 0))
+            if (!(coordinate.row == 0 || coordinate.col == 0))
                 throw std::logic_error{"Unknown seqan3::trace_direction in an inner cell of the trace matrix."};
 #endif
             break;
         }
     }
 
-    return {column_index_type{col}, row_index_type{row}};
+    return {column_index_type{coordinate.col}, row_index_type{coordinate.row}};
 }
 
 /*!\brief Compute the trace from a trace matrix.
@@ -99,7 +99,7 @@ template <
     typename trace_matrix_t>
 //!\cond
     requires Matrix<remove_cvref_t<trace_matrix_t>> &&
-             std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions> &&
+             std::Same<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions> &&
              detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<alignment_t>>
 //!\endcond
 inline alignment_t alignment_trace(database_t && database,
@@ -112,49 +112,49 @@ inline alignment_t alignment_trace(database_t && database,
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    size_t col = back_coordinate.first;
-    size_t row = back_coordinate.second;
 
-    assert(row <= query.size());
-    assert(col <= database.size());
-    assert(row < matrix.rows());
-    assert(col < matrix.cols());
+    matrix_coordinate coordinate{row_index_type{back_coordinate.second}, column_index_type{back_coordinate.first}};
+
+    assert(coordinate.row <= query.size());
+    assert(coordinate.col <= database.size());
+    assert(coordinate.row < matrix.rows());
+    assert(coordinate.col < matrix.cols());
 
     alignment_t aligned_seq{};
-    assign_unaligned(std::get<0>(aligned_seq), view::slice(database, front_coordinate.first, col));
-    assign_unaligned(std::get<1>(aligned_seq), view::slice(query, front_coordinate.second, row));
+    assign_unaligned(std::get<0>(aligned_seq), view::slice(database, front_coordinate.first, coordinate.col));
+    assign_unaligned(std::get<1>(aligned_seq), view::slice(query, front_coordinate.second, coordinate.row));
     auto end_aligned_db = std::ranges::cend(std::get<0>(aligned_seq));
     auto end_aligned_qy = std::ranges::cend(std::get<1>(aligned_seq));
 
-    if (matrix.at(0, 0) != N)
+    if (matrix.at({row_index_type{0u}, column_index_type{0u}}) != N)
         throw std::logic_error{"End trace must be NONE"};
 
     while (true)
     {
-        trace_directions dir = matrix.at(row, col);
+        trace_directions dir = matrix.at(coordinate);
         if ((dir & L) == L)
         {
-            col = std::max<size_t>(col, 1) - 1;
+            coordinate.col = std::max<size_t>(coordinate.col, 1) - 1;
             --end_aligned_db;
             insert_gap(std::get<1>(aligned_seq), end_aligned_qy);
         }
         else if ((dir & U) == U)
         {
-            row = std::max<size_t>(row, 1) - 1;
+            coordinate.row = std::max<size_t>(coordinate.row, 1) - 1;
             insert_gap(std::get<0>(aligned_seq), end_aligned_db);
             --end_aligned_qy;
         }
         else if ((dir & D) == D)
         {
-            row = std::max<size_t>(row, 1) - 1;
-            col = std::max<size_t>(col, 1) - 1;
+            coordinate.row = std::max<size_t>(coordinate.row, 1) - 1;
+            coordinate.col = std::max<size_t>(coordinate.col, 1) - 1;
             --end_aligned_db;
             --end_aligned_qy;
         }
         else
         {
 #ifndef NDEBUG
-            if (!(row == 0 || col == 0))
+            if (!(coordinate.row == 0 || coordinate.col == 0))
                 throw std::logic_error{"Unknown seqan3::trace_direction in an inner cell of the trace matrix."};
 #endif
             break;

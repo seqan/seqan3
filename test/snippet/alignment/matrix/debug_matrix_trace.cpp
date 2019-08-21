@@ -20,8 +20,10 @@ int main()
     auto U = seqan3::detail::trace_directions::up;
     auto L = seqan3::detail::trace_directions::left;
 
-    seqan3::detail::row_wise_matrix trace_matrix
+    seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions> trace_matrix
     {
+        seqan3::detail::number_rows{5u},
+        seqan3::detail::number_cols{9u},
         std::vector
         {
             N,L,L  ,L  ,L  ,L  ,L  ,L,L  ,
@@ -29,9 +31,7 @@ int main()
             U,U,D  ,D  ,D|L,L  ,L  ,L,L  ,
             U,U,D|U,D|U,D  ,D  ,D|L,L,L  ,
             U,U,D|U,D|U,D|U,D|U,D  ,D,D|L
-        },
-        5u,
-        9u
+        }
     };
 
     seqan3::debug_stream << "database:\t" << database << std::endl;
