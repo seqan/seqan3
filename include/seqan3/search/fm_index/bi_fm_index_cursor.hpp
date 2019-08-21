@@ -68,14 +68,16 @@ public:
      * \{
      */
     //!\brief Type for the unidirectional cursor on the original text.
-    using fwd_cursor = fm_index_cursor<fm_index<text_layout{index_type::is_collection_},
+    using fwd_cursor = fm_index_cursor<fm_index<typename index_type::char_type,
+                                                index_type::text_layout_mode,
                                                 typename index_type::sdsl_index_type>>;
     //!\brief Type for the unidirectional cursor on the reversed text.
-    using rev_cursor = fm_index_cursor<fm_index<text_layout{index_type::is_collection_},
+    using rev_cursor = fm_index_cursor<fm_index<typename index_type::char_type,
+                                                index_type::text_layout_mode,
                                                 typename index_type::sdsl_index_type>>;
     //!\}
 
-protected:
+private:
     //!\brief Type of the representation of characters in the underlying SDSL index.
     using sdsl_char_type = typename index_type::sdsl_char_type;
     //!\brief Type of the alphabet size in the underlying SDSL index.
@@ -237,18 +239,18 @@ public:
     //!\brief Default constructor. Accessing member functions on a default constructed object is undefined behavior.
     //        Default construction is necessary to make this class semi-regular and e.g., to allow construction of
     //        std::array of cursors.
-    bi_fm_index_cursor() noexcept = default;                                       //!< Default constructor.
-    bi_fm_index_cursor(bi_fm_index_cursor const &) noexcept = default;             //!< Copy constructor.
-    bi_fm_index_cursor & operator=(bi_fm_index_cursor const &) noexcept = default; //!< Copy assignment.
-    bi_fm_index_cursor(bi_fm_index_cursor &&) noexcept = default;                  //!< Move constructor.
-    bi_fm_index_cursor & operator=(bi_fm_index_cursor &&) noexcept = default;      //!< Move assignment.
-    ~bi_fm_index_cursor() = default;                                               //!< Destructor.
+    bi_fm_index_cursor() noexcept = default;                                       //!< Defaulted.
+    bi_fm_index_cursor(bi_fm_index_cursor const &) noexcept = default;             //!< Defaulted.
+    bi_fm_index_cursor & operator=(bi_fm_index_cursor const &) noexcept = default; //!< Defaulted.
+    bi_fm_index_cursor(bi_fm_index_cursor &&) noexcept = default;                  //!< Defaulted.
+    bi_fm_index_cursor & operator=(bi_fm_index_cursor &&) noexcept = default;      //!< Defaulted.
+    ~bi_fm_index_cursor() = default;                                               //!< Defaulted.
 
     //! \brief Construct from given index.
     bi_fm_index_cursor(index_t const & _index) noexcept : index(&_index),
                                                           fwd_lb(0), fwd_rb(_index.size() - 1),
                                                           rev_lb(0), rev_rb(_index.size() - 1),
-                                                          sigma(_index.fwd_fm.index.sigma - index_t::is_collection_),
+                                                          sigma(_index.fwd_fm.index.sigma - index_t::text_layout_mode),
                                                           depth(0)
     {}
     //\}
@@ -405,15 +407,17 @@ public:
      *
      * No-throw guarantee.
      */
-    template <Alphabet char_t>
+    template <typename char_t>
     bool extend_right(char_t const c) noexcept
     {
     #ifndef NDEBUG
         fwd_cursor_last_used = true;
     #endif
 
+        static_assert(std::ConvertibleTo<char_t, typename index_t::char_type>,
+                     "The character must be convertible to the alphabet of the index.");
+
         assert(index != nullptr);
-        assert(index->fwd_fm.sigma == alphabet_size<char_t>);
 
         size_type new_parent_lb = fwd_lb, new_parent_rb = fwd_rb;
 
@@ -445,15 +449,17 @@ public:
      *
      * No-throw guarantee.
      */
-    template <Alphabet char_t>
+    template <typename char_t>
     bool extend_left(char_t const c) noexcept
     {
     #ifndef NDEBUG
         fwd_cursor_last_used = false;
     #endif
 
+        static_assert(std::ConvertibleTo<char_t, typename index_t::char_type>,
+                      "The character must be convertible to the alphabet of the index.");
+
         assert(index != nullptr);
-        assert(index->fwd_fm.sigma == alphabet_size<char_t>);
 
         size_type new_parent_lb = rev_lb, new_parent_rb = rev_rb;
 
@@ -491,8 +497,10 @@ public:
     bool extend_right(seq_t && seq) noexcept
     {
         static_assert(std::ranges::ForwardRange<seq_t>, "The query must model ForwardRange.");
+        static_assert(std::ConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>,
+                      "The alphabet of the sequence must be convertible to the alphabet of the index.");
+
         assert(index != nullptr);
-        assert(index->fwd_fm.sigma == alphabet_size<innermost_value_type_t<seq_t>>);
 
         auto first = std::ranges::begin(seq);
         auto last = std::ranges::end(seq);
@@ -554,8 +562,9 @@ public:
     bool extend_left(seq_t && seq) noexcept
     {
         static_assert(std::ranges::BidirectionalRange<seq_t>, "The query must model BidirectionalRange.");
+        static_assert(std::ConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>,
+                      "The alphabet of the sequence must be convertible to the alphabet of the index.");
         assert(index != nullptr);
-        assert(index->fwd_fm.sigma == alphabet_size<innermost_value_type_t<seq_t>>);
 
         auto rev_seq = std::view::reverse(seq);
         auto first = std::ranges::begin(rev_seq);
@@ -853,13 +862,14 @@ public:
     template <std::ranges::Range text_t>
     auto path_label(text_t && text) const noexcept
     //!\cond
-        requires !index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::single
     //!\endcond
     {
         static_assert(std::ranges::InputRange<text_t>, "The text must model InputRange.");
         static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
+        static_assert(std::Same<innermost_value_type_t<text_t>, typename index_t::char_type>,
+                      "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
-        assert(index->fwd_fm.sigma == alphabet_size<value_type_t<text_t>>);
 
         size_type const query_begin = offset() - index->fwd_fm.index[fwd_lb];
         return text | view::slice(query_begin, query_begin + query_length());
@@ -869,13 +879,14 @@ public:
     template <std::ranges::Range text_t>
     auto path_label(text_t && text) const noexcept
     //!\cond
-        requires index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::collection
     //!\endcond
     {
         static_assert(std::ranges::InputRange<text_t>, "The text collection must model InputRange.");
         static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
+        static_assert(std::Same<innermost_value_type_t<text_t>, typename index_t::char_type>,
+                      "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
-        assert(index->fwd_fm.sigma == alphabet_size<innermost_value_type_t<text_t>>);
 
         size_type const loc = offset() - index->fwd_fm.index[fwd_lb];
         size_type const query_begin = loc - index->fwd_fm.text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
@@ -913,7 +924,7 @@ public:
      */
     std::vector<size_type> locate() const
     //!\cond
-        requires !index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::single
     //!\endcond
     {
         assert(index != nullptr);
@@ -929,7 +940,7 @@ public:
     //!\overload
     std::vector<std::pair<size_type, size_type>> locate() const
     //!\cond
-        requires index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::collection
     //!\endcond
     {
         assert(index != nullptr);
@@ -960,7 +971,7 @@ public:
      */
     auto lazy_locate() const
     //!\cond
-        requires !index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::single
     //!\endcond
     {
         assert(index != nullptr);
@@ -975,7 +986,7 @@ public:
     //!\overload
     auto lazy_locate() const
     //!\cond
-        requires index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::collection
     //!\endcond
     {
         assert(index != nullptr);

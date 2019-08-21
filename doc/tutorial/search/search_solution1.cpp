@@ -23,7 +23,8 @@ int main()
         oarchive(index);
     }
 
-    fm_index<text_layout::single> index2; // we need to tell the index that we work on a single text before loading
+    // we need to tell the index that we work on a single text and a `dna4` alphabet before loading
+    fm_index<dna4, text_layout::single> index2;
     {
         std::ifstream is{"index.file", std::ios::binary};
         cereal::BinaryInputArchive iarchive{is};
