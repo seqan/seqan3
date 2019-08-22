@@ -49,7 +49,7 @@ We recommend that you use CMake to build your project:
 
 Quick-Setup without CMake:
 
-  * Clone the repository with submodules: `git clone --recursive https://github.com/seqan/seqan3.git`
+  * Clone the repository with submodules: `git clone --recurse-submodules https://github.com/seqan/seqan3.git`
   * Add the following to your compiler invocation:
     * the include directories of SeqAn and its dependencies
     * C++17 mode with concepts support
