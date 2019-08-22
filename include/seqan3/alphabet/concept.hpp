@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <seqan3/alphabet/adaptation/char.hpp>
-#include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/alphabet/exception.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/core_language.hpp>
@@ -24,19 +22,66 @@
 #include <seqan3/std/concepts>
 
 // ============================================================================
+// forwards
+// ============================================================================
+
+namespace seqan3::custom
+{
+
+/*!\brief A type that can be specialised to provide customisation point implementations so that third party types
+ *        model alphabet concepts.
+ * \tparam t The type you wish to specialise for.
+ * \ingroup alphabet
+ *
+ * \details
+ *
+ * For examples of when and how you can make use of this type, please see \link about_customisation the page on
+ * customisation \endlink and the \link howto_write_an_alphabet_custom section on third party types \endlink in
+ * the Alphabet HowTo.
+ *
+ * Please note that by default the `t const`, `t &` and `t const &` specialisations of this class inherit the
+ * specialisation for `t` so you usually only need to provide a specialisation for `t`.
+ *
+ * \note Only use this, if you cannot provide respective functions in your namespace.
+ */
+template <typename t>
+struct alphabet
+{};
+
+//!\cond
+template <typename t>
+struct alphabet<t const> : alphabet<t>
+{};
+
+template <typename t>
+struct alphabet<t &> : alphabet<t>
+{};
+
+template <typename t>
+struct alphabet<t const &> : alphabet<t>
+{};
+//!\endcond
+
+} // namespace seqan3::custom
+
+// ============================================================================
 // to_rank()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void to_rank(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::to_rank.
 struct to_rank_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, to_rank(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::custom::to_rank(v)       )    // customisation namespace
-    SEQAN3_CPO_IMPL(0, v.to_rank()                      )    // member
+    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::to_rank(v))    // explicit customisation
+    SEQAN3_CPO_IMPL(1, to_rank(v)                                       )    // ADL
+    SEQAN3_CPO_IMPL(0, v.to_rank()                                      )    // member
 
 public:
     //!\brief Operator definition.
@@ -55,7 +100,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -75,8 +120,8 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `to_rank(your_type const a)` in the namespace of your type (or as `friend`).
- *   2. A free function `to_rank(your_type const a)` in `namespace seqan3::custom`.
+ *   1. A static member function `to_rank(your_type const a)` of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `to_rank(your_type const a)` in the namespace of your type (or as `friend`).
  *   3. A member function called `to_rank()`.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
@@ -96,7 +141,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto to_rank = detail::adl::only::to_rank_fn{};
+inline constexpr auto to_rank = detail::adl_only::to_rank_fn{};
 //!\}
 
 //!\brief The `rank_type` of the semi-alphabet; defined as the return type of seqan3::to_rank.
@@ -113,17 +158,21 @@ using alphabet_rank_t = decltype(seqan3::to_rank(std::declval<semi_alphabet_type
 // assign_rank_to()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void assign_rank_to(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::assign_rank_to.
 //!\ingroup alphabet
 struct assign_rank_to_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, (assign_rank_to(args..., v)                           ))    // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::custom::assign_rank_to(args..., v)           ))    // customisation namespace
-    SEQAN3_CPO_IMPL(0, (v.assign_rank(args...)                               ))    // member
+    SEQAN3_CPO_IMPL(2, (seqan3::custom::alphabet<decltype(v)>::assign_rank_to(args..., v))) // explicit customisation
+    SEQAN3_CPO_IMPL(1, (assign_rank_to(args..., v)                                       )) // ADL
+    SEQAN3_CPO_IMPL(0, (v.assign_rank(args...)                                           )) // member
 
 public:
     //!\brief Operator definition.
@@ -142,7 +191,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -164,10 +213,10 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `assign_rank_to(rank_type const chr, your_type & a)` in the namespace of your
+ *   1. A static member function `assign_rank_to(rank_type const chr, your_type & a)` of the class
+ *      `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `assign_rank_to(rank_type const chr, your_type & a)` in the namespace of your
  *      type (or as `friend`).
- *   2. A free function `assign_rank_to(rank_type const chr, your_type & a)` in
- *      `namespace seqan3::custom`.
  *   3. A member function called `assign_rank(rank_type const chr)` (not `assign_rank_to`).
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
@@ -188,7 +237,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto assign_rank_to = detail::adl::only::assign_rank_to_fn{};
+inline constexpr auto assign_rank_to = detail::adl_only::assign_rank_to_fn{};
 //!\}
 } // namespace seqan3
 
@@ -196,16 +245,20 @@ inline constexpr auto assign_rank_to = detail::adl::only::assign_rank_to_fn{};
 // to_char()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void to_char(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::to_char.
 struct to_char_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, to_char(v)                       )    // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::custom::to_char(v)       )    // customisation namespace
-    SEQAN3_CPO_IMPL(0, v.to_char()                      )    // member
+    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::to_char(v))    // explicit customisation
+    SEQAN3_CPO_IMPL(1, to_char(v)                                       )    // ADL
+    SEQAN3_CPO_IMPL(0, v.to_char()                                      )    // member
 
 public:
     //!\brief Operator definition.
@@ -223,7 +276,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -244,8 +297,8 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
+ *   2. A static member function `to_char(your_type const a)` of the class `seqan3::custom::alphabet<your_type>`.
  *   1. A free function `to_char(your_type const a)` in the namespace of your type (or as `friend`).
- *   2. A free function `to_char(your_type const a)` in `namespace seqan3::custom`.
  *   3. A member function called `to_char()`.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
@@ -265,7 +318,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto to_char = detail::adl::only::to_char_fn{};
+inline constexpr auto to_char = detail::adl_only::to_char_fn{};
 //!\}
 
 //!\brief The `char_type` of the alphabet; defined as the return type of seqan3::to_char.
@@ -282,23 +335,21 @@ using alphabet_char_t = decltype(seqan3::to_char(std::declval<alphabet_type cons
 // assign_char_to()
 // ============================================================================
 
-namespace seqan3::custom
+namespace seqan3::detail::adl_only
 {
-//!\cond
-void char_is_valid_for(); // forward
-//!\endcond
-} // seqan3::custom
 
-namespace seqan3::detail::adl::only
-{
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void assign_char_to(args_t ...) = delete;
+
 //!\brief Functor definition for seqan3::assign_char_to.
 //!\ingroup alphabet
 struct assign_char_to_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, (assign_char_to(args..., v)                           ))    // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::custom::assign_char_to(args..., v)           ))    // customisation namespace
-    SEQAN3_CPO_IMPL(0, (v.assign_char(args...)                               ))    // member
+    SEQAN3_CPO_IMPL(2, (seqan3::custom::alphabet<decltype(v)>::assign_char_to(args..., v))) // explicit customisation
+    SEQAN3_CPO_IMPL(1, (assign_char_to(args..., v)                                       )) // ADL
+    SEQAN3_CPO_IMPL(0, (v.assign_char(args...)                                           )) // member
 
 public:
     //!\brief Operator definition.
@@ -317,7 +368,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -339,10 +390,10 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `assign_char_to(char_type const chr, your_type & a)` in the namespace of your
+ *   1. A static member function `assign_char_to(char_type const chr, your_type & a)`
+ *      of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `assign_char_to(char_type const chr, your_type & a)` in the namespace of your
  *      type (or as `friend`).
- *   2. A free function `assign_char_to(char_type const chr, your_type & a)` in
- *      `namespace seqan3::custom`.
  *   3. A member function called `assign_char(char_type const chr)` (not `assign_char_to`).
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
@@ -363,7 +414,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto assign_char_to = detail::adl::only::assign_char_to_fn{};
+inline constexpr auto assign_char_to = detail::adl_only::assign_char_to_fn{};
 //!\}
 } // namespace seqan3
 
@@ -371,31 +422,30 @@ inline constexpr auto assign_char_to = detail::adl::only::assign_char_to_fn{};
 // char_is_valid_for()
 // ============================================================================
 
-namespace seqan3::custom
+namespace seqan3::detail::adl_only
 {
-//!\cond
-void char_is_valid_for(); // forward
-//!\endcond
-} // seqan3::custom
 
-namespace seqan3::detail::adl::only
-{
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void char_is_valid_for(args_t ...) = delete;
+
 /*!\brief Functor definition for seqan3::char_is_valid_for.
  * \tparam alph_t   The alphabet type being queried.
- * \tparam s_alph_t `alph_t` with cvref removed and possibly wrapped in std::type_identity; never user-provide this!
  * \ingroup alphabet
  */
-template <typename alph_t,
-          typename s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<alph_t>>,
-                                                 remove_cvref_t<alph_t>,
-                                                 std::type_identity<alph_t>>>
+template <typename alph_t>
 struct char_is_valid_for_fn
 {
 private:
-    SEQAN3_CPO_IMPL(3, (char_is_valid_for(v, s_alph_t{})                                       ))    // ADL
-    SEQAN3_CPO_IMPL(2, (seqan3::custom::char_is_valid_for(v, s_alph_t{})                       ))    // customisation ns
-    SEQAN3_CPO_IMPL(1, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::char_is_valid(v) ))    // member
-    SEQAN3_CPO_IMPL(0, (to_char(assign_char_to(v, s_alph_t{})) == v                            ))    // fallback
+    //!\brief `alph_t` with cvref removed and possibly wrapped in std::type_identity.
+    using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<alph_t>>,
+                                        remove_cvref_t<alph_t>,
+                                        std::type_identity<alph_t>>;
+
+    SEQAN3_CPO_IMPL(3, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::char_is_valid(v))) // expl. cst.
+    SEQAN3_CPO_IMPL(2, (char_is_valid_for(v, s_alph_t{})                                                )) // ADL
+    SEQAN3_CPO_IMPL(1, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::char_is_valid(v)          )) // member
+    SEQAN3_CPO_IMPL(0, (seqan3::to_char(seqan3::assign_char_to(v, s_alph_t{})) == v                     )) // fallback
 
 public:
     //!\brief Operator definition.
@@ -414,7 +464,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -437,14 +487,13 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `char_is_valid_for(char_type const chr, your_type const &)` in the namespace of your
+ *   1. A static member function `char_is_valid(char_type const chr)` of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `char_is_valid_for(char_type const chr, your_type const &)` in the namespace of your
  *      type (or as `friend`).
- *   2. A free function `char_is_valid_for(char_type const chr, your_type const &)` in
- *      `namespace seqan3::custom`.
  *   3. A `static` member function called `char_is_valid(char_type)` (not `char_is_valid_for`).
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
- * but recommended) and if the returned type is convertible to `bool`. For 1. and 2. the value of the second argument
+ * but recommended) and if the returned type is convertible to `bool`. For 2. the value of the second argument
  * to the function shall be ignored, it is only used to select the function via
  * [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
  *
@@ -454,7 +503,7 @@ namespace seqan3
  *
  * *Note* that if the alphabet type with cvref removed is not std::is_nothrow_default_constructible, this function
  * object will instead look for `char_is_valid_for(char_type const chr, std::type_identity<your_type> const &)`
- * with the same semantics. In that case the "fallback" above also does not work and you are required to provide
+ * in case 2. In that case the "fallback" above also does not work and you are required to provide
  * such an implementation.
  *
  * ### Example
@@ -470,7 +519,7 @@ template <typename alph_t>
 //!\cond
     requires requires { { to_char(std::declval<alph_t>()) }; } // to_char() is required by some defs
 //!\endcond
-inline constexpr auto char_is_valid_for = detail::adl::only::char_is_valid_for_fn<alph_t>{};
+inline constexpr auto char_is_valid_for = detail::adl_only::char_is_valid_for_fn<alph_t>{};
 //!\}
 } // namespace seqan3
 
@@ -478,7 +527,7 @@ inline constexpr auto char_is_valid_for = detail::adl::only::char_is_valid_for_f
 // assign_char_strictly_to()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
 
 //!\brief Functor definition for seqan3::assign_char_strictly_to.
@@ -517,7 +566,7 @@ struct assign_char_strictly_to_fn
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -546,7 +595,7 @@ namespace seqan3
  * \include test/snippet/alphabet/assign_char_strictly_to.cpp
  *
  */
-inline constexpr auto assign_char_strictly_to = detail::adl::only::assign_char_strictly_to_fn{};
+inline constexpr auto assign_char_strictly_to = detail::adl_only::assign_char_strictly_to_fn{};
 //!\}
 } // namespace seqan3
 
@@ -554,24 +603,30 @@ inline constexpr auto assign_char_strictly_to = detail::adl::only::assign_char_s
 // alphabet_size
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void alphabet_size(args_t ...) = delete;
+
 /*!\brief Functor definition used indirectly by for seqan3::detail::alphabet_size.
  * \tparam alph_t   The type being queried.
- * \tparam s_alph_t `alph_t` with cvref removed and possibly wrapped in std::type_identity; never user-provide this!
  * \ingroup alphabet
  */
-template <typename alph_t,
-          typename s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<alph_t>> &&
-                                                 seqan3::is_constexpr_default_constructible_v<remove_cvref_t<alph_t>>,
-                                                 remove_cvref_t<alph_t>,
-                                                 std::type_identity<alph_t>>>
+template <typename alph_t>
 struct alphabet_size_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, (alphabet_size(v)                           ))    // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::custom::alphabet_size(v)           ))    // customisation namespace
-    SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::alphabet_size )) // member
+    //!\brief `alph_t` with cvref removed and possibly wrapped in std::type_identity.
+    using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<alph_t>> &&
+                                        seqan3::is_constexpr_default_constructible_v<remove_cvref_t<alph_t>>,
+                                        remove_cvref_t<alph_t>,
+                                        std::type_identity<alph_t>>;
+
+    SEQAN3_CPO_IMPL(2, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::alphabet_size)) // expl. cst.
+    SEQAN3_CPO_IMPL(1, (alphabet_size(v)                                                             )) // ADL
+    SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::alphabet_size          )) // member
 
 public:
     //!\brief Operator definition.
@@ -601,7 +656,7 @@ template <typename alph_t>
 inline constexpr auto alphabet_size_obj = alphabet_size_fn<alph_t>{};
 //!\endcond
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -616,14 +671,13 @@ namespace seqan3
  *
  * It is only defined for types that provide one of the following (checked in this order):
  *
- *   1. A free function `alphabet_size(your_type const &)` in the namespace of your type (or as `friend`) that
+ *   3. A `static constexpr` data member of `seqan3::custom::alphabet<your_type>` called `alphabet_size`.
+ *   2. A free function `alphabet_size(your_type const &)` in the namespace of your type (or as `friend`) that
  *      returns the size.
- *   2. A free function `alphabet_size(your_type const &)` in `namespace seqan3::custom` that returns
- *      the size.
- *   3. A `static constexpr` data member called `alphabet_size` that is the size.
+ *   3. A `static constexpr` data member of `your_type` called `alphabet_size`.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` **and** `constexpr` and
- * if the returned type models std::Integral. For 1. and 2. the value of the argument to the function shall be
+ * if the returned type models std::Integral. For 2. the value of the argument to the function shall be
  * ignored, the argument is only used to select the function via
  * [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
  *
@@ -631,7 +685,7 @@ namespace seqan3
  *
  * *Note* that if the (semi-)alphabet type with cvref removed is not std::is_nothrow_default_constructible or not
  * seqan3::is_constexpr_default_constructible, this object will instead look for
- * `alphabet_size(std::type_identity<your_type> const &)` with the same semantics (in cases 1. and 2.).
+ * `alphabet_size(std::type_identity<your_type> const &)` with the same semantics (in case 2.).
  *
  * ### Example
  *
@@ -647,10 +701,10 @@ namespace seqan3
  */
 template <typename alph_t>
 //!\cond
-    requires requires { { detail::adl::only::alphabet_size_fn<alph_t>{} }; } &&
-             requires { { detail::adl::only::alphabet_size_obj<alph_t>() }; } // ICE workarounds
+    requires requires { { detail::adl_only::alphabet_size_fn<alph_t>{} }; } &&
+             requires { { detail::adl_only::alphabet_size_obj<alph_t>() }; } // ICE workarounds
 //!\endcond
-inline constexpr auto alphabet_size = detail::adl::only::alphabet_size_obj<alph_t>();
+inline constexpr auto alphabet_size = detail::adl_only::alphabet_size_obj<alph_t>();
 
 // ============================================================================
 // Semialphabet

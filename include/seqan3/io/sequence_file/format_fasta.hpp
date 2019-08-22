@@ -18,6 +18,7 @@
 #include <string_view>
 #include <vector>
 
+#include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>

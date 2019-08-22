@@ -16,33 +16,23 @@
 #include <seqan3/alphabet/concept.hpp>
 
 // ============================================================================
-// forwards
-// ============================================================================
-
-//!\cond
-namespace seqan3::custom
-{
-
-void to_phred();
-void assign_phred_to();
-
-} // namespace seqan3::custom
-//!\endcond
-
-// ============================================================================
 // to_phred()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void to_phred(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::to_phred.
 struct to_phred_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, to_phred(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::custom::to_phred(v)     ) // customisation namespace
-    SEQAN3_CPO_IMPL(0, v.to_phred()                    ) // member
+    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::to_phred(v)) // explicit customisation
+    SEQAN3_CPO_IMPL(1, to_phred(v)                                       ) // ADL
+    SEQAN3_CPO_IMPL(0, v.to_phred()                                      ) // member
 
 public:
     //!\brief Operator definition.
@@ -61,7 +51,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -82,14 +72,12 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `to_phred(your_type const a)` in the namespace of your type (or as `friend`).
- *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
- *      return type be of the respective phred representation (usually a small integral type).
- *   2. A free function `to_phred(your_type const a)` in `namespace seqan3::custom`.
- *      The same restrictions apply as above.
+ *   1. A static member function `to_phred(your_type const a)` of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `to_phred(your_type const a)` in the namespace of your type (or as `friend`).
  *   3. A member function called `to_phred()`.
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be of
- *      the respective rank representation.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type is convertible to `size_t`.
  *
  * Every quality alphabet type must provide one of the above.
  *
@@ -98,7 +86,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto to_phred = detail::adl::only::to_phred_fn{};
+inline constexpr auto to_phred = detail::adl_only::to_phred_fn{};
 //!\}
 
 /*!\brief The `phred_type` of the alphabet; defined as the return type of seqan3::to_phred.
@@ -116,17 +104,21 @@ using alphabet_phred_t = decltype(seqan3::to_phred(std::declval<alphabet_type>()
 // assign_phred_to()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void assign_phred_to(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::assign_phred_to.
 //!\ingroup quality
 struct assign_phred_to_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, (assign_phred_to(args..., v)                     )) // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::custom::assign_phred_to(args..., v)     )) // customisation namespace
-    SEQAN3_CPO_IMPL(0, (v.assign_phred(args...)                         )) // member
+    SEQAN3_CPO_IMPL(2, (seqan3::custom::alphabet<decltype(v)>::assign_phred_to(args..., v))) // explicit customisation
+    SEQAN3_CPO_IMPL(1, (assign_phred_to(args..., v)                                       )) // ADL
+    SEQAN3_CPO_IMPL(0, (v.assign_phred(args...)                                           )) // member
 
 public:
     //!\brief Operator definition for lvalues.
@@ -157,7 +149,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -177,15 +169,14 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `assign_phred_to(phred_type const chr, your_type & a)` in the namespace of your type
+ *   1. A static member function `assign_phred_to(phred_type const chr, your_type & a)`
+ *      of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `assign_phred_to(phred_type const chr, your_type & a)` in the namespace of your type
  *      (or as `friend`).
- *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
- *      return type be `your_type &`.
- *   2. A free function `assign_phred_to(phred_type const chr, your_type & a)` in
- *      `namespace seqan3::custom`. The same restrictions apply as above.
  *   3. A member function called `assign_phred(phred_type const chr)` (not `assign_phred_to`).
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
- *      `your_type &`.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type is `your_type &`.
  *
  * Every writable quality alphabet type must provide one of the above. *Note* that temporaries of `your_type`
  * are handled by this function object and **do not** require an additional overload.
@@ -195,7 +186,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto assign_phred_to = detail::adl::only::assign_phred_to_fn{};
+inline constexpr auto assign_phred_to = detail::adl_only::assign_phred_to_fn{};
 //!\}
 
 } // namespace seqan3

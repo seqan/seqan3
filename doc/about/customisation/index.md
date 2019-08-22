@@ -29,10 +29,16 @@ To customise one of our customisation points, do one of the following:
 
   * Provide functionality as members *or* inside the namespace of your type (will be picked up via
     [argument dependent lookup](https://en.cppreference.com/w/cpp/language/adl)).
-  * If you adapt a third party's type and you cannot add to that type's namespace, provide functionality inside the
-    namespace `seqan3::custom` (this is the "upload namespace").
-  * **Never** add names (types, functions, variables...) to namespace `seqan3` and never explicitly specialise one
-    of our templates or overload one of our functions.
+  * If you adapt a third party's type and you cannot add to that type's namespace, you can specialise the
+    respective template in `seqan3::custom` for that type and provide the needed functionality as static members of
+    that specialisation (this is an "upload space" for specialisations).
+
+\warning
+**Never** add anything (types, functions, variables...) to namespace `seqan3` and never explicitly specialise one
+of our templates (except those in seqan3::custom) or overload one of our functions.
+
+The \link howto_write_an_alphabet HowTo on creating your own alphabet \endlink provides many examples of how to
+satisfy the requirements of customisation point objects.
 
 More technical background on this topic can be found here:
 

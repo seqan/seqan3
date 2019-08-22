@@ -19,36 +19,23 @@
 #include <seqan3/std/type_traits>
 
 // ============================================================================
-// forwards
-// ============================================================================
-
-//!\cond
-namespace seqan3::custom
-{
-
-void is_pair_open();
-void is_pair_close();
-void is_unpaired();
-void max_pseudoknot_depth();
-void pseudoknot_id();
-
-} // namespace seqan3::custom
-//!\endcond
-
-// ============================================================================
 // is_pair_open()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void is_pair_open(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::is_pair_open.
 struct is_pair_open_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, is_pair_open(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::custom::is_pair_open(v)     ) // customisation namespace
-    SEQAN3_CPO_IMPL(0, v.is_pair_open()                    ) // member
+    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::is_pair_open(v)) // explicit customisation
+    SEQAN3_CPO_IMPL(1, is_pair_open(v)                                       ) // ADL
+    SEQAN3_CPO_IMPL(0, v.is_pair_open()                                      ) // member
 
 public:
     //!\brief Operator definition.
@@ -67,7 +54,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -87,14 +74,12 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `is_pair_open(your_type const a)` in the namespace of your type (or as `friend`).
- *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
- *      return type be `bool`.
- *   2. A free function `is_pair_open(your_type const a)` in `namespace seqan3::custom`.
- *      The same restrictions apply as above.
+ *   1. A static member function `is_pair_open(your_type const a)` of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `is_pair_open(your_type const a)` in the namespace of your type (or as `friend`).
  *   3. A member function called `is_pair_open()`.
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
- *      `bool`.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type is `bool.
  *
  * Every RNA structure alphabet type must provide one of the above.
  *
@@ -107,7 +92,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto is_pair_open = detail::adl::only::is_pair_open_fn{};
+inline constexpr auto is_pair_open = detail::adl_only::is_pair_open_fn{};
 //!\}
 
 } // namespace seqan3
@@ -116,16 +101,20 @@ inline constexpr auto is_pair_open = detail::adl::only::is_pair_open_fn{};
 // is_pair_close()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void is_pair_close(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::is_pair_close.
 struct is_pair_close_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, is_pair_close(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::custom::is_pair_close(v)     ) // customisation namespace
-    SEQAN3_CPO_IMPL(0, v.is_pair_close()                    ) // member
+    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::is_pair_close(v)) // explicit customisation
+    SEQAN3_CPO_IMPL(1, is_pair_close(v)                                       ) // ADL
+    SEQAN3_CPO_IMPL(0, v.is_pair_close()                                      ) // member
 
 public:
     //!\brief Operator definition.
@@ -144,7 +133,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -164,14 +153,12 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `is_pair_close(your_type const a)` in the namespace of your type (or as `friend`).
- *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
- *      return type be `bool`.
- *   2. A free function `is_pair_close(your_type const a)` in `namespace seqan3::custom`.
- *      The same restrictions apply as above.
+ *   1. A static member function `is_pair_close(your_type const a)` of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `is_pair_close(your_type const a)` in the namespace of your type (or as `friend`).
  *   3. A member function called `is_pair_close()`.
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
- *      `bool`.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type is `bool.
  *
  * Every RNA structure alphabet type must provide one of the above.
  *
@@ -184,7 +171,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto is_pair_close = detail::adl::only::is_pair_close_fn{};
+inline constexpr auto is_pair_close = detail::adl_only::is_pair_close_fn{};
 //!\}
 
 } // namespace seqan3
@@ -193,16 +180,20 @@ inline constexpr auto is_pair_close = detail::adl::only::is_pair_close_fn{};
 // is_unpaired()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void is_unpaired(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::is_unpaired.
 struct is_unpaired_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, is_unpaired(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::custom::is_unpaired(v)     ) // customisation namespace
-    SEQAN3_CPO_IMPL(0, v.is_unpaired()                    ) // member
+    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::is_unpaired(v)) // explicit customisation
+    SEQAN3_CPO_IMPL(1, is_unpaired(v)                                       ) // ADL
+    SEQAN3_CPO_IMPL(0, v.is_unpaired()                                      ) // member
 
 public:
     //!\brief Operator definition.
@@ -221,7 +212,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -241,14 +232,12 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `is_unpaired(your_type const a)` in the namespace of your type (or as `friend`).
- *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
- *      return type be `bool`.
- *   2. A free function `is_unpaired(your_type const a)` in `namespace seqan3::custom`.
- *      The same restrictions apply as above.
+ *   1. A static member function `is_unpaired(your_type const a)` of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `is_unpaired(your_type const a)` in the namespace of your type (or as `friend`).
  *   3. A member function called `is_unpaired()`.
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type be
- *      `bool`.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and if the returned type is `bool.
  *
  * Every RNA structure alphabet type must provide one of the above.
  *
@@ -261,7 +250,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto is_unpaired = detail::adl::only::is_unpaired_fn{};
+inline constexpr auto is_unpaired = detail::adl_only::is_unpaired_fn{};
 //!\}
 
 } // namespace seqan3
@@ -270,8 +259,12 @@ inline constexpr auto is_unpaired = detail::adl::only::is_unpaired_fn{};
 // max_pseudoknot_depth
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void max_pseudoknot_depth(args_t ...) = delete;
 
 /*!\brief Functor definition for seqan3::max_pseudoknot_depth.
  * \tparam alph_t   The type being queried.
@@ -286,9 +279,9 @@ template <typename alph_t,
 struct max_pseudoknot_depth_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, (max_pseudoknot_depth(v)                                                    )) // ADL
-    SEQAN3_CPO_IMPL(1, (seqan3::custom::max_pseudoknot_depth(v)                                    )) // custom nsp
-    SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::max_pseudoknot_depth )) // member
+    SEQAN3_CPO_IMPL(2, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::max_pseudoknot_depth)) // custom
+    SEQAN3_CPO_IMPL(1, (max_pseudoknot_depth(v)                                                             )) // ADL
+    SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::max_pseudoknot_depth          )) // member
 
 public:
     //!\brief Operator definition.
@@ -316,7 +309,7 @@ template <typename alph_t>
 inline constexpr auto max_pseudoknot_depth_obj = max_pseudoknot_depth_fn<alph_t>{};
 //!\endcond
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -342,13 +335,14 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `max_pseudoknot_depth(your_type const)` in the namespace of your type (or as `friend`).
- *      The function must be marked `constexpr` and `noexcept` and the return type must be convertible to `size_t`.
- *      The value of the argument to the function shall be ignored, it is only used to select the function via
- *      [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
- *   2. A free function `max_pseudoknot_depth(your_type const)` in `namespace seqan3::custom`.
- *      The same restrictions apply as above.
- *   3. A `static constexpr` data member of a type implicitly convertible to `size_t` called `max_pseudoknot_depth`.
+ *   1. A static member variable `max_pseudoknot_depth` of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `max_pseudoknot_depth(your_type const)` in the namespace of your type (or as `friend`).
+ *   3. A static member variable `max_pseudoknot_depth` of the class `your_type`.
+ *
+ * Functions/variables are only considered for one of the above cases if they are marked `noexcept` **and** `constexpr` and
+ * if the returned type is convertible to `size_t`. For 2. the value of the argument to the function shall be
+ * ignored, the argument is only used to select the function via
+ * [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
  *
  * Every RNA structure alphabet type must provide one of the above.
  *
@@ -364,10 +358,10 @@ namespace seqan3
  */
 template <typename alph_t>
 //!\cond
-    requires requires { { detail::adl::only::max_pseudoknot_depth_fn<alph_t>{} }; } &&
-             requires { { detail::adl::only::max_pseudoknot_depth_obj<alph_t>() }; }
+    requires requires { { detail::adl_only::max_pseudoknot_depth_fn<alph_t>{} }; } &&
+             requires { { detail::adl_only::max_pseudoknot_depth_obj<alph_t>() }; }
 //!\endcond
-inline constexpr auto max_pseudoknot_depth = detail::adl::only::max_pseudoknot_depth_obj<alph_t>();
+inline constexpr auto max_pseudoknot_depth = detail::adl_only::max_pseudoknot_depth_obj<alph_t>();
 
 } // namespace seqan3
 
@@ -375,16 +369,20 @@ inline constexpr auto max_pseudoknot_depth = detail::adl::only::max_pseudoknot_d
 // pseudoknot_id()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void pseudoknot_id(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::pseudoknot_id.
 struct pseudoknot_id_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, pseudoknot_id(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::custom::pseudoknot_id(v)     ) // customisation namespace
-    SEQAN3_CPO_IMPL(0, v.pseudoknot_id()                    ) // member
+    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::pseudoknot_id(v)) // explicit customisation
+    SEQAN3_CPO_IMPL(1, pseudoknot_id(v)                                       ) // ADL
+    SEQAN3_CPO_IMPL(0, v.pseudoknot_id()                                      ) // member
 
 public:
     //!\brief Operator definition.
@@ -403,7 +401,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -425,14 +423,12 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `pseudoknot_id(your_type const a)` in the namespace of your type (or as `friend`).
- *      The function must be marked `noexcept` (`constexpr` is not required, but recommended) and the
- *      return type must be convertible to `size_t`.
- *   2. A free function `pseudoknot_id(your_type const a)` in `namespace seqan3::custom`.
- *      The same restrictions apply as above.
- *   3. A member function called `pseudoknot_id()`.
- *      It must be marked `noexcept` (`constexpr` is not required, but recommended) and the return type
- *      must be convertible to `size_t`.
+ *   1. A static member function `pseudoknot_id(your_type const a)` of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `pseudoknot_id(your_type const a)` in the namespace of your type (or as `friend`).
+ *   3. A member function of `your_type` called `pseudoknot_id()`.
+ *
+ * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
+ * but recommended) and the return type is convertible to `size_t`.
  *
  * Every RNA structure alphabet type must provide one of the above.
  *
@@ -445,7 +441,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto pseudoknot_id = detail::adl::only::pseudoknot_id_fn{};
+inline constexpr auto pseudoknot_id = detail::adl_only::pseudoknot_id_fn{};
 //!\}
 
 } // namespace seqan3

@@ -17,32 +17,23 @@
 #include <seqan3/std/concepts>
 
 // ============================================================================
-// forwards
-// ============================================================================
-
-//!\cond
-namespace seqan3::custom
-{
-
-void complement();
-
-} // namespace seqan3::custom
-//!\endcond
-
-// ============================================================================
 // complement()
 // ============================================================================
 
-namespace seqan3::detail::adl::only
+namespace seqan3::detail::adl_only
 {
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename ...args_t>
+void complement(args_t ...) = delete;
 
 //!\brief Functor definition for seqan3::complement.
 struct complement_fn
 {
 private:
-    SEQAN3_CPO_IMPL(2, complement(v)                     ) // ADL
-    SEQAN3_CPO_IMPL(1, seqan3::custom::complement(v)     ) // customisation namespace
-    SEQAN3_CPO_IMPL(0, v.complement()                    ) // member
+    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::complement(v)) // explicit customisation
+    SEQAN3_CPO_IMPL(1, complement(v)                                       ) // ADL
+    SEQAN3_CPO_IMPL(0, v.complement()                                      ) // member
 
 public:
     //!\brief Operator definition.
@@ -61,7 +52,7 @@ public:
     }
 };
 
-} // namespace seqan3::detail::adl::only
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
@@ -81,8 +72,8 @@ namespace seqan3
  *
  * It acts as a wrapper and looks for three possible implementations (in this order):
  *
- *   1. A free function `complement(your_type const a)` in the namespace of your type (or as `friend`).
- *   2. A free function `complement(your_type const a)` in `namespace seqan3::custom`.
+ *   1. A static member function `complement(your_type const a)` of the class `seqan3::custom::alphabet<your_type>`.
+ *   2. A free function `complement(your_type const a)` in the namespace of your type (or as `friend`).
  *   3. A member function called `complement()`.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
@@ -99,7 +90,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto complement = detail::adl::only::complement_fn{};
+inline constexpr auto complement = detail::adl_only::complement_fn{};
 //!\}
 
 // ============================================================================

@@ -135,7 +135,7 @@ your type also model these concepts.
 \snippet dna2_alphabet.cpp writable_alphabet
 \endsolution
 
-At this point the seqan3::Alphabet concept should be modelled successfully and even seqan3::WritableAlphabet 
+At this point the seqan3::Alphabet concept should be modelled successfully and even seqan3::WritableAlphabet
 is fine because we implemented `assign_char` and `char_is_valid`.
 \snippet dna2_alphabet.cpp writable_alphabet_concept
 
@@ -157,6 +157,15 @@ without defining the (in)equality and comparison operators. Opposed to the examp
 to model the functionality.
 \snippet test/unit/alphabet/custom_alphabet_test.cpp my_alph
 
+## Adaptation of a third party type {#howto_write_an_alphabet_custom}
+
+This example is similar to the previous one, but assuming that you cannot add anything to the namespace of
+the type that you wish to adapt.
+In that case, you need to specialise the seqan3::custom::alphabet class template and provide the required functionality
+as static members.
+
+\snippet test/unit/alphabet/custom_alphabet3_test.cpp third_party_type
+
 ## Implementation of a non-default-constructible class
 
 This is an example of a custom alphabet that is not default-constructible and that has a non-default overload for
@@ -174,3 +183,4 @@ from '1', 't' and 'T' for value 1 as well as from '0', 'f' and 'F' for value 0.
 \note
 You should really make your alphabet types [no-throw-default-constructible](\ref std::is_nothrow_default_constructible)
 if you can!
+

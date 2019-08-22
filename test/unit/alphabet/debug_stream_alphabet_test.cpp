@@ -32,5 +32,5 @@ TYPED_TEST(debug_stream_test, alphabet)
 
     o.flush();
     EXPECT_EQ(o.str().size(), 1u);
-    EXPECT_EQ(to_char(o.str()[0]), 'C');
+    EXPECT_EQ(o.str()[0], 'C');
 }
