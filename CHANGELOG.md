@@ -23,6 +23,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Argument parser
 * Simplified reading file extensions from formatted files in the input/output file validators.
+* Enable subcommand argument parsing ([How-to](https://docs.seqan.de/seqan/3-master-user/subcommand_arg_parse.html)).
 
 #### Core
 * Added traits for "metaprogramming" with `seqan3::type_list` and type packs.

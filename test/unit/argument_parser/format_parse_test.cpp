@@ -804,3 +804,65 @@ TEST(parse_test, version_check_option_error)
         EXPECT_THROW((argument_parser{"test_parser", 3, argv}), parser_invalid_argument);
     }
 }
+
+TEST(parse_test, subcommand_argument_parser_success)
+{
+    bool flag_value{};
+    std::string option_value{};
+
+    // parsing
+    {
+        const char * argv[]{"./top_level", "-f", "sub1", "foo"};
+        argument_parser top_level_parser{"top_level", 4, argv, false, {"sub1", "sub2"}};
+        top_level_parser.add_flag(flag_value, 'f', "foo", "foo bar");
+
+        EXPECT_NO_THROW(top_level_parser.parse());
+        EXPECT_EQ(true, flag_value);
+
+        argument_parser & sub_parser = top_level_parser.get_sub_parser();
+
+        EXPECT_EQ(sub_parser.info.app_name, "top_level-sub1");
+
+        sub_parser.add_positional_option(option_value, "foo bar");
+
+        EXPECT_NO_THROW(sub_parser.parse());
+        EXPECT_EQ("foo", option_value);
+    }
+
+    // top-level help page
+    {
+        const char * argv[]{"./top_level", "-h", "-f", "sub1", "foo"};
+        argument_parser top_level_parser{"top_level", 5, argv, false, {"sub1", "sub2"}};
+        top_level_parser.add_flag(flag_value, 'f', "foo", "foo bar");
+
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(top_level_parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        EXPECT_FALSE(std::string{testing::internal::GetCapturedStdout()}.empty());
+    }
+
+    // sub-parser help page
+    {
+        const char * argv[]{"./top_level", "-f", "sub1", "-h"};
+        argument_parser top_level_parser{"top_level", 4, argv, false, {"sub1", "sub2"}};
+        top_level_parser.add_flag(flag_value, 'f', "foo", "foo bar");
+
+        EXPECT_NO_THROW(top_level_parser.parse());
+        EXPECT_EQ(true, flag_value);
+
+        argument_parser & sub_parser = top_level_parser.get_sub_parser();
+
+        EXPECT_EQ(sub_parser.info.app_name, "top_level-sub1");
+
+        sub_parser.add_positional_option(option_value, "foo bar");
+
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(sub_parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        EXPECT_FALSE(std::string{testing::internal::GetCapturedStdout()}.empty());
+    }
+
+    // incorrect sub command
+    {
+        const char * argv[]{"./top_level", "-f", "2", "subiddysub", "foo"};
+        EXPECT_THROW((argument_parser{"top_level", 5, argv, false, {"sub1", "sub2"}}), parser_invalid_argument);
+    }
+}

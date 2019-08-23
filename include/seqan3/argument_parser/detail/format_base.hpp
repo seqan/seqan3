@@ -214,10 +214,11 @@ private:
     ~format_help_base() = default;                                       //!< Defaulted.
 
     /*!\brief Initializes a format_help_base object.
+     * \param[in] names    A list of subcommands (see \link subcommand_arg_parse subcommand parsing \endlink).
      * \param[in] advanced Set to `true` to show advanced options.
      */
-    format_help_base(bool const advanced) :
-        show_advanced_options{advanced}
+    format_help_base(std::vector<std::string> const & names, bool const advanced) :
+        command_names{names}, show_advanced_options{advanced}
     {}
     //!\}
 
@@ -323,6 +324,19 @@ public:
             derived_t().print_section("Description");
             for (auto desc : meta.description)
                 print_line(desc);
+        }
+
+        if (!command_names.empty())
+        {
+            derived_t().print_section("Subcommands");
+            derived_t().print_line("This program must be invoked with one of the following subcommands:", false);
+            for (std::string const & name : command_names)
+                derived_t().print_line("- \\fB" + name + "\\fP", false);
+            derived_t().print_line("See the respective help page for further details (e.g. by calling " +
+                                   meta.app_name + " " + command_names[0] + " -h).", true);
+            derived_t().print_line("The following options below belong to the top-level parser and need to be "
+                                   "specified \\fBbefore\\fP the subcommand key word. Every argument after the "
+                                   "subcommand key word is passed on to the corresponding sub-parser.", true);
         }
 
         // add positional options if specified
@@ -452,6 +466,8 @@ protected:
     std::vector<std::function<void()>> positional_option_calls; // singled out to be printed on top
     //!\brief Keeps track of the number of positional options
     unsigned positional_option_count{0};
+    //!\brief The names of subcommand programs.
+    std::vector<std::string> command_names{};
     //!\brief Whether to show advanced options or not.
     bool show_advanced_options{true};
 };
