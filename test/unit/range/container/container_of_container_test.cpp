@@ -152,10 +152,10 @@ TYPED_TEST(container_of_container, element_access)
         EXPECT_EQ(dna4_vector(t2.concat()), "ACGTACGTGAGGA"_dna4);
 
         // data
-        EXPECT_EQ(std::get<0>(t1.data()), "ACGTACGTGAGGA"_dna4);
-        EXPECT_EQ(std::get<0>(t2.data()), "ACGTACGTGAGGA"_dna4);
-        EXPECT_EQ(std::get<1>(t1.data()), (std::vector<size_type>{0, 4, 8, 13}));
-        EXPECT_EQ(std::get<1>(t2.data()), (std::vector<size_type>{0, 4, 8, 13}));
+        EXPECT_EQ(std::get<0>(t1.raw_data()), "ACGTACGTGAGGA"_dna4);
+        EXPECT_EQ(std::get<0>(t2.raw_data()), "ACGTACGTGAGGA"_dna4);
+        EXPECT_EQ(std::get<1>(t1.raw_data()), (std::vector<size_type>{0, 4, 8, 13}));
+        EXPECT_EQ(std::get<1>(t2.raw_data()), (std::vector<size_type>{0, 4, 8, 13}));
     }
 
 }

@@ -518,6 +518,27 @@ public:
         return (*this)[size()-1];
     }
 
+    /*!\brief Provides direct, unsafe access to underlying data structures.
+     * \returns A reference to an SDSL bitvector.
+     *
+     * \details
+     *
+     * \noapi
+     *
+     * The exact representation of the data is implementation defined. Do not rely on it for API stability.
+     */
+    constexpr data_type & raw_data() noexcept
+    {
+        return data;
+    }
+
+    //!\copydoc raw_data()
+    constexpr data_type const & raw_data() const noexcept
+    {
+        return data;
+    }
+    //!\}
+
     /*!\name Capacity
      * \{
      */
@@ -1008,7 +1029,7 @@ public:
     template <CerealArchive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
-        archive(data); //TODO: data not yet serialisable
+        archive(data);
     }
     //!\endcond
 };
