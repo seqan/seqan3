@@ -63,7 +63,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/complement.cpp usage
+ * \include test/snippet/range/view/complement.cpp
  * \hideinitializer
  */
 

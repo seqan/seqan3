@@ -244,7 +244,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/persist.cpp usage
+ * \include test/snippet/range/view/persist.cpp
  *
  * \hideinitializer
  */

@@ -34,9 +34,7 @@ namespace seqan3::detail
  * you need to implement these in the range before you can make use of this iterator.
  *
  * Since the CRTP parameter is in fact a template template, CRTP instantiation looks a little different, e.g.:
- * \snippet test/snippet/range/detail/random_access_iterator.cpp usage
- * and not:
- * \snippet test/snippet/range/detail/random_access_iterator.cpp not_usage
+ * \include test/snippet/range/detail/random_access_iterator.cpp
  */
 template <typename range_type, template <typename...> typename derived_t_template>
 class random_access_iterator_base

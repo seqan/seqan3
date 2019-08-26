@@ -501,7 +501,7 @@ namespace seqan3::view
  * ### Example
  *
  * Operating on a range of seqan3::dna5:
- * \snippet test/snippet/range/view/translate.cpp dna5
+ * \include test/snippet/range/view/translate_dna5.cpp
  * \hideinitializer
  */
 inline constexpr auto translate_single = deep{detail::translate_fn<true>{}};
@@ -805,7 +805,7 @@ namespace seqan3::view
  * ### Example
  *
  * Operating on a range of seqan3::dna5:
- * \snippet test/snippet/range/view/translate.cpp usage
+ * \include test/snippet/range/view/translate_usage.cpp
  * \hideinitializer
  */
 inline constexpr auto translate = deep{detail::translate_fn<false>{}};

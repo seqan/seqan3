@@ -60,7 +60,7 @@ namespace seqan3::view
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
- * \snippet test/snippet/range/view/rank_char.cpp to_char
+ * \include test/snippet/range/view/range_view_to_char.cpp
  * \hideinitializer
  */
 inline auto const to_char = deep{std::view::transform([] (auto const in) noexcept

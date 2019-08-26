@@ -121,10 +121,10 @@ namespace seqan3::view
  * ###Example
  *
  * Operating on a range of seqan3::phred42:
- * \snippet test/snippet/range/view/trim.cpp phred42
+ * \include test/snippet/range/view/trim_phred42.cpp
  *
  * Or operating on a range of seqan3::dna5q:
- * \snippet test/snippet/range/view/trim.cpp dna5q
+ * \include test/snippet/range/view/trim_dna5q.cpp
  * \hideinitializer
  */
 
