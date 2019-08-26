@@ -371,6 +371,36 @@ TEST(validator_test, output_directory)
 
 #if __has_include(<filesystem>)
 // Setting the permissions with perm_options is not available in the experimental/filesystem branch.
+
+// In case this test is built as `root`, we want to exclude tests that check if certain missing permissions cause
+// specific exceptions. For this, we check if read/write permissions are still available after the permissions were
+// revoked. Note that `root` can always read/write even if user/group/all permissions are not set.
+
+inline bool read_access(std::filesystem::path const & file)
+{
+    std::fstream stream;
+    stream.open(file, std::ios::in);
+    return !stream.fail();
+}
+
+inline bool write_access(std::filesystem::path const & file)
+{
+    if (std::filesystem::is_directory(file))
+    {
+        std::fstream stream;
+        std::filesystem::path test_file{file};
+        test_file /= "test";
+        stream.open(test_file, std::ios::out);
+        return !stream.fail();
+    }
+    else
+    {
+        std::fstream stream;
+        stream.open(file, std::ios::out);
+        return !stream.fail();
+    }
+}
+
 TEST(validator_test, inputfile_not_readable)
 {
     test::tmp_filename tmp_name{"my_file.test"};
@@ -384,7 +414,10 @@ TEST(validator_test, inputfile_not_readable)
                                  std::filesystem::perms::others_read,
                                  std::filesystem::perm_options::remove);
 
-    EXPECT_THROW(input_file_validator{}(tmp_file), parser_invalid_argument);
+    if (!read_access(tmp_file))
+    {
+        EXPECT_THROW(input_file_validator{}(tmp_file), parser_invalid_argument);
+    }
 
     std::filesystem::permissions(tmp_file,
                                  std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
@@ -406,7 +439,10 @@ TEST(validator_test, inputdir_not_readable)
                                  std::filesystem::perms::others_read,
                                  std::filesystem::perm_options::remove);
 
-    EXPECT_THROW(input_directory_validator{}(tmp_dir), parser_invalid_argument);
+    if (!read_access(tmp_dir))
+    {
+        EXPECT_THROW(input_directory_validator{}(tmp_dir), parser_invalid_argument);
+    }
 
     std::filesystem::permissions(tmp_dir,
                                  std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
@@ -427,7 +463,10 @@ TEST(validator_test, outputfile_not_writable)
                                  std::filesystem::perms::others_write,
                                  std::filesystem::perm_options::remove);
 
-    EXPECT_THROW(output_file_validator{}(tmp_file), parser_invalid_argument);
+    if (!write_access(tmp_file))
+    {
+        EXPECT_THROW(output_file_validator{}(tmp_file), parser_invalid_argument);
+    }
 
     // make sure we can remove the directory.
     std::filesystem::permissions(tmp_file.parent_path(),
@@ -450,7 +489,10 @@ TEST(validator_test, outputdir_not_writable)
                                      std::filesystem::perms::others_write,
                                      std::filesystem::perm_options::remove);
 
-        EXPECT_THROW(output_directory_validator{}(tmp_dir), parser_invalid_argument);
+        if (!write_access(tmp_dir))
+        {
+            EXPECT_THROW(output_directory_validator{}(tmp_dir), parser_invalid_argument);
+        }
 
         // make sure we can remove the directory.
         std::filesystem::permissions(tmp_dir.parent_path(),
@@ -472,7 +514,10 @@ TEST(validator_test, outputdir_not_writable)
                                      std::filesystem::perms::others_write,
                                      std::filesystem::perm_options::remove);
 
-        EXPECT_THROW(output_directory_validator{}(tmp_dir), parser_invalid_argument);
+        if (!write_access(tmp_dir))
+        {
+            EXPECT_THROW(output_directory_validator{}(tmp_dir), parser_invalid_argument);
+        }
 
         // make sure we can remove the directory.
         std::filesystem::permissions(tmp_dir,
