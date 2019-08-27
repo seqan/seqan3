@@ -15,15 +15,12 @@
 #include <cassert>
 #include <type_traits>
 
+#include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/type_traits/iterator.hpp>
 #include <seqan3/std/iterator>
 
 namespace seqan3::detail
 {
-
-//!\brief An empty class type used in meta programming.
-struct empty_type
-{};
 
 /*!\brief A CRTP base template for creating iterators that inherit from other iterators.
  * \tparam derived_t The CRTP specialisation.
