@@ -14,13 +14,18 @@
 
 #include <type_traits>
 
+#include <seqan3/alignment/configuration/align_config_debug.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
+#include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/view/view_all.hpp>
@@ -64,30 +69,29 @@ template <std::ranges::forward_range first_range_t,
 //!\endcond
 struct align_result_selector
 {
+private:
+
     //!\brief Helper function to determine the actual result type.
-    static constexpr auto _determine()
+    static constexpr auto select()
     {
-        using score_type            = int32_t;
+        using score_type = int32_t;
 
         if constexpr (std::remove_reference_t<configuration_t>::template exists<align_cfg::result>())
         {
-            if constexpr (std::same_as<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
-                                    with_back_coordinate_type>)
+            if constexpr (configuration_t::template exists<align_cfg::result<with_back_coordinate_type>>())
             {
                 return alignment_result_value_type<uint32_t,
                                                    score_type,
                                                    alignment_coordinate>{};
             }
-            else if constexpr (std::same_as<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
-                                         with_front_coordinate_type>)
+            else if constexpr (configuration_t::template exists<align_cfg::result<with_front_coordinate_type>>())
             {
                 return alignment_result_value_type<uint32_t,
                                                    score_type,
                                                    alignment_coordinate,
                                                    alignment_coordinate>{};
             }
-            else if constexpr (std::same_as<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
-                                         with_alignment_type>)
+            else if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type>>())
             {
                 // Due to an error with gcc8 we define these types beforehand.
                 using first_gapped_seq_type = gapped<value_type_t<first_range_t>>;
@@ -116,8 +120,39 @@ struct align_result_selector
         }
     }
 
-    //!\brief The determined result type.
-    using type = decltype(_determine());
+    //!\brief Augments the result type with the debug output for score and trace matrix.
+    template <typename alignment_result_value_t>
+    static constexpr auto augment_if_debug(alignment_result_value_t)
+    {
+        if constexpr (configuration_t::template exists<detail::algorithm_debugging>())
+        {
+            using as_type_list = transfer_template_args_onto_t<alignment_result_value_t, type_list>;
+            using score_matrix_t = two_dimensional_matrix<int32_t, std::allocator<int32_t>, matrix_major_order::column>;
+            using trace_matrix_t = two_dimensional_matrix<trace_directions,
+                                                          std::allocator<trace_directions>,
+                                                          matrix_major_order::column>;
+            // Get the trace matrix only if result configuration requested alignment
+            if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type>>())
+            {
+                using with_score_t = list_traits::replace_at<score_matrix_t, 5, as_type_list>;
+                return transfer_template_args_onto_t<list_traits::replace_at<trace_matrix_t, 6, with_score_t>,
+                                                     alignment_result_value_type>{};
+            }
+            else
+            {
+                return transfer_template_args_onto_t<list_traits::replace_at<score_matrix_t, 5, as_type_list>,
+                                                     alignment_result_value_type>{};
+            }
+        }
+        else  // Return as is.
+        {
+            return alignment_result_value_t{};
+        }
+    }
+
+public:
+    //!\brief The selected result type.
+    using type = decltype(augment_if_debug(select()));
 };
 
 } // namespace seqan3::detail

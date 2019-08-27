@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <type_traits>
+
 #include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/view/drop_exactly.hpp>
 #include <range/v3/view/zip.hpp>
@@ -19,14 +21,16 @@
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/exception.hpp>
+#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
-#include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 #include <seqan3/range/view/get.hpp>
 #include <seqan3/range/view/slice.hpp>
@@ -78,7 +82,14 @@ class alignment_algorithm :
 private:
 
     //!\brief Check if the alignment is banded.
-    static constexpr bool is_banded = std::remove_reference_t<config_t>::template exists<align_cfg::band>();
+    static constexpr bool is_banded = config_t::template exists<align_cfg::band>();
+    //!\brief Check if debug mode is enabled.
+    static constexpr bool is_debug_mode = config_t::template exists<detail::algorithm_debugging>();
+
+    //!\brief The type of the score debug matrix type.
+    using score_debug_matrix_t = std::conditional_t<is_debug_mode, std::vector<int32_t>, empty_type>;
+    //!\brief The type of the trace debug matrix type.
+    using trace_debug_matrix_t = std::conditional_t<is_debug_mode, std::vector<trace_directions>, empty_type>;
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -571,6 +582,10 @@ private:
 
     //!\brief The alignment configuration stored on the heap.
     std::shared_ptr<config_t> cfg_ptr{};
+    //!\brief The debug matrix for the scores.
+    score_debug_matrix_t score_debug_matrix{};
+    //!\brief The debug matrix for the traces.
+    trace_debug_matrix_t trace_debug_matrix{};
 };
 
 } // namespace seqan3::detail

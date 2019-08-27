@@ -19,17 +19,21 @@ namespace seqan3::detail
 {
 
 /*!\brief A struct that contains the actual alignment result data.
- * \tparam id_t          The type for the alignment identifier.
- * \tparam score_t       The type for the resulting score.
- * \tparam back_coord_t  The type for the back coordinate, can be omitted.
- * \tparam front_coord_t The type for the front coordinate, can be omitted.
- * \tparam alignment_t   The type for the alignment, can be omitted.
+ * \tparam id_t                  The type for the alignment identifier.
+ * \tparam score_t               The type for the resulting score.
+ * \tparam back_coord_t          The type for the back coordinate, can be omitted.
+ * \tparam front_coord_t         The type for the front coordinate, can be omitted.
+ * \tparam alignment_t           The type for the alignment, can be omitted.
+ * \tparam score_debug_matrix_t  The type for the score matrix. Only present if seqan3::align_cfg::debug is enabled.
+ * \tparam trace_debug_matrix_t  The type for the trace matrix. Only present if seqan3::align_cfg::debug is enabled.
  */
 template <typename id_t,
           typename score_t,
           typename back_coord_t = std::nullopt_t *,
           typename front_coord_t = std::nullopt_t *,
-          typename alignment_t = std::nullopt_t *>
+          typename alignment_t = std::nullopt_t *,
+          typename score_debug_matrix_t = std::nullopt_t *,
+          typename trace_debug_matrix_t = std::nullopt_t *>
 struct alignment_result_value_type
 {
     //! \brief The alignment identifier.
@@ -42,6 +46,11 @@ struct alignment_result_value_type
     front_coord_t front_coordinate{};
     //! \brief The alignment, i.e. the actual base pair matching.
     alignment_t alignment{};
+
+    //!\brief The score matrix. Only accessible with seqan3::align_cfg::debug.
+    score_debug_matrix_t score_debug_matrix{};
+    //!\brief The trace matrix. Only accessible with seqan3::align_cfg::debug.
+    trace_debug_matrix_t trace_debug_matrix{};
 };
 
 /*!\name Type deduction guides
@@ -141,7 +150,7 @@ public:
 
     /*!\brief Returns the alignment identifier.
      * \return The id field.
-     * \attention This function will fail the compilation, if the id is not set.
+     * \attention Compiling this function will fail, if the id is not set.
      */
     constexpr id_t id() const noexcept
     {
@@ -152,7 +161,7 @@ public:
 
     /*!\brief Returns the alignment score.
      * \return The score field.
-     * \attention This function will fail the compilation, if the score is not set.
+     * \attention Compiling this function will fail, if the score is not set.
      */
     constexpr score_t score() const noexcept
     {
@@ -163,7 +172,7 @@ public:
 
     /*!\brief Returns the back coordinate of the alignment.
      * \return A pair of positions in the respective sequences, where the calculated alignment ends (inclusive).
-     * \attention This function will fail the compilation, if the back coordinate was not requested in the alignment
+     * \attention Compiling this function will fail, if the back coordinate was not requested in the alignment
      * configuration.
      */
     constexpr back_coord_t const & back_coordinate() const noexcept
@@ -177,7 +186,7 @@ public:
     /*!\brief Returns the front coordinate of the alignment.
      * \return  A pair of positions in the respective sequences, where the calculated alignment starts.
      * \details Guaranteed to be smaller than or equal to `back_coordinate()`.
-     * \attention This function will fail the compilation, if the front coordinate was not requested in the alignment
+     * \attention Compiling this function will fail, if the front coordinate was not requested in the alignment
      * configuration.
      */
     constexpr front_coord_t const & front_coordinate() const noexcept
@@ -190,7 +199,7 @@ public:
 
     /*!\brief Returns the actual alignment, i.e. the base pair matching.
      * \return At least two aligned sequences, which represent the alignment.
-     * \attention This function with fail the compilation, if the alignment was not requested in the alignment
+     * \attention Compiling this function will fail, if the alignment was not requested in the alignment
      * configuration.
      */
     constexpr alignment_t const & alignment() const noexcept
@@ -200,6 +209,43 @@ public:
         return data.alignment;
     }
     //!\}
+
+    //!\cond DEV
+    /*!\brief Returns the score matrix used to compute the alignment.
+     * \return The score matrix.
+     *
+     * \details
+     *
+     * This function is only used for debugging such that performance can be affected significantly when enabling
+     * seqan3::align_cfg::debug.
+     *
+     * \attention Compiling this function will fail, if seqan3::align_cfg::debug was not selected.
+     */
+    constexpr auto const & score_matrix() const noexcept
+    {
+        static_assert(!std::is_same_v<decltype(data.score_debug_matrix), std::nullopt_t *>,
+                      "Trying to access the score matrix, although it was not requested in the alignment configuration.");
+        return data.score_debug_matrix;
+    }
+
+    /*!\brief Returns the trace matrix used to compute the alignment.
+     * \return The score matrix.
+     *
+     * \details
+     *
+     * This function is only used for debugging such that performance can be affected significantly when enabling
+     * seqan3::align_cfg::debug.
+     *
+     * \attention Compiling this function will fail, if seqan3::align_cfg::debug was not selected and the alignment
+     *             was not requested in the configuration.
+     */
+    constexpr auto const & trace_matrix() const noexcept
+    {
+        static_assert(!std::is_same_v<decltype(data.trace_debug_matrix), std::nullopt_t *>,
+                      "Trying to access the trace matrix, although it was not requested in the alignment configuration.");
+        return data.trace_debug_matrix;
+    }
+    //!\endcond
 };
 
 } // namespace seqan3
