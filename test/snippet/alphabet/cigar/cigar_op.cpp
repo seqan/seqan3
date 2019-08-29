@@ -5,9 +5,9 @@ using seqan3::operator""_cigar_op;
 
 int main()
 {
-// Initialze an seqan3::cigar_op:
-seqan3::cigar_op match{'M'_cigar_op};
+    // Initialise a seqan3::cigar_op:
+    seqan3::cigar_op match{'M'_cigar_op};
 
-// you can print cigar_op values:
-seqan3::debug_stream << match << std::endl;          // M
+    // you can print cigar_op values:
+    seqan3::debug_stream << match << std::endl; // M
 }

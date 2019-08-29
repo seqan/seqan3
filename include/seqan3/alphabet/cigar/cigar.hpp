@@ -72,14 +72,21 @@ public:
     // Inherit constructors from base
     using base_t::base_t;
 
-    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
+    /*!\brief Construction via a value of one of the components.
+     * \tparam component_type One of the component types. Must be uniquely contained in the type list of the composite.
+     * \param[in] alph        The value of a component that should be assigned.
+     *
+     * \include test/snippet/alphabet/cigar/cigar_value_construction.cpp
+     */
     SEQAN3_DOXYGEN_ONLY(( constexpr cigar(component_type const alph) noexcept {} ))
-    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr cigar(indirect_component_type const alph) noexcept {} ))
-    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
+
+    /*!\brief Assignment via a value of one of the components.
+     * \tparam component_type One of the component types. Must be uniquely contained in the type list of the composite.
+     * \param[in] alph        The value of a component that should be assigned.
+     *
+     * \include test/snippet/alphabet/cigar/cigar_value_assignment.cpp
+     */
     SEQAN3_DOXYGEN_ONLY(( constexpr cigar & operator=(component_type const alph) noexcept {} ))
-    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr cigar & operator=(indirect_component_type const alph) noexcept {} ))
     //!\}
 
     // Inherit operators from base
