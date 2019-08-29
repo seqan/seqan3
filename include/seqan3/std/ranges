@@ -168,6 +168,11 @@ template <typename type>
 SEQAN3_CONCEPT ViewableRange = Range<type> && ::ranges::ViewableRange<type>;
 //!\endcond
 
+/*!\typedef std::ranges::range_value_t;
+ * \brief Alias for ranges::range_value_t. Returns the value type of the given range type.
+ */
+using SEQAN3_DOXYGEN_ONLY(range_value_t =) ::ranges::range_value_t;
+
 /*!\typedef std::ranges::begin;
  * \brief Alias for ranges::begin. Returns an iterator to the beginning of a range.
  */

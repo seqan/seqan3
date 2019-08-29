@@ -34,6 +34,10 @@ namespace std
 //!\addtogroup iterator
 //!\{
 
+// ------------------------------------------------------------------
+// iterator type traits
+// ------------------------------------------------------------------
+
 /*!\brief A type trait class that provides uniform interface to the properties of types that model the
  *        WeaklyIncrementable concept.
  * \tparam t The type to query.
@@ -104,6 +108,11 @@ struct incrementable_traits_or_iterator_traits<t>
  */
 template <typename t>
 using iter_difference_t = typename detail::incrementable_traits_or_iterator_traits<t>::difference_type;
+
+/*!\typedef std::iter_reference_t
+ * \brief Alias for ranges::iter_reference_t. Returns the reference type of the iterator.
+ */
+using SEQAN3_DOXYGEN_ONLY(iter_reference_t = ) ::ranges::iter_reference_t;
 
 // ------------------------------------------------------------------
 // auxiliary functions
