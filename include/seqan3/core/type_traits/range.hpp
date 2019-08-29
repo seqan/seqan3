@@ -228,7 +228,7 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
  *
  * \details
  *
- * \snippet test/snippet/core/type_traits/range.cpp usage
+ * \include test/snippet/core/type_traits/range.cpp
  *
  * Attention, this concept implicitly removes cv-qualifiers and reference from the types it recurses on and
  * compares.

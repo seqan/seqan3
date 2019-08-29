@@ -88,7 +88,7 @@ namespace seqan3
  *
  * ### example
  *
- * \snippet test/snippet/core/tuple_utility.cpp usage
+ * \include test/snippet/core/tuple_utility.cpp
  *
  * ### Complexity
  *
@@ -139,7 +139,7 @@ constexpr auto tuple_split(tuple_t<ts...> && t)
  *
  * ### example
  *
- * \snippet test/snippet/core/tuple_utility.cpp usage
+ * \include test/snippet/core/tuple_utility.cpp
  *
  * ### Complexity
  *

@@ -40,7 +40,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/core/char_operations/char_predicate.cpp is_in_interval
+ * \include test/snippet/core/char_operations/char_predicate_is_in_interval.cpp
  * \hideinitializer
  */
 template <uint8_t interval_first, uint8_t interval_last>
@@ -60,7 +60,7 @@ inline constexpr auto is_in_interval = detail::is_in_interval_type<interval_firs
  * (but case is ignored).
  *
  * ### Example
- * \snippet test/snippet/core/char_operations/char_predicate.cpp is_in_alphabet
+ * \include test/snippet/core/char_operations/char_predicate_is_in_alphabet.cpp
  * \hideinitializer
  */
 template <Alphabet alphabet_t>
@@ -76,7 +76,7 @@ inline constexpr auto is_in_alphabet = detail::is_in_alphabet_type<alphabet_t>{}
  *
  * ### Example
  *
- * \snippet test/snippet/core/char_operations/char_predicate.cpp is_char
+ * \include test/snippet/core/char_operations/char_predicate_is_char.cpp
  * \hideinitializer
  */
 template <int char_v>
@@ -320,7 +320,7 @@ inline auto constexpr is_xdigit = is_in_interval<'0', '9'> ||
  * joined efficiently, maintaining constant-time evaluation independent of the number of checks. Functors can be
  * combined with the `||-operator` or negated via the `!-operator`:
  *
- * \snippet test/snippet/core/char_operations/char_predicate.cpp operator
+ * \include test/snippet/core/char_operations/char_predicate_is_operator.cpp
  *
  * Defining complex combinations and using them in e.g. input/output can increase speed significantly over checking
  * multiple functions: we measured speed-ups of 10x for a single check and speed-ups of
