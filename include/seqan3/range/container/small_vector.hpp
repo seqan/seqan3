@@ -650,6 +650,8 @@ public:
     {
         auto const pos_as_num = std::ranges::distance(cbegin(), pos);
         auto const length = std::ranges::distance(begin_it, end_it);
+        
+        assert(pos_as_num + length <= capacity());
 
         if (length == 0)
             return begin(); // nothing to insert
