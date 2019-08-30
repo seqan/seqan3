@@ -29,6 +29,7 @@
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/algorithm>
+#include <seqan3/std/span>
 
 namespace seqan3::contrib
 {
@@ -228,29 +229,6 @@ _compressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
 }
 
 // ----------------------------------------------------------------------------
-// Function _bgzfCheckHeader()
-// ----------------------------------------------------------------------------
-
-inline bool
-_bgzfCheckHeader(char const * header)
-{
-    const char FLG_FEXTRA = detail::bgzf_compression::magic_header[3];
-    const char BGZF_ID1   = detail::bgzf_compression::magic_header[12];
-    const char BGZF_ID2   = detail::bgzf_compression::magic_header[13];
-    const char BGZF_SLEN  = detail::bgzf_compression::magic_header[14];
-    const char BGZF_XLEN  = detail::bgzf_compression::magic_header[10];
-
-    return (header[0] == static_cast<char>(detail::gz_compression::magic_header[0]) &&
-            header[1] == static_cast<char>(detail::gz_compression::magic_header[1]) &&
-            header[2] == static_cast<char>(detail::gz_compression::magic_header[2]) &&
-            (header[3] & FLG_FEXTRA) != 0 &&
-            _bgzfUnpack16(header + 10) == BGZF_XLEN &&
-            header[12] == BGZF_ID1 &&
-            header[13] == BGZF_ID2 &&
-            _bgzfUnpack16(header + 14) == BGZF_SLEN);
-}
-
-// ----------------------------------------------------------------------------
 // Function decompressInit() - GZIP
 // ----------------------------------------------------------------------------
 
@@ -297,7 +275,7 @@ _decompressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
     if (srcLength <= BLOCK_HEADER_LENGTH + BLOCK_FOOTER_LENGTH)
         throw io_error("BGZF block too short.");
 
-    if (!_bgzfCheckHeader(srcBegin))
+    if (!detail::bgzf_compression::validate_header(std::span{srcBegin, srcLength}))
         throw io_error("Invalid BGZF block header.");
 
     size_t compressedLen = _bgzfUnpack16(srcBegin + 16) + 1u;

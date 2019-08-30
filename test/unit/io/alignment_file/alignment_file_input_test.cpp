@@ -621,6 +621,7 @@ struct alignment_file_input_bam_format_f : public alignment_file_input_sam_forma
     };
 };
 
+#if SEQAN3_HAS_ZLIB
 TEST_F(alignment_file_input_bam_format_f, construct_by_filename)
 {
     test::tmp_filename filename{"alignment_file_input_constructor.bam"};
@@ -680,3 +681,4 @@ TEST_F(alignment_file_input_bam_format_f, construct_by_stream)
 
     EXPECT_EQ(counter, 3u);
 }
+#endif // SEQAN3_HAS_ZLIB

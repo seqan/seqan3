@@ -9,7 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/contrib/stream/gz_istream.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 
