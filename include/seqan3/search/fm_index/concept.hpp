@@ -16,7 +16,6 @@
 
 #include <sdsl/suffix_arrays.hpp>
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
@@ -78,6 +77,15 @@ namespace seqan3
  * \{
  */
 
+//!\brief The possible text layouts (single, collection) the seqan3::fm_index and seqan3::bi_fm_index can support.
+enum text_layout : bool
+{
+    //!\brief The text is a single range.
+    single,
+    //!\brief The text is a range of ranges.
+    collection
+};
+
 // ============================================================================
 //  FmIndex
 // ============================================================================
@@ -91,14 +99,15 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
 {
+    typename t::char_type;
     typename t::size_type;
     typename t::cursor_type;
 
     // NOTE: circular dependency
     // requires FmIndexCursor<typename t::cursor_type>;
-    requires requires (t index, std::conditional_t<t::is_collection_,
-                                                   std::vector<std::vector<dna4>>,
-                                                   std::vector<dna4>> const text)
+    requires requires (t index, std::conditional_t<t::text_layout_mode == text_layout::collection,
+                                                   std::vector<std::vector<typename t::char_type>>,
+                                                   std::vector<typename t::char_type>> const text)
     {
         { t(text) };
         { index.construct(text) } -> void;
@@ -149,10 +158,12 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
 
     requires requires (typename t::index_type const index) { { t(index) } };
 
-    requires requires (t cur, dna4 const c, std::vector<dna4> const seq,
-                       std::conditional_t<t::index_type::is_collection_,
-                                          std::vector<std::vector<dna4>>,
-                                          std::vector<dna4>> const text)
+    requires requires (t cur,
+                       typename t::index_type::char_type const c,
+                       std::vector<typename t::index_type::char_type> const seq,
+                       std::conditional_t<t::index_type::text_layout_mode == text_layout::collection,
+                                          std::vector<std::vector<typename t::index_type::char_type>>,
+                                          std::vector<typename t::index_type::char_type>> const text)
     {
         { cur.extend_right()    } -> bool;
         { cur.extend_right(c)   } -> bool;
@@ -164,7 +175,7 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
     { cur.last_rank()    } -> typename t::size_type;
     { cur.query_length() } -> typename t::size_type;
     { cur.count()        } -> typename t::size_type;
-    { cur.locate()       } -> std::conditional_t<t::index_type::is_collection_,
+    { cur.locate()       } -> std::conditional_t<t::index_type::text_layout_mode == text_layout::collection,
                                                 std::vector<std::pair<typename t::size_type, typename t::size_type>>,
                                                 std::vector<typename t::size_type>>;
     { cur.lazy_locate()  } -> auto;
@@ -240,7 +251,9 @@ SEQAN3_CONCEPT BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
 
     requires requires (typename t::index_type const index) { { t(index) } };
 
-    requires requires (t cur, dna4 const c, std::vector<dna4> const seq)
+    requires requires (t cur,
+                       typename t::index_type::char_type const c,
+                       std::vector<typename t::index_type::char_type> const seq)
     {
         { cur.extend_left()    } -> bool;
         { cur.extend_left(c)   } -> bool;

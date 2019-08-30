@@ -108,8 +108,6 @@ inline auto search(queries_t && queries,
     static_assert(detail::is_type_specialisation_of_v<remove_cvref_t<configuration_t>, configuration>,
                   "cfg must be a specialisation of seqan3::configuration.");
 
-    assert(alphabet_size<innermost_value_type_t<queries_t>> == index.sigma);
-
     using cfg_t = remove_cvref_t<configuration_t>;
 
     if constexpr (cfg_t::template exists<search_cfg::max_error>())

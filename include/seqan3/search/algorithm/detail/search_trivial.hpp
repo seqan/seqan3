@@ -15,6 +15,7 @@
 
 #include <type_traits>
 
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/drop.hpp>
 #include <seqan3/search/algorithm/detail/search_common.hpp>

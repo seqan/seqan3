@@ -123,7 +123,7 @@ TYPED_TEST_P(fm_index_collection_test, concept_check)
     using index_t = typename TypeParam::first_type;
 
     EXPECT_TRUE((FmIndex<index_t>));
-    if constexpr (std::Same<index_t, bi_fm_index<text_layout::collection>>)
+    if constexpr (std::Same<index_t, bi_fm_index<typename index_t::char_type, text_layout::collection>>)
     {
         EXPECT_TRUE(BiFmIndex<index_t>);
     }

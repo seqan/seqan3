@@ -38,7 +38,7 @@ void map_reads(std::filesystem::path const & query_path,
                uint8_t const errors)
 //! [map_reads]
 {
-    bi_fm_index<text_layout::collection> index; // we need to know if we work on a text collection before loading
+    bi_fm_index<dna5, text_layout::collection> index; // we need the alphabet and text layout before loading
     {
         std::ifstream is{index_path, std::ios::binary};
         cereal::BinaryInputArchive iarchive{is};

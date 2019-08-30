@@ -45,6 +45,19 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * **The `seqan3::concatenated_sequences::data()` function has been deprecated:**
   Use `seqan3::concatenated_sequences::raw_data()` instead.
 
+#### Search
+
+* **Changed class signature of (bi_)fm_index:**
+  All code that relies on automatic template deduction will be unaffected. In case you specified the template parameters
+  of a `seqan3::fm_index` or `seqan3::bi_fm_index` you will need to add the alphabet type as first parameter and pass a
+  `seqan3::text_layout` instead of a `bool` to indicate the text layout (single, collection).
+  For example, `fm_index<false> index{text}` where `text` is of type `dna4_vector` needs to be changed to
+  `fm_index<dna4, text_layout::single> index{text}`.
+
+* **The `construct()` method of the (bi_)fm_index is now private:**
+  Use the constructor `seqan3::fm_index::fm_index(text_t && text)` or `seqan3::bi_fm_index::bi_fm_index(text_t && text)`
+  instead.
+
 ## Notable Bug-fixes
 
 # 3.0.0 ("Escala")
