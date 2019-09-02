@@ -361,7 +361,7 @@ private:
                                          get_type_name_as_string(value) + ".");
     }
 
-    /*!\brief Tries to cast an input string into boleand value.
+    /*!\brief Tries to cast an input string into boolean value.
      * \param[out] value Stores the casted value.
      * \param[in]  in    The input argument to be casted.
      *
