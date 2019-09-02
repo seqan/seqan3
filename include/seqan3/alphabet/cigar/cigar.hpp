@@ -73,7 +73,7 @@ public:
     using base_t::base_t;
 
     /*!\brief Construction via a value of one of the components.
-     * \tparam component_type One of the component types. Must be uniquely contained in the type list of the composite.
+     * \tparam component_type One of the component types; must be uniquely contained in the type list of the composite.
      * \param[in] alph        The value of a component that should be assigned.
      *
      * \include test/snippet/alphabet/cigar/cigar_value_construction.cpp
@@ -81,7 +81,7 @@ public:
     SEQAN3_DOXYGEN_ONLY(( constexpr cigar(component_type const alph) noexcept {} ))
 
     /*!\brief Assignment via a value of one of the components.
-     * \tparam component_type One of the component types. Must be uniquely contained in the type list of the composite.
+     * \tparam component_type One of the component types; must be uniquely contained in the type list of the composite.
      * \param[in] alph        The value of a component that should be assigned.
      *
      * \include test/snippet/alphabet/cigar/cigar_value_assignment.cpp
@@ -139,6 +139,24 @@ public:
 
         return *this;
     }
+    //!\}
+
+    /*!\name Get functions
+     * \{
+     */
+    /*!\copydoc alphabet_tuple_base::get(alphabet_tuple_base & l)
+     *
+     * \include test/snippet/alphabet/cigar/cigar_get_index.cpp
+     */
+    SEQAN3_DOXYGEN_ONLY(( template <size_t index> constexpr auto get(cigar & l) noexcept {} ))
+
+    /*!\copybrief get
+     * \tparam type Return the element of specified type; only available if the type is unique in the set of components.
+     * \returns A proxy to the contained element that models the same alphabet concepts and supports assignment.
+     *
+     * \include test/snippet/alphabet/cigar/cigar_get_type.cpp
+     */
+    SEQAN3_DOXYGEN_ONLY(( template <typename type> constexpr auto get(cigar & l) noexcept {} ))
     //!\}
 };
 
