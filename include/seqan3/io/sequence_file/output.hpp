@@ -86,10 +86,10 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp template_deduction
+ * \include test/snippet/io/sequence_file/sequence_file_output_template_deduction.cpp
  *
  * Writing to std::cout:
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp cout_write
+ * \include test/snippet/io/sequence_file/sequence_file_output_cout_write.cpp
  *
  * Note that this is not the same as writing `sequence_file_output<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
@@ -100,7 +100,7 @@ namespace seqan3
  *
  * You can iterate over this file record-wise:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp record_wise_iteration
+ * \include test/snippet/io/sequence_file/sequence_file_output_record_wise_iteration.cpp
  *
  * The easiest way to write to a sequence file is to use the push_back() or emplace_back() member functions. These
  * work similarly to how they work on an std::vector. If you pass a tuple to push_back() or give arguments to
@@ -121,30 +121,30 @@ namespace seqan3
  *
  * The following snippets demonstrates the usage of such a fields trait object.
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp fields_trait_1
+ * \include test/snippet/io/sequence_file/sequence_file_output_fields_trait_1.cpp
  *
  * A different way of passing custom fields to the file is to pass a seqan3::record – instead of a tuple – to
  * push_back(). The seqan3::record clearly indicates which of its elements has which seqan3::field ID so the file will
  * use that information instead of the template argument. This is especially handy when reading from one file and
  * writing to another, because you don't have to configure the output file to match the input file, it will just work:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp fields_trait_2
+ * \include test/snippet/io/sequence_file/sequence_file_output_fields_trait_2.cpp
  *
  * ### Writing record-wise in batches
  *
  * You can write multiple records at once, by assigning to the file:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp batch_write
+ * \include test/snippet/io/sequence_file/sequence_file_output_batch_write.cpp
  * ### File I/O pipelines
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
  * files are also input ranges in SeqAn:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp direct_writing
+ * \include test/snippet/io/sequence_file/sequence_file_output_direct_writing.cpp
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp view_pipeline
+ * \include test/snippet/io/sequence_file/sequence_file_output_view_pipeline.cpp
  *
  * ### Column-based writing
  *
@@ -153,8 +153,7 @@ namespace seqan3
  *
  * You can use column-based writing in that case, it uses operator=() :
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp data_storage
- * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp col_based_writing
+ * \include test/snippet/io/sequence_file/sequence_file_output_col_based_writing.cpp
  *
  * ### Formats
  *
@@ -336,7 +335,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp range_interface
+     * \include test/snippet/io/sequence_file/sequence_file_output_range_interface.cpp
      */
     iterator begin() noexcept
     {
@@ -378,7 +377,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp push_back_record
+     * \include test/snippet/io/sequence_file/sequence_file_output_push_back_record.cpp
      */
     template <typename record_t>
     void push_back(record_t && r)
@@ -411,7 +410,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp push_back_tuple
+     * \include test/snippet/io/sequence_file/sequence_file_output_push_back_tuple.cpp
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
@@ -445,7 +444,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp emplace_back
+     * \include test/snippet/io/sequence_file/sequence_file_output_emplace_back.cpp
      */
     template <typename arg_t, typename ... arg_types>
     void emplace_back(arg_t && arg, arg_types && ... args)
@@ -472,7 +471,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp batch_write
+     * \include test/snippet/io/sequence_file/sequence_file_output_batch_write.cpp
      */
     template <std::ranges::InputRange rng_t>
     sequence_file_output & operator=(rng_t && range)
@@ -504,11 +503,11 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp batch_write_2
+     * \include test/snippet/io/sequence_file/sequence_file_output_batch_write.cpp
      *
      * This is especially useful in combination with file-based filters:
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp view_pipeline
+     * \include test/snippet/io/sequence_file/sequence_file_output_view_pipeline.cpp
      */
     template <std::ranges::InputRange rng_t>
     friend sequence_file_output & operator|(rng_t && range, sequence_file_output & f)
@@ -557,7 +556,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp col_based_writing
+     * \include test/snippet/io/sequence_file/sequence_file_output_col_based_writing.cpp
      */
     template <typename typelist, typename field_ids>
     sequence_file_output & operator=(record<typelist, field_ids> const & r)
@@ -588,7 +587,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp col_based_writing
+     * \include test/snippet/io/sequence_file/sequence_file_output_col_based_writing.cpp
      */
     template <typename ... arg_types>
     sequence_file_output & operator=(std::tuple<arg_types...> const & t)

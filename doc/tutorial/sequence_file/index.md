@@ -165,7 +165,7 @@ You can include the SeqAn3 sequence file functionality with:
 At first, you need to construct a seqan3::sequence_file_input object that handles file access.
 In most cases you construct from a file name:
 
-\snippet test/snippet/io/sequence_file/sequence_file_input.cpp template_deduction
+\include test/snippet/io/sequence_file/sequence_file_input_template_deduction.cpp
 
 All template parameters of the seqan3::sequence_file_input are automatically deduced, even the format!
 We **detect the format by the file name extension**.
@@ -204,7 +204,7 @@ See the detailed information on seqan3::sequence_file_input_default_traits_dna f
 After construction you can now read the sequence records. As described in the basic file layout,
 our file objects behave like ranges so you can use a range based for loop to conveniently iterate over the file:
 
-\snippet test/snippet/io/sequence_file/sequence_file_input.cpp record_iter
+\include test/snippet/io/sequence_file/sequence_file_input_record_iter.cpp
 
 \attention An input file is a **single input range**, which means you can only iterate over it **once**!
 
@@ -218,7 +218,7 @@ Since the return type seqan3::record behaves like a tuple, you can also use
 [structured bindings](http://en.cppreference.com/w/cpp/language/structured_binding)
 to decompose the record into its elements:
 
-\snippet test/snippet/io/sequence_file/sequence_file_input.cpp decomposed
+\include test/snippet/io/sequence_file/sequence_file_input_decomposed.cpp
 
 In this case you immediately get the two elements of the tuple:
 `seq` of seqan3::sequence_file_input::sequence_type and `id` of seqan3::sequence_file_input::id_type.
@@ -361,11 +361,11 @@ It should output `seq1` and `seq3`.
 You construct the seqan3::sequence_file_output just like the seqan3::sequence_file_input
 by giving it a file name or a stream.
 
-\snippet test/snippet/io/sequence_file/sequence_file_output.cpp template_deduction
+\include test/snippet/io/sequence_file/sequence_file_output_template_deduction.cpp
 
 Writing to std::cout:
 
-\snippet test/snippet/io/sequence_file/sequence_file_output.cpp cout_write
+\include test/snippet/io/sequence_file/sequence_file_output_cout_write.cpp
 
 ## Writing records
 
@@ -373,7 +373,7 @@ The easiest way to write to a sequence file is to use the seqan3::sequence_file_
 or seqan3::sequence_file_output::emplace_back() member functions.
 These work similarly to how they work on an std::vector.
 
-\snippet test/snippet/io/sequence_file/sequence_file_output.cpp record_wise_iteration
+\include test/snippet/io/sequence_file/sequence_file_output_record_wise_iteration.cpp
 
 If you pass a tuple to `push_back()` or give arguments to `emplace_back()` the order of elements is assumed
 to be the same as the one in the seqan3::sequence_file_output::selected_field_ids.

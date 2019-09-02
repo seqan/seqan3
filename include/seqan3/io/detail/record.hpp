@@ -56,7 +56,7 @@ SEQAN3_CONCEPT Fields = is_value_specialisation_of_v<t, fields>;
  *
  * ### Example
  *
- * \snippet test/snippet/io/detail/detail_record.cpp usage
+ * \include test/snippet/io/detail/detail_record.cpp
  */
 template <typename field_types,
           typename field_types_as_ids,

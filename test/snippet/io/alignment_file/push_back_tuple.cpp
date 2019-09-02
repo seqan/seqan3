@@ -1,19 +1,18 @@
-//! [all]
-#include <seqan3/io/alignment_file/all.hpp>
+#include <sstream>
+#include <string>
+#include <tuple>
 
-using namespace seqan3;
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/io/alignment_file/output.hpp>
 
 int main()
 {
-    alignment_file_output fout{std::filesystem::temp_directory_path()/"my.sam"};
-
-    auto it = fout.begin();
+    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     std::string id;
-    dna5_vector seq;
+    seqan3::dna5_vector seq;
 
     // ...
 
     fout.push_back(std::tie(seq, id));
 }
-//! [all]

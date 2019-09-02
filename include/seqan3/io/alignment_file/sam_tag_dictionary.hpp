@@ -300,7 +300,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  *
  * Example:
  *
- * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/general_usage.cpp all
+ * \include test/snippet/io/alignment_file/sam_tag_dictionary/general_usage.cpp
  *
  * \attention You can get any SAM_tag out of the dictionary, even if the tag is
  *            user defined, but note that for unknown tags the return type is an
@@ -310,7 +310,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  *
  * Unknown Tag Example:
  *
- * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/unknown_tag.cpp all
+ * \include test/snippet/io/alignment_file/sam_tag_dictionary/unknown_tag.cpp
  *
  * As mentioned before you can either overload the type trait seqan3::sam_tag_type
  * for the tag "XZ" or learn more about an std::variant at
