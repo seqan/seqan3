@@ -70,7 +70,7 @@ constexpr uint16_t operator""_tag()
 template <typename char_t, char_t ...s>
 constexpr uint16_t operator""_tag()
 {
-    static_assert(std::Same<char_t, char>, "Illegal SAM tag: Type must be char.");
+    static_assert(std::same_as<char_t, char>, "Illegal SAM tag: Type must be char.");
     constexpr small_string<sizeof...(s)> str{std::array<char, sizeof...(s)>{s...}};
 #pragma GCC diagnostic pop
 #endif
@@ -349,7 +349,7 @@ public:
     //!\brief Uses std::map::operator[] for access and default initializes new keys.
     template <uint16_t tag>
     //!\cond
-        requires !std::Same<sam_tag_type_t<tag>, variant_type>
+        requires !std::same_as<sam_tag_type_t<tag>, variant_type>
     //!\endcond
     auto & get() &
     {
@@ -362,7 +362,7 @@ public:
     //!\brief Uses std::map::operator[] for access and default initializes new keys.
     template <uint16_t tag>
     //!\cond
-        requires !std::Same<sam_tag_type_t<tag>, variant_type>
+        requires !std::same_as<sam_tag_type_t<tag>, variant_type>
     //!\endcond
     auto && get() &&
     {
@@ -376,7 +376,7 @@ public:
     //!\throws std::out_of_range if map has no key `tag`.
     template <uint16_t tag>
     //!\cond
-        requires !std::Same<sam_tag_type_t<tag>, variant_type>
+        requires !std::same_as<sam_tag_type_t<tag>, variant_type>
     //!\endcond
     auto const & get() const &
     {
@@ -387,7 +387,7 @@ public:
     //!\throws std::out_of_range if map has no key `tag`.
     template <uint16_t tag>
     //!\cond
-        requires !std::Same<sam_tag_type_t<tag>, variant_type>
+        requires !std::same_as<sam_tag_type_t<tag>, variant_type>
     //!\endcond
     auto const && get() const &&
     {

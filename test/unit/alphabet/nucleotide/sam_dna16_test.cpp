@@ -18,14 +18,14 @@ using namespace seqan3;
 // sam_dna16 alphabet
 // ------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, alphabet, sam_dna16);
+INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, alphabet_, sam_dna16);
 INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, alphabet_constexpr, sam_dna16);
 
 // nucleotide test: (because the complement is not bijective for sam_dna16 we need to test it manually)
 TEST(sam_dna16, nucleotide)
 {
-    EXPECT_TRUE(NucleotideAlphabet<sam_dna16>);
-    EXPECT_TRUE(NucleotideAlphabet<sam_dna16 &>);
+    EXPECT_TRUE(nucleotide_alphabet<sam_dna16>);
+    EXPECT_TRUE(nucleotide_alphabet<sam_dna16 &>);
 
     EXPECT_EQ(complement('='_sam_dna16), 'N'_sam_dna16);
     EXPECT_EQ(complement('A'_sam_dna16), 'T'_sam_dna16);

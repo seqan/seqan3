@@ -28,15 +28,15 @@ namespace seqan3::detail
  */
 
  // ============================================================================
- //  SdslIndex
+ //  sdsl_index
  // ============================================================================
 
-/*!\interface seqan3::detail::SdslIndex <>
+/*!\interface seqan3::detail::sdsl_index <>
  * \brief Concept for SDSL FM indices (which are called compressed suffix arrays in the SDSL).
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT SdslIndex = requires (t sdsl_index)
+SEQAN3_CONCEPT sdsl_index = requires (t sdsl_index)
 {
     typename t::size_type;
 
@@ -56,8 +56,8 @@ SEQAN3_CONCEPT SdslIndex = requires (t sdsl_index)
     };
 };
 //!\endcond
-/*!\name Requirements for seqan3::detail::SdslIndex
- * \relates seqan3::detail::SdslIndex
+/*!\name Requirements for seqan3::detail::sdsl_index
+ * \relates seqan3::detail::sdsl_index
  * \brief The SDSL index must support the following interface to work with SeqAn3 FM indices.
  * \{
  *
@@ -87,24 +87,24 @@ enum text_layout : bool
 };
 
 // ============================================================================
-//  FmIndex
+//  fm_index_specialisation
 // ============================================================================
 
-/*!\interface seqan3::FmIndex <>
+/*!\interface seqan3::fm_index_specialisation <>
  * \brief Concept for unidirectional FM indices.
  *
  * This concept defines the interface for unidirectional FM indices.
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
+SEQAN3_CONCEPT fm_index_specialisation = std::semiregular<t> && requires (t index)
 {
     typename t::char_type;
     typename t::size_type;
     typename t::cursor_type;
 
     // NOTE: circular dependency
-    // requires FmIndexCursor<typename t::cursor_type>;
+    // requires fm_index_cursor_specialisation<typename t::cursor_type>;
     requires requires (t index, std::conditional_t<t::text_layout_mode == text_layout::collection,
                                                    std::vector<std::vector<typename t::char_type>>,
                                                    std::vector<typename t::char_type>> const text)
@@ -119,9 +119,9 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
     { index.empty() } -> bool;
 };
 //!\endcond
-/*!\name Requirements for seqan3::FmIndex
- * \relates seqan3::FmIndex
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::FmIndex.
+/*!\name Requirements for seqan3::fm_index_specialisation
+ * \relates seqan3::fm_index_specialisation
+ * \brief You can expect these member types and member functions on all types that satisfy seqan3::fm_index_specialisation.
  * \{
  *
  * \typedef typename t::text_type text_type
@@ -139,22 +139,22 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
  */
 
 // ============================================================================
-//  FmIndexCursor
+//  fm_index_cursor_specialisation
 // ============================================================================
 
-/*!\interface seqan3::FmIndexCursor <>
+/*!\interface seqan3::fm_index_cursor_specialisation <>
  * \brief Concept for unidirectional FM index cursors.
  *
  * This concept defines the interface for cursors for unidirectional FM indices.
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
+SEQAN3_CONCEPT fm_index_cursor_specialisation = std::semiregular<t> && requires (t cur)
 {
     typename t::index_type;
     typename t::size_type;
 
-    requires FmIndex<typename t::index_type>;
+    requires fm_index_specialisation<typename t::index_type>;
 
     requires requires (typename t::index_type const index) { { t(index) } };
 
@@ -181,9 +181,9 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
     { cur.lazy_locate()  } -> auto;
 };
 //!\endcond
-/*!\name Requirements for seqan3::FmIndexCursor
- * \relates seqan3::FmIndexCursor
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::FmIndexCursor.
+/*!\name Requirements for seqan3::fm_index_cursor_specialisation
+ * \relates seqan3::fm_index_cursor_specialisation
+ * \brief You can expect these member types and member functions on all types that satisfy seqan3::fm_index_cursor_specialisation.
  * \{
  *
  * \typedef typename t::index_type index_type
@@ -195,32 +195,32 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
  */
 
 // ============================================================================
-//  BiFmIndex
+//  bi_fm_index_specialisation
 // ============================================================================
 
-/*!\interface seqan3::BiFmIndex <>
+/*!\interface seqan3::bi_fm_index_specialisation <>
  * \brief Concept for bidirectional FM indices.
  *
  * This concept defines the interface for bidirectional FM indices.
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT BiFmIndex = FmIndex<t> && requires (t index)
+SEQAN3_CONCEPT bi_fm_index_specialisation = fm_index_specialisation<t> && requires (t index)
 {
-    typename t::cursor_type; // already required by FmIndex but has a different documentation
+    typename t::cursor_type; // already required by fm_index_specialisation but has a different documentation
     typename t::fwd_cursor_type;
     typename t::rev_cursor_type;
 
     // NOTE: circular dependency
-    // requires BiFmIndexCursor<typename t::cursor_type>;
+    // requires bi_fm_index_cursor_specialisation<typename t::cursor_type>;
 
     { index.fwd_begin() } -> typename t::fwd_cursor_type;
     { index.rev_begin() } -> typename t::rev_cursor_type;
 };
 //!\endcond
-/*!\name Requirements for seqan3::BiFmIndex
- * \relates seqan3::BiFmIndex
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::BiFmIndex.
+/*!\name Requirements for seqan3::bi_fm_index_specialisation
+ * \relates seqan3::bi_fm_index_specialisation
+ * \brief You can expect these member types and member functions on all types that satisfy seqan3::bi_fm_index_specialisation.
  * \{
  *
  * \typedef typename t::cursor_type cursor_type
@@ -235,19 +235,19 @@ SEQAN3_CONCEPT BiFmIndex = FmIndex<t> && requires (t index)
  */
 
 // ============================================================================
-//  BiFmIndexCursor
+//  bi_fm_index_cursor_specialisation
 // ============================================================================
 
-/*!\interface seqan3::BiFmIndexCursor <>
+/*!\interface seqan3::bi_fm_index_cursor_specialisation <>
  * \brief Concept for bidirectional FM index cursors.
  *
  * This concept defines the interface for cursors for bidirectional FM indices.
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
+SEQAN3_CONCEPT bi_fm_index_cursor_specialisation = fm_index_cursor_specialisation<t> && requires (t cur)
 {
-    requires BiFmIndex<typename t::index_type>;
+    requires bi_fm_index_specialisation<typename t::index_type>;
 
     requires requires (typename t::index_type const index) { { t(index) } };
 
@@ -263,10 +263,10 @@ SEQAN3_CONCEPT BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
 
 };
 //!\endcond
-/*!\name Requirements for seqan3::BiFmIndexCursor
- * \relates seqan3::BiFmIndexCursor
+/*!\name Requirements for seqan3::bi_fm_index_cursor_specialisation
+ * \relates seqan3::bi_fm_index_cursor_specialisation
  * \brief You can expect these member types and member functions on all types that satisfy
- *        seqan3::FmIndexCursor.
+ *        seqan3::fm_index_cursor_specialisation.
  * \{
  *
  * \typedef typename t::index_type index_type

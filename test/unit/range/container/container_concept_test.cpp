@@ -25,35 +25,35 @@
 
 using namespace seqan3;
 
-TEST(range_concept, ForwardRange)
+TEST(range_concept, forward_range)
 {
-    EXPECT_TRUE((std::ranges::ForwardRange<std::array<char, 2>>));
-    EXPECT_TRUE((std::ranges::ForwardRange<std::list<char>>));
-    EXPECT_TRUE((std::ranges::ForwardRange<std::forward_list<char>>)); // `.size()` missing
-    EXPECT_TRUE((std::ranges::ForwardRange<std::vector<char>>));
-    EXPECT_TRUE((std::ranges::ForwardRange<std::deque<char>>));
-    EXPECT_TRUE((std::ranges::ForwardRange<std::string>));
+    EXPECT_TRUE((std::ranges::forward_range<std::array<char, 2>>));
+    EXPECT_TRUE((std::ranges::forward_range<std::list<char>>));
+    EXPECT_TRUE((std::ranges::forward_range<std::forward_list<char>>)); // `.size()` missing
+    EXPECT_TRUE((std::ranges::forward_range<std::vector<char>>));
+    EXPECT_TRUE((std::ranges::forward_range<std::deque<char>>));
+    EXPECT_TRUE((std::ranges::forward_range<std::string>));
 
-    EXPECT_TRUE((std::ranges::ForwardRange<seqan3::concatenated_sequences<std::string>>));
-    EXPECT_TRUE((std::ranges::ForwardRange<seqan3::concatenated_sequences<std::vector<char>>>));
-    EXPECT_TRUE((std::ranges::ForwardRange<bitcompressed_vector<dna4>>));
-    EXPECT_TRUE((std::ranges::ForwardRange<bitcompressed_vector<qualified<dna4, phred42>>>));
+    EXPECT_TRUE((std::ranges::forward_range<seqan3::concatenated_sequences<std::string>>));
+    EXPECT_TRUE((std::ranges::forward_range<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((std::ranges::forward_range<bitcompressed_vector<dna4>>));
+    EXPECT_TRUE((std::ranges::forward_range<bitcompressed_vector<qualified<dna4, phred42>>>));
 }
 
-TEST(Container, Container)
+TEST(container_, container)
 {
-    EXPECT_TRUE((seqan3::Container<std::array<char, 2>>));
-    EXPECT_TRUE((seqan3::Container<std::list<char>>));
-    EXPECT_FALSE((seqan3::Container<std::forward_list<char>>)); // `.size()` missing
-    EXPECT_TRUE((seqan3::Container<std::vector<char>>));
-    EXPECT_TRUE((seqan3::Container<std::deque<char>>));
-    EXPECT_TRUE((seqan3::Container<std::string>));
+    EXPECT_TRUE((seqan3::container<std::array<char, 2>>));
+    EXPECT_TRUE((seqan3::container<std::list<char>>));
+    EXPECT_FALSE((seqan3::container<std::forward_list<char>>)); // `.size()` missing
+    EXPECT_TRUE((seqan3::container<std::vector<char>>));
+    EXPECT_TRUE((seqan3::container<std::deque<char>>));
+    EXPECT_TRUE((seqan3::container<std::string>));
 
-    EXPECT_TRUE((seqan3::Container<seqan3::concatenated_sequences<std::string>>));
-    EXPECT_TRUE((seqan3::Container<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::container<seqan3::concatenated_sequences<std::string>>));
+    EXPECT_TRUE((seqan3::container<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(Container, sequence_container_former_travis_bug)
+TEST(container_, sequence_container_former_travis_bug)
 {
     // This tests a bug with const iterators on strings which was there in a
     // special gcc 7.2 build (ppa) for ubuntu 14.04 and 16.04. We leave it as
@@ -101,50 +101,50 @@ TEST(Container, sequence_container_former_travis_bug)
     EXPECT_EQ("Exemplar is an:== example string.", s);
 }
 
-TEST(Container, SequenceContainer)
+TEST(container_, sequence_container)
 {
-    EXPECT_FALSE((seqan3::SequenceContainer<std::array<char, 2>>));
-    EXPECT_TRUE((seqan3::SequenceContainer<std::list<char>>));
-    EXPECT_FALSE((seqan3::SequenceContainer<std::forward_list<char>>));
-    EXPECT_TRUE((seqan3::SequenceContainer<std::vector<char>>));
-    EXPECT_TRUE((seqan3::SequenceContainer<std::deque<char>>));
-    EXPECT_TRUE((seqan3::SequenceContainer<std::string>));
+    EXPECT_FALSE((seqan3::sequence_container<std::array<char, 2>>));
+    EXPECT_TRUE((seqan3::sequence_container<std::list<char>>));
+    EXPECT_FALSE((seqan3::sequence_container<std::forward_list<char>>));
+    EXPECT_TRUE((seqan3::sequence_container<std::vector<char>>));
+    EXPECT_TRUE((seqan3::sequence_container<std::deque<char>>));
+    EXPECT_TRUE((seqan3::sequence_container<std::string>));
 
-    EXPECT_TRUE((seqan3::SequenceContainer<seqan3::concatenated_sequences<std::string>>));
-    EXPECT_TRUE((seqan3::SequenceContainer<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::sequence_container<seqan3::concatenated_sequences<std::string>>));
+    EXPECT_TRUE((seqan3::sequence_container<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(Container, RandomAccessContainer)
+TEST(container_, random_access_container)
 {
-    EXPECT_FALSE((seqan3::RandomAccessContainer<std::array<char, 2>>));
-    EXPECT_FALSE((seqan3::RandomAccessContainer<std::list<char>>));
-    EXPECT_FALSE((seqan3::RandomAccessContainer<std::forward_list<char>>));
-    EXPECT_TRUE((seqan3::RandomAccessContainer<std::vector<char>>));
-    EXPECT_TRUE((seqan3::RandomAccessContainer<std::deque<char>>));
-    EXPECT_TRUE((seqan3::RandomAccessContainer<std::string>));
+    EXPECT_FALSE((seqan3::random_access_container<std::array<char, 2>>));
+    EXPECT_FALSE((seqan3::random_access_container<std::list<char>>));
+    EXPECT_FALSE((seqan3::random_access_container<std::forward_list<char>>));
+    EXPECT_TRUE((seqan3::random_access_container<std::vector<char>>));
+    EXPECT_TRUE((seqan3::random_access_container<std::deque<char>>));
+    EXPECT_TRUE((seqan3::random_access_container<std::string>));
 
-    EXPECT_TRUE((seqan3::RandomAccessContainer<seqan3::concatenated_sequences<std::string>>));
-    EXPECT_TRUE((seqan3::RandomAccessContainer<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::random_access_container<seqan3::concatenated_sequences<std::string>>));
+    EXPECT_TRUE((seqan3::random_access_container<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(Container, ReservableContainer)
+TEST(container_, reservible_container)
 {
-    EXPECT_FALSE((seqan3::ReservableContainer<std::array<char, 2>>));
-    EXPECT_FALSE((seqan3::ReservableContainer<std::list<char>>));
-    EXPECT_FALSE((seqan3::ReservableContainer<std::forward_list<char>>));
-    EXPECT_TRUE((seqan3::ReservableContainer<std::vector<char>>));
-    EXPECT_FALSE((seqan3::ReservableContainer<std::deque<char>>));
-    EXPECT_TRUE((seqan3::ReservableContainer<std::string>));
+    EXPECT_FALSE((seqan3::reservible_container<std::array<char, 2>>));
+    EXPECT_FALSE((seqan3::reservible_container<std::list<char>>));
+    EXPECT_FALSE((seqan3::reservible_container<std::forward_list<char>>));
+    EXPECT_TRUE((seqan3::reservible_container<std::vector<char>>));
+    EXPECT_FALSE((seqan3::reservible_container<std::deque<char>>));
+    EXPECT_TRUE((seqan3::reservible_container<std::string>));
 
-    EXPECT_TRUE((seqan3::ReservableContainer<seqan3::concatenated_sequences<std::string>>));
-    EXPECT_TRUE((seqan3::ReservableContainer<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::concatenated_sequences<std::string>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::concatenated_sequences<std::vector<char>>>));
 
-    EXPECT_TRUE((seqan3::ReservableContainer<sdsl::bit_vector>));
-    EXPECT_TRUE((seqan3::ReservableContainer<sdsl::int_vector<>>));
-    EXPECT_TRUE((seqan3::ReservableContainer<sdsl::int_vector<13>>));
-    EXPECT_TRUE((seqan3::ReservableContainer<sdsl::int_vector<64>>));
-    EXPECT_TRUE((seqan3::ReservableContainer<bitcompressed_vector<dna4>>));
-    EXPECT_TRUE((seqan3::ReservableContainer<bitcompressed_vector<qualified<dna4, phred42>>>));
+    EXPECT_TRUE((seqan3::reservible_container<sdsl::bit_vector>));
+    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<>>));
+    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<13>>));
+    EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<64>>));
+    EXPECT_TRUE((seqan3::reservible_container<bitcompressed_vector<dna4>>));
+    EXPECT_TRUE((seqan3::reservible_container<bitcompressed_vector<qualified<dna4, phred42>>>));
 }
 
 /* Check the SDSL containers */

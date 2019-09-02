@@ -31,8 +31,8 @@ namespace seqan3
 {
 
 /*!\brief A constexpr vector implementation with dynamic size at compile time.
- * \implements seqan3::ReservableContainer
- * \implements seqan3::Cerealisable
+ * \implements seqan3::reservible_container
+ * \implements seqan3::cerealisable
  * \ingroup container
  * \tparam value_type_ The underlying value type stored in the vector.
  * \tparam capacity_   The capacity of the constexpr vector.
@@ -136,7 +136,7 @@ public:
      */
     template <typename ...other_value_type>
     //!\cond
-        requires (std::Same<value_type, other_value_type> && ...)
+        requires (std::same_as<value_type, other_value_type> && ...)
     //!\endcond
     constexpr small_vector(other_value_type... args) noexcept(is_noexcept) :
         data_{args...}, sz{sizeof...(other_value_type)}
@@ -145,9 +145,9 @@ public:
     }
 
     /*!\brief Construct from two iterators.
-     * \tparam begin_it_type Must model std::ForwardIterator and `value_type` must be constructible from
+     * \tparam begin_it_type Must model std::forward_iterator and `value_type` must be constructible from
      *                             the reference type of begin_it_type.
-     * \tparam   end_it_type Must satisfy std::Sentinel.
+     * \tparam   end_it_type Must satisfy std::sentinel_for.
      * \param[in]         begin_it Begin of range to construct/assign from.
      * \param[in]           end_it End of range to construct/assign from.
      *
@@ -159,9 +159,9 @@ public:
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
      */
-    template <std::ForwardIterator begin_it_type, std::Sentinel<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
     //!\cond
-        requires std::Constructible<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
+        requires std::constructible_from<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
     //!\endcond
     constexpr small_vector(begin_it_type begin_it, end_it_type end_it) noexcept(is_noexcept) :
         small_vector{}
@@ -170,7 +170,7 @@ public:
     }
 
     /*!\brief Construct from a different range.
-     * \tparam other_range_t The type of range to be inserted; must satisfy std::ranges::InputRange and `value_type`
+     * \tparam other_range_t The type of range to be inserted; must satisfy std::ranges::input_range and `value_type`
      *                       must be constructible from reference_t<other_range_t>.
      * \param[in]      range The sequences to construct/assign from.
      *
@@ -182,10 +182,10 @@ public:
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
      */
-    template <std::ranges::InputRange other_range_t>
+    template <std::ranges::input_range other_range_t>
     //!\cond
         requires !std::is_same_v<remove_cvref_t<other_range_t>, small_vector>
-                 /*ICE: && std::Constructible<value_type, reference_t<other_range_t>>*/
+                 /*ICE: && std::constructible_from<value_type, reference_t<other_range_t>>*/
     //!\endcond
     explicit constexpr small_vector(other_range_t && range) noexcept(is_noexcept) :
         small_vector{std::ranges::begin(range), std::ranges::end(range)}
@@ -262,7 +262,7 @@ public:
     }
 
     /*!\brief Assign from a different range.
-     * \tparam other_range_t The type of range to be inserted; must satisfy std::ranges::InputRange and `value_type`
+     * \tparam other_range_t The type of range to be inserted; must satisfy std::ranges::input_range and `value_type`
      *                       must be constructible from reference_t<other_range_t>.
      * \param[in]      range The sequences to construct/assign from.
      *
@@ -274,9 +274,9 @@ public:
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
      */
-    template <std::ranges::InputRange other_range_t>
+    template <std::ranges::input_range other_range_t>
     //!\cond
-        requires std::Constructible<value_type, /*ranges::range_reference_t*/reference_t<other_range_t>>
+        requires std::constructible_from<value_type, /*ranges::range_reference_t*/reference_t<other_range_t>>
     //!\endcond
     constexpr void assign(other_range_t && range) noexcept(is_noexcept)
     {
@@ -284,9 +284,9 @@ public:
     }
 
     /*!\brief Assign from pair of iterators.
-     * \tparam begin_it_type Must satisfy std::ForwardIterator and the `value_type` must be constructible from
+     * \tparam begin_it_type Must satisfy std::forward_iterator and the `value_type` must be constructible from
      *                       the reference type of begin_it_type.
-     * \tparam   end_it_type Must satisfy std::Sentinel.
+     * \tparam   end_it_type Must satisfy std::sentinel_for.
      * \param[in]   begin_it Begin of range to construct/assign from.
      * \param[in]     end_it End of range to construct/assign from.
      *
@@ -298,10 +298,10 @@ public:
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
      */
-    template <std::ForwardIterator begin_it_type, std::Sentinel<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
     constexpr void assign(begin_it_type begin_it, end_it_type end_it) noexcept(is_noexcept)
     //!\cond
-        requires std::Constructible<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
+        requires std::constructible_from<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
     //!\endcond
     {
         clear();
@@ -623,9 +623,9 @@ public:
     }
 
     /*!\brief Inserts elements from range `[begin_it, end_it)` before position in the container.
-     * \tparam begin_it_type Must satisfy std::ForwardIterator and the `value_type` must be constructible from
+     * \tparam begin_it_type Must satisfy std::forward_iterator and the `value_type` must be constructible from
      *                       the reference type of begin_it_type.
-     * \tparam   end_it_type Must satisfy std::Sentinel.
+     * \tparam   end_it_type Must satisfy std::sentinel_for.
      * \param[in]        pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param[in]   begin_it Begin of range to construct/assign from.
      * \param[in]     end_it End of range to construct/assign from.
@@ -642,15 +642,15 @@ public:
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
      */
-    template <std::ForwardIterator begin_it_type, std::Sentinel<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
     //!\cond
-        requires std::Constructible<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
+        requires std::constructible_from<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
     //!\endcond
     constexpr iterator insert(const_iterator pos, begin_it_type begin_it, end_it_type end_it) noexcept(is_noexcept)
     {
         auto const pos_as_num = std::ranges::distance(cbegin(), pos);
         auto const length = std::ranges::distance(begin_it, end_it);
-        
+
         assert(pos_as_num + length <= capacity());
 
         if (length == 0)
@@ -945,12 +945,12 @@ protected:
     size_type sz{0};
 
     /*!\brief Serialisation support function.
-     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
      * \param archive The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    template <CerealArchive archive_t>
+    template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
         archive(data_);

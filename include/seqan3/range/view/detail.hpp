@@ -125,14 +125,14 @@ public:
     //!\}
 
     //!\brief Function-style overload for ranges.
-    template <std::ranges::InputRange urng_t>
+    template <std::ranges::input_range urng_t>
     constexpr auto operator()(urng_t && urange) const &
     {
         return pass_args_to_impl(std::forward<urng_t>(urange), std::make_index_sequence<sizeof...(stored_args_ts)>{});
     }
 
     //!\overload
-    template <std::ranges::InputRange urng_t>
+    template <std::ranges::input_range urng_t>
     constexpr auto operator()(urng_t && urange) &&
     {
         return std::move(*this).pass_args_to_impl(std::forward<urng_t>(urange),
@@ -146,14 +146,14 @@ public:
      *
      * \details
      *
-     * If the LHS models std::ranges::InputRange this functions delegates to operator()
+     * If the LHS models std::ranges::input_range this functions delegates to operator()
      * otherwise it assumes the LHS is another range adaptor closure object and it
      * returns a seqan3::detail::combined_adaptor that wraps that adaptor and this one.
      */
     template <typename arg_t>
     constexpr friend auto operator|(arg_t && arg, derived_type const & me)
     {
-        if constexpr (std::ranges::InputRange<arg_t>)
+        if constexpr (std::ranges::input_range<arg_t>)
             return me(std::forward<arg_t>(arg));
         else
             return combined_adaptor{std::forward<arg_t>(arg), me};
@@ -163,7 +163,7 @@ public:
     template <typename arg_t>
     constexpr friend auto operator|(arg_t && arg, derived_type && me)
     {
-        if constexpr (std::ranges::InputRange<arg_t>)
+        if constexpr (std::ranges::input_range<arg_t>)
             return std::move(me)(std::forward<arg_t>(arg));
         else
             return combined_adaptor{std::forward<arg_t>(arg), std::move(me)};
@@ -229,7 +229,7 @@ private:
     friend base_type;
 
     //!\brief Combine all arguments via `operator|`.
-    template <std::ranges::InputRange urng_t,
+    template <std::ranges::input_range urng_t,
               typename left_adaptor_t_,
               typename right_adaptor_t_>
     static auto impl(urng_t && urange, left_adaptor_t_ && left_adaptor, right_adaptor_t_ && right_adaptor)
@@ -386,7 +386,7 @@ private:
      * \param[in] args           The arguments to the constructor.
      * \returns Whatever the wrapped functor returns, usually a view.
      */
-    template <std::ranges::InputRange urng_t>
+    template <std::ranges::input_range urng_t>
     constexpr auto impl(urng_t && urange, stored_args_ts ... args) const
     {
         return fun(std::forward<urng_t>(urange), std::forward<stored_args_ts>(args)...);

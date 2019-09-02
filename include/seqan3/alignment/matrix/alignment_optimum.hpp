@@ -31,7 +31,7 @@ namespace seqan3::detail
  * This is an aggregate type, so the score needs to be passed before the seqan3::alignment_coordinate during
  * construction.
  */
-template <Arithmetic score_t>
+template <arithmetic score_t>
 struct alignment_optimum
 {
     //!\brief The optimal score.
@@ -47,7 +47,7 @@ struct alignment_optimum
 alignment_optimum() -> alignment_optimum<int32_t>;
 
 //!\brief Deduce the score type.
-template <Arithmetic score_t>
+template <arithmetic score_t>
 alignment_optimum(score_t const, alignment_coordinate const) ->
     alignment_optimum<std::remove_reference_t<score_t>>;
 //!\}

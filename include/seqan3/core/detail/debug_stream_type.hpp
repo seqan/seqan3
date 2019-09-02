@@ -64,7 +64,7 @@ constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
  *
  * See seqan3::fmtflags2 for more details.
  *
- * \attention This class does not yet model seqan3::OStream fully, \todo implement.
+ * \attention This class does not yet model seqan3::output_stream_over fully, \todo implement.
  */
 template <typename char_t = char>
 class debug_stream_type

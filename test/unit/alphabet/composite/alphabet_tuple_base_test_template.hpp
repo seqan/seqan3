@@ -19,7 +19,7 @@ TYPED_TEST_CASE_P(alphabet_tuple_base_test);
 
 TYPED_TEST_P(alphabet_tuple_base_test, concept_check)
 {
-    EXPECT_TRUE(TupleLike<TypeParam>);
+    EXPECT_TRUE(tuple_like<TypeParam>);
 }
 
 // default/zero construction

@@ -28,8 +28,8 @@ namespace seqan3::detail
 
 /*!\brief A debug matrix to wrap alignment matrices and sequences and make them printable together.
  * \ingroup alignment_matrix
- * \implements seqan3::detail::Matrix
- * \tparam matrix_t          An alignment matrix; Must model seqan3::detail::Matrix.
+ * \implements seqan3::detail::matrix
+ * \tparam matrix_t          An alignment matrix; Must model seqan3::detail::matrix.
  * \tparam first_sequence_t  The type of the first sequence; If no sequences are given this is std::nullopt_t.
  * \tparam second_sequence_t The type of the second sequence; If no sequences are given this is std::nullopt_t.
  *
@@ -39,7 +39,7 @@ namespace seqan3::detail
  *
  * \cond DEV
  * This type is used internally
- *   * to print seqan3::detail::Matrix's and,
+ *   * to print seqan3::detail::matrix's and,
  *   * to compare alignment matrices in in test cases.
  * \endcond
  *
@@ -57,7 +57,7 @@ namespace seqan3::detail
  * ### Output
  * \include test/snippet/alignment/matrix/debug_matrix_trace.out
  */
-template <Matrix matrix_t, typename first_sequence_t = std::nullopt_t, typename second_sequence_t = std::nullopt_t>
+template <matrix matrix_t, typename first_sequence_t = std::nullopt_t, typename second_sequence_t = std::nullopt_t>
 class debug_matrix
 {
 protected:
@@ -77,11 +77,11 @@ public:
     /*!\name Associated types
      * \{
      */
-    //!\copydoc seqan3::detail::Matrix::value_type
+    //!\copydoc seqan3::detail::matrix::value_type
     using value_type = std::conditional_t<is_traceback_matrix || is_optional_score,
                                           entry_t,
                                           std::optional<entry_t>>;
-    //!\copydoc seqan3::detail::Matrix::reference
+    //!\copydoc seqan3::detail::matrix::reference
     using reference = value_type;
     //!\brief The const reference type.
     using const_reference = reference;
@@ -100,14 +100,14 @@ public:
     ~debug_matrix() = default;  //!< Defaulted
 
     /*!\brief Construct the matrix out of an existing matrix.
-     * \param matrix An alignment matrix; Must model seqan3::detail::Matrix.
+     * \param matrix An alignment matrix; Must model seqan3::detail::matrix.
      */
     debug_matrix(matrix_t matrix)
         : debug_matrix(std::forward<matrix_t>(matrix), std::nullopt, std::nullopt)
     {}
 
     /*!\brief Construct the matrix out of an existing matrix and two sequences.
-     * \param matrix An alignment matrix; Must model seqan3::detail::Matrix.
+     * \param matrix An alignment matrix; Must model seqan3::detail::matrix.
      * \param first_sequence The first sequence of the sequence alignment.
      * \param second_sequence The second sequence of the sequence alignment.
      */
@@ -128,7 +128,7 @@ public:
     }
     //!\}
 
-    //!\copydoc seqan3::detail::Matrix::rows
+    //!\copydoc seqan3::detail::matrix::rows
     size_t rows() const noexcept
     {
         if (!_transpose)
@@ -137,7 +137,7 @@ public:
             return _cols.value_or(_matrix.cols());
     }
 
-    //!\copydoc seqan3::detail::Matrix::cols
+    //!\copydoc seqan3::detail::matrix::cols
     size_t cols() const noexcept
     {
         if (!_transpose)
@@ -164,7 +164,7 @@ public:
             return _first_sequence;
     }
 
-    //!\copydoc seqan3::detail::Matrix::at
+    //!\copydoc seqan3::detail::matrix::at
     const_reference at(matrix_coordinate const & coordinate) const noexcept
     {
         size_t row = coordinate.row;
@@ -404,15 +404,15 @@ protected:
     //!\brief Format used by seqan3::detail::debug_matrix.
     struct format_type
     {
-        //!\brief epsilon symbol (a single symbol)
+        //!\brief Epsilon symbol (a single symbol)
         char const * epsilon{};
-        //!\brief column separator symbol (a single symbol)
+        //!\brief Column separator symbol (a single symbol)
         char const * col_sep{};
-        //!\brief row separator symbol (a single symbol)
+        //!\brief Row separator symbol (a single symbol)
         char const * row_sep{};
-        //!\brief row separator symbol (a single symbol)
+        //!\brief Row separator symbol (a single symbol)
         char const * row_col_sep{};
-        //!\brief infinity symbol (a single symbol)
+        //!\brief Infinity symbol (a single symbol)
         char const * inf{};
     };
 
@@ -447,13 +447,13 @@ protected:
  * \{
  */
 //!\brief The type deduction guide for the constructor seqan3::detail::debug_matrix(matrix_t)
-template <Matrix matrix_t>
+template <matrix matrix_t>
 debug_matrix(matrix_t &&)
    -> debug_matrix<matrix_t>;
 
 //!\brief The type deduction guide for the constructor
 //!       seqan3::detail::debug_matrix(matrix_t, first_sequence_t, second_sequence_t)
-template <Matrix matrix_t, typename first_sequence_t, typename second_sequence_t>
+template <matrix matrix_t, typename first_sequence_t, typename second_sequence_t>
 debug_matrix(matrix_t &&, first_sequence_t &&, second_sequence_t &&)
    -> debug_matrix<matrix_t, first_sequence_t, second_sequence_t>;
 //!\}
@@ -463,7 +463,7 @@ debug_matrix(matrix_t &&, first_sequence_t &&, second_sequence_t &&)
 namespace seqan3
 {
 /*!\brief An alignment matrix can be printed to the seqan3::debug_stream.
- * \tparam alignment_matrix_t Type of the alignment matrix to be printed; must model seqan3::detail::Matrix.
+ * \tparam alignment_matrix_t Type of the alignment matrix to be printed; must model seqan3::detail::matrix.
  * \param s The seqan3::debug_stream.
  * \param matrix The alignment matrix.
  * \relates seqan3::debug_stream_type
@@ -472,7 +472,7 @@ namespace seqan3
  *
  * This prints out an alignment matrix which can be a score matrix or a trace matrix.
  */
-template <detail::Matrix alignment_matrix_t, typename char_t>
+template <detail::matrix alignment_matrix_t, typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
 {
     detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
@@ -484,9 +484,9 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, ali
 }
 
 //!\overload
-template <std::ranges::InputRange alignment_matrix_t, typename char_t>
+template <std::ranges::input_range alignment_matrix_t, typename char_t>
 //!\cond
-    requires detail::debug_stream_range_guard<alignment_matrix_t> && detail::Matrix<alignment_matrix_t>
+    requires detail::debug_stream_range_guard<alignment_matrix_t> && detail::matrix<alignment_matrix_t>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
 {

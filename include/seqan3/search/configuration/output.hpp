@@ -53,8 +53,8 @@ inline detail::search_output_text_position constexpr text_position;
  */
 template <typename output_t>
 //!\cond
-    requires std::Same<remove_cvref_t<output_t>, detail::search_output_text_position> ||
-             std::Same<remove_cvref_t<output_t>, detail::search_output_index_cursor>
+    requires std::same_as<remove_cvref_t<output_t>, detail::search_output_text_position> ||
+             std::same_as<remove_cvref_t<output_t>, detail::search_output_index_cursor>
 //!\endcond
 struct output : public pipeable_config_element<output<output_t>, output_t>
 {

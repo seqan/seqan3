@@ -25,7 +25,7 @@ TEST(lazy, instantiate)
 }
 
 template <typename t>
-    requires std::Integral<t>
+    requires std::integral<t>
 using integral_identity_t = t;
 
 TEST(lazy, lazy_conditional)

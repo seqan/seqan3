@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Includes the AlignedSequence and the related insert_gap and
+ * \brief Includes the aligned_sequence and the related insert_gap and
  *        erase_gap functions to enable stl container support.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
@@ -38,7 +38,7 @@ namespace seqan3::detail
 //!\brief Helper function to deduce the unaligned sequence type from an aligned sequence container.
 template <template <typename...> typename container_type, typename seq_alph_t, typename ...rest_t>
 //!\cond
-    requires Container<container_type<gapped<seq_alph_t>, rest_t...>>
+    requires container<container_type<gapped<seq_alph_t>, rest_t...>>
 //!\endcond
 constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, rest_t...>)
     -> container_type<seq_alph_t, rest_t...>;
@@ -48,7 +48,7 @@ template <template <typename...> typename container_type,
           template <typename...> typename allocator_type,
           typename seq_alph_t, typename ...rest_t>
 //!\cond
-    requires Container<container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>>
+    requires container<container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>>
 //!\endcond
 constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>)
     -> container_type<seq_alph_t, allocator_type<seq_alph_t>, rest_t...>;
@@ -88,14 +88,14 @@ using unaligned_seq_t = typename unaligned_seq<t>::type;
 } // namespace seqan3::detail
 
 // ---------------------------------------------------------------------------------------------------------------------
-// AlignedSequence
+// aligned_sequence
 // ---------------------------------------------------------------------------------------------------------------------
 
 namespace seqan3
 {
 
-/*!\interface seqan3::AlignedSequence <>
- * \extends   std::ranges::ForwardRange
+/*!\interface seqan3::aligned_sequence <>
+ * \extends   std::ranges::forward_range
  * \brief     The generic concept for an aligned sequence.
  * \ingroup   aligned_sequence
  *
@@ -107,15 +107,15 @@ namespace seqan3
  * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
  */
-/*!\name Requirements for seqan3::AlignedSequence
- * \brief You can expect these functions on all types that model seqan3::AlignedSequence.
- * \relates seqan3::AlignedSequence
+/*!\name Requirements for seqan3::aligned_sequence
+ * \brief You can expect these functions on all types that model seqan3::aligned_sequence.
+ * \relates seqan3::aligned_sequence
  * \{
  */
 /*!\fn      inline aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq, typename aligned_seq_t::const_iterator pos_it)
  * \brief   Insert a seqan3::gap into an aligned sequence.
  *
- * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::AlignedSequence.
+ * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::aligned_sequence.
  * \param[in,out] aligned_seq     The aligned sequence to modify.
  * \param[in]     pos_it          The iterator pointing to the position where to insert a gap.
  *
@@ -127,7 +127,7 @@ namespace seqan3
  *          pos_it, typename aligned_seq_t::size_type size)
  * \brief   Insert multiple seqan3::gap into an aligned sequence.
  *
- * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::AlignedSequence.
+ * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::aligned_sequence.
  * \param[in,out] aligned_seq     The aligned sequence to modify.
  * \param[in]     pos_it          The iterator pointing to the position where to insert a gaps.
  * \param[in]     size            The number of gap symbols to insert (will result in a gap of length `size`).
@@ -140,7 +140,7 @@ namespace seqan3
  *          pos_it)
  * \brief   Erase a seqan3::gap from an aligned sequence.
  *
- * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::AlignedSequence.
+ * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::aligned_sequence.
  * \param[in,out] aligned_seq     The aligned sequence to modify.
  * \param[in]     pos_it          The iterator pointing to the position where to erase a gap.
  *
@@ -154,7 +154,7 @@ namespace seqan3
  *          first, typename aligned_seq_t::const_iterator last)
  * \brief   Erase multiple seqan3::gap from an aligned sequence.
  *
- * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::AlignedSequence.
+ * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::aligned_sequence.
  * \param[in,out] aligned_seq     The aligned sequence to modify.
  * \param[in]     first           The iterator pointing to the position where to start erasing gaps.
  * \param[in]     last            The iterator pointing to the position where to stop erasing gaps.
@@ -168,7 +168,7 @@ namespace seqan3
 /*!\fn      void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_type && unaligned_seq)
  * \brief   Assign an ungapped sequence to a gapped sequence.
  *
- * \tparam        aligned_seq_t     Type of the container to reassign; must model seqan3::AlignedSequence.
+ * \tparam        aligned_seq_t     Type of the container to reassign; must model seqan3::aligned_sequence.
  * \tparam        unaligned_seq_t   Type of the container to assign from; must correspond to the aligned type without
  *                                  gap information (see details.)
  * \param[in,out] aligned_seq       The gapped sequence container to assign to.
@@ -186,10 +186,10 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT AlignedSequence =
-    std::ranges::ForwardRange<t> &&
-    Alphabet<reference_t<t>> &&
-    WeaklyAssignable<reference_t<t>, gap const &> &&
+SEQAN3_CONCEPT aligned_sequence =
+    std::ranges::forward_range<t> &&
+    alphabet<reference_t<t>> &&
+    weakly_assignable_from<reference_t<t>, gap const &> &&
     requires { typename detail::unaligned_seq_t<t>; } &&
     requires (t v, detail::unaligned_seq_t<t> unaligned)
     {
@@ -206,13 +206,13 @@ SEQAN3_CONCEPT AlignedSequence =
 // ---------------------------------------------------------------------------------------------------------------------
 
 /*!\name Aligned sequence interface for containers over the seqan3::gapped alphabet
- * \brief Enables containers to model seqan3::AlignedSequence if they model seqan3::SequenceContainer
+ * \brief Enables containers to model seqan3::aligned_sequence if they model seqan3::sequence_container
  *        and have a value type of the seqan3::gapped alphabet.
  * \{
  */
-/*!\brief An implementation of seqan3::AlignedSequence::insert_gap for sequence containers.
+/*!\brief An implementation of seqan3::aligned_sequence::insert_gap for sequence containers.
  * \ingroup aligned_sequence
- * \tparam        aligned_seq_t   Type of the container to modify; must model seqan3::SequenceContainer;
+ * \tparam        aligned_seq_t   Type of the container to modify; must model seqan3::sequence_container;
  *                                The value type must be a seqan3::gapped alphabet.
  * \param[in,out] aligned_seq     The aligned container to modify.
  * \param[in]     pos_it          The iterator pointing to the position where to insert a gap.
@@ -222,7 +222,7 @@ SEQAN3_CONCEPT AlignedSequence =
  * This function delegates to the member function `insert(iterator, value)` of
  * the container.
  */
-template <SequenceContainer aligned_seq_t>
+template <sequence_container aligned_seq_t>
 //!\cond
     requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>>
 //!\endcond
@@ -232,9 +232,9 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
     return aligned_seq.insert(pos_it, value_type_t<aligned_seq_t>{gap{}});
 }
 
-/*!\brief An implementation of seqan3::AlignedSequence::insert_gap for sequence containers.
+/*!\brief An implementation of seqan3::aligned_sequence::insert_gap for sequence containers.
  * \ingroup aligned_sequence
- * \tparam        aligned_seq_t   Type of the container to modify; must model seqan3::SequenceContainer;
+ * \tparam        aligned_seq_t   Type of the container to modify; must model seqan3::sequence_container;
  *                                The value type must be a seqan3::gapped alphabet.
  * \param[in,out] aligned_seq     The aligned container to modify.
  * \param[in]     pos_it          The iterator pointing to the position where to insert gaps.
@@ -245,7 +245,7 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
  * This function delegates to the member function `insert(iterator, `size`, `value`)`
  * of the container.
  */
-template <SequenceContainer aligned_seq_t>
+template <sequence_container aligned_seq_t>
 //!\cond
     requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>>
 //!\endcond
@@ -256,9 +256,9 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
     return aligned_seq.insert(pos_it, size, value_type_t<aligned_seq_t>{gap{}});
 }
 
-/*!\brief An implementation of seqan3::AlignedSequence::erase_gap for sequence containers.
+/*!\brief An implementation of seqan3::aligned_sequence::erase_gap for sequence containers.
  * \ingroup aligned_sequence
- * \tparam        aligned_seq_t   Type of the container to modify; must model seqan3::SequenceContainer;
+ * \tparam        aligned_seq_t   Type of the container to modify; must model seqan3::sequence_container;
  *                                The value type must be a seqan3::gapped alphabet.
  * \param[in,out] aligned_seq     The aligned container to modify.
  * \param[in]     pos_it          The iterator pointing to the position where to erase a gap.
@@ -271,7 +271,7 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
  * container. Before delegating, the function checks if the position pointed to
  * by \p pos_it is an actual seqan3::gap and throws an exception if not.
  */
-template <SequenceContainer aligned_seq_t>
+template <sequence_container aligned_seq_t>
 //!\cond
     requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>>
 //!\endcond
@@ -284,9 +284,9 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
     return aligned_seq.erase(pos_it);
 }
 
-/*!\brief An implementation of seqan3::AlignedSequence::erase_gap for sequence containers.
+/*!\brief An implementation of seqan3::aligned_sequence::erase_gap for sequence containers.
  * \ingroup aligned_sequence
- * \tparam        aligned_seq_t   Type of the container to modify; must model seqan3::SequenceContainer;
+ * \tparam        aligned_seq_t   Type of the container to modify; must model seqan3::sequence_container;
  *                                The value type must be a seqan3::gapped alphabet.
  * \param[in,out] aligned_seq     The aligned container to modify.
  * \param[in]     first           The iterator pointing to the position where to start erasing gaps.
@@ -300,7 +300,7 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  * the container. Before delegating, the function checks if the range
  * [\p first, \p last) contains only seqan3::gap symbols.
  */
-template <SequenceContainer aligned_seq_t>
+template <sequence_container aligned_seq_t>
 //!\cond
     requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>>
 //!\endcond
@@ -315,11 +315,11 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
     return aligned_seq.erase(first, last);
 }
 
-/*!\brief An implementation of seqan3::AlignedSequence::assign_unaligned_sequence for sequence containers.
+/*!\brief An implementation of seqan3::aligned_sequence::assign_unaligned_sequence for sequence containers.
  * \ingroup aligned_sequence
- * \tparam        aligned_seq_t     Type of the container to reassign; must model seqan3::SequenceContainer;
+ * \tparam        aligned_seq_t     Type of the container to reassign; must model seqan3::sequence_container;
  *                                  the value type must be a seqan3::gapped alphabet.
- * \tparam        unaligned_seq_t   Type of the container to assign from; must model std::ranges::ForwardRange.
+ * \tparam        unaligned_seq_t   Type of the container to assign from; must model std::ranges::forward_range.
  * \param[in,out] aligned_seq       The gapped sequence container to assign to.
  * \param[in,out] unaligned_seq     The unaligned sequence container to assign from.
  *
@@ -337,10 +337,10 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  * Strong exception guarantee.
  *
  */
-template <SequenceContainer aligned_seq_t, std::ranges::ForwardRange unaligned_sequence_type>
+template <sequence_container aligned_seq_t, std::ranges::forward_range unaligned_sequence_type>
 //!\cond
     requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>> &&
-             WeaklyAssignable<reference_t<aligned_seq_t>, reference_t<unaligned_sequence_type>>
+             weakly_assignable_from<reference_t<aligned_seq_t>, reference_t<unaligned_sequence_type>>
 //!\endcond
 inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_type && unaligned_seq)
 {
@@ -353,11 +353,11 @@ inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_typ
 //!\}
 
 /*!\name Aligned sequence interface for ranges that have the corresponding member functions.
- * \brief Enables ranges to model seqan3::AlignedSequence if they have the member functions
+ * \brief Enables ranges to model seqan3::aligned_sequence if they have the member functions
  *        insert_gap() and erase_gap().
  * \{
  */
-/*!\brief An implementation of seqan3::AlignedSequence::insert_gap for ranges with the corresponding
+/*!\brief An implementation of seqan3::aligned_sequence::insert_gap for ranges with the corresponding
  *        member function insert_gap(it, size).
  * \ingroup aligned_sequence
  * \tparam range_type   Type of the range to modify; must have an insert_gap(it, size) member function.
@@ -384,7 +384,7 @@ typename range_type::iterator insert_gap(range_type & rng,
     return rng.insert_gap(it, size);
 }
 
-/*!\brief An implementation of seqan3::AlignedSequence::erase_gap for ranges with the corresponding
+/*!\brief An implementation of seqan3::aligned_sequence::erase_gap for ranges with the corresponding
  *        member function erase_gap(it).
  * \ingroup aligned_sequence
  * \tparam range_type   Type of the range to modify; must have an erase_gap(it) member function.
@@ -406,7 +406,7 @@ typename range_type::iterator erase_gap(range_type & rng,
     return rng.erase_gap(it);
 }
 
-/*!\brief An implementation of seqan3::AlignedSequence::erase_gap for ranges with the corresponding
+/*!\brief An implementation of seqan3::aligned_sequence::erase_gap for ranges with the corresponding
  *        member function erase_gap(first, last).
  * \ingroup aligned_sequence
  * \tparam range_type   Type of the range to modify; must have an erase_gap(first, last) member function.
@@ -437,12 +437,12 @@ namespace detail
 
 /*!\brief               Create the formatted alignment output and add it to the provided debug_stream.
  * \ingroup             aligned_sequence
- * \tparam alignment_t  The type of the alignment, must satisfy TupleLike.
+ * \tparam alignment_t  The type of the alignment, must satisfy tuple_like.
  * \tparam idx          An index sequence.
  * \param[in] stream    The output stream that receives the formatted alignment.
  * \param[in] align     The alignment that shall be streamed.
  */
-template <typename char_t, TupleLike alignment_t, size_t ...idx>
+template <typename char_t, tuple_like alignment_t, size_t ...idx>
 void stream_alignment(debug_stream_type<char_t> & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
     using std::get;
@@ -490,28 +490,28 @@ void stream_alignment(debug_stream_type<char_t> & stream, alignment_t const & al
     }
 }
 
-/*!\brief True, if each type satisfies AlignedSequence; false otherwise.
+/*!\brief True, if each type satisfies aligned_sequence; false otherwise.
  * \tparam elems The pack of types to be tested.
  */
 template <typename ...elems>
 inline bool constexpr all_satisfy_aligned_seq = false;
 
-/*!\brief True, if each type satisfies AlignedSequence; false otherwise.
+/*!\brief True, if each type satisfies aligned_sequence; false otherwise.
  * \tparam elems The pack of types to be tested.
  */
 template <typename ...elems>
-inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (AlignedSequence<elems> && ...);
+inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_sequence<elems> && ...);
 
 } // namespace detail
 
-/*!\brief Streaming operator for alignments, which are represented as tuples of aligned sequences.
+/*!\brief Stream operator for alignments, which are represented as tuples of aligned sequences.
  * \ingroup         aligned_sequence
- * \tparam tuple_t  The alignment type, must satisfy TupleLike and its size must be at least 2.
+ * \tparam tuple_t  The alignment type, must satisfy tuple_like and its size must be at least 2.
  * \param stream    The target stream for the formatted output.
  * \param alignment The alignment that shall be formatted. All sequences must be equally long.
  * \return          The given stream to which the alignment representation is appended.
  */
-template <TupleLike tuple_t, typename char_t>
+template <tuple_like tuple_t, typename char_t>
 //!\cond
     requires detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<tuple_t>>
 //!\endcond

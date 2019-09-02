@@ -27,7 +27,7 @@ namespace seqan3::detail
 
 //!\brief Helper function for seqan3::simd::fill.
 //!\ingroup simd
-template <Simd simd_t, size_t... I>
+template <simd::simd_concept simd_t, size_t... I>
 constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>)
 {
     return simd_t{((void)I, scalar)...};
@@ -35,7 +35,7 @@ constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scala
 
 //!\brief Helper function for seqan3::simd::iota.
 //!\ingroup simd
-template <Simd simd_t, typename scalar_t, scalar_t... I>
+template <simd::simd_concept simd_t, typename scalar_t, scalar_t... I>
 constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t, I...>)
 {
     return simd_t{static_cast<scalar_t>(offset + I)...};
@@ -44,7 +44,7 @@ constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t
 /*!\brief Helper function to extract a part of the given simd vector.
  * \ingroup simd
  * \tparam divisor The divisor to select the chunk size.
- * \tparam simd_t  The simd type; must model seqan3::Simd.
+ * \tparam simd_t  The simd type; must model seqan3::simd::simd_concept.
  *
  * \param[in] src  The source vector to extract from.
  * \param[in] mask The control mask to select which chunk is extracted.
@@ -55,7 +55,7 @@ constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t
  * Extracts the specified part of the source simd vector and stores it in the first chunk starting at offset 0 in
  * the destination vector.
  */
-template <size_t divisor, Simd simd_t>
+template <size_t divisor, simd_concept simd_t>
 constexpr simd_t extract_impl(simd_t const & src, uint8_t const mask)
 {
     simd_t dst{};
@@ -68,12 +68,12 @@ constexpr simd_t extract_impl(simd_t const & src, uint8_t const mask)
 }
 
 /*!\brief Upcasts the given vector into the target vector using signed extension of packed values.
- * \tparam target_simd_t The target simd type; must model seqan3::simd::Simd and must be a native builtin simd type.
- * \tparam source_simd_t The source simd type; must model seqan3::simd::Simd and must be a native builtin simd type.
+ * \tparam target_simd_t The target simd type; must model seqan3::simd::simd_concept and must be a native builtin simd type.
+ * \tparam source_simd_t The source simd type; must model seqan3::simd::simd_concept and must be a native builtin simd type.
  * \param[in] src The source to upcast into `target_simd_t`.
  * \ingroup simd
  */
-template <Simd target_simd_t, Simd source_simd_t>
+template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_signed(source_simd_t const & src)
 {
     if constexpr (simd_traits<source_simd_t>::max_length == 16) // SSE4
@@ -156,17 +156,17 @@ constexpr target_simd_t upcast_signed(source_simd_t const & src)
     }
     else
     {
-        static_assert(simd_traits<source_simd_t>::max_length <= 32, "Simd type is not supported.");
+        static_assert(simd_traits<source_simd_t>::max_length <= 32, "simd type is not supported.");
     }
 }
 
 /*!\brief Upcasts the given vector into the target vector using unsigned extension of packed values.
- * \tparam target_simd_t The target simd type; must model seqan3::simd::Simd and must be a native builtin simd type.
- * \tparam source_simd_t The source simd type; must model seqan3::simd::Simd and must be a native builtin simd type.
+ * \tparam target_simd_t The target simd type; must model seqan3::simd::simd_concept and must be a native builtin simd type.
+ * \tparam source_simd_t The source simd type; must model seqan3::simd::simd_concept and must be a native builtin simd type.
  * \param[in] src The source to upcast into `target_simd_t`.
  * \ingroup simd
  */
-template <Simd target_simd_t, Simd source_simd_t>
+template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
 {
     if constexpr (simd_traits<source_simd_t>::max_length == 16) // SSE4
@@ -249,7 +249,7 @@ constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
     }
     else
     {
-        static_assert(simd_traits<source_simd_t>::max_length <= 32, "Simd type is not supported.");
+        static_assert(simd_traits<source_simd_t>::max_length <= 32, "simd type is not supported.");
     }
 }
 
@@ -275,7 +275,7 @@ constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
  * dst[63:0] := src[i+63:i]
  * ```
  */
-template <uint8_t index, Simd simd_t>
+template <uint8_t index, simd::simd_concept simd_t>
 //!\cond
     requires detail::is_builtin_simd_v<simd_t>
 //!\endcond
@@ -313,7 +313,7 @@ constexpr simd_t extract_halve(simd_t const & src)
  * dst[31:0] := src[i+31:i]
  * ```
  */
-template <uint8_t index, Simd simd_t>
+template <uint8_t index, simd::simd_concept simd_t>
 //!\cond
     requires detail::is_builtin_simd_v<simd_t>
 //!\endcond
@@ -351,7 +351,7 @@ constexpr simd_t extract_quarter(simd_t const & src)
  * dst[15:0] := src[i+15:i]
  * ```
  */
-template <uint8_t index, Simd simd_t>
+template <uint8_t index, simd::simd_concept simd_t>
 //!\cond
     requires detail::is_builtin_simd_v<simd_t>
 //!\endcond
@@ -375,7 +375,7 @@ inline namespace simd
 {
 
 /*!\brief Fills a seqan3::simd::simd_type vector with a scalar value.
- * \tparam    simd_t The simd type which satisfies seqan3::simd::Simd.
+ * \tparam    simd_t The simd type which satisfies seqan3::simd::simd_concept.
  * \param[in] scalar The scalar value to fill the seqan3::simd::simd_type vector.
  * \ingroup simd
  *
@@ -383,7 +383,7 @@ inline namespace simd
  *
  * \include test/snippet/core/simd/fill.cpp
  */
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
@@ -391,7 +391,7 @@ constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
 }
 
 /*!\brief Fills a seqan3::simd::simd_type vector with the scalar values offset, offset+1, offset+2, ...
- * \tparam    simd_t The simd type which satisfies seqan3::simd::Simd.
+ * \tparam    simd_t The simd type which satisfies seqan3::simd::simd_concept.
  * \param[in] offset The scalar offset to fill the seqan3::simd::simd_type vector.
  * \ingroup simd
  *
@@ -399,7 +399,7 @@ constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
  *
  * \include test/snippet/core/simd/iota.cpp
  */
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
@@ -409,14 +409,14 @@ constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
 
 /*!\brief Load simd_t size bits of integral data from memory.
  * \ingroup simd
- * \tparam    simd_t   The simd type; must model seqan3::simd::Simd.
+ * \tparam    simd_t   The simd type; must model seqan3::simd::simd_concept.
  * \param[in] mem_addr The memory address to load from. Does not need to be aligned on any particular boundary.
  *
  * \details
  *
  * \include test/snippet/core/simd/simd_load.cpp
  */
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 //!\cond
     requires detail::is_builtin_simd_v<simd_t>
 //!\endcond
@@ -448,7 +448,7 @@ constexpr simd_t load(void const * mem_addr)
 
 /*!\brief Transposes the given simd vector matrix.
  * \ingroup simd
- * \tparam simd_t The simd vector type; must model seqan3::detail::Simd and must be a simd built-in type.
+ * \tparam simd_t The simd vector type; must model seqan3::detail::simd_conceptand must be a simd built-in type.
  * \param[in,out] matrix The matrix that is transposed in place.
  *
  * \details
@@ -463,7 +463,7 @@ constexpr simd_t load(void const * mem_addr)
  *
  * Quadratic.
  */
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 //!\cond
     requires detail::is_builtin_simd_v<simd_t>
 //!\endcond
@@ -489,13 +489,13 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
 
 /*!\brief Upcasts the given vector into the target vector using sign extension of packed values.
  * \ingroup simd
- * \tparam simd_t The simd type; must model seqan3::simd::Simd and must be a builtin simd type.
+ * \tparam simd_t The simd type; must model seqan3::simd::simd_concept and must be a builtin simd type.
  *
  * \details
  *
  * \include test/snippet/core/simd/simd_upcast.cpp
  */
-template <Simd target_simd_t, Simd source_simd_t>
+template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 //!\cond
     requires detail::is_builtin_simd_v<target_simd_t> &&
              detail::is_builtin_simd_v<source_simd_t>
@@ -513,13 +513,13 @@ constexpr target_simd_t upcast(source_simd_t const & src)
                         "Target vector has a different byte size.");
             return reinterpret_cast<target_simd_t>(src);  // Same packing so we do not cast.
         }
-        else if constexpr (std::SignedIntegral<typename simd_traits<source_simd_t>::scalar_type>)
+        else if constexpr (std::signed_integral<typename simd_traits<source_simd_t>::scalar_type>)
         {
             return detail::upcast_signed<target_simd_t>(src);
         }
         else
         {
-            static_assert(std::UnsignedIntegral<typename simd_traits<source_simd_t>::scalar_type>,
+            static_assert(std::unsigned_integral<typename simd_traits<source_simd_t>::scalar_type>,
                         "Expected unsigned scalar type.");
             return detail::upcast_unsigned<target_simd_t>(src);
         }

@@ -19,9 +19,9 @@ namespace seqan3
 
 /*!\brief A semi-alphabet that type erases all other semi-alphabets of the same size.
  * \ingroup composite
- * \implements seqan3::Semialphabet
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
+ * \implements seqan3::semialphabet
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
  *
  * \details
  * This alphabet provides a generic representation for different alphabets of the same size by erasing
@@ -66,7 +66,7 @@ public:
     ~semialphabet_any()                                              noexcept = default; //!< Defaulted.
 
     //!\brief Construct semialphabet_any from alphabet of the same size
-    template <Semialphabet other_alph_t>
+    template <semialphabet other_alph_t>
     //!\cond
         requires (alphabet_size<other_alph_t> == size)
     //!\endcond
@@ -77,7 +77,7 @@ public:
     //!\}
 
     //!\brief Enable conversion of semialphabet_any into other (semi-)alphabet of the same size
-    template <Semialphabet other_alph_t>
+    template <semialphabet other_alph_t>
     //!\cond
         requires (alphabet_size<other_alph_t> == size)
     //!\endcond

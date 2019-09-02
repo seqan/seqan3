@@ -19,11 +19,11 @@ namespace seqan3
 {
 /*!\brief Implementation of a masked alphabet to be used for tuple composites.
  * \ingroup mask
- * \implements seqan3::WritableSemialphabet
- * \if DEV \implements seqan3::detail::ConstexprWritableSemialphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \implements seqan3::writable_semialphabet
+ * \if DEV \implements seqan3::detail::Constexprwritable_semialphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
  * \details
  * This alphabet is not usually used directly, but instead via seqan3::masked.

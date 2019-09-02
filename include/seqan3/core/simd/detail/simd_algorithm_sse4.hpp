@@ -24,14 +24,14 @@ namespace seqan3::detail
 
 /*!\brief Transposes the given simd vector matrix using SSE4 intrinsics.
  * \ingroup simd
- * \tparam simd_t The simd vector type; must model seqan3::detail::Simd and must be a simd built-in and native type.
+ * \tparam simd_t The simd vector type; must model seqan3::detail::simd_conceptand must be a simd built-in and native type.
  * \param[in,out] matrix The matrix that is transposed in place.
  *
  * \details
  *
  * Does inplace transformation using SSE4 intrinsics.
  */
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
 {
     static_assert(simd_traits<simd_t>::length == simd_traits<simd_t>::max_length, "Expects byte scalar type.");

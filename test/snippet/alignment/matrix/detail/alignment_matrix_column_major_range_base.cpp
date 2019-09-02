@@ -51,7 +51,7 @@ private:
     }
 
     //Required for the base class. Initialises the proxy for the current iterator over the current column.
-    template <std::RandomAccessIterator iter_t>
+    template <std::random_access_iterator iter_t>
     constexpr reference make_proxy(iter_t iter) noexcept
     {
         return *iter;

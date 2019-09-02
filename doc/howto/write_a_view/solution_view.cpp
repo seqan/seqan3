@@ -9,12 +9,12 @@
 using namespace seqan3;
 
 /* The iterator template */
-template <std::ranges::ForwardRange urng_t>            // CRTP derivation ↓
+template <std::ranges::forward_range urng_t>            // CRTP derivation ↓
 class my_iterator : public seqan3::detail::inherited_iterator_base<my_iterator<urng_t>,
                                                                    std::ranges::iterator_t<urng_t>>
 {
 private:
-    static_assert(NucleotideAlphabet<reference_t<urng_t>>,
+    static_assert(nucleotide_alphabet<reference_t<urng_t>>,
                   "You can only iterate over ranges of nucleotides!");
 
     // the immediate base type is the CRTP-layer
@@ -49,12 +49,12 @@ public:
 };
 
 // The inherited_iterator_base creates the necessary code so we also model RandomAccess now!
-static_assert(std::RandomAccessIterator<my_iterator<std::vector<dna5>>>);
+static_assert(std::random_access_iterator<my_iterator<std::vector<dna5>>>);
 //![iterator]
 
 //![view_header]
 /* The view class template */
-template <std::ranges::View urng_t>  // CRTP derivation ↓
+template <std::ranges::view urng_t>  // CRTP derivation ↓
 class my_view : public std::ranges::view_interface<my_view<urng_t>>
 {
 //![view_header]
@@ -77,7 +77,7 @@ public:
     {}
 
     // construct from non-view that can be view-wrapped
-    template <std::ranges::ViewableRange orng_t>
+    template <std::ranges::viewable_range orng_t>
     my_view(orng_t && urange_) : urange{std::view::all(std::forward<orng_t>(urange_))}
     {}
     //![view_constructors]
@@ -119,7 +119,7 @@ public:
 
 //![view_deduction_guide]
 // A deduction guide for the view class template
-template <std::ranges::ViewableRange orng_t>
+template <std::ranges::viewable_range orng_t>
 my_view(orng_t &&) -> my_view<std::ranges::all_view<orng_t>>;
 //![view_deduction_guide]
 
@@ -127,13 +127,13 @@ my_view(orng_t &&) -> my_view<std::ranges::all_view<orng_t>>;
 /* The adaptor object's type definition */
 struct my_view_fn
 {
-    template <std::ranges::InputRange urng_t>
+    template <std::ranges::input_range urng_t>
     auto operator()(urng_t && urange) const
     {
         return my_view{std::forward<urng_t>(urange)};
     }
 
-    template <std::ranges::InputRange urng_t>
+    template <std::ranges::input_range urng_t>
     friend auto operator|(urng_t && urange, my_view_fn const &)
     {
         return my_view{std::forward<urng_t>(urange)};
@@ -169,14 +169,14 @@ int main()
 //![main_range]
     /* try the range */
     my_view v{vec};
-    static_assert(std::ranges::RandomAccessRange<decltype(v)>);
+    static_assert(std::ranges::random_access_range<decltype(v)>);
     debug_stream << '\n' << v << '\n';
 //![main_range]
 
 //![main_adaptor]
     /* try the adaptor */
     auto v2 = vec | std::view::reverse | ::view::my;
-    static_assert(std::ranges::RandomAccessRange<decltype(v2)>);
+    static_assert(std::ranges::random_access_range<decltype(v2)>);
     debug_stream << v2 << '\n';
 //![main_adaptor]
 

@@ -87,7 +87,7 @@ struct test_sized_sentinel : public test_sentinel<value_type_t<iterator_type>>
 };
 
 template <typename iterator_t>
-    requires std::RandomAccessIterator<iterator_t>
+    requires std::random_access_iterator<iterator_t>
 inline typename test_sized_sentinel<iterator_t>::difference_type
 operator-(test_sized_sentinel<iterator_t> const & s,
           iterator_t const & i)
@@ -96,7 +96,7 @@ operator-(test_sized_sentinel<iterator_t> const & s,
 }
 
 template <typename iterator_t>
-    requires std::RandomAccessIterator<iterator_t>
+    requires std::random_access_iterator<iterator_t>
 inline typename test_sized_sentinel<iterator_t>::difference_type
 operator-(iterator_t const & i,
           test_sized_sentinel<iterator_t> const & s)

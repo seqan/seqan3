@@ -25,8 +25,8 @@ TEST(alignment_file_input_iterator, concepts)
     using it_t = typename alignment_file_input<>::iterator;
     using sen_t = typename alignment_file_input<>::sentinel;
 
-    EXPECT_TRUE((std::InputIterator<it_t>));
-    EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
+    EXPECT_TRUE((std::input_iterator<it_t>));
+    EXPECT_TRUE((std::sentinel_for<sen_t, it_t>));
 }
 
 struct alignment_file_input_f : public ::testing::Test
@@ -66,11 +66,11 @@ read3	43	ref	3	63	1S1M1D4M1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 TEST_F(alignment_file_input_f, concepts)
 {
     using t = alignment_file_input<>;
-    EXPECT_TRUE((std::ranges::InputRange<t>));
+    EXPECT_TRUE((std::ranges::input_range<t>));
 
     using ct = alignment_file_input<> const;
     // not const-iterable
-    EXPECT_FALSE((std::ranges::InputRange<ct>));
+    EXPECT_FALSE((std::ranges::input_range<ct>));
 }
 
 TEST_F(alignment_file_input_f, construct_by_filename)

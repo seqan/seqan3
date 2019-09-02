@@ -34,7 +34,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::Validator <>
+/*!\interface seqan3::validator <>
  * \brief The concept for option validators passed to add_option/positional_option.
  * \ingroup argument_parser
  *
@@ -45,13 +45,13 @@ namespace seqan3
  * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
-/*!\name Requirements for seqan3::Validator
- * \brief You can expect these (meta-)functions on all types that implement seqan3::Validator.
+/*!\name Requirements for seqan3::validator
+ * \brief You can expect these (meta-)functions on all types that implement seqan3::validator.
  * \{
  */
 /*!\typedef     using value_type
  * \brief       The type of value on which the validator is called on.
- * \relates     seqan3::Validator
+ * \relates     seqan3::validator
  *
  * \details
  * \attention This is a concept requirement, not an actual typedef (however types satisfying this concept
@@ -61,7 +61,7 @@ namespace seqan3
  * \brief           Validates the value 'cmp' and throws a seqan3::validation_failed on failure.
  * \tparam          value_type The type of the value to be validated.
  * \param[in,out]   cmp The value to be validated.
- * \relates         seqan3::Validator
+ * \relates         seqan3::validator
  * \throws          seqan3::validation_failed if value 'cmp' does not pass validation.
  *
  * \details
@@ -70,7 +70,7 @@ namespace seqan3
  */
 /*!\fn              std::string get_help_page_message() const
  * \brief           Returns a message that can be appended to the (positional) options help page info.
- * \relates         seqan3::Validator
+ * \relates         seqan3::validator
  * \returns         A string that contains information on the performed validation.
  *
  * \details
@@ -80,7 +80,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename validator_type>
-SEQAN3_CONCEPT Validator = std::Copyable<remove_cvref_t<validator_type>> &&
+SEQAN3_CONCEPT validator = std::copyable<remove_cvref_t<validator_type>> &&
                            requires(validator_type validator,
                                     typename std::remove_reference_t<validator_type>::value_type value)
 {
@@ -93,7 +93,7 @@ SEQAN3_CONCEPT Validator = std::Copyable<remove_cvref_t<validator_type>> &&
 
 /*!\brief A validator that checks whether a number is inside a given range.
  * \ingroup argument_parser
- * \implements seqan3::Validator
+ * \implements seqan3::validator
  *
  * \tparam option_value_type Must be a (container of) arithmetic type(s).
  *
@@ -130,14 +130,14 @@ public:
     }
 
     /*!\brief Tests whether every element in \p range lies inside [`min`, `max`].
-     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange. The value type must model
-     *                    seqan3::Arithmetic.
+     * \tparam range_type The type of range to check; must model std::ranges::forward_range. The value type must model
+     *                    seqan3::arithmetic.
      * \param  range      The input range to iterate over and check every element.
      * \throws parser_invalid_argument
      */
-    template <std::ranges::ForwardRange range_type>
+    template <std::ranges::forward_range range_type>
     //!\cond
-        requires Arithmetic<value_type_t<range_type>>
+        requires arithmetic<value_type_t<range_type>>
     //!\endcond
     void operator()(range_type const & range) const
     {
@@ -160,7 +160,7 @@ private:
 
 /*!\brief A validator that checks whether a value is inside a list of valid values.
  * \ingroup argument_parser
- * \implements seqan3::Validator
+ * \implements seqan3::validator
  *
  * \details
  *
@@ -194,13 +194,13 @@ public:
     }
 
     /*!\brief Tests whether every element in \p range lies inside values.
-     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange.
+     * \tparam range_type The type of range to check; must model std::ranges::forward_range.
      * \param  range      The input range to iterate over and check every element.
      * \throws parser_invalid_argument
      */
-    template <std::ranges::ForwardRange range_type>
+    template <std::ranges::forward_range range_type>
     //!\cond
-        requires std::ConvertibleTo<value_type_t<range_type>, value_type const &>
+        requires std::convertible_to<value_type_t<range_type>, value_type const &>
     //!\endcond
     void operator()(range_type const & range) const
     {
@@ -224,10 +224,10 @@ private:
  * \{
  */
 
-template <Arithmetic option_value_type>
+template <arithmetic option_value_type>
 value_list_validator(std::vector<option_value_type>) -> value_list_validator<double>;
 
-template <Arithmetic option_value_type>
+template <arithmetic option_value_type>
 value_list_validator(std::initializer_list<option_value_type>) -> value_list_validator<double>;
 
 value_list_validator(std::vector<const char *>) -> value_list_validator<std::string>;
@@ -276,14 +276,14 @@ public:
 
     /*!\brief Tests whether every path in list \p v passes validation. See operator()(value_type const & value)
      *        for further information.
-     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
+     * \tparam range_type The type of range to check; must model std::ranges::forward_range and the value type must
      *                    be convertible to std::filesystem::path.
      * \param  v          The input range to iterate over and check every element.
      * \throws parser_invalid_argument
      */
-    template <std::ranges::ForwardRange range_type>
+    template <std::ranges::forward_range range_type>
     //!\cond
-        requires std::ConvertibleTo<value_type_t<range_type>, std::filesystem::path const &>
+        requires std::convertible_to<value_type_t<range_type>, std::filesystem::path const &>
     //!\endcond
     void operator()(range_type const & v) const
     {
@@ -382,7 +382,7 @@ protected:
 
 /*!\brief A validator that checks if a given path is a valid input file.
  * \ingroup argument_parser
- * \implements seqan3::Validator
+ * \implements seqan3::validator
  * \tparam file_t The type of the file to get the valid extensions for; `void` on default.
  *
  * \details
@@ -407,7 +407,7 @@ class input_file_validator : public file_validator_base
 {
 public:
 
-    static_assert(std::Same<file_t, void> || detail::has_type_valid_formats<file_t>,
+    static_assert(std::same_as<file_t, void> || detail::has_type_valid_formats<file_t>,
                   "Expected either a template type with a static member called valid_formats (a file type) or void.");
 
     // Import from base class.
@@ -427,7 +427,7 @@ public:
      */
     input_file_validator()
     {
-        if constexpr (!std::Same<file_t, void>)
+        if constexpr (!std::same_as<file_t, void>)
             file_validator_base::extensions = detail::valid_file_extensions<typename file_t::valid_formats>();
     }
 
@@ -447,7 +447,7 @@ public:
      */
     explicit input_file_validator(std::vector<std::string> extensions)
     //!\cond
-        requires std::Same<file_t, void>
+        requires std::same_as<file_t, void>
     //!\endcond
         : file_validator_base{}
     {
@@ -500,7 +500,7 @@ public:
 
 /*!\brief A validator that checks if a given path is a valid output file.
  * \ingroup argument_parser
- * \implements seqan3::Validator
+ * \implements seqan3::validator
  * \tparam file_t The type of the file to get the valid extensions for; `void` on default.
  *
  * \details
@@ -525,7 +525,7 @@ class output_file_validator : public file_validator_base
 {
 public:
 
-    static_assert(std::Same<file_t, void> || detail::has_type_valid_formats<file_t>,
+    static_assert(std::same_as<file_t, void> || detail::has_type_valid_formats<file_t>,
                 "Expected either a template type with a static member called valid_formats (a file type) or void.");
 
     // Import from base class.
@@ -538,7 +538,7 @@ public:
     //!\copydoc seqan3::input_file_validator::input_file_validator()
     output_file_validator()
     {
-        if constexpr (!std::Same<file_t, void>)
+        if constexpr (!std::same_as<file_t, void>)
             file_validator_base::extensions = detail::valid_file_extensions<typename file_t::valid_formats>();
     }
 
@@ -551,7 +551,7 @@ public:
     //!\copydoc seqan3::input_file_validator::input_file_validator(std::vector<std::string>)
     explicit output_file_validator(std::vector<std::string> extensions)
     //!\cond
-        requires std::Same<file_t, void>
+        requires std::same_as<file_t, void>
     //!\endcond
         : file_validator_base{}
     {
@@ -603,7 +603,7 @@ public:
 
 /*!\brief A validator that checks if a given path is a valid input directory.
  * \ingroup argument_parser
- * \implements seqan3::Validator
+ * \implements seqan3::validator
  *
  * \details
  *
@@ -675,7 +675,7 @@ public:
 
 /*!\brief A validator that checks if a given path is a valid output directory.
  * \ingroup argument_parser
- * \implements seqan3::Validator
+ * \implements seqan3::validator
  *
  * \details
  *
@@ -757,7 +757,7 @@ public:
 
 /*!\brief A validator that checks if a matches a regular expression pattern.
  * \ingroup argument_parser
- * \implements seqan3::Validator
+ * \implements seqan3::validator
  *
  * \details
  *
@@ -797,14 +797,14 @@ public:
     }
 
     /*!\brief Tests whether every filename in list v matches the pattern.
-     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
+     * \tparam range_type The type of range to check; must model std::ranges::forward_range and the value type must
      *                    be convertible to std::string.
      * \param  v          The input range to iterate over and check every element.
      * \throws parser_invalid_argument
      */
-    template <std::ranges::ForwardRange range_type>
+    template <std::ranges::forward_range range_type>
     //!\cond
-        requires std::ConvertibleTo<value_type_t<range_type>, value_type const &>
+        requires std::convertible_to<value_type_t<range_type>, value_type const &>
     //!\endcond
     void operator()(range_type const & v) const
     {
@@ -827,7 +827,7 @@ namespace detail
 
 /*!\brief Validator that always returns true.
  * \ingroup argument_parser
- * \implements seqan3::Validator
+ * \implements seqan3::validator
  *
  * \details
  *
@@ -853,7 +853,7 @@ struct default_validator
 
 /*!\brief A helper struct to chain validators recursively via the pipe operator.
  *\ingroup argument_parser
- *\implements seqan3::Validator
+ *\implements seqan3::validator
  *
  *\details
  *
@@ -862,9 +862,9 @@ struct default_validator
  * call is well-formed. (add_option(val, ...., validator) requires
  * that val is of same type as validator::value_type).
  */
-template <Validator validator1_type, Validator validator2_type>
+template <validator validator1_type, validator validator2_type>
 //!\cond
-    requires std::Same<typename validator1_type::value_type, typename validator2_type::value_type>
+    requires std::same_as<typename validator1_type::value_type, typename validator2_type::value_type>
 //!\endcond
 class validator_chain_adaptor
 {
@@ -903,7 +903,7 @@ public:
      */
     template <typename cmp_type>
     //!\cond
-        requires std::Invocable<validator1_type, cmp_type const> && std::Invocable<validator2_type, cmp_type const>
+        requires std::invocable<validator1_type, cmp_type const> && std::invocable<validator2_type, cmp_type const>
     //!\endcond
     void operator()(cmp_type const & cmp) const
     {
@@ -929,10 +929,10 @@ private:
 /*!\brief Enables the chaining of validators.
  * \ingroup argument_parser
  * \tparam validator1_type The type of the fist validator;
- *                         Must satisfy the seqan3::Validator and the
+ *                         Must satisfy the seqan3::validator and the
  *                         same value_type as the second validator type.
  * \tparam validator2_type The type of the second validator;
- *                         Must satisfy the seqan3::Validator and the
+ *                         Must satisfy the seqan3::validator and the
  *                         same value_type as the fist validator type.
  * \param[in] vali1 The first validator to chain.
  * \param[in] vali2 The second validator to chain.
@@ -953,9 +953,9 @@ private:
  * You can chain as many validators as you want which will be evaluated one after
  * the other from left to right (first to last).
  */
-template <Validator validator1_type, Validator validator2_type>
+template <validator validator1_type, validator validator2_type>
 //!\cond
-    requires std::Same<typename std::remove_reference_t<validator1_type>::value_type,
+    requires std::same_as<typename std::remove_reference_t<validator1_type>::value_type,
                        typename std::remove_reference_t<validator2_type>::value_type>
 //!\endcond
 auto operator|(validator1_type && vali1, validator2_type && vali2)

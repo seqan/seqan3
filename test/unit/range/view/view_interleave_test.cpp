@@ -54,37 +54,37 @@ TEST(view_interleave, basic)
 
 TEST(view_interleave, concepts)
 {
-    // RandomAccessRange, ViewableRange, SizedRange
+    // random_access_range, viewable_range, sized_range
     std::string u{"FOOBARBAXBAT"};
     std::string i{"in"};
     size_t s = 3;
     auto v1 = detail::view_interleave(view::all(u), s, view::all(i));
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(v1), char>));
 
-    EXPECT_FALSE(std::ranges::ContiguousRange<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v1)>);
 
-    // ForwardRange, ViewableRange
+    // forward_range, viewable_range
     std::forward_list<dna4> u2{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4};
     dna4_vector i2{'G'_dna4};
     auto v2 = view::interleave(u2, s, i2);
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v2)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v2)>);
 
-    EXPECT_FALSE(std::ranges::ForwardRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::BidirectionalRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::RandomAccessRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::ContiguousRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::SizedRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v2), dna4>));
+    EXPECT_FALSE(std::ranges::forward_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::random_access_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v2), dna4>));
 }
 
 TEST(view_interleave, chunk_join)

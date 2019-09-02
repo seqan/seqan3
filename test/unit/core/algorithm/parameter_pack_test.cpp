@@ -38,7 +38,7 @@ TEST(parameter_pack, for_each_value2)
 
     auto fn = [&stream](auto const & arg)
     {
-        if constexpr(Alphabet<decltype(arg)>)
+        if constexpr(alphabet<decltype(arg)>)
             stream << to_char(arg) << ";";
         else
             stream << arg << ";";

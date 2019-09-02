@@ -30,13 +30,13 @@ namespace seqan3::detail
  * \details
  *
  * Manages the actual storage as a std::vector. How much memory is allocated is handled by the derived type.
- * The `score_t` must either model the seqan3::Arithmetic or seqan3::detail::Simd vector concept.
+ * The `score_t` must either model the seqan3::arithmetic or seqan3::detail::simd_conceptvector concept.
  */
 template <typename score_t>
 struct alignment_score_matrix_one_column_base
 {
 protected:
-    static_assert(Arithmetic<score_t> || Simd<score_t>,
+    static_assert(arithmetic<score_t> || simd_concept<score_t>,
                   "Score type must either be either an arithmetic type or a simd vector type.");
 
     //!\brief The actual element type.

@@ -87,7 +87,7 @@ inline small_string constexpr condition_message_v
 };
 
 // ----------------------------------------------------------------------------
-// CharPredicate
+// char_predicate
 // ----------------------------------------------------------------------------
 
 //!\cond
@@ -95,20 +95,20 @@ template <typename condition_t>
 class char_predicate_base;
 //!\endcond
 
-/*!\interface seqan3::detail::CharPredicate <>
+/*!\interface seqan3::detail::char_predicate <>
  * \brief An internal concept to check if an object fulfills the requirements of a seqan3::detail::char_predicate.
  * \ingroup stream
  *
  * \details
  *
- * An object of the type must be invocable with a std::Integral type and supply a static constexpr `msg` member of type
+ * An object of the type must be invocable with a std::integral type and supply a static constexpr `msg` member of type
  * seqan3::small_string.
  */
 //!\cond
 template <typename condition_t>
-SEQAN3_CONCEPT CharPredicate = requires
+SEQAN3_CONCEPT char_predicate = requires
 {
-    requires std::Predicate<std::remove_reference_t<condition_t>, char>;
+    requires std::predicate<std::remove_reference_t<condition_t>, char>;
     requires std::is_base_of_v<char_predicate_base<remove_cvref_t<condition_t>>,
                                remove_cvref_t<condition_t>>;
 
@@ -120,13 +120,13 @@ SEQAN3_CONCEPT CharPredicate = requires
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::detail::CharPredicate
- * \brief You can expect the variable and the predicate function on all types that satisfy seqan3::OStream.
+/*!\name Requirements for seqan3::detail::char_predicate
+ * \brief You can expect the variable and the predicate function on all types that satisfy seqan3::output_stream_over.
  * \{
  */
 /*!\fn      bool operator()(char_type c);
- * \brief   Predicate function to test if `c` satisfies the given condition.
- * \memberof seqan3::detail::CharPredicate
+ * \brief   predicate function to test if `c` satisfies the given condition.
+ * \memberof seqan3::detail::char_predicate
  * \param   c The character to be tested.
  * \returns `true` on success, `false` otherwise.
  *
@@ -135,7 +135,7 @@ SEQAN3_CONCEPT CharPredicate = requires
  */
 
 /*!\var static constexpr auto msg
- * \memberof seqan3::detail::CharPredicate
+ * \memberof seqan3::detail::char_predicate
  * \brief Defines the condition msg. The type is deduced from the constant expression in the definition of the variable.
  */
 //!\}
@@ -146,11 +146,11 @@ SEQAN3_CONCEPT CharPredicate = requires
 // ----------------------------------------------------------------------------
 
 //!\cond
-template <CharPredicate... condition_ts>
+template <char_predicate... condition_ts>
     requires sizeof...(condition_ts) >= 2
 struct char_predicate_combiner;
 
-template <CharPredicate condition_t>
+template <char_predicate condition_t>
 struct char_predicate_negator;
 //!\endcond
 
@@ -158,7 +158,7 @@ struct char_predicate_negator;
  *        parse conditions to add logical disjunction and negation operator.
  * \ingroup stream
  * \tparam derived_t The parse condition type to be extended with the logical operators.
- *                   Must model seqan3::detail::CharPredicate.
+ *                   Must model seqan3::detail::char_predicate.
  */
 template <typename derived_t>
 struct char_predicate_base
@@ -170,8 +170,8 @@ struct char_predicate_base
      * \brief Adds logical operators to allow logical disjunction, conjunction and negation on parse conditions.
      * \{
      */
-    //!\brief Combines the result of two seqan3::detail::CharPredicate via logical disjunction.
-    template <CharPredicate rhs_t>
+    //!\brief Combines the result of two seqan3::detail::char_predicate via logical disjunction.
+    template <char_predicate rhs_t>
     constexpr auto operator||(rhs_t const &) const
     {
         return char_predicate_combiner<derived_t, rhs_t>{};
@@ -188,13 +188,13 @@ struct char_predicate_base
      * \{
      */
     //!\brief Invokes the condition on `val`.
-    template <std::Integral value_t>
+    template <std::integral value_t>
     constexpr bool operator()(value_t const val) const noexcept
         requires sizeof(value_t) == 1
     {
         return derived_t::data[static_cast<unsigned char>(val)];
     }
-    template <std::Integral value_t>
+    template <std::integral value_t>
     constexpr bool operator()(value_t const val) const noexcept
         requires sizeof(value_t) != 1
     {
@@ -219,12 +219,12 @@ struct char_predicate_base
 // ----------------------------------------------------------------------------
 
 /*!\brief Logical disjunction operator for parse conditions.
- * \implements seqan3::detail::CharPredicate
+ * \implements seqan3::detail::char_predicate
  * \tparam condition_ts Template parameter pack over all parse condition types. Must contain at least 2 template parameters.
- *                      Must model seqan3::detail::CharPredicate.
+ *                      Must model seqan3::detail::char_predicate.
  * \ingroup stream
  */
-template <CharPredicate... condition_ts>
+template <char_predicate... condition_ts>
 //!\cond
     requires sizeof...(condition_ts) >= 2
 //!\endcond
@@ -243,12 +243,12 @@ struct char_predicate_combiner : public char_predicate_base<char_predicate_combi
 };
 
 /*!\brief Logical not operator for a parse condition.
- * \implements seqan3::detail::CharPredicate
+ * \implements seqan3::detail::char_predicate
  * \tparam condition_t Template parameter to apply the not-operator for.
- *                     Must model seqan3::detail::CharPredicate.
+ *                     Must model seqan3::detail::char_predicate.
  * \ingroup stream
  */
-template <CharPredicate condition_t>
+template <char_predicate condition_t>
 struct char_predicate_negator : public char_predicate_base<char_predicate_negator<condition_t>>
 {
     //!\brief The message representing the negation of the associated condition.
@@ -269,7 +269,7 @@ struct char_predicate_negator : public char_predicate_base<char_predicate_negato
 
 /*!\brief Parse condition that checks if a given value is in the range of `rng_beg` and `interval_last`.
  * \ingroup stream
- * \implements seqan3::detail::CharPredicate
+ * \implements seqan3::detail::char_predicate
  * \tparam interval_first non-type template parameter denoting the begin of the allowed range.
  *                        Must be less than or equal to `interval_last`.
  * \tparam interval_last non-type template parameter denoting the end of the allowed range.
@@ -311,10 +311,10 @@ struct is_in_interval_type : public char_predicate_base<is_in_interval_type<inte
 
 /*!\brief Parse condition that checks if a given value is within the given alphabet `alphabet_t`.
  * \ingroup stream
- * \implements seqan3::detail::CharPredicate
- * \tparam alphabet_t The alphabet type. Must model seqan3::Alphabet.
+ * \implements seqan3::detail::char_predicate
+ * \tparam alphabet_t The alphabet type. Must model seqan3::alphabet.
  */
-template <detail::ConstexprAlphabet alphabet_t>
+template <detail::constexpr_alphabet alphabet_t>
 struct is_in_alphabet_type : public char_predicate_base<is_in_alphabet_type<alphabet_t>>
 {
 public:
@@ -346,7 +346,7 @@ public:
 
 /*!\brief Parse condition that checks if a given value is equal to `char_v`.
  * \ingroup stream
- * \implements seqan3::detail::CharPredicate
+ * \implements seqan3::detail::char_predicate
  * \tparam char_v non-type template parameter with the value that should be checked against.
  */
 template <int char_v>

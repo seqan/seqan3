@@ -22,9 +22,9 @@ namespace seqan3::detail
 {
 /*!\brief A strong type for designated initialisation of the column index of a marix.
  * \ingroup alignment_matrix
- * \tparam index_type The type of the index to store; must model seqan3::Arithmetic.
+ * \tparam index_type The type of the index to store; must model seqan3::arithmetic.
  */
-template <std::Integral index_type>
+template <std::integral index_type>
 struct column_index_type : detail::strong_type<index_type, column_index_type<index_type>>
 {
     //!!\brief Import base class constructor.
@@ -36,19 +36,19 @@ struct column_index_type : detail::strong_type<index_type, column_index_type<ind
  * \{
  */
 //!\brief Deduces an signed integral type to std::ptrdiff_t.
-template <std::SignedIntegral index_type>
+template <std::signed_integral index_type>
 column_index_type(index_type) -> column_index_type<std::ptrdiff_t>;
 
 //!\brief Deduces an unsigned integral type to size_t.
-template <std::UnsignedIntegral index_type>
+template <std::unsigned_integral index_type>
 column_index_type(index_type) -> column_index_type<size_t>;
 //!\}
 
 /*!\brief A strong type for designated initialisation of the row index of a marix.
  * \ingroup alignment_matrix
- * \tparam index_type The type of the index to store; must model seqan3::Arithmetic.
+ * \tparam index_type The type of the index to store; must model seqan3::arithmetic.
  */
-template <std::Integral index_type>
+template <std::integral index_type>
 struct row_index_type : detail::strong_type<index_type, row_index_type<index_type>>
 {
     //!!\brief Import base class constructor.
@@ -60,17 +60,17 @@ struct row_index_type : detail::strong_type<index_type, row_index_type<index_typ
  * \{
  */
 //!\brief Deduces an signed integral type to std::ptrdiff_t.
-template <std::SignedIntegral index_type>
+template <std::signed_integral index_type>
 row_index_type(index_type) -> row_index_type<std::ptrdiff_t>;
 
 //!\brief Deduces an unsigned integral type to size_t.
-template <std::UnsignedIntegral index_type>
+template <std::unsigned_integral index_type>
 row_index_type(index_type) -> row_index_type<size_t>;
 //!\}
 
 //!\brief A representation of a location or offset within a two-dimensional matrix.
 //!\ingroup alignment_matrix
-template <std::Integral index_t>
+template <std::integral index_t>
 struct matrix_index
 {
     /*!\name Constructors, destructor and assignment
@@ -105,9 +105,9 @@ struct matrix_index
 matrix_index() -> matrix_index<std::ptrdiff_t>;
 
 //!\brief Deduces the index type from the common type of both index types.
-template <std::Integral row_index_t, std::Integral col_index_t>
+template <std::integral row_index_t, std::integral col_index_t>
 //!\cond
-    requires std::Common<row_index_t, col_index_t>
+    requires std::common_with<row_index_t, col_index_t>
 //!\endcond
 matrix_index(row_index_type<row_index_t>, column_index_type<col_index_t>) ->
     matrix_index<std::common_type_t<row_index_t, col_index_t>>;

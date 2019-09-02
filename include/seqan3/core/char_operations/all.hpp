@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides Character predicates for tokenization.
+ * \brief Provides Char predicates for tokenization.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
@@ -17,7 +17,7 @@
 #include <seqan3/core/char_operations/pretty_print.hpp>
 #include <seqan3/core/char_operations/transform.hpp>
 
-/*!\defgroup char_operations Char operations
+/*!\defgroup char_operations builtin_character operations
  * \brief Provides various operations on character types.
  * \ingroup core
  */

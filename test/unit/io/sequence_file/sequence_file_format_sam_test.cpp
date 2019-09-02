@@ -25,8 +25,8 @@ using namespace seqan3;
 // ----------------------------------------------------------------------------
 TEST(general, concepts)
 {
-   EXPECT_TRUE((SequenceFileInputFormat<format_sam>));
-   EXPECT_TRUE((SequenceFileOutputFormat<format_sam>));
+   EXPECT_TRUE((sequence_file_input_format<format_sam>));
+   EXPECT_TRUE((sequence_file_output_format<format_sam>));
 }
 // ----------------------------------------------------------------------------
 // reading
@@ -52,7 +52,7 @@ struct read_sam : public ::testing::Test
         { "!!!!!!!"_phred42 },
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
+    detail::sequence_file_input_format_REMOVEME<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -162,7 +162,7 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
+    detail::sequence_file_input_format_REMOVEME<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -186,7 +186,7 @@ R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
+    detail::sequence_file_input_format_REMOVEME<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -204,7 +204,7 @@ R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-+
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
+    detail::sequence_file_input_format_REMOVEME<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -222,7 +222,7 @@ R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*a,-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
+    detail::sequence_file_input_format_REMOVEME<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     dna5_vector seq;
@@ -240,7 +240,7 @@ R"(*	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
+    detail::sequence_file_input_format_REMOVEME<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     std::stringstream istream{input};
@@ -256,7 +256,7 @@ R"(ID 1	0	*	0	0	*	*	0	0	*	!##$%&'()*+,-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
+    detail::sequence_file_input_format_REMOVEME<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     dna5_vector seq;
     std::stringstream istream{input};
@@ -274,7 +274,7 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
+    detail::sequence_file_input_format_REMOVEME<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     std::string id;
     std::vector<phred42> qual;
@@ -298,7 +298,7 @@ R"(ID 1	0	*	0	0	*	*	0	0	ACGTTTTT?TTTTTTTTT	!##$%&'()*+,-./++-
 )"
     };
 
-    detail::sequence_file_input_format<format_sam> format{};
+    detail::sequence_file_input_format_REMOVEME<format_sam> format{};
     sequence_file_input_options<dna5, false> options;
     dna5_vector seq;
     std::stringstream istream{input};
@@ -375,7 +375,7 @@ struct write : public ::testing::Test
         { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE"_phred42 },
         { "!!*+,-./+*+,-./+!!FF!!"_phred42 },
     };
-    detail::sequence_file_output_format<format_sam> format;
+    detail::sequence_file_output_format_REMOVEME<format_sam> format;
     sequence_file_output_options options;
     std::ostringstream ostream;
     void do_write_test()

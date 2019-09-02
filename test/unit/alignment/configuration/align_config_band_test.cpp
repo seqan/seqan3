@@ -14,9 +14,9 @@
 
 using namespace seqan3;
 
-TEST(align_config_band, ConfigElement)
+TEST(align_config_band, config_element)
 {
-    EXPECT_TRUE((detail::ConfigElement<align_cfg::band<static_band>>));
+    EXPECT_TRUE((detail::config_element<align_cfg::band<static_band>>));
 }
 
 TEST(align_config_band, configuration)

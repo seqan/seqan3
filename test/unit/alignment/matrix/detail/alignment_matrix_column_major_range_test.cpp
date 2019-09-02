@@ -52,25 +52,25 @@ public:
                                      column_data_view_type{std::addressof(data[num_rows * column_index]), num_rows}};
     }
 
-    template <std::RandomAccessIterator iter_t>
+    template <std::random_access_iterator iter_t>
     constexpr reference make_proxy(iter_t iter) noexcept
     {
         return {*iter};
     }
 
-    template <std::RandomAccessIterator iter_t>
+    template <std::random_access_iterator iter_t>
     constexpr void on_column_iterator_creation(iter_t) noexcept
     {
         ++num_create;
     }
 
-    template <std::RandomAccessIterator iter_t>
+    template <std::random_access_iterator iter_t>
     constexpr void before_column_iterator_increment(iter_t ) noexcept
     {
         ++num_pre;
     }
 
-    template <std::RandomAccessIterator iter_t>
+    template <std::random_access_iterator iter_t>
     constexpr void after_column_iterator_increment(iter_t ) noexcept
     {
         ++num_post;
@@ -102,11 +102,11 @@ TEST(alignment_matrix_column_major_range_base, concepts)
     using column_t = value_type_t<outer_it>;
     using inner_it = std::ranges::iterator_t<column_t>;
 
-    EXPECT_TRUE(std::ranges::InputRange<test_matrix>);
-    EXPECT_TRUE(std::InputIterator<outer_it>);
-    EXPECT_TRUE(std::InputIterator<inner_it>);
-    EXPECT_TRUE(std::ranges::InputRange<column_t>);
-    EXPECT_TRUE(std::ranges::View<column_t>);
+    EXPECT_TRUE(std::ranges::input_range<test_matrix>);
+    EXPECT_TRUE(std::input_iterator<outer_it>);
+    EXPECT_TRUE(std::input_iterator<inner_it>);
+    EXPECT_TRUE(std::ranges::input_range<column_t>);
+    EXPECT_TRUE(std::ranges::view<column_t>);
 }
 
 TEST_F(alignment_matrix_column_major_range_base_test, begin_end)

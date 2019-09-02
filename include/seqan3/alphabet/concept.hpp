@@ -46,7 +46,7 @@ public:
         {
             { impl(priority_tag<2>{}, a) };
             requires noexcept(impl(priority_tag<2>{}, a));
-            requires std::Integral<decltype(impl(priority_tag<2>{}, a))>;
+            requires std::integral<decltype(impl(priority_tag<2>{}, a))>;
         }
     //!\endcond
     constexpr auto operator()(alph_t const a) const noexcept
@@ -80,7 +80,7 @@ namespace seqan3
  *   3. A member function called `to_rank()`.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
- * but recommended) and if the returned type models std::Integral.
+ * but recommended) and if the returned type models std::integral.
  *
  * Every (semi-)alphabet type must provide one of the above.
  *
@@ -89,7 +89,7 @@ namespace seqan3
  * \include test/snippet/alphabet/to_rank.cpp
  *
  * For an example of a full alphabet definition with free function implementations (solution 1. above),
- * see seqan3::Alphabet.
+ * see seqan3::alphabet.
  *
  * ### Customisation point
  *
@@ -133,7 +133,7 @@ public:
             {
                 { impl(priority_tag<2>{}, a, r) };
                 requires noexcept(impl(priority_tag<2>{}, a, r));
-                requires std::Same<alph_t &, decltype(impl(priority_tag<2>{}, a, r))>;
+                requires std::same_as<alph_t &, decltype(impl(priority_tag<2>{}, a, r))>;
             }
     //!\endcond
     constexpr alph_t operator()(seqan3::alphabet_rank_t<alph_t> const r, alph_t && a) const noexcept
@@ -181,7 +181,7 @@ namespace seqan3
  * \include test/snippet/alphabet/assign_rank_to.cpp
  *
  * For an example of a full alphabet definition with free function implementations (solution 1. above),
- * see seqan3::Alphabet.
+ * see seqan3::alphabet.
  *
  * ### Customisation point
  *
@@ -258,7 +258,7 @@ namespace seqan3
  * \include test/snippet/alphabet/to_char.cpp
  *
  * For an example of a full alphabet definition with free function implementations (solution 1. above),
- * see seqan3::Alphabet.
+ * see seqan3::alphabet.
  *
  * ### Customisation point
  *
@@ -308,7 +308,7 @@ public:
             {
                 { impl(priority_tag<2>{}, a, r) };
                 requires noexcept(impl(priority_tag<2>{}, a, r));
-                requires std::Same<alph_t &, decltype(impl(priority_tag<2>{}, a, r))>;
+                requires std::same_as<alph_t &, decltype(impl(priority_tag<2>{}, a, r))>;
             }
     //!\endcond
     constexpr alph_t operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t && a) const noexcept
@@ -329,7 +329,7 @@ namespace seqan3
 /*!\brief Assign a character to an alphabet object.
  * \tparam your_type Type of the target object.
  * \param chr  The character being assigned; must be of the seqan3::alphabet_char_t of the target object.
- * \param alph The target object; its type must model seqan3::Alphabet.
+ * \param alph The target object; its type must model seqan3::alphabet.
  * \returns Reference to `alph` if `alph` was given as lvalue, otherwise a copy.
  * \ingroup alphabet
  *
@@ -356,7 +356,7 @@ namespace seqan3
  * \include test/snippet/alphabet/assign_char_to.cpp
  *
  * For an example of a full alphabet definition with free function implementations (solution 1. above),
- * see seqan3::Alphabet.
+ * see seqan3::alphabet.
  *
  * ### Customisation point
  *
@@ -405,7 +405,7 @@ public:
         {
             { impl(priority_tag<3>{}, a, dummy{}) };
             requires noexcept(impl(priority_tag<3>{}, a));
-            requires std::ConvertibleTo<decltype(impl(priority_tag<3>{}, a)), bool>;
+            requires std::convertible_to<decltype(impl(priority_tag<3>{}, a)), bool>;
         }
     //!\endcond
     constexpr bool operator()(alphabet_char_t<alph_t> const a) const noexcept
@@ -423,11 +423,11 @@ namespace seqan3
  * \{
  */
 
-/*!\brief Returns whether a character is in the valid set of a seqan3::Alphabet (usually implies a bijective mapping
+/*!\brief Returns whether a character is in the valid set of a seqan3::alphabet (usually implies a bijective mapping
  *        to an alphabet value).
  * \tparam your_type The alphabet type being queried.
  * \param  chr       The character being checked; must be convertible to `seqan3::alphabet_char_t<your_type>`.
- * \param  alph      The target object; its type must model seqan3::Alphabet.
+ * \param  alph      The target object; its type must model seqan3::alphabet.
  * \returns `true` or `false`.
  * \ingroup alphabet
  *
@@ -529,7 +529,7 @@ namespace seqan3
 /*!\brief Assign a character to an alphabet object, throw if the character is not valid.
  * \tparam your_type Type of the target object.
  * \param chr  The character being assigned; must be of the seqan3::alphabet_char_t of the target object.
- * \param alph The target object; its type must model seqan3::Alphabet.
+ * \param alph The target object; its type must model seqan3::alphabet.
  * \returns Reference to `alph` if `alph` was given as lvalue, otherwise a copy.
  * \throws seqan3::invalid_char_assignment If `seqan3::char_is_valid_for<decltype(alph)>(chr) == false`.
  * \ingroup alphabet
@@ -581,7 +581,7 @@ public:
         {
             { impl(priority_tag<2>{}, s_alph_t{}, dummy{}) };
             requires noexcept(impl(priority_tag<2>{}, s_alph_t{}, dummy{}));
-            requires std::Integral<remove_cvref_t<decltype(impl(priority_tag<2>{}, s_alph_t{}, dummy{}))>>;
+            requires std::integral<remove_cvref_t<decltype(impl(priority_tag<2>{}, s_alph_t{}, dummy{}))>>;
         }
     //!\endcond
     constexpr auto operator()() const noexcept
@@ -623,7 +623,7 @@ namespace seqan3
  *   3. A `static constexpr` data member called `alphabet_size` that is the size.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` **and** `constexpr` and
- * if the returned type models std::Integral. For 1. and 2. the value of the argument to the function shall be
+ * if the returned type models std::integral. For 1. and 2. the value of the argument to the function shall be
  * ignored, the argument is only used to select the function via
  * [argument-dependent lookup](https://en.cppreference.com/w/cpp/language/adl).
  *
@@ -638,7 +638,7 @@ namespace seqan3
  * \include test/snippet/alphabet/alphabet_size.cpp
  *
  * For an example of a full alphabet definition with free function implementations (solution 1. above),
- * see seqan3::Alphabet.
+ * see seqan3::alphabet.
  *
  * ### Customisation point
  *
@@ -653,13 +653,13 @@ template <typename alph_t>
 inline constexpr auto alphabet_size = detail::adl::only::alphabet_size_obj<alph_t>();
 
 // ============================================================================
-// Semialphabet
+// semialphabet
 // ============================================================================
 
-/*!\interface seqan3::Semialphabet <>
- * \brief The basis for seqan3::Alphabet, but requires only rank interface (not char).
- * \extends std::StrictTotallyOrdered
- * \extends std::CopyConstructible
+/*!\interface seqan3::semialphabet <>
+ * \brief The basis for seqan3::alphabet, but requires only rank interface (not char).
+ * \extends std::totally_ordered
+ * \extends std::copy_constructible
  * \ingroup alphabet
  *
  * This concept represents the "rank part" of what is considered "an alphabet" in SeqAn. It requires no
@@ -667,23 +667,23 @@ inline constexpr auto alphabet_size = detail::adl::only::alphabet_size_obj<alph_
  *
  * ### Requirements
  *
- *   1. `t` shall model std::StrictTotallyOrdered ("has all comparison operators")
+ *   1. `t` shall model std::totally_ordered ("has all comparison operators")
  *   2. objects of type `t` shall be efficiently copyable:
- *     * `t` shall model std::CopyConstructible and be std::is_nothrow_copy_constructible
+ *     * `t` shall model std::copy_constructible and be std::is_nothrow_copy_constructible
  *     * move construction shall not be more efficient than copy construction; this implies no dynamic memory
  *       (de-)allocation [this is a semantic requirement that cannot be checked]
  *   3. seqan3::alphabet_size needs to be defined for `t`
  *   4. seqan3::to_rank needs to be defined for objects of type `t`
  *
  * See the documentation pages for the respective requirements.
- * The implications of 2. are that you can always take function arguments of types that model seqan3::Semialphabet
+ * The implications of 2. are that you can always take function arguments of types that model seqan3::semialphabet
  * by value.
  *
  * It is highly recommended that non-reference types that model this concept, also model:
  *
- *   * std::Regular
+ *   * std::regular
  *   * std::is_trivially_copyable
- *   * seqan3::StandardLayout
+ *   * seqan3::standard_layout
  *
  * All alphabets available in SeqAn (with very few exceptions) do so.
  *
@@ -697,9 +697,9 @@ inline constexpr auto alphabet_size = detail::adl::only::alphabet_size_obj<alph_
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT Semialphabet =
-    std::StrictTotallyOrdered<t> &&
-    std::CopyConstructible<t> &&
+SEQAN3_CONCEPT semialphabet =
+    std::totally_ordered<t> &&
+    std::copy_constructible<t> &&
     std::is_nothrow_copy_constructible_v<t> &&
     requires (t v)
 {
@@ -710,15 +710,15 @@ SEQAN3_CONCEPT Semialphabet =
 //!\endcond
 
 // ============================================================================
-// WritableSemialphabet
+// writable_semialphabet
 // ============================================================================
 
-/*!\interface seqan3::WritableSemialphabet <>
- * \brief A refinement of seqan3::Semialphabet that adds assignability.
- * \extends seqan3::Semialphabet
+/*!\interface seqan3::writable_semialphabet <>
+ * \brief A refinement of seqan3::semialphabet that adds assignability.
+ * \extends seqan3::semialphabet
  * \ingroup alphabet
  *
- * This concept refines seqan3::Semialphabet and adds the requirement to be able to change the value by
+ * This concept refines seqan3::semialphabet and adds the requirement to be able to change the value by
  * assigning a value of the rank representation.
  *
  * For a detailed overview of how the different alphabet concepts are related, see
@@ -726,7 +726,7 @@ SEQAN3_CONCEPT Semialphabet =
  *
  * ### Requirements
  *
- *   1. `t` shall model seqan3::Semialphabet
+ *   1. `t` shall model seqan3::semialphabet
  *   2. seqan3::assign_rank_to needs to be defined for objects of type `t`
  *
  * See the documentation pages for the respective requirements.
@@ -747,19 +747,19 @@ SEQAN3_CONCEPT Semialphabet =
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v, alphabet_rank_t<t> r)
+SEQAN3_CONCEPT writable_semialphabet = semialphabet<t> && requires (t v, alphabet_rank_t<t> r)
 {
     { seqan3::assign_rank_to(r, v) };
 };
 //!\endcond
 
 // ============================================================================
-// Alphabet
+// alphabet
 // ============================================================================
 
-/*!\interface seqan3::Alphabet <>
+/*!\interface seqan3::alphabet <>
  * \brief The generic alphabet concept that covers most data types used in ranges.
- * \extends seqan3::Semialphabet
+ * \extends seqan3::semialphabet
  * \ingroup alphabet
  *
  * This is the core alphabet concept that many other alphabet concepts refine.
@@ -769,7 +769,7 @@ SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v, alphabet
  *
  * ### Requirements
  *
- *   1. `t` shall model seqan3::Semialphabet ("has all rank representation")
+ *   1. `t` shall model seqan3::semialphabet ("has all rank representation")
  *   2. seqan3::to_char needs to be defined for objects of type `t`
  *
  * See the documentation pages for the respective requirements.
@@ -784,23 +784,23 @@ SEQAN3_CONCEPT WritableSemialphabet = Semialphabet<t> && requires (t v, alphabet
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT Alphabet = Semialphabet<t> && requires (t v)
+SEQAN3_CONCEPT alphabet = semialphabet<t> && requires (t v)
 {
     { seqan3::to_char(v) };
 };
 //!\endcond
 
 // ============================================================================
-// WritableAlphabet
+// writable_alphabet
 // ============================================================================
 
-/*!\interface seqan3::WritableAlphabet <>
- * \brief Refines seqan3::Alphabet and adds assignability.
- * \extends seqan3::Alphabet
- * \extends seqan3::WritableSemialphabet
+/*!\interface seqan3::writable_alphabet <>
+ * \brief Refines seqan3::alphabet and adds assignability.
+ * \extends seqan3::alphabet
+ * \extends seqan3::writable_semialphabet
  * \ingroup alphabet
  *
- * This concept refines seqan3::Alphabet and seqan3::WritableSemialphabet and adds the requirement to be able to change
+ * This concept refines seqan3::alphabet and seqan3::writable_semialphabet and adds the requirement to be able to change
  * the value by assigning a value of the character representation.
  *
  * For a detailed overview of how the different alphabet concepts are related, see
@@ -808,8 +808,8 @@ SEQAN3_CONCEPT Alphabet = Semialphabet<t> && requires (t v)
  *
  * ### Requirements
  *
- *   1. `t` shall model seqan3::Alphabet
- *   2. `t` shall model seqan3::WritableSemialphabet
+ *   1. `t` shall model seqan3::alphabet
+ *   2. `t` shall model seqan3::writable_semialphabet
  *   3. seqan3::assign_char_to needs to be defined for objects of type `t`
  *   4. seqan3::char_is_valid_for needs to be defined for type `t` and an argument of the character representation
  *
@@ -831,7 +831,7 @@ SEQAN3_CONCEPT Alphabet = Semialphabet<t> && requires (t v)
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableAlphabet = Alphabet<t> && WritableSemialphabet<t> && requires (t v, alphabet_char_t<t> c)
+SEQAN3_CONCEPT writable_alphabet = alphabet<t> && writable_semialphabet<t> && requires (t v, alphabet_char_t<t> c)
 {
     { seqan3::assign_char_to(c, v) };
 
@@ -844,17 +844,17 @@ SEQAN3_CONCEPT WritableAlphabet = Alphabet<t> && WritableSemialphabet<t> && requ
 // ============================================================================
 
 /*!\cond DEV
- * \name Generic serialisation functions for all seqan3::Semialphabet
- * \brief All types that satisfy seqan3::Semialphabet can be serialised via Cereal.
+ * \name Generic serialisation functions for all seqan3::semialphabet
+ * \brief All types that satisfy seqan3::semialphabet can be serialised via Cereal.
  *
  * \{
  */
 /*!
  * \brief Save an alphabet letter to stream.
- * \tparam archive_t Must satisfy seqan3::CerealOutputArchive.
- * \tparam alphabet_t Type of l; must satisfy seqan3::Semialphabet.
+ * \tparam archive_t Must satisfy seqan3::cereal_output_archive.
+ * \tparam alphabet_t Type of l; must satisfy seqan3::semialphabet.
  * \param l The alphabet letter.
- * \relates seqan3::Semialphabet
+ * \relates seqan3::semialphabet
  *
  * \details
  *
@@ -862,18 +862,18 @@ SEQAN3_CONCEPT WritableAlphabet = Alphabet<t> && WritableSemialphabet<t> && requ
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
-template <CerealOutputArchive archive_t, Semialphabet alphabet_t>
+template <cereal_output_archive archive_t, semialphabet alphabet_t>
 alphabet_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &, alphabet_t const & l)
 {
     return to_rank(l);
 }
 
 /*!\brief Restore an alphabet letter from a saved rank.
- * \tparam archive_t Must satisfy seqan3::CerealInputArchive.
- * \tparam wrapped_alphabet_t A seqan3::Semialphabet after Cereal mangles it up.
+ * \tparam archive_t Must satisfy seqan3::cereal_input_archive.
+ * \tparam wrapped_alphabet_t A seqan3::semialphabet after Cereal mangles it up.
  * \param l The alphabet letter (cereal wrapped).
  * \param r The assigned value.
- * \relates seqan3::Semialphabet
+ * \relates seqan3::semialphabet
  *
  * \details
  *
@@ -881,11 +881,11 @@ alphabet_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &,
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
-template <CerealInputArchive archive_t, typename wrapped_alphabet_t>
+template <cereal_input_archive archive_t, typename wrapped_alphabet_t>
 void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
                                        wrapped_alphabet_t && l,
                                        alphabet_rank_t<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>> const & r)
-    requires Semialphabet<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>>
+    requires semialphabet<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>>
 {
     assign_rank_to(r, static_cast<detail::strip_cereal_wrapper_t<wrapped_alphabet_t> &>(l));
 }
@@ -898,20 +898,20 @@ void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
 namespace seqan3::detail
 {
 // ============================================================================
-// ConstexprSemialphabet
+// constexpr_semialphabet
 // ============================================================================
 
-/*!\interface seqan3::detail::ConstexprSemialphabet <>
- * \brief A seqan3::Semialphabet that has constexpr accessors.
- * \extends seqan3::Semialphabet
+/*!\interface seqan3::detail::constexpr_semialphabet <>
+ * \brief A seqan3::semialphabet that has constexpr accessors.
+ * \extends seqan3::semialphabet
  * \ingroup alphabet
  *
- * The same as seqan3::Semialphabet, except that all required functions are also required to be callable
+ * The same as seqan3::semialphabet, except that all required functions are also required to be callable
  * in a `constexpr`-context.
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT ConstexprSemialphabet = Semialphabet<t> && requires
+SEQAN3_CONCEPT constexpr_semialphabet = semialphabet<t> && requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(to_rank(std::remove_reference_t<t>{}));
@@ -919,21 +919,21 @@ SEQAN3_CONCEPT ConstexprSemialphabet = Semialphabet<t> && requires
 //!\endcond
 
 // ============================================================================
-// WritableConstexprSemialphabet
+// writable_constexpr_semialphabet
 // ============================================================================
 
-/*!\interface seqan3::detail::WritableConstexprSemialphabet <>
- * \brief A seqan3::WritableSemialphabet that has a constexpr assignment.
- * \extends seqan3::detail::ConstexprSemialphabet
- * \extends seqan3::WritableSemialphabet
+/*!\interface seqan3::detail::writable_constexpr_semialphabet <>
+ * \brief A seqan3::writable_semialphabet that has a constexpr assignment.
+ * \extends seqan3::detail::constexpr_semialphabet
+ * \extends seqan3::writable_semialphabet
  * \ingroup alphabet
  *
- * Refines seqan3::detail::ConstexprSemialphabet and seqan3::WritableSemialphabet and requires that the call to
+ * Refines seqan3::detail::constexpr_semialphabet and seqan3::writable_semialphabet and requires that the call to
  * seqan3::assign_rank_to can happen in a `constexpr`-context.
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableConstexprSemialphabet = ConstexprSemialphabet<t> && WritableSemialphabet<t> && requires
+SEQAN3_CONCEPT writable_constexpr_semialphabet = constexpr_semialphabet<t> && writable_semialphabet<t> && requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(seqan3::assign_rank_to(alphabet_rank_t<t>{}, std::remove_reference_t<t>{}));
@@ -941,21 +941,21 @@ SEQAN3_CONCEPT WritableConstexprSemialphabet = ConstexprSemialphabet<t> && Writa
 //!\endcond
 
 // ============================================================================
-// ConstexprAlphabet
+// constexpr_alphabet
 // ============================================================================
 
-/*!\interface seqan3::detail::ConstexprAlphabet <>
- * \brief A seqan3::Alphabet that has constexpr accessors.
- * \extends seqan3::detail::ConstexprSemialphabet
- * \extends seqan3::Alphabet
+/*!\interface seqan3::detail::constexpr_alphabet <>
+ * \brief A seqan3::alphabet that has constexpr accessors.
+ * \extends seqan3::detail::constexpr_semialphabet
+ * \extends seqan3::alphabet
  * \ingroup alphabet
  *
- * Refines seqan3::detail::ConstexprSemialphabet and seqan3::Alphabet and requires that the call to
+ * Refines seqan3::detail::constexpr_semialphabet and seqan3::alphabet and requires that the call to
  * seqan3::to_char can happen in a `constexpr`-context.
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT ConstexprAlphabet = ConstexprSemialphabet<t> && Alphabet<t> && requires
+SEQAN3_CONCEPT constexpr_alphabet = constexpr_semialphabet<t> && alphabet<t> && requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(to_char(std::remove_reference_t<t>{}));
@@ -963,24 +963,24 @@ SEQAN3_CONCEPT ConstexprAlphabet = ConstexprSemialphabet<t> && Alphabet<t> && re
 //!\endcond
 
 // ============================================================================
-// WritableConstexprAlphabet
+// writable_constexpr_alphabet
 // ============================================================================
 
-/*!\interface seqan3::detail::WritableConstexprAlphabet <>
- * \brief A seqan3::WritableAlphabet that has constexpr accessors.
- * \extends seqan3::detail::ConstexprAlphabet
- * \extends seqan3::detail::WritableConstexprSemialphabet
- * \extends seqan3::WritableAlphabet
+/*!\interface seqan3::detail::writable_constexpr_alphabet <>
+ * \brief A seqan3::writable_alphabet that has constexpr accessors.
+ * \extends seqan3::detail::constexpr_alphabet
+ * \extends seqan3::detail::writable_constexpr_semialphabet
+ * \extends seqan3::writable_alphabet
  * \ingroup alphabet
  *
- * Refines seqan3::detail::ConstexprAlphabet, seqan3::detail::WritableConstexprSemialphabet and
- * seqan3::WritableAlphabet and requires that the calls to seqan3::assign_char_to and seqan3::char_is_valid_for
+ * Refines seqan3::detail::constexpr_alphabet, seqan3::detail::writable_constexpr_semialphabet and
+ * seqan3::writable_alphabet and requires that the calls to seqan3::assign_char_to and seqan3::char_is_valid_for
  * can happen in a `constexpr`-context.
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableConstexprAlphabet =
-    ConstexprAlphabet<t> && WritableConstexprSemialphabet<t> && WritableAlphabet<t> && requires
+SEQAN3_CONCEPT writable_constexpr_alphabet =
+    constexpr_alphabet<t> && writable_constexpr_semialphabet<t> && writable_alphabet<t> && requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(seqan3::assign_char_to(alphabet_char_t<t>{}, std::remove_reference_t<t>{}));

@@ -61,37 +61,37 @@ protected:
 TEST_F(kmer_hash_test, concepts)
 {
     auto v1 = text1 | ungapped_view;
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), size_t>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v1), size_t>));
 
     auto v2 = text5 | ungapped_view;
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v2)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v2)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::RandomAccessRange<decltype(v2)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::SizedRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(v2)>);
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v2), size_t>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::random_access_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
+    EXPECT_TRUE(const_iterable_range<decltype(v2)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v2), size_t>));
 
     auto v3 = text6 | ungapped_view;
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v3)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v3)>);
-    EXPECT_FALSE(std::ranges::BidirectionalRange<decltype(v3)>);
-    EXPECT_FALSE(std::ranges::RandomAccessRange<decltype(v3)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v3)>);
-    EXPECT_FALSE(std::ranges::SizedRange<decltype(v3)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v3)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(v3)>);
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v3), size_t>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v3)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v3)>);
+    EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v3)>);
+    EXPECT_FALSE(std::ranges::random_access_range<decltype(v3)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v3)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v3)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v3)>);
+    EXPECT_TRUE(const_iterable_range<decltype(v3)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v3), size_t>));
 }
 
 TEST_F(kmer_hash_test, ungapped)

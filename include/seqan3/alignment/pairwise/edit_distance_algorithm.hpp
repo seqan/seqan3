@@ -19,7 +19,7 @@ namespace seqan3::detail
 
 /*!\brief This algorithm unifies different edit distance implementations and uses the appropriate one depending on the
  * given configuration.
- * \implements std::Invocable
+ * \implements std::invocable
  * \tparam config_t The configuration type.
  * \tparam traits_t The traits type.
  *
@@ -61,13 +61,13 @@ public:
     //!}
 
     /*!\brief Invokes the actual alignment computation given two sequences.
-     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
-     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::forward_range.
+     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::forward_range.
      * \param[in] idx            The index of the current sequence pair.
      * \param[in] first_range    The first sequence (or packed sequences).
      * \param[in] second_range   The second sequence (or packed sequences).
      */
-    template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
+    template <std::ranges::forward_range first_range_t, std::ranges::forward_range second_range_t>
     constexpr auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
     {
         using edit_traits = default_edit_distance_trait_type<first_range_t,

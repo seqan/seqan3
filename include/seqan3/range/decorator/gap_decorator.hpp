@@ -33,9 +33,9 @@ namespace seqan3
 
 /*!\brief A gap decorator allows the annotation of sequences with gap symbols
  *        while leaving the underlying sequence unmodified.
- * \tparam inner_type The type of range that will be decorated with gaps; must model std::ranges::RandomAccessRange
- *                    and std::ranges::SizedRange.
- * \implements seqan3::AlignedSequence
+ * \tparam inner_type The type of range that will be decorated with gaps; must model std::ranges::random_access_range
+ *                    and std::ranges::sized_range.
+ * \implements seqan3::aligned_sequence
  * \ingroup decorator
  *
  * \details
@@ -72,13 +72,13 @@ namespace seqan3
  * \attention The iterator of the seqan3::gap_decorator does not model the
  *            [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator)
  *            requirements of the STL because dereferencing the iterator returns a proxy and no operator-> is provided.
- *            It does model the C++20 std::BidirectionalIterator.
+ *            It does model the C++20 std::bidirectional_iterator.
  *
  */
-template <std::ranges::ViewableRange inner_type>
+template <std::ranges::viewable_range inner_type>
 //!\cond
-    requires std::ranges::RandomAccessRange<inner_type> && std::ranges::SizedRange<inner_type> &&
-             (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::View<inner_type>)
+    requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type> &&
+             (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
 //!\endcond
 class gap_decorator
 {
@@ -88,8 +88,8 @@ private:
      * \details
      *
      * This iterator returns values when dereferenced, not references, i.e. it does not satisfy the semantic
-     * requirements of [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator).
-     * It does model the C++20 std::BidirectionalIterator.
+     * requirements of [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/bidirectional_iterator).
+     * It does model the C++20 std::bidirectional_iterator.
      */
     class gap_decorator_iterator
     {
@@ -197,7 +197,8 @@ private:
         }
         //!\}
 
-        /*!\name Arithmetic operators
+        /*!
+ame Arithmetic operators
          * \{
         */
         //!\brief Pre-increment, returns updated iterator.
@@ -343,12 +344,12 @@ private:
      *
      * \details
      *
-     * \attention This iterator models std::RandomAccessIterator but **does not guarantee constant time access**.
+     * \attention This iterator models std::random_access_iterator but **does not guarantee constant time access**.
      *            Random access is provided in \f$O(\log k)\f$ time (where `k` is the number of gaps).
      *
      * This iterator returns values when dereferenced, not references, i.e. it does not model the
-     * [Cpp17RandomAccessIterator](https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator)
-     * requirements of the STL. It does model the C++20 std::RandomAccessIterator.
+     * [Cpp17random_access_iterator](https://en.cppreference.com/w/cpp/named_req/random_access_iterator)
+     * requirements of the STL. It does model the C++20 std::random_access_iterator.
      */
     class gap_decorator_iterator_ra : public gap_decorator_iterator
     {
@@ -393,7 +394,8 @@ private:
         {}
         //!\}
 
-        /*!\name Arithmetic operators
+        /*!
+ame Arithmetic operators
         * \{
         */
         //!\brief Pre-increment, returns updated iterator.
@@ -534,9 +536,9 @@ public:
     //!\brief Construct with the ungapped range type.
     template <typename other_range_t>
     //!\cond
-         requires !std::Same<other_range_t, gap_decorator> &&
-                  std::Same<remove_cvref_t<other_range_t>, remove_cvref_t<inner_type>> &&
-                  std::ranges::ViewableRange<other_range_t> // at end, otherwise it competes with the move ctor
+         requires !std::same_as<other_range_t, gap_decorator> &&
+                  std::same_as<remove_cvref_t<other_range_t>, remove_cvref_t<inner_type>> &&
+                  std::ranges::viewable_range<other_range_t> // at end, otherwise it competes with the move ctor
     //!\endcond
     gap_decorator(other_range_t && range) : ungapped_view{view::all(std::forward<inner_type>(range))}
     {} // TODO (@smehringer) only works for copyable views. Has to be changed once views are not required to be copyable anymore.
@@ -692,7 +694,7 @@ public:
      */
     template <typename unaligned_seq_t> // generic template to use forwarding reference
     //!\cond
-        requires std::Assignable<gap_decorator &, unaligned_seq_t>
+        requires std::assignable_from<gap_decorator &, unaligned_seq_t>
     //!\endcond
     friend void assign_unaligned(gap_decorator & dec, unaligned_seq_t && unaligned)
     {
@@ -732,7 +734,7 @@ public:
      *
      * If the container is empty, the returned iterator will be equal to end().
      *
-     * \attention The returned iterator models the std::ranges::RandomAccessIterator but
+     * \attention The returned iterator models the std::ranges::random_access_iterator but
      *            **the operations on it do not guarantee constant time**.
      *            Random access is provided in \f$O(\log k)\f$ time (where `k` is the number of gaps).
      *
@@ -782,7 +784,7 @@ public:
     /*!\brief Returns a random access iterator pointing behind the last element of the decorator.
      * \returns Iterator pointing behind the last element.
      *
-     * \attention The returned iterator models the std::ranges::RandomAccessIterator but
+     * \attention The returned iterator models the std::ranges::random_access_iterator but
      *            **the operations on it do not guarantee constant time**.
      *            Random access is provided in \f$O(\log k)\f$ time (where `k` is the number of gaps).
      *
@@ -1025,14 +1027,14 @@ private:
  * \{
  */
 //!\brief Ranges (not views!) always deduce to `const & range_type` since they are access-only anyway.
-template <std::ranges::ViewableRange urng_t>
+template <std::ranges::viewable_range urng_t>
 //!\cond
-    requires !std::ranges::View<std::remove_reference_t<urng_t>>
+    requires !std::ranges::view<std::remove_reference_t<urng_t>>
 //!\endcond
 gap_decorator(urng_t && range) -> gap_decorator<std::remove_reference_t<urng_t> const &>;
 
 //!\brief Views always deduce to their respective type because they are copied.
-template <std::ranges::View urng_t>
+template <std::ranges::view urng_t>
 gap_decorator(urng_t range) -> gap_decorator<urng_t>;
 //!\}
 

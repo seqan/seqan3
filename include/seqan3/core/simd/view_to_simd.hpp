@@ -30,9 +30,9 @@
 namespace seqan3::detail
 {
 
-/*!\brief Transforms a range of ranges into chunks of seqan3::Simd vectors.
- * \implements std::ranges::InputRange
- * \tparam urng_t The underlying range type; must model std::ranges::ForwardRange.
+/*!\brief Transforms a range of ranges into chunks of seqan3::simd vectors.
+ * \implements std::ranges::input_range
+ * \tparam urng_t The underlying range type; must model std::ranges::forward_range.
  * \tparam simd_t The simd type to convert to.
  * \ingroup simd
  *
@@ -49,24 +49,24 @@ namespace seqan3::detail
  * Depending on the types of the input ranges a more efficient transformation using simd instructions is used.
  * The following requirements must be fulfilled by the inner range type of the underlying range:
  *  * they must model std::ranges::ContigiousRange
- *  * the iterator and sentinel types must model std::SizedSentinel
+ *  * the iterator and sentinel types must model std::sized_sentinel_for
  *  * the size of the rank type of the underlying alphabet must be 1.
  *
  * If one of these requirements is not fulfilled a standard fallback algorithm is used which might be slower to
  * transform the sequences, depending on the auto-vectorisation capabilities of the used compiler.
  */
-template <std::ranges::View urng_t, Simd simd_t>
+template <std::ranges::view urng_t, simd::simd_concept simd_t>
 class view_to_simd : public std::ranges::view_interface<view_to_simd<urng_t, simd_t>>
 {
 private:
 
-    static_assert(std::ranges::ForwardRange<urng_t>,
-                  "The underlying range must model ForwardRange.");
-    static_assert(std::ranges::InputRange<value_type_t<urng_t>>,
-                  "Expects the value type of the underlying range to be an InputRange.");
-    static_assert(std::DefaultConstructible<value_type_t<urng_t>>,
+    static_assert(std::ranges::forward_range<urng_t>,
+                  "The underlying range must model forward_range.");
+    static_assert(std::ranges::input_range<value_type_t<urng_t>>,
+                  "Expects the value type of the underlying range to be an input_range.");
+    static_assert(std::default_constructible<value_type_t<urng_t>>,
                   "Expects the inner range to be default constructible.");
-    static_assert(Semialphabet<value_type_t<value_type_t<urng_t>>>,
+    static_assert(semialphabet<value_type_t<value_type_t<urng_t>>>,
                   "Expects semi-alphabet as value type of the inner range.");
 
     /*!\name Auxiliary types
@@ -83,8 +83,8 @@ private:
      * \{
      */
     //!\brief Check if fast load is enabled.
-    static constexpr bool fast_load = std::ranges::ContiguousRange<inner_range_type> &&
-                                      std::SizedSentinel<std::ranges::iterator_t<inner_range_type>,
+    static constexpr bool fast_load = std::ranges::contiguous_range<inner_range_type> &&
+                                      std::sized_sentinel_for<std::ranges::iterator_t<inner_range_type>,
                                                          std::ranges::sentinel_t<inner_range_type>> &&
                                       sizeof(alphabet_rank_t<value_type_t<inner_range_type>>) == 1 &&
                                       sizeof(scalar_type) <= 2; // micro benchmark suggest using int8_t or int16_t has best performance.
@@ -132,9 +132,9 @@ public:
     //!\overload
     template <typename other_urng_t>
     //!\cond
-    requires !std::Same<remove_cvref_t<other_urng_t>, view_to_simd> &&
-             !std::Same<other_urng_t, urng_t> &&
-             std::ranges::ViewableRange<other_urng_t>
+    requires !std::same_as<remove_cvref_t<other_urng_t>, view_to_simd> &&
+             !std::same_as<other_urng_t, urng_t> &&
+             std::ranges::viewable_range<other_urng_t>
     //!\endcond
     constexpr view_to_simd(other_urng_t && urng, scalar_type const padding_value = alphabet_size) :
         view_to_simd{view::all(std::forward<other_urng_t>(urng)), padding_value}
@@ -171,11 +171,11 @@ public:
      *
      * \details
      *
-     * Only available if the inner range types model std::ranges::SizedRange.
+     * Only available if the inner range types model std::ranges::sized_range.
      */
     constexpr size_t size() const noexcept
     //!\cond
-        requires std::ranges::SizedRange<inner_range_type>
+        requires std::ranges::sized_range<inner_range_type>
     //!\endcond
     {
         auto it = std::ranges::max_element(urng, [] (auto & lhs, auto & rhs)
@@ -199,10 +199,10 @@ private:
  *
  * \details
  *
- * This iterator models std::InputIterator and std::Cpp17InputIterator.
+ * This iterator models std::input_iterator and std::Cpp17input_iterator.
  * When dereferencing it returns a reference to a range over simd vectors of type `simd_t`.
  */
-template <std::ranges::View urng_t, Simd simd_t>
+template <std::ranges::view urng_t, simd::simd_concept simd_t>
 class view_to_simd<urng_t, simd_t>::iterator_type
 {
 public:
@@ -277,7 +277,8 @@ public:
     }
     //!\}
 
-    /*!\name Arithmetic operators
+    /*!
+ame Arithmetic operators
      * \{
      */
     //!\brief Advances the iterator to the next chunk.
@@ -579,9 +580,9 @@ private:
  *
  * \details
  *
- * Returns a seqan3::detail::view_to_simd view for a given std::ranges::ViewableRange.
+ * Returns a seqan3::detail::view_to_simd view for a given std::ranges::viewable_range.
  */
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 struct to_simd_fn
 {
     //!\brief The type of a padding value.
@@ -601,47 +602,47 @@ struct to_simd_fn
         return detail::adaptor_from_functor{*this};
     }
 
-    /*!\brief Call the view's constructor with the underlying std::ranges::ViewableRange as argument.
-     * \param[in] urange The input range to process; must model std::ranges::ForwardRange and std::ranges::ViewableRange.
+    /*!\brief Call the view's constructor with the underlying std::ranges::viewable_range as argument.
+     * \param[in] urange The input range to process; must model std::ranges::forward_range and std::ranges::viewable_range.
      * \param[in] padding_value The padding character to use for smaller sequences.
      * \returns A range that transforms a collection of sequences into chunks of simd vectors.
      */
-    template <std::ranges::Range urng_t>
+    template <std::ranges::range urng_t>
     constexpr auto operator()(urng_t && urange, padding_t const padding_value) const noexcept
     {
-        static_assert(std::ranges::ForwardRange<urng_t>,
-            "The underlying range in view::to_simd must model std::ranges::ForwardRange.");
-        static_assert(std::ranges::ViewableRange<urng_t>,
-            "The underlying range in view::to_simd must model std::ranges::ViewableRange.");
-        static_assert(std::ranges::InputRange<value_type_t<urng_t>>,
-            "The value type of the underlying range must model std::ranges::InputRange.");
-        static_assert(Semialphabet<value_type_t<value_type_t<urng_t>>>,
-            "The value type of the inner ranges must model seqan3::Semialphabet.");
+        static_assert(std::ranges::forward_range<urng_t>,
+            "The underlying range in view::to_simd must model std::ranges::forward_range.");
+        static_assert(std::ranges::viewable_range<urng_t>,
+            "The underlying range in view::to_simd must model std::ranges::viewable_range.");
+        static_assert(std::ranges::input_range<value_type_t<urng_t>>,
+            "The value type of the underlying range must model std::ranges::input_range.");
+        static_assert(semialphabet<value_type_t<value_type_t<urng_t>>>,
+            "The value type of the inner ranges must model seqan3::semialphabet.");
 
         return view_to_simd<all_view<urng_t>, simd_t>{std::forward<urng_t>(urange), padding_value};
     }
 
-    /*!\brief Call the view's constructor with the underlying std::ranges::ViewableRange as argument.
-     * \param[in] urange The input range to process; must model std::ranges::ForwardRange and std::ranges::ViewableRange.
+    /*!\brief Call the view's constructor with the underlying std::ranges::viewable_range as argument.
+     * \param[in] urange The input range to process; must model std::ranges::forward_range and std::ranges::viewable_range.
      * \returns A range that transforms a collection of sequences into chunks of simd vectors.
      */
-    template <std::ranges::Range urng_t>
+    template <std::ranges::range urng_t>
     constexpr auto operator()(urng_t && urange) const noexcept
     {
-        static_assert(std::ranges::ForwardRange<urng_t>,
-            "The underlying range in view::to_simd must model std::ranges::ForwardRange.");
-        static_assert(std::ranges::ViewableRange<urng_t>,
-            "The underlying range in view::to_simd must model std::ranges::ViewableRange.");
-        static_assert(std::ranges::InputRange<value_type_t<urng_t>>,
-            "The value type of the underlying range must model std::ranges::InputRange.");
-        static_assert(Semialphabet<value_type_t<value_type_t<urng_t>>>,
-            "The value type of the inner ranges must model seqan3::Semialphabet.");
+        static_assert(std::ranges::forward_range<urng_t>,
+            "The underlying range in view::to_simd must model std::ranges::forward_range.");
+        static_assert(std::ranges::viewable_range<urng_t>,
+            "The underlying range in view::to_simd must model std::ranges::viewable_range.");
+        static_assert(std::ranges::input_range<value_type_t<urng_t>>,
+            "The value type of the underlying range must model std::ranges::input_range.");
+        static_assert(semialphabet<value_type_t<value_type_t<urng_t>>>,
+            "The value type of the inner ranges must model seqan3::semialphabet.");
 
         return view_to_simd<all_view<urng_t>, simd_t>{std::forward<urng_t>(urange)};
     }
 
     //!\brief Overloaded bit-operator to allow chaining with other ranges.
-    template <std::ranges::Range urng_t>
+    template <std::ranges::range urng_t>
     constexpr friend auto operator|(urng_t && urange, to_simd_fn const & me)
     {
         return me(std::forward<urng_t>(urange));
@@ -653,7 +654,7 @@ struct to_simd_fn
 namespace seqan3::view
 {
 
-/*!\brief A view that transforms a range of ranges into chunks of seqan3::Simd vectors.
+/*!\brief A view that transforms a range of ranges into chunks of seqan3::simd vectors.
  * \tparam urng_t The type of the range being processed.
  * \tparam simd_t The target simd vector type.
  * \param[in] urange The range being processed.
@@ -681,28 +682,28 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                               |
- * |---------------------------------|:-------------------------------------:|:----------------------------------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                                                  |
- * | std::ranges::ForwardRange       | *required*                            | *lost*                                                                       |
- * | std::ranges::BidirectionalRange |                                       | *lost*                                                                       |
- * | std::ranges::RandomAccessRange  |                                       | *lost*                                                                       |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                                                       |
- * |                                 |                                       |                                                                              |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                                                 |
- * | std::ranges::View               |                                       | *guaranteed*                                                                 |
- * | std::ranges::SizedRange         |                                       | *preserved*  (iff `std::ranges::SizedRange<value_type_t<urng_t>>` is `true`) |
- * | std::ranges::CommonRange        |                                       | *lost*                                                                       |
- * | std::ranges::OutputRange        |                                       | *lost*                                                                       |
- * | seqan3::ConstIterableRange      |                                       | *lost*                                                                       |
- * |                                 |                                       |                                                                              |
- * | seqan3::reference_t             |                                       | std::array<simd_t, simd_traits<simd_t>::length> &                            |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                               |
+ * |----------------------------------|:-------------------------------------:|:----------------------------------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                                                  |
+ * | std::ranges::forward_range       | *required*                            | *lost*                                                                       |
+ * | std::ranges::bidirectional_range |                                       | *lost*                                                                       |
+ * | std::ranges::random_access_range |                                       | *lost*                                                                       |
+ * | std::ranges::contiguous_range    |                                       | *lost*                                                                       |
+ * |                                  |                                       |                                                                              |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                                                 |
+ * | std::ranges::view                |                                       | *guaranteed*                                                                 |
+ * | std::ranges::sized_range         |                                       | *preserved*  (iff `std::ranges::sized_range<value_type_t<urng_t>>` is `true`) |
+ * | std::ranges::common_range        |                                       | *lost*                                                                       |
+ * | std::ranges::output_range        |                                       | *lost*                                                                       |
+ * | seqan3::const_iterable_range     |                                       | *lost*                                                                       |
+ * |                                  |                                       |                                                                              |
+ * | std::ranges::range_reference_t   |                                       | std::array<simd_t, simd_traits<simd_t>::length> &                            |
  *
  *
  * * `urng_t` is the type of the range modified by this view (input).
- * * the expression `std::ranges::InputRange<value_type_t<urng_t>` must evaluate to `true`
- * * the expression `std::DefaultConstructible<value_type_t<urng_t>>` must evaluate to `true`
- * * the expression `Semialphabet<value_type_t<value_type_t<urng_t>>>` must evaluate to `true`
+ * * the expression `std::ranges::input_range<value_type_t<urng_t>` must evaluate to `true`
+ * * the expression `std::default_constructible<value_type_t<urng_t>>` must evaluate to `true`
+ * * the expression `semialphabet<value_type_t<value_type_t<urng_t>>>` must evaluate to `true`
  * * `rrng_type` is the type of the range returned by this view.
  * * for more details, see \ref view.
  *
@@ -757,7 +758,7 @@ namespace seqan3::view
  * \hideinitializer
  */
 
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 inline constexpr auto to_simd = detail::to_simd_fn<simd_t>{};
 //!\}
 } // namespace seqan3::view

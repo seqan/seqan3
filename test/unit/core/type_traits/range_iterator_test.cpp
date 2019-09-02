@@ -29,7 +29,7 @@ TEST(range_and_iterator, iterator_)
     EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<std::vector<int> const>,
                                 typename std::vector<int>::const_iterator>));
 
-    auto v = std::ranges::view::iota(1);
+    auto v = std::view::iota(1);
     EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
                                 decltype(begin(v))>));
     EXPECT_FALSE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
@@ -45,7 +45,7 @@ TEST(range_and_iterator, sentinel_)
     EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<std::vector<int>>,
                                 std::ranges::iterator_t<std::vector<int>>>));
 
-    auto v = std::ranges::view::iota(1);
+    auto v = std::view::iota(1);
     EXPECT_FALSE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
                                 decltype(begin(v))>));
     EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
@@ -70,7 +70,7 @@ void expect_same_types()
 TEST(range_and_iterator, value_type_)
 {
     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = std::ranges::view::iota(1);
+    auto v = std::view::iota(1);
     using type_list = meta::list<value_type_t<std::vector<int>>,                    // short
                                  typename value_type<std::vector<int>>::type,       // long
                                  typename std::vector<int>::value_type,             // member type
@@ -92,7 +92,7 @@ TEST(range_and_iterator, value_type_)
 TEST(range_and_iterator, reference_)
 {
     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = std::ranges::view::iota(1);
+    auto v = std::view::iota(1);
     using type_list = meta::list<reference_t<std::vector<int>>,                    // short
                                  typename reference<std::vector<int>>::type,       // long
                                  typename std::vector<int>::reference,             // member type
@@ -115,7 +115,7 @@ TEST(range_and_iterator, reference_)
 TEST(range_and_iterator, rvalue_reference_)
 {
     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = std::ranges::view::iota(1);
+    auto v = std::view::iota(1);
     using type_list = meta::list<rvalue_reference_t<std::vector<int>>,                    // short
                                  typename rvalue_reference<std::vector<int>>::type,       // long
 // No types have member,yet:
@@ -139,7 +139,7 @@ TEST(range_and_iterator, rvalue_reference_)
 TEST(range_and_iterator, const_reference_)
 {
 //     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = std::ranges::view::iota(1);
+    auto v = std::view::iota(1);
     using type_list = meta::list<const_reference_t<std::vector<int>>,                    // short
                                  typename const_reference<std::vector<int>>::type,       // long
                                  typename std::vector<int>::const_reference,             // member type
@@ -164,7 +164,7 @@ TEST(range_and_iterator, difference_type_)
 {
     //TODO(h-2): add something that actually has a different difference_type
     using foreign_iterator = detail::random_access_iterator<std::vector<int>>;
-    auto v = std::ranges::view::iota(1);
+    auto v = std::view::iota(1);
     using type_list = meta::list<difference_type_t<std::vector<int>>,                    // short
                                  typename difference_type<std::vector<int>>::type,       // long
                                  typename std::vector<int>::difference_type,             // member type
@@ -246,21 +246,21 @@ TEST(range_and_iterator, dimension)
 
 TEST(range_and_iterator, compatible)
 {
-    EXPECT_TRUE((Compatible<std::vector<int>,
+    EXPECT_TRUE((compatible<std::vector<int>,
                                     std::list<int>>));
-    EXPECT_TRUE((Compatible<std::vector<int>,
+    EXPECT_TRUE((compatible<std::vector<int>,
                                     std::ranges::iterator_t<std::vector<int>>>));
-    EXPECT_TRUE((Compatible<std::vector<int>,
+    EXPECT_TRUE((compatible<std::vector<int>,
                                     std::ranges::iterator_t<std::vector<int> const>>));
-    EXPECT_TRUE((Compatible<std::list<std::vector<char>>,
+    EXPECT_TRUE((compatible<std::list<std::vector<char>>,
                                     std::ranges::iterator_t<std::vector<std::string>>>));
 
-    EXPECT_FALSE((Compatible<std::list<std::vector<char>>,
+    EXPECT_FALSE((compatible<std::list<std::vector<char>>,
                                      std::string>));
-    EXPECT_FALSE((Compatible<std::list<std::vector<char>>,
+    EXPECT_FALSE((compatible<std::list<std::vector<char>>,
                                      std::ranges::iterator_t<std::string>>));
-    EXPECT_FALSE((Compatible<std::list<int>,
+    EXPECT_FALSE((compatible<std::list<int>,
                                      int>));
-    EXPECT_FALSE((Compatible<std::vector<int>,
+    EXPECT_FALSE((compatible<std::vector<int>,
                                      std::string>));
 }

@@ -20,8 +20,8 @@ This page will teach you the basics of defining your own view.
 
 # What makes a view?
 
-A view is a type of `std::ranges::Range` that also models `std::ranges::View`.
-The additional requirements of `std::ranges::View` can be vaguely summarised as "not holding any own data" or at least
+A view is a type of `std::ranges::range` that also models `std::ranges::view`.
+The additional requirements of `std::ranges::view` can be vaguely summarised as "not holding any own data" or at least
 not holding data that is relative in size to the number of elements in the view (e.g. a vector cannot be a view,
 because its size in memory depends on the number of elements it represents).
 
@@ -104,7 +104,7 @@ auto v = vec | a;
 
 | Terminology                    | Description                                                               | Example                                                                                                           |
 |--------------------------------|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
-| "view"                         | A type that models std::ranges::View.                                     | `std::ranges::filter_view<std::subrange<int const *, int const *>>`                                               |
+| "view"                         | A type that models std::ranges::view.                                     | `std::ranges::filter_view<std::subrange<int const *, int const *>>`                                               |
 | "view adaptor object"          | Creates a view; can be combined with other adaptors.                      | `std::view::reverse` and <br> `std::view::filter` and <br> `(std::view::filter([] (int) { return true; }))`       |
 | "view adaptor closure object"  | A "view adaptor object" that requires no paramaters other than the range. | `std::view::reverse` and \strike{<tt>std::view::filter</tt> and} `(std::view::filter([] (int) { return true; }))` |
 
@@ -116,7 +116,7 @@ Let's look at some examples!
 \assignment{Exercise 1: Your first custom adaptor object}
 In the alphabet module you learned that ranges of alphabets are not implicitly
 convertible to `char` so you **cannot** print a `std::vector<seqan3::dna5>` via `std::cout`¹.
-You also know that you can call `seqan3::to_char` on every object that models `seqan3::Alphabet` which will convert it
+You also know that you can call `seqan3::to_char` on every object that models `seqan3::alphabet` which will convert it
 to `char` or a similar type.
 
 We want to do the following:
@@ -132,7 +132,7 @@ Define a *range adaptor object* using an existing adaptor which applies a concre
 
 \hint
 You need to need use `std::view::transform` and you need to set a fixed transformation function. `std::view::transform`
-takes an object that models `std::RegularInvocable`, e.g. a lambda function with empty capture `[]`.
+takes an object that models `std::regular_invocable`, e.g. a lambda function with empty capture `[]`.
 \endhint
 
 <small>¹ You *can* print via `seqan3::debug_stream`, but let's ignore that for now. </small>
@@ -152,7 +152,7 @@ provides `operator()` and `operator|` that each return a specialisation of `std:
 
 \assignment{Exercise 2: Combining two existing adaptor objects}
 
-Study the `seqan3::NucleotideAlphabet`. It states that you can call `seqan3::complement` on all nucleotides
+Study the `seqan3::nucleotide_alphabet`. It states that you can call `seqan3::complement` on all nucleotides
 which will give you <tt>'A'_dna5</tt> for <tt>'T'_dna5</tt> a.s.o. Think about how you can adapt the previous solution
 to write a view that transforms ranges of nucleotides into their complement.
 
@@ -207,7 +207,7 @@ This indicates that we can use the sentinel of the underlying range as-is.
 
 \assignment{Exercise 3: Your first iterator}
 
-Have a peak at the \ref tutorial_concepts tutorial again and study the `std::ForwardIterator` concept thoroughly.
+Have a peak at the \ref tutorial_concepts tutorial again and study the `std::forward_iterator` concept thoroughly.
 You will now have to implement your own forward iterator.
 
 \snippet doc/howto/write_a_view/solution_iterator.cpp start
@@ -225,7 +225,7 @@ shall behave exactly as the original in this regard (no transformation, yet).
 Some things to keep in mind for the implementation:
   * When defining a type template (like above), member **types** are not inherited implicitly (member functions are).
   * Another reason "just inheriting" is not sufficient, is that some inherited functions return objects or references
-    to the base type, not your type (which is required by the `std::ForwardIterator` concept).
+    to the base type, not your type (which is required by the `std::forward_iterator` concept).
   * If you choose to wrap the underlying iterator instead of inheriting, you will need to define and "forward"
     a few more member functions, but it's good practice and will help you understand the concept.
   * The `static_assert` will just return `true` or `false`, to get more detailed information on why your type does
@@ -260,7 +260,7 @@ In the previous assigment you have created a working – but pointless – itera
 It does not do anything differently from the original.
 
 Your task now is to implement the "complementing" behaviour, i.e.
-  * your iterator should only work on ranges of `seqan3::NucleotideAlphabet`
+  * your iterator should only work on ranges of `seqan3::nucleotide_alphabet`
   * when accessing an element through the iterator it should not return the element from the underlying range but
     instead its complement
 
@@ -295,8 +295,8 @@ cover the excluded case.</small>
 
 \endsolution
 
-You now have a working iterator, although it still lacks the capabilities of `std::BidirectionalIterator`,
-`std::RandomAccessIterator` and `std::ContiguousIterator`.
+You now have a working iterator, although it still lacks the capabilities of `std::bidirectional_iterator`,
+`std::random_access_iterator` and `std::contiguous_iterator`.
 When designing views, you should always strive to preserve as much of the capabilities of the underlying range
 as possible.
 
@@ -304,16 +304,16 @@ Which of the mentioned concepts do you think your iterator could be made to impl
 documentation.
 
 \hint
-It could be designed to be a `std::RandomAccessIterator` (and thus also `std::BidirectionalIterator`) when the
+It could be designed to be a `std::random_access_iterator` (and thus also `std::bidirectional_iterator`) when the
 underlying range is, because jumping on your iterator/view can be done in
 constant time iff it can be done in constant time on the underlying range (you just jump to the n-th element
 of the underlying range and perform your transformation one that).
 
-However, it can never model `std::ContiguousIterator` because that would imply that the elements are adjacent to each
+However, it can never model `std::contiguous_iterator` because that would imply that the elements are adjacent to each
 other in memory (the elements of our view are created on demand and are not stored in memory).
 \endhint
 
-If you have looked at the `std::RandomAccessIterator`, you will have seen that it is quite a bit of work to implement
+If you have looked at the `std::random_access_iterator`, you will have seen that it is quite a bit of work to implement
 all the operators, many of whom just need to be overloaded to fix the return type.
 To make this a little bit easier SeqAn provides `seqan3::detail::inherited_iterator_base`, it fixes the issue with the
 return type via CRTP.
@@ -336,7 +336,7 @@ for us, e.g. `.size()`, `.operator[]` and a few others.
 
 The only data member the class holds is a copy of the underlying range.
 As you may have noted above, our class only takes underlying ranges that model
-std::ranges::View.
+std::ranges::view.
 This might seem strange; after all we want to apply the view to a vector of which we know that it
 is not a view, but we will clear this up later.
 
@@ -370,10 +370,10 @@ Often you can use `std::ranges::default_sentinel_t` as the type for your sentine
 We have two constructors, one that takes an the underlying type by copy and moves it into the data member
 (remember that since it is a view, it will not be expensive to copy – if it is copied).
 
-The second constructor is more interesting, it takes a `std::ranges::ViewableRange` which is defined as
-being either a `std::ranges::View` or a reference to `std::ranges::Range` that is not a view
+The second constructor is more interesting, it takes a `std::ranges::viewable_range` which is defined as
+being either a `std::ranges::view` or a reference to `std::ranges::range` that is not a view
 (e.g. `std::vector<char> &`).
-Since we have a constructor for `std::ranges::View` already, this one explicitly handles the second case
+Since we have a constructor for `std::ranges::view` already, this one explicitly handles the second case
 and goes through `std::view::all` which wraps the reference in a thin view-layer.
 Storing only a view member guarantess that our type itself is also cheap to copy among other things.
 

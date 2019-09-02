@@ -163,7 +163,8 @@ public:
     }
     //!\}
 
-    /*!\name Arithmetic additive operators.
+    /*!
+ame Arithmetic additive operators.
      * \brief Only available if the corresponding skills from seqan3::detail::strong_type_skill are added and
      *        the underlying type supports this operation.
      * \{
@@ -187,7 +188,8 @@ public:
     }
     //!\}
 
-    /*!\name Arithmetic multiplicative operators.
+    /*!
+ame Arithmetic multiplicative operators.
      * \brief Only available if the corresponding skills from seqan3::detail::strong_type_skill are added and
      *        the underlying type supports this operation.
      * \{
@@ -279,7 +281,7 @@ public:
     }
 
     //!\brief Adds bitwise left shift operator to the strong type.
-    template <std::Integral integral_t>
+    template <std::integral integral_t>
     constexpr derived_t operator<<(integral_t const shift)
         //!\cond
         requires ((skills & strong_type_skill::bitwise_lshift) != strong_type_skill::none)
@@ -298,7 +300,7 @@ public:
     }
 
     //!\brief Adds bitwise right shift operator to the strong type.
-    template <std::Integral integral_t>
+    template <std::integral integral_t>
     constexpr derived_t operator>>(integral_t const shift)
         //!\cond
         requires ((skills & strong_type_skill::bitwise_rshift) != strong_type_skill::none)

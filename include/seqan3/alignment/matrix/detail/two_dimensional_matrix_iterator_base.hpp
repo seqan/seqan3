@@ -43,7 +43,7 @@ enum struct matrix_major_order : uint8_t
 
 /*!\brief A crtp-base class for iterators over seqan3::detail::two_dimensional_matrix.
  * \ingroup alignment_matrix
- * \implements seqan3::detail::TwoDimensionalMatrixIterator
+ * \implements seqan3::detail::two_dimensional_matrix_iterator
  * \tparam derived_t The derived type that implements this base iterator.
  * \tparam order The seqan3::detail::matrix_major_order to use.
  *
@@ -159,7 +159,8 @@ public:
     SEQAN3_DOXYGEN_ONLY(constexpr seqan3::detail::matrix_coordinate coordinate() const noexcept {})
     //!\}
 
-    /*!\name Arithmetic operators
+    /*!
+ame Arithmetic operators
      * \{
      */
 
@@ -299,7 +300,7 @@ public:
     // How can make sure this is the same type?
     template <typename other_derived_t>
     //!\cond
-        requires std::Constructible<derived_t, other_derived_t> || std::Constructible<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
     constexpr bool operator==(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
@@ -309,7 +310,7 @@ public:
     //!\brief Returns `true` if both iterators are unequal, `false` otherwise.
     template <typename other_derived_t>
     //!\cond
-        requires std::Constructible<derived_t, other_derived_t> || std::Constructible<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
     constexpr bool operator!=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
@@ -319,7 +320,7 @@ public:
     //!\brief Checks if `lhs` is smaller than `rhs`.
     template <typename other_derived_t>
     //!\cond
-        requires std::Constructible<derived_t, other_derived_t> || std::Constructible<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
     constexpr bool operator<(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
@@ -329,7 +330,7 @@ public:
     //!\brief Checks if `lhs` is smaller than or equal to `rhs`.
     template <typename other_derived_t>
     //!\cond
-        requires std::Constructible<derived_t, other_derived_t> || std::Constructible<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
     constexpr bool operator<=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
@@ -339,7 +340,7 @@ public:
     //!\brief Checks if `lhs` is greater than `rhs`.
     template <typename other_derived_t>
     //!\cond
-        requires std::Constructible<derived_t, other_derived_t> || std::Constructible<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
     constexpr bool operator>(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
@@ -349,7 +350,7 @@ public:
     //!\brief Checks if `lhs` is greater than or equal to `rhs`.
     template <typename other_derived_t>
     //!\cond
-        requires std::Constructible<derived_t, other_derived_t> || std::Constructible<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
     constexpr bool operator>=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {

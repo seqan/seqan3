@@ -21,16 +21,16 @@ namespace seqan3
 
 /*!\brief A seqan3::alphabet_tuple_base that joins a nucleotide alphabet with an RNA structure alphabet.
  * \ingroup structure
- * \implements seqan3::RnaStructureAlphabet
- * \implements seqan3::NucleotideAlphabet
- * \implements seqan3::WritableAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \tparam sequence_alphabet_t Type of the first letter; must model seqan3::WritableAlphabet,
- * seqan3::NucleotideAlphabet and satisfy the requirements on arguments by seqan3::alphabet_tuple_base.
- * \tparam structure_alphabet_t Types of further letters; must model seqan3::WritableAlphabet,
- * seqan3::RnaStructureAlphabet and satisfy the requirements on arguments by seqan3::alphabet_tuple_base.
+ * \implements seqan3::rna_structure_alphabet
+ * \implements seqan3::nucleotide_alphabet
+ * \implements seqan3::writable_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \tparam sequence_alphabet_t Type of the first letter; must model seqan3::writable_alphabet,
+ * seqan3::nucleotide_alphabet and satisfy the requirements on arguments by seqan3::alphabet_tuple_base.
+ * \tparam structure_alphabet_t Types of further letters; must model seqan3::writable_alphabet,
+ * seqan3::rna_structure_alphabet and satisfy the requirements on arguments by seqan3::alphabet_tuple_base.
  *
  * This composite pairs a nucleotide alphabet with a structure alphabet. The rank values
  * correpsond to numeric values in the size of the composite, while the character values
@@ -43,11 +43,11 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/structure/structured_rna.cpp
  *
- * This seqan3::alphabet_tuple_base itself models both seqan3::NucleotideAlphabet and seqan3::RnaStructureAlphabet.
+ * This seqan3::alphabet_tuple_base itself models both seqan3::nucleotide_alphabet and seqan3::rna_structure_alphabet.
  */
-template <NucleotideAlphabet sequence_alphabet_t, RnaStructureAlphabet structure_alphabet_t>
+template <nucleotide_alphabet sequence_alphabet_t, rna_structure_alphabet structure_alphabet_t>
 //!\cond
-    requires WritableAlphabet<sequence_alphabet_t> && WritableAlphabet<structure_alphabet_t>
+    requires writable_alphabet<sequence_alphabet_t> && writable_alphabet<structure_alphabet_t>
 //!\endcond
 class structured_rna :
     public alphabet_tuple_base<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
@@ -119,7 +119,7 @@ public:
     /*!\brief Return a structured_rna where the sequence letter is converted to its complement.
      * \details
      * See \ref nucleotide for the actual values.
-     * Satisfies the seqan3::NucleotideAlphabet::complement() requirement via the seqan3::complement() wrapper.
+     * Satisfies the seqan3::nucleotide_alphabet::complement() requirement via the seqan3::complement() wrapper.
      * The structure letter is not modified.
      * ###Complexity
      * Constant.

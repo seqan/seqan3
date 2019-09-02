@@ -45,16 +45,16 @@
 namespace seqan3
 {
 // ----------------------------------------------------------------------------
-// StructureFileInputTraits
+// structure_file_input_traits
 // ----------------------------------------------------------------------------
 
-/*!\interface seqan3::StructureFileInputTraits <>
+/*!\interface seqan3::structure_file_input_traits <>
  * \brief The requirements a traits_type for seqan3::structure_file_input must meet.
  * \ingroup structure_file
  */
-/*!\name Requirements for seqan3::StructureFileInputTraits
- * \brief You can expect these **member types** of all types that satisfy seqan3::StructureFileInputTraits.
- * \memberof seqan3::StructureFileInputTraits
+/*!\name Requirements for seqan3::structure_file_input_traits
+ * \brief You can expect these **member types** of all types that satisfy seqan3::structure_file_input_traits.
+ * \memberof seqan3::structure_file_input_traits
  *
  * \details
  *
@@ -66,10 +66,10 @@ namespace seqan3
  * \{
  */
 /*!\typedef using seq_alphabet
- * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::Alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::alphabet.
  */
 /*!\typedef using seq_legal_alphabet
- * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::Alphabet and be convertible to
+ * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::alphabet and be convertible to
  * `seq_alphabet`.
  *
  * \details
@@ -81,22 +81,22 @@ namespace seqan3
  */
 /*!\typedef using seq_container
  * \brief Type template of the seqan3::field::SEQ, a container template over `seq_alphabet`;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using seq_container_container
  * \brief Type template of a column of seqan3::field::SEQ, a container template that can hold multiple
- * `seq_container`; must satisfy seqan3::SequenceContainer.
+ * `seq_container`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using id_alphabet
- * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::Alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::alphabet.
  */
 /*!\typedef using id_container
  * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using id_container_container
  * \brief Type template of a column of seqan3::field::ID, a container template that can hold multiple
- * `id_container`; must satisfy seqan3::SequenceContainer.
+ * `id_container`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using bpp_prob
  * \brief Data type for the base pair probabilities in seqan3::field::BPP; must satisfy std::is_floating_point.
@@ -108,26 +108,26 @@ namespace seqan3
 /*!\typedef using bpp_queue
  * \brief A container template representing a set of interactions of type bpp_item,
  * which are (comparable) tuples of `bpp_prob` and `bpp_partner`;
- * must satisfy seqan3::Container and must provide an std::emplace(bpp_prob, bpp_partner) function.
+ * must satisfy seqan3::container and must provide an std::emplace(bpp_prob, bpp_partner) function.
  */
 /*!\typedef using bpp_container
  * \brief Type template of the seqan3::field::BPP, a container template over a set (bpp_queue) of interactions;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using bpp_container_container
  * \brief Type template of a column of seqan3::field::BPP, a container template that can hold multiple
- * `bpp_container`; must satisfy seqan3::SequenceContainer.
+ * `bpp_container`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using structure_alphabet
- * \brief Alphabet of the characters for the seqan3::field::STRUCTURE; must satisfy seqan3::RnaStructureAlphabet.
+ * \brief Alphabet of the characters for the seqan3::field::STRUCTURE; must satisfy seqan3::rna_structure_alphabet.
  */
 /*!\typedef using structure_container
  * \brief Type template of the seqan3::field::STRUCTURE, a container template over `structure_alphabet`;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using structure_container_container
  * \brief Type template of a column of seqan3::field::STRUCTURE, a container template that can hold multiple
- * `structure_container`; must satisfy seqan3::SequenceContainer.
+ * `structure_container`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using energy_type
  * \brief Type template of the seqan3::field::ENERGY; must be std::optional of a type satisfying std::is_floating_point.
@@ -137,7 +137,7 @@ namespace seqan3
  */
 /*!\typedef using energy_container
  * \brief Type template of a column of seqan3::field::ENERGY, a container template that can hold multiple `energy_type`;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using react_type
  * \brief Data type for the reactivity and reactivity error in seqan3::field::REACT and seqan3::field::REACT_ERR,
@@ -145,50 +145,50 @@ namespace seqan3
  */
 /*!\typedef using react_container
  * \brief Type template of the seqan3::field::REACT and seqan3::field::REACT_ERR, a container template over
- * `react_type`; must satisfy seqan3::SequenceContainer.
+ * `react_type`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using react_container_container
  * \brief Type template of a column of seqan3::field::REACT and seqan3::field::REACT_ERR, a container template that
- * can hold multiple `react_container`; must satisfy seqan3::SequenceContainer.
+ * can hold multiple `react_container`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using comment_alphabet
- * \brief Alphabet of the characters for the seqan3::field::COMMENT; must satisfy seqan3::Alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::COMMENT; must satisfy seqan3::alphabet.
  */
 /*!\typedef using comment_container
  * \brief Type template of the seqan3::field::COMMENT, a container template over `comment_alphabet`;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using comment_container_container
  * \brief Type template of a column of seqan3::field::COMMENT, a container template that can hold multiple
- * `comment_container`; must satisfy seqan3::SequenceContainer.
+ * `comment_container`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using offset_type
  * \brief Type template of the seqan3::field::OFFSET; must statisfy std::numeric_limits::is_integer.
  */
 /*!\typedef using offset_container
  * \brief Type template of a column of seqan3::field::OFFSET, a container template that can hold multiple `offset_type`;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 //!\}
 //!\cond
 template<typename t>
-SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
+SEQAN3_CONCEPT structure_file_input_traits = requires(t v)
 {
     // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
     // sequence
-    requires WritableAlphabet<typename t::seq_alphabet>;
-    requires WritableAlphabet<typename t::seq_legal_alphabet>;
-    requires ExplicitlyConvertibleTo<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
-    requires SequenceContainer<typename t::template seq_container<typename t::seq_alphabet>>;
-//    requires SequenceContainer
+    requires writable_alphabet<typename t::seq_alphabet>;
+    requires writable_alphabet<typename t::seq_legal_alphabet>;
+    requires explicitly_convertible_to<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
+    requires sequence_container<typename t::template seq_container<typename t::seq_alphabet>>;
+//    requires sequence_container
 //        <typename t::template seq_container_container
 //            <typename t::template seq_container
 //                <typename t::seq_alphabet>>>;
 
     // id
-    requires WritableAlphabet<typename t::id_alphabet>;
-    requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
-//    requires SequenceContainer
+    requires writable_alphabet<typename t::id_alphabet>;
+    requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
+//    requires sequence_container
 //        <typename t::template id_container_container
 //            <typename t::template id_container
 //                <typename t::id_alphabet>>>;
@@ -197,19 +197,19 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
     requires std::is_floating_point_v<typename t::bpp_prob>;
     requires std::numeric_limits<typename t::bpp_partner>::is_integer;
 
-//    requires Container // TODO check Associative Container Concept when implemented
+//    requires container // TODO check Associative container Concept when implemented
 //        <typename t::template bpp_queue
 //            <typename t::template bpp_item
 //                <typename t::bpp_prob, typename t::bpp_partner>>>
 //        && requires(typename t::template bpp_queue // TODO maybe implement also a version that allows emplace_back
 //            <typename t::template bpp_item
 //                <typename t::bpp_prob, typename t::bpp_partner>> value) { value.emplace(1.0, 1); };
-//    requires SequenceContainer
+//    requires sequence_container
 //        <typename t::template bpp_container
 //            <typename t::template bpp_queue
 //                 <typename t::template bpp_item
 //                      <typename t::bpp_prob, typename t::bpp_partner>>>>;
-//    requires SequenceContainer
+//    requires sequence_container
 //        <typename t::template bpp_container_container
 //            <typename t::template bpp_container
 //                <typename t::template bpp_queue
@@ -218,9 +218,9 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
 
     // structure
     requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
-          || RnaStructureAlphabet<typename t::structure_alphabet>;
-    requires SequenceContainer<typename t::template structure_container<typename t::structure_alphabet>>;
-//    requires SequenceContainer
+          || rna_structure_alphabet<typename t::structure_alphabet>;
+    requires sequence_container<typename t::template structure_container<typename t::structure_alphabet>>;
+//    requires sequence_container
 //        <typename t::template structure_container_container
 //            <typename t::template structure_container
 //                <typename t::structure_alphabet>>>;
@@ -231,11 +231,11 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
             <typename t::seq_alphabet, typename t::structure_alphabet>,
              typename t::seq_alphabet, typename t::structure_alphabet>,
         typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>>;
-//    requires SequenceContainer
+//    requires sequence_container
 //        <typename t::template structured_seq_container
 //            <typename t::template structured_seq_alphabet
 //                <typename t::seq_alphabet, typename t::structure_alphabet>>>;
-//    requires SequenceContainer
+//    requires sequence_container
 //        <typename t::template structured_seq_container_container
 //            <typename t::template structured_seq_container
 //                <typename t::template structured_seq_alphabet
@@ -243,27 +243,27 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
 
     // energy: std::optional of floating point number
     requires std::is_floating_point_v<typename t::energy_type::value_type>;
-    requires SequenceContainer<typename t::template energy_container<typename t::energy_type>>;
+    requires sequence_container<typename t::template energy_container<typename t::energy_type>>;
 
     // reactivity [error]
     requires std::is_floating_point_v<typename t::react_type>;
-    requires SequenceContainer<typename t::template react_container<typename t::react_type>>;
-//    requires SequenceContainer
+    requires sequence_container<typename t::template react_container<typename t::react_type>>;
+//    requires sequence_container
 //        <typename t::template react_container_container
 //            <typename t::template react_container
 //                <typename t::react_type>>>;
 
     // comment
-    requires WritableAlphabet<typename t::comment_alphabet>;
-    requires SequenceContainer<typename t::template comment_container<typename t::comment_alphabet>>;
-//    requires SequenceContainer
+    requires writable_alphabet<typename t::comment_alphabet>;
+    requires sequence_container<typename t::template comment_container<typename t::comment_alphabet>>;
+//    requires sequence_container
 //        <typename t::template comment_container_container
 //            <typename t::template comment_container
 //                <typename t::comment_alphabet>>>;
 
     // offset
     requires std::numeric_limits<typename t::offset_type>::is_integer;
-    requires SequenceContainer<typename t::template offset_container<typename t::offset_type>>;
+    requires sequence_container<typename t::template offset_container<typename t::offset_type>>;
 };
 //!\endcond
 
@@ -272,7 +272,7 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
 // ----------------------------------------------------------------------------
 
 /*!\brief The default traits for seqan3::structure_file_input
- * \implements StructureFileInputTraits
+ * \implements structure_file_input_traits
  * \ingroup structure_file
  *
  * \details
@@ -287,7 +287,7 @@ SEQAN3_CONCEPT StructureFileInputTraits = requires(t v)
 struct structure_file_input_default_traits_rna
 {
     /*!\name Member types
-     * \brief Definitions to satisfy seqan3::StructureFileInputTraits.
+     * \brief Definitions to satisfy seqan3::structure_file_input_traits.
      * \{
      */
 
@@ -422,7 +422,7 @@ struct structure_file_input_default_traits_rna
 struct structure_file_input_default_traits_aa : structure_file_input_default_traits_rna
 {
     /*!\name Member types
-     * \brief Definitions to satisfy seqan3::StructureFileInputTraits.
+     * \brief Definitions to satisfy seqan3::structure_file_input_traits.
      * \{
      */
 
@@ -445,12 +445,12 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
 /*!\brief A class for reading structured sequence files, e.g. Stockholm, Connect, Vienna, ViennaRNA bpp matrix ...
  * \ingroup structure_file
  * \tparam traits_type        An auxiliary type that defines certain member types and constants, must satisfy
- *                            seqan3::StructureFileInputTraits.
+ *                            seqan3::structure_file_input_traits.
  * \tparam selected_field_ids A seqan3::fields type with the list and order of desired record entries; all fields
  *                            must be in seqan3::structure_file_input::field_ids.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
- *                            seqan3::StructureFileInputFormat).
- * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::Char.
+ *                            seqan3::structure_file_input_format).
+ * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::builtin_character.
  * \details
  *
  * ### Introduction
@@ -570,17 +570,17 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *
  * Note that for this to make sense, your storage data types need to be identical to the corresponding column types
  * of the file. If you require different column types you can specify you own traits, see
- * seqan3::StructureFileInputTraits.
+ * seqan3::structure_file_input_traits.
  *
  * ### Formats
  *
  * Currently, the only implemented format is seqan3::format_vienna. More formats will follow soon.
  */
-template<StructureFileInputTraits traits_type_ = structure_file_input_default_traits_rna,
-         detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
-         detail::TypeListOfStructureFileInputFormats valid_formats_
+template<structure_file_input_traits traits_type_ = structure_file_input_default_traits_rna,
+         detail::fields_specialisation selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
+         detail::type_list_of_structure_file_input_formats valid_formats_
              = type_list<format_vienna>,
-         Char stream_char_type_ = char>
+         builtin_character stream_char_type_ = char>
 class structure_file_input
 {
 public:
@@ -784,7 +784,7 @@ public:
 
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam file_format The format of the file in the stream, must satisfy
-     * seqan3::StructureFileInputFormat.
+     * seqan3::structure_file_input_format.
      * \param[in] stream The stream to operate on; must be derived of std::basic_istream.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
@@ -797,12 +797,12 @@ public:
      * the file is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template<IStream2 stream_t, StructureFileInputFormat file_format>
+    template<input_stream stream_t, structure_file_input_format file_format>
     structure_file_input(stream_t & stream,
                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
-        format{detail::structure_file_input_format<file_format>{}}
+        format{detail::structure_file_input_format_REMOVEME<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -815,12 +815,12 @@ public:
     }
 
     //!\overload
-    template<IStream2 stream_t, StructureFileInputFormat file_format>
+    template<input_stream stream_t, structure_file_input_format file_format>
     structure_file_input(stream_t && stream,
                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
-        format{detail::structure_file_input_format<file_format>{}}
+        format{detail::structure_file_input_format_REMOVEME<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -995,7 +995,7 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::structure_file_input_format>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::structure_file_input_format_REMOVEME>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -1105,9 +1105,9 @@ protected:
  */
 
 //!\brief Deduction of the selected fields, the file format and the stream type.
-template <IStream2                 stream_type,
-          StructureFileInputFormat file_format,
-          detail::Fields           selected_field_ids>
+template <input_stream                 stream_type,
+          structure_file_input_format file_format,
+          detail::fields_specialisation           selected_field_ids>
 structure_file_input(stream_type && stream, file_format const &, selected_field_ids const &)
     -> structure_file_input<typename structure_file_input<>::traits_type,       // actually use the default
                             selected_field_ids,
@@ -1115,9 +1115,9 @@ structure_file_input(stream_type && stream, file_format const &, selected_field_
                             typename std::remove_reference_t<stream_type>::char_type>;
 
 //!\overload
-template <IStream2                 stream_type,
-          StructureFileInputFormat file_format,
-          detail::Fields           selected_field_ids>
+template <input_stream                 stream_type,
+          structure_file_input_format file_format,
+          detail::fields_specialisation           selected_field_ids>
 structure_file_input(stream_type & stream, file_format const &, selected_field_ids const &)
     -> structure_file_input<typename structure_file_input<>::traits_type,       // actually use the default
                             selected_field_ids,
@@ -1135,14 +1135,14 @@ namespace std
 {
 
 /*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \ingroup structure_file
  * \see std::tuple_size_v
  */
-template<seqan3::StructureFileInputTraits                    traits_type,
-         seqan3::detail::Fields                              selected_field_ids,
-         seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::Char                                        stream_char_t>
+template<seqan3::structure_file_input_traits                    traits_type,
+         seqan3::detail::fields_specialisation                              selected_field_ids,
+         seqan3::detail::type_list_of_structure_file_input_formats valid_formats,
+         seqan3::builtin_character                                        stream_char_t>
 struct tuple_size<seqan3::structure_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -1150,15 +1150,15 @@ struct tuple_size<seqan3::structure_file_input<traits_type, selected_field_ids, 
 };
 
 /*!\brief Obtains the type of the specified element.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \ingroup structure_file
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
 template<size_t                                              elem_no,
-         seqan3::StructureFileInputTraits                    traits_type,
-         seqan3::detail::Fields                              selected_field_ids,
-         seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::Char                                        stream_char_t>
+         seqan3::structure_file_input_traits                    traits_type,
+         seqan3::detail::fields_specialisation                              selected_field_ids,
+         seqan3::detail::type_list_of_structure_file_input_formats valid_formats,
+         seqan3::builtin_character                                        stream_char_t>
 struct tuple_element<elem_no,
                      seqan3::structure_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::structure_file_input<traits_type,

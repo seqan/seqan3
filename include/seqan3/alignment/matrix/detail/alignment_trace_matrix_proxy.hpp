@@ -26,14 +26,14 @@ namespace seqan3::detail
  * \details
  *
  * Provides named accessors to the respective values of the traceback matrix during the alignment computation.
- * The `trace_type` must be either a seqan3::detail::trace_directions value or a seqan3::detail::Simd vector
+ * The `trace_type` must be either a seqan3::detail::trace_directions value or a seqan3::detail::simd_conceptvector
  * over seqan3::detail::trace_directions.
  */
 template <typename trace_type>
 struct alignment_trace_matrix_proxy
 {
-    static_assert(std::Same<trace_type, trace_directions> || Simd<trace_type>,
-                  "Value type must either be a trace_directions object or a Simd vector.");
+    static_assert(std::same_as<trace_type, trace_directions> || simd_concept<trace_type>,
+                  "Value type must either be a trace_directions object or a simd vector.");
 
     trace_type & current; //!< Reference to the current element.
     trace_type & left_r; //!< Reference to the element to the left.

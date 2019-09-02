@@ -35,7 +35,7 @@ namespace seqan3::detail
  * column-major-order over the traceback matrix. Dereferencing an iterator returns a slice over the current matrix
  * column. The value type is a pair over a seqan3::alignment_coordinate and
  * the seqan3::detail::alignment_trace_matrix_proxy, which gives a unified access to the respective matrix cells
- * as needed by the standard alignment algorithm. The matrix is modelled as std::ranges::InputRange since the
+ * as needed by the standard alignment algorithm. The matrix is modelled as std::ranges::input_range since the
  * alignment algorithm iterates only once over the complete matrix to calculate the values.
  *
  * ### Only computing the coordinates
@@ -51,8 +51,8 @@ class alignment_trace_matrix_full_banded :
     public alignment_matrix_column_major_range_base<alignment_trace_matrix_full_banded<trace_t, coordinate_only>>
 {
 private:
-    static_assert(std::Same<trace_t, trace_directions> || Simd<trace_t>,
-                  "Value type must either be a trace_directions object or a Simd vector.");
+    static_assert(std::same_as<trace_t, trace_directions> || simd_concept<trace_t>,
+                  "Value type must either be a trace_directions object or a simd vector.");
 
     //!\brief The base class for data storage.
     using matrix_base_t = alignment_trace_matrix_base<trace_t>;
@@ -109,8 +109,8 @@ public:
     ~alignment_trace_matrix_full_banded() = default;
 
     /*!\brief Construction from two ranges and a band.
-     * \tparam first_sequence_t  The first range type; must model std::ranges::ForwardRange.
-     * \tparam second_sequence_t The second range type; must model std::ranges::ForwardRange.
+     * \tparam first_sequence_t  The first range type; must model std::ranges::forward_range.
+     * \tparam second_sequence_t The second range type; must model std::ranges::forward_range.
      *
      * \param[in] first         The first range.
      * \param[in] second        The second range.
@@ -123,7 +123,7 @@ public:
      * memory to store the banded matrix.
      * If `coordinate_only` is set to `true`, nothing will be allocated.
      */
-    template <std::ranges::ForwardRange first_sequence_t, std::ranges::ForwardRange second_sequence_t>
+    template <std::ranges::forward_range first_sequence_t, std::ranges::forward_range second_sequence_t>
     constexpr alignment_trace_matrix_full_banded(first_sequence_t && first,
                                                  second_sequence_t && second,
                                                  static_band const & band,
@@ -188,7 +188,7 @@ private:
     }
 
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::make_proxy
-    template <std::RandomAccessIterator iter_t>
+    template <std::random_access_iterator iter_t>
     constexpr value_type make_proxy(iter_t host_iter) noexcept
     {
         if constexpr (coordinate_only)

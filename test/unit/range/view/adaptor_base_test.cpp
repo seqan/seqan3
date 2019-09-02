@@ -66,7 +66,7 @@ TEST(arg_ownership, lval_adaptor)
 
     auto f = vec | a;
 
-    EXPECT_TRUE((std::Same<decltype(f),
+    EXPECT_TRUE((std::same_as<decltype(f),
                            std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
 
     // In general three operations happen:
@@ -100,7 +100,7 @@ TEST(arg_ownership, const_lval_adaptor)
 
     auto f = vec | a;
 
-    EXPECT_TRUE((std::Same<decltype(f),
+    EXPECT_TRUE((std::same_as<decltype(f),
                            std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
 
     EXPECT_EQ(std::get<0>(f).copy_count, 1ul);
@@ -130,7 +130,7 @@ TEST(arg_ownership, rval_adaptor)
 
     auto f = vec | std::move(a);
 
-    EXPECT_TRUE((std::Same<decltype(f),
+    EXPECT_TRUE((std::same_as<decltype(f),
                            std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
 
     EXPECT_EQ(std::get<0>(f).copy_count, 0ul); // moved out of storage, too, because temporary
@@ -160,7 +160,7 @@ TEST(arg_ownership, const_rval_adaptor)
 
     auto f = vec | std::move(a);
 
-    EXPECT_TRUE((std::Same<decltype(f),
+    EXPECT_TRUE((std::same_as<decltype(f),
                            std::tuple<copy_counter, copy_counter const, copy_counter &, copy_counter const &>>));
 
     EXPECT_EQ(std::get<0>(f).copy_count, 1ul);

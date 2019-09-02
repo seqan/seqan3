@@ -49,8 +49,8 @@ namespace seqan3
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of
  *                              fields IDs; only relevant if these can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each
- *                              must model seqan3::AlignmentFileOutputFormat).
- * \tparam stream_char_type     The type of character of the underlying stream, must model seqan3::Char.
+ *                              must model seqan3::alignment_file_output_format).
+ * \tparam stream_char_type     The type of character of the underlying stream, must model seqan3::builtin_character.
  *
  * \details
  *
@@ -166,7 +166,7 @@ namespace seqan3
  *   * seqan3::format_sam
  *   * seqan3::format_bam
  */
-template <detail::Fields selected_field_ids_ =
+template <detail::fields_specialisation selected_field_ids_ =
               fields<field::SEQ,
                      field::ID,
                      field::OFFSET,
@@ -182,8 +182,8 @@ template <detail::Fields selected_field_ids_ =
                      field::EVALUE,
                      field::BIT_SCORE,
                      field::HEADER_PTR>,
-          detail::TypeListOfAlignmentFileOutputFormats valid_formats_ = type_list<format_sam, format_bam>,
-          Char stream_char_type_ = char,
+          detail::type_list_of_alignment_file_output_formats valid_formats_ = type_list<format_sam, format_bam>,
+          builtin_character stream_char_type_ = char,
           typename ref_ids_type = ref_info_not_given>
 class alignment_file_output
 {
@@ -308,8 +308,8 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_type   The type of stream to write to; must model seqan3::OStream2.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::AlignmentFileOutputFormat.
+     * \tparam stream_type   The type of stream to write to; must model seqan3::output_stream.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::alignment_file_output_format.
      * \param[out] stream    The stream to write to, must be derived of std::basic_ostream<stream_char_t>.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
@@ -323,34 +323,34 @@ public:
      * want compression.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <OStream2 stream_type, AlignmentFileOutputFormat file_format>
+    template <output_stream stream_type, alignment_file_output_format file_format>
     alignment_file_output(stream_type              & stream,
                           file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{detail::alignment_file_output_format<file_format>{}}
+        format{detail::alignment_file_output_format_REMOVEME<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
     }
 
     //!\overload
-    template <OStream2 stream_type, AlignmentFileOutputFormat file_format>
+    template <output_stream stream_type, alignment_file_output_format file_format>
     alignment_file_output(stream_type             && stream,
                           file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_type{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{detail::alignment_file_output_format<file_format>{}}
+        format{detail::alignment_file_output_format_REMOVEME<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
     }
 
     /*!\brief Construct from filename.
-     * \tparam ref_ids_type_    The type of range over reference ids; must model std::ForwardRange.
-     * \tparam ref_lengths_type The type of range over reference lengths; must model std::ForwardRange.
+     * \tparam ref_ids_type_    The type of range over reference ids; must model std::forward_range.
+     * \tparam ref_lengths_type The type of range over reference lengths; must model std::forward_range.
      *
      * \param[in] filename      Path to the file you wish to open.
      * \param[in] ref_ids       A range over reference ids.
@@ -378,9 +378,9 @@ public:
      *
      * \include test/snippet/io/alignment_file/alignment_file_output_format_construction.cpp
      */
-    template <typename ref_ids_type_, std::ranges::ForwardRange ref_lengths_type>
+    template <typename ref_ids_type_, std::ranges::forward_range ref_lengths_type>
     //!\cond
-        requires std::Same<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
+        requires std::same_as<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
     //!\endcond
     alignment_file_output(std::filesystem::path const & filename,
                           ref_ids_type_              && ref_ids,
@@ -393,10 +393,10 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam stream_type      The type of stream to write to; must model seqan3::OStream2.
-     * \tparam file_format      The format of the file in the stream, must model seqan3::AlignmentFileOutputFormat.
-     * \tparam ref_ids_type_    The type of range over reference ids; must model std::ForwardRange.
-     * \tparam ref_lengths_type The type of range over reference lengths; must model std::ForwardRange.
+     * \tparam stream_type      The type of stream to write to; must model seqan3::output_stream.
+     * \tparam file_format      The format of the file in the stream, must model seqan3::alignment_file_output_format.
+     * \tparam ref_ids_type_    The type of range over reference ids; must model std::forward_range.
+     * \tparam ref_lengths_type The type of range over reference lengths; must model std::forward_range.
      *
      * \param[in] stream        The stream to operate on (this must be std::move'd in!).
      * \param[in] ref_ids       A range over reference ids.
@@ -413,12 +413,12 @@ public:
      * want compression.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <OStream2 stream_type,
-              AlignmentFileOutputFormat file_format,
+    template <output_stream stream_type,
+              alignment_file_output_format file_format,
               typename ref_ids_type_, // generic type to capture lvalue references
-              std::ranges::ForwardRange ref_lengths_type>
+              std::ranges::forward_range ref_lengths_type>
     //!\cond
-        requires std::Same<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
+        requires std::same_as<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
     //!\endcond
     alignment_file_output(stream_type             && stream,
                           ref_ids_type_           && ref_ids,
@@ -497,7 +497,7 @@ public:
     template <typename record_t>
     void push_back(record_t && r)
     //!\cond
-        requires TupleLike<record_t> &&
+        requires tuple_like<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
     //!\endcond
     {
@@ -545,7 +545,7 @@ public:
     template <typename tuple_t>
     void push_back(tuple_t && t)
     //!\cond
-        requires TupleLike<tuple_t>
+        requires tuple_like<tuple_t>
     //!\endcond
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
@@ -599,8 +599,8 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::OutputRange and have a reference type that
-     *                   satisfies seqan3::TupleLike.
+     * \tparam rng_t     Type of the range, must satisfy seqan3::output_range and have a reference type that
+     *                   satisfies seqan3::tuple_like.
      * \param[in] range  The range to write.
      *
      * \details
@@ -622,7 +622,7 @@ public:
     template <typename rng_t>
     alignment_file_output & operator=(rng_t && range)
     //!\cond
-        requires std::ranges::InputRange<rng_t> && TupleLike<reference_t<rng_t>>
+        requires std::ranges::input_range<rng_t> && tuple_like<reference_t<rng_t>>
     //!\endcond
     {
         for (auto && record : range)
@@ -631,8 +631,8 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
-     *                   satisfies seqan3::TupleLike.
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::input_range and have a reference type that
+     *                   satisfies seqan3::tuple_like.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
      *
@@ -661,7 +661,7 @@ public:
     template <typename rng_t>
     friend alignment_file_output & operator|(rng_t && range, alignment_file_output & f)
     //!\cond
-        requires std::ranges::InputRange<rng_t> && TupleLike<reference_t<rng_t>>
+        requires std::ranges::input_range<rng_t> && tuple_like<reference_t<rng_t>>
     //!\endcond
     {
         f = range;
@@ -672,7 +672,7 @@ public:
     template <typename rng_t>
     friend alignment_file_output operator|(rng_t && range, alignment_file_output && f)
     //!\cond
-        requires std::ranges::InputRange<rng_t> && TupleLike<reference_t<rng_t>>
+        requires std::ranges::input_range<rng_t> && tuple_like<reference_t<rng_t>>
     //!\endcond
     {
         f = range;
@@ -704,7 +704,7 @@ public:
      */
     auto & header()
     {
-        if constexpr (std::Same<ref_ids_type, ref_info_not_given>)
+        if constexpr (std::same_as<ref_ids_type, ref_info_not_given>)
             throw std::logic_error{"Please construct your file with reference id and length information in order "
                                    "to properly initialise the header before accessing it."};
 
@@ -731,14 +731,14 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::alignment_file_output_format>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::alignment_file_output_format_REMOVEME>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
 
     //!\brief The header type, which specilised with ref_ids_type if reference information are given.
-    using header_type = alignment_file_header<std::conditional_t<std::Same<ref_ids_type, ref_info_not_given>,
+    using header_type = alignment_file_header<std::conditional_t<std::same_as<ref_ids_type, ref_info_not_given>,
                                               std::vector<std::string>,
                                               ref_ids_type>>;
 
@@ -757,9 +757,9 @@ protected:
         {
             header_ptr->ref_id_info.emplace_back(ref_lengths[idx], "");
 
-            if constexpr (std::ranges::ContiguousRange<reference_t<ref_ids_type_>> &&
-                          std::ranges::SizedRange<reference_t<ref_ids_type_>> &&
-                          ForwardingRange<reference_t<ref_ids_type_>>)
+            if constexpr (std::ranges::contiguous_range<reference_t<ref_ids_type_>> &&
+                          std::ranges::sized_range<reference_t<ref_ids_type_>> &&
+                          forwarding_range<reference_t<ref_ids_type_>>)
             {
                 auto && id = header_ptr->ref_ids()[idx];
                 header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;
@@ -782,9 +782,9 @@ protected:
         std::visit([&] (auto & f)
         {
             // use header from record if explicitly given, e.g. file_output = file_input
-            if constexpr (!std::Same<record_header_ptr_t, std::nullptr_t>)
+            if constexpr (!std::same_as<record_header_ptr_t, std::nullptr_t>)
                 f.write(*secondary_stream, options, *record_header_ptr, std::forward<pack_type>(remainder)...);
-            else if constexpr (std::Same<ref_ids_type, ref_info_not_given>)
+            else if constexpr (std::same_as<ref_ids_type, ref_info_not_given>)
                 f.write(*secondary_stream, options, std::ignore, std::forward<pack_type>(remainder)...);
             else
                 f.write(*secondary_stream, options, *header_ptr, std::forward<pack_type>(remainder)...);
@@ -803,7 +803,7 @@ protected:
 /*!\brief Deduces selected_field_ids from input and sets alignment_file_output::ref_ids_type to
  * seqan3::detail::ref_info_not_given. Valid formats and stream_char_type are defaulted.
  */
-template <detail::Fields    selected_field_ids>
+template <detail::fields_specialisation    selected_field_ids>
 alignment_file_output(std::filesystem::path, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              typename alignment_file_output<>::valid_formats,
@@ -813,9 +813,9 @@ alignment_file_output(std::filesystem::path, selected_field_ids const &)
 /*!\brief Deduces selected_field_ids, the valid format and the stream_char_type from input and
  * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
  */
-template <OStream2                  stream_type,
-          AlignmentFileOutputFormat file_format,
-          detail::Fields            selected_field_ids>
+template <output_stream                  stream_type,
+          alignment_file_output_format file_format,
+          detail::fields_specialisation            selected_field_ids>
 alignment_file_output(stream_type &&, file_format const &, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              type_list<file_format>,
@@ -825,9 +825,9 @@ alignment_file_output(stream_type &&, file_format const &, selected_field_ids co
 /*!\brief Deduces selected_field_ids, the valid format and the stream_char_type from input and
  * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
  */
-template <OStream2                  stream_type,
-          AlignmentFileOutputFormat file_format,
-          detail::Fields            selected_field_ids>
+template <output_stream                  stream_type,
+          alignment_file_output_format file_format,
+          detail::fields_specialisation            selected_field_ids>
 alignment_file_output(stream_type &, file_format const &, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              type_list<file_format>,
@@ -837,8 +837,8 @@ alignment_file_output(stream_type &, file_format const &, selected_field_ids con
 /*!\brief Deduces the valid format and the stream_char_type from input and
  * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
  */
-template <OStream2                  stream_type,
-          AlignmentFileOutputFormat file_format>
+template <output_stream                  stream_type,
+          alignment_file_output_format file_format>
 alignment_file_output(stream_type &&, file_format const &)
     -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
                              type_list<file_format>,
@@ -848,8 +848,8 @@ alignment_file_output(stream_type &&, file_format const &)
 /*!\brief Deduces the valid format and the stream_char_type from input and
  * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
  */
-template <OStream2                  stream_type,
-          AlignmentFileOutputFormat file_format>
+template <output_stream                  stream_type,
+          alignment_file_output_format file_format>
 alignment_file_output(stream_type &, file_format const &)
     -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
                              type_list<file_format>,
@@ -857,9 +857,9 @@ alignment_file_output(stream_type &, file_format const &)
                              ref_info_not_given>;
 
 //!\brief Deduces selected_field_ids and ref_ids_type from input. Valid formats and stream_char_type are defaulted.
-template <detail::Fields    selected_field_ids,
-          std::ranges::ForwardRange ref_ids_type,
-          std::ranges::ForwardRange ref_lengths_type>
+template <detail::fields_specialisation    selected_field_ids,
+          std::ranges::forward_range ref_ids_type,
+          std::ranges::forward_range ref_lengths_type>
 alignment_file_output(std::filesystem::path const &,
                       ref_ids_type &&,
                       ref_lengths_type &&,
@@ -870,8 +870,8 @@ alignment_file_output(std::filesystem::path const &,
                              std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces ref_ids_type from input. Valid formats, selected_field_ids and stream_char_type are defaulted.
-template <std::ranges::ForwardRange ref_ids_type,
-          std::ranges::ForwardRange ref_lengths_type>
+template <std::ranges::forward_range ref_ids_type,
+          std::ranges::forward_range ref_lengths_type>
 alignment_file_output(std::filesystem::path const &,
                       ref_ids_type &&,
                       ref_lengths_type &&)
@@ -881,11 +881,11 @@ alignment_file_output(std::filesystem::path const &,
                              std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces selected_field_ids, the valid format, stream_char_type and the ref_ids_type from input.
-template <OStream2                  stream_type,
-          std::ranges::ForwardRange ref_ids_type,
-          std::ranges::ForwardRange ref_lengths_type,
-          AlignmentFileOutputFormat file_format,
-          detail::Fields            selected_field_ids>
+template <output_stream                  stream_type,
+          std::ranges::forward_range ref_ids_type,
+          std::ranges::forward_range ref_lengths_type,
+          alignment_file_output_format file_format,
+          detail::fields_specialisation            selected_field_ids>
 alignment_file_output(stream_type &&,
                       ref_ids_type &&,
                       ref_lengths_type &&,
@@ -897,11 +897,11 @@ alignment_file_output(stream_type &&,
                              std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces selected_field_ids, the valid format, stream_char_type and the ref_ids_type from input.
-template <OStream2                  stream_type,
-          std::ranges::ForwardRange ref_ids_type,
-          std::ranges::ForwardRange ref_lengths_type,
-          AlignmentFileOutputFormat file_format,
-          detail::Fields            selected_field_ids>
+template <output_stream                  stream_type,
+          std::ranges::forward_range ref_ids_type,
+          std::ranges::forward_range ref_lengths_type,
+          alignment_file_output_format file_format,
+          detail::fields_specialisation            selected_field_ids>
 alignment_file_output(stream_type &,
                       ref_ids_type &&,
                       ref_lengths_type &&,
@@ -913,10 +913,10 @@ alignment_file_output(stream_type &,
                              std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces the valid format, stream_char_type and the ref_ids_type from input. selected_field_ids are defaulted.
-template <OStream2                  stream_type,
-          std::ranges::ForwardRange ref_ids_type,
-          std::ranges::ForwardRange ref_lengths_type,
-          AlignmentFileOutputFormat file_format>
+template <output_stream                  stream_type,
+          std::ranges::forward_range ref_ids_type,
+          std::ranges::forward_range ref_lengths_type,
+          alignment_file_output_format file_format>
 alignment_file_output(stream_type &&,
                       ref_ids_type &&,
                       ref_lengths_type &&,
@@ -927,10 +927,10 @@ alignment_file_output(stream_type &&,
                              std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces the valid format, stream_char_type and the ref_ids_type from input. selected_field_ids are defaulted.
-template <OStream2                  stream_type,
-          std::ranges::ForwardRange ref_ids_type,
-          std::ranges::ForwardRange ref_lengths_type,
-          AlignmentFileOutputFormat file_format>
+template <output_stream                  stream_type,
+          std::ranges::forward_range ref_ids_type,
+          std::ranges::forward_range ref_lengths_type,
+          alignment_file_output_format file_format>
 alignment_file_output(stream_type &,
                       ref_ids_type &&,
                       ref_lengths_type &&,

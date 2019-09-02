@@ -38,7 +38,7 @@ namespace seqan3::detail
  */
 template <typename unary_function_t, typename ...args_t>
 //!\cond
-    requires (std::Invocable<unary_function_t, args_t> && ... && true)
+    requires (std::invocable<unary_function_t, args_t> && ... && true)
 //!\endcond
 constexpr void for_each_value(unary_function_t && fn, args_t && ...args)
 {
@@ -58,7 +58,7 @@ constexpr void for_each_value(unary_function_t && fn, args_t && ...args)
  * This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and passed as
  * argument. The invocation(s) will be done without any loop.
  *
- * This function can handle types which are incomplete, forward declared and not std::Semiregular.
+ * This function can handle types which are incomplete, forward declared and not std::semiregular.
  *
  * \include test/snippet/core/algorithm/for_each_type.cpp
  *
@@ -66,7 +66,7 @@ constexpr void for_each_value(unary_function_t && fn, args_t && ...args)
  */
 template <typename ...types, typename unary_function_t>
 //!\cond
-    requires (std::Invocable<unary_function_t, std::type_identity<types>> && ... && true)
+    requires (std::invocable<unary_function_t, std::type_identity<types>> && ... && true)
 //!\endcond
 constexpr void for_each_type(unary_function_t && fn)
 {
@@ -88,7 +88,7 @@ constexpr void for_each_type(unary_function_t && fn)
  * This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and passed as
  * argument. The invocation(s) will be done without any loop.
  *
- * This function can handle types which are incomplete, forward declared and not std::Semiregular.
+ * This function can handle types which are incomplete, forward declared and not std::semiregular.
  *
  * \include test/snippet/core/algorithm/for_each_type_list.cpp
  *
@@ -100,7 +100,7 @@ constexpr void for_each_type(unary_function_t && fn)
  */
 template <template <typename...> typename type_list_t, typename ...args_t, typename unary_function_t>
 //!\cond
-    requires (std::Invocable<unary_function_t, std::type_identity<args_t>> && ... && true)
+    requires (std::invocable<unary_function_t, std::type_identity<args_t>> && ... && true)
 //!\endcond
 constexpr void for_each_type(unary_function_t && fn, type_list_t<args_t...> const & SEQAN3_DOXYGEN_ONLY(type_list))
 {

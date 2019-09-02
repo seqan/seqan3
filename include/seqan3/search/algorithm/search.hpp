@@ -27,9 +27,9 @@ namespace seqan3
  */
 
 /*!\brief Search a query or a range of queries in an index.
- * \tparam index_t    Must model seqan3::FmIndex.
- * \tparam queries_t  Must model std::ranges::RandomAccessRange over the index's alphabet and std::ranges::SizedRange.
- *                    A range of queries must additionally model std::ranges::ForwardRange and std::ranges::SizedRange.
+ * \tparam index_t    Must model seqan3::fm_index_specialisation.
+ * \tparam queries_t  Must model std::ranges::random_access_range over the index's alphabet and std::ranges::sized_range.
+ *                    A range of queries must additionally model std::ranges::forward_range and std::ranges::sized_range.
  * \param[in] queries A single query or a range of queries.
  * \param[in] index   String index to be searched.
  * \param[in] cfg     A configuration object specifying the search parameters (e.g. number of errors, error types,
@@ -85,24 +85,24 @@ namespace seqan3
  * Strong exception guarantee if iterating the query does not change its state and if invoking a possible delegate
  * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
-template <FmIndex index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <fm_index_specialisation index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(queries_t && queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
 {
     if constexpr(dimension_v<queries_t> == 1u)
     {
-        static_assert(std::ranges::RandomAccessRange<queries_t>, "The query sequence must model RandomAccessRange.");
-        static_assert(std::ranges::SizedRange<queries_t>, "The query sequence must model SizedRange.");
+        static_assert(std::ranges::random_access_range<queries_t>, "The query sequence must model random_access_range.");
+        static_assert(std::ranges::sized_range<queries_t>, "The query sequence must model sized_range.");
     }
     else
     {
-        static_assert(std::ranges::ForwardRange<queries_t>, "The query collection must model ForwardRange.");
-        static_assert(std::ranges::SizedRange<queries_t>, "The query collection must model SizedRange.");
-        static_assert(std::ranges::RandomAccessRange<value_type_t<queries_t>>,
-                      "Elements of the query collection must model RandomAccessRange.");
-        static_assert(std::ranges::SizedRange<value_type_t<queries_t>>,
-                      "Elements of the query collection must model SizedRange.");
+        static_assert(std::ranges::forward_range<queries_t>, "The query collection must model forward_range.");
+        static_assert(std::ranges::sized_range<queries_t>, "The query collection must model sized_range.");
+        static_assert(std::ranges::random_access_range<value_type_t<queries_t>>,
+                      "Elements of the query collection must model random_access_range.");
+        static_assert(std::ranges::sized_range<value_type_t<queries_t>>,
+                      "Elements of the query collection must model sized_range.");
     }
 
     static_assert(detail::is_type_specialisation_of_v<remove_cvref_t<configuration_t>, configuration>,
@@ -149,7 +149,7 @@ inline auto search(queries_t && queries,
 }
 //!\cond DEV
 //! \overload
-template <FmIndex index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(char const * const queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
@@ -158,7 +158,7 @@ inline auto search(char const * const queries,
 }
 
 //! \overload
-template <FmIndex index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(std::initializer_list<char const * const> const & queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)

@@ -29,7 +29,7 @@ TYPED_TEST_CASE_P(ostream);
 
 TYPED_TEST_P(ostream, concept_check)
 {
-    EXPECT_TRUE((OStream<TypeParam, char>));
+    EXPECT_TRUE((output_stream_over<TypeParam, char>));
 }
 
 TYPED_TEST_P(ostream, output)
@@ -46,7 +46,7 @@ TYPED_TEST_P(ostream, output)
     std::ifstream fi{filename.get_path(), std::ios::binary};
     std::string buffer{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
 
-    if constexpr (std::Same<TypeParam, contrib::gz_ostream> || std::Same<TypeParam, contrib::bgzf_ostream>)
+    if constexpr (std::same_as<TypeParam, contrib::gz_ostream> || std::same_as<TypeParam, contrib::bgzf_ostream>)
         buffer[9] = '\x00'; // zero-out the OS byte.
 
     EXPECT_EQ(buffer, TestFixture::compressed);
@@ -67,7 +67,7 @@ TYPED_TEST_P(ostream, output_type_erased)
     std::ifstream fi{filename.get_path(), std::ios::binary};
     std::string buffer{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
 
-    if constexpr (std::Same<TypeParam, contrib::gz_ostream> || std::Same<TypeParam, contrib::bgzf_ostream>)
+    if constexpr (std::same_as<TypeParam, contrib::gz_ostream> || std::same_as<TypeParam, contrib::bgzf_ostream>)
         buffer[9] = '\x00'; // zero-out the OS byte.
 
     EXPECT_EQ(buffer, TestFixture::compressed);

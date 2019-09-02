@@ -38,7 +38,7 @@ void sequential_read(benchmark::State & state)
     // if single_pass, add view::single_pass_input, otherwise just &
     using single_t = std::conditional_t<single_pass, decltype(c | view::single_pass_input), container_t &>;
 
-    if constexpr (std::Same<adaptor_t, void>)
+    if constexpr (std::same_as<adaptor_t, void>)
     {
         for (auto _ : state)
         {
@@ -65,43 +65,43 @@ void sequential_read(benchmark::State & state)
 }
 
 BENCHMARK_TEMPLATE(sequential_read, std::string, void);
-BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(std::ranges::view::take));
+BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(std::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(seqan3::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(seqan3::view::take_exactly));
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(seqan3::view::take_exactly_or_throw));
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::ranges::view::take));
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_exactly));
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_exactly_or_throw));
 
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, void);
-BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(std::ranges::view::take));
+BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(std::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(seqan3::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(seqan3::view::take_exactly));
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(seqan3::view::take_exactly_or_throw));
 
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, void);
-BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(std::ranges::view::take));
+BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(std::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(seqan3::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(seqan3::view::take_exactly));
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(seqan3::view::take_exactly_or_throw));
 
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::ranges::view::take));
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take));
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_exactly));
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_exactly_or_throw));
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void,                                           true);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::ranges::view::take),              true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::view::take),              true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take),                   true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_exactly),           true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_exactly_or_throw),  true);
 
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void, true);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::ranges::view::take),             true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::view::take),             true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take),                  true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_exactly),          true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_exactly_or_throw), true);
@@ -129,7 +129,7 @@ void random_access(benchmark::State & state)
 
     uint8_t dummy = 0;
 
-    if constexpr (std::Same<adaptor_t, void>)
+    if constexpr (std::same_as<adaptor_t, void>)
     {
         for (auto _ : state)
         {
@@ -154,19 +154,19 @@ void random_access(benchmark::State & state)
 }
 
 BENCHMARK_TEMPLATE(random_access, std::string, void);
-BENCHMARK_TEMPLATE(random_access, std::string, decltype(std::ranges::view::take));
+BENCHMARK_TEMPLATE(random_access, std::string, decltype(std::view::take));
 BENCHMARK_TEMPLATE(random_access, std::string, decltype(seqan3::view::take));
 BENCHMARK_TEMPLATE(random_access, std::string, decltype(seqan3::view::take_exactly));
 BENCHMARK_TEMPLATE(random_access, std::string, decltype(seqan3::view::take_exactly_or_throw));
 
 BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, void);
-BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(std::ranges::view::take));
+BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(std::view::take));
 BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(seqan3::view::take));
 BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(seqan3::view::take_exactly));
 BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(seqan3::view::take_exactly_or_throw));
 
 BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>, void);
-BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>, decltype(std::ranges::view::take));
+BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>, decltype(std::view::take));
 BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>, decltype(seqan3::view::take));
 BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>, decltype(seqan3::view::take_exactly));
 BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>, decltype(seqan3::view::take_exactly_or_throw));

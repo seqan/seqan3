@@ -2,14 +2,14 @@
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
-#include <seqan3/range/container/concept.hpp> // for the seqan3::Container
+#include <seqan3/range/container/concept.hpp> // for the seqan3::container
 
 // a lambda helper function that prints every type in the std::variant<...allowed SAM tag types...>
 auto print_fn = [] (auto && arg)
 {
     using T = seqan3::remove_cvref_t<decltype(arg)>; // the type T of arg.
 
-    if constexpr (!seqan3::Container<T>)     // If T is not a container,
+    if constexpr (!seqan3::container<T>)     // If T is not a container,
     {
         seqan3::debug_stream << arg << '\n';       // just print arg directly.
     }

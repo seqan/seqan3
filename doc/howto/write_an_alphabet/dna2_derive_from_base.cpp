@@ -34,6 +34,6 @@ private:
 };
 
 // check the concepts
-static_assert(seqan3::Alphabet<dna2>);                   // ok
-static_assert(seqan3::WritableAlphabet<dna2>);           // ok
+static_assert(seqan3::alphabet<dna2>);                   // ok
+static_assert(seqan3::writable_alphabet<dna2>);           // ok
 //! [dna2]

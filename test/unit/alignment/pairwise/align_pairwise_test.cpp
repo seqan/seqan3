@@ -35,7 +35,7 @@ TYPED_TEST_CASE(align_pairwise_test, testing_types);
 template <typename type_param_t, typename seq_t, typename cfg_t>
 auto call_alignment(seq_t && seq, cfg_t && cfg)
 {
-    if constexpr (std::Same<type_param_t, void>)
+    if constexpr (std::same_as<type_param_t, void>)
         return align_pairwise(std::forward<seq_t>(seq), std::forward<cfg_t>(cfg));
     else
         return align_pairwise(type_param_t{}, std::forward<seq_t>(seq), std::forward<cfg_t>(cfg));

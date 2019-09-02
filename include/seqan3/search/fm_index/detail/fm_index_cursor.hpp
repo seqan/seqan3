@@ -26,7 +26,7 @@ namespace seqan3::detail
 
 /*!\brief Internal representation of the node of an FM index cursor.
  * \ingroup fm_index
- * \tparam index_t The type of the underlying index; must satisfy seqan3::FmIndex.
+ * \tparam index_t The type of the underlying index; must satisfy seqan3::fm_index_specialisation.
  */
 template <typename index_t>
 struct fm_index_cursor_node

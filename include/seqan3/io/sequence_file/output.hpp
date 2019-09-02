@@ -56,8 +56,8 @@ namespace seqan3
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of fields IDs; only relevant if these
  * can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- * seqan3::SequenceFileOutputFormat).
- * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::Char.
+ * seqan3::sequence_file_output_format).
+ * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::builtin_character.
  * \details
  *
  * ### Introduction
@@ -165,10 +165,10 @@ namespace seqan3
  *   * seqan3::format_sam
  */
 
-template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
-          detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
+template <detail::fields_specialisation selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
+          detail::type_list_of_sequence_file_output_formats valid_formats_ =
               type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>,
-          Char stream_char_type_ = char>
+          builtin_character stream_char_type_ = char>
 class sequence_file_output
 {
 public:
@@ -274,7 +274,7 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::SequenceFileOutputFormat.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sequence_file_output_format.
      * \param[in,out] stream The stream to write to, must be derived of std::basic_ostream<stream_char_t>.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
@@ -288,28 +288,28 @@ public:
      * want compression.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <OStream2 stream_t,
-              SequenceFileOutputFormat file_format>
+    template <output_stream stream_t,
+              sequence_file_output_format file_format>
     sequence_file_output(stream_t                 & stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{detail::sequence_file_output_format<file_format>{}}
+        format{detail::sequence_file_output_format_REMOVEME<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
     }
 
     //!\overload
-    template <OStream2 stream_t,
-              SequenceFileOutputFormat file_format>
+    template <output_stream stream_t,
+              sequence_file_output_format file_format>
     sequence_file_output(stream_t                && stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{detail::sequence_file_output_format<file_format>{}}
+        format{detail::sequence_file_output_format_REMOVEME<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -381,7 +381,7 @@ public:
      */
     template <typename record_t>
     void push_back(record_t && r)
-        requires TupleLike<record_t> &&
+        requires tuple_like<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
     {
         write_record(detail::get_or_ignore<field::SEQ>(r),
@@ -414,7 +414,7 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
-        requires TupleLike<tuple_t>
+        requires tuple_like<tuple_t>
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(t),
@@ -453,8 +453,8 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy std::ranges::OutputRange and have a reference type that
-     *                   satisfies seqan3::TupleLike.
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::output_range and have a reference type that
+     *                   satisfies seqan3::tuple_like.
      * \param[in] range  The range to write.
      *
      * \details
@@ -473,9 +473,9 @@ public:
      *
      * \include test/snippet/io/sequence_file/sequence_file_output_batch_write.cpp
      */
-    template <std::ranges::InputRange rng_t>
+    template <std::ranges::input_range rng_t>
     sequence_file_output & operator=(rng_t && range)
-        requires TupleLike<reference_t<rng_t>>
+        requires tuple_like<reference_t<rng_t>>
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -483,8 +483,8 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
-     *                   satisfies seqan3::TupleLike.
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::input_range and have a reference type that
+     *                   satisfies seqan3::tuple_like.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
      *
@@ -509,18 +509,18 @@ public:
      *
      * \include test/snippet/io/sequence_file/sequence_file_output_view_pipeline.cpp
      */
-    template <std::ranges::InputRange rng_t>
+    template <std::ranges::input_range rng_t>
     friend sequence_file_output & operator|(rng_t && range, sequence_file_output & f)
-        requires TupleLike<reference_t<rng_t>>
+        requires tuple_like<reference_t<rng_t>>
     {
         f = range;
         return f;
     }
 
     //!\overload
-    template <std::ranges::InputRange rng_t>
+    template <std::ranges::input_range rng_t>
     friend sequence_file_output operator|(rng_t && range, sequence_file_output && f)
-        requires TupleLike<reference_t<rng_t>>
+        requires tuple_like<reference_t<rng_t>>
     {
     #if defined(__GNUC__) && (__GNUC__ == 9) // an unreported build problem of GCC9
         for (auto && record : range)
@@ -633,7 +633,7 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::sequence_file_output_format>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::sequence_file_output_format_REMOVEME>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -673,10 +673,10 @@ protected:
     }
 
     //!\brief Write columns to file format, only tag-dispatch once.
-    template <std::ranges::InputRange seqs_t,
-              std::ranges::InputRange ids_t,
-              std::ranges::InputRange quals_t,
-              std::ranges::InputRange seq_quals_t>
+    template <std::ranges::input_range seqs_t,
+              std::ranges::input_range ids_t,
+              std::ranges::input_range quals_t,
+              std::ranges::input_range seq_quals_t>
     void write_columns(seqs_t       && seqs,
                        ids_t        && ids,
                        quals_t      && quals,
@@ -731,8 +731,8 @@ protected:
  */
 
 //!\brief Deduction guide for given stream and file format.
-template <OStream2                 stream_t,
-          SequenceFileOutputFormat file_format>
+template <output_stream                 stream_t,
+          sequence_file_output_format file_format>
 sequence_file_output(stream_t &,
                      file_format const &)
     -> sequence_file_output<typename sequence_file_output<>::selected_field_ids,  // default field ids
@@ -740,8 +740,8 @@ sequence_file_output(stream_t &,
                             typename std::remove_reference_t<stream_t>::char_type>;
 
 //!\overload
-template <OStream2                 stream_t,
-          SequenceFileOutputFormat file_format>
+template <output_stream                 stream_t,
+          sequence_file_output_format file_format>
 sequence_file_output(stream_t &&,
                      file_format const &)
     -> sequence_file_output<typename sequence_file_output<>::selected_field_ids,  // default field ids.
@@ -749,9 +749,9 @@ sequence_file_output(stream_t &&,
                             typename std::remove_reference_t<stream_t>::char_type>;
 
 //!\brief Deduction guide for given stream, file format and field ids.
-template <OStream2                 stream_t,
-          SequenceFileOutputFormat file_format,
-          detail::Fields           selected_field_ids>
+template <output_stream                 stream_t,
+          sequence_file_output_format file_format,
+          detail::fields_specialisation           selected_field_ids>
 sequence_file_output(stream_t &&,
                      file_format const &,
                      selected_field_ids const &)
@@ -760,9 +760,9 @@ sequence_file_output(stream_t &&,
                             typename std::remove_reference_t<stream_t>::char_type>;
 
 //!\overload
-template <OStream2                 stream_t,
-          SequenceFileOutputFormat file_format,
-          detail::Fields           selected_field_ids>
+template <output_stream                 stream_t,
+          sequence_file_output_format file_format,
+          detail::fields_specialisation           selected_field_ids>
 sequence_file_output(stream_t &,
                      file_format const &,
                      selected_field_ids const &)

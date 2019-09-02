@@ -53,8 +53,8 @@ namespace seqan3
  * ### Compute a single alignment
  *
  * In cases where only a single alignment is to be computed, the two sequences can be passed as a pair.
- * The pair can be any class template that models the seqan3::TupleLike concept. The tuple elements must model
- * std::ranges::ViewableRange and std::CopyConstructible.
+ * The pair can be any class template that models the seqan3::tuple_like concept. The tuple elements must model
+ * std::ranges::viewable_range and std::copy_constructible.
  * Accordingly, the following example wouldn't compile:
  * ```cpp
  * std::pair p{"ACGTAGC", "AGTACGACG"};
@@ -132,8 +132,8 @@ namespace seqan3
 template <typename exec_policy_t, typename sequence_t, typename alignment_config_t>
 //!\cond
     requires is_execution_policy_v<exec_policy_t> &&
-             detail::AlignPairwiseSingleInput<std::remove_reference_t<sequence_t>> &&
-             std::CopyConstructible<std::remove_reference_t<sequence_t>> &&
+             detail::align_pairwise_single_input<std::remove_reference_t<sequence_t>> &&
+             std::copy_constructible<std::remove_reference_t<sequence_t>> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
 //!\endcond
 constexpr auto align_pairwise(exec_policy_t const & exec,
@@ -143,9 +143,9 @@ constexpr auto align_pairwise(exec_policy_t const & exec,
     static_assert(std::tuple_size_v<std::remove_reference_t<sequence_t>> == 2,
                   "Alignment configuration error: Expects exactly two sequences for pairwise alignments.");
 
-    static_assert(std::ranges::ViewableRange<std::tuple_element_t<0, std::remove_reference_t<sequence_t>>> &&
-                  std::ranges::ViewableRange<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
-                  "Alignment configuration error: The tuple elements must model std::ranges::ViewableRange.");
+    static_assert(std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<sequence_t>>> &&
+                  std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
+                  "Alignment configuration error: The tuple elements must model std::ranges::viewable_range.");
 
     return align_pairwise(exec, std::view::single(std::forward<sequence_t>(seq)), config);
 }
@@ -155,8 +155,8 @@ constexpr auto align_pairwise(exec_policy_t const & exec,
  */
 template <typename sequence_t, typename alignment_config_t>
 //!\cond
-    requires detail::AlignPairwiseSingleInput<std::remove_reference_t<sequence_t>> &&
-             std::CopyConstructible<std::remove_reference_t<sequence_t>> &&
+    requires detail::align_pairwise_single_input<std::remove_reference_t<sequence_t>> &&
+             std::copy_constructible<std::remove_reference_t<sequence_t>> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
 //!\endcond
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
@@ -164,16 +164,16 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
     static_assert(std::tuple_size_v<std::remove_reference_t<sequence_t>> == 2,
                   "Alignment configuration error: Expects exactly two sequences for pairwise alignments.");
 
-    static_assert(std::ranges::ViewableRange<std::tuple_element_t<0, std::remove_reference_t<sequence_t>>> &&
-                  std::ranges::ViewableRange<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
-                  "Alignment configuration error: The tuple elements must model std::ranges::ViewableRange.");
+    static_assert(std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<sequence_t>>> &&
+                  std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
+                  "Alignment configuration error: The tuple elements must model std::ranges::viewable_range.");
 
     return align_pairwise(seqan3::seq, std::forward<sequence_t>(seq), config);
 }
 
 //!\cond
 template <typename sequence_t, typename alignment_config_t>
-    requires detail::AlignPairwiseRangeInputConcept<sequence_t> &&
+    requires detail::align_pairwise_range_input_concept<sequence_t> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
 {
@@ -182,7 +182,7 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
 
 template <typename exec_policy_t, typename sequence_t, typename alignment_config_t>
     requires is_execution_policy_v<exec_policy_t> &&
-             detail::AlignPairwiseRangeInputConcept<sequence_t> &&
+             detail::align_pairwise_range_input_concept<sequence_t> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
 constexpr auto align_pairwise(exec_policy_t const & exec,
                               sequence_t && seq,
@@ -191,10 +191,10 @@ constexpr auto align_pairwise(exec_policy_t const & exec,
     using first_seq_t  = std::tuple_element_t<0, value_type_t<sequence_t>>;
     using second_seq_t = std::tuple_element_t<1, value_type_t<sequence_t>>;
 
-    static_assert(std::ranges::RandomAccessRange<first_seq_t> && std::ranges::SizedRange<first_seq_t>,
-                  "Alignment configuration error: The sequence must model RandomAccessRange and SizedRange.");
-    static_assert(std::ranges::RandomAccessRange<second_seq_t> && std::ranges::SizedRange<second_seq_t>,
-                  "Alignment configuration error: The sequence must model RandomAccessRange and SizedRange.");
+    static_assert(std::ranges::random_access_range<first_seq_t> && std::ranges::sized_range<first_seq_t>,
+                  "Alignment configuration error: The sequence must model random_access_range and sized_range.");
+    static_assert(std::ranges::random_access_range<second_seq_t> && std::ranges::sized_range<second_seq_t>,
+                  "Alignment configuration error: The sequence must model random_access_range and sized_range.");
 
     // Pipe with view::persist to allow rvalue non-view ranges.
     auto seq_view = std::forward<sequence_t>(seq) | view::persist;

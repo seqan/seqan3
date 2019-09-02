@@ -16,9 +16,9 @@ using namespace std::literals;
 
 TEST(ignore_output_iterator, concept_check)
 {
-    EXPECT_TRUE((std::OutputIterator<detail::ignore_output_iterator, char>));
-    EXPECT_TRUE((std::OutputIterator<detail::ignore_output_iterator, int>));
-    EXPECT_FALSE((std::InputIterator<detail::ignore_output_iterator>));
+    EXPECT_TRUE((std::output_iterator<detail::ignore_output_iterator, char>));
+    EXPECT_TRUE((std::output_iterator<detail::ignore_output_iterator, int>));
+    EXPECT_FALSE((std::input_iterator<detail::ignore_output_iterator>));
 }
 
 TEST(ignore_output_iterator, assign)

@@ -97,7 +97,7 @@ TYPED_TEST(alignment_executor_two_way_test, in_avail)
 
     EXPECT_EQ(exec.in_avail(), 0u);
     EXPECT_EQ(exec.bump().value(), 7u);
-    if constexpr (std::Same<TypeParam, detail::execution_handler_parallel>)
+    if constexpr (std::same_as<TypeParam, detail::execution_handler_parallel>)
         EXPECT_EQ(exec.in_avail(), 4u);
     else
         EXPECT_EQ(exec.in_avail(), 0u);

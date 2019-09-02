@@ -41,7 +41,7 @@ inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
 // ----------------------------------------------------------------------------
 
 /*!\brief Checks if a given type is compatible with a list of other types.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \ingroup algorithm
  * \tparam query_t       The type to check for compatibility.
  * \tparam compare_types The types to compare against.
@@ -51,7 +51,7 @@ inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
  * Checks if the type is from the same algorithm configuration and if it can be combined with any of the
  * existing elements in the current configuration.
  */
-template <ConfigElement query_t, ConfigElement ... compare_types>
+template <config_element query_t, config_element ... compare_types>
 struct is_configuration_valid :
     public std::conditional_t<
         (std::is_same_v<remove_cvref_t<decltype(query_t::id)>, remove_cvref_t<decltype(compare_types::id)>> && ...) &&
@@ -63,7 +63,7 @@ struct is_configuration_valid :
     >
 {};
 
-/*!\brief Helper variable template to check for valid configuration composites (UnaryTypeTrait shortcut).
+/*!\brief Helper variable template to check for valid configuration composites (unary_type_trait shortcut).
  * \relates seqan3::detail::is_configuration_valid
  * \ingroup algorithm
  */

@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::format_sam tag and the seqan3::sequence_file_input_format and
- *        seqan3::sequence_file_output_format specialisation for this tag.
+ * \brief Provides the seqan3::format_sam tag and the seqan3::sequence_file_input_format_REMOVEME and
+ *        seqan3::sequence_file_output_format_REMOVEME specialisation for this tag.
  * \author Mitra Darvish <mitra.darvish AT fu-berlin.de>
  */
 
@@ -27,7 +27,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief The seqan3::sequence_file_input_format specialisation that handles formatted SAM input.
+/*!\brief The seqan3::sequence_file_input_format_REMOVEME specialisation that handles formatted SAM input.
  * \ingroup sequence
  *
  * \details
@@ -45,7 +45,7 @@ namespace seqan3::detail
  *
  */
 template <>
-class sequence_file_input_format<format_sam>
+class sequence_file_input_format_REMOVEME<format_sam>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -54,17 +54,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_input_format()                                                = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME()                                                = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format(sequence_file_input_format const &)              = delete;
+    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME const &)              = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format & operator=(sequence_file_input_format const &)  = delete;
-    sequence_file_input_format(sequence_file_input_format &&)                   = default; //!< Defaulted.
-    sequence_file_input_format & operator=(sequence_file_input_format &&)       = default; //!< Defaulted.
-    ~sequence_file_input_format()                                               = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME const &)  = delete;
+    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME &&)                   = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME &&)       = default; //!< Defaulted.
+    ~sequence_file_input_format_REMOVEME()                                               = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc SequenceFileInputFormat::read
+    //!\copydoc sequence_file_input_format::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
@@ -105,7 +105,7 @@ public:
 
 private:
     //!\brief An instance of the alignment format to read formatted SAM input.
-    alignment_file_input_format<format_sam> align_format{};
+    alignment_file_input_format_REMOVEME<format_sam> align_format{};
 
     //!\brief The default header for the alignment format.
     alignment_file_header<> default_header{};
@@ -114,10 +114,10 @@ private:
     std::string tmp_qual{};
 };
 
-//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted SAM.
+//!\brief The seqan3::sequence_file_output_format_REMOVEME specialisation that can write formatted SAM.
 //!\ingroup sequence
 template <>
-class sequence_file_output_format<format_sam>
+class sequence_file_output_format_REMOVEME<format_sam>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -126,17 +126,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
-    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME const &)          = delete;
+    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc SequenceFileOutputFormat::write
+    //!\copydoc sequence_file_output_format::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,
@@ -160,7 +160,7 @@ public:
 
 private:
     //!\brief An instance of the alignment format to read formatted SAM input.
-    alignment_file_output_format<format_sam> align_format{};
+    alignment_file_output_format_REMOVEME<format_sam> align_format{};
 
     //!\brief An empty dummy container to pass to align_format.write() such that an empty field is written.
     static constexpr std::string_view dummy{};

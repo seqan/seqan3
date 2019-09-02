@@ -16,61 +16,61 @@
 
 using namespace seqan3;
 
-TEST(object_concepts, Destructible)
+TEST(object_concepts, destructible)
 {
-    EXPECT_TRUE((std::Destructible<type_a>));
-    EXPECT_TRUE((!std::Destructible<type_d>));
+    EXPECT_TRUE((std::destructible<type_a>));
+    EXPECT_TRUE((!std::destructible<type_d>));
 }
 
-TEST(object_concepts, Constructible)
+TEST(object_concepts, constructible_from)
 {
-    EXPECT_TRUE((std::Constructible<type_a>));
-    EXPECT_TRUE((std::Constructible<type_c, type_a>));
-    EXPECT_TRUE((!std::Constructible<type_c, int>));
+    EXPECT_TRUE((std::constructible_from<type_a>));
+    EXPECT_TRUE((std::constructible_from<type_c, type_a>));
+    EXPECT_TRUE((!std::constructible_from<type_c, int>));
 }
 
-TEST(object_concepts, DefaultConstructible)
+TEST(object_concepts, default_constructible)
 {
-    EXPECT_TRUE((std::DefaultConstructible<type_a>));
-    EXPECT_TRUE((!std::DefaultConstructible<type_d>));
+    EXPECT_TRUE((std::default_constructible<type_a>));
+    EXPECT_TRUE((!std::default_constructible<type_d>));
 }
 
-TEST(object_concepts, MoveConstructible)
+TEST(object_concepts, move_constructible)
 {
-    EXPECT_TRUE((std::MoveConstructible<type_b>));
-    EXPECT_TRUE((!std::MoveConstructible<type_d>));
+    EXPECT_TRUE((std::move_constructible<type_b>));
+    EXPECT_TRUE((!std::move_constructible<type_d>));
 }
 
-TEST(object_concepts, CopyConstructible)
+TEST(object_concepts, copy_constructible)
 {
-    EXPECT_TRUE((std::CopyConstructible<type_a>));
-    EXPECT_TRUE((!std::CopyConstructible<type_b>));
+    EXPECT_TRUE((std::copy_constructible<type_a>));
+    EXPECT_TRUE((!std::copy_constructible<type_b>));
 }
 
-TEST(object_concepts, Movable)
+TEST(object_concepts, movable)
 {
-    EXPECT_TRUE((std::Movable<type_b>));
-    EXPECT_TRUE((!std::Movable<type_d>));
+    EXPECT_TRUE((std::movable<type_b>));
+    EXPECT_TRUE((!std::movable<type_d>));
 }
 
-TEST(object_concepts, Copyable)
+TEST(object_concepts, copyable)
 {
-    EXPECT_TRUE((std::Copyable<type_a>));
-    EXPECT_TRUE((!std::Copyable<type_b>));
+    EXPECT_TRUE((std::copyable<type_a>));
+    EXPECT_TRUE((!std::copyable<type_b>));
 }
 
-TEST(object_concepts, Semiregular)
+TEST(object_concepts, semiregular)
 {
-    EXPECT_TRUE((std::Semiregular<type_a>));
-    EXPECT_TRUE((std::Semiregular<type_c>));
-    EXPECT_TRUE((!std::Semiregular<type_b>));
-    EXPECT_TRUE((!std::Semiregular<type_d>));
+    EXPECT_TRUE((std::semiregular<type_a>));
+    EXPECT_TRUE((std::semiregular<type_c>));
+    EXPECT_TRUE((!std::semiregular<type_b>));
+    EXPECT_TRUE((!std::semiregular<type_d>));
 }
 
-TEST(object_concepts, Regular)
+TEST(object_concepts, regular)
 {
-    EXPECT_TRUE((!std::Regular<type_a>));
-    EXPECT_TRUE((!std::Regular<type_b>));
-    EXPECT_TRUE((std::Regular<type_c>));
-    EXPECT_TRUE((!std::Regular<type_d>));
+    EXPECT_TRUE((!std::regular<type_a>));
+    EXPECT_TRUE((!std::regular<type_b>));
+    EXPECT_TRUE((std::regular<type_c>));
+    EXPECT_TRUE((!std::regular<type_d>));
 }

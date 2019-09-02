@@ -22,7 +22,7 @@ namespace seqan3
 
 /*!\brief Extends a given alphabet with a gap character.
  * \ingroup gap
- * \tparam alphabet_t Type of the letter, e.g. dna4; must satisfy seqan3::WritableAlphabet.
+ * \tparam alphabet_t Type of the letter, e.g. dna4; must satisfy seqan3::writable_alphabet.
  *
  * The gapped alphabet represents the variant of a given alphabet and the
  * seqan3::gap alphabet (e.g. the four letter DNA alphabet + a gap character).
@@ -37,7 +37,7 @@ namespace seqan3
  */
 template <typename alphabet_t>
 //!\cond
-    requires WritableAlphabet<alphabet_t>
+    requires writable_alphabet<alphabet_t>
 //!\endcond
 using gapped = alphabet_variant<alphabet_t, gap>;
 

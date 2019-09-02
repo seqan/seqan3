@@ -25,8 +25,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((SequenceFileInputFormat<format_fasta>));
-    EXPECT_TRUE((SequenceFileOutputFormat<format_fasta>));
+    EXPECT_TRUE((sequence_file_input_format<format_fasta>));
+    EXPECT_TRUE((sequence_file_output_format<format_fasta>));
 }
 
 // ----------------------------------------------------------------------------
@@ -49,7 +49,7 @@ struct read : public ::testing::Test
         { "ACGTTTA"_dna5 },
     };
 
-    detail::sequence_file_input_format<format_fasta> format;
+    detail::sequence_file_input_format_REMOVEME<format_fasta> format;
 
     sequence_file_input_options<dna5, false> options;
 
@@ -328,7 +328,7 @@ struct write : public ::testing::Test
         "Test3"
     };
 
-    detail::sequence_file_output_format<format_fasta> format;
+    detail::sequence_file_output_format_REMOVEME<format_fasta> format;
 
     sequence_file_output_options options;
 

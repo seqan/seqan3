@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::AlignmentFileInputFormat and auxiliary classes.
+ * \brief Provides seqan3::alignment_file_input_format and auxiliary classes.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -31,7 +31,7 @@ namespace seqan3::detail
 
 //!\brief The alignment file input format base class.
 template <typename t>
-class alignment_file_input_format
+class alignment_file_input_format_REMOVEME
 {};
 
 } // namespace seqan3::detail
@@ -39,7 +39,7 @@ class alignment_file_input_format
 namespace seqan3
 {
 
-/*!\interface seqan3::AlignmentFileInputFormat <>
+/*!\interface seqan3::alignment_file_input_format <>
  * \brief The generic concept for alignment file input formats.
  * \ingroup alignment_file
  *
@@ -51,8 +51,8 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT AlignmentFileInputFormat =
-    requires (detail::alignment_file_input_format<t>                              & v,
+SEQAN3_CONCEPT alignment_file_input_format =
+    requires (detail::alignment_file_input_format_REMOVEME<t>                              & v,
               std::ifstream                                                       & stream,
               alignment_file_input_options<dna5>                                  & options,
               std::vector<dna5_vector>                                            & ref_sequences,
@@ -73,7 +73,7 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
               double                                                              & bit_score)
 {
     t::file_extensions;
-    // std::Same<decltype(t::file_extensions), std::vector<std::string>>;
+    // std::same_as<decltype(t::file_extensions), std::vector<std::string>>;
 
     { v.read(stream,
              options,
@@ -115,9 +115,9 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::AlignmentFileInputFormat
- * \brief You can expect these **members** on all types that implement seqan3::AlignmentFileInputFormat.
- * \memberof seqan3::AlignmentFileInputFormat
+/*!\name Requirements for seqan3::alignment_file_input_format
+ * \brief You can expect these **members** on all types that implement seqan3::alignment_file_input_format.
+ * \memberof seqan3::alignment_file_input_format
  * \{
  */
 
@@ -130,20 +130,20 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \tparam stream_type        The input stream type; Must be derived from std::ostream.
  * \tparam ref_seqs_type      e.g. std::deque<ref_sequence_type> or decltype(std::ignore).
- * \tparam seq_type           Type of the seqan3::field::SEQ input (see seqan3::AlignmentFileInputTraits).
- * \tparam qual_type          Type of the seqan3::field::QUAL input (see seqan3::AlignmentFileInputTraits).
- * \tparam id_type            Type of the seqan3::field::ID input (see seqan3::AlignmentFileInputTraits).
- * \tparam offset_type        Type of the seqan3::field::OFFSET input (see seqan3::AlignmentFileInputTraits).
- * \tparam ref_seq_type       Type of the seqan3::field::REF_SEQ input (see seqan3::AlignmentFileInputTraits).
- * \tparam ref_id_type        Type of the seqan3::field::REF_ID input (see seqan3::AlignmentFileInputTraits).
- * \tparam ref_offset_type    Type of the seqan3::field::REF_OFFSET input (see seqan3::AlignmentFileInputTraits).
- * \tparam align_type         Type of the seqan3::field::ALIGNMENT input (see seqan3::AlignmentFileInputTraits).
- * \tparam flag_type          Type of the seqan3::field::FLAG input (see seqan3::AlignmentFileInputTraits).
- * \tparam mapq_type          Type of the seqan3::field::MAPQ input (see seqan3::AlignmentFileInputTraits).
+ * \tparam seq_type           Type of the seqan3::field::SEQ input (see seqan3::alignment_file_input_traits).
+ * \tparam qual_type          Type of the seqan3::field::QUAL input (see seqan3::alignment_file_input_traits).
+ * \tparam id_type            Type of the seqan3::field::ID input (see seqan3::alignment_file_input_traits).
+ * \tparam offset_type        Type of the seqan3::field::OFFSET input (see seqan3::alignment_file_input_traits).
+ * \tparam ref_seq_type       Type of the seqan3::field::REF_SEQ input (see seqan3::alignment_file_input_traits).
+ * \tparam ref_id_type        Type of the seqan3::field::REF_ID input (see seqan3::alignment_file_input_traits).
+ * \tparam ref_offset_type    Type of the seqan3::field::REF_OFFSET input (see seqan3::alignment_file_input_traits).
+ * \tparam align_type         Type of the seqan3::field::ALIGNMENT input (see seqan3::alignment_file_input_traits).
+ * \tparam flag_type          Type of the seqan3::field::FLAG input (see seqan3::alignment_file_input_traits).
+ * \tparam mapq_type          Type of the seqan3::field::MAPQ input (see seqan3::alignment_file_input_traits).
  * \tparam mate_type          std::tuple<ref_id_type, ref_offset_type, int32_t> or decltype(std::ignore).
  * \tparam tag_dict_type      seqan3::sam_tag_dictionary or decltype(std::ignore).
- * \tparam e_value_type       Type of the seqan3::field::EVALUE input (see seqan3::AlignmentFileInputTraits).
- * \tparam bit_score_type     Type of the seqan3::field::BIT_SCORE input (see seqan3::AlignmentFileInputTraits).
+ * \tparam e_value_type       Type of the seqan3::field::EVALUE input (see seqan3::alignment_file_input_traits).
+ * \tparam bit_score_type     Type of the seqan3::field::BIT_SCORE input (see seqan3::alignment_file_input_traits).
  *
  * \param[in,out] stream      The input stream to read from.
  * \param[in]     options     File specific options passed to the format.
@@ -172,7 +172,7 @@ SEQAN3_CONCEPT AlignmentFileInputFormat =
  *     except stream, options and header. [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  */
- /*!\var static inline std::vector<std::string> seqan3::AlignmentFileInputFormat::file_extensions
+ /*!\var static inline std::vector<std::string> seqan3::alignment_file_input_format::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 //!\}
@@ -183,28 +183,28 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::AlignmentFileInputFormat [default is false].
+ * seqan3::alignment_file_input_format [default is false].
  * \ingroup core
- * \see seqan3::TypeListOfAlignmentFileInputFormats
+ * \see seqan3::type_list_specialisationOfalignment_file_input_formats
  */
 template <typename t>
 constexpr bool is_type_list_of_alignment_file_input_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::AlignmentFileInputFormat [overload].
+ * seqan3::alignment_file_input_format [overload].
  * \ingroup core
-  * \see seqan3::TypeListOfAlignmentFileInputFormats
+  * \see seqan3::type_list_specialisationOfalignment_file_input_formats
  */
 template <typename ... ts>
 constexpr bool is_type_list_of_alignment_file_input_formats_v<type_list<ts...>> =
-    (AlignmentFileInputFormat<ts> && ...);
+    (alignment_file_input_format<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
- *        seqan3::AlignmentFileInputFormat.
+ *        seqan3::alignment_file_input_format.
  * \ingroup core
  * \see seqan3::is_type_list_of_alignment_file_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT TypeListOfAlignmentFileInputFormats = is_type_list_of_alignment_file_input_formats_v<t>;
+SEQAN3_CONCEPT type_list_of_alignment_file_input_formats = is_type_list_of_alignment_file_input_formats_v<t>;
 
 } // namespace seqan3::detail

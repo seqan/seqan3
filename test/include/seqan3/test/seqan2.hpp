@@ -42,8 +42,8 @@ namespace ranges
 #endif
 {
 
-//!\brief This makes seqan iterators ranges-aware, i.e. makes them fulfil ranges::Readable which is in turn needed for
-//!ranges::InputRange.
+//!\brief This makes seqan iterators ranges-aware, i.e. makes them fulfil ranges::readable which is in turn needed for
+//!ranges::input_range.
 template <typename ...args_t>
 struct readable_traits<seqan::Iter<args_t...>>
 {

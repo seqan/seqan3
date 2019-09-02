@@ -14,11 +14,11 @@ using namespace seqan3;
 
 TEST(fast_istreambuf_iterator, concept)
 {
-    EXPECT_TRUE(std::InputIterator<detail::fast_istreambuf_iterator<char>>);
-    EXPECT_FALSE(std::ForwardIterator<detail::fast_istreambuf_iterator<char>>);
-    EXPECT_FALSE(std::BidirectionalIterator<detail::fast_istreambuf_iterator<char>>);
-    EXPECT_FALSE(std::RandomAccessIterator<detail::fast_istreambuf_iterator<char>>);
-    EXPECT_FALSE((std::OutputIterator<detail::fast_istreambuf_iterator<char>, char>));
+    EXPECT_TRUE(std::input_iterator<detail::fast_istreambuf_iterator<char>>);
+    EXPECT_FALSE(std::forward_iterator<detail::fast_istreambuf_iterator<char>>);
+    EXPECT_FALSE(std::bidirectional_iterator<detail::fast_istreambuf_iterator<char>>);
+    EXPECT_FALSE(std::random_access_iterator<detail::fast_istreambuf_iterator<char>>);
+    EXPECT_FALSE((std::output_iterator<detail::fast_istreambuf_iterator<char>, char>));
 }
 
 TEST(fast_istreambuf_iterator, construction)

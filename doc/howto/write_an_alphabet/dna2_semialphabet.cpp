@@ -12,7 +12,7 @@ struct dna2
 {
     uint8_t rank{};
 
-    // Semialphabet
+    // semialphabet
 
     static constexpr size_t alphabet_size = 2;
 
@@ -64,8 +64,8 @@ bool operator>=(dna2 const & lhs, dna2 const & rhs) noexcept
 }
 
 //! [writable_semialphabet_concept]
-static_assert(seqan3::Semialphabet<dna2>);               // ok
-static_assert(seqan3::WritableSemialphabet<dna2>);       // ok
+static_assert(seqan3::semialphabet<dna2>);               // ok
+static_assert(seqan3::writable_semialphabet<dna2>);       // ok
 //! [writable_semialphabet_concept]
 
 //! [free_functions]

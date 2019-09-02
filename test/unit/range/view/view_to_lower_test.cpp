@@ -64,36 +64,36 @@ TEST(view_to_lower, concepts)
     auto lower_view = input_string | view::to_lower;
 
     // Required
-    EXPECT_TRUE(std::ranges::InputRange<decltype(input_string)>);
-    EXPECT_TRUE(std::ranges::ViewableRange<decltype(input_string_ref)>);
+    EXPECT_TRUE(std::ranges::input_range<decltype(input_string)>);
+    EXPECT_TRUE(std::ranges::viewable_range<decltype(input_string_ref)>);
 
     // Preserved
-    EXPECT_EQ(std::ranges::InputRange<decltype(input_string)>,
-              std::ranges::InputRange<decltype(lower_view)>);
-    EXPECT_EQ(std::ranges::ForwardRange<decltype(input_string)>,
-              std::ranges::ForwardRange<decltype(lower_view)>);
-    EXPECT_EQ(std::ranges::BidirectionalRange<decltype(input_string)>,
-              std::ranges::BidirectionalRange<decltype(lower_view)>);
-    EXPECT_EQ(std::ranges::RandomAccessRange<decltype(input_string)>,
-              std::ranges::RandomAccessRange<decltype(lower_view)>);
-    EXPECT_EQ(std::ranges::RandomAccessRange<decltype(input_string)>,
-              std::ranges::RandomAccessRange<decltype(lower_view)>);
-    EXPECT_EQ(std::ranges::ViewableRange<decltype(input_string_ref)>,
-              std::ranges::ViewableRange<decltype(lower_view)>);
-    EXPECT_EQ(std::ranges::SizedRange<decltype(input_string)>,
-              std::ranges::SizedRange<decltype(lower_view)>);
-    EXPECT_EQ(std::ranges::CommonRange<decltype(input_string)>,
-              std::ranges::CommonRange<decltype(lower_view)>);
-    EXPECT_EQ(ConstIterableRange<decltype(input_string)>,
-              ConstIterableRange<decltype(lower_view)>);
-    EXPECT_TRUE((std::Same<std::remove_reference_t<reference_t<decltype(input_string)>>,
+    EXPECT_EQ(std::ranges::input_range<decltype(input_string)>,
+              std::ranges::input_range<decltype(lower_view)>);
+    EXPECT_EQ(std::ranges::forward_range<decltype(input_string)>,
+              std::ranges::forward_range<decltype(lower_view)>);
+    EXPECT_EQ(std::ranges::bidirectional_range<decltype(input_string)>,
+              std::ranges::bidirectional_range<decltype(lower_view)>);
+    EXPECT_EQ(std::ranges::random_access_range<decltype(input_string)>,
+              std::ranges::random_access_range<decltype(lower_view)>);
+    EXPECT_EQ(std::ranges::random_access_range<decltype(input_string)>,
+              std::ranges::random_access_range<decltype(lower_view)>);
+    EXPECT_EQ(std::ranges::viewable_range<decltype(input_string_ref)>,
+              std::ranges::viewable_range<decltype(lower_view)>);
+    EXPECT_EQ(std::ranges::sized_range<decltype(input_string)>,
+              std::ranges::sized_range<decltype(lower_view)>);
+    EXPECT_EQ(std::ranges::common_range<decltype(input_string)>,
+              std::ranges::common_range<decltype(lower_view)>);
+    EXPECT_EQ(const_iterable_range<decltype(input_string)>,
+              const_iterable_range<decltype(lower_view)>);
+    EXPECT_TRUE((std::same_as<std::remove_reference_t<reference_t<decltype(input_string)>>,
                            std::remove_reference_t<reference_t<decltype(lower_view)>>>));
 
     // Guaranteed
-    EXPECT_TRUE(std::ranges::ViewableRange<decltype(lower_view)>);
-    EXPECT_TRUE(std::ranges::View<decltype(lower_view)>);
+    EXPECT_TRUE(std::ranges::viewable_range<decltype(lower_view)>);
+    EXPECT_TRUE(std::ranges::view<decltype(lower_view)>);
 
     // Lost
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(lower_view), char>));
-    EXPECT_FALSE(std::ranges::ContiguousRange<decltype(lower_view)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(lower_view), char>));
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(lower_view)>);
 }

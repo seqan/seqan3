@@ -36,7 +36,7 @@ struct variant_from_tags;
 template <template <typename...> typename output_t, typename ...ts>
 struct variant_from_tags<meta::list<ts...>, output_t>
 {
-    //!\brief the type of std::variant.
+    //!\brief The type of std::variant.
     using type = std::variant<output_t<ts>...>;
 };
 
@@ -46,7 +46,7 @@ struct variant_from_tags<meta::list<ts...>, output_t>
  * \param add_cr Whether to add carriage return, too.
  * \ingroup io
  */
-template <std::OutputIterator<char> it_t>
+template <std::output_iterator<char> it_t>
 constexpr void write_eol(it_t & it, bool const add_cr)
 {
     if (add_cr)

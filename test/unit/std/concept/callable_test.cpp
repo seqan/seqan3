@@ -13,29 +13,29 @@
 
 #include "auxiliary.hpp"
 
-TEST(callable_concepts, Invocable)
+TEST(callable_concepts, invocable)
 {
-    EXPECT_TRUE((!std::Invocable<type_a, int, double, type_b>));
-    EXPECT_TRUE((std::Invocable<std::random_device>));
-    EXPECT_TRUE((std::Invocable<type_c, int, double, type_b>));
+    EXPECT_TRUE((!std::invocable<type_a, int, double, type_b>));
+    EXPECT_TRUE((std::invocable<std::random_device>));
+    EXPECT_TRUE((std::invocable<type_c, int, double, type_b>));
 }
 
-TEST(callable_concepts, RegularInvocable)
+TEST(callable_concepts, regular_invocable)
 {
-    EXPECT_TRUE((!std::RegularInvocable<type_a, int, double, type_b>));
-//TODO(rrahn): Should not meet the std::RegularInvocable
-//    EXPECT_TRUE((!std::RegularInvocable<std::random_device>));
-    EXPECT_TRUE((std::RegularInvocable<type_c, int, double, type_b>));
+    EXPECT_TRUE((!std::regular_invocable<type_a, int, double, type_b>));
+//TODO(rrahn): Should not meet the std::regular_invocable
+//    EXPECT_TRUE((!std::regular_invocable<std::random_device>));
+    EXPECT_TRUE((std::regular_invocable<type_c, int, double, type_b>));
 }
 
-TEST(callable_concepts, Predicate)
+TEST(callable_concepts, predicate)
 {
-    EXPECT_TRUE((!std::Predicate<type_c, int, double, type_b>));
-    EXPECT_TRUE((std::Predicate<type_b, int, double, type_b>));
+    EXPECT_TRUE((!std::predicate<type_c, int, double, type_b>));
+    EXPECT_TRUE((std::predicate<type_b, int, double, type_b>));
 }
 
-TEST(callable_concepts, Relation)
+TEST(callable_concepts, relation)
 {
-    EXPECT_TRUE((!std::Relation<type_d, int, double>));
-    EXPECT_TRUE((std::Relation<type_d, int, int>));
+    EXPECT_TRUE((!std::relation<type_d, int, double>));
+    EXPECT_TRUE((std::relation<type_d, int, int>));
 }

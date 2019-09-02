@@ -39,7 +39,7 @@ namespace seqan3::detail
 {
 
 /*!\brief The alignment algorithm type to compute standard pairwise alignment using dynamic programming.
- * \implements std::Invocable
+ * \implements std::invocable
  * \ingroup pairwise_alignment
  * \tparam config_t             The configuration type; must be of type seqan3::configuration.
  * \tparam algorithm_policies_t Template parameter pack with the policies to determine the execution of the algorithm;
@@ -103,8 +103,8 @@ public:
     //!\}
 
     /*!\brief Invokes the actual alignment computation given two sequences.
-     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
-     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::forward_range.
+     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::forward_range.
      * \param[in] idx            The index of the current processed sequence pair.
      * \param[in] first_range    The first sequence (or packed sequences).
      * \param[in] second_range   The second sequence (or packed sequences).
@@ -129,7 +129,7 @@ public:
      * The code always runs in \f$ O(N^2) \f$ time and depending on the configuration requires at least \f$ O(N) \f$
      * and at most \f$ O(N^2) \f$ space.
      */
-    template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
+    template <std::ranges::forward_range first_range_t, std::ranges::forward_range second_range_t>
     auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
         requires !is_banded
     {
@@ -194,8 +194,8 @@ public:
     }
 
     /*!\brief Invokes the banded alignment computation given two sequences.
-     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
-     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::forward_range.
+     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::forward_range.
      * \param[in] idx            The index of the current processed sequence pair.
      * \param[in] first_range    The first sequence (or packed sequences).
      * \param[in] second_range   The second sequence (or packed sequences).
@@ -221,7 +221,7 @@ public:
      * The code always runs in \f$ O(N*k) \f$ time and depending on the configuration requires at least \f$ O(k) \f$
      * and at most \f$ O(N*k) \f$ space.
      */
-    template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
+    template <std::ranges::forward_range first_range_t, std::ranges::forward_range second_range_t>
     auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
         requires is_banded
     {
@@ -527,18 +527,18 @@ private:
         using aligned_seq_type = decltype(result_type{}.alignment);
 
         // If we compute the traceback the aligned sequences must be provided.
-        if constexpr (seqan3::TupleLike<aligned_seq_type>)
+        if constexpr (seqan3::tuple_like<aligned_seq_type>)
         {
-            auto fill_aligned_sequence = [] (auto & aligned_sequence, auto & gap_segments, size_t const normalise)
+            auto fill_aligned_sequence = [] (auto & aligned_sequence_, auto & gap_segments, size_t const normalise)
             {
                 assert(std::ranges::empty(gap_segments) || normalise <= gap_segments[0].position);
 
                 size_t offset = 0;
                 for (auto const & gap_elem : gap_segments)
                 {
-                    auto it = std::ranges::begin(aligned_sequence);
+                    auto it = std::ranges::begin(aligned_sequence_);
                     std::ranges::advance(it, (gap_elem.position - normalise) + offset);
-                    insert_gap(aligned_sequence, it, gap_elem.size);
+                    insert_gap(aligned_sequence_, it, gap_elem.size);
                     offset += gap_elem.size;
                 }
             };

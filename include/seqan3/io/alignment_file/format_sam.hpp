@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::format_sam tag and the seqan3::alignment_file_input_format and
- *        seqan3::alignment_file_output_format specialisation for this tag.
+ * \brief Provides the seqan3::format_sam tag and the seqan3::alignment_file_input_format_REMOVEME and
+ *        seqan3::alignment_file_output_format_REMOVEME specialisation for this tag.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -68,7 +68,7 @@ namespace seqan3
  *
  * Take a look at our tutorial \ref tutorial_alignment_file for a walk through of how to read alignment files.
  *
- * ### Fields
+ * ### fields_specialisation
  *
  * The SAM format provides the following fields:
  * seqan3::field::ALIGNMENT, seqan3::field::SEQ, seqan3::field::QUAL,
@@ -140,10 +140,10 @@ struct format_sam
 namespace seqan3::detail
 {
 
-//!\brief The seqan3::alignment_file_input_format specialisation that handles formatted SAM input.
+//!\brief The seqan3::alignment_file_input_format_REMOVEME specialisation that handles formatted SAM input.
 //!\ingroup alignment_file
 template <>
-class alignment_file_input_format<format_sam>
+class alignment_file_input_format_REMOVEME<format_sam>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with
@@ -152,17 +152,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    alignment_file_input_format()                                                noexcept = default; //!< Defaulted.
+    alignment_file_input_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_input_format(alignment_file_input_format const &)                      = delete;
+    alignment_file_input_format_REMOVEME(alignment_file_input_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_input_format & operator=(alignment_file_input_format const &)          = delete;
-    alignment_file_input_format(alignment_file_input_format &&)                  noexcept = default; //!< Defaulted.
-    alignment_file_input_format & operator=(alignment_file_input_format &&)      noexcept = default; //!< Defaulted.
-    ~alignment_file_input_format()                                               noexcept = default; //!< Defaulted.
+    alignment_file_input_format_REMOVEME & operator=(alignment_file_input_format_REMOVEME const &)          = delete;
+    alignment_file_input_format_REMOVEME(alignment_file_input_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    alignment_file_input_format_REMOVEME & operator=(alignment_file_input_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~alignment_file_input_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc AlignmentFileInputFormat::read
+    //!\copydoc alignment_file_input_format::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
               typename ref_seqs_type,
@@ -323,7 +323,7 @@ public:
             {
                 if constexpr (!detail::decays_to_ignore_v<align_type>)
                 {
-                    static_assert(SequenceContainer<std::remove_reference_t<decltype(get<1>(align))>>,
+                    static_assert(sequence_container<std::remove_reference_t<decltype(get<1>(align))>>,
                                   "If you want to read ALIGNMENT but not SEQ, the alignment"
                                   " object must store a sequence container at the second (query) position.");
 
@@ -427,7 +427,7 @@ protected:
 
     /*!\brief Checks for known reference ids or adds a new reference is and assigns a reference id to `ref_id`.
      * \tparam ref_id_type         The type of the reference id (usually a view::all over ref_id_tmp_type).
-     * \tparam ref_id_tmp_type     The type of the temporary parsed id (Same type as reference ids in header).
+     * \tparam ref_id_tmp_type     The type of the temporary parsed id (same_as type as reference ids in header).
      * \tparam header_type         The type of the alignment header.
      * \tparam ref_seqs_type       A tag whether the reference information were given or not (std::ignore or not).
      *
@@ -509,7 +509,7 @@ protected:
                 using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
                 auto dummy_seq    = view::repeat_n(value_type_t<unaligned_t>{}, ref_length)
                                   | std::view::transform(detail::access_restrictor_fn{});
-                static_assert(std::Same<unaligned_t, decltype(dummy_seq)>,
+                static_assert(std::same_as<unaligned_t, decltype(dummy_seq)>,
                               "No reference information was given so the type of the first alignment tuple position"
                               "must have an unaligned sequence type of a dummy sequence ("
                               "view::repeat_n(dna5{}, size_t{}) | "
@@ -551,12 +551,12 @@ protected:
 
     /*!\brief Reads a range by copying from stream_view to target, converting values with seqan3::view::char_to.
      * \tparam stream_view_type  The type of the stream as a view.
-     * \tparam target_range_type The type of range to parse from input; must model std::ranges::ForwardRange.
+     * \tparam target_range_type The type of range to parse from input; must model std::ranges::forward_range.
      *
      * \param[in, out] stream_view  The stream view to iterate over.
      * \param[in, out] target       The range to store the parsed sequence.
      */
-    template <typename stream_view_type, std::ranges::ForwardRange target_range_type>
+    template <typename stream_view_type, std::ranges::forward_range target_range_type>
     void read_field(stream_view_type && stream_view, target_range_type & target)
     {
         if (!is_char<'*'>(*std::ranges::begin(stream_view)))
@@ -568,7 +568,7 @@ protected:
 
     /*!\brief Reads arithmetic fields using std::from_chars.
      * \tparam stream_view_type The type of the stream as a view.
-     * \tparam target_type      The type of value to parse from input; must model seqan3::Arithmetic.
+     * \tparam target_type      The type of value to parse from input; must model seqan3::arithmetic.
      *
      * \param[in, out] stream_view  The stream view to iterate over.
      * \param[in, out] target       The arithmetic value object to store the parsed value.
@@ -576,7 +576,7 @@ protected:
      * \throws seqan3::format_error if the character sequence in stream_view cannot be successfully converted to a value
      *         of type target_type.
      */
-    template <typename stream_view_type, Arithmetic target_type>
+    template <typename stream_view_type, arithmetic target_type>
     void read_field(stream_view_type && stream_view, target_type & target)
     {
         // unfortunately std::from_chars only accepts char const * so we need a buffer.
@@ -956,10 +956,10 @@ protected:
     }
 };
 
-//!\brief The seqan3::alignment_file_output_format specialisation that can write formatted SAM.
+//!\brief The seqan3::alignment_file_output_format_REMOVEME specialisation that can write formatted SAM.
 //!\ingroup alignment_file
 template <>
-class alignment_file_output_format<format_sam>
+class alignment_file_output_format_REMOVEME<format_sam>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with
@@ -968,17 +968,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    alignment_file_output_format()                                                 noexcept = default; //!< Defaulted.
+    alignment_file_output_format_REMOVEME()                                                 noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_output_format(alignment_file_output_format const &)                      = delete;
+    alignment_file_output_format_REMOVEME(alignment_file_output_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_output_format & operator=(alignment_file_output_format const &)          = delete;
-    alignment_file_output_format(alignment_file_output_format &&)                  noexcept = default; //!< Defaulted.
-    alignment_file_output_format & operator=(alignment_file_output_format &&)      noexcept = default; //!< Defaulted.
-    ~alignment_file_output_format()                                                noexcept = default; //!< Defaulted.
+    alignment_file_output_format_REMOVEME & operator=(alignment_file_output_format_REMOVEME const &)          = delete;
+    alignment_file_output_format_REMOVEME(alignment_file_output_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    alignment_file_output_format_REMOVEME & operator=(alignment_file_output_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~alignment_file_output_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc AlignmentFileOutputFormat::write
+    //!\copydoc alignment_file_output_format::write
     template <typename stream_type,
               typename header_type,
               typename seq_type,
@@ -1013,7 +1013,7 @@ public:
          *
          * - Given the SAM specifications, all fields may be empty
          *
-         * - Arithmetic values default to 0 while all others default to '*'
+         * - arithmetic values default to 0 while all others default to '*'
          *
          * - Because of the former, arithmetic values can be directly streamed
          *   into 'stream' as operator<< is defined for all arithmetic types
@@ -1025,68 +1025,68 @@ public:
         // ---------------------------------------------------------------------
         // Type Requirements (as static asserts for user friendliness)
         // ---------------------------------------------------------------------
-        static_assert((std::ranges::ForwardRange<seq_type>        &&
-                      Alphabet<reference_t<seq_type>>),
-                      "The seq object must be a std::ranges::ForwardRange over "
-                      "letters that model seqan3::Alphabet.");
+        static_assert((std::ranges::forward_range<seq_type>        &&
+                      alphabet<reference_t<seq_type>>),
+                      "The seq object must be a std::ranges::forward_range over "
+                      "letters that model seqan3::alphabet.");
 
-        static_assert((std::ranges::ForwardRange<id_type>         &&
-                      Alphabet<reference_t<id_type>>),
-                      "The id object must be a std::ranges::ForwardRange over "
-                      "letters that model seqan3::Alphabet.");
+        static_assert((std::ranges::forward_range<id_type>         &&
+                      alphabet<reference_t<id_type>>),
+                      "The id object must be a std::ranges::forward_range over "
+                      "letters that model seqan3::alphabet.");
 
         if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
         {
-            static_assert((std::ranges::ForwardRange<ref_id_type> ||
-                           std::Integral<std::remove_reference_t<ref_id_type>> ||
+            static_assert((std::ranges::forward_range<ref_id_type> ||
+                           std::integral<std::remove_reference_t<ref_id_type>> ||
                            detail::is_type_specialisation_of_v<remove_cvref_t<ref_id_type>, std::optional>),
-                          "The ref_id object must be a std::ranges::ForwardRange "
-                          "over letters that model seqan3::Alphabet.");
+                          "The ref_id object must be a std::ranges::forward_range "
+                          "over letters that model seqan3::alphabet.");
 
-            if constexpr (std::Integral<remove_cvref_t<ref_id_type>> ||
+            if constexpr (std::integral<remove_cvref_t<ref_id_type>> ||
                           detail::is_type_specialisation_of_v<remove_cvref_t<ref_id_type>, std::optional>)
                 static_assert(!detail::decays_to_ignore_v<header_type>,
                               "If you give indices as reference id information the header must also be present.");
         }
 
-        static_assert(TupleLike<remove_cvref_t<align_type>>,
+        static_assert(tuple_like<remove_cvref_t<align_type>>,
                       "The align object must be a std::pair of two ranges whose "
                       "value_type is comparable to seqan3::gap");
 
         static_assert((std::tuple_size_v<remove_cvref_t<align_type>> == 2 &&
-                       std::EqualityComparableWith<gap, reference_t<decltype(std::get<0>(align))>> &&
-                       std::EqualityComparableWith<gap, reference_t<decltype(std::get<1>(align))>>),
+                       std::equality_comparable_with<gap, reference_t<decltype(std::get<0>(align))>> &&
+                       std::equality_comparable_with<gap, reference_t<decltype(std::get<1>(align))>>),
                       "The align object must be a std::pair of two ranges whose "
                       "value_type is comparable to seqan3::gap");
 
-        static_assert((std::ranges::ForwardRange<qual_type>       &&
-                       Alphabet<reference_t<qual_type>>),
-                      "The qual object must be a std::ranges::ForwardRange "
-                      "over letters that model seqan3::Alphabet.");
+        static_assert((std::ranges::forward_range<qual_type>       &&
+                       alphabet<reference_t<qual_type>>),
+                      "The qual object must be a std::ranges::forward_range "
+                      "over letters that model seqan3::alphabet.");
 
-        static_assert(TupleLike<remove_cvref_t<mate_type>>,
+        static_assert(tuple_like<remove_cvref_t<mate_type>>,
                       "The mate object must be a std::tuple of size 3 with "
-                      "1) a std::ranges::ForwardRange with a value_type modelling seqan3::Alphabet, "
-                      "2) a std::Integral or std::optional<std::Integral>, and "
-                      "3) a std::Integral.");
+                      "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
+                      "2) a std::integral or std::optional<std::integral>, and "
+                      "3) a std::integral.");
 
-        static_assert(((std::ranges::ForwardRange<decltype(std::get<0>(mate))>     ||
-                        std::Integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
+        static_assert(((std::ranges::forward_range<decltype(std::get<0>(mate))>     ||
+                        std::integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
                         detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>) &&
-                      (std::Integral<remove_cvref_t<decltype(std::get<1>(mate))>> ||
+                      (std::integral<remove_cvref_t<decltype(std::get<1>(mate))>> ||
                        detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<1>(mate))>, std::optional>) &&
-                      std::Integral<remove_cvref_t<decltype(std::get<2>(mate))>>),
+                      std::integral<remove_cvref_t<decltype(std::get<2>(mate))>>),
                       "The mate object must be a std::tuple of size 3 with "
-                      "1) a std::ranges::ForwardRange with a value_type modelling seqan3::Alphabet, "
-                      "2) a std::Integral or std::optional<std::Integral>, and "
-                      "3) a std::Integral.");
+                      "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
+                      "2) a std::integral or std::optional<std::integral>, and "
+                      "3) a std::integral.");
 
-        if constexpr (std::Integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
+        if constexpr (std::integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
                       detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>)
             static_assert(!detail::decays_to_ignore_v<header_type>,
                           "If you give indices as mate reference id information the header must also be present.");
 
-        static_assert(std::Same<remove_cvref_t<tag_dict_type>, sam_tag_dictionary>,
+        static_assert(std::same_as<remove_cvref_t<tag_dict_type>, sam_tag_dictionary>,
                       "The tag_dict object must be of type seqan3::sam_tag_dictionary.");
 
         // ---------------------------------------------------------------------
@@ -1094,7 +1094,7 @@ public:
         // ---------------------------------------------------------------------
         if constexpr (!detail::decays_to_ignore_v<header_type> &&
                       !detail::decays_to_ignore_v<ref_id_type> &&
-                      !std::Integral<std::remove_reference_t<ref_id_type>> &&
+                      !std::integral<std::remove_reference_t<ref_id_type>> &&
                       !detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
         {
 
@@ -1102,9 +1102,9 @@ public:
             {
                 auto id_it = header.ref_dict.end();
 
-                if constexpr (std::ranges::ContiguousRange<decltype(ref_id)> &&
-                              std::ranges::SizedRange<decltype(ref_id)> &&
-                              ForwardingRange<decltype(ref_id)>)
+                if constexpr (std::ranges::contiguous_range<decltype(ref_id)> &&
+                              std::ranges::sized_range<decltype(ref_id)> &&
+                              forwarding_range<decltype(ref_id)>)
                 {
                     id_it = header.ref_dict.find(std::span{std::ranges::data(ref_id), std::ranges::size(ref_id)});
                 }
@@ -1112,7 +1112,7 @@ public:
                 {
                     using header_ref_id_type = std::remove_reference_t<decltype(header.ref_ids()[0])>;
 
-                    static_assert(ImplicitlyConvertibleTo<ref_id_type, header_ref_id_type>,
+                    static_assert(implicitly_convertible_to<ref_id_type, header_ref_id_type>,
                                   "The ref_id type is not convertible to the reference id information stored in the "
                                   "reference dictionary of the header object.");
 
@@ -1126,7 +1126,7 @@ public:
         }
 
         if (ref_offset.has_value() && (ref_offset.value() + 1) < 0)
-            throw format_error{"The ref_offset object must be an std::Integral >= 0."};
+            throw format_error{"The ref_offset object must be an std::integral >= 0."};
 
         // ---------------------------------------------------------------------
         // Writing the Header on first call
@@ -1154,7 +1154,7 @@ public:
 
         if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
         {
-            if constexpr (std::Integral<std::remove_reference_t<ref_id_type>>)
+            if constexpr (std::integral<std::remove_reference_t<ref_id_type>>)
             {
                 write_range(stream_it, (header.ref_ids())[ref_id]);
             }
@@ -1203,7 +1203,7 @@ public:
 
         stream << separator;
 
-        if constexpr (std::Integral<std::remove_reference_t<decltype(get<0>(mate))>>)
+        if constexpr (std::integral<std::remove_reference_t<decltype(get<0>(mate))>>)
         {
             write_range(stream_it, (header.ref_ids())[get<0>(mate)]);
         }
@@ -1255,14 +1255,14 @@ protected:
 
     /*!\brief Writes a field value to the stream.
      * \tparam stream_it_t The stream iterator type.
-     * \tparam field_type  The type of the field value. Must model std::ranges::ForwardRange.
+     * \tparam field_type  The type of the field value. Must model std::ranges::forward_range.
      *
      * \param[in,out] stream_it   The stream iterator to print to.
      * \param[in]     field_value The value to print.
      */
     template <typename stream_it_t, typename field_type>
     //!\cond
-        requires std::ranges::ForwardRange<field_type>
+        requires std::ranges::forward_range<field_type>
     //!\endcond
     void write_range(stream_it_t & stream_it, field_type && field_value)
     {
@@ -1289,11 +1289,11 @@ protected:
      * \param[in,out] stream      The stream to print to.
      * \param[in]     field_value The value to print.
      */
-    template <typename stream_t, Arithmetic field_type>
+    template <typename stream_t, arithmetic field_type>
     void write_field(stream_t & stream, field_type field_value)
     {
         // TODO: replace this with to_chars for efficiency
-        if constexpr (std::Same<field_type, int8_t> || std::Same<field_type, uint8_t>)
+        if constexpr (std::same_as<field_type, int8_t> || std::same_as<field_type, uint8_t>)
             stream << static_cast<int16_t>(field_value);
         else
             stream << field_value;
@@ -1313,7 +1313,7 @@ protected:
         {
             using T = remove_cvref_t<decltype(arg)>;
 
-            if constexpr (!Container<T> || std::Same<T, std::string>)
+            if constexpr (!container<T> || std::same_as<T, std::string>)
             {
                 stream << arg;
             }

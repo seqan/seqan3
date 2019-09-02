@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- * \brief Provides seqan3::AminoacidAlphabet.
+ * \brief Provides seqan3::aminoacid_alphabet.
  */
 
 #pragma once
@@ -22,7 +22,7 @@ namespace seqan3
 {
 
 /*!\brief Identifies amino acid alphabets.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \ingroup aminoacid
  *
  * \details
@@ -42,14 +42,14 @@ namespace seqan3
 template <typename type>
 struct is_aminoacid : std::false_type {};
 
-//!\brief Helper variable that delegates to seqan3::is_aminoacid<type>::value (UnaryTypeTrait shortcut).
+//!\brief Helper variable that delegates to seqan3::is_aminoacid<type>::value (unary_type_trait shortcut).
 //!\relates seqan3::is_aminoacid
 //!\ingroup aminoacid
 template <typename type>
 constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
 
-/*!\interface seqan3::AminoacidAlphabet <>
- * \extends seqan3::Alphabet
+/*!\interface seqan3::aminoacid_alphabet <>
+ * \extends seqan3::alphabet
  * \brief A concept that indicates whether an alphabet represents amino acids.
  * \ingroup aminoacid
  *
@@ -63,7 +63,7 @@ constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT AminoacidAlphabet = Alphabet<type> && is_aminoacid_v<remove_cvref_t<type>>;
+SEQAN3_CONCEPT aminoacid_alphabet = alphabet<type> && is_aminoacid_v<remove_cvref_t<type>>;
 //!\endcond
 
 } // namespace seqan3

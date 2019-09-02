@@ -64,7 +64,7 @@ TYPED_TEST(integral_from_char_test, negative_number)
     std::vector<char> const str{'-', '1', '2', '3'};
     auto res = std::from_chars(&str[0], &str[0] + str.size(), value);
 
-    if constexpr (std::UnsignedIntegral<TypeParam>)
+    if constexpr (std::unsigned_integral<TypeParam>)
     {
         EXPECT_EQ(res.ptr, &str[0]);
         EXPECT_EQ(res.ec, std::errc::invalid_argument);

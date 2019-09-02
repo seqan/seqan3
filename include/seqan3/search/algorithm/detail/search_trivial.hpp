@@ -30,8 +30,8 @@ namespace seqan3::detail
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
  * \tparam abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
- * \tparam cursor_t      Must model seqan3::FmIndexCursor.
- * \tparam query_t       Must model std::ranges::InputRange over the index's alphabet.
+ * \tparam cursor_t      Must model seqan3::fm_index_cursor_specialisation.
+ * \tparam query_t       Must model std::ranges::input_range over the index's alphabet.
  * \tparam delegate_t    Takes `index::cursor_type` as argument.
  * \param[in] cur        Cursor of atring index built on the text that will be searched.
  * \param[in] query      Query sequence to be searched with the cursor.
@@ -139,8 +139,8 @@ inline bool search_trivial(cursor_t cur, query_t & query, typename cursor_t::siz
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
  * \tparam abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
- * \tparam index_t       Must model seqan3::FmIndex.
- * \tparam query_t       Must model std::ranges::InputRange over the index's alphabet.
+ * \tparam index_t       Must model seqan3::fm_index_specialisation.
+ * \tparam query_t       Must model std::ranges::input_range over the index's alphabet.
  * \tparam delegate_t    Takes `index::cursor_type` as argument.
  * \param[in] index      String index built on the text that will be searched.
  * \param[in] query      Query sequence to be searched in the index.

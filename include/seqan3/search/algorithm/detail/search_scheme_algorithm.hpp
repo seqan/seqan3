@@ -72,7 +72,7 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size
 {
     using blocks_length_type = typename search_scheme_t::value_type::blocks_length_type;
 
-    bool constexpr is_dyn_scheme = std::Same<search_scheme_t, search_scheme_dyn_type>;
+    bool constexpr is_dyn_scheme = std::same_as<search_scheme_t, search_scheme_dyn_type>;
 
     // Either store information in an array (for search schemes known at compile time) or in a vector otherwise.
     using result_type = std::conditional_t<is_dyn_scheme,
@@ -135,8 +135,8 @@ inline bool search_ss(cursor_t cur, query_t & query,
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search scheme.
  *        Sub-function for searching the remaining part of the current block without any errors.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
- * \tparam cursor_t         Must model seqan3::BiFmIndexCursor.
- * \tparam query_t          Must model std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam cursor_t         Must model seqan3::bi_fm_index_cursor_specialisation.
+ * \tparam query_t          Must model std::ranges::random_access_range over the index's alphabet.
  * \tparam search_t         Is of type `seqan3::detail::search<>` or `seqan3::detail::search_dyn<>`.
  * \tparam blocks_length_t  Is of type `std::array` or `std::vector` of unsigned integers.
  * \tparam delegate_t       Takes `cursor_t` as argument.
@@ -435,8 +435,8 @@ inline bool search_ss(cursor_t cur, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
- * \tparam index_t          Must model seqan3::BiFmIndex.
- * \tparam query_t          Must model std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam index_t          Must model seqan3::bi_fm_index_specialisation.
+ * \tparam query_t          Must model std::ranges::random_access_range over the index's alphabet.
  * \tparam search_scheme_t  Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
  * \tparam delegate_t       Takes `typename index_t::cursor_type` as argument.
  * \param[in] index         String index built on the text that will be searched.
@@ -486,8 +486,8 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
 
 /*!\brief Searches a query sequence in a bidirectional index.
  * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
- * \tparam index_t         Must model seqan3::BiFmIndex.
- * \tparam query_t         Must model std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam index_t         Must model seqan3::bi_fm_index_specialisation.
+ * \tparam query_t         Must model std::ranges::random_access_range over the index's alphabet.
  * \tparam delegate_t      Takes `typename index_t::cursor_type` as argument.
  * \param[in] index        String index built on the text that will be searched.
  * \param[in] query        Query sequence to be searched in the index.
@@ -546,7 +546,7 @@ inline void search_algo_uni(index_t const & index, query_t & query, search_param
 template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
 inline void search_algo(index_t const & index, query_t & query, search_param const error_left, delegate_t && delegate)
 {
-    if constexpr (BiFmIndex<index_t>)
+    if constexpr (bi_fm_index_specialisation<index_t>)
         search_algo_bi<abort_on_hit>(index, query, error_left, delegate);
     else
         search_algo_uni<abort_on_hit>(index, query, error_left, delegate);

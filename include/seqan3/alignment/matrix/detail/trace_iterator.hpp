@@ -23,11 +23,11 @@ namespace seqan3::detail
 
 /*!\brief A trace iterator for affine gaps.
  * \ingroup alignment_matrix
- * \extends std::ForwardIterator
+ * \extends std::forward_iterator
  *
- * \tparam matrix_iter_t The wrapped matrix iterator; must model seqan3::detail::TwoDimensionalMatrixIterator and
+ * \tparam matrix_iter_t The wrapped matrix iterator; must model seqan3::detail::two_dimensional_matrix_iterator and
  *                       the iterator must be a trace matrix, i.e.
- *                       `std::Same<value_type_t<matrix_iter_t>, trace_directions>` must evaluate to `true`.
+ *                       `std::same_as<value_type_t<matrix_iter_t>, trace_directions>` must evaluate to `true`.
  *
  * \details
  *
@@ -38,17 +38,17 @@ namespace seqan3::detail
  * iterator. When advancing this iterator it actually moves from right to left and from bottom to top in the
  * underlying matrix until an entry with seqan3::detail::trace_directions::none is found.
  */
-template <TwoDimensionalMatrixIterator matrix_iter_t>
+template <two_dimensional_matrix_iterator matrix_iter_t>
 class trace_iterator
 {
 private:
 
-    static_assert(std::Same<value_type_t<matrix_iter_t>, trace_directions>,
+    static_assert(std::same_as<value_type_t<matrix_iter_t>, trace_directions>,
                   "Value type of the underlying iterator must be trace_directions");
 
     //!\brief Befriend with iterator over const verion.
-    template <TwoDimensionalMatrixIterator other_matrix_iter_t>
-        requires std::Constructible<matrix_iter_t, other_matrix_iter_t>
+    template <two_dimensional_matrix_iterator other_matrix_iter_t>
+        requires std::constructible_from<matrix_iter_t, other_matrix_iter_t>
     friend class trace_iterator;
 
 public:
@@ -82,12 +82,12 @@ public:
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
      * \tparam other_matrix_iter_t The underlying matrix iterator type of `other`; the condition
-     *                             `std::Constructible<matrix_iter_t, other_matrix_iter_t>` must evaluate to `true`.
+     *                             `std::constructible_from<matrix_iter_t, other_matrix_iter_t>` must evaluate to `true`.
      * \param[in] other The underlying matrix iterator.
      */
-    template <TwoDimensionalMatrixIterator other_matrix_iter_t>
+    template <two_dimensional_matrix_iterator other_matrix_iter_t>
     //!\cond
-        requires std::Constructible<matrix_iter_t, other_matrix_iter_t>
+        requires std::constructible_from<matrix_iter_t, other_matrix_iter_t>
     //!\endcond
     constexpr trace_iterator(trace_iterator<other_matrix_iter_t> const other) noexcept :
         trace_iterator{other.matrix_iter}
@@ -110,7 +110,8 @@ public:
     }
     //!\}
 
-    /*!\name Arithmetic operators
+    /*!
+ame Arithmetic operators
      * \{
      */
     //!\brief Advances the iterator by one.
@@ -157,10 +158,10 @@ public:
      * \{
      */
     //!\brief Returns `true` if both iterators are equal, `false` otherwise.
-    template <TwoDimensionalMatrixIterator other_matrix_iter_t>
+    template <two_dimensional_matrix_iterator other_matrix_iter_t>
     //!\cond
-        requires std::Constructible<matrix_iter_t, other_matrix_iter_t> ||
-                 std::Constructible<other_matrix_iter_t, matrix_iter_t>
+        requires std::constructible_from<matrix_iter_t, other_matrix_iter_t> ||
+                 std::constructible_from<other_matrix_iter_t, matrix_iter_t>
     //!\endcond
     constexpr bool operator==(trace_iterator<other_matrix_iter_t> const & rhs) const noexcept
     {
@@ -180,10 +181,10 @@ public:
     }
 
     //!\brief Returns `true` if both iterators are not equal, `false` otherwise.
-    template <TwoDimensionalMatrixIterator other_matrix_iter_t>
+    template <two_dimensional_matrix_iterator other_matrix_iter_t>
     //!\cond
-        requires std::Constructible<matrix_iter_t, other_matrix_iter_t> ||
-                 std::Constructible<other_matrix_iter_t, matrix_iter_t>
+        requires std::constructible_from<matrix_iter_t, other_matrix_iter_t> ||
+                 std::constructible_from<other_matrix_iter_t, matrix_iter_t>
     //!\endcond
     constexpr bool operator!=(trace_iterator<other_matrix_iter_t> const & rhs) const noexcept
     {
@@ -228,7 +229,7 @@ private:
  * \{
  */
 //!\brief Deduces the template argument from the passed iterator.
-template <TwoDimensionalMatrixIterator matrix_iter_t>
+template <two_dimensional_matrix_iterator matrix_iter_t>
 trace_iterator(matrix_iter_t const) -> trace_iterator<matrix_iter_t>;
 //!\}
 
