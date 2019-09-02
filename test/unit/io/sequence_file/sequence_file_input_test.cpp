@@ -299,6 +299,30 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
     EXPECT_EQ(counter, 3u);
 }
 
+TEST_F(sequence_file_input_f, record_reading_custom_options)
+{
+    std::istringstream istream{std::string
+    {
+        "> ID1 lala\n"
+        "ACGTTTTTTTTTTTTTTT\n"
+        "> ID2\n"
+        "ACGTTTTTTT\n"
+        "> ID3 lala\n"
+        "ACGTTTA\n"
+    }};
+
+    /* record based reading */
+    sequence_file_input fin{istream, format_fasta{}};
+    fin.options.truncate_ids = true;
+
+    auto it = fin.begin();
+    EXPECT_EQ(get<field::ID>(*it), "ID1");
+    ++it;
+    EXPECT_EQ(get<field::ID>(*it), "ID2");
+    ++it;
+    EXPECT_EQ(get<field::ID>(*it), "ID3");
+}
+
 TEST_F(sequence_file_input_f, file_view)
 {
     sequence_file_input fin{std::istringstream{input}, format_fasta{}};

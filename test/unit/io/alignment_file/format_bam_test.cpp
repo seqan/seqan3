@@ -249,7 +249,8 @@ struct bam_format : public alignment_file_data
 TEST_F(bam_format, wrong_magic_bytes)
 {
     std::istringstream stream{std::string{'\x43', '\x41', '\x4D', '\x01' /*CAM\1*/}};
-    EXPECT_THROW((alignment_file_input{stream, format_bam{}}), format_error);
+    alignment_file_input fin{stream, format_bam{}};
+    EXPECT_THROW(fin.begin(), format_error);
 }
 
 TEST_F(bam_format, unknown_ref_in_header)
@@ -264,7 +265,8 @@ TEST_F(bam_format, unknown_ref_in_header)
     };
 
     std::istringstream stream{unknown_ref};
-    EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
+    alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
+    EXPECT_THROW(fin.begin(), format_error);
 }
 
 TEST_F(bam_format, wrong_ref_length_in_header)
@@ -279,7 +281,8 @@ TEST_F(bam_format, wrong_ref_length_in_header)
     };
 
     std::istringstream stream{wrong_ref_length};
-    EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
+    alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
+    EXPECT_THROW(fin.begin(), format_error);
 }
 
 TEST_F(bam_format, wrong_order_in_header)
@@ -301,7 +304,8 @@ TEST_F(bam_format, wrong_order_in_header)
     };
 
     std::istringstream stream{wrong_order};
-    EXPECT_THROW((alignment_file_input{stream, rids, rseqs, format_bam{}}), format_error);
+    alignment_file_input fin{stream, rids, rseqs, format_bam{}};
+    EXPECT_THROW(fin.begin(), format_error);
 }
 
 TEST_F(bam_format, wrong_char_as_tag_identifier)
@@ -324,7 +328,8 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
+        alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
+        EXPECT_THROW(fin.begin(), format_error);
     }
     {
         std::string wrong_char_in_tag{ // Y in CG:B array tag
@@ -344,7 +349,8 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
+        alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
+        EXPECT_THROW(fin.begin(), format_error);
     }
 }
 
@@ -368,7 +374,8 @@ TEST_F(bam_format, invalid_cigar_op)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        EXPECT_THROW((alignment_file_input{stream, this->ref_ids, this->ref_sequences, format_bam{}}), format_error);
+        alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
+        EXPECT_THROW(fin.begin(), format_error);
     }
 }
 
@@ -403,14 +410,15 @@ TEST_F(bam_format, too_long_cigar_string_read)
     {   // error: sam_tag_dictionary is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        ASSERT_THROW((alignment_file_input{stream, format_bam{}, fields<field::ALIGNMENT>{}}), format_error);
+        alignment_file_input fin{stream, format_bam{}, fields<field::ALIGNMENT>{}};
+        ASSERT_THROW(fin.begin(), format_error);
     }
 
     {   // error: sequence is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        ASSERT_THROW((alignment_file_input{stream, format_bam{}, fields<field::ALIGNMENT, field::TAGS>{}}),
-                     format_error);
+        alignment_file_input fin{stream, format_bam{}, fields<field::ALIGNMENT, field::TAGS>{}};
+        ASSERT_THROW(fin.begin(), format_error);
     }
 
     {   // error no CG tag
@@ -429,7 +437,8 @@ TEST_F(bam_format, too_long_cigar_string_read)
             '\x00', '\x02', '\x02', '\x03'
         }};
 
-        ASSERT_THROW((alignment_file_input{stream, format_bam{}}), format_error);
+        alignment_file_input fin{stream, format_bam{}};
+        ASSERT_THROW(fin.begin(), format_error);
     }
 }
 

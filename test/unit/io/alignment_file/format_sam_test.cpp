@@ -116,7 +116,8 @@ TEST_F(sam_format, header_errors)
             "@HD\tVN:1.0\tTT:this is not a valid tag\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
     }
     {
         std::string header_str
@@ -124,7 +125,8 @@ TEST_F(sam_format, header_errors)
             "@HD\tVN:1.0\tSI:this is not a valid tag starting with S\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
     }
     {
         std::string header_str
@@ -133,7 +135,8 @@ TEST_F(sam_format, header_errors)
             "@TT\tthis is not a valid tag\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
     }
     {
         std::string header_str
@@ -142,7 +145,8 @@ TEST_F(sam_format, header_errors)
             "@PG\tID:prog\tTT:this is not a valid tag\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
     }
     {
         std::string header_str
@@ -151,7 +155,8 @@ TEST_F(sam_format, header_errors)
             "@SQ\tSN:unknown_ref\tLN:0\n"
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW((alignment_file_input{istream, this->ref_ids, this->ref_sequences, format_sam{}}), format_error);
+        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
     }
     {
         std::string header_str
@@ -160,7 +165,8 @@ TEST_F(sam_format, header_errors)
             "@SQ\tSN:ref\tLN:0\n" /*wrong length*/
         };
         std::istringstream istream(header_str);
-        EXPECT_THROW((alignment_file_input{istream, this->ref_ids, this->ref_sequences, format_sam{}}), format_error);
+        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
     }
 }
 
@@ -176,26 +182,37 @@ TEST_F(sam_format, format_error_illegal_character_in_seq)
 {
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\tAC!T\t*\n"));
 
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+    alignment_file_input fin{istream, format_sam{}};
+    EXPECT_THROW(fin.begin(), format_error);
 }
 
 TEST_F(sam_format, format_error_invalid_arithmetic_value)
 {
     // invalid value
     std::istringstream istream(std::string("*\t0\t*\t1abc\t0\t*\t*\t0\t0\t*\t*\n"));
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
-
+    {
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
+    }
     // overflow error
-    istream = std::istringstream(std::string("*\t0\t*\t2147483650\t0\t*\t*\t0\t0\t*\t*\n"));
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
-
+    {
+        istream = std::istringstream(std::string("*\t0\t*\t2147483650\t0\t*\t*\t0\t0\t*\t*\n"));
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
+    }
     // negative value as ref_offset
-    istream = std::istringstream(std::string("*\t0\t*\t-3\t0\t*\t*\t0\t0\t*\t*\n"));
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+    {
+        istream = std::istringstream(std::string("*\t0\t*\t-3\t0\t*\t*\t0\t0\t*\t*\n"));
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
+    }
 
     // negative value as mate mapping position
-    istream = std::istringstream(std::string("*\t0\t*\t0\t0\t*\t*\t-3\t0\t*\t*\n"));
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+    {
+        istream = std::istringstream(std::string("*\t0\t*\t0\t0\t*\t*\t-3\t0\t*\t*\n"));
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
+    }
 }
 
 
@@ -203,25 +220,38 @@ TEST_F(sam_format, format_error_invalid_cigar)
 {
     // unkown operation
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t5Z\t*\t0\t0\t*\t*\n"));
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
-
+    {
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
+    }
     // negative number as operation count
-    istream = std::istringstream(std::string("*\t0\t*\t0\t0\t-5M\t*\t0\t0\t*\t*\n"));
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+    {
+        istream = std::istringstream(std::string("*\t0\t*\t0\t0\t-5M\t*\t0\t0\t*\t*\n"));
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
+    }
 
-    istream = std::istringstream(std::string("*\t0\t*\t0\t0\t3S4M1I-5M2D2M\t*\t0\t0\t*\t*\n"));
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+    {
+        istream = std::istringstream(std::string("*\t0\t*\t0\t0\t3S4M1I-5M2D2M\t*\t0\t0\t*\t*\n"));
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
+    }
 }
 
 TEST_F(sam_format, format_error_invalid_sam_tag_format)
 {
     // type identifier is wrong
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\tNM:X:3\n"));
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
-
+    {
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
+    }
     // Array subtype identifier is wrong
-    istream = std::istringstream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\tNM:B:x3,4\n"));
-    EXPECT_THROW((alignment_file_input{istream, format_sam{}}), format_error);
+    {
+        istream = std::istringstream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\tNM:B:x3,4\n"));
+        alignment_file_input fin{istream, format_sam{}};
+        EXPECT_THROW(fin.begin(), format_error);
+    }
 }
 
 TEST_F(sam_format, write_different_header)
