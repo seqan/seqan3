@@ -44,11 +44,11 @@ SEQAN3_CONCEPT const_iterable_range =
     std::ranges::input_range<type const> &&
     (std::ranges::forward_range<std::remove_const_t<type>>       == std::ranges::forward_range<type const>) &&
     (std::ranges::bidirectional_range<std::remove_const_t<type>> == std::ranges::bidirectional_range<type const>) &&
-    (std::ranges::random_access_range<std::remove_const_t<type>>  == std::ranges::random_access_range<type const>);
+    (std::ranges::random_access_range<std::remove_const_t<type>> == std::ranges::random_access_range<type const>);
 //!\endcond
 
 /*!\interface seqan3::forwarding_range<>
- * \extends std::Range
+ * \extends std::ranges::range
  * \brief Specifies a range whose iterators may outlive the range and remain valid.
  * \see https://eel.is/c++draft/range.req
  */
