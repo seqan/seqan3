@@ -12,10 +12,12 @@
 
 #pragma once
 
+#include <optional>
 #include <type_traits>
 #include <vector>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/band/static_band.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
@@ -93,6 +95,21 @@ public:
     {}
     //!\}
 
+    /*!\brief Sets the column offset corresponding to the upper diagonal of the band within the matrix.
+     * \param[in] offset The offset to set.
+     *
+     * \details
+     *
+     * The offset corresponds to the cell where the upper diagonal intersects with the first row of the matrix after
+     * trimming the sequences. This option is only necessary if the matrix was computed with a banded alignment.
+     * In this case, the row index of the alignment coordinate must be synchronized with the actual global row index
+     * using the given offset.
+     */
+    constexpr void set_band_column_offset(size_t const offset)
+    {
+        band_col_offset = offset;
+    }
+
     /*!\brief Builds the aligned sequences from the given trace path.
      * \tparam trace_path_t The type of the trace path; must model std::ranges::input_range and
      *                      std::same_as<value_type_t<trace_path_t>, seqan::detail::trace_directions> must evaluate to
@@ -132,6 +149,12 @@ public:
 
         res.begin = trace_it.coordinate();
 
+        if (band_col_offset.has_value())
+        {
+            res.begin.row += res.begin.col - band_col_offset.value();
+            res.end.row += res.end.col - band_col_offset.value();
+        }
+
         assign_unaligned(res.alignment.first, fst_rng | views::slice(res.begin.col, res.end.col));
         assign_unaligned(res.alignment.second, sec_rng | views::slice(res.begin.row, res.end.row));
 
@@ -149,10 +172,8 @@ private:
      * \param[in,out] fst_aligned The first aligned sequence to insert gaps into.
      * \param[in,out] sec_aligned The second aligned sequence to insert gaps into.
      */
-    template <typename reverse_traces_t>
-    void fill_aligned_sequence(reverse_traces_t && rev_traces,
-                               fst_aligned_t & fst_aligned,
-                               sec_aligned_t & sec_aligned) const
+    template <typename reverse_traces_t, typename fst_t, typename sec_t>
+    void fill_aligned_sequence(reverse_traces_t && rev_traces, fst_t && fst_aligned, sec_t && sec_aligned) const
     {
         if (std::ranges::empty(rev_traces))
             return;
@@ -168,13 +189,14 @@ private:
             if (dir == trace_directions::left)
                 sec_it = insert_gap(sec_aligned, sec_it, span);
 
-            std::advance(fst_it, span);
-            std::advance(sec_it, span);
+            fst_it += span;
+            sec_it += span;
         }
     }
 
     all_view<fst_rng_t> fst_rng; //!< A view over the first range.
     all_view<sec_rng_t> sec_rng; //!< A view over the second range.
+    std::optional<size_t> band_col_offset; //!< The offset of the column where an optional band starts.
 };
 
 /*!\name Type deduction guides
@@ -184,5 +206,10 @@ private:
 //!\brief Deduces the type from the passed constructor arguments.
 template <std::ranges::viewable_range fst_rng_t, std::ranges::viewable_range sec_rng_t>
 aligned_sequence_builder(fst_rng_t, sec_rng_t) -> aligned_sequence_builder<fst_rng_t, sec_rng_t>;
+
+//!\brief Deduces the type from the passed constructor arguments.
+template <std::ranges::viewable_range fst_rng_t, std::ranges::viewable_range sec_rng_t>
+aligned_sequence_builder(fst_rng_t, sec_rng_t, std::optional<static_band>)
+    -> aligned_sequence_builder<fst_rng_t, sec_rng_t>;
 //!\}
 } // namespace seqan3::detail

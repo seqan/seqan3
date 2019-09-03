@@ -249,6 +249,20 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_0)
     EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{""});
 }
 
+TYPED_TEST(aligned_sequence_builder_fixture, build_with_band_offset)
+{
+    auto p = this->path(matrix_offset{row_index_type{2}, column_index_type{3}});
+    this->builder.set_band_column_offset(0);
+    auto [begin, end, alignment] = this->builder(p);
+
+    EXPECT_EQ(begin.row, 0u);
+    EXPECT_EQ(begin.col, 0u);
+    EXPECT_EQ(end.row, 5u);
+    EXPECT_EQ(end.col, 3u);
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"--ACG"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"AG---"});
+}
+
 TYPED_TEST(aligned_sequence_builder_fixture, both_empty)
 {
     std::remove_reference_t<typename TestFixture::fst_seq_t> first{};
