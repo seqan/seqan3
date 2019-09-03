@@ -79,6 +79,7 @@ private:
         using view_type = typename deferred_type<typename derived_t::column_data_view_type>::type;
 
         static_assert(std::ranges::random_access_range<view_type>, "Column view must support random access.");
+        static_assert(std::ranges::sized_range<view_type>, "Column view must be a sized range.");
         static_assert(std::ranges::view<view_type>, "Column view must be a view.");
 
         //!\brief The sentinel type of the underlying view.
@@ -153,6 +154,9 @@ ame Arithmetic operators
             //!\brief Advances the iterator by one.
             constexpr iterator_type & operator++() noexcept
             {
+                assert(host_ptr != nullptr);
+                assert(host_ptr->me_ptr != nullptr);
+
                 host_ptr->me_ptr->before_column_iterator_increment(host_iter);
                 ++host_iter;
                 host_ptr->me_ptr->after_column_iterator_increment(host_iter);
@@ -269,6 +273,12 @@ ame Arithmetic operators
         //!\brief Deleted end for const-qualified alignment-columns.
         constexpr sentinel cend() const noexcept = delete; // Not needed by the alignment algorithm
         //!\}
+
+        //!\brief Returns the size the alignment column.
+        constexpr size_t size() const noexcept
+        {
+            return std::ranges::size(ref);
+        }
 
     private:
         //!\brief The aliased alignment-column.

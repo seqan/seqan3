@@ -29,15 +29,17 @@ namespace seqan3::detail
  * The `trace_type` must be either a seqan3::detail::trace_directions value or a seqan3::detail::simd_conceptvector
  * over seqan3::detail::trace_directions.
  */
-template <typename trace_type>
+template <typename coordinate_type, typename trace_type>
 struct alignment_trace_matrix_proxy
 {
-    static_assert(std::same_as<trace_type, trace_directions> || simd_concept<trace_type>,
-                  "Value type must either be a trace_directions object or a simd vector.");
+    static_assert(std::same_as<trace_type, trace_directions> || simd_concept<trace_type> ||
+                  decays_to_ignore_v<trace_type>,
+                  "Value type must either be a trace_directions object, a simd vector over such or std::ignore.");
 
+    coordinate_type coordinate{}; //!< The current coordinate.
     trace_type & current; //!< Reference to the current element.
-    trace_type & left_r; //!< Reference to the element to the left.
-    trace_type & left_w; //!< Reference to the next element to the left.
+    trace_type & r_left; //!< Reference to the element to the left.
+    trace_type & w_left; //!< Reference to the next element to the left.
     trace_type & up; //!< Reference to the element above.
 };
 
