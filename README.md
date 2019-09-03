@@ -19,7 +19,7 @@ for:
 
 By leveraging *Modern C++* it provides unprecedented ease-of-use without sacrificing performance.
 
-Please see the [online documentation](http://docs.seqan.de/seqan/3-master-user/) for more details.
+Please see the [online documentation](https://docs.seqan.de/seqan/3-master-user/) for more details.
 
 ## Quick facts
 
@@ -32,7 +32,7 @@ Please see the [online documentation](http://docs.seqan.de/seqan/3-master-user/)
 
 |                   | requirement                                          | version  | comment                                     |
 |-------------------|------------------------------------------------------|----------|---------------------------------------------|
-|**compiler**       | [GCC](http://gcc.gnu.org)                            | ≥ 7      | no other compiler is currently supported!   |
+|**compiler**       | [GCC](https://gcc.gnu.org)                           | ≥ 7      | no other compiler is currently supported!   |
 |**build system**   | [CMake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                   |
 |**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      |                                             |
 |                   | [Range-V3](https://github.com/ericniebler/range-v3)  | ≥ 1.0    |                                             |
@@ -44,7 +44,7 @@ Please see the [online documentation](http://docs.seqan.de/seqan/3-master-user/)
 
 We recommend that you use CMake to build your project:
 
-  * [Setup-Tutorial](http://docs.seqan.de/seqan/3-master-user/setup.html)
+  * [Setup-Tutorial](https://docs.seqan.de/seqan/3-master-user/setup.html)
   * Using CMake guarantees that all optional dependencies are automatically detected and activated.
 
 Quick-Setup without CMake:

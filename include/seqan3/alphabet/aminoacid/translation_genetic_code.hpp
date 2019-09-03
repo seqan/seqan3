@@ -20,7 +20,7 @@ namespace seqan3
  *
  * \details
  * The numeric values of the enums correspond to the genbank transl_table values
- * (see http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi).
+ * (see https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi).
  */
 enum struct genetic_code : uint8_t
 {

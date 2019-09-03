@@ -52,7 +52,7 @@ PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
 
 EXPAND_AS_DEFINED      = SEQAN3_CPO_IMPL SEQAN3_DEPRECATED_310
 
-TAGFILES               += "${SEQAN3_DOXYGEN_STD_TAGFILE}=http://en.cppreference.com/w/"
+TAGFILES               += "${SEQAN3_DOXYGEN_STD_TAGFILE}=https://en.cppreference.com/w/"
 
 EXCLUDE_SYMBOLS        = seqan3::contrib
 

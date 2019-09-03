@@ -290,7 +290,7 @@ How does the result change?
 A special form of the pairwise sequence alignment is the edit distance. This distance metric counts the number of
 edits necessary to transform one sequence into the other. The cost model for the edit distance is fixed. In particular,
 the match score is `0` and the scores for a mismatch and a gap is `-1`. Due to the special metric a fast
-[bitvector](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.332.9395&rep=rep1&type=pdf) implementation can be
+[bitvector](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.332.9395&rep=rep1&type=pdf) implementation can be
 used to compute the edit distance. This happens in SeqAn automatically if the respective configurations are used.
 To do so, you need a scoring scheme initialised with Manhattan distance (at the moment only
 seqan3::nucleotide_scoring_scheme supports this) and a gap scheme initialised with `-1` for a gap and `0`

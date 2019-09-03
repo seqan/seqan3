@@ -298,7 +298,7 @@ SEQAN3_CONCEPT copy_constructible =
  * \extends     std::assignable_from
  * \extends     std::swappable
  *
- * \sa http://en.cppreference.com/w/cpp/concepts/movable
+ * \sa https://en.cppreference.com/w/cpp/concepts/movable
  */
 //!\cond
 template < class T >
@@ -347,7 +347,7 @@ namespace std::detail
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
  * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
- * \sa          http://en.cppreference.com/w/cpp/concepts/weakly_equality_comparable_with
+ * \sa          https://en.cppreference.com/w/cpp/concepts/weakly_equality_comparable_with
  */
 //!\cond
 template <class T, class U>
@@ -368,7 +368,7 @@ namespace std
 
 /*!\interface   std::equality_comparable <>
  * \brief       The same as std::weakly_equality_comparable_with<t,t>.
- * \sa          http://en.cppreference.com/w/cpp/concepts/equality_comparable
+ * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
  */
 /*!\name Requirements for std::equality_comparable
  * \brief You can expect these functions on all types that implement std::Equality_comparable.
@@ -401,7 +401,7 @@ SEQAN3_CONCEPT equality_comparable = detail::weakly_equality_comparable_with<T, 
  *              their common_reference_t satisfy std::equality_comparable.
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
- * \sa          http://en.cppreference.com/w/cpp/concepts/equality_comparable
+ * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
  */
 //!\cond
 template <class T, class U>
@@ -417,7 +417,7 @@ SEQAN3_CONCEPT equality_comparable_with =
 /*!\interface   std::totally_ordered
  * \extends     std::equality_comparable
  * \brief       Requires std::equality_comparable and all remaing comparison operators (`<`, `<=`, `>`, `>=`).
- * \sa          http://en.cppreference.com/w/cpp/concepts/totally_ordered
+ * \sa          https://en.cppreference.com/w/cpp/concepts/totally_ordered
  */
 /*!\name Requirements for std::totally_ordered
  * \brief You can expect these functions on all types that implement std::totally_ordered.
@@ -466,7 +466,7 @@ SEQAN3_CONCEPT totally_ordered =
  * \brief       Requires std::equality_comparable and all remaing comparison operators (`<`, `<=`, `>`, `>=`).
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
- * \sa          http://en.cppreference.com/w/cpp/concepts/totally_ordered
+ * \sa          https://en.cppreference.com/w/cpp/concepts/totally_ordered
  */
 //!\cond
 template <class T, class U>
@@ -500,7 +500,7 @@ SEQAN3_CONCEPT totally_ordered_with =
  *              requires that the type be std::assignable_from bool from a `const &` of itself.
  * \extends     std::movable
  * \extends     std::copy_constructible
- * \sa          http://en.cppreference.com/w/cpp/concepts/copyable
+ * \sa          https://en.cppreference.com/w/cpp/concepts/copyable
  */
 //!\cond
 template <class T>
@@ -511,7 +511,7 @@ SEQAN3_CONCEPT copyable = copy_constructible<T> && movable<T> && assignable_from
  * \brief       Subsumes std::copyable and std::default_constructible.
  * \extends     std::copyable
  * \extends     std::default_constructible
- * \sa          http://en.cppreference.com/w/cpp/concepts/semiregular
+ * \sa          https://en.cppreference.com/w/cpp/concepts/semiregular
  */
 //!\cond
 template <class T>
@@ -522,7 +522,7 @@ SEQAN3_CONCEPT semiregular = copyable<T> && default_constructible<T>;
  * \brief       Subsumes std::semiregular and std::equality_comparable.
  * \extends     std::semiregular
  * \extends     std::equality_comparable
- * \sa          http://en.cppreference.com/w/cpp/concepts/regular
+ * \sa          https://en.cppreference.com/w/cpp/concepts/regular
  */
 //!\cond
 template <class T>
@@ -535,7 +535,7 @@ SEQAN3_CONCEPT regular = semiregular<T> && equality_comparable<T>;
 
 /*!\interface   std::invocable <>
  * \brief       Specifies whether the given callable is invocable with the given arguments.
- * \sa          http://en.cppreference.com/w/cpp/concepts/invocable
+ * \sa          https://en.cppreference.com/w/cpp/concepts/invocable
  */
 //!\cond
 template< class F, class... Args >
@@ -551,7 +551,7 @@ SEQAN3_CONCEPT invocable =
  * \extends     std::invocable
  * \brief       Specifies whether the given callable is invocable with the given arguments and equality preserving
  *              (invocations change neither the callable, nor the arguments).
- * \sa          http://en.cppreference.com/w/cpp/concepts/regular_invocable
+ * \sa          https://en.cppreference.com/w/cpp/concepts/regular_invocable
  */
 //!\cond
 template< class F, class... Args >
@@ -561,7 +561,7 @@ SEQAN3_CONCEPT regular_invocable = invocable<F, Args...>;
 /*!\interface   std::predicate <>
  * \extends     std::regular_invocable
  * \brief       Specifies whether the given callable is std::regular_invocable and returns bool.
- * \sa          http://en.cppreference.com/w/cpp/concepts/predicate
+ * \sa          https://en.cppreference.com/w/cpp/concepts/predicate
  */
 //!\cond
 template < class F, class... Args >
@@ -572,7 +572,7 @@ SEQAN3_CONCEPT predicate = regular_invocable<F, Args...> && boolean<std::invoke_
  * \extends     std::predicate
  * \brief       Specifies that R defines a binary relation over the set of expressions whose type and value category
  *              are those encoded by either t or u.
- * \sa          http://en.cppreference.com/w/cpp/concepts/relation
+ * \sa          https://en.cppreference.com/w/cpp/concepts/relation
  */
 //!\cond
 template <class R, class T, class U>
@@ -591,7 +591,7 @@ SEQAN3_CONCEPT relation =
  * \extends     std::relation
  * \brief       The concept strict_weak_order<R, T, U> specifies that the relation R imposes a strict weak ordering
  *              on its arguments.
- * \sa          http://en.cppreference.com/w/cpp/concepts/relation
+ * \sa          https://en.cppreference.com/w/cpp/concepts/relation
  */
 //!\cond
 template < class R, class T, class U >

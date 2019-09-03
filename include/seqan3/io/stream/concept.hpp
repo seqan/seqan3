@@ -23,9 +23,9 @@ namespace seqan3
  * \ingroup stream
  * \brief Concept for output streams.
  *
- * An object is an output stream if it inherits from the [std::ios_base](http://en.cppreference.com/w/cpp/io/ios_base)
+ * An object is an output stream if it inherits from the [std::ios_base](https://en.cppreference.com/w/cpp/io/ios_base)
  * and supports the (un)formatted output function (`operator<<`) for a l-value of a given `value_type`.
- * It further needs to define the public member types as described in the [STD](http://en.cppreference.com/w/cpp/io/basic_ios).
+ * It further needs to define the public member types as described in the [STD](https://en.cppreference.com/w/cpp/io/basic_ios).
  */
 //!\cond
 template <typename stream_type, typename value_type>
@@ -90,9 +90,9 @@ SEQAN3_CONCEPT output_stream = requires { typename std::remove_reference_t<strea
  * \ingroup stream
  * \brief Concept for input streams.
  *
- * An object is an input stream if it inherits from the [std::ios_base](http://en.cppreference.com/w/cpp/io/ios_base)
+ * An object is an input stream if it inherits from the [std::ios_base](https://en.cppreference.com/w/cpp/io/ios_base)
  * and supports the (un)formatted input function (`operator>>`) for a l-value of a given `value_type`.
- * It further needs to define the public member types as described in the [STD](http://en.cppreference.com/w/cpp/io/basic_ios).
+ * It further needs to define the public member types as described in the [STD](https://en.cppreference.com/w/cpp/io/basic_ios).
  */
 //!\cond
 template <typename stream_type, typename value_type>

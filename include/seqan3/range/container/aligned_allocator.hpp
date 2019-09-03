@@ -52,8 +52,8 @@ namespace seqan3
  * As you can see, in the case of the aligned_allocator it is guaranteed that the
  * first element in the vector starts at offset 0.
  *
- * \see http://en.cppreference.com/w/cpp/concept/Allocator
- * \see http://en.cppreference.com/w/cpp/memory/c/aligned_alloc
+ * \see https://en.cppreference.com/w/cpp/concept/Allocator
+ * \see https://en.cppreference.com/w/cpp/memory/c/aligned_alloc
  */
 template <typename value_t, size_t alignment_v = __STDCPP_DEFAULT_NEW_ALIGNMENT__>
 class aligned_allocator
@@ -118,7 +118,7 @@ public:
         // causes the function to fail and return a null pointer (C11, as
         // published, specified undefined behavior in this case, this was
         // corrected by DR 460).
-        // http://en.cppreference.com/w/cpp/memory/c/aligned_alloc
+        // https://en.cppreference.com/w/cpp/memory/c/aligned_alloc
         if (auto p = static_cast<pointer>(std::aligned_alloc(alignment, n * sizeof(value_type))))
             return p;
 #endif

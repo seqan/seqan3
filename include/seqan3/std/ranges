@@ -55,7 +55,7 @@ namespace std::ranges
 /*!\interface std::ranges::range <>
  * \brief Defines the requirements of a type that allows iteration over its elements by providing a begin iterator
  * and an end sentinel.
- * \sa http://en.cppreference.com/w/cpp/ranges/Range
+ * \sa https://en.cppreference.com/w/cpp/ranges/Range
  */
 //!\cond
 template <typename type>
@@ -65,7 +65,7 @@ SEQAN3_CONCEPT range = ::ranges::Range<type>;
 /*!\interface std::ranges::sized_range <>
  * \extends std::ranges::range
  * \brief Specifies the requirements of a Range type that knows its size in constant time with the size function.
- * \sa http://en.cppreference.com/w/cpp/ranges/sized_range
+ * \sa https://en.cppreference.com/w/cpp/ranges/sized_range
  */
 //!\cond
 template <typename type>
@@ -75,7 +75,7 @@ SEQAN3_CONCEPT sized_range = range<type> && ::ranges::SizedRange<type>;
 /*!\interface std::ranges::common_range  <>
  * \extends std::ranges::range
  * \brief Specifies requirements of a Range type for which `begin` and `end` return objects of the same type.
- * \sa http://en.cppreference.com/w/cpp/ranges/BoundedRange
+ * \sa https://en.cppreference.com/w/cpp/ranges/BoundedRange
  */
 //!\cond
 template <typename type>
@@ -86,7 +86,7 @@ SEQAN3_CONCEPT common_range = range<type> && ::ranges::CommonRange<type>;
  * \extends std::ranges::range
  * \brief Specifies requirements of a Range type for which `begin` returns a type that models
  * std::output_iterator.
- * \sa http://en.cppreference.com/w/cpp/ranges/output_range
+ * \sa https://en.cppreference.com/w/cpp/ranges/output_range
  */
 //!\cond
 template <typename type, typename out_type>
@@ -97,7 +97,7 @@ SEQAN3_CONCEPT output_range = range<type> && ::ranges::OutputRange<type, out_typ
  * \extends std::ranges::range
  * \brief Specifies requirements of a Range type for which `begin` returns a type that models
  * std::input_iterator.
- * \sa http://en.cppreference.com/w/cpp/ranges/input_range
+ * \sa https://en.cppreference.com/w/cpp/ranges/input_range
  */
 //!\cond
 template <typename type>
@@ -108,7 +108,7 @@ SEQAN3_CONCEPT input_range = range<type> && ::ranges::InputRange<type>;
  * \extends std::ranges::input_range
  * \brief Specifies requirements of a Range type for which `begin` returns a type that models
  * std::forward_iterator.
- * \sa http://en.cppreference.com/w/cpp/ranges/forward_range
+ * \sa https://en.cppreference.com/w/cpp/ranges/forward_range
  */
 //!\cond
 template <typename type>
@@ -119,7 +119,7 @@ SEQAN3_CONCEPT forward_range = input_range<type> && ::ranges::ForwardRange<type>
  * \extends std::ranges::forward_range
  * \brief Specifies requirements of a Range type for which `begin` returns a type that models
  * std::bidirectional_iterator.
- * \sa http://en.cppreference.com/w/cpp/ranges/bidirectional_range
+ * \sa https://en.cppreference.com/w/cpp/ranges/bidirectional_range
  */
 //!\cond
 template <typename type>
@@ -130,7 +130,7 @@ SEQAN3_CONCEPT bidirectional_range = forward_range<type> && ::ranges::Bidirectio
  * \extends std::ranges::bidirectional_range
  * \brief Specifies requirements of a Range type for which `begin` returns a type that models
  * std::random_access_iterator.
- * \sa http://en.cppreference.com/w/cpp/ranges/random_access_range
+ * \sa https://en.cppreference.com/w/cpp/ranges/random_access_range
  */
 //!\cond
 template <typename type>
@@ -151,7 +151,7 @@ SEQAN3_CONCEPT contiguous_range = random_access_range<type> && ::ranges::Contigu
  * \extends std::ranges::viewable_range
  * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
  * \sa \ref view
- * \sa http://en.cppreference.com/w/cpp/ranges/View
+ * \sa https://en.cppreference.com/w/cpp/ranges/View
  */
 //!\cond
 template <typename type>

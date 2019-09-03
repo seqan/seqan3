@@ -4,7 +4,7 @@
 
 This changelog contains a top-level entry for each release with sections on new features, API changes and notable
 bug-fixes (not all bug-fixes will be listed).
-See the documentation on [API stability](http://docs.seqan.de/seqan/3-master-user/about_api.html) to learn about
+See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-user/about_api.html) to learn about
 when API changes are allowed.
 
 <!--

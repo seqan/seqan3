@@ -172,7 +172,7 @@ public:
      * The application name must only contain alpha-numeric characters, '_' or '-',
      * i.e. the following regex must evaluate to true: `\"^[a-zA-Z0-9_-]+$\"`.
      *
-     * See the [argument parser tutorial](http://docs.seqan.de/seqan/3.0.0-master-dev/tutorial_argument_parser.html)
+     * See the [argument parser tutorial](https://docs.seqan.de/seqan/3-master-dev/tutorial_argument_parser.html)
      * for more information about the version check functionality.
      */
     argument_parser(std::string const app_name,
@@ -207,7 +207,7 @@ public:
      *                     If option_type is a container, its value type must have the
      *                     formatted input function (exception: std::string is not
      *                     regarded as a container).
-     *                     See <a href="http://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
+     *                     See <a href="https://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
      *                        value. Must satisfy seqan3::validator.
      *
@@ -263,7 +263,7 @@ public:
      *                     If option_type is a container, its value type must have the
      *                     formateted input function (exception: std::string is not
      *                     regarded as a container).
-     *                     See <a href="http://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
+     *                     See <a href="https://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
      *                        value. Must satisfy seqan3::validator.
      *

@@ -50,7 +50,7 @@ SEQAN3_CONCEPT const_iterable_range =
 /*!\interface seqan3::forwarding_range<>
  * \extends std::Range
  * \brief Specifies a range whose iterators may outlive the range and remain valid.
- * \see http://eel.is/c++draft/range.req
+ * \see https://eel.is/c++draft/range.req
  */
 //!\cond
 template <typename type>

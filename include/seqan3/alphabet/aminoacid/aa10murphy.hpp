@@ -72,7 +72,7 @@ namespace seqan3
  * fold recognition and implications for folding. Protein Eng., 13(3):149–152, Mar 2000.\n
  * <sup><b>2</b></sup>Trotta, E. (2016). Selective forces and mutational biases drive stop codon usage
  * in the human genome: a comparison with sense codon usage.
- * BMC Genomics, 17, 366. http://doi.org/10.1186/s12864-016-2692-4
+ * BMC Genomics, 17, 366. https://doi.org/10.1186/s12864-016-2692-4
  *
  * \include test/snippet/alphabet/aminoacid/aa10murphy.cpp
  */

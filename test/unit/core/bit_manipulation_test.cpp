@@ -168,7 +168,7 @@ TYPED_TEST(unsigned_operations, count_trailing_zeros)
     }
 }
 
-// http://graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation
+// https://graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation
 template <std::unsigned_integral unsigned_t>
 unsigned_t permute_bits(unsigned_t v)
 {

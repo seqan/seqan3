@@ -21,7 +21,7 @@
  * | **Format** | **Extension**   | **Dependency**                   | **Description**                                   |
  * |:-----------|:----------------|:---------------------------------|:--------------------------------------------------|
  * | GZip       | `.gz`¹          | [zlib](https://zlib.net/)        | GNU-Zip, most common format on UNIX               |
- * | BGZF       | `.gz`, `.bgzf`² | [zlib](https://zlib.net/)        | [Blocked GZip](http://samtools.github.io/hts-specs/SAMv1.pdf), compatible extension to GZip, features parallelisation|
+ * | BGZF       | `.gz`, `.bgzf`² | [zlib](https://zlib.net/)        | [Blocked GZip](https://samtools.github.io/hts-specs/SAMv1.pdf), compatible extension to GZip, features parallelisation|
  * | BZip2      | `.bz2`          | [libbz2](https://www.bzip.org)   | Stronger compression than GZip, slower to compress |
  *
  * <small>¹ SeqAn always assumes GZip and does not handle pure `.Z`.<br>
@@ -94,7 +94,7 @@
  * This enables you to store data structures like indexes or sequences directly to disk.
  *
  * We use the [cereal library](https://github.com/USCiLab/cereal) to accomplish this.
- * For more information see [cereal's documentation](http://uscilab.github.io/cereal/) or our tutorial on
+ * For more information see [cereal's documentation](https://uscilab.github.io/cereal/) or our tutorial on
  * \ref tutorial_index_search which contains an example.
  */
 

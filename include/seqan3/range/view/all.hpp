@@ -39,7 +39,7 @@
  * \details
  *
  * SeqAn3 makes heavy use of views as defined in the
- * [Ranges Technical Specification](http://en.cppreference.com/w/cpp/experimental/ranges). From the original
+ * [Ranges Technical Specification](https://en.cppreference.com/w/cpp/experimental/ranges). From the original
  * documentation:  <i>"A view is a lightweight wrapper that presents a view of an underlying sequence of elements in
  * some custom way without mutating or copying it. Views are cheap to create and copy, and have non-owning reference
  * semantics. [...] The big advantage of ranges over iterators is their composability. They permit a functional style

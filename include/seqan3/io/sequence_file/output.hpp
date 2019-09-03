@@ -93,7 +93,7 @@ namespace seqan3
  *
  * Note that this is not the same as writing `sequence_file_output<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
- * [automatic deduction](http://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
+ * [automatic deduction](https://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
  * chooses different parameters depending on the constructor arguments. Prefer deduction over explicit defaults.
  *
  * ### Writing record-wise

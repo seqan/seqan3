@@ -215,7 +215,7 @@ which is a specialisation of seqan3::record and behaves like an std::tuple
 \note It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
 
 Since the return type seqan3::record behaves like a tuple, you can also use
-[structured bindings](http://en.cppreference.com/w/cpp/language/structured_binding)
+[structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding)
 to decompose the record into its elements:
 
 \include test/snippet/io/sequence_file/sequence_file_input_decomposed.cpp

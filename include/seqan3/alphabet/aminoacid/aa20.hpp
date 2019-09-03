@@ -54,7 +54,7 @@ namespace seqan3
  * Science, 164(3881), 788-798. doi:10.1126/science.164.3881.788\n
  * <sup><b>2</b></sup>Trotta, E. (2016). Selective forces and mutational biases drive stop codon usage
  * in the human genome: a comparison with sense codon usage.
- * BMC Genomics, 17, 366. http://doi.org/10.1186/s12864-016-2692-4
+ * BMC Genomics, 17, 366. https://doi.org/10.1186/s12864-016-2692-4
  *
  * \include test/snippet/alphabet/aminoacid/aa20_construction.cpp
  */
