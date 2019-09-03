@@ -90,6 +90,8 @@ def run_unit_tests(slave_name, compiler, build_type, model, with_cereal)
     {
         workspace = pwd()
         echo workspace
+        // Clean the workspace before building.
+        deleteDir()
 
         build_name = "$slave_name $compiler cereal-$with_cereal $build_type $env.BRANCH_NAME Build-$env.BUILD_NUMBER"
         disable_cereal = with_cereal ? 'OFF' : 'ON'
