@@ -86,17 +86,12 @@ class gap_decorator
 private:
     // Declaration of class's iterator types; for the defintion see below.
     class gap_decorator_iterator;
-    class gap_decorator_iterator_ra;
 
     //!\brief The iterator type of this container (a bidirectional iterator).
     using iterator = gap_decorator_iterator;
     //!\brief The const_iterator equals the iterator type. Since no references are ever returned and thus the underlying
     //!        sequence cannot be modified through the iterator there is no need for const.
     using const_iterator = iterator;
-    //!\brief The pseudo random access iterator type (provides functionality but **not in constant time**).
-    using iterator_ra = gap_decorator_iterator_ra;
-    //!\brief The const_iterator_ra equals the iterator_ra type.
-    using const_iterator_ra = iterator_ra;
 
 public:
     /*!\name Range-associated member types
@@ -330,34 +325,6 @@ public:
         return const_iterator{*this};
     }
 
-    /*!\brief Returns a pseudo random access iterator to the first element of the container.
-     * \returns Iterator to the first element.
-     *
-     * If the container is empty, the returned iterator will be equal to end().
-     *
-     * \attention The returned iterator models the std::ranges::random_access_iterator but
-     *            **the operations on it do not guarantee constant time**.
-     *            Random access is provided in \f$O(\log k)\f$ time (where `k` is the number of gaps).
-     *
-     * ### Complexity
-     *
-     * Constant.
-     *
-     * ### Exceptions
-     *
-     * No-throw guarantee.
-     */
-    const_iterator_ra begin_ra() const noexcept
-    {
-        return gap_decorator_iterator_ra{*this};
-    }
-
-    //!\copydoc begin_ra()
-    const_iterator_ra cbegin_ra() const noexcept
-    {
-        return gap_decorator_iterator_ra{*this};
-    }
-
     /*!\brief Returns an iterator pointing behind the last element of the decorator.
      * \returns Iterator pointing behind the last element.
      *
@@ -380,34 +347,6 @@ public:
     const_iterator cend() const noexcept
     {
         return const_iterator{*this, size()};
-    }
-
-    /*!\brief Returns a random access iterator pointing behind the last element of the decorator.
-     * \returns Iterator pointing behind the last element.
-     *
-     * \attention The returned iterator models the std::ranges::random_access_iterator but
-     *            **the operations on it do not guarantee constant time**.
-     *            Random access is provided in \f$O(\log k)\f$ time (where `k` is the number of gaps).
-     *
-     * \attention This element acts as a placeholder; attempting to dereference it results in undefined behaviour.
-     *
-     * ### Complexity
-     *
-     * Constant.
-     *
-     * ### Exceptions
-     *
-     * No-throw guarantee.
-     */
-    const_iterator_ra end_ra() const noexcept
-    {
-        return gap_decorator_iterator_ra{*this, size()};
-    }
-
-    //!\copydoc end_ra()
-    const_iterator_ra cend_ra() const noexcept
-    {
-        return gap_decorator_iterator_ra{*this, size()};
     }
     //!\}
 
@@ -639,13 +578,28 @@ template <std::ranges::view urng_t>
 gap_decorator(urng_t range) -> gap_decorator<urng_t>;
 //!\}
 
-//!\brief The random access iterator range.
+/*!\brief The iterator type over a seqan3::gap_decorator.
+ * \implements seqan3::pseudo_random_access_iterator
+ *
+ * \details
+ *
+ * This iterator returns values when dereferenced, not references, i.e. it does not satisfy the semantic
+ * requirements of [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/bidirectional_iterator).
+ * It does model the C++20 std::bidirectional_iterator. In addition, it offers all interfaces of a standard
+ * std::random_access_iterator except the iterator category which is defined as std::bidirectional_iterator_tag,
+ * because the complexity of the iterator is logarithmic and not constant. However, all interfaces inside the
+ * seqan3::gap_decorator make use of the more efficient logarithmic implementation. Be aware, that if you want to use
+ * the seqan3::gap_decorator in a generic algorithm, e.g. std::ranges::distance, the slower linear version will be
+ * picked due to the constraints of the iterator category. To achieve optimal performance in a generic context you can
+ * use seqan3::views::enforce_random_access to get a range over seqan3::gap_decorator which models
+ * std::random_access_iterator albeit its non-conforming runtime complexity.
+ */
 template <std::ranges::viewable_range inner_type>
 //!\cond
     requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type> &&
              (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
 //!\endcond
-class gap_decorator<inner_type>::gap_decorator_iterator_ra
+class gap_decorator<inner_type>::gap_decorator_iterator
 {
 protected:
     //!\brief Pointer to the underlying container structure.
@@ -704,21 +658,21 @@ public:
     //!\brief The pointer type.
     using pointer = value_type *;
     //!\brief The iterator category.
-    using iterator_category = std::random_access_iterator_tag;
+    using iterator_category = std::bidirectional_iterator_tag;
     //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr gap_decorator_iterator_ra() = default; //!< Defaulted.
-    constexpr gap_decorator_iterator_ra(gap_decorator_iterator_ra const &) = default; //!< Defaulted.
-    constexpr gap_decorator_iterator_ra & operator=(gap_decorator_iterator_ra const &) = default; //!< Defaulted.
-    constexpr gap_decorator_iterator_ra(gap_decorator_iterator_ra &&) = default; //!< Defaulted.
-    constexpr gap_decorator_iterator_ra & operator=(gap_decorator_iterator_ra &&) = default; //!< Defaulted.
-    ~gap_decorator_iterator_ra() = default; //!< Defaulted.
+    constexpr gap_decorator_iterator() = default; //!< Defaulted.
+    constexpr gap_decorator_iterator(gap_decorator_iterator const &) = default; //!< Defaulted.
+    constexpr gap_decorator_iterator & operator=(gap_decorator_iterator const &) = default; //!< Defaulted.
+    constexpr gap_decorator_iterator(gap_decorator_iterator &&) = default; //!< Defaulted.
+    constexpr gap_decorator_iterator & operator=(gap_decorator_iterator &&) = default; //!< Defaulted.
+    ~gap_decorator_iterator() = default; //!< Defaulted.
 
     //!\brief Construct from seqan3::gap_decorator and initialising to first position.
-    explicit constexpr gap_decorator_iterator_ra(gap_decorator const & host_) noexcept :
+    explicit constexpr gap_decorator_iterator(gap_decorator const & host_) noexcept :
         host(&host_), anchor_set_it{host_.anchors.begin()}
     {
         if (host_.anchors.size() && (*host_.anchors.begin()).first == 0) // there are gaps at the very front
@@ -734,7 +688,7 @@ public:
     }
 
     //!\brief Construct from seqan3::gap_decorator and explicit position.
-    constexpr gap_decorator_iterator_ra(gap_decorator const & host_,
+    constexpr gap_decorator_iterator(gap_decorator const & host_,
                                      typename gap_decorator::size_type const pos_) noexcept : host(&host_)
     {
         jump(pos_); // random access to pos
@@ -745,7 +699,7 @@ public:
      * \{
      */
     //!\brief Increments iterator.
-    constexpr gap_decorator_iterator_ra & operator++() noexcept
+    constexpr gap_decorator_iterator & operator++() noexcept
     {
         assert(host); // host is set
         ++pos;
@@ -774,35 +728,35 @@ public:
     }
 
     //!\brief Returns an incremented iterator copy.
-    constexpr gap_decorator_iterator_ra operator++(int) noexcept
+    constexpr gap_decorator_iterator operator++(int) noexcept
     {
-        gap_decorator_iterator_ra cpy{*this};
+        gap_decorator_iterator cpy{*this};
         ++(*this);
         return cpy;
     }
 
     //!\brief Advances iterator by `skip` many positions.
-    constexpr gap_decorator_iterator_ra & operator+=(difference_type const skip) noexcept
+    constexpr gap_decorator_iterator & operator+=(difference_type const skip) noexcept
     {
         this->jump(this->pos + skip);
         return *this;
     }
 
     //!\brief Returns an iterator copy advanced by `skip` many positions.
-    constexpr gap_decorator_iterator_ra operator+(difference_type const skip) const noexcept
+    constexpr gap_decorator_iterator operator+(difference_type const skip) const noexcept
     {
-        return gap_decorator_iterator_ra{*(this->host), this->pos + skip};
+        return gap_decorator_iterator{*(this->host), this->pos + skip};
     }
 
     //!\brief Returns an iterator copy advanced by `skip` many positions.
-    constexpr friend gap_decorator_iterator_ra operator+(difference_type const skip,
-                                                         gap_decorator_iterator_ra const & it) noexcept
+    constexpr friend gap_decorator_iterator operator+(difference_type const skip,
+                                                      gap_decorator_iterator const & it) noexcept
     {
         return it + skip;
     }
 
     //!\brief Decrements iterator.
-    constexpr gap_decorator_iterator_ra & operator--() noexcept
+    constexpr gap_decorator_iterator & operator--() noexcept
     {
         assert(host); // host is set
         --pos;
@@ -834,35 +788,35 @@ public:
     }
 
     //!\brief Returns a decremented iterator copy.
-    constexpr gap_decorator_iterator_ra operator--(int) noexcept
+    constexpr gap_decorator_iterator operator--(int) noexcept
     {
-        gap_decorator_iterator_ra cpy{*this};
+        gap_decorator_iterator cpy{*this};
         --(*this);
         return cpy;
     }
 
     //!\brief Advances iterator by `skip` many positions.
-    constexpr gap_decorator_iterator_ra & operator-=(difference_type const skip) noexcept
+    constexpr gap_decorator_iterator & operator-=(difference_type const skip) noexcept
     {
         this->jump(this->pos - skip);
         return *this;
     }
 
     //!\brief Returns an iterator copy advanced by `skip` many positions.
-    constexpr gap_decorator_iterator_ra operator-(difference_type const skip) const noexcept
+    constexpr gap_decorator_iterator operator-(difference_type const skip) const noexcept
     {
-        return gap_decorator_iterator_ra{*(this->host), this->pos - skip};
+        return gap_decorator_iterator{*(this->host), this->pos - skip};
     }
 
     //!\brief Returns an iterator copy advanced by `skip` many positions.
-    constexpr friend gap_decorator_iterator_ra operator-(difference_type const skip,
-                                                         gap_decorator_iterator_ra const & it) noexcept
+    constexpr friend gap_decorator_iterator operator-(difference_type const skip,
+                                                      gap_decorator_iterator const & it) noexcept
     {
         return it - skip;
     }
 
     //!\brief Returns the distance between two iterators.
-    constexpr difference_type operator-(gap_decorator_iterator_ra const lhs) const noexcept
+    constexpr difference_type operator-(gap_decorator_iterator const lhs) const noexcept
     {
         return static_cast<difference_type>(this->pos - lhs.pos);
     }
@@ -874,8 +828,7 @@ public:
     //!\brief Dereference operator returns a copy of the element currently pointed at.
     constexpr reference operator*() const noexcept
     {
-        return (is_at_gap) ? static_cast<reference>(gap{})
-                           : static_cast<reference>(host->ungapped_view[ungapped_view_pos]);
+        return (is_at_gap) ? reference{gap{}} : reference{host->ungapped_view[ungapped_view_pos]};
     }
 
     //!\brief Return underlying container value currently pointed at.
@@ -891,102 +844,46 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    constexpr friend bool operator==(gap_decorator_iterator_ra const & lhs, gap_decorator_iterator_ra const & rhs)
+    constexpr friend bool operator==(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos == rhs.pos;
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
-    constexpr friend bool operator!=(gap_decorator_iterator_ra const & lhs, gap_decorator_iterator_ra const & rhs)
+    constexpr friend bool operator!=(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos != rhs.pos;
     }
 
     //!\brief Checks whether `*this` is less than `rhs`.
-    constexpr friend bool operator<(gap_decorator_iterator_ra const & lhs, gap_decorator_iterator_ra const & rhs)
+    constexpr friend bool operator<(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos < rhs.pos;
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
-    constexpr friend bool operator>(gap_decorator_iterator_ra const & lhs, gap_decorator_iterator_ra const & rhs)
+    constexpr friend bool operator>(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos > rhs.pos;
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
-    constexpr friend bool operator<=(gap_decorator_iterator_ra const & lhs, gap_decorator_iterator_ra const & rhs)
+    constexpr friend bool operator<=(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos <= rhs.pos;
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-    constexpr friend bool operator>=(gap_decorator_iterator_ra const & lhs, gap_decorator_iterator_ra const & rhs)
+    constexpr friend bool operator>=(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos >= rhs.pos;
     }
-    //!\}
-};
-
-/*!\brief The iterator type over a seqan3::gap_decorator.
- * \implements seqan3::pseudo_random_access_iterator
- *
- * \details
- *
- * This iterator returns values when dereferenced, not references, i.e. it does not satisfy the semantic
- * requirements of [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/bidirectional_iterator).
- * It does model the C++20 std::bidirectional_iterator. In addition, it offers all interfaces of a standard
- * std::random_access_iterator except the iterator category which is std::bidirectional_iterator_tag, because the
- * complexity of the iterator is logarithmic and not constant. However, all interfaces inside the seqan3::gap_decorator
- * make use of the more efficient logarithmic implementation. Be aware, that if you want to use the
- * seqan3::gap_decorator in a generic algorithm, e.g. std::ranges::distance, the slower linear version will be picked
- * due to the constraints of the iterator category. To achieve optimal performance in a generic context you can use
- * seqan3::views::pseudo_random_access to get a range over seqan3::gap_decorator which
- * models std::random_access_iterator albeit its non-conforming runtime complexity.
- */
-template <std::ranges::viewable_range inner_type>
-//!\cond
-    requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type> &&
-             (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
-//!\endcond
-class gap_decorator<inner_type>::gap_decorator_iterator :
-    public detail::inherited_iterator_base<gap_decorator_iterator, gap_decorator_iterator_ra>
-{
-    //!\brief The overwritten iterator category.
-    using iterator_category = std::bidirectional_iterator_tag;
-
-    //!\brief An alias type definition for the base.
-    using base_t = detail::inherited_iterator_base<gap_decorator_iterator, gap_decorator_iterator_ra>;
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    //Import the base constructor.
-    using base_t::base_t;
-
-    constexpr gap_decorator_iterator() = default; //!< Defaulted.
-    constexpr gap_decorator_iterator(gap_decorator_iterator const &) = default; //!< Defaulted.
-    constexpr gap_decorator_iterator & operator=(gap_decorator_iterator const &) = default; //!< Defaulted.
-    constexpr gap_decorator_iterator(gap_decorator_iterator &&) = default; //!< Defaulted.
-    constexpr gap_decorator_iterator & operator=(gap_decorator_iterator &&) = default; //!< Defaulted.
-    ~gap_decorator_iterator() = default; //!< Defaulted.
-
-    //!\brief Initialise the adapted base class.
-    explicit constexpr gap_decorator_iterator(gap_decorator const & host_) noexcept :
-        base_t{gap_decorator_iterator_ra{host_}}
-    {}
-
-    //!\brief Initialise the adapted base class.
-    constexpr gap_decorator_iterator(gap_decorator const & host_,
-                                        typename gap_decorator::size_type const pos_) noexcept :
-        base_t(gap_decorator_iterator_ra{host_, pos_})
-    {}
     //!\}
 };
 
