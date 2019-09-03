@@ -26,8 +26,8 @@ TEST(sequence_file_output_iterator, concepts)
     using it_t = typename sequence_file_output<>::iterator;
     using sen_t = typename sequence_file_output<>::sentinel;
 
-    EXPECT_TRUE((std::OutputIterator<it_t, std::tuple<std::string, std::string>>));
-    EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
+    EXPECT_TRUE((std::output_iterator<it_t, std::tuple<std::string, std::string>>));
+    EXPECT_TRUE((std::sentinel_for<sen_t, it_t>));
 }
 
 std::vector<dna5_vector> seqs
@@ -68,11 +68,11 @@ std::vector<std::vector<phred42>> quals
 TEST(general, concepts)
 {
     using t = sequence_file_output<>;
-    EXPECT_TRUE((std::ranges::OutputRange<t, std::tuple<std::string, std::string>>));
+    EXPECT_TRUE((std::ranges::output_range<t, std::tuple<std::string, std::string>>));
 
     using ct = sequence_file_output<> const;
     // not const-iterable
-    EXPECT_FALSE((std::ranges::OutputRange<ct, std::tuple<std::string, std::string>>));
+    EXPECT_FALSE((std::ranges::output_range<ct, std::tuple<std::string, std::string>>));
 }
 
 TEST(general, construct_by_filename)

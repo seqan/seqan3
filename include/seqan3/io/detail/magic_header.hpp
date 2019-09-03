@@ -13,12 +13,15 @@
 #pragma once
 
 #include <array>
+#include <string>
+#include <vector>
 
+#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/core/platform.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/std/type_traits>
+#include <seqan3/std/span>
 
 namespace seqan3::detail
 {
@@ -85,6 +88,26 @@ struct bgzf_compression
     //  B       C       [SLEN        ]  [BSIZE       ]
         '\x42', '\x43', '\x02', '\x00', '\x00', '\x00'
     };
+
+    /*!\brief Checks if the given header is a bgzf header.
+     * \param[in] header The header to validate.
+     * \returns `true` if it is a bgzf header, otherwise `false`.
+     */
+    template <typename char_t, ptrdiff_t extend>
+    static bool validate_header(std::span<char_t, extend> header)
+    {
+        static_assert(std::detail::weakly_equality_comparable_with<char_t, char>,
+                      "The given char type of the span must be comparable with char.");
+
+        return (header[0] == magic_header[0] &&                                                     // GZ_ID1
+                header[1] == magic_header[1] &&                                                     // GZ_ID2
+                header[2] == magic_header[2] &&                                                     // GZ_CM
+                (header[3] & magic_header[3]) != 0 &&                                                // FLG_FEXTRA
+                to_little_endian(*reinterpret_cast<uint16_t *>(&header[10])) == magic_header[10] &&  // BGZF_ID1
+                header[12] == magic_header[12] &&                                                    // BGZF_ID2
+                header[13] == magic_header[13] &&                                                    // BGZF_SLEN
+                to_little_endian(*reinterpret_cast<uint16_t *>(&header[14])) == magic_header[14]);   // BGZF_XLEN
+    }
 };
 
 /*!\brief A seqan3::type_list containing the available compression formats.

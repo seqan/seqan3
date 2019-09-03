@@ -28,10 +28,10 @@ using test_types = ::testing::Types<std::tuple<aminoacid_scoring_scheme<int8_t>,
                                     std::tuple<nucleotide_scoring_scheme<int8_t>, dna15>>;
 TYPED_TEST_CASE(align_confg_scoring_test, test_types);
 
-TYPED_TEST(align_confg_scoring_test, ConfigElement)
+TYPED_TEST(align_confg_scoring_test, config_element)
 {
     using scheme_t = typename TestFixture::scheme_t;
-    EXPECT_TRUE((detail::ConfigElement<align_cfg::scoring<scheme_t>>));
+    EXPECT_TRUE((detail::config_element<align_cfg::scoring<scheme_t>>));
 }
 
 TYPED_TEST(align_confg_scoring_test, configuration)

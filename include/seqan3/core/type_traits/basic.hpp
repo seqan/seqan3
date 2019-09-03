@@ -39,7 +39,7 @@ using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<t>>;
 // ----------------------------------------------------------------------------
 
 /*!\brief Return the input type with `&&` removed, but lvalue references preserved.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam t The type to operate on.
  * \see seqan3::remove_rvalue_reference_t
  */
@@ -50,7 +50,7 @@ struct remove_rvalue_reference
     using type = std::conditional_t<std::is_rvalue_reference_v<t>, std::remove_reference_t<t>, t>;
 };
 
-/*!\brief Return the input type with `&&` removed, but lvalue references preserved (TransformationTrait shortcut).
+/*!\brief Return the input type with `&&` removed, but lvalue references preserved (transformation_trait shortcut).
  * \tparam t The type to operate on.
  * \see seqan3::remove_rvalue_reference
  */
@@ -62,14 +62,14 @@ using remove_rvalue_reference_t = typename remove_rvalue_reference<t>::type;
 // ----------------------------------------------------------------------------
 
 /*!\brief Whether a type std::is_default_constructible in `constexpr`-context.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \tparam t The type to operate on.
  */
 template <typename t>
 struct is_constexpr_default_constructible : std::false_type
 {};
 
-/*!\brief Whether a type std::is_default_constructible in `constexpr`-context (UnaryTypeTrait specialisation).
+/*!\brief Whether a type std::is_default_constructible in `constexpr`-context (unary_type_trait specialisation).
  * \tparam t A type that std::is_default_constructible.
  * \see seqan3::is_constexpr_default_constructible
  */
@@ -80,7 +80,7 @@ template <typename t>
 struct is_constexpr_default_constructible<t> : std::integral_constant<bool, SEQAN3_IS_CONSTEXPR(t{})>
 {};
 
-/*!\brief Whether a type std::is_default_constructible in `constexpr`-context (UnaryTypeTrait shortcut).
+/*!\brief Whether a type std::is_default_constructible in `constexpr`-context (unary_type_trait shortcut).
  * \tparam t The type to operate on.
  * \relates seqan3::is_constexpr_default_constructible
  */
@@ -102,7 +102,7 @@ namespace seqan3::detail
 // ----------------------------------------------------------------------------
 
 /*!\brief Return the type identity; further arguments are ignored, but can make this type dependent if they are.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam t The type to operate on.
  * \tparam dependent_ts Any provided types are ignored.
  * \see seqan3::detail::deferred_type_t
@@ -115,7 +115,7 @@ struct deferred_type
 };
 
 /*!\brief Return the type identity; further arguments are ignored, but can make this type dependent if they are
- *        (TransformationTrait shortcut).
+ *        (transformation_trait shortcut).
  * \tparam t The type to operate on.
  * \tparam dependent_ts Any provided types are ignored.
  * \see seqan3::detail::deferred_type

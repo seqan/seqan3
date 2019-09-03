@@ -29,6 +29,7 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
+#include <seqan3/std/span>
 
 namespace seqan3::detail
 {
@@ -37,10 +38,10 @@ namespace seqan3::detail
  * \param[in] reference The range that is expected to be the longer one.
  * \param[in] query     The range that is expected to be the shorter one.
  */
-template <std::ranges::ForwardRange ref_t, std::ranges::ForwardRange query_t>
+template <std::ranges::forward_range ref_t, std::ranges::forward_range query_t>
 inline bool starts_with(ref_t && reference, query_t && query)
 //!\cond
-    requires std::EqualityComparableWith<reference_t<ref_t>, reference_t<query_t>>
+    requires std::equality_comparable_with<reference_t<ref_t>, reference_t<query_t>>
 //!\endcond
 {
     auto rit  = std::ranges::begin(reference);
@@ -71,7 +72,7 @@ inline bool starts_with(ref_t && reference, query_t && query)
  * \returns A pointer to the secondary stream with defaulted or NOP'ed deleter.
  * \throws seqan3::file_open_error If the magic bytes suggest compression, but is not supported/available.
  */
-template <Char char_t>
+template <builtin_character char_t>
 inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, std::filesystem::path & filename)
     -> std::unique_ptr<std::basic_istream<char_t>, std::function<void(std::basic_istream<char_t>*)>>
 {
@@ -104,14 +105,14 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
         extension = filename.extension().string().substr(1);
 
     // tests whether the given extension matches with one of the given compression tags.
-    auto contains_extension = [] (auto compression_tag, auto const & extension)
+    [[maybe_unused]] auto contains_extension = [] (auto compression_tag, auto const & extension) constexpr
     {
         return std::ranges::find(decltype(compression_tag)::file_extensions, extension) !=
                std::ranges::end(decltype(compression_tag)::file_extensions);
     };
 
     // set return value appropriately
-    if (read_chars == magic_number.size() && contrib::_bgzfCheckHeader(magic_number.data())) // BGZF
+    if (read_chars == magic_number.size() && bgzf_compression::validate_header(std::span{magic_number})) // BGZF
     {
     #ifdef SEQAN3_HAS_ZLIB
         if (contains_extension(gz_compression{}, extension) || contains_extension(bgzf_compression{}, extension))
@@ -154,7 +155,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
 }
 
 //!\overload
-template <Char char_t>
+template <builtin_character char_t>
 inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream)
 {
     std::filesystem::path p;

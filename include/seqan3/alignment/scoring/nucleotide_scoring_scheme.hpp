@@ -22,7 +22,7 @@ namespace seqan3
 /*!\brief A data structure for managing and computing the score of two nucleotides.
  * \tparam score_type The underlying type.
  * \ingroup scoring
- * \implements seqan3::ScoringScheme
+ * \implements seqan3::scoring_scheme
  *
  * \details
  *
@@ -33,7 +33,7 @@ namespace seqan3
  *
  * \include test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp
  */
-template <Arithmetic score_type = int8_t>
+template <arithmetic score_type = int8_t>
 class nucleotide_scoring_scheme : public scoring_scheme_base<nucleotide_scoring_scheme<score_type>, dna15, score_type>
 {
 private:
@@ -48,7 +48,7 @@ public:
     SEQAN3_DOXYGEN_ONLY(( constexpr nucleotide_scoring_scheme() noexcept {} ))
     //!\copydoc scoring_scheme_base::scoring_scheme_base(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
     SEQAN3_DOXYGEN_ONLY((
-      template <Arithmetic score_arg_t>
+      template <arithmetic score_arg_t>
       constexpr nucleotide_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms) {}
     ))
     //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_type const & _matrix)
@@ -71,12 +71,12 @@ nucleotide_scoring_scheme() -> nucleotide_scoring_scheme<int8_t>;
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
  * To use a larger type, specify the template argument manually.
  */
-template <Arithmetic score_arg_type>
+template <arithmetic score_arg_type>
 nucleotide_scoring_scheme(match_score<score_arg_type>,
                           mismatch_score<score_arg_type>) -> nucleotide_scoring_scheme<int8_t>;
 
 //!\brief Deduce the score type from the provided matrix.
-template <Arithmetic score_arg_type>
+template <arithmetic score_arg_type>
 nucleotide_scoring_scheme(std::array<std::array<score_arg_type, 15>, 15>) -> nucleotide_scoring_scheme<score_arg_type>;
 //!\}
 

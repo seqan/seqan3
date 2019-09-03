@@ -21,7 +21,7 @@ TEST(out_file_iterator, concepts)
 {
     using it_t = detail::out_file_iterator<std::vector<int>>;
 
-    EXPECT_TRUE((std::OutputIterator<it_t, int>));
+    EXPECT_TRUE((std::output_iterator<it_t, int>));
 }
 
 TEST(out_file_iterator, member_types)

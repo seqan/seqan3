@@ -37,19 +37,19 @@ TEST(small_vector, standard_construction)
 
 TEST(small_vector, concepts)
 {
-    EXPECT_TRUE((ReservableContainer<small_vector<char, 4>>));
-    EXPECT_TRUE((std::ranges::RandomAccessRange<small_vector<char, 4>>));
-    EXPECT_TRUE((std::ranges::ContiguousRange<small_vector<char, 4>>));
+    EXPECT_TRUE((reservible_container<small_vector<char, 4>>));
+    EXPECT_TRUE((std::ranges::random_access_range<small_vector<char, 4>>));
+    EXPECT_TRUE((std::ranges::contiguous_range<small_vector<char, 4>>));
 }
 
 TEST(small_vector, construct_from_array)
 {
     // Deduce value type and N
-    EXPECT_TRUE((std::Same<decltype(small_vector{std::array{'h','e','l','l','o'}}),
+    EXPECT_TRUE((std::same_as<decltype(small_vector{std::array{'h','e','l','l','o'}}),
                  small_vector<char, 5>>));
 
     // construct from different sized array (size has to be smaller)
-    EXPECT_TRUE((std::Same<decltype(small_vector<char, 10>{std::array{'h','e','l','l','o'}}),
+    EXPECT_TRUE((std::same_as<decltype(small_vector<char, 10>{std::array{'h','e','l','l','o'}}),
                  small_vector<char, 10>>));
 }
 
@@ -57,16 +57,16 @@ TEST(small_vector, construct_from_built_in_array)
 {
     // Deduce value type and N
     int arr[3] = {1, 2, 3};
-    EXPECT_TRUE((std::Same<decltype(small_vector{arr}), small_vector<int, 3>>));
+    EXPECT_TRUE((std::same_as<decltype(small_vector{arr}), small_vector<int, 3>>));
 
     // Deduce value type and N
-    EXPECT_TRUE((std::Same<decltype(small_vector<int, 5>{arr}), small_vector<int, 5>>));
+    EXPECT_TRUE((std::same_as<decltype(small_vector<int, 5>{arr}), small_vector<int, 5>>));
 
     // char const *
-    EXPECT_TRUE((std::Same<decltype(small_vector{"hi"}), small_vector<char, 3>>));
+    EXPECT_TRUE((std::same_as<decltype(small_vector{"hi"}), small_vector<char, 3>>));
 
     // parameter pack
-    EXPECT_TRUE((std::Same<decltype(small_vector<char, 3>{'A', 'C', 'X'}), small_vector<char, 3>>));
+    EXPECT_TRUE((std::same_as<decltype(small_vector<char, 3>{'A', 'C', 'X'}), small_vector<char, 3>>));
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

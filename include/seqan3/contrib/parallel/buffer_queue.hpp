@@ -47,8 +47,8 @@ enum struct buffer_queue_policy : uint8_t
     dynamic
 };
 
-template <std::Semiregular value_t,
-          SequenceContainer buffer_t = std::vector<value_t>,
+template <std::semiregular value_t,
+          sequence_container buffer_t = std::vector<value_t>,
           buffer_queue_policy buffer_policy = buffer_queue_policy::dynamic>
 class buffer_queue
 {
@@ -76,8 +76,8 @@ public:
         roundSize = static_cast<size_type>(1) << static_cast<size_type>(std::log2(data.size() - 1) + 1);
     }
 
-    template <std::ranges::InputRange range_type>
-        requires std::ConvertibleTo<value_type_t<range_type>, value_type>
+    template <std::ranges::input_range range_type>
+        requires std::convertible_to<value_type_t<range_type>, value_type>
     buffer_queue(size_type const init_capacity, range_type && r) : buffer_queue{init_capacity}
     {
         std::ranges::copy(r, std::ranges::begin(data));
@@ -87,7 +87,7 @@ public:
      * \{
      */
     template <typename value2_t>
-        requires std::ConvertibleTo<value2_t, value_t>
+        requires std::convertible_to<value2_t, value_t>
     void push(value2_t && value)
     {
         detail::spin_delay delay{};
@@ -107,7 +107,7 @@ public:
     } // throws if closed
 
     template <typename value2_t>
-        requires std::ConvertibleTo<value2_t, value_t>
+        requires std::convertible_to<value2_t, value_t>
     queue_op_status wait_push(value2_t && value)
     {
         detail::spin_delay delay{};
@@ -169,7 +169,7 @@ public:
      * \{
      */
     template <typename value2_t>
-        requires std::ConvertibleTo<value2_t, value_t>
+        requires std::convertible_to<value2_t, value_t>
     queue_op_status try_push(value2_t &&);
 
     queue_op_status try_pop(value_t &);
@@ -234,7 +234,7 @@ private:
     }
 
     template <typename value2_t>
-        requires (std::ConvertibleTo<value2_t, value_t>) &&
+        requires (std::convertible_to<value2_t, value_t>) &&
                  (buffer_policy == buffer_queue_policy::fixed)
     bool overflow(value2_t &&)
     {
@@ -242,7 +242,7 @@ private:
     }
 
     template <typename value2_t>
-        requires (std::ConvertibleTo<value2_t, value_t>) &&
+        requires (std::convertible_to<value2_t, value_t>) &&
                  (buffer_policy == buffer_queue_policy::dynamic)
     bool overflow(value2_t && value);
 
@@ -258,11 +258,11 @@ private:
 };
 
 // Specifies a fixed size buffer queue.
-template <std::Semiregular value_t, SequenceContainer buffer_t = std::vector<value_t>>
+template <std::semiregular value_t, sequence_container buffer_t = std::vector<value_t>>
 using fixed_buffer_queue = buffer_queue<value_t, buffer_t, buffer_queue_policy::fixed>;
 
 // Specifies a dynamic size buffer queue (growable).
-template <std::Semiregular value_t, SequenceContainer buffer_t = std::vector<value_t>>
+template <std::semiregular value_t, sequence_container buffer_t = std::vector<value_t>>
 using dynamic_buffer_queue = buffer_queue<value_t, buffer_t, buffer_queue_policy::dynamic>;
 
 // ============================================================================
@@ -275,7 +275,7 @@ using dynamic_buffer_queue = buffer_queue<value_t, buffer_t, buffer_queue_policy
 
 template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
-    requires (std::ConvertibleTo<value2_t, value_t>) &&
+    requires (std::convertible_to<value2_t, value_t>) &&
              (buffer_policy == buffer_queue_policy::dynamic)
 inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t && value)
 {
@@ -439,7 +439,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
 //
 template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
-    requires std::ConvertibleTo<value2_t, value_t>
+    requires std::convertible_to<value2_t, value_t>
 inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(value2_t && value)
 {
     // try to push the value

@@ -19,7 +19,7 @@
 
 namespace seqan3
 {
-/*!\interface seqan3::OStream <>
+/*!\interface seqan3::output_stream_over <>
  * \ingroup stream
  * \brief Concept for output streams.
  *
@@ -29,7 +29,7 @@ namespace seqan3
  */
 //!\cond
 template <typename stream_type, typename value_type>
-SEQAN3_CONCEPT OStream = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
+SEQAN3_CONCEPT output_stream_over = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
                          requires (stream_type & os, value_type & val)
 {
     typename std::remove_reference_t<stream_type>::char_type;
@@ -43,13 +43,13 @@ SEQAN3_CONCEPT OStream = std::is_base_of_v<std::ios_base, std::remove_reference_
 };
 
 template <typename stream_type>
-SEQAN3_CONCEPT OStream2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
-                          OStream<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
+SEQAN3_CONCEPT output_stream = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+                          output_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
-/*!\name Requirements for seqan3::OStream
- * \relates seqan3::OStream
- * \brief You can expect these member types and the free function on all types that satisfy seqan3::OStream.
+/*!\name Requirements for seqan3::output_stream_over
+ * \relates seqan3::output_stream_over
+ * \brief You can expect these member types and the free function on all types that satisfy seqan3::output_stream_over.
  * \{
  */
 /*!\fn      std::basic_ostream<char_type, traits_type> & operator<<(value_type val);
@@ -86,7 +86,7 @@ SEQAN3_CONCEPT OStream2 = requires { typename std::remove_reference_t<stream_typ
   */
 //!\}
 
-/*!\interface seqan3::IStream <>
+/*!\interface seqan3::input_stream_over <>
  * \ingroup stream
  * \brief Concept for input streams.
  *
@@ -96,7 +96,7 @@ SEQAN3_CONCEPT OStream2 = requires { typename std::remove_reference_t<stream_typ
  */
 //!\cond
 template <typename stream_type, typename value_type>
-SEQAN3_CONCEPT IStream = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
+SEQAN3_CONCEPT input_stream_over = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
                          requires (stream_type & is, value_type & val)
 {
     typename std::remove_reference_t<stream_type>::char_type;
@@ -110,13 +110,13 @@ SEQAN3_CONCEPT IStream = std::is_base_of_v<std::ios_base, std::remove_reference_
 };
 
 template <typename stream_type>
-SEQAN3_CONCEPT IStream2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
-                          IStream<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
+SEQAN3_CONCEPT input_stream = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+                          input_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
-/*!\name Requirements for seqan3::IStream
- * \relates seqan3::IStream
- * \brief You can expect these member types and the free function on all types that satisfy seqan3::IStream.
+/*!\name Requirements for seqan3::input_stream_over
+ * \relates seqan3::input_stream_over
+ * \brief You can expect these member types and the free function on all types that satisfy seqan3::input_stream_over.
  * \{
  */
 /*!\fn      std::basic_istream<char_type, traits_type> & operator>>(value_type val);
@@ -153,9 +153,9 @@ SEQAN3_CONCEPT IStream2 = requires { typename std::remove_reference_t<stream_typ
   */
 //!\}
 
-/*!\interface seqan3::Stream <>
- * \extends seqan3::IStream
- * \extends seqan3::OStream
+/*!\interface seqan3::stream_REMOVEME <>
+ * \extends seqan3::input_stream_over
+ * \extends seqan3::output_stream_over
  * \brief Concept for i/o streams permitting both directions.
  * \ingroup stream
  *
@@ -164,8 +164,8 @@ SEQAN3_CONCEPT IStream2 = requires { typename std::remove_reference_t<stream_typ
  */
 //!\cond
 template <typename stream_type, typename value_type>
-SEQAN3_CONCEPT Stream = OStream<stream_type, value_type> &&
-                        IStream<stream_type, value_type>;
+SEQAN3_CONCEPT stream_REMOVEME = output_stream_over<stream_type, value_type> &&
+                        input_stream_over<stream_type, value_type>;
 
 //!\endcond
 

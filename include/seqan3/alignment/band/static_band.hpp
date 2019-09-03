@@ -36,8 +36,8 @@ public:
 
     /*!\brief Construction from seqan3::lower_bound and seqan3::upper_bound.
      * \tparam input_value_t The input type of the lower and upper band boundaries.
-     * \param lower The lower boundary of the band; must model std::Integral.
-     * \param upper The upper boundary of the band; must model std::Integral.
+     * \param lower The lower boundary of the band; must model std::integral.
+     * \param upper The upper boundary of the band; must model std::integral.
      *
      * \throws std::invalid_argument if upper < lower.
      *
@@ -45,7 +45,7 @@ public:
      * The boundaries denote the maximum allowed inbalance of insertions and deletions in the alignment.
      * For a symmetric band, choose lower = -upper. The upper boundary must not be smaller than the lower boundary.
      */
-    template <std::Integral input_value_t>
+    template <std::integral input_value_t>
     constexpr static_band(lower_bound<input_value_t> const lower, upper_bound<input_value_t> const upper)
         : lower_bound{lower.get()}, upper_bound{upper.get()}
     {

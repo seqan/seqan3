@@ -27,12 +27,6 @@
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/std/ranges>
 
-// namespace seqan3::detail
-// {
-//     // forward declaration
-//     auto get_suffix_array_range(fm_index_cursor<index_t> const & it);
-// } // namespace seqan3::detail
-
 namespace seqan3
 {
 
@@ -41,8 +35,8 @@ namespace seqan3
  */
 
 /*!\brief The SeqAn FM Index Cursor.
- * \implements seqan3::FmIndexCursor
- * \tparam index_t The type of the underlying index; must model seqan3::FmIndex.
+ * \implements seqan3::fm_index_cursor_specialisation
+ * \tparam index_t The type of the underlying index; must model seqan3::fm_index_specialisation.
  * \details
  *
  * The cursor's interface provides searching a string from left to right in the indexed text.
@@ -63,7 +57,6 @@ namespace seqan3
 template <typename index_t>
 class fm_index_cursor
 {
-
 public:
 
     /*!\name Member types
@@ -75,7 +68,7 @@ public:
     using size_type = typename index_type::size_type;
     //!\}
 
-protected:
+private:
     //!\privatesection
 
     /*!\name Member types
@@ -113,7 +106,7 @@ protected:
     }
 
     //!\brief Optimized backward search without alphabet mapping
-    template <detail::SdslIndex csa_t>
+    template <detail::sdsl_index csa_t>
     bool backward_search(csa_t const & csa, sdsl_char_type const c, size_type & l, size_type & r) const noexcept
     {
         assert(l <= r && r < csa.size());
@@ -121,7 +114,7 @@ protected:
         size_type _l, _r;
 
         size_type cc = c;
-        if constexpr(!std::Same<typename csa_t::alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr(!std::same_as<typename csa_t::alphabet_type, sdsl::plain_byte_alphabet>)
         {
             cc = csa.char2comp[c];
             if (cc == 0 && c > 0) // [[unlikely]]
@@ -159,16 +152,16 @@ public:
     //!\brief Default constructor. Accessing member functions on a default constructed object is undefined behavior.
     //        Default construction is necessary to make this class semi-regular and e.g., to allow construction of
     //        std::array of iterators.
-    fm_index_cursor() noexcept = default;                                    //!< Default constructor.
-    fm_index_cursor(fm_index_cursor const &) noexcept = default;             //!< Copy constructor.
-    fm_index_cursor & operator=(fm_index_cursor const &) noexcept = default; //!< Copy assignment.
-    fm_index_cursor(fm_index_cursor &&) noexcept = default;                  //!< Move constructor.
-    fm_index_cursor & operator=(fm_index_cursor &&) noexcept = default;      //!< Move assignment.
-    ~fm_index_cursor() = default;                                            //!< Destructor.
+    fm_index_cursor() noexcept = default;                                    //!< Defaulted.
+    fm_index_cursor(fm_index_cursor const &) noexcept = default;             //!< Defaulted.
+    fm_index_cursor & operator=(fm_index_cursor const &) noexcept = default; //!< Defaulted.
+    fm_index_cursor(fm_index_cursor &&) noexcept = default;                  //!< Defaulted.
+    fm_index_cursor & operator=(fm_index_cursor &&) noexcept = default;      //!< Defaulted.
+    ~fm_index_cursor() = default;                                            //!< Defaulted.
 
     //! \brief Construct from given index.
     fm_index_cursor(index_t const & _index) noexcept : index(&_index), node({0, _index.index.size() - 1, 0, 0}),
-                                                       sigma(_index.index.sigma - index_t::is_collection_)
+                                                       sigma(_index.index.sigma - index_t::text_layout_mode)
     {}
     //\}
 
@@ -256,7 +249,7 @@ public:
     /*!\brief Tries to extend the query by the character `c` to the right.
      * \tparam char_t Type of the character needs to be convertible to the character type `char_type` of the indexed
      *                text.
-     * \param[in] c Character to extend the query with to the right.
+     * \param[in] c builtin_characteracter to extend the query with to the right.
      * \returns `true` if the cursor could extend the query successfully.
      *
      * ### Complexity
@@ -267,11 +260,13 @@ public:
      *
      * No-throw guarantee.
      */
-    template <Alphabet char_t>
+    template <typename char_t>
     bool extend_right(char_t const c) noexcept
     {
+        static_assert(std::convertible_to<char_t, typename index_t::char_type>,
+                     "The character must be convertible to the alphabet of the index.");
+
         assert(index != nullptr);
-        assert(index->sigma == alphabet_size<char_t>);
 
         size_type _lb = node.lb, _rb = node.rb;
 
@@ -288,7 +283,7 @@ public:
     }
 
     /*!\brief Tries to extend the query by `seq` to the right.
-     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::ForwardRange.
+     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::forward_range.
      * \param[in] seq Sequence to extend the query with to the right.
      * \returns `true` if the cursor could extend the query successfully.
      *
@@ -303,12 +298,14 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::ranges::Range seq_t>
+    template <std::ranges::range seq_t>
     bool extend_right(seq_t && seq) noexcept
     {
-        static_assert(std::ranges::ForwardRange<seq_t>, "The query must model ForwardRange.");
+        static_assert(std::ranges::forward_range<seq_t>, "The query must model forward_range.");
+        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, typename index_t::char_type>,
+                     "The alphabet of the sequence must be convertible to the alphabet of the index.");
+
         assert(index != nullptr); // range must not be empty!
-        assert(index->sigma == alphabet_size<innermost_value_type_t<seq_t>>);
 
         size_type _lb = node.lb, _rb = node.rb;
         size_type new_parent_lb = parent_lb, new_parent_rb = parent_rb;
@@ -426,7 +423,7 @@ public:
     }
 
     /*!\brief Returns the searched query.
-     * \tparam text_t The type of the text used to build the index; must model std::ranges::InputRange.
+     * \tparam text_t The type of the text used to build the index; must model std::ranges::input_range.
      * \param[in] text Text that was used to build the index.
      * \returns Searched query.
      *
@@ -442,32 +439,34 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::ranges::Range text_t>
+    template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
     //!\cond
-        requires !index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::single
     //!\endcond
     {
-        static_assert(std::ranges::InputRange<text_t>, "The text must model InputRange.");
-        static_assert(!(dimension_v<text_t> != 1), "The input cannot be a text collection.");
+        static_assert(std::ranges::input_range<text_t>, "The text must model input_range.");
+        static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
+        static_assert(std::same_as<innermost_value_type_t<text_t>, typename index_t::char_type>,
+                      "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
-        assert(index->sigma == alphabet_size<value_type_t<text_t>>);
 
         size_type const query_begin = offset() - index->index[node.lb];
         return text | view::slice(query_begin, query_begin + query_length());
     }
 
     //!\overload
-    template <std::ranges::Range text_t>
+    template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
     //!\cond
-        requires index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::collection
     //!\endcond
     {
-        static_assert(std::ranges::InputRange<text_t>, "The text collection must model InputRange.");
-        static_assert(!(dimension_v<text_t> != 2), "The input must be a text collection.");
+        static_assert(std::ranges::input_range<text_t>, "The text collection must model input_range.");
+        static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
+        static_assert(std::same_as<innermost_value_type_t<text_t>, typename index_t::char_type>,
+                      "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
-        assert(index->sigma == alphabet_size<innermost_value_type_t<text_t>>);
 
         size_type const loc = offset() - index->index[node.lb];
         size_type const query_begin = loc - index->text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
@@ -505,7 +504,7 @@ public:
      */
     std::vector<size_type> locate() const
     //!\cond
-        requires !index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::single
     //!\endcond
     {
         assert(index != nullptr);
@@ -521,7 +520,7 @@ public:
     //!\overload
     std::vector<std::pair<size_type, size_type>> locate() const
     //!\cond
-        requires index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::collection
     //!\endcond
     {
         assert(index != nullptr);
@@ -552,7 +551,7 @@ public:
      */
     auto lazy_locate() const
     //!\cond
-        requires !index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::single
     //!\endcond
     {
         assert(index != nullptr);
@@ -564,7 +563,7 @@ public:
     //!\overload
     auto lazy_locate() const
     //!\cond
-        requires index_t::is_collection_
+        requires index_t::text_layout_mode == text_layout::collection
     //!\endcond
     {
         assert(index != nullptr);

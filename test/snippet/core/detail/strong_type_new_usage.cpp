@@ -16,11 +16,11 @@ struct window_size : seqan3::detail::strong_type<unsigned, window_size>
 
 namespace seqan3::detail
 {
-template <std::ranges::ForwardRange fwd_rng_type>
+template <std::ranges::forward_range fwd_rng_type>
     bool do_find(fwd_rng_type &, int const, int const) { return true; }
 }  // namespace seqan3::detail
 
-template <std::ranges::ForwardRange fwd_rng_type>
+template <std::ranges::forward_range fwd_rng_type>
     bool search(fwd_rng_type & rng, window_size const w, error const e)
 {
     // do something

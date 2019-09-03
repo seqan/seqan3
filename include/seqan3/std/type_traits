@@ -22,7 +22,7 @@ namespace std
  * \brief The \<concepts\> header from C++20's standard library.
  */
 
-/*!\brief The identity transformation (a TransformationTrait that returns the input).
+/*!\brief The identity transformation (a transformation_trait that returns the input).
  * \see https://en.cppreference.com/w/cpp/types/type_identity
  * \ingroup std_type_traits
  */

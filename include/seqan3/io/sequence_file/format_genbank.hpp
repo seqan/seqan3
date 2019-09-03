@@ -44,8 +44,8 @@ namespace seqan3
 {
 
 /*!\brief       The GenBank format (tag).
- * \implements  seqan3::SequenceFileInputFormat
- * \implements  seqan3::SequenceFileOutputFormat
+ * \implements  seqan3::sequence_file_input_format
+ * \implements  seqan3::sequence_file_output_format
  * \ingroup     sequence
  *
  * \details
@@ -55,7 +55,7 @@ namespace seqan3
  * genbank is the format used in GenBank sequence database. See
  * (http://quma.cdb.riken.jp/help/gbHelp.html) for a an in-depth description of the format.
  *
- * ### Fields
+ * ### fields_specialisation
  *
  * The genbank format provides the fields seqan3::field::SEQ and seqan3::field::ID. Both fields are required when
  * writing.
@@ -85,10 +85,10 @@ struct format_genbank
 namespace seqan3::detail
 {
 
-//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted Genbank input.
+//!\brief The seqan3::sequence_file_input_format_REMOVEME specialisation that handles formatted Genbank input.
 //!\ingroup sequence
 template<>
-class sequence_file_input_format<format_genbank>
+class sequence_file_input_format_REMOVEME<format_genbank>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -97,17 +97,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
+    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
-    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME const &)          = delete;
+    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format_REMOVEME()                                              noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc SequenceFileInputFormat::read
+    //!\copydoc sequence_file_input_format::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
@@ -185,10 +185,10 @@ public:
     }
 };
 
-//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted Genbank output.
+//!\brief The seqan3::sequence_file_output_format_REMOVEME specialisation that can write formatted Genbank output.
 //!\ingroup sequence
 template <>
-class sequence_file_output_format<format_genbank>
+class sequence_file_output_format_REMOVEME<format_genbank>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -197,17 +197,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
-    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME const &)          = delete;
+    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc SequenceFileOutputFormat::write
+    //!\copydoc sequence_file_output_format::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,

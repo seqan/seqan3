@@ -37,10 +37,10 @@
  *
  * Pairwise sequence alignments can be computed with the free function seqan3::align_pairwise. This function is called
  * in the default case with a sequence pair and an alignment configuration object.
- * Note the type of the pair must model seqan3::TupleLike, e.g. std::tuple or std::pair, with exactly two elements.
+ * Note the type of the pair must model seqan3::tuple_like, e.g. std::tuple or std::pair, with exactly two elements.
  * The algorithm accesses the sequences via the corresponding get interface. Furthermore, the sequences stored in the
- * pair must model std::ranges::ViewableRange. This means the type returned by the get interface models either
- * std::ranges::View or std::ranges::Range and is an lvalue reference. If you don't know yet what a view or a range is
+ * pair must model std::ranges::viewable_range. This means the type returned by the get interface models either
+ * std::ranges::view or std::ranges::range and is an lvalue reference. If you don't know yet what a view or a range is
  * it is recommended to read through the \ref tutorial_ranges "ranges tutorial".
  * The following code snippet demonstrates a simple use of the pairwise alignment interface.
  *
@@ -56,8 +56,8 @@
  *
  * \include test/snippet/alignment/pairwise/align_pairwise_range.cpp
  *
- * In addition to the type requirements above the alignment interface requires std::ranges::RandomAccessRange and
- * std::ranges::SizedRange in order to work correctly.
+ * In addition to the type requirements above the alignment interface requires std::ranges::random_access_range and
+ * std::ranges::sized_range in order to work correctly.
  *
  * ## Configuring pairwise alignments
  *
@@ -124,7 +124,7 @@
  * ### Scoring two letters
  *
  * Scoring two letters of a single alphabet (or two similar alphabets) is performed by scoring schemes. A scoring
- * scheme is any type that models seqan3::ScoringScheme, i.e. it must provide a member function that
+ * scheme is any type that models seqan3::scoring_scheme, i.e. it must provide a member function that
  * takes the two letters and returns the scheme-specific score. Algorithms that expect a scoring scheme should check
  * this concept with their respective alphabet(s).
  *
@@ -137,7 +137,7 @@
  *
  * These also support scoring two nucleotides/amino acids of different types and they also support modification of
  * their scores via `set_()` functions and by returning references to their internal score matrix. You can however
- * add completely different types, as long as they model seqan3::ScoringScheme.
+ * add completely different types, as long as they model seqan3::scoring_scheme.
  *
  * The scoring scheme can be configured with the seqan3::align_cfg::scoring element. Since the scoring scheme is
  * strongly coupled on the sequences to be aligned it can not be defaulted. Thus, it is mandatory for the

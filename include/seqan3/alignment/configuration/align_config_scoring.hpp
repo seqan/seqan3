@@ -23,7 +23,7 @@ namespace seqan3::align_cfg
 
 /*!\brief Sets the scoring scheme for the alignment algorithm.
  * \ingroup configuration
- * \tparam scoring_scheme_t The type of the scoring scheme. Must satisfy seqan3::ScoringScheme.
+ * \tparam scoring_scheme_t The type of the scoring scheme. Must satisfy seqan3::scoring_scheme.
  *
  * \details
  *

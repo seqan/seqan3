@@ -40,7 +40,7 @@ void map_reads(std::filesystem::path const & query_path,
                reference_storage_t & storage,
                uint8_t const errors)
 {
-    bi_fm_index<text_layout::collection> index; // we need to know if we work on a text collection before loading
+    bi_fm_index<dna5, text_layout::collection> index; // we need the alphabet and text layout before loading
     {
         std::ifstream is{index_path, std::ios::binary};
         cereal::BinaryInputArchive iarchive{is};
@@ -76,11 +76,11 @@ void map_reads(std::filesystem::path const & query_path,
 
             for (auto && alignment : align_pairwise(std::tie(text_view, query), align_config))
             {
-                auto aligned_sequence = alignment.alignment();
+                auto aligned_seq = alignment.alignment();
                 size_t ref_offset = alignment.front_coordinate().first + 2 + start;
                 size_t map_qual = 60u + alignment.score();
 
-                sam_out.emplace_back(query, id, storage.ids[idx], ref_offset, aligned_sequence, qual, map_qual);
+                sam_out.emplace_back(query, id, storage.ids[idx], ref_offset, aligned_seq, qual, map_qual);
             }
         }
     }

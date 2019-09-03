@@ -47,7 +47,7 @@ TEST(in_file_iterator, concepts)
 {
     using it_t = detail::in_file_iterator<fake_file_t>;
 
-    EXPECT_TRUE((std::InputIterator<it_t>));
+    EXPECT_TRUE((std::input_iterator<it_t>));
 }
 
 TEST(in_file_iterator, member_types)

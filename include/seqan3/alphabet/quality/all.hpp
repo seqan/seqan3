@@ -70,11 +70,11 @@
  *
  * ###Concept
  *
- * The quality submodule defines the seqan3::WritableQualityAlphabet which encompasses
+ * The quality submodule defines the seqan3::writable_quality_alphabet which encompasses
  * all the alphabets, defined in the submodule, and refines the
- * seqan3::WritableAlphabet by providing Phred score assignment and conversion
+ * seqan3::writable_alphabet by providing Phred score assignment and conversion
  * operations.
- * Additionally, this submodule defines the seqan3::QualityAlphabet, which only requires
+ * Additionally, this submodule defines the seqan3::quality_alphabet, which only requires
  * readablity and not assignability.
  *
  * ###Assignment and Conversion

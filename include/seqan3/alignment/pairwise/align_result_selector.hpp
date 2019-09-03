@@ -33,17 +33,17 @@ namespace seqan3::detail
  * \tparam first_t  Type of the first sequence.
  * \tparam second_t Type of the second sequence.
  * \details
- * The type uses the gap decorator if RandomAccessRange and SizedRange are met for both input sequences.
+ * The type uses the gap decorator if random_access_range and sized_range are met for both input sequences.
  */
 template <typename first_t, typename second_t>
 struct alignment_type;
 
 //!\overload
 template <typename first_t, typename second_t>
-    requires std::ranges::RandomAccessRange<first_t> &&
-             std::ranges::SizedRange<first_t> &&
-             std::ranges::RandomAccessRange<second_t> &&
-             std::ranges::SizedRange<second_t>
+    requires std::ranges::random_access_range<first_t> &&
+             std::ranges::sized_range<first_t> &&
+             std::ranges::random_access_range<second_t> &&
+             std::ranges::sized_range<second_t>
 struct alignment_type<first_t, second_t>
 {
     //!\brief The alignment type with gap decorator.
@@ -56,8 +56,8 @@ struct alignment_type<first_t, second_t>
  * \tparam second_range_t  The type of the second sequence.
  * \tparam configuration_t The configuration type. Must be of type seqan3::detail::configuration
  */
-template <std::ranges::ForwardRange first_range_t,
-          std::ranges::ForwardRange second_range_t,
+template <std::ranges::forward_range first_range_t,
+          std::ranges::forward_range second_range_t,
           typename configuration_t>
 //!\cond
     requires is_type_specialisation_of_v<remove_cvref_t<configuration_t>, configuration>
@@ -71,14 +71,14 @@ struct align_result_selector
 
         if constexpr (std::remove_reference_t<configuration_t>::template exists<align_cfg::result>())
         {
-            if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
+            if constexpr (std::same_as<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                     with_back_coordinate_type>)
             {
                 return alignment_result_value_type<uint32_t,
                                                    score_type,
                                                    alignment_coordinate>{};
             }
-            else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
+            else if constexpr (std::same_as<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                          with_front_coordinate_type>)
             {
                 return alignment_result_value_type<uint32_t,
@@ -86,7 +86,7 @@ struct align_result_selector
                                                    alignment_coordinate,
                                                    alignment_coordinate>{};
             }
-            else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
+            else if constexpr (std::same_as<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                          with_alignment_type>)
             {
                 // Due to an error with gcc8 we define these types beforehand.

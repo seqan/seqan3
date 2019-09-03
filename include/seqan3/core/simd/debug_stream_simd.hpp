@@ -29,7 +29,7 @@ namespace seqan3
  */
 template <typename simd_t, typename char_t>
 //!\cond
-    requires simd::Simd<remove_cvref_t<simd_t>>
+    requires simd::simd_concept<remove_cvref_t<simd_t>>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, simd_t && simd)
 {

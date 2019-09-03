@@ -46,16 +46,16 @@ namespace seqan3
 {
 
 // ----------------------------------------------------------------------------
-// SequenceFileInputTraits
+// sequence_file_input_traits
 // ----------------------------------------------------------------------------
 
-/*!\interface seqan3::SequenceFileInputTraits <>
+/*!\interface seqan3::sequence_file_input_traits <>
  * \brief The requirements a traits_type for seqan3::sequence_file_input must meet.
  * \ingroup sequence
  */
-/*!\name Requirements for seqan3::SequenceFileInputTraits
- * \brief You can expect these **member types** of all types that satisfy seqan3::SequenceFileInputTraits.
- * \memberof seqan3::SequenceFileInputTraits
+/*!\name Requirements for seqan3::sequence_file_input_traits
+ * \brief You can expect these **member types** of all types that satisfy seqan3::sequence_file_input_traits.
+ * \memberof seqan3::sequence_file_input_traits
  *
  * \details
  *
@@ -66,10 +66,10 @@ namespace seqan3
  * \{
  */
 /*!\typedef using sequence_alphabet
- * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::Alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::alphabet.
  */
 /*!\typedef using sequence_legal_alphabet
- * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::Alphabet and be convertible to
+ * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::alphabet and be convertible to
  * `sequence_alphabet`.
  *
  * \details
@@ -81,54 +81,54 @@ namespace seqan3
  */
 /*!\typedef using sequence_container
  * \brief Type template of the seqan3::field::SEQ, a container template over `sequence_alphabet`;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using sequence_container_container
  * \brief Type template of a column of seqan3::field::SEQ, a container template that can hold multiple
- * `sequence_container`; must satisfy seqan3::SequenceContainer.
+ * `sequence_container`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using id_alphabet
- * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::Alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::alphabet.
  */
 /*!\typedef using id_container
  * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using id_container_container
  * \brief Type template of a column of seqan3::field::ID, a container template that can hold multiple
- * `id_container`; must satisfy seqan3::SequenceContainer.
+ * `id_container`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using quality_alphabet
- * \brief Alphabet of the characters for the seqan3::field::QUAL; must satisfy seqan3::WritableQualityAlphabet.
+ * \brief Alphabet of the characters for the seqan3::field::QUAL; must satisfy seqan3::writable_quality_alphabet.
  */
 /*!\typedef using quality_container
  * \brief Type template of the seqan3::field::QUAL, a container template over `quality_alphabet`;
- * must satisfy seqan3::SequenceContainer.
+ * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using quality_container_container
  * \brief Type template of a column of seqan3::field::QUAL, a container template that can hold multiple
- * `quality_container`; must satisfy seqan3::SequenceContainer.
+ * `quality_container`; must satisfy seqan3::sequence_container.
  */
 //!\}
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
+SEQAN3_CONCEPT sequence_file_input_traits = requires (t v)
 {
-    requires WritableAlphabet<typename t::sequence_alphabet>;
-    requires WritableAlphabet<typename t::sequence_legal_alphabet>;
-    requires ExplicitlyConvertibleTo<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
-    requires SequenceContainer<typename t::template sequence_container<typename t::sequence_alphabet>>;
-    requires SequenceContainer<typename t::template sequence_container_container<
+    requires writable_alphabet<typename t::sequence_alphabet>;
+    requires writable_alphabet<typename t::sequence_legal_alphabet>;
+    requires explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
+    requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
+    requires sequence_container<typename t::template sequence_container_container<
         typename t::template sequence_container<typename t::sequence_alphabet>>>;
 
-    requires WritableAlphabet<typename t::id_alphabet>;
-    requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
-    requires SequenceContainer<typename t::template id_container_container<typename t::template id_container<
+    requires writable_alphabet<typename t::id_alphabet>;
+    requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
+    requires sequence_container<typename t::template id_container_container<typename t::template id_container<
         typename t::id_alphabet>>>;
 
-    requires WritableQualityAlphabet<typename t::quality_alphabet>;
-    requires SequenceContainer<typename t::template quality_container<typename t::quality_alphabet>>;
-    requires SequenceContainer<typename t::template quality_container_container<
+    requires writable_quality_alphabet<typename t::quality_alphabet>;
+    requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
+    requires sequence_container<typename t::template quality_container_container<
         typename t::template quality_container<typename t::quality_alphabet>>>;
 };
 //!\endcond
@@ -138,7 +138,7 @@ SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
 // ----------------------------------------------------------------------------
 
 /*!\brief The default traits for seqan3::sequence_file_input
- * \implements SequenceFileInputTraits
+ * \implements sequence_file_input_traits
  * \ingroup sequence
  *
  * \details
@@ -148,12 +148,12 @@ SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
  *
  * This example will make the file read into a smaller alphabet and a compressed container:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp trait_overwrite
+ * \include test/snippet/io/sequence_file/sequence_file_input_trait_overwrite.cpp
  */
 struct sequence_file_input_default_traits_dna
 {
     /*!\name Member types
-     * \brief Definitions to satisfy seqan3::SequenceFileInputTraits.
+     * \brief Definitions to satisfy seqan3::sequence_file_input_traits.
      * \{
      */
 
@@ -200,7 +200,7 @@ struct sequence_file_input_default_traits_dna
 struct sequence_file_input_default_traits_aa : sequence_file_input_default_traits_dna
 {
     /*!\name Member types
-     * \brief Definitions to satisfy seqan3::SequenceFileInputTraits.
+     * \brief Definitions to satisfy seqan3::sequence_file_input_traits.
      * \{
      */
 
@@ -219,12 +219,12 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
 /*!\brief A class for reading sequence files, e.g. FASTA, FASTQ ...
  * \ingroup sequence
  * \tparam traits_type          An auxiliary type that defines certain member types and constants, must satisfy
- * seqan3::SequenceFileInputTraits.
+ * seqan3::sequence_file_input_traits.
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of desired record entries; all fields
  * must be in seqan3::sequence_file_input::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- * seqan3::SequenceFileInputFormat).
- * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::Char.
+ * seqan3::sequence_file_input_format).
+ * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::builtin_character.
  * \details
  *
  * ### Introduction
@@ -254,9 +254,9 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp template_deduction
+ * \include test/snippet/io/sequence_file/sequence_file_input_template_deduction.cpp
  * Reading from an std::istringstream:
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp istringstream
+ * \include test/snippet/io/sequence_file/sequence_file_input_istringstream.cpp
  *
  * Note that this is not the same as writing `sequence_file_input<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
@@ -266,20 +266,20 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * In some cases, you do need to specify the arguments, e.g. if you want to read amino acids:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp aminoacid
+ * \include test/snippet/io/sequence_file/sequence_file_input_aminoacid.cpp
  *
  * You can define your own traits type to further customise the types used by and returned by this class, see
  * seqan3::sequence_file_default_traits_dna for more details. As mentioned above, specifying at least one
  * template parameter yourself means that you loose automatic deduction so if you want to read amino acids **and**
  * want to read from a string stream you need to give all types yourself:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp template_specification
+ * \include test/snippet/io/sequence_file/sequence_file_input_template_specification.cpp
  *
  * ### Reading record-wise
  *
  * You can iterate over this file record-wise:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp record_iter
+ * \include test/snippet/io/sequence_file/sequence_file_input_record_iter.cpp
  *
  * In the above example, rec has the type \ref record_type which is a specialisation of seqan3::record and behaves
  * like an std::tuple (that's why we can access it via get). Instead of using the seqan3::field based interface on
@@ -290,7 +290,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
  * to store it somewhere without copying:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp auto_ref
+ * \include test/snippet/io/sequence_file/sequence_file_input_auto_ref.cpp
  *
  * ### Reading record-wise (decomposed records)
  *
@@ -298,7 +298,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * [structured bindings](http://en.cppreference.com/w/cpp/language/structured_binding)
  * to decompose the record into its elements:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp decomposed
+ * \include test/snippet/io/sequence_file/sequence_file_input_decomposed.cpp
  *
  * In this case you immediately get the two elements of the tuple: `seq` of \ref sequence_type and `id` of
  * \ref id_type. **But beware: with structured bindings you do need to get the order of elements correctly!**
@@ -310,7 +310,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * combined field for SEQ and QUAL (see above). Or to never actually read the QUAL, if you don't need it.
  * The following snippets demonstrate the usage of such a fields trait object.
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp custom_fields
+ * \include test/snippet/io/sequence_file/sequence_file_input_custom_fields.cpp
  *
  * When reading a file, all fields not present in the file (but requested implicitly or via the `selected_field_ids`
  * parameter) are ignored.
@@ -320,7 +320,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * Since SeqAn files are ranges, you can also create views over files. A useful example is to filter the records
  * based on certain criteria, e.g. minimum length of the sequence field:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp file_view
+ * \include test/snippet/io/sequence_file/sequence_file_input_file_view.cpp
  *
  * ### End of file
  *
@@ -334,12 +334,11 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * This interface is less flexible, but can save you copy operations in certain scenarios, given that
  * you have sufficient memory to load the entire file at once:
  *
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp data_storage
- * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp col_read
+ * \include test/snippet/io/sequence_file/sequence_file_input_col_read.cpp
  *
  * Note that for this to make sense, your storage data types need to be identical to the corresponding column types
  * of the file. If you require different column types you can specify you own traits, see
- * seqan3::SequenceFileInputTraits.
+ * seqan3::sequence_file_input_traits.
  *
  * ### Formats
  *
@@ -352,16 +351,16 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  */
 
 template <
-    SequenceFileInputTraits                    traits_type_        = sequence_file_input_default_traits_dna,
-    detail::Fields                             selected_field_ids_ = fields<field::SEQ,
+    sequence_file_input_traits                    traits_type_        = sequence_file_input_default_traits_dna,
+    detail::fields_specialisation                             selected_field_ids_ = fields<field::SEQ,
                                                                             field::ID,
                                                                             field::QUAL>,
-    detail::TypeListOfSequenceFileInputFormats valid_formats_      = type_list<format_embl,
+    detail::type_list_of_sequence_file_input_formats valid_formats_      = type_list<format_embl,
                                                                                format_fasta,
                                                                                format_fastq,
                                                                                format_genbank,
                                                                                format_sam>,
-    Char                                       stream_char_type_   = char>
+    builtin_character                                       stream_char_type_   = char>
 class sequence_file_input
 {
 public:
@@ -532,7 +531,7 @@ public:
      */
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::SequenceFileInputFormat.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sequence_file_input_format.
      * \param[in] stream     The stream to operate on; must be derived of std::basic_istream.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
@@ -545,13 +544,13 @@ public:
      * it is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <IStream2 stream_t,
-              SequenceFileInputFormat file_format>
+    template <input_stream stream_t,
+              sequence_file_input_format file_format>
     sequence_file_input(stream_t                 & stream,
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
-        format{detail::sequence_file_input_format<file_format>{}}
+        format{detail::sequence_file_input_format_REMOVEME<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -564,13 +563,13 @@ public:
     }
 
     //!\overload
-    template <IStream2 stream_t,
-              SequenceFileInputFormat file_format>
+    template <input_stream stream_t,
+              sequence_file_input_format file_format>
     sequence_file_input(stream_t                && stream,
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
-        format{detail::sequence_file_input_format<file_format>{}}
+        format{detail::sequence_file_input_format_REMOVEME<file_format>{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -629,14 +628,14 @@ public:
      * This function returns a reference to the currently buffered record, it is identical to dereferencing begin(),
      * but begin also always points to the current record on single pass input ranges:
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp return_record
+     * \include test/snippet/io/sequence_file/sequence_file_input_return_record.cpp
      *
      * It most situations using the iterator interface or a range-based for-loop are preferable to using front(),
      * because you can only move to the next record via the iterator.
      *
      * In any case, don't forget the reference! If you want to save the data from the record elsewhere, use move:
      *
-     * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp record_move
+     * \include test/snippet/io/sequence_file/sequence_file_input_record_move.cpp
      *
      * ### Complexity
      *
@@ -745,7 +744,7 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::sequence_file_input_format>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::sequence_file_input_format_REMOVEME>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -821,8 +820,8 @@ protected:
  */
 
 //!\brief Deduces the sequence input file type from the stream and the format.
-template <IStream2                           stream_type,
-          SequenceFileInputFormat            file_format>
+template <input_stream                           stream_type,
+          sequence_file_input_format            file_format>
 sequence_file_input(stream_type & stream,
                     file_format const &)
     -> sequence_file_input<typename sequence_file_input<>::traits_type,         // actually use the default
@@ -831,8 +830,8 @@ sequence_file_input(stream_type & stream,
                            typename std::remove_reference_t<stream_type>::char_type>;
 
 //!\overload
-template <IStream2                           stream_type,
-          SequenceFileInputFormat            file_format>
+template <input_stream                           stream_type,
+          sequence_file_input_format            file_format>
 sequence_file_input(stream_type && stream,
                     file_format const &)
    -> sequence_file_input<typename sequence_file_input<>::traits_type,         // actually use the default
@@ -841,9 +840,9 @@ sequence_file_input(stream_type && stream,
                           typename std::remove_reference_t<stream_type>::char_type>;
 
 //!\brief Deduces the sequence input file type from the stream, the format and the field ids.
-template <IStream2                           stream_type,
-          SequenceFileInputFormat            file_format,
-          detail::Fields                     selected_field_ids>
+template <input_stream                           stream_type,
+          sequence_file_input_format            file_format,
+          detail::fields_specialisation                     selected_field_ids>
 sequence_file_input(stream_type && stream,
                     file_format const &,
                     selected_field_ids const &)
@@ -853,9 +852,9 @@ sequence_file_input(stream_type && stream,
                            typename std::remove_reference_t<stream_type>::char_type>;
 
 //!\overload
-template <IStream2                           stream_type,
-          SequenceFileInputFormat            file_format,
-          detail::Fields                     selected_field_ids>
+template <input_stream                           stream_type,
+          sequence_file_input_format            file_format,
+          detail::fields_specialisation                     selected_field_ids>
 sequence_file_input(stream_type & stream,
                     file_format const &,
                     selected_field_ids const &)
@@ -874,14 +873,14 @@ sequence_file_input(stream_type & stream,
 namespace std
 {
 /*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \ingroup sequence
  * \see std::tuple_size_v
  */
-template <seqan3::SequenceFileInputTraits                    traits_type,
-          seqan3::detail::Fields                             selected_field_ids,
-          seqan3::detail::TypeListOfSequenceFileInputFormats valid_formats,
-          seqan3::Char                                       stream_char_t>
+template <seqan3::sequence_file_input_traits                    traits_type,
+          seqan3::detail::fields_specialisation                             selected_field_ids,
+          seqan3::detail::type_list_of_sequence_file_input_formats valid_formats,
+          seqan3::builtin_character                                       stream_char_t>
 struct tuple_size<seqan3::sequence_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -889,15 +888,15 @@ struct tuple_size<seqan3::sequence_file_input<traits_type, selected_field_ids, v
 };
 
 /*!\brief Obtains the type of the specified element.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \ingroup sequence
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
 template <size_t                                             elem_no,
-          seqan3::SequenceFileInputTraits                    traits_type,
-          seqan3::detail::Fields                             selected_field_ids,
-          seqan3::detail::TypeListOfSequenceFileInputFormats valid_formats,
-          seqan3::Char                                       stream_char_t>
+          seqan3::sequence_file_input_traits                    traits_type,
+          seqan3::detail::fields_specialisation                             selected_field_ids,
+          seqan3::detail::type_list_of_sequence_file_input_formats valid_formats,
+          seqan3::builtin_character                                       stream_char_t>
 struct tuple_element<elem_no, seqan3::sequence_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::sequence_file_input<traits_type,
                                                                selected_field_ids,

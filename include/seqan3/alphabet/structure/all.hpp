@@ -17,7 +17,7 @@
  *
  * The following alphabets are currently supported in SeqAn. Please see the format's page for more details.
  *
- * Name                                     | Characters               | Description
+ * Name                                     | Chars               | Description
  * ---------------------------------------- | ------------------------ | -----------
  * [Dot Bracket](@ref seqan3::dot_bracket3) | `().`                    | Simple annotation that defines base pairs. No pseudoknots allowed.
  * [WUSS](@ref seqan3::wuss)                | `.<>:,-_~;()[]{}AaBb...` | Annotation that provides further markups and pseudoknots.

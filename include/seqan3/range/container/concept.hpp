@@ -34,19 +34,19 @@ namespace seqan3::detail
 //!\privatesection
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
-//!\attention Will be deleted once seqan3::detail::SequenceContainer_modified_by_const_iterator_bug is fixed.
+//!\attention Will be deleted once seqan3::detail::sequence_container_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 struct is_basic_string : std::false_type
 {};
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
-//!\attention Will be deleted once seqan3::detail::SequenceContainer_modified_by_const_iterator_bug is fixed.
+//!\attention Will be deleted once seqan3::detail::sequence_container_modified_by_const_iterator_bug is fixed.
 template <typename value_t, typename traits_t, typename allocator_t>
 struct is_basic_string<std::basic_string<value_t, traits_t, allocator_t>> : std::true_type
 {};
 
 //!\brief Shorthand of seqan3::detail::is_basic_string
-//!\attention Will be deleted once seqan3::detail::SequenceContainer_modified_by_const_iterator_bug is fixed.
+//!\attention Will be deleted once seqan3::detail::sequence_container_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
 
@@ -60,11 +60,11 @@ namespace seqan3
 /*!\addtogroup container
  * \{
  */
-/*!\interface seqan3::Container <>
- * \extends std::ranges::ForwardRange
- * \extends std::ranges::SizedRange
- * \extends std::ranges::CommonRange
- * \extends seqan3::ConstIterableRange
+/*!\interface seqan3::container <>
+ * \extends std::ranges::forward_range
+ * \extends std::ranges::sized_range
+ * \extends std::ranges::common_range
+ * \extends seqan3::const_iterable_range
  * \brief The (most general) container concept as defined by the standard library.
  * \details
  * The container concept is modelled as in the [STL](http://en.cppreference.com/w/cpp/concept/Container), but
@@ -76,7 +76,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT Container = requires (type val, type val2, type const cval, typename type::iterator it)
+SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typename type::iterator it)
 {
     // member types
     typename type::value_type;
@@ -84,11 +84,11 @@ SEQAN3_CONCEPT Container = requires (type val, type val2, type const cval, typen
     typename type::const_reference;
 /*
     typename type::iterator;
-    requires std::ForwardIterator<typename type::iterator>;
+    requires std::forward_iterator<typename type::iterator>;
     { it } -> typename type::const_iterator; // NOTE check whether iterator is const convertible
 
     typename type::const_iterator;
-    requires std::ForwardIterator<typename type::const_iterator>;
+    requires std::forward_iterator<typename type::const_iterator>;
 
     typename type::difference_type;
     typename type::size_type;
@@ -114,7 +114,7 @@ SEQAN3_CONCEPT Container = requires (type val, type val2, type const cval, typen
     { val.cbegin()    } -> typename type::const_iterator;
     { val.cend()      } -> typename type::const_iterator;
 
-    requires !std::EqualityComparable<typename type::value_type> || std::EqualityComparable<type>;
+    requires !std::equality_comparable<typename type::value_type> || std::equality_comparable<type>;
 
     { val.swap(val2)  } -> void;
     { swap(val, val2) } -> void;
@@ -126,13 +126,13 @@ SEQAN3_CONCEPT Container = requires (type val, type val2, type const cval, typen
 };
 //!\endcond
 
-/*!\interface seqan3::SequenceContainer <>
- * \extends seqan3::Container
- * \brief A more refined container concept than seqan3::Container.
+/*!\interface seqan3::sequence_container <>
+ * \extends seqan3::container
+ * \brief A more refined container concept than seqan3::container.
  *
  * Includes constraints on constructors, `assign()`, `.insert()`, `.erase()`, `.push_back()`, `.pop_back`, `.clear()`,
  * `.size()`, `front()` and `.back()` member functions with corresponding signatures. Models the subset of the
- * [STL SequenceContainerConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainer) that is supported
+ * [STL SequenceConcept](http://en.cppreference.com/w/cpp/concept/SequenceConcept) that is supported
  * by `std::list`, `std::vector`, `std::deque`, `std::basic_string`.
  *
  * \attention
@@ -140,9 +140,9 @@ SEQAN3_CONCEPT Container = requires (type val, type val2, type const cval, typen
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT SequenceContainer = requires (type val, type val2, type const cval)
+SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cval)
 {
-    requires Container<type>;
+    requires container<type>;
 
     // construction
     { type{typename type::size_type{}, typename type::value_type{}} };
@@ -186,13 +186,13 @@ SEQAN3_CONCEPT SequenceContainer = requires (type val, type val2, type const cva
 };
 //!\endcond
 
-/*!\interface seqan3::RandomAccessContainer <>
- * \extends seqan3::SequenceContainer
- * \extends std::ranges::RandomAccessRange
- * \brief A more refined container concept than seqan3::SequenceContainer.
+/*!\interface seqan3::random_access_container <>
+ * \extends seqan3::sequence_container
+ * \extends std::ranges::random_access_range
+ * \brief A more refined container concept than seqan3::sequence_container.
  *
  * Adds requirements for `.at()`, `.resize()` and the subscript operator `[]`. Models the subset of the
- * [STL SequenceContainerConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainer) that is supported
+ * [STL SequenceConcept](http://en.cppreference.com/w/cpp/concept/SequenceConcept) that is supported
  * by `std::vector`, `std::deque` and `std::basic_string`.
  *
  * \attention
@@ -202,9 +202,9 @@ SEQAN3_CONCEPT SequenceContainer = requires (type val, type val2, type const cva
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT RandomAccessContainer = requires (type val)
+SEQAN3_CONCEPT random_access_container = requires (type val)
 {
-    requires SequenceContainer<type>;
+    requires sequence_container<type>;
 
     // access container
     { val[0]    } -> typename type::reference;
@@ -216,9 +216,9 @@ SEQAN3_CONCEPT RandomAccessContainer = requires (type val)
 };
 //!\endcond
 
-/*!\interface seqan3::ReservableContainer <>
- * \extends seqan3::RandomAccessContainer
- * \brief A more refined container concept than seqan3::RandomAccessContainer.
+/*!\interface seqan3::reservible_container <>
+ * \extends seqan3::random_access_container
+ * \brief A more refined container concept than seqan3::random_access_container.
  *
  * Adds requirements for `.reserve()`, `.capacity()` and `.shrink_to_fit()`.
  * Satisfied by `std::vector` and `std::basic_string`.
@@ -228,9 +228,9 @@ SEQAN3_CONCEPT RandomAccessContainer = requires (type val)
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT ReservableContainer = requires (type val)
+SEQAN3_CONCEPT reservible_container = requires (type val)
 {
-    requires RandomAccessContainer<type>;
+    requires random_access_container<type>;
 
     { val.capacity()      } -> typename type::size_type;
     { val.reserve(0)      } -> void;

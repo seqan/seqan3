@@ -335,7 +335,7 @@ type_list<trait_t<pack_t>...> transform(type_list<pack_t...>);
 // seqan3::list_traits
 // ----------------------------------------------------------------------------
 
-//TODO think about whether the TypeList concept check is expensive and necessary
+//TODO think about whether the type_list_specialisation concept check is expensive and necessary
 
 //!\brief Namespace containing traits for working on seqan3::type_list.
 namespace seqan3::list_traits
@@ -346,7 +346,7 @@ namespace seqan3::list_traits
  */
 
 //!\cond
-template <seqan3::detail::TypeList list_t>
+template <seqan3::detail::type_list_specialisation list_t>
 inline constexpr size_t size = 0;
 //!\endcond
 
@@ -358,7 +358,7 @@ template <typename ...pack_t>
 inline constexpr size_t size<type_list<pack_t...>> = sizeof...(pack_t);
 
 //!\cond
-template <typename query_t, seqan3::detail::TypeList list_t>
+template <typename query_t, seqan3::detail::type_list_specialisation list_t>
 inline constexpr ptrdiff_t count = -1;
 //!\endcond
 
@@ -371,7 +371,7 @@ inline constexpr ptrdiff_t count<query_t, type_list<pack_t...>> =
     seqan3::pack_traits::count<query_t, pack_t...>;
 
 //!\cond
-template <typename query_t, seqan3::detail::TypeList list_t>
+template <typename query_t, seqan3::detail::type_list_specialisation list_t>
 inline constexpr ptrdiff_t find = -1;
 //!\endcond
 
@@ -386,7 +386,7 @@ inline constexpr ptrdiff_t find<query_t,type_list<pack_t...>> = seqan3::pack_tra
  * \ingroup type_list
  * \copydetails seqan3::pack_traits::contains
  */
-template <typename query_t, seqan3::detail::TypeList list_t>
+template <typename query_t, seqan3::detail::type_list_specialisation list_t>
 inline constexpr bool contains = (find<query_t, list_t> != -1);
 
 //!\}
@@ -409,7 +409,7 @@ inline constexpr bool contains = (find<query_t, list_t> != -1);
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
  */
-template <ptrdiff_t idx, seqan3::detail::TypeList list_t>
+template <ptrdiff_t idx, seqan3::detail::type_list_specialisation list_t>
 //!\cond
     requires (idx >= 0 && idx < size<list_t>) || (-idx <= size<list_t>)
 //!\endcond
@@ -426,7 +426,7 @@ using at = typename decltype(detail::at<idx>(list_t{}))::type;
  * * Number of template instantiations: O(1)
  * * Other operations: O(1)
  */
-template <seqan3::detail::TypeList list_t>
+template <seqan3::detail::type_list_specialisation list_t>
 //!\cond
     requires (size<list_t> > 0)
 //!\endcond
@@ -446,7 +446,7 @@ using front = typename decltype(detail::front(list_t{}))::type;
  * Notably faster than `seqan3::pack_traits::at<size<pack...> - 1, pack...>` (no recursive template
  * instantiations).
  */
-template <seqan3::detail::TypeList list_t>
+template <seqan3::detail::type_list_specialisation list_t>
 //!\cond
     requires (size<list_t> > 0)
 //!\endcond
@@ -470,7 +470,7 @@ using back = typename decltype(detail::back(list_t{}))::type;
  * * Number of template instantiations: O(1)
  * * Other operations: O(1)
  */
-template <seqan3::detail::TypeList list1_t, seqan3::detail::TypeList list2_t>
+template <seqan3::detail::type_list_specialisation list1_t, seqan3::detail::type_list_specialisation list2_t>
 using concat = decltype(detail::concat(list1_t{}, list2_t{}));
 
 /*!\brief Return a seqan3::type_list of all the types in the type list, except the first.
@@ -484,7 +484,7 @@ using concat = decltype(detail::concat(list1_t{}, list2_t{}));
  * * Number of template instantiations: O(1)
  * * Other operations: O(1)
  */
-template <seqan3::detail::TypeList list_t>
+template <seqan3::detail::type_list_specialisation list_t>
 //!\cond
     requires (size<list_t> > 0)
 //!\endcond
@@ -502,7 +502,7 @@ using drop_front = decltype(detail::drop_front(list_t{}));
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
  */
-template <ptrdiff_t i, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
     requires (i >= 0 && i <= size<list_t>)
 //!\endcond
@@ -520,7 +520,7 @@ using take = typename decltype(detail::split_after<i>(type_list<>{}, list_t{})):
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
  */
-template <ptrdiff_t i, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
     requires (i >= 0 && i <= size<list_t>)
 //!\endcond
@@ -538,7 +538,7 @@ using drop = typename decltype(detail::split_after<i>(type_list<>{}, list_t{})):
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
  */
-template <ptrdiff_t i, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
     requires (i >= 0 && i <= size<list_t>)
 //!\endcond
@@ -556,7 +556,7 @@ using take_last = drop<size<list_t> - i, list_t>;
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
  */
-template <ptrdiff_t i, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
     requires (i >= 0 && i <= size<list_t>)
 //!\endcond
@@ -574,7 +574,7 @@ using drop_last = take<size<list_t> - i, list_t>;
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
  */
-template <ptrdiff_t i, seqan3::detail::TypeList list_t>
+template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
     requires (i >= 0 && i <= size<list_t>)
 //!\endcond
@@ -595,7 +595,7 @@ using split_after = decltype(detail::split_after<i>(type_list<>{}, list_t{}));
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
  */
-template <template <typename> typename trait_t, seqan3::detail::TypeList list_t>
+template <template <typename> typename trait_t, seqan3::detail::type_list_specialisation list_t>
 using transform = decltype(detail::transform<trait_t>(list_t{}));
 
 //!\}

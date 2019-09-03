@@ -133,12 +133,12 @@ TYPED_TEST(unbanded_score_matrix_test, test_concepts)
     // Get the active column
     auto zip_view = mock.current_column();
 
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(zip_view)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(zip_view)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(zip_view)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(zip_view)>);
 
     auto it = std::ranges::begin(zip_view);
-    EXPECT_TRUE(std::BidirectionalIterator<decltype(it)>);
+    EXPECT_TRUE(std::bidirectional_iterator<decltype(it)>);
 
     auto it_e = std::ranges::end(zip_view);
-    EXPECT_TRUE(std::BidirectionalIterator<decltype(it_e)>);
+    EXPECT_TRUE(std::bidirectional_iterator<decltype(it_e)>);
 }

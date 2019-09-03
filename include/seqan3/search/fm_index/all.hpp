@@ -25,7 +25,7 @@
  * library). You are able to specify the underlying implementation of the SDSL to adjust it to your needs as well as
  * choose one of the preconfigured indices that are suitable for common applications in sequence analysis.
  *
- * For technical reasons you can currently only build indices over a seqan3::Alphabet if its
+ * For technical reasons you can currently only build indices over a seqan3::alphabet if its
  * seqan3::alphabet_size is smaller or equal 256.
  *
  * You can choose between unidirectional and bidirectional FM indices (which can be thought of suffix trees
@@ -39,7 +39,7 @@
  * Index Cursors are lightweight objects, i.e. they are cheap to copy.
  *
  * Note that although the SeqAn3 index cursor, although having similar behaviour, don't model any of the standard library
- * iterator concepts, not even std::Iterator.
+ * iterator concepts, not even std::input_or_output_iterator.
  *
  */
 

@@ -34,7 +34,7 @@ void sequential_read(benchmark::State& state)
 
     uint8_t dummy = 0;
 
-    if constexpr (std::Same<adaptor_t, void>)
+    if constexpr (std::same_as<adaptor_t, void>)
     {
         using single_t = std::conditional_t<single_pass, decltype(c | view::single_pass_input), container_t &>;
 
@@ -80,66 +80,66 @@ void sequential_read(benchmark::State& state)
 
 // runs with chained adaptor (cannot use or_throw here)
 BENCHMARK_TEMPLATE(sequential_read, std::string, void, false);
-BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(std::ranges::view::take_while), true);
+BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(std::view::take_while), true);
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(seqan3::view::take_until), false);
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void, false);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::ranges::view::take_while), true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::view::take_while), true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_until), false);
 
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, void, false);
-BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(std::ranges::view::take_while), true);
+BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(std::view::take_while), true);
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(seqan3::view::take_until), false);
 
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, void, false);
-BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(std::ranges::view::take_while), true);
+BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(std::view::take_while), true);
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(seqan3::view::take_until), false);
 
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void, false);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::ranges::view::take_while), true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::view::take_while), true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_until), false);
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void, false, true);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::ranges::view::take_while), true, true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::view::take_while), true, true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_until), false, true);
 
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void, false, true);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::ranges::view::take_while), true, true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::view::take_while), true, true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_until), false, true);
 
 // runs with one adaptor
 BENCHMARK_TEMPLATE(sequential_read, std::string, void, false, false, true);
-BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(std::ranges::view::take_while), true, false, true);
+BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(std::view::take_while), true, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(seqan3::view::take_until), false, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(seqan3::view::take_until_or_throw), false, false, true);
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void, false, false, true);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::ranges::view::take_while), true, false, true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::view::take_while), true, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_until), false, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_until_or_throw), false, false, true);
 
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, void, false, false, true);
-BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(std::ranges::view::take_while), true, false, true);
+BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(std::view::take_while), true, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(seqan3::view::take_until), false, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(seqan3::view::take_until_or_throw), false, false, true);
 
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, void, false, false, true);
-BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(std::ranges::view::take_while), true, false, true);
+BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(std::view::take_while), true, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(seqan3::view::take_until), false, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(seqan3::view::take_until_or_throw), false, false, true);
 
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void, false, false, true);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::ranges::view::take_while), true, false, true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::view::take_while), true, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_until), false, false, true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_until_or_throw), false, false, true);
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void, false, true, true);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::ranges::view::take_while), true, true, true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::view::take_while), true, true, true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_until), false, true, true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::take_until_or_throw), false, true, true);
 
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void, false, true, true);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::ranges::view::take_while), true, true, true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::view::take_while), true, true, true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_until), false, true, true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::view::take_until_or_throw), false, true, true);
 

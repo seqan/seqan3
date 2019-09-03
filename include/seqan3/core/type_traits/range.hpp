@@ -49,12 +49,12 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `value_type` of another type.
- * \implements seqan3::TransformationTrait
- * \tparam t The type you wish to query; must model std::ranges::InputRange.
+ * \implements seqan3::transformation_trait
+ * \tparam t The type you wish to query; must model std::ranges::input_range.
  */
-template <std::ranges::InputRange rng_t>
+template <std::ranges::input_range rng_t>
 //!\cond
-    requires !std::Iterator<rng_t>
+    requires !std::input_or_output_iterator<rng_t>
 //!\endcond
 struct value_type<rng_t>
 {
@@ -67,12 +67,12 @@ struct value_type<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `reference` of another type.
- * \implements seqan3::TransformationTrait
- * \tparam t The type you wish to query; must model std::ranges::InputRange.
+ * \implements seqan3::transformation_trait
+ * \tparam t The type you wish to query; must model std::ranges::input_range.
  */
-template <std::ranges::InputRange rng_t>
+template <std::ranges::input_range rng_t>
 //!\cond
-    requires !std::Iterator<rng_t>
+    requires !std::input_or_output_iterator<rng_t>
 //!\endcond
 struct reference<rng_t>
 {
@@ -85,12 +85,12 @@ struct reference<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `rvalue_reference` of another type.
- * \implements seqan3::TransformationTrait
- * \tparam t The type you wish to query; must model std::ranges::InputRange.
+ * \implements seqan3::transformation_trait
+ * \tparam t The type you wish to query; must model std::ranges::input_range.
  */
-template <std::ranges::InputRange rng_t>
+template <std::ranges::input_range rng_t>
 //!\cond
-    requires !std::Iterator<rng_t>
+    requires !std::input_or_output_iterator<rng_t>
 //!\endcond
 struct rvalue_reference<rng_t>
 {
@@ -103,12 +103,12 @@ struct rvalue_reference<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `const_reference` of another type.
- * \implements seqan3::TransformationTrait
- * \tparam t The type you wish to query; must model std::ranges::InputRange.
+ * \implements seqan3::transformation_trait
+ * \tparam t The type you wish to query; must model std::ranges::input_range.
  */
-template <std::ranges::InputRange rng_t>
+template <std::ranges::input_range rng_t>
 //!\cond
-    requires !std::Iterator<rng_t>
+    requires !std::input_or_output_iterator<rng_t>
 //!\endcond
 struct const_reference<rng_t>
 {
@@ -121,12 +121,12 @@ struct const_reference<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `difference_type` of another type.
- * \implements seqan3::TransformationTrait
- * \tparam t The type you wish to query; must model std::ranges::InputRange.
+ * \implements seqan3::transformation_trait
+ * \tparam t The type you wish to query; must model std::ranges::input_range.
  */
-template <std::ranges::Range rng_t>
+template <std::ranges::range rng_t>
 //!\cond
-    requires !std::Iterator<rng_t>
+    requires !std::input_or_output_iterator<rng_t>
 //!\endcond
 struct difference_type<rng_t>
 {
@@ -139,12 +139,12 @@ struct difference_type<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `size_type` of another type.
- * \implements seqan3::TransformationTrait
- * \tparam t The type you wish to query; must model std::ranges::SizedRange.
+ * \implements seqan3::transformation_trait
+ * \tparam t The type you wish to query; must model std::ranges::sized_range.
  */
-template <std::ranges::SizedRange rng_t>
+template <std::ranges::sized_range rng_t>
 //!\cond
-    requires !std::Iterator<rng_t>
+    requires !std::input_or_output_iterator<rng_t>
 //!\endcond
 struct size_type<rng_t>
 {
@@ -159,7 +159,7 @@ struct size_type<rng_t>
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
 /*!\brief Recursively determines the `value_type` on containers and/or iterators.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam t The type to recurse on; must have `std::ranges::value_type_t<rng_t>`.
  *
  * \details
@@ -185,7 +185,7 @@ struct innermost_value_type<t>
 };
 //!\endcond
 
-//!\brief Shortcut for seqan3::innermost_value_type (TransformationTrait shortcut).
+//!\brief Shortcut for seqan3::innermost_value_type (transformation_trait shortcut).
 //!\see seqan3::innermost_value_type
 template <typename t>
 using innermost_value_type_t = typename innermost_value_type<t>::type;
@@ -217,12 +217,12 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
 //!\endcond
 
 // ----------------------------------------------------------------------------
-// Compatible
+// compatible
 // ----------------------------------------------------------------------------
 
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
-/*!\interface seqan3::Compatible <>
+/*!\interface seqan3::compatible <>
  * \brief Two types are "compatible" if their seqan3::dimension_v and their seqan3::innermost_value_type_t are
  * the same.
  *
@@ -235,7 +235,7 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
  */
 //!\cond
 template <typename t1, typename t2>
-SEQAN3_CONCEPT Compatible = requires (t1, t2)
+SEQAN3_CONCEPT compatible = requires (t1, t2)
 {
     requires (dimension_v<t1> == dimension_v<t2>);
 

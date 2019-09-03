@@ -98,8 +98,8 @@ TYPED_TEST(unbanded_score_trace_test, current_column)
 
     using value_t = seqan3::value_type_t<decltype(zip_view)>;
     EXPECT_EQ(std::tuple_size_v<value_t>, 3u);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(zip_view)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(zip_view)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(zip_view)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(zip_view)>);
 }
 
 TYPED_TEST(unbanded_score_trace_test, go_next_column)

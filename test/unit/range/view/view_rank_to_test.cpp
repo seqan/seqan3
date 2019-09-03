@@ -38,25 +38,25 @@ TEST(view_rank_to, basic)
 TEST(view_rank_to, concepts)
 {
     std::vector<unsigned> vec{0,1,3,3,3,2,0,3,0};
-    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_FALSE(std::ranges::View<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), unsigned>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
+    EXPECT_FALSE(std::ranges::view<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
+    EXPECT_TRUE(const_iterable_range<decltype(vec)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(vec), unsigned>));
 
     auto v1 = vec | view::rank_to<dna5>;
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5>));
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), unsigned>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v1), dna5>));
+    EXPECT_FALSE((std::ranges::output_range<decltype(v1), unsigned>));
 }

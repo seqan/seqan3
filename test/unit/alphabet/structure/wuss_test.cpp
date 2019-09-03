@@ -13,11 +13,11 @@
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet, wuss51);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet_, wuss51);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet_constexpr, wuss51);
-INSTANTIATE_TYPED_TEST_CASE_P(wuss15, alphabet, wuss<15>);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss15, alphabet_, wuss<15>);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss15, alphabet_constexpr, wuss<15>);
-INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet, wuss<67>);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet_, wuss<67>);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet_constexpr, wuss<67>);
 
 // assign_char functions
@@ -66,22 +66,22 @@ TEST(wuss, to_char)
 // concepts
 TEST(wuss, concept_check)
 {
-    EXPECT_TRUE(RnaStructureAlphabet<wuss51>);
-    EXPECT_TRUE(RnaStructureAlphabet<wuss51 &>);
-    EXPECT_TRUE(RnaStructureAlphabet<wuss51 const>);
-    EXPECT_TRUE(RnaStructureAlphabet<wuss51 const &>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss51>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss51 &>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss51 const>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss51 const &>);
     EXPECT_NE(max_pseudoknot_depth<wuss51>, 0);
 
-    EXPECT_TRUE(RnaStructureAlphabet<wuss<>>);  // same as wuss51
-    EXPECT_TRUE(RnaStructureAlphabet<wuss<> &>);
-    EXPECT_TRUE(RnaStructureAlphabet<wuss<> const>);
-    EXPECT_TRUE(RnaStructureAlphabet<wuss<> const &>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss<>>);  // same as wuss51
+    EXPECT_TRUE(rna_structure_alphabet<wuss<> &>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss<> const>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss<> const &>);
     EXPECT_NE(max_pseudoknot_depth<wuss<>>, 0);
 
-    EXPECT_TRUE(RnaStructureAlphabet<wuss<67>>);
-    EXPECT_TRUE(RnaStructureAlphabet<wuss<67> &>);
-    EXPECT_TRUE(RnaStructureAlphabet<wuss<67> const>);
-    EXPECT_TRUE(RnaStructureAlphabet<wuss<67> const &>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss<67>>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss<67> &>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss<67> const>);
+    EXPECT_TRUE(rna_structure_alphabet<wuss<67> const &>);
     EXPECT_NE(max_pseudoknot_depth<wuss<67>>, 0);
 
 }

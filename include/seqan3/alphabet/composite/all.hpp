@@ -29,9 +29,9 @@
  *
  * We have currently three major composite alphabets:
  * * seqan3::alphabet_tuple_base which can be used to create a std::tuple like object that still models
- *   seqan3::Alphabet.
+ *   seqan3::alphabet.
  * * seqan3::alphabet_variant which roughly corresponds to the Union of the given types. It behaves similar to
- *   std::variant, but also models seqan3::Alphabet.
+ *   std::variant, but also models seqan3::alphabet.
  * * seqan3::semialphabet_any which type erases other alphabets of the same size and allows again transformation to
  *   alphabets of the same size by copying the rank.
  */

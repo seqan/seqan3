@@ -11,7 +11,7 @@
 #include "../alphabet_constexpr_test_template.hpp"
 #include "nucleotide_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(dna5, alphabet, dna5);
+INSTANTIATE_TYPED_TEST_CASE_P(dna5, alphabet_, dna5);
 INSTANTIATE_TYPED_TEST_CASE_P(dna5, alphabet_constexpr, dna5);
 INSTANTIATE_TYPED_TEST_CASE_P(dna5, nucleotide, dna5);
 

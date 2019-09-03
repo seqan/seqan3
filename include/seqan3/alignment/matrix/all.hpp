@@ -6,13 +6,13 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link alignment_matrix Matrix sub-module \endlink.
+ * \brief Meta-header for the \link alignment_matrix matrix sub-module \endlink.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup alignment_matrix Matrix
+/*!\defgroup alignment_matrix matrix
  * \brief Provides data structures for representing alignment coordinates and alignments as a matrix.
  * \ingroup alignment
  * \see alignment

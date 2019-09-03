@@ -69,18 +69,18 @@ TEST(view_trim, qualified)
 TEST(view_trim, concepts)
 {
     std::vector<dna5q> vec{{'A'_dna5, phred42{40}}, {'G'_dna5, phred42{40}}, {'G'_dna5, phred42{30}}, {'A'_dna5, phred42{20}}, {'T'_dna5, phred42{10}}};
-    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), dna5q>));
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::input_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(vec), dna5q>));
+    EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
 
     auto v1 = vec | view::trim(20u);
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), dna5q>));
-    EXPECT_TRUE(!std::ranges::SizedRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(v1), dna5q>));
+    EXPECT_TRUE(!std::ranges::sized_range<decltype(v1)>);
 }

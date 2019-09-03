@@ -330,7 +330,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
 {
-    EXPECT_TRUE(FmIndexCursor<TypeParam>);
+    EXPECT_TRUE(fm_index_cursor_specialisation<TypeParam>);
 }
 
 REGISTER_TYPED_TEST_CASE_P(fm_index_cursor_collection_test, ctr, begin, extend_right_range,

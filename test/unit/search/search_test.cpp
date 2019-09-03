@@ -8,11 +8,11 @@
 #include <algorithm>
 #include <type_traits>
 
-#include "helper.hpp"
-
 #include <seqan3/search/algorithm/all.hpp>
 
 #include <gtest/gtest.h>
+
+#include "helper.hpp"
 
 using namespace seqan3;
 using namespace seqan3::search_cfg;
@@ -34,8 +34,10 @@ public:
     T index{text};
 };
 
-using fm_index_types        = ::testing::Types<fm_index<text_layout::single>, bi_fm_index<text_layout::single>>;
-using fm_index_string_types = ::testing::Types<fm_index<text_layout::single>, bi_fm_index<text_layout::single>>;
+using fm_index_types        = ::testing::Types<fm_index<dna4, text_layout::single>,
+                                               bi_fm_index<dna4, text_layout::single>>;
+using fm_index_string_types = ::testing::Types<fm_index<char, text_layout::single>,
+                                               bi_fm_index<char, text_layout::single>>;
 
 TYPED_TEST_CASE(search_test, fm_index_types);
 TYPED_TEST_CASE(search_string_test, fm_index_string_types);

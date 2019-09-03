@@ -24,10 +24,10 @@ TYPED_TEST_CASE_P(nucleotide);
 
 TYPED_TEST_P(nucleotide, concept_check)
 {
-    EXPECT_TRUE(NucleotideAlphabet<TypeParam>);
-    EXPECT_TRUE(NucleotideAlphabet<TypeParam &>);
-    EXPECT_TRUE(NucleotideAlphabet<TypeParam const>);
-    EXPECT_TRUE(NucleotideAlphabet<TypeParam const &>);
+    EXPECT_TRUE(nucleotide_alphabet<TypeParam>);
+    EXPECT_TRUE(nucleotide_alphabet<TypeParam &>);
+    EXPECT_TRUE(nucleotide_alphabet<TypeParam const>);
+    EXPECT_TRUE(nucleotide_alphabet<TypeParam const &>);
 }
 
 TYPED_TEST_P(nucleotide, global_complement)

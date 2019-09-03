@@ -22,16 +22,16 @@ namespace seqan3::detail
 {
 
 /*!\brief Provides a range interface for alignment matrices.
- * \implements std::ranges::InputRange
+ * \implements std::ranges::input_range
  * \ingroup alignment_matrix
  * \tparam derived_t The derived type implementing the data model of the matrix (see details for more information).
  *
  * \details
  *
  * This crtp-base class provides a range based interface for alignment matrices. It generates a range of ranges, where
- * both the outer range and the inner ranges model std::ranges::InputRange. The interface uses a column-major-order
+ * both the outer range and the inner ranges model std::ranges::input_range. The interface uses a column-major-order
  * to iterate over the matrix, i.e. the outer range iterates over the columns and the inner range over the num_rows of
- * each column. In addition, the inner range type, also referred to as `alignment-column`, must model std::ranges::View.
+ * each column. In addition, the inner range type, also referred to as `alignment-column`, must model std::ranges::view.
  * It is a shallow wrapper around the actual column stored in the `derived_t`, who implements the corresponding data
  * model. The current alignment-column is created within the `derived_t` when the iterator over the outer range is
  * dereferenced. The iterator over the resulting `alignment-column` is further refined by the `derived_t` to
@@ -64,8 +64,8 @@ private:
     friend derived_t;
 
     /*!\brief Represents a column within an alignment matrix.
-     * \implements std::ranges::View
-     * \implements std::ranges::InputRange
+     * \implements std::ranges::view
+     * \implements std::ranges::input_range
      *
      * \details
      *
@@ -78,14 +78,14 @@ private:
         //!\brief A view aliasing the actual stored data column within the underlying matrix.
         using view_type = typename deferred_type<typename derived_t::column_data_view_type>::type;
 
-        static_assert(std::ranges::RandomAccessRange<view_type>, "Column view must support random access.");
-        static_assert(std::ranges::View<view_type>, "Column view must be a view.");
+        static_assert(std::ranges::random_access_range<view_type>, "Column view must support random access.");
+        static_assert(std::ranges::view<view_type>, "Column view must be a view.");
 
         //!\brief The sentinel type of the underlying view.
         using sentinel = std::ranges::sentinel_t<view_type>;
 
         /*!\brief The iterator over an alignment-column.
-         * \implements std::ForwardIterator
+         * \implements std::forward_iterator
          *
          * \details
          *
@@ -139,14 +139,15 @@ private:
             //!\brief Returns a proxy for the current alignment cell.
             constexpr reference operator*() const noexcept
             {
-                static_assert(std::ConvertibleTo<decltype(host_ptr->me_ptr->make_proxy(host_iter)), reference>,
+                static_assert(std::convertible_to<decltype(host_ptr->me_ptr->make_proxy(host_iter)), reference>,
                               "The returned type of make_proxy must be convertible to the reference type.");
                 assert(host_ptr != nullptr);
                 return host_ptr->me_ptr->make_proxy(host_iter);
             }
             //!\}
 
-            /*!\name Arithmetic operators
+            /*!
+ame Arithmetic operators
              * \{
              */
             //!\brief Advances the iterator by one.
@@ -277,15 +278,15 @@ private:
     }; // class alignment_column_type
 
     /*!\brief A column iterator over the alignment matrix.
-     * \implements std::InputIterator
+     * \implements std::input_iterator
      *
      * \details
      *
      * This iterator enables the iteration over the underlying alignment matrix in column-major-order.
      * When dereferenced the iterator returns a seqan3::detail::alignment_matrix_column_major_range_base::column_type.
      * The initialisation of the alignment-column depends on the derived type.
-     * This iterator models the std::InputIterator since in some cases the underlying semantics would only guarantee
-     * an std::InputIterator, e.g. in the one column score matrix implementation. Both the previous and the current
+     * This iterator models the std::input_iterator since in some cases the underlying semantics would only guarantee
+     * an std::input_iterator, e.g. in the one column score matrix implementation. Both the previous and the current
      * column refer to the same data storage.
      */
     class iterator_type
@@ -331,13 +332,14 @@ private:
         //!\brief Returns the current alignment-column.
         constexpr reference operator*() const noexcept
         {
-            static_assert(std::ConvertibleTo<decltype(me_ptr->initialise_column(column_index)), reference>,
+            static_assert(std::convertible_to<decltype(me_ptr->initialise_column(column_index)), reference>,
                           "The returned type of initialise_column must be convertible to the reference type.");
             return me_ptr->initialise_column(column_index);
         }
         //!\}
 
-        /*!\name Arithmetic operators
+        /*!
+ame Arithmetic operators
          * \{
          */
         //!\brief Increments by one.
@@ -419,7 +421,7 @@ private:
      */
     SEQAN3_DOXYGEN_ONLY(typedef /*IMPLEMENTATION_DEFINED*/ value_type;)
 
-    /*!\brief The view over the current alignment-column; must model std::ranges::View and std::ranges::InputRange.
+    /*!\brief The view over the current alignment-column; must model std::ranges::view and std::ranges::input_range.
      * \note This type must be defined by the derived type.
      */
     SEQAN3_DOXYGEN_ONLY(typedef /*IMPLEMENTATION_DEFINED*/ column_data_view_type;)

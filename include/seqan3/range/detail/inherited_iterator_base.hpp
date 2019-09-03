@@ -27,8 +27,8 @@ struct empty_type
 
 /*!\brief A CRTP base template for creating iterators that inherit from other iterators.
  * \tparam derived_t The CRTP specialisation.
- * \tparam base_t    The type to inherit from; must satisfy std::Iterator.
- * \implements std::Iterator
+ * \tparam base_t    The type to inherit from; must satisfy std::input_or_output_iterator.
+ * \implements std::input_or_output_iterator
  * \ingroup range
  *
  * \details
@@ -48,7 +48,7 @@ struct empty_type
  *
  * \snippet test/unit/range/detail/inherited_iterator_base_test.cpp inherited_iterator_base def
  */
-template <typename derived_t, std::Iterator base_t>
+template <typename derived_t, std::input_or_output_iterator base_t>
 class inherited_iterator_base : public std::conditional_t<std::is_pointer_v<base_t> || !std::Semiregular<base_t>,
                                                           empty_type,
                                                           base_t>
@@ -117,7 +117,7 @@ public:
     constexpr bool operator==(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() == std::declval<base_t &>()))
     //!\cond
-        requires std::EqualityComparable<base_t>
+        requires std::equality_comparable<base_t>
     //!\endcond
     {
         return *this_to_base() == *rhs.this_to_base();
@@ -127,7 +127,7 @@ public:
     constexpr bool operator!=(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() == std::declval<base_t &>()))
     //!\cond
-        requires std::EqualityComparable<base_t>
+        requires std::equality_comparable<base_t>
     //!\endcond
     {
         return !(*this == rhs);
@@ -137,7 +137,7 @@ public:
     constexpr bool operator<(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() < std::declval<base_t &>()))
     //!\cond
-        requires std::StrictTotallyOrdered<base_t>
+        requires std::totally_ordered<base_t>
     //!\endcond
     {
         return *this_to_base() < *rhs.this_to_base();
@@ -147,7 +147,7 @@ public:
     constexpr bool operator>(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() > std::declval<base_t &>()))
     //!\cond
-        requires std::StrictTotallyOrdered<base_t>
+        requires std::totally_ordered<base_t>
     //!\endcond
     {
         return *this_to_base() > *rhs.this_to_base();
@@ -157,7 +157,7 @@ public:
     constexpr bool operator<=(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() > std::declval<base_t &>()))
     //!\cond
-        requires std::StrictTotallyOrdered<base_t>
+        requires std::totally_ordered<base_t>
     //!\endcond
     {
         return !(*this > rhs);
@@ -167,21 +167,22 @@ public:
     constexpr bool operator>=(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() < std::declval<base_t &>()))
     //!\cond
-        requires std::StrictTotallyOrdered<base_t>
+        requires std::totally_ordered<base_t>
     //!\endcond
     {
         return !(*this < rhs);
     }
     //!\}
 
-    /*!\name Arithmetic operators
+    /*!
+ame Arithmetic operators
      * \brief Unless specialised in derived_type, all operators perform base_t's operator and cast to derived_t.
      * \{
     */
     //!\brief Pre-increment, return updated iterator.
     constexpr derived_t & operator++() noexcept(noexcept(++std::declval<base_t &>()))
     //!\cond
-        requires std::InputIterator<base_t>
+        requires std::input_iterator<base_t>
     //!\endcond
     {
         ++(*this_to_base());
@@ -198,7 +199,7 @@ public:
     constexpr derived_t operator++(int) noexcept(noexcept(++std::declval<derived_t &>()) &&
                                                  noexcept(derived_t(std::declval<base_t &>())))
     //!\cond
-        requires std::Semiregular<base_t>
+        requires std::semiregular<base_t>
     //!\endcond
     {
         derived_t cpy{*this_to_base()};
@@ -209,7 +210,7 @@ public:
     //!\brief Pre-decrement, return updated iterator.
     constexpr derived_t & operator--() noexcept(noexcept(--std::declval<base_t &>()))
     //!\cond
-        requires std::BidirectionalIterator<base_t>
+        requires std::bidirectional_iterator<base_t>
     //!\endcond
     {
         --(*this_to_base());
@@ -220,7 +221,7 @@ public:
     constexpr derived_t operator--(int) noexcept(noexcept(--std::declval<derived_t &>()) &&
                                                  noexcept(derived_t{std::declval<base_t &>()}))
     //!\cond
-        requires std::BidirectionalIterator<base_t>
+        requires std::bidirectional_iterator<base_t>
     //!\endcond
     {
         derived_t cpy{*this_to_base()};
@@ -231,7 +232,7 @@ public:
     //!\brief Move iterator to the right.
     constexpr derived_t & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() += skip))
     //!\cond
-        requires std::RandomAccessIterator<base_t>
+        requires std::random_access_iterator<base_t>
     //!\endcond
     {
         *this_to_base() += skip;
@@ -242,7 +243,7 @@ public:
     constexpr derived_t operator+(difference_type const skip) const
         noexcept(noexcept(std::declval<derived_t &>() += skip) && noexcept(derived_t{std::declval<base_t &>()}))
     //!\cond
-        requires std::RandomAccessIterator<base_t>
+        requires std::random_access_iterator<base_t>
     //!\endcond
     {
         derived_t cpy{*this_to_base()};
@@ -253,7 +254,7 @@ public:
     constexpr friend derived_t operator+(difference_type const skip, derived_t const & it)
         noexcept(noexcept(it + skip))
     //!\cond
-        requires std::RandomAccessIterator<base_t>
+        requires std::random_access_iterator<base_t>
     //!\endcond
     {
         return it + skip;
@@ -262,7 +263,7 @@ public:
     //!\brief Decrement iterator by skip.
     constexpr derived_t & operator-=(difference_type const skip) noexcept(noexcept(std::declval<derived_t &>() += skip))
     //!\cond
-        requires std::RandomAccessIterator<base_t>
+        requires std::random_access_iterator<base_t>
     //!\endcond
     {
         return *this_derived() += -skip;
@@ -272,7 +273,7 @@ public:
     constexpr derived_t operator-(difference_type const skip) const
         noexcept(noexcept(std::declval<derived_t &>() -= skip) && noexcept(derived_t(std::declval<base_t &>())))
     //!\cond
-        requires std::RandomAccessIterator<base_t>
+        requires std::random_access_iterator<base_t>
     //!\endcond
     {
         derived_t cpy{*this_to_base()};
@@ -283,7 +284,7 @@ public:
     constexpr friend derived_t operator-(difference_type const skip, derived_t const & it)
         noexcept(noexcept(std::declval<derived_t &>() - skip))
     //!\cond
-        requires std::RandomAccessIterator<base_t>
+        requires std::random_access_iterator<base_t>
     //!\endcond
     {
         return it - skip;
@@ -293,7 +294,7 @@ public:
     constexpr difference_type operator-(derived_t const rhs) const
         noexcept(noexcept(std::declval<base_t &>() - std::declval<base_t &>()))
     //!\cond
-        requires std::RandomAccessIterator<base_t>
+        requires std::random_access_iterator<base_t>
     //!\endcond
     {
         assert(*rhs.this_to_base() <= *this_to_base());
@@ -307,7 +308,7 @@ public:
     //!\brief Dereference operator returns element currently pointed at.
     constexpr reference operator*() noexcept(noexcept(*std::declval<base_t &>()))
     //!\cond
-        requires std::Readable<base_t>
+        requires std::readable<base_t>
     //!\endcond
     {
         return **this_to_base();
@@ -316,7 +317,7 @@ public:
     //!\brief Dereference operator returns element currently pointed at.
     constexpr decltype(auto) operator*() const noexcept(noexcept(*std::declval<base_t const &>()))
     //!\cond
-        requires std::Readable<base_t>
+        requires std::readable<base_t>
     //!\endcond
     {
         return **this_to_base();
@@ -334,7 +335,7 @@ public:
     //!\brief Return pointer to this iterator.
     constexpr decltype(auto) operator->() const noexcept(noexcept(*std::declval<base_t const &>()))
     //!\cond
-        requires std::InputIterator<base_t>
+        requires std::input_iterator<base_t>
     //!\endcond
     {
         return &*this_to_base();
@@ -344,7 +345,7 @@ public:
     constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n)
         noexcept(noexcept(*std::declval<derived_t &>()) && noexcept(std::declval<derived_t &>() + 3))
     //!\cond
-        requires std::RandomAccessIterator<base_t>
+        requires std::random_access_iterator<base_t>
     //!\endcond
     {
         return *(*this_derived() + n);

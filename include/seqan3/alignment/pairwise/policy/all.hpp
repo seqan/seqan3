@@ -55,7 +55,7 @@
  *
  * # Matrix policies
  *
- * Matrix policies are used to allocate and to provide an iterable interface to the alignment matrix.
+ * matrix policies are used to allocate and to provide an iterable interface to the alignment matrix.
  * These policies maintain the alignment matrix in their own state.
  * The following table shows the functions that are required by the seqan3::detail::alignment_algorithm.
  *
@@ -74,8 +74,8 @@
  * - current_column:
  *
  *     Returns the current column to be computed. The return type can be any type that supports structured bindings,
- *     where the first parameter is at least a std::ranges::ForwardRange over the score matrix and the second argument
- *     is at least a std::ranges::ForwardRange over the traceback matrix or std::ignore if the traceback shall not
+ *     where the first parameter is at least a std::ranges::forward_range over the score matrix and the second argument
+ *     is at least a std::ranges::forward_range over the traceback matrix or std::ignore if the traceback shall not
  *     be computed.
  *
  * - go_next_column:

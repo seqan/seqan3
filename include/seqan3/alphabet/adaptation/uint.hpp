@@ -10,7 +10,7 @@
  * \brief Provides alphabet adaptations for standard uint types.
  * \details
  * This file provides function and type trait overloads so that the following types
- * fulfil the seqan3::Alphabet:
+ * fulfil the seqan3::alphabet:
  *   * `uint8_t`
  *   * `uint16_t`
  *   * `uint32_t`
@@ -37,9 +37,9 @@ namespace seqan3::detail
 
 //!\brief Whether a type is `uint8_t`, `uint16_t` or `uint32_t`.
 template <typename type, typename type2 = std::remove_reference_t<type>>
-constexpr bool is_uint_adaptation_v = std::Same<type2, uint8_t>  ||
-                                      std::Same<type2, uint16_t> ||
-                                      std::Same<type2, uint32_t>;
+constexpr bool is_uint_adaptation_v = std::same_as<type2, uint8_t>  ||
+                                      std::same_as<type2, uint16_t> ||
+                                      std::same_as<type2, uint32_t>;
 //!\}
 } // namespace seqan3::detail
 
@@ -77,9 +77,9 @@ template <typename uint_type>
 //!\endcond
 constexpr auto to_char(uint_type const intgr) noexcept
 {
-    if constexpr (std::Same<uint_type, uint8_t>)
+    if constexpr (std::same_as<uint_type, uint8_t>)
         return static_cast<char>(intgr);
-    else if constexpr (std::Same<uint_type, uint16_t>)
+    else if constexpr (std::same_as<uint_type, uint16_t>)
         return static_cast<char16_t>(intgr);
     else
         return static_cast<char32_t>(intgr);

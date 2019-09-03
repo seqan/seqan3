@@ -31,7 +31,7 @@ TEST(view_all, string_overload)
 
         auto v = view::all(urange);
 
-        EXPECT_FALSE((std::Same<decltype(v), std::string_view>)); // only returns string_view for string const
+        EXPECT_FALSE((std::same_as<decltype(v), std::string_view>)); // only returns string_view for string const
         EXPECT_TRUE((std::ranges::equal(v, urange)));
     }
 
@@ -41,7 +41,7 @@ TEST(view_all, string_overload)
 
         auto v = view::all(urange);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::string_view>));
+        EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
         EXPECT_TRUE((std::ranges::equal(v, urange)));
     }
 
@@ -50,7 +50,7 @@ TEST(view_all, string_overload)
 
         auto v = view::all(urange);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::string_view>));
+        EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
         EXPECT_TRUE((std::ranges::equal(v, urange)));
     }
 }
@@ -62,7 +62,7 @@ TEST(view_all, contiguous_overload)
 
         auto v = view::all(urange);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
         EXPECT_TRUE((std::ranges::equal(v, urange)));
     }
 
@@ -71,7 +71,7 @@ TEST(view_all, contiguous_overload)
 
         auto v = view::all(urange);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
         EXPECT_TRUE((std::ranges::equal(v, urange)));
     }
 }
@@ -82,7 +82,7 @@ TEST(view_all, random_access_overload)
 
     auto v = view::all(urange);
 
-    EXPECT_TRUE((std::Same<decltype(v),
+    EXPECT_TRUE((std::same_as<decltype(v),
                           std::ranges::subrange<typename std::deque<int>::iterator, typename std::deque<int>::iterator>>));
     EXPECT_TRUE((std::ranges::equal(v, urange)));
 }
@@ -94,7 +94,7 @@ TEST(view_all, generic_overload)
 
         auto v = view::all(urange);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::ranges::all_view<std::list<int> &>>));
+        EXPECT_TRUE((std::same_as<decltype(v), std::ranges::all_view<std::list<int> &>>));
         EXPECT_TRUE((std::ranges::equal(v, urange)));
     }
 
@@ -104,7 +104,7 @@ TEST(view_all, generic_overload)
         auto v = urange | std::view::filter([] (int) { return true; });
         auto v2 = view::all(v);
 
-        EXPECT_TRUE((std::Same<decltype(v2), std::ranges::all_view<decltype(v)>>));
+        EXPECT_TRUE((std::same_as<decltype(v2), std::ranges::all_view<decltype(v)>>));
         EXPECT_TRUE((std::ranges::equal(v2, urange)));
     }
 }

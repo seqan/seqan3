@@ -15,55 +15,55 @@
 using namespace seqan3;
 
 template <typename T>
-using alphabet = ::testing::Test;
+using alphabet_ = ::testing::Test;
 
 constexpr size_t max_iterations = 65536u;
 
-TYPED_TEST_CASE_P(alphabet);
+TYPED_TEST_CASE_P(alphabet_);
 
-TYPED_TEST_P(alphabet, concept_check)
+TYPED_TEST_P(alphabet_, concept_check)
 {
-    EXPECT_TRUE(Semialphabet<TypeParam>);
-    EXPECT_TRUE(Semialphabet<TypeParam &>);
-    EXPECT_TRUE(Semialphabet<TypeParam const>);
-    EXPECT_TRUE(Semialphabet<TypeParam const &>);
+    EXPECT_TRUE(semialphabet<TypeParam>);
+    EXPECT_TRUE(semialphabet<TypeParam &>);
+    EXPECT_TRUE(semialphabet<TypeParam const>);
+    EXPECT_TRUE(semialphabet<TypeParam const &>);
 
-    EXPECT_TRUE(WritableSemialphabet<TypeParam>);
-    EXPECT_TRUE(WritableSemialphabet<TypeParam &>);
-    EXPECT_FALSE(WritableSemialphabet<TypeParam const>);
-    EXPECT_FALSE(WritableSemialphabet<TypeParam const &>);
+    EXPECT_TRUE(writable_semialphabet<TypeParam>);
+    EXPECT_TRUE(writable_semialphabet<TypeParam &>);
+    EXPECT_FALSE(writable_semialphabet<TypeParam const>);
+    EXPECT_FALSE(writable_semialphabet<TypeParam const &>);
 
-    EXPECT_TRUE(Alphabet<TypeParam>);
-    EXPECT_TRUE(Alphabet<TypeParam &>);
-    EXPECT_TRUE(Alphabet<TypeParam const>);
-    EXPECT_TRUE(Alphabet<TypeParam const &>);
+    EXPECT_TRUE(alphabet<TypeParam>);
+    EXPECT_TRUE(alphabet<TypeParam &>);
+    EXPECT_TRUE(alphabet<TypeParam const>);
+    EXPECT_TRUE(alphabet<TypeParam const &>);
 
-    EXPECT_TRUE(WritableAlphabet<TypeParam>);
-    EXPECT_TRUE(WritableAlphabet<TypeParam &>);
-    EXPECT_FALSE(WritableAlphabet<TypeParam const>);
-    EXPECT_FALSE(WritableAlphabet<TypeParam const &>);
+    EXPECT_TRUE(writable_alphabet<TypeParam>);
+    EXPECT_TRUE(writable_alphabet<TypeParam &>);
+    EXPECT_FALSE(writable_alphabet<TypeParam const>);
+    EXPECT_FALSE(writable_alphabet<TypeParam const &>);
 }
 
-TYPED_TEST_P(alphabet, type_properties)
+TYPED_TEST_P(alphabet_, type_properties)
 {
     // It is highly recommended that non-reference types that model this concept, also model:
-    EXPECT_TRUE((std::Regular<TypeParam>));
-    EXPECT_TRUE((seqan3::TriviallyCopyable<TypeParam>));
-    EXPECT_TRUE((seqan3::StandardLayout<TypeParam>));
+    EXPECT_TRUE((std::regular<TypeParam>));
+    EXPECT_TRUE((seqan3::trivially_copyable<TypeParam>));
+    EXPECT_TRUE((seqan3::standard_layout<TypeParam>));
 }
 
-TYPED_TEST_P(alphabet, alphabet_size_)
+TYPED_TEST_P(alphabet_, alphabet_size_)
 {
     EXPECT_GT(alphabet_size<TypeParam>, 0u);
 }
 
-TYPED_TEST_P(alphabet, default_value_constructor)
+TYPED_TEST_P(alphabet_, default_value_constructor)
 {
     [[maybe_unused]] TypeParam t1;
     [[maybe_unused]] TypeParam t2{};
 }
 
-TYPED_TEST_P(alphabet, global_assign_rank_to)
+TYPED_TEST_P(alphabet_, global_assign_rank_to)
 {
     // this double checks the value initialisation
     EXPECT_EQ((assign_rank_to(0, TypeParam{})), TypeParam{});
@@ -79,7 +79,7 @@ TYPED_TEST_P(alphabet, global_assign_rank_to)
     EXPECT_TRUE((std::is_same_v<decltype(assign_rank_to(0, TypeParam{})), TypeParam>));
 }
 
-TYPED_TEST_P(alphabet, global_to_rank)
+TYPED_TEST_P(alphabet_, global_to_rank)
 {
     // this double checks the value initialisation
     EXPECT_EQ(to_rank(TypeParam{}), 0u);
@@ -91,7 +91,7 @@ TYPED_TEST_P(alphabet, global_to_rank)
     EXPECT_TRUE((std::is_same_v<decltype(to_rank(t0)), alphabet_rank_t<TypeParam>>));
 }
 
-TYPED_TEST_P(alphabet, copy_constructor)
+TYPED_TEST_P(alphabet_, copy_constructor)
 {
     // the module operation ensures that the result is within the valid rank range;
     // it will be in the most cases 1 except for alphabets like seqan3::gap where it will be 0
@@ -104,7 +104,7 @@ TYPED_TEST_P(alphabet, copy_constructor)
     EXPECT_EQ(t2, t3);
 }
 
-TYPED_TEST_P(alphabet, move_constructor)
+TYPED_TEST_P(alphabet_, move_constructor)
 {
     constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size<TypeParam>;
     TypeParam t0;
@@ -117,7 +117,7 @@ TYPED_TEST_P(alphabet, move_constructor)
     EXPECT_EQ(t3, t0);
 }
 
-TYPED_TEST_P(alphabet, copy_assignment)
+TYPED_TEST_P(alphabet_, copy_assignment)
 {
     constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size<TypeParam>;
     TypeParam t1;
@@ -127,7 +127,7 @@ TYPED_TEST_P(alphabet, copy_assignment)
     EXPECT_EQ(t1, t2);
 }
 
-TYPED_TEST_P(alphabet, move_assignment)
+TYPED_TEST_P(alphabet_, move_assignment)
 {
     constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size<TypeParam>;
     TypeParam t0;
@@ -141,7 +141,7 @@ TYPED_TEST_P(alphabet, move_assignment)
     EXPECT_EQ(t3, t0);
 }
 
-TYPED_TEST_P(alphabet, swap)
+TYPED_TEST_P(alphabet_, swap)
 {
     constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size<TypeParam>;
     TypeParam t0;
@@ -155,10 +155,10 @@ TYPED_TEST_P(alphabet, swap)
     EXPECT_EQ(t1, t3);
 }
 
-TYPED_TEST_P(alphabet, global_assign_char_to)
+TYPED_TEST_P(alphabet_, global_assign_char_to)
 {
     using char_t = alphabet_char_t<TypeParam>;
-    if constexpr(std::Integral<char_t>)
+    if constexpr(std::integral<char_t>)
     {
         char_t i = std::numeric_limits<char_t>::min();
         char_t j = std::numeric_limits<char_t>::max();
@@ -172,7 +172,7 @@ TYPED_TEST_P(alphabet, global_assign_char_to)
     }
 }
 
-TYPED_TEST_P(alphabet, global_char_is_valid_for) // only test negative example for most; more inside specialised tests
+TYPED_TEST_P(alphabet_, global_char_is_valid_for) // only test negative example for most; more inside specialised tests
 {
     if constexpr (alphabet_size<TypeParam> < 255) // includes most of our alphabets, but not the adaptations!
     {
@@ -180,10 +180,10 @@ TYPED_TEST_P(alphabet, global_char_is_valid_for) // only test negative example f
     }
 }
 
-TYPED_TEST_P(alphabet, global_assign_char_strictly_to)
+TYPED_TEST_P(alphabet_, global_assign_char_strictly_to)
 {
     using char_t = alphabet_char_t<TypeParam>;
-    if constexpr(std::Integral<char_t>)
+    if constexpr(std::integral<char_t>)
     {
         char_t i = std::numeric_limits<char_t>::min();
         char_t j = std::numeric_limits<char_t>::max();
@@ -198,7 +198,7 @@ TYPED_TEST_P(alphabet, global_assign_char_strictly_to)
     }
 }
 
-TYPED_TEST_P(alphabet, global_to_char)
+TYPED_TEST_P(alphabet_, global_to_char)
 {
     TypeParam t0;
     EXPECT_TRUE((std::is_same_v<decltype(to_char(t0)), alphabet_char_t<TypeParam>>));
@@ -207,7 +207,7 @@ TYPED_TEST_P(alphabet, global_to_char)
 
 }
 
-TYPED_TEST_P(alphabet, comparison_operators)
+TYPED_TEST_P(alphabet_, comparison_operators)
 {
     TypeParam t0{};
     TypeParam t1{};
@@ -234,7 +234,7 @@ TYPED_TEST_P(alphabet, comparison_operators)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(alphabet, concept_check, type_properties, alphabet_size_, default_value_constructor,
+REGISTER_TYPED_TEST_CASE_P(alphabet_, concept_check, type_properties, alphabet_size_, default_value_constructor,
     global_assign_rank_to, global_to_rank, copy_constructor, move_constructor, copy_assignment, move_assignment, swap,
     global_assign_char_to, global_to_char, global_char_is_valid_for, global_assign_char_strictly_to,
     comparison_operators);

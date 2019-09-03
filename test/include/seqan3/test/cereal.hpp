@@ -36,14 +36,14 @@ namespace test
 {
 //!\cond DEV
 /*!\brief Tests if an object is cerealisable.
- * \tparam in_archive_t  Type of the cereal input archive. Must model seqan3::CerealInputArchive.
- * \tparam out_archive_t Type of the cereal output archive. Must model seqan3::CerealOutputArchive.
- * \tparam value_t       The type to cerealise. Must model seqan3::Cerealisable.
+ * \tparam in_archive_t  Type of the cereal input archive. Must model seqan3::cereal_input_archive.
+ * \tparam out_archive_t Type of the cereal output archive. Must model seqan3::cereal_output_archive.
+ * \tparam value_t       The type to cerealise. Must model seqan3::cerealisable.
  * \param l The object to cerealise.
  */
-template <CerealInputArchive in_archive_t, CerealOutputArchive out_archive_t, typename value_t>
+template <cereal_input_archive in_archive_t, cereal_output_archive out_archive_t, typename value_t>
 //!\cond
-    requires Cerealisable<value_t, in_archive_t, out_archive_t>
+    requires cerealisable<value_t, in_archive_t, out_archive_t>
 //!\endcond
 void do_cerealisation(value_t && l)
 {

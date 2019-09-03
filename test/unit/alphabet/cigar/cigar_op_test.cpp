@@ -11,7 +11,7 @@
 #include "../alphabet_constexpr_test_template.hpp"
 #include <seqan3/alphabet/cigar/cigar_op.hpp>
 
-INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, alphabet, cigar_op);
+INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, alphabet_, cigar_op);
 INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, alphabet_constexpr, cigar_op);
 
 TEST(cigar_op, to_char_assign_char)

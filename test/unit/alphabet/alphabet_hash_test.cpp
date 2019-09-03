@@ -26,7 +26,7 @@ TYPED_TEST(alphabet_hashing, hash)
     {
         TypeParam t0{};
         std::hash<TypeParam> h{};
-        if constexpr (std::Same<TypeParam, char>)
+        if constexpr (std::same_as<TypeParam, char>)
         {
             for (size_t i = 0; i < alphabet_size<TypeParam>/2; ++i)
             {
@@ -55,7 +55,7 @@ TYPED_TEST(alphabet_hashing, hash)
     }
     {
         std::hash<TypeParam const> h{};
-        if constexpr (std::Same<TypeParam, char>)
+        if constexpr (std::same_as<TypeParam, char>)
         {
             for (size_t i = 0; i < alphabet_size<TypeParam>/2; ++i)
             {

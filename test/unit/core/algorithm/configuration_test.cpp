@@ -17,10 +17,10 @@ using namespace seqan3;
 
 TEST(configuration, concept_check)
 {
-    EXPECT_TRUE(detail::ConfigElement<bar>);
-    EXPECT_FALSE(detail::ConfigElement<int>);
+    EXPECT_TRUE(detail::config_element<bar>);
+    EXPECT_FALSE(detail::config_element<int>);
 
-    EXPECT_TRUE((TupleLike<configuration<bax, bar>>));
+    EXPECT_TRUE((tuple_like<configuration<bax, bar>>));
 }
 
 TEST(configuration, tuple_size)

@@ -13,8 +13,8 @@ using namespace seqan3;
 
 TEST(mask, concept_check)
 {
-    EXPECT_TRUE(Semialphabet<mask>);
-    EXPECT_TRUE(detail::ConstexprSemialphabet<mask>);
+    EXPECT_TRUE(semialphabet<mask>);
+    EXPECT_TRUE(detail::constexpr_semialphabet<mask>);
 }
 
 TEST(mask, assign_rank)

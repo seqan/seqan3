@@ -47,7 +47,7 @@ enum struct advanceable_alignment_coordinate_state : uint8_t
 
 /*!\brief Implements an internal alignment coordinate that can be used as an argument to the std::ranges::iota_view.
  * \ingroup alignment_matrix
- * \implements std::EqualityComparable
+ * \implements std::equality_comparable
  * \tparam states   A non-type template flag to enable a specific advanceable policy.
  * \see seqan3::detail::advanceable_alignment_coordinate_state.
  *
@@ -55,10 +55,10 @@ enum struct advanceable_alignment_coordinate_state : uint8_t
  *
  * This class provides all members to make the `advanceable_alignment_coordinate` be usable in a std::ranges::iota_view.
  * For the purpose of alignments, modelling only incrementable and decrementable would fully suffice.
- * Unfortunately, the current range implementation does not preserve std::ranges::BidirectionalRange properties,
- * so we need to model the full advanceable concept in order to preserve the std::ranges::RandomAccessRange properties.
+ * Unfortunately, the current range implementation does not preserve std::ranges::bidirectional_range properties,
+ * so we need to model the full advanceable concept in order to preserve the std::ranges::random_access_range properties.
  * This, however, can be relaxed if the range implementation fully complies with the current standard draft for Ranges,
- * as increment and decrement would be enough and std::view::iota would preserve std::ranges::BidirectionalRange.
+ * as increment and decrement would be enough and std::view::iota would preserve std::ranges::bidirectional_range.
  */
 template <advanceable_alignment_coordinate_state state = advanceable_alignment_coordinate_state::none>
 class advanceable_alignment_coordinate
@@ -69,7 +69,7 @@ public:
      * \{
      */
 
-    //!\brief Defines the difference type to model the std::WeaklyIncrementable concept.
+    //!\brief Defines the difference type to model the std::weakly_incrementable concept.
     using difference_type = std::make_signed_t<size_t>;
     //!\}
 
@@ -89,7 +89,7 @@ public:
     //!\brief Copy-constructs from another advanceable_alignment_coordinate with a different policy.
     template <advanceable_alignment_coordinate_state other_state>
     //!\cond
-        requires !std::Same<other_state, state>
+        requires !std::same_as<other_state, state>
     //!\endcond
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> const & other) :
         first{other.first},
@@ -99,7 +99,7 @@ public:
     //!\brief Move-constructs from another advanceable_alignment_coordinate with a different policy.
     template <advanceable_alignment_coordinate_state other_state>
     //!\cond
-        requires !std::Same<other_state, state>
+        requires !std::same_as<other_state, state>
     //!\endcond
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> && other) :
         first{std::move(other.first)},
@@ -391,7 +391,7 @@ public:
  */
 template <typename coordinate_type, typename char_t>
 //!\cond
-    requires std::Same<remove_cvref_t<coordinate_type>, alignment_coordinate> ||
+    requires std::same_as<remove_cvref_t<coordinate_type>, alignment_coordinate> ||
              detail::is_value_specialisation_of_v<remove_cvref_t<coordinate_type>,
                                                   detail::advanceable_alignment_coordinate>
 //!\endcond

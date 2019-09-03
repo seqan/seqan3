@@ -78,10 +78,10 @@ struct strata : detail::strong_type<uint8_t, strata, detail::strong_type_skill::
  */
 template <typename mode_t>
 //!\cond
-    requires std::Same<remove_cvref_t<mode_t>, detail::search_mode_all> ||
-             std::Same<remove_cvref_t<mode_t>, detail::search_mode_all_best> ||
-             std::Same<remove_cvref_t<mode_t>, detail::search_mode_best> ||
-             std::Same<remove_cvref_t<mode_t>, strata>
+    requires std::same_as<remove_cvref_t<mode_t>, detail::search_mode_all> ||
+             std::same_as<remove_cvref_t<mode_t>, detail::search_mode_all_best> ||
+             std::same_as<remove_cvref_t<mode_t>, detail::search_mode_best> ||
+             std::same_as<remove_cvref_t<mode_t>, strata>
 //!\endcond
 struct mode : public pipeable_config_element<mode<mode_t>, mode_t>
 {

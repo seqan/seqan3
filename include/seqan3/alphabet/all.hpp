@@ -42,7 +42,7 @@
  *
  * # The alphabet concepts
  *
- * ### Alphabet size
+ * ### alphabet size
  *
  * All alphabets in SeqAn have a fixed size. It
  * can be queried via the seqan3::alphabet_size type trait and *optionally* also the `alphabet_size` static
@@ -112,18 +112,18 @@
  * ### Different concepts
  *
  * All types that have valid implementations of the functions/functors described above model the concept
- * seqan3::WritableAlphabet. This is the strongest (i.e. most refined) *general case* concept.
- * There are more refined concepts for specific biological applications (like seqan3::NucleotideAlphabet), and there are
+ * seqan3::writable_alphabet. This is the strongest (i.e. most refined) *general case* concept.
+ * There are more refined concepts for specific biological applications (like seqan3::nucleotide_alphabet), and there are
  * less refined concepts that only model part of an alphabet:
  *
- *   * seqan3::Semialphabet and derived concepts only require the rank interface;
- *   * seqan3::Alphabet (without `Writable*`) and derived concepts only require readability and not assignability.
+ *   * seqan3::semialphabet and derived concepts only require the rank interface;
+ *   * seqan3::alphabet (without `writable*`) and derived concepts only require readability and not assignability.
  *
- * Typically you will use seqan3::Alphabet in "read-only" situations (e.g. `const` parameters) and
- * seqan3::WritableAlphabet whenever the values might be changed.
+ * Typically you will use seqan3::alphabet in "read-only" situations (e.g. `const` parameters) and
+ * seqan3::writable_alphabet whenever the values might be changed.
  * Semi-alphabets are less useful in application code.
  *
- * |                                  | seqan3::Semialphabet | seqan3::WritableSemialphabet | seqan3::Alphabet | seqan3::WritableAlphabet | Aux |
+ * |                                  | seqan3::semialphabet | seqan3::writable_semialphabet | seqan3::alphabet | seqan3::writable_alphabet | Aux |
  * |----------------------------------|:--------------------:|:----------------------------:|:----------------:|:------------------------:|:---:|
  * | seqan3::alphabet_size            | ✅                    | ✅                            | ✅                | ✅                        |     |
  * | seqan3::to_rank                  | ✅                    | ✅                            | ✅                | ✅                        |     |
@@ -152,10 +152,10 @@
  * that accepts different alphabet types, you need to use the free function / type trait interface, because
  * it is the only interface guaranteed to exist (member functions are **not** required/enforced by the concept).
  *
- * # Containers over alphabets
+ * # containers over alphabets
  *
  * In SeqAn3 it is recommended you use the STL container classes like std::vector for storing sequence data,
- * but you can use other class templates if they satisfy the respective seqan3::Container, e.g. `std::deque` or
+ * but you can use other class templates if they satisfy the respective seqan3::container, e.g. `std::deque` or
  * <a href="https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md" target="_blank">
  * <tt>folly::fbvector</tt></a> or even <a href="http://doc.qt.io/qt-5/qvector.html" target="_blank">
  * <tt>Qt::QVector</tt></a>.

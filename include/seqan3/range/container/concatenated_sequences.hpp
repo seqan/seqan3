@@ -36,10 +36,10 @@ namespace seqan3
 {
 
 /*!\brief Container that stores sequences concatenated internally.
- * \tparam inner_type The type of sequences that will be stored. Must satisfy seqan3::ReservableContainer.
+ * \tparam inner_type The type of sequences that will be stored. Must satisfy seqan3::reservible_container.
  * \tparam data_delimiters_type A container that stores the begin/end positions in the inner_type. Must be
- * seqan3::ReservableContainer and have inner_type's size_type as value_type.
- * \implements seqan3::ReservableContainer
+ * seqan3::reservible_container and have inner_type's size_type as value_type.
+ * \implements seqan3::reservible_container
  * \ingroup container
  *
  * This class may be used whenever you would usually use `std::vector<std::vector<some_alphabet>>` or
@@ -82,8 +82,8 @@ namespace seqan3
 template <typename inner_type,
           typename data_delimiters_type = std::vector<typename inner_type::size_type>>
 //!\cond
-    requires ReservableContainer<std::remove_reference_t<inner_type>> &&
-             ReservableContainer<std::remove_reference_t<data_delimiters_type>> &&
+    requires reservible_container<std::remove_reference_t<inner_type>> &&
+             reservible_container<std::remove_reference_t<data_delimiters_type>> &&
              std::is_same_v<size_type_t<inner_type>, value_type_t<data_delimiters_type>>
 //!\endcond
 class concatenated_sequences
@@ -136,7 +136,7 @@ public:
 
 protected:
     /*!\name Compatibility
-     * \brief Static constexpr variables that emulate/encapsulate seqan3::Compatible (which doesn't work for types during their definition).
+     * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible (which doesn't work for types during their definition).
      * \{
      */
     //!\cond
@@ -148,7 +148,7 @@ protected:
     static constexpr bool is_compatible_this_aux = true;
     //!\endcond
 
-    //!\brief Whether a type satisfies seqan3::Compatible with this class.
+    //!\brief Whether a type satisfies seqan3::compatible with this class.
     //!\hideinitializer
     // cannot use the concept, because this class is not yet fully defined
     template <typename t>
@@ -157,11 +157,11 @@ protected:
                                                std::is_same_v<remove_cvref_t<t>, iterator>                  ||
                                                std::is_same_v<remove_cvref_t<t>, const_iterator>;
 
-    //!\brief Whether a type satisfies seqan3::Compatible with this class's value_type or reference type.
+    //!\brief Whether a type satisfies seqan3::compatible with this class's value_type or reference type.
     //!\hideinitializer
     // we explicitly check same-ness, because these types may not be fully resolved, yet
     template <typename t>
-    static constexpr bool is_compatible_value = Compatible<value_type, t>                           ||
+    static constexpr bool is_compatible_value = compatible<value_type, t>                           ||
                                                 std::is_same_v<remove_cvref_t<t>, value_type>       ||
                                                 std::is_same_v<remove_cvref_t<t>, reference>        ||
                                                 std::is_same_v<remove_cvref_t<t>, const_reference>;
@@ -195,13 +195,13 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::InputRange rng_of_rng_type>
+    template <std::ranges::input_range rng_of_rng_type>
     concatenated_sequences(rng_of_rng_type && rng_of_rng)
     //!\cond
         requires is_compatible_this<rng_of_rng_type>
     //!\endcond
     {
-        if constexpr (std::ranges::SizedRange<rng_of_rng_type>)
+        if constexpr (std::ranges::sized_range<rng_of_rng_type>)
             data_delimiters.reserve(seqan3::size(rng_of_rng) + 1);
 
         for (auto && val : rng_of_rng)
@@ -224,7 +224,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::ForwardRange rng_type>
+    template <std::ranges::forward_range rng_type>
     concatenated_sequences(size_type const count, rng_type && value)
     //!\cond
         requires is_compatible_value<rng_type>
@@ -238,9 +238,9 @@ public:
     }
 
     /*!\brief Construct/assign from pair of iterators.
-     * \tparam begin_iterator_type Must satisfy std::ForwardIterator and must satisfy
+     * \tparam begin_iterator_type Must satisfy std::forward_iterator and must satisfy
      * \ref is_compatible_value.
-     * \tparam end_iterator_type Must satisfy std::SizedSentinel.
+     * \tparam end_iterator_type Must satisfy std::sized_sentinel_for.
      * \param begin_it begin of range to construct/assign from.
      * \param end_it end of range to construct/assign from.
      *
@@ -252,7 +252,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ForwardIterator begin_iterator_type, std::SizedSentinel<begin_iterator_type> end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, std::sized_sentinel_for<begin_iterator_type> end_iterator_type>
     concatenated_sequences(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
         requires is_compatible_this<begin_iterator_type>
@@ -273,7 +273,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::ForwardRange rng_type = value_type>
+    template <std::ranges::forward_range rng_type = value_type>
     concatenated_sequences(std::initializer_list<rng_type> ilist)
     //!\cond
         requires is_compatible_value<rng_type>
@@ -294,7 +294,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::ForwardRange rng_type>
+    template <std::ranges::forward_range rng_type>
     concatenated_sequences & operator=(std::initializer_list<rng_type> ilist)
     //!\cond
         requires is_compatible_value<rng_type>
@@ -316,7 +316,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::InputRange rng_of_rng_type>
+    template <std::ranges::input_range rng_of_rng_type>
     void assign(rng_of_rng_type && rng_of_rng)
     //!\cond
         requires is_compatible_this<rng_of_rng_type>
@@ -342,7 +342,7 @@ public:
     template <typename rng_type>
     void assign(size_type const count, rng_type && value)
     //!\cond
-        requires (std::ranges::ForwardRange<rng_type> && is_compatible_value<rng_type>)
+        requires (std::ranges::forward_range<rng_type> && is_compatible_value<rng_type>)
     //!\endcond
     {
         concatenated_sequences rhs{count, value};
@@ -350,8 +350,8 @@ public:
     }
 
     /*!\brief Construct/assign from pair of iterators.
-     * \tparam begin_iterator_type Must satisfy std::ForwardIterator and satisfy \ref is_compatible_value.
-     * \tparam end_iterator_type Must satisfy std::SizedSentinel.
+     * \tparam begin_iterator_type Must satisfy std::forward_iterator and satisfy \ref is_compatible_value.
+     * \tparam end_iterator_type Must satisfy std::sized_sentinel_for.
      * \param begin_it begin of range to construct/assign from.
      * \param end_it end of range to construct/assign from.
      *
@@ -363,11 +363,11 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ForwardIterator begin_iterator_type, typename end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
         requires is_compatible_this<begin_iterator_type> &&
-                 std::SizedSentinel<end_iterator_type, begin_iterator_type>
+                 std::sized_sentinel_for<end_iterator_type, begin_iterator_type>
     //!\endcond
     {
         concatenated_sequences rhs{begin_it, end_it};
@@ -386,7 +386,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::ForwardRange rng_type = value_type>
+    template <std::ranges::forward_range rng_type = value_type>
     void assign(std::initializer_list<rng_type> ilist)
     //!\cond
         requires is_compatible_value<rng_type>
@@ -841,7 +841,7 @@ public:
     }
 
     /*!\brief Inserts value before position in the container.
-     * \tparam rng_type The type of range to be inserted; must satisfy std::ranges::ForwardRange
+     * \tparam rng_type The type of range to be inserted; must satisfy std::ranges::forward_range
      * and have the same `value_type` as `value_type` (i.e. `value_type`'s `value_type`!).
      * \param pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param value Element value to insert.
@@ -864,7 +864,7 @@ public:
      *
      * \include test/snippet/range/container/concatenated_sequences_insert.cpp
      */
-    template <std::ranges::ForwardRange rng_type>
+    template <std::ranges::forward_range rng_type>
     iterator insert(const_iterator pos, rng_type && value)
         requires is_compatible_value<rng_type>
     {
@@ -896,7 +896,7 @@ public:
      *
      * \include test/snippet/range/container/concatenated_sequences_insert2.cpp
      */
-    template <std::ranges::ForwardRange rng_type>
+    template <std::ranges::forward_range rng_type>
     iterator insert(const_iterator pos, size_type const count, rng_type && value)
         requires is_compatible_value<rng_type>
 
@@ -916,7 +916,7 @@ public:
          */
 
         size_type value_len = 0;
-        if constexpr (std::ranges::SizedRange<rng_type>)
+        if constexpr (std::ranges::sized_range<rng_type>)
             value_len = seqan3::size(value);
         else
             value_len = std::distance(seqan3::begin(value), seqan3::end(value));
@@ -954,8 +954,8 @@ public:
     }
 
     /*!\brief Inserts elements from range `[first, last)` before position in the container.
-     * \tparam begin_iterator_type Must satisfy std::ForwardIterator and \ref is_compatible_value.
-     * \tparam end_iterator_type Must satisfy std::SizedSentinel.
+     * \tparam begin_iterator_type Must satisfy std::forward_iterator and \ref is_compatible_value.
+     * \tparam end_iterator_type Must satisfy std::sized_sentinel_for.
      * \param pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param first Begin of range to insert.
      * \param last Behind the end of range to insert.
@@ -976,11 +976,11 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
      */
-    template <std::ForwardIterator begin_iterator_type, typename end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type first, end_iterator_type last)
     //!\cond
         requires is_compatible_this<begin_iterator_type> &&
-                 std::SizedSentinel<end_iterator_type, begin_iterator_type>
+                 std::sized_sentinel_for<end_iterator_type, begin_iterator_type>
     //!\endcond
     {
         auto const pos_as_num = std::distance(cbegin(), pos);
@@ -1003,7 +1003,7 @@ public:
         for (size_type i = 0; i < ilist.size(); ++i, ++first)
         {
             // constant for sized ranges and/or random access ranges, linear otherwise
-            if constexpr (std::ranges::SizedRange<std::decay_t<decltype(*first)>>)
+            if constexpr (std::ranges::sized_range<std::decay_t<decltype(*first)>>)
                 full_len += seqan3::size(*first);
             else
                 full_len += std::distance(seqan3::begin(*first), seqan3::end(*first));
@@ -1054,7 +1054,7 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
      */
-    template <std::ranges::ForwardRange rng_type>
+    template <std::ranges::forward_range rng_type>
     iterator insert(const_iterator pos, std::initializer_list<rng_type> const & ilist)
         requires is_compatible_value<rng_type>
     {
@@ -1146,7 +1146,7 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
      */
-    template <std::ranges::ForwardRange rng_type>
+    template <std::ranges::forward_range rng_type>
     void push_back(rng_type && value)
         requires is_compatible_value<rng_type>
     {
@@ -1216,7 +1216,7 @@ public:
      * \param value Instead of appending empty containers, append copies of value.
      * \copydetails resize()
      */
-    template <std::ranges::ForwardRange rng_type>
+    template <std::ranges::forward_range rng_type>
     void resize(size_type const count, rng_type && value)
         requires is_compatible_value<rng_type>
     {
@@ -1297,12 +1297,12 @@ public:
 
     /*!\cond DEV
      * \brief Serialisation support function.
-     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
      * \param archive The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    template <CerealArchive archive_t>
+    template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
         archive(data_values, data_delimiters);

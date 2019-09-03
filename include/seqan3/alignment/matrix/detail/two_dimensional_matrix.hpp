@@ -43,7 +43,7 @@ struct number_rows : strong_type<size_t, number_rows>
 
 /*!\brief A two dimensional matrix used inside of alignment algorithms.
  * \ingroup alignment_matrix
- * \implements std::ranges::RandomAccessRange
+ * \implements std::ranges::random_access_range
  *
  * \tparam value_t The value type to store.
  * \tparam allocator_t The allocator type used to allocate the storage; defaults to std::allocator.
@@ -113,15 +113,15 @@ public:
      * \param col_dim The column dimension (number of columns).
      * \param entries A range used to fill the underlying matrix.
      */
-    template <std::ranges::ForwardRange entries_t>
+    template <std::ranges::forward_range entries_t>
     //!\cond
-        requires (!std::Same<entries_t, storage_type>) && (std::ConvertibleTo<value_type_t<entries_t>, value_type>)
+        requires (!std::same_as<entries_t, storage_type>) && (std::convertible_to<value_type_t<entries_t>, value_type>)
     //!\endcond
     two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, entries_t entries) :
         row_dim{row_dim.get()},
         col_dim{col_dim.get()}
     {
-        static_assert(std::MoveConstructible<value_type_t<entries_t>>, "The value type must be moveable.");
+        static_assert(std::move_constructible<value_type_t<entries_t>>, "The value type must be moveable.");
 
         assert(static_cast<size_t>(std::ranges::distance(entries)) == (row_dim.get() * col_dim.get()));
         storage.resize(row_dim.get() * col_dim.get());
@@ -129,9 +129,9 @@ public:
     }
 
     //!\overload
-    template <std::ranges::ForwardRange entries_t>
+    template <std::ranges::forward_range entries_t>
     //!\cond
-        requires (std::Same<entries_t, storage_type>)
+        requires (std::same_as<entries_t, storage_type>)
     //!\endcond
     two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, entries_t entries) :
         row_dim{row_dim.get()},
@@ -168,7 +168,7 @@ public:
                                          column_index_type{static_cast<std::ptrdiff_t>(coordinate.col)}});
     }
 
-    //!\copydoc seqan3::detail::Matrix::at
+    //!\copydoc seqan3::detail::matrix::at
     constexpr reference at(matrix_coordinate const & coordinate)
     {
         if (static_cast<size_t>(coordinate.col) >= cols())
@@ -179,7 +179,7 @@ public:
         return (*this)[coordinate];
     }
 
-    //!\copydoc seqan3::detail::Matrix::at
+    //!\copydoc seqan3::detail::matrix::at
     constexpr const_reference at(matrix_coordinate const & coordinate) const
     {
         if (static_cast<size_t>(coordinate.col) >= cols())
@@ -190,13 +190,13 @@ public:
         return (*this)[coordinate];
     }
 
-    //!\copydoc seqan3::detail::Matrix::rows
+    //!\copydoc seqan3::detail::matrix::rows
     size_t rows() const noexcept
     {
         return row_dim;
     }
 
-    //!\copydoc seqan3::detail::Matrix::cols
+    //!\copydoc seqan3::detail::matrix::cols
     size_t cols() const noexcept
     {
         return col_dim;
@@ -257,8 +257,8 @@ public:
 private:
 
     storage_type storage; //!< The matrix as a one-dimensional (flattened) vector of entries.
-    size_type    row_dim; //!< \copydoc seqan3::detail::Matrix::rows
-    size_type    col_dim; //!< \copydoc seqan3::detail::Matrix::cols
+    size_type    row_dim; //!< \copydoc seqan3::detail::matrix::rows
+    size_type    col_dim; //!< \copydoc seqan3::detail::matrix::cols
 };
 
 /*!\brief A two-dimensional matrix iterator.
@@ -285,7 +285,7 @@ private:
 
     //!\brief Befriend the corresponding const iterator.
     template <typename other_matrix_t>
-        requires std::Same<other_matrix_t, std::remove_const_t<matrix_t>> &&
+        requires std::same_as<other_matrix_t, std::remove_const_t<matrix_t>> &&
                     std::is_const_v<matrix_t>
     friend class iterator_type;
 
@@ -320,7 +320,7 @@ public:
 
     /*!\brief Construction from the underlying matrix and the iterator over actual storage.
     * \param[in] matrix The underlying matrix to access the corresponding dimensions.
-    * \param[in] iter   The underlying iterator over the actual storage; must model std::RandomAccessIterator.
+    * \param[in] iter   The underlying iterator over the actual storage; must model std::random_access_iterator.
     */
     constexpr iterator_type(matrix_t & matrix, storage_iterator iter) :
         matrix_ptr{&matrix},
@@ -330,7 +330,7 @@ public:
     //!\brief Construction of cons-iterator from non-const-iterator.
     template <typename other_matrix_t>
     //!\cond
-        requires std::Same<other_matrix_t, std::remove_const_t<matrix_t>> && std::is_const_v<matrix_t>
+        requires std::same_as<other_matrix_t, std::remove_const_t<matrix_t>> && std::is_const_v<matrix_t>
     //!\endcond
     constexpr iterator_type(
         iterator_type<other_matrix_t> other) noexcept :
@@ -360,7 +360,7 @@ public:
         return *this;
     }
 
-    //!\copydoc seqan3::detail::TwoDimensionalMatrixIterator::coordinate()
+    //!\copydoc seqan3::detail::two_dimensional_matrix_iterator::coordinate()
     matrix_coordinate coordinate() const noexcept
     {
         assert(matrix_ptr != nullptr);

@@ -70,7 +70,7 @@ constexpr uint16_t operator""_tag()
 template <typename char_t, char_t ...s>
 constexpr uint16_t operator""_tag()
 {
-    static_assert(std::Same<char_t, char>, "Illegal SAM tag: Type must be char.");
+    static_assert(std::same_as<char_t, char>, "Illegal SAM tag: Type must be char.");
     constexpr small_string<sizeof...(s)> str{std::array<char, sizeof...(s)>{s...}};
 #pragma GCC diagnostic pop
 #endif
@@ -300,7 +300,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  *
  * Example:
  *
- * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/general_usage.cpp all
+ * \include test/snippet/io/alignment_file/sam_tag_dictionary/general_usage.cpp
  *
  * \attention You can get any SAM_tag out of the dictionary, even if the tag is
  *            user defined, but note that for unknown tags the return type is an
@@ -310,7 +310,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  *
  * Unknown Tag Example:
  *
- * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/unknown_tag.cpp all
+ * \include test/snippet/io/alignment_file/sam_tag_dictionary/unknown_tag.cpp
  *
  * As mentioned before you can either overload the type trait seqan3::sam_tag_type
  * for the tag "XZ" or learn more about an std::variant at
@@ -349,7 +349,7 @@ public:
     //!\brief Uses std::map::operator[] for access and default initializes new keys.
     template <uint16_t tag>
     //!\cond
-        requires !std::Same<sam_tag_type_t<tag>, variant_type>
+        requires !std::same_as<sam_tag_type_t<tag>, variant_type>
     //!\endcond
     auto & get() &
     {
@@ -362,7 +362,7 @@ public:
     //!\brief Uses std::map::operator[] for access and default initializes new keys.
     template <uint16_t tag>
     //!\cond
-        requires !std::Same<sam_tag_type_t<tag>, variant_type>
+        requires !std::same_as<sam_tag_type_t<tag>, variant_type>
     //!\endcond
     auto && get() &&
     {
@@ -376,7 +376,7 @@ public:
     //!\throws std::out_of_range if map has no key `tag`.
     template <uint16_t tag>
     //!\cond
-        requires !std::Same<sam_tag_type_t<tag>, variant_type>
+        requires !std::same_as<sam_tag_type_t<tag>, variant_type>
     //!\endcond
     auto const & get() const &
     {
@@ -387,7 +387,7 @@ public:
     //!\throws std::out_of_range if map has no key `tag`.
     template <uint16_t tag>
     //!\cond
-        requires !std::Same<sam_tag_type_t<tag>, variant_type>
+        requires !std::same_as<sam_tag_type_t<tag>, variant_type>
     //!\endcond
     auto const && get() const &&
     {

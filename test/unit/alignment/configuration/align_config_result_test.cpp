@@ -27,9 +27,9 @@ using test_types = ::testing::Types<detail::with_score_type,
 
 TYPED_TEST_CASE(align_cfg_result_test, test_types);
 
-TEST(align_config_max_error, ConfigElement)
+TEST(align_config_max_error, config_element)
 {
-    EXPECT_TRUE((detail::ConfigElement<align_cfg::result<detail::with_score_type>>));
+    EXPECT_TRUE((detail::config_element<align_cfg::result<detail::with_score_type>>));
 }
 
 template <typename type>

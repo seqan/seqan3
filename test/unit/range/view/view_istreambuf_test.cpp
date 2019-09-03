@@ -85,15 +85,15 @@ TEST(view_istreambuf, concepts)
     std::istringstream is{data};
     auto v1 = view::istreambuf(is);
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), char>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v1), char>));
 }
 
 TEST(view_istreambuf, big_file_stram)

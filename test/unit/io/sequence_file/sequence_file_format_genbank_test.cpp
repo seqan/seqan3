@@ -25,8 +25,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((SequenceFileInputFormat<format_genbank>));
-    EXPECT_TRUE((SequenceFileOutputFormat<format_genbank>));
+    EXPECT_TRUE((sequence_file_input_format<format_genbank>));
+    EXPECT_TRUE((sequence_file_output_format<format_genbank>));
 }
 
 // ----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ ORIGIN
 )"
     };
 
-    detail::sequence_file_input_format<format_genbank> format;
+    detail::sequence_file_input_format_REMOVEME<format_genbank> format;
 
     sequence_file_input_options<dna5, false> options;
 
@@ -302,7 +302,7 @@ ORIGIN
 )"
     };
 
-    detail::sequence_file_output_format<format_genbank> format;
+    detail::sequence_file_output_format_REMOVEME<format_genbank> format;
 
     sequence_file_output_options options;
 

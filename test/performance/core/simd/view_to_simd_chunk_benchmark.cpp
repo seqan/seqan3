@@ -74,7 +74,7 @@ void to_simd_naive_wo_condition(benchmark::State& state)
     state.counters["value"] = value;
 }
 
-// runs with ContiguousRange
+// runs with contiguous_range
 BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<dna4>, simd_type_t<int8_t>);
 BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<dna4>, simd_type_t<int16_t>);
 BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<dna4>, simd_type_t<int32_t>);
@@ -122,7 +122,7 @@ void to_simd_naive_w_condition(benchmark::State& state)
     state.counters["value"] = value;
 }
 
-// runs with ContiguousRange
+// runs with contiguous_range
 BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<dna4>, simd_type_t<int8_t>);
 BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<dna4>, simd_type_t<int16_t>);
 BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<dna4>, simd_type_t<int32_t>);
@@ -158,7 +158,7 @@ void to_simd(benchmark::State& state)
     state.counters["value"] = value;
 }
 
-// runs with ContiguousRange
+// runs with contiguous_range
 BENCHMARK_TEMPLATE(to_simd, std::vector<dna4>, simd_type_t<int8_t>);
 BENCHMARK_TEMPLATE(to_simd, std::vector<dna4>, simd_type_t<int16_t>);
 BENCHMARK_TEMPLATE(to_simd, std::vector<dna4>, simd_type_t<int32_t>);
@@ -169,7 +169,7 @@ BENCHMARK_TEMPLATE(to_simd, std::deque<dna4>, simd_type_t<int16_t>);
 BENCHMARK_TEMPLATE(to_simd, std::deque<dna4>, simd_type_t<int32_t>);
 BENCHMARK_TEMPLATE(to_simd, std::deque<dna4>, simd_type_t<int64_t>);
 
-// runs without ContiguousRange
+// runs without contiguous_range
 BENCHMARK_TEMPLATE(to_simd, std::list<dna4>, simd_type_t<int8_t>);
 BENCHMARK_TEMPLATE(to_simd, std::list<dna4>, simd_type_t<int16_t>);
 BENCHMARK_TEMPLATE(to_simd, std::list<dna4>, simd_type_t<int32_t>);

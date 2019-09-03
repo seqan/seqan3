@@ -35,8 +35,8 @@ namespace seqan3::detail
  */
  template <typename trace_matrix_t>
  //!\cond
-     requires Matrix<remove_cvref_t<trace_matrix_t>> &&
-              std::Same<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions>
+     requires matrix<remove_cvref_t<trace_matrix_t>> &&
+              std::same_as<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions>
  //!\endcond
 inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
                                                        alignment_coordinate const back_coordinate)
@@ -93,13 +93,13 @@ inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
  * \returns Returns a seqan3::aligned_sequence.
  */
 template <
-    TupleLike alignment_t,
+    tuple_like alignment_t,
     typename database_t,
     typename query_t,
     typename trace_matrix_t>
 //!\cond
-    requires Matrix<remove_cvref_t<trace_matrix_t>> &&
-             std::Same<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions> &&
+    requires matrix<remove_cvref_t<trace_matrix_t>> &&
+             std::same_as<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions> &&
              detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<alignment_t>>
 //!\endcond
 inline alignment_t alignment_trace(database_t && database,

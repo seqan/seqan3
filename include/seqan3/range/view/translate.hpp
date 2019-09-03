@@ -35,19 +35,19 @@
 namespace seqan3::detail
 {
 
-template <std::ranges::View urng_t>
+template <std::ranges::view urng_t>
 //!\cond
-    requires std::ranges::SizedRange<urng_t> &&
-             std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<reference_t<urng_t>>
+    requires std::ranges::sized_range<urng_t> &&
+             std::ranges::random_access_range<urng_t> &&
+             nucleotide_alphabet<reference_t<urng_t>>
 //!\endcond
 class view_translate;
 
-template <std::ranges::View urng_t>
+template <std::ranges::view urng_t>
 //!\cond
-    requires std::ranges::SizedRange<urng_t> &&
-             std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<reference_t<urng_t>>
+    requires std::ranges::sized_range<urng_t> &&
+             std::ranges::random_access_range<urng_t> &&
+             nucleotide_alphabet<reference_t<urng_t>>
 //!\endcond
 class view_translate_single;
 
@@ -112,17 +112,17 @@ struct translate_fn
      * \param[in] tf     The frame that should be used for translation.
      * \returns          A range of translated sequence(s).
      */
-    template <std::ranges::Range urng_t>
+    template <std::ranges::range urng_t>
     constexpr auto operator()(urng_t && urange, translation_frames const tf = default_frames) const
     {
-        static_assert(std::ranges::ViewableRange<urng_t>,
+        static_assert(std::ranges::viewable_range<urng_t>,
             "The range parameter to view::translate[_single] cannot be a temporary of a non-view range.");
-        static_assert(std::ranges::SizedRange<urng_t>,
-            "The range parameter to view::translate[_single] must model std::ranges::SizedRange.");
-        static_assert(std::ranges::RandomAccessRange<urng_t>,
-            "The range parameter to view::translate[_single] must model std::ranges::RandomAccessRange.");
-        static_assert(NucleotideAlphabet<reference_t<urng_t>>,
-            "The range parameter to view::translate[_single] must be over elements of seqan3::NucleotideAlphabet.");
+        static_assert(std::ranges::sized_range<urng_t>,
+            "The range parameter to view::translate[_single] must model std::ranges::sized_range.");
+        static_assert(std::ranges::random_access_range<urng_t>,
+            "The range parameter to view::translate[_single] must model std::ranges::random_access_range.");
+        static_assert(nucleotide_alphabet<reference_t<urng_t>>,
+            "The range parameter to view::translate[_single] must be over elements of seqan3::nucleotide_alphabet.");
 
         if constexpr (single)
             return detail::view_translate_single{std::forward<urng_t>(urange), tf};
@@ -131,7 +131,7 @@ struct translate_fn
     }
 
     //!\brief This adaptor is usable without setting the frames parameter in which case the default is chosen.
-    template <std::ranges::Range urng_t>
+    template <std::ranges::range urng_t>
     constexpr friend auto operator|(urng_t && urange, translate_fn const & me)
     {
         return me(std::forward<urng_t>(urange));
@@ -143,16 +143,16 @@ struct translate_fn
 // ============================================================================
 
 /*!\brief The return type of seqan3::view::translate_single.
- * \implements std::ranges::View
- * \implements std::ranges::SizedRange
- * \implements std::ranges::RandomAccessRange
+ * \implements std::ranges::view
+ * \implements std::ranges::sized_range
+ * \implements std::ranges::random_access_range
  * \ingroup view
  */
-template <std::ranges::View urng_t>
+template <std::ranges::view urng_t>
 //!\cond
-    requires std::ranges::SizedRange<urng_t> &&
-             std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<reference_t<urng_t>>
+    requires std::ranges::sized_range<urng_t> &&
+             std::ranges::random_access_range<urng_t> &&
+             nucleotide_alphabet<reference_t<urng_t>>
 //!\endcond
 class view_translate_single : public ranges::view_base
 {
@@ -223,9 +223,9 @@ public:
      */
     template <typename rng_t>
     //!\cond
-     requires !std::Same<remove_cvref_t<rng_t>, view_translate_single> &&
-              std::ranges::ViewableRange<rng_t> &&
-              std::Constructible<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
+     requires !std::same_as<remove_cvref_t<rng_t>, view_translate_single> &&
+              std::ranges::viewable_range<rng_t> &&
+              std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
     view_translate_single(rng_t && _urange, translation_frames const _tf = translation_frames::FWD_FRAME_0)
      : view_translate_single{std::view::all(std::forward<rng_t>(_urange)), _tf}
@@ -477,22 +477,22 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       | *required*                            | *preserved*                                        |
- * | std::ranges::BidirectionalRange | *required*                            | *preserved*                                        |
- * | std::ranges::RandomAccessRange  | *required*                            | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         | *required*                            | *preserved*                                        |
- * | std::ranges::CommonRange        |                                       | *guaranteed*                                       |
- * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::ConstIterableRange      | *required*                            | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | seqan3::aa27                                       |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |----------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                        |
+ * | std::ranges::forward_range       | *required*                            | *preserved*                                        |
+ * | std::ranges::bidirectional_range | *required*                            | *preserved*                                        |
+ * | std::ranges::random_access_range | *required*                            | *preserved*                                        |
+ * | std::ranges::contiguous_range    |                                       | *lost*                                             |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::view                |                                       | *guaranteed*                                       |
+ * | std::ranges::sized_range         | *required*                            | *preserved*                                        |
+ * | std::ranges::common_range        |                                       | *guaranteed*                                       |
+ * | std::ranges::output_range        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_range     | *required*                            | *preserved*                                        |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::range_reference_t   | seqan3::nucleotide_alphabet            | seqan3::aa27                                       |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.
@@ -516,18 +516,18 @@ namespace seqan3::detail
 {
 
 /*!\brief The return type of seqan3::view::translate.
- * \implements std::ranges::View
- * \implements std::ranges::SizedRange
- * \implements std::ranges::RandomAccessRange
+ * \implements std::ranges::view
+ * \implements std::ranges::sized_range
+ * \implements std::ranges::random_access_range
  * \tparam urng_t The type of the range being translated.
  * \param[in] tf Translation frames to be used.
  * \ingroup view
  */
-template <std::ranges::View urng_t>
+template <std::ranges::view urng_t>
 //!\cond
-    requires std::ranges::SizedRange<urng_t> &&
-             std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<reference_t<urng_t>>
+    requires std::ranges::sized_range<urng_t> &&
+             std::ranges::random_access_range<urng_t> &&
+             nucleotide_alphabet<reference_t<urng_t>>
 //!\endcond
 class view_translate : public ranges::view_base
 {
@@ -561,7 +561,7 @@ public:
 
 protected:
     /*!\name Compatibility
-     * \brief Static constexpr variables that emulate/encapsulate seqan3::Compatible (which doesn't work for types during their definition).
+     * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible (which doesn't work for types during their definition).
      * \{
      */
     //!\cond
@@ -613,9 +613,9 @@ public:
      */
     template <typename rng_t>
     //!\cond
-        requires !std::Same<remove_cvref_t<rng_t>, view_translate> &&
-                 std::ranges::ViewableRange<rng_t> &&
-                 std::Constructible<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
+        requires !std::same_as<remove_cvref_t<rng_t>, view_translate> &&
+                 std::ranges::viewable_range<rng_t> &&
+                 std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
     view_translate(rng_t && _urange, translation_frames const _tf = translation_frames::SIX_FRAME)
      : view_translate{std::view::all(std::forward<rng_t>(_urange)), _tf}
@@ -744,9 +744,9 @@ public:
 //!\brief Class template argument deduction for view_translate.
 template <typename urng_t>
 //!\cond
-    requires std::ranges::SizedRange<urng_t> &&
-             std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<reference_t<urng_t>>
+    requires std::ranges::sized_range<urng_t> &&
+             std::ranges::random_access_range<urng_t> &&
+             nucleotide_alphabet<reference_t<urng_t>>
 //!\endcond
 view_translate(urng_t &&, translation_frames const = translation_frames{}) -> view_translate<std::ranges::all_view<urng_t>>;
 
@@ -781,22 +781,22 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       | *required*                            | *preserved*                                        |
- * | std::ranges::BidirectionalRange | *required*                            | *preserved*                                        |
- * | std::ranges::RandomAccessRange  | *required*                            | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         | *required*                            | *preserved*                                        |
- * | std::ranges::CommonRange        |                                       | *guaranteed*                                       |
- * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::ConstIterableRange      | *required*                            | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | std::ranges::View && std::ranges::RandomAccessRange && std::ranges::SizedRange |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |----------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                        |
+ * | std::ranges::forward_range       | *required*                            | *preserved*                                        |
+ * | std::ranges::bidirectional_range | *required*                            | *preserved*                                        |
+ * | std::ranges::random_access_range | *required*                            | *preserved*                                        |
+ * | std::ranges::contiguous_range    |                                       | *lost*                                             |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::view                |                                       | *guaranteed*                                       |
+ * | std::ranges::sized_range         | *required*                            | *preserved*                                        |
+ * | std::ranges::common_range        |                                       | *guaranteed*                                       |
+ * | std::ranges::output_range        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_range     | *required*                            | *preserved*                                        |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::range_reference_t   | seqan3::nucleotide_alphabet            | std::ranges::view && std::ranges::random_access_range && std::ranges::sized_range |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.

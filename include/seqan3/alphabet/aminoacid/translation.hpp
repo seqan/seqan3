@@ -49,19 +49,19 @@ class rna15;
  *
  * No-throw guarantee.
  */
-template <genetic_code gc = genetic_code::CANONICAL, NucleotideAlphabet nucl_type>
+template <genetic_code gc = genetic_code::CANONICAL, nucleotide_alphabet nucl_type>
 constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) noexcept
 {
-    if constexpr (std::Same<nucl_type, dna4> || std::Same<nucl_type, dna5> || std::Same<nucl_type, dna15>)
+    if constexpr (std::same_as<nucl_type, dna4> || std::same_as<nucl_type, dna5> || std::same_as<nucl_type, dna15>)
     {
         // table exists for dna15 and is generated for dna4 and dna5 (compile time ok, because small)
         return seqan3::detail::translation_table<nucl_type, gc>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
     }
-    else if constexpr (std::Same<nucl_type, rna4> || std::Same<nucl_type, rna5> || std::Same<nucl_type, rna15>)
+    else if constexpr (std::same_as<nucl_type, rna4> || std::same_as<nucl_type, rna5> || std::same_as<nucl_type, rna15>)
     {
-        using rna2dna_t = std::conditional_t<std::Same<nucl_type, rna4>,  dna4,
-                          std::conditional_t<std::Same<nucl_type, rna5>,  dna5,
-                          std::conditional_t<std::Same<nucl_type, rna15>, dna15, void>>>;
+        using rna2dna_t = std::conditional_t<std::same_as<nucl_type, rna4>,  dna4,
+                          std::conditional_t<std::same_as<nucl_type, rna5>,  dna5,
+                          std::conditional_t<std::same_as<nucl_type, rna15>, dna15, void>>>;
 
         // we can use dna's tables, because ranks are identical
         return seqan3::detail::translation_table<rna2dna_t, gc>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
@@ -98,9 +98,9 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
 template <genetic_code gc = genetic_code::CANONICAL, typename tuple_type>
 //!\cond
     requires std::tuple_size<tuple_type>::value == 3 &&
-             NucleotideAlphabet<std::tuple_element_t<0, tuple_type>> &&
-             NucleotideAlphabet<std::tuple_element_t<1, tuple_type>> &&
-             NucleotideAlphabet<std::tuple_element_t<2, tuple_type>>
+             nucleotide_alphabet<std::tuple_element_t<0, tuple_type>> &&
+             nucleotide_alphabet<std::tuple_element_t<1, tuple_type>> &&
+             nucleotide_alphabet<std::tuple_element_t<2, tuple_type>>
 //!\endcond
 constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (tuple_type const & input_tuple) noexcept
 {
@@ -109,7 +109,7 @@ constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (tuple_type const & input
 
 /*!\brief Translate one nucleotide triplet into single amino acid (range interface).
  * \ingroup aminoacid
- * \tparam range_type Type of input_range; must satisfy std::ranges::InputRange.
+ * \tparam range_type Type of input_range; must satisfy std::ranges::input_range.
  * \param[in] input_range Range of three nucleotides that should be converted to amino acid.
  *
  * \details
@@ -126,9 +126,9 @@ constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (tuple_type const & input
  *
  * \deprecated Use seqan3::translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) instead.
  */
-template <genetic_code gc = genetic_code::CANONICAL, std::ranges::InputRange range_type>
+template <genetic_code gc = genetic_code::CANONICAL, std::ranges::input_range range_type>
 //!\cond
-    requires NucleotideAlphabet<reference_t<std::decay_t<range_type>>>
+    requires nucleotide_alphabet<reference_t<std::decay_t<range_type>>>
 //!\endcond
 constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_range)
 {
@@ -145,7 +145,7 @@ constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_rang
 
 /*!\brief Translate one nucleotide triplet into single amino acid (range interface, input range allows random access).
  * \ingroup aminoacid
- * \tparam range_type Type of input_range; must satisfy std::ranges::RandomAccessRange.
+ * \tparam range_type Type of input_range; must satisfy std::ranges::random_access_range.
  * \param[in] input_range Range of three nucleotides that should be converted to amino acid.
  *
  * \details
@@ -162,9 +162,9 @@ constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_rang
  *
  * \deprecated Use seqan3::translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) instead.
  */
-template <genetic_code gc = genetic_code::CANONICAL, std::ranges::RandomAccessRange range_type>
+template <genetic_code gc = genetic_code::CANONICAL, std::ranges::random_access_range range_type>
 //!\cond
-    requires NucleotideAlphabet<reference_t<std::decay_t<range_type>>>
+    requires nucleotide_alphabet<reference_t<std::decay_t<range_type>>>
 //!\endcond
 constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_range)
 {

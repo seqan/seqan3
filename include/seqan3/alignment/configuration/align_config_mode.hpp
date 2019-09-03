@@ -88,8 +88,8 @@ namespace seqan3::align_cfg
  */
 template <typename mode_type>
 //!\cond
-    requires std::Same<remove_cvref_t<mode_type>, detail::global_alignment_type> ||
-             std::Same<remove_cvref_t<mode_type>, detail::local_alignment_type>
+    requires std::same_as<remove_cvref_t<mode_type>, detail::global_alignment_type> ||
+             std::same_as<remove_cvref_t<mode_type>, detail::local_alignment_type>
 //!\endcond
 struct mode : public pipeable_config_element<mode<mode_type>, mode_type>
 {

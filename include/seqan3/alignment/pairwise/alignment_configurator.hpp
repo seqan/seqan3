@@ -35,42 +35,42 @@ namespace seqan3::detail
 //!\brief A helper concept to test for correct input in seqan3::align_pairwise.
 //!\ingroup pairwise_alignment
 template <typename value_t>
-SEQAN3_CONCEPT AlignPairwiseValue =
-    TupleLike<value_t> &&
+SEQAN3_CONCEPT align_pairwise_value =
+    tuple_like<value_t> &&
     std::tuple_size_v<value_t> == 2 &&
-    std::ranges::ForwardRange<std::tuple_element_t<0, value_t>> &&
-    std::ranges::ForwardRange<std::tuple_element_t<1, value_t>>;
+    std::ranges::forward_range<std::tuple_element_t<0, value_t>> &&
+    std::ranges::forward_range<std::tuple_element_t<1, value_t>>;
 
 //!\brief A helper concept to test for correct single value input in seqan3::align_pairwise.
 //!\ingroup pairwise_alignment
-//!\see seqan3::detail::AlignPairwiseValue
-//!\see seqan3::detail::AlignPairwiseRangeInputConcept
+//!\see seqan3::detail::align_pairwise_value
+//!\see seqan3::detail::align_pairwise_range_input_concept
 template <typename value_t>
-SEQAN3_CONCEPT AlignPairwiseSingleInput =
-    AlignPairwiseValue<value_t> &&
-    std::ranges::ViewableRange<std::tuple_element_t<0, value_t>> &&
-    std::ranges::ViewableRange<std::tuple_element_t<1, value_t>>;
+SEQAN3_CONCEPT align_pairwise_single_input =
+    align_pairwise_value<value_t> &&
+    std::ranges::viewable_range<std::tuple_element_t<0, value_t>> &&
+    std::ranges::viewable_range<std::tuple_element_t<1, value_t>>;
 
 /*!\brief A helper concept to test for correct range input in seqan3::align_pairwise.
  * \ingroup pairwise_alignment
  *
  * \details
  *
- * Only use input ranges whose value type models seqan3::detail::AlignPairwiseValue and
- * whose reference type is an lvalue reference and the range itself models std::ranges::ViewableRange or
- * the reference type is a prvalue and it models seqan3::detail::AlignPairwiseSingleInput.
+ * Only use input ranges whose value type models seqan3::detail::align_pairwise_value and
+ * whose reference type is an lvalue reference and the range itself models std::ranges::viewable_range or
+ * the reference type is a prvalue and it models seqan3::detail::align_pairwise_single_input.
  * This covers all typical use cases:
  * a) A lvalue range, whose reference type is a tuple like lvalue reference,
  * b) A range, whose reference type is a tuple over viewable ranges.
- * This covers also transforming and non-transforming views (e.g. std::ranges::view::zip, or view::take).
+ * This covers also transforming and non-transforming views (e.g. std::view::zip, or view::take).
  * Only a temporary non-view range piped with view::persist can't be handled securely.
  */
 template <typename range_t>
-SEQAN3_CONCEPT AlignPairwiseRangeInputConcept =
-    std::ranges::InputRange<std::remove_reference_t<range_t>> &&
-    AlignPairwiseValue<value_type_t<range_t>> &&
-    ((std::ranges::ViewableRange<range_t> && std::is_lvalue_reference_v<reference_t<range_t>>) ||
-     AlignPairwiseSingleInput<std::remove_reference_t<reference_t<range_t>>>);
+SEQAN3_CONCEPT align_pairwise_range_input_concept =
+    std::ranges::input_range<std::remove_reference_t<range_t>> &&
+    align_pairwise_value<value_type_t<range_t>> &&
+    ((std::ranges::viewable_range<range_t> && std::is_lvalue_reference_v<reference_t<range_t>>) ||
+     align_pairwise_single_input<std::remove_reference_t<reference_t<range_t>>>);
 
 /*!\brief Provides several contracts to test when configuring the alignment algorithm.
  * \ingroup pairwise_alignment
@@ -101,7 +101,7 @@ public:
     //!\brief Tests whether the value type of `range_type` is a tuple with exactly 2 members.
     constexpr static bool expects_tuple_like_value_type()
     {
-        return TupleLike<alignment_config_type> &&
+        return tuple_like<alignment_config_type> &&
                std::tuple_size_v<value_type_t<std::ranges::iterator_t<unref_range_type>>> == 2;
     }
 
@@ -113,7 +113,7 @@ public:
             using scoring_type = std::remove_reference_t<
                                     decltype(get<align_cfg::scoring>(std::declval<alignment_config_type>()).value)
                                  >;
-            return static_cast<bool>(ScoringScheme<scoring_type,
+            return static_cast<bool>(scoring_scheme<scoring_type,
                                                    value_type_t<first_seq_t>,
                                                    value_type_t<second_seq_t>>);
         }
@@ -131,7 +131,7 @@ public:
 };
 
 /*!\brief Configures the alignment algorithm given the sequences and the configuration object.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \ingroup pairwise_alignment
  */
 struct alignment_configurator
@@ -231,7 +231,7 @@ private:
 
 public:
     /*!\brief Configures the algorithm.
-     * \tparam sequences_t The range type containing the sequence pairs; must model std::ranges::ForwardRange.
+     * \tparam sequences_t The range type containing the sequence pairs; must model std::ranges::forward_range.
      * \tparam config_t    The alignment configuration type; must be a specialisation of seqan3::configuration.
      * \param[in] cfg      The configuration object.
      *
@@ -249,7 +249,7 @@ public:
      * Note that even if they are not passed as const lvalue reference (which is not possible, since not all views are
      * const-iterable), they are not modified within the alignment algorithm.
      */
-    template <AlignPairwiseRangeInputConcept sequences_t, typename config_t>
+    template <align_pairwise_range_input_concept sequences_t, typename config_t>
     //!\cond
         requires is_type_specialisation_of_v<config_t, configuration>
     //!\endcond
@@ -297,7 +297,7 @@ public:
 
             static_assert(alignment_contract_t::expects_tuple_like_value_type(),
                           "Alignment configuration error: "
-                          "The value type of the sequence ranges must model the seqan3::TupleLike "
+                          "The value type of the sequence ranges must model the seqan3::tuple_like "
                           "and must contain exactly 2 elements.");
 
             static_assert(alignment_contract_t::expects_valid_scoring_scheme(),

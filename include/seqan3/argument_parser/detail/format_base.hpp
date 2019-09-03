@@ -82,7 +82,7 @@ protected:
      * \tparam container_type The container type for which to query it's value_type.
      * \returns The type of the container value_type as a string.
      */
-    template <SequenceContainer container_type>
+    template <sequence_container container_type>
     //!\cond
         requires !std::is_same_v<container_type, std::string>
     //!\endcond
@@ -104,14 +104,14 @@ protected:
     }
 
     /*!\brief Formats the container and its value_type for the help page printing.
-     * \tparam container_type A type that must satisfy the seqan3::SequenceContainer.
+     * \tparam container_type A type that must satisfy the seqan3::sequence_container.
      * \param[in] container The container to deduct the type from.
      *
      * \returns The type of the container value type as a string, encapsulated in "List of".
      */
     template <typename container_type>
     //!\cond
-        requires SequenceContainer<container_type> && !std::is_same_v<container_type, std::string>
+        requires sequence_container<container_type> && !std::is_same_v<container_type, std::string>
     //!\endcond
     static std::string option_type_and_list_info(container_type const & container)
     {
@@ -296,7 +296,7 @@ public:
                                                           option_type_and_list_info(value)),
                                         desc +
                                         // a list at the end may be empty and thus have a default value
-                                        ((SequenceContainer<option_type> && !std::Same<option_type, std::string>)
+                                        ((sequence_container<option_type> && !std::same_as<option_type, std::string>)
                                             ? detail::to_string(" Default: ", value, ". ")
                                             : std::string{" "}) +
                                         validator.get_help_page_message());

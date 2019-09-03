@@ -22,15 +22,15 @@ namespace seqan3
  * \{
  */
 /*!\brief All alphabets can be printed to the seqan3::debug_stream by their char representation.
- * \tparam alphabet_t Type of the alphabet to be printed; must model seqan3::Alphabet.
+ * \tparam alphabet_t Type of the alphabet to be printed; must model seqan3::alphabet.
  * \param s The seqan3::debug_stream.
  * \param l The alphabet letter.
  * \relates seqan3::debug_stream_type
  */
-template <Alphabet alphabet_t, typename char_t>
+template <alphabet alphabet_t, typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t const l)
 //!\cond
-    requires !OStream<std::basic_ostream<char_t>, alphabet_t>
+    requires !output_stream_over<std::basic_ostream<char_t>, alphabet_t>
 //!\endcond
 {
     return s << to_char(l);

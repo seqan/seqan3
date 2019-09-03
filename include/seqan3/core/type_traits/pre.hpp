@@ -26,7 +26,7 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `value_type` of another type.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query.
  * \see seqan3::value_type_t
  *
@@ -40,7 +40,7 @@ namespace seqan3
 template <typename t>
 struct value_type;
 
-/*!\brief Shortcut for seqan3::value_type (TransformationTrait shortcut).
+/*!\brief Shortcut for seqan3::value_type (transformation_trait shortcut).
  * \tparam t The type you wish to query.
  * \see seqan3::value_type
  */
@@ -55,7 +55,7 @@ using value_type_t = typename value_type<t>::type;
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `reference` of another type.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query.
  * \see seqan3::reference_t
  *
@@ -69,7 +69,7 @@ using value_type_t = typename value_type<t>::type;
 template <typename t>
 struct reference;
 
-/*!\brief Shortcut for seqan3::reference (TransformationTrait shortcut).
+/*!\brief Shortcut for seqan3::reference (transformation_trait shortcut).
  * \tparam t The type you wish to query.
  * \see seqan3::reference
  */
@@ -84,7 +84,7 @@ using reference_t = typename reference<t>::type;
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `rvalue_reference` of another type.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query.
  * \see seqan3::rvalue_reference_t
  *
@@ -98,7 +98,7 @@ using reference_t = typename reference<t>::type;
 template <typename t>
 struct rvalue_reference;
 
-/*!\brief Shortcut for seqan3::rvalue_reference (TransformationTrait shortcut).
+/*!\brief Shortcut for seqan3::rvalue_reference (transformation_trait shortcut).
  * \tparam t The type you wish to query.
  * \see seqan3::rvalue_reference
  */
@@ -113,7 +113,7 @@ using rvalue_reference_t = typename rvalue_reference<t>::type;
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `const_reference` of another type.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query.
  * \see seqan3::const_reference_t
  *
@@ -129,7 +129,7 @@ using rvalue_reference_t = typename rvalue_reference<t>::type;
 template <typename t>
 struct const_reference;
 
-/*!\brief Shortcut for seqan3::const_reference (TransformationTrait shortcut).
+/*!\brief Shortcut for seqan3::const_reference (transformation_trait shortcut).
  * \tparam t The type you wish to query.
  * \see seqan3::const_reference
  */
@@ -144,7 +144,7 @@ using const_reference_t = typename const_reference<t>::type;
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `difference_type` of another type.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query.
  * \see seqan3::difference_type_t
  *
@@ -158,7 +158,7 @@ using const_reference_t = typename const_reference<t>::type;
 template <typename t>
 struct difference_type;
 
-/*!\brief Shortcut for seqan3::difference_type (TransformationTrait shortcut).
+/*!\brief Shortcut for seqan3::difference_type (transformation_trait shortcut).
  * \tparam t The type you wish to query.
  * \see seqan3::difference_type
  */
@@ -173,7 +173,7 @@ using difference_type_t = typename difference_type<t>::type;
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `size_type` of another type.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query.
  * \see seqan3::size_type_t
  *
@@ -187,7 +187,7 @@ using difference_type_t = typename difference_type<t>::type;
 template <typename t>
 struct size_type;
 
-/*!\brief Shortcut for seqan3::size_type (TransformationTrait shortcut).
+/*!\brief Shortcut for seqan3::size_type (transformation_trait shortcut).
  * \tparam t The type you wish to query.
  * \see seqan3::size_type
  */

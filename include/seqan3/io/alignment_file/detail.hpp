@@ -32,7 +32,7 @@ namespace seqan3::detail
 struct view_equality_fn
 {
     //!\brief Compares to ranges by delegating to std::ranges::equal.
-    template <std::ranges::ForwardRange rng1_type, std::ranges::ForwardRange rng2_type>
+    template <std::ranges::forward_range rng1_type, std::ranges::forward_range rng2_type>
     constexpr bool operator()(rng1_type && rng1, rng2_type && rng2) const
     {
         return std::ranges::equal(rng1, rng2);
@@ -80,12 +80,12 @@ struct view_equality_fn
  * in the extended CIGAR alphabet (\p extended_cigar = `true`) the function
  * will return an 'X' since the bases are aligned but are not
  * equal.
- * \sa seqan3::AlignedSequence
+ * \sa seqan3::aligned_sequence
  */
 template <typename reference_char_type, typename query_char_type>
 //!\cond
-    requires std::detail::WeaklyEqualityComparableWith<reference_char_type, gap> &&
-             std::detail::WeaklyEqualityComparableWith<query_char_type, gap>
+    requires std::detail::weakly_equality_comparable_with<reference_char_type, gap> &&
+             std::detail::weakly_equality_comparable_with<query_char_type, gap>
 //!\endcond
 char compare_aligned_values(reference_char_type const reference_char,
                             query_char_type const query_char,
@@ -108,9 +108,9 @@ char compare_aligned_values(reference_char_type const reference_char,
  *        corresponding CIGAR string.
  * \ingroup alignment_file
  *
- * \tparam ref_seq_type    Must model std::ranges::ForwardRange. The value_type must
+ * \tparam ref_seq_type    Must model std::ranges::forward_range. The value_type must
  *                         be equality comparable to seqan3::gap.
- * \tparam query_seq_type  Must model std::ranges::ForwardRange. The value_type must
+ * \tparam query_seq_type  Must model std::ranges::forward_range. The value_type must
  *                         be equality comparable to seqan3::gap.
  * \param  ref_seq         The reference sequence to compare against the query sequence.
  * \param  query_seq       The query sequence to build the CIGAR string for.
@@ -133,12 +133,12 @@ char compare_aligned_values(reference_char_type const reference_char,
  * In this case, the function seqan3::detail::get_cigar_string will return
  * the following cigar string when printed: "4M2I5M2D1M". The extended cigar
  * string would look like this: "3=1X2I3=1X1=2D1=".
- * \sa seqan3::AlignedSequence
+ * \sa seqan3::aligned_sequence
  */
-template <std::ranges::ForwardRange ref_seq_type, std::ranges::ForwardRange query_seq_type>
+template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range query_seq_type>
 //!\cond
-    requires std::detail::WeaklyEqualityComparableWith<gap, reference_t<ref_seq_type>> &&
-             std::detail::WeaklyEqualityComparableWith<gap, reference_t<query_seq_type>>
+    requires std::detail::weakly_equality_comparable_with<gap, reference_t<ref_seq_type>> &&
+             std::detail::weakly_equality_comparable_with<gap, reference_t<query_seq_type>>
 //!\endcond
 std::string get_cigar_string(ref_seq_type && ref_seq,
                              query_seq_type && query_seq,
@@ -193,9 +193,9 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
 /*!\brief Creates a CIGAR string (SAM format) given an alignment represented by two aligned sequences.
  * \ingroup alignment_file
  *
- * \tparam alignment_type  Must model the seqan3::TupleLike and must
+ * \tparam alignment_type  Must model the seqan3::tuple_like and must
  *                         have std::tuple_size 2. Each tuple element must model
- *                         std::ForwardRange and its value_type must be comparable
+ *                         std::forward_range and its value_type must be comparable
  *                         to seqan3::gap.
  * \param  alignment       The alignment, represented by a pair of aligned sequences,
  *                         to be transformed into CIGAR_vector based on the
@@ -227,9 +227,9 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
  * In this case, the function seqan3::detail::get_cigar_string will return
  * the following cigar string when printed: "4M2I5M2D1M". The extended cigar
  * string would look like this: "3=1X2I3=1X1=2D1=".
- * \sa seqan3::AlignedSequence
+ * \sa seqan3::aligned_sequence
  */
-template <TupleLike alignment_type>
+template <tuple_like alignment_type>
 //!\cond
     requires std::tuple_size_v<remove_cvref_t<alignment_type>> == 2
 //!\endcond
@@ -244,9 +244,9 @@ std::string get_cigar_string(alignment_type && alignment,
 /*!\brief Creates a CIGAR string (SAM format) given an alignment represented by two aligned sequences.
  * \ingroup alignment_file
  *
- * \tparam alignment_type  Must model the seqan3::TupleLike and must
+ * \tparam alignment_type  Must model the seqan3::tuple_like and must
  *                         have std::tuple_size 2. Each tuple element must model
- *                         std::ForwardRange and its value_type must be comparable
+ *                         std::forward_range and its value_type must be comparable
  *                         to seqan3::gap.
  * \param  alignment       The alignment, represented by a pair of aligned sequences,
  *                         to be transformed into CIGAR_vector based on the
@@ -278,9 +278,9 @@ std::string get_cigar_string(alignment_type && alignment,
  * In this case, the function seqan3::detail::get_cigar_vector will return
  * the following cigar vector when printed: "[('M',4),('I',2),('M',5),('D',2),('M',1)]".
  * The extended cigar string would look like this: "[('=',3)('X',1)('I',2)('=',3)('X',1)('=',1)('D',2)('=',1)]".
- * \sa seqan3::AlignedSequence
+ * \sa seqan3::aligned_sequence
  */
-template <TupleLike alignment_type>
+template <tuple_like alignment_type>
 //!\cond
     requires std::tuple_size_v<remove_cvref_t<alignment_type>> == 2
 //!\endcond
@@ -340,7 +340,7 @@ std::vector<std::pair<char, size_t>> get_cigar_vector(alignment_type && alignmen
 /*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
  * \ingroup alignment_file
  * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
- *                          std::ranges::InputRange.
+ *                          std::ranges::input_range.
  * \param[in]  cigar_input  The single pass input view over the cigar string to parse.
  *
  * \returns A tuple of size five containing (1) std::vector of operation-count pairs, e.g. (M, 3), that describe
@@ -351,7 +351,7 @@ std::vector<std::pair<char, size_t>> get_cigar_vector(alignment_type && alignmen
  *
  * For example, the view over the cigar string "1S4M1D2M2S" will return `{[(M,4), (D,1), (M,2)], 7, 6, 1, 2}`.
  */
-template <std::ranges::InputRange cigar_input_type>
+template <std::ranges::input_range cigar_input_type>
 std::tuple<std::vector<std::pair<char, size_t>>, size_t, size_t, size_t, size_t>
 parse_cigar(cigar_input_type && cigar_input)
 {
@@ -447,7 +447,7 @@ parse_cigar(cigar_input_type && cigar_input)
 /*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
  * \ingroup alignment_file
  * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
- *                          std::ranges::InputRange.
+ *                          std::ranges::input_range.
  * \param[in]  cigar_input  The single pass input view over the cigar string to parse.
  * \param[in]  n_cigar_op   number of cigar operations to expect in the input.
  *
@@ -459,7 +459,7 @@ parse_cigar(cigar_input_type && cigar_input)
  *
  * For example, the view over the cigar string "1S4M1D2M2S" will return `{[(M,4), (D,1), (M,2)], 7, 6, 1, 2}`.
  */
-template <std::ranges::InputRange cigar_input_type>
+template <std::ranges::input_range cigar_input_type>
 auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op)
 {
     std::vector<std::pair<char, size_t>> operations{};
@@ -549,8 +549,8 @@ auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op)
 /*!\brief Transforms a std::vector of operation-count pairs (representing the cigar string).
  * \ingroup alignment_file
  *
- * \tparam alignment_type The type of alignment; must model seqan3::TupleLike and all tuple element types
- *                        must model seqan3::AlignedSequence.
+ * \tparam alignment_type The type of alignment; must model seqan3::tuple_like and all tuple element types
+ *                        must model seqan3::aligned_sequence.
  *
  * \param[in,out] alignment  The alignment to fill with gaps according to the cigar information.
  * \param[in]     cigar      The cigar information given as a std::vector of operation-count pairs.
@@ -569,7 +569,7 @@ auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op)
  * ATGCCCCGTTG--C
  * ```
  */
-template <TupleLike alignment_type>
+template <tuple_like alignment_type>
 //!\cond
     requires std::tuple_size_v<remove_cvref_t<alignment_type>> == 2 &&
              detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<alignment_type>>

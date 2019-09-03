@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::format_embl tag and the seqan3::sequence_file_input_format and
- *        seqan3::sequence_file_output_format specialisation for this tag.
+ * \brief Provides the seqan3::format_embl tag and the seqan3::sequence_file_input_format_REMOVEME and
+ *        seqan3::sequence_file_output_format_REMOVEME specialisation for this tag.
  * \author Mitra Darvish <mitra.darvish AT fu-berlin.de>
  */
 
@@ -44,8 +44,8 @@
 namespace seqan3
 {
 /*!\brief       The EMBL format (tag).
- * \implements  seqan3::SequenceFileInputFormat
- * \implements  seqan3::SequenceFileOutputFormat
+ * \implements  seqan3::sequence_file_input_format
+ * \implements  seqan3::sequence_file_output_format
  * \ingroup     sequence
  *
  * \details
@@ -55,7 +55,7 @@ namespace seqan3
  * embl is the format used in ENA sequence records. See the
  * (ftp://ftp.ebi.ac.uk/pub/databases/embl/doc/usrman.txt) for a an in-depth description of the format.
  *
- * ### Fields
+ * ### fields_specialisation
  *
  * The embl format provides the fields seqan3::field::SEQ and seqan3::field::ID. Both fields are required when writing.
  *
@@ -86,10 +86,10 @@ struct format_embl
 namespace seqan3::detail
 {
 
-//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted EMBL input.
+//!\brief The seqan3::sequence_file_input_format_REMOVEME specialisation that handles formatted EMBL input.
 //!\ingroup sequence
 template <>
-class sequence_file_input_format<format_embl>
+class sequence_file_input_format_REMOVEME<format_embl>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -98,17 +98,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
+    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
-    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME const &)          = delete;
+    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format_REMOVEME()                                              noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc SequenceFileInputFormat::read
+    //!\copydoc sequence_file_input_format::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
@@ -210,10 +210,10 @@ public:
     }
 };
 
-//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted EMBL.
+//!\brief The seqan3::sequence_file_output_format_REMOVEME specialisation that can write formatted EMBL.
 //!\ingroup sequence
 template <>
-class sequence_file_output_format<format_embl>
+class sequence_file_output_format_REMOVEME<format_embl>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -222,17 +222,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
-    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME const &)          = delete;
+    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc SequenceFileOutputFormat::write
+    //!\copydoc sequence_file_output_format::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,

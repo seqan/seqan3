@@ -107,8 +107,8 @@
  *
  * ###Concept
  *
- * The nucleotide submodule defines seqan3::NucleotideAlphabet which encompasses all the alphabets defined in the
- * submodule and refines seqan3::Alphabet. The only additional requirement is that their values can be
+ * The nucleotide submodule defines seqan3::nucleotide_alphabet which encompasses all the alphabets defined in the
+ * submodule and refines seqan3::alphabet. The only additional requirement is that their values can be
  * complemented, see below.
  *
  * ###Complement
@@ -134,7 +134,7 @@
  *
  * In the typical structure of DNA molecules (or double-stranded RNA), each nucleotide has a complement that it
  * pairs with. To generate the complement value of a nucleotide letter, you can call an implementation of
- * seqan3::NucleotideAlphabet::complement() on it.
+ * seqan3::nucleotide_alphabet::complement() on it.
  *
  * The only exception to this table is the seqan3::dna3bs alphabet. The complement for 'G' is defined as 'T' since 'C' and 'T'
  * are treated as the same letters. However, it is not recommended to use the complement of seqan3::dna3bs but rather

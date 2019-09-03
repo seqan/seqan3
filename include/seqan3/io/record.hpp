@@ -120,7 +120,7 @@ enum class field
  *
  * ### Example
  *
- * \snippet test/snippet/io/record.cpp usage_1
+ * \include test/snippet/io/record_1.cpp
  *
  */
 template <field ...fs>
@@ -165,7 +165,7 @@ struct fields
 
 /*!\brief The class template that file records are based on; behaves like an std::tuple.
  * \ingroup io
- * \implements seqan3::TupleLike
+ * \implements seqan3::tuple_like
  * \tparam field_types The types of the fields in this record as a seqan3::type_list.
  * \tparam field_ids   A seqan3::fields type with seqan3::field IDs corresponding to field_types.
  *
@@ -181,7 +181,7 @@ struct fields
  *
  * This is how it works:
  *
- * \snippet test/snippet/io/record.cpp usage_2
+ * \include test/snippet/io/record_2.cpp
  */
 template <typename field_types, typename field_ids>
 struct record : detail::transfer_template_args_onto_t<field_types, std::tuple>
@@ -227,7 +227,7 @@ namespace std
 {
 
 /*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \relates seqan3::record
  * \see std::tuple_size_v
  */
@@ -239,7 +239,7 @@ struct tuple_size<seqan3::record<field_types, field_ids>>
 };
 
 /*!\brief Obtains the type of the specified element.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \relates seqan3::record
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */

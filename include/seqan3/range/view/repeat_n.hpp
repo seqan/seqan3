@@ -27,7 +27,7 @@ namespace seqan3::detail
 struct repeat_n_fn
 {
     /*!\brief Creates a range of size `count`, where each element equals `value`.
-     * \tparam    value_t The type of value to repeat; must be std::CopyConstructible.
+     * \tparam    value_t The type of value to repeat; must be std::copy_constructible.
      * \param[in] value   The value to repeat.
      * \param[in] count   The number of times to repeat `value`.
      * \returns A range of size `count`, where each element equals `value`.
@@ -35,7 +35,7 @@ struct repeat_n_fn
     template <typename value_t>
     constexpr auto operator()(value_t && value, size_t const count) const
     {
-        static_assert(std::CopyConstructible<value_t>, "The value passed to repeat_n must be copy constructible.");
+        static_assert(std::copy_constructible<value_t>, "The value passed to repeat_n must be copy constructible.");
 
         return view::repeat(std::forward<value_t>(value)) | view::take_exactly(count);
     }
@@ -50,7 +50,7 @@ namespace seqan3::view
  * \{
  */
 /*!\brief A view factory that repeats a given value `n` times.
- * \tparam    value_t The type of value to repeat; must be std::CopyConstructible.
+ * \tparam    value_t The type of value to repeat; must be std::copy_constructible.
  * \param[in] value   The value to repeat.
  * \param[in] count   The number of times to repeat `value`.
  * \returns A range of size `count`, where each element equals `value`.
@@ -67,22 +67,22 @@ namespace seqan3::view
  *
  * This view is **source-only**, it can only be at the beginning of a pipe of range transformations.
  *
- * | range concepts and reference_t  | `rrng_t` (returned range type)                     |
- * |---------------------------------|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *guaranteed*                                       |
- * | std::ranges::ForwardRange       | *guaranteed*                                       |
- * | std::ranges::BidirectionalRange | *guaranteed*                                       |
- * | std::ranges::RandomAccessRange  | *guaranteed*                                       |
- * | std::ranges::ContiguousRange    |                                                    |
- * |                                 |                                                    |
- * | std::ranges::ViewableRange      | *guaranteed*                                       |
- * | std::ranges::View               | *guaranteed*                                       |
- * | std::ranges::SizedRange         | *guaranteed*                                       |
- * | std::ranges::CommonRange        |                                                    |
- * | std::ranges::OutputRange        | *guaranteed*                                       |
- * | seqan3::ConstIterableRange      | *guaranteed*                                       |
- * |                                 |                                                    |
- * | seqan3::reference_t             | std::remove_reference_t<value_t> &                 |
+ * | Concepts and traits              | `rrng_t` (returned range type)                     |
+ * |----------------------------------|:--------------------------------------------------:|
+ * | std::ranges::input_range         | *guaranteed*                                       |
+ * | std::ranges::forward_range       | *guaranteed*                                       |
+ * | std::ranges::bidirectional_range | *guaranteed*                                       |
+ * | std::ranges::random_access_range | *guaranteed*                                       |
+ * | std::ranges::contiguous_range    |                                                    |
+ * |                                  |                                                    |
+ * | std::ranges::viewable_range      | *guaranteed*                                       |
+ * | std::ranges::view                | *guaranteed*                                       |
+ * | std::ranges::sized_range         | *guaranteed*                                       |
+ * | std::ranges::common_range        |                                                    |
+ * | std::ranges::output_range        | *guaranteed*                                       |
+ * | seqan3::const_iterable_range     | *guaranteed*                                       |
+ * |                                  |                                                    |
+ * | std::ranges::range_reference_t   | std::remove_reference_t<value_t> &                 |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

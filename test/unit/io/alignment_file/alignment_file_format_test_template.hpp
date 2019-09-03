@@ -146,7 +146,7 @@ TYPED_TEST_CASE_P(alignment_file_read);
 
 TYPED_TEST_P(alignment_file_read, input_concept)
 {
-    EXPECT_TRUE((AlignmentFileInputFormat<TypeParam>));
+    EXPECT_TRUE((alignment_file_input_format<TypeParam>));
 }
 
 // ----------------------------------------------------------------------------
@@ -359,7 +359,7 @@ TYPED_TEST_CASE_P(alignment_file_write);
 
 TYPED_TEST_P(alignment_file_write, output_concept)
 {
-    EXPECT_TRUE((AlignmentFileOutputFormat<TypeParam>));
+    EXPECT_TRUE((alignment_file_output_format<TypeParam>));
 }
 
 TYPED_TEST_P(alignment_file_write, write_empty_members)

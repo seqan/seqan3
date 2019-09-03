@@ -52,8 +52,8 @@ TYPED_TEST(seqan2_container, std_ranges_begin_end)
     auto it = std::ranges::begin(container);
     auto it_end = std::ranges::end(container);
 
-    EXPECT_TRUE((std::Same<decltype(it), decltype(seqan::begin(container))>));
-    EXPECT_TRUE((std::Same<decltype(it_end), decltype(seqan::end(container))>));
+    EXPECT_TRUE((std::same_as<decltype(it), decltype(seqan::begin(container))>));
+    EXPECT_TRUE((std::same_as<decltype(it_end), decltype(seqan::end(container))>));
 
     for (int i = 0; it != it_end; ++it, ++i)
     {
@@ -67,10 +67,10 @@ TYPED_TEST(seqan2_container, std_ranges_iterator)
     using iterator_t = decltype(std::ranges::begin(std::declval<container_t &>()));
     using const_iterator_t = decltype(std::ranges::begin(std::declval<container_t const &>()));
 
-    EXPECT_TRUE((std::Same<std::ranges::iterator_t<container_t>, iterator_t>));
-    EXPECT_TRUE((std::Same<std::ranges::iterator_t<container_t &>, iterator_t>));
-    EXPECT_TRUE((std::Same<std::ranges::iterator_t<container_t const>, const_iterator_t>));
-    EXPECT_TRUE((std::Same<std::ranges::iterator_t<container_t const &>, const_iterator_t>));
+    EXPECT_TRUE((std::same_as<std::ranges::iterator_t<container_t>, iterator_t>));
+    EXPECT_TRUE((std::same_as<std::ranges::iterator_t<container_t &>, iterator_t>));
+    EXPECT_TRUE((std::same_as<std::ranges::iterator_t<container_t const>, const_iterator_t>));
+    EXPECT_TRUE((std::same_as<std::ranges::iterator_t<container_t const &>, const_iterator_t>));
 }
 
 TYPED_TEST(seqan2_container, std_iterator_traits)
@@ -78,15 +78,15 @@ TYPED_TEST(seqan2_container, std_iterator_traits)
     using container_t = TypeParam;
     using iterator_t = std::ranges::iterator_t<container_t>;
     using value_type = typename std::iterator_traits<iterator_t>::value_type;
-    EXPECT_TRUE((std::Same<value_type, int>));
+    EXPECT_TRUE((std::same_as<value_type, int>));
 }
 
 TYPED_TEST(seqan2_container, std_iterator)
 {
     using container_t = TypeParam;
     using iterator_t = std::ranges::iterator_t<container_t>;
-    EXPECT_FALSE(std::Iterator<container_t>);
-    EXPECT_TRUE(std::Iterator<iterator_t>);
+    EXPECT_FALSE(std::input_or_output_iterator<container_t>);
+    EXPECT_TRUE(std::input_or_output_iterator<iterator_t>);
 }
 
 template <typename range_t>
@@ -108,15 +108,15 @@ TYPED_TEST(seqan2_container, std_ranges_range)
 {
     using container_t = TypeParam;
     using iterator_t = std::ranges::iterator_t<container_t>;
-    EXPECT_TRUE(std::ranges::Range<container_t>);
-    EXPECT_FALSE(std::ranges::Range<iterator_t>);
+    EXPECT_TRUE(std::ranges::range<container_t>);
+    EXPECT_FALSE(std::ranges::range<iterator_t>);
 }
 
 TYPED_TEST(seqan2_container, seqan3_value_type)
 {
     using container_t = TypeParam;
     using value_type = seqan3::value_type_t<container_t>;
-    EXPECT_TRUE((std::Same<value_type, int>));
+    EXPECT_TRUE((std::same_as<value_type, int>));
 }
 
 #endif

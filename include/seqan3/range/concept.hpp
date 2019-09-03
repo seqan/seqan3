@@ -19,8 +19,8 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::ConstIterableRange <>
- * \extends std::InputRange
+/*!\interface seqan3::const_iterable_range <>
+ * \extends std::input_range
  * \brief Specifies requirements of an input range type for which the `const` version of that type satisfies the
  * same strength input range concept as the non-const version.
  *
@@ -29,7 +29,7 @@ namespace seqan3
  * For a type `t` it usually holds that if `t` is a range, `t const` is also a range with similar properties, but
  * there are cases where this does not hold:
  *
- *   * a `const` range is usually not writable so std::OutputRange is lost; pure output ranges
+ *   * a `const` range is usually not writable so std::output_range is lost; pure output ranges
  * (those that are not also input ranges) are therefore not `const`-iterable;
  *   * single-pass input ranges, like SeqAn files, are not `const`-iterable, because "single-pass-ness" implies that
  * there is something in the range that changes on every iterator increment (and `const` ranges can't change);
@@ -39,22 +39,22 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT ConstIterableRange =
-    std::ranges::InputRange<std::remove_const_t<type>> &&
-    std::ranges::InputRange<type const> &&
-    (std::ranges::ForwardRange<std::remove_const_t<type>>       == std::ranges::ForwardRange<type const>) &&
-    (std::ranges::BidirectionalRange<std::remove_const_t<type>> == std::ranges::BidirectionalRange<type const>) &&
-    (std::ranges::RandomAccessRange<std::remove_const_t<type>>  == std::ranges::RandomAccessRange<type const>);
+SEQAN3_CONCEPT const_iterable_range =
+    std::ranges::input_range<std::remove_const_t<type>> &&
+    std::ranges::input_range<type const> &&
+    (std::ranges::forward_range<std::remove_const_t<type>>       == std::ranges::forward_range<type const>) &&
+    (std::ranges::bidirectional_range<std::remove_const_t<type>> == std::ranges::bidirectional_range<type const>) &&
+    (std::ranges::random_access_range<std::remove_const_t<type>>  == std::ranges::random_access_range<type const>);
 //!\endcond
 
-/*!\interface seqan3::ForwardingRange<>
+/*!\interface seqan3::forwarding_range<>
  * \extends std::Range
  * \brief Specifies a range whose iterators may outlive the range and remain valid.
  * \see http://eel.is/c++draft/range.req
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT ForwardingRange = std::ranges::Range<type> && requires (type && val)
+SEQAN3_CONCEPT forwarding_range = std::ranges::range<type> && requires (type && val)
 {
     std::ranges::begin(std::forward<type>(val));
     std::ranges::end(std::forward<type>(val));

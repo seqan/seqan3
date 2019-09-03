@@ -15,12 +15,12 @@ struct dna2
 //! [struct]
 
 //! [alphabet_concept]
-static_assert(seqan3::Alphabet<dna2> == false);          // NOT an Alphabet
+static_assert(seqan3::alphabet<dna2> == false);          // NOT an alphabet
 //! [alphabet_concept]
 
 //! [other_concepts]
-static_assert(std::CopyConstructible<dna2>);             // ok
-static_assert(std::StrictTotallyOrdered<dna2> == false); // NO comparison operators
-static_assert(seqan3::Semialphabet<dna2> == false);      // NOT a Semialphabet
-static_assert(seqan3::Alphabet<dna2> == false);          // NOT an Alphabet
+static_assert(std::copy_constructible<dna2>);             // ok
+static_assert(std::totally_ordered<dna2> == false); // NO comparison operators
+static_assert(seqan3::semialphabet<dna2> == false);      // NOT a semialphabet
+static_assert(seqan3::alphabet<dna2> == false);          // NOT an alphabet
 //! [other_concepts]

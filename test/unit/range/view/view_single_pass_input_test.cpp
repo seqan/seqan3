@@ -69,16 +69,16 @@ TYPED_TEST(single_pass_input, view_concept)
     using rng_t = decltype(std::declval<TypeParam &>() | std::view::all);
     using view_t = detail::single_pass_input_view<rng_t>;
     EXPECT_TRUE((std::is_base_of_v<ranges::view_base, view_t>));
-    EXPECT_TRUE((std::Sentinel<std::ranges::sentinel_t<view_t>, std::ranges::iterator_t<view_t>>));
-    EXPECT_TRUE(std::ranges::Range<view_t>);
-    EXPECT_TRUE(std::ranges::View<view_t>);
-    EXPECT_TRUE(std::ranges::InputRange<view_t>);
-    EXPECT_EQ((std::ranges::OutputRange<view_t, reference_t<view_t>>),
-              (std::ranges::OutputRange<rng_t, reference_t<rng_t>>));
-    EXPECT_FALSE(std::ranges::CommonRange<view_t>);
-    EXPECT_FALSE(std::ranges::ForwardRange<view_t>);
-    EXPECT_FALSE(std::ranges::BidirectionalRange<view_t>);
-    EXPECT_FALSE(std::ranges::RandomAccessRange<view_t>);
+    EXPECT_TRUE((std::sentinel_for<std::ranges::sentinel_t<view_t>, std::ranges::iterator_t<view_t>>));
+    EXPECT_TRUE(std::ranges::range<view_t>);
+    EXPECT_TRUE(std::ranges::view<view_t>);
+    EXPECT_TRUE(std::ranges::input_range<view_t>);
+    EXPECT_EQ((std::ranges::output_range<view_t, reference_t<view_t>>),
+              (std::ranges::output_range<rng_t, reference_t<rng_t>>));
+    EXPECT_FALSE(std::ranges::common_range<view_t>);
+    EXPECT_FALSE(std::ranges::forward_range<view_t>);
+    EXPECT_FALSE(std::ranges::bidirectional_range<view_t>);
+    EXPECT_FALSE(std::ranges::random_access_range<view_t>);
 }
 
 TYPED_TEST(single_pass_input, view_construction)
@@ -157,8 +157,8 @@ TYPED_TEST(single_pass_input, view_iterate)
 TYPED_TEST(single_pass_input, iterator_concepts)
 {
     using view_type = detail::single_pass_input_view<decltype(std::declval<TypeParam>() | view::persist)>;
-    EXPECT_TRUE((std::InputIterator<std::ranges::iterator_t<view_type>>));
-    EXPECT_FALSE((std::ForwardIterator<std::ranges::iterator_t<view_type>>));
+    EXPECT_TRUE((std::input_iterator<std::ranges::iterator_t<view_type>>));
+    EXPECT_FALSE((std::forward_iterator<std::ranges::iterator_t<view_type>>));
 }
 
 TYPED_TEST(single_pass_input, iterator_construction)
@@ -272,8 +272,8 @@ TYPED_TEST(single_pass_input, sentinel_concepts)
     using iterator_type = std::ranges::iterator_t<view_type>;
     using sentinel_type = std::ranges::sentinel_t<view_type>;
 
-    EXPECT_TRUE((std::Sentinel<sentinel_type, iterator_type>));
-    EXPECT_FALSE((std::SizedSentinel<sentinel_type, iterator_type>));
+    EXPECT_TRUE((std::sentinel_for<sentinel_type, iterator_type>));
+    EXPECT_FALSE((std::sized_sentinel_for<sentinel_type, iterator_type>));
 }
 
 TYPED_TEST(single_pass_input, sentinel_eq_comparison)

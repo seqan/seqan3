@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::AlignmentFileOutputFormat and auxiliary classes.
+ * \brief Provides seqan3::alignment_file_output_format and auxiliary classes.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -30,7 +30,7 @@ namespace seqan3::detail
 
 //!\brief The alignment file output format base class.
 template <typename t>
-class alignment_file_output_format
+class alignment_file_output_format_REMOVEME
 {};
 
 } // namespace seqan3::detail
@@ -38,7 +38,7 @@ class alignment_file_output_format
 namespace seqan3
 {
 
-/*!\interface seqan3::AlignmentFileOutputFormat <>
+/*!\interface seqan3::alignment_file_output_format <>
  * \brief The generic concept for alignment file out formats.
  * \ingroup alignment_file
  *
@@ -51,8 +51,8 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT AlignmentFileOutputFormat =
-    requires (detail::alignment_file_output_format<t>                              & v,
+SEQAN3_CONCEPT alignment_file_output_format =
+    requires (detail::alignment_file_output_format_REMOVEME<t>                              & v,
               std::ofstream                                                        & stream,
               alignment_file_output_options                                        & options,
               alignment_file_header<>                                              & header,
@@ -94,9 +94,9 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::AlignmentFileOutputFormat
- * \brief You can expect these **members** on all types that implement seqan3::AlignmentFileOutputFormat.
- * \memberof seqan3::AlignmentFileOutputFormat
+/*!\name Requirements for seqan3::alignment_file_output_format
+ * \brief You can expect these **members** on all types that implement seqan3::alignment_file_output_format.
+ * \memberof seqan3::alignment_file_output_format
  * \{
  */
 
@@ -118,7 +118,7 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
                   e_value_type                           && e_value,
                   bit_score_type                         && bit_score)
  * \brief Write the given fields to the specified stream.
- * \tparam stream_type      Output stream, must model seqan3::OStream with `char`.
+ * \tparam stream_type      Output stream, must model seqan3::output_stream_over with `char`.
  * \tparam seq_type         Type of the seqan3
  * \tparam id_type          Type of the seqan3
  * \tparam offset_type      Type of the seqan3
@@ -153,7 +153,7 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
  * \param[in]     bit_score  The data for seqan3::field::, e.g. the bit score of the alignment (BLAST).
  *
  */
-/*!\var static inline std::vector<std::string> seqan3::AlignmentFileOutputFormat::file_extensions
+/*!\var static inline std::vector<std::string> seqan3::alignment_file_output_format::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 
@@ -165,27 +165,27 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::AlignmentFileOutputFormat [default is false].
+ * seqan3::alignment_file_output_format [default is false].
  * \ingroup core
- * \see seqan3::TypeListOfAlignmentFileOutputFormats
+ * \see seqan3::type_list_specialisationOfalignment_file_output_formats
  */
 template <typename t>
 constexpr bool is_type_list_of_alignment_file_output_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::AlignmentFileOutputFormat [overload].
+ * seqan3::alignment_file_output_format [overload].
  * \ingroup core
- * \see seqan3::TypeListOfAlignmentFileOutputFormats
+ * \see seqan3::type_list_specialisationOfalignment_file_output_formats
  */
 template <typename ... ts>
 constexpr bool is_type_list_of_alignment_file_output_formats_v<type_list<ts...>>
-                = (AlignmentFileOutputFormat<ts> && ...);
+                = (alignment_file_output_format<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::AlignmentFileOutputFormat.
+ * seqan3::alignment_file_output_format.
  * \ingroup core
  * \see seqan3::is_type_list_of_alignment_file_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT TypeListOfAlignmentFileOutputFormats = is_type_list_of_alignment_file_output_formats_v<t>;
+SEQAN3_CONCEPT type_list_of_alignment_file_output_formats = is_type_list_of_alignment_file_output_formats_v<t>;
 } // namespace seqan3::detail

@@ -39,11 +39,11 @@ TYPED_TEST(two_dimensional_matrix_test, concepts)
 {
     using matrix_type = typename TestFixture::matrix_type;
 
-    EXPECT_TRUE(Matrix<matrix_type>);
-    EXPECT_TRUE(std::ranges::InputRange<matrix_type>);
-    EXPECT_TRUE(std::ranges::ForwardRange<matrix_type>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<matrix_type>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<matrix_type>);
+    EXPECT_TRUE(matrix<matrix_type>);
+    EXPECT_TRUE(std::ranges::input_range<matrix_type>);
+    EXPECT_TRUE(std::ranges::forward_range<matrix_type>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<matrix_type>);
+    EXPECT_TRUE(std::ranges::random_access_range<matrix_type>);
 }
 
 TYPED_TEST(two_dimensional_matrix_test, construction)
@@ -181,7 +181,7 @@ TYPED_TEST_CASE(iterator_fixture_two_dimensional, testing_types);
 
 TYPED_TEST(iterator_fixture_two_dimensional, two_dimensional_concept)
 {
-    EXPECT_TRUE(TwoDimensionalMatrixIterator<typename TestFixture::iterator_type>);
+    EXPECT_TRUE(two_dimensional_matrix_iterator<typename TestFixture::iterator_type>);
 }
 
 TYPED_TEST(iterator_fixture_two_dimensional, update_by_matrix_offset_add)

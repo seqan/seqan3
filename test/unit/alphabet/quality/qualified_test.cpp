@@ -68,6 +68,6 @@ using qualified_types = ::testing::Types<qualified<dna4, phred42>,
                                          qualified<gapped<dna4>, phred42>,
                                          dna4q>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(qualified, alphabet, qualified_types);
+INSTANTIATE_TYPED_TEST_CASE_P(qualified, alphabet_, qualified_types);
 INSTANTIATE_TYPED_TEST_CASE_P(qualified, alphabet_constexpr, qualified_types);
 INSTANTIATE_TYPED_TEST_CASE_P(qualified, alphabet_tuple_base_test, qualified_types);

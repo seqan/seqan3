@@ -11,7 +11,7 @@
 
 #include "../alphabet_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(cigar, alphabet, cigar);
+INSTANTIATE_TYPED_TEST_CASE_P(cigar, alphabet_, cigar);
 // note: cigar is not usable in constexpr context.
 
 TEST(cigar, brace_init)

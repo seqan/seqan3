@@ -26,10 +26,10 @@ namespace seqan3
 
 /*!\brief The cigar alphabet pairs a counter with a seqan3::cigar_op letter.
  * \ingroup cigar
- * \implements seqan3::WritableAlphabet
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \implements seqan3::writable_alphabet
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
  * \details
  *
