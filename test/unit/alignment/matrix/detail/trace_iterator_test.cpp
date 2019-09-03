@@ -48,10 +48,10 @@ struct trace_iterator_fixture : public ::testing::Test
 
 TEST_F(trace_iterator_fixture, concepts)
 {
-    EXPECT_TRUE(std::ranges::View<path_type>);
-    EXPECT_TRUE(std::ranges::InputRange<path_type>);
-    EXPECT_TRUE(std::ranges::ForwardRange<path_type>);
-    EXPECT_FALSE(std::ranges::BidirectionalRange<path_type>);
+    EXPECT_TRUE(std::ranges::view<path_type>);
+    EXPECT_TRUE(std::ranges::input_range<path_type>);
+    EXPECT_TRUE(std::ranges::forward_range<path_type>);
+    EXPECT_FALSE(std::ranges::bidirectional_range<path_type>);
 }
 
 TEST_F(trace_iterator_fixture, trace_path_2_3)

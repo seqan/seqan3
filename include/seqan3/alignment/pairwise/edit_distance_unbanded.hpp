@@ -524,7 +524,7 @@ class edit_distance_unbanded_trace_matrix_policy :
     using typename edit_traits::trace_matrix_type;
     using typename edit_traits::result_value_type;
 
-    /*!\name Trace Matrix Policy: Protected Attributes
+    /*!\name Trace matrix Policy: Protected Attributes
      * \copydoc edit_distance_unbanded_trace_matrix_policy
      * \{
      */
@@ -537,7 +537,7 @@ class edit_distance_unbanded_trace_matrix_policy :
     trace_matrix_type _trace_matrix{};
     //!\}
 
-    /*!\name Trace Matrix Policy: Protected Member Functions
+    /*!\name Trace matrix Policy: Protected Member Functions
      * \copydoc edit_distance_unbanded_trace_matrix_policy
      * \{
      */
@@ -562,7 +562,7 @@ class edit_distance_unbanded_trace_matrix_policy :
     //!\}
 
 public:
-    /*!\name Trace Matrix Policy: Public Member Functions
+    /*!\name Trace matrix Policy: Public Member Functions
      * \copydoc edit_distance_unbanded_trace_matrix_policy
      * \{
      */
@@ -635,7 +635,7 @@ public:
     proxy_reference(value_t &&) = delete; //!< Deleted.
 
     //!\brief Assign a value to the stored reference.
-    template <std::ConvertibleTo<value_t> other_value_t>
+    template <std::convertible_to<value_t> other_value_t>
     proxy_reference & operator=(other_value_t && u) noexcept
     {
         get() = std::forward<other_value_t>(u);
@@ -672,8 +672,8 @@ private:
  * \extends edit_distance_unbanded_trace_matrix_policy
  * \extends edit_distance_unbanded_max_errors_policy
  */
-template <std::ranges::ViewableRange database_t,
-          std::ranges::ViewableRange query_t,
+template <std::ranges::viewable_range database_t,
+          std::ranges::viewable_range query_t,
           typename align_config_t,
           typename edit_traits>
 class edit_distance_unbanded :

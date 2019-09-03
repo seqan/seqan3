@@ -23,12 +23,12 @@ namespace seqan3
 
 /*!\brief The canonical amino acid alphabet.
  * \ingroup aminoacid
- * \implements seqan3::AminoacidAlphabet
- * \implements seqan3::WritableAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \implements seqan3::aminoacid_alphabet
+ * \implements seqan3::writable_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
  * \details
  * The alphabet consists of letters A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y
@@ -149,8 +149,8 @@ protected:
 namespace seqan3
 {
 
-//!\brief Identifies aa20 as an amino acid alphabet (UnaryTypeTrait specialisation).
-//!\implements UnaryTypeTrait
+//!\brief Identifies aa20 as an amino acid alphabet (unary_type_trait specialisation).
+//!\implements unary_type_trait
 //!\see seqan3::is_aminoacid
 //!\ingroup aminoacid
 template <>

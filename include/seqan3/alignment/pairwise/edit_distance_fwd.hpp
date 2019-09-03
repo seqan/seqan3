@@ -54,8 +54,8 @@ struct selector
 /*!\brief The default traits type for the edit distance algorithm.
  * \ingroup pairwise_alignment
  */
-template <std::ranges::ViewableRange database_t,
-          std::ranges::ViewableRange query_t,
+template <std::ranges::viewable_range database_t,
+          std::ranges::viewable_range query_t,
           typename align_config_t,
           typename is_semi_global_t,
           typename word_t = uint_fast64_t>
@@ -94,15 +94,15 @@ struct default_edit_distance_trait_type
 
     //!\brief Whether the alignment configuration indicates to compute and/or store the score.
     static constexpr bool compute_score = align_config_type::template exists<align_cfg::result<with_score_type>>() ||
-                                          !std::Same<decltype(result_value_type{}.back_coordinate), std::nullopt_t *>;
+                                          !std::same_as<decltype(result_value_type{}.back_coordinate), std::nullopt_t *>;
     //!\brief Whether the alignment configuration indicates to compute and/or store the back coordinate.
-    static constexpr bool compute_back_coordinate = !std::Same<decltype(result_value_type{}.back_coordinate),
+    static constexpr bool compute_back_coordinate = !std::same_as<decltype(result_value_type{}.back_coordinate),
                                                                std::nullopt_t *>;
     //!\brief Whether the alignment configuration indicates to compute and/or store the front coordinate.
-    static constexpr bool compute_front_coordinate = !std::Same<decltype(result_value_type{}.front_coordinate),
+    static constexpr bool compute_front_coordinate = !std::same_as<decltype(result_value_type{}.front_coordinate),
                                                                 std::nullopt_t *>;
     //!\brief Whether the alignment configuration indicates to compute and/or store the alignment of the sequences.
-    static constexpr bool compute_sequence_alignment = !std::Same<decltype(result_value_type{}.alignment),
+    static constexpr bool compute_sequence_alignment = !std::same_as<decltype(result_value_type{}.alignment),
                                                                   std::nullopt_t *>;
     //!\brief Whether the alignment configuration indicates to compute and/or store the score matrix.
     static constexpr bool compute_score_matrix = false;
@@ -128,8 +128,8 @@ using edit_distance_base =
                               derived_t>;
 
 //!\cond
-template <std::ranges::ViewableRange database_t,
-          std::ranges::ViewableRange query_t,
+template <std::ranges::viewable_range database_t,
+          std::ranges::viewable_range query_t,
           typename align_config_t,
           typename traits_t = default_edit_distance_trait_type<database_t, query_t, align_config_t, std::false_type>>
 class edit_distance_unbanded; //forward declaration

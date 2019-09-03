@@ -41,7 +41,7 @@ constexpr auto min_viable_uint_v = static_cast<min_viable_uint_t<value>>(value);
 // ------------------------------------------------------------------
 
 //!\brief Return the number of values an integral type can have, i.e. the different between min and max.
-template <std::Integral int_t>
+template <std::integral int_t>
 constexpr size_t size_in_values_v = static_cast<size_t>(std::numeric_limits<int_t>::max()) -
                                     std::numeric_limits<int_t>::lowest() + 1;
 

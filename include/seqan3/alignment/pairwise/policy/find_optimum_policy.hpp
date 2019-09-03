@@ -117,7 +117,7 @@ protected:
     }
 
     /*!\brief Checks the complete last column for the optimal score.
-     * \tparam rng_t   The type of the last column; must model std::ranges::BidirectionalRange.
+     * \tparam rng_t   The type of the last column; must model std::ranges::bidirectional_range.
      * \tparam score_t The type of the optimal score.
      * \param[in]     rng       The last column of the dynamic programming matrix.
      * \param[in,out] optimum   The current optimum to compare with.
@@ -128,7 +128,7 @@ protected:
      * if the trait for searching the last column is set to std::false_type.
      * Due to a column based iteration layout the entire last column can be searched at once.
      */
-    template <std::ranges::BidirectionalRange rng_t, typename score_t>
+    template <std::ranges::bidirectional_range rng_t, typename score_t>
     constexpr void check_score_last_column(rng_t const & rng,
                                            alignment_optimum<score_t> & optimum) const noexcept
     {

@@ -25,7 +25,7 @@ namespace seqan3::detail
  *
  * \details
  *
- * This concept refines the std::ranges::InputRange concept to allow streaming the range object to the debug stream,
+ * This concept refines the std::ranges::input_range concept to allow streaming the range object to the debug stream,
  * with the following requirements:
  *
  * * `rng_t` is not the same type as `reference_t<rng_t>`,
@@ -34,9 +34,9 @@ namespace seqan3::detail
  */
 template <typename rng_t>
 SEQAN3_CONCEPT debug_stream_range_guard =
-    !std::Same<remove_cvref_t<reference_t<rng_t>>, remove_cvref_t<rng_t>> && // prevent recursive instantiation
+    !std::same_as<remove_cvref_t<reference_t<rng_t>>, remove_cvref_t<rng_t>> && // prevent recursive instantiation
     // exclude null-terminated strings:
-    !(std::is_pointer_v<std::decay_t<rng_t>> && std::Same<remove_cvref_t<reference_t<rng_t>>, char>);
+    !(std::is_pointer_v<std::decay_t<rng_t>> && std::same_as<remove_cvref_t<reference_t<rng_t>>, char>);
 
 /*!\brief Helper template variable that checks if the reference type of a range can be streamed into an instance of
  *        seqan3::debug_stream_type .
@@ -49,11 +49,11 @@ SEQAN3_CONCEPT debug_stream_range_guard =
  * Evaluates to `true` if the following expression is valid: `debug_stream << *rng.begin();`, where rng is of  type
  * rng_t. Otherwise false.
  */
-template <std::ranges::Range rng_t, typename char_t>
+template <std::ranges::range rng_t, typename char_t>
 constexpr bool reference_type_is_streamable_v = false;
 
 //!\cond
-template <std::ranges::Range rng_t, typename char_t>
+template <std::ranges::range rng_t, typename char_t>
     requires requires (reference_t<rng_t> l, debug_stream_type<char_t> s) { { s << l }; }
 constexpr bool reference_type_is_streamable_v<rng_t, char_t> = true;
 //!\endcond
@@ -65,14 +65,14 @@ namespace seqan3
  * \{
  */
 /*!\brief All input ranges can be printed to the seqan3::debug_stream element-wise (if their elements are printable).
- * \tparam rng_t Type of the range to be printed; must model std::ranges::InputRange.
+ * \tparam rng_t Type of the range to be printed; must model std::ranges::input_range.
  * \param s The seqan3::debug_stream.
  * \param r The input range.
  * \relates seqan3::debug_stream_type
  *
  * \details
  *
- * If the element type models seqan3::Alphabet (and is not an unsigned integer), the range is printed
+ * If the element type models seqan3::alphabet (and is not an unsigned integer), the range is printed
  * just as if it were a string, i.e. <tt>std::vector<dna4>{'C'_dna4, 'G'_dna4, 'A'_dna4}</tt> is printed as "CGA".
  *
  * In all other cases the elements are comma separated and the range is enclosed in brackets, i.e.
@@ -83,7 +83,7 @@ namespace seqan3
  * to avoid ambiguous function calls.
  * \endif
  */
-template <std::ranges::InputRange rng_t, typename char_t>
+template <std::ranges::input_range rng_t, typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
 //!\cond
     requires detail::debug_stream_range_guard<rng_t>
@@ -92,7 +92,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng
     static_assert(detail::reference_type_is_streamable_v<rng_t, char_t>,
                   "The reference type of the passed range cannot be streamed into the debug_stream.");
 
-    if constexpr (Alphabet<reference_t<rng_t>> &&
+    if constexpr (alphabet<reference_t<rng_t>> &&
                   !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<rng_t>>>)
     {
         for (auto && l : r)

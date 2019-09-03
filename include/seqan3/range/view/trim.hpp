@@ -32,7 +32,7 @@ struct trim_fn
     template <typename threshold_t>
     constexpr auto operator()(threshold_t const threshold) const
     {
-        static_assert(QualityAlphabet<threshold_t> || std::Integral<threshold_t>,
+        static_assert(quality_alphabet<threshold_t> || std::integral<threshold_t>,
                       "The threshold must either be a quality alphabet or an integral type "
                       "in which case it is compared with the underlying phred type.");
 
@@ -44,19 +44,19 @@ struct trim_fn
      * \param irange The range being processed.
      * \param threshold The minimum quality as a phred score [integral type].
      */
-    template <std::ranges::InputRange irng_t, typename threshold_t>
+    template <std::ranges::input_range irng_t, typename threshold_t>
     constexpr auto operator()(irng_t && irange, threshold_t const threshold) const
     {
-        static_assert(QualityAlphabet<std::remove_reference_t<reference_t<irng_t>>>,
-                      "view:trim can only operate on ranges over seqan3::QualityAlphabet.");
-        static_assert(std::Same<remove_cvref_t<threshold_t>, remove_cvref_t<reference_t<irng_t>>> ||
-                      std::Integral<remove_cvref_t<threshold_t>>,
+        static_assert(quality_alphabet<std::remove_reference_t<reference_t<irng_t>>>,
+                      "view:trim can only operate on ranges over seqan3::quality_alphabet.");
+        static_assert(std::same_as<remove_cvref_t<threshold_t>, remove_cvref_t<reference_t<irng_t>>> ||
+                      std::integral<remove_cvref_t<threshold_t>>,
                       "The threshold must either be a letter of the underlying alphabet or an integral type "
                       "in which case it is compared with the underlying phred type.");
 
         return view::take_until(std::forward<irng_t>(irange), [threshold] (auto const value)
         {
-            if constexpr (std::Same<remove_cvref_t<threshold_t>, remove_cvref_t<reference_t<irng_t>>>)
+            if constexpr (std::same_as<remove_cvref_t<threshold_t>, remove_cvref_t<reference_t<irng_t>>>)
             {
                 return to_phred(value) < to_phred(threshold);
             }
@@ -78,7 +78,7 @@ namespace seqan3::view
  * \{
  */
 
-/*!\brief               A view that does quality-threshold trimming on a range of seqan3::QualityAlphabet.
+/*!\brief               A view that does quality-threshold trimming on a range of seqan3::quality_alphabet.
  * \tparam urng_t       The type of the range being processed. See below for requirements.
  * \tparam threshold_t  Either seqan3::value_type_t<urng_t> or
  *                      seqan3::alphabet_phred_t<seqan3::value_type_t<urng_t>>.
@@ -101,20 +101,20 @@ namespace seqan3::view
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
- * |---------------------------------|:-------------------------------------:|:-------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                     |
- * | std::ranges::ForwardRange       |                                       | *preserved*                     |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                     |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                     |
- * |                                 |                                       |                                 |
- * | std::ranges::View               |                                       | *guaranteed*                    |
- * | std::ranges::SizedRange         |                                       | *lost*                          |
- * | std::ranges::CommonRange        |                                       | *lost*                          |
- * | std::ranges::OutputRange        |                                       | *preserved*                     |
- * | seqan3::ConstIterableRange      |                                       | *preserved*                     |
- * |                                 |                                       |                                 |
- * | seqan3::reference_t             | seqan3::QualityAlphabet               | seqan3::reference_t<urng_t>     |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
+ * |----------------------------------|:-------------------------------------:|:-------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                     |
+ * | std::ranges::forward_range       |                                       | *preserved*                     |
+ * | std::ranges::bidirectional_range |                                       | *preserved*                     |
+ * | std::ranges::random_access_range |                                       | *preserved*                     |
+ * |                                  |                                       |                                  |
+ * | std::ranges::view                |                                       | *guaranteed*                    |
+ * | std::ranges::sized_range         |                                       | *lost*                          |
+ * | std::ranges::common_range        |                                       | *lost*                          |
+ * | std::ranges::output_range        |                                       | *preserved*                     |
+ * | seqan3::const_iterable_range     |                                       | *preserved*                     |
+ * |                                  |                                       |                                  |
+ * | std::ranges::range_reference_t   | seqan3::quality_alphabet               | seqan3::reference_t<urng_t>     |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

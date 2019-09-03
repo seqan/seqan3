@@ -14,7 +14,7 @@
 
 //![my_alph]
 #include <cstddef>                      // for size_t
-#include <seqan3/alphabet/concept.hpp>  // for seqan3::Alphabet
+#include <seqan3/alphabet/concept.hpp>  // for seqan3::alphabet
 
 namespace my_namespace
 {
@@ -68,8 +68,8 @@ constexpr my_alph & assign_char_to(char const c, my_alph & a) noexcept
 
 } // namespace my_namespace
 
-static_assert(seqan3::Alphabet<my_namespace::my_alph>);
+static_assert(seqan3::alphabet<my_namespace::my_alph>);
 //![my_alph]
 
-INSTANTIATE_TYPED_TEST_CASE_P(my_alph, alphabet,            my_namespace::my_alph);
+INSTANTIATE_TYPED_TEST_CASE_P(my_alph, alphabet_,            my_namespace::my_alph);
 INSTANTIATE_TYPED_TEST_CASE_P(my_alph, alphabet_constexpr,  my_namespace::my_alph);

@@ -30,8 +30,8 @@ namespace seqan3
  */
 
 /*!\brief The SeqAn Bidirectional FM Index Cursor.
- * \implements seqan3::BiFmIndexCursor
- * \tparam index_t The type of the underlying index; must model seqan3::BiFmIndex.
+ * \implements seqan3::bi_fm_index_cursor_specialisation
+ * \tparam index_t The type of the underlying index; must model seqan3::bi_fm_index_specialisation.
  * \details
  *
  * The cursor's interface provides searching a string both from left to right as well as from right to left in the
@@ -139,7 +139,7 @@ private:
     }
 
     //!\brief Optimized bidirectional search without alphabet mapping
-    template <detail::SdslIndex csa_t>
+    template <detail::sdsl_index csa_t>
     bool bidirectional_search(csa_t const & csa, sdsl_char_type const c,
                               size_type & l_fwd, size_type & r_fwd,
                               size_type & l_bwd, size_type & r_bwd) const noexcept
@@ -151,7 +151,7 @@ private:
         size_type _l_fwd, _r_fwd, _l_bwd, _r_bwd;
 
         size_type cc = c;
-        if constexpr(!std::Same<typename csa_t::alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr(!std::same_as<typename csa_t::alphabet_type, sdsl::plain_byte_alphabet>)
         {
             cc = csa.char2comp[c];
             if (cc == 0 && c > 0) // [[unlikely]]
@@ -193,7 +193,7 @@ private:
     }
 
     //!\brief Optimized bidirectional search for cycle_back() and cycle_front() without alphabet mapping
-    template <detail::SdslIndex csa_t>
+    template <detail::sdsl_index csa_t>
     bool bidirectional_search_cycle(csa_t const & csa, sdsl_char_type const c,
                                     size_type const l_parent, size_type const r_parent,
                                     size_type & l_fwd, size_type & r_fwd,
@@ -202,7 +202,7 @@ private:
         assert((l_parent <= r_parent) && (r_parent < csa.size()));
 
         size_type c_begin;
-        if constexpr(std::Same<typename csa_t::alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr(std::same_as<typename csa_t::alphabet_type, sdsl::plain_byte_alphabet>)
             c_begin = csa.C[c]; // TODO: check whether this can be removed
         else
             c_begin = csa.C[csa.char2comp[c]];
@@ -396,7 +396,7 @@ public:
     /*!\brief Tries to extend the query by the character `c` to the right.
      * \tparam char_t Type of the character needs to be convertible to the character type `char_type` of the indexed
      *                text.
-     * \param[in] c Character to extend the query with to the right.
+     * \param[in] c builtin_characteracter to extend the query with to the right.
      * \returns `true` if the cursor could extend the query successfully.
      *
      * ### Complexity
@@ -414,7 +414,7 @@ public:
         fwd_cursor_last_used = true;
     #endif
 
-        static_assert(std::ConvertibleTo<char_t, typename index_t::char_type>,
+        static_assert(std::convertible_to<char_t, typename index_t::char_type>,
                      "The character must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
@@ -438,7 +438,7 @@ public:
     /*!\brief Tries to extend the query by the character `c` to the left.
      * \tparam char_t Type of the character needs to be convertible to the character type `char_type` of the indexed
      *                text.
-     * \param[in] c Character to extend the query with to the left.
+     * \param[in] c builtin_characteracter to extend the query with to the left.
      * \returns `true` if the cursor could extend the query successfully.
      *
      * ### Complexity
@@ -456,7 +456,7 @@ public:
         fwd_cursor_last_used = false;
     #endif
 
-        static_assert(std::ConvertibleTo<char_t, typename index_t::char_type>,
+        static_assert(std::convertible_to<char_t, typename index_t::char_type>,
                       "The character must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
@@ -478,7 +478,7 @@ public:
     }
 
     /*!\brief Tries to extend the query by `seq` to the right.
-     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::ForwardRange.
+     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::forward_range.
      * \param[in] seq Sequence to extend the query with to the right.
      * \returns `true` if the cursor could extend the query successfully.
      *
@@ -493,11 +493,11 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::ranges::Range seq_t>
+    template <std::ranges::range seq_t>
     bool extend_right(seq_t && seq) noexcept
     {
-        static_assert(std::ranges::ForwardRange<seq_t>, "The query must model ForwardRange.");
-        static_assert(std::ConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>,
+        static_assert(std::ranges::forward_range<seq_t>, "The query must model forward_range.");
+        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, typename index_t::char_type>,
                       "The alphabet of the sequence must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
@@ -539,7 +539,7 @@ public:
     }
 
     /*!\brief Tries to extend the query by `seq` to the left.
-     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::BidirectionalRange.
+     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::bidirectional_range.
      * \param[in] seq Sequence to extend the query with to the left (starting from right to left, see example).
      * \returns `true` if the cursor could extend the query successfully.
      *
@@ -558,11 +558,11 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::ranges::Range seq_t>
+    template <std::ranges::range seq_t>
     bool extend_left(seq_t && seq) noexcept
     {
-        static_assert(std::ranges::BidirectionalRange<seq_t>, "The query must model BidirectionalRange.");
-        static_assert(std::ConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>,
+        static_assert(std::ranges::bidirectional_range<seq_t>, "The query must model bidirectional_range.");
+        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, typename index_t::char_type>,
                       "The alphabet of the sequence must be convertible to the alphabet of the index.");
         assert(index != nullptr);
 
@@ -844,7 +844,7 @@ public:
     }
 
     /*!\brief Returns the searched query.
-     * \tparam text_t The type of the text used to build the index; must model std::ranges::InputRange.
+     * \tparam text_t The type of the text used to build the index; must model std::ranges::input_range.
      * \param[in] text Text that was used to build the index.
      *
      * \if DEV
@@ -859,15 +859,15 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::ranges::Range text_t>
+    template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
     //!\cond
         requires index_t::text_layout_mode == text_layout::single
     //!\endcond
     {
-        static_assert(std::ranges::InputRange<text_t>, "The text must model InputRange.");
+        static_assert(std::ranges::input_range<text_t>, "The text must model input_range.");
         static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
-        static_assert(std::Same<innermost_value_type_t<text_t>, typename index_t::char_type>,
+        static_assert(std::same_as<innermost_value_type_t<text_t>, typename index_t::char_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 
@@ -876,15 +876,15 @@ public:
     }
 
     //!\overload
-    template <std::ranges::Range text_t>
+    template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
     //!\cond
         requires index_t::text_layout_mode == text_layout::collection
     //!\endcond
     {
-        static_assert(std::ranges::InputRange<text_t>, "The text collection must model InputRange.");
+        static_assert(std::ranges::input_range<text_t>, "The text collection must model input_range.");
         static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
-        static_assert(std::Same<innermost_value_type_t<text_t>, typename index_t::char_type>,
+        static_assert(std::same_as<innermost_value_type_t<text_t>, typename index_t::char_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 

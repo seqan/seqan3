@@ -9,7 +9,7 @@
 #include "../alphabet_constexpr_test_template.hpp"
 #include "nucleotide_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(rna5, alphabet, rna5);
+INSTANTIATE_TYPED_TEST_CASE_P(rna5, alphabet_, rna5);
 INSTANTIATE_TYPED_TEST_CASE_P(rna5, alphabet_constexpr, rna5);
 INSTANTIATE_TYPED_TEST_CASE_P(rna5, nucleotide, rna5);
 

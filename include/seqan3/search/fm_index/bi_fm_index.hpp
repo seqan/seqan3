@@ -29,11 +29,11 @@ namespace seqan3
  */
 
 /*!\brief The SeqAn Bidirectional FM Index
- * \implements seqan3::BiFmIndex
- * \tparam alphabet_t        The alphabet type; must model seqan3::Semialphabet.
+ * \implements seqan3::bi_fm_index_specialisation
+ * \tparam alphabet_t        The alphabet type; must model seqan3::semialphabet.
  * \tparam text_layout_mode_ Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.
- * \tparam sdsl_index_type_  The type of the underlying SDSL index, must model seqan3::SdslIndex.
+ * \tparam sdsl_index_type_  The type of the underlying SDSL index, must model seqan3::sdsl_index.
  * \details
  *
  * The seqan3::bi_fm_index is a fast and space-efficient bidirectional string index to search strings and
@@ -58,9 +58,9 @@ namespace seqan3
  * \attention When building an index for a **text collection** over any alphabet, the symbols with rank 254 and 255
  *            are reserved and may not be used in the text.
  */
-template <Semialphabet alphabet_t,
+template <semialphabet alphabet_t,
           text_layout text_layout_mode_,
-          detail::SdslIndex sdsl_index_type_ = default_sdsl_index_type>
+          detail::sdsl_index sdsl_index_type_ = default_sdsl_index_type>
 class bi_fm_index
 {
 private:
@@ -96,7 +96,7 @@ private:
 
     /*!\brief Constructs the index given a range.
      *        The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.
-     * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
+     * \tparam text_t The type of range to construct from; must model std::ranges::bidirectional_range.
      * \param[in] text The text to construct from.
      *
      * \details
@@ -113,15 +113,15 @@ private:
      *
      * No guarantee. \if DEV \todo Ensure strong exception guarantee. \endif
      */
-    template <std::ranges::Range text_t>
+    template <std::ranges::range text_t>
     //!\cond
         requires text_layout_mode_ == text_layout::single
     //!\endcond
     void construct(text_t && text)
     {
-        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must model BidirectionalRange.");
+        static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
         static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::ConvertibleTo<innermost_value_type_t<text_t>, alphabet_t>,
+        static_assert(std::convertible_to<innermost_value_type_t<text_t>, alphabet_t>,
                      "The alphabet of the text collection must be convertible to the alphabet of the index.");
         static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
 
@@ -135,17 +135,17 @@ private:
     }
 
     //!\overload
-    template <std::ranges::Range text_t>
+    template <std::ranges::range text_t>
     //!\cond
         requires text_layout_mode_ == text_layout::collection
     //!\endcond
     void construct(text_t && text)
     {
-        static_assert(std::ranges::BidirectionalRange<text_t>, "The text must model BidirectionalRange.");
-        static_assert(std::ranges::BidirectionalRange<reference_t<text_t>>,
-                      "The elements of the text collection must model BidirectionalRange.");
+        static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
+        static_assert(std::ranges::bidirectional_range<reference_t<text_t>>,
+                      "The elements of the text collection must model bidirectional_range.");
         static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::ConvertibleTo<innermost_value_type_t<text_t>, alphabet_t>,
+        static_assert(std::convertible_to<innermost_value_type_t<text_t>, alphabet_t>,
                      "The alphabet of the text collection must be convertible to the alphabet of the index.");
         static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
 
@@ -197,14 +197,14 @@ public:
     ~bi_fm_index() = default;                               //!< Defaulted.
 
     /*!\brief Constructor that immediately constructs the index given a range. The range cannot be empty.
-     * \tparam text_t The type of range to construct from; must model std::ranges::BidirectionalRange.
+     * \tparam text_t The type of range to construct from; must model std::ranges::bidirectional_range.
      * \param[in] text The text to construct from.
      *
      * ### Complexity
      *
      * \if DEV \todo \endif At least linear.
      */
-    template <std::ranges::Range text_t>
+    template <std::ranges::range text_t>
     bi_fm_index(text_t && text)
     {
         construct(std::forward<text_t>(text));
@@ -332,12 +332,12 @@ public:
 
     /*!\cond DEV
      * \brief Serialisation support function.
-     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
      * \param archive The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    template <CerealArchive archive_t>
+    template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
         archive(fwd_fm);
@@ -350,7 +350,7 @@ public:
  * \{
  */
 //! \brief Deduces the dimensions of the text.
-template <std::ranges::Range text_t>
+template <std::ranges::range text_t>
 bi_fm_index(text_t &&) -> bi_fm_index<innermost_value_type_t<text_t>, text_layout{dimension_v<text_t> != 1}>;
 //!\}
 

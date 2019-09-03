@@ -37,25 +37,25 @@ using test_types = ::testing::Types<decorator_t, decorator_t2>;
 // ---------------------------------------------------------------------------------------------------------------------
 
 template <typename inner_type_>
-class aligned_sequence<gap_decorator<inner_type_>> : public ::testing::Test
+class aligned_sequence_<gap_decorator<inner_type_>> : public ::testing::Test
 {
 public:
     // Initialiser function is needed for the typed test because the gapped_decorator
     // will be initialised differently than the naive vector<gapped<dna>>.
-    void initialise_typed_test_container(decorator_t & container, dna4_vector const & target)
+    void initialise_typed_test_container(decorator_t & container_, dna4_vector const & target)
     {
-        container = target;
+        container_ = target;
     }
 
     // Initialiser function is needed for the typed test because the gapped_decorator
     // will be initialised differently than the naive vector<gapped<dna>>.
-    void initialise_typed_test_container(decorator_t2 & container, dna4_vector const & target)
+    void initialise_typed_test_container(decorator_t2 & container_, dna4_vector const & target)
     {
-        container = std::ranges::subrange<decltype(target.begin()), decltype(target.end())>{target.begin(), target.end()};
+        container_ = std::ranges::subrange<decltype(target.begin()), decltype(target.end())>{target.begin(), target.end()};
     }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator, aligned_sequence, test_types);
+INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator, aligned_sequence_, test_types);
 
 template <>
 struct iterator_fixture<decorator_t::iterator> : public ::testing::Test
@@ -133,17 +133,17 @@ TYPED_TEST_CASE(gap_decorator_f, test_types);
 // concept checks
 TYPED_TEST(gap_decorator_f, concept_checks)
 {
-    EXPECT_TRUE((std::ranges::BidirectionalRange<TypeParam>));
-    EXPECT_TRUE((std::ranges::BidirectionalRange<TypeParam const>));
+    EXPECT_TRUE((std::ranges::bidirectional_range<TypeParam>));
+    EXPECT_TRUE((std::ranges::bidirectional_range<TypeParam const>));
 
     EXPECT_FALSE((std::ranges::enable_view<TypeParam>));
     EXPECT_FALSE((std::ranges::enable_view<TypeParam &>));
     EXPECT_FALSE((ranges::enable_view<TypeParam>));
     EXPECT_FALSE((ranges::enable_view<TypeParam &>));
 
-    EXPECT_FALSE((std::ranges::View<TypeParam>));
+    EXPECT_FALSE((std::ranges::view<TypeParam>));
 
-    EXPECT_TRUE((AlignedSequence<TypeParam>));
+    EXPECT_TRUE((aligned_sequence<TypeParam>));
 }
 
 TYPED_TEST(gap_decorator_f, construction_general)

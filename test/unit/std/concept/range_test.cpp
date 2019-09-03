@@ -22,214 +22,214 @@
 
 TEST(range_concepts, Range)
 {
-    EXPECT_TRUE ((std::ranges::Range<std::forward_list<char>>));
-    EXPECT_TRUE ((std::ranges::Range<std::list<char>>));
-    EXPECT_TRUE ((std::ranges::Range<std::array<char, 2>>));
-    EXPECT_TRUE ((std::ranges::Range<std::vector<char>>));
-    EXPECT_TRUE ((std::ranges::Range<std::deque<char>>));
-    EXPECT_TRUE ((std::ranges::Range<std::string>));
+    EXPECT_TRUE ((std::ranges::range<std::forward_list<char>>));
+    EXPECT_TRUE ((std::ranges::range<std::list<char>>));
+    EXPECT_TRUE ((std::ranges::range<std::array<char, 2>>));
+    EXPECT_TRUE ((std::ranges::range<std::vector<char>>));
+    EXPECT_TRUE ((std::ranges::range<std::deque<char>>));
+    EXPECT_TRUE ((std::ranges::range<std::string>));
 
-    EXPECT_TRUE ((std::ranges::Range<sdsl::int_vector<8>>));
-    EXPECT_TRUE ((std::ranges::Range<sdsl::int_vector<9>>));
+    EXPECT_TRUE ((std::ranges::range<sdsl::int_vector<8>>));
+    EXPECT_TRUE ((std::ranges::range<sdsl::int_vector<9>>));
 
-    EXPECT_TRUE ((std::ranges::Range<ranges::any_view<char, ranges::category::input>>));
-    EXPECT_TRUE ((std::ranges::Range<ranges::any_view<char, ranges::category::forward>>));
-    EXPECT_TRUE ((std::ranges::Range<ranges::any_view<char, ranges::category::bidirectional>>));
-    EXPECT_TRUE ((std::ranges::Range<ranges::any_view<char, ranges::category::random_access>>));
+    EXPECT_TRUE ((std::ranges::range<ranges::any_view<char, ranges::category::input>>));
+    EXPECT_TRUE ((std::ranges::range<ranges::any_view<char, ranges::category::forward>>));
+    EXPECT_TRUE ((std::ranges::range<ranges::any_view<char, ranges::category::bidirectional>>));
+    EXPECT_TRUE ((std::ranges::range<ranges::any_view<char, ranges::category::random_access>>));
 
-    EXPECT_TRUE ((std::ranges::Range<std::vector<char> const>));
-    EXPECT_TRUE ((std::ranges::Range<std::vector<char> const &>));
+    EXPECT_TRUE ((std::ranges::range<std::vector<char> const>));
+    EXPECT_TRUE ((std::ranges::range<std::vector<char> const &>));
 }
 
-TEST(range_concepts, InputRange)
+TEST(range_concepts, input_range)
 {
-    EXPECT_TRUE ((std::ranges::InputRange<std::forward_list<char>>));
-    EXPECT_TRUE ((std::ranges::InputRange<std::list<char>>));
-    EXPECT_TRUE ((std::ranges::InputRange<std::array<char, 2>>));
-    EXPECT_TRUE ((std::ranges::InputRange<std::vector<char>>));
-    EXPECT_TRUE ((std::ranges::InputRange<std::deque<char>>));
-    EXPECT_TRUE ((std::ranges::InputRange<std::string>));
+    EXPECT_TRUE ((std::ranges::input_range<std::forward_list<char>>));
+    EXPECT_TRUE ((std::ranges::input_range<std::list<char>>));
+    EXPECT_TRUE ((std::ranges::input_range<std::array<char, 2>>));
+    EXPECT_TRUE ((std::ranges::input_range<std::vector<char>>));
+    EXPECT_TRUE ((std::ranges::input_range<std::deque<char>>));
+    EXPECT_TRUE ((std::ranges::input_range<std::string>));
 
-    EXPECT_TRUE ((std::ranges::InputRange<sdsl::int_vector<8>>));
-    EXPECT_TRUE ((std::ranges::InputRange<sdsl::int_vector<9>>));
+    EXPECT_TRUE ((std::ranges::input_range<sdsl::int_vector<8>>));
+    EXPECT_TRUE ((std::ranges::input_range<sdsl::int_vector<9>>));
 
-    EXPECT_TRUE ((std::ranges::InputRange<ranges::any_view<char, ranges::category::input>>));
-    EXPECT_TRUE ((std::ranges::InputRange<ranges::any_view<char, ranges::category::forward>>));
-    EXPECT_TRUE ((std::ranges::InputRange<ranges::any_view<char, ranges::category::bidirectional>>));
-    EXPECT_TRUE ((std::ranges::InputRange<ranges::any_view<char, ranges::category::random_access>>));
+    EXPECT_TRUE ((std::ranges::input_range<ranges::any_view<char, ranges::category::input>>));
+    EXPECT_TRUE ((std::ranges::input_range<ranges::any_view<char, ranges::category::forward>>));
+    EXPECT_TRUE ((std::ranges::input_range<ranges::any_view<char, ranges::category::bidirectional>>));
+    EXPECT_TRUE ((std::ranges::input_range<ranges::any_view<char, ranges::category::random_access>>));
 
-    EXPECT_TRUE ((std::ranges::InputRange<std::vector<char> const>));
-    EXPECT_TRUE ((std::ranges::InputRange<std::vector<char> const &>));
+    EXPECT_TRUE ((std::ranges::input_range<std::vector<char> const>));
+    EXPECT_TRUE ((std::ranges::input_range<std::vector<char> const &>));
 }
 
-TEST(range_concepts, ForwardRange)
+TEST(range_concepts, forward_range)
 {
-    EXPECT_TRUE ((std::ranges::ForwardRange<std::forward_list<char>>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<std::list<char>>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<std::array<char, 2>>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<std::vector<char>>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<std::deque<char>>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<std::string>));
+    EXPECT_TRUE ((std::ranges::forward_range<std::forward_list<char>>));
+    EXPECT_TRUE ((std::ranges::forward_range<std::list<char>>));
+    EXPECT_TRUE ((std::ranges::forward_range<std::array<char, 2>>));
+    EXPECT_TRUE ((std::ranges::forward_range<std::vector<char>>));
+    EXPECT_TRUE ((std::ranges::forward_range<std::deque<char>>));
+    EXPECT_TRUE ((std::ranges::forward_range<std::string>));
 
-    EXPECT_TRUE ((std::ranges::ForwardRange<sdsl::int_vector<8>>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<sdsl::int_vector<9>>));
+    EXPECT_TRUE ((std::ranges::forward_range<sdsl::int_vector<8>>));
+    EXPECT_TRUE ((std::ranges::forward_range<sdsl::int_vector<9>>));
 
-    EXPECT_FALSE((std::ranges::ForwardRange<ranges::any_view<char, ranges::category::input>>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<ranges::any_view<char, ranges::category::forward>>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<ranges::any_view<char, ranges::category::bidirectional>>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<ranges::any_view<char, ranges::category::random_access>>));
+    EXPECT_FALSE((std::ranges::forward_range<ranges::any_view<char, ranges::category::input>>));
+    EXPECT_TRUE ((std::ranges::forward_range<ranges::any_view<char, ranges::category::forward>>));
+    EXPECT_TRUE ((std::ranges::forward_range<ranges::any_view<char, ranges::category::bidirectional>>));
+    EXPECT_TRUE ((std::ranges::forward_range<ranges::any_view<char, ranges::category::random_access>>));
 
-    EXPECT_TRUE ((std::ranges::ForwardRange<std::vector<char> const>));
-    EXPECT_TRUE ((std::ranges::ForwardRange<std::vector<char> const &>));
+    EXPECT_TRUE ((std::ranges::forward_range<std::vector<char> const>));
+    EXPECT_TRUE ((std::ranges::forward_range<std::vector<char> const &>));
 }
 
-TEST(range_concepts, BidirectionalRange)
+TEST(range_concepts, bidirectional_range)
 {
-    EXPECT_FALSE((std::ranges::BidirectionalRange<std::forward_list<char>>));
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<std::list<char>>));
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<std::array<char, 2>>));
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<std::vector<char>>));
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<std::deque<char>>));
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<std::string>));
+    EXPECT_FALSE((std::ranges::bidirectional_range<std::forward_list<char>>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<std::list<char>>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<std::array<char, 2>>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<std::vector<char>>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<std::deque<char>>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<std::string>));
 
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<sdsl::int_vector<8>>));
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<sdsl::int_vector<9>>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<sdsl::int_vector<8>>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<sdsl::int_vector<9>>));
 
-    EXPECT_FALSE((std::ranges::BidirectionalRange<ranges::any_view<char, ranges::category::input>>));
-    EXPECT_FALSE((std::ranges::BidirectionalRange<ranges::any_view<char, ranges::category::forward>>));
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<ranges::any_view<char, ranges::category::bidirectional>>));
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<ranges::any_view<char, ranges::category::random_access>>));
+    EXPECT_FALSE((std::ranges::bidirectional_range<ranges::any_view<char, ranges::category::input>>));
+    EXPECT_FALSE((std::ranges::bidirectional_range<ranges::any_view<char, ranges::category::forward>>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<ranges::any_view<char, ranges::category::bidirectional>>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<ranges::any_view<char, ranges::category::random_access>>));
 
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<std::vector<char> const>));
-    EXPECT_TRUE ((std::ranges::BidirectionalRange<std::vector<char> const &>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<std::vector<char> const>));
+    EXPECT_TRUE ((std::ranges::bidirectional_range<std::vector<char> const &>));
 }
 
-TEST(range_concepts, RandomAccessRange)
+TEST(range_concepts, random_access_range)
 {
-    EXPECT_FALSE((std::ranges::RandomAccessRange<std::forward_list<char>>));
-    EXPECT_FALSE((std::ranges::RandomAccessRange<std::list<char>>));
-    EXPECT_TRUE ((std::ranges::RandomAccessRange<std::array<char, 2>>));
-    EXPECT_TRUE ((std::ranges::RandomAccessRange<std::vector<char>>));
-    EXPECT_TRUE ((std::ranges::RandomAccessRange<std::deque<char>>));
-    EXPECT_TRUE ((std::ranges::RandomAccessRange<std::string>));
+    EXPECT_FALSE((std::ranges::random_access_range<std::forward_list<char>>));
+    EXPECT_FALSE((std::ranges::random_access_range<std::list<char>>));
+    EXPECT_TRUE ((std::ranges::random_access_range<std::array<char, 2>>));
+    EXPECT_TRUE ((std::ranges::random_access_range<std::vector<char>>));
+    EXPECT_TRUE ((std::ranges::random_access_range<std::deque<char>>));
+    EXPECT_TRUE ((std::ranges::random_access_range<std::string>));
 
-    EXPECT_TRUE ((std::ranges::RandomAccessRange<sdsl::int_vector<8>>));
-    EXPECT_TRUE ((std::ranges::RandomAccessRange<sdsl::int_vector<9>>));
+    EXPECT_TRUE ((std::ranges::random_access_range<sdsl::int_vector<8>>));
+    EXPECT_TRUE ((std::ranges::random_access_range<sdsl::int_vector<9>>));
 
-    EXPECT_FALSE((std::ranges::RandomAccessRange<ranges::any_view<char, ranges::category::input>>));
-    EXPECT_FALSE((std::ranges::RandomAccessRange<ranges::any_view<char, ranges::category::forward>>));
-    EXPECT_FALSE((std::ranges::RandomAccessRange<ranges::any_view<char, ranges::category::bidirectional>>));
-    EXPECT_TRUE ((std::ranges::RandomAccessRange<ranges::any_view<char, ranges::category::random_access>>));
+    EXPECT_FALSE((std::ranges::random_access_range<ranges::any_view<char, ranges::category::input>>));
+    EXPECT_FALSE((std::ranges::random_access_range<ranges::any_view<char, ranges::category::forward>>));
+    EXPECT_FALSE((std::ranges::random_access_range<ranges::any_view<char, ranges::category::bidirectional>>));
+    EXPECT_TRUE ((std::ranges::random_access_range<ranges::any_view<char, ranges::category::random_access>>));
 
-    EXPECT_TRUE ((std::ranges::RandomAccessRange<std::vector<char> const>));
-    EXPECT_TRUE ((std::ranges::RandomAccessRange<std::vector<char> const &>));
+    EXPECT_TRUE ((std::ranges::random_access_range<std::vector<char> const>));
+    EXPECT_TRUE ((std::ranges::random_access_range<std::vector<char> const &>));
 }
 
-TEST(range_concepts, ContiguousRange)
+TEST(range_concepts, contiguous_range)
 {
-    EXPECT_FALSE((std::ranges::ContiguousRange<std::forward_list<char>>));
-    EXPECT_FALSE((std::ranges::ContiguousRange<std::list<char>>));
-    EXPECT_TRUE ((std::ranges::ContiguousRange<std::array<char, 2>>));
-    EXPECT_TRUE ((std::ranges::ContiguousRange<std::vector<char>>));
-    EXPECT_FALSE((std::ranges::ContiguousRange<std::deque<char>>));
-    EXPECT_TRUE ((std::ranges::ContiguousRange<std::string>));
+    EXPECT_FALSE((std::ranges::contiguous_range<std::forward_list<char>>));
+    EXPECT_FALSE((std::ranges::contiguous_range<std::list<char>>));
+    EXPECT_TRUE ((std::ranges::contiguous_range<std::array<char, 2>>));
+    EXPECT_TRUE ((std::ranges::contiguous_range<std::vector<char>>));
+    EXPECT_FALSE((std::ranges::contiguous_range<std::deque<char>>));
+    EXPECT_TRUE ((std::ranges::contiguous_range<std::string>));
 
-//     EXPECT_TRUE ((std::ranges::ContiguousRange<sdsl::int_vector<8>>));
-    EXPECT_FALSE((std::ranges::ContiguousRange<sdsl::int_vector<9>>));
+//     EXPECT_TRUE ((std::ranges::contiguous_range<sdsl::int_vector<8>>));
+    EXPECT_FALSE((std::ranges::contiguous_range<sdsl::int_vector<9>>));
 
-    EXPECT_FALSE((std::ranges::ContiguousRange<ranges::any_view<char, ranges::category::input>>));
-    EXPECT_FALSE((std::ranges::ContiguousRange<ranges::any_view<char, ranges::category::forward>>));
-    EXPECT_FALSE((std::ranges::ContiguousRange<ranges::any_view<char, ranges::category::bidirectional>>));
-    EXPECT_FALSE((std::ranges::ContiguousRange<ranges::any_view<char, ranges::category::random_access>>));
+    EXPECT_FALSE((std::ranges::contiguous_range<ranges::any_view<char, ranges::category::input>>));
+    EXPECT_FALSE((std::ranges::contiguous_range<ranges::any_view<char, ranges::category::forward>>));
+    EXPECT_FALSE((std::ranges::contiguous_range<ranges::any_view<char, ranges::category::bidirectional>>));
+    EXPECT_FALSE((std::ranges::contiguous_range<ranges::any_view<char, ranges::category::random_access>>));
 
-    EXPECT_TRUE ((std::ranges::ContiguousRange<std::vector<char> const>));
-    EXPECT_TRUE ((std::ranges::ContiguousRange<std::vector<char> const &>));
+    EXPECT_TRUE ((std::ranges::contiguous_range<std::vector<char> const>));
+    EXPECT_TRUE ((std::ranges::contiguous_range<std::vector<char> const &>));
 }
 
-TEST(range_concepts, OutputRange)
+TEST(range_concepts, output_range)
 {
-    EXPECT_TRUE ((std::ranges::OutputRange<std::forward_list<char>, char>));
-    EXPECT_TRUE ((std::ranges::OutputRange<std::list<char>, char>));
-    EXPECT_TRUE ((std::ranges::OutputRange<std::array<char, 2>, char>));
-    EXPECT_TRUE ((std::ranges::OutputRange<std::vector<char>, char>));
-    EXPECT_TRUE ((std::ranges::OutputRange<std::deque<char>, char>));
-    EXPECT_TRUE ((std::ranges::OutputRange<std::string, char>));
+    EXPECT_TRUE ((std::ranges::output_range<std::forward_list<char>, char>));
+    EXPECT_TRUE ((std::ranges::output_range<std::list<char>, char>));
+    EXPECT_TRUE ((std::ranges::output_range<std::array<char, 2>, char>));
+    EXPECT_TRUE ((std::ranges::output_range<std::vector<char>, char>));
+    EXPECT_TRUE ((std::ranges::output_range<std::deque<char>, char>));
+    EXPECT_TRUE ((std::ranges::output_range<std::string, char>));
 
-    EXPECT_TRUE ((std::ranges::OutputRange<sdsl::int_vector<8>, uint8_t>));
-//     EXPECT_TRUE ((std::ranges::OutputRange<sdsl::int_vector<9>, uint8_t>));
+    EXPECT_TRUE ((std::ranges::output_range<sdsl::int_vector<8>, uint8_t>));
+//     EXPECT_TRUE ((std::ranges::output_range<sdsl::int_vector<9>, uint8_t>));
 
-    EXPECT_FALSE((std::ranges::OutputRange<ranges::any_view<char, ranges::category::input>, char>));
-    EXPECT_FALSE((std::ranges::OutputRange<ranges::any_view<char, ranges::category::forward>, char>));
-    EXPECT_FALSE((std::ranges::OutputRange<ranges::any_view<char, ranges::category::bidirectional>, char>));
-    EXPECT_FALSE((std::ranges::OutputRange<ranges::any_view<char, ranges::category::random_access>, char>));
+    EXPECT_FALSE((std::ranges::output_range<ranges::any_view<char, ranges::category::input>, char>));
+    EXPECT_FALSE((std::ranges::output_range<ranges::any_view<char, ranges::category::forward>, char>));
+    EXPECT_FALSE((std::ranges::output_range<ranges::any_view<char, ranges::category::bidirectional>, char>));
+    EXPECT_FALSE((std::ranges::output_range<ranges::any_view<char, ranges::category::random_access>, char>));
 
-    EXPECT_TRUE ((std::ranges::OutputRange<std::vector<char> &, char>));
-    EXPECT_FALSE((std::ranges::OutputRange<std::vector<char> const, char>));
-    EXPECT_FALSE((std::ranges::OutputRange<std::vector<char> const &, char>));
+    EXPECT_TRUE ((std::ranges::output_range<std::vector<char> &, char>));
+    EXPECT_FALSE((std::ranges::output_range<std::vector<char> const, char>));
+    EXPECT_FALSE((std::ranges::output_range<std::vector<char> const &, char>));
 }
 
-TEST(range_concepts, SizedRange)
+TEST(range_concepts, sized_range)
 {
-    EXPECT_FALSE((std::ranges::SizedRange<std::forward_list<char>>));
-    EXPECT_TRUE ((std::ranges::SizedRange<std::list<char>>));
-    EXPECT_TRUE ((std::ranges::SizedRange<std::array<char, 2>>));
-    EXPECT_TRUE ((std::ranges::SizedRange<std::vector<char>>));
-    EXPECT_TRUE ((std::ranges::SizedRange<std::deque<char>>));
-    EXPECT_TRUE ((std::ranges::SizedRange<std::string>));
+    EXPECT_FALSE((std::ranges::sized_range<std::forward_list<char>>));
+    EXPECT_TRUE ((std::ranges::sized_range<std::list<char>>));
+    EXPECT_TRUE ((std::ranges::sized_range<std::array<char, 2>>));
+    EXPECT_TRUE ((std::ranges::sized_range<std::vector<char>>));
+    EXPECT_TRUE ((std::ranges::sized_range<std::deque<char>>));
+    EXPECT_TRUE ((std::ranges::sized_range<std::string>));
 
-    EXPECT_TRUE ((std::ranges::SizedRange<sdsl::int_vector<8>>));
-    EXPECT_TRUE ((std::ranges::SizedRange<sdsl::int_vector<9>>));
+    EXPECT_TRUE ((std::ranges::sized_range<sdsl::int_vector<8>>));
+    EXPECT_TRUE ((std::ranges::sized_range<sdsl::int_vector<9>>));
 
-    EXPECT_FALSE((std::ranges::SizedRange<ranges::any_view<char, ranges::category::input>>));
-    EXPECT_FALSE((std::ranges::SizedRange<ranges::any_view<char, ranges::category::forward>>));
-    EXPECT_FALSE((std::ranges::SizedRange<ranges::any_view<char, ranges::category::bidirectional>>));
-    EXPECT_FALSE((std::ranges::SizedRange<ranges::any_view<char, ranges::category::random_access>>));
+    EXPECT_FALSE((std::ranges::sized_range<ranges::any_view<char, ranges::category::input>>));
+    EXPECT_FALSE((std::ranges::sized_range<ranges::any_view<char, ranges::category::forward>>));
+    EXPECT_FALSE((std::ranges::sized_range<ranges::any_view<char, ranges::category::bidirectional>>));
+    EXPECT_FALSE((std::ranges::sized_range<ranges::any_view<char, ranges::category::random_access>>));
 
-    EXPECT_TRUE ((std::ranges::SizedRange<std::vector<char> &>));
-    EXPECT_TRUE ((std::ranges::SizedRange<std::vector<char> const>));
-    EXPECT_TRUE ((std::ranges::SizedRange<std::vector<char> const &>));
+    EXPECT_TRUE ((std::ranges::sized_range<std::vector<char> &>));
+    EXPECT_TRUE ((std::ranges::sized_range<std::vector<char> const>));
+    EXPECT_TRUE ((std::ranges::sized_range<std::vector<char> const &>));
 }
 
 TEST(range_concepts, View)
 {
-    EXPECT_FALSE((std::ranges::View<std::forward_list<char>>));
-    EXPECT_FALSE((std::ranges::View<std::list<char>>));
-    EXPECT_FALSE((std::ranges::View<std::array<char, 2>>));
-    EXPECT_FALSE((std::ranges::View<std::vector<char>>));
-    EXPECT_FALSE((std::ranges::View<std::deque<char>>));
-    EXPECT_FALSE((std::ranges::View<std::string>));
+    EXPECT_FALSE((std::ranges::view<std::forward_list<char>>));
+    EXPECT_FALSE((std::ranges::view<std::list<char>>));
+    EXPECT_FALSE((std::ranges::view<std::array<char, 2>>));
+    EXPECT_FALSE((std::ranges::view<std::vector<char>>));
+    EXPECT_FALSE((std::ranges::view<std::deque<char>>));
+    EXPECT_FALSE((std::ranges::view<std::string>));
 
-    EXPECT_FALSE((std::ranges::View<sdsl::int_vector<8>>));
-    EXPECT_FALSE((std::ranges::View<sdsl::int_vector<9>>));
+    EXPECT_FALSE((std::ranges::view<sdsl::int_vector<8>>));
+    EXPECT_FALSE((std::ranges::view<sdsl::int_vector<9>>));
 
-    EXPECT_TRUE ((std::ranges::View<ranges::any_view<char, ranges::category::input>>));
-    EXPECT_TRUE ((std::ranges::View<ranges::any_view<char, ranges::category::forward>>));
-    EXPECT_TRUE ((std::ranges::View<ranges::any_view<char, ranges::category::bidirectional>>));
-    EXPECT_TRUE ((std::ranges::View<ranges::any_view<char, ranges::category::random_access>>));
+    EXPECT_TRUE ((std::ranges::view<ranges::any_view<char, ranges::category::input>>));
+    EXPECT_TRUE ((std::ranges::view<ranges::any_view<char, ranges::category::forward>>));
+    EXPECT_TRUE ((std::ranges::view<ranges::any_view<char, ranges::category::bidirectional>>));
+    EXPECT_TRUE ((std::ranges::view<ranges::any_view<char, ranges::category::random_access>>));
 
-    EXPECT_FALSE((std::ranges::View<std::vector<char> &>));
-    EXPECT_FALSE((std::ranges::View<std::vector<char> const>));
-    EXPECT_FALSE((std::ranges::View<std::vector<char> const &>));
+    EXPECT_FALSE((std::ranges::view<std::vector<char> &>));
+    EXPECT_FALSE((std::ranges::view<std::vector<char> const>));
+    EXPECT_FALSE((std::ranges::view<std::vector<char> const &>));
 }
 
-TEST(range_concepts, ViewableRange)
+TEST(range_concepts, viewable_range)
 {
-    EXPECT_FALSE((std::ranges::ViewableRange<std::forward_list<char>>));
-    EXPECT_FALSE((std::ranges::ViewableRange<std::list<char>>));
-    EXPECT_FALSE((std::ranges::ViewableRange<std::array<char, 2>>));
-    EXPECT_FALSE((std::ranges::ViewableRange<std::vector<char>>));
-    EXPECT_FALSE((std::ranges::ViewableRange<std::deque<char>>));
-    EXPECT_FALSE((std::ranges::ViewableRange<std::string>));
+    EXPECT_FALSE((std::ranges::viewable_range<std::forward_list<char>>));
+    EXPECT_FALSE((std::ranges::viewable_range<std::list<char>>));
+    EXPECT_FALSE((std::ranges::viewable_range<std::array<char, 2>>));
+    EXPECT_FALSE((std::ranges::viewable_range<std::vector<char>>));
+    EXPECT_FALSE((std::ranges::viewable_range<std::deque<char>>));
+    EXPECT_FALSE((std::ranges::viewable_range<std::string>));
 
-    EXPECT_FALSE((std::ranges::ViewableRange<sdsl::int_vector<8>>));
-    EXPECT_FALSE((std::ranges::ViewableRange<sdsl::int_vector<9>>));
+    EXPECT_FALSE((std::ranges::viewable_range<sdsl::int_vector<8>>));
+    EXPECT_FALSE((std::ranges::viewable_range<sdsl::int_vector<9>>));
 
-    EXPECT_TRUE ((std::ranges::ViewableRange<ranges::any_view<char, ranges::category::input>>));
-    EXPECT_TRUE ((std::ranges::ViewableRange<ranges::any_view<char, ranges::category::forward>>));
-    EXPECT_TRUE ((std::ranges::ViewableRange<ranges::any_view<char, ranges::category::bidirectional>>));
-    EXPECT_TRUE ((std::ranges::ViewableRange<ranges::any_view<char, ranges::category::random_access>>));
+    EXPECT_TRUE ((std::ranges::viewable_range<ranges::any_view<char, ranges::category::input>>));
+    EXPECT_TRUE ((std::ranges::viewable_range<ranges::any_view<char, ranges::category::forward>>));
+    EXPECT_TRUE ((std::ranges::viewable_range<ranges::any_view<char, ranges::category::bidirectional>>));
+    EXPECT_TRUE ((std::ranges::viewable_range<ranges::any_view<char, ranges::category::random_access>>));
 
-    EXPECT_TRUE ((std::ranges::ViewableRange<std::vector<char> &>));
-    EXPECT_FALSE((std::ranges::ViewableRange<std::vector<char> const>));
-    EXPECT_TRUE ((std::ranges::ViewableRange<std::vector<char> const &>));
+    EXPECT_TRUE ((std::ranges::viewable_range<std::vector<char> &>));
+    EXPECT_FALSE((std::ranges::viewable_range<std::vector<char> const>));
+    EXPECT_TRUE ((std::ranges::viewable_range<std::vector<char> const &>));
 }

@@ -21,7 +21,7 @@ SeqAn library. We call these "customisation points" (also known as "extension po
 
 # Customisation points
 
-One such customisation point is seqan3::to_rank. Instead of the seqan3::Semialphabet concept looking directly for
+One such customisation point is seqan3::to_rank. Instead of the seqan3::semialphabet concept looking directly for
 member functions or free functions in your namespace, it always checks for a valid definition of seqan3::to_rank which
 in turn resolves to different possible implementations.
 

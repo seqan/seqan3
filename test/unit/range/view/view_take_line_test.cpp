@@ -52,39 +52,39 @@ template <typename adaptor_t>
 void do_concepts(adaptor_t const & adaptor)
 {
     std::string vec{"foo\nbar"};
-    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_FALSE(std::ranges::View<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), char>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
+    EXPECT_FALSE(std::ranges::view<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
+    EXPECT_TRUE(const_iterable_range<decltype(vec)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(vec), char>));
 
     auto v1 = vec | adaptor;
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(v1), char>));
 
     auto v2 = vec | view::single_pass_input | adaptor;
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::ForwardRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::BidirectionalRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::RandomAccessRange<decltype(v2)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::SizedRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_FALSE(ConstIterableRange<decltype(v2)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), char>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::forward_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::random_access_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
+    EXPECT_FALSE(const_iterable_range<decltype(v2)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(v2), char>));
 }
 
 // ============================================================================
@@ -158,15 +158,15 @@ TEST(view_take_line, reverse_bug)
     std::string vec{"foo\nbar"};
     auto v1 = vec | view::take_line;
     EXPECT_EQ("foo", std::string(v1));
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(v1), char>));
 
     // No build failure, but wrong results:
 //     auto v2 = v1 | std::view::reverse;

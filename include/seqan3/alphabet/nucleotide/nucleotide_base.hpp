@@ -28,7 +28,7 @@ namespace seqan3
  * \details
  *
  * You can use this class to define your own nucleotide alphabet, but types are not required to be based on it to model
- * seqan3::NucleotideAlphabet, it is purely a way to avoid code duplication.
+ * seqan3::nucleotide_alphabet, it is purely a way to avoid code duplication.
  *
  * In addition to the requirements of seqan3::alphabet_base, the derived type needs to define the following static
  * member variable (can be private):
@@ -73,9 +73,9 @@ public:
     //!\brief Allow explicit construction from any other nucleotide type and convert via the character representation.
     template <typename other_nucl_type>
     //!\cond
-        requires !std::Same<nucleotide_base, other_nucl_type> &&
-                 !std::Same<derived_type, other_nucl_type> &&
-                 NucleotideAlphabet<other_nucl_type>
+        requires !std::same_as<nucleotide_base, other_nucl_type> &&
+                 !std::same_as<derived_type, other_nucl_type> &&
+                 nucleotide_alphabet<other_nucl_type>
     //!\endcond
     explicit constexpr nucleotide_base(other_nucl_type const & other) noexcept
     {
@@ -95,7 +95,7 @@ public:
      *
      * See \ref nucleotide for the actual values.
      *
-     * Provides an implementation for seqan3::complement, required to model seqan3::NucleotideAlphabet.
+     * Provides an implementation for seqan3::complement, required to model seqan3::nucleotide_alphabet.
      *
      * ###Complexity
      *
@@ -115,7 +115,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::Semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * Satisfies the seqan3::semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
      * wrapper.
      *
      * Behaviour specific to nucleotides: True also for lower case letters that silently convert to their upper case

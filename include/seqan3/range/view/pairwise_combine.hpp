@@ -22,8 +22,8 @@ namespace seqan3::detail
 {
 /*!\brief Generates all pairwise combinations of the elements in the underlying range.
  * \ingroup view
- * \tparam underlying_range_type The type of the underlying range; must model std::ranges::View,
- *                               std::ranges::ForwardRange and std::ranges::CommonRange.
+ * \tparam underlying_range_type The type of the underlying range; must model std::ranges::view,
+ *                               std::ranges::forward_range and std::ranges::common_range.
  *
  * \details
  *
@@ -35,9 +35,9 @@ namespace seqan3::detail
  *
  * \include test/snippet/range/view/pairwise_combine.cpp
  */
-template <std::ranges::View underlying_range_type>
+template <std::ranges::view underlying_range_type>
 //!\cond
-    requires  std::ranges::ForwardRange<underlying_range_type> && std::ranges::CommonRange<underlying_range_type>
+    requires  std::ranges::forward_range<underlying_range_type> && std::ranges::common_range<underlying_range_type>
 // !\endcond
 class pairwise_combine_view : public ranges::view_interface<pairwise_combine_view<underlying_range_type>>
 {
@@ -63,7 +63,7 @@ private:
 
         //!\brief Friend declaration for iterator with different range const-ness.
         template <typename other_range_type>
-            requires std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+            requires std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         friend class iterator_type;
 
         //!\brief Alias type for the iterator over the passed range type.
@@ -104,7 +104,7 @@ private:
          *        range.
          * \param[in] iter     The iterator pointing to current element within the underlying range.
          * \param[in] begin_it The iterator pointing to begin of the underlying range. Only needed if
-         *                     `underlying_iterator_type` models std::RandomAccessIterator.
+         *                     `underlying_iterator_type` models std::random_access_iterator.
          * \param[in] end_it   The iterator pointing to end of the underlying range.
          *
          * \details
@@ -129,8 +129,8 @@ private:
          * Allows construction of a const iterator (operating on a const range) from a non-const iterator.
          * This special constructor is needed as it is not covered by the standard copy and move constructors.
          */
-        template <std::ConvertibleTo<range_type &> other_range_type>
-            requires std::Same<std::remove_const_t<other_range_type>, std::remove_const_t<range_type>>
+        template <std::convertible_to<range_type &> other_range_type>
+            requires std::same_as<std::remove_const_t<other_range_type>, std::remove_const_t<range_type>>
         constexpr iterator_type(iterator_type<other_range_type> other) noexcept :
             iterator_type{std::move(other.first_it), std::move(other.begin_it), std::move(other.end_it)}
         {}
@@ -152,7 +152,7 @@ private:
         constexpr reference operator[](size_t const index)
             noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type>
+            requires std::random_access_iterator<underlying_iterator_type>
         //!\endcond
         {
             from_index(index);
@@ -160,7 +160,8 @@ private:
         }
         //!\}
 
-        /*!\name Arithmetic operators
+        /*!
+ame Arithmetic operators
          * \{
          */
         //!\brief Pre-increment operator.
@@ -185,11 +186,11 @@ private:
             return tmp;
         }
 
-        //!\brief Pre-decrement operator; `underlying_iterator_type` must model std::BidirectionalIterator.
+        //!\brief Pre-decrement operator; `underlying_iterator_type` must model std::bidirectional_iterator.
         constexpr iterator_type & operator--(/*pre-decrement*/)
             noexcept(noexcept(--std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::BidirectionalIterator<underlying_iterator_type>
+            requires std::bidirectional_iterator<underlying_iterator_type>
         //!\endcond
         {
             if (--second_it == first_it)
@@ -201,11 +202,11 @@ private:
             return *this;
         }
 
-        //!\brief Post-decrement operator; `underlying_iterator_type` must model std::BidirectionalIterator.
+        //!\brief Post-decrement operator; `underlying_iterator_type` must model std::bidirectional_iterator.
         constexpr iterator_type operator--(int /*post-decrement*/)
             noexcept(noexcept(std::declval<underlying_iterator_type &>()--))
         //!\cond
-            requires std::BidirectionalIterator<underlying_iterator_type>
+            requires std::bidirectional_iterator<underlying_iterator_type>
         //!\endcond
         {
             iterator_type tmp{*this};
@@ -214,11 +215,11 @@ private:
         }
 
         //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::RandomAccessIterator.
+        //!\      std::random_access_iterator.
         constexpr iterator_type & operator+=(difference_type const offset)
             noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type>
+            requires std::random_access_iterator<underlying_iterator_type>
         //!\endcond
         {
             from_index(to_index() + offset);
@@ -226,11 +227,11 @@ private:
         }
 
         //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::RandomAccessIterator.
+        //!\      std::random_access_iterator.
         constexpr iterator_type operator+(difference_type const offset)
             noexcept(noexcept(std::declval<iterator_type &>() += 1))
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type>
+            requires std::random_access_iterator<underlying_iterator_type>
         //!\endcond
         {
             iterator_type tmp{*this};
@@ -238,11 +239,11 @@ private:
         }
 
         //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::RandomAccessIterator.
+        //!\      std::random_access_iterator.
         constexpr friend iterator_type operator+(difference_type const offset, iterator_type iter)
             noexcept(noexcept(std::declval<iterator_type<range_type> &>().from_index(1)))
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type>
+            requires std::random_access_iterator<underlying_iterator_type>
         //!\endcond
         {
             iter.from_index(iter.to_index() + offset);
@@ -250,11 +251,11 @@ private:
         }
 
         //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::RandomAccessIterator.
+        //!\      std::random_access_iterator.
         constexpr iterator_type & operator-=(difference_type const offset)
             noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type>
+            requires std::random_access_iterator<underlying_iterator_type>
         //!\endcond
         {
             from_index(to_index() - offset);
@@ -262,11 +263,11 @@ private:
         }
 
         //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::RandomAccessIterator.
+        //!\      std::random_access_iterator.
         constexpr iterator_type operator-(difference_type const offset)
             noexcept(noexcept(std::declval<iterator_type &>() -= 1))
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type>
+            requires std::random_access_iterator<underlying_iterator_type>
         //!\endcond
         {
             iterator_type tmp{*this};
@@ -274,11 +275,11 @@ private:
         }
 
         //!\brief Computes the distance between two iterators; `underlying_iterator_type` must model
-        //!\      std::RandomAccessIterator.
+        //!\      std::random_access_iterator.
         template <typename other_range_type>
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type> &&
-                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+            requires std::random_access_iterator<underlying_iterator_type> &&
+                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
         constexpr difference_type operator-(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>().to_index()))
@@ -288,8 +289,8 @@ private:
         //!\}
 
         /*!\name Comparison operators
-         * \brief These operators are available if the `underlying_iterator_type` models std::EqualityComparable or
-         *        std::StrictTotallyOrdered respectively.
+         * \brief These operators are available if the `underlying_iterator_type` models std::equality_comparable or
+         *        std::totally_ordered respectively.
          * \{
          */
         //NOTE: The comparison operators should be implemented as friends, but due to a bug in gcc friend function
@@ -299,8 +300,8 @@ private:
         //!\brief Checks whether `*this` is equal to `rhs`.
         template <typename other_range_type>
         //!\cond
-            requires std::EqualityComparableWith<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
-                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+            requires std::equality_comparable_with<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
+                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
         constexpr bool operator==(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() == std::declval<underlying_iterator_type &>()))
@@ -311,8 +312,8 @@ private:
         //!\brief Checks whether `*this` is not equal to `rhs`.
         template <typename other_range_type>
         //!\cond
-            requires std::EqualityComparableWith<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
-                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+            requires std::equality_comparable_with<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
+                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
         constexpr bool operator!=(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() != std::declval<underlying_iterator_type &>()))
@@ -323,9 +324,9 @@ private:
         //!\brief Checks whether `*this` is less than `rhs`.
         template <typename other_range_type>
         //!\cond
-            requires std::StrictTotallyOrderedWith<underlying_iterator_type,
+            requires std::totally_ordered_with<underlying_iterator_type,
                                                    std::ranges::iterator_t<other_range_type>> &&
-                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
         constexpr bool operator<(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() < std::declval<underlying_iterator_type &>()))
@@ -336,9 +337,9 @@ private:
         //!\brief Checks whether `*this` is greater than `rhs`.
         template <typename other_range_type>
         //!\cond
-            requires std::StrictTotallyOrderedWith<underlying_iterator_type,
+            requires std::totally_ordered_with<underlying_iterator_type,
                                                    std::ranges::iterator_t<other_range_type>> &&
-                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
         constexpr bool operator>(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() > std::declval<underlying_iterator_type &>()))
@@ -350,9 +351,9 @@ private:
         //!\brief Checks whether `*this` is less than or equal to `rhs`.
         template <typename other_range_type>
         //!\cond
-            requires std::StrictTotallyOrderedWith<underlying_iterator_type,
+            requires std::totally_ordered_with<underlying_iterator_type,
                                                    std::ranges::iterator_t<other_range_type>> &&
-                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
         constexpr bool operator<=(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() <= std::declval<underlying_iterator_type &>()))
@@ -363,9 +364,9 @@ private:
         //!\brief Checks whether `*this` is greater than or equal to `rhs`.
         template <typename other_range_type>
         //!\cond
-            requires std::StrictTotallyOrderedWith<underlying_iterator_type,
+            requires std::totally_ordered_with<underlying_iterator_type,
                                                    std::ranges::iterator_t<other_range_type>> &&
-                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
         constexpr bool operator>=(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() >= std::declval<underlying_iterator_type &>()))
@@ -391,7 +392,7 @@ private:
         constexpr size_t to_index() const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() - std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type>
+            requires std::random_access_iterator<underlying_iterator_type>
         //!\endcond
         {
             size_t src_size = end_it - begin_it;
@@ -409,7 +410,7 @@ private:
             noexcept(noexcept(std::declval<underlying_iterator_type &>() - std::declval<underlying_iterator_type &>()) &&
                      noexcept(std::declval<underlying_iterator_type &>() + 1))
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type>
+            requires std::random_access_iterator<underlying_iterator_type>
         //!\endcond
         {
             size_t src_size = end_it - begin_it;
@@ -476,7 +477,7 @@ public:
      * \details
      *
      * During construction the iterator pointing to the last element of the view is cached (not the end of the range).
-     * This optimises the call to end if the underlying range models only ForwardRange. Otherwise the call to end will be
+     * This optimises the call to end if the underlying range models only forward_range. Otherwise the call to end will be
      * linear in the number of elements of the underlying range.
      *
      * \attention This view cannot be chained immediately after an infinite range, because upon construction it will
@@ -484,7 +485,7 @@ public:
      *
      * ### Complexity
      *
-     * Constant if `underlying_range_type` models std::ranges::BidirectionalRange, otherwise linear.
+     * Constant if `underlying_range_type` models std::ranges::bidirectional_range, otherwise linear.
      */
     explicit constexpr pairwise_combine_view(underlying_range_type range) : u_range{std::move(range)}
     {
@@ -495,14 +496,14 @@ public:
         }
         else
         {
-            if constexpr (std::ranges::BidirectionalRange<underlying_range_type>)
+            if constexpr (std::ranges::bidirectional_range<underlying_range_type>)
             { // Simply take one before the end. We can do this as we require underlying_range_type to be a common range.
                 back_iterator = std::ranges::prev(std::ranges::end(u_range));
             }
             else
             { // For all other cases we need to set the back_iterator in linear time to the correct position.
                 back_iterator = std::ranges::begin(u_range);
-                if constexpr (std::ranges::SizedRange<underlying_range_type>)
+                if constexpr (std::ranges::sized_range<underlying_range_type>)
                 {
                     std::ranges::advance(back_iterator, std::ranges::size(u_range) - 1);
                 }
@@ -520,14 +521,14 @@ public:
 
     /*!\brief Constructs from a view.
      * \tparam    other_range_t  The type of the range to be wrapped with seqan3::detail::pairwise_combine_view;
-     *                           must model std::ranges::ViewableRange and underlying_range_type must be constructible
-     *                           with other_range wrapped in std::ranges::view::all.
+     *                           must model std::ranges::viewable_range and underlying_range_type must be constructible
+     *                           with other_range wrapped in std::view::all.
      * \param[in] range          The underlying range to be wrapped.
      *
      * \details
      *
      * During construction the iterator pointing to the last element of the view is cached (not the end of the range).
-     * This optimises the call to end if the underlying range models only ForwardRange. Otherwise the call to end will be
+     * This optimises the call to end if the underlying range models only forward_range. Otherwise the call to end will be
      * linear in the number of elements of the underlying range.
      *
      * \attention This view cannot be chained immediately after an infinite range, because upon construction it will
@@ -535,19 +536,19 @@ public:
      *
      * ### Complexity
      *
-     * Constant if `other_range_t` models std::ranges::BidirectionalRange, otherwise linear.
+     * Constant if `other_range_t` models std::ranges::bidirectional_range, otherwise linear.
      */
     template <typename other_range_t>
     //!\cond
-        requires !std::Same<remove_cvref_t<other_range_t>, pairwise_combine_view> &&
-                 std::ranges::ViewableRange<other_range_t> &&  // Must come after self type check to avoid conflicts with the move constructor.
-                 std::Constructible<underlying_range_type, ranges::ref_view<std::remove_reference_t<other_range_t>>>
+        requires !std::same_as<remove_cvref_t<other_range_t>, pairwise_combine_view> &&
+                 std::ranges::viewable_range<other_range_t> &&  // Must come after self type check to avoid conflicts with the move constructor.
+                 std::constructible_from<underlying_range_type, ranges::ref_view<std::remove_reference_t<other_range_t>>>
             //TODO: Investigate: the following expression is equivalent to the one above but raises a weird assertion in
-            //      the ranges adaptor suggesting that the pairwise_combine_view is not a ViewableRange.
-            //      std::Constructible<underlying_range_type, decltype(std::ranges::view::all(std::declval<other_range_t &&>()))>
+            //      the ranges adaptor suggesting that the pairwise_combine_view is not a viewable_range.
+            //      std::constructible_from<underlying_range_type, decltype(std::view::all(std::declval<other_range_t &&>()))>
     //!\endcond
     explicit constexpr pairwise_combine_view(other_range_t && range) :
-        pairwise_combine_view{std::ranges::view::all(std::forward<other_range_t>(range))}
+        pairwise_combine_view{std::view::all(std::forward<other_range_t>(range))}
     {}
 
     /*!\name Iterators
@@ -574,7 +575,7 @@ public:
     //!\copydoc begin()
     constexpr const_iterator begin() const noexcept
     //!\cond
-        requires ConstIterableRange<underlying_range_type>
+        requires const_iterable_range<underlying_range_type>
     //!\endcond
     {
         return {std::ranges::begin(u_range), std::ranges::begin(u_range), std::ranges::end(u_range)};
@@ -583,7 +584,7 @@ public:
     //!\copydoc begin()
     constexpr const_iterator cbegin() const noexcept
     //!\cond
-        requires ConstIterableRange<underlying_range_type>
+        requires const_iterable_range<underlying_range_type>
     //!\endcond
     {
         return begin();
@@ -610,7 +611,7 @@ public:
     //!\copydoc end()
     constexpr const_iterator end() const noexcept
     //!\cond
-        requires ConstIterableRange<underlying_range_type>
+        requires const_iterable_range<underlying_range_type>
     //!\endcond
     {
         return {back_iterator, std::ranges::begin(u_range), std::ranges::end(u_range)};
@@ -619,7 +620,7 @@ public:
     //!\copydoc end()
     constexpr const_iterator cend() const noexcept
     //!\cond
-        requires ConstIterableRange<underlying_range_type>
+        requires const_iterable_range<underlying_range_type>
     //!\endcond
     {
         return end();
@@ -632,7 +633,7 @@ public:
     //!\brief Computes the size based on the size of the underlying range.
     constexpr size_type size() const noexcept
     //!\cond
-        requires std::ranges::SizedRange<underlying_range_type>
+        requires std::ranges::sized_range<underlying_range_type>
     //!\endcond
     {
         return (std::ranges::size(u_range) * (std::ranges::size(u_range) - 1) / 2);
@@ -651,8 +652,8 @@ private:
  * \{
  */
 
-//!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in std::ranges::view::all.
-template <std::ranges::ViewableRange other_range_t>
+//!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in std::view::all.
+template <std::ranges::viewable_range other_range_t>
 pairwise_combine_view(other_range_t && range) ->
     pairwise_combine_view<std::ranges::all_view<other_range_t>>;
 //!\}
@@ -681,7 +682,7 @@ namespace seqan3::view
  * underlying range.
  * In order to receive the end iterator in constant time an iterator pointing to the last element of the underlying
  * range will be cached upon construction of this view. This construction takes linear time for underlying ranges that
- * do not model std::ranges::BidirectionalRange.
+ * do not model std::ranges::bidirectional_range.
  *
  * ### Iterator
  *
@@ -696,22 +697,22 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                       |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                                          |
- * | std::ranges::ForwardRange       | *required*                            | *preserved*                                                          |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                                                          |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                                                          |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                                               |
- * |                                 |                                       |                                                                      |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                                         |
- * | std::ranges::View               |                                       | *guaranteed*                                                         |
- * | std::ranges::SizedRange         |                                       | *preserved*                                                          |
- * | std::ranges::CommonRange        | *required*                            | *guaranteed*                                                         |
- * | std::ranges::OutputRange        |                                       | *lost*                                                               |
- * | seqan3::ConstIterableRange      |                                       | *preserved*                                                          |
- * |                                 |                                       |                                                                      |
- * | seqan3::reference_t             |                                       | std::tuple<seqan3::reference_t<urng_t>, seqan3::reference_t<urng_t>> |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                       |
+ * |----------------------------------|:-------------------------------------:|:--------------------------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                                          |
+ * | std::ranges::forward_range       | *required*                            | *preserved*                                                          |
+ * | std::ranges::bidirectional_range |                                       | *preserved*                                                          |
+ * | std::ranges::random_access_range |                                       | *preserved*                                                          |
+ * | std::ranges::contiguous_range    |                                       | *lost*                                                               |
+ * |                                  |                                       |                                                                      |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                                         |
+ * | std::ranges::view                |                                       | *guaranteed*                                                         |
+ * | std::ranges::sized_range         |                                       | *preserved*                                                          |
+ * | std::ranges::common_range        | *required*                            | *guaranteed*                                                         |
+ * | std::ranges::output_range        |                                       | *lost*                                                               |
+ * | seqan3::const_iterable_range     |                                       | *preserved*                                                          |
+ * |                                  |                                       |                                                                      |
+ * | std::ranges::range_reference_t   |                                       | std::tuple<seqan3::reference_t<urng_t>, seqan3::reference_t<urng_t>> |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

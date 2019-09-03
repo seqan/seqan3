@@ -13,16 +13,16 @@
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet, dot_bracket3);
+INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet_, dot_bracket3);
 INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet_constexpr, dot_bracket3);
 
 // concepts
 TEST(dot_bracket3, concept_check)
 {
-    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3>);
-    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3 &>);
-    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3 const>);
-    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3 const &>);
+    EXPECT_TRUE(rna_structure_alphabet<dot_bracket3>);
+    EXPECT_TRUE(rna_structure_alphabet<dot_bracket3 &>);
+    EXPECT_TRUE(rna_structure_alphabet<dot_bracket3 const>);
+    EXPECT_TRUE(rna_structure_alphabet<dot_bracket3 const &>);
 
     EXPECT_NE(max_pseudoknot_depth<dot_bracket3>, 0);
 }

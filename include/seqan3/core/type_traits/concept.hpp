@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the concepts seqan3::TransformationTrait and seqan3::UnaryTypeTrait.
+ * \brief Provides the concepts seqan3::transformation_trait and seqan3::unary_type_trait.
  * \author Svenja Mehringer <avenja.mehringer AT fu-berlin.de>
  */
 
@@ -19,7 +19,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::TransformationTrait
+/*!\interface seqan3::transformation_trait
  * \ingroup type_traits
  * \brief Concept for a transformation trait.
  *
@@ -27,10 +27,10 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT TransformationTrait = requires { typename t::type; };
+SEQAN3_CONCEPT transformation_trait = requires { typename t::type; };
 //!\endcond
 
-/*!\interface seqan3::UnaryTypeTrait
+/*!\interface seqan3::unary_type_trait
  * \ingroup type_traits
  * \brief Concept for a unary traits type.
  *
@@ -38,7 +38,7 @@ SEQAN3_CONCEPT TransformationTrait = requires { typename t::type; };
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT UnaryTypeTrait = std::is_base_of_v<std::integral_constant<typename t::value_type, t::value>, t>;
+SEQAN3_CONCEPT unary_type_trait = std::is_base_of_v<std::integral_constant<typename t::value_type, t::value>, t>;
 //!\endcond
 
 } // namespace seqan3

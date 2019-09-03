@@ -28,12 +28,12 @@ class rna15;
 
 /*!\brief The 15 letter DNA alphabet, containing all IUPAC smybols minus the gap.
  * \ingroup nucleotide
- * \implements seqan3::NucleotideAlphabet
- * \implements seqan3::WritableAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \implements seqan3::nucleotide_alphabet
+ * \implements seqan3::writable_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
  * \details
  * Note that you can assign 'U' as a character to dna15 and it will silently
@@ -73,7 +73,7 @@ public:
     using base_t::base_t;
 
     //!\brief Allow implicit construction from dna/rna of the same size.
-    template <std::Same<rna15> t>    // Accept incomplete type
+    template <std::same_as<rna15> t>    // Accept incomplete type
     constexpr dna15(t const & r) noexcept
     {
         assign_rank(r.to_rank());

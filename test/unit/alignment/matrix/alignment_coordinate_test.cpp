@@ -20,22 +20,22 @@ TEST(advanceable_alignment_coordinate, column_index_type)
 {
     detail::column_index_type ci{1u};
     EXPECT_EQ(ci.get(), 1u);
-    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(ci.get())>, size_t>));
+    EXPECT_TRUE((std::same_as<std::remove_reference_t<decltype(ci.get())>, size_t>));
 
     detail::column_index_type ci2{1};
     EXPECT_EQ(ci2.get(), 1);
-    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(ci2.get())>, std::ptrdiff_t>));
+    EXPECT_TRUE((std::same_as<std::remove_reference_t<decltype(ci2.get())>, std::ptrdiff_t>));
 }
 
 TEST(advanceable_alignment_coordinate, row_index_type)
 {
     detail::row_index_type ri{1u};
     EXPECT_EQ(ri.get(), 1u);
-    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(ri.get())>, size_t>));
+    EXPECT_TRUE((std::same_as<std::remove_reference_t<decltype(ri.get())>, size_t>));
 
     detail::row_index_type ri2{1};
     EXPECT_EQ(ri2.get(), 1);
-    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(ri2.get())>, std::ptrdiff_t>));
+    EXPECT_TRUE((std::same_as<std::remove_reference_t<decltype(ri2.get())>, std::ptrdiff_t>));
 }
 
 TEST(advanceable_alignment_coordinate, construction)
@@ -90,9 +90,9 @@ TEST(advanceable_alignment_coordinate, weakly_equality_comparable_concept)
     using column_incrementable =
         detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
 
-    EXPECT_TRUE(std::EqualityComparable<not_incrementable>);
-    EXPECT_TRUE(std::EqualityComparable<row_incrementable>);
-    EXPECT_TRUE(std::EqualityComparable<column_incrementable>);
+    EXPECT_TRUE(std::equality_comparable<not_incrementable>);
+    EXPECT_TRUE(std::equality_comparable<row_incrementable>);
+    EXPECT_TRUE(std::equality_comparable<column_incrementable>);
 }
 
 TEST(advanceable_alignment_coordinate, equality)
@@ -134,9 +134,9 @@ TEST(advanceable_alignment_coordinate, incremental_concept)
     using column_incrementable =
         detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
 
-    EXPECT_FALSE(std::WeaklyIncrementable<not_incrementable>);
-    EXPECT_TRUE(std::WeaklyIncrementable<row_incrementable>);
-    EXPECT_TRUE(std::WeaklyIncrementable<column_incrementable>);
+    EXPECT_FALSE(std::weakly_incrementable<not_incrementable>);
+    EXPECT_TRUE(std::weakly_incrementable<row_incrementable>);
+    EXPECT_TRUE(std::weakly_incrementable<column_incrementable>);
 }
 
 TEST(advanceable_alignment_coordinate, increment_row)
@@ -261,7 +261,7 @@ TEST(advanceable_alignment_coordinate, iota_column_index)
     col_incrementable co_end{detail::column_index_type{5u}, detail::row_index_type{0u}};
     auto v = std::view::iota(co_begin, co_end);
 
-    EXPECT_TRUE((std::Same<decltype(v.begin()), decltype(v.end())>));
+    EXPECT_TRUE((std::same_as<decltype(v.begin()), decltype(v.end())>));
     EXPECT_EQ((*(--v.end())).first, 4u);
 
     size_t test = 0u;
@@ -278,7 +278,7 @@ TEST(advanceable_alignment_coordinate, iota_row_index)
     row_incrementable co_end{detail::column_index_type{0u}, detail::row_index_type{5u}};
     auto v = std::view::iota(co_begin, co_end);
 
-    EXPECT_TRUE((std::Same<decltype(v.begin()), decltype(v.end())>));
+    EXPECT_TRUE((std::same_as<decltype(v.begin()), decltype(v.end())>));
     EXPECT_EQ((*(--v.end())).second, 4u);
 
     size_t test = 0u;

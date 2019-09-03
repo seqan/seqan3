@@ -16,20 +16,20 @@
 
 using namespace seqan3;
 
-TEST(comparison_concepts, WeaklyEqualityComparableWith)
+TEST(comparison_concepts, weakly_equality_comparable_with)
 {
-    EXPECT_TRUE((std::detail::WeaklyEqualityComparableWith<type_a, type_b>));
-    EXPECT_TRUE((!std::detail::WeaklyEqualityComparableWith<type_a, type_c>));
+    EXPECT_TRUE((std::detail::weakly_equality_comparable_with<type_a, type_b>));
+    EXPECT_TRUE((!std::detail::weakly_equality_comparable_with<type_a, type_c>));
 }
 
-TEST(comparison_concepts, EqualityComparableWith)
+TEST(comparison_concepts, equality_comparable)
 {
-    EXPECT_TRUE((!std::EqualityComparableWith<type_a, type_b>));
-    EXPECT_TRUE((std::EqualityComparableWith<type_b, type_d>));
+    EXPECT_TRUE((!std::equality_comparable_with<type_a, type_b>));
+    EXPECT_TRUE((std::equality_comparable_with<type_b, type_d>));
 }
 
-TEST(comparison_concepts, StrictTotallyOrderedWith)
+TEST(comparison_concepts, totally_ordered)
 {
-    EXPECT_TRUE((!std::StrictTotallyOrderedWith<type_a, type_b>));
-    EXPECT_TRUE((std::StrictTotallyOrderedWith<type_b, type_d>));
+    EXPECT_TRUE((!std::totally_ordered_with<type_a, type_b>));
+    EXPECT_TRUE((std::totally_ordered_with<type_b, type_d>));
 }

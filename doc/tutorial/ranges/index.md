@@ -38,33 +38,33 @@ There are different ways to classify ranges, one way is through the capabilities
 
 ## Range concepts
 
-Ranges are typically either \link std::ranges::InputRange input ranges \endlink (they can be read from) or
-\link std::ranges::OutputRange output ranges \endlink (they can be written to) or both.
+Ranges are typically either \link std::ranges::input_range input ranges \endlink (they can be read from) or
+\link std::ranges::output_range output ranges \endlink (they can be written to) or both.
 E.g. a `std::vector<int>` is both, but a `std::vector<int> const` would only be an input range.
 
-\link std::ranges::InputRange Input ranges \endlink have different *strengths* that are realised through more
+\link std::ranges::input_range Input ranges \endlink have different *strengths* that are realised through more
 refined concepts (i.e. types that model a stronger concept, always also model the weaker one):
 
 | Concept                           | Description                                                 |
 |-----------------------------------|-------------------------------------------------------------|
-| std::ranges::InputRange           | can be iterated from beginning to end **at least once**     |
-| std::ranges::ForwardRange         | can be iterated from beginning to end **multiple times**    |
-| std::ranges::BidirectionalRange   | iterator can also move backwards with `--`                  |
-| std::ranges::RandomAccessRange    | you can jump to elements **in constant-time** `[]`          |
-| std::ranges::ContiguousRange      | elements are always stored consecutively in memory          |
+| std::ranges::input_range           | can be iterated from beginning to end **at least once**     |
+| std::ranges::forward_range         | can be iterated from beginning to end **multiple times**    |
+| std::ranges::bidirectional_range   | iterator can also move backwards with `--`                  |
+| std::ranges::random_access_range    | you can jump to elements **in constant-time** `[]`          |
+| std::ranges::contiguous_range      | elements are always stored consecutively in memory          |
 
 For the well-known containers from the standard library this matrix shows which concepts they model:
 
 |                                   | std::forward_list | std::list | std::deque | std::array | std::vector |
 |-----------------------------------|:-----------------:|:---------:|:----------:|:----------:|:-----------:|
-| std::ranges::InputRange           | ✅                 | ✅         | ✅          | ✅          | ✅           |
-| std::ranges::ForwardRange         | ✅                 | ✅         | ✅          | ✅          | ✅           |
-| std::ranges::BidirectionalRange   |                   | ✅         | ✅          | ✅          | ✅           |
-| std::ranges::RandomAccessRange    |                   |           | ✅          | ✅          | ✅           |
-| std::ranges::ContiguousRange      |                   |           |            | ✅          | ✅           |
+| std::ranges::input_range           | ✅                 | ✅         | ✅          | ✅          | ✅           |
+| std::ranges::forward_range         | ✅                 | ✅         | ✅          | ✅          | ✅           |
+| std::ranges::bidirectional_range   |                   | ✅         | ✅          | ✅          | ✅           |
+| std::ranges::random_access_range    |                   |           | ✅          | ✅          | ✅           |
+| std::ranges::contiguous_range      |                   |           |            | ✅          | ✅           |
 
 There are also range concepts that are independent of input or output or one of the above concept, e.g.
-std::ranges::SizedRange which requires that the size of a range can be computed and in constant time.
+std::ranges::sized_range which requires that the size of a range can be computed and in constant time.
 
 ## Storage behaviour
 
@@ -84,9 +84,9 @@ If you are confused about *decorators* vs *views*, think of decorators as "under
 views as "underlying range + algorithm".
 
 The storage behaviour is orthogonal to the range concepts defined by the iterators mentioned above, i.e. you
-can have a container that satisfies std::ranges::RandomAccessRange (e.g. `std::vector` does, but `std::list`
+can have a container that satisfies std::ranges::random_access_range (e.g. `std::vector` does, but `std::list`
 does not) and you can have views or decorators that do so or don't. For some combinations of iterator capabilities
-and storage behaviour there are extra concept definitions, e.g. seqan3::RandomAccessContainer.
+and storage behaviour there are extra concept definitions, e.g. seqan3::random_access_container.
 
 # Views
 
@@ -142,7 +142,7 @@ of access.
 
 \assignment{Exercise: Fun with views I}
 Look up the documentation of std::view::transform and std::view::filter.
-Both take a Invocable object as parameter, e.g. a lambda function.
+Both take a invocable object as parameter, e.g. a lambda function.
 std::view::transform applies the lambda on each element in the underlying range and std::view::filter
 filter "removes" those elements that its lambda function evaluates to false for.
 
@@ -168,18 +168,18 @@ std::cout << *v.begin() << '\n'; // should print 4
 
 ## View concepts
 
-Views are a specific kind of range that is formalised in the std::ranges::View concept.
+Views are a specific kind of range that is formalised in the std::ranges::view concept.
 Every view returned by a view adaptor models this concept, but which other range concepts are modeled by a view?
 
 It depends on the underlying range and also the view itself.
 With few exceptions, views don't model more/stronger range concepts than their underlying range (other than
-std::ranges::View) and they try to preserve as much of the underlying range's concepts as possible.
-For instance the view returned by `std::view::reverse` models std::ranges::RandomAccessRange (and weaker concepts)
+std::ranges::view) and they try to preserve as much of the underlying range's concepts as possible.
+For instance the view returned by `std::view::reverse` models std::ranges::random_access_range (and weaker concepts)
 iff the underlying range also models the respective concept.
-It never models std::ranges::ContiguousRange, because the third element of the view is not located immediately after
+It never models std::ranges::contiguous_range, because the third element of the view is not located immediately after
 the second in memory (but instead before the second).
 
-Perhaps surprising to some, many views also model std::ranges::OutputRange if the underlying range does, i.e. **views
+Perhaps surprising to some, many views also model std::ranges::output_range if the underlying range does, i.e. **views
 are not read-only**:
 
 \snippet doc/tutorial/ranges/range_snippets.cpp assign_through
@@ -188,32 +188,32 @@ are not read-only**:
 Have a look at the solution to the previous exercise (filter+transform).
 Which of the following concepts do you think `v` models?
 
-| Concept                         | yes/no? |
-|---------------------------------|:-------:|
-| std::ranges::InputRange         |         |
-| std::ranges::ForwardRange       |         |
-| std::ranges::BidirectionalRange |         |
-| std::ranges::RandomAccessRange  |         |
-| std::ranges::ContiguousRange    |         |
-|                                 |         |
-| std::ranges::View               |         |
-| std::ranges::SizedRange         |         |
-| std::ranges::OutputRange        |         |
+| Concept                          | yes/no? |
+|----------------------------------|:-------:|
+| std::ranges::input_range         |         |
+| std::ranges::forward_range       |         |
+| std::ranges::bidirectional_range |         |
+| std::ranges::random_access_range |         |
+| std::ranges::contiguous_range    |         |
+|                                  |         |
+| std::ranges::view                |         |
+| std::ranges::sized_range         |         |
+| std::ranges::output_range        |         |
 
 \endassignment
 \solution
 
-| Concept                         | yes/no? |
-|---------------------------------|:-------:|
-| std::ranges::InputRange         |   ✅    |
-| std::ranges::ForwardRange       |   ✅    |
-| std::ranges::BidirectionalRange |   ✅    |
-| std::ranges::RandomAccessRange  |        |
-| std::ranges::ContiguousRange    |        |
-|                                 |        |
-| std::ranges::View               |   ✅    |
-| std::ranges::SizedRange         |        |
-| std::ranges::OutputRange        |        |
+| Concept                          | yes/no? |
+|----------------------------------|:-------:|
+| std::ranges::input_range         |   ✅    |
+| std::ranges::forward_range       |   ✅    |
+| std::ranges::bidirectional_range |   ✅    |
+| std::ranges::random_access_range |        |
+| std::ranges::contiguous_range    |        |
+|                                  |        |
+| std::ranges::view                |   ✅    |
+| std::ranges::sized_range         |        |
+| std::ranges::output_range        |        |
 
 The filter does not preserve RandomAccess and therefore not Contiguous, because it doesn't "know" which element
 of the underlying range is the i-th one in constant time.
@@ -221,7 +221,7 @@ This also means we don't know the size.
 
 The transform on the other hand produces a new element on every access (the result of the multiplication), therefore
 `v` is not an output range, you cannot assign values to its elements.
-This would have prevented modelling the ContiguousRange as well – if it hadn't been already by the filter – because
+This would have prevented modelling the contiguous_range as well – if it hadn't been already by the filter – because
 values are created on-demand and are not stored in memory at all.
 \endsolution
 
@@ -252,13 +252,13 @@ Use views to implement steps 2.-4.
 
 # Containers
 
-Containers are ranges that own their data.
+containers are ranges that own their data.
 SeqAn3 uses the standard library containers, like std::vector and std::list to store elements.
 For certain use-cases we have introduced our own containers, though.
 
-All standard library containers model std::ranges::ForwardRange (see above), but we have introduced container
+All standard library containers model std::ranges::forward_range (see above), but we have introduced container
 concepts that encompass more of a containers interface.
-Have a look at the API documentation of seqan3::Container and unfold the inheritance diagram.
+Have a look at the API documentation of seqan3::container and unfold the inheritance diagram.
 What can you learn about the different refinements and their relation to the range concepts?
 
 ## The bitcompressed vector

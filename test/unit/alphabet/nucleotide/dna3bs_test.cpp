@@ -12,15 +12,15 @@
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, alphabet, dna3bs);
+INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, alphabet_, dna3bs);
 INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, alphabet_constexpr, dna3bs);
 
 TEST(dna3bs, concept_check)
 {
-    EXPECT_TRUE(NucleotideAlphabet<dna3bs>);
-    EXPECT_TRUE(NucleotideAlphabet<dna3bs &>);
-    EXPECT_TRUE(NucleotideAlphabet<dna3bs const>);
-    EXPECT_TRUE(NucleotideAlphabet<dna3bs const &>);
+    EXPECT_TRUE(nucleotide_alphabet<dna3bs>);
+    EXPECT_TRUE(nucleotide_alphabet<dna3bs &>);
+    EXPECT_TRUE(nucleotide_alphabet<dna3bs const>);
+    EXPECT_TRUE(nucleotide_alphabet<dna3bs const &>);
 }
 
 TEST(dna3bs, global_complement)

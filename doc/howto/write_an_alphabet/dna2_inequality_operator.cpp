@@ -25,5 +25,5 @@ struct dna2
     }
 };
 
-static_assert(std::EqualityComparable<dna2>);            // ok
+static_assert(std::equality_comparable<dna2>);            // ok
 //! [inequality]

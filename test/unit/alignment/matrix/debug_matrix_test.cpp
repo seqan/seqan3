@@ -274,7 +274,7 @@ using trace_matrix_test = debug_matrix_test;
 template <typename>
 struct debug_matrix_traits;
 
-template <Matrix matrix_t, typename first_sequence_t, typename second_sequence_t>
+template <matrix matrix_t, typename first_sequence_t, typename second_sequence_t>
 struct debug_matrix_traits<debug_matrix<matrix_t, first_sequence_t, second_sequence_t>>
 {
     using matrix_type = matrix_t;
@@ -284,14 +284,14 @@ struct debug_matrix_traits<debug_matrix<matrix_t, first_sequence_t, second_seque
 
 TEST_F(debug_matrix_test, matrix_concept)
 {
-    EXPECT_TRUE((Matrix<row_wise_matrix<int>>));
-    EXPECT_TRUE((Matrix<row_wise_matrix<int> &>));
-    EXPECT_TRUE((Matrix<row_wise_matrix<int> const>));
-    EXPECT_TRUE((Matrix<row_wise_matrix<int> const &>));
-    EXPECT_TRUE((Matrix<debug_matrix<row_wise_matrix<int>>>));
-    EXPECT_TRUE((Matrix<debug_matrix<row_wise_matrix<int> &>>));
-    EXPECT_TRUE((Matrix<debug_matrix<row_wise_matrix<int> const>>));
-    EXPECT_TRUE((Matrix<debug_matrix<row_wise_matrix<int> const &>>));
+    EXPECT_TRUE((matrix<row_wise_matrix<int>>));
+    EXPECT_TRUE((matrix<row_wise_matrix<int> &>));
+    EXPECT_TRUE((matrix<row_wise_matrix<int> const>));
+    EXPECT_TRUE((matrix<row_wise_matrix<int> const &>));
+    EXPECT_TRUE((matrix<debug_matrix<row_wise_matrix<int>>>));
+    EXPECT_TRUE((matrix<debug_matrix<row_wise_matrix<int> &>>));
+    EXPECT_TRUE((matrix<debug_matrix<row_wise_matrix<int> const>>));
+    EXPECT_TRUE((matrix<debug_matrix<row_wise_matrix<int> const &>>));
 }
 
 TEST_F(debug_matrix_test, construct_with_references)
@@ -301,9 +301,9 @@ TEST_F(debug_matrix_test, construct_with_references)
     using first_sequence_type = typename debug_matrix_traits<debug_matrix_type>::first_sequence_type;
     using second_sequence_type = typename debug_matrix_traits<debug_matrix_type>::second_sequence_type;
 
-    EXPECT_TRUE((std::Same<matrix_type, row_wise_matrix<int> &>));
-    EXPECT_TRUE((std::Same<first_sequence_type, std::vector<dna4> &>));
-    EXPECT_TRUE((std::Same<second_sequence_type, std::vector<dna4> &>));
+    EXPECT_TRUE((std::same_as<matrix_type, row_wise_matrix<int> &>));
+    EXPECT_TRUE((std::same_as<first_sequence_type, std::vector<dna4> &>));
+    EXPECT_TRUE((std::same_as<second_sequence_type, std::vector<dna4> &>));
 }
 
 TEST_F(debug_matrix_test, construct_with_move)
@@ -314,9 +314,9 @@ TEST_F(debug_matrix_test, construct_with_move)
     using first_sequence_type = typename debug_matrix_traits<debug_matrix_type>::first_sequence_type;
     using second_sequence_type = typename debug_matrix_traits<debug_matrix_type>::second_sequence_type;
 
-    EXPECT_TRUE((std::Same<matrix_type, row_wise_matrix<int>>));
-    EXPECT_TRUE((std::Same<first_sequence_type, std::vector<dna4>>));
-    EXPECT_TRUE((std::Same<second_sequence_type, std::vector<dna4>>));
+    EXPECT_TRUE((std::same_as<matrix_type, row_wise_matrix<int>>));
+    EXPECT_TRUE((std::same_as<first_sequence_type, std::vector<dna4>>));
+    EXPECT_TRUE((std::same_as<second_sequence_type, std::vector<dna4>>));
 }
 
 TEST_F(score_matrix_test, other_matrix)

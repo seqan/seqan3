@@ -31,7 +31,7 @@ void sequential_read(benchmark::State& state)
 
     uint8_t dummy = 0;
 
-    if constexpr (std::Same<adaptor_t, void>)
+    if constexpr (std::same_as<adaptor_t, void>)
     {
         for (auto _ : state)
         {
@@ -55,22 +55,22 @@ void sequential_read(benchmark::State& state)
 }
 
 BENCHMARK_TEMPLATE(sequential_read, std::string, void);
-BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(std::ranges::view::all));
+BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(std::view::all));
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(::ranges::view::all));
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(seqan3::view::all));
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::ranges::view::all));
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::view::all));
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(::ranges::view::all));
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::view::all));
 
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, void);
-BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(std::ranges::view::all));
+BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(std::view::all));
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(::ranges::view::all));
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(seqan3::view::all));
 
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, void);
-BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(std::ranges::view::all));
+BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(std::view::all));
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(::ranges::view::all));
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(seqan3::view::all));
 

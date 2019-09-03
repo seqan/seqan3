@@ -39,7 +39,7 @@ namespace seqan3::align_cfg
  */
 template <typename band_t>
 //!\cond
-    requires std::Same<band_t, static_band>
+    requires std::same_as<band_t, static_band>
 //!\endcond
 struct band : public pipeable_config_element<band<band_t>, band_t>
 {

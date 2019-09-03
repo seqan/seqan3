@@ -26,8 +26,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((SequenceFileInputFormat<format_embl>));
-    EXPECT_TRUE((SequenceFileOutputFormat<format_embl>));
+    EXPECT_TRUE((sequence_file_input_format<format_embl>));
+    EXPECT_TRUE((sequence_file_output_format<format_embl>));
 }
 
 // ----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
 //)"
     };
 
-    detail::sequence_file_input_format<format_embl> format;
+    detail::sequence_file_input_format_REMOVEME<format_embl> format;
 
     sequence_file_input_options<dna5, false> options;
 
@@ -308,7 +308,7 @@ GGAGTATAAT ATATATATAT ATAT                                        24
 )"
     };
 
-    detail::sequence_file_output_format<format_embl> format;
+    detail::sequence_file_output_format_REMOVEME<format_embl> format;
 
     sequence_file_output_options options;
 

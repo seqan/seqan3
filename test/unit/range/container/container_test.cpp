@@ -20,21 +20,21 @@
 using namespace seqan3;
 
 template <typename T>
-class container : public ::testing::Test
+class container_ : public ::testing::Test
 {};
 
 using container_types = ::testing::Types<std::vector<dna4>,
                                          bitcompressed_vector<dna4>,
                                          small_vector<dna4, 1000>>;
 
-TYPED_TEST_CASE(container, container_types);
+TYPED_TEST_CASE(container_, container_types);
 
-TYPED_TEST(container, concepts)
+TYPED_TEST(container_, concepts)
 {
-    EXPECT_TRUE(ReservableContainer<TypeParam>);
+    EXPECT_TRUE(reservible_container<TypeParam>);
 }
 
-TYPED_TEST(container, construction)
+TYPED_TEST(container_, construction)
 {
     TypeParam t1;
     TypeParam t2{};
@@ -57,7 +57,7 @@ TYPED_TEST(container, construction)
     EXPECT_EQ(t3, t7);
 }
 
-TYPED_TEST(container, swap)
+TYPED_TEST(container_, swap)
 {
     TypeParam t0{};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -71,7 +71,7 @@ TYPED_TEST(container, swap)
     EXPECT_EQ(t1, (TypeParam{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4}));
 }
 
-TYPED_TEST(container, assign)
+TYPED_TEST(container_, assign)
 {
     TypeParam t0{'C'_dna4, 'C'_dna4};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -102,7 +102,7 @@ TYPED_TEST(container, assign)
     }
 }
 
-TYPED_TEST(container, iterators)
+TYPED_TEST(container_, iterators)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
     TypeParam const t2{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -127,7 +127,7 @@ TYPED_TEST(container, iterators)
     EXPECT_TRUE((std::ranges::equal(t1, "TCCGT"_dna4)));
 }
 
-TYPED_TEST(container, element_access)
+TYPED_TEST(container_, element_access)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
     TypeParam const t2{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -161,7 +161,7 @@ TYPED_TEST(container, element_access)
     EXPECT_TRUE((std::ranges::equal(t1, "CCCGG"_dna4)));
 }
 
-TYPED_TEST(container, capacity)
+TYPED_TEST(container_, capacity)
 {
     TypeParam t0{};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -182,7 +182,7 @@ TYPED_TEST(container, capacity)
     EXPECT_GE(t1.capacity(), t1.size());
     EXPECT_GE(t2.capacity(), t2.size());
 
-    if constexpr (!std::Same<TypeParam, small_vector<dna4, 1000>>)
+    if constexpr (!std::same_as<TypeParam, small_vector<dna4, 1000>>)
     {
         // max_size
         EXPECT_GT(t0.max_size(), 1'000'000'000'000u);
@@ -215,7 +215,7 @@ TYPED_TEST(container, capacity)
     }
 }
 
-TYPED_TEST(container, clear)
+TYPED_TEST(container_, clear)
 {
     TypeParam t0{};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -224,7 +224,7 @@ TYPED_TEST(container, clear)
     EXPECT_EQ(t0, t1);
 }
 
-TYPED_TEST(container, insert)
+TYPED_TEST(container_, insert)
 {
     TypeParam t0{};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -260,7 +260,7 @@ TYPED_TEST(container, insert)
     EXPECT_EQ(t0, t1);
 }
 
-TYPED_TEST(container, erase)
+TYPED_TEST(container_, erase)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
 
@@ -277,7 +277,7 @@ TYPED_TEST(container, erase)
     EXPECT_EQ(t1, (TypeParam{'C'_dna4, 'T'_dna4}));
 }
 
-TYPED_TEST(container, push_pop)
+TYPED_TEST(container_, push_pop)
 {
     TypeParam t0{};
 
@@ -294,7 +294,7 @@ TYPED_TEST(container, push_pop)
     EXPECT_EQ(t0, (TypeParam{}));
 }
 
-TYPED_TEST(container, resize)
+TYPED_TEST(container_, resize)
 {
     TypeParam t0{};
 
@@ -315,7 +315,7 @@ TYPED_TEST(container, resize)
     EXPECT_EQ(t0, (TypeParam{'A'_dna4, 'A'_dna4}));
 }
 
-TYPED_TEST(container, serialisation)
+TYPED_TEST(container_, serialisation)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
     test::do_serialisation(t1);

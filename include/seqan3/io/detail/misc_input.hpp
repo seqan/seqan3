@@ -38,10 +38,10 @@ namespace seqan3::detail
  * \param[in] reference The range that is expected to be the longer one.
  * \param[in] query     The range that is expected to be the shorter one.
  */
-template <std::ranges::ForwardRange ref_t, std::ranges::ForwardRange query_t>
+template <std::ranges::forward_range ref_t, std::ranges::forward_range query_t>
 inline bool starts_with(ref_t && reference, query_t && query)
 //!\cond
-    requires std::EqualityComparableWith<reference_t<ref_t>, reference_t<query_t>>
+    requires std::equality_comparable_with<reference_t<ref_t>, reference_t<query_t>>
 //!\endcond
 {
     auto rit  = std::ranges::begin(reference);
@@ -72,7 +72,7 @@ inline bool starts_with(ref_t && reference, query_t && query)
  * \returns A pointer to the secondary stream with defaulted or NOP'ed deleter.
  * \throws seqan3::file_open_error If the magic bytes suggest compression, but is not supported/available.
  */
-template <Char char_t>
+template <builtin_character char_t>
 inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, std::filesystem::path & filename)
     -> std::unique_ptr<std::basic_istream<char_t>, std::function<void(std::basic_istream<char_t>*)>>
 {
@@ -155,7 +155,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
 }
 
 //!\overload
-template <Char char_t>
+template <builtin_character char_t>
 inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream)
 {
     std::filesystem::path p;

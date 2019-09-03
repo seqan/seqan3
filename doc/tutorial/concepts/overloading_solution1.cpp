@@ -3,7 +3,7 @@
 
 using namespace seqan3;
 
-template <Alphabet t>
+template <alphabet t>
 void print(t const v)
 {
     std::cout << "I am an alphabet and my value as char is: " << to_char(v) << '\n';

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::StructureFileOutputFormat and auxiliary classes.
+ * \brief Provides seqan3::structure_file_output_format and auxiliary classes.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -27,7 +27,7 @@ namespace seqan3::detail
 
 //!\brief The structure file output format base class.
 template <typename t>
-class structure_file_output_format
+class structure_file_output_format_REMOVEME
 {};
 
 } // namespace seqan3::detail
@@ -35,7 +35,7 @@ class structure_file_output_format
 namespace seqan3
 {
 
-/*!\interface seqan3::StructureFileOutputFormat <>
+/*!\interface seqan3::structure_file_output_format <>
  * \brief The generic concept for structure file out formats.
  * \ingroup structure_file
  *
@@ -47,7 +47,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_output_format<t> & v,
+SEQAN3_CONCEPT structure_file_output_format = requires(detail::structure_file_output_format_REMOVEME<t> & v,
                                                     std::ofstream & f,
                                                     structure_file_output_options & options,
                                                     rna5_vector & seq,
@@ -75,9 +75,9 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_outpu
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::StructureFileOutputFormat
- * \brief You can expect these **members** on all types that implement seqan3::StructureFileOutputFormat.
- * \memberof seqan3::StructureFileOutputFormat
+/*!\name Requirements for seqan3::structure_file_output_format
+ * \brief You can expect these **members** on all types that implement seqan3::structure_file_output_format.
+ * \memberof seqan3::structure_file_output_format
  * \{
  */
 
@@ -93,20 +93,20 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_outpu
  *                comment_type && comment,
  *                offset_type && offset)
  * \brief Write the given fields to the specified stream.
- * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
- * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
- * over a seqan3::Alphabet.
- * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange
- * over a seqan3::Alphabet.
- * \tparam bpp_type         Type of the seqan3::field::BPP output; must satisfy std::ranges::OutputRange
+ * \tparam stream_type      Output stream, must satisfy seqan3::output_stream_over with `char`.
+ * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::output_range
+ * over a seqan3::alphabet.
+ * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::output_range
+ * over a seqan3::alphabet.
+ * \tparam bpp_type         Type of the seqan3::field::BPP output; must satisfy std::ranges::output_range
  * over a set of pair of types satisfying std::is_floating_point and std::numeric_limits::is_integer, respectively.
- * \tparam structure_type   Type of the seqan3::field::STRUCTURE output; must satisfy std::ranges::OutputRange
- * over a seqan3::RnaStructureAlphabet.
+ * \tparam structure_type   Type of the seqan3::field::STRUCTURE output; must satisfy std::ranges::output_range
+ * over a seqan3::rna_structure_alphabet.
  * \tparam energy_type      Type of the seqan3::field::ENERGY output; must satisfy std::is_floating_point.
  * \tparam react_type       Type of the seqan3::field::REACT and seqan3::field::REACT_ERR output;
  * must satisfy std::is_floating_point.
- * \tparam comment_type     Type of the seqan3::field::COMMENT output; must satisfy std::ranges::OutputRange
- * over a seqan3::Alphabet.
+ * \tparam comment_type     Type of the seqan3::field::COMMENT output; must satisfy std::ranges::output_range
+ * over a seqan3::alphabet.
  * \tparam offset_type      Type of the seqan3::field::OFFSET output; must satisfy std::numeric_limits::is_integer.
  * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.
@@ -129,7 +129,7 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(detail::structure_file_outpu
  *   * The format does not handle seqan3::field::STRUCTURED_SEQ, instead seqan3::structure_file_output splits it into
  * two views and passes it to the format as if they were separate.
  */
-/*!\var static inline std::vector<std::string> seqan3::StructureFileOutputFormat::file_extensions
+/*!\var static inline std::vector<std::string> seqan3::structure_file_output_format::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 
@@ -141,21 +141,21 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::StructureFileOutputFormat [default is false].
+ * seqan3::structure_file_output_format [default is false].
  * \ingroup core
- * \see seqan3::TypeListOfStructureFileOutputFormats
+ * \see seqan3::type_list_specialisationOfstructure_file_output_formats
  */
 template <typename t>
 constexpr bool is_type_list_of_structure_file_output_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::StructureFileOutputFormat [overload].
+ * seqan3::structure_file_output_format [overload].
  * \ingroup core
- * \see seqan3::TypeListOfStructureFileOutputFormats
+ * \see seqan3::type_list_specialisationOfstructure_file_output_formats
  */
 template <typename ... ts>
 constexpr bool is_type_list_of_structure_file_output_formats_v<type_list<ts...>>
-                = (StructureFileOutputFormat<ts> && ...);
+                = (structure_file_output_format<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::StructureFileFormat.
@@ -163,5 +163,5 @@ constexpr bool is_type_list_of_structure_file_output_formats_v<type_list<ts...>>
  * \see seqan3::is_type_list_of_structure_file_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT TypeListOfStructureFileOutputFormats = is_type_list_of_structure_file_output_formats_v<t>;
+SEQAN3_CONCEPT type_list_of_structure_file_output_formats = is_type_list_of_structure_file_output_formats_v<t>;
 } // namespace seqan3::detail

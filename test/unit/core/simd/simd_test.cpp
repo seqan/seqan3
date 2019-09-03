@@ -56,32 +56,32 @@ TEST(simd, standard_construction)
     EXPECT_TRUE((std::is_nothrow_swappable_v<int16x_t>));
 }
 
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 1>)
 {
     simd = simd_t{a};
 }
 
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 8>)
 {
     simd = simd_t{a, a, a, a, a, a, a, a};
 }
 
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 16>)
 {
     simd = simd_t{a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a};
 }
 
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 32>)
 {
     simd = simd_t{a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a,
                   a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a};
 }
 
-template <Simd simd_t>
+template <simd::simd_concept simd_t>
 void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 64>)
 {
     simd = simd_t{a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a,

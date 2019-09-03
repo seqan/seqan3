@@ -26,12 +26,12 @@ namespace seqan3
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
  * \tparam char_t       The character type of the alphabet (set this to `void` when defining just a
- *                      seqan3::Semialphabet).
+ *                      seqan3::semialphabet).
  *
  * \details
  *
  * You can use this class to define your own alphabet, but types are not required to be based on it to model
- * seqan3::Alphabet, it is purely a way to avoid code duplication.
+ * seqan3::alphabet, it is purely a way to avoid code duplication.
  *
  * The base class represents the alphabet value as the rank and automatically deduces the rank type from the size and
  * defines all required member functions. The derived type needs to define only the following two tables as static
@@ -52,13 +52,13 @@ template <typename derived_type, size_t size, typename char_t = char>
 class alphabet_base
 {
 protected:
-    static_assert(size != 0, "Alphabet size must be >= 1"); // == 1 is handled below in separate specialisation
+    static_assert(size != 0, "alphabet size must be >= 1"); // == 1 is handled below in separate specialisation
 
     /*!\name Member types
      * \{
      */
     //!\brief The char representation; conditional needed to make semi alphabet definitions legal.
-    using char_type = std::conditional_t<std::Same<char_t, void>, char, char_t>;
+    using char_type = std::conditional_t<std::same_as<char_t, void>, char, char_t>;
     //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
     using rank_type = detail::min_viable_uint_t<size - 1>;
     //!\}
@@ -82,7 +82,7 @@ public:
      *
      * \details
      *
-     * Provides an implementation for seqan3::to_char, required to model seqan3::Alphabet.
+     * Provides an implementation for seqan3::to_char, required to model seqan3::alphabet.
      *
      * ###Complexity
      *
@@ -94,7 +94,7 @@ public:
      */
     constexpr char_type to_char() const noexcept
     //!\cond
-        requires !std::Same<char_t, void>
+        requires !std::same_as<char_t, void>
     //!\endcond
     {
         return derived_type::rank_to_char[rank];
@@ -104,7 +104,7 @@ public:
      *
      * \details
      *
-     * Provides an implementation for seqan3::to_rank, required to model seqan3::Semialphabet.
+     * Provides an implementation for seqan3::to_rank, required to model seqan3::semialphabet.
      *
      * ###Complexity
      *
@@ -128,7 +128,7 @@ public:
      *
      * \details
      *
-     * Provides an implementation for seqan3::assign_char_to, required to model seqan3::Alphabet.
+     * Provides an implementation for seqan3::assign_char_to, required to model seqan3::alphabet.
      *
      * ###Complexity
      *
@@ -140,7 +140,7 @@ public:
      */
     constexpr derived_type & assign_char(char_type const c) noexcept
     //!\cond
-        requires !std::Same<char_t, void>
+        requires !std::same_as<char_t, void>
     //!\endcond
     {
         using index_t = std::make_unsigned_t<char_type>;
@@ -153,7 +153,7 @@ public:
      *
      * \details
      *
-     * Provides an implementation for seqan3::assign_rank_to, required to model seqan3::Semialphabet.
+     * Provides an implementation for seqan3::assign_rank_to, required to model seqan3::semialphabet.
      *
      * ###Complexity
      *
@@ -237,7 +237,7 @@ protected:
      * \{
      */
     //!\copybrief seqan3::alphabet_base::char_type
-    using char_type = std::conditional_t<std::Same<char_t, void>, char, char_t>;
+    using char_type = std::conditional_t<std::same_as<char_t, void>, char, char_t>;
     //!\copybrief seqan3::alphabet_base::rank_type
     using rank_type = bool;
     //!\}
@@ -260,7 +260,7 @@ public:
     //!\copybrief seqan3::alphabet_base::to_char
     constexpr char_type to_char() const noexcept
     //!\cond
-        requires !std::Same<char_t, void>
+        requires !std::same_as<char_t, void>
     //!\endcond
     {
         return derived_type::char_value;
@@ -279,7 +279,7 @@ public:
     //!\copybrief seqan3::alphabet_base::assign_char
     constexpr derived_type & assign_char(char_type const) noexcept
     //!\cond
-        requires !std::Same<char_t, void>
+        requires !std::same_as<char_t, void>
     //!\endcond
     {
         return static_cast<derived_type &>(*this);

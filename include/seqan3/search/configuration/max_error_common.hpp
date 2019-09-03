@@ -25,7 +25,7 @@ namespace seqan3::search_cfg
  */
 template <typename value_t>
 //!\cond
-    requires Arithmetic<value_t>
+    requires arithmetic<value_t>
 //!\endcond
 struct total : detail::strong_type<value_t, total<value_t>, detail::strong_type_skill::convert>
 {
@@ -40,14 +40,14 @@ struct total : detail::strong_type<value_t, total<value_t>, detail::strong_type_
  * \relates seqan3::search_cfg::total
  * \{
  */
-//! \brief Deduces to `uint8_t` for all types modelling std::Integral.
-template <std::Integral value_t>
+//! \brief Deduces to `uint8_t` for all types modelling std::integral.
+template <std::integral value_t>
 total(value_t) -> total<uint8_t>;
 
-//! \brief Deduces to `double` for all types modelling seqan3::FloatingPoint.
+//! \brief Deduces to `double` for all types modelling seqan3::floating_point.
 template <typename value_t>
 //!\cond
-    requires FloatingPoint<value_t>
+    requires floating_point<value_t>
 //!\endcond
 total(value_t) -> total<double>;
 //!\}
@@ -59,7 +59,7 @@ total(value_t) -> total<double>;
  */
 template <typename value_t>
 //!\cond
-    requires Arithmetic<value_t>
+    requires arithmetic<value_t>
 //!\endcond
 struct substitution : detail::strong_type<value_t, substitution<value_t>, detail::strong_type_skill::convert>
 {
@@ -74,14 +74,14 @@ struct substitution : detail::strong_type<value_t, substitution<value_t>, detail
  * \relates seqan3::search_cfg::substitution
  * \{
  */
-//! \brief Deduces to `uint8_t` for all types modelling std::Integral.
-template <std::Integral value_t>
+//! \brief Deduces to `uint8_t` for all types modelling std::integral.
+template <std::integral value_t>
 substitution(value_t) -> substitution<uint8_t>;
 
-//! \brief Deduces to `double` for all types modelling seqan3::FloatingPoint.
+//! \brief Deduces to `double` for all types modelling seqan3::floating_point.
 template <typename value_t>
 //!\cond
-    requires FloatingPoint<value_t>
+    requires floating_point<value_t>
 //!\endcond
 substitution(value_t) -> substitution<double>;
 //!\}
@@ -92,7 +92,7 @@ substitution(value_t) -> substitution<double>;
  */
 template <typename value_t>
 //!\cond
-    requires Arithmetic<value_t>
+    requires arithmetic<value_t>
 //!\endcond
 struct insertion : detail::strong_type<value_t, insertion<value_t>, detail::strong_type_skill::convert>
 {
@@ -107,14 +107,14 @@ struct insertion : detail::strong_type<value_t, insertion<value_t>, detail::stro
  * \relates seqan3::search_cfg::total
  * \{
  */
-//! \brief Deduces to `uint8_t` for all types modelling std::Integral.
-template <std::Integral value_t>
+//! \brief Deduces to `uint8_t` for all types modelling std::integral.
+template <std::integral value_t>
 insertion(value_t) -> insertion<uint8_t>;
 
-//! \brief Deduces to `double` for all types modelling seqan3::FloatingPoint.
+//! \brief Deduces to `double` for all types modelling seqan3::floating_point.
 template <typename value_t>
 //!\cond
-    requires FloatingPoint<value_t>
+    requires floating_point<value_t>
 //!\endcond
 insertion(value_t) -> insertion<double>;
 //!\}
@@ -125,7 +125,7 @@ insertion(value_t) -> insertion<double>;
  */
 template <typename value_t>
 //!\cond
-    requires Arithmetic<value_t>
+    requires arithmetic<value_t>
 //!\endcond
 struct deletion : detail::strong_type<value_t, deletion<value_t>, detail::strong_type_skill::convert>
 {
@@ -140,14 +140,14 @@ struct deletion : detail::strong_type<value_t, deletion<value_t>, detail::strong
  * \relates seqan3::search_cfg::deletion
  * \{
  */
-//! \brief Deduces to `uint8_t` for Integral types.
-template <std::Integral value_t>
+//! \brief Deduces to `uint8_t` for integral types.
+template <std::integral value_t>
 deletion(value_t) -> deletion<uint8_t>;
 
-//! \brief Deduces to `double` for all types modelling seqan3::FloatingPoint.
+//! \brief Deduces to `double` for all types modelling seqan3::floating_point.
 template <typename value_t>
 //!\cond
-    requires FloatingPoint<value_t>
+    requires floating_point<value_t>
 //!\endcond
 deletion(value_t) -> deletion<double>;
 //!\}

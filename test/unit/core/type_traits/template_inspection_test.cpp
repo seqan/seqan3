@@ -19,10 +19,10 @@ TEST(template_inspect, concept_check)
 {
     using tl = type_list<int, char, double>;
 
-    EXPECT_FALSE((TransformationTrait<detail::transfer_template_args_onto<int, std::tuple>>));
-    EXPECT_TRUE((TransformationTrait<detail::transfer_template_args_onto<tl, std::tuple>>));
+    EXPECT_FALSE((transformation_trait<detail::transfer_template_args_onto<int, std::tuple>>));
+    EXPECT_TRUE((transformation_trait<detail::transfer_template_args_onto<tl, std::tuple>>));
 
-    EXPECT_TRUE((UnaryTypeTrait<detail::is_type_specialisation_of<int, type_list>>));
+    EXPECT_TRUE((unary_type_trait<detail::is_type_specialisation_of<int, type_list>>));
 }
 
 TEST(template_inspect, transfer_template_args_onto_t)
@@ -50,7 +50,7 @@ TEST(template_inspect, is_type_specialisation_of_v)
     EXPECT_FALSE((detail::is_type_specialisation_of_v<int, type_list>));
 }
 
-template <std::Integral t>
+template <std::integral t>
 struct constraint_bar
 {};
 

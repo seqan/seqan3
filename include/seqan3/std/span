@@ -27,7 +27,7 @@
 #include <iterator>     // for iterators
 #include <type_traits>  // for remove_cv, etc
 
-#include <seqan3/range/concept.hpp>  // for ForwardingRange
+#include <seqan3/range/concept.hpp>  // for forwarding_range
 #include <seqan3/std/iterator>       // for iterator concepts
 #include <seqan3/std/ranges>         // for range concepts
 
@@ -81,12 +81,12 @@ public:
     constexpr span           (const span&) noexcept = default;
     constexpr span& operator=(const span&) noexcept = default;
 
-    template <ContiguousIterator iterator_t>
+    template <contiguous_iterator iterator_t>
         requires is_convertible_v<remove_reference_t<iter_reference_t<iterator_t>>(*)[], element_type(*)[]>
     constexpr span(iterator_t f, index_type count) noexcept : data_{addressof(*f)}
         { (void) count; assert(span_extent == count); } // "size mismatch in span's constructor (f, count)"
 
-    template <ContiguousIterator iterator_t, SizedSentinel<iterator_t> sentinel_t>
+    template <contiguous_iterator iterator_t, sized_sentinel_for<iterator_t> sentinel_t>
         requires is_convertible_v<remove_reference_t<iter_reference_t<iterator_t>>(*)[], element_type(*)[]> &&
                  !is_convertible_v<sentinel_t, size_t>
     constexpr span(iterator_t f, sentinel_t l) noexcept : data_{addressof(*f)}
@@ -232,12 +232,12 @@ public:
     constexpr span           (const span&) noexcept = default;
     constexpr span& operator=(const span&) noexcept = default;
 
-    template <ContiguousIterator iterator_t>
+    template <contiguous_iterator iterator_t>
         requires is_convertible_v<remove_reference_t<iter_reference_t<iterator_t>>(*)[], element_type(*)[]>
     constexpr span(iterator_t f, index_type count) noexcept : data_{addressof(*f)}, size_{count}
     {}
 
-    template <ContiguousIterator iterator, SizedSentinel<iterator> sentinel>
+    template <contiguous_iterator iterator, sized_sentinel_for<iterator> sentinel>
         requires is_convertible_v<remove_reference_t<iter_reference_t<iterator>>(*)[], element_type(*)[]> &&
                  !is_convertible_v<sentinel, size_t>
     constexpr span(iterator f, sentinel l) noexcept : data_{addressof(*f)}, size_{static_cast<index_type>(distance(f, l))}
@@ -253,15 +253,15 @@ public:
     inline constexpr span(const array<value_type, span_sz>& arr) noexcept : data_{arr.data()}, size_{span_sz} {}
 
     template <typename range_t>
-        requires !Same<remove_reference_t<remove_cv_t<range_t>>, span> && // guard for recursive instantiation in Constructible
+        requires !same_as<remove_reference_t<remove_cv_t<range_t>>, span> && // guard for recursive instantiation in constructible_from
                  !is_span<remove_reference_t<range_t>>::value &&
                  !is_std_array<remove_reference_t<range_t>>::value &&
                  !is_array_v<remove_reference_t<range_t>> &&
                  is_convertible_v<remove_reference_t<iter_reference_t<ranges::iterator_t<range_t>>>(*)[],
                                   element_type(*)[]> &&
-                 ranges::ContiguousRange<range_t> &&
-                 ranges::SizedRange<range_t> &&
-                 (seqan3::ForwardingRange<range_t> || is_const_v<element_type>)
+                 ranges::contiguous_range<range_t> &&
+                 ranges::sized_range<range_t> &&
+                 (seqan3::forwarding_range<range_t> || is_const_v<element_type>)
     constexpr span(range_t && rng) : data_{ranges::data(rng)}, size_{static_cast<index_type>(ranges::size(rng))}
     {}
 
@@ -399,10 +399,10 @@ template <class span_tp, ptrdiff_t span_extent>
     { lhs.swap(rhs); }
 
 //  Deduction guides
-template <ContiguousIterator iterator_t>
+template <contiguous_iterator iterator_t>
     span(iterator_t, size_t) -> span<remove_reference_t<iter_reference_t<iterator_t>>>;
 
-template <ContiguousIterator iterator_t, SizedSentinel<iterator_t> sentinel_t>
+template <contiguous_iterator iterator_t, sized_sentinel_for<iterator_t> sentinel_t>
     span(iterator_t, sentinel_t) -> span<remove_reference_t<iter_reference_t<iterator_t>>>;
 
 template <class span_tp, size_t span_sz>
@@ -414,7 +414,7 @@ template <class span_tp, size_t span_sz>
 template <class span_tp, size_t span_sz>
     span(const array<span_tp, span_sz>&) -> span<const span_tp, span_sz>;
 
-template <ranges::ContiguousRange range_t>
+template <ranges::contiguous_range range_t>
     span(range_t &&) -> span<ranges::range_value_t<range_t>>;
 } // namespace std
 

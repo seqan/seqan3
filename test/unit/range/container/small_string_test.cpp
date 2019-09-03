@@ -37,10 +37,10 @@ TEST(small_string, standard_construction)
     EXPECT_TRUE((std::is_nothrow_move_assignable_v<small_string<4>>));
 }
 
-TEST(small_string, Container)
+TEST(small_string, container)
 {
-    EXPECT_TRUE(Container<small_string<4>>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<small_string<4>>);
+    EXPECT_TRUE(container<small_string<4>>);
+    EXPECT_TRUE(std::ranges::random_access_range<small_string<4>>);
 }
 
 // construction from literal.

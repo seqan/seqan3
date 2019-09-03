@@ -102,7 +102,7 @@ constexpr size_t next_power_of_two(size_t n)
 *
 * Constant.
 */
-template <std::UnsignedIntegral unsigned_t>
+template <std::unsigned_integral unsigned_t>
 constexpr uint8_t popcount(unsigned_t const n) noexcept
 {
 #if defined(__GNUC__)
@@ -142,7 +142,7 @@ constexpr uint8_t popcount(unsigned_t const n) noexcept
 *
 * Constant.
 */
-template <std::UnsignedIntegral unsigned_t>
+template <std::unsigned_integral unsigned_t>
 constexpr uint8_t count_leading_zeros(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
@@ -183,7 +183,7 @@ constexpr uint8_t count_leading_zeros(unsigned_t const n) noexcept
  *
  * Constant.
  */
-template <std::UnsignedIntegral unsigned_t>
+template <std::unsigned_integral unsigned_t>
 constexpr uint8_t count_trailing_zeros(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
@@ -224,7 +224,7 @@ constexpr uint8_t count_trailing_zeros(unsigned_t const n) noexcept
  *
  * Constant.
  */
-template <std::UnsignedIntegral unsigned_t>
+template <std::unsigned_integral unsigned_t>
 constexpr uint8_t most_significant_bit_set(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
@@ -237,7 +237,7 @@ constexpr uint8_t most_significant_bit_set(unsigned_t const n) noexcept
 
 /*!\brief Convert the byte encoding of integer values to little-endian byte order.
  * \ingroup core
- * \tparam type The type of the value to convert; must model std::Integral.
+ * \tparam type The type of the value to convert; must model std::integral.
  * \param  in   The input value to convert.
  * \returns the converted value in little-endian byte-order.
  *
@@ -247,7 +247,7 @@ constexpr uint8_t most_significant_bit_set(unsigned_t const n) noexcept
  * integral types are allowed as input. On host systems with little endian this function is a no-op and returns the
  * unchanged input value. Other systems with mixed endianness are not supported.
  */
-template <std::Integral type>
+template <std::integral type>
 constexpr type to_little_endian(type const in) noexcept
 {
     if constexpr (endian::native == endian::little)

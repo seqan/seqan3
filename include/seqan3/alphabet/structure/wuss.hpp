@@ -29,12 +29,12 @@ namespace seqan3
 /*!\brief The WUSS structure alphabet of the characters `.<>:,-_~;()[]{}AaBbCcDd`...
  * \tparam SIZE The alphabet size defaults to 51 and must be an odd number in range 15..67.
  *              It determines the allowed pseudoknot depth by adding characters AaBb..Zz to the alphabet.
- * \implements seqan3::RnaStructureAlphabet
- * \implements seqan3::WritableAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \implements seqan3::rna_structure_alphabet
+ * \implements seqan3::writable_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
  * \ingroup structure
  *

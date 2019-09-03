@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Provides seqan3::detail::Matrix.
+ * \brief Provides seqan3::detail::matrix.
  */
 
 #pragma once
@@ -26,19 +26,19 @@ namespace seqan3::detail
 template <typename score_type>
 constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
 
-/*!\interface seqan3::detail::Matrix <>
+/*!\interface seqan3::detail::matrix <>
  * \brief Defines the requirements of a matrix (e.g. score matrices, trace matrices).
  * \tparam matrix_t The type the concept check is performed on (the putative matrix).
  * \ingroup alignment_matrix
  */
-/*!\name Requirements for seqan3::detail::Matrix
- * \brief You can expect these members on all types that implement seqan3::detail::Matrix.
- * \relates seqan3::detail::Matrix
+/*!\name Requirements for seqan3::detail::matrix
+ * \brief You can expect these members on all types that implement seqan3::detail::matrix.
+ * \relates seqan3::detail::matrix
  * \{
  */
 //!\cond
 template <typename matrix_t>
-SEQAN3_CONCEPT Matrix = requires(remove_cvref_t<matrix_t> m)
+SEQAN3_CONCEPT matrix = requires(remove_cvref_t<matrix_t> m)
 {
 //!\endcond
 
@@ -86,9 +86,9 @@ SEQAN3_CONCEPT Matrix = requires(remove_cvref_t<matrix_t> m)
  * \param[in] lhs       Compare the left hand side matrix
  * \param[in] rhs       with the right hand side matrix.
  */
-template <Matrix matrix1_t, Matrix matrix2_t>
+template <matrix matrix1_t, matrix matrix2_t>
 //!\cond
-    requires std::EqualityComparableWith<typename matrix1_t::reference, typename matrix2_t::reference>
+    requires std::equality_comparable_with<typename matrix1_t::reference, typename matrix2_t::reference>
 //!\endcond
 inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {
@@ -112,9 +112,9 @@ inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
  * \param[in] lhs       Compare the left hand side matrix
  * \param[in] rhs       with the right hand side matrix.
  */
-template <Matrix matrix1_t, Matrix matrix2_t>
+template <matrix matrix1_t, matrix matrix2_t>
 //!\cond
-    requires std::EqualityComparableWith<typename matrix1_t::reference, typename matrix2_t::reference>
+    requires std::equality_comparable_with<typename matrix1_t::reference, typename matrix2_t::reference>
 //!\endcond
 inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {

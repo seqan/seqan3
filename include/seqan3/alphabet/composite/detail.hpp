@@ -22,11 +22,11 @@ namespace seqan3::detail
 {
 
 // ------------------------------------------------------------------
-// AlphabetTupleBase
+// alphabet_tuple_base_specialisation
 // ------------------------------------------------------------------
 
-/*!\interface seqan3::detail::AlphabetTupleBase <>
- * \extends seqan3::Semialphabet
+/*!\interface seqan3::detail::alphabet_tuple_base_specialisation <>
+ * \extends seqan3::semialphabet
  * \brief seqan3::alphabet_tuple_base and its specialisations model this concept.
  * \ingroup alphabet
  *
@@ -37,7 +37,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT AlphabetTupleBase = requires
+SEQAN3_CONCEPT alphabet_tuple_base_specialisation = requires
 {
     typename t::seqan3_tuple_components;
     typename t::seqan3_recursive_tuple_components;
@@ -49,18 +49,18 @@ SEQAN3_CONCEPT AlphabetTupleBase = requires
 // ------------------------------------------------------------------
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \ingroup alphabet
  */
 template <typename t>
 struct tuple_components;
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list
- *        [specialisation for seqan3::alphabet_tuple_base].
- * \implements seqan3::TransformationTrait
+ *        [specialisation for seqan3::alphabet_tuple_base_specialisation].
+ * \implements seqan3::transformation_trait
  * \ingroup alphabet
  */
-template <AlphabetTupleBase t>
+template <alphabet_tuple_base_specialisation t>
 struct tuple_components<t>
 {
     //!\brief The returned type.
@@ -73,18 +73,18 @@ struct tuple_components<t>
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
  *        nested composites) as a meta::list [base template].
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \ingroup alphabet
  */
 template <typename t>
 struct recursive_tuple_components;
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
- *        nested composites) as a meta::list [specialisation for seqan3::alphabet_tuple_base].
- * \implements seqan3::TransformationTrait
+ *        nested composites) as a meta::list [specialisation for seqan3::alphabet_tuple_base_specialisation].
+ * \implements seqan3::transformation_trait
  * \ingroup alphabet
  */
-template <AlphabetTupleBase t>
+template <alphabet_tuple_base_specialisation t>
 struct recursive_tuple_components<t>
 {
     //!\brief The returned type.
@@ -114,7 +114,7 @@ struct implicitly_convertible_from
 {
     //!\brief The returned type when invoked.
     template <typename type>
-    using invoke = std::integral_constant<bool, ImplicitlyConvertibleTo<T, type>>;
+    using invoke = std::integral_constant<bool, implicitly_convertible_to<T, type>>;
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
@@ -125,7 +125,7 @@ struct assignable_from
 {
     //!\brief The returned type when invoked.
     template <typename type>
-    using invoke = std::integral_constant<bool, WeaklyAssignable<type, T>>;
+    using invoke = std::integral_constant<bool, weakly_assignable_from<type, T>>;
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
@@ -136,18 +136,18 @@ struct weakly_equality_comparable_with
 {
     //!\brief The returned type when invoked.
     template <typename type>
-    using invoke = std::integral_constant<bool, std::detail::WeaklyEqualityComparableWith<type, T>>;
+    using invoke = std::integral_constant<bool, std::detail::weakly_equality_comparable_with<type, T>>;
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
  * Returns an std::true_type if the `type` is comparable via <,<=,>,>= to `T`.
  */
 template <typename T>
-struct weakly_ordered_with
+struct weakly_ordered_with_
 {
     //!\brief The returned type when invoked.
     template <typename type>
-    using invoke = std::integral_constant<bool, WeaklyOrderedWith<type, T>>;
+    using invoke = std::integral_constant<bool, weakly_ordered_with<type, T>>;
 };
 
 } // namespace seqan3::detail
@@ -162,7 +162,7 @@ namespace seqan3
 // forward
 template <typename ...alternative_types>
 //!\cond
-    requires (detail::WritableConstexprAlphabet<alternative_types> && ...) &&
+    requires (detail::writable_constexpr_alphabet<alternative_types> && ...) &&
              (!std::is_reference_v<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
@@ -172,7 +172,7 @@ class alphabet_variant;
 template <typename derived_type,
           typename ...component_types>
 //!\cond
-    requires (detail::WritableConstexprSemialphabet<component_types> && ...) &&
+    requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
              (!std::is_reference_v<component_types> && ...)
 //!\endcond
 class alphabet_tuple_base;

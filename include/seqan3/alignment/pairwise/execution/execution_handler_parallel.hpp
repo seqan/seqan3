@@ -101,8 +101,8 @@ public:
      */
     template <typename fn_type, typename first_range_type, typename second_range_type, typename delegate_type>
     //!\cond
-        requires std::Invocable<fn_type, size_t const, first_range_type, second_range_type> &&
-                 std::Invocable<delegate_type, std::invoke_result_t<fn_type,
+        requires std::invocable<fn_type, size_t const, first_range_type, second_range_type> &&
+                 std::invocable<delegate_type, std::invoke_result_t<fn_type,
                                                                     size_t const,
                                                                     first_range_type,
                                                                     second_range_type>>
@@ -113,8 +113,8 @@ public:
                  second_range_type second_range,
                  delegate_type && delegate)
     {
-        static_assert(std::ranges::View<first_range_type>, "Expected a view!");
-        static_assert(std::ranges::View<second_range_type>, "Expected a view!");
+        static_assert(std::ranges::view<first_range_type>, "Expected a view!");
+        static_assert(std::ranges::view<second_range_type>, "Expected a view!");
 
         assert(state != nullptr);
 

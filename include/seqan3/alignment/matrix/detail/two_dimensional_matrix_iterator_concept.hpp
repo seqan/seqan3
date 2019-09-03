@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::TwoDimensionalMatrixIterator.
+ * \brief Provides seqan3::detail::two_dimensional_matrix_iterator.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -21,17 +21,17 @@
 namespace seqan3::detail
 {
 
-/*!\interface seqan3::detail::TwoDimensionalMatrixIterator <>
- * \extends   std::RandomAccessIterator
+/*!\interface seqan3::detail::two_dimensional_matrix_iterator <>
+ * \extends   std::random_access_iterator
  * \brief     A concept for iterators over a two dimensional matrix, e.g. seqan3::detail::two_dimensional_matrix
  * \ingroup   alignment_matrix
  *
  * This concept describes the requirements an iterator must fulfil in order to be used inside various parts
  * of the alignment algorithm, e.g. to compute the traceback path after filling the alignment matrix.
  */
-/*!\name Requirements for seqan3::detail::TwoDimensionalMatrixIterator
- * \brief You can expect these functions on all types that model seqan3::detail::TwoDimensionalMatrixIterator.
- * \relates seqan3::detail::TwoDimensionalMatrixIterator
+/*!\name Requirements for seqan3::detail::two_dimensional_matrix_iterator
+ * \brief You can expect these functions on all types that model seqan3::detail::two_dimensional_matrix_iterator.
+ * \relates seqan3::detail::two_dimensional_matrix_iterator
  * \{
  */
 /*!\fn iterator & operator+=(seqan3::detail::matrix_offset offset) noexcept
@@ -91,8 +91,8 @@ namespace seqan3::detail
 //!\}
 //!\cond
 template <typename iter_t>
-SEQAN3_CONCEPT TwoDimensionalMatrixIterator =
-    std::RandomAccessIterator<iter_t> &&
+SEQAN3_CONCEPT two_dimensional_matrix_iterator =
+    std::random_access_iterator<iter_t> &&
     requires(std::remove_reference_t<iter_t> it, std::remove_reference_t<iter_t> const cit, matrix_offset offset)
     {
         { it += offset };
@@ -106,14 +106,14 @@ SEQAN3_CONCEPT TwoDimensionalMatrixIterator =
         { it.coordinate() };
         { cit.coordinate() };
 
-        requires std::Same<decltype(it += offset), std::remove_reference_t<iter_t> &>;
-        requires std::Same<decltype(it + offset), std::remove_reference_t<iter_t>>;
-        requires std::Same<decltype(offset + it), std::remove_reference_t<iter_t>>;
-        requires std::Same<decltype(it -= offset), std::remove_reference_t<iter_t> &>;
-        requires std::Same<decltype(it - offset), std::remove_reference_t<iter_t>>;
-        requires std::Same<decltype(cit - offset), std::remove_reference_t<iter_t>>;
-        requires std::Same<decltype(it.coordinate()), matrix_coordinate>;
-        requires std::Same<decltype(cit.coordinate()), matrix_coordinate>;
+        requires std::same_as<decltype(it += offset), std::remove_reference_t<iter_t> &>;
+        requires std::same_as<decltype(it + offset), std::remove_reference_t<iter_t>>;
+        requires std::same_as<decltype(offset + it), std::remove_reference_t<iter_t>>;
+        requires std::same_as<decltype(it -= offset), std::remove_reference_t<iter_t> &>;
+        requires std::same_as<decltype(it - offset), std::remove_reference_t<iter_t>>;
+        requires std::same_as<decltype(cit - offset), std::remove_reference_t<iter_t>>;
+        requires std::same_as<decltype(it.coordinate()), matrix_coordinate>;
+        requires std::same_as<decltype(cit.coordinate()), matrix_coordinate>;
     };
 //!\endcond
 } // namespace seqan3::detail

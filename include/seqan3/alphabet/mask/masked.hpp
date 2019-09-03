@@ -22,14 +22,14 @@ namespace seqan3
 /*!\brief Implementation of a masked composite, which extends a given alphabet
  * with a mask.
  * \ingroup mask
- * \implements seqan3::WritableAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \implements seqan3::writable_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
- * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::Semialphabet.
- * \tparam mask_t Types of masked letter; must satisfy seqan3::Semialphabet, defaults to seqan3::mask.
+ * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semialphabet.
+ * \tparam mask_t Types of masked letter; must satisfy seqan3::semialphabet, defaults to seqan3::mask.
  *
  * \details
  * The masked composite represents a seqan3::alphabet_tuple_base of any given alphabet with the
@@ -40,7 +40,7 @@ namespace seqan3
  */
  template <typename sequence_alphabet_t>
 //!\cond
-    requires WritableAlphabet<sequence_alphabet_t>
+    requires writable_alphabet<sequence_alphabet_t>
 //!\endcond
 class masked : public alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
 {
@@ -121,7 +121,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::Semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * Satisfies the seqan3::semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
      * wrapper.
      *
      * Default implementation: True for all character values that are reproduced by #to_char() after being assigned

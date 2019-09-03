@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::ScoringScheme.
+ * \brief Provides seqan3::scoring_scheme.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -17,11 +17,11 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::ScoringScheme <>
+/*!\interface seqan3::scoring_scheme <>
  * \brief A concept that requires that type be able to score two letters.
  * \tparam t            The type the concept check is performed on (the putative scoring scheme).
- * \tparam alphabet_t   The type of the first letter that you wish to score; must model seqan3::Alphabet.
- * \tparam alphabet2_t  The type of the second letter that you wish to score; must model seqan3::Alphabet;
+ * \tparam alphabet_t   The type of the first letter that you wish to score; must model seqan3::alphabet.
+ * \tparam alphabet2_t  The type of the second letter that you wish to score; must model seqan3::alphabet;
  *                      defaults to `alphabet_t`.
  * \ingroup scoring
  *
@@ -31,14 +31,14 @@ namespace seqan3
  * ability to score the two letters is required.
  *
  */
-/*!\name Requirements for seqan3::ScoringScheme
- * \brief You can expect these members on all types that implement seqan3::ScoringScheme.
- * \memberof seqan3::ScoringScheme
+/*!\name Requirements for seqan3::scoring_scheme
+ * \brief You can expect these members on all types that implement seqan3::scoring_scheme.
+ * \memberof seqan3::scoring_scheme
  * \{
  */
 
 /*!\typedef     typedef IMPLEMENTATION_DEFINED score_type;
- * \brief       The type returned by seqan3::ScoringScheme::score(), usually a seqan3::Arithmetic.
+ * \brief       The type returned by seqan3::scoring_scheme::score(), usually a seqan3::arithmetic.
  *
  * \details
  * \attention This is a concept requirement, not an actual typedef (however types satisfying this concept
@@ -57,14 +57,14 @@ namespace seqan3
 //!\}
 
 //!\cond
-template <typename t, Alphabet alphabet_t, Alphabet alphabet2_t = alphabet_t>
-SEQAN3_CONCEPT ScoringScheme = requires (t scheme,
+template <typename t, alphabet alphabet_t, alphabet alphabet2_t = alphabet_t>
+SEQAN3_CONCEPT scoring_scheme = requires (t scheme,
                                                 alphabet_t const alph1,
                                                 alphabet2_t const alph2)
 {
-    { scheme.score(alph1, alph2) } -> std::CommonReference<typename std::remove_reference_t<t>::score_type>;
+    { scheme.score(alph1, alph2) } -> std::common_reference_with<typename std::remove_reference_t<t>::score_type>;
     { scheme.score(alphabet_t{}, alphabet2_t{}) }
-        -> std::CommonReference<typename std::remove_reference_t<t>::score_type>;
+        -> std::common_reference_with<typename std::remove_reference_t<t>::score_type>;
 };
 //!\endcond
 

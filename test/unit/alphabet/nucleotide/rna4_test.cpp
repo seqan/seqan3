@@ -9,7 +9,7 @@
 #include "../alphabet_constexpr_test_template.hpp"
 #include "nucleotide_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(rna4, alphabet, rna4);
+INSTANTIATE_TYPED_TEST_CASE_P(rna4, alphabet_, rna4);
 INSTANTIATE_TYPED_TEST_CASE_P(rna4, alphabet_constexpr, rna4);
 INSTANTIATE_TYPED_TEST_CASE_P(rna4, nucleotide, rna4);
 

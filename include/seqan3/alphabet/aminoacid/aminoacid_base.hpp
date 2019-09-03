@@ -65,9 +65,9 @@ public:
     //!\brief Allow explicit construction from any other aminoacid type and convert via the character representation.
     template <typename other_aa_type>
     //!\cond
-        requires !std::Same<aminoacid_base, other_aa_type> &&
-                 !std::Same<derived_type, other_aa_type> &&
-                 AminoacidAlphabet<other_aa_type>
+        requires !std::same_as<aminoacid_base, other_aa_type> &&
+                 !std::same_as<derived_type, other_aa_type> &&
+                 aminoacid_alphabet<other_aa_type>
     //!\endcond
     explicit constexpr aminoacid_base(other_aa_type const & other) noexcept
     {
@@ -81,7 +81,7 @@ public:
      *
      * \details
      *
-     * Models the seqan3::Semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * Models the seqan3::semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
      * wrapper.
      *
      * Behaviour specific to amino acids: True also for lower case letters that silently convert to their upper case.

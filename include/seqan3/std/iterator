@@ -39,7 +39,7 @@ namespace std
 // ------------------------------------------------------------------
 
 /*!\brief A type trait class that provides uniform interface to the properties of types that model the
- *        WeaklyIncrementable concept.
+ *        weakly_incrementable concept.
  * \tparam t The type to query.
  * \sa https://en.cppreference.com/w/cpp/iterator/incrementable_traits
  */
@@ -68,7 +68,7 @@ struct incrementable_traits<t>
 
 template <typename t>
     requires (!requires { typename t::difference_type; } &&
-              requires(t const & a, t const & b) { requires Integral<decltype(a - b)>; })
+              requires(t const & a, t const & b) { requires integral<decltype(a - b)>; })
 struct incrementable_traits<t>
 {
     using difference_type = std::make_signed_t<decltype(declval<t>() - declval<t>())>;
@@ -141,172 +141,172 @@ constexpr auto back_inserter(container_t & container)
 // Concepts
 // ------------------------------------------------------------------
 
-/*!\interface std::Readable <>
- * \brief The concept Readable is satisfied by types that are readable by applying operator*, such as pointers, smart
+/*!\interface std::readable <>
+ * \brief The concept readable is satisfied by types that are readable by applying operator*, such as pointers, smart
  *        pointers, and iterators.
- * \sa https://en.cppreference.com/w/cpp/iterator/Readable
+ * \sa https://en.cppreference.com/w/cpp/iterator/readable
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT Readable = ::ranges::Readable<t>;
+SEQAN3_CONCEPT readable = ::ranges::Readable<t>;
 
 //!\endcond
 
-/*!\interface std::Writable <>
- * \brief The concept `Writable<Out, T>` specifies the requirements for writing a value whose type and value category
+/*!\interface std::writable <>
+ * \brief The concept `writable<Out, T>` specifies the requirements for writing a value whose type and value category
  *        are encoded by T into an iterator Out's referenced object.
- * \sa https://en.cppreference.com/w/cpp/iterator/Writable
+ * \sa https://en.cppreference.com/w/cpp/iterator/writable
  */
 //!\cond
 template <typename out, typename t>
-SEQAN3_CONCEPT Writable = ::ranges::Writable<out, t>;
+SEQAN3_CONCEPT writable = ::ranges::Writable<out, t>;
 //!\endcond
 
-/*!\interface std::WeaklyIncrementable <>
+/*!\interface std::weakly_incrementable <>
  * \extends std::Semiregular
- * \brief The concept WeaklyIncrementable specifies the requirements on a type that can be incremented (with the
+ * \brief The concept weakly_incrementable specifies the requirements on a type that can be incremented (with the
  *        pre- and post-increment operators). The increment operations need not be equality-preserving, and the type
  *        need not be std::EqualityComparable.
- * \sa https://en.cppreference.com/w/cpp/iterator/WeaklyIncrementable
+ * \sa https://en.cppreference.com/w/cpp/iterator/weakly_incrementable
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WeaklyIncrementable = Semiregular<t> &&
+SEQAN3_CONCEPT weakly_incrementable = semiregular<t> &&
                                    requires (t v)
 {
     typename iter_difference_t<std::remove_reference_t<t>>;
-    requires SignedIntegral<iter_difference_t<std::remove_reference_t<t>>>;
-    requires Same<decltype(++v), t &>; /* not required to be equality preserving */
+    requires signed_integral<iter_difference_t<std::remove_reference_t<t>>>;
+    requires same_as<decltype(++v), t &>; /* not required to be equality preserving */
     v++; /* not required to be equality preserving */
 };
 //!\endcond
 
-/*!\interface std::Incrementable <>
- * \extends std::WeaklyIncrementable
+/*!\interface std::incrementable <>
+ * \extends std::weakly_incrementable
  * \extends std::Regular
- * \brief The concept Incrementable specifies the requirements on a type that can be incremented (with the pre-
- *        and post-increment operators). The increment operations (including those required by std::WeaklyIncrementable)
+ * \brief The concept incrementable specifies the requirements on a type that can be incremented (with the pre-
+ *        and post-increment operators). The increment operations (including those required by std::weakly_incrementable)
  *        are required to be equality-preserving, and the type is required to be std::EqualityComparable.
- * \sa https://en.cppreference.com/w/cpp/iterator/Incrementable
+ * \sa https://en.cppreference.com/w/cpp/iterator/incrementable
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT Incrementable = Regular<i> && WeaklyIncrementable<i> && ::ranges::Incrementable<i>;
+SEQAN3_CONCEPT incrementable = regular<i> && weakly_incrementable<i> && ::ranges::Incrementable<i>;
 //!\endcond
 
-/*!\interface std::Iterator <>
- * \extends std::WeaklyIncrementable
+/*!\interface std::input_or_output_iterator <>
+ * \extends std::weakly_incrementable
  * \brief The Iterator concept forms the basis of the iterator concept taxonomy; every iterator satisfies the Iterator
  *        requirements.
  * \sa https://en.cppreference.com/w/cpp/iterator/Iterator
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT Iterator = WeaklyIncrementable<i> && ::ranges::Iterator<i>;
+SEQAN3_CONCEPT input_or_output_iterator = weakly_incrementable<i> && ::ranges::Iterator<i>;
 //!\endcond
 
-/*!\interface std::Sentinel <>
+/*!\interface std::sentinel_for <>
  * \extends std::Semiregular
- * \extends std::Iterator
- * \brief The Sentinel concept specifies the relationship between an std::Iterator type and a std::Semiregular type
+ * \extends std::input_or_output_iterator
+ * \brief The sentinel_for concept specifies the relationship between an std::input_or_output_iterator type and a std::Semiregular type
  *        whose values denote a range.
- * \sa https://en.cppreference.com/w/cpp/iterator/Sentinel
+ * \sa https://en.cppreference.com/w/cpp/iterator/sentinel_for
  */
 //!\cond
 template <typename s, typename i>
-SEQAN3_CONCEPT Sentinel = Semiregular<s> && Iterator<i> && ::ranges::Sentinel<s, i>;
+SEQAN3_CONCEPT sentinel_for = semiregular<s> && input_or_output_iterator<i> && ::ranges::Sentinel<s, i>;
 //!\endcond
 
-/*!\interface std::SizedSentinel <>
- * \extends std::Sentinel
- * \brief The SizedSentinel concept specifies that an object of the iterator type I and an object of the
+/*!\interface std::sized_sentinel_for <>
+ * \extends std::sentinel_for
+ * \brief The sized_sentinel_for concept specifies that an object of the iterator type I and an object of the
  *        sentinel type S can be subtracted to compute the distance between them in constant time.
- * \sa https://en.cppreference.com/w/cpp/iterator/SizedSentinel
+ * \sa https://en.cppreference.com/w/cpp/iterator/sized_sentinel_for
  */
 //!\cond
 template <typename s, typename i>
-SEQAN3_CONCEPT SizedSentinel = Sentinel<s, i> && ::ranges::SizedSentinel<s, i>;
+SEQAN3_CONCEPT sized_sentinel_for = sentinel_for<s, i> && ::ranges::SizedSentinel<s, i>;
 //!\endcond
 
-/*!\interface std::OutputIterator <>
- * \extends std::Iterator
- * \extends std::Writable
- * \brief The OutputIterator concept is a refinement of std::Iterator, adding the requirement that it can be used
- *        to write values of values of type and value category encoded by T (via std::Writable).
+/*!\interface std::output_iterator <>
+ * \extends std::input_or_output_iterator
+ * \extends std::writable
+ * \brief The output_iterator concept is a refinement of std::input_or_output_iterator, adding the requirement that it can be used
+ *        to write values of values of type and value category encoded by T (via std::writable).
  *        std::EqualityComparable is not required.
- * \sa https://en.cppreference.com/w/cpp/iterator/OutputIterator
+ * \sa https://en.cppreference.com/w/cpp/iterator/output_iterator
  */
 //!\cond
 template <typename out, typename t>
-SEQAN3_CONCEPT OutputIterator = Iterator<out> && Writable<out, t> && ::ranges::OutputIterator<out, t>;
+SEQAN3_CONCEPT output_iterator = input_or_output_iterator<out> && writable<out, t> && ::ranges::OutputIterator<out, t>;
 //!\endcond
 
-/*!\interface std::InputIterator <>
- * \extends std::Iterator
- * \extends std::Readable
- * \brief The InputIterator concept is a refinement of std::Iterator, adding the requirement that the referenced
- *        values can be read (via std::Readable) and the requirement that the iterator category tag be present.
- * \sa https://en.cppreference.com/w/cpp/iterator/InputIterator
+/*!\interface std::input_iterator <>
+ * \extends std::input_or_output_iterator
+ * \extends std::readable
+ * \brief The input_iterator concept is a refinement of std::input_or_output_iterator, adding the requirement that the referenced
+ *        values can be read (via std::readable) and the requirement that the iterator category tag be present.
+ * \sa https://en.cppreference.com/w/cpp/iterator/input_iterator
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT InputIterator = Iterator<i> && Readable<i> && ::ranges::InputIterator<i>;
+SEQAN3_CONCEPT input_iterator = input_or_output_iterator<i> && readable<i> && ::ranges::InputIterator<i>;
 //!\endcond
 
-/*!\interface std::ForwardIterator <>
- * \extends std::InputIterator
- * \extends std::Incrementable
- * \extends std::Sentinel
- * \brief The InputIterator concept is a refinement of std::Iterator, adding the requirement that the referenced
- *        values can be read (via std::Readable) and the requirement that the iterator category tag be present.
- * \sa https://en.cppreference.com/w/cpp/iterator/ForwardIterator
+/*!\interface std::forward_iterator <>
+ * \extends std::input_iterator
+ * \extends std::incrementable
+ * \extends std::sentinel_for
+ * \brief The input_iterator concept is a refinement of std::input_or_output_iterator, adding the requirement that the referenced
+ *        values can be read (via std::readable) and the requirement that the iterator category tag be present.
+ * \sa https://en.cppreference.com/w/cpp/iterator/forward_iterator
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT ForwardIterator = InputIterator<i> &&
-                               Incrementable<i> &&
-                               Sentinel<i, i> &&
+SEQAN3_CONCEPT forward_iterator = input_iterator<i> &&
+                               incrementable<i> &&
+                               sentinel_for<i, i> &&
                                ::ranges::ForwardIterator<i>;
 //!\endcond
 
-/*!\interface std::BidirectionalIterator <>
- * \extends std::ForwardIterator
- * \brief The concept BidirectionalIterator refines std::ForwardIterator by adding the ability to move an iterator
+/*!\interface std::bidirectional_iterator <>
+ * \extends std::forward_iterator
+ * \brief The concept bidirectional_iterator refines std::forward_iterator by adding the ability to move an iterator
  *        backward.
- * \sa https://en.cppreference.com/w/cpp/iterator/BidirectionalIterator
+ * \sa https://en.cppreference.com/w/cpp/iterator/bidirectional_iterator
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT BidirectionalIterator = ForwardIterator<i> && ::ranges::BidirectionalIterator<i>;
+SEQAN3_CONCEPT bidirectional_iterator = forward_iterator<i> && ::ranges::BidirectionalIterator<i>;
 //!\endcond
 
-/*!\interface std::RandomAccessIterator <>
- * \extends std::BidirectionalIterator
- * \extends std::SizedSentinel
- * \extends std::StrictTotallyOrdered
- * \brief The concept RandomAccessIterator refines std::BidirectionalIterator by adding support for constant
+/*!\interface std::random_access_iterator <>
+ * \extends std::bidirectional_iterator
+ * \extends std::sized_sentinel_for
+ * \extends std::totally_ordered
+ * \brief The concept random_access_iterator refines std::bidirectional_iterator by adding support for constant
  *        time advancement with the +=, +, -=, and - operators, constant time computation of distance with -,
  *        and array notation with subscripting.
- * \sa https://en.cppreference.com/w/cpp/iterator/BidirectionalIterator
+ * \sa https://en.cppreference.com/w/cpp/iterator/bidirectional_iterator
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT RandomAccessIterator = BidirectionalIterator<i> &&
-                                    StrictTotallyOrdered<i> &&
-                                    SizedSentinel<i, i> &&
+SEQAN3_CONCEPT random_access_iterator = bidirectional_iterator<i> &&
+                                    totally_ordered<i> &&
+                                    sized_sentinel_for<i, i> &&
                                     ::ranges::RandomAccessIterator<i>;
 //!\endcond
 
-/*!\interface std::ContiguousIterator <>
- * \extends std::RandomAccessIterator
- * \brief The concept ContiguousIterator refines std::RandomAccessIterator by requiring that for every iterator
+/*!\interface std::contiguous_iterator <>
+ * \extends std::random_access_iterator
+ * \brief The concept contiguous_iterator refines std::random_access_iterator by requiring that for every iterator
  *        `i` and distance `n` where `(a + n)` is a valid iterator `*(a + n)` is equivalent to
  *        `*(std::addressof(*a) + n)`.
- * \sa https://en.cppreference.com/w/cpp/iterator/ContiguousIterator
+ * \sa https://en.cppreference.com/w/cpp/iterator/contiguous_iterator
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT ContiguousIterator = RandomAccessIterator<i> &&
+SEQAN3_CONCEPT contiguous_iterator = random_access_iterator<i> &&
                                     ::ranges::ContiguousIterator<i>;
 //!\endcond
 

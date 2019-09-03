@@ -46,8 +46,8 @@ private:
 
 TEST(alignment_range, concept_test)
 {
-    EXPECT_TRUE(std::ranges::InputRange<alignment_range<dummy_executor>>);
-    EXPECT_FALSE(std::ranges::ForwardRange<alignment_range<dummy_executor>>);
+    EXPECT_TRUE(std::ranges::input_range<alignment_range<dummy_executor>>);
+    EXPECT_FALSE(std::ranges::forward_range<alignment_range<dummy_executor>>);
 }
 
 TEST(alignment_range, construction)

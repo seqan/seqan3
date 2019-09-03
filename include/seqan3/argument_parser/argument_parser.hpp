@@ -209,7 +209,7 @@ public:
      *                     regarded as a container).
      *                     See <a href="http://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
-     *                        value. Must satisfy seqan3::Validator.
+     *                        value. Must satisfy seqan3::validator.
      *
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  short_id  The short identifier for the option (e.g. 'a').
@@ -218,11 +218,11 @@ public:
      * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      */
-    template <typename option_type, Validator validator_type = detail::default_validator<option_type>>
+    template <typename option_type, validator validator_type = detail::default_validator<option_type>>
     //!\cond
-        requires (IStream<std::istringstream, option_type> ||
-                  IStream<std::istringstream, typename option_type::value_type>) &&
-                  std::Invocable<validator_type, option_type>
+        requires (input_stream_over<std::istringstream, option_type> ||
+                  input_stream_over<std::istringstream, typename option_type::value_type>) &&
+                  std::invocable<validator_type, option_type>
     //!\endcond
     void add_option(option_type & value,
                     char const short_id,
@@ -265,7 +265,7 @@ public:
      *                     regarded as a container).
      *                     See <a href="http://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
-     *                        value. Must satisfy seqan3::Validator.
+     *                        value. Must satisfy seqan3::validator.
      *
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  desc      The description of the positional option to be shown in the help page.
@@ -277,11 +277,11 @@ public:
      *
      * The validator must be applicable to the given output variable (\p value).
      */
-    template <typename option_type, Validator validator_type = detail::default_validator<option_type>>
+    template <typename option_type, validator validator_type = detail::default_validator<option_type>>
     //!\cond
-        requires (IStream<std::istringstream, option_type> ||
-                  IStream<std::istringstream, typename option_type::value_type>) &&
-                  std::Invocable<validator_type, option_type>
+        requires (input_stream_over<std::istringstream, option_type> ||
+                  input_stream_over<std::istringstream, typename option_type::value_type>) &&
+                  std::invocable<validator_type, option_type>
     //!\endcond
     void add_positional_option(option_type & value,
                                std::string const & desc,
@@ -291,7 +291,7 @@ public:
             throw parser_design_error{"You added a positional option with a list value before so you cannot add "
                                       "any other positional options."};
 
-        if constexpr (SequenceContainer<option_type> && !std::Same<option_type, std::string>)
+        if constexpr (sequence_container<option_type> && !std::same_as<option_type, std::string>)
             has_positional_list_option = true; // keep track of a list option because there must be only one!
 
         // copy variables into the lambda because the calls are pushed to a stack

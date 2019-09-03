@@ -32,7 +32,7 @@ namespace seqan3::detail
 /*!\brief A two way executor for pairwise alignments.
  * \ingroup execution
  * \tparam resource_t            The underlying range of sequence pairs to be computed; must model
- *                               std::ranges::ViewableRange and std::ranges::InputRange.
+ *                               std::ranges::viewable_range and std::ranges::input_range.
  * \tparam alignment_algorithm_t The alignment algorithm to be invoked on each sequence pair.
  * \tparam execution_handler_t   The execution handler managing the execution of the alignments.
  *
@@ -42,12 +42,12 @@ namespace seqan3::detail
  * a two-way execution flow. The alignment results can then be accessed in an order-preserving manner using the
  * alignment_executor_two_way::bump() member function.
  */
-template <std::ranges::ViewableRange resource_t,
+template <std::ranges::viewable_range resource_t,
           typename alignment_algorithm_t,
           typename execution_handler_t = execution_handler_sequential>
 //!\cond
-    requires std::ranges::ForwardRange<resource_t> &&
-             std::CopyConstructible<alignment_algorithm_t>
+    requires std::ranges::forward_range<resource_t> &&
+             std::copy_constructible<alignment_algorithm_t>
 //!\endcond
 class alignment_executor_two_way
 {
@@ -113,7 +113,7 @@ public:
         resource{std::view::zip(std::forward<resource_t>(resrc), std::view::iota(0))},
         kernel{std::move(fn)}
     {
-        if constexpr (std::Same<execution_handler_t, execution_handler_parallel>)
+        if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
             init_buffer(std::ranges::distance(resrc));
         else
             init_buffer(1);
@@ -136,9 +136,9 @@ public:
                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec)) :
         alignment_executor_two_way{std::move(resrc), std::move(fn)}
     {
-        static_assert(!std::Same<exec_policy_t, parallel_unsequenced_policy>,
+        static_assert(!std::same_as<exec_policy_t, parallel_unsequenced_policy>,
                       "Parallel unsequenced execution not supported!");
-        static_assert(!std::Same<exec_policy_t, unsequenced_policy>,
+        static_assert(!std::same_as<exec_policy_t, unsequenced_policy>,
                       "Unsequenced execution not supported!");
     }
     //!}
@@ -287,7 +287,7 @@ template <typename resource_rng_t, typename func_t, typename exec_policy_t>
 alignment_executor_two_way(resource_rng_t &&, func_t, exec_policy_t const &) ->
     alignment_executor_two_way<resource_rng_t,
                                func_t,
-                               std::conditional_t<std::Same<exec_policy_t, parallel_policy>,
+                               std::conditional_t<std::same_as<exec_policy_t, parallel_policy>,
                                                   execution_handler_parallel,
                                                   execution_handler_sequential>>;
 

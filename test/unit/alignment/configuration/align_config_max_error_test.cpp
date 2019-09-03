@@ -15,9 +15,9 @@
 
 using namespace seqan3;
 
-TEST(align_config_max_error, ConfigElement)
+TEST(align_config_max_error, config_element)
 {
-    EXPECT_TRUE((detail::ConfigElement<align_cfg::max_error>));
+    EXPECT_TRUE((detail::config_element<align_cfg::max_error>));
 }
 
 TEST(align_config_max_error, configuration)

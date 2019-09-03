@@ -28,7 +28,7 @@ namespace seqan3
 
 //!\brief Stores the header information of alignment files.
 //!\ingroup alignment_file
-template <std::ranges::ForwardRange ref_ids_type = std::deque<std::string>>
+template <std::ranges::forward_range ref_ids_type = std::deque<std::string>>
 class alignment_file_header
 {
 public:
@@ -91,7 +91,7 @@ private:
     //!\brief Stream deleter with default behaviour (ownership assumed).
     static void ref_ids_deleter_default(ref_ids_type * ptr) { delete ptr; }
     //!\brief The key's type of ref_dict.
-    using key_type = std::conditional_t<std::ranges::ContiguousRange<reference_t<ref_ids_type>>,
+    using key_type = std::conditional_t<std::ranges::contiguous_range<reference_t<ref_ids_type>>,
                         std::span<innermost_value_type_t<ref_ids_type> const>,
                         all_view<reference_t<ref_ids_type>>>;
     //!\brief The pointer to reference ids information (non-owning if reference information is given).
@@ -149,7 +149,7 @@ public:
      *         of alternative names that tools may use when referring to this
      *         reference sequence. These alternative names are not used elsewhere
      *         within the SAM file; in  particular, they must not appear in alignment
-     *         records’ RNAME or RNEXT fields. Regular expression : name (, name )*
+     *         records’ RNAME or RNEXT fields. regular expression : name (, name )*
      *         where name is [0-9A-Za-z][0-9A-Za-z*+.@ |-]* |
      * | AS  | Genome assembly identifier. |
      * | M5  | MD5 checksum of the sequence.  See Section 1.3.1 |

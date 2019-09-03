@@ -30,7 +30,7 @@ namespace seqan3
  */
 template <typename optional_type, typename char_t>
 //!\cond
-   requires std::Same<remove_cvref_t<optional_type>, std::nullopt_t>
+   requires std::same_as<remove_cvref_t<optional_type>, std::nullopt_t>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, optional_type && SEQAN3_DOXYGEN_ONLY(arg))
 {

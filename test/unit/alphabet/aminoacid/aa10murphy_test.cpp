@@ -13,7 +13,7 @@
 
 #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
 
-INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, alphabet, aa10murphy);
+INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, alphabet_, aa10murphy);
 INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, alphabet_constexpr, aa10murphy);
 INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, aminoacid, aa10murphy);
 

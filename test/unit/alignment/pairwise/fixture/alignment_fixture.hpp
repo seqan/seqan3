@@ -44,12 +44,12 @@ struct alignment_fixture
     score_vector_or_matrix_t score_vector{};
     trace_vector_or_matrix_t trace_vector{};
 
-    auto score_matrix() const requires seqan3::detail::Matrix<score_vector_or_matrix_t>
+    auto score_matrix() const requires seqan3::detail::matrix<score_vector_or_matrix_t>
     {
         return detail::debug_matrix{score_vector};
     };
 
-    auto score_matrix() const requires !seqan3::detail::Matrix<score_vector_or_matrix_t>
+    auto score_matrix() const requires !seqan3::detail::matrix<score_vector_or_matrix_t>
     {
         detail::row_wise_matrix<value_type_t<score_vector_or_matrix_t>>
             score_matrix{detail::number_rows{sequence2.size() + 1},
@@ -58,12 +58,12 @@ struct alignment_fixture
         return detail::debug_matrix{std::move(score_matrix)};
     };
 
-    auto trace_matrix() const requires seqan3::detail::Matrix<trace_vector_or_matrix_t>
+    auto trace_matrix() const requires seqan3::detail::matrix<trace_vector_or_matrix_t>
     {
         return detail::debug_matrix{trace_vector};
     };
 
-    auto trace_matrix() const requires !seqan3::detail::Matrix<trace_vector_or_matrix_t>
+    auto trace_matrix() const requires !seqan3::detail::matrix<trace_vector_or_matrix_t>
     {
         detail::row_wise_matrix<value_type_t<trace_vector_or_matrix_t>>
             trace_matrix{detail::number_rows{sequence2.size() + 1},

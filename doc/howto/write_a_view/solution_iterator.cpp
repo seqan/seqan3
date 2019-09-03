@@ -6,12 +6,12 @@
 
 using namespace seqan3;
 
-template <std::ranges::ForwardRange urng_t> // the underlying range type
+template <std::ranges::forward_range urng_t> // the underlying range type
 struct my_iterator : std::ranges::iterator_t<urng_t>
 {
 //![start]
     //![static_assert]
-    static_assert(NucleotideAlphabet<reference_t<urng_t>>,
+    static_assert(nucleotide_alphabet<reference_t<urng_t>>,
                   "You can only iterate over ranges of nucleotides!");
     //![static_assert]
 
@@ -75,7 +75,7 @@ struct my_iterator : std::ranges::iterator_t<urng_t>
 };
 
 // verify that your type models the concept
-static_assert(std::ForwardIterator<my_iterator<std::vector<dna5>>>);
+static_assert(std::forward_iterator<my_iterator<std::vector<dna5>>>);
 
 int main()
 {

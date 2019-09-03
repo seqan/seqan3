@@ -30,7 +30,7 @@ namespace seqan3
  * \ingroup scoring
  * \see seqan3::gap_scheme
  */
-template <Arithmetic score_type>
+template <arithmetic score_type>
 struct gap_score : detail::strong_type<score_type, gap_score<score_type>, detail::strong_type_skill::convert>
 {
      using detail::strong_type<score_type, gap_score<score_type>, detail::strong_type_skill::convert>::strong_type;
@@ -42,7 +42,7 @@ struct gap_score : detail::strong_type<score_type, gap_score<score_type>, detail
  */
 
 //!\brief Deduce the score type from the given argument.
-template <Arithmetic score_type>
+template <arithmetic score_type>
 gap_score(score_type) -> gap_score<score_type>;
 //!\}
 
@@ -56,7 +56,7 @@ gap_score(score_type) -> gap_score<score_type>;
  * \ingroup scoring
  * \see seqan3::gap_scheme
  */
-template <Arithmetic score_type>
+template <arithmetic score_type>
 struct gap_open_score : detail::strong_type<score_type, gap_open_score<score_type>, detail::strong_type_skill::convert>
 {
      using detail::strong_type<score_type, gap_open_score<score_type>, detail::strong_type_skill::convert>::strong_type;
@@ -68,7 +68,7 @@ struct gap_open_score : detail::strong_type<score_type, gap_open_score<score_typ
  */
 
 //!\brief Deduce the score type from the given argument.
-template <Arithmetic score_type>
+template <arithmetic score_type>
 gap_open_score(score_type) -> gap_open_score<score_type>;
 //!\}
 
@@ -80,7 +80,7 @@ gap_open_score(score_type) -> gap_open_score<score_type>;
  * \tparam score_type Type of the score values saved internally.
  * \ingroup scoring
  */
-template <Arithmetic score_t = int8_t>
+template <arithmetic score_t = int8_t>
 class gap_scheme
 {
 public:
@@ -105,7 +105,7 @@ public:
     /*!\brief Constructor for the Affine gap costs model (delegates to set_affine()).
      * \copydetails set_affine()
      */
-    template <Arithmetic score_arg_t>
+    template <arithmetic score_arg_t>
     constexpr gap_scheme(gap_score<score_arg_t> const g, gap_open_score<score_arg_t> const go)
     {
         set_affine(g, go);
@@ -114,7 +114,7 @@ public:
     /*!\brief Constructor for the Linear gap costs model (delegates to set_linear()).
      * \copydetails set_linear()
      */
-    template <Arithmetic score_arg_t>
+    template <arithmetic score_arg_t>
     constexpr gap_scheme(gap_score<score_arg_t> const g)
     {
         set_linear(g);
@@ -138,11 +138,11 @@ public:
      * formula was `(n-1) * g + go`.
      *
      */
-    template <Arithmetic score_arg_t>
+    template <arithmetic score_arg_t>
     constexpr void set_affine(gap_score<score_arg_t> const g, gap_open_score<score_arg_t> const go)
     {
-        std::conditional_t<std::Integral<score_t>, int64_t, double> i_g = static_cast<score_arg_t>(g);
-        std::conditional_t<std::Integral<score_t>, int64_t, double> i_go = static_cast<score_arg_t>(go);
+        std::conditional_t<std::integral<score_t>, int64_t, double> i_g = static_cast<score_arg_t>(g);
+        std::conditional_t<std::integral<score_t>, int64_t, double> i_go = static_cast<score_arg_t>(go);
         if ((i_g  < std::numeric_limits<score_t>::lowest() || i_g  > std::numeric_limits<score_t>::max()) ||
             (i_go < std::numeric_limits<score_t>::lowest() || i_go > std::numeric_limits<score_t>::max()))
         {
@@ -166,7 +166,7 @@ public:
      * The score for a sequence of `n` gap characters is computed as `n * g`. This is the same as the affine model
      * with a gap open score of `0`.
      */
-    template <Arithmetic score_arg_t>
+    template <arithmetic score_arg_t>
     constexpr void set_linear(gap_score<score_arg_t> const g)
     {
         set_affine(g, gap_open_score<score_arg_t>{0});
@@ -231,12 +231,12 @@ public:
 
     /*!\cond DEV
      * \brief Serialisation support function.
-     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
      * \param  archive   The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    template <CerealArchive archive_t>
+    template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
         archive(gap);
@@ -263,28 +263,28 @@ gap_scheme() -> gap_scheme<int8_t>;
  * for floating point types.
  * To use a larger type, specify the template argument manually.
  */
-template <FloatingPoint score_arg_type>
+template <floating_point score_arg_type>
 gap_scheme(gap_score<score_arg_type>, gap_open_score<score_arg_type>) -> gap_scheme<float>;
 
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `float`
  * for floating point types.
  * To use a larger type, specify the template argument manually.
  */
-template <FloatingPoint score_arg_type>
+template <floating_point score_arg_type>
 gap_scheme(gap_score<score_arg_type>) -> gap_scheme<float>;
 
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`
  * for integer types.
  * To use a larger type, specify the template argument manually.
  */
-template <Arithmetic score_arg_type>
+template <arithmetic score_arg_type>
 gap_scheme(gap_score<score_arg_type>, gap_open_score<score_arg_type>) -> gap_scheme<int8_t>;
 
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`
  * for integer types.
  * To use a larger type, specify the template argument manually.
  */
-template <Arithmetic score_arg_type>
+template <arithmetic score_arg_type>
 gap_scheme(gap_score<score_arg_type>) -> gap_scheme<int8_t>;
 //!\}
 
