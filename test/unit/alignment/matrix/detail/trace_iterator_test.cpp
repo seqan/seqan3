@@ -14,7 +14,6 @@
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
 
 #include "../../../range/iterator_test_template.hpp"
 
