@@ -26,10 +26,10 @@
  * ### Usage
  *
  * The basis of any algorithm configuration are configuration elements. These are objects that handle a specific
- * setting and must satisfy the seqan3::detail::ConfigElement. The following snippet demonstrates a
+ * setting and must satisfy the seqan3::detail::config_element. The following snippet demonstrates a
  * basic setup for such configuration elements.
  *
- * \snippet test/snippet/core/algorithm/configuration.cpp configuration_setup
+ * \include test/snippet/core/algorithm/configuration_setup.cpp
  *
  * Here, two classes with the name `bar` and `foo` are created. They can be normal or template classes and must
  * inherit from seqan3::pipeable_config_element and contain a member with the name `value` to satisfy the respective
@@ -42,7 +42,7 @@
  * To provide compatibility checks the `seqan3::detail::compatibility_table` must be overloaded for the specific
  * algorithm configuration.
  *
- * \snippet test/snippet/core/algorithm/configuration.cpp compatibility
+ * \include test/snippet/core/algorithm/configuration_compatibility.cpp
  *
  * The type for the configuration element ids is used to overload the bool table. In the example above, both
  * elements can be combined with each other but not with themselves, to avoid inconsistent settings.
@@ -53,7 +53,7 @@
  * different configuration elements which are added through the seqan3::pipeable_config_element base class.
  * The following snippet demonstrates how `bar` and `foo` can be combined.
  *
- * \snippet test/snippet/core/algorithm/configuration.cpp combine
+ * \include test/snippet/core/algorithm/configuration_combine.cpp
 
  * ### Access the data
  *
@@ -61,7 +61,7 @@
  * position-based and type-based `get` interfaces. The `get` interface was extended to also support
  * template template types as input template parameters to query the correct element:
  *
- * \snippet test/snippet/core/algorithm/configuration.cpp get
+ * \include test/snippet/core/algorithm/configuration_get.cpp
  *
  * The get interface returns a reference to the stored configuration element. In some cases, e.g. the implementor
  * of the actual algorithm, one wants to have an easy access to the actual value of the setting. Since, the
@@ -69,7 +69,7 @@
  * seqan3::configuration::value_or interface, which provides direct access to the value of the respective
  * configuration element or uses a default value if the queried type is not contained in the configuration.
  *
- * \snippet test/snippet/core/algorithm/configuration.cpp value_or
+ * \include test/snippet/core/algorithm/configuration_value_or.cpp
  */
  #include <seqan3/core/algorithm/bound.hpp>
 #include <seqan3/core/algorithm/concept.hpp>

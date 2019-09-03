@@ -38,8 +38,9 @@ namespace seqan3::view
  * \details
  *
  * This adaptor returns a single line **excluding** the end-line character(s), *but moving the cursor behind them
- * for single-pass ranges.* I.e. for all ranges that satisfy std::ranges::ForwardRange this is the same as calling
- * \snippet test/snippet/range/view/take_line.cpp adaptor_def
+ * for single-pass ranges.* I.e. for all ranges that satisfy std::ranges::forward_range this is the same as calling
+ * ranges::view::take_while:
+ * \snippet test/snippet/range/view/take_line_adaptor_def.cpp usage
  * but for *single pass input ranges* this means that any endline characters after the returned range are also consumed
  * (this potentially includes multiple newline characters).
  *
@@ -50,32 +51,32 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         |                                       | *lost*                                             |
- * | std::ranges::CommonRange        |                                       | *lost*                                             |
- * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | std::CommonReference<char>            | seqan3::reference_t<urng_t>                        |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |----------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                        |
+ * | std::ranges::forward_range       |                                       | *preserved*                                        |
+ * | std::ranges::bidirectional_range |                                       | *preserved*                                        |
+ * | std::ranges::random_access_range |                                       | *preserved*                                        |
+ * | std::ranges::contiguous_range    |                                       | *preserved*                                        |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::view                |                                       | *guaranteed*                                       |
+ * | std::ranges::sized_range         |                                       | *lost*                                             |
+ * | std::ranges::common_range        |                                       | *lost*                                             |
+ * | std::ranges::output_range        |                                       | *preserved*                                        |
+ * | seqan3::const_iterable_range     |                                       | *preserved*                                        |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::range_reference_t   | std::common_reference_with<char>            | seqan3::reference_t<urng_t>                        |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
  *
- * Behaviour on std::ranges::ForwardRange:
- * \snippet test/snippet/range/view/take_line.cpp behaviour
+ * Behaviour on std::ranges::forward_range:
+ * \include test/snippet/range/view/take_line_behaviour.cpp
  *
- * On single pass std::ranges::InputRange it can be used to tokenise the input stream line-wise:
- * \snippet test/snippet/range/view/take_line.cpp tokenise
+ * On single pass std::ranges::input_range it can be used to tokenise the input stream line-wise:
+ * \include test/snippet/range/view/take_line_tokenise.cpp
  */
 inline auto constexpr take_line = view::take_until_and_consume(is_char<'\r'> || is_char<'\n'>);
 

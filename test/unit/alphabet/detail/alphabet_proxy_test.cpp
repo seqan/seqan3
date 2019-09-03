@@ -31,5 +31,5 @@ public:
     ~alphabet_proxy_example() = default;
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, alphabet, alphabet_proxy_example);
+INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, alphabet_, alphabet_proxy_example);
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, alphabet_constexpr, alphabet_proxy_example);

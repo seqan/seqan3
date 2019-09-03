@@ -27,4 +27,4 @@ private:
     friend alphabet_base<ab, 2>;
 };
 
-static_assert(seqan3::Alphabet<ab>);
+static_assert(seqan3::alphabet<ab>);

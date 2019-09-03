@@ -83,7 +83,7 @@ If you plug in a type that does not model `Addable`, you will get a message stat
 template backtrace.
 
 The standard library provides a set of [predefined concepts](https://en.cppreference.com/w/cpp/concepts).
-For our example above, the std::Integral concept could have been used.
+For our example above, the std::integral concept could have been used.
 
 ## Syntax variants
 
@@ -94,7 +94,7 @@ constraints; all of the following are equivalent.
 
 ```cpp
 template <typename t1, typename t2>
-    requires std::Integral<t1> && std::Integral<t2> // && MyOtherConcept<t1>
+    requires std::integral<t1> && std::integral<t2> // && MyOtherConcept<t1>
 auto add(t1 const v1, t2 const v2)
 {
     return v1 + v2;
@@ -103,7 +103,7 @@ auto add(t1 const v1, t2 const v2)
 
 (2) The "intermediate syntax":
 ```cpp
-template <std::Integral t1, std::Integral t2>                       // one constraint per type
+template <std::integral t1, std::integral t2>                       // one constraint per type
 auto add(t1 const v1, t2 const v2)
 {
     return v1 + v2;
@@ -112,7 +112,7 @@ auto add(t1 const v1, t2 const v2)
 
 (3) The "terse syntax":
 ```cpp
-auto add(std::Integral auto const v1, std::Integral auto const v2)  // one constraint per type
+auto add(std::integral auto const v1, std::integral auto const v2)  // one constraint per type
 {
     return v1 + v2;
 }
@@ -124,7 +124,7 @@ Different constraints can be applied to different template parameters and a sing
 by multiple concepts.
 Syntaxes can also be combined:
 ```cpp
-template <std::Integral t1, std::Integral t2>
+template <std::integral t1, std::integral t2>
     // requires MyOtherConcept<t1>
 auto add(t1 const v1, t2 const v2)
 {
@@ -187,7 +187,7 @@ int main()
 ```
 
 The `print` function (template) should print for every object `v` passed to it the result of `to_char(v)` and it should
-be constrained to only accepts types that model seqan3::Alphabet.
+be constrained to only accepts types that model seqan3::alphabet.
 Try calling `print` with a different type, e.g. `int` to make sure that it does.
 \endassignment
 \solution
@@ -215,7 +215,7 @@ It maps one type to another type; in this case it returns a type that is able to
 This can be used in generic algorithms to hold data in different types depending on the type of the input –
 in this case we could avoid half of the space consumption for unsigned integral types VS signed integral types.
 
-\note The std::Same used above is a concept with two template parameters.
+\note The std::same_as used above is a concept with two template parameters.
 It requires that both parameters are the same. The `static_assert` checks conditions at compile-time; it can be
 used to verify whether a type or a combination of types model a concept. In the above case we can use the combination
 to check the "return type" of the transformation trait.
@@ -232,26 +232,26 @@ That's why it's important to read the detailed documentation section where all r
 
 Have a look at the documentation of seqan3::argument_parser::add_positional_option().
 It has two template parameters, one seems unconstrained (`typename` in the signature) and one is constrained
-(`Validator` in the signature).
+(`validator` in the signature).
 But in fact both are constrained as the detailed documentation reveals.
 
-Now, follow the link to seqan3::Validator. We will check in the next section whether you understand the
+Now, follow the link to seqan3::validator. We will check in the next section whether you understand the
 documentation for the concept.
 
 # How to make your own type model a concept
 
-## seqan3::Validator
+## seqan3::validator
 
 Remember the tutorial on \ref tutorial_argument_parser ? Let's implement our own validator that checks
 if a numeric argument is an integral square (i.e. the user shall only be allowed to enter 0, 1, 4, 9...).
 
 ### Understanding the requirements
 
-In the previous section you analysed seqan3::Validator.
+In the previous section you analysed seqan3::validator.
 Do you understand the requirements formulated on that page?
 
 \hint
-In order to model the seqan3::Validator, your custom validator must provide the following:
+In order to model the seqan3::validator, your custom validator must provide the following:
 
   1. It needs to expose a `value_type` type member which identifies the type of variable the validator works on.
      Currently, the SeqAn3 validators either have value_type `double` or `std::string`.
@@ -267,7 +267,7 @@ In order to model the seqan3::Validator, your custom validator must provide the 
 
 ### Formally satisfying the requirements
 
-As we have noted previously, you can check if your type models seqan3::Validator in the following way:
+As we have noted previously, you can check if your type models seqan3::validator in the following way:
 
 ```cpp
 struct custom_validator
@@ -275,14 +275,14 @@ struct custom_validator
     // ...
 };
 
-static_assert(seqan3::Validator<custom_validator>);
+static_assert(seqan3::validator<custom_validator>);
 ```
 
 To formally satisfy the requirements, your functions don't need the correct behaviour, yet.
 Only the signatures need to be fully specified.
 
 \assignment{Exercise: Custom validator I}
-Implement enough of the above mentioned `struct custom_validator` for it to model seqan3::Validator and pass
+Implement enough of the above mentioned `struct custom_validator` for it to model seqan3::validator and pass
 the check. You can use an empty `main()`-function for now.
 \endassignment
 \solution

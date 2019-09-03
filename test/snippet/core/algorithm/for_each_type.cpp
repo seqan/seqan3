@@ -1,10 +1,5 @@
-#include <iostream>
-#include <string>
-
 #include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/debug_stream.hpp>
-
-using namespace seqan3;
 
 namespace incomplete
 {
@@ -29,26 +24,26 @@ int main()
         static_assert(std::is_same_v<id_t, std::type_identity<type>>, "id is of type std::type_identity<type>");
 
         if constexpr(std::is_same_v<type, bool>)
-            debug_stream << "bool";
+            seqan3::debug_stream << "bool";
         else if constexpr(std::is_same_v<type, int>)
-            debug_stream << "int";
+            seqan3::debug_stream << "int";
         else if constexpr(std::is_same_v<type, float>)
-            debug_stream << "float";
+            seqan3::debug_stream << "float";
         else if constexpr(std::is_same_v<type, incomplete::type>)
-            debug_stream << "incomplete::type";
+            seqan3::debug_stream << "incomplete::type";
 
-        debug_stream << ", ";
+        seqan3::debug_stream << ", ";
     };
 
     // prints each type name, i.e. "int, float, bool, incomplete::type, \n"
-    detail::for_each_type<int, float, bool, incomplete::type>(fn);
-    debug_stream << "\n";
+    seqan3::detail::for_each_type<int, float, bool, incomplete::type>(fn);
+    seqan3::debug_stream << "\n";
 
     // is the same as explicitly writing
     fn(std::type_identity<int>{});
     fn(std::type_identity<float>{});
     fn(std::type_identity<bool>{});
     fn(std::type_identity<incomplete::type>{});
-    debug_stream << "\n";
+    seqan3::debug_stream << "\n";
     return 0;
 }

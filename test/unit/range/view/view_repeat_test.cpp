@@ -46,16 +46,16 @@ TEST(general, concept)
     char chr{'A'};
     auto v = view::repeat(chr);
 
-    EXPECT_TRUE((std::ranges::Range<decltype(v)>));
-    EXPECT_TRUE((std::ranges::InputRange<decltype(v)>));
-    EXPECT_TRUE((std::ranges::ForwardRange<decltype(v)>));
-    EXPECT_TRUE((std::ranges::BidirectionalRange<decltype(v)>));
-    EXPECT_TRUE((std::ranges::RandomAccessRange<decltype(v)>));
-    EXPECT_FALSE((std::ranges::ContiguousRange<decltype(v)>));
-    EXPECT_TRUE((std::ranges::View<decltype(v)>));
-    EXPECT_FALSE((std::ranges::SizedRange<decltype(v)>));
-    EXPECT_FALSE((std::ranges::CommonRange<decltype(v)>));
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v), char>));
+    EXPECT_TRUE((std::ranges::range<decltype(v)>));
+    EXPECT_TRUE((std::ranges::input_range<decltype(v)>));
+    EXPECT_TRUE((std::ranges::forward_range<decltype(v)>));
+    EXPECT_TRUE((std::ranges::bidirectional_range<decltype(v)>));
+    EXPECT_TRUE((std::ranges::random_access_range<decltype(v)>));
+    EXPECT_FALSE((std::ranges::contiguous_range<decltype(v)>));
+    EXPECT_TRUE((std::ranges::view<decltype(v)>));
+    EXPECT_FALSE((std::ranges::sized_range<decltype(v)>));
+    EXPECT_FALSE((std::ranges::common_range<decltype(v)>));
+    EXPECT_TRUE((std::ranges::output_range<decltype(v), char>));
 }
 
 TEST(general, iterator)

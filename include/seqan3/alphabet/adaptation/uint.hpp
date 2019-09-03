@@ -10,7 +10,7 @@
  * \brief Provides alphabet adaptations for standard uint types.
  * \details
  * This file provides function and type trait overloads so that the following types
- * fulfil the seqan3::Alphabet:
+ * fulfil the seqan3::alphabet:
  *   * `uint8_t`
  *   * `uint16_t`
  *   * `uint32_t`
@@ -36,9 +36,9 @@ namespace seqan3::detail
 //!\brief Whether a type is `uint8_t`, `uint16_t` or `uint32_t`.
 //!\ingroup adaptation
 template <typename type>
-constexpr bool is_uint_adaptation_v = std::Same<type, uint8_t>  ||
-                                      std::Same<type, uint16_t> ||
-                                      std::Same<type, uint32_t>;
+constexpr bool is_uint_adaptation_v = std::same_as<type, uint8_t>  ||
+                                      std::same_as<type, uint16_t> ||
+                                      std::same_as<type, uint32_t>;
 } // namespace seqan3::detail
 
 namespace seqan3::custom

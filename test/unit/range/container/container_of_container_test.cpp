@@ -29,12 +29,12 @@ TYPED_TEST_CASE(container_of_container, container_of_container_types);
 
 using In = std::ranges::iterator_t<seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna4> > >;
 
-static_assert(std::Readable<In>);
+static_assert(std::readable<In>);
 
 TYPED_TEST(container_of_container, concepts)
 {
-    EXPECT_TRUE(Container<TypeParam>);
-    EXPECT_TRUE(Container<value_type_t<TypeParam>>);
+    EXPECT_TRUE(container<TypeParam>);
+    EXPECT_TRUE(container<value_type_t<TypeParam>>);
 }
 
 TYPED_TEST(container_of_container, construction)
@@ -152,10 +152,10 @@ TYPED_TEST(container_of_container, element_access)
         EXPECT_EQ(dna4_vector(t2.concat()), "ACGTACGTGAGGA"_dna4);
 
         // data
-        EXPECT_EQ(std::get<0>(t1.data()), "ACGTACGTGAGGA"_dna4);
-        EXPECT_EQ(std::get<0>(t2.data()), "ACGTACGTGAGGA"_dna4);
-        EXPECT_EQ(std::get<1>(t1.data()), (std::vector<size_type>{0, 4, 8, 13}));
-        EXPECT_EQ(std::get<1>(t2.data()), (std::vector<size_type>{0, 4, 8, 13}));
+        EXPECT_EQ(std::get<0>(t1.raw_data()), "ACGTACGTGAGGA"_dna4);
+        EXPECT_EQ(std::get<0>(t2.raw_data()), "ACGTACGTGAGGA"_dna4);
+        EXPECT_EQ(std::get<1>(t1.raw_data()), (std::vector<size_type>{0, 4, 8, 13}));
+        EXPECT_EQ(std::get<1>(t2.raw_data()), (std::vector<size_type>{0, 4, 8, 13}));
     }
 
 }

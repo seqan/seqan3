@@ -12,7 +12,7 @@
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(dssp9, alphabet, dssp9);
+INSTANTIATE_TYPED_TEST_CASE_P(dssp9, alphabet_, dssp9);
 INSTANTIATE_TYPED_TEST_CASE_P(dssp9, alphabet_constexpr, dssp9);
 
 // assign_char functions

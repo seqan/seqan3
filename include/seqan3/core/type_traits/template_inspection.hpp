@@ -32,7 +32,7 @@ struct transfer_template_args_onto
 //!\endcond
 
 /*!\brief Extracts a type template's **type** arguments and specialises another template with them.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \ingroup type_traits
  * \tparam source_template   The source type; must be a specialisation of a template.
  * \tparam target_template   The type template you wish to specialise.
@@ -53,7 +53,7 @@ struct transfer_template_args_onto
  *
  * ### Example
  *
- * \snippet test/snippet/core/type_traits/template_inspection.cpp usage
+ * \include test/snippet/core/type_traits/template_inspection_usage.cpp
  */
 template <template <typename ...> typename source_template,
           template <typename ...> typename target_template,
@@ -70,7 +70,7 @@ struct transfer_template_args_onto<source_template<source_arg_types...>, target_
     using type = target_template<source_arg_types...>;
 };
 
-/*!\brief Shortcut for seqan3::detail::transfer_template_args_onto (TransformationTrait shortcut).
+/*!\brief Shortcut for seqan3::detail::transfer_template_args_onto (transformation_trait shortcut).
  * \ingroup type_traits
  * \see seqan3::detail::transfer_template_args_onto
  */
@@ -88,7 +88,7 @@ struct transfer_template_vargs_onto
 //!\endcond
 
 /*!\brief Extracts a type template's **non-type** arguments and specialises another template with them.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \ingroup type_traits
  * \tparam source_template   The source type; must be a specialisation of a template.
  * \tparam target_template   The type template you wish to specialise.
@@ -119,7 +119,7 @@ struct transfer_template_vargs_onto<source_template<source_varg_types...>, targe
     using type = target_template<source_varg_types...>;
 };
 
-/*!\brief Shortcut for seqan3::detail::transfer_template_vargs_onto (TransformationTrait shortcut).
+/*!\brief Shortcut for seqan3::detail::transfer_template_vargs_onto (transformation_trait shortcut).
  * \ingroup type_traits
  * \see seqan3::detail::transfer_template_vargs_onto
  */
@@ -131,7 +131,7 @@ using transfer_template_vargs_onto_t = typename transfer_template_vargs_onto<sou
 // ----------------------------------------------------------------------------
 
 /*!\brief Determines whether a source_type is a specialisation of another template.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \ingroup type_traits
  * \tparam source_type      The source type.
  * \tparam target_template  The type template you wish to compare against (must take only types as template arguments).
@@ -140,7 +140,7 @@ using transfer_template_vargs_onto_t = typename transfer_template_vargs_onto<sou
  *
  * ### Example
  *
- * \snippet test/snippet/core/type_traits/template_inspection.cpp usage_2
+ * \include test/snippet/core/type_traits/template_inspection_usage_2.cpp
  */
 template <typename source_t, template <typename ...> typename target_template>
 struct is_type_specialisation_of : public std::false_type
@@ -149,14 +149,14 @@ struct is_type_specialisation_of : public std::false_type
 //!\overload
 template <typename source_t, template <typename ...> typename target_template>
 //!\cond
-    requires !std::Same<transformation_trait_or_t<transfer_template_args_onto<source_t, target_template>, void>,
+    requires !std::same_as<transformation_trait_or_t<transfer_template_args_onto<source_t, target_template>, void>,
                         void>
 //!\endcond
 struct is_type_specialisation_of<source_t, target_template> :
         std::is_same<source_t, transfer_template_args_onto_t<source_t, target_template>>
 {};
 
-/*!\brief Helper variable template for seqan3::detail::is_type_specialisation_of (UnaryTypeTrait shortcut).
+/*!\brief Helper variable template for seqan3::detail::is_type_specialisation_of (unary_type_trait shortcut).
  * \relates seqan3::detail::is_type_specialisation_of
  * \tparam source_type      The source type.
  * \tparam target_template  The type template you wish to compare against (must take only types as template arguments).
@@ -175,7 +175,7 @@ struct is_value_specialisation_of : std::false_type
 //!\endcond
 
 /*!\brief Determines whether a source_type is a specialisation of another template.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \ingroup type_traits
  * \tparam source_type      The source type.
  * \tparam target_template  The type template you wish to compare against (must take only non-types as template
@@ -185,14 +185,14 @@ struct is_value_specialisation_of : std::false_type
  */
 template <typename source_t, template <auto ...> typename target_template>
 //!\cond
-    requires !std::Same<transformation_trait_or_t<transfer_template_vargs_onto<source_t, target_template>, void>,
+    requires !std::same_as<transformation_trait_or_t<transfer_template_vargs_onto<source_t, target_template>, void>,
                         void>
 //!\endcond
 struct is_value_specialisation_of<source_t, target_template> :
     std::is_same<source_t, transfer_template_vargs_onto_t<source_t, target_template>>
 {};
 
-/*!\brief Helper variable template for seqan3::detail::is_value_specialisation_of (UnaryTypeTrait shortcut).
+/*!\brief Helper variable template for seqan3::detail::is_value_specialisation_of (unary_type_trait shortcut).
  * \relates seqan3::detail::is_value_specialisation_of
  * \tparam source_type      The source type.
  * \tparam target_template  The type template you wish to compare against (must take only types as template arguments).
@@ -202,7 +202,7 @@ inline constexpr bool is_value_specialisation_of_v = is_value_specialisation_of<
 
 /*!
  * \brief Exposes `templ_t<spec_t...>` if that is valid, otherwise `fallback_t`.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \see seqan3::detail::valid_template_spec_or_t
  * \ingroup type_traits
  * \tparam fallback_t The fallback type.
@@ -227,7 +227,7 @@ struct valid_template_spec_or<fallback_t, templ_t, spec_t...>
     using type = templ_t<spec_t...>;
 };
 
-/*!\brief Helper for seqan3::detail::valid_template_spec_or (TransformationTrait shortcut).
+/*!\brief Helper for seqan3::detail::valid_template_spec_or (transformation_trait shortcut).
  * \ingroup type_traits
  * \see seqan3::detail::valid_template_spec_or
  * \tparam fallback_t The fallback type.

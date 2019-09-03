@@ -18,59 +18,59 @@
 
 using namespace seqan3;
 
-TEST(io, Stream)
+TEST(io, stream_REMOVEME)
 {
-    EXPECT_FALSE((Stream<std::istream, char>));
-    EXPECT_FALSE((Stream<std::ostream, char>));
-    EXPECT_TRUE((Stream<std::iostream, char>));
-    EXPECT_FALSE((Stream<std::ifstream, char>));
-    EXPECT_FALSE((Stream<std::ofstream, char>));
-    EXPECT_TRUE((Stream<std::fstream, char>));
-    EXPECT_FALSE((Stream<std::istringstream, char>));
-    EXPECT_FALSE((Stream<std::ostringstream, char>));
-    EXPECT_TRUE((Stream<std::stringstream, char>));
-    EXPECT_FALSE((Stream<std::vector<char>, char>));
-    EXPECT_FALSE((Stream<std::vector<char>, char>));
-    EXPECT_FALSE((Stream<std::vector<char>, char>));
-    EXPECT_FALSE((Stream<std::string, char>));
-    EXPECT_FALSE((Stream<std::string, char>));
-    EXPECT_FALSE((Stream<std::string, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::istream, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::ostream, char>));
+    EXPECT_TRUE((stream_REMOVEME<std::iostream, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::ifstream, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::ofstream, char>));
+    EXPECT_TRUE((stream_REMOVEME<std::fstream, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::istringstream, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::ostringstream, char>));
+    EXPECT_TRUE((stream_REMOVEME<std::stringstream, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::vector<char>, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::vector<char>, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::vector<char>, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::string, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::string, char>));
+    EXPECT_FALSE((stream_REMOVEME<std::string, char>));
 }
 
-TEST(io, IStream)
+TEST(io, input_stream_over)
 {
-    EXPECT_TRUE((IStream<std::istream, char>));
-    EXPECT_FALSE((IStream<std::ostream, char>));
-    EXPECT_TRUE((IStream<std::iostream, char>));
-    EXPECT_TRUE((IStream<std::ifstream, char>));
-    EXPECT_FALSE((IStream<std::ofstream, char>));
-    EXPECT_TRUE((IStream<std::fstream, char>));
-    EXPECT_TRUE((IStream<std::istringstream, char>));
-    EXPECT_FALSE((IStream<std::ostringstream, char>));
-    EXPECT_TRUE((IStream<std::stringstream, char>));
-    EXPECT_FALSE((IStream<std::vector<char>, char>));
-    EXPECT_FALSE((IStream<std::vector<char>, char>));
-    EXPECT_FALSE((IStream<std::vector<char>, char>));
-    EXPECT_FALSE((IStream<std::string, char>));
-    EXPECT_FALSE((IStream<std::string, char>));
-    EXPECT_FALSE((IStream<std::string, char>));
+    EXPECT_TRUE((input_stream_over<std::istream, char>));
+    EXPECT_FALSE((input_stream_over<std::ostream, char>));
+    EXPECT_TRUE((input_stream_over<std::iostream, char>));
+    EXPECT_TRUE((input_stream_over<std::ifstream, char>));
+    EXPECT_FALSE((input_stream_over<std::ofstream, char>));
+    EXPECT_TRUE((input_stream_over<std::fstream, char>));
+    EXPECT_TRUE((input_stream_over<std::istringstream, char>));
+    EXPECT_FALSE((input_stream_over<std::ostringstream, char>));
+    EXPECT_TRUE((input_stream_over<std::stringstream, char>));
+    EXPECT_FALSE((input_stream_over<std::vector<char>, char>));
+    EXPECT_FALSE((input_stream_over<std::vector<char>, char>));
+    EXPECT_FALSE((input_stream_over<std::vector<char>, char>));
+    EXPECT_FALSE((input_stream_over<std::string, char>));
+    EXPECT_FALSE((input_stream_over<std::string, char>));
+    EXPECT_FALSE((input_stream_over<std::string, char>));
 }
 
-TEST(io, OStream)
+TEST(io, output_stream_over)
 {
-    EXPECT_FALSE((OStream<std::istream, char>));
-    EXPECT_TRUE((OStream<std::ostream, char>));
-    EXPECT_TRUE((OStream<std::iostream, char>));
-    EXPECT_FALSE((OStream<std::ifstream, char>));
-    EXPECT_TRUE((OStream<std::ofstream, char>));
-    EXPECT_TRUE((OStream<std::fstream, char>));
-    EXPECT_FALSE((OStream<std::istringstream, char>));
-    EXPECT_TRUE((OStream<std::ostringstream, char>));
-    EXPECT_TRUE((OStream<std::stringstream, char>));
-    EXPECT_FALSE((OStream<std::vector<char>, char>));
-    EXPECT_FALSE((OStream<std::vector<char>, char>));
-    EXPECT_FALSE((OStream<std::vector<char>, char>));
-    EXPECT_FALSE((OStream<std::string, char>));
-    EXPECT_FALSE((OStream<std::string, char>));
-    EXPECT_FALSE((OStream<std::string, char>));
+    EXPECT_FALSE((output_stream_over<std::istream, char>));
+    EXPECT_TRUE((output_stream_over<std::ostream, char>));
+    EXPECT_TRUE((output_stream_over<std::iostream, char>));
+    EXPECT_FALSE((output_stream_over<std::ifstream, char>));
+    EXPECT_TRUE((output_stream_over<std::ofstream, char>));
+    EXPECT_TRUE((output_stream_over<std::fstream, char>));
+    EXPECT_FALSE((output_stream_over<std::istringstream, char>));
+    EXPECT_TRUE((output_stream_over<std::ostringstream, char>));
+    EXPECT_TRUE((output_stream_over<std::stringstream, char>));
+    EXPECT_FALSE((output_stream_over<std::vector<char>, char>));
+    EXPECT_FALSE((output_stream_over<std::vector<char>, char>));
+    EXPECT_FALSE((output_stream_over<std::vector<char>, char>));
+    EXPECT_FALSE((output_stream_over<std::string, char>));
+    EXPECT_FALSE((output_stream_over<std::string, char>));
+    EXPECT_FALSE((output_stream_over<std::string, char>));
 }

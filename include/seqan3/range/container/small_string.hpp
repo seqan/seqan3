@@ -20,7 +20,7 @@ namespace seqan3
 
 /*!\brief Implements a small string that can be used for compile time computations.
  * \ingroup container
- * \implements seqan3::ReservableContainer
+ * \implements seqan3::reservible_container
  * \tparam capacity_ The capacity of the small string.
  *
  * This class provides a string type for small strings and compile-time contexts. It has fixed capacity, but variable
@@ -144,9 +144,9 @@ public:
     }
 
     /*!\brief Assign from pair of iterators.
-     * \tparam begin_it_type Must satisfy std::ForwardIterator and the `value_type` must be constructible from
+     * \tparam begin_it_type Must satisfy std::forward_iterator and the `value_type` must be constructible from
      *                       the reference type of begin_it_type.
-     * \tparam   end_it_type Must satisfy std::Sentinel.
+     * \tparam   end_it_type Must satisfy std::sentinel_for.
      * \param[in]   begin_it Begin of range to construct/assign from.
      * \param[in]     end_it End of range to construct/assign from.
      *
@@ -158,10 +158,10 @@ public:
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
      */
-    template <std::ForwardIterator begin_it_type, std::Sentinel<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
     constexpr void assign(begin_it_type begin_it, end_it_type end_it) noexcept
     //!\cond
-        requires std::Constructible<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
+        requires std::constructible_from<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
     //!\endcond
     {
         base_t::assign(begin_it, end_it);

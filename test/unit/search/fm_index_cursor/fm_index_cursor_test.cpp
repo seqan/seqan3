@@ -7,14 +7,14 @@
 
 #include "fm_index_cursor_test_template.hpp"
 
-using it_t1 = fm_index_cursor<fm_index<text_layout::single>>;
+using it_t1 = fm_index_cursor<fm_index<dna4, text_layout::single>>;
 INSTANTIATE_TYPED_TEST_CASE_P(default_traits, fm_index_cursor_test, it_t1);
 
-using it_t2 = fm_index_cursor<fm_index<text_layout::single, sdsl_byte_index_type>>;
+using it_t2 = fm_index_cursor<fm_index<dna4, text_layout::single, sdsl_byte_index_type>>;
 INSTANTIATE_TYPED_TEST_CASE_P(byte_alphabet_traits, fm_index_cursor_test, it_t2);
 
-using it_t3 = bi_fm_index_cursor<bi_fm_index<text_layout::single>>;
+using it_t3 = bi_fm_index_cursor<bi_fm_index<dna4, text_layout::single>>;
 INSTANTIATE_TYPED_TEST_CASE_P(bi_default_traits, fm_index_cursor_test, it_t3);
 
-using it_t4 = bi_fm_index_cursor<bi_fm_index<text_layout::single, sdsl_byte_index_type>>;
+using it_t4 = bi_fm_index_cursor<bi_fm_index<dna4, text_layout::single, sdsl_byte_index_type>>;
 INSTANTIATE_TYPED_TEST_CASE_P(bi_byte_alphabet_traits, fm_index_cursor_test, it_t4);

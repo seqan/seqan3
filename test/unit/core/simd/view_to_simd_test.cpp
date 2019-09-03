@@ -110,20 +110,20 @@ TEST(view_to_simd, concept_check)
     using test_type = detail::view_to_simd<all_view<cmp_type &>, simd_type_t<int8_t>>;
 
     using iter_t = decltype(std::ranges::begin(std::declval<test_type &>()));
-    EXPECT_TRUE(std::InputIterator<iter_t>);
+    EXPECT_TRUE(std::input_iterator<iter_t>);
 
-    EXPECT_EQ(std::ranges::InputRange<cmp_type>, std::ranges::InputRange<test_type>);
-    EXPECT_NE(std::ranges::ForwardRange<cmp_type>, std::ranges::ForwardRange<test_type>);
-    EXPECT_NE(std::ranges::BidirectionalRange<cmp_type>, std::ranges::BidirectionalRange<test_type>);
-    EXPECT_NE(std::ranges::RandomAccessRange<cmp_type>, std::ranges::RandomAccessRange<test_type>);
-    EXPECT_NE(std::ranges::RandomAccessRange<cmp_type>, std::ranges::RandomAccessRange<test_type>);
+    EXPECT_EQ(std::ranges::input_range<cmp_type>, std::ranges::input_range<test_type>);
+    EXPECT_NE(std::ranges::forward_range<cmp_type>, std::ranges::forward_range<test_type>);
+    EXPECT_NE(std::ranges::bidirectional_range<cmp_type>, std::ranges::bidirectional_range<test_type>);
+    EXPECT_NE(std::ranges::random_access_range<cmp_type>, std::ranges::random_access_range<test_type>);
+    EXPECT_NE(std::ranges::random_access_range<cmp_type>, std::ranges::random_access_range<test_type>);
 
-    EXPECT_EQ(std::ranges::Range<cmp_type>, std::ranges::Range<test_type>);
-    EXPECT_NE(std::ranges::View<cmp_type>, std::ranges::View<test_type>);
-    EXPECT_EQ(std::ranges::SizedRange<cmp_type>, std::ranges::SizedRange<test_type>);
-    EXPECT_NE(std::ranges::CommonRange<cmp_type>, std::ranges::CommonRange<test_type>);
-    EXPECT_NE(ConstIterableRange<cmp_type>, ConstIterableRange<test_type>);
-    EXPECT_NE((std::ranges::OutputRange<cmp_type, dna4_vector>), (std::ranges::OutputRange<test_type, dna4_vector>));
+    EXPECT_EQ(std::ranges::range<cmp_type>, std::ranges::range<test_type>);
+    EXPECT_NE(std::ranges::view<cmp_type>, std::ranges::view<test_type>);
+    EXPECT_EQ(std::ranges::sized_range<cmp_type>, std::ranges::sized_range<test_type>);
+    EXPECT_NE(std::ranges::common_range<cmp_type>, std::ranges::common_range<test_type>);
+    EXPECT_NE(const_iterable_range<cmp_type>, const_iterable_range<test_type>);
+    EXPECT_NE((std::ranges::output_range<cmp_type, dna4_vector>), (std::ranges::output_range<test_type, dna4_vector>));
 }
 
 TEST(view_to_simd, iter_concept)
@@ -133,13 +133,13 @@ TEST(view_to_simd, iter_concept)
     using iter_t = std::ranges::iterator_t<test_type>;
     using sent_t = std::ranges::sentinel_t<test_type>;
 
-    EXPECT_TRUE(std::Iterator<iter_t>);
-    EXPECT_TRUE(std::InputIterator<iter_t>);
-    EXPECT_FALSE(std::ForwardIterator<iter_t>);
-    EXPECT_FALSE(std::BidirectionalIterator<iter_t>);
-    EXPECT_FALSE(std::RandomAccessIterator<iter_t>);
-    EXPECT_FALSE((std::OutputIterator<iter_t, decltype(*std::declval<iter_t &>())>));
-    EXPECT_TRUE((std::Sentinel<sent_t, iter_t>));
+    EXPECT_TRUE(std::input_or_output_iterator<iter_t>);
+    EXPECT_TRUE(std::input_iterator<iter_t>);
+    EXPECT_FALSE(std::forward_iterator<iter_t>);
+    EXPECT_FALSE(std::bidirectional_iterator<iter_t>);
+    EXPECT_FALSE(std::random_access_iterator<iter_t>);
+    EXPECT_FALSE((std::output_iterator<iter_t, decltype(*std::declval<iter_t &>())>));
+    EXPECT_TRUE((std::sentinel_for<sent_t, iter_t>));
 }
 
 TYPED_TEST(view_to_simd_test, size)

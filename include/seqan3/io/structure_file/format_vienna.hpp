@@ -53,8 +53,8 @@
 namespace seqan3
 {
 /*!\brief       The Vienna format (dot bracket notation) for RNA sequences with secondary structure.
- * \implements  seqan3::StructureFileInputFormat
- * \implements  seqan3::StructureFileOutputFormat
+ * \implements  seqan3::structure_file_input_format
+ * \implements  seqan3::structure_file_output_format
  * \ingroup     structure_file
  *
  * \details
@@ -74,7 +74,7 @@ namespace seqan3
  * input format of the ViennaRNA package (if structure and energy are omitted).
  * See https://www.tbi.univie.ac.at/RNA/tutorial/#sec2_7 for details.
  *
- * ### Fields
+ * ### fields_specialisation
  *
  * The Vienna format provides the fields seqan3::field::SEQ, seqan3::field::ID, seqan3::field::BPP (read only),
  * seqan3::field::STRUCTURE, seqan3::field::STRUCTURED_SEQ and seqan3::field::ENERGY.\n\n
@@ -104,10 +104,10 @@ struct format_vienna
 namespace seqan3::detail
 {
 
-//!\brief The seqan3::structure_file_input_format specialisation that can handle formatted VIENNA input.
+//!\brief The seqan3::structure_file_input_format_REMOVEME specialisation that can handle formatted VIENNA input.
 //!\ingroup structure_file
 template <>
-class structure_file_input_format<format_vienna>
+class structure_file_input_format_REMOVEME<format_vienna>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -116,17 +116,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    structure_file_input_format()                                                noexcept = default; //!< Defaulted.
+    structure_file_input_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    structure_file_input_format(structure_file_input_format const &)                      = delete;
+    structure_file_input_format_REMOVEME(structure_file_input_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    structure_file_input_format & operator=(structure_file_input_format const &)          = delete;
-    structure_file_input_format(structure_file_input_format &&)                  noexcept = default; //!< Defaulted.
-    structure_file_input_format & operator=(structure_file_input_format &&)      noexcept = default; //!< Defaulted.
-    ~structure_file_input_format()                                               noexcept = default; //!< Defaulted.
+    structure_file_input_format_REMOVEME & operator=(structure_file_input_format_REMOVEME const &)          = delete;
+    structure_file_input_format_REMOVEME(structure_file_input_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    structure_file_input_format_REMOVEME & operator=(structure_file_input_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~structure_file_input_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc seqan3::StructureFileInputFormat::read
+    //!\copydoc seqan3::structure_file_input_format::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
               bool     structured_seq_combined,
@@ -302,10 +302,10 @@ private:
     }
 };
 
-//!\brief The seqan3::structure_file_output_format specialisation that can write formatted VIENNA.
+//!\brief The seqan3::structure_file_output_format_REMOVEME specialisation that can write formatted VIENNA.
 //!\ingroup structure_file
 template <>
-class structure_file_output_format<format_vienna>
+class structure_file_output_format_REMOVEME<format_vienna>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -314,17 +314,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    structure_file_output_format()                                                 noexcept = default; //!< Defaulted.
+    structure_file_output_format_REMOVEME()                                                 noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    structure_file_output_format(structure_file_output_format const &)                      = delete;
+    structure_file_output_format_REMOVEME(structure_file_output_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    structure_file_output_format & operator=(structure_file_output_format const &)          = delete;
-    structure_file_output_format(structure_file_output_format &&)                  noexcept = default; //!< Defaulted.
-    structure_file_output_format & operator=(structure_file_output_format &&)      noexcept = default; //!< Defaulted.
-    ~structure_file_output_format()                                                noexcept = default; //!< Defaulted.
+    structure_file_output_format_REMOVEME & operator=(structure_file_output_format_REMOVEME const &)          = delete;
+    structure_file_output_format_REMOVEME(structure_file_output_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    structure_file_output_format_REMOVEME & operator=(structure_file_output_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~structure_file_output_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc seqan3::StructureFileOutputFormat::write
+    //!\copydoc seqan3::structure_file_output_format::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,

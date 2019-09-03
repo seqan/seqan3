@@ -41,7 +41,7 @@ template <typename value_t,
           bool _is_static  = std::conditional_t<std::is_same_v<value_t, bool>, std::false_type, std::true_type>::value,
           bool _value      = std::conditional_t<_is_static, value_t, std::false_type>::value>
 //!\cond
-    requires std::Same<value_t, std::true_type> || std::Same<value_t, std::false_type> || std::Same<value_t, bool>
+    requires std::same_as<value_t, std::true_type> || std::same_as<value_t, std::false_type> || std::same_as<value_t, bool>
 //!\endcond
 struct sequence_end_gap_specifier_base
 {

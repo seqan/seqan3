@@ -17,13 +17,13 @@
 #include <seqan3/core/char_operations/predicate_detail.hpp>
 
 // ----------------------------------------------------------------------------
-// General Purpose Character Predicates
+// General Purpose Char predicates
 // ----------------------------------------------------------------------------
 
 namespace seqan3
 {
 
-/*!\name Character predicates
+/*!\name Char predicates
  * \brief A set of function objects to check if a character from an input source fulfills certain characteristics.
  * \ingroup char_operations
  * \{
@@ -40,7 +40,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/core/char_operations/char_predicate.cpp is_in_interval
+ * \include test/snippet/core/char_operations/char_predicate_is_in_interval.cpp
  * \hideinitializer
  */
 template <uint8_t interval_first, uint8_t interval_last>
@@ -49,8 +49,8 @@ template <uint8_t interval_first, uint8_t interval_last>
 //!\endcond
 inline constexpr auto is_in_interval = detail::is_in_interval_type<interval_first, interval_last>{};
 
-/*!\brief Checks whether a given letter is valid for the specified seqan3::Alphabet.
- * \tparam alphabet_t The alphabet to check; must model seqan3::Alphabet.
+/*!\brief Checks whether a given letter is valid for the specified seqan3::alphabet.
+ * \tparam alphabet_t The alphabet to check; must model seqan3::alphabet.
  * \ingroup char_operations
  *
  * \details
@@ -60,10 +60,10 @@ inline constexpr auto is_in_interval = detail::is_in_interval_type<interval_firs
  * (but case is ignored).
  *
  * ### Example
- * \snippet test/snippet/core/char_operations/char_predicate.cpp is_in_alphabet
+ * \include test/snippet/core/char_operations/char_predicate_is_in_alphabet.cpp
  * \hideinitializer
  */
-template <Alphabet alphabet_t>
+template <alphabet alphabet_t>
 inline constexpr auto is_in_alphabet = detail::is_in_alphabet_type<alphabet_t>{};
 
 /*!\brief Checks whether a given letter is the same as the template non-type argument.
@@ -76,7 +76,7 @@ inline constexpr auto is_in_alphabet = detail::is_in_alphabet_type<alphabet_t>{}
  *
  * ### Example
  *
- * \snippet test/snippet/core/char_operations/char_predicate.cpp is_char
+ * \include test/snippet/core/char_operations/char_predicate_is_char.cpp
  * \hideinitializer
  */
 template <int char_v>
@@ -307,11 +307,11 @@ inline auto constexpr is_xdigit = is_in_interval<'0', '9'> ||
                                   is_in_interval<'a', 'f'>;
 //!\}
 
-/*!\name Character predicates
+/*!\name Char predicates
  * \ingroup char_operations
  * \details
  *
- * Character predicates are function like objects that can be used to check if a character `c` fulfills certain
+ * Char predicates are function like objects that can be used to check if a character `c` fulfills certain
  * constraints. SeqAn3 implements all predicates also available in the standard library and some more.
  *
  * ### Disjunction and Negation
@@ -320,7 +320,7 @@ inline auto constexpr is_xdigit = is_in_interval<'0', '9'> ||
  * joined efficiently, maintaining constant-time evaluation independent of the number of checks. Functors can be
  * combined with the `||-operator` or negated via the `!-operator`:
  *
- * \snippet test/snippet/core/char_operations/char_predicate.cpp operator
+ * \include test/snippet/core/char_operations/char_predicate_is_operator.cpp
  *
  * Defining complex combinations and using them in e.g. input/output can increase speed significantly over checking
  * multiple functions: we measured speed-ups of 10x for a single check and speed-ups of

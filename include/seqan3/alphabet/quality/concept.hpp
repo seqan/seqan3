@@ -44,7 +44,7 @@ public:
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::to_phred().");
-        static_assert(std::Constructible<size_t, decltype(impl(priority_tag<2>{}, chr))>,
+        static_assert(std::constructible_from<size_t, decltype(impl(priority_tag<2>{}, chr))>,
             "The return type of your to_phred() implementation must be convertible to size_t.");
 
         return impl(priority_tag<2>{}, chr);
@@ -61,7 +61,7 @@ namespace seqan3
  */
 
 /*!\brief The public getter function for the phred representation of a quality score.
- * \tparam your_type The type of alphabet. Must model the seqan3::QualityAlphabet.
+ * \tparam your_type The type of alphabet. Must model the seqan3::quality_alphabet.
  * \param  chr       The quality value to convert into the phred score.
  * \returns the phred representation of a quality score.
  * \ingroup quality
@@ -131,7 +131,7 @@ public:
     {
         static_assert(noexcept(impl(priority_tag<2>{}, a, p)),
             "Only overloads that are marked noexcept are picked up by seqan3::assign_phred_to().");
-        static_assert(std::Same<alph_t &, decltype(impl(priority_tag<2>{}, a, p))>,
+        static_assert(std::same_as<alph_t &, decltype(impl(priority_tag<2>{}, a, p))>,
             "The return type of your assign_phred_to() implementation must be 'alph_t &'.");
 
         return impl(priority_tag<2>{}, a, p);
@@ -159,7 +159,7 @@ namespace seqan3
  */
 
 /*!\brief Assign a phred score to a quality alphabet object.
- * \tparam your_type The type of the target object. Must model the seqan3::QualityAlphabet.
+ * \tparam your_type The type of the target object. Must model the seqan3::quality_alphabet.
  * \param  chr       The phred score being assigned; must be of the seqan3::alphabet_phred_t of the target object.
  * \returns Reference to `alph` if `alph` was given as lvalue, otherwise a copy.
  * \ingroup quality
@@ -192,27 +192,27 @@ inline constexpr auto assign_phred_to = detail::adl_only::assign_phred_to_fn{};
 } // namespace seqan3
 
 // ============================================================================
-// seqan3::QualityAlphabet
+// seqan3::quality_alphabet
 // ============================================================================
 
 namespace seqan3
 {
 
-/*!\interface seqan3::QualityAlphabet <>
- * \extends seqan3::Alphabet
+/*!\interface seqan3::quality_alphabet <>
+ * \extends seqan3::alphabet
  * \brief A concept that indicates whether an alphabet represents quality scores.
  * \ingroup quality
  *
  * \details
  *
- * In addition to the requirements for seqan3::Alphabet, the
- * QualityAlphabet introduces a requirement for conversion functions from and to
+ * In addition to the requirements for seqan3::alphabet, the
+ * quality_alphabet introduces a requirement for conversion functions from and to
  * a Phred score.
  * ### Concepts and doxygen
  *
  * ### Requirements
  *
- *   1. `t` shall model seqan3::Alphabet
+ *   1. `t` shall model seqan3::alphabet
  *   2. seqan3::to_phred needs to be defined for objects of type `t`
  *
  * See the documentation pages for the respective requirements.
@@ -227,30 +227,30 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT QualityAlphabet = Alphabet<t> && requires(t qual)
+SEQAN3_CONCEPT quality_alphabet = alphabet<t> && requires(t qual)
 {
     { seqan3::to_phred(qual) };
 };
 //!\endcond
 
 // ============================================================================
-// seqan3::WritableQualityAlphabet
+// seqan3::writable_quality_alphabet
 // ============================================================================
 
-/*!\interface seqan3::QualityAlphabet <>
- * \extends seqan3::Alphabet
+/*!\interface seqan3::quality_alphabet <>
+ * \extends seqan3::alphabet
  * \brief A concept that indicates whether a writable alphabet represents quality scores.
  * \ingroup quality
  *
  * \details
  *
- * In addition to the requirements for seqan3::WritableAlphabet, the seqan3::WritableQualityAlphabet
- * introduces the requirements of seqan3::QualityAlphabet.
+ * In addition to the requirements for seqan3::writable_alphabet, the seqan3::writable_quality_alphabet
+ * introduces the requirements of seqan3::quality_alphabet.
  *
  * ### Requirements
  *
- *   1. `t` shall model seqan3::WritableAlphabet
- *   2. `t` shall model seqan3::QualityAlphabet
+ *   1. `t` shall model seqan3::writable_alphabet
+ *   2. `t` shall model seqan3::quality_alphabet
  *   3. seqan3::assign_phred_to needs to be defined for objects of type `t`
  *
  * See the documentation pages for the respective requirements.
@@ -265,8 +265,8 @@ SEQAN3_CONCEPT QualityAlphabet = Alphabet<t> && requires(t qual)
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT WritableQualityAlphabet = WritableAlphabet<t> &&
-                                         QualityAlphabet<t> &&
+SEQAN3_CONCEPT writable_quality_alphabet = writable_alphabet<t> &&
+                                         quality_alphabet<t> &&
                                          requires(t v, alphabet_phred_t<t> c)
 {
     { seqan3::assign_phred_to(c, v) };

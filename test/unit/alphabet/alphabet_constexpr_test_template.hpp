@@ -30,17 +30,17 @@ TYPED_TEST_CASE_P(alphabet_constexpr);
 
 TYPED_TEST_P(alphabet_constexpr, concept_check)
 {
-    EXPECT_TRUE(detail::ConstexprAlphabet<TypeParam   >);
-    EXPECT_TRUE(detail::ConstexprAlphabet<TypeParam & >);
+    EXPECT_TRUE(detail::constexpr_alphabet<TypeParam   >);
+    EXPECT_TRUE(detail::constexpr_alphabet<TypeParam & >);
 
-    EXPECT_TRUE(detail::ConstexprAlphabet<TypeParam const   >);
-    EXPECT_TRUE(detail::ConstexprAlphabet<TypeParam const & >);
+    EXPECT_TRUE(detail::constexpr_alphabet<TypeParam const   >);
+    EXPECT_TRUE(detail::constexpr_alphabet<TypeParam const & >);
 
-    EXPECT_TRUE(detail::WritableConstexprAlphabet<TypeParam   >);
-    EXPECT_TRUE(detail::WritableConstexprAlphabet<TypeParam & >);
+    EXPECT_TRUE(detail::writable_constexpr_alphabet<TypeParam   >);
+    EXPECT_TRUE(detail::writable_constexpr_alphabet<TypeParam & >);
 
-    EXPECT_FALSE(detail::WritableConstexprAlphabet<TypeParam const   >);
-    EXPECT_FALSE(detail::WritableConstexprAlphabet<TypeParam const & >);
+    EXPECT_FALSE(detail::writable_constexpr_alphabet<TypeParam const   >);
+    EXPECT_FALSE(detail::writable_constexpr_alphabet<TypeParam const & >);
 }
 
 TYPED_TEST_P(alphabet_constexpr, default_value_constructor)

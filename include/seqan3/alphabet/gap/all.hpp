@@ -25,7 +25,7 @@
  *
  * The gap symbol (`-`) is used in alignments to represent an interruption in an alignment, usually the result of an
  * insertion or deletion. The seqan3::gap alphabet represents this (single) gap symbol and satisfies the
- * seqan3::Alphabet.
+ * seqan3::alphabet.
  *
  * The main purpose of seqan3::gap is to be combined with other alphabets. This can easily be achieved by using the
  * seqan3::gapped<> template which transforms any other alphabet to be a composite of that alphabet + the gap

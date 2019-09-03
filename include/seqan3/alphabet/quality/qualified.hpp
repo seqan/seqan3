@@ -20,13 +20,13 @@ namespace seqan3
 
 /*!\brief Joins an arbitrary alphabet with a quality alphabet.
  * \ingroup quality
- * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::WritableAlphabet.
- * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::WritableQualityAlphabet.
- * \implements seqan3::WritableQualityAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::writable_alphabet.
+ * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::writable_quality_alphabet.
+ * \implements seqan3::writable_quality_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
  *
  * This composite pairs an arbitrary alphabet with a quality alphabet, where
@@ -49,9 +49,9 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/quality/qualified.cpp
  *
- * This seqan3::alphabet_tuple_base itself fulfils both seqan3::WritableAlphabet and seqan3::WritableQualityAlphabet.
+ * This seqan3::alphabet_tuple_base itself fulfils both seqan3::writable_alphabet and seqan3::writable_quality_alphabet.
  */
-template <WritableAlphabet sequence_alphabet_t, WritableQualityAlphabet quality_alphabet_t>
+template <writable_alphabet sequence_alphabet_t, writable_quality_alphabet quality_alphabet_t>
 class qualified :
     public alphabet_tuple_base<qualified<sequence_alphabet_t, quality_alphabet_t>,
                                  sequence_alphabet_t, quality_alphabet_t>
@@ -138,10 +138,10 @@ public:
 
     /*!\brief Return a qualified where the quality is preserved, but the sequence letter is complemented.
      * \sa seqan3::complement
-     * \sa seqan3::NucleotideAlphabet::complement
+     * \sa seqan3::nucleotide_alphabet::complement
      */
     constexpr qualified complement() const noexcept
-        requires NucleotideAlphabet<sequence_alphabet_t>
+        requires nucleotide_alphabet<sequence_alphabet_t>
     {
         using seqan3::complement;
         return qualified{complement(get<0>(*this)), get<1>(*this)};

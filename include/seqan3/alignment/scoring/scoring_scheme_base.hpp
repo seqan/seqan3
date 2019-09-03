@@ -37,7 +37,7 @@ namespace seqan3
  * \ingroup scoring
  * \see scoring_scheme_base::set_simple_scheme
  */
-template <Arithmetic score_type>
+template <arithmetic score_type>
 struct match_score : detail::strong_type<score_type, match_score<score_type>, detail::strong_type_skill::convert>
 {
      using detail::strong_type<score_type, match_score<score_type>, detail::strong_type_skill::convert>::strong_type;
@@ -49,7 +49,7 @@ struct match_score : detail::strong_type<score_type, match_score<score_type>, de
  */
 
 //!\brief Deduce the score type from the provided argument.
-template <Arithmetic score_type>
+template <arithmetic score_type>
 match_score(score_type) -> match_score<score_type>;
 //!\}
 
@@ -62,7 +62,7 @@ match_score(score_type) -> match_score<score_type>;
  * \ingroup scoring
  * \see scoring_scheme_base::set_simple_scheme
  */
-template <Arithmetic score_type>
+template <arithmetic score_type>
 struct mismatch_score : detail::strong_type<score_type, mismatch_score<score_type>, detail::strong_type_skill::convert>
 {
      using detail::strong_type<score_type, mismatch_score<score_type>, detail::strong_type_skill::convert>::strong_type;
@@ -74,7 +74,7 @@ struct mismatch_score : detail::strong_type<score_type, mismatch_score<score_typ
  */
 
 //!\brief Deduce the score type from the provided argument.
-template <Arithmetic score_type>
+template <arithmetic score_type>
 mismatch_score(score_type) -> mismatch_score<score_type>;
 //!\}
 
@@ -93,9 +93,9 @@ mismatch_score(score_type) -> mismatch_score<score_type>;
  * This type is never used directly, instead use seqan3::nucleotide_scoring_scheme or seqan3::aminoacid_scoring_scheme.
  *
  * <small><i>This class is only implementation detail and not required for most users.
- * Types that model seqan3::ScoringScheme can (but don't need to!) inherit from it.</i></small>
+ * Types that model seqan3::scoring_scheme can (but don't need to!) inherit from it.</i></small>
  */
-template <typename derived_t, Alphabet alphabet_t, Arithmetic score_t>
+template <typename derived_t, alphabet alphabet_t, arithmetic score_t>
 class scoring_scheme_base
 {
 public:
@@ -141,7 +141,7 @@ private:
     /*!\brief Constructor for the simple scheme (delegates to set_simple_scheme()).
      * \copydetails set_simple_scheme()
      */
-    template <Arithmetic score_arg_t>
+    template <arithmetic score_arg_t>
     constexpr scoring_scheme_base(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
     {
         set_simple_scheme(ms, mms);
@@ -172,11 +172,11 @@ public:
      * \param[in] mms Mismatches shall be given this value (of type seqan3::mismatch_score).
      * \throws std::invalid_argument Thrown if you pass a value that is to large/low to be represented by `score_t`.
      */
-    template <Arithmetic score_arg_t>
+    template <arithmetic score_arg_t>
     constexpr void set_simple_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
     {
-        std::conditional_t<std::Integral<score_t>, int64_t, double> i_ms = static_cast<score_arg_t>(ms);
-        std::conditional_t<std::Integral<score_t>, int64_t, double> i_mms = static_cast<score_arg_t>(mms);
+        std::conditional_t<std::integral<score_t>, int64_t, double> i_ms = static_cast<score_arg_t>(ms);
+        std::conditional_t<std::integral<score_t>, int64_t, double> i_mms = static_cast<score_arg_t>(mms);
         if ((i_ms  < std::numeric_limits<score_t>::lowest() || i_ms  > std::numeric_limits<score_t>::max()) ||
             (i_mms < std::numeric_limits<score_t>::lowest() || i_mms > std::numeric_limits<score_t>::max()))
         {
@@ -210,15 +210,15 @@ public:
      * \param[in] alph2   The second letter to score.
      * \return The score of the two letters in the current scheme.
      */
-    template <ExplicitlyConvertibleTo<alphabet_t> alph1_t,
-              ExplicitlyConvertibleTo<alphabet_t> alph2_t>
+    template <explicitly_convertible_to<alphabet_t> alph1_t,
+              explicitly_convertible_to<alphabet_t> alph2_t>
     constexpr score_t & score(alph1_t const alph1, alph2_t const alph2) noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }
 
     //!\copydoc score
-    template <ExplicitlyConvertibleTo<alphabet_t> alph1_t, ExplicitlyConvertibleTo<alphabet_t> alph2_t>
+    template <explicitly_convertible_to<alphabet_t> alph1_t, explicitly_convertible_to<alphabet_t> alph2_t>
     constexpr score_t score(alph1_t const alph1, alph2_t const alph2) const noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
@@ -243,12 +243,12 @@ public:
 
     /*!\cond DEV
      * \brief Serialisation support function.
-     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
      * \param  archive   The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    template <CerealArchive archive_t>
+    template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
         archive(matrix);

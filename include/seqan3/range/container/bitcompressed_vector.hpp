@@ -32,9 +32,9 @@ namespace seqan3
 {
 
 /*!\brief A space-optimised version of std::vector that compresses multiple letters into a single byte.
- * \tparam alphabet_type The value type of the container, must satisfy seqan3::Alphabet and not be `&`.
- * \implements seqan3::ReservableContainer
- * \implements seqan3::Cerealisable
+ * \tparam alphabet_type The value type of the container, must satisfy seqan3::alphabet and not be `&`.
+ * \implements seqan3::reservible_container
+ * \implements seqan3::cerealisable
  * \ingroup container
  *
  * This class template behaves just like std::vector<alphabet_type> but has an internal representation where
@@ -47,7 +47,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/range/container/bitcompressed_vector.cpp usage
+ * \include test/snippet/range/container/bitcompressed_vector.cpp
  *
  * ### Thread safety
  *
@@ -59,7 +59,7 @@ namespace seqan3
  * threads at the same time **is not safe** and will lead to corruption if both values are stored in the same
  * 64bit-block, i.e. if the distance between `i` and `j` is smaller than 64 / alphabet_size.
  */
-template <Alphabet alphabet_type>
+template <alphabet alphabet_type>
 //!\cond
     requires std::is_same_v<alphabet_type, std::remove_reference_t<alphabet_type>>
 //!\endcond
@@ -69,7 +69,7 @@ private:
     //!\brief The number of bits needed to represent a single letter of the alphabet_type.
     static constexpr size_t bits_per_letter = std::ceil(std::log2(alphabet_size<alphabet_type>));
 
-    static_assert(bits_per_letter <= 64, "Alphabet must be representable in at most 64bit.");
+    static_assert(bits_per_letter <= 64, "alphabet must be representable in at most 64bit.");
 
     //!\brief Type of the underlying SDSL vector.
     using data_type = sdsl::int_vector<bits_per_letter>;
@@ -119,7 +119,7 @@ private:
         //!\}
     };
 
-    static_assert(WritableAlphabet<reference_proxy_type>);
+    static_assert(writable_alphabet<reference_proxy_type>);
     //!\cond
     //NOTE(h-2): it is entirely unclear to me why we need this
     template <typename t>
@@ -163,8 +163,8 @@ public:
     ~bitcompressed_vector()                                                  = default; //!< Defaulted.
 
     /*!\brief Construct from a different range.
-     * \tparam other_range_t The type of range to construct from; must satisfy std::ranges::InputRange and
-     *                       std::CommonReference<value_type_t<other_range_t>, value_type>.
+     * \tparam other_range_t The type of range to construct from; must satisfy std::ranges::input_range and
+     *                       std::common_reference_with<value_type_t<other_range_t>, value_type>.
      * \param[in]      range The sequences to construct/assign from.
      *
      * ### Complexity
@@ -175,7 +175,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::InputRange other_range_t>
+    template <std::ranges::input_range other_range_t>
     //!\cond
         requires has_same_value_type_v<other_range_t>
     //!\endcond
@@ -200,9 +200,9 @@ public:
     {}
 
     /*!\brief Construct from pair of iterators.
-     * \tparam begin_iterator_type Must model std::ForwardIterator and
-     *                             std::CommonReference<value_type_t<begin_iterator_type>, value_type>.
-     * \tparam   end_iterator_type Must model std::Sentinel.
+     * \tparam begin_iterator_type Must model std::forward_iterator and
+     *                             std::common_reference_with<value_type_t<begin_iterator_type>, value_type>.
+     * \tparam   end_iterator_type Must model std::sentinel_for.
      * \param[in]         begin_it Begin of range to construct/assign from.
      * \param[in]           end_it End of range to construct/assign from.
      *
@@ -214,10 +214,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ForwardIterator begin_iterator_type, std::Sentinel<begin_iterator_type> end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, std::sentinel_for<begin_iterator_type> end_iterator_type>
     bitcompressed_vector(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires std::CommonReference<value_type_t<begin_iterator_type>, value_type>
+        requires std::common_reference_with<value_type_t<begin_iterator_type>, value_type>
     //!\endcond
     {
         insert(cend(), begin_it, end_it);
@@ -256,8 +256,8 @@ public:
     }
 
     /*!\brief Assign from a different range.
-     * \tparam other_range_t The type of range to be inserted; must satisfy std::ranges::InputRange and
-     *                       std::CommonReference<value_type_t<other_range_t>, value_type>.
+     * \tparam other_range_t The type of range to be inserted; must satisfy std::ranges::input_range and
+     *                       std::common_reference_with<value_type_t<other_range_t>, value_type>.
      * \param[in]      range The sequences to construct/assign from.
      *
      * ### Complexity
@@ -268,10 +268,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::InputRange other_range_t>
+    template <std::ranges::input_range other_range_t>
     void assign(other_range_t && range)
     //!\cond
-        requires std::CommonReference<value_type_t<other_range_t>, value_type>
+        requires std::common_reference_with<value_type_t<other_range_t>, value_type>
     //!\endcond
     {
         bitcompressed_vector rhs{std::forward<other_range_t>(range)};
@@ -297,9 +297,9 @@ public:
     }
 
     /*!\brief Assign from pair of iterators.
-     * \tparam begin_iterator_type Must satisfy std::ForwardIterator and
-     *                             std::CommonReference<value_type_t<begin_iterator_type>, value_type>.
-     * \tparam   end_iterator_type Must satisfy std::Sentinel.
+     * \tparam begin_iterator_type Must satisfy std::forward_iterator and
+     *                             std::common_reference_with<value_type_t<begin_iterator_type>, value_type>.
+     * \tparam   end_iterator_type Must satisfy std::sentinel_for.
      * \param[in]         begin_it Begin of range to construct/assign from.
      * \param[in]           end_it End of range to construct/assign from.
      *
@@ -311,10 +311,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ForwardIterator begin_iterator_type, std::Sentinel<begin_iterator_type> end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, std::sentinel_for<begin_iterator_type> end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires std::CommonReference<value_type_t<begin_iterator_type>, value_type>
+        requires std::common_reference_with<value_type_t<begin_iterator_type>, value_type>
     //!\endcond
     {
         bitcompressed_vector rhs{begin_it, end_it};
@@ -518,6 +518,27 @@ public:
         return (*this)[size()-1];
     }
 
+    /*!\brief Provides direct, unsafe access to underlying data structures.
+     * \returns A reference to an SDSL bitvector.
+     *
+     * \details
+     *
+     * \noapi
+     *
+     * The exact representation of the data is implementation defined. Do not rely on it for API stability.
+     */
+    constexpr data_type & raw_data() noexcept
+    {
+        return data;
+    }
+
+    //!\copydoc raw_data()
+    constexpr data_type const & raw_data() const noexcept
+    {
+        return data;
+    }
+    //!\}
+
     /*!\name Capacity
      * \{
      */
@@ -707,9 +728,9 @@ public:
     }
 
     /*!\brief Inserts elements from range `[begin_it, end_it)` before position in the container.
-     * \tparam begin_iterator_type Must satisfy std::ForwardIterator and
-     *                             std::CommonReference<value_type_t<begin_iterator_type>, value_type>.
-     * \tparam   end_iterator_type Must satisfy std::Sentinel.
+     * \tparam begin_iterator_type Must satisfy std::forward_iterator and
+     *                             std::common_reference_with<value_type_t<begin_iterator_type>, value_type>.
+     * \tparam   end_iterator_type Must satisfy std::sentinel_for.
      * \param[in]              pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param[in]         begin_it Begin of range to construct/assign from.
      * \param[in]           end_it End of range to construct/assign from.
@@ -730,10 +751,10 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
      */
-    template <std::ForwardIterator begin_iterator_type, std::Sentinel<begin_iterator_type> end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, std::sentinel_for<begin_iterator_type> end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires std::CommonReference<value_type_t<begin_iterator_type>, value_type>
+        requires std::common_reference_with<value_type_t<begin_iterator_type>, value_type>
     //!\endcond
     {
         auto const pos_as_num = std::distance(cbegin(), pos);
@@ -1000,15 +1021,15 @@ public:
 
     /*!\cond DEV
      * \brief Serialisation support function.
-     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
      * \param archive The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    template <CerealArchive archive_t>
+    template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
-        archive(data); //TODO: data not yet serialisable
+        archive(data);
     }
     //!\endcond
 };

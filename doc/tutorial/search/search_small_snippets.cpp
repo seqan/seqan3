@@ -48,7 +48,8 @@ fm_index index{text};
 
 {
 //![load]
-fm_index<text_layout::single> index; // we need to tell the index that we work on a single text before loading
+// we need to tell the index that we work on a single text and a `char` alphabet before loading
+fm_index<char, text_layout::single> index;
 {
     std::ifstream is{"index.file", std::ios::binary};
     cereal::BinaryInputArchive iarchive{is};

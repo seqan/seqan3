@@ -29,7 +29,7 @@ struct options
     uint32_t repeats{20};
 };
 
-template <Alphabet alphabet_t>
+template <alphabet alphabet_t>
 void mutate_substitution(std::vector<alphabet_t> & seq, size_t const pos, uint8_t alphabet_rank)
 {
     alphabet_t & cbase = seq[pos];
@@ -38,19 +38,19 @@ void mutate_substitution(std::vector<alphabet_t> & seq, size_t const pos, uint8_
     cbase.assign_rank(alphabet_rank);
 }
 
-template <Alphabet alphabet_t>
+template <alphabet alphabet_t>
 void mutate_insertion(std::vector<alphabet_t> & seq, size_t const pos, uint8_t const alphabet_rank)
 {
     seq.insert(std::ranges::begin(seq) + pos, alphabet_t{}.assign_rank(alphabet_rank));
 }
 
-template <Alphabet alphabet_t>
+template <alphabet alphabet_t>
 void mutate_deletion(std::vector<alphabet_t> & seq, size_t const pos)
 {
     seq.erase(std::ranges::begin(seq) + pos);
 }
 
-template <Alphabet alphabet_t>
+template <alphabet alphabet_t>
 std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> const & ref,
                                                     size_t const number_of_reads,
                                                     size_t const read_length,

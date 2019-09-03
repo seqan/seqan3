@@ -204,7 +204,7 @@ private:
                         }
 
                         // check header
-                        if (!_bgzfCheckHeader(&job.inputBuffer[0]))
+                        if (!detail::bgzf_compression::validate_header(std::span{job.inputBuffer}))
                         {
                             streamBuf->serializer.fileOfs = -1;
                             streamBuf->serializer.error = new io_error("Invalid BGZF block header.");

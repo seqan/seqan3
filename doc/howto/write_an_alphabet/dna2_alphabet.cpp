@@ -12,7 +12,7 @@ struct dna2
 {
     uint8_t rank{};
 
-    // Semialphabet
+    // semialphabet
 
     static constexpr size_t alphabet_size = 2;
 
@@ -28,7 +28,7 @@ struct dna2
         return *this;
     }
 
-    // Alphabet
+    // alphabet
 
     char to_char() const noexcept
     {
@@ -91,12 +91,12 @@ struct dna2
 //! [writable_alphabet]
 
 //! [writable_alphabet_concept]
-static_assert(seqan3::Alphabet<dna2>);                   // ok
-static_assert(seqan3::WritableAlphabet<dna2>);           // ok
+static_assert(seqan3::alphabet<dna2>);                   // ok
+static_assert(seqan3::writable_alphabet<dna2>);           // ok
 //! [writable_alphabet_concept]
 
 //! [dummy_requirement]
-template <seqan3::Alphabet check_this_type>
+template <seqan3::alphabet check_this_type>
 void foo()
 {}
 

@@ -8,7 +8,7 @@
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
- * \brief Provides seqan3::NucleotideAlphabet.
+ * \brief Provides seqan3::nucleotide_alphabet.
  */
 
 #pragma once
@@ -43,7 +43,7 @@ public:
         {
             { impl(priority_tag<2>{}, nucl) };
             requires noexcept(impl(priority_tag<2>{}, nucl));
-            requires std::Same<nucleotide_t, decltype(impl(priority_tag<2>{}, nucl))>;
+            requires std::same_as<nucleotide_t, decltype(impl(priority_tag<2>{}, nucl))>;
         }
     //!\endcond
     constexpr nucleotide_t operator()(nucleotide_t const nucl) const noexcept
@@ -94,22 +94,22 @@ inline constexpr auto complement = detail::adl_only::complement_fn{};
 //!\}
 
 // ============================================================================
-// NucleotideAlphabet concept
+// nucleotide_alphabet concept
 // ============================================================================
 
-/*!\interface seqan3::NucleotideAlphabet <>
- * \extends seqan3::Alphabet
+/*!\interface seqan3::nucleotide_alphabet <>
+ * \extends seqan3::alphabet
  * \brief A concept that indicates whether an alphabet represents nucleotides.
  * \ingroup nucleotide
  *
  * \details
  *
- * In addition to the requirements for seqan3::Alphabet, the NucleotideAlphabet introduces
- * a requirement for a complement function: seqan3::NucleotideAlphabet::complement.
+ * In addition to the requirements for seqan3::alphabet, the nucleotide_alphabet introduces
+ * a requirement for a complement function: seqan3::nucleotide_alphabet::complement.
  *
  * ### Requirements
  *
- *   1. `t` shall model seqan3::Alphabet
+ *   1. `t` shall model seqan3::alphabet
  *   2. seqan3::complement needs to be defined for objects of type `t`
  *
  * See the documentation pages for the respective requirements.
@@ -124,7 +124,7 @@ inline constexpr auto complement = detail::adl_only::complement_fn{};
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT NucleotideAlphabet = Alphabet<t> && requires (t val)
+SEQAN3_CONCEPT nucleotide_alphabet = alphabet<t> && requires (t val)
 {
     { seqan3::complement(val) };
 };

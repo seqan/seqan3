@@ -89,10 +89,10 @@ namespace seqan3::align_cfg
  */
 template <typename with_type = detail::with_score_type>
 //!\cond
-    requires std::Same<with_type, detail::with_score_type> ||
-             std::Same<with_type, detail::with_back_coordinate_type> ||
-             std::Same<with_type, detail::with_front_coordinate_type> ||
-             std::Same<with_type, detail::with_alignment_type>
+    requires std::same_as<with_type, detail::with_score_type> ||
+             std::same_as<with_type, detail::with_back_coordinate_type> ||
+             std::same_as<with_type, detail::with_front_coordinate_type> ||
+             std::same_as<with_type, detail::with_alignment_type>
 //!\endcond
 class result : public pipeable_config_element<result<with_type>, with_type>
 {

@@ -427,7 +427,7 @@ struct traits : traits_base<value_type>
 template <typename value_type>
 inline value_type complement_(value_type x) noexcept
 {
-    static_assert(std::UnsignedIntegral<value_type>, "cast to unsigned first");
+    static_assert(std::unsigned_integral<value_type>, "cast to unsigned first");
     return value_type(~x + 1);
 }
 
@@ -631,14 +631,14 @@ from_chars_atoi(char const * first, char const * last, value_type & value) noexc
                                   });
 }
 
-template <std::SignedIntegral value_type>
+template <std::signed_integral value_type>
 inline std::from_chars_result from_chars_atoi(char const * first, char const * last, value_type & value) noexcept
 {
     using t = decltype(to_unsigned(value));
     return sign_combinator(first, last, value, from_chars_atoi<t>);
 }
 
-template <std::UnsignedIntegral value_type>
+template <std::unsigned_integral value_type>
 inline std::from_chars_result from_chars_integral(char const * first, char const * last, value_type & value, int base) noexcept
 {
     if (base == 10)
@@ -682,7 +682,7 @@ inline std::from_chars_result from_chars_integral(char const * first, char const
                                   base);
 }
 
-template <std::SignedIntegral value_type>
+template <std::signed_integral value_type>
 inline std::from_chars_result from_chars_integral(char const * first, char const * last, value_type & value, int base) noexcept
 {
     using t = decltype(to_unsigned(value));
@@ -691,7 +691,7 @@ inline std::from_chars_result from_chars_integral(char const * first, char const
 //!\endcond
 
 //!\brief Delegates to functions strto[d/f/ld] for floating point value extraction.
-template <seqan3::FloatingPoint value_type>
+template <seqan3::floating_point value_type>
 inline std::from_chars_result from_chars_floating_point(char const * first,
                                                         char const * last,
                                                         value_type & value,
@@ -769,15 +769,15 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
 
     char * end;
 
-    if constexpr (std::Same<std::remove_reference_t<value_type>, float>)
+    if constexpr (std::same_as<std::remove_reference_t<value_type>, float>)
     {
         tmp = strtof(start, &end);
     }
-    if constexpr (std::Same<std::remove_reference_t<value_type>, double>)
+    if constexpr (std::same_as<std::remove_reference_t<value_type>, double>)
     {
         tmp = strtod(start, &end);
     }
-    if constexpr (std::Same<std::remove_reference_t<value_type>, long double>)
+    if constexpr (std::same_as<std::remove_reference_t<value_type>, long double>)
     {
         tmp = strtold(start, &end);
     }
@@ -814,7 +814,7 @@ void from_chars(char const *, char const *, bool, int = 10) = delete;
 
 /*!\brief Convert an integral into a char sequence.
  * \ingroup charconv
- * \tparam value_type The type to convert to a char sequence; Must model std::Integral.
+ * \tparam value_type The type to convert to a char sequence; Must model std::integral.
  * \param[in]      first The start of the range to fill.
  * \param[in]      last  The end of the range to fill.
  * \param[in, out] value The value to store the parsed result in.
@@ -844,7 +844,7 @@ void from_chars(char const *, char const *, bool, int = 10) = delete;
  *
  * \sa https://en.cppreference.com/w/cpp/utility/to_chars
  */
-template <std::Integral value_type>
+template <std::integral value_type>
 inline std::to_chars_result to_chars(char * first, char * last, value_type value, int base) noexcept
 {
     assert(first != nullptr);
@@ -855,7 +855,7 @@ inline std::to_chars_result to_chars(char * first, char * last, value_type value
 
 //!\brief std::to_chars overload with default base = 10.
 //!\ingroup charconv
-template <std::Integral value_type>
+template <std::integral value_type>
 inline std::to_chars_result to_chars(char * first, char * last, value_type value) noexcept
 {
     assert(first != nullptr);
@@ -865,7 +865,7 @@ inline std::to_chars_result to_chars(char * first, char * last, value_type value
 
 //!\brief std::to_chars overload for floating point via a std::stringstream for default base = 10.
 //!\ingroup charconv
-template <seqan3::FloatingPoint floating_point_type>
+template <seqan3::floating_point floating_point_type>
 inline std::to_chars_result to_chars(char * first, char * last, floating_point_type value) noexcept
 {
     assert(first != nullptr);
@@ -889,7 +889,7 @@ inline std::to_chars_result to_chars(char * first, char * last, floating_point_t
 
 /*!\brief Parse a char sequence into an integral.
  * \ingroup charconv
- * \tparam value_type The type to parse the string into; Must model std::Integral.
+ * \tparam value_type The type to parse the string into; Must model std::integral.
  * \param[in]      first The start of the string to parse.
  * \param[in]      last  The end of the string to parse.
  * \param[in, out] value The value to store the parsed result in.
@@ -930,7 +930,7 @@ inline std::to_chars_result to_chars(char * first, char * last, floating_point_t
  *
  * \sa https://en.cppreference.com/w/cpp/utility/from_chars
  */
-template <std::Integral value_type>
+template <std::integral value_type>
 inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value, int base) noexcept
 {
     assert(2 <= base && base <= 36);
@@ -939,7 +939,7 @@ inline std::from_chars_result from_chars(char const * first, char const * last, 
 
 //!\brief std::from_chars overload for integrals with default base = 10.
 //!\ingroup charconv
-template <std::Integral value_type>
+template <std::integral value_type>
 inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value) noexcept // base 10 default
 {
     return seqan3::detail::from_chars_atoi(first, last, value);
@@ -951,7 +951,7 @@ inline std::from_chars_result from_chars(char const * first, char const * last, 
 
 /*!\brief Parse a char sequence into an floating point value.
  * \ingroup charconv
- * \tparam value_type The type to parse the string into; Must model std::Integral.
+ * \tparam value_type The type to parse the string into; Must model std::integral.
  * \param[in]      first The start of the string to parse.
  * \param[in]      last  The end of the string to parse.
  * \param[in, out] value The value to store the parsed result in.
@@ -1004,7 +1004,7 @@ inline std::from_chars_result from_chars(char const * first, char const * last, 
  *
  * \sa https://en.cppreference.com/w/cpp/utility/from_chars
  */
-template <seqan3::FloatingPoint floating_point_type>
+template <seqan3::floating_point floating_point_type>
 inline std::from_chars_result from_chars(char const * first,
                                          char const * last,
                                          floating_point_type & value,

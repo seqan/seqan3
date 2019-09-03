@@ -31,10 +31,10 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `value_type` of another type.
- * \implements seqan3::TransformationTrait
- * \tparam it_t The type you wish to query; must model std::InputIterator.
+ * \implements seqan3::transformation_trait
+ * \tparam it_t The type you wish to query; must model std::input_iterator.
  */
-template <std::InputIterator it_t>
+template <std::input_iterator it_t>
 struct value_type<it_t>
 {
     //!\brief Return the member type as return type.
@@ -48,10 +48,10 @@ struct value_type<it_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `reference` type of another type.
- * \implements seqan3::TransformationTrait
- * \tparam it_t The type you wish to query; must model std::InputIterator.
+ * \implements seqan3::transformation_trait
+ * \tparam it_t The type you wish to query; must model std::input_iterator.
  */
-template <std::InputIterator it_t>
+template <std::input_iterator it_t>
 struct reference<it_t>
 {
     //!\brief Return the member type as return type.
@@ -65,10 +65,10 @@ struct reference<it_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `rvalue_reference` type of another type.
- * \implements seqan3::TransformationTrait
- * \tparam it_t The type you wish to query; must model std::InputIterator.
+ * \implements seqan3::transformation_trait
+ * \tparam it_t The type you wish to query; must model std::input_iterator.
  */
-template <std::InputIterator it_t>
+template <std::input_iterator it_t>
 struct rvalue_reference<it_t>
 {
     //!\brief Return the member type as return type.
@@ -88,10 +88,10 @@ struct rvalue_reference<it_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `difference_type` of another type.
- * \implements seqan3::TransformationTrait
- * \tparam it_t The type you wish to query; must model std::WeaklyIncrementable.
+ * \implements seqan3::transformation_trait
+ * \tparam it_t The type you wish to query; must model std::weakly_incrementable.
  */
-template <std::WeaklyIncrementable it_t>
+template <std::weakly_incrementable it_t>
 struct difference_type<it_t>
 {
     //!\brief Return the member type as return type.
@@ -105,10 +105,10 @@ struct difference_type<it_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes the `size_type` of another type.
- * \implements seqan3::TransformationTrait
- * \tparam it_t The type you wish to query; must model std::WeaklyIncrementable.
+ * \implements seqan3::transformation_trait
+ * \tparam it_t The type you wish to query; must model std::weakly_incrementable.
  */
-template <std::WeaklyIncrementable it_t>
+template <std::weakly_incrementable it_t>
 struct size_type<it_t>
 {
     //!\brief Return the member type as return type.
@@ -123,7 +123,7 @@ struct size_type<it_t>
 
 /*!\brief Exposes the
  * [iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_tags) from the modelled concept.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \tparam it_t The type to operate on.
  * \see seqan3::iterator_tag_t
  *
@@ -133,24 +133,24 @@ struct size_type<it_t>
  *     <th>iterator_tag<it_t>::type</th>
  *   </tr>
  *   <tr>
- *     <td>\ref std::InputIterator "std::InputIterator<it_t>"</td>
+ *     <td>\ref std::input_iterator "std::input_iterator<it_t>"</td>
  *     <td>std::input_iterator_tag</td>
  *   </tr>
  *   <tr>
- *     <td>\ref std::InputIterator "!std::InputIterator<it_t>" &amp;&amp;
- *         \ref std::OutputIterator "std::OutputIterator<it_t, value_type<it_t>>"</td>
+ *     <td>\ref std::input_iterator "!std::input_iterator<it_t>" &amp;&amp;
+ *         \ref std::output_iterator "std::output_iterator<it_t, value_type<it_t>>"</td>
  *     <td>std::output_iterator_tag</td>
  *   </tr>
  *   <tr>
- *     <td>\ref std::ForwardIterator "std::ForwardIterator<it_t>"</td>
+ *     <td>\ref std::forward_iterator "std::forward_iterator<it_t>"</td>
  *     <td>std::forward_iterator_tag</td>
  *   </tr>
  *   <tr>
- *     <td>\ref std::BidirectionalIterator "std::BidirectionalIterator<it_t>"</td>
+ *     <td>\ref std::bidirectional_iterator "std::bidirectional_iterator<it_t>"</td>
  *     <td>std::bidirectional_iterator_tag</td>
  *   </tr>
  *   <tr>
- *     <td>\ref std::RandomAccessIterator "std::RandomAccessIterator<it_t>"</td>
+ *     <td>\ref std::random_access_iterator "std::random_access_iterator<it_t>"</td>
  *     <td>std::random_access_iterator_tag</td>
  *   </tr>
  * </table>
@@ -177,7 +177,7 @@ struct iterator_tag<it_t>
     using type = typename std::iterator_traits<it_t>::iterator_category;
 };
 
-template <std::InputIterator it_t>
+template <std::input_iterator it_t>
     requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
 struct iterator_tag<it_t>
 {
@@ -185,28 +185,28 @@ struct iterator_tag<it_t>
 };
 
 template <typename it_t>
-    requires !std::InputIterator<it_t> && std::OutputIterator<it_t, value_type_t<it_t>> &&
+    requires !std::input_iterator<it_t> && std::output_iterator<it_t, value_type_t<it_t>> &&
              !requires { typename std::iterator_traits<it_t>::iterator_category; }
 struct iterator_tag<it_t>
 {
     using type = std::output_iterator_tag;
 };
 
-template <std::ForwardIterator it_t>
+template <std::forward_iterator it_t>
     requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
 struct iterator_tag<it_t>
 {
     using type = std::forward_iterator_tag;
 };
 
-template <std::BidirectionalIterator it_t>
+template <std::bidirectional_iterator it_t>
     requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
 struct iterator_tag<it_t>
 {
     using type = std::bidirectional_iterator_tag;
 };
 
-template <std::RandomAccessIterator it_t>
+template <std::random_access_iterator it_t>
     requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
 struct iterator_tag<it_t>
 {
@@ -214,7 +214,7 @@ struct iterator_tag<it_t>
 };
 //!\endcond
 
-/*!\brief Return the `iterator_category` type of the input type (TransformationTrait shortcut).
+/*!\brief Return the `iterator_category` type of the input type (transformation_trait shortcut).
  * \tparam it_t The type to operate on.
  * \see seqan3::iterator_tag
  */

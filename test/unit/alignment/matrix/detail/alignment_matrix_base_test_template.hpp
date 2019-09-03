@@ -39,11 +39,11 @@ TYPED_TEST_P(alignment_matrix_base_test, range_concepts)
     using column_t = value_type_t<outer_it>;
     using inner_it = std::ranges::iterator_t<column_t>;
 
-    EXPECT_TRUE(std::ranges::InputRange<typename TestFixture::matrix_t>);
-    EXPECT_TRUE(std::InputIterator<outer_it>);
-    EXPECT_TRUE(std::InputIterator<inner_it>);
-    EXPECT_TRUE(std::ranges::InputRange<column_t>);
-    EXPECT_TRUE(std::ranges::View<column_t>);
+    EXPECT_TRUE(std::ranges::input_range<typename TestFixture::matrix_t>);
+    EXPECT_TRUE(std::input_iterator<outer_it>);
+    EXPECT_TRUE(std::input_iterator<inner_it>);
+    EXPECT_TRUE(std::ranges::input_range<column_t>);
+    EXPECT_TRUE(std::ranges::view<column_t>);
 }
 
 TYPED_TEST_P(alignment_matrix_base_test, begin_end)

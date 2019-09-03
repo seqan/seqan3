@@ -1,24 +1,19 @@
-#include <seqan3/range/view/complement.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/range/view/complement.hpp>
 #include <seqan3/std/ranges>
-
-using namespace seqan3;
 
 int main()
 {
-//! [usage]
-dna5_vector foo{"ACGTA"_dna5};
+    using seqan3::operator""_dna5;
 
-// pipe notation
-auto v = foo | view::complement;                                  // == "TGCAT"
+    seqan3::dna5_vector foo{"ACGTA"_dna5};
 
-// function notation
-dna5_vector v2(view::complement(foo));                            // == "TGCAT"
+    // pipe notation
+    auto v = foo | seqan3::view::complement;                                      // == "TGCAT"
 
-// generate the reverse complement:
-dna5_vector v3 = foo | view::complement | std::view::reverse;          // == "TACGT"
-//! [usage]
-(void) v;
-(void) v2;
-(void) v3;
+    // function notation
+    auto v2(seqan3::view::complement(foo));                        // == "TGCAT"
+
+    // generate the reverse complement:
+    auto v3 = foo | seqan3::view::complement | std::view::reverse; // == "TACGT"
 }

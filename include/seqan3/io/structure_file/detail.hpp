@@ -23,7 +23,7 @@ namespace seqan3::detail
  * \brief Transforms a structure annotation string into a base pair probability matrix.
  * \ingroup structure_file
  * \throws seqan3::parse_error if unpaired brackets are found in the structure annotation.
- * \tparam structure_alph_type The type of the structure alphabet; must satisfy seqan3::RnaStructureAlphabet.
+ * \tparam structure_alph_type The type of the structure alphabet; must satisfy seqan3::rna_structure_alphabet.
  * \tparam bpp_type            The type of the target matrix.
  * \tparam structure_type      The range type of the structure annotation.
  * \param[out] bpp             The target matrix that receives the base pair probabilities.
@@ -31,15 +31,15 @@ namespace seqan3::detail
  * \param[in]  weight          The weight to be assigned to all interactions present.
  *                             As the source allows only one interaction partner, the weight defaults to 1.0.
  */
-template <typename structure_alph_type, typename bpp_type, std::ranges::Range structure_type>
+template <typename structure_alph_type, typename bpp_type, std::ranges::range structure_type>
 inline
 void bpp_from_rna_structure(bpp_type & bpp, structure_type const & structure, double weight = 1.)
 {
-    if constexpr (!RnaStructureAlphabet<structure_alph_type>)
+    if constexpr (!rna_structure_alphabet<structure_alph_type>)
         throw parse_error{"Cannot create base pair probabilities from a structure that is not RNA structure."};
 
     bpp.clear();
-    if constexpr (std::ranges::SizedRange<structure_type>)
+    if constexpr (std::ranges::sized_range<structure_type>)
         bpp.reserve(size(structure));
 
     std::stack<size_t> brackets[max_pseudoknot_depth<structure_alph_type>];

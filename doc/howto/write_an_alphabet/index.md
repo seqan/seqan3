@@ -19,13 +19,13 @@ For detailed information on the alphabet concepts please read the \ref alphabet 
 In the following sections we demonstrate how to write an alphabet that models them.
 
 A brief summary of the concepts used in this HowTo:
-- seqan3::Semialphabet requires your type to have a numerical representation (rank), as well as
+- seqan3::semialphabet requires your type to have a numerical representation (rank), as well as
   an alphabet size and comparison operators.
-- seqan3::WritableSemialphabet additionally requires being able to change the value of the object
+- seqan3::writable_semialphabet additionally requires being able to change the value of the object
   via the rank representation.
-- seqan3::Alphabet requires that your type has a visual representation in addition to the numerical representation.
+- seqan3::alphabet requires that your type has a visual representation in addition to the numerical representation.
   Usually this is a character type like char.
-- seqan3::WritableAlphabet additionally requires being able to change the value of the object
+- seqan3::writable_alphabet additionally requires being able to change the value of the object
   via the char representation.
 
 # Step by step: Create your own alphabet
@@ -34,7 +34,7 @@ In the alphabet tutorial we have calculated the GC content of a nucleotide seque
 Guanine and Cytosine are complementary nucleobases,
 which pair in a DNA molecule by building 3 hydrogen bonds. Adenine and Thymine pair with only 2 hydrogen bonds.
 As a consequence, we denote Guanine and Cytosine as strong (S) and Adenine and Thymine as weak (W) nucleobases.
-In this section we want to implement a seqan3::Alphabet that consists of the characters `S` and `W` to represent
+In this section we want to implement a seqan3::alphabet that consists of the characters `S` and `W` to represent
 strong and weak nucleobases.
 
 Let's start with a simple struct that only holds the alphabet's numerical representation, namely the **rank** value.
@@ -49,7 +49,7 @@ However `bool` is not actually smaller than `uint8_t` and does not always behave
 so we use `uint8_t` here. You only need a different type if your alphabet has an alphabet size >=255.
 
 If you want SeqAn's algorithms to accept it as an alphabet, you need to make sure that your type
-satisfies the requirements of the seqan3::Alphabet concept. A quick check can reveal that this is not the case:
+satisfies the requirements of the seqan3::alphabet concept. A quick check can reveal that this is not the case:
 \snippet dna2_only_rank.cpp alphabet_concept
 
 \note
@@ -62,17 +62,17 @@ that `foo()` cannot be called with `dna2` because `constraints are not satisfied
 
 ## Prerequisites
 
-A look at the documentation of seqan3::Alphabet will reveal that it is actually a refinement of other concepts,
-more precisely seqan3::Semialphabet which in turn refines std::CopyConstructible and std::StrictTotallyOrdered.
+A look at the documentation of seqan3::alphabet will reveal that it is actually a refinement of other concepts,
+more precisely seqan3::semialphabet which in turn refines std::copy_constructible and std::totally_ordered.
 Let's check those:
 \snippet dna2_only_rank.cpp other_concepts
 
-You should see that your type models only the std::CopyConstructible concept.
-Let's have a look at the documentation for std::StrictTotallyOrdered. Can you guess what it describes?
+You should see that your type models only the std::copy_constructible concept.
+Let's have a look at the documentation for std::totally_ordered. Can you guess what it describes?
 
 It describes the requirements for types that are comparable via `<`, `<=`, `>` and `>=`.
 This is useful so that you can sort a text over the alphabet, for example.
-Additionally, std::StrictTotallyOrdered is again a refinement of std::EqualityComparable,
+Additionally, std::totally_ordered is again a refinement of std::equality_comparable,
 which requires the `==` and `!=` operators, so let's first implement those.
 \snippet dna2_equality_operator.cpp equality
 
@@ -87,18 +87,18 @@ Implement the inequality operator (!=) for `dna2`.
 \snippet dna2_inequality_operator.cpp inequality
 \endsolution
 
-We see that our type now models std::EqualityComparable, which is a prerequisite of std::StrictTotallyOrdered.
+We see that our type now models std::equality_comparable, which is a prerequisite of std::totally_ordered.
 
 \assignment{Excercise}
-Implement the four comparison operators and verify that your type models std::StrictTotallyOrdered.
+Implement the four comparison operators and verify that your type models std::totally_ordered.
 \endassignment
 \solution
 \snippet dna2_comparison_operators.cpp comparison
 \endsolution
 
-## Semialphabet
+## semialphabet
 
-Let's move on to the more interesting concepts. seqan3::Semialphabet constitutes the *rank interface*
+Let's move on to the more interesting concepts. seqan3::semialphabet constitutes the *rank interface*
 that we introduced in the [alphabet tutorial](\ref tutorial_alphabets). Have a look at the API reference again.
 Beyond the conceptional requirements, it also requires that seqan3::alphabet_size and seqan3::to_rank can be
 called on your alphabet.
@@ -109,16 +109,16 @@ reference and also the [documentation on customisation points](\ref about_custom
 In this case we choose to implement the functionality as member functions:
 \snippet dna2_semialphabet.cpp semialphabet
 
-As you can see from the `static_assert` our dna2 alphabet now models seqan3::Semialphabet and
-seqan3::WritableSemialphabet:
+As you can see from the `static_assert` our dna2 alphabet now models seqan3::semialphabet and
+seqan3::writable_semialphabet:
 \snippet dna2_semialphabet.cpp writable_semialphabet_concept
 
 You can also try out the customisation points directly (they appear like free functions). Here is an example:
 \snippet dna2_semialphabet.cpp free_functions
 
-## Alphabet
+## alphabet
 
-Now that you have a feeling for concepts, have a look at seqan3::Alphabet and seqan3::WritableAlphabet and make
+Now that you have a feeling for concepts, have a look at seqan3::alphabet and seqan3::writable_alphabet and make
 your type also model these concepts.
 
 \assignment{Excercise}
@@ -135,11 +135,11 @@ your type also model these concepts.
 \snippet dna2_alphabet.cpp writable_alphabet
 \endsolution
 
-At this point the seqan3::Alphabet concept should be modelled successfully and even seqan3::WritableAlphabet
+At this point the seqan3::alphabet concept should be modelled successfully and even seqan3::writable_alphabet 
 is fine because we implemented `assign_char` and `char_is_valid`.
 \snippet dna2_alphabet.cpp writable_alphabet_concept
 
-## Shortcut: Alphabet base template
+## Shortcut: alphabet base template
 
 Often it is not required to implement the entire class yourself, instead you can derive from seqan3::alphabet_base
 which defines most things for you if you provide certain conversion tables. Read the documentation of
@@ -152,7 +152,7 @@ seqan3::alphabet_base for details. This implementation deduces `bool` as the sma
 This is an example of a minimal custom alphabet that provides implementations for all necessary customisation
 points.
 
-As an enum class the values already have an order and therefore the class models std::StrictTotallyOrdered
+As an enum class the values already have an order and therefore the class models std::totally_ordered
 without defining the (in)equality and comparison operators. Opposed to the examples above, we use only free functions
 to model the functionality.
 \snippet test/unit/alphabet/custom_alphabet_test.cpp my_alph

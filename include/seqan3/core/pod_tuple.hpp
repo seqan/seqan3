@@ -34,7 +34,7 @@ struct pod_tuple
 
 /*!\brief Behaves like std::tuple but is an aggregate [PODType](http://en.cppreference.com/w/cpp/concept/PODType).
  * \ingroup core
- * \implements seqan3::TupleLike
+ * \implements seqan3::tuple_like
  * \tparam type0    The first type (the first type).
  * \tparam ...types 0-n types (the remaining types of the values to be stored).
  *
@@ -49,7 +49,7 @@ struct pod_tuple
  * [structured bindings](http://en.cppreference.com/w/cpp/language/declarations#Structured_binding_declaration)
  * to access the elements in the tuple.
  *
- * \snippet test/snippet/core/pod_tuple.cpp usage
+ * \include test/snippet/core/pod_tuple.cpp
  *
  */
 template <typename type0, typename ...types>
@@ -342,7 +342,7 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 //!\endcond
 
 /*!\brief Obtains the type of the specified element.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \relates seqan3::pod_tuple
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
@@ -355,7 +355,7 @@ struct tuple_element<i, t<types...>>
 };
 
 /*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \see std::tuple_size_v
  * \relates seqan3::pod_tuple
  */

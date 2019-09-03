@@ -58,7 +58,7 @@ public:
     }
 
     template <typename indirect_assignable_type>
-        requires std::Assignable<alphabet_type &, indirect_assignable_type>
+        requires std::assignable_from<alphabet_type &, indirect_assignable_type>
     constexpr alphabet_proxy & operator=(indirect_assignable_type const & c) noexcept
     {
         alphabet_type a{};
@@ -67,7 +67,7 @@ public:
     }
 
     constexpr alphabet_proxy & assign_char(char_type_virtual const c) noexcept
-        requires !std::Same<char_type, void>
+        requires !std::same_as<char_type, void>
     {
         alphabet_type tmp{};
         using seqan3::assign_char_to;
@@ -84,7 +84,7 @@ public:
     }
 
     constexpr alphabet_proxy & assign_phred(phred_type_virtual const c) noexcept
-        requires !std::Same<phred_type, void>
+        requires !std::same_as<phred_type, void>
     {
         alphabet_type tmp{};
         assign_phred_to(c, tmp);
@@ -115,8 +115,8 @@ namespace seqan3
  * This CRTP base facilitates the definition of such proxies. Most users of SeqAn will not need to understand the
  * details.
  *
- * This class ensures that the proxy itself also models seqan3::Semialphabet, seqan3::Alphabet,
- * seqan3::QualityAlphabet, seqan3::NucleotideAlphabet and/or seqan3::AminoacidAlphabet if the emulated type models
+ * This class ensures that the proxy itself also models seqan3::semialphabet, seqan3::alphabet,
+ * seqan3::quality_alphabet, seqan3::nucleotide_alphabet and/or seqan3::aminoacid_alphabet if the emulated type models
  * these. This makes sure that function templates which accept the original, also accept the proxy. An exception
  * are multi-layered composites of alphabets where the proxy currently does not support access via `get`.
  *
@@ -127,7 +127,7 @@ namespace seqan3
  *
  * See seqan3::bitcompressed_vector or seqan3::alphabet_tuple_base for examples of how this class is used.
  */
-template <typename derived_type, WritableSemialphabet alphabet_type>
+template <typename derived_type, writable_semialphabet alphabet_type>
 class alphabet_proxy : public alphabet_base<derived_type,
                                             alphabet_size<alphabet_type>,
                                             detail::valid_template_spec_or_t<void, alphabet_char_t, alphabet_type>>
@@ -190,7 +190,7 @@ private:
     //!\brief Assignment from any type that the emulated type is assignable from.
     template <typename indirect_assignable_type>
     constexpr derived_type & operator=(indirect_assignable_type const & c) noexcept
-        requires WeaklyAssignable<alphabet_type, indirect_assignable_type>
+        requires weakly_assignable_from<alphabet_type, indirect_assignable_type>
     {
         alphabet_type a{};
         a = c;
@@ -215,7 +215,7 @@ public:
     }
 
     constexpr derived_type & assign_char(char_type const c) noexcept
-        requires WritableAlphabet<alphabet_type>
+        requires writable_alphabet<alphabet_type>
     {
         alphabet_type tmp{};
         assign_char_to(c, tmp);
@@ -223,7 +223,7 @@ public:
     }
 
     constexpr derived_type & assign_phred(phred_type const c) noexcept
-        requires WritableQualityAlphabet<alphabet_type>
+        requires writable_quality_alphabet<alphabet_type>
     {
         alphabet_type tmp{};
         assign_phred_to(c, tmp);
@@ -244,7 +244,7 @@ public:
     //!\brief Implicit conversion to types that the emulated type is convertible to.
     template <typename other_t>
     //!\cond
-        requires std::ConvertibleTo<alphabet_type, other_t>
+        requires std::convertible_to<alphabet_type, other_t>
     //!\endcond
     constexpr operator other_t() const noexcept
     {
@@ -252,7 +252,7 @@ public:
     }
 
     constexpr auto to_char() const noexcept
-        requires Alphabet<alphabet_type>
+        requires alphabet<alphabet_type>
     {
         /* (smehringer) Explicit conversion instead of static_cast:
          * See explanation in to_phred().
@@ -261,7 +261,7 @@ public:
     }
 
     constexpr auto to_phred() const noexcept
-        requires QualityAlphabet<alphabet_type>
+        requires quality_alphabet<alphabet_type>
     {
         using seqan3::to_phred;
         /* (smehringer) Explicit conversion instead of static_cast:
@@ -278,7 +278,7 @@ public:
 
 #if 0 // this currently causes GCC ICE in alphabet_tuple_base test
     constexpr alphabet_type complement() const noexcept
-        requires NucleotideAlphabet<alphabet_type>
+        requires nucleotide_alphabet<alphabet_type>
     {
         using seqan3::complement;
         return complement(static_cast<alphabet_type>(*this));
@@ -287,7 +287,7 @@ public:
 
     //!\brief Delegate to the emulated type's validator.
     static constexpr bool char_is_valid(char_type const c) noexcept
-        requires WritableAlphabet<alphabet_type>
+        requires writable_alphabet<alphabet_type>
     {
         return char_is_valid_for<alphabet_type>(c);
     }
@@ -301,7 +301,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator==(derived_type const lhs, t const rhs) noexcept
-        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+        -> std::enable_if_t<!std::same_as<derived_type, t> && std::detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
         return (static_cast<alphabet_type>(lhs) == rhs);
@@ -310,7 +310,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator==(t const lhs, derived_type const rhs) noexcept
-        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+        -> std::enable_if_t<!std::same_as<derived_type, t> && std::detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
         return (rhs == lhs);
@@ -319,7 +319,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator!=(derived_type const lhs, t const rhs) noexcept
-        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+        -> std::enable_if_t<!std::same_as<derived_type, t> && std::detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
         return !(lhs == rhs);
@@ -328,7 +328,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator!=(t const lhs, derived_type const rhs) noexcept
-        -> std::enable_if_t<!std::Same<derived_type, t> && std::detail::WeaklyEqualityComparableWith<alphabet_type, t>,
+        -> std::enable_if_t<!std::same_as<derived_type, t> && std::detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
         return (rhs != lhs);

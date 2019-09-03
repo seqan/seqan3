@@ -53,32 +53,32 @@ namespace seqan3::view
  *
  * *For the higher dimensions* (all except the innermost ranges) the following properties hold:
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         |                                       | *preserved*                                        |
- * | std::ranges::CommonRange        |                                       | *preserved*                                        |
- * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | std::ranges::InputRange           | std::ranges::InputRange + std::ranges::View |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |----------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                        |
+ * | std::ranges::forward_range       |                                       | *preserved*                                        |
+ * | std::ranges::bidirectional_range |                                       | *preserved*                                        |
+ * | std::ranges::random_access_range |                                       | *preserved*                                        |
+ * | std::ranges::contiguous_range    |                                       | *lost*                                             |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::view                |                                       | *guaranteed*                                       |
+ * | std::ranges::sized_range         |                                       | *preserved*                                        |
+ * | std::ranges::common_range        |                                       | *preserved*                                        |
+ * | std::ranges::output_range        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_range     |                                       | *preserved*                                        |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::range_reference_t   | std::ranges::input_range           | std::ranges::input_range + std::ranges::view |
  *
  * ### Examples
  *
  * Wrapping an adaptor that takes no parameters ("range adaptor <i>closure</i> object"):
  *
- * \snippet test/snippet/range/view/deep.cpp no_param
+ * \include test/snippet/range/view/deep_no_param.cpp
  *
  * Wrapping an adaptor that takes parameters:
  *
- * \snippet test/snippet/range/view/deep.cpp with_param
+ * \include test/snippet/range/view/deep_with_param.cpp
  *
  * The above example illustrates that view::deep has two sets of arguments, the **arguments to construct** this adaptor,
  * and the arguments passed to the underlying adaptor when **calling** this adaptor. You can use `()` for both, but
@@ -88,11 +88,11 @@ namespace seqan3::view
  * of the underlying adaptor if they are temporaries. This is no problem for small objects like the integer above,
  * but might be expensive for larger ones. To avoid this, pass in references to external objects instead of temporaries:
  *
- * \snippet test/snippet/range/view/deep.cpp pass_ref
+ * \include test/snippet/range/view/deep_pass_ref.cpp
  *
  * Wrapping an adaptor including its arguments:
  *
- * \snippet test/snippet/range/view/deep.cpp wrap_args
+ * \include test/snippet/range/view/deep_wrap_args.cpp
  * In the above example the argument to the underlying adaptor is hardcoded and can't be changed at the call-site. It
  * is less flexible, but does not require workarounds for arguments that are expensive (or impossible) to copy.
  *
@@ -133,7 +133,7 @@ public:
      * \param[in] adap                  The stored adaptor unwrapped by the base-classes explode()-member.
      * \returns A view with the inner adaptor applied on the innermost ranges.
      */
-    template <std::ranges::InputRange urng_t, typename underlying_adaptor_t_>
+    template <std::ranges::input_range urng_t, typename underlying_adaptor_t_>
     static constexpr auto impl(urng_t && urange, underlying_adaptor_t_ && adap)
     {
         return std::forward<urng_t>(urange) | std::forward<underlying_adaptor_t_>(adap);
@@ -149,9 +149,9 @@ public:
      *
      * Recurses and calls std::view::transform if the underlying range is a range-of-ranges.
      */
-    template <std::ranges::InputRange urng_t>
+    template <std::ranges::input_range urng_t>
     //!\cond
-        requires std::ranges::InputRange<reference_t<urng_t>>
+        requires std::ranges::input_range<reference_t<urng_t>>
     //!\endcond
     constexpr auto operator()(urng_t && urange) const &
     {
@@ -162,9 +162,9 @@ public:
     }
 
     //!\overload
-    template <std::ranges::InputRange urng_t>
+    template <std::ranges::input_range urng_t>
     //!\cond
-        requires std::ranges::InputRange<reference_t<urng_t>>
+        requires std::ranges::input_range<reference_t<urng_t>>
     //!\endcond
     constexpr auto operator()(urng_t && urange) &&
     {
@@ -176,7 +176,7 @@ public:
 
     /*!\brief Called to produce a range adaptor closure object if the wrapped functor was **not** a range
      * adaptor *closure* object before, i.e. requires arguments.
-     * \tparam    first_arg_t      The type of the first argument; must not model std::ranges::InputRange.
+     * \tparam    first_arg_t      The type of the first argument; must not model std::ranges::input_range.
      * \tparam    stored_arg_types The argument types, note that **temporaries will be copied on recursion!**
      * \param[in] first            First argument.
      * \param[in] args             Further arguments (optional).
@@ -184,7 +184,7 @@ public:
      */
     template <typename first_arg_t, typename ... stored_arg_types>
     //!\cond
-        requires !std::ranges::InputRange<first_arg_t>
+        requires !std::ranges::input_range<first_arg_t>
     //!\endcond
     constexpr auto operator()(first_arg_t && first, stored_arg_types && ...args) const
     {
@@ -220,7 +220,7 @@ public:
      *
      * Recurses and calls std::view::transform if the underlying range is a range-of-ranges.
      */
-    template <std::ranges::InputRange urng_t, typename ... stored_arg_types>
+    template <std::ranges::input_range urng_t, typename ... stored_arg_types>
     //!\cond
         requires sizeof...(stored_arg_types) > 0
     //!\endcond

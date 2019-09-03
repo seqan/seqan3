@@ -21,25 +21,25 @@ using namespace seqan3;
 using seqan3::detail::to_string;
 
 template <typename T>
-class aligned_sequence : public ::testing::Test
+class aligned_sequence_ : public ::testing::Test
 {};
 
 dna4_vector const seq = "ACTA"_dna4;
 
-TYPED_TEST_CASE_P(aligned_sequence);
+TYPED_TEST_CASE_P(aligned_sequence_);
 
-TYPED_TEST_P(aligned_sequence, fulfills_concept)
+TYPED_TEST_P(aligned_sequence_, fulfills_concept)
 {
-    EXPECT_TRUE((AlignedSequence<TypeParam>));
-    EXPECT_FALSE((AlignedSequence<std::vector<dna4>>));
+    EXPECT_TRUE((aligned_sequence<TypeParam>));
+    EXPECT_FALSE((aligned_sequence<std::vector<dna4>>));
 }
 
-TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
+TYPED_TEST_P(aligned_sequence_, assign_unaligned_sequence)
 {
     using unaligned_seq_type = remove_cvref_t<detail::unaligned_seq_t<TypeParam>>;
     unaligned_seq_type unaligned_seq{};
 
-    if constexpr (SequenceContainer<unaligned_seq_type>)
+    if constexpr (sequence_container<unaligned_seq_type>)
     {
         unaligned_seq.resize(seq.size());
         std::copy(seq.begin(), seq.end(), begin(unaligned_seq));
@@ -55,7 +55,7 @@ TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
     EXPECT_TRUE((ranges::equal(aligned_seq, unaligned_seq)));
 }
 
-TYPED_TEST_P(aligned_sequence, assign_empty_unaligned_sequence)
+TYPED_TEST_P(aligned_sequence_, assign_empty_unaligned_sequence)
 {
     using unaligned_seq_type = remove_cvref_t<detail::unaligned_seq_t<TypeParam>>;
     unaligned_seq_type unaligned_seq{};
@@ -67,7 +67,7 @@ TYPED_TEST_P(aligned_sequence, assign_empty_unaligned_sequence)
     EXPECT_EQ(aligned_seq.size(), 0u);
 }
 
-TYPED_TEST_P(aligned_sequence, insert_one_gap)
+TYPED_TEST_P(aligned_sequence_, insert_one_gap)
 {
     TypeParam aligned_seq;
     TestFixture::initialise_typed_test_container(aligned_seq, seq);
@@ -88,7 +88,7 @@ TYPED_TEST_P(aligned_sequence, insert_one_gap)
     EXPECT_EQ(to_string(aligned_seq), "A--CTA");
 }
 
-TYPED_TEST_P(aligned_sequence, insert_multiple_gaps)
+TYPED_TEST_P(aligned_sequence_, insert_multiple_gaps)
 {
     TypeParam aligned_seq;
     TestFixture::initialise_typed_test_container(aligned_seq, seq);
@@ -114,7 +114,7 @@ TYPED_TEST_P(aligned_sequence, insert_multiple_gaps)
     EXPECT_EQ(to_string(aligned_seq), "--A------CTA--");
 }
 
-TYPED_TEST_P(aligned_sequence, insert_zero_gaps)
+TYPED_TEST_P(aligned_sequence_, insert_zero_gaps)
 {
     TypeParam aligned_seq;
     TestFixture::initialise_typed_test_container(aligned_seq, seq);
@@ -127,7 +127,7 @@ TYPED_TEST_P(aligned_sequence, insert_zero_gaps)
     EXPECT_EQ(to_string(aligned_seq), "ACTA");
 }
 
-TYPED_TEST_P(aligned_sequence, erase_one_gap)
+TYPED_TEST_P(aligned_sequence_, erase_one_gap)
 {
     // 1) Removing an actual gap
     TypeParam aligned_seq;
@@ -151,7 +151,7 @@ TYPED_TEST_P(aligned_sequence, erase_one_gap)
     EXPECT_EQ(to_string(aligned_seq), "ACTA");
 }
 
-TYPED_TEST_P(aligned_sequence, erase_multiple_gaps)
+TYPED_TEST_P(aligned_sequence_, erase_multiple_gaps)
 {
     TypeParam aligned_seq;
 
@@ -211,7 +211,7 @@ TYPED_TEST_P(aligned_sequence, erase_multiple_gaps)
     EXPECT_EQ(to_string(aligned_seq), "A---CTA");
 }
 
-TYPED_TEST_P(aligned_sequence, insert_erase_on_empty_sequence)
+TYPED_TEST_P(aligned_sequence_, insert_erase_on_empty_sequence)
 {
     using unaligned_seq_type = remove_cvref_t<detail::unaligned_seq_t<TypeParam>>;
     unaligned_seq_type unaligned{};
@@ -242,7 +242,7 @@ TYPED_TEST_P(aligned_sequence, insert_erase_on_empty_sequence)
     EXPECT_EQ(to_string(aligned_seq), "");
 }
 
-TYPED_TEST_P(aligned_sequence, cigar_string)
+TYPED_TEST_P(aligned_sequence_, cigar_string)
 {
     {   // default_parameters
         auto seq_ref = "ACGTGATCTG"_dna4;
@@ -323,7 +323,7 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(aligned_sequence,
+REGISTER_TYPED_TEST_CASE_P(aligned_sequence_,
                            fulfills_concept,
                            assign_unaligned_sequence,
                            assign_empty_unaligned_sequence,

@@ -43,7 +43,7 @@ TEST(translate_triplets, dna15)
     EXPECT_EQ(t1, c);
 }
 
-TEST(translate_triplets, RandomAccessRange)
+TEST(translate_triplets, random_access_range)
 {
     dna15 n1{'C'_dna15};
     dna15 n2{'T'_dna15};
@@ -55,7 +55,7 @@ TEST(translate_triplets, RandomAccessRange)
     #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     aa27 t2{translate_triplet(range_triplet)};
 
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(range_triplet)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(range_triplet)>);
     EXPECT_EQ(t2, c);
 }
 

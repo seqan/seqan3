@@ -77,7 +77,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires ConvertibleToByMember<target_t, alphabet_variant<alternatives...>>
+    requires convertible_to_by_member<target_t, alphabet_variant<alternatives...>>
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
@@ -86,7 +86,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires AlphabetTupleBase<target_t> &&
+    requires alphabet_tuple_base_specialisation<target_t> &&
              meta::in<detail::transformation_trait_or_t<recursive_tuple_components<target_t>, meta::list<>>,
                       alphabet_variant<alternatives...>>::value
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
@@ -116,17 +116,17 @@ template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
     //NO, it's not possible to use the value_type type trait here
-    requires requires { std::Same<typename target_t::value_type, alphabet_variant<alternatives...>>; }
+    requires requires { std::same_as<typename target_t::value_type, alphabet_variant<alternatives...>>; }
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
 
 // guard against pairs/tuples that *might* contain self to prevent recursive instantiation
-// (applying TupleLike unfortunately does not work because it itself starts recursive instantiation)
+// (applying tuple_like unfortunately does not work because it itself starts recursive instantiation)
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires TupleSize<target_t> && !AlphabetTupleBase<target_t>
+    requires tuple_size<target_t> && !alphabet_tuple_base_specialisation<target_t>
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
@@ -142,27 +142,27 @@ namespace seqan3
  * \ingroup composite
  * \if DEV
  * \tparam ...alternative_types Types of possible values (at least 2); all must model
- *                              seqan3::detail::WritableConstexprAlphabet, not be references and be unique.
- * \implements seqan3::detail::WritableConstexprAlphabet
+ *                              seqan3::detail::writable_constexpr_alphabet, not be references and be unique.
+ * \implements seqan3::detail::writable_constexpr_alphabet
  * \else
- * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::WritableAlphabet,
+ * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::writable_alphabet,
  *                              must not be references and must be unique; all required functions for
- *                              seqan3::WritableAlphabet need to be callable in a `constexpr`-context.
+ *                              seqan3::writable_alphabet need to be callable in a `constexpr`-context.
  * \endif
- * \implements seqan3::WritableAlphabet
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
+ * \implements seqan3::writable_alphabet
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
 
  * \details
  *
  * The alphabet_variant represents the union of two or more alternative alphabets (e.g. the
  * four letter DNA alternative + the gap alternative). It behaves similar to a
  * [variant](https://en.cppreference.com/w/cpp/language/variant) or std::variant, but it preserves the
- * seqan3::Alphabet.
+ * seqan3::alphabet.
  *
  * Short description:
  *   * combines multiple different alphabets in an "either-or"-fashion;
- *   * is itself a seqan3::Alphabet;
+ *   * is itself a seqan3::alphabet;
  *   * its alphabet size is the sum of the individual sizes;
  *   * default initialises to the the first alternative's default (no empty state like std::variant);
  *   * constructible, assignable and (in-)equality-comparable with each alternative type and also all types that
@@ -175,7 +175,7 @@ namespace seqan3
  *
  * ### The `char` representation of an alphabet_variant
  *
- * Part of the seqan3::Alphabet concept requires that the alphabet_variant provides a char representation in addition
+ * Part of the seqan3::alphabet concept requires that the alphabet_variant provides a char representation in addition
  * to the rank representation. For an object of seqan3::alphabet_variant, the `to_char()` member function will always
  * return the same character as if invoked on the respective alternative.
  * In contrast, the `assign_char()` member function might be ambiguous between the alternative alphabets in a variant.
@@ -197,7 +197,7 @@ namespace seqan3
  */
 template <typename ...alternative_types>
 //!\cond
-    requires (detail::WritableConstexprAlphabet<alternative_types> && ...) &&
+    requires (detail::writable_constexpr_alphabet<alternative_types> && ...) &&
              (!std::is_reference_v<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
@@ -218,7 +218,7 @@ private:
     //!\brief A meta::list of the types of each alternative in the composite
     using alternatives = meta::list<alternative_types...>;
 
-    static_assert(std::Same<alternatives, meta::unique<alternatives>>,
+    static_assert(std::same_as<alternatives, meta::unique<alternatives>>,
                   "All types in a alphabet_variant must be distinct.");
 
     using typename base_t::char_type;
@@ -619,8 +619,8 @@ protected:
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator==(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
 //!\cond
-    requires detail::WeaklyEqualityComparableByMembersWith<alphabet_variant<alternative_types...>, lhs_t> &&
-             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, alphabet_variant<alternative_types...>>
+    requires detail::weakly_equality_comparable_by_members_with<alphabet_variant<alternative_types...>, lhs_t> &&
+             !detail::weakly_equality_comparable_by_members_with<lhs_t, alphabet_variant<alternative_types...>>
 //!\endcond
 {
     return rhs == lhs;
@@ -629,8 +629,8 @@ constexpr bool operator==(lhs_t const lhs, alphabet_variant<alternative_types...
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator!=(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
 //!\cond
-    requires detail::WeaklyEqualityComparableByMembersWith<alphabet_variant<alternative_types...>, lhs_t> &&
-             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, alphabet_variant<alternative_types...>>
+    requires detail::weakly_equality_comparable_by_members_with<alphabet_variant<alternative_types...>, lhs_t> &&
+             !detail::weakly_equality_comparable_by_members_with<lhs_t, alphabet_variant<alternative_types...>>
 //!\endcond
 {
     return rhs != lhs;

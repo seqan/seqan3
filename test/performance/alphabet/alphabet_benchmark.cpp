@@ -14,7 +14,7 @@
 
 using namespace seqan3;
 
-template <Alphabet alphabet_t>
+template <alphabet alphabet_t>
 static void assign_char_(benchmark::State& state)
 {
     using char_t = alphabet_char_t<alphabet_t>;
@@ -32,7 +32,7 @@ static void assign_char_(benchmark::State& state)
     state.counters["loop_iterations"] = std::numeric_limits<char_t>::max() - std::numeric_limits<char_t>::min();
 }
 
-template <Alphabet alphabet_t>
+template <alphabet alphabet_t>
 static void to_char_(benchmark::State& state)
 {
     using char_t = alphabet_char_t<alphabet_t>;
@@ -50,7 +50,7 @@ static void to_char_(benchmark::State& state)
     state.counters["loop_iterations"] = std::numeric_limits<char_t>::max() - std::numeric_limits<char_t>::min();
 }
 
-template <Semialphabet alphabet_t>
+template <semialphabet alphabet_t>
 static void assign_rank_(benchmark::State& state)
 {
     using rank_t_ = alphabet_rank_t<alphabet_t>;
@@ -69,7 +69,7 @@ static void assign_rank_(benchmark::State& state)
     state.counters["loop_iterations"] = std::numeric_limits<rank_t>::max() - std::numeric_limits<rank_t>::min();
 }
 
-template <Semialphabet alphabet_t>
+template <semialphabet alphabet_t>
 static void to_rank_(benchmark::State& state)
 {
     using rank_t_ = alphabet_rank_t<alphabet_t>;

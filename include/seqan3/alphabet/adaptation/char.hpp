@@ -10,7 +10,7 @@
  * \brief Provides alphabet adaptations for standard char types.
  * \details
  * This file provides function and type trait overloads so that the following types
- * fulfil the seqan3::Alphabet:
+ * fulfil the seqan3::alphabet:
  *   * `char`
  *   * `char16_t`
  *   * `char32_t`
@@ -36,10 +36,10 @@ namespace seqan3::detail
 //!\brief Whether a type is `char`, `char16_t`, `char32_t` or `wchar_t` (type trait).
 //!\ingroup adaptation
 template <typename type>
-constexpr bool is_char_adaptation_v = std::Same<type, char>     ||
-                                      std::Same<type, char16_t> ||
-                                      std::Same<type, char32_t> ||
-                                      std::Same<type, wchar_t>;
+constexpr bool is_char_adaptation_v = std::same_as<type, char>     ||
+                                      std::same_as<type, char16_t> ||
+                                      std::same_as<type, char32_t> ||
+                                      std::same_as<type, wchar_t>;
 } // namespace seqan3::detail
 
 namespace seqan3::custom

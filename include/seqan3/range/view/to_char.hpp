@@ -40,32 +40,32 @@ namespace seqan3::view
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         |                                       | *preserved*                                        |
- * | std::ranges::CommonRange        |                                       | *preserved*                                        |
- * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::Alphabet                      | seqan3::alphabet_char_t<seqan3::value_type_t<urng_t>>   |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |----------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                        |
+ * | std::ranges::forward_range       |                                       | *preserved*                                        |
+ * | std::ranges::bidirectional_range |                                       | *preserved*                                        |
+ * | std::ranges::random_access_range |                                       | *preserved*                                        |
+ * | std::ranges::contiguous_range    |                                       | *lost*                                             |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::view                |                                       | *guaranteed*                                       |
+ * | std::ranges::sized_range         |                                       | *preserved*                                        |
+ * | std::ranges::common_range        |                                       | *preserved*                                        |
+ * | std::ranges::output_range        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_range     |                                       | *preserved*                                        |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::range_reference_t   | seqan3::alphabet                      | seqan3::alphabet_char_t<seqan3::value_type_t<urng_t>>   |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
- * \snippet test/snippet/range/view/rank_char.cpp to_char
+ * \include test/snippet/range/view/range_view_to_char.cpp
  * \hideinitializer
  */
 inline auto const to_char = deep{std::view::transform([] (auto const in) noexcept
 {
-    static_assert(Alphabet<remove_cvref_t<decltype(in)>>, "The value type of seqan3::view::to_char must model the seqan3::Alphabet.");
+    static_assert(alphabet<remove_cvref_t<decltype(in)>>, "The value type of seqan3::view::to_char must model the seqan3::alphabet.");
     return seqan3::to_char(in);
 })};
 

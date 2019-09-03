@@ -19,7 +19,7 @@ namespace seqan3::detail
 
 /*!\brief A matrix represented in a one-dimensional std::vector accessing the data in row-major-order.
  * \ingroup alignment_matrix
- * \implements seqan3::detail::Matrix
+ * \implements seqan3::detail::matrix
  * \tparam value_t \copydoc seqan3::detail::two_dimensional_matrix::value_type
  */
 template <typename value_t>

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Provides seqan3::RnaStructureAlphabet.
+ * \brief Provides seqan3::rna_structure_alphabet.
  */
 
 #pragma once
@@ -47,7 +47,7 @@ public:
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::is_pair_open().");
-        static_assert(std::Same<bool, decltype(impl(priority_tag<2>{}, chr))>,
+        static_assert(std::same_as<bool, decltype(impl(priority_tag<2>{}, chr))>,
             "The return type of your is_pair_open() implementation must be 'bool'.");
 
         return impl(priority_tag<2>{}, chr);
@@ -126,7 +126,7 @@ public:
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::is_pair_close().");
-        static_assert(std::Same<bool, decltype(impl(priority_tag<2>{}, chr))>,
+        static_assert(std::same_as<bool, decltype(impl(priority_tag<2>{}, chr))>,
             "The return type of your is_pair_close() implementation must be 'bool'.");
 
         return impl(priority_tag<2>{}, chr);
@@ -205,7 +205,7 @@ public:
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::is_unpaired().");
-        static_assert(std::Same<bool, decltype(impl(priority_tag<2>{}, chr))>,
+        static_assert(std::same_as<bool, decltype(impl(priority_tag<2>{}, chr))>,
             "The return type of your is_unpaired() implementation must be 'bool'.");
 
         return impl(priority_tag<2>{}, chr);
@@ -293,7 +293,7 @@ public:
     {
         static_assert(noexcept(impl(priority_tag<2>{}, s_alph_t{})),
             "Only overloads that are marked noexcept are picked up by seqan3::max_pseudoknot_depth.");
-        static_assert(std::Constructible<size_t, decltype(impl(priority_tag<2>{}, s_alph_t{}))>,
+        static_assert(std::constructible_from<size_t, decltype(impl(priority_tag<2>{}, s_alph_t{}))>,
             "The return type of your max_pseudoknot_depth implementation must be convertible to size_t.");
         static_assert(SEQAN3_IS_CONSTEXPR(impl(priority_tag<2>{}, s_alph_t{})),
             "Only overloads that are marked constexpr are picked up by seqan3::max_pseudoknot_depth.");
@@ -394,7 +394,7 @@ public:
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::pseudoknot_id().");
-        static_assert(std::Constructible<std::optional<size_t>, decltype(impl(priority_tag<2>{}, chr))>,
+        static_assert(std::constructible_from<std::optional<size_t>, decltype(impl(priority_tag<2>{}, chr))>,
             "The return type of your pseudoknot_id() implementation must be convertible to std::optional<size_t>.");
 
         return impl(priority_tag<2>{}, chr);
@@ -447,14 +447,14 @@ inline constexpr auto pseudoknot_id = detail::adl_only::pseudoknot_id_fn{};
 } // namespace seqan3
 
 // ============================================================================
-// RnaStructureAlphabet concept
+// rna_structure_alphabet concept
 // ============================================================================
 
 namespace seqan3
 {
-/*!\interface seqan3::RnaStructureAlphabet <>
+/*!\interface seqan3::rna_structure_alphabet <>
  * \brief A concept that indicates whether an alphabet represents RNA structure.
- * \extends seqan3::Alphabet
+ * \extends seqan3::alphabet
  * \ingroup structure
  *
  * \details
@@ -465,7 +465,7 @@ namespace seqan3
  *
  * ### Requirements
  *
- *   1. `t` shall model seqan3::Alphabet
+ *   1. `t` shall model seqan3::alphabet
  *   2. seqan3::is_pair_open needs to be defined for objects of type `t`
  *   3. seqan3::is_pair_close needs to be defined for objects of type `t`
  *   4. seqan3::is_unpaired needs to be defined for objects of type `t`
@@ -484,7 +484,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT RnaStructureAlphabet = seqan3::Alphabet<t> && requires(t val)
+SEQAN3_CONCEPT rna_structure_alphabet = seqan3::alphabet<t> && requires(t val)
 {
     { seqan3::is_pair_open(val) };
     { seqan3::is_pair_close(val) };

@@ -32,11 +32,11 @@ class single_pass_input_iterator;
 
 /*!\brief Adds single_pass_input behavior to the underlying range.
  * \tparam urng_t The underlying range type.
- * \implements std::ranges::InputRange
+ * \implements std::ranges::input_range
  * \ingroup view
  */
 //![view_def]
-template <std::ranges::View urng_t>
+template <std::ranges::view urng_t>
 class single_pass_input_view : public std::ranges::view_interface<single_pass_input_view<urng_t>>
 {
 //![view_def]
@@ -101,12 +101,12 @@ public:
         state_ptr{new state{std::move(_urng)}}
     {}
 
-    //!\brief Construction from std::ranges::ViewableRange.
+    //!\brief Construction from std::ranges::viewable_range.
     template <typename other_urng_t>
     //!\cond
-    requires !std::Same<remove_cvref_t<other_urng_t>, single_pass_input_view> &&
-             std::ranges::ViewableRange<other_urng_t> &&  // Must come after self type check to avoid conflicts with the move constructor.
-             std::Constructible<urng_t, ranges::ref_view<std::remove_reference_t<other_urng_t>>>
+    requires !std::same_as<remove_cvref_t<other_urng_t>, single_pass_input_view> &&
+             std::ranges::viewable_range<other_urng_t> &&  // Must come after self type check to avoid conflicts with the move constructor.
+             std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<other_urng_t>>>
     //!\endcond
     explicit single_pass_input_view(other_urng_t && _urng) :
         single_pass_input_view{std::view::all(_urng)}
@@ -153,8 +153,8 @@ public:
  * \{
  */
 
-//!\brief Deduces the single_pass_input_view from the underlying range if it is a std::ranges::ViewableRange.
-template <std::ranges::ViewableRange urng_t>
+//!\brief Deduces the single_pass_input_view from the underlying range if it is a std::ranges::viewable_range.
+template <std::ranges::viewable_range urng_t>
 single_pass_input_view(urng_t &&) ->
     single_pass_input_view<std::ranges::all_view<urng_t>>;
 //!\}
@@ -167,7 +167,7 @@ single_pass_input_view(urng_t &&) ->
 namespace seqan3::detail
 {
 /*!\brief An input_iterator over the associated range.
- * \implements std::InputIterator
+ * \implements std::input_iterator
  * \ingroup view
  * \tparam view_type The type of the associated type.
  *
@@ -188,8 +188,8 @@ class single_pass_input_iterator<single_pass_input_view<view_type>>
     template <typename input_view_type>
     friend class single_pass_input_iterator;
 
-    //!\brief Test that the sentinel fulfills the std::Sentinel for the underlying iterator.
-    static_assert(std::Sentinel<sentinel_type, base_iterator_type>);
+    //!\brief Test that the sentinel fulfills the std::sentinel_for for the underlying iterator.
+    static_assert(std::sentinel_for<sentinel_type, base_iterator_type>);
 
 public:
 
@@ -261,8 +261,8 @@ public:
     //!\brief Post-increment.
     auto operator++(int) noexcept
     {
-        if constexpr (std::OutputIterator<base_iterator_type, reference> &&
-                      std::CopyConstructible<base_iterator_type>)
+        if constexpr (std::output_iterator<base_iterator_type, reference> &&
+                      std::copy_constructible<base_iterator_type>)
         {
             single_pass_input_iterator tmp{*this};
             ++(*this);
@@ -350,22 +350,22 @@ namespace seqan3::view
  * ### View properties
  *
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       |                                       | *lost*                                             |
- * | std::ranges::BidirectionalRange |                                       | *lost*                                             |
- * | std::ranges::RandomAccessRange  |                                       | *lost*                                             |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         |                                       | *lost*                                             |
- * | std::ranges::CommonRange        |                                       | *lost*                                             |
- * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::ConstIterableRange      |                                       | *lost*                                             |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |----------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                        |
+ * | std::ranges::forward_range       |                                       | *lost*                                             |
+ * | std::ranges::bidirectional_range |                                       | *lost*                                             |
+ * | std::ranges::random_access_range |                                       | *lost*                                             |
+ * | std::ranges::contiguous_range    |                                       | *lost*                                             |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::view                |                                       | *guaranteed*                                       |
+ * | std::ranges::sized_range         |                                       | *lost*                                             |
+ * | std::ranges::common_range        |                                       | *lost*                                             |
+ * | std::ranges::output_range        |                                       | *preserved*                                        |
+ * | seqan3::const_iterable_range     |                                       | *lost*                                             |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -375,7 +375,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/single_pass_input.cpp usage
+ * \include test/snippet/range/view/single_pass_input.cpp
  * \hideinitializer
  */
 inline constexpr auto single_pass_input = detail::adaptor_for_view_without_args<detail::single_pass_input_view>{};

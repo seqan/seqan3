@@ -89,25 +89,25 @@ TEST(view_persist, const_)
 TEST(view_persist, concepts)
 {
     std::string vec{"foobar"};
-    EXPECT_TRUE(std::ranges::InputRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(std::string{"foo"})>);
-    EXPECT_FALSE(std::ranges::View<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(ConstIterableRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(std::string{"foo"}), char>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(std::string{"foo"})>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(std::string{"foo"})>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(std::string{"foo"})>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(std::string{"foo"})>);
+    EXPECT_FALSE(std::ranges::view<decltype(std::string{"foo"})>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(std::string{"foo"})>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(std::string{"foo"})>);
+    EXPECT_TRUE(const_iterable_range<decltype(std::string{"foo"})>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(std::string{"foo"}), char>));
 
     auto v1 = std::string{"foo"} | view::persist;
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(v1), char>));
 }

@@ -33,8 +33,8 @@ class edit_distance_score_matrix_full
 {
 public:
     //!\brief This friend allows the edit distance algorithm to fill the score matrix via add_column.
-    template <std::ranges::ViewableRange database_t,
-              std::ranges::ViewableRange query_t,
+    template <std::ranges::viewable_range database_t,
+              std::ranges::viewable_range query_t,
               typename align_config_t,
               typename edit_traits>
     friend class edit_distance_unbanded;
@@ -68,13 +68,13 @@ public:
     //!\copydoc default_edit_distance_trait_type::score_type
     using score_type = score_t;
 
-    //!\copydoc seqan3::detail::Matrix::value_type
+    //!\copydoc seqan3::detail::matrix::value_type
     using value_type = std::conditional_t<use_max_errors, std::optional<score_type>, score_type>;
 
-    //!\copydoc seqan3::detail::Matrix::reference
+    //!\copydoc seqan3::detail::matrix::reference
     using reference = value_type;
 
-    //!\copydoc seqan3::detail::Matrix::size_type
+    //!\copydoc seqan3::detail::matrix::size_type
     using size_type = size_t;
 
     //!\brief A special score which represents infinity.
@@ -123,7 +123,7 @@ public:
     }
 
 public:
-    //!\copydoc seqan3::detail::Matrix::at
+    //!\copydoc seqan3::detail::matrix::at
     reference at(matrix_coordinate const & coordinate) const noexcept
     {
         size_t col = coordinate.col;
@@ -154,13 +154,13 @@ public:
         return -score;
     }
 
-    //!\copydoc seqan3::detail::Matrix::rows
+    //!\copydoc seqan3::detail::matrix::rows
     size_t rows() const noexcept
     {
         return rows_size;
     }
 
-    //!\copydoc seqan3::detail::Matrix::cols
+    //!\copydoc seqan3::detail::matrix::cols
     size_t cols() const noexcept
     {
         return columns.size();
@@ -225,7 +225,7 @@ protected:
     }
 
 private:
-    //!\copydoc seqan3::detail::Matrix::rows
+    //!\copydoc seqan3::detail::matrix::rows
     size_t rows_size{};
     //!\brief The columns of the score matrix.
     std::vector<column_type> columns{};

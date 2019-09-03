@@ -28,8 +28,8 @@ TEST(general, concepts)
     using it_t = typename structure_file_input<>::iterator;
     using sen_t = typename structure_file_input<>::sentinel;
 
-    EXPECT_TRUE((std::InputIterator<it_t>));
-    EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
+    EXPECT_TRUE((std::input_iterator<it_t>));
+    EXPECT_TRUE((std::sentinel_for<sen_t, it_t>));
 }
 
 struct structure_file_input_class : public ::testing::Test
@@ -54,11 +54,11 @@ struct structure_file_input_class : public ::testing::Test
 TEST_F(structure_file_input_class, concepts)
 {
     using t = structure_file_input<>;
-    EXPECT_TRUE((std::ranges::InputRange<t>));
+    EXPECT_TRUE((std::ranges::input_range<t>));
 
     using ct = structure_file_input<> const;
     // not const-iterable
-    EXPECT_FALSE((std::ranges::InputRange<ct>));
+    EXPECT_FALSE((std::ranges::input_range<ct>));
 }
 
 TEST_F(structure_file_input_class, construct_by_filename)

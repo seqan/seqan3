@@ -31,7 +31,7 @@ struct istreambuf_fn
 {
     /*!\brief Return the view object.
      * \param[in,out] s Reference to the stream buffer.
-     * \tparam stream_char_t Character type of the stream device.
+     * \tparam stream_char_t builtin_characteracter type of the stream device.
      * \tparam stream_traits_t Traits type of the stream device.
      * \returns A std::ranges::subrange over a detail::fast_istreambuf_iterator and std::ranges::default_sentinel_t.
      */
@@ -47,11 +47,11 @@ struct istreambuf_fn
     }
 
     /*!\brief Return the view object.
-     * \tparam stream_t Type of the stream, must model seqan3::IStream2.
+     * \tparam stream_t Type of the stream, must model seqan3::input_stream.
      * \param[in,out] s Reference to a stream object.
      * \returns A std::ranges::subrange over a detail::fast_istreambuf_iterator and std::ranges::default_sentinel_t.
      */
-    template <IStream2 stream_t>
+    template <input_stream stream_t>
     constexpr auto operator()(stream_t & s) const
     {
         return this->operator()(*s.rdbuf());
@@ -72,7 +72,7 @@ namespace seqan3::view
  */
 
 /*!\brief                A view factory that returns a view over the stream buffer of an input stream.
- * \tparam istreambuf_t  The type of the stream(buffer); must be std::basic_streambuf or model seqan3::IStream2.
+ * \tparam istreambuf_t  The type of the stream(buffer); must be std::basic_streambuf or model seqan3::input_stream.
  * \param[in] istreambuf The stream buffer or an input stream of whome the buffer is retrieved.
  * \returns
  * \ingroup view
@@ -88,22 +88,22 @@ namespace seqan3::view
  *
  * This is a source-only view adaptor, also known as a range factory; you cannot pipe anything into it.
  *
- * | range concepts and reference_t  | `rrng_t` (returned range type)   |
- * |---------------------------------|:--------------------------------:|
- * | std::ranges::InputRange         | *guaranteed*                     |
- * | std::ranges::ForwardRange       |                                  |
- * | std::ranges::BidirectionalRange |                                  |
- * | std::ranges::RandomAccessRange  |                                  |
- * | std::ranges::ContiguousRange    |                                  |
- * |                                 |                                  |
- * | std::ranges::ViewableRange      | *guaranteed*                     |
- * | std::ranges::View               | *guaranteed*                     |
- * | std::ranges::SizedRange         |                                  |
- * | std::ranges::CommonRange        |                                  |
- * | std::ranges::OutputRange        |                                  |
- * | seqan3::ConstIterableRange      | *guaranteed*                     |
- * |                                 |                                  |
- * | seqan3::reference_t             | `istream_t::char_type`           |
+ * | Concepts and traits              | `rrng_t` (returned range type)   |
+ * |----------------------------------|:--------------------------------:|
+ * | std::ranges::input_range         | *guaranteed*                     |
+ * | std::ranges::forward_range       |                                  |
+ * | std::ranges::bidirectional_range |                                  |
+ * | std::ranges::random_access_range |                                  |
+ * | std::ranges::contiguous_range    |                                  |
+ * |                                  |                                  |
+ * | std::ranges::viewable_range      | *guaranteed*                     |
+ * | std::ranges::view                | *guaranteed*                     |
+ * | std::ranges::sized_range         |                                  |
+ * | std::ranges::common_range        |                                  |
+ * | std::ranges::output_range        |                                  |
+ * | seqan3::const_iterable_range     | *guaranteed*                     |
+ * |                                  |                                  |
+ * | std::ranges::range_reference_t   | `istream_t::char_type`           |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

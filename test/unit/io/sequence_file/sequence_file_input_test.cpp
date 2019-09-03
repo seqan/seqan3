@@ -24,8 +24,8 @@ TEST(sequence_file_input_iterator, concepts)
     using it_t = typename sequence_file_input<>::iterator;
     using sen_t = typename sequence_file_input<>::sentinel;
 
-    EXPECT_TRUE((std::InputIterator<it_t>));
-    EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
+    EXPECT_TRUE((std::input_iterator<it_t>));
+    EXPECT_TRUE((std::sentinel_for<sen_t, it_t>));
 }
 
 struct sequence_file_input_f : public ::testing::Test
@@ -58,11 +58,11 @@ struct sequence_file_input_f : public ::testing::Test
 TEST_F(sequence_file_input_f, concepts)
 {
     using t = sequence_file_input<>;
-    EXPECT_TRUE((std::ranges::InputRange<t>));
+    EXPECT_TRUE((std::ranges::input_range<t>));
 
     using ct = sequence_file_input<> const;
     // not const-iterable
-    EXPECT_FALSE((std::ranges::InputRange<ct>));
+    EXPECT_FALSE((std::ranges::input_range<ct>));
 }
 
 TEST_F(sequence_file_input_f, construct_by_filename)

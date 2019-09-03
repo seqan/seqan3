@@ -23,7 +23,7 @@ using alphabet_variant_types = ::testing::Types<alphabet_variant<dna4, gap>,
                                                  alphabet_variant<dna4, dna5, gap>,
                                                  alphabet_variant<char, gap>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet, alphabet_variant_types);
+INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet_, alphabet_variant_types);
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet_constexpr, alphabet_variant_types);
 
 template <typename T>

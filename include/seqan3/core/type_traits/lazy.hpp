@@ -43,7 +43,7 @@ struct lazy
 
 /*!\brief A transformation trait that instantiates seqan3::lazy types. Base template is the identity transformation.
  * \tparam t The type to operate on.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  */
 template <typename t>
 struct instantiate : std::type_identity<t>
@@ -52,7 +52,7 @@ struct instantiate : std::type_identity<t>
 /*!\brief A transformation trait that instantiates seqan3::lazy types.
  * \tparam template_t The uninstantiated template.
  * \tparam spec_t     The arguments to template_t.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  */
 template <template <typename ...> typename template_t, typename ...spec_t>
 struct instantiate<lazy<template_t, spec_t...>>
@@ -79,7 +79,7 @@ using instantiate_t = typename instantiate<t>::type;
  * \tparam decision   Whether to resolve to the first type or the second.
  * \tparam on_true_t  The return type in case `decision` is true.
  * \tparam on_false_t The return type in case `decision` is false.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  *
  * \details
  *

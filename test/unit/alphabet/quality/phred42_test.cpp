@@ -15,7 +15,7 @@
 
 using namespace seqan3;
 
-INSTANTIATE_TYPED_TEST_CASE_P(phred42, alphabet, phred42);
+INSTANTIATE_TYPED_TEST_CASE_P(phred42, alphabet_, phred42);
 INSTANTIATE_TYPED_TEST_CASE_P(phred42, alphabet_constexpr, phred42);
 INSTANTIATE_TYPED_TEST_CASE_P(phred42, phred, phred42);
 

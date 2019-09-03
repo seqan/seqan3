@@ -62,39 +62,39 @@ template <typename adaptor_t>
 void do_concepts(adaptor_t && adaptor)
 {
     std::vector vec{1, 2, 3};
-    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_FALSE(std::ranges::View<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), int>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
+    EXPECT_FALSE(std::ranges::view<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
+    EXPECT_TRUE(const_iterable_range<decltype(vec)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(vec), int>));
 
     auto v1 = vec | adaptor;
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), int>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(v1), int>));
 
     auto v2 = vec | view::single_pass_input | adaptor;
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::ForwardRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::BidirectionalRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::RandomAccessRange<decltype(v2)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::SizedRange<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_FALSE(ConstIterableRange<decltype(v2)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), int>));
+    EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::forward_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::random_access_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
+    EXPECT_FALSE(const_iterable_range<decltype(v2)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(v2), int>));
 }
 
 // ============================================================================
@@ -129,7 +129,7 @@ TEST(view_drop, type_erasure)
 
         auto v = view::drop(urange, 3);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::string_view>));
+        EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
         EXPECT_TRUE((std::ranges::equal(v, urange.substr(3,3))));
     }
 
@@ -138,7 +138,7 @@ TEST(view_drop, type_erasure)
 
         auto v = view::drop(urange, 3);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::string_view>));
+        EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
         EXPECT_TRUE((std::ranges::equal(v, urange.substr(3,3))));
     }
 
@@ -147,7 +147,7 @@ TEST(view_drop, type_erasure)
 
         auto v = view::drop(urange, 3);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
         EXPECT_TRUE((std::ranges::equal(v, std::vector{4, 5, 6})));
     }
 
@@ -156,7 +156,7 @@ TEST(view_drop, type_erasure)
 
         auto v = view::drop(urange, 3);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
         EXPECT_TRUE((std::ranges::equal(v, std::vector{4, 5, 6})));
     }
 
@@ -165,7 +165,7 @@ TEST(view_drop, type_erasure)
 
         auto v = view::drop(urange, 3);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
+        EXPECT_TRUE((std::same_as<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
                                                                   typename std::deque<int>::iterator>>));
         EXPECT_TRUE((std::ranges::equal(v, std::vector{4, 5, 6})));
     }
@@ -175,7 +175,7 @@ TEST(view_drop, type_erasure)
 
         auto v = view::drop(urange, 3);
 
-        EXPECT_TRUE((std::Same<decltype(v), decltype(std::view::drop(urange, 3))>));
+        EXPECT_TRUE((std::same_as<decltype(v), decltype(std::view::drop(urange, 3))>));
         EXPECT_TRUE((std::ranges::equal(v, std::vector{4, 5, 6})));
     }
 
@@ -185,7 +185,7 @@ TEST(view_drop, type_erasure)
         auto v = urange | std::view::filter([] (int) { return true; });
         auto v2 = view::drop(v, 3);
 
-        EXPECT_TRUE((std::Same<decltype(v2), decltype(std::view::drop(v, 3))>));
+        EXPECT_TRUE((std::same_as<decltype(v2), decltype(std::view::drop(v, 3))>));
         EXPECT_TRUE((std::ranges::equal(v2, std::vector{4, 5, 6})));
     }
 }

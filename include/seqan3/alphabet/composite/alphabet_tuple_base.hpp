@@ -89,7 +89,7 @@ template <typename ... tuple_comps,
           typename tuple_derived_t,
           template <typename> typename fun_t,
           typename other_t>
-    requires ConvertibleToByMember<other_t, tuple_derived_t>
+    requires convertible_to_by_member<other_t, tuple_derived_t>
 inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
                                        tuple_derived_t,
                                        fun_t,
@@ -113,18 +113,18 @@ inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tupl
 template <typename ... tuple_comps,
           typename tuple_derived_t,
           typename other_t>
-    requires ImplicitlyConvertibleTo<other_t, tuple_derived_t>
+    requires implicitly_convertible_to<other_t, tuple_derived_t>
 inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
                                        tuple_derived_t,
-                                       weakly_equality_comparable_with,
+                                       seqan3::detail::weakly_equality_comparable_with,
                                        other_t> = false;
 template <typename ... tuple_comps,
           typename tuple_derived_t,
           typename other_t>
-    requires ImplicitlyConvertibleTo<other_t, tuple_derived_t>
+    requires implicitly_convertible_to<other_t, tuple_derived_t>
 inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
                                        tuple_derived_t,
-                                       weakly_ordered_with,
+                                       weakly_ordered_with_,
                                        other_t> = false;
 //!\endcond
 
@@ -144,12 +144,12 @@ decltype(auto) get();
 
 /*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
  * \ingroup composite
- * \implements seqan3::WritableSemialphabet
+ * \implements seqan3::writable_semialphabet
  * \if DEV
- * \implements seqan3::detail::ConstexprWritableSemialphabet
- * \tparam component_types Types of letters; must model seqan3::detail::WritableConstexprSemialphabet.
+ * \implements seqan3::detail::Constexprwritable_semialphabet
+ * \tparam component_types Types of letters; must model seqan3::detail::writable_constexpr_semialphabet.
  * \else
- * \tparam component_types Types of letters; must model seqan3::WritableSemialphabet and all required function calls
+ * \tparam component_types Types of letters; must model seqan3::writable_semialphabet and all required function calls
  * need to be callable in `constexpr`-context.
  * \endif
  *
@@ -159,8 +159,8 @@ decltype(auto) get();
  *
  * Short description:
  *   * combines multiple alphabets as independent components, similar to a tuple;
- *   * models seqan3::TupleLike, i.e. provides a get interface to its component_list;
- *   * is itself a seqan3::WritableSemialphabet, but most derived types implement the full seqan3::WritableAlphabet;
+ *   * models seqan3::tuple_like, i.e. provides a get interface to its component_list;
+ *   * is itself a seqan3::writable_semialphabet, but most derived types implement the full seqan3::writable_alphabet;
  *   * its alphabet size is the product of the individual sizes;
  *   * constructible, assignable and comparable with each component type and also all types that
  *     these are constructible/assignable/comparable with;
@@ -182,7 +182,7 @@ decltype(auto) get();
 template <typename derived_type,
           typename ...component_types>
 //!\cond
-    requires (detail::WritableConstexprSemialphabet<component_types> && ...) &&
+    requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
              (!std::is_reference_v<component_types> && ...)
 //!\endcond
 class alphabet_tuple_base :
@@ -335,12 +335,12 @@ public:
     }
 
     /*!\brief Construction via a value of a subtype that is assignable to one of the components.
-     * \tparam indirect_component_type Type that models seqan3::WeaklyAssignable for
+     * \tparam indirect_component_type Type that models seqan3::weakly_assignable_from for
      *                                 one of the component types.
      * \param  alph                    The value that should be assigned.
      *
      * Note that the value will be assigned to the **FIRST** type T that fulfils
-     * `Assignable<T, indirect_component_type>`, regardless if other types are also
+     * `assignable_from<T, indirect_component_type>`, regardless if other types are also
      * fit for assignment.
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
@@ -390,7 +390,7 @@ public:
     }
 
     /*!\brief Assignment via a value of a subtype that is assignable to one of the components.
-     * \tparam indirect_component_type Type that models seqan3::WeaklyAssignable for
+     * \tparam indirect_component_type Type that models seqan3::weakly_assignable_from for
      *                                 one of the component types.
      * \param  alph                    The value of a component that should be assigned.
      *
@@ -531,40 +531,40 @@ public:
     template <typename indirect_component_type>
     constexpr bool operator<(indirect_component_type const rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with_, indirect_component_type>
     //!\endcond
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with<indirect_component_type>>>;
+        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
         return get<component_type>(*this) < rhs;
     }
 
     template <typename indirect_component_type>
     constexpr bool operator>(indirect_component_type const rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with_, indirect_component_type>
     //!\endcond
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with<indirect_component_type>>>;
+        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
         return get<component_type>(*this) > rhs;
     }
 
     template <typename indirect_component_type>
     constexpr bool operator<=(indirect_component_type const rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with_, indirect_component_type>
     //!\endcond
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with<indirect_component_type>>>;
+        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
         return get<component_type>(*this) <= rhs;
     }
 
     template <typename indirect_component_type>
     constexpr bool operator>=(indirect_component_type const rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with_, indirect_component_type>
     //!\endcond
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with<indirect_component_type>>>;
+        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
         return get<component_type>(*this) >= rhs;
     }
     //!\}
@@ -619,8 +619,8 @@ private:
  */
 template <typename indirect_component_type, typename derived_type, typename ...component_types>
 //!\cond
-    requires detail::WeaklyEqualityComparableByMembersWith<derived_type, indirect_component_type> &&
-             !detail::WeaklyEqualityComparableByMembersWith<indirect_component_type, derived_type>
+    requires detail::weakly_equality_comparable_by_members_with<derived_type, indirect_component_type> &&
+             !detail::weakly_equality_comparable_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator==(indirect_component_type const lhs,
                           alphabet_tuple_base<derived_type, component_types...> const rhs) noexcept
@@ -630,8 +630,8 @@ constexpr bool operator==(indirect_component_type const lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::WeaklyEqualityComparableByMembersWith<derived_type, indirect_component_type> &&
-             !detail::WeaklyEqualityComparableByMembersWith<indirect_component_type, derived_type>
+    requires detail::weakly_equality_comparable_by_members_with<derived_type, indirect_component_type> &&
+             !detail::weakly_equality_comparable_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator!=(indirect_component_type const lhs,
                           alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
@@ -641,8 +641,8 @@ constexpr bool operator!=(indirect_component_type const lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
-             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
+    requires detail::weakly_ordered_by_members_with<derived_type, indirect_component_type> &&
+             !detail::weakly_ordered_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<(indirect_component_type const lhs,
                          alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
@@ -652,8 +652,8 @@ constexpr bool operator<(indirect_component_type const lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
-             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
+    requires detail::weakly_ordered_by_members_with<derived_type, indirect_component_type> &&
+             !detail::weakly_ordered_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>(indirect_component_type const lhs,
                          alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
@@ -663,8 +663,8 @@ constexpr bool operator>(indirect_component_type const lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
-             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
+    requires detail::weakly_ordered_by_members_with<derived_type, indirect_component_type> &&
+             !detail::weakly_ordered_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<=(indirect_component_type const lhs,
                           alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
@@ -674,8 +674,8 @@ constexpr bool operator<=(indirect_component_type const lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
-             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
+    requires detail::weakly_ordered_by_members_with<derived_type, indirect_component_type> &&
+             !detail::weakly_ordered_by_members_with<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>=(indirect_component_type const lhs,
                           alphabet_tuple_base<derived_type, indirect_component_types...> const rhs) noexcept
@@ -690,11 +690,11 @@ namespace std
 {
 
 /*!\brief Obtains the type of the specified element.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \ingroup composite
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
-template <std::size_t i, seqan3::detail::AlphabetTupleBase tuple_t>
+template <std::size_t i, seqan3::detail::alphabet_tuple_base_specialisation tuple_t>
 struct tuple_element<i, tuple_t>
 {
     //!\brief Element type.
@@ -702,11 +702,11 @@ struct tuple_element<i, tuple_t>
 };
 
 /*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
- * \implements seqan3::UnaryTypeTrait
+ * \implements seqan3::unary_type_trait
  * \ingroup composite
  * \see std::tuple_size_v
  */
-template <seqan3::detail::AlphabetTupleBase tuple_t>
+template <seqan3::detail::alphabet_tuple_base_specialisation tuple_t>
 struct tuple_size<tuple_t> :
     public std::integral_constant<size_t, tuple_t::seqan3_tuple_components::size()>
 {};

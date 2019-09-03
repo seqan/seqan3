@@ -22,13 +22,13 @@ namespace seqan3
 
 /*!\brief A seqan3::alphabet_tuple_base that joins an aminoacid alphabet with a protein structure alphabet.
  * \ingroup structure
- * \implements seqan3::WritableAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \tparam sequence_alphabet_t Type of the first aminoacid letter; must model seqan3::WritableAlphabet,
- * seqan3::AminoacidAlphabet and satisfy the requirements on arguments by seqan3::alphabet_tuple_base.
- * \tparam structure_alphabet_t Types of further structure letters; must model seqan3::WritableAlphabet and satisfy
+ * \implements seqan3::writable_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \tparam sequence_alphabet_t Type of the first aminoacid letter; must model seqan3::writable_alphabet,
+ * seqan3::aminoacid_alphabet and satisfy the requirements on arguments by seqan3::alphabet_tuple_base.
+ * \tparam structure_alphabet_t Types of further structure letters; must model seqan3::writable_alphabet and satisfy
  * the requirements on arguments by seqan3::alphabet_tuple_base.
  *
  * This composite pairs an aminoacid alphabet with a structure alphabet. The rank values
@@ -42,9 +42,9 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/structure/structured_aa.cpp
  *
- * This seqan3::alphabet_tuple_base itself fulfills seqan3::Alphabet.
+ * This seqan3::alphabet_tuple_base itself fulfills seqan3::alphabet.
  */
-template <WritableAlphabet sequence_alphabet_t = aa27, WritableAlphabet structure_alphabet_t = dssp9>
+template <writable_alphabet sequence_alphabet_t = aa27, writable_alphabet structure_alphabet_t = dssp9>
 //!\cond
     requires (!std::is_reference_v<sequence_alphabet_t>) && (!std::is_reference_v<structure_alphabet_t>)
 //!\endcond

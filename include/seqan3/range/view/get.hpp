@@ -38,28 +38,28 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                          |
- * |---------------------------------|:-------------------------------------:|:-------------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                             |
- * | std::ranges::ForwardRange       |                                       | *preserved*                                             |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                                             |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                                             |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                                  |
- * |                                 |                                       |                                                         |
- * | std::ranges::ViewableRange      | *required*                            | *preserved*                                             |
- * | std::ranges::View               |                                       | *preserved*                                             |
- * | std::ranges::SizedRange         |                                       | *preserved*                                             |
- * | std::ranges::CommonRange        |                                       | *preserved*                                             |
- * | std::ranges::OutputRange        |                                       | *preserved*                                             |
- * | seqan3::ConstIterableRange      |                                       | *preserved*                                             |
- * |                                 |                                       |                                                         |
- * | seqan3::reference_t             | seqan3::TupleLike                     | std::tuple_element_t<index, seqan3::reference_t<urng_t>>|
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                          |
+ * |----------------------------------|:-------------------------------------:|:-------------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                             |
+ * | std::ranges::forward_range       |                                       | *preserved*                                             |
+ * | std::ranges::bidirectional_range |                                       | *preserved*                                             |
+ * | std::ranges::random_access_range |                                       | *preserved*                                             |
+ * | std::ranges::contiguous_range    |                                       | *lost*                                                  |
+ * |                                  |                                       |                                                         |
+ * | std::ranges::viewable_range      | *required*                            | *preserved*                                             |
+ * | std::ranges::view                |                                       | *preserved*                                             |
+ * | std::ranges::sized_range         |                                       | *preserved*                                             |
+ * | std::ranges::common_range        |                                       | *preserved*                                             |
+ * | std::ranges::output_range        |                                       | *preserved*                                             |
+ * | seqan3::const_iterable_range     |                                       | *preserved*                                             |
+ * |                                  |                                       |                                                         |
+ * | std::ranges::range_reference_t   | seqan3::tuple_like                     | std::tuple_element_t<index, seqan3::reference_t<urng_t>>|
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/get.cpp usage
+ * \include test/snippet/range/view/get.cpp
  * \hideinitializer
  */
 template <auto index>
@@ -67,8 +67,8 @@ inline auto const get = std::view::transform([] (auto && in) -> decltype(auto)
 {
     using std::get;
     using seqan3::get;
-    static_assert(TupleLike<decltype(in)>,
-                  "You may only pass ranges to view::get whose reference_t models the TupleLike.");
+    static_assert(tuple_like<decltype(in)>,
+                  "You may only pass ranges to view::get whose reference_t models the tuple_like.");
 
     // we need to explicitly remove && around temporaries to return values as values (and not as rvalue references)
     // we cannot simply cast to std::tuple_element_t (or set that as return value), because some tuples, like

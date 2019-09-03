@@ -77,7 +77,7 @@ namespace seqan3::detail
  * possible hits in a region of interest, then both values might be given in form of an unsigned integer.
  * The following snippet shows a typical interface:
  *
- * \snippet test/snippet/core/detail/strong_type.cpp usage
+ * \include test/snippet/core/detail/strong_type_usage.cpp
  *
  * The first parameter is the window size and the last parameter defines the error threshold.
  * But, what happens if the user accidentally switches the `window_size` with the `error` parameter?
@@ -87,10 +87,10 @@ namespace seqan3::detail
  * A strong type is expressive in what it actually represents as a value.
  * In our toy example we could define two strong types as follows:
  *
- * \snippet test/snippet/core/detail/strong_type_2.cpp error_window
+ * \include test/snippet/core/detail/strong_type_error_window.cpp
  * Our interface could now be changed to:
  *
- * \snippet test/snippet/core/detail/strong_type_2.cpp new_usage
+ * \include test/snippet/core/detail/strong_type_new_usage.cpp
  *
  * Now the user is forced to pass the parameters as their named type. If the parameter order is mixed up by accident
  * the compiler would emit an error message, since the `error` type is not convertible to the `window_size` type and
@@ -109,7 +109,7 @@ namespace seqan3::detail
  * operations from the seqan3::detail::strong_type_skill enum.
  * For example, we could further specify our error type to support increment and decrement operations.
  *
- * \snippet test/snippet/core/detail/strong_type.cpp adding_skills
+ * \include test/snippet/core/detail/strong_type_adding_skills.cpp
  */
 template <typename value_t, typename derived_t, strong_type_skill skills = strong_type_skill::none>
 class strong_type
@@ -163,7 +163,8 @@ public:
     }
     //!\}
 
-    /*!\name Arithmetic additive operators.
+    /*!
+ame Arithmetic additive operators.
      * \brief Only available if the corresponding skills from seqan3::detail::strong_type_skill are added and
      *        the underlying type supports this operation.
      * \{
@@ -187,7 +188,8 @@ public:
     }
     //!\}
 
-    /*!\name Arithmetic multiplicative operators.
+    /*!
+ame Arithmetic multiplicative operators.
      * \brief Only available if the corresponding skills from seqan3::detail::strong_type_skill are added and
      *        the underlying type supports this operation.
      * \{
@@ -279,7 +281,7 @@ public:
     }
 
     //!\brief Adds bitwise left shift operator to the strong type.
-    template <std::Integral integral_t>
+    template <std::integral integral_t>
     constexpr derived_t operator<<(integral_t const shift)
         //!\cond
         requires ((skills & strong_type_skill::bitwise_lshift) != strong_type_skill::none)
@@ -298,7 +300,7 @@ public:
     }
 
     //!\brief Adds bitwise right shift operator to the strong type.
-    template <std::Integral integral_t>
+    template <std::integral integral_t>
     constexpr derived_t operator>>(integral_t const shift)
         //!\cond
         requires ((skills & strong_type_skill::bitwise_rshift) != strong_type_skill::none)

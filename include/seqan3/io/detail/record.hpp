@@ -32,14 +32,14 @@ namespace seqan3::detail
  * \relates seqan3::fields
  */
 template <typename t>
-SEQAN3_CONCEPT Fields = is_value_specialisation_of_v<t, fields>;
+SEQAN3_CONCEPT fields_specialisation = is_value_specialisation_of_v<t, fields>;
 
 // ----------------------------------------------------------------------------
 // select_types_with_ids
 // ----------------------------------------------------------------------------
 
 /*!\brief Exposes a subset of types as a seqan3::type_list selected based on their IDs.
- * \implements seqan3::TransformationTrait
+ * \implements seqan3::transformation_trait
  * \ingroup io
  * \tparam field_types          The types of the fields available to the record in a seqan3::type_list.
  * \tparam field_types_as_ids   A seqan3::fields type with seqan3::field IDs corresponding to field_types.
@@ -56,7 +56,7 @@ SEQAN3_CONCEPT Fields = is_value_specialisation_of_v<t, fields>;
  *
  * ### Example
  *
- * \snippet test/snippet/io/detail/detail_record.cpp usage
+ * \include test/snippet/io/detail/detail_record.cpp
  */
 template <typename field_types,
           typename field_types_as_ids,
@@ -69,7 +69,7 @@ struct select_types_with_ids                               // unconstrained temp
     using type = type_list<return_types...>;
 };
 
-/*!\brief Shortcut for seqan3::select_types_with_ids (TransformationTrait shortcut).
+/*!\brief Shortcut for seqan3::select_types_with_ids (transformation_trait shortcut).
  * \ingroup io
  * \relates select_types_with_ids
  */
@@ -209,8 +209,8 @@ decltype(auto) get_or(std::tuple<types...> const & t, or_type && or_value)
 // range_wrap_ignore
 // ----------------------------------------------------------------------------
 
-//!\brief Pass through the reference to the argument in case the argument satisfies std::ranges::InputRange.
-template <std::ranges::InputRange rng_t>
+//!\brief Pass through the reference to the argument in case the argument satisfies std::ranges::input_range.
+template <std::ranges::input_range rng_t>
 inline auto & range_wrap_ignore(rng_t & range)
 {
     return range;

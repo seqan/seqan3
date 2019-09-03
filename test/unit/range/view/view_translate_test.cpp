@@ -194,17 +194,17 @@ TYPED_TEST(nucleotide, view_translate_single_concepts)
 {
     std::string const in{"ACGTACGTACGTA"};
     std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
-    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::input_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
 
     auto v1 = vec | view::translate_single(translation_frames::FWD_FRAME_0);
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_TRUE((std::is_same_v<aa27, value_type_t<decltype(v1)>>));
     EXPECT_TRUE((std::is_same_v<aa27, reference_t<decltype(v1)>>));
 }
@@ -213,20 +213,20 @@ TYPED_TEST(nucleotide, view_translate_concepts)
 {
     std::string const in{"ACGTACGTACGTA"};
     std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
 
     auto v1 = vec | view::translate(translation_frames::FWD_REV_0);
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<value_type_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::SizedRange<value_type_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::View<value_type_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<reference_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::SizedRange<reference_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::View<reference_t<decltype(v1)>>);
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<value_type_t<decltype(v1)>>);
+    EXPECT_TRUE(std::ranges::sized_range<value_type_t<decltype(v1)>>);
+    EXPECT_TRUE(std::ranges::view<value_type_t<decltype(v1)>>);
+    EXPECT_TRUE(std::ranges::random_access_range<reference_t<decltype(v1)>>);
+    EXPECT_TRUE(std::ranges::sized_range<reference_t<decltype(v1)>>);
+    EXPECT_TRUE(std::ranges::view<reference_t<decltype(v1)>>);
 }

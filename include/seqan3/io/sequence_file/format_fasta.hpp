@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::format_fasta tag and the seqan3::sequence_file_input_format and
- *        seqan3::sequence_file_output_format specialisation for this tag.
+ * \brief Provides the seqan3::format_fasta tag and the seqan3::sequence_file_input_format_REMOVEME and
+ *        seqan3::sequence_file_output_format_REMOVEME specialisation for this tag.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -46,8 +46,8 @@ namespace seqan3
 {
 
 /*!\brief       The FastA format (tag).
- * \implements  SequenceFileInputFormat
- * \implements  SequenceFileOutputFormat
+ * \implements  sequence_file_input_format
+ * \implements  sequence_file_output_format
  * \ingroup     sequence
  *
  * \details
@@ -57,7 +57,7 @@ namespace seqan3
  * FastA is the de-facto-standard for sequence storage in bionformatics. See the
  * [article on wikipedia](https://en.wikipedia.org/wiki/FASTA_format) for a an in-depth description of the format.
  *
- * ### Fields
+ * ### fields_specialisation
  *
  * The FastA format provides the fields seqan3::field::SEQ and seqan3::field::ID. Both fields are required when writing.
  *
@@ -96,10 +96,10 @@ struct format_fasta
 namespace seqan3::detail
 {
 
-//!\brief The seqan3::sequence_file_input_format specialisation that handles formatted FASTA input.
+//!\brief The seqan3::sequence_file_input_format_REMOVEME specialisation that handles formatted FASTA input.
 //!\ingroup sequence
 template <>
-class sequence_file_input_format<format_fasta>
+class sequence_file_input_format_REMOVEME<format_fasta>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -108,17 +108,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_input_format()                                               noexcept = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format(sequence_file_input_format const &)                      = delete;
+    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format & operator=(sequence_file_input_format const &)          = delete;
-    sequence_file_input_format(sequence_file_input_format &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_input_format & operator=(sequence_file_input_format &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_input_format()                                              noexcept = default; //!< Defaulted.                                //!< Defaulted.
+    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME const &)          = delete;
+    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_input_format_REMOVEME()                                              noexcept = default; //!< Defaulted.                                //!< Defaulted.
     //!\}
 
-    //!\copydoc SequenceFileInputFormat::read
+    //!\copydoc sequence_file_input_format::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
@@ -290,10 +290,10 @@ protected:
     }
 };
 
-//!\brief The seqan3::sequence_file_output_format specialisation that can write formatted FASTA.
+//!\brief The seqan3::sequence_file_output_format_REMOVEME specialisation that can write formatted FASTA.
 //!\ingroup sequence
 template <>
-class sequence_file_output_format<format_fasta>
+class sequence_file_output_format_REMOVEME<format_fasta>
 {
 public:
     //!\brief Exposes the format tag that this class is specialised with.
@@ -302,17 +302,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    sequence_file_output_format()                                                noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format(sequence_file_output_format const &)                      = delete;
+    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME const &)                      = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format & operator=(sequence_file_output_format const &)          = delete;
-    sequence_file_output_format(sequence_file_output_format &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_output_format & operator=(sequence_file_output_format &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_output_format()                                               noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME const &)          = delete;
+    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
+    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
+    ~sequence_file_output_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
     //!\}
 
-    //!\copydoc SequenceFileOutputFormat::write
+    //!\copydoc sequence_file_output_format::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,

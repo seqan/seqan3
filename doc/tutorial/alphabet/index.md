@@ -22,7 +22,7 @@ but also for quality, secondary structure and gap annotation as well as combinat
 
 \assignment{Task}
 Read the section *Detailed Description* of the API reference page for \ref alphabet.
-This is a detailed introduction to the Alphabet module and demonstrates its main advantages.
+This is a detailed introduction to the alphabet module and demonstrates its main advantages.
 \endassignment
 
 # The nucleotide alphabets
@@ -88,11 +88,11 @@ It returns true if the character is valid and false otherwise.
 
 ## Obtaining the alphabet size
 You can retrieve the alphabet size by accessing the class member variable `alphabet_size`
-which is implemented in most seqan3::Alphabet instances.
+which is implemented in most seqan3::alphabet instances.
 
 \snippet alphabet_main.cpp size
 
-## Containers over alphabets
+## containers over alphabets
 
 In SeqAn you can use the STL containers to model e.g. sequences, sets or mappings with our alphabets.
 The following example shows some exemplary contexts for their use.

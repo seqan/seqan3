@@ -28,12 +28,12 @@ class rna5;
 
 /*!\brief The five letter DNA alphabet of A,C,G,T and the unknown character N.
  * \ingroup nucleotide
- * \implements seqan3::NucleotideAlphabet
- * \implements seqan3::WritableAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \implements seqan3::nucleotide_alphabet
+ * \implements seqan3::writable_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
  * \details
  * Note that you can assign 'U' as a character to dna5 and it will silently
@@ -73,7 +73,7 @@ public:
     using base_t::base_t;
 
     //!\brief Allow implicit construction from dna/rna of the same size.
-    template <std::Same<rna5> t>    // Accept incomplete type
+    template <std::same_as<rna5> t>    // Accept incomplete type
     constexpr dna5(t const & r) noexcept
     {
         assign_rank(r.to_rank());

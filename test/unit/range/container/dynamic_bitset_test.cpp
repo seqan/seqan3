@@ -37,8 +37,8 @@ TEST(dynamic_bitset, standard_construction)
 
 TEST(dynamic_bitset, concepts)
 {
-    EXPECT_TRUE((ReservableContainer<dynamic_bitset<58>>));
-    EXPECT_TRUE((std::ranges::RandomAccessRange<dynamic_bitset<58>>));
+    EXPECT_TRUE((reservible_container<dynamic_bitset<58>>));
+    EXPECT_TRUE((std::ranges::random_access_range<dynamic_bitset<58>>));
 }
 
 constexpr bool comparison_test()

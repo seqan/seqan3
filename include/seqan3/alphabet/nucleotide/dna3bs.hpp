@@ -25,12 +25,12 @@ namespace seqan3
 {
 /*!\brief The three letter reduced DNA alphabet for bisulfite sequencing mode (A,G,T(=C)).
  * \ingroup nucleotide
- * \implements seqan3::NucleotideAlphabet
- * \implements seqan3::WritableAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \implements seqan3::nucleotide_alphabet
+ * \implements seqan3::writable_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
  * \details
  * This alphabet represents a reduced version that can be used when dealing with bisulfite-converted data.

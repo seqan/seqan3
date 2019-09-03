@@ -16,9 +16,8 @@
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/ranges>
-#include <seqan3/test/pretty_printing.hpp>
 
+#include "../iterator_test_template.hpp"
 #include "../../alignment/aligned_sequence_test_template.hpp"
 
 using namespace seqan3;
@@ -38,25 +37,89 @@ using test_types = ::testing::Types<decorator_t, decorator_t2>;
 // ---------------------------------------------------------------------------------------------------------------------
 
 template <typename inner_type_>
-class aligned_sequence<gap_decorator<inner_type_>> : public ::testing::Test
+class aligned_sequence_<gap_decorator<inner_type_>> : public ::testing::Test
 {
 public:
     // Initialiser function is needed for the typed test because the gapped_decorator
     // will be initialised differently than the naive vector<gapped<dna>>.
-    void initialise_typed_test_container(decorator_t & container, dna4_vector const & target)
+    void initialise_typed_test_container(decorator_t & container_, dna4_vector const & target)
     {
-        container = target;
+        container_ = target;
     }
 
     // Initialiser function is needed for the typed test because the gapped_decorator
     // will be initialised differently than the naive vector<gapped<dna>>.
-    void initialise_typed_test_container(decorator_t2 & container, dna4_vector const & target)
+    void initialise_typed_test_container(decorator_t2 & container_, dna4_vector const & target)
     {
-        container = std::ranges::subrange<decltype(target.begin()), decltype(target.end())>{target.begin(), target.end()};
+        container_ = std::ranges::subrange<decltype(target.begin()), decltype(target.end())>{target.begin(), target.end()};
     }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator, aligned_sequence, test_types);
+INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator, aligned_sequence_, test_types);
+
+template <>
+struct iterator_fixture<decorator_t::iterator> : public ::testing::Test
+{
+    using iterator_tag = std::bidirectional_iterator_tag;
+    static constexpr bool const_iterable = true;
+
+    std::vector<dna4> const vec{"ACTGACTG"_dna4};
+
+    template <typename t>
+    static void initialise_with_gaps(t & v)
+    {
+        insert_gap(v, std::next(v.begin(), 5), 4);
+        insert_gap(v, std::next(v.begin(), 2));
+        insert_gap(v, v.end(), 3);
+        insert_gap(v, v.begin(), 5);
+    }
+
+    std::vector<gapped<dna4>> expected_range = [this] ()
+        {
+            std::vector<gapped<dna4>> tmp{};
+            std::copy(vec.begin(), vec.end(), std::back_inserter(tmp));
+            initialise_with_gaps(tmp);
+            return tmp;
+        }();
+
+    decorator_t test_range = [this] ()
+        {
+            decorator_t tmp{vec};
+            initialise_with_gaps(tmp);
+            return tmp;
+        }();
+};
+
+template <>
+struct iterator_fixture<decorator_t::iterator_ra> : iterator_fixture<decorator_t::iterator>
+{
+    using iterator_tag = std::random_access_iterator_tag;
+    static constexpr bool const_iterable = true;
+
+    // expected_range is inherited
+
+    struct expose_random_access_iterator
+    {
+        std::vector<dna4> const vec{"ACTGACTG"_dna4};
+        decorator_t range = [this] ()
+            {
+                decorator_t tmp{vec};
+                iterator_fixture<decorator_t::iterator>::initialise_with_gaps(tmp);
+                return tmp;
+            }();
+
+        decorator_t::iterator_ra begin() { return range.begin_ra(); }
+        decorator_t::iterator_ra end()   { return range.end_ra(); }
+        decorator_t::const_iterator_ra cbegin(){ return range.cbegin_ra(); }
+        decorator_t::const_iterator_ra cend()  { return range.cend_ra(); }
+    };
+
+    expose_random_access_iterator test_range{};
+};
+
+using test_type = ::testing::Types<decorator_t::iterator, decorator_t::iterator_ra>;
+
+INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator, iterator_fixture, test_type);
 
 // ---------------------------------------------------------------------------------------------------------------------
 // typed test
@@ -70,17 +133,17 @@ TYPED_TEST_CASE(gap_decorator_f, test_types);
 // concept checks
 TYPED_TEST(gap_decorator_f, concept_checks)
 {
-    EXPECT_TRUE((std::ranges::BidirectionalRange<TypeParam>));
-    EXPECT_TRUE((std::ranges::BidirectionalRange<TypeParam const>));
+    EXPECT_TRUE((std::ranges::bidirectional_range<TypeParam>));
+    EXPECT_TRUE((std::ranges::bidirectional_range<TypeParam const>));
 
     EXPECT_FALSE((std::ranges::enable_view<TypeParam>));
     EXPECT_FALSE((std::ranges::enable_view<TypeParam &>));
     EXPECT_FALSE((ranges::enable_view<TypeParam>));
     EXPECT_FALSE((ranges::enable_view<TypeParam &>));
 
-    EXPECT_FALSE((std::ranges::View<TypeParam>));
+    EXPECT_FALSE((std::ranges::view<TypeParam>));
 
-    EXPECT_TRUE((AlignedSequence<TypeParam>));
+    EXPECT_TRUE((aligned_sequence<TypeParam>));
 }
 
 TYPED_TEST(gap_decorator_f, construction_general)
@@ -237,76 +300,6 @@ TEST(gap_decorator, begin_and_end)
 
     [[maybe_unused]] auto end = dec.end();
     [[maybe_unused]] auto end_const = dec.cend();
-}
-
-TEST(gap_decorator, gap_decorator_iterator)
-{
-    std::vector<dna4> v{"ACTGACTG"_dna4};
-    gap_decorator dec{v};
-
-    // iterating over an ungapped string
-    // -------------------------------------------------------------------------
-    // pre-increment
-    auto seq_it = v.begin();
-    for (auto it = dec.begin(); it != dec.end(); ++it, ++seq_it)
-        EXPECT_EQ(*it, *seq_it);
-
-    // post-increment
-    seq_it = v.begin();
-    for (auto it = dec.begin(); it != dec.end(); it++, seq_it++)
-        EXPECT_EQ(*it, *seq_it);
-
-    // pre-decrement
-    seq_it = v.end() - 1;
-    for (auto it = --dec.end(); it != dec.begin(); --it, --seq_it)
-        EXPECT_EQ(*it, *seq_it);
-
-    // post-decrement
-    seq_it = v.end() - 1;
-    for (auto it = --dec.end(); it != dec.begin(); it--, seq_it--)
-        EXPECT_EQ(*it, *seq_it);
-
-    // random access through gap_decorator operator[]
-    for (size_t i = 0; i < dec.size(); ++i)
-        EXPECT_EQ(dec[i], v[i]);
-
-    // iterating with gaps in the middle
-    // -------------------------------------------------------------------------
-    std::vector<gapped<dna4>> expected{v.size()};
-    std::copy(v.begin(), v.end(), expected.begin());
-    insert_gap(dec, std::next(dec.begin(), 5), 4);
-    insert_gap(dec, std::next(dec.begin(), 2));
-    insert_gap(dec, dec.end(), 3);
-    insert_gap(dec, dec.begin(), 5);
-    insert_gap(expected, std::next(expected.begin(), 5), 4);
-    insert_gap(expected, std::next(expected.begin(), 2));
-    insert_gap(expected, expected.end(), 3);
-    insert_gap(expected, expected.begin(), 5);
-
-    // pre-increment
-    auto expected_it = expected.begin();
-    for (auto it = dec.begin(); it != dec.end(); ++it, ++expected_it)
-        EXPECT_EQ(*it, *expected_it);
-
-    // post-increment
-    expected_it = expected.begin();
-    for (auto it = dec.begin(); it != dec.end(); it++, expected_it++)
-        EXPECT_EQ(*it, *expected_it);
-
-    // pre-decrement
-    expected_it = expected.end() - 1;
-    for (auto it = --dec.end(); it != dec.begin(); --it, --expected_it)
-        EXPECT_EQ(*it, *expected_it);
-
-    // post-decrement
-    expected_it = expected.end() - 1;
-    for (auto it = --dec.end(); it != dec.begin(); it--, expected_it--)
-        EXPECT_EQ(*it, *expected_it);
-
-    // random access through gap_decorator operator[]
-    for (size_t i = 0; i < dec.size(); ++i)
-        EXPECT_EQ(dec[i], expected[i]);
-
 }
 
 TEST(gap_decorator, decorator_on_views)

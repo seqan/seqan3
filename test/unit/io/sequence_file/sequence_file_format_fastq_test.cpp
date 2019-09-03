@@ -25,8 +25,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((SequenceFileInputFormat<format_fastq>));
-    EXPECT_TRUE((SequenceFileOutputFormat<format_fastq>));
+    EXPECT_TRUE((sequence_file_input_format<format_fastq>));
+    EXPECT_TRUE((sequence_file_output_format<format_fastq>));
 }
 
 // ----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ struct read : public ::testing::Test
         { "!!!!!!!"_phred42 },
     };
 
-    detail::sequence_file_input_format<format_fastq> format;
+    detail::sequence_file_input_format_REMOVEME<format_fastq> format;
 
     sequence_file_input_options<dna5, false> options;
 
@@ -346,7 +346,7 @@ struct write : public ::testing::Test
         { "!!*+,-./+*+,-./+!!FF!!"_phred42 },
     };
 
-    detail::sequence_file_output_format<format_fastq> format;
+    detail::sequence_file_output_format_REMOVEME<format_fastq> format;
 
     sequence_file_output_options options;
 

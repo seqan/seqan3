@@ -25,9 +25,9 @@ class pairwise_combine_base_test : public ::testing::Test
 {
 public:
 
-    using view_t       = decltype(seqan3::detail::pairwise_combine_view{std::ranges::view::all(std::declval<t &>())});
+    using view_t       = decltype(seqan3::detail::pairwise_combine_view{std::view::all(std::declval<t &>())});
     using const_view_t = decltype(seqan3::detail::pairwise_combine_view{
-                                    std::ranges::view::all(std::declval<t const &>())});
+                                    std::view::all(std::declval<t const &>())});
 
     auto create_view()
     {
@@ -91,16 +91,16 @@ TYPED_TEST_CASE(pairwise_combine_iterator_test, test_types);
 
 TYPED_TEST(pairwise_combine_iterator_test, concepts)
 {
-    EXPECT_TRUE(std::ForwardIterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
+    EXPECT_TRUE(std::forward_iterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
 
-    if constexpr (std::BidirectionalIterator<std::ranges::iterator_t<TypeParam>>)
+    if constexpr (std::bidirectional_iterator<std::ranges::iterator_t<TypeParam>>)
     {
-        EXPECT_TRUE(std::BidirectionalIterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
+        EXPECT_TRUE(std::bidirectional_iterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
     }
 
-    if constexpr (std::RandomAccessIterator<std::ranges::iterator_t<TypeParam>>)
+    if constexpr (std::random_access_iterator<std::ranges::iterator_t<TypeParam>>)
     {
-        EXPECT_TRUE(std::RandomAccessIterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
+        EXPECT_TRUE(std::random_access_iterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
     }
 }
 
@@ -211,14 +211,14 @@ TYPED_TEST(pairwise_combine_iterator_test, post_increment)
 
 TYPED_TEST(pairwise_combine_iterator_test, pre_decrement)
 {
-    if constexpr (std::ranges::BidirectionalRange<TypeParam>)
+    if constexpr (std::ranges::bidirectional_range<TypeParam>)
     {
         using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
         auto r = this->resource();
         iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
 
-        if constexpr (std::BidirectionalIterator<decltype(r.begin())>)
+        if constexpr (std::bidirectional_iterator<decltype(r.begin())>)
         {
             EXPECT_EQ(*(--it), (std::tuple{'c', 'd'}));
         }
@@ -227,14 +227,14 @@ TYPED_TEST(pairwise_combine_iterator_test, pre_decrement)
 
 TYPED_TEST(pairwise_combine_iterator_test, post_decrement)
 {
-    if constexpr (std::ranges::BidirectionalRange<TypeParam>)
+    if constexpr (std::ranges::bidirectional_range<TypeParam>)
     {
         using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
         auto r = this->resource();
         iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
 
-        if constexpr (std::BidirectionalIterator<decltype(r.begin())>)
+        if constexpr (std::bidirectional_iterator<decltype(r.begin())>)
         {
             --it;
             EXPECT_EQ(*(it--), (std::tuple{'c', 'd'}));
@@ -262,7 +262,7 @@ TYPED_TEST(pairwise_combine_iterator_test, subscript)
     auto r = this->resource();
     iterator_t it{r.begin(), r.begin(), r.end()};
 
-    if constexpr (std::RandomAccessIterator<decltype(r.begin())>)
+    if constexpr (std::random_access_iterator<decltype(r.begin())>)
     {
         EXPECT_EQ(it[0], (std::tuple{'a', 'b'}));
         EXPECT_EQ(it[1], (std::tuple{'a', 'c'}));
@@ -280,7 +280,7 @@ TYPED_TEST(pairwise_combine_iterator_test, advance_n)
     auto r = this->resource();
     iterator_t it{r.begin(), r.begin(), r.end()};
 
-    if constexpr (std::RandomAccessIterator<decltype(r.begin())>)
+    if constexpr (std::random_access_iterator<decltype(r.begin())>)
     {
         it = it + 1;
         EXPECT_EQ(*it, (std::tuple{'a', 'c'}));
@@ -293,7 +293,7 @@ TYPED_TEST(pairwise_combine_iterator_test, advance_n)
 
 TYPED_TEST(pairwise_combine_iterator_test, decrement_n)
 {
-    if constexpr (std::ranges::RandomAccessRange<TypeParam>)
+    if constexpr (std::ranges::random_access_range<TypeParam>)
     {
         using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
@@ -309,7 +309,7 @@ TYPED_TEST(pairwise_combine_iterator_test, decrement_n)
 
 TYPED_TEST(pairwise_combine_iterator_test, distance)
 {
-    if constexpr (std::ranges::RandomAccessRange<TypeParam>)
+    if constexpr (std::ranges::random_access_range<TypeParam>)
     {
         using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
@@ -334,7 +334,7 @@ TYPED_TEST(pairwise_combine_iterator_test, order)
     iterator_t it_2{r.begin(), r.begin(), r.end()};
     ++it_2;
 
-    if constexpr (std::StrictTotallyOrdered<decltype(r.begin())>)
+    if constexpr (std::totally_ordered<decltype(r.begin())>)
     {
         EXPECT_FALSE(it_1 < it_1);
         EXPECT_TRUE(it_1 <= it_1);
@@ -350,14 +350,14 @@ TYPED_TEST(pairwise_combine_iterator_test, order)
 
 TYPED_TEST(pairwise_combine_test, view_concept)
 {
-    EXPECT_TRUE(std::ranges::InputRange<typename TestFixture::view_t>);
-    EXPECT_TRUE(std::ranges::ForwardRange<typename TestFixture::view_t>);
-    EXPECT_TRUE(std::ranges::View<typename TestFixture::view_t>);
-    EXPECT_FALSE((std::ranges::OutputRange<typename TestFixture::view_t, std::tuple<char &, char &>>));
-    EXPECT_EQ(std::ranges::BidirectionalRange<TypeParam>,
-              std::ranges::BidirectionalRange<typename TestFixture::view_t>);
-    EXPECT_EQ(std::ranges::SizedRange<TypeParam>, std::ranges::SizedRange<typename TestFixture::view_t>);
-    EXPECT_EQ(std::ranges::RandomAccessRange<TypeParam>, std::ranges::RandomAccessRange<typename TestFixture::view_t>);
+    EXPECT_TRUE(std::ranges::input_range<typename TestFixture::view_t>);
+    EXPECT_TRUE(std::ranges::forward_range<typename TestFixture::view_t>);
+    EXPECT_TRUE(std::ranges::view<typename TestFixture::view_t>);
+    EXPECT_FALSE((std::ranges::output_range<typename TestFixture::view_t, std::tuple<char &, char &>>));
+    EXPECT_EQ(std::ranges::bidirectional_range<TypeParam>,
+              std::ranges::bidirectional_range<typename TestFixture::view_t>);
+    EXPECT_EQ(std::ranges::sized_range<TypeParam>, std::ranges::sized_range<typename TestFixture::view_t>);
+    EXPECT_EQ(std::ranges::random_access_range<TypeParam>, std::ranges::random_access_range<typename TestFixture::view_t>);
 }
 
 TYPED_TEST(pairwise_combine_test, basic_construction)
@@ -406,16 +406,16 @@ TYPED_TEST(pairwise_combine_test, iterate)
 
 TYPED_TEST(pairwise_combine_test, iterate_reverse)
 {
-    if constexpr (std::ranges::BidirectionalRange<TypeParam>)
+    if constexpr (std::ranges::bidirectional_range<TypeParam>)
     {
         auto v = this->create_view();
         using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
         std::vector<ref_t> cmp;
 
-        for (auto r : v | std::ranges::view::reverse)
+        for (auto r : v | std::view::reverse)
             cmp.push_back(r);
 
-        EXPECT_TRUE(ranges::equal(cmp, this->expect() | std::ranges::view::reverse));
+        EXPECT_TRUE(ranges::equal(cmp, this->expect() | std::view::reverse));
     }
 }
 
@@ -423,7 +423,7 @@ TYPED_TEST(pairwise_combine_test, size)
 {
     auto v = this->create_view();
 
-    if constexpr (std::ranges::SizedRange<decltype(v)>)
+    if constexpr (std::ranges::sized_range<decltype(v)>)
     {
         EXPECT_EQ(std::ranges::size(v), 6u);
         EXPECT_EQ(v.size(), 6u);

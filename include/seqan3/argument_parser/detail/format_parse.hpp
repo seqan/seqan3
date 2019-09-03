@@ -173,7 +173,7 @@ public:
     template <typename id_type>
     static bool is_empty_id(id_type const & id)
     {
-        if constexpr (std::Same<remove_cvref_t<id_type>, std::string>)
+        if constexpr (std::same_as<remove_cvref_t<id_type>, std::string>)
             return id.empty();
         else // char
             return is_char<'\0'>(id);
@@ -284,7 +284,7 @@ private:
 
     /*!\brief Tries to cast an input string into a value.
      *
-     * \tparam option_t Must satisfy the seqan3::IStream.
+     * \tparam option_t Must satisfy the seqan3::input_stream_over.
      *
      * \param[out] value Stores the casted value.
      * \param[in]  in    The input argument to be casted.
@@ -293,7 +293,7 @@ private:
      */
     template <typename option_t>
     //!\cond
-        requires IStream<std::istringstream, option_t>
+        requires input_stream_over<std::istringstream, option_t>
     //!\endcond
     void retrieve_value(option_t & value, std::string const & in)
     {
@@ -314,15 +314,15 @@ private:
 
     /*!\brief Appends a casted value to its container.
      *
-     * \tparam container_option_t Must satisfy the seqan3::SequenceContainer and
-     *                            its value_type must satisfy the seqan3::IStream
+     * \tparam container_option_t Must satisfy the seqan3::sequence_container and
+     *                            its value_type must satisfy the seqan3::input_stream_over
      *
-     * \param[out] value Container that stores the casted value.
+     * \param[out] value container that stores the casted value.
      * \param[in]  in    The input argument to be casted.
      */
-    template <SequenceContainer container_option_t>
+    template <sequence_container container_option_t>
     //!\cond
-        requires IStream<std::istringstream, typename container_option_t::value_type>
+        requires input_stream_over<std::istringstream, typename container_option_t::value_type>
     //!\cond
     void retrieve_value(container_option_t & value, std::string const & in)
     {
@@ -333,7 +333,7 @@ private:
     }
 
     /*!\brief Tries to cast an input string into an arithmetic value.
-     * \tparam option_t  The optiona value type; must model seqan3::Arithmetic.
+     * \tparam option_t  The optiona value type; must model seqan3::arithmetic.
      * \param[out] value Stores the casted value.
      * \param[in]  in    The input argument to be casted.
      *
@@ -344,9 +344,9 @@ private:
      *
      * This function delegates to std::from_chars.
      */
-    template <Arithmetic option_t>
+    template <arithmetic option_t>
     //!\cond
-        requires IStream<std::istringstream, option_t>
+        requires input_stream_over<std::istringstream, option_t>
     //!\endcond
     void retrieve_value(option_t & value, std::string const & in)
     {
@@ -497,7 +497,7 @@ private:
      * multiple times.
      *
      */
-    template <SequenceContainer option_type, typename id_type>
+    template <sequence_container option_type, typename id_type>
     //!cond
         requires !std::is_same_v<option_type, std::string>
     //!\endcond
@@ -606,7 +606,7 @@ private:
 
         // if value is no container we need to check for multiple declarations
         if (short_id_is_set && long_id_is_set &&
-            !(SequenceContainer<option_type> && !std::is_same_v<option_type, std::string>))
+            !(sequence_container<option_type> && !std::is_same_v<option_type, std::string>))
             throw option_declared_multiple_times("Option " + combine_option_names(short_id, long_id) +
                                                  " is no list/container but specified multiple times");
 
@@ -681,7 +681,7 @@ private:
             throw too_few_arguments("Not enough positional arguments provided (Need at least " +
                                     std::to_string(positional_option_calls.size()) + "). See -h/--help for more information.");
 
-        if (SequenceContainer<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
+        if (sequence_container<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
         {
             assert(positional_option_count == positional_option_calls.size()); // checked on set up.
 

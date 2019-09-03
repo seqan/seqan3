@@ -26,12 +26,12 @@ namespace seqan3
 
 /*!\brief The five letter RNA alphabet of A,C,G,U and the unknown character N.
  * \ingroup nucleotide
- * \implements seqan3::NucleotideAlphabet
- * \implements seqan3::WritableAlphabet
- * \if DEV \implements seqan3::detail::WritableConstexprAlphabet \endif
- * \implements seqan3::TriviallyCopyable
- * \implements seqan3::StandardLayout
- * \implements std::Regular
+ * \implements seqan3::nucleotide_alphabet
+ * \implements seqan3::writable_alphabet
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
+ * \implements seqan3::trivially_copyable
+ * \implements seqan3::standard_layout
+ * \implements std::regular
  *
  * \details
  * This alphabet has the same internal representation as seqan3::dna5, the only difference is that it prints 'U' on
