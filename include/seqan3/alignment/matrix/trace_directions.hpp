@@ -29,14 +29,14 @@ enum struct trace_directions : uint8_t
     none      = 0b00000,
     //!\brief Trace comes from the diagonal entry.
     diagonal  = 0b00001,
-    //!\brief Trace comes from the above entry.
-    up        = 0b00010,
-    //!\brief Trace comes from the left entry.
-    left      = 0b00100,
     //!\brief Trace comes from the above entry, while opening the gap.
-    up_open   = 0b01000,
+    up_open   = 0b00010,
+    //!\brief Trace comes from the above entry.
+    up        = 0b00100,
     //!\brief Trace comes from the left entry, while opening the gap.
-    left_open = 0b10000
+    left_open = 0b01000,
+    //!\brief Trace comes from the left entry.
+    left      = 0b10000
 };
 
 } // namespace seqan3::detail
@@ -56,17 +56,37 @@ namespace seqan3
  * \param s The seqan3::debug_stream.
  * \param trace The trace direction.
  * \relates seqan3::debug_stream_type
+ *
+ * \details
+ *
+ * The following table shows the printed symbol of a particular seqan3::detail::trace_directions:
+ *
+ * | trace direction                             | utf8 | ascii |
+ * |:-------------------------------------------:|:----:|:-----:|
+ * | seqan3::detail::trace_directions::none      | ↺    | N     |
+ * | seqan3::detail::trace_directions::diagonal  | ↖    | D     |
+ * | seqan3::detail::trace_directions::up_open   | ↑    | U     |
+ * | seqan3::detail::trace_directions::up        | ⇡    | u     |
+ * | seqan3::detail::trace_directions::left_open | ←    | L     |
+ * | seqan3::detail::trace_directions::left      | ⇠    | l     |
  */
 template <typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, detail::trace_directions const trace)
 {
-    static char const * unicode[8]{"↺", "↖", "↑", "↖↑", "←", "↖←", "↑←", "↖↑←"};
-    static char const * csv[8]{"N", "D", "U", "DU", "L", "DL", "UL", "DUL"};
+    static char const * unicode[32]{ "↺",   "↖",   "↑",   "↖↑",   "⇡",   "↖⇡",   "↑⇡",   "↖↑⇡",
+                                     "←",  "↖←",  "↑←",  "↖↑←",  "⇡←",  "↖⇡←",  "↑⇡←",  "↖↑⇡←",
+                                     "⇠",  "↖⇠",  "↑⇠",  "↖↑⇠",  "⇡⇠",  "↖⇡⇠",  "↑⇡⇠",  "↖↑⇡⇠",
+                                    "←⇠", "↖←⇠", "↑←⇠", "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
+
+    static char const * csv[32]{ "N",   "D",   "U",   "DU",   "u",   "Du",   "Uu",   "DUu",
+                                 "L",  "DL",  "UL",  "DUL",  "uL",  "DuL",  "UuL",  "DUuL",
+                                 "l",  "Dl",  "Ul",  "DUl",  "ul",  "Dul",  "Uul",  "DUul",
+                                "Ll", "DLl", "ULl", "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
 
     bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
     auto const & trace_dir = is_unicode ? unicode : csv;
 
-    s << trace_dir[static_cast<size_t>(trace) % 8u];
+    s << trace_dir[static_cast<size_t>(trace)];
     return s;
 }
 
