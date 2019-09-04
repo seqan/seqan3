@@ -317,8 +317,7 @@ public:
     }
 
     /*!\brief Construction via a value of one of the components.
-     * \tparam component_type Must be one uniquely contained in the type
-                              list of the composite.
+     * \tparam component_type Must be one uniquely contained in the type list of the composite.
      * \param  alph           The value of a component that should be assigned.
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
@@ -371,8 +370,7 @@ public:
     //!\endcond
 
     /*!\brief Assignment via a value of one of the components.
-     * \tparam component_type One of the component types. Must be uniquely
-     *                        contained in the type list of the composite.
+     * \tparam component_type One of the component types. Must be uniquely contained in the type list of the composite.
      * \param  alph           The value of a component that should be assigned.
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
