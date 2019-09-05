@@ -329,6 +329,22 @@ auto split_after(type_list<pack1_t...>, type_list<head_t, pack2_t...>)
 template <template <typename> typename trait_t, typename ...pack_t>
 type_list<trait_t<pack_t>...> transform(type_list<pack_t...>);
 
+/*!\brief Implementation for replace_at.
+ * \tparam replace_t The type replacing the old one.
+ * \tparam pack1_t   Types before the replacement.
+ * \tparam head_t    The type to be replaced.
+ * \tparam pack2_t   Types after the replacement.
+ * \ingroup type_list
+ */
+template <typename replace_t,
+          typename ...pack1_t,
+          typename head_t,
+          typename ...pack2_t>
+auto replace_at(std::pair<type_list<pack1_t...>, type_list<head_t, pack2_t...>>)
+{
+    return type_list<pack1_t..., replace_t, pack2_t...>{};
+}
+
 } // namespace seqan3::list_traits::detail
 
 // ----------------------------------------------------------------------------
@@ -598,6 +614,25 @@ using split_after = decltype(detail::split_after<i>(type_list<>{}, list_t{}));
 template <template <typename> typename trait_t, seqan3::detail::type_list_specialisation list_t>
 using transform = decltype(detail::transform<trait_t>(list_t{}));
 
+/*!\brief Replace the type at the given index with the given type.
+ * \tparam replace_t The type to replace the old type with.
+ * \tparam i         The index of the type to be replaced.
+ * \tparam list_t    The (input) type list.
+ * \ingroup type_list
+ *
+ * \details
+ *
+ * ### (Compile-time) Complexity
+ *
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
+ */
+template <typename replace_t, std::ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
+//!\cond
+    requires (i >= 0 && i < size<list_t>)
+//!\endcond
+using replace_at = decltype(detail::replace_at<replace_t>(detail::split_after<i>(type_list<>{}, list_t{})));
+
 //!\}
 
 } // namespace seqan3::list_traits
@@ -702,6 +737,25 @@ template <ptrdiff_t i, typename ...pack_t>
     requires (i >= 0 && i <= sizeof...(pack_t))
 //!\endcond
 using split_after = seqan3::list_traits::split_after<i, type_list<pack_t...>>;
+
+/*!\brief Replace the type at the given index with the given type.
+ * \tparam replace_t The type to replace the old type with.
+ * \tparam i         The index of the type to be replaced.
+ * \tparam pack_t    The (input) type pack.
+ * \ingroup type_list
+ *
+ * \details
+ *
+ * ### (Compile-time) Complexity
+ *
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
+ */
+template <typename replace_t, std::ptrdiff_t i, typename ...pack_t>
+//!\cond
+    requires (i >= 0 && i < sizeof...(pack_t))
+//!\endcond
+using replace_at = decltype(seqan3::list_traits::replace_at<replace_t, i, type_list<pack_t...>>());
 
 //!\}
 

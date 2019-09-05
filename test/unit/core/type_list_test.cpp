@@ -162,6 +162,16 @@ TEST(pack_traits, split_after)
                                 type_list<>>));
 }
 
+TEST(pack_traits, replace_at)
+{
+    EXPECT_TRUE((std::is_same_v<pack_traits::replace_at<double, 0, int, float, bool>,
+                                type_list<double, float, bool>>));
+    EXPECT_TRUE((std::is_same_v<pack_traits::replace_at<double, 1, int, float, bool>,
+                                type_list<int, double, bool>>));
+    EXPECT_TRUE((std::is_same_v<pack_traits::replace_at<double, 2, int, float, bool>,
+                                type_list<int, float, double>>));
+}
+
 // ----------------------------------------------------------------------------
 // list tests
 // ----------------------------------------------------------------------------
@@ -304,4 +314,14 @@ TEST(list_traits, transform)
                                 type_list<int, bool>>));
     EXPECT_TRUE((std::is_same_v<list_traits::transform<reference_t, type_list<std::vector<int>, std::list<bool>>>,
                                 type_list<int &, bool &>>));
+}
+
+TEST(list_traits, replace_at)
+{
+    EXPECT_TRUE((std::is_same_v<list_traits::replace_at<double, 0, type_list<int, float, bool>>,
+                                type_list<double, float, bool>>));
+    EXPECT_TRUE((std::is_same_v<list_traits::replace_at<double, 1, type_list<int, float, bool>>,
+                                type_list<int, double, bool>>));
+    EXPECT_TRUE((std::is_same_v<list_traits::replace_at<double, 2, type_list<int, float, bool>>,
+                                type_list<int, float, double>>));
 }
