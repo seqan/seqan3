@@ -49,13 +49,13 @@ struct empty_type
  * \snippet test/unit/range/detail/inherited_iterator_base_test.cpp inherited_iterator_base def
  */
 template <typename derived_t, std::input_or_output_iterator base_t>
-class inherited_iterator_base : public std::conditional_t<std::is_pointer_v<base_t> || !std::Semiregular<base_t>,
+class inherited_iterator_base : public std::conditional_t<std::is_pointer_v<base_t> || !std::semiregular<base_t>,
                                                           empty_type,
                                                           base_t>
 {
 private:
     //!\brief Whether this iterator inherits or wraps.
-    static constexpr bool wrap_base = std::is_pointer_v<base_t> || !std::Semiregular<base_t>;
+    static constexpr bool wrap_base = std::is_pointer_v<base_t> || !std::semiregular<base_t>;
 public:
     /*!\name Associated types
      * \brief All are derived from the base_t.
@@ -326,7 +326,7 @@ ame Arithmetic operators
     //!\brief Return pointer to this iterator.
     constexpr pointer operator->() noexcept(noexcept(*std::declval<base_t &>()))
     //!\cond
-        requires std::InputIterator<base_t>
+        requires std::input_iterator<base_t>
     //!\endcond
     {
         return &*this_to_base();
@@ -355,7 +355,7 @@ ame Arithmetic operators
     constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n) const
         noexcept(noexcept(*std::declval<derived_t const &>()) && noexcept(std::declval<derived_t const &>() + 3))
     //!\cond
-        requires std::RandomAccessIterator<base_t>
+        requires std::random_access_iterator<base_t>
     //!\endcond
     {
         return *(*this_derived() + n);

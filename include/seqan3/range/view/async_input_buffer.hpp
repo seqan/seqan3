@@ -38,17 +38,17 @@ namespace seqan3::detail
  * \implements std::ranges::InputRange
  * \ingroup view
  */
-template <std::ranges::Range urng_t>
+template <std::ranges::range urng_t>
 class async_input_buffer_view : public std::ranges::view_interface<async_input_buffer_view<urng_t>>
 {
 private:
-    static_assert(std::ranges::InputRange<urng_t>,
+    static_assert(std::ranges::input_range<urng_t>,
         "The range parameter to async_input_buffer_view must be at least an std::ranges::InputRange.");
-    static_assert(std::ranges::View<urng_t>,
+    static_assert(std::ranges::view<urng_t>,
         "The range parameter to async_input_buffer_view must model std::ranges::View.");
-    static_assert(std::Movable<value_type_t<urng_t>>,
+    static_assert(std::movable<value_type_t<urng_t>>,
         "The range parameter to async_input_buffer_view must have a value_type that is std::Movable.");
-    static_assert(std::Constructible<value_type_t<urng_t>, std::remove_reference_t<reference_t<urng_t>> &&>,
+    static_assert(std::constructible_from<value_type_t<urng_t>, std::remove_reference_t<reference_t<urng_t>> &&>,
         "The range parameter to async_input_buffer_view must have a value_type that is constructible by a moved "
         "value of its reference type.");
 
@@ -118,9 +118,9 @@ public:
     //!\brief Construction from std::ranges::ViewableRange.
     template <typename other_urng_t>
     //!\cond
-    requires !std::Same<remove_cvref_t<other_urng_t>, async_input_buffer_view> && // prevent recursive instantiation
-             std::ranges::ViewableRange<other_urng_t> &&
-             std::Constructible<urng_t, ranges::ref_view<std::remove_reference_t<other_urng_t>>>
+    requires !std::same_as<remove_cvref_t<other_urng_t>, async_input_buffer_view> && // prevent recursive instantiation
+             std::ranges::viewable_range<other_urng_t> &&
+             std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<other_urng_t>>>
     //!\endcond
     async_input_buffer_view(other_urng_t && _urng, size_t const buffer_size) :
         async_input_buffer_view{std::view::all(_urng), buffer_size}
@@ -307,7 +307,7 @@ public:
  */
 
 //!\brief Deduces the async_input_buffer_view from the underlying range if it is a std::ranges::ViewableRange.
-template <std::ranges::ViewableRange urng_t>
+template <std::ranges::viewable_range urng_t>
 async_input_buffer_view(urng_t &&, size_t const buffer_size) -> async_input_buffer_view<std::ranges::all_view<urng_t>>;
 //!\}
 
@@ -329,16 +329,16 @@ struct async_input_buffer_fn
      * \param[in] buffer_size The frame that should be used for translation.
      * \returns A range of translated sequence(s).
      */
-    template <std::ranges::Range urng_t>
+    template <std::ranges::range urng_t>
     constexpr auto operator()(urng_t && urange, size_t const buffer_size) const
     {
-        static_assert(std::ranges::InputRange<urng_t>,
+        static_assert(std::ranges::input_range<urng_t>,
             "The range parameter to view::async_input_buffer must be at least an std::ranges::InputRange.");
-        static_assert(std::ranges::ViewableRange<urng_t>,
+        static_assert(std::ranges::viewable_range<urng_t>,
             "The range parameter to view::async_input_buffer cannot be a temporary of a non-view range.");
-        static_assert(std::Movable<value_type_t<urng_t>>,
+        static_assert(std::movable<value_type_t<urng_t>>,
             "The range parameter to view::async_input_buffer must have a value_type that is std::Movable.");
-        static_assert(std::Constructible<value_type_t<urng_t>, std::remove_reference_t<reference_t<urng_t>> &&>,
+        static_assert(std::constructible_from<value_type_t<urng_t>, std::remove_reference_t<reference_t<urng_t>> &&>,
             "The range parameter to view::async_input_buffer must have a value_type that is constructible by a moved "
             "value of its reference type.");
 
@@ -401,7 +401,7 @@ namespace seqan3::view
  *
  * This view always moves elements from the underlying range into its buffer which means that the elements in
  * the underlying range will be invalidated! For underlying ranges that are single-pass, this makes no difference, but
- * it might be unexpected for multi-pass ranges (std::ranges::ForwardRange).
+ * it might be unexpected for multi-pass ranges (std::ranges::forward_range).
  *
  * Typically this adaptor is used when you want to consume the entire underlying range. Destructing
  * this view before all elements have been read will also stop the thread that moves object from the underlying
@@ -418,20 +418,20 @@ namespace seqan3::view
  *
  * | concepts and reference type               | `urng_t` (underlying range type)  | `rrng_t` (returned range type)    |
  * |-------------------------------------------|:---------------------------------:|:---------------------------------:|
- * | std::ranges::InputRange                   | *required*                        | *preserved*                       |
- * | std::ranges::ForwardRange                 |                                   | *lost*                            |
- * | std::ranges::BidirectionalRange           |                                   | *lost*                            |
- * | std::ranges::RandomAccessRange            |                                   | *lost*                            |
- * | std::ranges::ContiguousRange              |                                   | *lost*                            |
+ * | std::ranges::input_range                  | *required*                        | *preserved*                       |
+ * | std::ranges::forward_range                |                                   | *lost*                            |
+ * | std::ranges::bidirectional_range          |                                   | *lost*                            |
+ * | std::ranges::random_access_range          |                                   | *lost*                            |
+ * | std::ranges::contiguous_range             |                                   | *lost*                            |
  * |                                           |                                   |                                   |
- * | std::ranges::ViewableRange                | *required*                        | *guaranteed*                      |
- * | std::ranges::View                         |                                   | *guaranteed*                      |
- * | std::ranges::SizedRange                   |                                   | *lost*                            |
- * | std::ranges::CommonRange                  |                                   | *lost*                            |
- * | std::ranges::OutputRange                  |                                   | *lost*                            |
- * | seqan3::ConstIterableRange                |                                   | *lost*                            |
+ * | std::ranges::viewable_range               | *required*                        | *guaranteed*                      |
+ * | std::ranges::view                         |                                   | *guaranteed*                      |
+ * | std::ranges::sized_range                  |                                   | *lost*                            |
+ * | std::ranges::common_range                 |                                   | *lost*                            |
+ * | std::ranges::output_range                 |                                   | *lost*                            |
+ * | seqan3::const_iterable_range              |                                   | *lost*                            |
  * |                                           |                                   |                                   |
- * | seqan3::reference_t                       |                                   | `seqan3::value_type_t<urng_t> &`  |
+ * | std::ranges::range_reference_t            |                                   | `seqan3::value_type_t<urng_t> &`  |
  * |                                           |                                   |                                   |
  * | std::iterator_traits \::iterator_category |                                   | *none*                            |
  *

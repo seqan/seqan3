@@ -48,6 +48,15 @@ TEST(async_input_buffer, in_out)
     EXPECT_TRUE(std::ranges::equal(vec, v));
 }
 
+TEST(async_input_buffer, in_out_empty)
+{
+    std::vector<seqan3::dna4> vec{};
+
+    auto v = vec | view::async_input_buffer(3);
+
+    EXPECT_TRUE(v.begin() == v.end());
+}
+
 TEST(async_input_buffer, buffer_size_zero)
 {
     std::vector<seqan3::dna4> vec{"ACGTACGTACGTATCGAGAGCTTTAGC"_dna4};
@@ -106,10 +115,10 @@ TEST(async_input_buffer, concepts)
 
     auto v1 = vec | view::async_input_buffer(1);
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_FALSE(ConstIterableRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_FALSE(const_iterable_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
 }
