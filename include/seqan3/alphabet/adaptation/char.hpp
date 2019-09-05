@@ -27,6 +27,8 @@
 
 #include <limits>
 
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/std/concepts>
@@ -44,11 +46,6 @@ constexpr bool is_char_adaptation_v = std::same_as<type, char>     ||
 
 namespace seqan3::custom
 {
-
-//!\cond
-template <typename type>
-struct alphabet;
-//!\endcond
 
 /*!\brief Alphabet specific customisations for builtin char types.
  * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.

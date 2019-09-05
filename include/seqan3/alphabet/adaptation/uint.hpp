@@ -27,6 +27,7 @@
 
 #include <limits>
 
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/std/concepts>
@@ -43,11 +44,6 @@ constexpr bool is_uint_adaptation_v = std::same_as<type, uint8_t>  ||
 
 namespace seqan3::custom
 {
-
-//!\cond
-template <typename type>
-struct alphabet;
-//!\endcond
 
 /*!\brief Alphabet specific customisations for unsigned integral types.
  * \tparam uint_type Any of `uint8_t`, `uint16_t` and `uint32_t`.
@@ -69,9 +65,9 @@ struct alphabet<uint_type>
      */
     static constexpr auto to_char(uint_type const intgr) noexcept
     {
-        if constexpr (std::Same<uint_type, uint8_t>)
+        if constexpr (std::same_as<uint_type, uint8_t>)
             return static_cast<char>(intgr);
-        else if constexpr (std::Same<uint_type, uint16_t>)
+        else if constexpr (std::same_as<uint_type, uint16_t>)
             return static_cast<char16_t>(intgr);
         else
             return static_cast<char32_t>(intgr);
