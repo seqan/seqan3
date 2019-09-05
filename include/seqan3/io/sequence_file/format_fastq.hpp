@@ -23,6 +23,7 @@
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/remove_if.hpp>
 
+#include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>

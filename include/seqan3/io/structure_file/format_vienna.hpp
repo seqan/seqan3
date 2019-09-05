@@ -28,6 +28,7 @@
 #include <range/v3/view/remove_if.hpp>
 #include <range/v3/view/transform.hpp>
 
+#include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/type_traits/range.hpp>

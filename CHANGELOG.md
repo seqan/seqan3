@@ -29,6 +29,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## API changes
 
+* **Customising for third party types has changes slightly:**
+  You are only affected if you added types to `seqan3::custom::`.
+  Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html).
+
 #### Argument parser
 
 * **Changed class signature of input/output file validators:**
