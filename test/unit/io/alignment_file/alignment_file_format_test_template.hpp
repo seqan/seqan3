@@ -336,12 +336,14 @@ TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_informati
 {
     {   // with reference information given
         typename TestFixture::stream_type istream{this->unknown_ref};
-        EXPECT_THROW((alignment_file_input{istream, this->ref_ids, this->ref_sequences, TypeParam{}}), format_error);
+        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
+        EXPECT_THROW((fin.begin()), format_error);
     }
 
     {   // with reference information in the header
         typename TestFixture::stream_type istream{this->unknown_ref_header};
-        EXPECT_THROW((alignment_file_input{istream, TypeParam{}}), format_error);
+        alignment_file_input fin{istream, TypeParam{}};
+        EXPECT_THROW((fin.begin()), format_error);
     }
 }
 

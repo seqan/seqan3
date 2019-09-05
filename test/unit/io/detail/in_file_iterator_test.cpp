@@ -23,20 +23,26 @@ struct fake_file_t : std::vector<int>
 
     using base::base;
 
+    using iterator = detail::in_file_iterator<fake_file_t>;
+
     size_t current_position = 0;
     bool at_end = false;
 
     void read_next_record()
     {
+        record_buffer = base::operator[](current_position);
         ++current_position;
         if (current_position == size())
             at_end = true;
     }
 
-    int & front()
+    iterator begin()
     {
-        return begin()[current_position];
+        read_next_record();
+        return {*this};
     }
+
+    int record_buffer;
 
     fake_file_t() :
         base{}
@@ -74,7 +80,7 @@ TEST(in_file_iterator, operations)
     fake_file_t f{1, 2, 3, 4, 5, 6, 8};
 
     // construct
-    it_t it{f};
+    it_t it = f.begin();
 
     // deref
     EXPECT_EQ(*it, 1);
@@ -94,7 +100,7 @@ TEST(in_file_iterator, comparison)
     using it_t = detail::in_file_iterator<fake_file_t>;
 
     fake_file_t f{1, 2, 3, 4, 5, 6, 8};
-    it_t it{f};
+    it_t it = f.begin();
 
     // not at end
     EXPECT_FALSE(it == std::ranges::default_sentinel);

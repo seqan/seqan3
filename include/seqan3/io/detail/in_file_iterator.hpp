@@ -110,14 +110,14 @@ public:
     reference operator*() noexcept
     {
         assert(host != nullptr);
-        return host->front();
+        return host->record_buffer;
     }
 
     //!\brief Dereference returns the currently buffered record.
     reference operator*() const noexcept
     {
         assert(host != nullptr);
-        return host->front();
+        return host->record_buffer;
     }
     //!\}
 

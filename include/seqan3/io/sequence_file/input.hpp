@@ -519,9 +519,6 @@ public:
 
         // initialise format handler or throw if format is not found
         detail::set_format(format, filename);
-
-        // buffer first record
-        read_next_record();
     }
     /* NOTE(h-2): Curiously we do not need a user-defined deduction guide for the above constructor.
      * A combination of default template parameters and auto-deduction guides works as expected,
@@ -557,9 +554,6 @@ public:
 
         // possibly add intermediate compression stream
         secondary_stream = detail::make_secondary_istream(*primary_stream);
-
-        // buffer first record
-        read_next_record();
     }
 
     //!\overload
@@ -576,9 +570,6 @@ public:
 
         // possibly add intermediate compression stream
         secondary_stream = detail::make_secondary_istream(*primary_stream);
-
-        // buffer first record
-        read_next_record();
     }
     //!\}
 
@@ -588,6 +579,7 @@ public:
      */
     /*!\brief Returns an iterator to current position in the file.
      * \returns An iterator pointing to the current position in the file.
+     * \throws seqan3::format_error
      *
      * Equals end() if the file is at end.
      *
@@ -597,10 +589,17 @@ public:
      *
      * ### Exceptions
      *
-     * No-throw guarantee.
+     * Throws seqan3::format_error if the first record could not be read into the buffer.
      */
-    iterator begin() noexcept
+    iterator begin()
     {
+        // buffer first record
+        if (!first_record_was_read)
+        {
+            read_next_record();
+            first_record_was_read = true;
+        }
+
         return {*this};
     }
 
@@ -647,7 +646,7 @@ public:
      */
     reference front() noexcept
     {
-        return record_buffer;
+        return *begin();
     }
     //!\}
 
@@ -740,6 +739,8 @@ protected:
     //!\brief The secondary stream is a compression layer on the primary or just points to the primary (no compression).
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
+    //!\brief Tracks whether the very first record is buffered when calling begin().
+    bool first_record_was_read{false};
     //!\brief File is at position 1 behind the last record.
     bool at_end{false};
 
