@@ -46,8 +46,13 @@ namespace seqan3::detail
  * \snippet test/unit/range/detail/inherited_iterator_base_test.cpp inherited_iterator_base def
  */
 template <typename derived_t, std::input_or_output_iterator base_t>
-class inherited_iterator_base : public std::conditional_t<std::is_pointer_v<base_t>, empty_type, base_t>
+class inherited_iterator_base : public std::conditional_t<std::is_pointer_v<base_t> || !std::semiregular<base_t>,
+                                                          empty_type,
+                                                          base_t>
 {
+private:
+    //!\brief Whether this iterator inherits or wraps.
+    static constexpr bool wrap_base = std::is_pointer_v<base_t> || !std::semiregular<base_t>;
 public:
     /*!\name Associated types
      * \brief All are derived from the base_t.
@@ -86,7 +91,7 @@ public:
     //!\brief Delegate to base class if inheriting from non-pointer iterator.
     constexpr inherited_iterator_base(base_t it) noexcept(std::is_nothrow_move_constructible_v<base_t>)
     //!\cond
-        requires !std::is_pointer_v<base_t>
+        requires !wrap_base
     //!\endcond
         : base_t{std::move(it)}
     {}
@@ -94,7 +99,7 @@ public:
     //!\brief Initialise member if deriving from pointer.
     constexpr inherited_iterator_base(base_t it) noexcept
     //!\cond
-        requires std::is_pointer_v<base_t>
+        requires wrap_base
     //!\endcond
         : member{std::move(it)}
     {}
@@ -181,11 +186,17 @@ ame Arithmetic operators
         return *this_derived();
     }
 
+    //!\brief Post-increment of non-copyable iterators returns void.
+    constexpr void operator++(int) noexcept(noexcept(++std::declval<derived_t &>()))
+    {
+        ++(*this_derived());
+    }
+
     //!\brief Post-increment, return previous iterator state.
     constexpr derived_t operator++(int) noexcept(noexcept(++std::declval<derived_t &>()) &&
                                                  noexcept(derived_t(std::declval<base_t &>())))
     //!\cond
-        requires std::input_iterator<base_t>
+        requires std::semiregular<base_t>
     //!\endcond
     {
         derived_t cpy{*this_to_base()};
@@ -292,16 +303,34 @@ ame Arithmetic operators
      * \{
     */
     //!\brief Dereference operator returns element currently pointed at.
-    constexpr reference operator*() const noexcept(noexcept(*std::declval<base_t &>()))
+    constexpr reference operator*() noexcept(noexcept(*std::declval<base_t &>()))
     //!\cond
-        requires std::input_iterator<base_t>
+        requires std::readable<base_t>
+    //!\endcond
+    {
+        return **this_to_base();
+    }
+
+    //!\brief Dereference operator returns element currently pointed at.
+    constexpr decltype(auto) operator*() const noexcept(noexcept(*std::declval<base_t const &>()))
+    //!\cond
+        requires std::readable<base_t>
     //!\endcond
     {
         return **this_to_base();
     }
 
     //!\brief Return pointer to this iterator.
-    constexpr pointer operator->() const noexcept(noexcept(*std::declval<base_t &>()))
+    constexpr pointer operator->() noexcept(noexcept(*std::declval<base_t &>()))
+    //!\cond
+        requires std::input_iterator<base_t>
+    //!\endcond
+    {
+        return &*this_to_base();
+    }
+
+    //!\brief Return pointer to this iterator.
+    constexpr decltype(auto) operator->() const noexcept(noexcept(*std::declval<base_t const &>()))
     //!\cond
         requires std::input_iterator<base_t>
     //!\endcond
@@ -310,8 +339,18 @@ ame Arithmetic operators
     }
 
     //!\brief Return underlying container value currently pointed at.
-    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n) const
+    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n)
         noexcept(noexcept(*std::declval<derived_t &>()) && noexcept(std::declval<derived_t &>() + 3))
+    //!\cond
+        requires std::random_access_iterator<base_t>
+    //!\endcond
+    {
+        return *(*this_derived() + n);
+    }
+
+    //!\brief Return underlying container value currently pointed at.
+    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n) const
+        noexcept(noexcept(*std::declval<derived_t const &>()) && noexcept(std::declval<derived_t const &>() + 3))
     //!\cond
         requires std::random_access_iterator<base_t>
     //!\endcond
@@ -322,7 +361,7 @@ ame Arithmetic operators
 
 private:
     //!\brief If the base is a pointer, we wrap it instead of inheriting.
-    std::conditional_t<std::is_pointer_v<base_t>, base_t, empty_type> member;
+    std::conditional_t<wrap_base, base_t, empty_type> member;
 
     //!\brief Befriend the derived type so it can access the private members.
     friend derived_t;
@@ -342,7 +381,7 @@ private:
     //!\brief Cast this to base type.
     constexpr base_t * this_to_base()
     {
-        if constexpr (std::is_pointer_v<base_t>)
+        if constexpr (wrap_base)
             return &member;
         else
             return static_cast<base_t*>(this);
@@ -351,7 +390,7 @@ private:
     //!\copydoc this_to_base
     constexpr base_t const * this_to_base() const
     {
-        if constexpr (std::is_pointer_v<base_t>)
+        if constexpr (wrap_base)
             return &member;
         else
             return static_cast<base_t const *>(this);

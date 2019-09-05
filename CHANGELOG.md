@@ -27,6 +27,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### Core
 * Added traits for "metaprogramming" with `seqan3::type_list` and type packs.
 
+#### Input/Output
+
+* Asynchronous input (background file reading) supported via seqan3::view::async_input_buffer.
+
 ## API changes
 
 * **Customising for third party types has changes slightly:**
