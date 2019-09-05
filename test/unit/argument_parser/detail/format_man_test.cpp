@@ -24,64 +24,65 @@ struct format_man_test : public ::testing::Test
     std::vector<std::string> list_pos_opt_value{};
     std::string my_stdout{};
     const char * argv[4] = {"./format_man_test --version-check 0", "--export-help", "man"};
-    std::string expected{".TH DEFAULT 1 \"December 01, 1994\" \"default 01.01.01\" \"default_man_page_title\"\n"
-                         ".SH NAME\n"
-                         "default \\- A short description here.\n"
-                         ".SH SYNOPSIS\n"
-                         "\\fB./format_man_test\\fP synopsis\n"
-                         ".br\n"
-                         "\\fB./format_man_test\\fP synopsis2\n"
-                         ".SH DESCRIPTION\n"
-                         "description\n"
-                         ".sp\n"
-                         "description2\n"
-                         ".SH POSITIONAL ARGUMENTS\n"
-                         ".TP\n"
-                         "\\fBARGUMENT-1\\fP (\\fIsigned 8 bit integer\\fP)\n"
-                         "this is a positional option. \n"
-                         ".TP\n"
-                         "\\fBARGUMENT-2\\fP (\\fIList\\fP of \\fIstd::string\\fP's)\n"
-                         "this is a positional option. Default: []. \n"
-                         ".SH OPTIONS\n"
-                         ".SS Basic options:\n"
-                         ".TP\n"
-                         "\\fB-h\\fP, \\fB--help\\fP\n"
-                         "Prints the help page.\n"
-                         ".TP\n"
-                         "\\fB-hh\\fP, \\fB--advanced-help\\fP\n"
-                         "Prints the help page including advanced options.\n"
-                         ".TP\n"
-                         "\\fB--version\\fP\n"
-                         "Prints the version information.\n"
-                         ".TP\n"
-                         "\\fB--copyright\\fP\n"
-                         "Prints the copyright/license information.\n"
-                         ".TP\n"
-                         "\\fB--export-help\\fP (std::string)\n"
-                         "Export the help page information. Value must be one of [html, man].\n"
-                         ".TP\n"
-                         "\\fB--version-check\\fP (bool)\n"
-                         "Whether to to check for the newest app version. Default: 1.\n"
-                         ".SS \n"
-                         ".TP\n"
-                         "\\fB-i\\fP, \\fB--int\\fP (\\fIsigned 32 bit integer\\fP)\n"
-                         "this is a int option. Default: 5. \n"
-                         ".TP\n"
-                         "\\fB-j\\fP, \\fB--jint\\fP (\\fIsigned 32 bit integer\\fP)\n"
-                         "this is a required int option. \n"
-                         ".SH FLAGS\n"
-                         ".SS SubFlags\n"
-                         "here come all the flags\n"
-                         ".TP\n"
-                         "\\fB-f\\fP, \\fB--flag\\fP\n"
-                         "this is a flag.\n"
-                         ".TP\n"
-                         "\\fB-k\\fP, \\fB--kflag\\fP\n"
-                         "this is a flag.\n"
-                         ".SH EXAMPLES\n"
-                         "example\n"
-                         ".sp\n"
-                         "example2\n"};
+    std::string expected = R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title"
+.SH NAME
+default \- A short description here.
+.SH SYNOPSIS
+\fB./format_man_test\fP synopsis
+.br
+\fB./format_man_test\fP synopsis2
+.SH DESCRIPTION
+description
+.sp
+description2
+.SH POSITIONAL ARGUMENTS
+.TP
+\fBARGUMENT-1\fP (\fIsigned 8 bit integer\fP)
+this is a positional option. 
+.TP
+\fBARGUMENT-2\fP (\fIList\fP of \fIstd::string\fP's)
+this is a positional option. Default: []. 
+.SH OPTIONS
+.SS Basic options:
+.TP
+\fB-h\fP, \fB--help\fP
+Prints the help page.
+.TP
+\fB-hh\fP, \fB--advanced-help\fP
+Prints the help page including advanced options.
+.TP
+\fB--version\fP
+Prints the version information.
+.TP
+\fB--copyright\fP
+Prints the copyright/license information.
+.TP
+\fB--export-help\fP (std::string)
+Export the help page information. Value must be one of [html, man].
+.TP
+\fB--version-check\fP (bool)
+Whether to to check for the newest app version. Default: 1.
+.SS 
+.TP
+\fB-i\fP, \fB--int\fP (\fIsigned 32 bit integer\fP)
+this is a int option. Default: 5. 
+.TP
+\fB-j\fP, \fB--jint\fP (\fIsigned 32 bit integer\fP)
+this is a required int option. 
+.SH FLAGS
+.SS SubFlags
+here come all the flags
+.TP
+\fB-f\fP, \fB--flag\fP
+this is a flag.
+.TP
+\fB-k\fP, \fB--kflag\fP
+this is a flag.
+.SH EXAMPLES
+example
+.sp
+example2
+)";
 
     // Full info parser initialisation
     void dummy_init(argument_parser & parser)
@@ -117,30 +118,31 @@ TEST_F(format_man_test, empty_information)
     parser.info.man_page_title = "default_man_page_title";
     parser.info.short_description = "A short description here.";
 
-    std::string expected_short{".TH DEFAULT 1 \"December 01, 1994\" \"default 01.01.01\" \"default_man_page_title\"\n"
-                               ".SH NAME\n"
-                               "default \\- A short description here.\n"
-                               ".SH OPTIONS\n"
-                               ".SS Basic options:\n"
-                               ".TP\n"
-                               "\\fB-h\\fP, \\fB--help\\fP\n"
-                               "Prints the help page.\n"
-                               ".TP\n"
-                               "\\fB-hh\\fP, \\fB--advanced-help\\fP\n"
-                               "Prints the help page including advanced options.\n"
-                               ".TP\n"
-                               "\\fB--version\\fP\n"
-                               "Prints the version information.\n"
-                               ".TP\n"
-                               "\\fB--copyright\\fP\n"
-                               "Prints the copyright/license information.\n"
-                               ".TP\n"
-                               "\\fB--export-help\\fP (std::string)\n"
-                               "Export the help page information. Value must be one of [html, man].\n"
-                               ".TP\n"
-                               "\\fB--version-check\\fP (bool)\n"
-                               "Whether to to check for the newest app version. Default: 1.\n"
-                               ".SS \n"};
+    std::string expected_short = R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title"
+.SH NAME
+default \- A short description here.
+.SH OPTIONS
+.SS Basic options:
+.TP
+\fB-h\fP, \fB--help\fP
+Prints the help page.
+.TP
+\fB-hh\fP, \fB--advanced-help\fP
+Prints the help page including advanced options.
+.TP
+\fB--version\fP
+Prints the version information.
+.TP
+\fB--copyright\fP
+Prints the copyright/license information.
+.TP
+\fB--export-help\fP (std::string)
+Export the help page information. Value must be one of [html, man].
+.TP
+\fB--version-check\fP (bool)
+Whether to to check for the newest app version. Default: 1.
+.SS 
+)";
 
     // Test the dummy parser with minimal information.
     testing::internal::CaptureStdout();
@@ -174,11 +176,12 @@ TEST_F(format_man_test, full_info_short_copyright)
     dummy_init(parser);
     // Add a short copyright and test the dummy parser.
     parser.info.short_copyright = "short copyright";
-    expected += std::string{".SH LEGAL\n"
-                            "\\fBdefault Copyright:\\fR short copyright\n"
-                            ".br\n"
-                            "\\fBSeqAn Copyright:\\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
-                            ".br\n"};
+    expected += R"(.SH LEGAL
+\fBdefault Copyright:\fR short copyright
+.br
+\fBSeqAn Copyright:\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+.br
+)";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
 
@@ -196,13 +199,14 @@ TEST_F(format_man_test, full_info_short_and_citation)
     // Add a short copyright & citation and test the dummy parser.
     parser.info.short_copyright = "short copyright";
     parser.info.citation = "citation";
-    expected += std::string{".SH LEGAL\n"
-                            "\\fBdefault Copyright:\\fR short copyright\n"
-                            ".br\n"
-                            "\\fBSeqAn Copyright:\\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
-                            ".br\n"
-                            "\\fBIn your academic works please cite:\\fR citation\n"
-                            ".br\n"};
+    expected += R"(.SH LEGAL
+\fBdefault Copyright:\fR short copyright
+.br
+\fBSeqAn Copyright:\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+.br
+\fBIn your academic works please cite:\fR citation
+.br
+)";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
 
@@ -221,14 +225,15 @@ TEST_F(format_man_test, full_info_short_long_and_citation)
     parser.info.short_copyright = "short copyright";
     parser.info.citation = "citation";
     parser.info.long_copyright = "looong copyright";
-    expected += std::string{".SH LEGAL\n"
-                            "\\fBdefault Copyright:\\fR short copyright\n"
-                            ".br\n"
-                            "\\fBSeqAn Copyright:\\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
-                            ".br\n"
-                            "\\fBIn your academic works please cite:\\fR citation\n"
-                            ".br\n"
-                            "For full copyright and/or warranty information see \\fB--copyright\\fR.\n"};
+    expected += R"(.SH LEGAL
+\fBdefault Copyright:\fR short copyright
+.br
+\fBSeqAn Copyright:\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+.br
+\fBIn your academic works please cite:\fR citation
+.br
+For full copyright and/or warranty information see \fB--copyright\fR.
+)";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
 
