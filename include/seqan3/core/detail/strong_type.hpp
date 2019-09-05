@@ -102,7 +102,7 @@ namespace seqan3::detail
  * implementation the underlying value can then be extracted using the `getter`-member functions of the
  * seqan3::detail::strong_type class. However, there might be scenarios, where the strong type is exposed to the user
  * to work with, but with a restricted set of operations that can be applied to the type.
- * A familiar use case are the time typedefs of the [std::chrono](http://en.cppreference.com/w/cpp/header/chrono)
+ * A familiar use case are the time typedefs of the [std::chrono](https://en.cppreference.com/w/cpp/header/chrono)
  * library. It is convenient for the user to subtract two time values representing, for example seconds, to get the
  * duration between two time points. But not all operations like modulo or multiplication are really useful for this.
  * In order to add skills to the seqan3::detail::strong_type the typedef can be further specialized with

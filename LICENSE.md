@@ -46,7 +46,7 @@ DAMAGE.
 # Documentation
 
 The API documentation and manual are additionally provided under the
-terms of the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+terms of the [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
 This includes
   * doxygen-style comments within the library source code;
   * Markdown files and images in the `doc`-subfolder;

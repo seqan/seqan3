@@ -55,7 +55,7 @@ enum EStrategy
 // Class basic_gz_ostreambuf
 // --------------------------------------------------------------------------
 // A stream decorator that takes raw input and zips it to a ostream.
-// The class wraps up the inflate method of the zlib library 1.1.4 http://www.gzip.org/zlib/
+// The class wraps up the inflate method of the zlib library 1.1.4 https://www.zlib.net
 
 template <typename Elem,
           typename Tr = std::char_traits<Elem>,

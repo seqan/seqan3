@@ -61,7 +61,7 @@ TEST(container_, sequence_container_former_travis_bug)
     // see https://github.com/seqan/seqan3/pull/113/
     using namespace std::string_literals;
 
-    // example code from http://en.cppreference.com/w/cpp/string/basic_string/insert
+    // example code from https://en.cppreference.com/w/cpp/string/basic_string/insert
     std::string s = "xmplr";
 
     // insert(size_type index, size_type count, char ch)

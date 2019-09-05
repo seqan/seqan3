@@ -9,7 +9,7 @@ This HowTo documents how to write a view using the standard library and some hel
 \note
 Some of the links from this HowTo only resolve in the developer documentation because
 they refer to entities from the seqan3::detail namespace.
-We recommend you open this tutorial from [the developer documentation](http://docs.seqan.de/seqan/3.0.0-master-dev/).
+We recommend you open this tutorial from [the developer documentation](https://docs.seqan.de/seqan/3-master-dev/).
 
 # Motivation
 
@@ -66,7 +66,7 @@ We will discuss the details of these adaptor objects in the following sections.
 
 # Custom range adaptor objects
 
-Read [section 24.7 and 24.7.1 of the C++ standard](http://eel.is/c++draft/range.adaptors).
+Read [section 24.7 and 24.7.1 of the C++ standard](https://eel.is/c++draft/range.adaptors).
 
 The wording of the standard needs some getting used to, but some important notes for us are:
   1. You can pipe a viewable range into series of *adaptor closure objects* and will get back a view (this is also

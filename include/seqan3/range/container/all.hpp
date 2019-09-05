@@ -22,6 +22,6 @@
 /*!\defgroup container container
  * \brief The container submodule contains special SeqAn3 containers and generic container concepts.
  * \ingroup range
- * \sa http://en.cppreference.com/w/cpp/container
+ * \sa https://en.cppreference.com/w/cpp/container
  * \sa range/container/all.hpp
  */

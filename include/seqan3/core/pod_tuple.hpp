@@ -32,7 +32,7 @@ struct pod_tuple
 {};
 //!\endcond
 
-/*!\brief Behaves like std::tuple but is an aggregate [PODType](http://en.cppreference.com/w/cpp/concept/PODType).
+/*!\brief Behaves like std::tuple but is an aggregate [PODType](https://en.cppreference.com/w/cpp/concept/PODType).
  * \ingroup core
  * \implements seqan3::tuple_like
  * \tparam type0    The first type (the first type).
@@ -43,10 +43,10 @@ struct pod_tuple
  * actually enforces this on all types in the tuple (if you want to add non POD types, just use
  * std::tuple instead).
  *
- * It (only) supports [aggregate initialization](http://en.cppreference.com/w/cpp/language/aggregate_initialization),
+ * It (only) supports [aggregate initialization](https://en.cppreference.com/w/cpp/language/aggregate_initialization),
  * i.e. you must use brace-initializiers and cannot
  * use paranthesis. You can use seqan3::get or std::get and also
- * [structured bindings](http://en.cppreference.com/w/cpp/language/declarations#Structured_binding_declaration)
+ * [structured bindings](https://en.cppreference.com/w/cpp/language/declarations#Structured_binding_declaration)
  * to access the elements in the tuple.
  *
  * \include test/snippet/core/pod_tuple.cpp
@@ -170,7 +170,7 @@ pod_tuple(types && ...) -> pod_tuple<types...>;
 
 /*!\name Access an element of a pod_tuple by index
  * \{
- * \brief The same as [std::get](http://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+ * \brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
  *
  * Note that these functions are available, both, in the seqan3 namespace and in namespace std.
  */
@@ -221,7 +221,7 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 //!\}
 
 /*!\name Access an element of a pod_tuple by type
- * \brief The same as [std::get](http://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+ * \brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
  *
  * Note that these functions are available, both, in the seqan3 namespace and in namespace std.
  * As is the case with std::tuple, this function is only defined if the type appears once

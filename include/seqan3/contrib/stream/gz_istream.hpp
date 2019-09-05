@@ -43,7 +43,7 @@ const size_t GZ_INPUT_DEFAULT_BUFFER_SIZE = 921600;
 // Class basic_gz_istreambuf
 // --------------------------------------------------------------------------
 // A stream decorator that takes compressed input and unzips it to a istream.
-// The class wraps up the deflate method of the zlib library 1.1.4 http://www.gzip.org/zlib/
+// The class wraps up the deflate method of the zlib library 1.1.4 https://www.zlib.net
 
 template <typename Elem,
           typename Tr = std::char_traits<Elem>,

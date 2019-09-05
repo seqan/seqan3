@@ -36,8 +36,8 @@ map the reads.
 
 # The data
 
-We provide an example [reference](http://ftp.imp.fu-berlin.de/pub/SeqAn/seqan3_read_mapper/reference.fasta)
-and an example [query](http://ftp.imp.fu-berlin.de/pub/SeqAn/seqan3_read_mapper/query.fastq) file.
+We provide an example [reference](https://ftp.imp.fu-berlin.de/pub/SeqAn/seqan3_read_mapper/reference.fasta)
+and an example [query](https://ftp.imp.fu-berlin.de/pub/SeqAn/seqan3_read_mapper/query.fastq) file.
 
 # The indexer
 

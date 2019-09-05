@@ -52,8 +52,8 @@ namespace seqan3
  *
  * ### Introduction
  *
- * genbank is the format used in GenBank sequence database. See
- * (http://quma.cdb.riken.jp/help/gbHelp.html) for a an in-depth description of the format.
+ * genbank is the format used in the GenBank sequence database. See [this example record at NCBI]
+ * (https://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html) for more details about the format.
  *
  * ### fields_specialisation
  *

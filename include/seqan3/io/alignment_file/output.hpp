@@ -103,7 +103,7 @@ namespace seqan3
  * Note that this is not the same as writing `alignment_file_output<>`
  * (with angle brackets). In the latter case they are explicitly set to their
  * default values, in the former case
- * [automatic deduction](http://en.cppreference.com/w/cpp/language/class_template_argument_deduction)
+ * [automatic deduction](https://en.cppreference.com/w/cpp/language/class_template_argument_deduction)
  * happens which chooses different parameters depending on the constructor arguments.
  * For opening from file, `alignment_file_output<>` would have also worked, but for
  * opening from stream it would not have.

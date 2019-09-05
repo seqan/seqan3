@@ -260,7 +260,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * Note that this is not the same as writing `sequence_file_input<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
- * [automatic deduction](http://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
+ * [automatic deduction](https://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
  * chooses different parameters depending on the constructor arguments. For opening from file, `sequence_file_input<>`
  * would have also worked, but for opening from stream it would not have.
  *
@@ -295,7 +295,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * ### Reading record-wise (decomposed records)
  *
  * Instead of using `get` on the record, you can also use
- * [structured bindings](http://en.cppreference.com/w/cpp/language/structured_binding)
+ * [structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding)
  * to decompose the record into its elements:
  *
  * \include test/snippet/io/sequence_file/sequence_file_input_decomposed.cpp

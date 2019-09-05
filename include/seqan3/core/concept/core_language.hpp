@@ -75,7 +75,7 @@ namespace seqan3
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
  * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
- * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/weakly_equality_comparable_with
+ * \sa          https://en.cppreference.com/w/cpp/experimental/ranges/concepts/weakly_equality_comparable_with
  */
 //!\cond
 template <typename t1, typename t2>
@@ -107,7 +107,7 @@ SEQAN3_CONCEPT explicitly_convertible_to = requires (t vt) { { static_cast<u>(vt
 
 /*!\interface   seqan3::arithmetic <>
  * \brief       A type that satisfies std::is_arithmetic_v<t>.
- * \sa          http://en.cppreference.com/w/cpp/types/is_arithmetic
+ * \sa          https://en.cppreference.com/w/cpp/types/is_arithmetic
  */
 //!\cond
 template <typename t>
@@ -117,7 +117,7 @@ SEQAN3_CONCEPT arithmetic = std::is_arithmetic_v<t>;
 /*!\interface   seqan3::floating_point <>
  * \extends     seqan3::arithmetic
  * \brief       An arithmetic type that also satisfies std::is_floating_point_v<t>.
- * \sa          http://en.cppreference.com/w/cpp/types/is_floating_point
+ * \sa          https://en.cppreference.com/w/cpp/types/is_floating_point
  */
 //!\cond
 template <typename t>
@@ -143,7 +143,7 @@ SEQAN3_CONCEPT builtin_character = std::integral<t> &&
 /*!\interface   seqan3::trivially_destructible <>
  * \extends     std::destructible
  * \brief       A type that satisfies std::is_trivially_destructible_v<t>.
- * \sa          http://en.cppreference.com/w/cpp/types/is_destructible
+ * \sa          https://en.cppreference.com/w/cpp/types/is_destructible
  */
 //!\cond
 template <typename t>
@@ -153,7 +153,7 @@ SEQAN3_CONCEPT trivially_destructible = std::destructible<t> && std::is_triviall
 /*!\interface   seqan3::trivially_copyable
  * \brief       A type that satisfies std::is_trivially_copyable_v<t>.
  * \extends     std::copyable
- * \sa          http://en.cppreference.com/w/cpp/types/is_trivially_copyable
+ * \sa          https://en.cppreference.com/w/cpp/types/is_trivially_copyable
  */
 //!\cond
 template <typename t>
@@ -164,7 +164,7 @@ SEQAN3_CONCEPT trivially_copyable = std::copyable<t> && std::is_trivially_copyab
  * \brief       A type that satisfies seqan3::trivially_copyable and seqan3::trivially_destructible.
  * \extends     seqan3::trivially_copyable
  * \extends     seqan3::trivially_destructible
- * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/copyable
+ * \sa          https://en.cppreference.com/w/cpp/experimental/ranges/concepts/copyable
  */
 //!\cond
 template <typename t>

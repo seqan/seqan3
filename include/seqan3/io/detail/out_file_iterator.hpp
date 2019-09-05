@@ -39,7 +39,7 @@ namespace seqan3::detail
  * std::ranges::default_sentinel always return false (there is no end in an output file).
  *
  * If any of these characteristics seem unusual to you, please refer to the [standard library's
- * documentation on output iterators](http://en.cppreference.com/w/cpp/concept/output_iterator).
+ * documentation on output iterators](https://en.cppreference.com/w/cpp/concept/output_iterator).
  *
  * This class template differs from std::back_insert_iterator only in that it performs
  * no checks itself on the assigned values and that it allows comparisons against
