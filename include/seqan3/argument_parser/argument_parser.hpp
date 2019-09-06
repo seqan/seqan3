@@ -29,6 +29,7 @@
 #include <seqan3/argument_parser/detail/version_check.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/detail/terminal.hpp>
+#include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/io/stream/concept.hpp>
 
 namespace seqan3
@@ -166,6 +167,7 @@ public:
      * \param[in] argc           The number of command line arguments.
      * \param[in] argv           The command line arguments to parse.
      * \param[in] version_check  Notify users about app version updates (default true).
+     * \param[in] subcommands    A list of subcommands (see \link subcommand_arg_parse subcommand parsing \endlink).
      *
      * \throws seqan3::parser_design_error if the application name contains illegal characters.
      *
@@ -178,14 +180,19 @@ public:
     argument_parser(std::string const app_name,
                     int const argc,
                     char const * const * const  argv,
-                    bool version_check = true) :
+                    bool version_check = true,
+                    std::vector<std::string> subcommands = {}) :
         version_check_dev_decision{version_check}
     {
         if (!std::regex_match(app_name, app_name_regex))
             throw parser_design_error{"The application name must only contain alpha-numeric characters "
                                                "or '_' and '-' (regex: \"^[a-zA-Z0-9_-]+$\")."};
+        for (auto & sub : subcommands)
+            if (!std::regex_match(sub, std::regex{"^[a-zA-Z0-9_]+$"}))
+                throw parser_design_error{"The subcommand name must only contain alpha-numeric characters or '_'."};
+
         info.app_name = std::move(app_name);
-        init(argc, argv);
+        init(argc, argv, std::move(subcommands));
     }
 
     //!\brief The destructor.
@@ -217,6 +224,8 @@ public:
      * \param[in]  desc      The description of the option to be shown in the help page.
      * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
+     *
+     * \throws seqan3::parser_design_error
      */
     template <typename option_type, validator validator_type = detail::default_validator<option_type>>
     //!\cond
@@ -231,6 +240,9 @@ public:
                     option_spec const & spec = option_spec::DEFAULT,
                     validator_type validator = validator_type{}) // copy to bind rvalues
     {
+        if (sub_parser != nullptr)
+            throw parser_design_error{"You may only specify flags for the top-level parser."};
+
         verify_identifiers(short_id, long_id);
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
@@ -287,6 +299,9 @@ public:
                                std::string const & desc,
                                validator_type validator = validator_type{}) // copy to bind rvalues
     {
+        if (sub_parser != nullptr)
+            throw parser_design_error{"You may only specify flags for the top-level parser."};
+
         if (has_positional_list_option)
             throw parser_design_error{"You added a positional option with a list value before so you cannot add "
                                       "any other positional options."};
@@ -387,6 +402,19 @@ public:
 
         std::visit([this] (auto & f) { f.parse(info); }, format);
         parse_was_called = true;
+    }
+
+    //!\brief Returns a reference to the sub-parser instance if
+    //!       \link subcommand_arg_parse subcommand parsing \endlink was enabled.
+    argument_parser & get_sub_parser()
+    {
+        if (sub_parser == nullptr)
+        {
+            throw parser_design_error("You did not enable subcommand parsing on construction "
+                                      "so you cannot access the sub-parser!");
+        }
+
+        return *sub_parser;
     }
 
     //!\name Structuring the Help Page
@@ -511,13 +539,17 @@ private:
     //!\brief The future object that keeps track of the detached version check call thread.
     std::future<bool> version_check_future;
 
-    //!\brief Validates the application name to ensure an escaped server call
+    //!\brief Validates the application name to ensure an escaped server call.
     std::regex app_name_regex{"^[a-zA-Z0-9_-]+$"};
+
+    //!\brief Stores the sub-parser in case \link subcommand_arg_parse subcommand parsing \endlink is enabled.
+    std::unique_ptr<argument_parser> sub_parser{nullptr};
 
     /*!\brief Initializes the seqan3::argument_parser class on construction.
      *
-     * \param[in] argc     The number of command line arguments.
-     * \param[in] argv     The command line arguments.
+     * \param[in] argc        The number of command line arguments.
+     * \param[in] argv        The command line arguments.
+     * \param[in] subcommands The subcommand key words to split command line arguments into top-level and sub-parser.
      *
      * \throws seqan3::parser_invalid_argument
      *
@@ -542,7 +574,7 @@ private:
      * If `--export-help` is specified with a value other than html/man or ctd
      * a parser_invalid_argument is thrown.
      */
-    void init(int argc, char const * const * const argv)
+    void init(int argc, char const * const * const argv, std::vector<std::string> const & subcommands)
     {
         // cash command line input, in case --version-check is specified but shall not be passed to format_parse()
         std::vector<std::string> argv_new{};
@@ -553,26 +585,33 @@ private:
             return;
         }
 
+        bool special_format_was_set{false};
+
         for(int i = 1, argv_len = argc; i < argv_len; ++i) // start at 1 to skip binary name
         {
             std::string arg{argv[i]};
 
+            if (std::ranges::find(subcommands, arg) != subcommands.end())
+            {
+                sub_parser = std::make_unique<argument_parser>(info.app_name + "-" + arg, argc - i, argv + i, false);
+                break;
+            }
             if (arg == "-h" || arg == "--help")
             {
-                format = detail::format_help{false};
+                format = detail::format_help{subcommands, false};
                 init_standard_options();
-                return;
+                special_format_was_set = true;
             }
             else if (arg == "-hh" || arg == "--advanced-help")
             {
-                format = detail::format_help{true};
+                format = detail::format_help{subcommands, true};
                 init_standard_options();
-                return;
+                special_format_was_set = true;
             }
             else if (arg == "--version")
             {
                 format = detail::format_version{};
-                return;
+                special_format_was_set = true;
             }
             else if (arg.substr(0, 13) == "--export-help") // --export-help=man is also allowed
             {
@@ -590,9 +629,9 @@ private:
                 }
 
                 if (export_format == "html")
-                    format = detail::format_html{};
+                    format = detail::format_html{subcommands};
                 else if (export_format == "man")
-                    format = detail::format_man{};
+                    format = detail::format_man{subcommands};
                 // TODO (smehringer) use when CTD support is available
                 // else if (export_format == "ctd")
                 //     format = detail::format_ctd{};
@@ -600,12 +639,12 @@ private:
                     throw validation_failed{"Validation failed for option --export-help: "
                                             "Value must be one of [html, man]"};
                 init_standard_options();
-                return;
+                special_format_was_set = true;
             }
             else if (arg == "--copyright")
             {
                 format = detail::format_copyright{};
-                return;
+                special_format_was_set = true;
             }
             else if (arg == "--version-check")
             {
@@ -629,7 +668,16 @@ private:
             }
         }
 
-        format = detail::format_parse(argc, std::move(argv_new));
+        if (!special_format_was_set)
+        {
+            if (!subcommands.empty() && sub_parser == nullptr)
+            {
+                throw parser_invalid_argument{detail::to_string("Please specify which sub program you want to use ",
+                                              "(one of ", subcommands, "). Use -h/--help for more information.")};
+            }
+
+            format = detail::format_parse(argc, std::move(argv_new));
+        }
     }
 
     //!\brief Adds standard options to the help page.
@@ -705,7 +753,7 @@ private:
                  detail::format_html,
                  detail::format_man,
                  detail::format_copyright/*,
-                 detail::format_ctd*/> format{detail::format_help(0)};
+                 detail::format_ctd*/> format{detail::format_help{{}, false}}; // Will be overwritten in any case.
 
     //!\brief List of option/flag identifiers that are already used.
     std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "copyright"};

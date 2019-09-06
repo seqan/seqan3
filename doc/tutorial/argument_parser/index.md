@@ -466,6 +466,13 @@ that can serve as a copy'n'paste source for your application.
 \include doc/tutorial/argument_parser/solution6.cpp
 \endsolution
 
+# Subcommand argument parsing
+
+Many applications provide several sub programs, e.g. `git` comes with many functionalities like `git push`,
+`git pull`, `git checkout`, etc. each having their own help page.
+If you are interested in how this subcommand parsing can be done with the seqan3::argument_parser,
+take a look at our \link subcommand_arg_parse HowTo\endlink.
+
 # Update Notifications
 
 When you run a SeqAn-based application for the first time, you will likely be asked about "update notifications".

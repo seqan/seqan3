@@ -56,8 +56,8 @@ public:
     format_help & operator=(format_help &&) = default;         //!< Defaulted.
     ~format_help() = default;                                  //!< Defaulted.
 
-    //!\copydoc format_help_base(bool)
-    format_help(bool const advanced) : base_type{advanced}
+    //!\copydoc format_help_base(std::vector<std::string> const &, bool const)
+    format_help(std::vector<std::string> const & names, bool const advanced = false) : base_type{names, advanced}
     {};
     //!\}
 

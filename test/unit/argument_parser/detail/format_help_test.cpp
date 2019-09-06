@@ -325,3 +325,37 @@ TEST(help_page_printing, copyright)
         EXPECT_EQ(std_cout, expected);
     }
 }
+
+TEST(parse_test, subcommand_argument_parser)
+{
+    int option_value{};
+    std::string option_value2{};
+
+    const char * argv[]{"./test_parser", "-h"};
+    argument_parser top_level_parser{"test_parser", 2, argv, true, {"sub1", "sub2"}};
+    top_level_parser.info.description.push_back("description");
+    top_level_parser.add_option(option_value, 'f', "foo", "foo bar.");
+
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(top_level_parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+    std::string std_cout = testing::internal::GetCapturedStdout();
+
+    std::string expected = "test_parser\n"
+                           "===========\n"
+                           "DESCRIPTION\n"
+                           "    description\n"
+                           "SUB COMMANDS\n"
+                           "    This program must be invoked with one of the following subcommands:\n"
+                           "    - sub1\n"
+                           "    - sub2\n"
+                           "    See the respective help page for further details (e.g. by calling test_parser sub1 -h)."
+                           "    The following options below belong to the top-level parser and need to be specified "
+                           "    before the subcommand key word. Every argument after the subcommand key word is "
+                           "    passed on to the corresponding sub-parser.\n" +
+                           basic_options_str +
+                           "    -f, --foo (signed 32 bit integer)\n"
+                           "    foo bar. Default: 0.\n" +
+                           basic_version_str;
+
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+}

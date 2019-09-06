@@ -270,6 +270,33 @@ TEST_F(version_check, option_off)
     EXPECT_FALSE(std::filesystem::exists(APP_VERSION_FILENAME)) << APP_VERSION_FILENAME;
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
+
+    // Version check option always needs to be parsed, even if special formats get selected
+    const char * argv2[4] = {APP_NAME.c_str(), "-h", OPTION_VERSION_CHECK, OPTION_OFF};
+
+    char * env{std::getenv("SEQAN3_NO_VERSION_CHECK")};
+    if (env != nullptr)
+        unsetenv("SEQAN3_NO_VERSION_CHECK");
+
+    argument_parser parser{APP_NAME, 4, argv2};
+    parser.info.version = "2.3.4";
+
+    EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+
+    // call future.get() to artificially wait for the thread to finish and avoid
+    // any interference with following tests
+    if (parser.version_check_future.valid())
+    {
+        EXPECT_FALSE(parser.version_check_future.get());
+    }
+
+    if (env != nullptr)
+        setenv("SEQAN3_NO_VERSION_CHECK", env, 1);
+
+    // no timestamp is written since the decision was made explicitly
+    EXPECT_FALSE(std::filesystem::exists(APP_VERSION_FILENAME)) << APP_VERSION_FILENAME;
+
+    EXPECT_TRUE(remove_files_from_path()); // clear files again
 }
 
 // case: the current argument parser has a smaller seqan version than is present in the version file

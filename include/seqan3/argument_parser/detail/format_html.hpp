@@ -50,8 +50,8 @@ public:
     format_html & operator=(format_html &&) = default;         //!< Defaulted.
     ~format_html() = default;                                  //!< Defaulted.
 
-    //!\copydoc format_help_base(bool)
-    format_html(bool const advanced) : base_type{advanced}
+    //!\copydoc format_help_base(std::vector<std::string> const &, bool const)
+    format_html(std::vector<std::string> const & names, bool const advanced = false) : base_type{names, advanced}
     {};
     //!\}
 

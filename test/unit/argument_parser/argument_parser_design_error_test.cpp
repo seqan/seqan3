@@ -115,3 +115,36 @@ TEST(parse_test, parse_called_twice)
 
     EXPECT_THROW(parser.parse(), parser_design_error);
 }
+
+TEST(parse_test, subcommand_argument_parser_error)
+{
+    bool flag_value{};
+
+    // subcommand parsing was not enabled on construction but get_sub_parser() is called
+    {
+        const char * argv[]{"./top_level", "-f"};
+        argument_parser top_level_parser{"top_level", 2, argv, false};
+        top_level_parser.add_flag(flag_value, 'f', "foo", "foo bar");
+
+        EXPECT_NO_THROW(top_level_parser.parse());
+        EXPECT_EQ(true, flag_value);
+
+        EXPECT_THROW(top_level_parser.get_sub_parser(), parser_design_error);
+    }
+
+    // subcommand key word must only contain alpha numeric characters
+    {
+        const char * argv[]{"./top_level", "-f"};
+        EXPECT_THROW((argument_parser{"top_level", 2, argv, false, {"with space"}}), parser_design_error);
+        EXPECT_THROW((argument_parser{"top_level", 2, argv, false, {"-dash"}}), parser_design_error);
+    }
+
+    // no positional/options are allowed
+    {
+        const char * argv[]{"./top_level", "foo"};
+        argument_parser top_level_parser{"top_level", 2, argv, false, {"foo"}};
+
+        EXPECT_THROW((top_level_parser.add_option(flag_value, 'f', "foo", "foo bar")), parser_design_error);
+        EXPECT_THROW((top_level_parser.add_positional_option(flag_value, "foo bar")), parser_design_error);
+    }
+}
