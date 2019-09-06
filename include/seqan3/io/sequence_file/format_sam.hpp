@@ -19,6 +19,7 @@
 #include <vector>
 
 #include <seqan3/io/alignment_file/format_sam.hpp>
+#include <seqan3/io/exception.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
@@ -99,10 +100,10 @@ public:
 
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
             if (std::ranges::distance(sequence) == 0)
-                throw format_error{"The sequence information must not be empty."};
+                throw parse_error{"The sequence information must not be empty."};
         if constexpr (!detail::decays_to_ignore_v<id_type>)
             if (std::ranges::distance(id) == 0)
-                throw format_error{"The sequence information must not be empty."};
+                throw parse_error{"The id information must not be empty."};
 
         if (options.truncate_ids)
             id = id | views::take_until_and_consume(is_space) | std::ranges::to<id_type>;

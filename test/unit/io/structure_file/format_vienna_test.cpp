@@ -5,21 +5,21 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <optional>
+#include <set>
 #include <sstream>
 #include <tuple>
 #include <vector>
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
-#include <seqan3/alphabet/structure/dot_bracket3.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
+#include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/alphabet/structure/structured_rna.hpp>
-#include <seqan3/io/structure_file/format_vienna.hpp>
-#include <seqan3/io/structure_file/input_format_concept.hpp>
-#include <seqan3/io/structure_file/output_format_concept.hpp>
+#include <seqan3/io/structure_file/all.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
+#include <seqan3/std/iterator>
 
 using namespace seqan3;
 
@@ -55,16 +55,16 @@ struct read : public ::testing::Test
         { "example 2" }
     };
 
-    std::vector<rna4_vector> const expected_seq
+    std::vector<rna5_vector> const expected_seq
     {
-        { "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna4 },
-        { "UUGGAGUACACAACCUGUACACUCUUUC"_rna4 }
+        { "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5 },
+        { "UUGGAGUACACAACCUGUACACUCUUUC"_rna5 }
     };
 
-    std::vector<std::vector<dot_bracket3>> const expected_structure
+    std::vector<std::vector<wuss<51>>> const expected_structure
     {
-        { "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_db3 },
-        { "..(((((..(((...)))..)))))..."_db3 }
+        { "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51 },
+        { "..(((((..(((...)))..)))))..."_wuss51 }
     };
 
     std::vector<double> const expected_energy
@@ -83,25 +83,14 @@ struct read : public ::testing::Test
         }
     };
 
-    detail::structure_file_input_format_REMOVEME<format_vienna> format;
-
-    structure_file_input_options<rna4, false> options;
-
-    static constexpr auto ig = std::ignore; // shortcut
+    structure_file_input_options<rna15, false> options;
 
     bool check_seq = true;
     bool check_id = true;
     bool check_structure = true;
     bool check_energy= true;
 
-    rna4_vector seq;
-    std::string id;
-    std::vector<std::set<std::pair<float, uint8_t>>> bpp;
-    std::vector<dot_bracket3> structure;
-    std::vector<structured_rna<rna4, dot_bracket3>> structured_seq;
-    std::optional<double> energy;
-
-    void bpp_test(std::vector<uint8_t> const & bpp_comp)
+    void bpp_test(std::vector<std::set<std::pair<double, size_t>>> & bpp, std::vector<uint8_t> const & bpp_comp)
     {
         size_t cnt = 0ul;
         auto interaction_sets = bpp | std::views::filter([] (auto & set) { return set.size() == 1; });
@@ -118,22 +107,20 @@ struct read : public ::testing::Test
     {
         std::stringstream istream{input};
 
-        for (size_t idx = 0ul; idx < expected_seq.size(); ++idx)
+        auto field_set = fields<field::ID, field::SEQ, field::BPP, field::STRUCTURE, field::ENERGY>{};
+        structure_file_input fin{istream, format_vienna{}, field_set};
+        fin.options = options;
+
+        auto it = fin.begin();
+        for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
         {
-            id.clear();
-            seq.clear();
-            structure.clear();
-            bpp.clear();
-            energy = std::nullopt;
-
-            EXPECT_NO_THROW(( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig) ));
-
-            EXPECT_EQ(check_energy, energy.has_value());
-            if (check_seq)       { EXPECT_TRUE(( std::ranges::equal(seq, expected_seq[idx]) )); }
-            if (check_id)        { EXPECT_TRUE(( std::ranges::equal(id, expected_id[idx]) )); }
-            if (check_structure) { EXPECT_TRUE(( std::ranges::equal(structure, expected_structure[idx]) )); }
-            if (check_structure) { bpp_test(expected_interactions[idx]); }
-            if (check_energy)    { EXPECT_DOUBLE_EQ(*energy, expected_energy[idx]); }
+            EXPECT_EQ(check_energy, get<field::ENERGY>(*it).has_value());
+            if (check_seq)       { EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(*it), expected_seq[idx]))); }
+            if (check_id)        { EXPECT_TRUE((std::ranges::equal(get<field::ID>(*it), expected_id[idx]))); }
+            if (check_structure) { bpp_test(get<field::BPP>(*it), expected_interactions[idx]); }
+            if (check_energy)    { EXPECT_DOUBLE_EQ(*get<field::ENERGY>(*it), expected_energy[idx]); }
+            if (check_structure)
+                { EXPECT_TRUE(( std::ranges::equal(get<field::STRUCTURE>(*it), expected_structure[idx]) )); }
         }
     }
 };
@@ -236,75 +223,69 @@ struct read_fields : public read {};
 TEST_F(read_fields, only_seq)
 {
     std::stringstream istream{input};
-    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx)
+    structure_file_input fin{istream, format_vienna{}, fields<field::SEQ>{}};
+    auto it = fin.begin();
+    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_NO_THROW(( format.read(istream, options, seq, ig, ig, ig, ig, ig, ig, ig, ig) ));
-
-        EXPECT_TRUE(std::ranges::equal(seq, expected_seq[idx]));
-        seq.clear();
+        EXPECT_TRUE(std::ranges::equal(get<field::SEQ>(*it), expected_seq[idx]));
     }
 }
 
 TEST_F(read_fields, only_id)
 {
     std::stringstream istream{input};
-    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx)
+    structure_file_input fin{istream, format_vienna{}, fields<field::ID>{}};
+    auto it = fin.begin();
+    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_NO_THROW(( format.read(istream, options, ig, id, ig, ig, ig, ig, ig, ig, ig) ));
-
-        EXPECT_TRUE(std::ranges::equal(id, expected_id[idx]));
-        id.clear();
+        EXPECT_TRUE(std::ranges::equal(get<field::ID>(*it), expected_id[idx]));
     }
 }
 
 TEST_F(read_fields, only_structure)
 {
     std::stringstream istream{input};
-    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx)
+    structure_file_input fin{istream, format_vienna{}, fields<field::STRUCTURE>{}};
+    auto it = fin.begin();
+    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_NO_THROW(( format.read(istream, options, ig, ig, ig, structure, ig, ig, ig, ig, ig) ));
-
-        EXPECT_TRUE(std::ranges::equal(structure, expected_structure[idx]));
-        structure.clear();
+        EXPECT_TRUE(std::ranges::equal(get<field::STRUCTURE>(*it), expected_structure[idx]));
     }
 }
 
 TEST_F(read_fields, only_energy)
 {
     std::stringstream istream{input};
-    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx)
+    structure_file_input fin{istream, format_vienna{}, fields<field::ENERGY>{}};
+    auto it = fin.begin();
+    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_NO_THROW(( format.read(istream, options, ig, ig, ig, ig, energy, ig, ig, ig, ig) ));
-
-        EXPECT_TRUE(energy);
-        EXPECT_DOUBLE_EQ(*energy, expected_energy[idx]);
-        energy = std::nullopt;
+        EXPECT_TRUE(get<field::ENERGY>(*it));
+        EXPECT_DOUBLE_EQ(*get<field::ENERGY>(*it), expected_energy[idx]);
     }
 }
 
 TEST_F(read_fields, structured_seq)
 {
-    structure_file_input_options<rna4, true> opt{};
     std::stringstream istream{input};
-    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx)
+    structure_file_input fin{istream, format_vienna{}, fields<field::STRUCTURED_SEQ>{}};
+    auto it = fin.begin();
+    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_NO_THROW(( format.read(istream, opt, structured_seq, ig, ig, structured_seq, ig, ig, ig, ig, ig) ));
-
-        EXPECT_TRUE(std::ranges::equal(structured_seq | views::convert<rna4>, expected_seq[idx]));
-        EXPECT_TRUE(std::ranges::equal(structured_seq | views::convert<dot_bracket3>, expected_structure[idx]));
-        structured_seq.clear();
+        EXPECT_TRUE(std::ranges::equal(get<field::STRUCTURED_SEQ>(*it) | views::convert<rna5>, expected_seq[idx]));
+        EXPECT_TRUE(std::ranges::equal(get<field::STRUCTURED_SEQ>(*it) | views::convert<wuss<51>>,
+                                       expected_structure[idx]));
     }
 }
 
 TEST_F(read_fields, only_bpp)
 {
     std::stringstream istream{input};
-    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx)
+    structure_file_input fin{istream, format_vienna{}, fields<field::BPP>{}};
+    auto it = fin.begin();
+    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_NO_THROW(( format.read(istream, options, ig, ig, bpp, ig, ig, ig, ig, ig, ig) ));
-
-        bpp_test(expected_interactions[idx]);
-        bpp.clear();
+        bpp_test(get<field::BPP>(*it), expected_interactions[idx]);
     }
 }
 
@@ -314,7 +295,8 @@ TEST_F(read_fail, wrong_id)
 {
     input[0] = '#'; // invalid character for ID line
     std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, ig, id, ig, ig, ig, ig, ig, ig, ig), parse_error );
+    structure_file_input fin{istream, format_vienna{}};
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 TEST_F(read_fail, missing_seq)
@@ -325,7 +307,8 @@ TEST_F(read_fail, missing_seq)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
     };
     std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig), parse_error );
+    structure_file_input fin{istream, format_vienna{}};
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 TEST_F(read_fail, missing_structure)
@@ -338,7 +321,8 @@ TEST_F(read_fail, missing_structure)
         "UUGGAGUACACAACCUGUACACUCUUUC\n"
     };
     std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig), parse_error );
+    structure_file_input fin{istream, format_vienna{}};
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 TEST_F(read_fail, missing_structure_and_id)
@@ -349,17 +333,8 @@ TEST_F(read_fail, missing_structure_and_id)
         "UUGGAGUACACAACCUGUACACUCUUUC\n"
     };
     std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig), parse_error );
-}
-
-TEST_F(read_fail, empty)
-{
-    input =
-    {
-        ""
-    };
-    std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig), parse_error );
+    structure_file_input fin{istream, format_vienna{}};
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 TEST_F(read_fail, structure_too_long)
@@ -371,8 +346,8 @@ TEST_F(read_fail, structure_too_long)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).. (-17.50)\n"
     };
     std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig),
-                  parse_error );
+    structure_file_input fin{istream, format_vienna{}};
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 TEST_F(read_fail, structure_too_short)
@@ -384,8 +359,8 @@ TEST_F(read_fail, structure_too_short)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))) (-17.50)\n"
     };
     std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig),
-                  parse_error );
+    structure_file_input fin{istream, format_vienna{}};
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 TEST_F(read_fail, structure_too_long_structured_seq)
@@ -397,8 +372,8 @@ TEST_F(read_fail, structure_too_long_structured_seq)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).. (-17.50)\n"
     };
     std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, structured_seq, id, bpp, structured_seq, energy, ig, ig, ig, ig),
-                  parse_error );
+    structure_file_input fin{istream, format_vienna{}, fields<field::STRUCTURED_SEQ>{}};
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 TEST_F(read_fail, structure_too_short_structured_seq)
@@ -410,8 +385,8 @@ TEST_F(read_fail, structure_too_short_structured_seq)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))) (-17.50)\n"
     };
     std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, structured_seq, id, bpp, structured_seq, energy, ig, ig, ig, ig),
-                  parse_error );
+    structure_file_input fin{istream, format_vienna{}, fields<field::STRUCTURED_SEQ>{}};
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 TEST_F(read_fail, wrong_char)
@@ -423,7 +398,8 @@ TEST_F(read_fail, wrong_char)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
     };
     std::stringstream istream{input};
-    EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig), parse_error );
+    structure_file_input fin{istream, format_vienna{}};
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 // ----------------------------------------------------------------------------
@@ -438,16 +414,16 @@ struct write : public ::testing::Test
         { "example 2" }
     };
 
-    std::vector<rna4_vector> const seq
+    std::vector<rna5_vector> const seq
     {
-        { "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna4 },
-        { "UUGGAGUACACAACCUGUACACUCUUUC"_rna4 }
+        { "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5 },
+        { "UUGGAGUACACAACCUGUACACUCUUUC"_rna5 }
     };
 
-    std::vector<std::vector<dot_bracket3>> const structure
+    std::vector<std::vector<wuss<51>>> const structure
     {
-        { "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_db3 },
-        { "..(((((..(((...)))..)))))..."_db3 }
+        { "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51 },
+        { "..(((((..(((...)))..)))))..."_wuss51 }
     };
 
     std::vector<float> const energy
@@ -455,19 +431,15 @@ struct write : public ::testing::Test
         -17.5f, -3.71f
     };
 
-    detail::structure_file_output_format_REMOVEME<format_vienna> format;
-
-    structure_file_output_options options;
-
-    static constexpr auto ig = std::ignore; // shortcut
-
     std::ostringstream ostream;
 };
 
 TEST_F(write, standard)
 {
+    structure_file_output fout{ostream, format_vienna{}, fields<field::SEQ, field::ID, field::STRUCTURE, field::ENERGY>{}};
     for (size_t i = 0ul; i < seq.size(); ++i)
-        EXPECT_NO_THROW(format.write(ostream, options, seq[i], id[i], ig, structure[i], energy[i], ig, ig, ig, ig));
+        fout.emplace_back(seq[i], id[i], structure[i], energy[i]);
+        //EXPECT_NO_THROW(format.write(ostream, options, seq[i], id[i], ig, structure[i], energy[i], ig, ig, ig, ig));
 
     std::string const expected_content
     {
@@ -484,9 +456,10 @@ TEST_F(write, standard)
 
 TEST_F(write, option_precision)
 {
-    options.precision = 2; // we want 2 digits for energy
+    structure_file_output fout{ostream, format_vienna{}, fields<field::SEQ, field::ID, field::STRUCTURE, field::ENERGY>{}};
+    fout.options.precision = 2; // we want 2 digits for energy
     for (size_t i = 0ul; i < seq.size(); ++i)
-        EXPECT_NO_THROW(format.write(ostream, options, seq[i], id[i], ig, structure[i], energy[i], ig, ig, ig, ig));
+        fout.emplace_back(seq[i], id[i], structure[i], energy[i]);
 
     std::string const expected_content
     {
@@ -503,9 +476,10 @@ TEST_F(write, option_precision)
 
 TEST_F(write, option_add_carriage_return)
 {
-    options.add_carriage_return = true;
+    structure_file_output fout{ostream, format_vienna{}, fields<field::SEQ, field::ID, field::STRUCTURE, field::ENERGY>{}};
+    fout.options.add_carriage_return = true;
     for (size_t i = 0ul; i < seq.size(); ++i)
-        EXPECT_NO_THROW(format.write(ostream, options, seq[i], id[i], ig, structure[i], energy[i], ig, ig, ig, ig));
+        fout.emplace_back(seq[i], id[i], structure[i], energy[i]);
 
     std::string const expected_content
     {
@@ -524,9 +498,10 @@ struct write_fields : public write {};
 
 TEST_F(write_fields, id_missing)
 {
-    options.precision = 2; // we want 2 digits for energy
+    structure_file_output fout{ostream, format_vienna{}, fields<field::SEQ, field::STRUCTURE, field::ENERGY>{}};
+    fout.options.precision = 2; // we want 2 digits for energy
     for (size_t i = 0ul; i < seq.size(); ++i)
-        EXPECT_NO_THROW(format.write(ostream, options, seq[i], ig, ig, structure[i], energy[i], ig, ig, ig, ig));
+        fout.emplace_back(seq[i], structure[i], energy[i]);
 
     std::string const expected_content
     {
@@ -541,8 +516,9 @@ TEST_F(write_fields, id_missing)
 
 TEST_F(write_fields, energy_missing)
 {
+    structure_file_output fout{ostream, format_vienna{}, fields<field::SEQ, field::ID, field::STRUCTURE>{}};
     for (size_t i = 0ul; i < seq.size(); ++i)
-        EXPECT_NO_THROW(format.write(ostream, options, seq[i], id[i], ig, structure[i], ig, ig, ig, ig, ig));
+        fout.emplace_back(seq[i], id[i], structure[i]);
 
     std::string const expected_content
     {
@@ -559,13 +535,15 @@ TEST_F(write_fields, energy_missing)
 
 TEST_F(write_fields, structure_missing)
 {
-    EXPECT_THROW(format.write(ostream, options, seq[0], id[0], ig, ig, energy[0], ig, ig, ig, ig), std::logic_error);
+    structure_file_output fout{ostream, format_vienna{}, fields<field::SEQ, field::ID, field::ENERGY>{}};
+    EXPECT_THROW(fout.emplace_back(seq[0], id[0], energy[0]), std::logic_error);
 }
 
 TEST_F(write_fields, structure_and_energy_missing)
 {
+    structure_file_output fout{ostream, format_vienna{}, fields<field::SEQ, field::ID>{}};
     for (size_t i = 0ul; i < seq.size(); ++i)
-        EXPECT_NO_THROW(format.write(ostream, options, seq[i], id[i], ig, ig, ig, ig, ig, ig, ig));
+        fout.emplace_back(seq[i], id[i]);
 
     std::string const expected_content
     {
@@ -580,20 +558,21 @@ TEST_F(write_fields, structure_and_energy_missing)
 
 TEST_F(write_fields, seq_missing)
 {
-    EXPECT_THROW(format.write(ostream, options, ig, id[0], ig, structure[0], energy[0], ig, ig, ig, ig),
-                 std::logic_error);
+    structure_file_output fout{ostream, format_vienna{}, fields<field::ID, field::STRUCTURE, field::ENERGY>{}};
+    EXPECT_THROW(fout.emplace_back(id[0], structure[0], energy[0]), std::logic_error);
 }
 
 TEST_F(write_fields, seq_empty)
 {
-    EXPECT_THROW(format.write(ostream, options, ""_rna4, id[0], ig, structure[0], energy[0], ig, ig, ig, ig),
-                 std::runtime_error);
+    structure_file_output fout{ostream, format_vienna{}, fields<field::SEQ, field::ID, field::STRUCTURE, field::ENERGY>{}};
+    EXPECT_THROW(fout.emplace_back(""_rna5, id[0], structure[0], energy[0]), std::runtime_error);
 }
 
 TEST_F(write_fields, only_seq)
 {
+    structure_file_output fout{ostream, format_vienna{}, fields<field::SEQ>{}};
     for (size_t i = 0ul; i < seq.size(); ++i)
-        EXPECT_NO_THROW(format.write(ostream, options, seq[i], ig, ig, ig, ig, ig, ig, ig, ig));
+        fout.emplace_back(seq[i]);
 
     std::string const expected_content
     {
@@ -606,8 +585,9 @@ TEST_F(write_fields, only_seq)
 
 TEST_F(write_fields, structured_seq)
 {
-    std::vector<std::vector<structured_rna<rna4, dot_bracket3>>> structured_seq;
+    std::vector<std::vector<structured_rna<rna5, wuss<51>>>> structured_seq;
     structured_seq.resize(seq.size());
+
     for (unsigned i = 0; i < seq.size(); ++i)
     {
         structured_seq[i].resize(seq[i].size());
@@ -618,20 +598,10 @@ TEST_F(write_fields, structured_seq)
         }
     }
 
+    structure_file_output fout{ostream, format_vienna{}, fields<field::STRUCTURED_SEQ>{}};
+
     for (size_t i = 0ul; i < seq.size(); ++i)
-    {
-        EXPECT_NO_THROW(format.write(ostream,
-                                     options,
-                                     structured_seq[i] | views::convert<rna4>,
-                                     ig,
-                                     ig,
-                                     structured_seq[i] | views::convert<dot_bracket3>,
-                                     ig,
-                                     ig,
-                                     ig,
-                                     ig,
-                                     ig));
-    }
+        fout.emplace_back(structured_seq[i]);
 
     std::string const expected_content
     {

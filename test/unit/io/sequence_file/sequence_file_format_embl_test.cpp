@@ -18,38 +18,78 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/test/pretty_printing.hpp>
 
+#include "sequence_file_format_test_template.hpp"
+
 using namespace seqan3;
 
-// ----------------------------------------------------------------------------
-// general
-// ----------------------------------------------------------------------------
-
-TEST(general, concepts)
+template <>
+struct sequence_file_read<format_embl> : public sequence_file_data
 {
-    EXPECT_TRUE((sequence_file_input_format<format_embl>));
-    EXPECT_TRUE((sequence_file_output_format<format_embl>));
-}
+    std::string standard_input
+    {
+R"(ID ID1;	 stuff
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTT        18
+//
+ID ID2;
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60
+TTTTTTTTTT TTTTTTTTTT TT        82
+//
+ID ID3 lala;
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTA        7
+//)"
+    };
+
+    std::string illegal_alphabet_character_input
+    {
+R"(ID ID1;	 stuff
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  AXGTTTTTTT TTTTTTTT        18
+//)"
+    };
+
+    std::string standard_output
+    {
+R"(ID ID1; 18 BP.
+SQ Sequence 18 BP;
+ACGTTTTTTT TTTTTTTT                                               18
+//
+ID ID2; 82 BP.
+SQ Sequence 82 BP;
+ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60
+TTTTTTTTTT TTTTTTTTTT TT                                          82
+//
+ID ID3 lala; 7 BP.
+SQ Sequence 7 BP;
+ACGTTTA                                                           7
+//
+)"
+    };
+
+    std::string no_or_ill_formatted_id_input
+    {
+R"(IK ID1;   stuff
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTT        18
+//)"
+    };
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+// parametrized tests
+// ---------------------------------------------------------------------------------------------------------------------
+
+INSTANTIATE_TYPED_TEST_CASE_P(embl, sequence_file_read, format_embl);
+INSTANTIATE_TYPED_TEST_CASE_P(embl, sequence_file_write, format_embl);
 
 // ----------------------------------------------------------------------------
 // reading
 // ----------------------------------------------------------------------------
 
-struct read : public ::testing::Test
+struct read : public sequence_file_data
 {
-    std::vector<std::string> expected_ids
-    {
-        { "ID1" },
-        { "ID2" },
-        { "ID3 lala" },
-    };
-
-    std::vector<dna5_vector> expected_seqs
-    {
-        { "ACGTTTTTTTTTTTTTTT"_dna5 },
-        { "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5 },
-        { "ACGTTTA"_dna5 },
-    };
-
     std::string input
     {
 R"(ID ID1;	stuff
@@ -67,65 +107,23 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
 //)"
     };
 
-    detail::sequence_file_input_format_REMOVEME<format_embl> format;
-
-    sequence_file_input_options<dna5, false> options;
-
-    std::string id;
-    dna5_vector seq;
+    sequence_file_input_options<dna15, false> options{};
 
     void do_read_test(std::string const & input)
     {
         std::stringstream istream{input};
 
-        for (unsigned i = 0; i < 3; ++i)
-        {
-            id.clear();
-            seq.clear();
+        sequence_file_input fin{istream, format_embl{}, fields<field::ID, field::SEQ>{}};
+        fin.options = options;
 
-            EXPECT_NO_THROW(( format.read(istream, options, seq, id, std::ignore) ));
-            EXPECT_EQ(id, expected_ids[i]);
-            EXPECT_EQ(seq, expected_seqs[i]);
-            EXPECT_TRUE((ranges::equal(seq, expected_seqs[i])));
-            EXPECT_TRUE((ranges::equal(id, expected_ids[i])));
+        auto it = fin.begin();
+        for (unsigned i = 0; i < 3; ++i, ++it)
+        {
+            EXPECT_EQ(get<field::ID>(*it), ids[i]);
+            EXPECT_EQ(get<field::SEQ>(*it), seqs[i]);
         }
     }
 };
-
-TEST_F(read, standard)
-{
-    do_read_test(input);
-}
-
-TEST_F(read, no_id)
-{
-    std::string input
-    {
-R"(IK ID1;  stuff
-SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
-  ACGTTTTTTT TTTTTTTT        18
-//
-ID ID2;
-SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
-  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60
-TTTTTTTTTT TTTTTTTTTT TT        82
-//
-ID ID3 lala;
-SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
-  ACGTTTA        7
-//)"
-    };
-
-    std::stringstream istream{input};
-    EXPECT_THROW(( format.read(istream, options, seq, id, std::ignore)), parse_error );
-}
-
-TEST_F(read, options_truncate_ids)
-{
-    options.truncate_ids = true;
-    expected_ids[2] = "ID3"; // "lala" is stripped
-    do_read_test(input);
-}
 
 TEST_F(read, complete_header)
 {
@@ -150,28 +148,13 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
     };
 
     options.embl_genbank_complete_header = true;
-    expected_ids[0] = "ID ID1;\tstuff\n";
-    expected_ids[1] = "ID ID2;\n";
-    expected_ids[2] = "ID ID3 lala;\nXX\nAC   AB000263;\nXX\n";
+    ids[0] = "ID ID1;\tstuff\n";
+    ids[1] = "ID ID2;\n";
+    ids[2] = "ID ID3 lala;\nXX\nAC   AB000263;\nXX\n";
     do_read_test(input);
 }
 
-TEST_F(read, only_seq)
-{
-    std::stringstream istream{input};
-
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        id.clear();
-        seq.clear();
-
-        format.read(istream, options, seq, std::ignore, std::ignore);
-
-        EXPECT_TRUE((ranges::equal(seq, expected_seqs[i])));
-    }
-}
-
-TEST_F(read, only_seq_multiple_lines_before)
+TEST_F(read, multiple_lines_before_seq)
 {
     std::string input
     {
@@ -193,81 +176,7 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
 //)"
     };
 
-    std::stringstream istream{input};
-
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        id.clear();
-        seq.clear();
-
-        format.read(istream, options, seq, std::ignore, std::ignore);
-
-        EXPECT_TRUE((ranges::equal(seq, expected_seqs[i])));
-    }
-}
-
-TEST_F(read, only_id)
-{
-    std::stringstream istream{input};
-
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        id.clear();
-        seq.clear();
-
-        format.read(istream, options, std::ignore, id, std::ignore);
-
-        EXPECT_TRUE((ranges::equal(id, expected_ids[i])));
-    }
-}
-
-TEST_F(read, seq_qual)
-{
-    std::stringstream istream{input};
-    sequence_file_input_options<dna5, true> options2;
-
-    std::vector<qualified<dna5, phred42>> seq_qual;
-
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        id.clear();
-        seq_qual.clear();
-
-        format.read(istream, options2, seq_qual, id, seq_qual);
-
-        EXPECT_TRUE((ranges::equal(id, expected_ids[i])));
-        EXPECT_TRUE((ranges::equal(seq_qual | views::convert<dna5>, expected_seqs[i])));
-    }
-}
-
-TEST_F(read, illegal_alphabet)
-{
-    std::string input
-    {
-        R"(ID ID1;	stuff
-        SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
-          ARGTTTTTTT TTTTTTTT        18
-        //)"
-    };
-
-    std::stringstream istream{input};
-    EXPECT_THROW(( format.read(istream, options, seq, id, std::ignore)), parse_error );
-}
-
-TEST_F(read, from_stream_file)
-{
-    sequence_file_input fin{std::istringstream{input}, format_embl{}, fields<field::SEQ, field::ID>{}};
-
-    size_t counter = 0;
-    for (auto & [ seq, id ] : fin)
-    {
-        EXPECT_TRUE((std::ranges::equal(seq,  expected_seqs[counter])));
-        EXPECT_TRUE((std::ranges::equal(id,  expected_ids[counter])));
-
-        counter++;
-    }
-
-    EXPECT_EQ(counter, 3u);
+    do_read_test(input);
 }
 
 // ----------------------------------------------------------------------------
@@ -308,71 +217,21 @@ GGAGTATAAT ATATATATAT ATAT                                        24
 )"
     };
 
-    detail::sequence_file_output_format_REMOVEME<format_embl> format;
-
-    sequence_file_output_options options;
+    sequence_file_output_options options{};
 
     std::ostringstream ostream;
 
     void do_write_test()
     {
+        sequence_file_output fout{ostream, format_embl{}, fields<field::SEQ, field::ID>{}};
+        fout.options = options;
+
         for (unsigned i = 0; i < 3; ++i)
-            EXPECT_NO_THROW(( format.write(ostream, options, seqs[i], ids[i], std::ignore) ));
+            EXPECT_NO_THROW((fout.emplace_back(seqs[i], ids[i])));
 
         ostream.flush();
     }
 };
-
-TEST_F(write, arg_handling_id_missing)
-{
-    EXPECT_THROW( (format.write(ostream, options, seqs[0], std::ignore, std::ignore)),
-                   std::logic_error );
-}
-
-TEST_F(write, arg_handling_id_empty)
-{
-    EXPECT_THROW( (format.write(ostream, options, seqs[0], std::string_view{""}, std::ignore)),
-                   std::runtime_error );
-}
-
-TEST_F(write, arg_handling_seq_missing)
-{
-    EXPECT_THROW( (format.write(ostream, options, std::ignore, ids[0], std::ignore)),
-                   std::logic_error );
-}
-
-TEST_F(write, arg_handling_seq_empty)
-{
-    EXPECT_THROW( (format.write(ostream, options, std::string_view{""}, ids[0], std::ignore)),
-                   std::runtime_error );
-}
-
-TEST_F(write, default_options)
-{
-
-    do_write_test();
-
-    EXPECT_EQ(ostream.str(), comp);
-}
-
-TEST_F(write, seq_qual)
-{
-    auto convert_to_qualified = std::views::transform([] (auto const in)
-    {
-        return qualified<dna5, phred42>{} = in;
-    });
-
-    for (unsigned i = 0; i < 3; ++i)
-        EXPECT_NO_THROW(( format.write(ostream,
-                                       options,
-                                       seqs[i] | convert_to_qualified,
-                                       ids[i],
-                                       seqs[i] | convert_to_qualified) ));
-
-    ostream.flush();
-
-    EXPECT_EQ(ostream.str(), comp);
-}
 
 TEST_F(write, complete_header)
 {
@@ -403,18 +262,4 @@ GGAGTATAAT ATATATATAT ATAT                                        24
     do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
-}
-
-TEST_F(write, from_stream_file)
-{
-    sequence_file_output fout{std::ostringstream{}, format_embl{}};
-
-    for(int i = 0; i < 3; i++)
-    {
-        fout.emplace_back(seqs[i],ids[i]);
-    }
-
-    fout.get_stream().flush();
-
-    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), comp);
 }
