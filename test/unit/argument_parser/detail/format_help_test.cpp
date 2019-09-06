@@ -18,6 +18,7 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/drop.hpp>
+#include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/to.hpp>
 
 using namespace seqan3;
@@ -196,10 +197,23 @@ TEST(help_page_printing, do_not_print_hidden_options)
     EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
+enum class foo
+{
+    one,
+    two,
+    three
+};
+
+auto enumeration_names(foo)
+{
+    return std::unordered_map<std::string_view, foo>{{"one", foo::one}, {"two", foo::two}, {"three", foo::three}};
+}
+
 TEST(help_page_printing, full_information)
 {
     int8_t required_option{};
     int8_t non_list_optional{1};
+    foo enum_option_value{};
 
     // Add synopsis, description, short description, positional option, option, flag, and example.
     argument_parser parser6{"test_parser", 2, argv1};
@@ -209,6 +223,8 @@ TEST(help_page_printing, full_information)
     parser6.info.description.push_back("description2");
     parser6.info.short_description = "so short";
     parser6.add_option(option_value, 'i', "int", "this is a int option.");
+    parser6.add_option(enum_option_value, 'e', "enum", "this is an enum option.", option_spec::DEFAULT,
+                       value_list_validator{seqan3::enumeration_names<foo> | views::get<1>});
     parser6.add_option(required_option, 'r', "required-int", "this is another int option.", option_spec::REQUIRED);
     parser6.add_section("Flags");
     parser6.add_subsection("SubFlags");
@@ -237,6 +253,8 @@ TEST(help_page_printing, full_information)
                basic_options_str +
                "-i, --int (signed 32 bit integer)\n"
                "this is a int option. Default: 5.\n"
+               "-e, --enum (foo)\n"
+               "this is an enum option. Default: one. Value must be one of [three,two,one].\n"
                "-r, --required-int (signed 8 bit integer)\n"
                "this is another int option.\n"
                "FLAGS\n"

@@ -581,6 +581,77 @@ TEST(parse_type_test, parse_error_double_option)
     EXPECT_THROW(parser2.parse(), parser_invalid_argument);
 }
 
+namespace foo
+{
+enum class bar
+{
+    one,
+    two,
+    three
+};
+
+auto enumeration_names(bar)
+{
+    return std::unordered_map<std::string_view, bar>{{"one", bar::one}, {"two", bar::two}, {"three", bar::three}};
+}
+} // namespace foo
+
+namespace Other
+{
+enum class bar
+{
+    one,
+    two
+};
+} // namespace Other
+
+namespace seqan3::custom
+{
+template <>
+struct argument_parsing<Other::bar>
+{
+    static inline std::unordered_map<std::string_view, Other::bar> const enumeration_names
+    {
+        {"one", Other::bar::one}, {"two", Other::bar::two}
+    };
+};
+} // namespace seqan3::custom
+
+TEST(parse_type_test, parse_success_enum_option)
+{
+    {
+        foo::bar option_value{};
+
+        const char * argv[] = {"./argument_parser_test", "-e", "two"};
+        argument_parser parser{"test_parser", 3, argv, false};
+        parser.add_option(option_value, 'e', "enum-option", "this is an enum option.");
+
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE(option_value == foo::bar::two);
+    }
+
+    {
+        Other::bar option_value{};
+
+        const char * argv[] = {"./argument_parser_test", "-e", "two"};
+        argument_parser parser{"test_parser", 3, argv, false};
+        parser.add_option(option_value, 'e', "enum-option", "this is an enum option.");
+
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE(option_value == Other::bar::two);
+    }
+}
+
+TEST(parse_type_test, parse_error_enum_option)
+{
+    foo::bar option_value{};
+
+    const char * argv[] = {"./argument_parser_test", "-e", "four"};
+    argument_parser parser{"test_parser", 3, argv, false};
+    parser.add_option(option_value, 'e', "enum-option", "this is an enum option.");
+
+    EXPECT_THROW(parser.parse(), parser_invalid_argument);
+}
 
 TEST(parse_test, too_many_arguments_error)
 {

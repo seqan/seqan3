@@ -15,11 +15,208 @@
 #include <sstream>
 #include <vector>
 
+#include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/std/type_traits>
+
+namespace seqan3::custom
+{
+
+/*!\brief A type that can be specialised to provide customisation point implementations for the seqan3::argument_parser
+ *        such that third party types may be adapted.
+ * \tparam t The type you wish to specialise for.
+ * \ingroup argument_parser
+ *
+ * \details
+ *
+ * ### Named Enumerations
+ *
+ * In order to use a third party type within the seqan3::argument_parser::add_option or
+ * seqan3::argument_parser::add_positional_option call, you can specialise this struct in the following way:
+ *
+ * \include test/snippet/argument_parser/custom_argument_parsing_enumeration.cpp
+ *
+ * Please note that by default the `t const`, `t &` and `t const &` specialisations of this class inherit the
+ * specialisation for `t` so you usually only need to provide a specialisation for `t`.
+ *
+ * \note Only use this if you cannot provide respective functions in your namespace. See the tutorial
+ * \ref tutorial_argument_parser for an example of customising a type within your own namespace.
+ */
+template <typename t>
+struct argument_parsing
+{}; // forward
+
+//!\cond
+template <typename t>
+struct argument_parsing<t const> : argument_parsing<t>
+{};
+
+template <typename t>
+struct argument_parsing<t &> : argument_parsing<t>
+{};
+
+template <typename t>
+struct argument_parsing<t const &> : argument_parsing<t>
+{};
+//!\endcond
+
+} // seqan3::custom
+
+namespace seqan3::detail::adl_only
+{
+
+//!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
+template <typename t>
+std::unordered_map<std::string_view, t> enumeration_names(t) = delete;
+
+/*!\brief Functor definition for seqan3::enumeration_names.
+ *
+ * We need a class template here because we need the original option_t next to s_option_t that may be wrapped
+ * std::type_identity to be default constructible. We need option_t to be default constructible because the
+ * respective CPO should be callable without a function parameter.
+ */
+template <typename option_t>
+struct enumeration_names_fn
+{
+    //!\brief `option_t` with cvref removed and possibly wrapped in std::type_identity.
+    using s_option_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<option_t>> &&
+                                          seqan3::is_constexpr_default_constructible_v<remove_cvref_t<option_t>>,
+                                          remove_cvref_t<option_t>,
+                                          std::type_identity<option_t>>;
+
+    SEQAN3_CPO_IMPL(1, (deferred_type_t<seqan3::custom::argument_parsing<option_t>, decltype(v)>::enumeration_names))
+    SEQAN3_CPO_IMPL(0, (enumeration_names(v))) // ADL
+
+    //!\brief Operator definition.
+    template <typename dummy = int> // need to make this a template to enforce deferred initialisation
+    //!\cond
+        requires requires
+        {
+            { impl(priority_tag<1>{}, s_option_t{}, dummy{}) };
+            std::same_as<decltype(impl(priority_tag<1>{}, s_option_t{}, dummy{})),
+                         std::unordered_map<std::string_view, remove_cvref_t<option_t>>>;
+        }
+    //!\endcond
+    auto operator()() const
+    {
+        return impl(priority_tag<1>{}, s_option_t{});
+    }
+};
+
+} // namespace seqan3::detail::adl_only
 
 namespace seqan3
 {
+
+/*!\name Customisation Points
+ * \{
+ */
+
+/*!\brief Return a conversion map from std::string_view to option_type.
+ * \tparam your_type Type of the value to retrieve the conversion map for.
+ * \param value The value is not used, just its type.
+ * \returns A std::unordered_map<std::string_view, your_type> that maps a string identifier to a value of your_type.
+ * \ingroup argument_parser
+ * \details
+ *
+ * This is a function object. Invoke it with the parameter(s) specified above.
+ *
+ * It acts as a wrapper and looks for two possible implementations (in this order):
+ *
+ *   1. A static member `enumeration_names` in `seqan3::custom::argument_parsing<your_type>` that is of type
+ *      `std::unordered_map<std::string_view, your_type>>`.
+ *   2. A free function `enumeration_names(your_type const a)` in the namespace of your type (or as `friend`) which
+ *      returns a `std::unordered_map<std::string_view, your_type>>`.
+ *
+ * ### Example
+ *
+ * If you are working on a type in your own namespace, you should implement a free function like this:
+ *
+ * \include test/snippet/argument_parser/custom_enumeration.cpp
+ *
+ * **Only if you cannot access the namespace of your type to customize** you may specialize
+ * the seqan3::custom::argument_parsing struct like this:
+ *
+ * \include test/snippet/argument_parser/custom_argument_parsing_enumeration.cpp
+ *
+ * ### Customisation point
+ *
+ * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own type,
+ * simply provide one of the two functions specified above.
+ */
+template <typename option_type>
+//!\cond
+    requires requires { { detail::adl_only::enumeration_names_fn<option_type>{}() }; }
+//!\endcond
+inline auto const enumeration_names = detail::adl_only::enumeration_names_fn<option_type>{}();
+//!\}
+
+/*!\interface seqan3::named_enumeration <>
+ * \brief Checks whether the free function seqan3::enumeration_names can be called on the type.
+ * \ingroup argument_parser
+ * \tparam option_type The type to check.
+ *
+ * ### Requirements
+ *
+ * * A instance of seqan3::enumeration_names<option_type> must exist and be of type
+ *   `std::unordered_map<std::string, option_type>`.
+ */
+//!\cond
+template <typename option_type>
+SEQAN3_CONCEPT named_enumeration = requires
+{
+    { seqan3::enumeration_names<option_type> };
+};
+//!\endcond
+
+/*!\interface seqan3::argument_parser_compatible_option <>
+ * \brief Checks whether the the type can be used in an add_(positional_)option call on the argument parser.
+ * \ingroup argument_parser
+ * \tparam option_type The type to check.
+ *
+ * ### Requirements
+ *
+ * In order to model this concept, the type must either be streamable to std::istringstream or
+ * model seqan3::named_enumeration<option_type>.
+ */
+//!\cond
+template <typename option_type>
+SEQAN3_CONCEPT argument_parser_compatible_option = input_stream_over<std::istringstream, option_type> ||
+                                                   named_enumeration<option_type>;
+//!\endcond
+
+/*!\name Formatted output overloads
+ * \{
+ */
+/*!\brief A type (e.g. an enum) can be made debug streamable by customizing the seqan3::enumeration_names.
+ * \tparam option_type Type of the enum to be printed.
+ * \param s  The seqan3::debug_stream.
+ * \param op The value to print.
+ * \relates seqan3::debug_stream_type
+ *
+ * \details
+ *
+ * This searches the seqan3::enumeration_names of the respective type for the value \p op and prints the
+ * respective string if found or '\<UNKNOWN_VALUE\>' if the value cannot be found in the map.
+ */
+template <typename char_t, typename option_type>
+//!\cond
+    requires named_enumeration<remove_cvref_t<option_type>>
+//!\endcond
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, option_type && op)
+{
+    for (auto & [key, value] : enumeration_names<option_type>)
+    {
+        if (op == value)
+            return s << key;
+    }
+
+    return s << "<UNKNOWN_VALUE>";
+}
+//!\}
 
 /*!\brief Used to further specify argument_parser options/flags.
  * \ingroup argument_parser
