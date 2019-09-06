@@ -37,7 +37,7 @@ struct read : public ::testing::Test
 {
     std::vector<std::string> expected_ids
     {
-        { "ID1" },
+        { "ID1 stuff" },
         { "ID2" },
         { "ID3" },
     };

@@ -143,10 +143,19 @@ public:
             else
             {
                 detail::consume(stream_view | views::take_until(!is_blank));
-                // read id
-                std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank)
-                                              | views::char_to<value_type_t<id_type>>,
-                                                std::back_inserter(id));
+
+                auto read_id_until = [&stream_view, &id] (auto predicate)
+                {
+                    std::ranges::copy(stream_view | views::take_until_or_throw(predicate)
+                                                  | views::char_to<value_type_t<id_type>>,
+                                                    std::back_inserter(id));
+                };
+
+                if (options.truncate_ids)
+                    read_id_until(is_space);
+                else
+                    read_id_until(is_cntrl);
+
                 detail::consume(stream_view | views::take_line_or_throw);
             }
         }
