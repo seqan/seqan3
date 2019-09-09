@@ -30,15 +30,16 @@ struct fake_file_t : std::vector<int>
 
     void read_next_record()
     {
-        record_buffer = base::operator[](current_position);
         ++current_position;
         if (current_position == size())
             at_end = true;
+        else
+            record_buffer = base::operator[](current_position);
     }
 
     iterator begin()
     {
-        read_next_record();
+        record_buffer = base::operator[](current_position);
         return {*this};
     }
 
