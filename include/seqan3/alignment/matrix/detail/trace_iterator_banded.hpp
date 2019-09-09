@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::trace_iterator.
+ * \brief Provides seqan3::detail::trace_iterator_banded.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -17,7 +17,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief A trace iterator an unbanded trace matrix.
+/*!\brief A trace iterator for banded trace matrices.
  * \ingroup alignment_matrix
  *
  * \tparam matrix_iter_t The wrapped matrix iterator; must model seqan3::detail::two_dimensional_matrix_iterator and
@@ -26,33 +26,36 @@ namespace seqan3::detail
  *
  * \details
  *
- * This iterator follows a given trace in an unbanded trace matrix.
+ * This iterator follows a given trace in a banded trace matrix.
  */
 template <two_dimensional_matrix_iterator matrix_iter_t>
-class trace_iterator : public trace_iterator_base<trace_iterator<matrix_iter_t>, matrix_iter_t>
+class trace_iterator_banded : public trace_iterator_base<trace_iterator_banded<matrix_iter_t>, matrix_iter_t>
 {
 private:
     static_assert(std::same_as<value_type_t<matrix_iter_t>, trace_directions>,
                   "Value type of the underlying iterator must be trace_directions.");
 
     //!\brief The type of the base class.
-    using base_t = trace_iterator_base<trace_iterator<matrix_iter_t>, matrix_iter_t>;
+    using base_t = trace_iterator_base<trace_iterator_banded<matrix_iter_t>, matrix_iter_t>;
+
+    //!\brief Befriend base class.
+    friend base_t;
 
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr trace_iterator() = default; //!< Defaulted.
-    constexpr trace_iterator(trace_iterator const &) = default; //!< Defaulted.
-    constexpr trace_iterator(trace_iterator &&) = default; //!< Defaulted.
-    constexpr trace_iterator & operator=(trace_iterator const &) = default; //!< Defaulted.
-    constexpr trace_iterator & operator=(trace_iterator &&) = default; //!< Defaulted.
-    ~trace_iterator() = default; //!< Defaulted.
+    constexpr trace_iterator_banded() = default; //!< Defaulted.
+    constexpr trace_iterator_banded(trace_iterator_banded const &) = default; //!< Defaulted.
+    constexpr trace_iterator_banded(trace_iterator_banded &&) = default; //!< Defaulted.
+    constexpr trace_iterator_banded & operator=(trace_iterator_banded const &) = default; //!< Defaulted.
+    constexpr trace_iterator_banded & operator=(trace_iterator_banded &&) = default; //!< Defaulted.
+    ~trace_iterator_banded() = default; //!< Defaulted.
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
      * \param[in] matrix_iter The underlying matrix iterator.
      */
-    explicit constexpr trace_iterator(matrix_iter_t const matrix_iter) noexcept : base_t{matrix_iter}
+    constexpr trace_iterator_banded(matrix_iter_t const matrix_iter) noexcept : base_t{matrix_iter}
     {}
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
@@ -68,9 +71,26 @@ public:
     //!\cond
         requires std::constructible_from<matrix_iter_t, other_matrix_iter_t>
     //!\endcond
-    constexpr trace_iterator(trace_iterator<other_matrix_iter_t> const other) noexcept : base_t{other}
+    constexpr trace_iterator_banded(trace_iterator_banded<other_matrix_iter_t> const other) noexcept : base_t{other}
     {}
     //!\}
+
+private:
+    //!\copydoc seqan3::detail::trace_iterator_base::go_left
+    constexpr void go_left(matrix_iter_t & iter) const noexcept
+    {
+        // Note, in the banded matrix, the columns are virtually shifted by one cell.
+        // So going left means go to the previous column and then one row down.
+        iter -= matrix_offset{row_index_type{-1}, column_index_type{1}};
+    }
+
+    //!\copydoc seqan3::detail::trace_iterator_base::go_up
+    constexpr void go_diagonal(matrix_iter_t & iter) const noexcept
+    {
+        // Note, in the banded matrix, the columns are virtually shifted by one cell.
+        // So going diagonal means go to the previous column and stay in the same row.
+        iter -= matrix_offset{row_index_type{0}, column_index_type{1}};
+    }
 };
 
 /*!\name Type deduction guides
@@ -78,7 +98,7 @@ public:
  */
 //!\brief Deduces the template argument from the passed iterator.
 template <two_dimensional_matrix_iterator matrix_iter_t>
-trace_iterator(matrix_iter_t const) -> trace_iterator<matrix_iter_t>;
+trace_iterator_banded(matrix_iter_t const) -> trace_iterator_banded<matrix_iter_t>;
 //!\}
 
 } // namespace seqan3::detail
