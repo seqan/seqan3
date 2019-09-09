@@ -90,9 +90,9 @@ private:
         advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_end{column_index_type{current_column_index}, row_index_type{dimension_second_range}};
 
-        return std::view::zip(std::span{score_matrix},
-                                 std::view::iota(col_begin, col_end),
-                                 ranges::view::repeat_n(std::ignore, dimension_second_range) | std::view::common);
+        return std::views::zip(std::span{score_matrix},
+                               std::views::iota(col_begin, col_end),
+                               views::repeat_n(std::ignore, dimension_second_range) | std::views::common);
     }
 
     //!\brief Moves internal matrix pointer to the next column.
@@ -115,10 +115,10 @@ private:
  *
  * \details
  *
- * This helper view is used as long as view::get is broken for nested zip-views.
+ * This helper view is used as long as views::get is broken for nested zip-views.
  * See https://github.com/seqan/seqan3/issues/745 for more details.
  */
-inline const auto view_get_score_column = ranges::view::transform([](auto && elem)
+inline const auto view_get_score_column = std::views::transform([](auto && elem)
 {
     using std::get;
     return get<0>(std::forward<decltype(elem)>(elem));

@@ -21,7 +21,7 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/view/slice.hpp>
+#include <seqan3/range/views/slice.hpp>
 
 namespace seqan3::detail
 {
@@ -121,8 +121,8 @@ inline alignment_t alignment_trace(database_t && database,
     assert(coordinate.col < matrix.cols());
 
     alignment_t aligned_seq{};
-    assign_unaligned(std::get<0>(aligned_seq), view::slice(database, front_coordinate.first, coordinate.col));
-    assign_unaligned(std::get<1>(aligned_seq), view::slice(query, front_coordinate.second, coordinate.row));
+    assign_unaligned(std::get<0>(aligned_seq), views::slice(database, front_coordinate.first, coordinate.col));
+    assign_unaligned(std::get<1>(aligned_seq), views::slice(query, front_coordinate.second, coordinate.row));
     auto end_aligned_db = std::ranges::cend(std::get<0>(aligned_seq));
     auto end_aligned_qy = std::ranges::cend(std::get<1>(aligned_seq));
 

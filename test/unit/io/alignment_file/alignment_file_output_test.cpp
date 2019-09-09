@@ -15,8 +15,6 @@
 #include <seqan3/io/alignment_file/input.hpp>
 #include <seqan3/io/alignment_file/output.hpp>
 #include <seqan3/range/shortcuts.hpp>
-#include <seqan3/range/view/convert.hpp>
-#include <seqan3/range/view/to_char.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/std/iterator>
 

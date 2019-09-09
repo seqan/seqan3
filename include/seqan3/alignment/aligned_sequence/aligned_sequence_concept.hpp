@@ -24,8 +24,8 @@
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/view/slice.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/ranges>
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -470,19 +470,19 @@ void stream_alignment(debug_stream_type<char_t> & stream, alignment_t const & al
 
         // write first sequence
         stream << '\n' << std::setw(8) << "";
-        ranges::for_each(get<0>(align) | view::slice(begin_pos, end_pos) | view::to_char,
+        std::ranges::for_each(get<0>(align) | views::slice(begin_pos, end_pos) | views::to_char,
                          [&stream] (char ch) { stream << ch; });
 
         auto stream_f = [&] (auto const & previous_seq, auto const & aligned_seq)
         {
             // write alignment bars
             stream << '\n' << std::setw(8) << "";
-            ranges::for_each(ranges::zip_view(previous_seq, aligned_seq) | view::slice(begin_pos, end_pos),
+            std::ranges::for_each(ranges::zip_view(previous_seq, aligned_seq) | views::slice(begin_pos, end_pos),
                              [&stream] (auto && ch) { stream << (get<0>(ch) == get<1>(ch) ? '|' : ' '); });
 
             // write next sequence
             stream << '\n' << std::setw(8) << "";
-            ranges::for_each(aligned_seq | view::slice(begin_pos, end_pos) | view::to_char,
+            std::ranges::for_each(aligned_seq | views::slice(begin_pos, end_pos) | views::to_char,
                              [&stream] (char ch) { stream << ch; });
         };
         (stream_f(get<idx>(align), get<idx + 1>(align)), ...);

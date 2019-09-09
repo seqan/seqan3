@@ -49,7 +49,7 @@ void seqan3_affine_dna4(benchmark::State & state)
         *seqan3::begin(rng);
     }
 
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::single(std::tie(seq1, seq2)), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -69,7 +69,7 @@ void seqan2_affine_dna4(benchmark::State & state)
         seqan::globalAlignmentScore(seq1, seq2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::single(std::tie(seq1, seq2)), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -92,7 +92,7 @@ void seqan3_affine_dna4_trace(benchmark::State & state)
         *seqan3::begin(rng);
     }
 
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::single(std::tie(seq1, seq2)), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -114,7 +114,7 @@ void seqan2_affine_dna4_trace(benchmark::State & state)
         seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::single(std::tie(seq1, seq2)), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -175,7 +175,7 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
         seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -245,7 +245,7 @@ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
         seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 

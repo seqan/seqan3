@@ -53,7 +53,7 @@ int main()
     sequence_file_input fin{tmp_dir/"my.fastq"};
     sequence_file_output fout{tmp_dir/"output.fastq"};
 
-    auto length_filter = std::view::filter([] (auto const & rec)
+    auto length_filter = std::views::filter([] (auto const & rec)
     {
         return std::ranges::size(get<field::SEQ>(rec)) >= 5;
     });

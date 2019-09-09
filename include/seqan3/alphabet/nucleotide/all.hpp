@@ -84,7 +84,7 @@
  *   * Nucleotide types defined here are **implicitly** convertible to each other if they have the same size
  *     (e.g. seqan3::dna4 ↔ seqan3::rna4).
  *   * Other nucleotide types are **explicitly** convertible to each other through their character representation.
- *   * All ranges of nucleotide alphabets are convertible to each other via seqan3::view::convert.
+ *   * All ranges of nucleotide alphabets are convertible to each other via seqan3::views::convert.
  *   * None of the nucleotide alphabets can be directly converted or assigned from `char`. You need to explicitly call
  *     `assign_char` or use a literal (see below).
  *

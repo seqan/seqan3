@@ -28,7 +28,7 @@
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/view_all.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail

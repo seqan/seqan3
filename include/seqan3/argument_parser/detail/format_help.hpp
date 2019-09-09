@@ -528,8 +528,8 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.)"};
 
-        strem << ranges::view::repeat_n('=', 80) << to_text("\n\\fB") << "Copyright information for "
-              << meta.app_name << ":\n" << to_text("\\fP") << ranges::view::repeat_n('-', 80) << '\n';
+        strem << views::repeat_n('=', 80) << to_text("\n\\fB") << "Copyright information for "
+              << meta.app_name << ":\n" << to_text("\\fP") << views::repeat_n('-', 80) << '\n';
 
         if (!empty(meta.long_copyright))
         {
@@ -545,9 +545,9 @@ DAMAGE.)"};
             strem << to_text("\\fP") << meta.app_name << " copyright information not available.\n";
         }
 
-        strem << ranges::view::repeat_n('=', 80) << to_text("\n\\fB")
+        strem << views::repeat_n('=', 80) << to_text("\n\\fB")
               << "This program contains SeqAn3 code licensed under the following terms:\n" << to_text("\\fP")
-              << ranges::view::repeat_n('-', 80) << '\n' << seqan_license << '\n';
+              << views::repeat_n('-', 80) << '\n' << seqan_license << '\n';
 
         std::exit(EXIT_SUCCESS);
     }

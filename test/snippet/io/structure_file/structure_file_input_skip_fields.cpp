@@ -2,8 +2,8 @@
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/structure_file/input.hpp>
-#include <seqan3/range/view/get.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/get.hpp>
+#include <seqan3/range/views/to_char.hpp>
 
 auto input = R"(> S.cerevisiae_tRNA-PHE M10740/1-73
 GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA
@@ -26,7 +26,7 @@ int main()
         seqan3::debug_stream << "ID: "        << id                                                         << '\n';
         // sequence and structure are part of the same vector, of type std::vector<structured_rna<rna5, wuss51>>
         // sequence and structure strings are extracted and converted to char on-the-fly
-        seqan3::debug_stream << "SEQ: "       << (struc_seq | seqan3::view::get<0> | seqan3::view::to_char) << '\n';
-        seqan3::debug_stream << "STRUCTURE: " << (struc_seq | seqan3::view::get<1> | seqan3::view::to_char) << '\n';
+        seqan3::debug_stream << "SEQ: "       << (struc_seq | seqan3::views::get<0> | seqan3::views::to_char) << '\n';
+        seqan3::debug_stream << "STRUCTURE: " << (struc_seq | seqan3::views::get<1> | seqan3::views::to_char) << '\n';
     }
 }

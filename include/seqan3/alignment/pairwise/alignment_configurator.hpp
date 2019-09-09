@@ -28,7 +28,7 @@
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/view_all.hpp>
 
 namespace seqan3::detail
 {
@@ -62,8 +62,8 @@ SEQAN3_CONCEPT align_pairwise_single_input =
  * This covers all typical use cases:
  * a) A lvalue range, whose reference type is a tuple like lvalue reference,
  * b) A range, whose reference type is a tuple over viewable ranges.
- * This covers also transforming and non-transforming views (e.g. std::view::zip, or view::take).
- * Only a temporary non-view range piped with view::persist can't be handled securely.
+ * This covers also transforming and non-transforming views (e.g. std::views::zip, or views::take).
+ * Only a temporary non-view range piped with views::persist can't be handled securely.
  */
 template <typename range_t>
 SEQAN3_CONCEPT align_pairwise_range_input_concept =

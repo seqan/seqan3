@@ -2,7 +2,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/view/to_rank.hpp>
+#include <seqan3/range/views/to_rank.hpp>
 
 int main()
 {
@@ -19,5 +19,5 @@ int main()
     seqan3::debug_stream << vec;                           // prints "ACGT"
 
     // ranges of non-alphabets are printed comma-separated:
-    seqan3::debug_stream << (vec | seqan3::view::to_rank); // prints "[0,1,2,3]"
+    seqan3::debug_stream << (vec | seqan3::views::to_rank); // prints "[0,1,2,3]"
 }

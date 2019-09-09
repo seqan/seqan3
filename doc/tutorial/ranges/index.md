@@ -22,10 +22,10 @@ C++20 introduces the notion of *ranges* and provides algorithms that accept such
 `std::ranges::sort(v)` now works if `v` is range – and vectors are ranges!
 
 What about the two examples that suggest superiority of the iterator-based approach? In C++20 you can do the following:
-  * sorting only all elements after the fifth one: `std::ranges::sort(std::view::drop(v, 5))`
-  * sorting in reverse order: `std::ranges::sort(std::view::reverse(v))`
+  * sorting only all elements after the fifth one: `std::ranges::sort(std::views::drop(v, 5))`
+  * sorting in reverse order: `std::ranges::sort(std::views::reverse(v))`
 
-We will discuss later what `std::view::reverse(v)` does, for now it is enough to understand that it returns something
+We will discuss later what `std::views::reverse(v)` does, for now it is enough to understand that it returns something
 that appears like a container and that std::ranges::sort can sort it.
 Later we will see that this approach offers even more flexibility than working with iterators.
 
@@ -119,10 +119,10 @@ You may have wondered why we wrote
 
 and not
 ```cpp
-std::view::reverse v{vec};
+std::views::reverse v{vec};
 ```
 
-That's because `std::view::reverse` is not the view itself, it's an *adaptor* that takes the underlying range
+That's because `std::views::reverse` is not the view itself, it's an *adaptor* that takes the underlying range
 (in our case the vector) and returns a view object over the vector.
 The exact type of this view is hidden behind the `auto` statement.
 This has the advantage, that we don't need to worry about the template arguments of the view type, but more importantly
@@ -141,9 +141,9 @@ Note that accessing the 0th element of the view is still lazy, determining which
 of access.
 
 \assignment{Exercise: Fun with views I}
-Look up the documentation of std::view::transform and std::view::filter.
+Look up the documentation of std::views::transform and std::views::filter.
 Both take a invocable object as parameter, e.g. a lambda function.
-std::view::transform applies the lambda on each element in the underlying range and std::view::filter
+std::views::transform applies the lambda on each element in the underlying range and std::views::filter
 filter "removes" those elements that its lambda function evaluates to false for.
 
 What does this imply for argument types and return types of the lambda functions?
@@ -174,7 +174,7 @@ Every view returned by a view adaptor models this concept, but which other range
 It depends on the underlying range and also the view itself.
 With few exceptions, views don't model more/stronger range concepts than their underlying range (other than
 std::ranges::view) and they try to preserve as much of the underlying range's concepts as possible.
-For instance the view returned by `std::view::reverse` models std::ranges::random_access_range (and weaker concepts)
+For instance the view returned by `std::views::reverse` models std::ranges::random_access_range (and weaker concepts)
 iff the underlying range also models the respective concept.
 It never models std::ranges::contiguous_range, because the third element of the view is not located immediately after
 the second in memory (but instead before the second).
@@ -230,11 +230,11 @@ We provide overview tables for all our view adaptors that document which concept
 ## Views in the standard library and in SeqAn
 
 The standard library in C++20 provides a number of useful views and SeqAn provides many views, as well.
-Most views provided by SeqAn3 are specific to biological operations, like seqan3::view::trim which trims sequences
-based on the quality or seqan3::view::complement which generates the complement of a nucleotide sequence.
+Most views provided by SeqAn3 are specific to biological operations, like seqan3::views::trim which trims sequences
+based on the quality or seqan3::views::complement which generates the complement of a nucleotide sequence.
 But SeqAn3 also provides some general purpose views.
 
-Have a look at the \link view View-submodule \endlink to get an overview of SeqAn's views and also read through the
+Have a look at the \link views views-submodule \endlink to get an overview of SeqAn's views and also read through the
 detailed description on that page now that you had a more gentle introduction.
 
 \assignment{Exercise: Fun with views III}

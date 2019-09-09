@@ -11,14 +11,14 @@
 
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/view_all.hpp>
 
 using namespace seqan3;
 
 auto setup()
 {
     auto data = std::tuple{"ACGT"_dna4, "ACGT"_dna4};
-    return ranges::view::single(std::move(data));
+    return std::views::single(std::move(data));
 }
 
 template <typename config_t>
@@ -28,7 +28,7 @@ bool run_test(config_t const & cfg)
     auto fn = detail::alignment_configurator::configure<decltype(r)>(cfg);
     auto & [seq1, seq2] = *std::ranges::begin(r);
 
-    return fn(0u, seq1 | view::all, seq2 | view::all).score() == 0;
+    return fn(0u, seq1 | views::all, seq2 | views::all).score() == 0;
 }
 
 TEST(alignment_configurator, configure_edit)

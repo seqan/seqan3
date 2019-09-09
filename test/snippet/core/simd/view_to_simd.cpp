@@ -20,7 +20,7 @@ int main()
     batch.push_back("GTACGGATGGTAAACCGCACAT"_dna4);
 
     // Applies lazy transformation using `8` as a padding symbol if a sequence ends early.
-    auto to_soa = batch | seqan3::view::to_simd<uint16x8_t>(8);
+    auto to_soa = batch | seqan3::views::to_simd<uint16x8_t>(8);
 
     size_t chunk_count = 0;
     for (auto & chunk : to_soa)

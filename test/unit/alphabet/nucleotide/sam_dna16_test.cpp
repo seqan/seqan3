@@ -106,6 +106,6 @@ TEST(sam_dna16, char_is_valid)
                                is_char<'m'> || is_char<'b'> || is_char<'d'> || is_char<'h'> || is_char<'v'> ||
                                is_char<'='>;
 
-    for (char c : std::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
+    for (char c : std::views::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
         EXPECT_EQ(sam_dna16::char_is_valid(c), validator(c));
 }

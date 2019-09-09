@@ -37,9 +37,9 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/view/slice.hpp>
-#include <seqan3/range/view/take_exactly.hpp>
-#include <seqan3/range/view/take_until.hpp>
+#include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/take_exactly.hpp>
+#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -172,15 +172,15 @@ public:
         if (!header_was_read)
         {
             // magic BAM string
-            if (!std::ranges::equal(stream_view | view::take_exactly_or_throw(4), std::string_view{"BAM\1"}))
+            if (!std::ranges::equal(stream_view | views::take_exactly_or_throw(4), std::string_view{"BAM\1"}))
                 throw format_error{"File is not in BAM format."};
 
             int32_t tmp32{};
             read_field(stream_view, tmp32);
 
             if (tmp32 > 0) // header text is present
-                read_header(stream_view | view::take_exactly_or_throw(tmp32)
-                                        | view::take_until_and_consume(is_char<'\0'>),
+                read_header(stream_view | views::take_exactly_or_throw(tmp32)
+                                        | views::take_until_and_consume(is_char<'\0'>),
                             header,
                             ref_seqs);
 
@@ -258,7 +258,7 @@ public:
 
         // read id
         // -------------------------------------------------------------------------------------------------------------
-        read_field(stream_view | view::take_exactly_or_throw(core.l_read_name - 1), id); // field::ID
+        read_field(stream_view | views::take_exactly_or_throw(core.l_read_name - 1), id); // field::ID
         std::ranges::next(std::ranges::begin(stream_view)); // skip '\0'
 
         // read cigar string
@@ -270,7 +270,7 @@ public:
         }
         else
         {
-            detail::consume(stream_view | view::take_exactly_or_throw(core.n_cigar_op * 4));
+            detail::consume(stream_view | views::take_exactly_or_throw(core.n_cigar_op * 4));
         }
 
         offset = offset_tmp;
@@ -280,8 +280,8 @@ public:
         if (core.l_seq > 0) // sequence information is given
         {
             auto seq_stream = stream_view
-                            | view::take_exactly_or_throw(core.l_seq / 2) // one too short if uneven
-                            | std::view::transform([] (char c) -> std::pair<sam_dna16, sam_dna16>
+                            | views::take_exactly_or_throw(core.l_seq / 2) // one too short if uneven
+                            | std::views::transform([] (char c) -> std::pair<sam_dna16, sam_dna16>
                               {
                                   return {sam_dna16{}.assign_rank(std::min(15, static_cast<uint8_t>(c) >> 4)),
                                           sam_dna16{}.assign_rank(std::min(15, static_cast<uint8_t>(c) & 0x0f))};
@@ -362,7 +362,7 @@ public:
                 if constexpr (!detail::decays_to_ignore_v<align_type>)
                 {
                     assign_unaligned(get<1>(align),
-                                     seq | view::slice(static_cast<decltype(std::ranges::distance(seq))>(offset_tmp),
+                                     seq | views::slice(static_cast<decltype(std::ranges::distance(seq))>(offset_tmp),
                                                        std::ranges::distance(seq) - soft_clipping_end));
                 }
             }
@@ -370,15 +370,15 @@ public:
 
         // read qual string
         // -------------------------------------------------------------------------------------------------------------
-        read_field(stream_view | view::take_exactly_or_throw(core.l_seq)
-                               | std::view::transform([] (char chr) { return static_cast<char>(chr + 33); }), qual);
+        read_field(stream_view | views::take_exactly_or_throw(core.l_seq)
+                               | std::views::transform([] (char chr) { return static_cast<char>(chr + 33); }), qual);
 
         // All remaining optional fields if any: SAM tags dictionary
         // -------------------------------------------------------------------------------------------------------------
         int32_t remaining_bytes = core.block_size - (sizeof(alignment_record_core) - 4/*block_size excluded*/) -
                                   core.l_read_name - core.n_cigar_op * 4 - (core.l_seq + 1) / 2 - core.l_seq;
         assert(remaining_bytes >= 0);
-        auto tags_view = stream_view | view::take_exactly_or_throw(remaining_bytes);
+        auto tags_view = stream_view | views::take_exactly_or_throw(remaining_bytes);
 
         while (tags_view.size() > 0)
             read_field(tags_view, tag_dict);
@@ -409,10 +409,10 @@ public:
                                        "stored in the optional field CG but this tag is not present in the given ",
                                        "record.")};
 
-                    auto cigar_view = std::view::all(std::get<std::string>(it->second));
+                    auto cigar_view = std::views::all(std::get<std::string>(it->second));
                     std::tie(cigar, ref_length, seq_length, offset_tmp, soft_clipping_end) = detail::parse_cigar(cigar_view);
                     assign_unaligned(get<1>(align),
-                                     seq | view::slice(static_cast<decltype(std::ranges::distance(seq))>(offset_tmp),
+                                     seq | views::slice(static_cast<decltype(std::ranges::distance(seq))>(offset_tmp),
                                                        std::ranges::distance(seq) - soft_clipping_end));
                     tag_dict.erase(it); // remove redundant information
                 }
@@ -948,13 +948,13 @@ public:
             // write qual
             if (std::ranges::empty(qual))
             {
-                auto v = view::repeat_n(static_cast<char>(255), core.l_seq);
+                auto v = views::repeat_n(static_cast<char>(255), core.l_seq);
                 std::ranges::copy_n(v.begin(), core.l_seq, stream_it);
             }
             else
             {
                 assert(static_cast<int32_t>(std::ranges::distance(qual)) == core.l_seq);
-                auto v = qual | std::view::transform([] (auto chr) { return static_cast<char>(to_rank(chr)); });
+                auto v = qual | std::views::transform([] (auto chr) { return static_cast<char>(to_rank(chr)); });
                 std::ranges::copy_n(v.begin(), core.l_seq, stream_it);
             }
 

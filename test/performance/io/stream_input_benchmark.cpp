@@ -265,7 +265,7 @@ void seqan2_uncompressed(benchmark::State & state)
     {
         s.clear();
         s.seekg(0, std::ios::beg);
-        auto it = seqan::Iter<std::istringstream, seqan::stream_REMOVEMEIterator<seqan::Input> >(s);
+        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input> >(s);
 
         for (size_t v = 0; v < input.size(); ++v)
         {
@@ -287,7 +287,7 @@ void seqan2_compressed_impl(benchmark::State & state)
         s.clear();
         s.seekg(0, std::ios::beg);
         stream_t comp{s};
-        auto it = seqan::Iter<std::istringstream, seqan::stream_REMOVEMEIterator<seqan::Input> >(comp);
+        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input> >(comp);
 
         for (size_t v = 0; v < input_comp<compression_t>.size(); ++v)
         {

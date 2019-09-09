@@ -26,7 +26,7 @@
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/views/persist.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -147,7 +147,7 @@ constexpr auto align_pairwise(exec_policy_t const & exec,
                   std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
                   "Alignment configuration error: The tuple elements must model std::ranges::viewable_range.");
 
-    return align_pairwise(exec, std::view::single(std::forward<sequence_t>(seq)), config);
+    return align_pairwise(exec, std::views::single(std::forward<sequence_t>(seq)), config);
 }
 
 /*!\overload
@@ -196,8 +196,8 @@ constexpr auto align_pairwise(exec_policy_t const & exec,
     static_assert(std::ranges::random_access_range<second_seq_t> && std::ranges::sized_range<second_seq_t>,
                   "Alignment configuration error: The sequence must model random_access_range and sized_range.");
 
-    // Pipe with view::persist to allow rvalue non-view ranges.
-    auto seq_view = std::forward<sequence_t>(seq) | view::persist;
+    // Pipe with views::persist to allow rvalue non-view ranges.
+    auto seq_view = std::forward<sequence_t>(seq) | views::persist;
     // Configure the alignment algorithm.
     auto kernel = detail::alignment_configurator::configure<decltype(seq_view)>(config);
     // Create a two-way executor for the alignment.

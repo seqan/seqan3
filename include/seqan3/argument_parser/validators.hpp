@@ -24,8 +24,8 @@
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/view/drop.hpp>
-#include <seqan3/range/view/to_lower.hpp>
+#include <seqan3/range/views/drop.hpp>
+#include <seqan3/range/views/to_lower.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
@@ -190,7 +190,7 @@ public:
     void operator()(value_type const & cmp) const
     {
         if (!(std::find(values.begin(), values.end(), cmp) != values.end()))
-            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", std::view::all(values), "."));
+            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", std::views::all(values), "."));
     }
 
     /*!\brief Tests whether every element in \p range lies inside values.
@@ -210,7 +210,7 @@ public:
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("Value must be one of ", std::view::all(values), ".");
+        return detail::to_string("Value must be one of ", std::views::all(values), ".");
     }
 
 private:
@@ -311,12 +311,12 @@ protected:
 
         // Drop the dot.
         std::string tmp_str = path.extension().string();
-        auto drop_less_ext = tmp_str | view::drop(1);
+        auto drop_less_ext = tmp_str | views::drop(1);
 
         // Compares the extensions in lower case.
         auto cmp_lambda = [&] (std::string const & cmp)
         {
-            return std::ranges::equal(cmp | view::to_lower, drop_less_ext | view::to_lower);
+            return std::ranges::equal(cmp | views::to_lower, drop_less_ext | views::to_lower);
         };
 
         // Check if requested extension is present.
@@ -493,7 +493,7 @@ public:
     std::string get_help_page_message() const
     {
         return detail::to_string("Valid input file formats: [",
-                                 extensions | std::view::join(std::string{", "}),
+                                 extensions | std::views::join(std::string{", "}),
                                  "]");
     }
 };
@@ -596,7 +596,7 @@ public:
     std::string get_help_page_message() const
     {
         return detail::to_string("Valid output file formats: [",
-                                 extensions | std::view::join(std::string{", "}),
+                                 extensions | std::views::join(std::string{", "}),
                                  "]");
     }
 };

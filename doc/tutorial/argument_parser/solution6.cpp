@@ -43,7 +43,7 @@ void run_program(std::filesystem::path & path, std::vector<uint8_t> sn, std::str
 
         while (std::getline(file, line))
         {
-            auto splitted_line = line | std::view::split('\t');
+            auto splitted_line = line | std::views::split('\t');
             auto it = splitted_line.begin(); // move to 1rst column
 
             if (std::find(sn.begin(), sn.end(), to_number<uint8_t>(*it)) != sn.end())

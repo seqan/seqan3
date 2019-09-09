@@ -133,8 +133,8 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!	TI:i:2
         format.read(istream, options2, seq_qual, id, seq_qual);
 
         EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
-        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<dna5>, expected_seqs[i])));
-        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<phred42>, expected_quals[i])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | views::convert<dna5>, expected_seqs[i])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | views::convert<phred42>, expected_quals[i])));
     }
 }
 

@@ -17,7 +17,7 @@
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/simd/view_to_simd.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/view_all.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
@@ -171,17 +171,17 @@ TYPED_TEST(view_to_simd_test, iterate_with_padding)
 TYPED_TEST(view_to_simd_test, adaptor_pipe)
 {
     { // without padding
-        auto v = this->sequences | view::to_simd<typename TestFixture::simd_t>;
+        auto v = this->sequences | views::to_simd<typename TestFixture::simd_t>;
         this->compare(v, this->transformed_simd_vec);
     }
 
     { // w padding
-        auto v = this->sequences | view::to_simd<typename TestFixture::simd_t>(TestFixture::padding_value_custom);
+        auto v = this->sequences | views::to_simd<typename TestFixture::simd_t>(TestFixture::padding_value_custom);
         this->compare(v, this->transformed_simd_vec_padded);
     }
 
     { // w padding and calling range
-        auto v = view::to_simd<typename TestFixture::simd_t>(TestFixture::padding_value_custom)(this->sequences);
+        auto v = views::to_simd<typename TestFixture::simd_t>(TestFixture::padding_value_custom)(this->sequences);
         this->compare(v, this->transformed_simd_vec_padded);
     }
 }
@@ -189,12 +189,12 @@ TYPED_TEST(view_to_simd_test, adaptor_pipe)
 TYPED_TEST(view_to_simd_test, adaptor_function)
 {
     { // without padding
-        auto v = view::to_simd<typename TestFixture::simd_t>(this->sequences);
+        auto v = views::to_simd<typename TestFixture::simd_t>(this->sequences);
         this->compare(v, this->transformed_simd_vec);
     }
 
     { // w padding
-        auto v = view::to_simd<typename TestFixture::simd_t>(this->sequences, TestFixture::padding_value_custom);
+        auto v = views::to_simd<typename TestFixture::simd_t>(this->sequences, TestFixture::padding_value_custom);
         this->compare(v, this->transformed_simd_vec_padded);
     }
 }
@@ -205,7 +205,7 @@ TYPED_TEST(view_to_simd_test, empty_sequences)
     std::vector<typename TestFixture::container_t> sequences;
     sequences.resize(simd_traits<simd_t>::length);
 
-    auto v = sequences | view::to_simd<simd_t>;
+    auto v = sequences | views::to_simd<simd_t>;
     this->compare(v, std::vector<simd_t, typename TestFixture::allocator_t>{});
 
     EXPECT_EQ(v.empty(), true);
@@ -220,7 +220,7 @@ TYPED_TEST(view_to_simd_test, fewer_sequences)
     for (simd_t & vec : this->transformed_simd_vec)
         vec[simd_traits<simd_t>::length - 1] = TestFixture::padding_value_dna4;
 
-    auto v = this->sequences | view::to_simd<simd_t>;
+    auto v = this->sequences | views::to_simd<simd_t>;
     this->compare(v, this->transformed_simd_vec);
 
     if constexpr (simd_traits<simd_t>::length > 1)
@@ -238,7 +238,7 @@ TYPED_TEST(view_to_simd_test, fewer_sequences_w_padding)
     for (simd_t & vec : this->transformed_simd_vec_padded)
         vec[simd_traits<simd_t>::length - 1] = TestFixture::padding_value_custom;
 
-    auto v = this->sequences | view::to_simd<simd_t>(TestFixture::padding_value_custom);
+    auto v = this->sequences | views::to_simd<simd_t>(TestFixture::padding_value_custom);
     this->compare(v, this->transformed_simd_vec_padded);
 
     if constexpr (simd_traits<simd_t>::length > 1)
@@ -253,7 +253,7 @@ TYPED_TEST(view_to_simd_test, empty_underlying_range)
     using simd_t = typename TestFixture::simd_t;
     std::vector<typename TestFixture::container_t> sequences{};
 
-    auto v = sequences | view::to_simd<simd_t>;
+    auto v = sequences | views::to_simd<simd_t>;
     this->compare(v, std::vector<simd_t, typename TestFixture::allocator_t>{});
 
     EXPECT_EQ(v.empty(), true);

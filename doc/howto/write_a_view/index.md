@@ -49,17 +49,17 @@ std::ranges::transform_view v{vec, l};
 
 But this syntax gets difficult to read when you create "a view(from a view(from a view()))".
 That's why for every view that adapts an existing view we have an additional *adaptor object*, usually available
-in a `view::` sub-namespace:
+in a `views::` sub-namespace:
 
 ```cpp
 std::vector vec{1, 2, 3, 4, 5};
 
 auto l = [] (int i) { return i + 1; };
 
-auto v = vec | std::view::transform(l);
+auto v = vec | std::views::transform(l);
 ```
 
-This adaptor object (`std::view::transform`) provides the pipe operator and returns an object of the actual view type
+This adaptor object (`std::views::transform`) provides the pipe operator and returns an object of the actual view type
 (`std::ranges::transform_view`).
 The pipe operator allows us to chain multiple adaptors similar to the unix command line.
 We will discuss the details of these adaptor objects in the following sections.
@@ -73,21 +73,21 @@ The wording of the standard needs some getting used to, but some important notes
   what we did above):
 ```cpp
 std::vector vec{1, 2, 3, 4, 5};
-auto v = vec | std::view::transform([] (int i) { return i + 1; })
-             | std::view::filter([] (int i) { return i % 2 == 0; });
+auto v = vec | std::views::transform([] (int i) { return i + 1; })
+             | std::views::filter([] (int i) { return i % 2 == 0; });
 // v is a view, you can iterate over it!
 ```
   2. The adaptor objects support function-style usage, too, although it only reduces readability:
 ```cpp
 std::vector vec{1, 2, 3, 4, 5};
-auto v = std::view::filter(std::view::transform(vec, [] (int i) { return i + 1; }), [] (int i) { return i % 2 == 0; });
+auto v = std::views::filter(std::views::transform(vec, [] (int i) { return i + 1; }), [] (int i) { return i % 2 == 0; });
 // v is a view, you can iterate over it!
 ```
 
   3. You can create a new *adaptor closure object* from an adaptor object that requires parameters by providing those:
 ```cpp
 std::vector vec{1, 2, 3, 4, 5};
-auto a = std::view::transform([] (int i) { return i + 1; });
+auto a = std::views::transform([] (int i) { return i + 1; });
 // a is an adaptor and can be used as such:
 auto v = vec | a;
 ```
@@ -96,8 +96,8 @@ auto v = vec | a;
   a range:
 ```cpp
 std::vector vec{1, 2, 3, 4, 5};
-auto a = std::view::transform([] (int i) { return i + 1; })
-       | std::view::filter([] (int i) { return i % 2 == 0; });
+auto a = std::views::transform([] (int i) { return i + 1; })
+       | std::views::filter([] (int i) { return i % 2 == 0; });
 // a is an adaptor and can be used as such:
 auto v = vec | a;
 ```
@@ -105,8 +105,8 @@ auto v = vec | a;
 | Terminology                    | Description                                                               | Example                                                                                                           |
 |--------------------------------|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
 | "view"                         | A type that models std::ranges::view.                                     | `std::ranges::filter_view<std::subrange<int const *, int const *>>`                                               |
-| "view adaptor object"          | Creates a view; can be combined with other adaptors.                      | `std::view::reverse` and <br> `std::view::filter` and <br> `(std::view::filter([] (int) { return true; }))`       |
-| "view adaptor closure object"  | A "view adaptor object" that requires no paramaters other than the range. | `std::view::reverse` and \strike{<tt>std::view::filter</tt> and} `(std::view::filter([] (int) { return true; }))` |
+| "view adaptor object"          | Creates a view; can be combined with other adaptors.                      | `std::views::reverse` and <br> `std::views::filter` and <br> `(std::views::filter([] (int) { return true; }))`       |
+| "view adaptor closure object"  | A "view adaptor object" that requires no paramaters other than the range. | `std::views::reverse` and \strike{<tt>std::views::filter</tt> and} `(std::views::filter([] (int) { return true; }))` |
 
 In many cases where you are planning on creating "a new view", it will be sufficient to use the previously
 mentioned techniques to just create "a new adaptor object" and not having to specify the actual view type yourself.
@@ -131,7 +131,7 @@ Define a *range adaptor object* using an existing adaptor which applies a concre
 (calling seqan3::to_char) on every element.
 
 \hint
-You need to need use `std::view::transform` and you need to set a fixed transformation function. `std::view::transform`
+You need to need use `std::views::transform` and you need to set a fixed transformation function. `std::views::transform`
 takes an object that models `std::regular_invocable`, e.g. a lambda function with empty capture `[]`.
 \endhint
 
@@ -142,7 +142,7 @@ takes an object that models `std::regular_invocable`, e.g. a lambda function wit
 
 \include doc/howto/write_a_view/view_exercise1.cpp
 
-You simply define your adaptor type as `auto` and make it behave like `std::view::transform`, except that you
+You simply define your adaptor type as `auto` and make it behave like `std::views::transform`, except that you
 "hard-code" the lambda function that is applied to each element.
 Since your adaptor object now takes a range as the only parameter, it is an adaptor closure object.
 
@@ -156,7 +156,7 @@ Study the `seqan3::nucleotide_alphabet`. It states that you can call `seqan3::co
 which will give you <tt>'A'_dna5</tt> for <tt>'T'_dna5</tt> a.s.o. Think about how you can adapt the previous solution
 to write a view that transforms ranges of nucleotides into their complement.
 
-BUT, we are also interested in *reversing* the range which is possible with `std::view::reverse`:
+BUT, we are also interested in *reversing* the range which is possible with `std::views::reverse`:
 
 \snippet doc/howto/write_a_view/view_exercise2.cpp start
 ```cpp
@@ -171,7 +171,7 @@ Define a *range adaptor object* that presents a view of the reverse complement o
 
 \include doc/howto/write_a_view/view_exercise2.cpp
 
-The adaptor consists of `std::view::reverse` combined with `std::view::transform`. This time the lambda just
+The adaptor consists of `std::views::reverse` combined with `std::views::transform`. This time the lambda just
 performs the call to `seqan3::complement`.
 \endsolution
 
@@ -374,11 +374,11 @@ The second constructor is more interesting, it takes a `std::ranges::viewable_ra
 being either a `std::ranges::view` or a reference to `std::ranges::range` that is not a view
 (e.g. `std::vector<char> &`).
 Since we have a constructor for `std::ranges::view` already, this one explicitly handles the second case
-and goes through `std::view::all` which wraps the reference in a thin view-layer.
+and goes through `std::views::all` which wraps the reference in a thin view-layer.
 Storing only a view member guarantess that our type itself is also cheap to copy among other things.
 
 Note that both of these constructors seem like generic functions, but they just handle the underlying type or a
-type that turns into the underlying when wrapped in `std::view::all`.
+type that turns into the underlying when wrapped in `std::views::all`.
 
 \snippet doc/howto/write_a_view/solution_view.cpp view_deduction_guide
 
@@ -421,10 +421,10 @@ function/constructor-style creation of view objects, therefore it defines two op
 \snippet doc/howto/write_a_view/solution_view.cpp adaptor_type_definition
 
 The first operator is very straight-forward, it simply delegates to the constructor of our view so that
-`view::my(FOO)` is identical to `my_view{FOO}`.
+`views::my(FOO)` is identical to `my_view{FOO}`.
 
 The second operator is declared as friend, because the left-hand-side of the `operator|` is generic, it's how
-the range is handled in snippets like `auto v = vec | view::my`.
+the range is handled in snippets like `auto v = vec | views::my`.
 
 \note
 This adaptor type does not yet provide the ability to combine multiple adaptors into a new adaptor, it only
@@ -447,7 +447,7 @@ The adaptor object is simply an instance of the previously defined type:
 
 \snippet doc/howto/write_a_view/solution_view.cpp adaptor_object_definition
 
-As noted above, we place this object in a `view::` sub-namespace by convention.
+As noted above, we place this object in a `views::` sub-namespace by convention.
 Since the object holds no state, we mark it as `constexpr` and since it's a global variable we also mark it as
 `inline` to prevent linkage issues.
 

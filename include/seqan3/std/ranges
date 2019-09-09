@@ -150,7 +150,7 @@ SEQAN3_CONCEPT contiguous_range = random_access_range<type> && ::ranges::Contigu
  * \extends std::semiregular
  * \extends std::ranges::viewable_range
  * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
- * \sa \ref view
+ * \sa \ref views
  * \sa https://en.cppreference.com/w/cpp/ranges/View
  */
 //!\cond
@@ -161,7 +161,7 @@ SEQAN3_CONCEPT view = range<type> && ::ranges::View<type>;
 /*!\interface std::ranges::viewable_range <>
  * \extends std::ranges::range
  * \brief Specifies the requirements of a Range type that is either a std::ranges::view or an lvalue-reference.
- * \sa \ref view
+ * \sa \ref views
  */
 //!\cond
 template <typename type>
@@ -324,7 +324,7 @@ using subrange_kind = ::ranges::subrange_kind;
  *
  * Preservation in this table refers to the properties of the iterator/sentinel pair.
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### STD module
  *
@@ -380,13 +380,13 @@ namespace std::ranges::views
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
  *
  * ```cpp
  * dna4_vector s{"ACTTTGATAN"_dna4};
- * auto v = std::view::all(s); // the same as std::ranges::subrange{begin(s), end(s)}
+ * auto v = std::views::all(s); // the same as std::ranges::subrange{begin(s), end(s)}
  * ```
  * \hideinitializer
  */
@@ -397,7 +397,7 @@ inline constexpr auto all = ::ranges::view::all;
 namespace std::ranges
 {
 
-//!\brief The type that would be returned by the std::view::all adaptor.
+//!\brief The type that would be returned by the std::views::all adaptor.
 template<viewable_range R>
 using all_view = decltype(views::all(declval<R>()));
 
@@ -432,19 +432,19 @@ namespace std::ranges::views
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
  *
  * ```cpp
  * dna5_vector s{"ACTNTGATAN"_dna5};
- * auto v1 = s | std::view::filter([](dna5 const l) { return (l != 'N'_dna5); }); // == "ACTTGATA"_dna5
+ * auto v1 = s | std::views::filter([](dna5 const l) { return (l != 'N'_dna5); }); // == "ACTTGATA"_dna5
  *
  * // this won't work (as of C++17), because std::find expects begin and end to be of the same type:
  * // auto it = std::find(begin(v1), end(v1), 'G'_dna5);
  *
  * // this will:
- * auto v2 = v1 | std::view::common;
+ * auto v2 = v1 | std::views::common;
  * auto it = std::find(begin(v2), end(v2), 'G'_dna5);
  * ```
  * \hideinitializer
@@ -480,7 +480,7 @@ inline constexpr auto common = ::ranges::view::common;
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \hideinitializer
  */
@@ -519,7 +519,7 @@ inline constexpr auto drop = ::ranges::view::drop;
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * This view only *preserves* certain concepts if and only if the specified functor also models
  * std::indirect_regular_unary_invocable<fun_t, reference_t<urng_t>, i.e.
@@ -557,13 +557,13 @@ inline constexpr auto drop_while = ::ranges::view::drop_while;
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
  *
  * ```cpp
  * dna5_vector s{"ACTNTGATAN"_dna5};
- * auto v1 = s | std::view::filter([](dna5 const l) { return (l != 'N'_dna5); }); // == "ACTTGATA"_dna5
+ * auto v1 = s | std::views::filter([](dna5 const l) { return (l != 'N'_dna5); }); // == "ACTTGATA"_dna5
  * ```
  * \hideinitializer
  */
@@ -603,7 +603,7 @@ namespace std::ranges
  * |                                  |                                                    |
  * | std::ranges::range_reference_t   | value_type &                                       |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \hideinitializer
  */
@@ -645,7 +645,7 @@ namespace std::ranges::views
  * | std::ranges::range_reference_t   | `init_t`                                                         |
  *
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \hideinitializer
  */
@@ -681,7 +681,7 @@ inline constexpr auto iota = ::ranges::view::iota;
  * ¹ This depends on `urng_t` **and** `seqan3::reference_t<urng_t>`.<br>
  * ² This also requires that `seqan3::reference_t<urng_t>` is an lvalue reference.
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \hideinitializer
  */
@@ -713,13 +713,13 @@ inline constexpr auto join = ::ranges::view::join;
  * |                                  |                                       |                                                      |
  * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                          |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
  *
  * ```cpp
  * std::string s{"ACTNTGATAN"};
- * auto v1 = s | std::view::reverse; // == "NATAGTNTCA"
+ * auto v1 = s | std::views::reverse; // == "NATAGTNTCA"
  * ```
  * \hideinitializer
  */
@@ -754,7 +754,7 @@ inline constexpr auto reverse = ::ranges::view::reverse;
  * |                                  |                                 |
  * | std::ranges::range_reference_t   | value_t &                       |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \hideinitializer
  */
@@ -790,7 +790,7 @@ inline constexpr auto single = ::ranges::view::single;
  * |                                  |                                       |                                  |                                 |
  * | std::ranges::range_reference_t   |                                       | *see to the right*              | seqan3::reference_t<urng_t>     |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \hideinitializer
  */
@@ -826,7 +826,7 @@ inline constexpr auto split = ::ranges::view::split;
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \hideinitializer
  */
@@ -865,7 +865,7 @@ inline constexpr auto take = ::ranges::view::take;
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * This view only *preserves* certain concepts if and only if the specified functor also models
  * std::indirect_regular_unary_invocable<fun_t, reference_t<urng_t>, i.e.
@@ -903,13 +903,13 @@ inline constexpr auto take_while = ::ranges::view::take_while;
  * |                                  |                                       |                                                      |
  * | std::ranges::range_reference_t   |                                       | `decltype(invocable(seqan3::reference_t<urng_t>{}))` |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
  *
  * ```cpp
  * std::string s{"ACTNTGATAN"};
- * auto v1 = s | std::view::transform([](dna4 const l) { return to_char(l); }); // == "ACTNTGATAN"
+ * auto v1 = s | std::views::transform([](dna4 const l) { return to_char(l); }); // == "ACTNTGATAN"
  * ```
  * \hideinitializer
  */
@@ -946,7 +946,7 @@ inline constexpr auto transform = ::ranges::view::transform;
  * The guarantees for the returned range type only hold if the respective requirements are met by **all underlying
  * ranges**.
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \hideinitializer
  */
@@ -957,7 +957,7 @@ inline constexpr auto zip = ::ranges::view::zip;
 // Import std::ranges::view as std::view
 namespace std
 {
-    namespace view = ::std::ranges::views;
+    namespace views = ::std::ranges::views;
 } // namespace std
 
 #endif

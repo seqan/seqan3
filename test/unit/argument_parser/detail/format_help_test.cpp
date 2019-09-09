@@ -16,8 +16,8 @@
 #include <seqan3/argument_parser/detail/format_help.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/view/take_until.hpp>
-#include <seqan3/range/view/drop.hpp>
+#include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/drop.hpp>
 
 using namespace seqan3;
 
@@ -64,7 +64,7 @@ TEST(help_page_printing, short_help)
                "============="
                "./some_binary_name synopsis"
                "Try -h or --help for more information.";
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, no_information)
@@ -78,7 +78,7 @@ TEST(help_page_printing, no_information)
                "===========" +
                basic_options_str +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, with_short_copyright)
@@ -96,7 +96,7 @@ TEST(help_page_printing, with_short_copyright)
                "LEGAL"
                "test_parser Copyright: short"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.";
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, with_long_copyright)
@@ -113,7 +113,7 @@ TEST(help_page_printing, with_long_copyright)
                "LEGAL"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                "For full copyright and/or warranty information see --copyright.";
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, with_citation)
@@ -130,7 +130,7 @@ TEST(help_page_printing, with_citation)
                "LEGAL"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                "In your academic works please cite: citation";
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, empty_advanced_help)
@@ -144,7 +144,7 @@ TEST(help_page_printing, empty_advanced_help)
                "===========" +
                basic_options_str +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, empty_version_call)
@@ -157,7 +157,7 @@ TEST(help_page_printing, empty_version_call)
     expected = "test_parser"
                "===========" +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, version_call)
@@ -176,7 +176,7 @@ TEST(help_page_printing, version_call)
                basic_version_str +
                "URL"
                "www.seqan.de";
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, do_not_print_hidden_options)
@@ -192,7 +192,7 @@ TEST(help_page_printing, do_not_print_hidden_options)
                "===========" +
                basic_options_str +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, full_information)
@@ -247,7 +247,7 @@ TEST(help_page_printing, full_information)
                "example\n"
                "example2" +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }
 
 TEST(help_page_printing, copyright)
@@ -263,8 +263,8 @@ TEST(help_page_printing, copyright)
         std::istreambuf_iterator<char>()
     };
 
-    detail::consume(sub | view::take_until_and_consume(is_char<'`'>));
-    std::string license_string{sub | view::drop(1) | view::take_until(is_char<'`'>)};
+    detail::consume(sub | views::take_until_and_consume(is_char<'`'>));
+    std::string license_string{sub | views::drop(1) | views::take_until(is_char<'`'>)};
 
     // Test --copyright with empty short and long copyright info.
     {
@@ -357,5 +357,5 @@ TEST(parse_test, subcommand_argument_parser)
                            "    foo bar. Default: 0.\n" +
                            basic_version_str;
 
-    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
 }

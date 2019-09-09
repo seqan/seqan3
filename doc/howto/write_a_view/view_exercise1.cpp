@@ -6,7 +6,7 @@
 using namespace seqan3;
 
 //![start]
-auto const my_convert_to_char_view = std::view::transform([] (auto const alph)
+auto const my_convert_to_char_view = std::views::transform([] (auto const alph)
 {
     return to_char(alph);
 });

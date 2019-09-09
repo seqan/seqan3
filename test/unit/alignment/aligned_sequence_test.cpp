@@ -11,8 +11,6 @@
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/range/view/persist.hpp>
-#include <seqan3/range/view/convert.hpp>
 
 #include "../alignment/aligned_sequence_test_template.hpp"
 

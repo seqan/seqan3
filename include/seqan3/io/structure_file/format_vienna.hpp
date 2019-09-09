@@ -41,12 +41,12 @@
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/view/char_to.hpp>
-#include <seqan3/range/view/istreambuf.hpp>
-#include <seqan3/range/view/to_char.hpp>
-#include <seqan3/range/view/take.hpp>
-#include <seqan3/range/view/take_line.hpp>
-#include <seqan3/range/view/take_until.hpp>
+#include <seqan3/range/views/char_to.hpp>
+#include <seqan3/range/views/istreambuf.hpp>
+#include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/take.hpp>
+#include <seqan3/range/views/take_line.hpp>
+#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
@@ -150,7 +150,7 @@ public:
               comment_type & SEQAN3_DOXYGEN_ONLY(comment),
               offset_type & SEQAN3_DOXYGEN_ONLY(offset))
     {
-        auto stream_view = view::istreambuf(stream);
+        auto stream_view = views::istreambuf(stream);
 
         // READ ID (if present)
         auto constexpr is_id = is_char<'>'>;
@@ -160,23 +160,23 @@ public:
             {
                 if (options.truncate_ids)
                 {
-                    std::ranges::copy(stream_view | std::view::drop_while(is_id || is_blank) // skip leading >
-                                                  | view::take_until_or_throw(is_cntrl || is_blank)
-                                                  | view::char_to<value_type_t<id_type>>,
+                    std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
+                                                  | views::take_until_or_throw(is_cntrl || is_blank)
+                                                  | views::char_to<value_type_t<id_type>>,
                                       std::back_inserter(id));
-                    detail::consume(stream_view | view::take_line_or_throw);
+                    detail::consume(stream_view | views::take_line_or_throw);
                 }
                 else
                 {
-                    std::ranges::copy(stream_view | std::view::drop_while(is_id || is_blank) // skip leading >
-                                                  | view::take_line_or_throw
-                                                  | view::char_to<value_type_t<id_type>>,
+                    std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
+                                                  | views::take_line_or_throw
+                                                  | views::char_to<value_type_t<id_type>>,
                                       std::back_inserter(id));
                 }
             }
             else
             {
-                detail::consume(stream_view | view::take_line_or_throw);
+                detail::consume(stream_view | views::take_line_or_throw);
             }
         }
         else if constexpr (!detail::decays_to_ignore_v<id_type>)
@@ -194,9 +194,9 @@ public:
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             auto constexpr is_legal_seq = is_in_alphabet<seq_legal_alph_type>;
-            std::ranges::copy(stream_view | view::take_line_or_throw                      // until end of line
-                                          | std::view::filter(!(is_space || is_digit)) // ignore whitespace and numbers
-                                          | std::view::transform([is_legal_seq](char const c)
+            std::ranges::copy(stream_view | views::take_line_or_throw                      // until end of line
+                                          | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
+                                          | std::views::transform([is_legal_seq](char const c)
                                             {
                                                 if (!is_legal_seq(c))                    // enforce legal alphabet
                                                 {
@@ -207,12 +207,12 @@ public:
                                                 }
                                               return c;
                                             })
-                                          | view::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
+                                          | views::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
                               std::back_inserter(seq));
         }
         else
         {
-            detail::consume(stream_view | view::take_line_or_throw);
+            detail::consume(stream_view | views::take_line_or_throw);
         }
 
         // READ STRUCTURE (if present)
@@ -249,14 +249,14 @@ public:
         }
         else
         {
-            detail::consume(stream_view | view::take_until(is_space)); // until whitespace
+            detail::consume(stream_view | views::take_until(is_space)); // until whitespace
         }
 
         // READ ENERGY (if present)
         if constexpr (!detail::decays_to_ignore_v<energy_type>)
         {
-            std::string e_str = stream_view | view::take_line
-                                            | std::view::filter(!(is_space || is_char<'('> || is_char<')'>));
+            std::string e_str = stream_view | views::take_line
+                                            | std::views::filter(!(is_space || is_char<'('> || is_char<')'>));
             if (!e_str.empty())
             {
                 size_t num_processed;
@@ -269,9 +269,9 @@ public:
         }
         else
         {
-            detail::consume(stream_view | view::take_line);
+            detail::consume(stream_view | views::take_line);
         }
-        detail::consume(stream_view | view::take_until(!is_space));
+        detail::consume(stream_view | views::take_until(!is_space));
     }
 
 private:
@@ -286,8 +286,8 @@ private:
     auto read_structure(stream_view_type & stream_view)
     {
         auto constexpr is_legal_structure = is_in_alphabet<alph_type>;
-        return stream_view | view::take_until(is_space) // until whitespace
-                           | std::view::transform([is_legal_structure](char const c)
+        return stream_view | views::take_until(is_space) // until whitespace
+                           | std::views::transform([is_legal_structure](char const c)
                              {
                                  if (!is_legal_structure(c))
                                  {
@@ -298,7 +298,7 @@ private:
                                  }
                                  return c;
                              })                                  // enforce legal alphabet
-                           | view::char_to<alph_type>;           // convert to actual target alphabet
+                           | views::char_to<alph_type>;           // convert to actual target alphabet
     }
 };
 
@@ -366,7 +366,7 @@ public:
             if (empty(seq)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing Vienna files."};
 
-            std::ranges::copy(seq | view::to_char, stream_it);
+            std::ranges::copy(seq | views::to_char, stream_it);
             detail::write_eol(stream_it, options.add_carriage_return);
         }
         else
@@ -379,7 +379,7 @@ public:
         if constexpr (!detail::decays_to_ignore_v<structure_type>)
         {
             if (!empty(structure))
-                std::ranges::copy(structure | view::to_char, stream_it);
+                std::ranges::copy(structure | views::to_char, stream_it);
 
             // WRITE ENERGY (optional)
             if constexpr (!detail::decays_to_ignore_v<energy_type>)

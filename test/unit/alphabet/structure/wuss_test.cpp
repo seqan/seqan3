@@ -39,7 +39,7 @@ TEST(wuss, assign_char)
         'H'_wuss51, 'B'_wuss51, 'E'_wuss51, 'G'_wuss51, 'I'_wuss51, 'T'_wuss51, 'S'_wuss51
     };
 
-    for (auto [ ch, cm ] : std::view::zip(input, cmp))
+    for (auto [ ch, cm ] : std::views::zip(input, cmp))
         EXPECT_EQ((assign_char_to(ch, wuss51{})), cm);
 }
 

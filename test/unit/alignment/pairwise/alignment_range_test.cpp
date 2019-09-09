@@ -12,7 +12,7 @@
 #include <range/v3/view/iota.hpp>
 
 #include <seqan3/alignment/pairwise/alignment_range.hpp>
-#include <seqan3/range/view/single_pass_input.hpp>
+#include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/shortcuts.hpp>
 
 using namespace seqan3;
@@ -41,7 +41,7 @@ struct dummy_executor
 
 private:
 
-    detail::single_pass_input_view<decltype(ranges::view::iota(0u, 10u))> generator{ranges::view::iota(0u, 10u)};
+    detail::single_pass_input_view<decltype(std::views::iota(0u, 10u))> generator{std::views::iota(0u, 10u)};
 };
 
 TEST(alignment_range, concept_test)

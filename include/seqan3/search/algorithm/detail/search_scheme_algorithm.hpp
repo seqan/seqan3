@@ -15,7 +15,7 @@
 #include <type_traits>
 
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
-#include <seqan3/range/view/slice.hpp>
+#include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/algorithm/detail/search_common.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_precomputed.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
@@ -180,7 +180,7 @@ inline bool search_ss_exact(cursor_t cur, query_t & query,
         size_type const infix_lb = rb - 1; // inclusive
         size_type const infix_rb = lb + blocks_length[block_id] - 1; // exclusive
 
-        if (!cur.extend_right(query | view::slice(infix_lb, infix_rb + 1)))
+        if (!cur.extend_right(query | views::slice(infix_lb, infix_rb + 1)))
             return false;
 
         if (search_ss<abort_on_hit>(cur, query, lb, infix_rb + 2, errors_spent, block_id2, go_right2, search,
@@ -194,7 +194,7 @@ inline bool search_ss_exact(cursor_t cur, query_t & query,
         size_type const infix_lb = rb - blocks_length[block_id] - 1; // inclusive
         size_type const infix_rb = lb - 1; // inclusive
 
-        if (!cur.extend_left(query | view::slice(infix_lb, infix_rb + 1)))
+        if (!cur.extend_left(query | views::slice(infix_lb, infix_rb + 1)))
             return false;
 
         if (search_ss<abort_on_hit>(cur, query, infix_lb, rb, errors_spent, block_id2, go_right2, search, blocks_length,

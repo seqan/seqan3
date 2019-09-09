@@ -14,7 +14,7 @@
 
 #include <seqan3/alignment/band/static_band.hpp>
 #include <seqan3/alignment/pairwise/policy/banded_score_dp_matrix_policy.hpp>
-#include <seqan3/range/view/take_exactly.hpp>
+#include <seqan3/range/views/take_exactly.hpp>
 
 template <typename alloc_type>
 class banded_score_dp_matrix_policy_mock :
@@ -120,7 +120,7 @@ TEST(banded_score_dp_matrix_policy, current_band_size)
     auto mock = mock_factory(static_band{lower_bound{-7}, upper_bound{5}});
 
     // Current band size is band_row_index + 1.
-    for (auto s : std::view::iota(0u, 6u))
+    for (auto s : std::views::iota(0u, 6u))
     {
         // Band increases by one as long as it is
         EXPECT_EQ(mock.current_band_size(), 8 + s);
@@ -128,7 +128,7 @@ TEST(banded_score_dp_matrix_policy, current_band_size)
     }
 
     // After that the band size does not change until the end of second range is reached.
-    for ([[maybe_unused]] auto s : std::view::iota(6u, 11u))
+    for ([[maybe_unused]] auto s : std::views::iota(6u, 11u))
     {
         // Band increases by one as long as it is
         EXPECT_EQ(mock.current_band_size(), 13u);
@@ -136,7 +136,7 @@ TEST(banded_score_dp_matrix_policy, current_band_size)
     }
 
     // When the band reaches the end it will be decreased by one
-    for (auto s : std::view::iota(11u, 14u))
+    for (auto s : std::views::iota(11u, 14u))
     {
         // Band increases by one as long as it is
         EXPECT_EQ(mock.current_band_size(), 13 - (s - 10u));
@@ -161,7 +161,7 @@ TEST(banded_score_dp_matrix_policy, current_column)
         std::get<0>(std::forward<decltype(tpl)>(tpl)) = std::tuple{-1, -1, std::ignore};
     }
 
-    for (auto && tpl : col | view::take_exactly(3u))
+    for (auto && tpl : col | views::take_exactly(3u))
     {
         int first;
         int second;
@@ -231,15 +231,15 @@ TEST(banded_score_dp_matrix_policy, trim_sequences)
         static_band band{lower_bound{3}, upper_bound{4}};
 
         auto [t_seq1, t_seq2] = mock.trim_sequences(seq1, seq2, band);
-        EXPECT_TRUE(ranges::equal(t_seq1, seq1 | std::view::drop(2)));
-        EXPECT_TRUE(ranges::equal(t_seq2, seq2 | view::take_exactly(7)));
+        EXPECT_TRUE(ranges::equal(t_seq1, seq1 | std::views::drop(2)));
+        EXPECT_TRUE(ranges::equal(t_seq2, seq2 | views::take_exactly(7)));
     }
 
     {
         static_band band{lower_bound{-5}, upper_bound{-3}};
 
         auto [t_seq1, t_seq2] = mock.trim_sequences(seq1, seq2, band);
-        EXPECT_TRUE(ranges::equal(t_seq1, seq1 | view::take_exactly(7)));
-        EXPECT_TRUE(ranges::equal(t_seq2, seq2 | std::view::drop(2)));
+        EXPECT_TRUE(ranges::equal(t_seq1, seq1 | views::take_exactly(7)));
+        EXPECT_TRUE(ranges::equal(t_seq2, seq2 | std::views::drop(2)));
     }
 }

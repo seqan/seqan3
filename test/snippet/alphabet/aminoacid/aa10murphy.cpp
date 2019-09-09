@@ -1,7 +1,7 @@
 #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/views/convert.hpp>
 
 using seqan3::operator""_aa10murphy;
 using seqan3::operator""_aa27;
@@ -19,7 +19,7 @@ int main()
 
     // Convert aa27 alphabet to aa10_murphy
     seqan3::aa27_vector v1{"AVRSTXOUB"_aa27};
-    auto v2 = v1 | seqan3::view::convert<seqan3::aa10murphy>; // AIKSSSKCB
+    auto v2 = v1 | seqan3::views::convert<seqan3::aa10murphy>; // AIKSSSKCB
 
     seqan3::debug_stream << v2 << "\n";
 

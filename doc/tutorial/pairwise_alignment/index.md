@@ -67,7 +67,7 @@ Add the two sequences "ACGTGACTGACT" and "AGGTACGAGCGACACT" to the set and compu
 of the four sequences and output the scores.
 
 \hint
-You can use the seqan3::view::pairwise_combine to generate all pairwise combinations.
+You can use the seqan3::views::pairwise_combine to generate all pairwise combinations.
 \endhint
 \endassignment
 \solution
@@ -319,7 +319,7 @@ Compute all pairwise alignments from the assignment 1 (only the scores). Only al
 filter all alignments with 6 or less errors.
 
 \hint
-You can use the std::view::filter to get only those alignments that fit the requirements.
+You can use the std::views::filter to get only those alignments that fit the requirements.
 \endhint
 
 \endassignment

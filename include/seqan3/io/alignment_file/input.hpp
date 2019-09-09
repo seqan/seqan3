@@ -38,8 +38,8 @@
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
-#include <seqan3/range/view/repeat_n.hpp>
-#include <seqan3/range/view/slice.hpp>
+#include <seqan3/range/views/repeat_n.hpp>
+#include <seqan3/range/views/slice.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
@@ -152,7 +152,7 @@ SEQAN3_CONCEPT alignment_file_input_traits = requires (t v)
     // Type of tuple entry 1 (reference) is set to
     // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
-    // view::repeat_n(sequence_alphabet{}, size_t{}) | std::view::transform(detail::access_restrictor_fn{})
+    // views::repeat_n(sequence_alphabet{}, size_t{}) | std::views::transform(detail::access_restrictor_fn{})
     // Type of tuple entry 2 (query) is set to
     // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
@@ -398,8 +398,8 @@ public:
 
 private:
     //!\brief The dummy ref sequence type if no reference information were given.
-    using dummy_ref_type = decltype(view::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
-                                    std::view::transform(detail::access_restrictor_fn{}));
+    using dummy_ref_type = decltype(views::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
+                                    std::views::transform(detail::access_restrictor_fn{}));
 public:
     /*!\name Field types and record type
      * \brief These types are relevant for record/row-based reading; they may be manipulated via the \ref traits_type
@@ -425,7 +425,7 @@ public:
                                                      detail::transformation_trait_or_t<
                                                         seqan3::reference<typename traits_type::ref_sequences const>,
                                                         dummy_ref_type> /* does not matter as type is not chosen */
-                                                     >() | view::slice(0, 0))>;
+                                                     >() | views::slice(0, 0))>;
     /*!\brief The type of field::REF_ID is fixed to std::optional<int32_t>.
      *
      * To be consistent with the BAM format, the field::REF_ID will hold the index to the actual reference
@@ -462,7 +462,7 @@ private:
     using alignment_query_type = std::conditional_t<
                                      selected_field_ids::contains(field::SEQ),
                                      gap_decorator<
-                                         decltype(std::declval<sequence_type &>() | view::slice(0, 0))>,
+                                         decltype(std::declval<sequence_type &>() | views::slice(0, 0))>,
                                      typename traits_type::template sequence_container<
                                          gapped<typename traits_type::sequence_alphabet>>>;
 

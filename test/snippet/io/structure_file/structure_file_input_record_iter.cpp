@@ -3,8 +3,7 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/io/structure_file/input.hpp>
-#include <seqan3/range/view/get.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/to_char.hpp>
 
 auto input = R"(> S.cerevisiae_tRNA-PHE M10740/1-73
 ACEWACEW
@@ -29,7 +28,7 @@ int main()
     {
         seqan3::debug_stream << "ID: "        << get<seqan3::field::ID>(rec)                                  << '\n';
         // sequence and structure are converted to char on-the-fly
-        seqan3::debug_stream << "SEQ: "       << (get<seqan3::field::SEQ>(rec) | seqan3::view::to_char)       << '\n';
-        seqan3::debug_stream << "STRUCTURE: " << (get<seqan3::field::STRUCTURE>(rec) | seqan3::view::to_char) << '\n';
+        seqan3::debug_stream << "SEQ: "       << (get<seqan3::field::SEQ>(rec) | seqan3::views::to_char)       << '\n';
+        seqan3::debug_stream << "STRUCTURE: " << (get<seqan3::field::STRUCTURE>(rec) | seqan3::views::to_char) << '\n';
     }
 }

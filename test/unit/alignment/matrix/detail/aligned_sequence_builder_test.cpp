@@ -15,7 +15,7 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/algorithm>
 
 using namespace seqan3;
@@ -100,8 +100,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_3)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 2u);
     EXPECT_EQ(end.col, 3u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"--ACG"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"AG---"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"--ACG"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"AG---"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_2)
@@ -113,8 +113,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_2)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 2u);
     EXPECT_EQ(end.col, 2u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"AC"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"AG"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"AC"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"AG"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_1)
@@ -126,8 +126,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_1)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 2u);
     EXPECT_EQ(end.col, 1u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"A--"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"-AG"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"A--"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"-AG"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_0)
@@ -139,8 +139,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_0)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 2u);
     EXPECT_EQ(end.col, 0u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"--"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"AG"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"--"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"AG"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_3)
@@ -152,8 +152,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_3)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 1u);
     EXPECT_EQ(end.col, 3u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"ACG"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"--A"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"ACG"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"--A"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_2)
@@ -165,8 +165,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_2)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 1u);
     EXPECT_EQ(end.col, 2u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"-AC"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"A--"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"-AC"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"A--"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_1)
@@ -178,8 +178,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_1)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 1u);
     EXPECT_EQ(end.col, 1u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"A"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"A"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"A"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"A"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_0)
@@ -191,8 +191,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_0)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 1u);
     EXPECT_EQ(end.col, 0u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"-"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"A"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"-"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"A"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_3)
@@ -204,8 +204,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_3)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 0u);
     EXPECT_EQ(end.col, 3u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"ACG"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"---"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"ACG"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"---"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_2)
@@ -217,8 +217,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_2)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 0u);
     EXPECT_EQ(end.col, 2u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"AC"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"--"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"AC"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"--"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_1)
@@ -230,8 +230,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_1)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 0u);
     EXPECT_EQ(end.col, 1u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"A"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"-"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"A"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"-"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_0)
@@ -243,8 +243,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_0)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 0u);
     EXPECT_EQ(end.col, 0u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{""});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{""});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{""});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{""});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, both_empty)
@@ -261,8 +261,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, both_empty)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 0u);
     EXPECT_EQ(end.col, 0u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{""});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{""});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{""});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{""});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, first_empty)
@@ -278,8 +278,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, first_empty)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 2u);
     EXPECT_EQ(end.col, 0u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"--"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"AG"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"--"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"AG"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, second_empty)
@@ -295,6 +295,6 @@ TYPED_TEST(aligned_sequence_builder_fixture, second_empty)
     EXPECT_EQ(begin.col, 0u);
     EXPECT_EQ(end.row, 0u);
     EXPECT_EQ(end.col, 3u);
-    EXPECT_EQ(alignment.first  | view::to_char | std::ranges::to<std::string>, std::string{"ACG"});
-    EXPECT_EQ(alignment.second | view::to_char | std::ranges::to<std::string>, std::string{"---"});
+    EXPECT_EQ(alignment.first  | views::to_char | std::ranges::to<std::string>, std::string{"ACG"});
+    EXPECT_EQ(alignment.second | views::to_char | std::ranges::to<std::string>, std::string{"---"});
 }

@@ -18,7 +18,7 @@
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/io/structure_file/input_format_concept.hpp>
 #include <seqan3/io/structure_file/output_format_concept.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
 
 using namespace seqan3;
@@ -104,7 +104,7 @@ struct read : public ::testing::Test
     void bpp_test(std::vector<uint8_t> const & bpp_comp)
     {
         size_t cnt = 0ul;
-        auto interaction_sets = bpp | std::view::filter([] (auto & set) { return set.size() == 1; });
+        auto interaction_sets = bpp | std::views::filter([] (auto & set) { return set.size() == 1; });
         for (auto & iset : interaction_sets)
         {
             EXPECT_EQ(iset.size(), 1u);
@@ -290,8 +290,8 @@ TEST_F(read_fields, structured_seq)
     {
         EXPECT_NO_THROW(( format.read(istream, opt, structured_seq, ig, ig, structured_seq, ig, ig, ig, ig, ig) ));
 
-        EXPECT_TRUE(std::ranges::equal(structured_seq | view::convert<rna4>, expected_seq[idx]));
-        EXPECT_TRUE(std::ranges::equal(structured_seq | view::convert<dot_bracket3>, expected_structure[idx]));
+        EXPECT_TRUE(std::ranges::equal(structured_seq | views::convert<rna4>, expected_seq[idx]));
+        EXPECT_TRUE(std::ranges::equal(structured_seq | views::convert<dot_bracket3>, expected_structure[idx]));
         structured_seq.clear();
     }
 }
@@ -622,10 +622,10 @@ TEST_F(write_fields, structured_seq)
     {
         EXPECT_NO_THROW(format.write(ostream,
                                      options,
-                                     structured_seq[i] | view::convert<rna4>,
+                                     structured_seq[i] | views::convert<rna4>,
                                      ig,
                                      ig,
-                                     structured_seq[i] | view::convert<dot_bracket3>,
+                                     structured_seq[i] | views::convert<dot_bracket3>,
                                      ig,
                                      ig,
                                      ig,

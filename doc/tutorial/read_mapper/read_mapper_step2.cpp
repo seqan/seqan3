@@ -50,7 +50,7 @@ void map_reads(std::filesystem::path const & query_path,
     configuration const search_config = search_cfg::max_error{search_cfg::total{errors}} |
                                         search_cfg::mode{search_cfg::all_best};
 
-    for (auto & [query, id, qual] : query_in | view::take(20))
+    for (auto & [query, id, qual] : query_in | views::take(20))
     {
         auto positions = search(query, index, search_config);
         debug_stream << "id:           " << id << '\n';

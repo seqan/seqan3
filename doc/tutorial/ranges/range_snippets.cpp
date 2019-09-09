@@ -9,7 +9,7 @@ int main()
 //![def]
 std::vector vec{1, 2, 3, 4, 5, 6};
 //![rev_def]
-auto v = std::view::reverse(vec);
+auto v = std::views::reverse(vec);
 //![rev_def]
 //![def]
 
@@ -21,7 +21,7 @@ std::cout << *v.begin() << '\n';
 //![assign_through]
 //![piped]
 std::vector vec{1, 2, 3, 4, 5, 6};
-auto v = vec | std::view::reverse | std::view::drop(2);
+auto v = vec | std::views::reverse | std::views::drop(2);
 
 std::cout << *v.begin() << '\n';
 //![piped]
@@ -32,8 +32,8 @@ std::cout << *v.begin() << '\n';
 {
 //![solution1]
 std::vector vec{1, 2, 3, 4, 5, 6};
-auto v = vec | std::view::filter(   [] (auto const i) { return i % 2 == 0; })
-             | std::view::transform([] (auto const i) { return i*i; });
+auto v = vec | std::views::filter(   [] (auto const i) { return i % 2 == 0; })
+             | std::views::transform([] (auto const i) { return i*i; });
 
 std::cout << *v.begin() << '\n'; // prints 4
 //![solution1]

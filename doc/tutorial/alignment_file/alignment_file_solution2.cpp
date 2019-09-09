@@ -66,7 +66,7 @@ int main()
                                       ref_seqs,
                                       fields<field::ID,field::REF_ID, field::MAPQ, field::ALIGNMENT>{}};
 
-    auto mapq_filter = std::view::filter([] (auto & rec) { return get<field::MAPQ>(rec) >= 30; });
+    auto mapq_filter = std::views::filter([] (auto & rec) { return get<field::MAPQ>(rec) >= 30; });
 
     for (auto & [id, ref_id, mapq, alignment] : mapping_file | mapq_filter)
     {

@@ -37,8 +37,8 @@
 #include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
-#include <seqan3/range/view/convert.hpp>
-#include <seqan3/range/view/get.hpp>
+#include <seqan3/range/views/convert.hpp>
+#include <seqan3/range/views/get.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -694,10 +694,10 @@ protected:
             {
                 f.write(*secondary_stream,
                         options,
-                        structured_seq | view::get<0>,
+                        structured_seq | views::get<0>,
                         id,
                         bpp,
-                        structured_seq | view::get<1>,
+                        structured_seq | views::get<1>,
                         energy,
                         react,
                         react_error,
@@ -764,16 +764,16 @@ protected:
         {
             if constexpr (!detail::decays_to_ignore_v<reference_t<structured_seq_type>>)
             {
-                auto zipped = std::view::zip(structured_seq, id, bpp, energy, react, react_error, comment, offset);
+                auto zipped = std::views::zip(structured_seq, id, bpp, energy, react, react_error, comment, offset);
 
                 for (auto && v : zipped)
                 {
                     f.write(*secondary_stream,
                             options,
-                            std::get<0>(v) | view::get<0>, // seq
+                            std::get<0>(v) | views::get<0>, // seq
                             std::get<1>(v),  // id
                             std::get<2>(v),  // bpp
-                            std::get<0>(v) | view::get<1>, // structure
+                            std::get<0>(v) | views::get<1>, // structure
                             std::get<3>(v),  // energy
                             std::get<4>(v),  // react
                             std::get<5>(v),  // react_error
@@ -783,7 +783,7 @@ protected:
             }
             else
             {
-                auto zipped = std::view::zip(seq, id, bpp, structure, energy, react, react_error, comment, offset);
+                auto zipped = std::views::zip(seq, id, bpp, structure, energy, react, react_error, comment, offset);
 
                 for (auto && v : zipped)
                 {

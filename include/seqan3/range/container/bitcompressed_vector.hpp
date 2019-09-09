@@ -21,9 +21,9 @@
 #include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
-#include <seqan3/range/view/to_char.hpp>
-#include <seqan3/range/view/to_rank.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/to_rank.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -760,8 +760,8 @@ public:
         auto const pos_as_num = std::distance(cbegin(), pos);
 
         auto v = std::ranges::subrange<begin_iterator_type, end_iterator_type>{begin_it, end_it}
-               | view::convert<value_type>
-               | view::to_rank;
+               | views::convert<value_type>
+               | views::to_rank;
         data.insert(data.begin() + pos_as_num, seqan3::begin(v), seqan3::end(v));
 
         return begin() + pos_as_num;

@@ -36,12 +36,12 @@
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/view/char_to.hpp>
-#include <seqan3/range/view/istreambuf.hpp>
-#include <seqan3/range/view/repeat_n.hpp>
-#include <seqan3/range/view/slice.hpp>
-#include <seqan3/range/view/take_until.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/char_to.hpp>
+#include <seqan3/range/views/istreambuf.hpp>
+#include <seqan3/range/views/repeat_n.hpp>
+#include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
@@ -204,8 +204,8 @@ public:
                       detail::is_type_specialisation_of_v<ref_offset_type, std::optional>,
                       "The ref_offset must be a specialisation of std::optional.");
 
-        auto stream_view = view::istreambuf(stream);
-        auto field_view = stream_view | view::take_until_or_throw_and_consume(is_char<'\t'>);
+        auto stream_view = views::istreambuf(stream);
+        auto field_view = stream_view | views::take_until_or_throw_and_consume(is_char<'\t'>);
 
         // these variables need to be stored to compute the ALIGNMENT
         int32_t ref_offset_tmp{};
@@ -309,7 +309,7 @@ public:
         if (!is_char<'*'>(*std::ranges::begin(stream_view))) // sequence information is given
         {
             auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-            auto seq_stream = field_view | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
+            auto seq_stream = field_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                            {
                                                if (!is_legal_alph(c))
                                                    throw format_error{std::string{"Encountered an unexpected letter: "} +
@@ -360,7 +360,7 @@ public:
                     if (!cigar.empty()) // if no alignment info is given, the field::ALIGNMENT should remain empty
                     {
                         assign_unaligned(get<1>(align),
-                                         seq | view::slice(static_cast<decltype(std::ranges::size(seq))>(offset_tmp),
+                                         seq | views::slice(static_cast<decltype(std::ranges::size(seq))>(offset_tmp),
                                                            std::ranges::size(seq) - soft_clipping_end));
                     }
                 }
@@ -374,7 +374,7 @@ public:
         // Field 11:  Quality
         // -------------------------------------------------------------------------------------------------------------
         auto const tab_or_end = is_char<'\t'> || is_char<'\r'> || is_char<'\n'>;
-        read_field(stream_view | view::take_until_or_throw(tab_or_end), qual);
+        read_field(stream_view | views::take_until_or_throw(tab_or_end), qual);
 
         if constexpr (!detail::decays_to_ignore_v<seq_type> && !detail::decays_to_ignore_v<qual_type>)
         {
@@ -391,10 +391,10 @@ public:
         while (is_char<'\t'>(*std::ranges::begin(stream_view))) // read all tags if present
         {
             std::ranges::next(std::ranges::begin(stream_view)); // skip tab
-            read_field(stream_view | view::take_until_or_throw(tab_or_end), tag_dict);
+            read_field(stream_view | views::take_until_or_throw(tab_or_end), tag_dict);
         }
 
-        detail::consume(stream_view | view::take_until(!(is_char<'\r'> || is_char<'\n'>))); // consume new line
+        detail::consume(stream_view | views::take_until(!(is_char<'\r'> || is_char<'\n'>))); // consume new line
 
         // DONE READING - wrap up
         // -------------------------------------------------------------------------------------------------------------
@@ -426,7 +426,7 @@ protected:
     bool ref_info_present_in_header{false};
 
     /*!\brief Checks for known reference ids or adds a new reference is and assigns a reference id to `ref_id`.
-     * \tparam ref_id_type         The type of the reference id (usually a view::all over ref_id_tmp_type).
+     * \tparam ref_id_type         The type of the reference id (usually a views::all over ref_id_tmp_type).
      * \tparam ref_id_tmp_type     The type of the temporary parsed id (same_as type as reference ids in header).
      * \tparam header_type         The type of the alignment header.
      * \tparam ref_seqs_type       A tag whether the reference information were given or not (std::ignore or not).
@@ -502,18 +502,18 @@ protected:
             {
                 assert(static_cast<size_t>(ref_start + ref_length) <= std::ranges::size(ref_seqs[rid]));
                 // copy over unaligned reference sequence part
-                assign_unaligned(get<0>(align), ref_seqs[rid] | view::slice(ref_start, ref_start + ref_length));
+                assign_unaligned(get<0>(align), ref_seqs[rid] | views::slice(ref_start, ref_start + ref_length));
             }
             else
             {
                 using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-                auto dummy_seq    = view::repeat_n(value_type_t<unaligned_t>{}, ref_length)
-                                  | std::view::transform(detail::access_restrictor_fn{});
+                auto dummy_seq    = views::repeat_n(value_type_t<unaligned_t>{}, ref_length)
+                                  | std::views::transform(detail::access_restrictor_fn{});
                 static_assert(std::same_as<unaligned_t, decltype(dummy_seq)>,
                               "No reference information was given so the type of the first alignment tuple position"
                               "must have an unaligned sequence type of a dummy sequence ("
-                              "view::repeat_n(dna5{}, size_t{}) | "
-                              "std::view::transform(detail::access_restrictor_fn{}))");
+                              "views::repeat_n(dna5{}, size_t{}) | "
+                              "std::views::transform(detail::access_restrictor_fn{}))");
 
                 assign_unaligned(get<0>(align), dummy_seq); // assign dummy sequence
             }
@@ -526,13 +526,13 @@ protected:
             if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference info given
             {
                 assert(std::ranges::size(ref_seqs) > 0); // we assume that the given ref info is not empty
-                assign_unaligned(get<0>(align), ref_seqs[0] | view::slice(0, 0));
+                assign_unaligned(get<0>(align), ref_seqs[0] | views::slice(0, 0));
             }
             else
             {
                 using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-                assign_unaligned(get<0>(align), view::repeat_n(value_type_t<unaligned_t>{}, 0)
-                                                | std::view::transform(detail::access_restrictor_fn{}));
+                assign_unaligned(get<0>(align), views::repeat_n(value_type_t<unaligned_t>{}, 0)
+                                                | std::views::transform(detail::access_restrictor_fn{}));
             }
         }
     }
@@ -549,7 +549,7 @@ protected:
         detail::consume(stream_view);
     }
 
-    /*!\brief Reads a range by copying from stream_view to target, converting values with seqan3::view::char_to.
+    /*!\brief Reads a range by copying from stream_view to target, converting values with seqan3::views::char_to.
      * \tparam stream_view_type  The type of the stream as a view.
      * \tparam target_range_type The type of range to parse from input; must model std::ranges::forward_range.
      *
@@ -560,7 +560,7 @@ protected:
     void read_field(stream_view_type && stream_view, target_range_type & target)
     {
         if (!is_char<'*'>(*std::ranges::begin(stream_view)))
-            std::ranges::copy(stream_view | view::char_to<value_type_t<target_range_type>>,
+            std::ranges::copy(stream_view | views::char_to<value_type_t<target_range_type>>,
                               std::back_inserter(target));
         else
             std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
@@ -638,7 +638,7 @@ protected:
         std::vector<value_type> tmp_vector;
         while (std::ranges::begin(stream_view) != ranges::end(stream_view)) // not fully consumed yet
         {
-            read_field(stream_view | view::take_until(is_char<','>), value);
+            read_field(stream_view | views::take_until(is_char<','>), value);
             tmp_vector.push_back(value);
 
             if (is_char<','>(*std::ranges::begin(stream_view)))
@@ -792,9 +792,9 @@ protected:
     {
         auto parse_tag_value = [&stream_view, this] (auto & value) // helper function to parse the next tag value
         {
-            detail::consume(stream_view | view::take_until_or_throw(is_char<':'>)); // skip tag name
+            detail::consume(stream_view | views::take_until_or_throw(is_char<':'>)); // skip tag name
             std::ranges::next(std::ranges::begin(stream_view));                     // skip ':'
-            read_field(stream_view | view::take_until_or_throw(is_char<'\t'> || is_char<'\n'>), value);
+            read_field(stream_view | views::take_until_or_throw(is_char<'\t'> || is_char<'\n'>), value);
         };
 
         // @HQ line
@@ -848,7 +848,7 @@ protected:
                 if (is_char<'\t'>(*std::ranges::begin(stream_view)))         // read rest of the tags
                 {
                     std::ranges::next(std::ranges::begin(stream_view));      // skip tab
-                    read_field(stream_view | view::take_until_or_throw(is_char<'\n'>), get<1>(info));
+                    read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), get<1>(info));
                 }
                 std::ranges::next(std::ranges::begin(stream_view));          // skip newline
 
@@ -889,7 +889,7 @@ protected:
                 if (is_char<'\t'>(*std::ranges::begin(stream_view)))         // read rest of the tags
                 {
                     std::ranges::next(std::ranges::begin(stream_view));
-                    read_field(stream_view | view::take_until_or_throw(is_char<'\n'>), get<1>(tmp));
+                    read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), get<1>(tmp));
                 }
                 std::ranges::next(std::ranges::begin(stream_view));          // skip newline
 
@@ -942,7 +942,7 @@ protected:
                 std::ranges::next(std::ranges::begin(stream_view)); // skip C
                 std::ranges::next(std::ranges::begin(stream_view)); // skip O
                 std::ranges::next(std::ranges::begin(stream_view)); // skip :
-                read_field(stream_view | view::take_until_or_throw(is_char<'\n'>), tmp);
+                read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), tmp);
                 std::ranges::next(std::ranges::begin(stream_view)); // skip newline
 
                 hdr.comments.emplace_back(std::move(tmp));
@@ -1269,7 +1269,7 @@ protected:
         if (std::ranges::empty(field_value))
             stream_it = '*';
         else
-            std::ranges::copy(field_value | view::to_char, stream_it);
+            std::ranges::copy(field_value | views::to_char, stream_it);
     }
 
     /*!\brief Writes a field value to the stream.
@@ -1422,7 +1422,7 @@ protected:
         detail::write_eol(stream_it, options.add_carriage_return);
 
         // (@SQ) Write Reference Sequence Dictionary lines [required].
-        for (auto const & [ref_name, ref_info] : std::view::zip(header.ref_ids(), header.ref_id_info))
+        for (auto const & [ref_name, ref_info] : std::views::zip(header.ref_ids(), header.ref_id_info))
         {
             stream << "@SQ\tSN:";
 

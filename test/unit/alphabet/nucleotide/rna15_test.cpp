@@ -80,6 +80,6 @@ TEST(rna15, char_is_valid)
                             || is_char<'M'> || is_char<'B'> || is_char<'D'> || is_char<'H'> || is_char<'V'>
                             || is_char<'r'> || is_char<'y'> || is_char<'s'> || is_char<'w'> || is_char<'k'>
                             || is_char<'m'> || is_char<'b'> || is_char<'d'> || is_char<'h'> || is_char<'v'>;
-    for (char c : std::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
+    for (char c : std::views::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
         EXPECT_EQ(rna15::char_is_valid(c), validator(c));
 }

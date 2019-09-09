@@ -19,7 +19,7 @@ int main()
 
     seqan3::alignment_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
 
-    auto minimum_length10_filter = std::view::filter([] (auto const & rec)
+    auto minimum_length10_filter = std::views::filter([] (auto const & rec)
     {
         return std::ranges::size(get<seqan3::field::SEQ>(rec)) >= 10;
     });

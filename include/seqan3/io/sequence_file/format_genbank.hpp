@@ -29,13 +29,13 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/view/char_to.hpp>
-#include <seqan3/range/view/interleave.hpp>
-#include <seqan3/range/view/istreambuf.hpp>
-#include <seqan3/range/view/to_char.hpp>
-#include <seqan3/range/view/take.hpp>
-#include <seqan3/range/view/take_line.hpp>
-#include <seqan3/range/view/take_until.hpp>
+#include <seqan3/range/views/char_to.hpp>
+#include <seqan3/range/views/interleave.hpp>
+#include <seqan3/range/views/istreambuf.hpp>
+#include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/take.hpp>
+#include <seqan3/range/views/take_line.hpp>
+#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/ranges>
@@ -119,10 +119,10 @@ public:
               id_type                                                                   & id,
               qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = view::istreambuf(stream);
+        auto stream_view = views::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
 
-        if (!(std::ranges::equal(stream_view | view::take_until_or_throw(is_cntrl || is_blank), std::string{"LOCUS"})))
+        if (!(std::ranges::equal(stream_view | views::take_until_or_throw(is_cntrl || is_blank), std::string{"LOCUS"})))
             throw parse_error{"An entry has to start with the code word LOCUS."};
 
         //ID
@@ -134,36 +134,36 @@ public:
 
                 while (!is_char<'O'>(*std::ranges::begin(stream_view)))
                 {
-                        std::ranges::copy(stream_view | view::take_line_or_throw
-                                                      | view::char_to<value_type_t<id_type>>,
+                        std::ranges::copy(stream_view | views::take_line_or_throw
+                                                      | views::char_to<value_type_t<id_type>>,
                                                         std::back_inserter(id));
                         id.push_back('\n');
                 }
             }
             else
             {
-                detail::consume(stream_view | view::take_until(!is_blank));
+                detail::consume(stream_view | views::take_until(!is_blank));
                 // read id
-                std::ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank)
-                                              | view::char_to<value_type_t<id_type>>,
+                std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank)
+                                              | views::char_to<value_type_t<id_type>>,
                                                 std::back_inserter(id));
-                detail::consume(stream_view | view::take_line_or_throw);
+                detail::consume(stream_view | views::take_line_or_throw);
             }
         }
 
         // Jump to sequence
         while (!(is_char<'O'>(*std::ranges::begin(stream_view)) || options.embl_genbank_complete_header))
-            detail::consume(stream_view | view::take_line_or_throw);
+            detail::consume(stream_view | views::take_line_or_throw);
 
         // Sequence
-        detail::consume(stream_view | view::take_line_or_throw); // consume "ORIGIN"
+        detail::consume(stream_view | views::take_line_or_throw); // consume "ORIGIN"
         auto constexpr is_end = is_char<'/'> ;
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-            std::ranges::copy(stream_view | std::view::filter(!(is_space || is_digit))
-                                          | view::take_until_or_throw_and_consume(is_end) // consume "//"
-                                          | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
+            std::ranges::copy(stream_view | std::views::filter(!(is_space || is_digit))
+                                          | views::take_until_or_throw_and_consume(is_end) // consume "//"
+                                          | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                             {
                                                 if (!is_legal_alph(c))
                                                 {
@@ -174,12 +174,12 @@ public:
                                                 }
                                                 return c;
                                             })
-                                          | view::char_to<value_type_t<seq_type>>,    // convert to actual target alphabet
+                                          | views::char_to<value_type_t<seq_type>>,    // convert to actual target alphabet
                                             std::back_inserter(sequence));
         }
         else
         {
-            detail::consume(stream_view | view::take_until_or_throw_and_consume(is_end)); // consume until "//"
+            detail::consume(stream_view | views::take_until_or_throw_and_consume(is_end)); // consume until "//"
             ++stream_it; // consume "/n"
         }
     }
@@ -271,8 +271,8 @@ public:
                     stream_it = ' ';
                 std::ranges::copy(std::to_string(bp), stream_it);
                 stream_it = ' ';
-                std::ranges::copy(seq[i] | view::to_char
-                                         | view::interleave(10, std::string_view{" "}), stream_it);
+                std::ranges::copy(seq[i] | views::to_char
+                                         | views::interleave(10, std::string_view{" "}), stream_it);
                 bp += 60;
                 ++i;
                 detail::write_eol(stream_it,false);

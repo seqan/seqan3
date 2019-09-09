@@ -9,13 +9,10 @@
 
 #include <fstream>
 
-#include <range/v3/view/remove_if.hpp>
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
-#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/views/persist.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/test/tmp_filename.hpp>
 
@@ -159,7 +156,7 @@ TEST(validator_test, input_file)
                                "          desc Valid input file formats: [fa, sam, fasta]"} +
                                basic_options_str +
                                basic_version_str;
-        EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
     }
 }
 
@@ -257,7 +254,7 @@ TEST(validator_test, output_file)
                                "          desc Valid output file formats: [fa, sam, fasta]"} +
                                basic_options_str +
                                basic_version_str;
-        EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
     }
 }
 
@@ -320,7 +317,7 @@ TEST(validator_test, input_directory)
                                basic_options_str +
                                basic_version_str;
 
-        EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
     }
 }
 
@@ -365,7 +362,7 @@ TEST(validator_test, output_directory)
                                basic_options_str +
                                basic_version_str;
 
-        EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
     }
 }
 
@@ -615,8 +612,8 @@ TEST(validator_test, arithmetic_range_validator_success)
                            "          desc Default: []. Value must be in range [-20,20]." +
                            basic_options_str +
                            basic_version_str);
-    EXPECT_TRUE(ranges::equal((my_stdout   | std::view::filter(!is_space)),
-                               expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)),
+                               expected | std::views::filter(!is_space)));
 
     // option - double value
     double double_option_value;
@@ -772,8 +769,8 @@ TEST(validator_test, value_list_validator_success)
                            "    -i, --int-option (List of signed 32 bit integer's)"
                            "          desc Default: []. Value must be one of [-10,48,50]." +
                            basic_version_str);
-    EXPECT_TRUE(ranges::equal((my_stdout   | std::view::filter(!is_space)),
-                               expected | std::view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)),
+                               expected | std::views::filter(!is_space)));
 }
 
 TEST(validator_test, value_list_validator_error)
@@ -887,8 +884,8 @@ TEST(validator_test, regex_validator_success)
                            "    -s, --string-option (List of std::string's)"
                            "          desc Default: []. Value must match the pattern '[a-zA-Z]+@[a-zA-Z]+\\.com'." +
                            basic_version_str);
-    EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    EXPECT_TRUE(std::ranges::equal((my_stdout | std::views::filter(!is_space)),
+                                    expected  | std::views::filter(!is_space)));
 }
 
 TEST(validator_test, regex_validator_error)
@@ -1027,8 +1024,8 @@ TEST(validator_test, chaining_validators)
                                "          Valid output file formats:  [sa, so]"
                                "          Value must match the pattern '.*'."} +
                                basic_version_str;
-        EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),
-                                   expected | ranges::view::remove_if(is_space)));
+        EXPECT_TRUE(std::ranges::equal((my_stdout | std::views::filter(!is_space)),
+                                        expected  | std::views::filter(!is_space)));
     }
 
     // chaining with a container option value type

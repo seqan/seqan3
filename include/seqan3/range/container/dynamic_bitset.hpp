@@ -15,8 +15,8 @@
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
-#include <seqan3/range/view/interleave.hpp>
-#include <seqan3/range/view/repeat_n.hpp>
+#include <seqan3/range/views/interleave.hpp>
+#include <seqan3/range/views/repeat_n.hpp>
 
 namespace seqan3
 {
@@ -434,7 +434,7 @@ public:
     constexpr void assign(size_type const count, value_type const value) noexcept
     {
         clear();
-        auto tmp = view::repeat_n(value, count);
+        auto tmp = views::repeat_n(value, count);
         assign(std::ranges::begin(tmp), std::ranges::end(tmp));
     }
 
@@ -1250,7 +1250,7 @@ public:
      */
     constexpr iterator insert(const_iterator pos, size_type const count, value_type const value) noexcept
     {
-        auto tmp = view::repeat_n(value, count);
+        auto tmp = views::repeat_n(value, count);
         return insert(pos, std::ranges::begin(tmp), std::ranges::end(tmp));
     }
 
@@ -1666,7 +1666,7 @@ public:
     {
         std::string str{};
         str.reserve(size());
-        for (bool const bit : std::view::reverse(*this))
+        for (bool const bit : std::views::reverse(*this))
             bit ? str.push_back(one) : str.push_back(zero);
 
         return str;
@@ -1771,7 +1771,7 @@ public:
                 c == is.widen('0') ? tmp.push_back(false) : tmp.push_back(true);
             }
 
-            arg.assign(std::view::reverse(tmp));
+            arg.assign(std::views::reverse(tmp));
 
             if (arg.size() == 0) // nothing extracted so we set the fail bit.
                 is.setstate(std::ios_base::failbit); // LCOV_EXCL_LINE
@@ -1793,7 +1793,7 @@ public:
     template <typename char_t>
     friend debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, dynamic_bitset arg)
     {
-        s << (std::string_view{arg.to_string()} | view::interleave(4, std::string_view{"'"}) | ranges::to<std::string>);
+        s << (std::string_view{arg.to_string()} | views::interleave(4, std::string_view{"'"}) | ranges::to<std::string>);
         return s;
     }
     //!\}

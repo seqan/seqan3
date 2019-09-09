@@ -24,7 +24,7 @@
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/test/performance/units.hpp>
 
 #include <sstream>
@@ -144,7 +144,7 @@ void read2(benchmark::State & state)
     {
         istream.clear();
         istream.seekg(0, std::ios::beg);
-        auto it = seqan::Iter<std::istringstream, seqan::stream_REMOVEMEIterator<seqan::Input> >(istream);
+        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input> >(istream);
 
         for (size_t i = 0; i < iterations_per_run; ++i)
         {

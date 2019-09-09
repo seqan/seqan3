@@ -178,10 +178,8 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
 
     // access container
     { val.front()  } -> typename type::reference;
-    { val.front()  } -> typename type::const_reference;
     { cval.front() } -> typename type::const_reference;
     { val.back()   } -> typename type::reference;
-    { val.back()   } -> typename type::const_reference;
     { cval.back()  } -> typename type::const_reference;
 };
 //!\endcond

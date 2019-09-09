@@ -105,7 +105,7 @@ record_type rec = std::move(*fin.begin()); // avoid copying
 sequence_file_input fin1{"/tmp/my.fastq"};
 sequence_file_input fin2{"/tmp/my.fastq"}; // for simplicity we take the same file
 
-for (auto && [rec1, rec2] : std::view::zip(fin1, fin2)) // && is important! because view::zip returns temporaries
+for (auto && [rec1, rec2] : std::views::zip(fin1, fin2)) // && is important! because views::zip returns temporaries
 {
     if (get<field::ID>(rec1) != get<field::ID>(rec2))
         throw std::runtime_error("Oh oh your pairs don't match.");
@@ -117,7 +117,7 @@ for (auto && [rec1, rec2] : std::view::zip(fin1, fin2)) // && is important! beca
 //![read_in_batches]
 sequence_file_input fin{"/tmp/my.fastq"};
 
-for (auto && records : fin | ranges::view::chunk(10)) // && is important! because view::chunk returns temporaries
+for (auto && records : fin | ranges::view::chunk(10)) // && is important! because views::chunk returns temporaries
 {
     // `records` contains 10 elements (or less at the end)
     debug_stream << "Taking the next 10 sequences:\n";
@@ -130,10 +130,10 @@ for (auto && records : fin | ranges::view::chunk(10)) // && is important! becaus
 //![quality_filter]
 sequence_file_input fin{"/tmp/my.fastq"};
 
-// std::view::filter takes a function object (a lambda in this case) as input that returns a boolean
-auto minimum_quality_filter = std::view::filter([] (auto const & rec)
+// std::views::filter takes a function object (a lambda in this case) as input that returns a boolean
+auto minimum_quality_filter = std::views::filter([] (auto const & rec)
 {
-    auto qual = get<field::QUAL>(rec) | std::view::transform([] (auto q) { return q.to_phred(); });
+    auto qual = get<field::QUAL>(rec) | std::views::transform([] (auto q) { return q.to_phred(); });
     double sum = ranges::accumulate(qual.begin(), qual.end(), 0);
     return sum / std::ranges::size(qual) >= 40; // minimum average quality >= 40
 });

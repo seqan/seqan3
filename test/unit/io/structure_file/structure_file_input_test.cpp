@@ -15,7 +15,7 @@
 
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/io/structure_file/input.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -168,7 +168,7 @@ TEST_F(structure_file_input_class, guided_stream_constructor)
 TEST_F(structure_file_input_class, guided_stream_constructor_and_custom_fields)
 {
     /* guided stream constructor + custom fields */
-    structure_file_input fin{std::wistringstream{"> ID\nACGU\n....\n" | view::convert<wchar_t>},
+    structure_file_input fin{std::wistringstream{"> ID\nACGU\n....\n" | views::convert<wchar_t>},
                              format_vienna{},
                              fields<field::SEQ>{}};
 
@@ -262,7 +262,7 @@ struct structure_file_input_read : public ::testing::Test
     void bpp_test(bpp_type & bpp, std::vector<uint8_t> const & bpp_comp)
     {
         size_t idx = 0ul;
-        auto interactions = bpp | std::view::filter([] (auto & set) { return set.size() == 1; });
+        auto interactions = bpp | std::views::filter([] (auto & set) { return set.size() == 1; });
         for (auto & elem : interactions)
         {
             EXPECT_EQ(elem.begin()->second, bpp_comp[idx++]);
@@ -353,8 +353,8 @@ TEST_F(structure_file_input_read, record_custom_fields)
     for (auto & [ id, seq_structure ] : fin)
     {
         EXPECT_TRUE((std::ranges::equal(id, id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seq_structure | view::convert<rna5>, seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seq_structure | view::convert<wuss51>, structure_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seq_structure | views::convert<rna5>, seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seq_structure | views::convert<wuss51>, structure_comp[counter])));
         ++counter;
     }
     EXPECT_EQ(counter, num_records);
@@ -365,7 +365,7 @@ TEST_F(structure_file_input_read, record_file_view)
     structure_file_input fin{std::istringstream{input}, format_vienna{},
                              fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
 
-    auto minimum_length_filter = ranges::view::filter([] (auto const & rec)
+    auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
         return size(get<field::SEQ>(rec)) >= 5;
     });
