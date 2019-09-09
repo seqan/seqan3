@@ -338,12 +338,9 @@ type_list<trait_t<pack_t>...> transform(type_list<pack_t...>);
  */
 template <typename replace_t,
           typename ...pack1_t,
-          typename head_t,
-          typename ...pack2_t>
-auto replace_at(std::pair<type_list<pack1_t...>, type_list<head_t, pack2_t...>>)
-{
-    return type_list<pack1_t..., replace_t, pack2_t...>{};
-}
+          typename head_t, typename ...pack2_t>
+type_list<pack1_t..., replace_t, pack2_t...>
+replace_at(std::pair<type_list<pack1_t...>, type_list<head_t, pack2_t...>>);
 
 } // namespace seqan3::list_traits::detail
 
