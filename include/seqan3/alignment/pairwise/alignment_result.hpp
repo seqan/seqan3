@@ -150,30 +150,29 @@ public:
 
     /*!\brief Returns the alignment identifier.
      * \return The id field.
-     * \attention Compiling this function will fail, if the id is not set.
      */
     constexpr id_t id() const noexcept
     {
         static_assert(!std::is_same_v<id_t, std::nullopt_t *>,
-                      "Failed to access the identifier.");
+                      "Identifier is not available but should.");
         return data.id;
     }
 
     /*!\brief Returns the alignment score.
      * \return The score field.
-     * \attention Compiling this function will fail, if the score is not set.
      */
     constexpr score_t score() const noexcept
     {
         static_assert(!std::is_same_v<score_t, std::nullopt_t *>,
-                      "Failed to access the score.");
+                      "Alignment score is not available but should.");
         return data.score;
     }
 
     /*!\brief Returns the back coordinate of the alignment.
      * \return A pair of positions in the respective sequences, where the calculated alignment ends (inclusive).
-     * \attention Compiling this function will fail, if the back coordinate was not requested in the alignment
-     * configuration.
+     *
+     * \note This function is only available if the back coordinate was requested via the alignment configuration
+     * (see seqan3::align_cfg::result).
      */
     constexpr back_coord_t const & back_coordinate() const noexcept
     {
@@ -185,9 +184,13 @@ public:
 
     /*!\brief Returns the front coordinate of the alignment.
      * \return  A pair of positions in the respective sequences, where the calculated alignment starts.
-     * \details Guaranteed to be smaller than or equal to `back_coordinate()`.
-     * \attention Compiling this function will fail, if the front coordinate was not requested in the alignment
-     * configuration.
+     *
+     * \details
+     *
+     * Guaranteed to be smaller than or equal to `back_coordinate()`.
+     *
+     * \note This function is only available if the front coordinate was requested via the alignment configuration
+     * (see seqan3::align_cfg::result).
      */
     constexpr front_coord_t const & front_coordinate() const noexcept
     {
@@ -199,8 +202,9 @@ public:
 
     /*!\brief Returns the actual alignment, i.e. the base pair matching.
      * \return At least two aligned sequences, which represent the alignment.
-     * \attention Compiling this function will fail, if the alignment was not requested in the alignment
-     * configuration.
+     *
+     * \note This function is only available if the alignment was requested via the alignment configuration
+     * (see seqan3::align_cfg::result).
      */
     constexpr alignment_t const & alignment() const noexcept
     {
@@ -219,7 +223,8 @@ public:
      * This function is only used for debugging such that performance can be affected significantly when enabling
      * seqan3::align_cfg::debug.
      *
-     * \attention Compiling this function will fail, if seqan3::align_cfg::debug was not selected.
+     * \note This function is only available if the debug mode was requested via the alignment configuration
+     * (see seqan3::align_cfg::debug).
      */
     constexpr auto const & score_matrix() const noexcept
     {
@@ -236,8 +241,8 @@ public:
      * This function is only used for debugging such that performance can be affected significantly when enabling
      * seqan3::align_cfg::debug.
      *
-     * \attention Compiling this function will fail, if seqan3::align_cfg::debug was not selected and the alignment
-     *             was not requested in the configuration.
+     * \note This function is only available if the debug mode and the alignment was requested via the alignment
+     * configuration (see seqan3::align_cfg::debug and seqan3::align_cfg::result).
      */
     constexpr auto const & trace_matrix() const noexcept
     {
