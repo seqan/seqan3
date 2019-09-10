@@ -218,7 +218,7 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided stream constructor + custom fields + different stream char type */
     {
-        auto winput = input | views::convert<wchar_t>;
+        auto winput = input | views::convert<wchar_t> | views::to<std::wstring>;
         std::wistringstream ext{winput};
         alignment_file_input fin{ext, format_sam{}, fields<field::SEQ>{}};
 
@@ -231,7 +231,7 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided stream temporary constructor + custom fields + different stream char type */
     {
-        auto winput = input | views::convert<wchar_t>;
+        auto winput = input | views::convert<wchar_t> | views::to<std::wstring>;
         alignment_file_input fin{std::wistringstream{winput}, format_sam{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);

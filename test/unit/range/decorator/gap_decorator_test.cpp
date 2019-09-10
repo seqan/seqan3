@@ -77,7 +77,7 @@ struct iterator_fixture<decorator_t::iterator> : public ::testing::Test
     std::vector<gapped<dna4>> expected_range = [this] ()
         {
             std::vector<gapped<dna4>> tmp{};
-            std::copy(vec.begin(), vec.end(), std::back_inserter(tmp));
+            std::copy(vec.begin(), vec.end(), std::ranges::back_inserter(tmp));
             initialise_with_gaps(tmp);
             return tmp;
         }();

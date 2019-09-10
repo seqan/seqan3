@@ -19,6 +19,7 @@
 #include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
@@ -84,8 +85,8 @@ struct view_equality_fn
  */
 template <typename reference_char_type, typename query_char_type>
 //!\cond
-    requires std::detail::weakly_equality_comparable_with<reference_char_type, gap> &&
-             std::detail::weakly_equality_comparable_with<query_char_type, gap>
+    requires seqan3::detail::weakly_equality_comparable_with<reference_char_type, gap> &&
+             seqan3::detail::weakly_equality_comparable_with<query_char_type, gap>
 //!\endcond
 char compare_aligned_values(reference_char_type const reference_char,
                             query_char_type const query_char,
@@ -137,8 +138,8 @@ char compare_aligned_values(reference_char_type const reference_char,
  */
 template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range query_seq_type>
 //!\cond
-    requires std::detail::weakly_equality_comparable_with<gap, reference_t<ref_seq_type>> &&
-             std::detail::weakly_equality_comparable_with<gap, reference_t<query_seq_type>>
+    requires seqan3::detail::weakly_equality_comparable_with<gap, reference_t<ref_seq_type>> &&
+             seqan3::detail::weakly_equality_comparable_with<gap, reference_t<query_seq_type>>
 //!\endcond
 std::string get_cigar_string(ref_seq_type && ref_seq,
                              query_seq_type && query_seq,
@@ -165,7 +166,7 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
     size_t tmp_length{0};
 
     // go through alignment columns
-    for (auto column : std::views::zip(ref_seq, query_seq))
+    for (auto column : views::zip(ref_seq, query_seq))
     {
         char next_op = compare_aligned_values(std::get<0>(column), std::get<1>(column), extended_cigar);
 
@@ -311,7 +312,7 @@ std::vector<std::pair<char, size_t>> get_cigar_vector(alignment_type && alignmen
     size_t tmp_length{0};
 
     // go through alignment columns
-    for (auto column : std::views::zip(ref_seq, query_seq))
+    for (auto column : views::zip(ref_seq, query_seq))
     {
         char next_op = compare_aligned_values(std::get<0>(column), std::get<1>(column), extended_cigar);
 

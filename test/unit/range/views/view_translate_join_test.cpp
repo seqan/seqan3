@@ -16,6 +16,7 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/complement.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/translate_join.hpp>
 #include <seqan3/std/ranges>
 
@@ -61,8 +62,8 @@ TYPED_TEST(nucleotide, view_translate)
     std::string const in2{"TCGAGAGCTTTAGC"};
     std::vector<std::vector<TypeParam> > vec;
     vec.resize(2);
-    vec[0] = in1 | views::char_to<TypeParam>;
-    vec[1] = in2 | views::char_to<TypeParam>;
+    vec[0] = in1 | views::char_to<TypeParam> | views::to<std::vector>;
+    vec[1] = in2 | views::char_to<TypeParam> | views::to<std::vector>;
 
     std::vector<std::vector<aa27> > cmp1{{"TYVR"_aa27}, {"SRAL"_aa27}};
     std::vector<std::vector<aa27> > cmp2{{"TYVR"_aa27}, {"YVRT"_aa27}, {"SRAL"_aa27}, {"AKAL"_aa27}};
@@ -157,8 +158,8 @@ TYPED_TEST(nucleotide, view_translate_concepts)
     std::string const in2{"TCGAGAGCTTTAGC"};
     std::vector<std::vector<TypeParam> > vec;
     vec.resize(2);
-    vec[0] = in1 | views::char_to<TypeParam>;
-    vec[1] = in2 | views::char_to<TypeParam>;
+    vec[0] = in1 | views::char_to<TypeParam> | views::to<std::vector>;
+    vec[1] = in2 | views::char_to<TypeParam> | views::to<std::vector>;
 
     EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);

@@ -20,8 +20,10 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -53,7 +55,7 @@ private:
     //!\brief Helper function to determine the transformed type.
     template <typename rng_t>
     //!\cond
-        requires std::constructible_from<gap_decorator<rng_t>>
+        requires std::default_constructible<gap_decorator<rng_t>>
     //!\endcond
     static auto aligned_type() { return gap_decorator<rng_t>{}; }
 
@@ -94,15 +96,15 @@ class aligned_sequence_builder
 {
 private:
 
-    static_assert(std::constructible_from<typename traits_t::fst_aligned_t,
-                                     decltype(std::declval<fst_rng_t>() | views::slice(0, 1))>,
-                  "The given sequence type cannot be transformed to a aligned_sequence. It needs to be a views::slice "
-                  "over the original type.");
-
-    static_assert(std::constructible_from<typename traits_t::sec_aligned_t,
-                                     decltype(std::declval<sec_rng_t>() | views::slice(0, 1))>,
-                  "The given sequence type cannot be transformed to a aligned_sequence. It needs to be a views::slice "
-                  "over the original type.");
+//     static_assert(std::constructible_from<typename traits_t::fst_aligned_t,
+//                                      decltype(std::declval<fst_rng_t>() | views::slice(0, 1))>,
+//                   "The given sequence type cannot be transformed to a aligned_sequence. It needs to be a views::slice "
+//                   "over the original type.");
+//
+//     static_assert(std::constructible_from<typename traits_t::sec_aligned_t,
+//                                      decltype(std::declval<sec_rng_t>() | views::slice(0, 1))>,
+//                   "The given sequence type cannot be transformed to a aligned_sequence. It needs to be a views::slice "
+//                   "over the original type.");
 
     using fst_aligned_t = typename traits_t::fst_aligned_t; //!< The aligned sequence type for the first range.
     using sec_aligned_t = typename traits_t::sec_aligned_t; //!< The aligned sequence type for the second range.
@@ -174,8 +176,29 @@ public:
 
         matrix_coordinate path_begin = trace_it.coordinate();
 
-        fst_aligned_t fst_aligned{fst_rng | views::slice(path_begin.col, path_end.col)};
-        sec_aligned_t sec_aligned{sec_rng | views::slice(path_begin.row, path_end.row)};
+        fst_aligned_t fst_aligned;
+        if constexpr (detail::is_type_specialisation_of_v<fst_aligned_t, std::vector>)
+        {
+            fst_aligned = fst_rng
+                        | views::slice(path_begin.col, path_end.col)
+                        | views::to<fst_aligned_t>;
+        }
+        else
+        {
+            fst_aligned = fst_aligned_t{fst_rng | views::slice(path_begin.col, path_end.col)};
+        }
+
+        sec_aligned_t sec_aligned;
+        if constexpr (detail::is_type_specialisation_of_v<sec_aligned_t, std::vector>)
+        {
+            sec_aligned = sec_rng
+                        | views::slice(path_begin.row, path_end.row)
+                        | views::to<sec_aligned_t>;
+        }
+        else
+        {
+            sec_aligned = sec_aligned_t{sec_rng | views::slice(path_begin.row, path_end.row)};
+        }
 
         // Now we need to insert the values.
         fill_aligned_sequence(traces | std::views::reverse, fst_aligned, sec_aligned);

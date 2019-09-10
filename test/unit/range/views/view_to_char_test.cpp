@@ -12,6 +12,7 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;
@@ -22,16 +23,16 @@ TEST(view_to_char, basic)
     std::string cmp{"ACTTTGATA"};
 
     // pipe notation
-    std::string v = vec | views::to_char | std::ranges::to<std::string>;
+    std::string v = vec | views::to_char | views::to<std::string>;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    std::string v2(views::to_char(vec) | std::ranges::to<std::string>);
+    std::string v2(views::to_char(vec) | views::to<std::string>);
     EXPECT_EQ(cmp, v2);
 
     // combinability
     std::string cmp2{"ATAGTTTCA"};
-    std::string v3 = vec | views::to_char | std::views::reverse | std::ranges::to<std::string>;
+    std::string v3 = vec | views::to_char | std::views::reverse | views::to<std::string>;
     EXPECT_EQ(cmp2, v3);
 }
 

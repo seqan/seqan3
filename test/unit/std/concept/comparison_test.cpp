@@ -18,8 +18,8 @@ using namespace seqan3;
 
 TEST(comparison_concepts, weakly_equality_comparable_with)
 {
-    EXPECT_TRUE((std::detail::weakly_equality_comparable_with<type_a, type_b>));
-    EXPECT_TRUE((!std::detail::weakly_equality_comparable_with<type_a, type_c>));
+    EXPECT_TRUE((seqan3::detail::weakly_equality_comparable_with<type_a, type_b>));
+    EXPECT_TRUE((!seqan3::detail::weakly_equality_comparable_with<type_a, type_c>));
 }
 
 TEST(comparison_concepts, equality_comparable)

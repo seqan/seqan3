@@ -18,11 +18,6 @@
 #include <string_view>
 #include <vector>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/view/chunk.hpp>
-#include <range/v3/view/join.hpp>
-#include <range/v3/view/remove_if.hpp>
-
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
@@ -153,14 +148,14 @@ public:
             {
                 std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank)
                                               | views::char_to<value_type_t<id_type>>,
-                                  std::back_inserter(id));
+                                  std::ranges::back_inserter(id));
                 detail::consume(stream_view | views::take_line_or_throw);
             }
             else
             {
                 std::ranges::copy(stream_view | views::take_line_or_throw
                                               | views::char_to<value_type_t<id_type>>,
-                                  std::back_inserter(id));
+                                  std::ranges::back_inserter(id));
             }
         }
         else
@@ -186,7 +181,7 @@ public:
                                         return c;
                                     })
                                         | views::char_to<value_type_t<seq_type>>,         // convert to actual target alphabet
-                              std::back_inserter(sequence));
+                              std::ranges::back_inserter(sequence));
             sequence_size_after = size(sequence);
         }
         else // consume, but count
@@ -221,7 +216,7 @@ public:
         else if constexpr (!detail::decays_to_ignore_v<qual_type>)
         {
             std::ranges::copy(qview | views::char_to<value_type_t<qual_type>>,
-                              std::back_inserter(qualities));
+                              std::ranges::back_inserter(qualities));
         }
         else
         {

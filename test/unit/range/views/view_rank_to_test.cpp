@@ -11,6 +11,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/views/rank_to.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/std/ranges>
 
@@ -22,16 +23,16 @@ TEST(view_rank_to, basic)
     dna5_vector cmp{"ACTTTGATA"_dna5};
 
     // pipe notation
-    dna5_vector v = vec | views::rank_to<dna5> | std::ranges::to<std::vector>;
+    dna5_vector v = vec | views::rank_to<dna5> | views::to<std::vector>;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    dna5_vector v2(views::rank_to<dna5>(vec) | std::ranges::to<std::vector>);
+    dna5_vector v2(views::rank_to<dna5>(vec) | views::to<std::vector>);
     EXPECT_EQ(cmp, v2);
 
     // combinability
     dna5_vector cmp2{"ATAGTTTCA"_dna5};
-    dna5_vector v3 = vec | views::rank_to<dna5> | std::views::reverse | std::ranges::to<std::vector>;
+    dna5_vector v3 = vec | views::rank_to<dna5> | std::views::reverse | views::to<std::vector>;
     EXPECT_EQ(cmp2, v3);
 }
 

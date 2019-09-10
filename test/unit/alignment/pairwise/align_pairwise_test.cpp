@@ -18,6 +18,7 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/ranges>
 
 #include <range/v3/view/generate_n.hpp>
@@ -67,8 +68,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
             EXPECT_EQ(res.back_coordinate().first, 8u);
             EXPECT_EQ(res.back_coordinate().second, 9u);
             auto && [gap1, gap2] = res.alignment();
-            EXPECT_EQ(std::string{gap1 | views::to_char}, "ACGTGATG--");
-            EXPECT_EQ(std::string{gap2 | views::to_char}, "A-GTGATACT");
+            EXPECT_EQ(gap1 | views::to_char | views::to<std::string>, "ACGTGATG--");
+            EXPECT_EQ(gap2 | views::to_char | views::to<std::string>, "A-GTGATACT");
         }
     }
 }
@@ -94,8 +95,8 @@ TYPED_TEST(align_pairwise_test, single_view)
         {
             EXPECT_EQ(res.score(), -4);
             auto && [gap1, gap2] = res.alignment();
-            EXPECT_EQ(std::string{gap1 | views::to_char}, "ACGTGATG--");
-            EXPECT_EQ(std::string{gap2 | views::to_char}, "A-GTGATACT");
+            EXPECT_EQ(gap1 | views::to_char | views::to<std::string>, "ACGTGATG--");
+            EXPECT_EQ(gap2 | views::to_char | views::to<std::string>, "A-GTGATACT");
         }
     }
 }
@@ -113,7 +114,7 @@ TYPED_TEST(align_pairwise_test, collection)
     {
         EXPECT_EQ(res.score(), -4);
         auto && [gap1, gap2] = res.alignment();
-        EXPECT_EQ(std::string{gap1 | views::to_char}, "ACGTGATG--");
-        EXPECT_EQ(std::string{gap2 | views::to_char}, "A-GTGATACT");
+        EXPECT_EQ(gap1 | views::to_char | views::to<std::string>, "ACGTGATG--");
+        EXPECT_EQ(gap2 | views::to_char | views::to<std::string>, "A-GTGATACT");
     }
 }

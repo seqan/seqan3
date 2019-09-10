@@ -103,23 +103,23 @@ TYPED_TEST(container_of_container, iterators)
     TypeParam const t2{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     // begin
-    EXPECT_EQ(dna4_vector(*t1.begin()), "ACGT"_dna4);
-    EXPECT_EQ(dna4_vector(*t1.cbegin()), "ACGT"_dna4);
-    EXPECT_EQ(dna4_vector(*t2.begin()), "ACGT"_dna4);
-    EXPECT_EQ(dna4_vector(*t2.cbegin()), "ACGT"_dna4);
+    EXPECT_TRUE(std::ranges::equal(*t1.begin(),  "ACGT"_dna4));
+    EXPECT_TRUE(std::ranges::equal(*t1.cbegin(), "ACGT"_dna4));
+    EXPECT_TRUE(std::ranges::equal(*t2.begin(),  "ACGT"_dna4));
+    EXPECT_TRUE(std::ranges::equal(*t2.cbegin(), "ACGT"_dna4));
 
     // end and arithmetic
-    EXPECT_EQ(dna4_vector(*(t1.end()  - 1)), "GAGGA"_dna4);
-    EXPECT_EQ(dna4_vector(*(t1.cend() - 1)), "GAGGA"_dna4);
-    EXPECT_EQ(dna4_vector(*(t2.end()  - 1)), "GAGGA"_dna4);
-    EXPECT_EQ(dna4_vector(*(t2.cend() - 1)), "GAGGA"_dna4);
+    EXPECT_TRUE(std::ranges::equal(*(t1.end()  - 1), "GAGGA"_dna4));
+    EXPECT_TRUE(std::ranges::equal(*(t1.cend() - 1), "GAGGA"_dna4));
+    EXPECT_TRUE(std::ranges::equal(*(t2.end()  - 1), "GAGGA"_dna4));
+    EXPECT_TRUE(std::ranges::equal(*(t2.cend() - 1), "GAGGA"_dna4));
 
     // convertibility between const and non-const
     EXPECT_TRUE(t1.cend() == t1.end());
 
     // writability
     (*t1.begin())[0] = 'T'_dna4;
-    EXPECT_EQ(dna4_vector(*t1.begin()), "TCGT"_dna4);
+    EXPECT_TRUE((std::ranges::equal(*t1.begin(), "TCGT"_dna4)));
 }
 
 TYPED_TEST(container_of_container, element_access)
@@ -128,28 +128,28 @@ TYPED_TEST(container_of_container, element_access)
     TypeParam const t2{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     // at
-    EXPECT_EQ(dna4_vector(t1.at(0)), "ACGT"_dna4);
-    EXPECT_EQ(dna4_vector(t2.at(0)), "ACGT"_dna4);
+    EXPECT_TRUE(std::ranges::equal(t1.at(0), "ACGT"_dna4));
+    EXPECT_TRUE(std::ranges::equal(t2.at(0), "ACGT"_dna4));
     //TODO once we have throwing assert, check at's ability to throw
 
     // []
-    EXPECT_EQ(dna4_vector(t1[0]), "ACGT"_dna4);
-    EXPECT_EQ(dna4_vector(t2[0]), "ACGT"_dna4);
+    EXPECT_TRUE(std::ranges::equal(t1[0], "ACGT"_dna4));
+    EXPECT_TRUE(std::ranges::equal(t2[0], "ACGT"_dna4));
 
     // front
-    EXPECT_EQ(dna4_vector(t1.front()), "ACGT"_dna4);
-    EXPECT_EQ(dna4_vector(t2.front()), "ACGT"_dna4);
+    EXPECT_TRUE(std::ranges::equal(t1.front(), "ACGT"_dna4));
+    EXPECT_TRUE(std::ranges::equal(t2.front(), "ACGT"_dna4));
 
     // back
-    EXPECT_EQ(dna4_vector(t1.back()), "GAGGA"_dna4);
-    EXPECT_EQ(dna4_vector(t2.back()), "GAGGA"_dna4);
+    EXPECT_TRUE(std::ranges::equal(t1.back(), "GAGGA"_dna4));
+    EXPECT_TRUE(std::ranges::equal(t2.back(), "GAGGA"_dna4));
 
     if constexpr (std::is_same_v<TypeParam, concatenated_sequences<std::vector<dna4>>>)
     {
         using size_type = typename TypeParam::size_type;
         // concat
-        EXPECT_EQ(dna4_vector(t1.concat()), "ACGTACGTGAGGA"_dna4);
-        EXPECT_EQ(dna4_vector(t2.concat()), "ACGTACGTGAGGA"_dna4);
+        EXPECT_TRUE(std::ranges::equal(t1.concat(), "ACGTACGTGAGGA"_dna4));
+        EXPECT_TRUE(std::ranges::equal(t2.concat(), "ACGTACGTGAGGA"_dna4));
 
         // data
         EXPECT_EQ(std::get<0>(t1.raw_data()), "ACGTACGTGAGGA"_dna4);
@@ -249,7 +249,11 @@ TYPED_TEST(container_of_container, insert)
     t1 = {"GAGGA"_dna4, "ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
     t0.insert(t0.cend(), t1.begin() + 1, t1.begin() + 3);
 
+    // remove the following after range-v3 is updated to 1.0
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     t0.insert(t0.cend(),   t1.cend() - 1, t1.cend());
+    #pragma GCC diagnostic pop
     t0.insert(t0.cbegin(), t1.cend() - 1, t1.cend());
     EXPECT_EQ(t0, t1);
 

@@ -11,6 +11,7 @@
 
 #include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
+#include <seqan3/range/views/to.hpp>
 
 #include "alignment_file_format_test_template.hpp"
 
@@ -476,8 +477,8 @@ TEST_F(bam_format, too_long_cigar_string_write)
             '\x00', '\x6C', '\x6F', '\x6E', '\x67', '\x5F', '\x72', '\x65', '\x61', '\x64', '\x00', '\x04', '\x17',
             '\x11', '\x00', '\xF3', '\x2D', '\x22', '\x00'
         } +
-        std::string(views::repeat_n('\x88', (read.size() + 1) / 2))  /*seq */ +
-        std::string(views::repeat_n('\xFF',  read.size()))           /*qual*/ +
+        (views::repeat_n('\x88', (read.size() + 1) / 2) | views::to<std::string> /*seq */) +
+        (views::repeat_n('\xFF',  read.size())          | views::to<std::string> /*qual*/) +
         std::string /*the beginning*/
         {
             '\x43', '\x47', '\x5A' /*tag info: CGZ*/

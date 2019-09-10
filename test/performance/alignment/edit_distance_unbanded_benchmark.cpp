@@ -13,10 +13,9 @@
 #include <utility>
 #include <vector>
 
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
@@ -187,7 +186,7 @@ void seqan2_edit_distance_dna4_collection(benchmark::State & state)
     }
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -206,7 +205,7 @@ void seqan2_edit_distance_dna4_generic_collection(benchmark::State & state)
     }
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 #endif // SEQAN3_HAS_SEQAN2

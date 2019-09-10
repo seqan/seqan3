@@ -18,6 +18,7 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/drop.hpp>
+#include <seqan3/range/views/to.hpp>
 
 using namespace seqan3;
 
@@ -264,7 +265,7 @@ TEST(help_page_printing, copyright)
     };
 
     detail::consume(sub | views::take_until_and_consume(is_char<'`'>));
-    std::string license_string{sub | views::drop(1) | views::take_until(is_char<'`'>)};
+    std::string license_string{sub | views::drop(1) | views::take_until(is_char<'`'>)  | views::to<std::string>};
 
     // Test --copyright with empty short and long copyright info.
     {

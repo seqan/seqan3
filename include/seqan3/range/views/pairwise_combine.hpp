@@ -40,7 +40,7 @@ template <std::ranges::view underlying_range_type>
 //!\cond
     requires  std::ranges::forward_range<underlying_range_type> && std::ranges::common_range<underlying_range_type>
 // !\endcond
-class pairwise_combine_view : public ranges::view_interface<pairwise_combine_view<underlying_range_type>>
+class pairwise_combine_view : public std::ranges::view_interface<pairwise_combine_view<underlying_range_type>>
 {
 private:
 

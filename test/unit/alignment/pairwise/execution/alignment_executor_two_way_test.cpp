@@ -12,9 +12,12 @@
 #include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 #include <seqan3/test/pretty_printing.hpp>
+
+using namespace seqan3;
 
 struct dummy_alignment
 {
@@ -23,7 +26,7 @@ struct dummy_alignment
     constexpr auto operator()(size_t const, first_seq_t && first_seq, second_seq_t && second_seq) const
     {
         size_t count = 0;
-        std::ranges::for_each(std::views::zip(first_seq, second_seq), [&](auto && tpl)
+        std::ranges::for_each(views::zip(first_seq, second_seq), [&](auto && tpl)
         {
             auto && [v1, v2] = tpl;
             if (v1 == v2)
@@ -32,8 +35,6 @@ struct dummy_alignment
         return count;
     }
 };
-
-using namespace seqan3;
 
 template <typename t>
 struct alignment_executor_two_way_test : public ::testing::Test

@@ -10,6 +10,7 @@
 #include "../helper.hpp"
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
 #include <seqan3/std/algorithm>
 
@@ -190,7 +191,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
 TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
 {
     std::vector<dna4> text{"ACGGTAGGACGTAGC"_dna4};
-    std::vector<dna4> rev_text{text | std::views::reverse};
+    std::vector<dna4> rev_text{text | std::views::reverse | views::to<std::vector<dna4>>};
     typename TypeParam::index_type bi_fm{text};
 
     {

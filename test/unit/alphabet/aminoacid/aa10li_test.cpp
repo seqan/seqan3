@@ -12,6 +12,7 @@
 #include "aminoacid_test_template.hpp"
 
 #include <seqan3/alphabet/aminoacid/aa10li.hpp>
+#include <seqan3/range/views/zip.hpp>
 
 INSTANTIATE_TYPED_TEST_CASE_P(aa10li, alphabet_, aa10li);
 INSTANTIATE_TYPED_TEST_CASE_P(aa10li, alphabet_constexpr, aa10li);
@@ -41,7 +42,7 @@ TEST(aa10li, assign_char)
         'F'_aa10li, 'A'_aa10li
     };
 
-    for (auto [ chr, alp ] : std::views::zip(chars, alphabets))
+    for (auto [ chr, alp ] : views::zip(chars, alphabets))
         EXPECT_EQ((assign_char_to(chr, aa10li{})), alp);
 }
 
@@ -61,7 +62,7 @@ TEST(aa10li, to_char)
         'B'_aa10li, 'J'_aa10li, 'O'_aa10li, 'U'_aa10li, 'X'_aa10li, 'Z'_aa10li
     };
 
-    for (auto [ chr, alp ] : std::views::zip(chars, alphabets))
+    for (auto [ chr, alp ] : views::zip(chars, alphabets))
         EXPECT_EQ(to_char(alp), chr);
 }
 

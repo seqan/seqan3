@@ -17,6 +17,7 @@
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/range/views/interleave.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
+#include <seqan3/range/views/to.hpp>
 
 namespace seqan3
 {
@@ -1793,7 +1794,7 @@ public:
     template <typename char_t>
     friend debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, dynamic_bitset arg)
     {
-        s << (std::string_view{arg.to_string()} | views::interleave(4, std::string_view{"'"}) | ranges::to<std::string>);
+        s << (std::string_view{arg.to_string()} | views::interleave(4, std::string_view{"'"}) | views::to<std::string>);
         return s;
     }
     //!\}

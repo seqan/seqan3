@@ -18,8 +18,9 @@
 #include <variant>
 #include <vector>
 
-#include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/zip.hpp>
+// remove the following after range-v3 is updated to 1.0
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 #include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
@@ -42,6 +43,7 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/get.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -702,7 +704,7 @@ protected:
         {
             if constexpr (!detail::decays_to_ignore_v<reference_t<seq_quals_t>>)
             {
-                auto zipped = std::views::zip(seq_quals, ids);
+                auto zipped = views::zip(seq_quals, ids);
 
                 for (auto && v : zipped)
                     f.write(*secondary_stream,
@@ -713,7 +715,7 @@ protected:
             }
             else
             {
-                auto zipped = std::views::zip(seqs, ids, quals);
+                auto zipped = views::zip(seqs, ids, quals);
 
                 for (auto && v : zipped)
                     f.write(*secondary_stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v));
@@ -771,3 +773,5 @@ sequence_file_output(stream_t &,
                             typename std::remove_reference_t<stream_t>::char_type>;
 //!\}
 } // namespace seqan3
+
+#pragma GCC diagnostic pop

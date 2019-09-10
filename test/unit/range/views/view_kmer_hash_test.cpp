@@ -13,6 +13,7 @@
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/to.hpp>
 
 #include <gtest/gtest.h>
 
@@ -96,62 +97,62 @@ TEST_F(kmer_hash_test, concepts)
 
 TEST_F(kmer_hash_test, ungapped)
 {
-    EXPECT_EQ(ungapped1, text1 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped2, text2 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped3, text3 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped4, text4 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped5, text5 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped6, text6 | ungapped_view | std::ranges::to<result_t>);
+    EXPECT_EQ(ungapped1, text1 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped2, text2 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped3, text3 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped4, text4 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped5, text5 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped6, text6 | ungapped_view | views::to<result_t>);
 }
 
 TEST_F(kmer_hash_test, gapped)
 {
-    EXPECT_EQ(gapped1, text1 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped2, text2 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped3, text3 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped4, text4 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped5, text5 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped6, text6 | gapped_view | std::ranges::to<result_t>);
+    EXPECT_EQ(gapped1, text1 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped2, text2 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped3, text3 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped4, text4 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped5, text5 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped6, text6 | gapped_view | views::to<result_t>);
 }
 
 TEST_F(kmer_hash_test, const_ungapped)
 {
-    EXPECT_EQ(ungapped1, ctext1 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped2, ctext2 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped3, ctext3 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped4, ctext4 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped5, ctext5 | ungapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(ungapped6, ctext6 | ungapped_view | std::ranges::to<result_t>);
+    EXPECT_EQ(ungapped1, ctext1 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped2, ctext2 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped3, ctext3 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped4, ctext4 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped5, ctext5 | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(ungapped6, ctext6 | ungapped_view | views::to<result_t>);
 }
 
 TEST_F(kmer_hash_test, const_gapped)
 {
-    EXPECT_EQ(gapped1, ctext1 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped2, ctext2 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped3, ctext3 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped4, ctext4 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped5, ctext5 | gapped_view | std::ranges::to<result_t>);
-    EXPECT_EQ(gapped6, ctext6 | gapped_view | std::ranges::to<result_t>);
+    EXPECT_EQ(gapped1, ctext1 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped2, ctext2 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped3, ctext3 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped4, ctext4 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped5, ctext5 | gapped_view | views::to<result_t>);
+    EXPECT_EQ(gapped6, ctext6 | gapped_view | views::to<result_t>);
 }
 
 TEST_F(kmer_hash_test, combinability)
 {
     auto stop_at_t = views::take_until([] (dna4 const x) { return x == 'T'_dna4; });
-    EXPECT_EQ(result_t{6}, static_cast<result_t>(text2 | stop_at_t | ungapped_view));
-    EXPECT_EQ(result_t{6}, static_cast<result_t>(text5 | stop_at_t | ungapped_view));
-    EXPECT_EQ(result_t{6}, static_cast<result_t>(text6 | stop_at_t | ungapped_view));
+    EXPECT_EQ(result_t{6}, text2 | stop_at_t | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(result_t{6}, text5 | stop_at_t | ungapped_view | views::to<result_t>);
+    EXPECT_EQ(result_t{6}, text6 | stop_at_t | ungapped_view | views::to<result_t>);
 
-    EXPECT_EQ(ungapped2 | std::views::reverse | std::ranges::to<result_t>,
-              text2 | ungapped_view | std::views::reverse | std::ranges::to<result_t>);
+    EXPECT_EQ(ungapped2 | std::views::reverse | views::to<result_t>,
+              text2 | ungapped_view | std::views::reverse | views::to<result_t>);
 
-    EXPECT_EQ(gapped2 | std::views::reverse | std::ranges::to<result_t>,
-              text2 | gapped_view | std::views::reverse | std::ranges::to<result_t>);
+    EXPECT_EQ(gapped2 | std::views::reverse | views::to<result_t>,
+              text2 | gapped_view | std::views::reverse | views::to<result_t>);
 
-    EXPECT_EQ(ungapped5 | std::views::reverse | std::ranges::to<result_t>,
-              text5 | ungapped_view | std::views::reverse | std::ranges::to<result_t>);
+    EXPECT_EQ(ungapped5 | std::views::reverse | views::to<result_t>,
+              text5 | ungapped_view | std::views::reverse | views::to<result_t>);
 
-    EXPECT_EQ(gapped5 | std::views::reverse | std::ranges::to<result_t>,
-              text5 | gapped_view | std::views::reverse | std::ranges::to<result_t>);
+    EXPECT_EQ(gapped5 | std::views::reverse | views::to<result_t>,
+              text5 | gapped_view | std::views::reverse | views::to<result_t>);
 }
 
 TEST_F(kmer_hash_test, invalid_sizes)

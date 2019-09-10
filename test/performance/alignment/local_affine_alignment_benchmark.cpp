@@ -16,6 +16,7 @@
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/range/views/zip.hpp>
 
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
@@ -231,7 +232,7 @@ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
         seqan::localAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11}, seqan::Gotoh());
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), local_affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), local_affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 

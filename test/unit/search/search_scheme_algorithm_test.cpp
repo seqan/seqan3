@@ -15,8 +15,8 @@
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
 #include <seqan3/search/fm_index/all.hpp>
-
-#include <range/v3/view/slice.hpp>
+#include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/to.hpp>
 
 #include <gtest/gtest.h>
 
@@ -37,7 +37,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
     using char_t = typename text_t::value_type;
 
     uint64_t const pos = std::rand() % (text.size() - query_length + 1);
-    text_t const orig_query = text | views::slice(pos, pos + query_length);
+    text_t const orig_query = text | views::slice(pos, pos + query_length) | views::to<text_t>;
 
     // Modify query s.t. it has errors matching error_distribution.
     auto query = orig_query;
@@ -95,14 +95,14 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
 
     auto remove_predicate_ss = [&text, &orig_query, query_length] (uint64_t const hit)
     {
-        dna4_vector matched_seq = text | views::slice(hit, hit + query_length);
+        dna4_vector matched_seq = text | views::slice(hit, hit + query_length) | views::to<dna4_vector>;
         return (matched_seq != orig_query);
     };
 
     auto remove_predicate_trivial = [&] (uint64_t const hit)
     {
         // filter only correct error distributions
-        dna4_vector matched_seq = text | views::slice(hit, hit + query_length);
+        dna4_vector matched_seq = text | views::slice(hit, hit + query_length) | views::to<dna4_vector>;
         if (orig_query != matched_seq)
             return true;
 

@@ -19,6 +19,8 @@
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/simd/view_to_simd.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
+#include <seqan3/range/views/to.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 #include <seqan3/test/performance/sequence_generator.hpp>
@@ -38,18 +40,18 @@ void to_simd_naive_wo_condition(benchmark::State& state)
     sequences.resize(simd_length);
 
     for (size_t i = 0; i < simd_length; ++i)
-        std::ranges::copy(test::generate_sequence<dna4>(500, 10), std::back_inserter(sequences[i]));
+        std::ranges::copy(test::generate_sequence<dna4>(500, 10), std::ranges::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)
     {
         // First sort the sequences by their lengths, but only use a proxy.
         auto sorted_sequences =
-            std::views::transform(std::views::zip(sequences, std::views::iota(0u, simd_length)), [] (auto && tpl)
+            std::views::transform(views::zip(sequences, std::views::iota(0u, simd_length)), [] (auto && tpl)
             {
                 return std::pair{std::ranges::size(std::get<0>(tpl)), std::get<1>(tpl)};
             })
-            | std::ranges::to<std::vector<std::pair<size_t, size_t>>>;
+            | views::to<std::vector<std::pair<size_t, size_t>>>;
 
         std::ranges::sort(sorted_sequences);
 
@@ -98,7 +100,7 @@ void to_simd_naive_w_condition(benchmark::State& state)
     sequences.resize(simd_length);
 
     for (size_t i = 0; i < simd_length; ++i)
-        std::ranges::copy(test::generate_sequence<dna4>(500, 10), std::back_inserter(sequences[i]));
+        std::ranges::copy(test::generate_sequence<dna4>(500, 10), std::ranges::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)
@@ -145,7 +147,7 @@ void to_simd(benchmark::State& state)
     sequences.resize(simd_traits<simd_t>::length);
 
     for (size_t i = 0; i < simd_traits<simd_t>::length; ++i)
-        std::ranges::copy(test::generate_sequence<dna4>(500, 10), std::back_inserter(sequences[i]));
+        std::ranges::copy(test::generate_sequence<dna4>(500, 10), std::ranges::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)

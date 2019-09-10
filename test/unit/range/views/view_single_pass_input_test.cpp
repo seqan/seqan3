@@ -15,6 +15,7 @@
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/take.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
 
 template <typename rng_type>
@@ -37,11 +38,11 @@ class single_pass_input : public ::testing::Test
         {
             return rng_type{1, 2, 3, 4, 5};
         }
-        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::ranges::istream_view<char>>)
+        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::ranges::basic_istream_view<char>>)
         {
             return std::istringstream{"12345"};
         }
-        else if constexpr (std::is_same_v<rng_type, std::ranges::istream_view<int>>)
+        else if constexpr (std::is_same_v<rng_type, std::ranges::basic_istream_view<int>>)
         {
             return std::istringstream{"1 2 3 4 5"};
         }
@@ -57,8 +58,8 @@ public:
 using underlying_range_types = ::testing::Types<std::vector<char>,
                                                 std::vector<int>,
                                                 std::vector<char> const,
-                                                std::ranges::istream_view<char>,
-                                                std::ranges::istream_view<int>>;
+                                                std::ranges::basic_istream_view<char>,
+                                                std::ranges::basic_istream_view<int>>;
 
 TYPED_TEST_CASE(single_pass_input, underlying_range_types);
 
@@ -146,7 +147,7 @@ TYPED_TEST(single_pass_input, view_iterate)
     {
         detail::single_pass_input_view view{p};
         TypeParam tmp{this->cmp_data};
-        auto zipper = std::views::zip(tmp, std::move(view));
+        auto zipper = views::zip(tmp, std::move(view));
         for (auto it = zipper.begin(); it != zipper.end(); ++it)
         {
             EXPECT_EQ(std::get<0>(*it), std::get<1>(*it));

@@ -127,34 +127,6 @@ struct size_type<it_t>
  * \tparam it_t The type to operate on.
  * \see seqan3::iterator_tag_t
  *
- * <table>
- *   <tr>
- *     <th>Modelled concept</th>
- *     <th>iterator_tag<it_t>::type</th>
- *   </tr>
- *   <tr>
- *     <td>\ref std::input_iterator "std::input_iterator<it_t>"</td>
- *     <td>std::input_iterator_tag</td>
- *   </tr>
- *   <tr>
- *     <td>\ref std::input_iterator "!std::input_iterator<it_t>" &amp;&amp;
- *         \ref std::output_iterator "std::output_iterator<it_t, value_type<it_t>>"</td>
- *     <td>std::output_iterator_tag</td>
- *   </tr>
- *   <tr>
- *     <td>\ref std::forward_iterator "std::forward_iterator<it_t>"</td>
- *     <td>std::forward_iterator_tag</td>
- *   </tr>
- *   <tr>
- *     <td>\ref std::bidirectional_iterator "std::bidirectional_iterator<it_t>"</td>
- *     <td>std::bidirectional_iterator_tag</td>
- *   </tr>
- *   <tr>
- *     <td>\ref std::random_access_iterator "std::random_access_iterator<it_t>"</td>
- *     <td>std::random_access_iterator_tag</td>
- *   </tr>
- * </table>
- *
  * \attention
  * If [std::iterator_traits<it_t>::iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_traits)
  * is defined for a type `it_t`, this transformation trait acts as an alias for it.

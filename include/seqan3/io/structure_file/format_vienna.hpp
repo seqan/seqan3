@@ -21,13 +21,6 @@
 #include <type_traits>
 #include <vector>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/view/chunk.hpp>
-#include <range/v3/view/drop_while.hpp>
-#include <range/v3/view/join.hpp>
-#include <range/v3/view/remove_if.hpp>
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
@@ -43,10 +36,11 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
@@ -163,7 +157,7 @@ public:
                     std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
                                                   | views::take_until_or_throw(is_cntrl || is_blank)
                                                   | views::char_to<value_type_t<id_type>>,
-                                      std::back_inserter(id));
+                                      std::ranges::back_inserter(id));
                     detail::consume(stream_view | views::take_line_or_throw);
                 }
                 else
@@ -171,7 +165,7 @@ public:
                     std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
                                                   | views::take_line_or_throw
                                                   | views::char_to<value_type_t<id_type>>,
-                                      std::back_inserter(id));
+                                      std::ranges::back_inserter(id));
                 }
             }
             else
@@ -208,7 +202,7 @@ public:
                                               return c;
                                             })
                                           | views::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
-                              std::back_inserter(seq));
+                              std::ranges::back_inserter(seq));
         }
         else
         {
@@ -234,7 +228,7 @@ public:
             else
             {
                 using alph_type = value_type_t<structure_type>;
-                std::ranges::copy(read_structure<alph_type>(stream_view), std::back_inserter(structure));
+                std::ranges::copy(read_structure<alph_type>(stream_view), std::ranges::back_inserter(structure));
                 structure_length = std::ranges::distance(structure);
 
                 if constexpr (!detail::decays_to_ignore_v<bpp_type>)
@@ -262,7 +256,8 @@ public:
         if constexpr (!detail::decays_to_ignore_v<energy_type>)
         {
             std::string e_str = stream_view | views::take_line
-                                            | std::views::filter(!(is_space || is_char<'('> || is_char<')'>));
+                                            | std::views::filter(!(is_space || is_char<'('> || is_char<')'>))
+                                            | views::to<std::string>;
             if (!e_str.empty())
             {
                 size_t num_processed;

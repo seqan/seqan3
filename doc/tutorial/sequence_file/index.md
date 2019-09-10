@@ -328,7 +328,7 @@ which is split into two files.
 The read pairs are identified by their identical name/id
 and that their position in the two files is the same.
 
-If you want to handle one pair of reads at a time, you can do so easily with a std::views::zip.
+If you want to handle one pair of reads at a time, you can do so easily with a views::zip.
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp paired_reads
 

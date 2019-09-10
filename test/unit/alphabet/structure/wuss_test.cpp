@@ -5,10 +5,9 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
+#include <seqan3/range/views/zip.hpp>
 
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
@@ -39,7 +38,7 @@ TEST(wuss, assign_char)
         'H'_wuss51, 'B'_wuss51, 'E'_wuss51, 'G'_wuss51, 'I'_wuss51, 'T'_wuss51, 'S'_wuss51
     };
 
-    for (auto [ ch, cm ] : std::views::zip(input, cmp))
+    for (auto [ ch, cm ] : views::zip(input, cmp))
         EXPECT_EQ((assign_char_to(ch, wuss51{})), cm);
 }
 

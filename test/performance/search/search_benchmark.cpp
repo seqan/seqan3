@@ -10,6 +10,8 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/search/algorithm/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/range/views/join.hpp>
+#include <seqan3/range/views/to.hpp>
 
 using namespace seqan3;
 using namespace seqan3::test;
@@ -134,8 +136,8 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
 
     return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15)
          | views::persist
-         | std::views::join
-         | std::ranges::to<std::vector>;
+         | views::join
+         | views::to<std::vector>;
 }
 
 //============================================================================
@@ -154,7 +156,7 @@ void unidirectional_search_all_collection(benchmark::State & state, options && o
                                                                           o.read_length, o.simulated_errors,
                                                                           o.prob_insertion, o.prob_deletion,
                                                                           o.stddev, i);
-        std::ranges::move(seq_reads, std::back_inserter(reads));
+        std::ranges::move(seq_reads, std::ranges::back_inserter(reads));
     }
 
     fm_index index{collection};

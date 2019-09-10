@@ -47,7 +47,7 @@ int main()
     // }
 
     // But you can also do this:
-    std::ranges::copy(fin, std::back_inserter(records));
+    std::ranges::copy(fin, std::ranges::back_inserter(records));
 
     debug_stream << records << std::endl;
 }

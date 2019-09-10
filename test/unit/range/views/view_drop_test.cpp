@@ -15,10 +15,11 @@
 
 #include <range/v3/view/unique.hpp>
 
-#include <seqan3/range/views/drop.hpp>
-#include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/range/views/drop.hpp>
+#include <seqan3/range/views/single_pass_input.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
@@ -37,24 +38,24 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("bar", std::string(v));
 
     // function notation
-    std::string v2{adaptor(vec, 3) | std::ranges::to<std::string>};
+    std::string v2{adaptor(vec, 3) | views::to<std::string>};
     EXPECT_EQ("bar", v2);
 
     // combinability
     auto v3 = vec | adaptor(1) | adaptor(1) | ranges::view::unique;
-    EXPECT_EQ("obar", std::string(v3));
-    std::string v3b = vec | std::views::reverse | adaptor(3) | ranges::view::unique | std::ranges::to<std::string>;
+    EXPECT_EQ("obar", v3 | views::to<std::string>);
+    std::string v3b = vec | std::views::reverse | adaptor(3) | ranges::view::unique | views::to<std::string>;
     EXPECT_EQ("of", v3b);
 
     // store arg
     auto a0 = adaptor(3);
     auto v4 = vec | a0;
-    EXPECT_EQ("bar", std::string(v4 | std::ranges::to<std::string>));
+    EXPECT_EQ("bar", v4 | views::to<std::string>);
 
     // store combined
     auto a1 = adaptor(1) | adaptor(1) | ranges::view::unique;
     auto v5 = vec | a1;
-    EXPECT_EQ("obar", std::string(v5 | std::ranges::to<std::string>));
+    EXPECT_EQ("obar", v5 | views::to<std::string>);
 }
 
 template <typename adaptor_t>
@@ -117,7 +118,7 @@ TEST(view_drop, underlying_is_shorter)
 
     std::string v;
     // full parsing on conversion
-    EXPECT_NO_THROW(( v = vec | views::single_pass_input | views::drop(4)  | std::ranges::to<std::string>));
+    EXPECT_NO_THROW(( v = vec | views::single_pass_input | views::drop(4)  | views::to<std::string>));
     EXPECT_EQ("ar", v);
 }
 

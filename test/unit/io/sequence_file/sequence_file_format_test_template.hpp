@@ -16,6 +16,7 @@
 #include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/io/sequence_file/all.hpp>
 #include <seqan3/range/views/convert.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/concepts>
 #include <seqan3/test/pretty_printing.hpp>
@@ -181,7 +182,7 @@ TYPED_TEST_P(sequence_file_write, seq_qual)
     for (unsigned i = 0; i < 3; ++i)
     {
         EXPECT_NO_THROW((fout.emplace_back(this->ids[i],
-                                           std::views::zip(this->seqs[i], this->quals[i]) | convert_to_qualified)));
+                                           views::zip(this->seqs[i], this->quals[i]) | convert_to_qualified)));
     }
 
     this->ostream.flush();

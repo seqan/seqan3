@@ -18,6 +18,7 @@
 
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/std/ranges>
@@ -890,7 +891,7 @@ public:
 
         size_type const loc = offset() - index->fwd_fm.index[fwd_lb];
         size_type const query_begin = loc - index->fwd_fm.text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return text | std::views::join | views::slice(query_begin, query_begin + query_length());
+        return text | views::join | views::slice(query_begin, query_begin + query_length());
     }
 
     /*!\brief Counts the number of occurrences of the searched query in the text.

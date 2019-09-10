@@ -21,6 +21,7 @@
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -428,7 +429,7 @@ private:
      */
     constexpr bool all_iterators_reached_sentinel() const noexcept
     {
-        return std::ranges::all_of(std::views::zip(cached_iter, cached_sentinel), [] (auto && tpl)
+        return std::ranges::all_of(views::zip(cached_iter, cached_sentinel), [] (auto && tpl)
     {
             return std::get<0>(tpl) == std::get<1>(tpl);
         });

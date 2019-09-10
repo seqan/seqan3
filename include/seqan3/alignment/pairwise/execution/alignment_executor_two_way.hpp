@@ -24,6 +24,7 @@
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -56,7 +57,7 @@ private:
      * \{
      */
     //!\brief The underlying resource type.
-    using resource_type       = decltype(views::single_pass_input(std::views::zip(std::declval<resource_t>(),
+    using resource_type       = decltype(views::single_pass_input(views::zip(std::declval<resource_t>(),
                                                                                 std::views::iota(0))));
     //!\brief The value type of the resource.
     using resource_value_type = value_type_t<resource_type>;
@@ -110,7 +111,7 @@ public:
      */
     alignment_executor_two_way(resource_t resrc,
                                alignment_algorithm_t fn) :
-        resource{std::views::zip(std::forward<resource_t>(resrc), std::views::iota(0))},
+        resource{views::zip(std::forward<resource_t>(resrc), std::views::iota(0))},
         kernel{std::move(fn)}
     {
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)

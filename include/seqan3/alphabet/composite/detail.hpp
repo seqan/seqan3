@@ -132,11 +132,11 @@ struct assignable_from
  * Returns an std::true_type if the `type` is weakly equality comparable to `T`.
  */
 template <typename T>
-struct weakly_equality_comparable_with
+struct weakly_equality_comparable_with_
 {
     //!\brief The returned type when invoked.
     template <typename type>
-    using invoke = std::integral_constant<bool, std::detail::weakly_equality_comparable_with<type, T>>;
+    using invoke = std::integral_constant<bool, weakly_equality_comparable_with<type, T>>;
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.

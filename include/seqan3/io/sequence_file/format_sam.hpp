@@ -25,6 +25,7 @@
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -106,7 +107,7 @@ public:
                 throw parse_error{"The id information must not be empty."};
 
         if (options.truncate_ids)
-            id = id | views::take_until_and_consume(is_space) | std::ranges::to<id_type>;
+            id = id | views::take_until_and_consume(is_space) | views::to<id_type>;
     }
 
 private:

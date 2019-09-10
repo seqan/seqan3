@@ -60,11 +60,11 @@ private:
      *
      * Depending on the type of the iterator passed to the shape_iterator, different functionality is available:
      *
-     * | Concept modelled by passed text iterator                     | Available functions             |
-     * |--------------------------------------------------------------|---------------------------------|
-     * | \ref std::forward_iterator "std::forward_iterator"             | \ref shape_iterator_comparison "Comparison operators"<br>\ref operator++ "Pre-increment (++it)"<br>\ref operator++(int) "Post-increment (it++)"<br>\ref operator* "Indirection operator (*it)" |
-     * | \ref std::bidirectional_iterator "std::bidirectional_iterator" | \ref operator-- "Pre-decrement (--it)"<br>\ref operator--(int) "Post-decrement (it--)" |
-     * | \ref std::random_access_iterator "std::random_access_iterator"   | \ref operator+= "Forward (it +=)"<br>\ref operator+ "Forward copy (it +)"<br>\ref operator-= "Decrement(it -=)"<br>\ref shape_iterator_operator-decrement "Decrement copy (it -)"<br>\ref shape_iterator_operator-difference "Difference (it1 - it2)"<br>\ref operator[] "Subscript (it[])" |
+     * | Concept modelled by passed text iterator | Available functions             |
+     * |------------------------------------------|---------------------------------|
+     * | std::forward_iterator                    | \ref shape_iterator_comparison "Comparison operators"<br>\ref operator++ "Pre-increment (++it)"<br>\ref operator++(int) "Post-increment (it++)"<br>\ref operator* "Indirection operator (*it)" |
+     * | std::bidirectional_iterator              | \ref operator-- "Pre-decrement (--it)"<br>\ref operator--(int) "Post-decrement (it--)" |
+     * | std::random_access_iterator              | \ref operator+= "Forward (it +=)"<br>\ref operator+ "Forward copy (it +)"<br>\ref operator-= "Decrement(it -=)"<br>\ref shape_iterator_operator-decrement "Decrement copy (it -)"<br>\ref shape_iterator_operator-difference "Difference (it1 - it2)"<br>\ref operator[] "Subscript (it[])" |
      *
      * When using a gapped seqan3::shape, the `0`s of the seqan3::shape are virtually removed from the hashed k-mer.
      * Note that any shape is expected to start with a `1` and end with a `1`.

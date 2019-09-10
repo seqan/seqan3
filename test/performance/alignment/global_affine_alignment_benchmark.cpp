@@ -13,10 +13,10 @@
 #include <utility>
 #include <vector>
 
-
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
@@ -175,7 +175,7 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
         seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -245,7 +245,7 @@ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
         seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 

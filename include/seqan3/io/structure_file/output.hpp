@@ -20,8 +20,9 @@
 #include <variant>
 #include <vector>
 
-#include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/zip.hpp>
+// remove the following after range-v3 is updated to 1.0
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 #include <seqan3/alphabet/structure/all.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
@@ -39,6 +40,7 @@
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/get.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -764,7 +766,7 @@ protected:
         {
             if constexpr (!detail::decays_to_ignore_v<reference_t<structured_seq_type>>)
             {
-                auto zipped = std::views::zip(structured_seq, id, bpp, energy, react, react_error, comment, offset);
+                auto zipped = views::zip(structured_seq, id, bpp, energy, react, react_error, comment, offset);
 
                 for (auto && v : zipped)
                 {
@@ -783,7 +785,7 @@ protected:
             }
             else
             {
-                auto zipped = std::views::zip(seq, id, bpp, structure, energy, react, react_error, comment, offset);
+                auto zipped = views::zip(seq, id, bpp, structure, energy, react, react_error, comment, offset);
 
                 for (auto && v : zipped)
                 {
@@ -823,3 +825,4 @@ structure_file_output(stream_t &, file_format const &, selected_field_ids const 
 //!\}
 
 } // namespace seqan3
+#pragma GCC diagnostic pop

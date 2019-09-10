@@ -11,6 +11,7 @@
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/to.hpp>
 
 #include "fixture/alignment_fixture.hpp"
 
@@ -94,8 +95,10 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
     EXPECT_EQ(res.front_coordinate(), fixture.front_coordinate);
 
     auto && [gapped_database, gapped_query] = res.alignment();
-    EXPECT_EQ(std::string{gapped_database | views::to_char}, fixture.aligned_sequence1);
-    EXPECT_EQ(std::string{gapped_query | views::to_char}, fixture.aligned_sequence2);
+    EXPECT_EQ(gapped_database | views::to_char | views::to<decltype(fixture.aligned_sequence1)>,
+              fixture.aligned_sequence1);
+    EXPECT_EQ(gapped_query    | views::to_char | views::to<decltype(fixture.aligned_sequence2)>,
+              fixture.aligned_sequence2);
 }
 
 REGISTER_TYPED_TEST_CASE_P(pairwise_alignment_test,

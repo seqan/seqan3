@@ -13,6 +13,7 @@
 #include <seqan3/alignment/matrix/detail/trace_iterator_banded.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/iterator>
 
 #include "../../../range/iterator_test_template.hpp"
@@ -57,7 +58,7 @@ TEST_F(trace_iterator_banded_test, concepts)
 
 TEST_F(trace_iterator_banded_test, trace_path_2_5)
 {
-    std::vector vec = path(matrix_offset{row_index_type{2}, column_index_type{5}}) | std::ranges::to<std::vector>;
+    std::vector vec = path(matrix_offset{row_index_type{2}, column_index_type{5}}) | views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 8u);
     EXPECT_EQ(vec, (std::vector{U, U, L, L, L, D, D, U}));

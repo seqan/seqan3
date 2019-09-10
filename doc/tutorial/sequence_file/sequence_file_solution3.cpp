@@ -65,10 +65,15 @@ int main()
     //     debug_stream << "ID: " << get<field::ID>(rec) << '\n';
     // }
 
-    // But you can also do this :)
-    std::vector<std::string> ids = std::move(fin | length_filter | std::views::take(2) | views::get<field::ID>);
+    // But you can also do this to retrieve all IDs into a vector:
+    std::vector<std::string> ids = fin
+                                 | length_filter                                // apply length filter
+                                 | std::views::take(2)                          // take first two records
+                                 | views::get<field::ID>                        // select only ID from record
+                                 | views::convert<std::string &&>               // mark ID to be moved out of record
+                                 | views::to<std::vector<std::string>>;         // convert to container
     // Note that you need to know the type of id (std::string)
-    // We use move to avoid copying
+    // Converting to && prevents the IDs from being copied
 
     debug_stream << ids << std::endl;
 }

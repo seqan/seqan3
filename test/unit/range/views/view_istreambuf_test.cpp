@@ -17,6 +17,7 @@
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>
 
@@ -74,7 +75,7 @@ TEST(view_istreambuf, basic)
     is.clear();
     is.seekg(0, std::ios::beg);
     auto v4 = views::istreambuf(is) | views::take_until(is_space);
-    std::string out2 = v4;
+    std::string out2 = v4 | views::to<std::string>;
     std::string comp2 = "ACGTATATATAT";
     EXPECT_TRUE(std::ranges::equal(out2, comp2));
 }

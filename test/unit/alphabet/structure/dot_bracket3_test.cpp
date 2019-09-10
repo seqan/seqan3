@@ -5,10 +5,9 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
+#include <seqan3/range/views/zip.hpp>
 
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
@@ -46,7 +45,7 @@ TEST(dot_bracket3, assign_char)
         '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3
     };
 
-    for (auto [ ch, cm ] : std::views::zip(input, cmp))
+    for (auto [ ch, cm ] : views::zip(input, cmp))
         EXPECT_EQ((assign_char_to(ch, dot_bracket3{})), cm);
 }
 

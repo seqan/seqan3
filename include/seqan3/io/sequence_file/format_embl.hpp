@@ -33,10 +33,12 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
+#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/ranges>
@@ -125,7 +127,7 @@ public:
 
         std::string idbuffer;
         std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank),
-                          std::back_inserter(idbuffer));
+                          std::ranges::back_inserter(idbuffer));
         if (idbuffer != "ID")
             throw parse_error{"An entry has to start with the code word ID."};
 
@@ -133,12 +135,12 @@ public:
         {
             if (options.embl_genbank_complete_header)
             {
-                std::ranges::copy(idbuffer | views::char_to<value_type_t<id_type>>, std::back_inserter(id));
+                std::ranges::copy(idbuffer | views::char_to<value_type_t<id_type>>, std::ranges::back_inserter(id));
                 do
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_char<'S'>)
                                                   | views::char_to<value_type_t<id_type>>,
-                                 std::back_inserter(id));
+                                 std::ranges::back_inserter(id));
                     id.push_back(*stream_it);
                     ++stream_it;
                 } while (*stream_it != 'Q');
@@ -155,13 +157,13 @@ public:
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
                                                   | views::char_to<value_type_t<id_type>>,
-                                 std::back_inserter(id));
+                                 std::ranges::back_inserter(id));
                 }
                 else
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_char<';'>)
                                                   | views::char_to<value_type_t<id_type>>,
-                                 std::back_inserter(id));
+                                 std::ranges::back_inserter(id));
                 }
             }
         }
@@ -197,7 +199,7 @@ public:
                                         return c;
                                     })
                                   | views::char_to<value_type_t<seq_type>>,         // convert to actual target alphabet
-                         std::back_inserter(sequence));
+                         std::ranges::back_inserter(sequence));
         }
         else
         {
@@ -296,7 +298,7 @@ public:
             {
                 std::ranges::copy(chunk | views::to_char
                                         | ranges::view::chunk(10)
-                                        | std::views::join(' '), stream_it);
+                                        | views::join(' '), stream_it);
                 ++i;
                 stream_it = ' ';
                 bp = std::min(sequence_size, bp + 60);

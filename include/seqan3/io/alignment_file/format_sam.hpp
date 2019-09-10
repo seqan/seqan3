@@ -42,6 +42,8 @@
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/to.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
@@ -561,7 +563,7 @@ protected:
     {
         if (!is_char<'*'>(*std::ranges::begin(stream_view)))
             std::ranges::copy(stream_view | views::char_to<value_type_t<target_range_type>>,
-                              std::back_inserter(target));
+                              std::ranges::back_inserter(target));
         else
             std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
     }
@@ -705,7 +707,7 @@ protected:
             }
             case 'Z' : // string
             {
-                target[tag] = std::string(stream_view);
+                target[tag] = stream_view | views::to<std::string>;
                 break;
             }
             case 'H' :
@@ -1422,7 +1424,7 @@ protected:
         detail::write_eol(stream_it, options.add_carriage_return);
 
         // (@SQ) Write Reference Sequence Dictionary lines [required].
-        for (auto const & [ref_name, ref_info] : std::views::zip(header.ref_ids(), header.ref_id_info))
+        for (auto const & [ref_name, ref_info] : views::zip(header.ref_ids(), header.ref_id_info))
         {
             stream << "@SQ\tSN:";
 
