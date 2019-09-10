@@ -10,8 +10,8 @@
 #include <string>
 
 #include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
-#include <seqan3/range/view/persist.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/persist.hpp>
+#include <seqan3/range/views/view_all.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 #include <seqan3/test/pretty_printing.hpp>
@@ -23,7 +23,7 @@ struct dummy_alignment
     constexpr auto operator()(size_t const, first_seq_t && first_seq, second_seq_t && second_seq) const
     {
         size_t count = 0;
-        ranges::for_each(ranges::view::zip(first_seq, second_seq), [&](auto && tpl)
+        std::ranges::for_each(std::views::zip(first_seq, second_seq), [&](auto && tpl)
         {
             auto && [v1, v2] = tpl;
             if (v1 == v2)
@@ -105,7 +105,7 @@ TYPED_TEST(alignment_executor_two_way_test, in_avail)
 
 TYPED_TEST(alignment_executor_two_way_test, lvalue_single_view)
 {
-    auto v = ranges::view::single(single);
+    auto v = std::views::single(single);
     using t = detail::alignment_executor_two_way<decltype(v), decltype(fn), TypeParam>;
 
     t exec{v, fn};
@@ -115,8 +115,8 @@ TYPED_TEST(alignment_executor_two_way_test, lvalue_single_view)
 
 TYPED_TEST(alignment_executor_two_way_test, rvalue_single_view)
 {
-    using t = detail::alignment_executor_two_way<decltype(ranges::view::single(single)), decltype(fn), TypeParam>;
-    t exec{ranges::view::single(single), fn};
+    using t = detail::alignment_executor_two_way<decltype(std::views::single(single)), decltype(fn), TypeParam>;
+    t exec{std::views::single(single), fn};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
@@ -135,8 +135,8 @@ TYPED_TEST(alignment_executor_two_way_test, lvalue_collection)
 
 TYPED_TEST(alignment_executor_two_way_test, rvalue_collection_view)
 {
-    using t = detail::alignment_executor_two_way<decltype(collection | view::persist), decltype(fn), TypeParam>;
-    t exec{collection | view::persist, fn};
+    using t = detail::alignment_executor_two_way<decltype(collection | views::persist), decltype(fn), TypeParam>;
+    t exec{collection | views::persist, fn};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);

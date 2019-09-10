@@ -5,7 +5,7 @@
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/view/pairwise_combine.hpp>
+#include <seqan3/range/views/pairwise_combine.hpp>
 
 using namespace seqan3;
 
@@ -21,6 +21,6 @@ int main()
                   align_cfg::scoring{nucleotide_scoring_scheme{}} |
                   align_cfg::aligned_ends{free_ends_first};
 
-    for (auto const & res : align_pairwise(view::pairwise_combine(vec), config))
+    for (auto const & res : align_pairwise(views::pairwise_combine(vec), config))
         debug_stream << "Score: " << res.score() << '\n';
 }

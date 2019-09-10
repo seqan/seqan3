@@ -32,9 +32,9 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
-#include <seqan3/range/view/get.hpp>
-#include <seqan3/range/view/slice.hpp>
-#include <seqan3/range/view/take_exactly.hpp>
+#include <seqan3/range/views/get.hpp>
+#include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -353,7 +353,7 @@ private:
 
         this->init_origin_cell(*std::ranges::begin(col), cache);
 
-        ranges::for_each(col | ranges::view::drop_exactly(1), [&cache, this](auto && cell)
+        std::ranges::for_each(col | ranges::view::drop_exactly(1), [&cache, this](auto && cell)
         {
             this->init_column_cell(std::forward<decltype(cell)>(cell), cache);
         });
@@ -389,7 +389,7 @@ private:
     {
         using std::get;
         auto const & score_scheme = get<align_cfg::scoring>(*cfg_ptr).value;
-        ranges::for_each(first_range, [&, this](auto seq1_value)
+        std::ranges::for_each(first_range, [&, this](auto seq1_value)
         {
             // Move internal matrix to next column.
             this->go_next_column();
@@ -398,7 +398,7 @@ private:
             this->init_row_cell(*std::ranges::begin(col), cache);
 
             auto second_range_it = std::ranges::begin(second_range);
-            ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
+            std::ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
             {
                 this->compute_cell(cell, cache, score_scheme.score(seq1_value, *second_range_it));
                 ++second_range_it;
@@ -412,7 +412,7 @@ private:
         });
 
         // Prepare the last column for tracking the optimum: Only get the current score cell and the coordinate.
-        auto last_column_view = this->current_column() | std::view::transform([](auto && entry)
+        auto last_column_view = this->current_column() | std::views::transform([](auto && entry)
             {
             using std::get;
             return std::tuple{get<0>(std::forward<decltype(entry)>(entry)),
@@ -441,14 +441,14 @@ private:
         // 1st phase: Iterate as long as the band intersects with the first row.
         // ----------------------------------------------------------------------------
 
-        ranges::for_each(first_range | view::take_exactly(this->band_column_index), [&, this](auto first_range_value)
+        std::ranges::for_each(first_range | views::take_exactly(this->band_column_index), [&, this](auto first_range_value)
         {
             this->go_next_column(); // Move to the next column.
             auto col = this->current_column();
             this->init_row_cell(*std::ranges::begin(col), cache); // initialise first row of dp matrix.
 
             auto second_range_it = std::ranges::begin(second_range);
-            ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
+            std::ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
             {
                 this->compute_cell(std::forward<decltype(cell)>(cell),
                                    cache,
@@ -471,7 +471,7 @@ private:
         // ----------------------------------------------------------------------------
 
         // Drop the first columns from the 1st phase.
-        ranges::for_each(first_range | ranges::view::drop_exactly(this->band_column_index),
+        std::ranges::for_each(first_range | ranges::view::drop_exactly(this->band_column_index),
         [&, this](auto first_range_value)
         {
             this->go_next_column(); // Move to the next column.
@@ -488,7 +488,7 @@ private:
 
             // Process rest of current column band.
             ++second_range_it;
-            ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
+            std::ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
             {
                 this->compute_cell(std::forward<decltype(cell)>(cell),
                                    cache,
@@ -506,7 +506,7 @@ private:
             }
         });
         // Prepare the last column for tracking the optimum: Only get the current score cell and the coordinate.
-        auto last_column_view = this->current_column() | std::view::transform([](auto && entry) {
+        auto last_column_view = this->current_column() | std::views::transform([](auto && entry) {
             using std::get;
             return std::tuple{get<0>(get<0>(std::forward<decltype(entry)>(entry))),
                               get<1>(std::forward<decltype(entry)>(entry))};
@@ -560,10 +560,10 @@ private:
                 back_coordinate = this->map_banded_coordinate_to_range_position(back_coordinate);
 
             // Get the subrange over the first sequence according to the front and back coordinate.
-            auto first_subrange = view::slice(first_range, front_coordinate.first, back_coordinate.first);
+            auto first_subrange = views::slice(first_range, front_coordinate.first, back_coordinate.first);
 
             // Get the subrange over the second sequence according to the front and back coordinate.
-            auto second_subrange = view::slice(second_range, front_coordinate.second, back_coordinate.second);
+            auto second_subrange = views::slice(second_range, front_coordinate.second, back_coordinate.second);
 
             // Create and fill the aligned_sequences.
             aligned_seq_type aligned_seq;

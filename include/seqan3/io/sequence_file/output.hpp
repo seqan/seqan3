@@ -40,8 +40,8 @@
 #include <seqan3/io/sequence_file/format_sam.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
-#include <seqan3/range/view/convert.hpp>
-#include <seqan3/range/view/get.hpp>
+#include <seqan3/range/views/convert.hpp>
+#include <seqan3/range/views/get.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -657,9 +657,9 @@ protected:
             {
                 f.write(*secondary_stream,
                         options,
-                        seq_qual | view::get<0>,
+                        seq_qual | views::get<0>,
                         id,
-                        seq_qual | view::get<1>);
+                        seq_qual | views::get<1>);
             }
             else
             {
@@ -702,18 +702,18 @@ protected:
         {
             if constexpr (!detail::decays_to_ignore_v<reference_t<seq_quals_t>>)
             {
-                auto zipped = std::view::zip(seq_quals, ids);
+                auto zipped = std::views::zip(seq_quals, ids);
 
                 for (auto && v : zipped)
                     f.write(*secondary_stream,
                             options,
-                            std::get<0>(v) | view::get<0>,
+                            std::get<0>(v) | views::get<0>,
                             std::get<1>(v),
-                            std::get<0>(v) | view::get<1>);
+                            std::get<0>(v) | views::get<1>);
             }
             else
             {
-                auto zipped = std::view::zip(seqs, ids, quals);
+                auto zipped = std::views::zip(seqs, ids, quals);
 
                 for (auto && v : zipped)
                     f.write(*secondary_stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v));

@@ -18,6 +18,6 @@ int main()
                   seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}};
 
     // Compute the alignment over a range of pairs.
-    for (auto const & res : seqan3::align_pairwise(std::view::zip(data1, data2), config))
+    for (auto const & res : seqan3::align_pairwise(std::views::zip(data1, data2), config))
         seqan3::debug_stream << "The score: " << res.score() << "\n";
 }

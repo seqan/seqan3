@@ -17,8 +17,8 @@
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/to_string.hpp>
-#include <seqan3/range/view/single_pass_input.hpp>
-#include <seqan3/range/view/take_until.hpp>
+#include <seqan3/range/views/single_pass_input.hpp>
+#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
@@ -165,7 +165,7 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
     size_t tmp_length{0};
 
     // go through alignment columns
-    for (auto column : std::view::zip(ref_seq, query_seq))
+    for (auto column : std::views::zip(ref_seq, query_seq))
     {
         char next_op = compare_aligned_values(std::get<0>(column), std::get<1>(column), extended_cigar);
 
@@ -311,7 +311,7 @@ std::vector<std::pair<char, size_t>> get_cigar_vector(alignment_type && alignmen
     size_t tmp_length{0};
 
     // go through alignment columns
-    for (auto column : std::view::zip(ref_seq, query_seq))
+    for (auto column : std::views::zip(ref_seq, query_seq))
     {
         char next_op = compare_aligned_values(std::get<0>(column), std::get<1>(column), extended_cigar);
 
@@ -388,11 +388,11 @@ parse_cigar(cigar_input_type && cigar_input)
         };
 
     // transform input into a signle input view if it isn't already
-    auto cigar_view = cigar_input | view::single_pass_input;
+    auto cigar_view = cigar_input | views::single_pass_input;
 
     // check hard/soft clipping at the beginning manually
     // -----------------------------------------------------------------------------------------------------------------
-    auto [ignore, buffer_end] = std::ranges::copy(cigar_view | view::take_until_or_throw(!is_digit), buffer.data());
+    auto [ignore, buffer_end] = std::ranges::copy(cigar_view | views::take_until_or_throw(!is_digit), buffer.data());
     (void) ignore;
 
     cigar_op = *std::ranges::begin(cigar_view);
@@ -401,7 +401,7 @@ parse_cigar(cigar_input_type && cigar_input)
     if (is_char<'H'>(cigar_op)) // hard clipping is ignored. parse the next operation
     {
         auto [ignore2, buffer_end2] = std::ranges::copy(cigar_view
-                                                        | view::take_until_or_throw(!is_digit), buffer.data());
+                                                        | views::take_until_or_throw(!is_digit), buffer.data());
         buffer_end = buffer_end2;
         (void) ignore2;
 
@@ -426,7 +426,7 @@ parse_cigar(cigar_input_type && cigar_input)
     // -----------------------------------------------------------------------------------------------------------------
     while (std::ranges::begin(cigar_view) != std::ranges::end(cigar_view)) // until stream is not empty
     {
-        buffer_end = (std::ranges::copy(cigar_view | view::take_until_or_throw(!is_digit), buffer.data())).out;
+        buffer_end = (std::ranges::copy(cigar_view | views::take_until_or_throw(!is_digit), buffer.data())).out;
         cigar_op = *std::ranges::begin(cigar_view);
         std::ranges::next(std::ranges::begin(cigar_view));
 

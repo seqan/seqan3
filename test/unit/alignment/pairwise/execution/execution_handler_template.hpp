@@ -11,7 +11,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/view_all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 
 using namespace seqan3;
@@ -48,8 +48,8 @@ TYPED_TEST_P(execution_handler, execute_w_lvalue)
 
     for (unsigned i = 0; i < SIZE; ++i, ++pos)
     {
-        auto v1 = set1[i] | view::all;
-        auto v2 = set2[i] | view::all;
+        auto v1 = set1[i] | views::all;
+        auto v2 = set2[i] | views::all;
         exec_handler.execute(callable, i, v1, v2, [pos, &buffer] (auto && res) { buffer[pos] = std::move(res); });
     }
 
@@ -88,7 +88,7 @@ TYPED_TEST_P(execution_handler, execute_w_rvalue)
 
     for (unsigned i = 0; i < SIZE; ++i, ++pos)
     {
-        exec_handler.execute(callable, i, set1[i] | view::all, set2[i] | view::all,
+        exec_handler.execute(callable, i, set1[i] | views::all, set2[i] | views::all,
                              [&buffer, pos] (auto && res) { buffer[pos] = std::move(res); });
     }
 

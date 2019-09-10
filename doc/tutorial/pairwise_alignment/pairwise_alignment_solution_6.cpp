@@ -5,7 +5,7 @@
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/view/pairwise_combine.hpp>
+#include <seqan3/range/views/pairwise_combine.hpp>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;
@@ -22,9 +22,9 @@ int main()
                   align_cfg::max_error{7u} |
                   align_cfg::result{with_score};
 
-    auto filter_v = std::view::filter([](auto && res) { return res.score() >= -6;});
+    auto filter_v = std::views::filter([](auto && res) { return res.score() >= -6;});
 
-    for (auto const & res : align_pairwise(view::pairwise_combine(vec), config) | view::persist | filter_v)
+    for (auto const & res : align_pairwise(views::pairwise_combine(vec), config) | views::persist | filter_v)
     {
         debug_stream << "Score: " << res.score() << '\n';
     }

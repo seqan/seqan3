@@ -57,7 +57,7 @@ void map_reads(std::filesystem::path const & query_path,
                                        align_cfg::result{with_alignment};
 //! [alignment_config]
 
-    for (auto & [query, id, qual] : query_in | view::take(20))
+    for (auto & [query, id, qual] : query_in | views::take(20))
     {
         auto positions = search(query, index, search_config);
         for (auto & [idx, pos] : positions)

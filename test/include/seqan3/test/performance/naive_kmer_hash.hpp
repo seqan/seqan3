@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
- * \brief Provides seqan3::view::kmer_hash.
+ * \brief Provides seqan3::views::kmer_hash.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/view/detail.hpp>
+#include <seqan3/range/views/detail.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -25,7 +25,7 @@ namespace seqan3::detail
 //  naive_kmer_hash_fn (adaptor definition)
 // ============================================================================
 
-//!\brief view::kmer_hash's range adaptor object type (non-closure).
+//!\brief views::kmer_hash's range adaptor object type (non-closure).
 struct naive_kmer_hash_fn
 {
     //!\brief Store the argument and return a range adaptor closure object.
@@ -46,7 +46,7 @@ struct naive_kmer_hash_fn
     //!\endcond
     constexpr auto operator()(urng_t && urange, size_t const k) const noexcept
     {
-        return std::forward<urng_t>(urange) | ranges::view::sliding(k) | std::view::transform(
+        return std::forward<urng_t>(urange) | ranges::view::sliding(k) | std::views::transform(
         [] (auto const in)
         {
             std::hash<decltype(in)> h{};
@@ -57,7 +57,7 @@ struct naive_kmer_hash_fn
 
 } // namespace seqan3::detail
 
-namespace seqan3::view
+namespace seqan3::views
 {
 
 /*!\name Alphabet related views
@@ -70,7 +70,7 @@ namespace seqan3::view
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of unsigned integral values where each value is the hash of the resp. k-mer.
  *                      See below for the properties of the returned range.
- * \ingroup view
+ * \ingroup views
  *
  * ### View properties
  *
@@ -91,12 +91,12 @@ namespace seqan3::view
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   | seqan3::semialphabet                  | std::size_t                                        |
  *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
- * \snippet test/snippet/range/view/kmer_hash.cpp usage
+ * \snippet test/snippet/range/views/kmer_hash.cpp usage
  * \hideinitializer
  */
 inline auto constexpr naive_kmer_hash = detail::naive_kmer_hash_fn{};
 
-} // namespace seqan3::view
+} // namespace seqan3::views

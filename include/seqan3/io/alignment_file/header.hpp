@@ -20,7 +20,7 @@
 #include <seqan3/alphabet/detail/hash.hpp>
 #include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/view_all.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3

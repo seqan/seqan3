@@ -41,7 +41,7 @@ TEST(aa10murphy, assign_char)
         'F'_aa10murphy, 'S'_aa10murphy
     };
 
-    for (auto [ chr, alp ] : std::view::zip(chars, alphabets))
+    for (auto [ chr, alp ] : std::views::zip(chars, alphabets))
         EXPECT_EQ((assign_char_to(chr, aa10murphy{})), alp);
 }
 
@@ -61,7 +61,7 @@ TEST(aa10murphy, to_char)
         'B'_aa10murphy, 'J'_aa10murphy, 'O'_aa10murphy, 'U'_aa10murphy, 'X'_aa10murphy, 'Z'_aa10murphy
     };
 
-    for (auto [ chr, alp ] : std::view::zip(chars, alphabets))
+    for (auto [ chr, alp ] : std::views::zip(chars, alphabets))
         EXPECT_EQ(to_char(alp), chr);
 }
 
@@ -101,7 +101,7 @@ TEST(aa10murphy, char_is_valid)
 {
     constexpr auto aa27_validator = (is_alpha || is_char<'*'>);
 
-    for (char c : std::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
+    for (char c : std::views::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
     {
         bool expect = false;
         switch (c)

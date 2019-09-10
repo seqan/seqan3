@@ -50,8 +50,8 @@ TEST(translate_triplets, random_access_range)
     dna15 n3{'A'_dna15};
     aa27 c{'L'_aa27};
 
-    auto range_triplet = ranges::view::concat(ranges::view::single(n1), ranges::view::single(n2),
-                                              ranges::view::single(n3));
+    auto range_triplet = ranges::view::concat(std::views::single(n1), std::views::single(n2),
+                                              std::views::single(n3));
     #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     aa27 t2{translate_triplet(range_triplet)};
 

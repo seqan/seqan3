@@ -17,7 +17,7 @@
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/range/shortcuts.hpp>
-#include <seqan3/range/view/to_rank.hpp>
+#include <seqan3/range/views/to_rank.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
@@ -202,8 +202,8 @@ private:
         sdsl::int_vector<8> tmp_text(text.size());
 
         std::ranges::copy(text
-                          | view::to_rank
-                          | std::view::transform([] (uint8_t const r)
+                          | views::to_rank
+                          | std::views::transform([] (uint8_t const r)
                           {
                               if constexpr (sigma == 256)
                               {
@@ -214,7 +214,7 @@ private:
                               }
                               return r + 1;
                           })
-                          | std::view::reverse,
+                          | std::views::reverse,
                           seqan3::begin(tmp_text)); // reverse and increase rank by one
 
         sdsl::construct_im(index, tmp_text, 0);
@@ -282,10 +282,10 @@ private:
         constexpr uint8_t delimiter = sigma >= 255 ? 255 : sigma + 1;
 
         std::vector<uint8_t> tmp = text
-                                   | view::deep{view::to_rank}
-                                   | view::deep
+                                   | views::deep{views::to_rank}
+                                   | views::deep
                                    {
-                                       std::view::transform([] (uint8_t const r)
+                                       std::views::transform([] (uint8_t const r)
                                        {
                                            if constexpr (sigma >= 255)
                                            {
@@ -298,17 +298,17 @@ private:
                                            return r + 1;
                                        })
                                    }
-                                   | std::view::join(delimiter);
+                                   | std::views::join(delimiter);
 
-        std::ranges::copy((tmp | std::view::reverse), seqan3::begin(tmp_text));
+        std::ranges::copy((tmp | std::views::reverse), seqan3::begin(tmp_text));
 
         //!\if DEV \todo Replace with this once this does not cause debug builds to exceed max memory on travis \endif
         // std::ranges::copy(text
-        //                   | view::deep{view::to_rank}
-        //                   | view::deep{std::view::transform([] (uint8_t const r) { return r + 1; })} // increase rank
-        //                   | view::deep{std::view::reverse}
-        //                   | std::view::reverse
-        //                   | std::view::join(delimiter), // join with delimiter
+        //                   | views::deep{views::to_rank}
+        //                   | views::deep{std::views::transform([] (uint8_t const r) { return r + 1; })} // increase rank
+        //                   | views::deep{std::views::reverse}
+        //                   | std::views::reverse
+        //                   | std::views::join(delimiter), // join with delimiter
         //                   seqan3::begin(tmp_text));
 
         sdsl::construct_im(index, tmp_text, 0);

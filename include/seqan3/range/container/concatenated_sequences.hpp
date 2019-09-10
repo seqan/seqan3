@@ -16,21 +16,65 @@
 #include <vector>
 
 #include <range/v3/view/const.hpp>
-#include <range/v3/view/join.hpp>
-#include <range/v3/view/repeat_n.hpp>
-#include <range/v3/view/slice.hpp>
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/range/views/repeat_n.hpp>
+#include <seqan3/range/views/slice.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/vector.hpp>
 #endif
+
+namespace seqan3::detail
+{
+
+/*!\brief The reference type of seqan3::concatenated_sequences.
+ * \tparam value_type The value_type of the seqan3::concatenated_sequences.
+ * \tparam is_const_ref Reference type or const reference type.
+ *
+ * \details
+ *
+ * A light-weight type that inherits from the returned type of the seqan3::views::slice adaptor (std::span, std::ranges::subrange, ...),
+ * but additionally provides implicit convertibility to the `value_type`. This is needed so that `value_type` and
+ * `reference` type of seqan3::concatenated_sequences satisfy std::common_reference_with.
+ *
+ * The const version of this type additionally ensures deep constness to maintain container-like behaviour.
+ */
+template <typename value_type, bool const_>
+struct concatenated_sequences_reference_proxy :
+    public std::conditional_t<const_,
+                              decltype(std::declval<value_type const &>() | ranges::view::const_ | views::slice(0,1)),
+                              decltype(std::declval<value_type &>() | views::slice(0,1))>
+{
+    //!\brief The base type.
+    using base_t =
+        std::conditional_t<const_,
+                           decltype(std::declval<value_type const &>() | ranges::view::const_ | views::slice(0,1)),
+                           decltype(std::declval<value_type &>() | views::slice(0,1))>;
+
+    //!\brief Inherit the base type's constructors.
+    using base_t::base_t;
+
+    //!\brief Construct from base type.
+    concatenated_sequences_reference_proxy(base_t && rhs) : base_t{std::move(rhs)} {}
+
+    //!\brief Implicitly convert to the `value_type` of seqan3::concatenated_sequences.
+    operator value_type() const
+    {
+        value_type ret;
+        ret.resize(std::ranges::size(*this));
+        std::ranges::copy(*this, std::ranges::begin(ret));
+        return ret;
+    }
+};
+
+} // namespace seqan3::detail
 
 namespace seqan3
 {
@@ -104,13 +148,13 @@ public:
     //!\hideinitializer
     using value_type = std::decay_t<inner_type>;
 
-    //!\brief A proxy of type ranges::view::slice that represents the range on the concatenated vector.
+    //!\brief A proxy of type views::slice that represents the range on the concatenated vector.
     //!\hideinitializer
-    using reference = decltype(data_values | ranges::view::slice(0, 1));
+    using reference = detail::concatenated_sequences_reference_proxy<value_type, false>;
 
-    //!\brief An immutable proxy of type ranges::view::slice that represents the range on the concatenated vector.
+    //!\brief An immutable proxy of type views::slice that represents the range on the concatenated vector.
     //!\hideinitializer
-    using const_reference = decltype(std::as_const(data_values) | ranges::view::slice(0, 1) | ranges::view::const_);
+    using const_reference = detail::concatenated_sequences_reference_proxy<value_type, true>;
 
     //!\brief The iterator type of this container (a random access iterator).
     //!\hideinitializer
@@ -139,12 +183,22 @@ protected:
      * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible (which doesn't work for types during their definition).
      * \{
      */
+    //!\brief Whether a type satisfies seqan3::compatible with this class's `value_type` or `reference` type.
+    //!\hideinitializer
+    // we explicitly check same-ness, because these types may not be fully resolved, yet
+    template <typename t>
+    static constexpr bool is_compatible_value = std::is_same_v<remove_cvref_t<t>, value_type>       ||
+                                                std::is_same_v<remove_cvref_t<t>, reference>        ||
+                                                std::is_same_v<remove_cvref_t<t>, const_reference>  ||
+                                                (dimension_v<t> == dimension_v<value_type> &&
+                                                std::convertible_to<reference_t<t>, value_type_t<value_type>>);
+    //!\}
+
     //!\cond
     // unfortunately we cannot specialise the variable template so we have to add an auxiliary here
     template <typename t>
         requires (dimension_v<t> == dimension_v<value_type> + 1) &&
-                 std::is_same_v<remove_cvref_t<innermost_value_type_t<value_type>>,
-                                remove_cvref_t<innermost_value_type_t<t>>>
+                  is_compatible_value<reference_t<t>>
     static constexpr bool is_compatible_this_aux = true;
     //!\endcond
 
@@ -157,15 +211,6 @@ protected:
                                                std::is_same_v<remove_cvref_t<t>, iterator>                  ||
                                                std::is_same_v<remove_cvref_t<t>, const_iterator>;
 
-    //!\brief Whether a type satisfies seqan3::compatible with this class's value_type or reference type.
-    //!\hideinitializer
-    // we explicitly check same-ness, because these types may not be fully resolved, yet
-    template <typename t>
-    static constexpr bool is_compatible_value = compatible<value_type, t>                           ||
-                                                std::is_same_v<remove_cvref_t<t>, value_type>       ||
-                                                std::is_same_v<remove_cvref_t<t>, reference>        ||
-                                                std::is_same_v<remove_cvref_t<t>, const_reference>;
-    //!\}
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -511,15 +556,14 @@ public:
     reference operator[](size_type const i)
     {
         assert(i < size());
-        return data_values | ranges::view::slice(data_delimiters[i], data_delimiters[i+1]);
+        return data_values | views::slice(data_delimiters[i], data_delimiters[i+1]);
     }
 
     //!\copydoc operator[]()
     const_reference operator[](size_type const i) const
     {
         assert(i < size());
-        return data_values | ranges::view::slice(data_delimiters[i], data_delimiters[i+1])
-                           | ranges::view::const_;
+        return data_values | ranges::view::const_ | views::slice(data_delimiters[i], data_delimiters[i+1]);
     }
 
     /*!\brief Return the first element as a view. Calling front on an empty container is undefined.
@@ -588,13 +632,13 @@ public:
      */
     reference concat()
     {
-        return data_values | ranges::view::slice(static_cast<size_type>(0), concat_size());
+        return data_values | views::slice(static_cast<size_type>(0), concat_size());
     }
 
     //!\copydoc concat()
     const_reference concat() const
     {
-        return data_values | ranges::view::slice(static_cast<size_type>(0), concat_size()) | ranges::view::const_;
+        return data_values | ranges::view::const_ | views::slice(static_cast<size_type>(0), concat_size());
     }
 
     /*!\brief Provides direct, unsafe access to underlying data structures.
@@ -906,8 +950,8 @@ public:
         if (count == 0)
             return begin() + pos_as_num;
 
-        /* TODO implement view::flat_repeat_n that is like
-         *  ranges::view::repeat_n(value, count) | std::view::join | ranges::view::bounded;
+        /* TODO implement views::flat_repeat_n that is like
+         *  views::repeat_n(value, count) | std::views::join | ranges::view::bounded;
          * but preserves random access and size.
          *
          * then do
@@ -922,8 +966,8 @@ public:
             value_len = std::distance(seqan3::begin(value), seqan3::end(value));
 
         data_values.reserve(data_values.size() + count * value_len);
-        auto placeholder = ranges::view::repeat_n(value_type_t<rng_type>{}, count * value_len)
-                         | std::view::common;
+        auto placeholder = views::repeat_n(value_type_t<rng_type>{}, count * value_len)
+                         | std::views::common;
         // insert placeholder so the tail is moved once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            seqan3::begin(placeholder),
@@ -1012,8 +1056,8 @@ public:
         }
 
         // adapt values of inserted region
-        auto placeholder = ranges::view::repeat_n(value_type_t<value_type>{}, full_len)
-                         | std::view::common;
+        auto placeholder = views::repeat_n(value_type_t<value_type>{}, full_len)
+                         | std::views::common;
         // insert placeholder so the tail is moved only once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            seqan3::begin(placeholder),

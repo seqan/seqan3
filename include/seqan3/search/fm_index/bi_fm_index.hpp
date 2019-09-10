@@ -16,7 +16,7 @@
 
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/filesystem>
-#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/views/persist.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
 #include <seqan3/std/ranges>
@@ -129,7 +129,7 @@ private:
         if (std::ranges::begin(text) == std::ranges::end(text))
             throw std::invalid_argument("The text that is indexed cannot be empty.");
 
-        auto rev_text = std::view::reverse(text);
+        auto rev_text = std::views::reverse(text);
         fwd_fm.construct(text);
         rev_fm.construct(rev_text);
     }
@@ -153,7 +153,7 @@ private:
         if (std::ranges::begin(text) == std::ranges::end(text))
             throw std::invalid_argument("The text that is indexed cannot be empty.");
 
-        auto rev_text = text | view::deep{std::view::reverse} | std::view::reverse;
+        auto rev_text = text | views::deep{std::views::reverse} | std::views::reverse;
         fwd_fm.construct(text);
         rev_fm.construct(rev_text);
     }

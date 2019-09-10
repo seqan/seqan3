@@ -44,7 +44,7 @@ void run_program(std::filesystem::path & path, uint32_t yr, std::string & aggr_b
 
         while (std::getline(file, line))
         {
-            auto splitted_line = line | std::view::split('\t');
+            auto splitted_line = line | std::views::split('\t');
             auto it = std::next(splitted_line.begin(), 3); // move to 4th column
 
             if (to_number<uint32_t>(*it) >= yr)

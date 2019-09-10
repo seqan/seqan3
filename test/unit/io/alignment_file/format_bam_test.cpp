@@ -446,8 +446,8 @@ TEST_F(bam_format, too_long_cigar_string_write)
 {
     // create an alignment resulting more than 65535 cigar elements
     // -------------------------------------------------------------------------
-    auto read = view::repeat_n('T'_dna5,  70'000);
-    auto ref  = view::repeat_n('A'_dna5, 2 * read.size() - 1);
+    auto read = views::repeat_n('T'_dna5,  70'000);
+    auto ref  = views::repeat_n('A'_dna5, 2 * read.size() - 1);
 
     auto gapped_ref  = gap_decorator{ref};
 
@@ -476,8 +476,8 @@ TEST_F(bam_format, too_long_cigar_string_write)
             '\x00', '\x6C', '\x6F', '\x6E', '\x67', '\x5F', '\x72', '\x65', '\x61', '\x64', '\x00', '\x04', '\x17',
             '\x11', '\x00', '\xF3', '\x2D', '\x22', '\x00'
         } +
-        std::string(view::repeat_n('\x88', (read.size() + 1) / 2))  /*seq */ +
-        std::string(view::repeat_n('\xFF',  read.size()))           /*qual*/ +
+        std::string(views::repeat_n('\x88', (read.size() + 1) / 2))  /*seq */ +
+        std::string(views::repeat_n('\xFF',  read.size()))           /*qual*/ +
         std::string /*the beginning*/
         {
             '\x43', '\x47', '\x5A' /*tag info: CGZ*/

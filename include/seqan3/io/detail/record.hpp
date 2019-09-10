@@ -14,10 +14,9 @@
 
 #pragma once
 
-#include <range/v3/view/repeat.hpp>
-
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/record.hpp>
+#include <seqan3/range/views/repeat.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -224,7 +223,7 @@ inline auto & range_wrap_ignore(rng_t & range)
  */
 inline auto range_wrap_ignore(ignore_t const &)
 {
-    return ranges::view::repeat(std::ignore);
+    return views::repeat(std::ignore);
 }
 
 } // namespace seqan3::detail

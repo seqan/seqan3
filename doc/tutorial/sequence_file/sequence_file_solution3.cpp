@@ -41,7 +41,7 @@ write_file_dummy_struct go{};
 //![solution]
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/all.hpp>
-#include <seqan3/range/view/get.hpp>
+#include <seqan3/range/views/get.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
@@ -53,20 +53,20 @@ int main()
 
     sequence_file_input fin{tmp_dir/"my.fastq"};
 
-    auto length_filter = std::view::filter([] (auto const & rec)
+    auto length_filter = std::views::filter([] (auto const & rec)
     {
         return std::ranges::size(get<field::SEQ>(rec)) >= 5;
     });
 
     // you can use a for loop
 
-    // for (auto & rec : fin | length_filter | std::view::take(2))
+    // for (auto & rec : fin | length_filter | std::views::take(2))
     // {
     //     debug_stream << "ID: " << get<field::ID>(rec) << '\n';
     // }
 
     // But you can also do this :)
-    std::vector<std::string> ids = std::move(fin | length_filter | std::view::take(2) | view::get<field::ID>);
+    std::vector<std::string> ids = std::move(fin | length_filter | std::views::take(2) | views::get<field::ID>);
     // Note that you need to know the type of id (std::string)
     // We use move to avoid copying
 

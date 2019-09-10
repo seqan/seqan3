@@ -17,7 +17,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/range/concept.hpp>
-#include <seqan3/range/view/drop.hpp>
+#include <seqan3/range/views/drop.hpp>
 #include <seqan3/search/algorithm/detail/search_common.hpp>
 #include <seqan3/std/ranges>
 
@@ -56,7 +56,7 @@ inline bool search_trivial(cursor_t cur, query_t & query, typename cursor_t::siz
     if (query_pos == std::ranges::size(query) || error_left.total == 0)
     {
         // If not at end of query sequence, try searching the remaining suffix without any errors.
-        if (query_pos == std::ranges::size(query) || cur.extend_right(view::drop(query, query_pos)))
+        if (query_pos == std::ranges::size(query) || cur.extend_right(views::drop(query, query_pos)))
         {
             delegate(cur);
             return true;

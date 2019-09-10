@@ -70,10 +70,10 @@ protected:
 
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::column_data_view_type
     using column_data_view_type = std::conditional_t<coordinate_only,
-                                        decltype(std::view::iota(coordinate_type{}, coordinate_type{})),
-                                        decltype(std::view::zip(std::declval<std::span<element_type>>(),
+                                        decltype(std::views::iota(coordinate_type{}, coordinate_type{})),
+                                        decltype(std::views::zip(std::declval<std::span<element_type>>(),
                                                                 std::declval<std::span<element_type>>(),
-                                                                std::view::iota(coordinate_type{}, coordinate_type{})))>;
+                                                                std::views::iota(coordinate_type{}, coordinate_type{})))>;
 
 public:
     /*!\name Associated types
@@ -137,16 +137,16 @@ private:
         coordinate_type row_end{column_index_type{column_index}, row_index_type{matrix_base_t::num_rows}};
         if constexpr (coordinate_only)
         {
-            return alignment_column_type{*this, column_data_view_type{std::view::iota(std::move(row_begin),
+            return alignment_column_type{*this, column_data_view_type{std::views::iota(std::move(row_begin),
                                                                                       std::move(row_end))}};
         }
         else
         {
             size_type index = matrix_base_t::num_rows * column_index;
-            auto col = std::view::zip(std::span<element_type>{std::addressof(matrix_base_t::data[index]),
+            auto col = std::views::zip(std::span<element_type>{std::addressof(matrix_base_t::data[index]),
                                                               matrix_base_t::num_rows},
                                       std::span<element_type>{matrix_base_t::cache_left},
-                                      std::view::iota(std::move(row_begin), std::move(row_end)));
+                                      std::views::iota(std::move(row_begin), std::move(row_end)));
             return alignment_column_type{*this, column_data_view_type{col}};
         }
     }

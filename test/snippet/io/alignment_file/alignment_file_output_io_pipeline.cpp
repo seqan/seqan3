@@ -1,7 +1,7 @@
 #include <sstream>
 
 #include <seqan3/io/alignment_file/all.hpp>
-#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/views/persist.hpp>
 #include <seqan3/std/ranges>
 
 auto sam_file_raw = R"(@HD	VN:1.6	SO:coordinate	GO:none
@@ -15,7 +15,7 @@ r001	147	ref	237	30	*	=	7	-39	CAGCGGCAT	*	NM:i:1
 int main()
 {
     seqan3::alignment_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}}
-        | seqan3::view::persist
-        | std::view::take(3) // take only the first 3 records
+        | seqan3::views::persist
+        | std::views::take(3) // take only the first 3 records
         | seqan3::alignment_file_output{std::ostringstream{}, seqan3::format_sam{}};
 }

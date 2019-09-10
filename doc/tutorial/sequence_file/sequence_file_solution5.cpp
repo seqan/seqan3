@@ -41,7 +41,7 @@ write_file_dummy_struct go{};
 //![solution]
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/all.hpp>
-#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/views/persist.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
@@ -54,7 +54,7 @@ int main()
     sequence_file_input fin{tmp_dir/"my.fastq"};
     sequence_file_output fout{tmp_dir/"output.fastq"};
 
-    auto length_filter = std::view::filter([] (auto & rec)
+    auto length_filter = std::views::filter([] (auto & rec)
     {
         return std::ranges::size(get<field::SEQ>(rec)) >= 5;
     });

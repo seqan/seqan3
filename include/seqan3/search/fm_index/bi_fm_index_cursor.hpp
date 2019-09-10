@@ -18,7 +18,7 @@
 
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/view/slice.hpp>
+#include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/std/ranges>
 
@@ -566,7 +566,7 @@ public:
                       "The alphabet of the sequence must be convertible to the alphabet of the index.");
         assert(index != nullptr);
 
-        auto rev_seq = std::view::reverse(seq);
+        auto rev_seq = std::views::reverse(seq);
         auto first = std::ranges::begin(rev_seq);
         auto last = std::ranges::end(rev_seq);
 
@@ -872,7 +872,7 @@ public:
         assert(index != nullptr);
 
         size_type const query_begin = offset() - index->fwd_fm.index[fwd_lb];
-        return text | view::slice(query_begin, query_begin + query_length());
+        return text | views::slice(query_begin, query_begin + query_length());
     }
 
     //!\overload
@@ -890,7 +890,7 @@ public:
 
         size_type const loc = offset() - index->fwd_fm.index[fwd_lb];
         size_type const query_begin = loc - index->fwd_fm.text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return text | std::view::join | view::slice(query_begin, query_begin + query_length());
+        return text | std::views::join | views::slice(query_begin, query_begin + query_length());
     }
 
     /*!\brief Counts the number of occurrences of the searched query in the text.
@@ -976,8 +976,8 @@ public:
     {
         assert(index != nullptr);
 
-        return std::view::iota(fwd_lb, fwd_lb + count())
-             | std::view::transform([*this, _offset = offset()] (auto sa_pos)
+        return std::views::iota(fwd_lb, fwd_lb + count())
+             | std::views::transform([*this, _offset = offset()] (auto sa_pos)
                {
                    return _offset - index->fwd_fm.index[sa_pos];
                });
@@ -991,12 +991,12 @@ public:
     {
         assert(index != nullptr);
 
-        return std::view::iota(fwd_lb, fwd_lb + count())
-               | std::view::transform([*this, _offset = offset()] (auto sa_pos)
+        return std::views::iota(fwd_lb, fwd_lb + count())
+               | std::views::transform([*this, _offset = offset()] (auto sa_pos)
                {
                    return _offset - index->fwd_fm.index[sa_pos];
                })
-               | std::view::transform([*this] (auto loc)
+               | std::views::transform([*this] (auto loc)
                {
                    size_type sequence_rank = index->fwd_fm.text_begin_rs.rank(loc + 1);
                    size_type sequence_position = loc - index->fwd_fm.text_begin_ss.select(sequence_rank);

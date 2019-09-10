@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
@@ -42,10 +42,10 @@ TYPED_TEST_P(pairwise_alignment_collection_test, score)
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_score};
     auto [database, query] = fixture.get_sequences();
-    auto alignment_rng = align_pairwise(typename TestFixture::policy_t{}, std::view::zip(database, query), align_cfg);
+    auto alignment_rng = align_pairwise(typename TestFixture::policy_t{}, std::views::zip(database, query), align_cfg);
 
     auto scores = fixture.get_scores();
-    EXPECT_TRUE((std::ranges::equal(alignment_rng | std::view::transform([] (auto res) { return res.score(); } ),
+    EXPECT_TRUE((std::ranges::equal(alignment_rng | std::views::transform([] (auto res) { return res.score(); } ),
                                     fixture.get_scores())));
 }
 
@@ -54,12 +54,12 @@ TYPED_TEST_P(pairwise_alignment_collection_test, back_coordinate)
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_back_coordinate};
     auto [database, query] = fixture.get_sequences();
-    auto res_vec = align_pairwise(typename TestFixture::policy_t{}, std::view::zip(database, query), align_cfg)
+    auto res_vec = align_pairwise(typename TestFixture::policy_t{}, std::views::zip(database, query), align_cfg)
                  | std::ranges::to<std::vector>;
 
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res) { return res.score(); }),
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                     fixture.get_scores())));
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res) { return res.back_coordinate(); }),
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.back_coordinate(); }),
                                     fixture.get_back_coordinates())));
 }
 
@@ -68,14 +68,14 @@ TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_front_coordinate};
     auto [database, query] = fixture.get_sequences();
-    auto res_vec = align_pairwise(typename TestFixture::policy_t{}, std::view::zip(database, query), align_cfg)
+    auto res_vec = align_pairwise(typename TestFixture::policy_t{}, std::views::zip(database, query), align_cfg)
                  | std::ranges::to<std::vector>;
 
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res) { return res.score(); }),
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                     fixture.get_scores())));
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res) { return res.back_coordinate(); }),
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.back_coordinate(); }),
                                     fixture.get_back_coordinates())));
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res) { return res.front_coordinate(); }),
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.front_coordinate(); }),
                                     fixture.get_front_coordinates())));
 }
 
@@ -84,24 +84,24 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
     auto [database, query] = fixture.get_sequences();
-    auto res_vec = align_pairwise(typename TestFixture::policy_t{}, std::view::zip(database, query), align_cfg)
+    auto res_vec = align_pairwise(typename TestFixture::policy_t{}, std::views::zip(database, query), align_cfg)
                  | std::ranges::to<std::vector>;
 
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res) { return res.score(); }),
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                     fixture.get_scores())));
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res) { return res.back_coordinate(); }),
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.back_coordinate(); }),
                                     fixture.get_back_coordinates())));
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res) { return res.front_coordinate(); }),
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.front_coordinate(); }),
                                     fixture.get_front_coordinates())));
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res)
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res)
                                               {
-                                                    return std::get<0>(res.alignment()) | view::to_char
+                                                    return std::get<0>(res.alignment()) | views::to_char
                                                                                         | std::ranges::to<std::string>;
                                               }),
                                     fixture.get_aligned_sequences1())));
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::view::transform([] (auto res)
+    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res)
                                               {
-                                                    return std::get<1>(res.alignment()) | view::to_char
+                                                    return std::get<1>(res.alignment()) | views::to_char
                                                                                         | std::ranges::to<std::string>;
                                               }),
                                     fixture.get_aligned_sequences2())));

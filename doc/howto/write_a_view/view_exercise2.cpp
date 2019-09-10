@@ -6,7 +6,7 @@
 using namespace seqan3;
 
 //![start]
-auto my_reverse_complement = std::view::reverse | std::view::transform([] (auto const d)
+auto my_reverse_complement = std::views::reverse | std::views::transform([] (auto const d)
 {
     return complement(d);
 });

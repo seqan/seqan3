@@ -10,8 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/range/view/convert.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -203,7 +202,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided stream constructor + custom fields + different stream char type */
     {
-        auto winput = input | view::convert<wchar_t>;
+        auto winput = input | views::convert<wchar_t>;
         std::wistringstream ext{winput};
         sequence_file_input fin{ext, format_fasta{}, fields<field::SEQ>{}};
 
@@ -216,7 +215,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided stream temporary constructor + custom fields + different stream char type */
     {
-        auto winput = input | view::convert<wchar_t>;
+        auto winput = input | views::convert<wchar_t>;
         sequence_file_input fin{std::wistringstream{winput}, format_fasta{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);
@@ -290,7 +289,7 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
     size_t counter = 0;
     for (auto & [ id, seq_qual ] : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<dna5>, seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | views::convert<dna5>, seq_comp[counter])));
         EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
 
         counter++;
@@ -327,7 +326,7 @@ TEST_F(sequence_file_input_f, file_view)
 {
     sequence_file_input fin{std::istringstream{input}, format_fasta{}};
 
-    auto minimum_length_filter = std::view::filter([] (auto const & rec)
+    auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
         return size(get<field::SEQ>(rec)) >= 5;
     });

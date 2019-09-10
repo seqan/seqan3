@@ -31,12 +31,12 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/view/char_to.hpp>
-#include <seqan3/range/view/istreambuf.hpp>
-#include <seqan3/range/view/to_char.hpp>
-#include <seqan3/range/view/take_exactly.hpp>
-#include <seqan3/range/view/take_line.hpp>
-#include <seqan3/range/view/take_until.hpp>
+#include <seqan3/range/views/char_to.hpp>
+#include <seqan3/range/views/istreambuf.hpp>
+#include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/take_exactly.hpp>
+#include <seqan3/range/views/take_line.hpp>
+#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/ranges>
@@ -120,11 +120,11 @@ public:
               id_type                                                                   & id,
               qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = view::istreambuf(stream);
+        auto stream_view = views::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
 
         std::string idbuffer;
-        std::ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
+        std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank),
                           std::back_inserter(idbuffer));
         if (idbuffer != "ID")
             throw parse_error{"An entry has to start with the code word ID."};
@@ -133,11 +133,11 @@ public:
         {
             if (options.embl_genbank_complete_header)
             {
-                std::ranges::copy(idbuffer | view::char_to<value_type_t<id_type>>, std::back_inserter(id));
+                std::ranges::copy(idbuffer | views::char_to<value_type_t<id_type>>, std::back_inserter(id));
                 do
                 {
-                    std::ranges::copy(stream_view | view::take_until_or_throw(is_char<'S'>)
-                                                  | view::char_to<value_type_t<id_type>>,
+                    std::ranges::copy(stream_view | views::take_until_or_throw(is_char<'S'>)
+                                                  | views::char_to<value_type_t<id_type>>,
                                  std::back_inserter(id));
                     id.push_back(*stream_it);
                     ++stream_it;
@@ -148,19 +148,19 @@ public:
             else
             {
                 // ID
-                detail::consume(stream_view | view::take_until(!is_blank));
+                detail::consume(stream_view | views::take_until(!is_blank));
 
                 // read id
                 if (options.truncate_ids)
                 {
-                    std::ranges::copy(stream_view | view::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
-                                                  | view::char_to<value_type_t<id_type>>,
+                    std::ranges::copy(stream_view | views::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
+                                                  | views::char_to<value_type_t<id_type>>,
                                  std::back_inserter(id));
                 }
                 else
                 {
-                    std::ranges::copy(stream_view | view::take_until_or_throw(is_char<';'>)
-                                                  | view::char_to<value_type_t<id_type>>,
+                    std::ranges::copy(stream_view | views::take_until_or_throw(is_char<';'>)
+                                                  | views::char_to<value_type_t<id_type>>,
                                  std::back_inserter(id));
                 }
             }
@@ -171,21 +171,21 @@ public:
         {
             do
             {
-                detail::consume(stream_view | view::take_until_or_throw(is_char<'S'>));
+                detail::consume(stream_view | views::take_until_or_throw(is_char<'S'>));
                 ++stream_it;
             } while (*stream_it != 'Q');
         }
-        detail::consume(stream_view | view::take_line_or_throw); //Consume line with infos to sequence
+        detail::consume(stream_view | views::take_line_or_throw); //Consume line with infos to sequence
 
         // Sequence
         auto constexpr is_end = is_char<'/'> ;
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            auto seq_view = stream_view | std::view::filter(!(is_space || is_digit)) // ignore whitespace and numbers
-                                        | view::take_until_or_throw(is_end);   // until //
+            auto seq_view = stream_view | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
+                                        | views::take_until_or_throw(is_end);   // until //
 
             auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-            std::ranges::copy(seq_view | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
+            std::ranges::copy(seq_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                     {
                                         if (!is_legal_alph(c))
                                         {
@@ -196,12 +196,12 @@ public:
                                         }
                                         return c;
                                     })
-                                  | view::char_to<value_type_t<seq_type>>,         // convert to actual target alphabet
+                                  | views::char_to<value_type_t<seq_type>>,         // convert to actual target alphabet
                          std::back_inserter(sequence));
         }
         else
         {
-            detail::consume(stream_view | view::take_until(is_end));
+            detail::consume(stream_view | views::take_until(is_end));
         }
         //Jump over // and cntrl
         ++stream_it;
@@ -294,15 +294,15 @@ public:
             size_t bp = 0;
             for (auto chunk : seqChunk)
             {
-                std::ranges::copy(chunk | view::to_char
+                std::ranges::copy(chunk | views::to_char
                                         | ranges::view::chunk(10)
-                                        | std::view::join(' '), stream_it);
+                                        | std::views::join(' '), stream_it);
                 ++i;
                 stream_it = ' ';
                 bp = std::min(sequence_size, bp + 60);
                 uint8_t num_blanks = 60 * i - bp;  // for sequence characters
                 num_blanks += num_blanks / 10;     // additional chunk separators
-                std::ranges::copy(ranges::view::repeat_n(' ', num_blanks), stream_it);
+                std::ranges::copy(views::repeat_n(' ', num_blanks), stream_it);
                 std::ranges::copy(std::to_string(bp), stream_it);
                 stream_it = '\n';
             }

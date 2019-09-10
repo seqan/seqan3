@@ -26,7 +26,7 @@ TYPED_TEST_CASE_P(bi_fm_index_cursor_collection_test);
 TYPED_TEST_P(bi_fm_index_cursor_collection_test, begin)
 {
     std::vector<std::vector<dna4>> text{"AACGATCGGA"_dna4, "AACGATCGGA"_dna4};
-    auto rev_text = text | view::deep{std::view::reverse} | view::deep{view::persist};
+    auto rev_text = text | views::deep{std::views::reverse} | views::deep{views::persist};
 
     typename TypeParam::index_type bi_fm{text};
     bi_fm_index fm_fwd{text};
@@ -197,7 +197,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_fwd_cursor)
 TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_rev_cursor)
 {
     std::vector<std::vector<dna4>> text{"ACGGTAGGACGTAGC"_dna4, "TGCTACGATCC"_dna4};
-    std::vector<std::vector<dna4>> rev_text{text | view::deep{std::view::reverse} | std::view::reverse};
+    std::vector<std::vector<dna4>> rev_text{text | views::deep{std::views::reverse} | std::views::reverse};
     typename TypeParam::index_type bi_fm{text};
 
     {

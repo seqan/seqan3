@@ -2,7 +2,6 @@
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/range/view/get.hpp>
 #include <seqan3/std/ranges>
 
 auto input = R"(> TEST1
@@ -18,7 +17,7 @@ int main()
 
     seqan3::sequence_file_input fin{std::istringstream{}, seqan3::format_fasta{}};
 
-    auto minimum_length5_filter = std::view::filter([] (auto const & rec)
+    auto minimum_length5_filter = std::views::filter([] (auto const & rec)
     {
         return std::ranges::size(get<seqan3::field::SEQ>(rec)) >= 5;
     });

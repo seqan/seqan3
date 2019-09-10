@@ -58,7 +58,7 @@ enum struct advanceable_alignment_coordinate_state : uint8_t
  * Unfortunately, the current range implementation does not preserve std::ranges::bidirectional_range properties,
  * so we need to model the full advanceable concept in order to preserve the std::ranges::random_access_range properties.
  * This, however, can be relaxed if the range implementation fully complies with the current standard draft for Ranges,
- * as increment and decrement would be enough and std::view::iota would preserve std::ranges::bidirectional_range.
+ * as increment and decrement would be enough and std::views::iota would preserve std::ranges::bidirectional_range.
  */
 template <advanceable_alignment_coordinate_state state = advanceable_alignment_coordinate_state::none>
 class advanceable_alignment_coordinate
@@ -329,7 +329,7 @@ namespace seqan3
  * This class only gives access to the respective positions of the sequences and is meant for
  * the user interface. The additional complexity of an advanceable coorindate using the
  * seqan3::detail::advanceable_alignment_coordinate is only necessary for the implementation of the pairwise
- * alignment algorithm. Within in the algorithm the coordinate is used in combination with a seqan3::view::iota to
+ * alignment algorithm. Within in the algorithm the coordinate is used in combination with a seqan3::views::iota to
  * keep track of the current position within the alignment matrix. For the user, however, this interface adds no
  * benefit as they are only interested in the front/back coordinates for the respective alignment.
  * \endif

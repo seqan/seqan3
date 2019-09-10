@@ -7,7 +7,6 @@
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/view/get.hpp>
 
 // Create a data struct used to hold the sequence information.
 struct data_storage_t

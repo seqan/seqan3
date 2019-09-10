@@ -17,7 +17,7 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/ranges>
 
 #include <range/v3/view/generate_n.hpp>
@@ -67,8 +67,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
             EXPECT_EQ(res.back_coordinate().first, 8u);
             EXPECT_EQ(res.back_coordinate().second, 9u);
             auto && [gap1, gap2] = res.alignment();
-            EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
-            EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
+            EXPECT_EQ(std::string{gap1 | views::to_char}, "ACGTGATG--");
+            EXPECT_EQ(std::string{gap2 | views::to_char}, "A-GTGATACT");
         }
     }
 }
@@ -78,7 +78,7 @@ TYPED_TEST(align_pairwise_test, single_view)
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
-    auto v = ranges::view::single(std::tie(seq1, seq2)) | std::view::common;
+    auto v = std::views::single(std::tie(seq1, seq2)) | std::views::common;
 
     {  // the score
         configuration cfg = align_cfg::edit | align_cfg::result{with_score};
@@ -94,8 +94,8 @@ TYPED_TEST(align_pairwise_test, single_view)
         {
             EXPECT_EQ(res.score(), -4);
             auto && [gap1, gap2] = res.alignment();
-            EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
-            EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
+            EXPECT_EQ(std::string{gap1 | views::to_char}, "ACGTGATG--");
+            EXPECT_EQ(std::string{gap2 | views::to_char}, "A-GTGATACT");
         }
     }
 }
@@ -113,7 +113,7 @@ TYPED_TEST(align_pairwise_test, collection)
     {
         EXPECT_EQ(res.score(), -4);
         auto && [gap1, gap2] = res.alignment();
-        EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
-        EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
+        EXPECT_EQ(std::string{gap1 | views::to_char}, "ACGTGATG--");
+        EXPECT_EQ(std::string{gap2 | views::to_char}, "A-GTGATACT");
     }
 }

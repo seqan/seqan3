@@ -21,7 +21,7 @@
 
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/view/slice.hpp>
+#include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
@@ -452,7 +452,7 @@ public:
         assert(index != nullptr);
 
         size_type const query_begin = offset() - index->index[node.lb];
-        return text | view::slice(query_begin, query_begin + query_length());
+        return text | views::slice(query_begin, query_begin + query_length());
     }
 
     //!\overload
@@ -470,7 +470,7 @@ public:
 
         size_type const loc = offset() - index->index[node.lb];
         size_type const query_begin = loc - index->text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return text | std::view::join | view::slice(query_begin, query_begin + query_length());
+        return text | std::views::join | views::slice(query_begin, query_begin + query_length());
     }
 
     /*!\brief Counts the number of occurrences of the searched query in the text.
@@ -556,8 +556,8 @@ public:
     {
         assert(index != nullptr);
 
-        return std::view::iota(node.lb, node.lb + count())
-               | std::view::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; });
+        return std::views::iota(node.lb, node.lb + count())
+               | std::views::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; });
     }
 
     //!\overload
@@ -568,9 +568,9 @@ public:
     {
         assert(index != nullptr);
 
-        return std::view::iota(node.lb, node.lb + count())
-               | std::view::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; })
-               | std::view::transform([*this] (auto loc)
+        return std::views::iota(node.lb, node.lb + count())
+               | std::views::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; })
+               | std::views::transform([*this] (auto loc)
                {
                    size_type sequence_rank = index->text_begin_rs.rank(loc + 1);
                    size_type sequence_position = loc - index->text_begin_ss.select(sequence_rank);

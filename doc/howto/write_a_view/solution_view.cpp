@@ -78,7 +78,7 @@ public:
 
     // construct from non-view that can be view-wrapped
     template <std::ranges::viewable_range orng_t>
-    my_view(orng_t && urange_) : urange{std::view::all(std::forward<orng_t>(urange_))}
+    my_view(orng_t && urange_) : urange{std::views::all(std::forward<orng_t>(urange_))}
     {}
     //![view_constructors]
 
@@ -143,7 +143,7 @@ struct my_view_fn
 
 //![adaptor_object_definition]
 /* The adaptor object's definition */
-namespace view
+namespace views
 {
 
 inline constexpr my_view_fn my{};
@@ -175,7 +175,7 @@ int main()
 
 //![main_adaptor]
     /* try the adaptor */
-    auto v2 = vec | std::view::reverse | ::view::my;
+    auto v2 = vec | std::views::reverse | ::views::my;
     static_assert(std::ranges::random_access_range<decltype(v2)>);
     debug_stream << v2 << '\n';
 //![main_adaptor]

@@ -21,7 +21,7 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/range/shortcuts.hpp>
-#include <seqan3/range/view/slice.hpp>
+#include <seqan3/range/views/slice.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 
@@ -125,11 +125,11 @@ public:
             col_end{column_index_type{current_column_index}, row_index_type{col_begin.second + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
-        auto zip_score = std::view::zip(std::span{std::addressof(*current_matrix_iter), span},
+        auto zip_score = std::views::zip(std::span{std::addressof(*current_matrix_iter), span},
                                            std::span{std::addressof(*(current_matrix_iter + 1)), span});
-        return std::view::zip(std::move(zip_score),
-                                 std::view::iota(col_begin, col_end),
-                                 ranges::view::repeat_n(std::ignore, span) | std::view::common);
+        return std::views::zip(std::move(zip_score),
+                               std::views::iota(col_begin, col_end),
+                               views::repeat_n(std::ignore, span) | std::views::common);
     }
 
     //!\brief Moves internal matrix pointer to the next column.
@@ -212,14 +212,14 @@ public:
         {
             size_t begin_pos = std::max(band.lower_bound - 1, static_cast<band_type>(0));
             size_t end_pos = std::min(band.upper_bound + dimension_second, dimension_first);
-            return first_range | view::slice(begin_pos, end_pos);
+            return first_range | views::slice(begin_pos, end_pos);
         };
 
         auto trim_second_range = [&]() constexpr
         {
             size_t begin_pos = std::abs(std::min(band.upper_bound + 1, static_cast<band_type>(0)));
             size_t end_pos = std::min(dimension_first - band.lower_bound, dimension_second);
-            return second_range | view::slice(begin_pos, end_pos);
+            return second_range | views::slice(begin_pos, end_pos);
         };
 
         return std::tuple{trim_first_range(), trim_second_range()};

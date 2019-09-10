@@ -93,6 +93,6 @@ TEST(dna3bs, char_is_valid)
 {
     constexpr auto validator = is_char<'A'> || is_char<'G'> || is_char<'T'> || is_char<'U'>
                             || is_char<'a'> || is_char<'g'> || is_char<'t'> || is_char<'u'>;
-    for (char c : std::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
+    for (char c : std::views::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
         EXPECT_EQ(dna3bs::char_is_valid(c), validator(c));
 }

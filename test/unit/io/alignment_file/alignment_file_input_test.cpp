@@ -11,8 +11,7 @@
 
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/alignment_file/input.hpp>
-#include <seqan3/range/view/convert.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -219,7 +218,7 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided stream constructor + custom fields + different stream char type */
     {
-        auto winput = input | view::convert<wchar_t>;
+        auto winput = input | views::convert<wchar_t>;
         std::wistringstream ext{winput};
         alignment_file_input fin{ext, format_sam{}, fields<field::SEQ>{}};
 
@@ -232,7 +231,7 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided stream temporary constructor + custom fields + different stream char type */
     {
-        auto winput = input | view::convert<wchar_t>;
+        auto winput = input | views::convert<wchar_t>;
         alignment_file_input fin{std::wistringstream{winput}, format_sam{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);
@@ -301,7 +300,7 @@ TEST_F(alignment_file_input_f, file_view)
 {
     alignment_file_input fin{std::istringstream{input}, format_sam{}};
 
-    auto minimum_length_filter = std::view::filter([] (auto const & rec)
+    auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
         return size(get<field::SEQ>(rec)) >= 5;
     });

@@ -72,10 +72,10 @@ protected:
                                           alignment_trace_matrix_proxy<trace_t>>;
     //!\copydoc alignment_matrix_column_major_range_base::column_data_view_type
     using column_data_view_type = std::conditional_t<coordinate_only,
-                                        decltype(std::view::iota(coordinate_type{}, coordinate_type{})),
-                                        decltype(std::view::zip(std::declval<std::span<element_type>>(),
+                                        decltype(std::views::iota(coordinate_type{}, coordinate_type{})),
+                                        decltype(std::views::zip(std::declval<std::span<element_type>>(),
                                                                 std::declval<std::span<element_type>>(),
-                                                                std::view::iota(coordinate_type{}, coordinate_type{})))>;
+                                                                std::views::iota(coordinate_type{}, coordinate_type{})))>;
 
 public:
     /*!\name Associated types
@@ -169,7 +169,7 @@ private:
         coordinate_type row_end{column_index_type{column_index}, row_index_type{static_cast<size_type>(slice_end)}};
         if constexpr (coordinate_only)
         {
-            return alignment_column_type{*this, column_data_view_type{std::view::iota(std::move(row_begin),
+            return alignment_column_type{*this, column_data_view_type{std::views::iota(std::move(row_begin),
                                                                                       std::move(row_end))}};
         }
         else
@@ -177,12 +177,12 @@ private:
             size_type base_index = band_size * column_index;
 
             // We need to jump to the offset.
-            auto col = std::view::zip(
+            auto col = std::views::zip(
                             std::span<element_type>{std::addressof(matrix_base_t::data[base_index + slice_begin]),
                                                     std::addressof(matrix_base_t::data[base_index + slice_end])},
                             std::span<element_type>{std::addressof(matrix_base_t::cache_left[slice_begin]),
                                                     std::addressof(matrix_base_t::cache_left[slice_end])},
-                            std::view::iota(std::move(row_begin), std::move(row_end)));
+                            std::views::iota(std::move(row_begin), std::move(row_end)));
             return alignment_column_type{*this, column_data_view_type{std::move(col)}};
         }
     }

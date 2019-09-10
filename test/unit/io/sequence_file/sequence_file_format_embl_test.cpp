@@ -236,7 +236,7 @@ TEST_F(read, seq_qual)
         format.read(istream, options2, seq_qual, id, seq_qual);
 
         EXPECT_TRUE((ranges::equal(id, expected_ids[i])));
-        EXPECT_TRUE((ranges::equal(seq_qual | view::convert<dna5>, expected_seqs[i])));
+        EXPECT_TRUE((ranges::equal(seq_qual | views::convert<dna5>, expected_seqs[i])));
     }
 }
 
@@ -357,7 +357,7 @@ TEST_F(write, default_options)
 
 TEST_F(write, seq_qual)
 {
-    auto convert_to_qualified = ranges::view::transform([] (auto const in)
+    auto convert_to_qualified = std::views::transform([] (auto const in)
     {
         return qualified<dna5, phred42>{} = in;
     });

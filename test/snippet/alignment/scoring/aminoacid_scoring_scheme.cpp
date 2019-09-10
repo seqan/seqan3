@@ -34,7 +34,7 @@ std::vector<seqan3::aa27> two = "ANIMATOR"_aa27;
 seqan3::aminoacid_scoring_scheme scheme3{seqan3::aminoacid_similarity_matrix::BLOSUM62};
 // You can also score two sequences:
 int score = 0;
-for (auto pair : std::view::zip(one, two))
+for (auto pair : std::views::zip(one, two))
     score += scheme3.score(std::get<0>(pair), std::get<1>(pair));
 seqan3::debug_stream << "Score: " << score << "\n"; // 4 + -3 + 4 + -3 + 4 + 5 + -1 + 5 = 15
 

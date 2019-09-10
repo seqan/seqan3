@@ -86,7 +86,7 @@ void seqan3_affine_dna4_parallel(benchmark::State & state)
 {
     auto [vec1, vec2] = generate_data_seqan3<seqan3::dna4>();
 
-    auto data = std::view::zip(vec1, vec2) | std::ranges::to<std::vector>;
+    auto data = std::views::zip(vec1, vec2) | std::ranges::to<std::vector>;
 
     int64_t total = 0;
     for (auto _ : state)
@@ -99,7 +99,7 @@ void seqan3_affine_dna4_parallel(benchmark::State & state)
         }
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::view::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
@@ -112,7 +112,7 @@ template <typename result_t>
 void seqan3_affine_dna4_omp_for(benchmark::State & state)
 {
     auto [vec1, vec2] = generate_data_seqan3<seqan3::dna4>();
-    auto zip = std::view::zip(vec1, vec2);
+    auto zip = std::views::zip(vec1, vec2);
     int64_t total = 0;
     for (auto _ : state)
     {
@@ -125,7 +125,7 @@ void seqan3_affine_dna4_omp_for(benchmark::State & state)
         }
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::view::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
@@ -153,7 +153,7 @@ void seqan2_affine_dna4_parallel(benchmark::State & state)
         total = std::accumulate(seqan::begin(res), seqan::end(res), total);
     }
 
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
@@ -195,7 +195,7 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
         }
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::view::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }

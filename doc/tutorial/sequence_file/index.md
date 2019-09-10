@@ -328,7 +328,7 @@ which is split into two files.
 The read pairs are identified by their identical name/id
 and that their position in the two files is the same.
 
-If you want to handle one pair of reads at a time, you can do so easily with a std::view::zip.
+If you want to handle one pair of reads at a time, you can do so easily with a std::views::zip.
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp paired_reads
 
@@ -339,7 +339,7 @@ that have a length of at least 5.
 
 Hints:
 * You can use `std::ranges::size` to retrieve the size of a range.
-* You need the following includes for std::view::filter and std::take
+* You need the following includes for std::views::filter and std::take
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include_ranges
 
 

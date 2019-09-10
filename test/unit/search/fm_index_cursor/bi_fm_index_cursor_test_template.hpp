@@ -26,7 +26,7 @@ TYPED_TEST_CASE_P(bi_fm_index_cursor_test);
 TYPED_TEST_P(bi_fm_index_cursor_test, begin)
 {
     std::vector<dna4> text{"AACGATCGGA"_dna4};
-    auto rev_text = ranges::view::reverse(text);
+    auto rev_text = std::views::reverse(text);
 
 
     typename TypeParam::index_type bi_fm{text};
@@ -190,7 +190,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
 TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
 {
     std::vector<dna4> text{"ACGGTAGGACGTAGC"_dna4};
-    std::vector<dna4> rev_text{text | std::view::reverse};
+    std::vector<dna4> rev_text{text | std::views::reverse};
     typename TypeParam::index_type bi_fm{text};
 
     {

@@ -5,7 +5,6 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/view/get.hpp>
 
 auto input = R"(> TEST1
 ACGT

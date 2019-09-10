@@ -45,7 +45,7 @@ void to_simd_naive_wo_condition(benchmark::State& state)
     {
         // First sort the sequences by their lengths, but only use a proxy.
         auto sorted_sequences =
-            std::view::transform(std::view::zip(sequences, std::view::iota(0u, simd_length)), [] (auto && tpl)
+            std::views::transform(std::views::zip(sequences, std::views::iota(0u, simd_length)), [] (auto && tpl)
             {
                 return std::pair{std::ranges::size(std::get<0>(tpl)), std::get<1>(tpl)};
             })
@@ -150,7 +150,7 @@ void to_simd(benchmark::State& state)
     size_t value = 0;
     for (auto _ : state)
     {
-        for (auto & chunk : sequences | view::to_simd<simd_t>)
+        for (auto & chunk : sequences | views::to_simd<simd_t>)
             for (simd_t const & vec : chunk)
                 value += vec[0];
     }

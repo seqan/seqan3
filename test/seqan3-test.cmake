@@ -93,11 +93,11 @@ list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${PROJEC
 # ----------------------------------------------------------------------------
 
 # Get a specific component of a test file which follows the seqan3 naming scheme.
-# e.g. target_source_file = "range/view/take.cpp"
+# e.g. target_source_file = "range/views/take.cpp"
 # component:
 #  * TARGET_NAME - the target name (e.g. "take")
 #  * TARGET_UNIQUE_NAME - the target name which includes the target_path (e.g. range-view-take)
-#  * TEST_NAME - the test name which includes the target_path (e.g. "range/view/take")
+#  * TEST_NAME - the test name which includes the target_path (e.g. "range/views/take")
 #  * TARGET_PATH - the path to the target source (e.g. "range/view")
 macro (seqan3_test_component VAR target_source_file component_name_)
     string (TOUPPER "${component_name_}" component_name)

@@ -22,8 +22,8 @@
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/range/view/repeat_n.hpp>
-#include <seqan3/range/view/take.hpp>
+#include <seqan3/range/views/repeat_n.hpp>
+#include <seqan3/range/views/take.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
@@ -257,7 +257,7 @@ public:
     constexpr void assign(size_type const count, value_type const value) noexcept(is_noexcept)
     {
         clear();
-        auto tmp = view::repeat_n(value, count);
+        auto tmp = views::repeat_n(value, count);
         assign(std::ranges::begin(tmp), std::ranges::end(tmp));
     }
 
@@ -618,7 +618,7 @@ public:
      */
     constexpr iterator insert(const_iterator pos, size_type const count, value_type const value) noexcept(is_noexcept)
     {
-        auto tmp = view::repeat_n(value, count);
+        auto tmp = views::repeat_n(value, count);
         return insert(pos, std::ranges::begin(tmp), std::ranges::end(tmp));
     }
 

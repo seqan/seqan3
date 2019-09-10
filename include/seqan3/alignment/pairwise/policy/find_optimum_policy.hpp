@@ -136,7 +136,7 @@ protected:
         // Only check the entire column if it was configured to search here.
         if constexpr (traits_type::find_in_last_column_type::value)
         {
-            ranges::for_each(rng, [&](auto && entry)
+            std::ranges::for_each(rng, [&](auto && entry)
             {
                 optimum = std::max(optimum,
                                    alignment_optimum<score_t>{get<0>(get<0>(entry)),

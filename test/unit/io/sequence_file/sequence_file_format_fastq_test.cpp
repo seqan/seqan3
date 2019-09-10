@@ -13,7 +13,7 @@
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
@@ -270,8 +270,8 @@ TEST_F(read, seq_qual)
         format.read(istream, options2, seq_qual, id, seq_qual);
 
         EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
-        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<dna5>, expected_seqs[i])));
-        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<phred42>, expected_quals[i])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | views::convert<dna5>, expected_seqs[i])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | views::convert<phred42>, expected_quals[i])));
     }
 }
 
@@ -437,9 +437,9 @@ TEST_F(write, seq_qual)
     for (unsigned i = 0; i < 3; ++i)
         EXPECT_NO_THROW(( format.write(ostream,
                                        options,
-                                       vec[i] | view::convert<dna5>,
+                                       vec[i] | views::convert<dna5>,
                                        ids[i],
-                                       vec[i] | view::convert<phred42>) ));
+                                       vec[i] | views::convert<phred42>) ));
 
     ostream.flush();
 

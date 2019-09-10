@@ -19,8 +19,8 @@
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/range/view/detail.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/detail.hpp>
+#include <seqan3/range/views/view_all.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -137,7 +137,7 @@ public:
              std::ranges::viewable_range<other_urng_t>
     //!\endcond
     constexpr view_to_simd(other_urng_t && urng, scalar_type const padding_value = alphabet_size) :
-        view_to_simd{view::all(std::forward<other_urng_t>(urng)), padding_value}
+        view_to_simd{views::all(std::forward<other_urng_t>(urng)), padding_value}
     {}
     //!\}
 
@@ -428,7 +428,7 @@ private:
      */
     constexpr bool all_iterators_reached_sentinel() const noexcept
     {
-        return std::ranges::all_of(std::view::zip(cached_iter, cached_sentinel), [] (auto && tpl)
+        return std::ranges::all_of(std::views::zip(cached_iter, cached_sentinel), [] (auto && tpl)
     {
             return std::get<0>(tpl) == std::get<1>(tpl);
         });
@@ -574,7 +574,7 @@ private:
 //  to_simd_fn (adaptor definition)
 // ============================================================================
 
-/*!\brief view::to_simd's range adaptor closure object type.
+/*!\brief views::to_simd's range adaptor closure object type.
  * \tparam simd_t The target simd type.
  * \ingroup simd
  *
@@ -611,9 +611,9 @@ struct to_simd_fn
     constexpr auto operator()(urng_t && urange, padding_t const padding_value) const noexcept
     {
         static_assert(std::ranges::forward_range<urng_t>,
-            "The underlying range in view::to_simd must model std::ranges::forward_range.");
+            "The underlying range in views::to_simd must model std::ranges::forward_range.");
         static_assert(std::ranges::viewable_range<urng_t>,
-            "The underlying range in view::to_simd must model std::ranges::viewable_range.");
+            "The underlying range in views::to_simd must model std::ranges::viewable_range.");
         static_assert(std::ranges::input_range<value_type_t<urng_t>>,
             "The value type of the underlying range must model std::ranges::input_range.");
         static_assert(semialphabet<value_type_t<value_type_t<urng_t>>>,
@@ -630,9 +630,9 @@ struct to_simd_fn
     constexpr auto operator()(urng_t && urange) const noexcept
     {
         static_assert(std::ranges::forward_range<urng_t>,
-            "The underlying range in view::to_simd must model std::ranges::forward_range.");
+            "The underlying range in views::to_simd must model std::ranges::forward_range.");
         static_assert(std::ranges::viewable_range<urng_t>,
-            "The underlying range in view::to_simd must model std::ranges::viewable_range.");
+            "The underlying range in views::to_simd must model std::ranges::viewable_range.");
         static_assert(std::ranges::input_range<value_type_t<urng_t>>,
             "The value type of the underlying range must model std::ranges::input_range.");
         static_assert(semialphabet<value_type_t<value_type_t<urng_t>>>,
@@ -651,7 +651,7 @@ struct to_simd_fn
 
 } // namespace seqan3::detail
 
-namespace seqan3::view
+namespace seqan3::views
 {
 
 /*!\brief A view that transforms a range of ranges into chunks of seqan3::simd vectors.
@@ -705,7 +705,7 @@ namespace seqan3::view
  * * the expression `std::default_constructible<value_type_t<urng_t>>` must evaluate to `true`
  * * the expression `semialphabet<value_type_t<value_type_t<urng_t>>>` must evaluate to `true`
  * * `rrng_type` is the type of the range returned by this view.
- * * for more details, see \ref view.
+ * * for more details, see \ref views.
  *
  * ### Example
  *
@@ -761,4 +761,4 @@ namespace seqan3::view
 template <simd::simd_concept simd_t>
 inline constexpr auto to_simd = detail::to_simd_fn<simd_t>{};
 //!\}
-} // namespace seqan3::view
+} // namespace seqan3::views

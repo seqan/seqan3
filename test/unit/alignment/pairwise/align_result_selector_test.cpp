@@ -14,18 +14,13 @@
 
 #include <meta/meta.hpp>
 
-#include <range/v3/view/bounded.hpp>
-#include <range/v3/view/single.hpp>
-
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/range/view/persist.hpp>
-#include <seqan3/range/view/to_char.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/view_all.hpp>
 
 using namespace seqan3;
 

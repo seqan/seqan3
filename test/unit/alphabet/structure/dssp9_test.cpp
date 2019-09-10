@@ -34,7 +34,7 @@ TEST(dssp9, assign_char)
         'H'_dssp9, 'B'_dssp9, 'E'_dssp9, 'G'_dssp9, 'I'_dssp9, 'T'_dssp9, 'S'_dssp9
     };
 
-    for (auto [ ch, cm ] : std::view::zip(input, cmp))
+    for (auto [ ch, cm ] : std::views::zip(input, cmp))
         EXPECT_EQ((assign_char_to(ch, dssp9{})), cm);
 }
 

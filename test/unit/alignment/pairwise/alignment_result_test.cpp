@@ -17,8 +17,8 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/range/view/persist.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/persist.hpp>
+#include <seqan3/range/views/to_char.hpp>
 
 using namespace seqan3;
 
@@ -162,16 +162,16 @@ TYPED_TEST(alignment_result_test, alignment)
     if constexpr (tuple_like<alignment_t>)
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(std::string{std::get<0>(tmp.alignment()) | view::persist | view::to_char},
+        EXPECT_EQ(std::string{std::get<0>(tmp.alignment()) | views::persist | views::to_char},
                   std::string{"AT-C--A"});
-        EXPECT_EQ(std::string{std::get<1>(tmp.alignment()) | view::persist | view::to_char},
+        EXPECT_EQ(std::string{std::get<1>(tmp.alignment()) | views::persist | views::to_char},
                   std::string{"AT-C--A"});
     }
     else
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(std::string{(tmp.alignment()[0]) | view::persist | view::to_char}, std::string{"AT-C--A"});
-        EXPECT_EQ(std::string{(tmp.alignment()[1]) | view::persist | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_EQ(std::string{(tmp.alignment()[0]) | views::persist | views::to_char}, std::string{"AT-C--A"});
+        EXPECT_EQ(std::string{(tmp.alignment()[1]) | views::persist | views::to_char}, std::string{"AT-C--A"});
     }
 }
 

@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/views/persist.hpp>
 #include <seqan3/search/algorithm/detail/search.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/std/algorithm>

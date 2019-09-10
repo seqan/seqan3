@@ -46,7 +46,7 @@ TEST(dot_bracket3, assign_char)
         '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3
     };
 
-    for (auto [ ch, cm ] : std::view::zip(input, cmp))
+    for (auto [ ch, cm ] : std::views::zip(input, cmp))
         EXPECT_EQ((assign_char_to(ch, dot_bracket3{})), cm);
 }
 

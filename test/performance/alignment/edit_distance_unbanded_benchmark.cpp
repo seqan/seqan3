@@ -71,7 +71,7 @@ void seqan3_edit_distance_dna4(benchmark::State & state)
     }
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::single(std::tie(seq1, seq2)), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -89,7 +89,7 @@ void seqan3_edit_distance_dna4_selector(benchmark::State & state)
     }
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::single(std::tie(seq1, seq2)), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -105,7 +105,7 @@ void seqan2_edit_distance_dna4(benchmark::State & state)
         score += global_edit_distance_seqan2(seq1, seq2);
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::single(std::tie(seq1, seq2)), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -120,7 +120,7 @@ void seqan2_edit_distance_generic_dna4(benchmark::State & state)
         score += seqan::globalAlignmentScore(seq1, seq2, seqan::Score<int>{0, -1, -1});
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::single(std::tie(seq1, seq2)), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 #endif // SEQAN3_HAS_SEQAN2
@@ -187,7 +187,7 @@ void seqan2_edit_distance_dna4_collection(benchmark::State & state)
     }
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::zip(vec1, vec2), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -206,7 +206,7 @@ void seqan2_edit_distance_dna4_generic_collection(benchmark::State & state)
     }
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(ranges::view::zip(vec1, vec2), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(std::views::zip(vec1, vec2), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 #endif // SEQAN3_HAS_SEQAN2

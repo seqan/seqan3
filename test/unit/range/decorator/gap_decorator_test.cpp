@@ -14,7 +14,7 @@
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/ranges>
 
 #include "../iterator_test_template.hpp"
@@ -320,13 +320,13 @@ TEST(gap_decorator, decorator_on_views)
     EXPECT_EQ(*(std::next(dec.begin(), 1)), gap{});
     EXPECT_EQ(*it, gap{});
 
-    // auto v_char = v | view::to_char;
-    gap_decorator dec2{v | view::to_char};
+    // auto v_char = v | views::to_char;
+    gap_decorator dec2{v | views::to_char};
     EXPECT_EQ(dec2.size(), 4u);
     EXPECT_EQ(*dec2.begin(), 'A');
     EXPECT_EQ(*++dec2.begin(), 'C');
 
-    auto dec3 = dec | ranges::view::filter([] (auto chr) { return chr != gap{}; });
+    auto dec3 = dec | std::views::filter([] (auto chr) { return chr != gap{}; });
     EXPECT_EQ(*dec3.begin(), 'C'_dna4);
     EXPECT_EQ(*(std::next(dec3.begin())), 'T'_dna4);
 }

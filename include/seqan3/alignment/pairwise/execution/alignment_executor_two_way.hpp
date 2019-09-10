@@ -22,8 +22,8 @@
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
-#include <seqan3/range/view/single_pass_input.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/views/single_pass_input.hpp>
+#include <seqan3/range/views/view_all.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -56,8 +56,8 @@ private:
      * \{
      */
     //!\brief The underlying resource type.
-    using resource_type       = decltype(view::single_pass_input(std::view::zip(std::declval<resource_t>(),
-                                                                                std::view::iota(0))));
+    using resource_type       = decltype(views::single_pass_input(std::views::zip(std::declval<resource_t>(),
+                                                                                std::views::iota(0))));
     //!\brief The value type of the resource.
     using resource_value_type = value_type_t<resource_type>;
     //!\}
@@ -110,7 +110,7 @@ public:
      */
     alignment_executor_two_way(resource_t resrc,
                                alignment_algorithm_t fn) :
-        resource{std::view::zip(std::forward<resource_t>(resrc), std::view::iota(0))},
+        resource{std::views::zip(std::forward<resource_t>(resrc), std::views::iota(0))},
         kernel{std::move(fn)}
     {
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
@@ -224,8 +224,8 @@ private:
             buffer_pointer write_to = gptr;
             exec_handler.execute(kernel,
                                  idx,
-                                 first_seq | view::all,
-                                 second_seq | view::all,
+                                 first_seq | views::all,
+                                 second_seq | views::all,
                                  [write_to] (auto && res) { *write_to = std::move(res); });
         }
 
