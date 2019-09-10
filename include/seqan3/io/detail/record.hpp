@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/range/views/repeat.hpp>
@@ -100,8 +101,8 @@ struct select_types_with_ids<field_types, field_types_as_ids, selected_field_ids
                                          selected_field_ids,
                                          field_no + 1,
                                          return_types ...,
-                                         meta::at_c<field_types,
-                                                    field_types_as_ids::index_of(selected_field_ids::as_array[field_no])>>;
+                                         list_traits::at<field_types_as_ids::index_of(
+                                             selected_field_ids::as_array[field_no]), field_types>>;
 
 };
 //!\endcond

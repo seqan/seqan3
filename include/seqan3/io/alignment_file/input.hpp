@@ -25,6 +25,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
@@ -856,7 +857,7 @@ protected:
     template <typename format_type>
     void init(format_type const &)
     {
-        static_assert(meta::in<valid_formats, format_type>::value,
+        static_assert(list_traits::contains<format_type, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
 
         format = detail::alignment_file_input_format_REMOVEME<format_type>{};

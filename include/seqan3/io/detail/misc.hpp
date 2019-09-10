@@ -16,7 +16,7 @@
 
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/std/algorithm>
@@ -33,8 +33,8 @@ struct variant_from_tags;
 
 //!\brief Transfers a list of format tags (`...ts`) onto a std::variant by specialising output_t with each.
 //!\ingroup io
-template <template <typename ...> typename output_t, typename ...ts>
-struct variant_from_tags<meta::list<ts...>, output_t>
+template <template <typename...> typename output_t, typename ...ts>
+struct variant_from_tags<type_list<ts...>, output_t>
 {
     //!\brief The type of std::variant.
     using type = std::variant<output_t<ts>...>;
@@ -76,9 +76,9 @@ void set_format(format_variant_type & format,
     if (extension.size() > 1)
     {
         extension = extension.substr(1); // drop leading "."
-        meta::for_each(valid_formats{}, [&] (auto && fmt)
+        detail::for_each<valid_formats>([&] (auto fmt)
         {
-            using fmt_type = remove_cvref_t<decltype(fmt)>;
+            using fmt_type = remove_cvref_t<typename decltype(fmt)::type>;
             using fmt_tag  = typename fmt_type::format_tag;
 
             for (auto const & ext : fmt_tag::file_extensions)

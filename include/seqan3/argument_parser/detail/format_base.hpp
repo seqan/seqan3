@@ -18,12 +18,11 @@
 #include <sstream>
 #include <string>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/argument_parser/validators.hpp>
 #include <seqan3/core/detail/reflection.hpp>
+#include <seqan3/core/type_list/all.hpp>
 #include <seqan3/std/filesystem>
 
 namespace seqan3::detail
@@ -43,20 +42,20 @@ protected:
     static std::string get_type_name_as_string(value_type const & /**/)
     {
         using type = std::decay_t<value_type>;
-        using types = meta::list<int8_t,
-                                 uint8_t,
-                                 int16_t,
-                                 uint16_t,
-                                 int32_t,
-                                 uint32_t,
-                                 int64_t,
-                                 uint64_t,
-                                 double,
-                                 float,
-                                 bool,
-                                 char,
-                                 std::string,
-                                 std::filesystem::path>;
+        using types = type_list<int8_t,
+                                uint8_t,
+                                int16_t,
+                                uint16_t,
+                                int32_t,
+                                uint32_t,
+                                int64_t,
+                                uint64_t,
+                                double,
+                                float,
+                                bool,
+                                char,
+                                std::string,
+                                std::filesystem::path>;
         std::vector<std::string> names{"signed 8 bit integer",
                                        "unsigned 8 bit integer",
                                        "signed 16 bit integer",
@@ -72,8 +71,8 @@ protected:
                                        "std::string",
                                        "std::filesystem::path"};
 
-        if constexpr (meta::in<types, type>::value)
-            return names[meta::find_index<types, type>::value];
+        if constexpr (list_traits::contains<type, types>)
+            return names[list_traits::find<type, types>];
         else
             return detail::get_display_name_v<value_type>.str();
     }

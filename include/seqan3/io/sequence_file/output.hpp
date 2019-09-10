@@ -23,6 +23,7 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 #include <seqan3/core/detail/pack_algorithm.hpp>
+#include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/concept/tuple.hpp>
@@ -299,7 +300,7 @@ public:
         secondary_stream{&stream, stream_deleter_noop},
         format{detail::sequence_file_output_format_REMOVEME<file_format>{}}
     {
-        static_assert(meta::in<valid_formats, file_format>::value,
+        static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
     }
 
@@ -313,7 +314,7 @@ public:
         secondary_stream{&*primary_stream, stream_deleter_noop},
         format{detail::sequence_file_output_format_REMOVEME<file_format>{}}
     {
-        static_assert(meta::in<valid_formats, file_format>::value,
+        static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
     }
     //!\}

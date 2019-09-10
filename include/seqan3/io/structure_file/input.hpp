@@ -31,6 +31,7 @@
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
+#include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
@@ -803,7 +804,7 @@ public:
         primary_stream{&stream, stream_deleter_noop},
         format{detail::structure_file_input_format_REMOVEME<file_format>{}}
     {
-        static_assert(meta::in<valid_formats, file_format>::value,
+        static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
 
         // possibly add intermediate decompression stream
@@ -818,7 +819,7 @@ public:
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         format{detail::structure_file_input_format_REMOVEME<file_format>{}}
     {
-        static_assert(meta::in<valid_formats, file_format>::value,
+        static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
 
         // possibly add intermediate compression stream
