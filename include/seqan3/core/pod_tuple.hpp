@@ -15,9 +15,8 @@
 #include <tuple>
 #include <type_traits>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/core/platform.hpp>
+#include <seqan3/core/type_list/all.hpp>
 
 namespace seqan3
 {
@@ -245,12 +244,10 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 template <typename type, typename ...arg_types>
 constexpr auto & get(seqan3::pod_tuple<arg_types...> & t) noexcept
 //!\cond
-    requires meta::in<meta::list<arg_types...>, type>::value &&
-             (meta::find_index<meta::list<arg_types...>, type>::value ==
-              meta::reverse_find_index<meta::list<arg_types...>, type>::value)
+    requires (seqan3::pack_traits::count<type, arg_types...> == 1)
 //!\endcond
 {
-    return seqan3::get<meta::find_index<meta::list<arg_types...>, type>::value>(t);
+    return seqan3::get<seqan3::pack_traits::find<type, arg_types...>>(t);
 }
 
 //!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
@@ -258,12 +255,10 @@ constexpr auto & get(seqan3::pod_tuple<arg_types...> & t) noexcept
 template <typename type, typename ...arg_types>
 constexpr auto const & get(seqan3::pod_tuple<arg_types...> const & t) noexcept
 //!\cond
-    requires meta::in<meta::list<arg_types...>, type>::value &&
-             (meta::find_index<meta::list<arg_types...>, type>::value ==
-              meta::reverse_find_index<meta::list<arg_types...>, type>::value)
+    requires (seqan3::pack_traits::count<type, arg_types...> == 1)
 //!\endcond
 {
-    return seqan3::get<meta::find_index<meta::list<arg_types...>, type>::value>(t);
+    return seqan3::get<seqan3::pack_traits::find<type, arg_types...>>(t);
 }
 
 //!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
@@ -271,12 +266,10 @@ constexpr auto const & get(seqan3::pod_tuple<arg_types...> const & t) noexcept
 template <typename type, typename ...arg_types>
 constexpr auto && get(seqan3::pod_tuple<arg_types...> && t) noexcept
 //!\cond
-    requires meta::in<meta::list<arg_types...>, type>::value &&
-             (meta::find_index<meta::list<arg_types...>, type>::value ==
-              meta::reverse_find_index<meta::list<arg_types...>, type>::value)
+    requires (seqan3::pack_traits::count<type, arg_types...> == 1)
 //!\endcond
 {
-    return seqan3::get<meta::find_index<meta::list<arg_types...>, type>::value>(std::move(t));
+    return seqan3::get<seqan3::pack_traits::find<type, arg_types...>>(std::move(t));
 }
 
 //!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
@@ -284,12 +277,10 @@ constexpr auto && get(seqan3::pod_tuple<arg_types...> && t) noexcept
 template <typename type, typename ...arg_types>
 constexpr auto const && get(seqan3::pod_tuple<arg_types...> const && t) noexcept
 //!\cond
-    requires meta::in<meta::list<arg_types...>, type>::value &&
-             (meta::find_index<meta::list<arg_types...>, type>::value ==
-              meta::reverse_find_index<meta::list<arg_types...>, type>::value)
+    requires (seqan3::pack_traits::count<type, arg_types...> == 1)
 //!\endcond
 {
-    return seqan3::get<meta::find_index<meta::list<arg_types...>, type>::value>(std::move(t));
+    return seqan3::get<seqan3::pack_traits::find<type, arg_types...>>(std::move(t));
 }
 //!\}
 
@@ -329,36 +320,28 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 
 template <typename type, typename ...types>
 constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
+    requires (seqan3::pack_traits::count<type, types...> == 1)
 {
     return seqan3::get<type>(t);
 }
 
 template <typename type, typename ...types>
 constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
+    requires (seqan3::pack_traits::count<type, types...> == 1)
 {
     return seqan3::get<type>(t);
 }
 
 template <typename type, typename ...types>
 constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
+    requires (seqan3::pack_traits::count<type, types...> == 1)
 {
     return seqan3::get<type>(std::move(t));
 }
 
 template <typename type, typename ...types>
 constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
+    requires (seqan3::pack_traits::count<type, types...> == 1)
 {
     return seqan3::get<type>(std::move(t));
 }
@@ -374,7 +357,7 @@ template <std::size_t i, template <typename ...> typename t, typename ...types>
             std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
 struct tuple_element<i, t<types...>>
 {
-    using type = meta::at_c<meta::list<types...>, i>;
+    using type = seqan3::pack_traits::at<i, types...>;
 };
 
 /*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.

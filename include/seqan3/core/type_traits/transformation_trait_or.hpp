@@ -17,6 +17,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/core/platform.hpp>
+#include <seqan3/core/type_traits/concept.hpp>
 #include <seqan3/std/type_traits>
 
 namespace seqan3::detail
@@ -42,7 +43,7 @@ namespace seqan3::detail
  *   seqan3::detail::transformation_trait_or_t as a shorthand for *seqan3::detail::transformation_trait_or::type*
  */
 template <typename type_t, typename default_t>
-using transformation_trait_or = std::conditional_t<meta::is_trait<type_t>::value,   // check if type_t::type exists
+using transformation_trait_or = std::conditional_t<transformation_trait<type_t>,    // check if type_t::type exists
                                                    type_t,                          // if yes, return type_t
                                                    std::type_identity<default_t>>;  // else return default_t as trait
 

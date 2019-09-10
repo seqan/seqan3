@@ -467,7 +467,8 @@ inline constexpr ptrdiff_t find = -1;
  * \include test/snippet/core/type_list/list_traits_find.cpp
  */
 template <typename query_t, typename ...pack_t>
-inline constexpr ptrdiff_t find<query_t, type_list<pack_t...>> = seqan3::pack_traits::detail::find<query_t, pack_t...>();
+inline constexpr ptrdiff_t find<query_t, type_list<pack_t...>> =
+    seqan3::pack_traits::detail::find<query_t, pack_t...>();
 
 //!\cond
 template <template <typename> typename pred_t, seqan3::detail::type_list_specialisation list_t>

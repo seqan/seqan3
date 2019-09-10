@@ -19,6 +19,7 @@
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/algorithm/configuration_utility.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/tuple_utility.hpp>
@@ -276,13 +277,13 @@ public:
     template <typename query_t>
     static constexpr bool exists() noexcept
     {
-        return !meta::empty<meta::find<type_list<configs_t...>, query_t>>::value;
+        return pack_traits::contains<query_t, configs_t...>;
     }
     //!\brief Checks if the given type exists in the tuple.
     template <template <typename ...> typename query_t>
     static constexpr bool exists() noexcept
     {
-        return !meta::empty<meta::find_if<type_list<configs_t...>, detail::is_same_configuration_f<query_t>>>::value;
+        return (pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...> > -1);
     }
     //!\}
 
@@ -566,10 +567,9 @@ configuration(pipeable_config_element<derived_t, value_t> const &) -> configurat
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto & get(configuration<configs_t...> & config) noexcept
 {
-    using _tail = meta::find_if<type_list<configs_t...>, detail::is_same_configuration_f<query_t>>;
-    static_assert(!meta::empty<_tail>::value, "Access error: The requested type is not contained.");
+    constexpr auto pos = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
+    static_assert(pos > -1, "Access error: The requested type is not contained.");
 
-    constexpr size_t pos = sizeof...(configs_t) - meta::size<_tail>::value;
     return get<pos>(config);
 }
 
@@ -577,10 +577,9 @@ constexpr auto & get(configuration<configs_t...> & config) noexcept
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto const & get(configuration<configs_t...> const & config) noexcept
 {
-    using _tail = meta::find_if<type_list<configs_t...>, detail::is_same_configuration_f<query_t>>;
-    static_assert(!meta::empty<_tail>::value, "Access error: The requested type is not contained.");
+    constexpr auto pos = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
+    static_assert(pos > -1, "Access error: The requested type is not contained.");
 
-    constexpr size_t pos = sizeof...(configs_t) - meta::size<_tail>::value;
     return get<pos>(config);
 }
 
@@ -588,10 +587,9 @@ constexpr auto const & get(configuration<configs_t...> const & config) noexcept
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto && get(configuration<configs_t...> && config) noexcept
 {
-    using _tail = meta::find_if<type_list<configs_t...>, detail::is_same_configuration_f<query_t>>;
-    static_assert(!meta::empty<_tail>::value, "Access error: The requested type is not contained.");
+    constexpr auto pos = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
+    static_assert(pos > -1, "Access error: The requested type is not contained.");
 
-    constexpr size_t pos = sizeof...(configs_t) - meta::size<_tail>::value;
     return get<pos>(std::move(config));
 }
 
@@ -599,10 +597,9 @@ constexpr auto && get(configuration<configs_t...> && config) noexcept
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto const && get(configuration<configs_t...> const && config) noexcept
 {
-    using _tail = meta::find_if<type_list<configs_t...>, detail::is_same_configuration_f<query_t>>;
-    static_assert(!meta::empty<_tail>::value, "Access error: The requested type is not contained.");
+    constexpr auto pos = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
+    static_assert(pos > -1, "Access error: The requested type is not contained.");
 
-    constexpr size_t pos = sizeof...(configs_t) - meta::size<_tail>::value;
     // TODO: change after GCC-7 bug with const && version of get in std::tuple is fixed.
     // return get<pos>(std::move(config));
     return std::move(get<pos>(config));

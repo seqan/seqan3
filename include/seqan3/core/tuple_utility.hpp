@@ -12,13 +12,11 @@
 
 #pragma once
 
-#include <meta/meta.hpp>
-
 #include <utility>
 
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/pod_tuple.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 
@@ -152,7 +150,7 @@ constexpr auto tuple_split(tuple_t<ts...> && t)
 template <typename pivot_t, tuple_like tuple_t>
 constexpr auto tuple_split(tuple_t && t)
 {
-    constexpr size_t pivot_c = meta::find_index<detail::tuple_type_list_t<remove_cvref_t<tuple_t>>, pivot_t>::value;
+    constexpr size_t pivot_c = list_traits::find<pivot_t, detail::tuple_type_list_t<remove_cvref_t<tuple_t>>>;
 
     static_assert(pivot_c <= std::tuple_size_v<remove_cvref_t<tuple_t>>);
 
