@@ -38,7 +38,7 @@ namespace seqan3::views
  *
  * ### View properties
  *
- * This view is a **deep views** Given a range-of-range as input (as opposed to just a range), it will apply
+ * This view is a **deep view** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
  *
  * | Concepts and traits              | `urng_t` (underlying range type) | `rrng_t` (returned range type)                          |
