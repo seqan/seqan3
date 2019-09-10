@@ -278,6 +278,130 @@ static auto dna4_02_s10u_15u_e7 = []()
     };
 }();
 
+static auto dna4_02_s1u_15u_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 14 (14 deletetions)
+        // alignment:
+        // AACCGGTAAACCGG
+        //
+        // --------------
+        "AACCGGTAAACCGG"_dna4,
+        ""_dna4,
+        align_cfg::edit | align_cfg::max_error{255},
+        -14,
+        "AACCGGTAAACCGG",
+        "--------------",
+        dna4_02_s1u_15u.front_coordinate,
+        dna4_02_s1u_15u.back_coordinate,
+        dna4_02_s1u_15u.score_vector,
+        dna4_02_s1u_15u.trace_vector
+    };
+}();
+
+static auto dna4_02_s1u_15u_e5 = []()
+{
+    std::vector<bool> masking_matrix
+    {
+    //    e, A, A, C, C, G, G, T, A, A, A, C, C, G, G
+    /*e*/ 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    return alignment_fixture
+    {
+        // score is inf and has no alignment
+        "AACCGGTAAACCGG"_dna4,
+        ""_dna4,
+        align_cfg::edit | align_cfg::max_error{5},
+        INF,
+        "",
+        "",
+        alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
+        dna4_02_s1u_15u.score_matrix().mask_matrix(masking_matrix),
+        dna4_02_s1u_15u.trace_matrix().mask_matrix(masking_matrix)
+    };
+}();
+
+static auto dna4_02T_s15u_1u_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 14 (14 insertions)
+        // alignment:
+        // --------------
+        //
+        // AACCGGTAAACCGG
+        ""_dna4,
+        "AACCGGTAAACCGG"_dna4,
+        align_cfg::edit | align_cfg::max_error{255},
+        -14,
+        "--------------",
+        "AACCGGTAAACCGG",
+        dna4_02T_s15u_1u.front_coordinate,
+        dna4_02T_s15u_1u.back_coordinate,
+        dna4_02T_s15u_1u.score_vector,
+        dna4_02T_s15u_1u.trace_vector
+    };
+}();
+
+static auto dna4_02T_s15u_1u_e5 = []()
+{
+    std::vector<bool> masking_matrix
+    {
+    //    e,
+    /*e*/ 1,
+    /*A*/ 1,
+    /*A*/ 1,
+    /*C*/ 1,
+    /*C*/ 1,
+    /*G*/ 1,
+    /*G*/ 0,
+    /*T*/ 0,
+    /*A*/ 0,
+    /*A*/ 0,
+    /*A*/ 0,
+    /*C*/ 0,
+    /*C*/ 0,
+    /*G*/ 0,
+    /*G*/ 0,
+    };
+
+    return alignment_fixture
+    {
+        // score is inf and has no alignment
+        ""_dna4,
+        "AACCGGTAAACCGG"_dna4,
+        align_cfg::edit | align_cfg::max_error{5},
+        INF,
+        "",
+        "",
+        alignment_coordinate{column_index_type{0u}, row_index_type{14u}},
+        alignment_coordinate{column_index_type{0u}, row_index_type{14u}},
+        dna4_02T_s15u_1u.score_matrix().mask_matrix(masking_matrix),
+        dna4_02T_s15u_1u.trace_matrix().mask_matrix(masking_matrix)
+    };
+}();
+
+static auto dna4_03_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 0
+        ""_dna4,
+        ""_dna4,
+        align_cfg::edit | align_cfg::max_error{255},
+        -0,
+        "",
+        "",
+        dna4_03.front_coordinate,
+        dna4_03.back_coordinate,
+        dna4_03.score_vector,
+        dna4_03.trace_vector
+    };
+}();
+
 static auto aa27_01_e255 = []()
 {
     return alignment_fixture

@@ -23,15 +23,60 @@ struct debug_matrix_test : public ::testing::Test
 
     std::vector<bool> masking_matrix
     {
-         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
-         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
-         1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
-         0,  1,  1,  1,  1,  1,  1,  0,  0,  0,  1,  1,  1,  1,  1,  0,  1,
-         0,  0,  1,  1,  1,  1,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  1,
-         0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  1,  1,  0,  0,  1,
-         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
+        1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  1,
+        0,  1,  1,  1,  1,  1,  1,  0,  0,  0,  1,  1,  1,  1,  1,  0,  1,
+        0,  0,  1,  1,  1,  1,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0,  1,
+        0,  0,  0,  1,  1,  0,  0,  0,  0,  0,  0,  0,  1,  1,  0,  0,  1,
+        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1
+    };
+
+    std::vector<bool> transposed_masking_matrix
+    {
+        1,  1,  1,  1,  1,  0,  0,  0,  0,
+        1,  1,  1,  1,  1,  1,  0,  0,  0,
+        1,  1,  1,  1,  1,  1,  1,  0,  0,
+        1,  1,  1,  1,  1,  1,  1,  1,  0,
+        1,  1,  1,  1,  1,  1,  1,  1,  0,
+        1,  1,  1,  1,  1,  1,  1,  0,  0,
+        1,  1,  1,  1,  1,  1,  0,  0,  0,
+        1,  1,  1,  1,  1,  0,  0,  0,  0,
+        1,  1,  1,  1,  1,  0,  0,  0,  0,
+        1,  1,  1,  1,  1,  0,  0,  0,  0,
+        1,  1,  1,  1,  1,  1,  0,  0,  0,
+        1,  1,  1,  1,  1,  1,  1,  0,  0,
+        1,  1,  1,  1,  1,  1,  1,  1,  0,
+        1,  1,  1,  1,  1,  1,  1,  1,  0,
+        1,  1,  1,  1,  1,  1,  0,  0,  0,
+        1,  1,  0,  0,  0,  0,  0,  0,  0,
+        1,  1,  1,  1,  1,  1,  1,  1,  1
+    };
+
+    std::vector<bool> masking_matrix_s9u_7u
+    {
+        1,  1,  1,  1,  1,  1,  1,
+        1,  1,  1,  1,  1,  1,  1,
+        1,  1,  1,  1,  1,  1,  1,
+        1,  1,  1,  1,  1,  1,  1,
+        1,  1,  1,  1,  1,  1,  1,
+        0,  1,  1,  1,  1,  1,  1,
+        0,  0,  1,  1,  1,  1,  0,
+        0,  0,  0,  1,  1,  0,  0,
+        0,  0,  0,  0,  0,  0,  0
+    };
+
+    std::vector<bool> transposed_masking_matrix_s7u_9u
+    {
+        1,  1,  1,  1,  1,  0,  0,  0,  0,
+        1,  1,  1,  1,  1,  1,  0,  0,  0,
+        1,  1,  1,  1,  1,  1,  1,  0,  0,
+        1,  1,  1,  1,  1,  1,  1,  1,  0,
+        1,  1,  1,  1,  1,  1,  1,  1,  0,
+        1,  1,  1,  1,  1,  1,  1,  0,  0,
+        1,  1,  1,  1,  1,  1,  0,  0,  0
     };
 
     std::vector<int> scores
@@ -108,6 +153,22 @@ struct debug_matrix_test : public ::testing::Test
            -6, -5, -4, -3, -4, -3, -4,
            -7, -6, -5, -4, -4, -4, -3,
            -8, -7, -6, -5, -5, -5, -4
+        }
+    };
+
+    row_wise_matrix<int> transposed_score_matrix_s9u_7u
+    {
+        number_rows{7u},
+        number_cols{9u},
+        std::vector
+        {
+           -0, -1, -2, -3, -4, -5, -6, -7, -8,
+           -1, -0, -1, -2, -3, -4, -5, -6, -7,
+           -2, -1, -1, -2, -3, -3, -4, -5, -6,
+           -3, -2, -1, -2, -3, -4, -3, -4, -5,
+           -4, -3, -2, -2, -3, -3, -4, -4, -5,
+           -5, -4, -3, -3, -3, -4, -3, -4, -5,
+           -6, -5, -4, -3, -4, -4, -4, -3, -4
         }
     };
 
@@ -457,6 +518,80 @@ TEST_F(score_matrix_test, transpose_matrix_rvalue)
     EXPECT_EQ(transpose_matrix.second_sequence(), second_sequence_expect);
 
     EXPECT_EQ(transpose_matrix, transposed_score_matrix);
+}
+
+TEST_F(score_matrix_test, combine_sub_transpose_operations)
+{
+    debug_matrix matrix1{score_matrix, first_sequence, second_sequence};
+    debug_matrix matrix2{score_matrix, first_sequence, second_sequence};
+    matrix1.transpose_matrix().sub_matrix(7u, 9u);
+    matrix2.sub_matrix(9u, 7u).transpose_matrix();
+
+    EXPECT_EQ(matrix1.rows(), 7u);
+    EXPECT_EQ(matrix1.cols(), 9u);
+    EXPECT_EQ(matrix2.rows(), 7u);
+    EXPECT_EQ(matrix2.cols(), 9u);
+    EXPECT_EQ(matrix1, transposed_score_matrix_s9u_7u);
+    EXPECT_EQ(matrix2, transposed_score_matrix_s9u_7u);
+    EXPECT_EQ(matrix1, matrix2);
+}
+
+TEST_F(score_matrix_test, combine_mask_transpose_operations)
+{
+    debug_matrix matrix1{score_matrix, first_sequence, second_sequence};
+    debug_matrix matrix2{score_matrix, first_sequence, second_sequence};
+    matrix1.mask_matrix(masking_matrix).sub_matrix(9u, 7u);
+    matrix2.sub_matrix(9u, 7u).mask_matrix(masking_matrix_s9u_7u);
+
+    EXPECT_EQ(matrix1.rows(), 9u);
+    EXPECT_EQ(matrix1.cols(), 7u);
+    EXPECT_EQ(matrix2.rows(), 9u);
+    EXPECT_EQ(matrix2.cols(), 7u);
+    EXPECT_EQ(matrix1, matrix2);
+}
+
+TEST_F(score_matrix_test, combine_sub_mask_transpose_operations)
+{
+    debug_matrix matrix1{score_matrix, first_sequence, second_sequence};
+    debug_matrix matrix2{score_matrix, first_sequence, second_sequence};
+    debug_matrix matrix3{score_matrix, first_sequence, second_sequence};
+    debug_matrix matrix4{score_matrix, first_sequence, second_sequence};
+    debug_matrix matrix5{score_matrix, first_sequence, second_sequence};
+    debug_matrix matrix6{score_matrix, first_sequence, second_sequence};
+    matrix1.mask_matrix(masking_matrix).transpose_matrix().sub_matrix(7u, 9u);
+    matrix2.mask_matrix(masking_matrix).sub_matrix(9u, 7u).transpose_matrix();
+    matrix3.sub_matrix(9u, 7u).mask_matrix(masking_matrix_s9u_7u).transpose_matrix();
+    matrix4.sub_matrix(9u, 7u).transpose_matrix().mask_matrix(transposed_masking_matrix_s7u_9u);
+    matrix5.transpose_matrix().sub_matrix(7u, 9u).mask_matrix(transposed_masking_matrix_s7u_9u);
+    matrix6.transpose_matrix().mask_matrix(transposed_masking_matrix).sub_matrix(7u, 9u);
+
+    EXPECT_EQ(matrix1.rows(), 7u);
+    EXPECT_EQ(matrix1.cols(), 9u);
+    EXPECT_EQ(matrix2.rows(), 7u);
+    EXPECT_EQ(matrix2.cols(), 9u);
+    EXPECT_EQ(matrix3.rows(), 7u);
+    EXPECT_EQ(matrix3.cols(), 9u);
+    EXPECT_EQ(matrix4.rows(), 7u);
+    EXPECT_EQ(matrix4.cols(), 9u);
+    EXPECT_EQ(matrix5.rows(), 7u);
+    EXPECT_EQ(matrix5.cols(), 9u);
+    EXPECT_EQ(matrix6.rows(), 7u);
+    EXPECT_EQ(matrix6.cols(), 9u);
+    EXPECT_EQ(matrix1, matrix2);
+    EXPECT_EQ(matrix1, matrix3);
+    EXPECT_EQ(matrix1, matrix4);
+    EXPECT_EQ(matrix1, matrix5);
+    EXPECT_EQ(matrix1, matrix6);
+    EXPECT_EQ(matrix2, matrix3);
+    EXPECT_EQ(matrix2, matrix4);
+    EXPECT_EQ(matrix2, matrix5);
+    EXPECT_EQ(matrix2, matrix6);
+    EXPECT_EQ(matrix3, matrix4);
+    EXPECT_EQ(matrix3, matrix5);
+    EXPECT_EQ(matrix3, matrix6);
+    EXPECT_EQ(matrix4, matrix5);
+    EXPECT_EQ(matrix4, matrix6);
+    EXPECT_EQ(matrix5, matrix6);
 }
 
 TEST_F(trace_matrix_test, other_matrix)
