@@ -224,6 +224,15 @@
 #   endif
 #endif
 
+//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91607
+#ifndef SEQAN3_WORKAROUND_GCC_91607
+#   if defined(__GNUC_MINOR__) && (__GNUC__ == 9) && (__GNUC_MINOR__ == 2)
+#       define SEQAN3_WORKAROUND_GCC_91607 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_91607 0
+#   endif
+#endif
+
 // ============================================================================
 //  Backmatter
 // ============================================================================

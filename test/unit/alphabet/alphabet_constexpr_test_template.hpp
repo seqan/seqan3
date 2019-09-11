@@ -121,7 +121,11 @@ TYPED_TEST_P(alphabet_constexpr, global_assign_char)
 
 TYPED_TEST_P(alphabet_constexpr, global_to_char)
 {
+#if SEQAN3_WORKAROUND_GCC_91607
+    constexpr TypeParam t0{assign_rank_to(0u, TypeParam{})};
+#else
     constexpr TypeParam t0{};
+#endif
     [[maybe_unused]] constexpr alphabet_char_t<TypeParam> c = to_char(t0);
 }
 
