@@ -17,16 +17,19 @@ using namespace seqan3::detail;
 
 static constexpr trace_directions N = trace_directions::none;
 static constexpr trace_directions D = trace_directions::diagonal;
-static constexpr trace_directions U = trace_directions::up;
-static constexpr trace_directions L = trace_directions::left;
+static constexpr trace_directions u = trace_directions::up;
+static constexpr trace_directions l = trace_directions::left;
+static constexpr trace_directions U = trace_directions::up_open;
+static constexpr trace_directions L = trace_directions::left_open;
 
 TEST(debug_stream_test, ascii)
 {
     std::stringstream s{};
     debug_stream_type stream{s};
     stream << N << ";" << D << ";" << U << ";" << L << ";" << (D|U) << ";" << (D|L) << ";" << (U|L) << ";" << (D|U|L);
+    stream << ";" << u << ";" << l << ";" << (D|u) << ";" << (D|u|l) << ";" << (D|U|u|L|l);
 
-    EXPECT_EQ(s.str(), "N;D;U;L;DU;DL;UL;DUL");
+    EXPECT_EQ(s.str(), "N;D;U;L;DU;DL;UL;DUL;u;l;Du;Dul;DUuLl");
 }
 
 TEST(debug_stream_test, unicode)
@@ -35,6 +38,7 @@ TEST(debug_stream_test, unicode)
     debug_stream_type stream{s};
     stream << fmtflags2::utf8;
     stream << N << ";" << D << ";" << U << ";" << L << ";" << (D|U) << ";" << (D|L) << ";" << (U|L) << ";" << (D|U|L);
+    stream << ";" << u << ";" << l << ";" << (D|u) << ";" << (D|u|l) << ";" << (D|U|u|L|l);
 
-    EXPECT_EQ(s.str(), "↺;↖;↑;←;↖↑;↖←;↑←;↖↑←");
+    EXPECT_EQ(s.str(), "↺;↖;↑;←;↖↑;↖←;↑←;↖↑←;⇡;⇠;↖⇡;↖⇡⇠;↖↑⇡←⇠");
 }
