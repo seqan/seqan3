@@ -58,7 +58,7 @@ SEQAN3_CONCEPT sdsl_index = requires (t sdsl_index)
 //!\endcond
 /*!\name Requirements for seqan3::detail::sdsl_index
  * \relates seqan3::detail::sdsl_index
- * \brief The SDSL index must support the following interface to work with SeqAn3 FM indices.
+ * \brief The SDSL index must support the following interface to work with SeqAn FM indices.
  * \{
  *
  * \typedef typename t::size_type size_type

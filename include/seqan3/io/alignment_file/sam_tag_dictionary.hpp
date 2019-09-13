@@ -106,7 +106,7 @@ constexpr uint16_t operator""_tag()
  *
  * The seqan3::sam_tag_type is overloaded the following SAM tags:
  *
- * | Tag Name | SeqAn3 Type Implementation |
+ * | Tag Name | SeqAn Type Implementation |
  * | -------- | --------------------- |
  * | "AM"_tag | int32_t               |
  * | "AS"_tag | int32_t               |

@@ -1,7 +1,7 @@
 # Quick Setup (using CMake) {#setup}
 
 <b>Learning Objective:</b><br>
-In this short guide you will learn how to set up SeqAn3 and how to compile a small example to test whether everything
+In this short guide you will learn how to set up SeqAn and how to compile a small example to test whether everything
 works.
 
 \tutorial_head{Easy, 30 Minutes, No prerequisites, }

@@ -1,8 +1,8 @@
-# Alphabets in SeqAn3 {#tutorial_alphabets}
+# Alphabets in SeqAn {#tutorial_alphabets}
 
 ***Learning Objective:***
 
-In this tutorial we look at alphabets and you will learn how to work with nucleotides and amino acids in SeqAn3.
+In this tutorial we look at alphabets and you will learn how to work with nucleotides and amino acids in SeqAn.
 We guide you through the most important properties of SeqAn's alphabets and show you the different implemented types.
 After completion, you will be able to use the alphabets inside of STL containers and to compare alphabet values.
 
@@ -29,7 +29,7 @@ This is a detailed introduction to the alphabet module and demonstrates its main
 
 Nucleotides are the components of (Deoxy)Ribonucleic acid (DNA/RNA) and contain one of the nucleobases
 Adenine (A), Cytosine (C), Guanine (G), Thymine (T, only DNA) and Uracil (U, only RNA).
-In SeqAn3 the alphabets seqan3::dna4 and seqan3::rna4 contain exactly the four respective nucleotides.
+In SeqAn the alphabets seqan3::dna4 and seqan3::rna4 contain exactly the four respective nucleotides.
 The trailed number in the alphabets' name represents the number of entities the alphabet holds –
 we denote this number as *alphabet size*.
 For instance, the alphabet seqan3::dna5 represents five entities as it contains the additional symbol 'N'
@@ -52,7 +52,7 @@ We have shown three solutions for assigning variables of alphabet type.
 
 ## The rank of an alphabet symbol
 The rank of a symbol is a number in range \[0..alphabet_size) where each number is paired with
-an alphabet symbol by a bijective function. In SeqAn3 the rank is always determined by the lexicographical
+an alphabet symbol by a bijective function. In SeqAn the rank is always determined by the lexicographical
 order of the underlying characters. For instance, in seqan3::dna4 the bijection is <br>
 <code>'A'_dna4 ⟼ 0</code> <br>
 <code>'C'_dna4 ⟼ 1</code> <br>
@@ -103,7 +103,7 @@ Please note how easily a sequence can be created via the string literal.
 
 ## Comparability
 
-All alphabets in SeqAn3 are regular and comparable. This means that you can
+All alphabets in SeqAn are regular and comparable. This means that you can
 use the `<`, `<=`, `>` and `>=` operators to compare the values based on the rank.
 For instance, this is useful for sorting a text over the alphabet. Regular implies that the
 equality and inequality of two values can be tested with `==` and `!=`.

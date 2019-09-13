@@ -20,7 +20,7 @@
 #include <seqan3/range/container/small_vector.hpp>
 
 /*!\defgroup container Container
- * \brief The container submodule contains special SeqAn3 containers and generic container concepts.
+ * \brief The container submodule contains special SeqAn containers and generic container concepts.
  * \ingroup range
  * \sa https://en.cppreference.com/w/cpp/container
  * \sa range/container/all.hpp

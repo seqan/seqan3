@@ -86,7 +86,7 @@ namespace seqan3
  * ### SAM format columns -> fields
  *
  * Since many users will be accustomed to the columns of the SAM format, here is a
- * mapping of the common SAM format columns to the SeqAn3 record fields:
+ * mapping of the common SAM format columns to the SeqAn record fields:
  *
  * | #  | SAM Column ID |  FIELD name                                       |
  * |:--:|:--------------|:--------------------------------------------------|

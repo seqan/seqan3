@@ -409,7 +409,7 @@ public:
     static constexpr std::string_view unregistered_app = "UNREGISTERED_APP";
     //!\brief The message directed to the developer of the app if a new seqan3 version is available.
     static constexpr std::string_view message_seqan3_update =
-        "[SEQAN3 INFO] :: A new SeqAn3 version is available online.\n"
+        "[SEQAN3 INFO] :: A new SeqAn version is available online.\n"
         "[SEQAN3 INFO] :: Please visit www.github.com/seqan/seqan3.git for an update\n"
         "[SEQAN3 INFO] :: or inform the developer of this app.\n"
         "[SEQAN3 INFO] :: If you don't wish to receive further notifications, set --version-check OFF.\n\n";

@@ -102,7 +102,7 @@
  * seqan3::debug_stream:
  * \include test/snippet/alphabet/all_nonambiguous.cpp
  *
- * To reduce the burden of calling `assign_char` often, most alphabets in SeqAn3 provide custom literals for
+ * To reduce the burden of calling `assign_char` often, most alphabets in SeqAn provide custom literals for
  * the alphabet and sequences over the alphabet:
  *
  * \include test/snippet/alphabet/all_literal.cpp
@@ -154,7 +154,7 @@
  *
  * # containers over alphabets
  *
- * In SeqAn3 it is recommended you use the STL container classes like std::vector for storing sequence data,
+ * In SeqAn it is recommended you use the STL container classes like std::vector for storing sequence data,
  * but you can use other class templates if they satisfy the respective seqan3::container, e.g. `std::deque` or
  * <a href="https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md" target="_blank">
  * <tt>folly::fbvector</tt></a> or even <a href="https://doc.qt.io/qt-5/qvector.html" target="_blank">

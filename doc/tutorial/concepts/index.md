@@ -3,7 +3,7 @@
 [TOC]
 
 This tutorial introduces "C++ Concepts", a feature of C++20 (and available to some extent in older GCC versions).
-You will learn the terminology used in the context of concepts and how to use SeqAn3's concepts in your application.
+You will learn the terminology used in the context of concepts and how to use SeqAn's concepts in your application.
 
 \tutorial_head{Moderate, 60 min, \ref setup\, \ref tutorial_argument_parser,}
 
@@ -220,7 +220,7 @@ It requires that both parameters are the same. The `static_assert` checks condit
 used to verify whether a type or a combination of types model a concept. In the above case we can use the combination
 to check the "return type" of the transformation trait.
 
-# Concepts in SeqAn3 and this documentation
+# Concepts in SeqAn and this documentation
 
 SeqAn uses concepts extensively, for specialisation/overloading, but also to prevent misuse of templates and to clearly
 specify all public interfaces.
@@ -254,7 +254,7 @@ Do you understand the requirements formulated on that page?
 In order to model the seqan3::validator, your custom validator must provide the following:
 
   1. It needs to expose a `value_type` type member which identifies the type of variable the validator works on.
-     Currently, the SeqAn3 validators either have value_type `double` or `std::string`.
+     Currently, the SeqAn validators either have value_type `double` or `std::string`.
      Since the validator works on every type that has a common reference type to `value_type`, it enables a validator
      with `value_type = double` to work on all arithmetic values.
      \attention In order to be chainable, the validators need to share the same value_type!

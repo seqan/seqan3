@@ -1,4 +1,4 @@
-# Alignment Input and Output in SeqAn3 {#tutorial_alignment_file}
+# Alignment Input and Output in SeqAn {#tutorial_alignment_file}
 
 ***Learning Objective:***
 
@@ -16,7 +16,7 @@ Alignment files are used to store pairwise alignments between two (biological) s
 Common file formats are the Sequence Alignment/Map format (SAM) and BLAST output format.
 Next to the alignment, those formats store additional information like the start positions or mapping qualities.
 Alignment files are a little more complex than sequence files but the basic design is the same.
-If you are new to SeqAn3, we strongly recommend to do the tutorial \ref tutorial_sequence_file first.
+If you are new to SeqAn, we strongly recommend to do the tutorial \ref tutorial_sequence_file first.
 
 # Alignment file formats
 
@@ -142,7 +142,7 @@ You can select fields by providing a seqan3::fields object as an extra parameter
 In the example above we only select the id, sequence and flag information
 so the seqan3::record object has three tuple elements that are decomposed using structural bindings.
 
-Note that this is possible for all seqan3 file objects.
+Note that this is possible for all SeqAn file objects.
 
 \assignment{Exercise: Accumulating mapping qualities}
 
@@ -170,7 +170,7 @@ Average: 27.4
 
 # Alignment representation in the SAM format
 
-In SeqAn3 we represent an alignment as a tuple of two *aligned_sequences*,
+In SeqAn we represent an alignment as a tuple of two *aligned_sequences*,
 as you have probably learned by now from the alignment tutorial.
 
 The SAM format is the common output format of read mappers where you align short read sequences
@@ -209,7 +209,7 @@ or the [SAMtools paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2723002/).
 
 ## Completing reference information
 
-In SeqAn3 the conversion from a CIGAR string to an alignment (two *aligned_sequences*) is done automatically for you.
+In SeqAn the conversion from a CIGAR string to an alignment (two *aligned_sequences*) is done automatically for you.
 You can just pass the alignment object to the alignment file:
 
 \snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main

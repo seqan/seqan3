@@ -28,7 +28,7 @@
  * This is resembled by the range concepts defined in this module. Another way to classify ranges is by their storage
  * behaviour, i.e. whether they own the data that is accessible through them. See below for more details.
  *
- * Ranges are found throughout the SeqAn3 library, this module provides general-purpose ranges that are not specific
+ * Ranges are found throughout the SeqAn library, this module provides general-purpose ranges that are not specific
  * to another module or biological function.
  *
  * ### Iterator capabilities
@@ -49,7 +49,7 @@
  *
  * ### Storage behaviour
  *
- * **containers** are the ranges most well known, they own their elements. SeqAn3 makes use of standard STL containers
+ * **containers** are the ranges most well known, they own their elements. SeqAn makes use of standard STL containers
  * like `std::vector`, but also implements some custom containers. See the \link container container submodule \endlink
  * for more details.
  *

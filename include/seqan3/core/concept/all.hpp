@@ -18,7 +18,7 @@
 
 /*!\defgroup concept Concept
  * \ingroup core
- * \brief Additional concepts that are not specific to a SeqAn3 module.
+ * \brief Additional concepts that are not specific to a SeqAn module.
  *
  * \details
  *

@@ -1,8 +1,8 @@
-# Implementing your own read mapper with SeqAn3 {#tutorial_read_mapper}
+# Implementing your own read mapper with SeqAn {#tutorial_read_mapper}
 
 <b>Learning Objective:</b><br>
 In this tutorial you will learn how to combine the components of previous tutorials to create your very first
-SeqAn3 application: a read mapper!
+SeqAn application: a read mapper!
 
 \tutorial_head{High, 90 Minutes, All,}
 

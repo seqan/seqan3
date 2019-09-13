@@ -16,7 +16,7 @@
 //
 // Author: Jonathan de Halleux, dehalleux@pelikhan.com, 2003   (original zlib stream)
 // Author: David Weese, dave.weese@gmail.com, 2014             (extension to parallel block-wise compression in bgzf format)
-// Author: Rene Rahn, rene.rahn AT fu-berlin.de, 2019          (adaption to SeqAn3)
+// Author: Rene Rahn, rene.rahn AT fu-berlin.de, 2019          (adaption to SeqAn library version 3)
 
 #pragma once
 

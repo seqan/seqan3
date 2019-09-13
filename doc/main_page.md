@@ -4,7 +4,7 @@ Welcome to the documentation of the SeqAn library.
 This web-site contains the API reference (documentation of our interfaces) and more elaborate Tutorials and
 How-Tos.
 
-If you are new to SeqAn3, we recommend that you begin by reading \ref setup and doing the full tutorial,
+If you are new to SeqAn, we recommend that you begin by reading \ref setup and doing the full tutorial,
 starting with \ref tutorial_first_example.
 
 In contrast to the Tutorials (which are expected to be useful for all developers), the How-Tos contain more advanced

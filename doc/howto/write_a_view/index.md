@@ -2,7 +2,7 @@
 
 [TOC]
 
-This HowTo documents how to write a view using the standard library and some helpers from SeqAn3.
+This HowTo documents how to write a view using the standard library and some helpers from SeqAn.
 
 \tutorial_head{Difficult, 120 min, \ref tutorial_concepts\,\ref tutorial_ranges, }
 

@@ -35,7 +35,7 @@ namespace seqan3
  * there is something in the range that changes on every iterator increment (and `const` ranges can't change);
  *   * certain views store a state with their algorithm that also changes when `begin()` is called or an
  * iterator is incremented; these may be not be `const`-iterable, because the standard library
- * (and also SeqAn3) guarantees that it is safe to call `const`-qualified functions concurrently.
+ * (and also SeqAn) guarantees that it is safe to call `const`-qualified functions concurrently.
  */
 //!\cond
 template <typename type>
