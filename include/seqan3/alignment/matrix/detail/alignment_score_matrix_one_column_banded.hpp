@@ -71,6 +71,7 @@ public:
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::sentinel
     using sentinel = typename range_base_t::sentinel;
     using typename matrix_base_t::size_type;
+    using typename matrix_base_t::underlying_type;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -125,7 +126,6 @@ public:
     }
     //!\}
 
-private:
     //!\brief The column index where the upper bound of the band passes through.
     int32_t band_col_index{};
     //!\brief The row index where the lower bound of the band passes through.
@@ -133,6 +133,7 @@ private:
     //!\brief The size of the band.
     int32_t band_size{};
 
+private:
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::initialise_column
     constexpr alignment_column_type initialise_column(size_type const column_index) noexcept
     {

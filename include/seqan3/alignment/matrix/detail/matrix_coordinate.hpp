@@ -91,6 +91,17 @@ struct matrix_index
                            column_index_type<index_t> const col_idx) noexcept
         : row{row_idx.get()}, col{col_idx.get()}
     {}
+
+    /*!\brief Construction from other matrix_index with different integral type.
+     * \param[in] other The other matrix_index to construct from.
+     */
+    template <std::integral other_index_t>
+    //!\cond
+        requires !std::same_as<other_index_t, index_t>
+    //!\endcond
+    explicit constexpr matrix_index(matrix_index<other_index_t> other) noexcept
+        : row{static_cast<index_t>(other.row)}, col{static_cast<index_t>(other.col)}
+    {}
     //!\}
 
     index_t row{}; //!< The row index.

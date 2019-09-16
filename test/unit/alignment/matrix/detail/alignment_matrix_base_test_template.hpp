@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alignment/band/static_band.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 using namespace seqan3::detail;
@@ -43,6 +44,8 @@ TYPED_TEST_P(alignment_matrix_base_test, range_concepts)
     EXPECT_TRUE(std::input_iterator<outer_it>);
     EXPECT_TRUE(std::input_iterator<inner_it>);
     EXPECT_TRUE(std::ranges::input_range<column_t>);
+    EXPECT_TRUE(std::ranges::forward_range<column_t>);
+    EXPECT_TRUE(std::ranges::sized_range<column_t>);
     EXPECT_TRUE(std::ranges::view<column_t>);
 }
 

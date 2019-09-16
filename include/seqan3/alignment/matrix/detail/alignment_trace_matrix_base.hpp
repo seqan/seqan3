@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
@@ -49,7 +50,7 @@ protected:
                                               aligned_allocator<element_type, sizeof(element_type)>,
                                               std::allocator<element_type>>;
     //!\brief The type of the underlying memory pool.
-    using pool_type = std::vector<element_type, allocator_type>;
+    using pool_type = two_dimensional_matrix<element_type, allocator_type, matrix_major_order::column>;
     //!\brief The size type.
     using size_type = size_t;
 
@@ -57,7 +58,7 @@ public:
     //!\brief The linearised matrix storing the trace data in column-major-order.
     pool_type data{};
     //!\brief Internal cache for the trace values to the left.
-    pool_type cache_left{};
+    std::vector<element_type, allocator_type> cache_left{};
     //!\brief Internal cache for the last trace value above.
     element_type cache_up{};
     //!\brief The number of columns.

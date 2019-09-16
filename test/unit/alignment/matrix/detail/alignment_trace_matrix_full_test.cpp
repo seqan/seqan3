@@ -53,14 +53,13 @@ struct iterator_fixture<outer_iterator<test_type>> : alignment_matrix_base_test<
     template <typename lhs_t, typename rhs_t>
     static void test(lhs_t lhs, rhs_t rhs)
     {
-        auto [coo, trace] = lhs;
-        EXPECT_EQ(coo.second, std::get<0>(std::get<0>(rhs)));
-        EXPECT_EQ(coo.first, std::get<1>(std::get<0>(rhs)));
+        EXPECT_EQ(lhs.coordinate.second, std::get<0>(std::get<0>(rhs)));
+        EXPECT_EQ(lhs.coordinate.first, std::get<1>(std::get<0>(rhs)));
 
         if constexpr (std::is_same_v<std::tuple_element_t<0, test_type>,
                                      detail::alignment_trace_matrix_full<trace_directions>>)
         {
-            EXPECT_EQ(trace.current, std::get<1>(rhs));
+            EXPECT_EQ(lhs.current, std::get<1>(rhs));
         }
     }
 
@@ -111,3 +110,19 @@ using testing_types_inner = ::testing::Types<inner_iterator<trace_matrix_t>, inn
 INSTANTIATE_TYPED_TEST_CASE_P(trace_matrix_inner_iterator,
                               iterator_fixture,
                               testing_types_inner);
+
+
+TEST(trace_matrix, trace_path)
+{
+    detail::alignment_trace_matrix_full<trace_directions> matrix{"acgt", "acgt"};
+
+    EXPECT_THROW((matrix.trace_path(matrix_coordinate{row_index_type{6u}, column_index_type{4u}})),
+                 std::invalid_argument);
+
+    EXPECT_THROW((matrix.trace_path(matrix_coordinate{row_index_type{4u}, column_index_type{6u}})),
+                 std::invalid_argument);
+
+    auto path = matrix.trace_path(matrix_coordinate{row_index_type{4u}, column_index_type{4u}});
+
+    EXPECT_TRUE(path.empty());
+}

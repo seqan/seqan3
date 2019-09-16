@@ -16,6 +16,7 @@
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_proxy.hpp>
+#include <seqan3/alignment/matrix/detail/trace_iterator_banded.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 
@@ -66,10 +67,6 @@ protected:
     using typename matrix_base_t::element_type;
     using typename matrix_base_t::coordinate_type;
     using typename range_base_t::alignment_column_type;
-    //!\brief The proxy type when accessing a traceback matrix cell.
-    using proxy_type = std::conditional_t<coordinate_only,
-                                          detail::ignore_t,
-                                          alignment_trace_matrix_proxy<trace_t>>;
     //!\copydoc alignment_matrix_column_major_range_base::column_data_view_type
     using column_data_view_type = std::conditional_t<coordinate_only,
                                         decltype(std::views::iota(coordinate_type{}, coordinate_type{})),
@@ -82,7 +79,10 @@ public:
      * \{
      */
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::value_type
-    using value_type = std::pair<coordinate_type, proxy_type>;
+    using value_type = alignment_trace_matrix_proxy<coordinate_type,
+                                                    std::conditional_t<coordinate_only,
+                                                                       detail::ignore_t const,
+                                                                       trace_t>>;
     //!\brief Same as value type.
     using reference = value_type;
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::iterator
@@ -139,13 +139,29 @@ public:
         // Reserve one more cell to deal with last cell in the banded column which needs only the diagonal and up cell.
         if constexpr (!coordinate_only)
         {
-            matrix_base_t::data.resize(matrix_base_t::num_cols * band_size);
-            matrix_base_t::cache_left.resize(band_size, initial_value);
+            matrix_base_t::data = typename matrix_base_t::pool_type{number_rows{static_cast<size_type>(band_size)},
+                                                                    number_cols{matrix_base_t::num_cols}};
+            matrix_base_t::cache_left.resize(band_size + 1, initial_value);
         }
     }
     //!\}
 
-private:
+    //!\copydoc seqan3::detail::alignment_trace_matrix_full::trace_path
+    auto trace_path(matrix_coordinate const & trace_begin)
+    {
+        static_assert(!coordinate_only, "Requested trace but storing the trace was disabled!");
+
+        using matrix_iter_t = std::ranges::iterator_t<typename matrix_base_t::pool_type>;
+        using trace_iterator_t = trace_iterator_banded<matrix_iter_t>;
+        using path_t = std::ranges::subrange<trace_iterator_t, std::ranges::default_sentinel_t>;
+
+        if (trace_begin.row >= static_cast<size_t>(band_size) || trace_begin.col >= matrix_base_t::num_cols)
+            throw std::invalid_argument{"The given coordinate exceeds the trace matrix size."};
+
+        return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin}},
+                      std::ranges::default_sentinel};
+    }
+
     //!\brief The column index where the upper bound of the band passes through.
     int32_t band_col_index{};
     //!\brief The row index where the lower bound of the band passes through.
@@ -153,6 +169,7 @@ private:
     //!\brief The size of the band.
     int32_t band_size{};
 
+private:
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::initialise_column
     constexpr alignment_column_type initialise_column(size_type const column_index) noexcept
     {
@@ -169,19 +186,19 @@ private:
         coordinate_type row_end{column_index_type{column_index}, row_index_type{static_cast<size_type>(slice_end)}};
         if constexpr (coordinate_only)
         {
-            return alignment_column_type{*this, column_data_view_type{std::views::iota(std::move(row_begin),
-                                                                                      std::move(row_end))}};
+            return alignment_column_type{*this,
+                                         column_data_view_type{std::views::iota(std::move(row_begin),
+                                                                                std::move(row_end))}};
         }
         else
         {
-            size_type base_index = band_size * column_index;
-
+            matrix_coordinate band_begin{row_index_type{static_cast<size_type>(slice_begin)},
+                                         column_index_type{column_index}};
+            size_type slice_size =  slice_end - slice_begin;
             // We need to jump to the offset.
             auto col = std::views::zip(
-                            std::span<element_type>{std::addressof(matrix_base_t::data[base_index + slice_begin]),
-                                                    std::addressof(matrix_base_t::data[base_index + slice_end])},
-                            std::span<element_type>{std::addressof(matrix_base_t::cache_left[slice_begin]),
-                                                    std::addressof(matrix_base_t::cache_left[slice_end])},
+                            std::span<element_type>{std::addressof(matrix_base_t::data[band_begin]), slice_size},
+                            std::span<element_type>{std::addressof(matrix_base_t::cache_left[slice_begin]), slice_size},
                             std::views::iota(std::move(row_begin), std::move(row_end)));
             return alignment_column_type{*this, column_data_view_type{std::move(col)}};
         }
@@ -193,14 +210,16 @@ private:
     {
         if constexpr (coordinate_only)
         {
-            return {*host_iter, std::ignore};
+            return {*host_iter, std::ignore, std::ignore, std::ignore, std::ignore};
         }
         else
         {
-            return {std::get<2>(*host_iter), proxy_type{std::get<0>(*host_iter),
-                                                        std::get<1>(*(host_iter + 1)),
-                                                        std::get<1>(*host_iter),
-                                                        matrix_base_t::cache_up}};
+            return {std::get<2>(*host_iter),        // the current coordinate.
+                    std::get<0>(*host_iter),        // the current cell.
+                    std::get<1>(*(host_iter + 1)),  // the last left cell to read from.
+                    std::get<1>(*host_iter),        // the next left cell to write to.
+                    matrix_base_t::cache_up         // the last up cell to read/write from/to.
+                    };
         }
     }
 };

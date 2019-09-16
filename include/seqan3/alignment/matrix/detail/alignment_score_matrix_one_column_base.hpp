@@ -39,8 +39,10 @@ protected:
     static_assert(arithmetic<score_t> || simd_concept<score_t>,
                   "Score type must either be either an arithmetic type or a simd vector type.");
 
+    //!\brief The underlying type of the scores.
+    using underlying_type = score_t;
     //!\brief The actual element type.
-    using element_type = std::tuple<score_t, score_t>;
+    using element_type = std::tuple<underlying_type, underlying_type>;
     //!\brief The allocator type.
     using allocator_type = aligned_allocator<element_type, sizeof(element_type)>;
     //!\brief The type of the underlying storage.
@@ -51,7 +53,7 @@ public:
     //!\brief The linearised memory pool storing only one column of the matrix.
     pool_type pool{};
     //!\brief Internal cache for the last diagonal and vertical value during the alignment computation.
-    std::array<score_t, 3> cache{};  // Third argument is used to cache next diagonal value in non-banded case.
+    std::array<underlying_type, 3> cache{};  // Third argument is used to cache next diagonal value in non-banded case.
     //!\brief The number of columns.
     size_type num_cols{};
     //!\brief The number of num_rows.

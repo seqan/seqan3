@@ -74,6 +74,7 @@ public:
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::sentinel
     using sentinel = typename range_base_t::sentinel;
     using typename matrix_base_t::size_type;
+    using typename matrix_base_t::underlying_type;
     //!\}
 
     /*!\name Constructors, destructor and assignment
