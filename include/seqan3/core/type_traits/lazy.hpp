@@ -63,7 +63,7 @@ struct instantiate<lazy<template_t, spec_t...>>
 
 /*!\brief A transformation trait that instantiates seqan3::lazy types. Transformation trait shortcut.
  * \tparam t The type to operate on.
- * \relates seqan3::instantiate
+ * \relates seqan3::detail::instantiate
  */
 template <typename t>
 //!\cond
@@ -95,7 +95,7 @@ struct lazy_conditional : instantiate<std::conditional_t<decision, on_true_t, on
  * \tparam decision   Whether to resolve to the first type or the second.
  * \tparam on_true_t  The return type in case `decision` is true.
  * \tparam on_false_t The return type in case `decision` is false.
- * \relates seqan3::lazy_conditional
+ * \relates seqan3::detail::lazy_conditional
  */
 template <bool decision, typename on_true_t, typename on_false_t>
 //!\cond
@@ -103,5 +103,42 @@ template <bool decision, typename on_true_t, typename on_false_t>
 //!\endcond
 using lazy_conditional_t = instantiate_t<std::conditional_t<decision, on_true_t, on_false_t>>;
 
+/*!\brief An unary type trait that tests whether a template class can be instantiated with the given template type
+ *        parameters.
+ * \implements seqan3::unary_type_trait
+ * \tparam query_t The type of the template class to test.
+ * \tparam args_t  The template parameter pack to instantiate the template class with.
+ *
+ * \details
+ *
+ * Note, this unary type trait can be used in a seqan3::detail::lazy_conditional expression to check if instantiating
+ * a template class with specific template arguments would result in a valid template definition. Thus, the template
+ * parameters of the checked class must be constrained accordingly.
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/type_traits/is_instantiable_with.cpp
+ */
+template <template <typename ...> typename query_t, typename ...args_t>
+struct is_instantiable_with :
+//!\cond
+    public std::false_type
+//!\endcond
+{};
+
+//!\cond
+template <template <typename ...> typename query_t, typename ...args_t>
+    requires requires { typename std::type_identity<query_t<args_t...>>::type; }
+struct is_instantiable_with<query_t, args_t...> : public std::true_type
+{};
+//!\endcond
+
+/*!\brief Helper variable template for seqan3::detail::is_instantiable_with.
+ * \tparam query_t The type of the template class to test.
+ * \tparam args_t  The template parameter pack to instantiate the template class with.
+ * \relates seqan3::detail::is_instantiable_with
+ */
+template <template <typename ...> typename query_t, typename ...args_t>
+inline constexpr bool is_instantiable_with_v = is_instantiable_with<query_t, args_t...>::value;
 //!\}
 } // namespace seqan3::detail
