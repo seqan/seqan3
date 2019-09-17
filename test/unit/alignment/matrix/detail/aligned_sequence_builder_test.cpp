@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <list>
+#include <vector>
 
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/alignment/matrix/detail/trace_iterator.hpp>
@@ -74,7 +75,8 @@ struct aligned_sequence_builder_fixture : ::testing::Test
 
 using test_types = ::testing::Types<std::pair<dna4_vector &, dna4_vector &>,
                                     std::pair<dna4_vector &, dna15_vector &>,
-                                    std::pair<dna4_vector &, std::list<dna4> &>>;
+                                    std::pair<dna4_vector &, std::list<dna4> &>,
+                                    std::pair<std::list<dna4> &, std::list<dna4> &>>;
 
 TYPED_TEST_CASE(aligned_sequence_builder_fixture, test_types);
 
