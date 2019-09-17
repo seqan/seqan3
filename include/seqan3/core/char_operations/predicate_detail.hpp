@@ -190,13 +190,19 @@ struct char_predicate_base
     //!\brief Invokes the condition on `val`.
     template <std::integral value_t>
     constexpr bool operator()(value_t const val) const noexcept
+    //!\cond
         requires sizeof(value_t) == 1
+    //!\endcond
     {
         return derived_t::data[static_cast<unsigned char>(val)];
     }
+
+    //!\overload
     template <std::integral value_t>
     constexpr bool operator()(value_t const val) const noexcept
+    //!\cond
         requires sizeof(value_t) != 1
+    //!\endcond
     {
         return (static_cast<std::make_unsigned_t<value_t>>(val) < 256) ? operator()(static_cast<uint8_t>(val)) :
                (static_cast<decltype(EOF)>(val) == EOF)                ? derived_t::data[256]                  : false;
