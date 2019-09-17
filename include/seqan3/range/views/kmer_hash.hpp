@@ -138,61 +138,62 @@ private:
         //!\anchor shape_iterator_comparison
         //!\name Comparison operators
         //!\{
-        //\!brief Compare to iterator on text.
+
+        //!\brief Compare to iterator on text.
         friend bool operator==(shape_iterator const & lhs, sentinel_t const & rhs) noexcept
         {
             return lhs.text_right == rhs;
         }
 
-        //\!brief Compare to iterator on text.
+        //!\brief Compare to iterator on text.
         friend bool operator==(sentinel_t const & lhs, shape_iterator const & rhs) noexcept
         {
             return lhs == rhs.text_right;
         }
 
-        //\!brief Compare to another shape_iterator.
+        //!\brief Compare to another shape_iterator.
         friend bool operator==(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return std::tie(lhs.text_right, lhs.shape_) == std::tie(rhs.text_right, rhs.shape_);
         }
 
-        //\!brief Compare to iterator on text.
+        //!\brief Compare to iterator on text.
         friend bool operator!=(shape_iterator const & lhs, sentinel_t const & rhs) noexcept
         {
             return !(lhs == rhs);
         }
 
-        //\!brief Compare to iterator on text.
+        //!\brief Compare to iterator on text.
         friend bool operator!=(sentinel_t const & lhs, shape_iterator const & rhs) noexcept
         {
             return !(lhs == rhs);
         }
 
-        //\!brief Compare to another shape_iterator.
+        //!\brief Compare to another shape_iterator.
         friend bool operator!=(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return !(lhs == rhs);
         }
 
-        //\!brief Compare to another shape_iterator.
+        //!\brief Compare to another shape_iterator.
         friend bool operator<(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return (lhs.shape_ <= rhs.shape_) && (lhs.text_right < rhs.text_right);
         }
 
-        //\!brief Compare to another shape_iterator.
+        //!\brief Compare to another shape_iterator.
         friend bool operator>(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return (lhs.shape_ >= rhs.shape_) && (lhs.text_right > rhs.text_right);
         }
 
-        //\!brief Compare to another shape_iterator.
+        //!\brief Compare to another shape_iterator.
         friend bool operator<=(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return (lhs.shape_ <= rhs.shape_) && (lhs.text_right <= rhs.text_right);
         }
 
-        //\!brief Compare to another shape_iterator.
+        //!\brief Compare to another shape_iterator.
         friend bool operator>=(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return (lhs.shape_ >= rhs.shape_) && (lhs.text_right >= rhs.text_right);
