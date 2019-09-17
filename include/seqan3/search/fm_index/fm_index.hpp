@@ -343,14 +343,16 @@ public:
      */
     fm_index() = default;              //!< Defaulted.
 
-    fm_index(fm_index const & rhs) :   //!< When copy constructing, also update internal data structures.
+    //!\brief When copy constructing, also update internal data structures.
+    fm_index(fm_index const & rhs) :
         index{rhs.index}, text_begin{rhs.text_begin}, text_begin_ss{rhs.text_begin_ss}, text_begin_rs{rhs.text_begin_rs}
     {
         text_begin_ss.set_vector(&text_begin);
         text_begin_rs.set_vector(&text_begin);
     }
 
-    fm_index(fm_index && rhs) :        //!< When move constructing, also update internal data structures.
+    //!\brief When move constructing, also update internal data structures.
+    fm_index(fm_index && rhs) :
         index{std::move(rhs.index)}, text_begin{std::move(rhs.text_begin)},text_begin_ss{std::move(rhs.text_begin_ss)},
         text_begin_rs{std::move(rhs.text_begin_rs)}
     {
@@ -358,7 +360,8 @@ public:
         text_begin_rs.set_vector(&text_begin);
     }
 
-    fm_index & operator=(fm_index rhs) //!< When copy/move assigning, also update internal data structures.
+    //!\brief When copy/move assigning, also update internal data structures.
+    fm_index & operator=(fm_index rhs)
     {
         index = std::move(rhs.index);
         text_begin = std::move(rhs.text_begin);
