@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/mask/mask.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/io/stream/concept.hpp>
 
@@ -34,6 +35,18 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alp
 //!\endcond
 {
     return s << to_char(l);
+}
+
+/*!\brief Overload for the seqan3::mask alphabet.
+ * \tparam char_t Type char type of the debug_stream.
+ * \param s The seqan3::debug_stream.
+ * \param l The mask alphabet letter.
+ * \relates seqan3::debug_stream_type
+ */
+template <typename char_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, mask const l)
+{
+    return s << (l == mask::MASKED ? "MASKED" : "UNMASKED");
 }
 
 //!\}

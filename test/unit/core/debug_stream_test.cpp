@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 
+#include <seqan3/alphabet/mask/mask.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
@@ -95,6 +96,20 @@ TEST(debug_stream_test, alphabet)
     my_stream << d2;
     o.flush();
     EXPECT_EQ(o.str(), "ANN");
+}
+
+TEST(debug_stream_test, mask_semialphabet)
+{
+    std::ostringstream o;
+    debug_stream_type my_stream{o};
+
+    my_stream << mask::MASKED;
+    o.flush();
+    EXPECT_EQ(o.str(), "MASKED");
+
+    my_stream << mask::UNMASKED;
+    o.flush();
+    EXPECT_EQ(o.str(), "MASKEDUNMASKED");
 }
 
 TEST(debug_stream_test, range_of_alphabet)
