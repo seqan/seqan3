@@ -111,8 +111,8 @@ protected:
 
 /*!\name Literals
  * \{
- *
- * \brief The seqan3::dssp9 string literal.
+ */
+/*!\brief The seqan3::dssp9 string literal.
  * \relates seqan3::dssp9
  * \param[in] str A pointer to the character string to assign.
  * \param[in] len The size of the character string to assign.

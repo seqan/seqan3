@@ -86,8 +86,8 @@ public:
 
     /*!\name RNA structure properties
      * \{
-     *
-     *!\brief Check whether the character represents a rightward interaction in an RNA structure.
+     */
+    /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
      */
     constexpr bool is_pair_open() const noexcept

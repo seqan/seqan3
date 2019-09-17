@@ -149,8 +149,8 @@ protected:
 
 /*!\name Literals
  * \{
- *
- * \brief The seqan3::db3 string literal.
+ */
+/*!\brief The seqan3::db3 string literal.
  * \relates seqan3::dot_bracket3
  * \param[in] str A pointer to the character string to assign.
  * \param[in] len The size of the character string to assign.

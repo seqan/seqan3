@@ -370,7 +370,9 @@ public:
      */
     template <typename alternative_t>
     constexpr bool is_alternative() const noexcept
+    //!\cond
         requires holds_alternative<alternative_t>()
+    //!\endcond
     {
         constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
         return is_alternative<index>();
@@ -382,7 +384,9 @@ public:
      */
     template <typename alternative_t>
     constexpr alternative_t convert_to() const
+    //!\cond
         requires holds_alternative<alternative_t>()
+    //!\endcond
     {
         constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
         return convert_impl<index, true>();
@@ -393,7 +397,9 @@ public:
      */
     template <typename alternative_t>
     constexpr alternative_t convert_unsafely_to() const noexcept
+    //!\cond
         requires holds_alternative<alternative_t>()
+    //!\endcond
     {
         constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
         return convert_impl<index, false>();
@@ -406,16 +412,22 @@ public:
      *        `alphabet_variant<dna5, gap>{gap{}} < 'C'_dna5`.
      * \{
      */
+    //!\brief Checks for equality.
     template <typename alternative_t>
     constexpr bool operator==(alternative_t const rhs) const noexcept
+    //!\cond
         requires holds_alternative<alternative_t>()
+    //!\endcond
     {
         return is_alternative<alternative_t>() && (convert_unsafely_to<alternative_t>() == rhs);
     }
 
+    //!\brief Checks for inequality.
     template <typename alternative_t>
     constexpr bool operator!=(alternative_t const rhs) const noexcept
+    //!\cond
         requires holds_alternative<alternative_t>()
+    //!\endcond
     {
         return !operator==(rhs);
     }
@@ -428,6 +440,7 @@ public:
      *        `alphabet_variant<dna5, gap>{gap{}} < 'C'_rna5`.
      * \{
      */
+    //!\brief Checks for equality.
     template <typename indirect_alternative_type>
     constexpr bool operator==(indirect_alternative_type const rhs) const noexcept
     //!\cond
@@ -442,6 +455,7 @@ public:
         return is_alternative<alternative_t>() && (convert_unsafely_to<alternative_t>() == rhs);
     }
 
+    //!\brief Checks for inequality.
     template <typename indirect_alternative_type>
     constexpr bool operator!=(indirect_alternative_type const rhs) const noexcept
     //!\cond
@@ -616,6 +630,7 @@ protected:
  * \brief Free function (in-)equality comparison operators that forward to member operators (for types != self).
  *\{
  */
+//!\brief Checks for equality.
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator==(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
 //!\cond
@@ -626,6 +641,7 @@ constexpr bool operator==(lhs_t const lhs, alphabet_variant<alternative_types...
     return rhs == lhs;
 }
 
+//!\brief Checks for inequality.
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator!=(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
 //!\cond

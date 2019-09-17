@@ -259,6 +259,7 @@ private:
         constexpr component_proxy & operator=(component_proxy &&) = default;       //!< Defaulted.
         ~component_proxy() = default;                                              //!< Defaulted.
 
+        //!\brief Construct from an alphabet letter and reference to the parent object.
         constexpr component_proxy(alphabet_type const l, alphabet_tuple_base & p) :
             base_t{l}, parent{&p}
         {}
@@ -270,12 +271,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alphabet_tuple_base() noexcept : base_t{} {}
-    constexpr alphabet_tuple_base(alphabet_tuple_base const &) = default;
-    constexpr alphabet_tuple_base(alphabet_tuple_base &&) = default;
-    constexpr alphabet_tuple_base & operator=(alphabet_tuple_base const &) = default;
-    constexpr alphabet_tuple_base & operator=(alphabet_tuple_base &&) = default;
-    ~alphabet_tuple_base() = default;
+    constexpr alphabet_tuple_base() noexcept : base_t{} {}                            //!< Defaulted.
+    constexpr alphabet_tuple_base(alphabet_tuple_base const &) = default;             //!< Defaulted.
+    constexpr alphabet_tuple_base(alphabet_tuple_base &&) = default;                  //!< Defaulted.
+    constexpr alphabet_tuple_base & operator=(alphabet_tuple_base const &) = default; //!< Defaulted.
+    constexpr alphabet_tuple_base & operator=(alphabet_tuple_base &&) = default;      //!< Defaulted.
+    ~alphabet_tuple_base() = default;                                                 //!< Defaulted.
 
     using base_t::base_t;
     //!\}
@@ -409,10 +410,8 @@ public:
     //!\cond
     // If not assignable but implicit convertible, convert first and assign afterwards
     template <typename indirect_component_type>
-    //!\cond
         requires !detail::one_component_is<alphabet_tuple_base, derived_type, detail::assignable_from, indirect_component_type> &&
                  detail::one_component_is<alphabet_tuple_base, derived_type, detail::implicitly_convertible_from, indirect_component_type>
-    //!\endcond
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
         using component_type = meta::front<meta::find_if<component_list, detail::implicitly_convertible_from<indirect_component_type>>>;
@@ -506,6 +505,7 @@ public:
      *        that a component type is comparable with).
      * \{
      */
+    //!\brief Checks whether `*this` is equal to `rhs`.
     template <typename indirect_component_type>
     constexpr bool operator==(indirect_component_type const rhs) const noexcept
     //!\cond
@@ -516,6 +516,7 @@ public:
         return get<component_type>(*this) == rhs;
     }
 
+    //!\brief Checks whether `*this` is unequal to `rhs`.
     template <typename indirect_component_type>
     constexpr bool operator!=(indirect_component_type const rhs) const noexcept
     //!\cond
@@ -526,6 +527,7 @@ public:
         return get<component_type>(*this) != rhs;
     }
 
+    //!\brief Checks whether `*this` is smaller than `rhs`.
     template <typename indirect_component_type>
     constexpr bool operator<(indirect_component_type const rhs) const noexcept
     //!\cond
@@ -536,6 +538,7 @@ public:
         return get<component_type>(*this) < rhs;
     }
 
+    //!\brief Checks whether `*this` is greater than `rhs`.
     template <typename indirect_component_type>
     constexpr bool operator>(indirect_component_type const rhs) const noexcept
     //!\cond
@@ -546,6 +549,7 @@ public:
         return get<component_type>(*this) > rhs;
     }
 
+    //!\brief Checks whether `*this` is smaller than or equal to `rhs`.
     template <typename indirect_component_type>
     constexpr bool operator<=(indirect_component_type const rhs) const noexcept
     //!\cond
@@ -556,6 +560,7 @@ public:
         return get<component_type>(*this) <= rhs;
     }
 
+    //!\brief Checks whether `*this` is bigger than or equal to `rhs`.
     template <typename indirect_component_type>
     constexpr bool operator>=(indirect_component_type const rhs) const noexcept
     //!\cond
@@ -615,6 +620,7 @@ private:
  * \{
  * \brief Free function comparison operators that forward to member operators (for types != self).
  */
+//!\brief Checks whether `lhs` is equal to `rhs`.
 template <typename indirect_component_type, typename derived_type, typename ...component_types>
 //!\cond
     requires detail::weakly_equality_comparable_by_members_with<derived_type, indirect_component_type> &&
@@ -626,6 +632,7 @@ constexpr bool operator==(indirect_component_type const lhs,
     return rhs == lhs;
 }
 
+//!\brief Checks whether `lhs` unequal to `rhs`.
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
     requires detail::weakly_equality_comparable_by_members_with<derived_type, indirect_component_type> &&
@@ -637,6 +644,7 @@ constexpr bool operator!=(indirect_component_type const lhs,
     return rhs != lhs;
 }
 
+//!\brief Checks whether `lhs` is smaller than `rhs`.
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
     requires detail::weakly_ordered_by_members_with<derived_type, indirect_component_type> &&
@@ -648,6 +656,7 @@ constexpr bool operator<(indirect_component_type const lhs,
     return rhs > lhs;
 }
 
+//!\brief Checks whether `lhs` is bigger than `rhs`.
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
     requires detail::weakly_ordered_by_members_with<derived_type, indirect_component_type> &&
@@ -659,6 +668,7 @@ constexpr bool operator>(indirect_component_type const lhs,
     return rhs < lhs;
 }
 
+//!\brief Checks whether `lhs` is smaller than or equal to `rhs`.
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
     requires detail::weakly_ordered_by_members_with<derived_type, indirect_component_type> &&
@@ -670,6 +680,7 @@ constexpr bool operator<=(indirect_component_type const lhs,
     return rhs >= lhs;
 }
 
+//!\brief Checks whether `lhs` is bigger than or equal to `rhs`.
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
     requires detail::weakly_ordered_by_members_with<derived_type, indirect_component_type> &&
