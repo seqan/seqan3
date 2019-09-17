@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <list>
+#include <vector>
 
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/alignment/matrix/detail/trace_iterator.hpp>
@@ -75,7 +76,8 @@ struct aligned_sequence_builder_fixture : ::testing::Test
 
 using test_types = ::testing::Types<std::pair<dna4_vector &, dna4_vector &>,
                                     std::pair<dna4_vector &, dna15_vector &>,
-                                    std::pair<dna4_vector &, std::list<dna4> &>>;
+                                    std::pair<dna4_vector &, std::list<dna4> &>,
+                                    std::pair<std::list<dna4> &, std::list<dna4> &>>;
 
 TYPED_TEST_CASE(aligned_sequence_builder_fixture, test_types);
 
@@ -95,12 +97,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, construction)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_3)
 {
     auto p = this->path(matrix_offset{row_index_type{2}, column_index_type{3}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 2u);
-    EXPECT_EQ(end.col, 3u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0, 3}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0, 2}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"--ACG"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"AG---"});
 }
@@ -108,12 +108,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_3)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_2)
 {
     auto p = this->path(matrix_offset{row_index_type{2}, column_index_type{2}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 2u);
-    EXPECT_EQ(end.col, 2u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"AC"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"AG"});
 }
@@ -121,12 +119,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_2)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_1)
 {
     auto p = this->path(matrix_offset{row_index_type{2}, column_index_type{1}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 2u);
-    EXPECT_EQ(end.col, 1u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"A--"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"-AG"});
 }
@@ -134,12 +130,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_1)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_0)
 {
     auto p = this->path(matrix_offset{row_index_type{2}, column_index_type{0}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 2u);
-    EXPECT_EQ(end.col, 0u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"--"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"AG"});
 }
@@ -147,12 +141,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_0)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_3)
 {
     auto p = this->path(matrix_offset{row_index_type{1}, column_index_type{3}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 1u);
-    EXPECT_EQ(end.col, 3u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 3u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"ACG"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"--A"});
 }
@@ -160,12 +152,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_3)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_2)
 {
     auto p = this->path(matrix_offset{row_index_type{1}, column_index_type{2}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 1u);
-    EXPECT_EQ(end.col, 2u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"-AC"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"A--"});
 }
@@ -173,12 +163,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_2)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_1)
 {
     auto p = this->path(matrix_offset{row_index_type{1}, column_index_type{1}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 1u);
-    EXPECT_EQ(end.col, 1u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"A"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"A"});
 }
@@ -186,12 +174,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_1)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_0)
 {
     auto p = this->path(matrix_offset{row_index_type{1}, column_index_type{0}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 1u);
-    EXPECT_EQ(end.col, 0u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"-"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"A"});
 }
@@ -199,12 +185,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_0)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_3)
 {
     auto p = this->path(matrix_offset{row_index_type{0}, column_index_type{3}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 0u);
-    EXPECT_EQ(end.col, 3u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 3u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"ACG"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"---"});
 }
@@ -212,12 +196,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_3)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_2)
 {
     auto p = this->path(matrix_offset{row_index_type{0}, column_index_type{2}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 0u);
-    EXPECT_EQ(end.col, 2u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"AC"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"--"});
 }
@@ -225,12 +207,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_2)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_1)
 {
     auto p = this->path(matrix_offset{row_index_type{0}, column_index_type{1}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 0u);
-    EXPECT_EQ(end.col, 1u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"A"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"-"});
 }
@@ -238,12 +218,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_1)
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_0)
 {
     auto p = this->path(matrix_offset{row_index_type{0}, column_index_type{0}});
-    auto [begin, end, alignment] = this->builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 0u);
-    EXPECT_EQ(end.col, 0u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{""});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{""});
 }
@@ -256,12 +234,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, both_empty)
     typename TestFixture::type_param builder{first, second};
 
     auto p = this->path(matrix_offset{row_index_type{0}, column_index_type{0}});
-    auto [begin, end, alignment] = builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 0u);
-    EXPECT_EQ(end.col, 0u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{""});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{""});
 }
@@ -273,12 +249,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, first_empty)
     typename TestFixture::type_param builder{first, this->sec};
 
     auto p = this->path(matrix_offset{row_index_type{2}, column_index_type{0}});
-    auto [begin, end, alignment] = builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 2u);
-    EXPECT_EQ(end.col, 0u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"--"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"AG"});
 }
@@ -290,12 +264,10 @@ TYPED_TEST(aligned_sequence_builder_fixture, second_empty)
     typename TestFixture::type_param builder{this->fst, second};
 
     auto p = this->path(matrix_offset{row_index_type{0}, column_index_type{3}});
-    auto [begin, end, alignment] = builder(p);
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = builder(p);
 
-    EXPECT_EQ(begin.row, 0u);
-    EXPECT_EQ(begin.col, 0u);
-    EXPECT_EQ(end.row, 0u);
-    EXPECT_EQ(end.col, 3u);
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 3u}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(alignment.first  | views::to_char | views::to<std::string>, std::string{"ACG"});
     EXPECT_EQ(alignment.second | views::to_char | views::to<std::string>, std::string{"---"});
 }
