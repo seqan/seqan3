@@ -12,8 +12,10 @@
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 #include "../composite/alphabet_tuple_base_test_template.hpp"
 
 using namespace seqan3;
@@ -57,5 +59,7 @@ public:
 using structured_aa_types = ::testing::Types<structured_aa<aa27, dssp9>>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(structured_aa, alphabet_, structured_aa_types);
+INSTANTIATE_TYPED_TEST_CASE_P(structured_aa, semi_alphabet_test, structured_aa_types);
 INSTANTIATE_TYPED_TEST_CASE_P(structured_aa, alphabet_constexpr, structured_aa_types);
+INSTANTIATE_TYPED_TEST_CASE_P(structured_aa, semi_alphabet_constexpr, structured_aa_types);
 INSTANTIATE_TYPED_TEST_CASE_P(structured_aa, alphabet_tuple_base_test, structured_aa_types);

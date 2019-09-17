@@ -9,8 +9,10 @@
 
 #include <seqan3/core/char_operations/predicate.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 using namespace seqan3;
 
@@ -19,7 +21,9 @@ using namespace seqan3;
 // ------------------------------------------------------------------
 
 INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, alphabet_, sam_dna16);
+INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, semi_alphabet_test, sam_dna16);
 INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, alphabet_constexpr, sam_dna16);
+INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, semi_alphabet_constexpr, sam_dna16);
 
 // nucleotide test: (because the complement is not bijective for sam_dna16 we need to test it manually)
 TEST(sam_dna16, nucleotide)

@@ -9,14 +9,18 @@
 
 #include <seqan3/alphabet/quality/phred42.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 #include "phred_test_template.hpp"
 
 using namespace seqan3;
 
 INSTANTIATE_TYPED_TEST_CASE_P(phred42, alphabet_, phred42);
+INSTANTIATE_TYPED_TEST_CASE_P(phred42, semi_alphabet_test, phred42);
 INSTANTIATE_TYPED_TEST_CASE_P(phred42, alphabet_constexpr, phred42);
+INSTANTIATE_TYPED_TEST_CASE_P(phred42, semi_alphabet_constexpr, phred42);
 INSTANTIATE_TYPED_TEST_CASE_P(phred42, phred, phred42);
 
 TEST(phred42, char_literal)

@@ -11,8 +11,10 @@
 
 #include <seqan3/alphabet/adaptation/all.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 using namespace seqan3;
 
@@ -20,7 +22,9 @@ using namespace seqan3;
 using fast_uint_types = ::testing::Types<uint8_t, uint16_t/*, uint32_t*/>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, alphabet_, fast_uint_types);
+INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, semi_alphabet_test, fast_uint_types);
 INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, alphabet_constexpr, fast_uint_types);
+INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, semi_alphabet_constexpr, fast_uint_types);
 
 template <typename T>
 using uint_adaptation = ::testing::Test;

@@ -5,12 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 #include "nucleotide_test_template.hpp"
 
 INSTANTIATE_TYPED_TEST_CASE_P(dna4, alphabet_, dna4);
+INSTANTIATE_TYPED_TEST_CASE_P(dna4, semi_alphabet_test, dna4);
 INSTANTIATE_TYPED_TEST_CASE_P(dna4, alphabet_constexpr, dna4);
+INSTANTIATE_TYPED_TEST_CASE_P(dna4, semi_alphabet_constexpr, dna4);
 INSTANTIATE_TYPED_TEST_CASE_P(dna4, nucleotide, dna4);
 
 TEST(dna4, to_char_assign_char)

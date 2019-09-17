@@ -14,8 +14,10 @@
 #include <seqan3/alphabet/structure/structured_rna.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 #include "../composite/alphabet_tuple_base_test_template.hpp"
 
 using namespace seqan3;
@@ -61,5 +63,7 @@ public:
 using structured_rna_types = ::testing::Types<structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, alphabet_, structured_rna_types);
+INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, semi_alphabet_test, structured_rna_types);
 INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, alphabet_constexpr, structured_rna_types);
+INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, semi_alphabet_constexpr, structured_rna_types);
 INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, alphabet_tuple_base_test, structured_rna_types);

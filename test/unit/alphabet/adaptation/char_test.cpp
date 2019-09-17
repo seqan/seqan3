@@ -11,21 +11,22 @@
 
 #include <seqan3/alphabet/adaptation/all.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 using namespace seqan3;
 
-// char32_t and wchar_t, too slow
-using fast_char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
+using char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet_, fast_char_types);
-INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet_constexpr, fast_char_types);
+INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet_, char_types);
+INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, semi_alphabet_test, char_types);
+INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet_constexpr, char_types);
+INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, semi_alphabet_constexpr, char_types);
 
 template <typename T>
 using char_adaptation = ::testing::Test;
-
-using char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
 TYPED_TEST_CASE(char_adaptation, char_types);
 

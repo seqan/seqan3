@@ -14,8 +14,10 @@
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 using namespace seqan3;
 
@@ -24,7 +26,9 @@ using alphabet_variant_types = ::testing::Types<alphabet_variant<dna4, gap>,
                                                  alphabet_variant<char, gap>>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet_, alphabet_variant_types);
+INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, semi_alphabet_test, alphabet_variant_types);
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet_constexpr, alphabet_variant_types);
+INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, semi_alphabet_constexpr, alphabet_variant_types);
 
 template <typename T>
 using alphabet_variant_test = ::testing::Test;
