@@ -23,26 +23,42 @@ namespace seqan3::detail
  * \ingroup alignment_configuration
  */
 struct with_score_type
-{};
+{
+    //!\privatesection
+    //!\brief The internal rank for computing a score.
+    static constexpr int8_t rank = 0;
+};
 
 /*!\brief Triggers score computation and determines the end position of the sequence alignment.
  * \ingroup alignment_configuration
  */
 struct with_back_coordinate_type
-{};
+{
+    //!\privatesection
+    //!\brief The rank for computing the back coordinate.
+    static constexpr int8_t rank = 1;
+};
 
 /*!\brief Triggers score computation and determines begin and end position of the sequence alignment.
  * \ingroup alignment_configuration
  */
 struct with_front_coordinate_type
-{};
+{
+    //!\privatesection
+    //!\brief The rank for computing the front coordinate.
+    static constexpr int8_t rank = 2;
+};
 
 /*!\brief Triggers score computation and determines the end position of the sequence alignment as well as the
  *        full traceback.
  * \ingroup alignment_configuration
  */
 struct with_alignment_type
-{};
+{
+    //!\privatesection
+    //!\brief The rank for computing the alignment.
+    static constexpr int8_t rank = 3;
+};
 
 } // namespace seqan3::detail
 
