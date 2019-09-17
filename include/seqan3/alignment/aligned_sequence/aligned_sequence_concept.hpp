@@ -347,7 +347,7 @@ inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_typ
     using std::swap;
     aligned_seq_t tmp;
     tmp.resize(std::ranges::distance(unaligned_seq));
-    std::copy(std::ranges::begin(unaligned_seq), std::ranges::end(unaligned_seq), std::ranges::begin(tmp));
+    std::ranges::copy(unaligned_seq, std::ranges::begin(tmp));
     swap(aligned_seq, tmp);
 }
 //!\}
