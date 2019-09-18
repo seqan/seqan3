@@ -145,25 +145,25 @@ TYPED_TEST(pairwise_combine_iterator_test, associated_types)
     { // non-const view over non-const range
         using u_ref_t = typename std::iterator_traits<u_iter_t>::reference;
         EXPECT_TRUE((std::is_same_v<typename std::iterator_traits<v_iter_t>::reference,
-                                    std::tuple<u_ref_t, u_ref_t>>));
+                                    seqan3::common_tuple<u_ref_t, u_ref_t>>));
     }
 
     { // non-const view over const range
         using u_ref_t = typename std::iterator_traits<u_const_iter_t>::reference;
         EXPECT_TRUE((std::is_same_v<typename std::iterator_traits<v_const_iter_t>::reference,
-                                    std::tuple<u_ref_t, u_ref_t>>));
+                                    seqan3::common_tuple<u_ref_t, u_ref_t>>));
     }
 
     { // const view over non-const range
         using u_ref_t = typename std::iterator_traits<u_iter_t>::reference;
         EXPECT_TRUE((std::is_same_v<typename std::iterator_traits<const v_iter_t>::reference,
-                                    std::tuple<u_ref_t, u_ref_t>>));
+                                    seqan3::common_tuple<u_ref_t, u_ref_t>>));
     }
 
     { // const view over const range
         using u_ref_t = typename std::iterator_traits<u_const_iter_t>::reference;
         EXPECT_TRUE((std::is_same_v<typename std::iterator_traits<const v_const_iter_t>::reference,
-                                    std::tuple<u_ref_t, u_ref_t>>));
+                                    seqan3::common_tuple<u_ref_t, u_ref_t>>));
     }
 
     { // value type
@@ -353,11 +353,21 @@ TYPED_TEST(pairwise_combine_test, view_concept)
     EXPECT_TRUE(std::ranges::input_range<typename TestFixture::view_t>);
     EXPECT_TRUE(std::ranges::forward_range<typename TestFixture::view_t>);
     EXPECT_TRUE(std::ranges::view<typename TestFixture::view_t>);
-    EXPECT_FALSE((std::ranges::output_range<typename TestFixture::view_t, std::tuple<char &, char &>>));
+    EXPECT_TRUE((std::ranges::output_range<typename TestFixture::view_t, std::tuple<char &, char &>>));
     EXPECT_EQ(std::ranges::bidirectional_range<TypeParam>,
               std::ranges::bidirectional_range<typename TestFixture::view_t>);
     EXPECT_EQ(std::ranges::sized_range<TypeParam>, std::ranges::sized_range<typename TestFixture::view_t>);
     EXPECT_EQ(std::ranges::random_access_range<TypeParam>, std::ranges::random_access_range<typename TestFixture::view_t>);
+
+    EXPECT_TRUE(std::ranges::input_range<typename TestFixture::const_view_t>);
+    EXPECT_TRUE(std::ranges::forward_range<typename TestFixture::const_view_t>);
+    EXPECT_TRUE(std::ranges::view<typename TestFixture::const_view_t>);
+    //TODO: Investigate, because this should be false. It cannot be used as a output range!
+    // EXPECT_FALSE((std::ranges::output_range<typename TestFixture::const_view_t, std::tuple<char, char>>));
+    EXPECT_EQ(std::ranges::bidirectional_range<TypeParam>,
+              std::ranges::bidirectional_range<typename TestFixture::const_view_t>);
+    EXPECT_EQ(std::ranges::sized_range<TypeParam>, std::ranges::sized_range<typename TestFixture::const_view_t>);
+    EXPECT_EQ(std::ranges::random_access_range<TypeParam>, std::ranges::random_access_range<typename TestFixture::const_view_t>);
 }
 
 TYPED_TEST(pairwise_combine_test, basic_construction)
@@ -475,6 +485,22 @@ TEST(pairwise_combine_fn_test, filter_input)
     EXPECT_EQ(*++it, (std::tuple{'a', 'd'}));
     EXPECT_EQ(*++it, (std::tuple{'b', 'c'}));
     EXPECT_EQ(*++it, (std::tuple{'b', 'd'}));
+    EXPECT_EQ(*++it, (std::tuple{'c', 'd'}));
+}
+
+TEST(pairwise_combine_fn_test, output)
+{
+    std::vector orig{'a', 'b', 'c', 'd'};
+    auto v = orig | seqan3::views::pairwise_combine;
+
+    *v.begin() = std::tuple{'x', 'y'};
+
+    auto it = v.begin();
+    EXPECT_EQ(*it,   (std::tuple{'x', 'y'}));
+    EXPECT_EQ(*++it, (std::tuple{'x', 'c'}));
+    EXPECT_EQ(*++it, (std::tuple{'x', 'd'}));
+    EXPECT_EQ(*++it, (std::tuple{'y', 'c'}));
+    EXPECT_EQ(*++it, (std::tuple{'y', 'd'}));
     EXPECT_EQ(*++it, (std::tuple{'c', 'd'}));
 }
 
