@@ -87,7 +87,7 @@ namespace seqan3::detail
 
 //!\brief The seqan3::sequence_file_input_format_REMOVEME specialisation that handles formatted Genbank input.
 //!\ingroup sequence
-template<>
+template <>
 class sequence_file_input_format_REMOVEME<format_genbank>
 {
 public:

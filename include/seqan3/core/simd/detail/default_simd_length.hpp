@@ -37,7 +37,7 @@ constexpr auto default_simd_max_length = 0u;
  * \tparam scalar_t The underlying type of a simd vector
  * \tparam simd_backend_t The name of the simd backend.
  */
-template <typename scalar_t, template<typename, size_t> typename simd_backend_t>
+template <typename scalar_t, template <typename, size_t> typename simd_backend_t>
 constexpr auto default_simd_length = []
 {
     constexpr auto max_length = default_simd_max_length<simd_backend_t>;

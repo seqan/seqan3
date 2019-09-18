@@ -24,20 +24,20 @@ namespace seqan3::detail
 
 //!\brief Indicates whether the first template argument is contained in the remaining.
 //!\implements seqan3::unary_type_trait
-template<typename target_t, typename ...pack>
+template <typename target_t, typename ...pack>
 struct type_in_pack : std::false_type {};
 
 //!\cond
-template<typename target_t, typename ...pack>
+template <typename target_t, typename ...pack>
 struct type_in_pack<target_t, target_t, pack...> : std::true_type {};
 
-template<typename target_t, typename pack1, typename ...pack>
+template <typename target_t, typename pack1, typename ...pack>
 struct type_in_pack<target_t, pack1, pack...> : type_in_pack<target_t, pack...> {};
 //!\endcond
 
 //!\brief Shortcut for seqan3::detail::type_in_pack (unary_type_trait shortcut).
 //!\relates seqan3::detail::type_in_pack
-template<typename target_t, typename ...pack>
+template <typename target_t, typename ...pack>
 inline bool constexpr type_in_pack_v = type_in_pack<target_t, pack...>::value;
 
 //!\}

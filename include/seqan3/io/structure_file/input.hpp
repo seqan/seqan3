@@ -171,7 +171,7 @@ namespace seqan3
  */
 //!\}
 //!\cond
-template<typename t>
+template <typename t>
 SEQAN3_CONCEPT structure_file_input_traits = requires(t v)
 {
     // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
@@ -300,11 +300,11 @@ struct structure_file_input_default_traits_rna
     using seq_legal_alphabet                 = rna15;
 
     //!\brief The type of an RNA sequence is std::vector.
-    template<typename _seq_alphabet>
+    template <typename _seq_alphabet>
     using seq_container                      = std::vector<_seq_alphabet>;
 
     //!\brief The container for sequences is seqan3::concatenated_sequences.
-    template<typename _seq_container>
+    template <typename _seq_container>
     using seq_container_container            = concatenated_sequences<_seq_container>;
 
     // id
@@ -313,11 +313,11 @@ struct structure_file_input_default_traits_rna
     using id_alphabet                        = char;
 
     //!\brief The string type for an identifier is std::basic_string.
-    template<typename _id_alphabet>
+    template <typename _id_alphabet>
     using id_container                       = std::basic_string<_id_alphabet>;
 
     //!\brief The container for identifier strings is seqan3::concatenated_sequences.
-    template<typename _id_container>
+    template <typename _id_container>
     using id_container_container             = concatenated_sequences<_id_container>;
 
     // base pair probability structure
@@ -329,19 +329,19 @@ struct structure_file_input_default_traits_rna
     using bpp_partner                        = size_t;
 
     //!\brief The type of a base pair item is std::pair<double, size_t>.
-    template<typename _bpp_prob, typename _bpp_partner>
+    template <typename _bpp_prob, typename _bpp_partner>
     using bpp_item                           = std::pair<_bpp_prob, _bpp_partner>;
 
     //!\brief A queue of base pair items sorted by probability is realised with std::set.
-    template<typename _bpp_item>
+    template <typename _bpp_item>
     using bpp_queue                          = std::set<_bpp_item>;
 
     //!\brief A string over all bases containing the respective interaction queues is represented as std::vector.
-    template<typename _bpp_queue>
+    template <typename _bpp_queue>
     using bpp_container                      = std::vector<_bpp_queue>;
 
     //!\brief The container for interaction strings is std::vector.
-    template<typename _bpp_container>
+    template <typename _bpp_container>
     using bpp_container_container            = std::vector<_bpp_container>;
 
     // fixed structure
@@ -350,25 +350,25 @@ struct structure_file_input_default_traits_rna
     using structure_alphabet                 = wuss51;
 
     //!\brief The string type for a structure annotation is std::vector.
-    template<typename _structure_alphabet>
+    template <typename _structure_alphabet>
     using structure_container                = std::vector<_structure_alphabet>;
 
     //!\brief The container for structure annotation strings is seqan3::concatenated_sequences.
-    template<typename _structure_container>
+    template <typename _structure_container>
     using structure_container_container      = concatenated_sequences<_structure_container>;
 
     // combined sequence and structure
 
     //!\brief The combined structured sequence alphabet is seqan3::structured_rna<seqan3::rna5, seqan3::wuss51>.
-    template<typename _seq_alphabet, typename _structure_alphabet>
+    template <typename _seq_alphabet, typename _structure_alphabet>
     using structured_seq_alphabet            = structured_rna<_seq_alphabet, _structure_alphabet>;
 
     //!\brief The type of a structured RNA sequence is std::vector.
-    template<typename _structured_seq_alphabet>
+    template <typename _structured_seq_alphabet>
     using structured_seq_container           = std::vector<_structured_seq_alphabet>;
 
     //!\brief The container for sequences is seqan3::concatenated_sequences.
-    template<typename _structured_seq_container>
+    template <typename _structured_seq_container>
     using structured_seq_container_container = concatenated_sequences<_structured_seq_container>;
 
     // energy
@@ -377,7 +377,7 @@ struct structure_file_input_default_traits_rna
     using energy_type                        = std::optional<double>;
 
     //!\brief The type of a container of energy values is std::vector.
-    template<typename _energy_type>
+    template <typename _energy_type>
     using energy_container                   = std::vector<_energy_type>;
 
     // reactivity [error]
@@ -386,11 +386,11 @@ struct structure_file_input_default_traits_rna
     using react_type                         = double;
 
     //!\brief The type of a string of reactivity values is std::vector.
-    template<typename _react_type>
+    template <typename _react_type>
     using react_container                    = std::vector<_react_type>;
 
     //!\brief The type of a container of reactivity strings is std::vector.
-    template<typename _react_container>
+    template <typename _react_container>
     using react_container_container          = std::vector<_react_container>;
 
     // comment
@@ -399,11 +399,11 @@ struct structure_file_input_default_traits_rna
     using comment_alphabet                   = char;
 
     //!\brief The string type for a comment is std::basic_string.
-    template<typename _comment_alphabet>
+    template <typename _comment_alphabet>
     using comment_container                  = std::basic_string<_comment_alphabet>;
 
     //!\brief The container for comments is seqan3::concatenated_sequences.
-    template<typename _comment_container>
+    template <typename _comment_container>
     using comment_container_container        = concatenated_sequences<_comment_container>;
 
     // offset
@@ -412,7 +412,7 @@ struct structure_file_input_default_traits_rna
     using offset_type                        = size_t;
 
     //!\brief The type of a container of offset values is std::vector.
-    template<typename _offset_type>
+    template <typename _offset_type>
     using offset_container                   = std::vector<_offset_type>;
     //!\}
 };
@@ -433,7 +433,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
     //!\brief The structure annotation alphabet is seqan3::dssp9.
     using structure_alphabet       = dssp9;
     //!\brief The combined structured sequence alphabet is seqan3::structured_aa<seqan3::aa27, seqan3::dssp9>.
-    template<typename _seq_alphabet, typename _structure_alphabet>
+    template <typename _seq_alphabet, typename _structure_alphabet>
     using structured_seq_alphabet  = structured_aa<_seq_alphabet, _structure_alphabet>;
     //!\}
 };
@@ -576,7 +576,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *
  * Currently, the only implemented format is seqan3::format_vienna. More formats will follow soon.
  */
-template<structure_file_input_traits traits_type_ = structure_file_input_default_traits_rna,
+template <structure_file_input_traits traits_type_ = structure_file_input_default_traits_rna,
          detail::fields_specialisation selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
          detail::type_list_of_structure_file_input_formats valid_formats_
              = type_list<format_vienna>,
@@ -794,7 +794,7 @@ public:
      * the file is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template<input_stream stream_t, structure_file_input_format file_format>
+    template <input_stream stream_t, structure_file_input_format file_format>
     structure_file_input(stream_t & stream,
                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -809,7 +809,7 @@ public:
     }
 
     //!\overload
-    template<input_stream stream_t, structure_file_input_format file_format>
+    template <input_stream stream_t, structure_file_input_format file_format>
     structure_file_input(stream_t && stream,
                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -906,7 +906,7 @@ public:
      * \{
      */
     //!\brief Read the entire file into internal buffers and retrieve the specified column.
-    template<field f>
+    template <field f>
     friend auto & get(structure_file_input & file)
     {
         static_assert(structure_file_input::selected_field_ids::contains(f),
@@ -918,14 +918,14 @@ public:
     }
 
     //!\copydoc get
-    template<field f>
+    template <field f>
     friend auto && get(structure_file_input && file)
     {
         return std::move(get<f>(file));
     }
 
     //!\copydoc get
-    template<size_t i>
+    template <size_t i>
     friend auto & get(structure_file_input & file)
     {
         static_assert(i < structure_file_input::selected_field_ids::as_array.size(),
@@ -936,14 +936,14 @@ public:
     }
 
     //!\copydoc get
-    template<size_t i>
+    template <size_t i>
     friend auto && get(structure_file_input && file)
     {
         return std::move(get<i>(file));
     }
 
     //!\copydoc get
-    template<typename t>
+    template <typename t>
     friend auto & get(structure_file_input & file)
     {
         file.read_columns();
@@ -952,7 +952,7 @@ public:
     }
 
     //!\copydoc get
-    template<typename t>
+    template <typename t>
     friend auto && get(structure_file_input && file)
     {
         return std::move(get<t>(file));
@@ -1140,10 +1140,10 @@ namespace std
  * \ingroup structure_file
  * \see std::tuple_size_v
  */
-template<seqan3::structure_file_input_traits                    traits_type,
-         seqan3::detail::fields_specialisation                              selected_field_ids,
-         seqan3::detail::type_list_of_structure_file_input_formats valid_formats,
-         seqan3::builtin_character                                        stream_char_t>
+template <seqan3::structure_file_input_traits traits_type,
+          seqan3::detail::fields_specialisation selected_field_ids,
+          seqan3::detail::type_list_of_structure_file_input_formats valid_formats,
+          seqan3::builtin_character stream_char_t>
 struct tuple_size<seqan3::structure_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -1155,11 +1155,11 @@ struct tuple_size<seqan3::structure_file_input<traits_type, selected_field_ids, 
  * \ingroup structure_file
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
-template<size_t                                              elem_no,
-         seqan3::structure_file_input_traits                    traits_type,
-         seqan3::detail::fields_specialisation                              selected_field_ids,
-         seqan3::detail::type_list_of_structure_file_input_formats valid_formats,
-         seqan3::builtin_character                                        stream_char_t>
+template <size_t elem_no,
+          seqan3::structure_file_input_traits traits_type,
+          seqan3::detail::fields_specialisation selected_field_ids,
+          seqan3::detail::type_list_of_structure_file_input_formats valid_formats,
+          seqan3::builtin_character stream_char_t>
 struct tuple_element<elem_no,
                      seqan3::structure_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::structure_file_input<traits_type,

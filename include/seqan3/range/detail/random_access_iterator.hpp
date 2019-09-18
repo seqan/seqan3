@@ -57,7 +57,7 @@ protected:
     friend class random_access_iterator_base;
 
     //!\brief Because this is CRTP, we know the full derived type:
-    using derived_t = derived_t_template<range_type>;
+    using derived_t = derived_t_template <range_type>;
 
 public:
     //!\brief Type for distances between iterators.

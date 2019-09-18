@@ -348,7 +348,7 @@ public:
      * \param[in] _size   The desired size (after which to stop returning elements).
      * \throws unexpected_end_of_input If `exactly && or_throw && seqan3::sized_range<urng_t>`.
      */
-    template<std::ranges::viewable_range rng_t>
+    template <std::ranges::viewable_range rng_t>
     //!\cond
         requires std::constructible_from<rng_t, std::ranges::all_view<rng_t>>
     //!\endcond

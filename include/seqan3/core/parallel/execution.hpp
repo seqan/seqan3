@@ -71,24 +71,24 @@ inline constexpr unsequenced_policy          unseq{};
 /*!\brief Test whether a class represents an execution policy.
  * \see seqan3::is_execution_policy_v
  */
-template<class t>
+template <class t>
 struct is_execution_policy : std::false_type
 {};
 
 //!\cond
-template<>
+template <>
 struct is_execution_policy<sequenced_policy> : std::true_type
 {};
 
-template<>
+template <>
 struct is_execution_policy<parallel_policy> : std::true_type
 {};
 
-template<>
+template <>
 struct is_execution_policy<parallel_unsequenced_policy> : std::true_type
 {};
 
-template<>
+template <>
 struct is_execution_policy<unsequenced_policy> : std::true_type
 {};
 //!\endcond
@@ -96,7 +96,7 @@ struct is_execution_policy<unsequenced_policy> : std::true_type
 /*!\brief Helper variable template for std::is_execution_policy.
  * \relates seqan3::is_execution_policy
  */
-template<class t>
+template <class t>
 inline constexpr bool is_execution_policy_v = is_execution_policy<t>::value;
 //!\}
 } // namespace seqan3

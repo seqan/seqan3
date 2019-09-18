@@ -395,7 +395,7 @@ public:
      * \param[in] _urange The underlying range.
      * \param[in] _fun    The functor that acts as termination criterium.
      */
-    template<std::ranges::viewable_range rng_t>
+    template <std::ranges::viewable_range rng_t>
     //!\cond
         requires std::constructible_from<rng_t, std::ranges::all_view<rng_t>>
     //!\endcond

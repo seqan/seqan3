@@ -61,13 +61,13 @@ template <template <typename ...> typename source_template,
 //!\cond
     requires requires ()
     {
-        std::declval<target_template<source_arg_types...>>();
+        std::declval<target_template <source_arg_types...>>();
     }
 //!\endcond
-struct transfer_template_args_onto<source_template<source_arg_types...>, target_template>
+struct transfer_template_args_onto<source_template <source_arg_types...>, target_template>
 {
     //!\brief The return type: the target type specialised by the unpacked types in the list.
-    using type = target_template<source_arg_types...>;
+    using type = target_template <source_arg_types...>;
 };
 
 /*!\brief Shortcut for seqan3::detail::transfer_template_args_onto (transformation_trait shortcut).
@@ -110,13 +110,13 @@ template <template <auto ...> typename source_template,
 //!\cond
     requires requires ()
     {
-        std::declval<target_template<source_varg_types...>>();
+        std::declval<target_template <source_varg_types...>>();
     }
 //!\endcond
-struct transfer_template_vargs_onto<source_template<source_varg_types...>, target_template>
+struct transfer_template_vargs_onto<source_template <source_varg_types...>, target_template>
 {
     //!\brief The return type: the target type specialised by the unpacked types in the list.
-    using type = target_template<source_varg_types...>;
+    using type = target_template <source_varg_types...>;
 };
 
 /*!\brief Shortcut for seqan3::detail::transfer_template_vargs_onto (transformation_trait shortcut).
