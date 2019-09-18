@@ -99,6 +99,7 @@ public:
 
     //!\name Write functions
     //!\{
+
     //!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
     constexpr structured_rna & assign_char(char_type const c) noexcept
     {

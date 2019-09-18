@@ -301,10 +301,15 @@ public:
     /*!\name Associated types
     * \{
     */
+    //!\brief Value type of this iterator.
     using value_type = value_type_t<storage_iterator>;
+    //!\brief Reference to `value_type`.
     using reference = reference_t<storage_iterator>;
+    //!\brief The pointer type.
     using pointer = typename storage_iterator::pointer;
+    //!\brief Type for distances between iterators.
     using difference_type = difference_type_t<storage_iterator>;
+    //!\brief The iterator tag.
     using iterator_category = std::random_access_iterator_tag;
     //!\}
 

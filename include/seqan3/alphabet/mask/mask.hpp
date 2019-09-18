@@ -57,8 +57,8 @@ public:
      * \details Similar to an Enum interface.
      */
     //!\{
-    static const mask UNMASKED;
-    static const mask MASKED;
+    static const mask UNMASKED; //!< Member for UNMASKED.
+    static const mask MASKED;   //!< Member for MASKED.
     //!\}
 };
 

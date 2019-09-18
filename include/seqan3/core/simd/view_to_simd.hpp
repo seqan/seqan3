@@ -760,5 +760,5 @@ namespace seqan3::views
 
 template <simd::simd_concept simd_t>
 inline constexpr auto to_simd = detail::to_simd_fn<simd_t>{};
-//!\}
+
 } // namespace seqan3::views

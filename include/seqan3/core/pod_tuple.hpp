@@ -174,10 +174,13 @@ pod_tuple(types && ...) -> pod_tuple<types...>;
  *
  * Note that these functions are available, both, in the seqan3 namespace and in namespace std.
  */
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
 constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
+//!\cond
     requires i < sizeof...(types)
+//!\endcond
 {
     if constexpr (i == 0)
         return t._head;
@@ -185,10 +188,13 @@ constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
         return seqan3::get<i-1>(t._tail);
 }
 
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
 constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
+//!\cond
     requires i < sizeof...(types)
+//!\endcond
 {
     if constexpr (i == 0)
         return t._head;
@@ -197,10 +203,13 @@ constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
 }
 
 // extra overloads for temporaries required, because members of temporaries may only be returned as temporaries
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
 constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
+//!\cond
     requires i < sizeof...(types)
+//!\endcond
 {
     if constexpr (i == 0)
         return std::move(t._head);
@@ -208,10 +217,13 @@ constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
         return seqan3::get<i-1>(std::move(t._tail));
 }
 
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
 constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
+//!\cond
     requires i < sizeof...(types)
+//!\endcond
 {
     if constexpr (i == 0)
         return std::move(t._head);
@@ -228,45 +240,56 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
  * in the tuple, i.e. `std::get<int>(std::tuple<int, int>{1,2})` is not defined.
  * \{
  */
-
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
 //!\relates seqan3::pod_tuple
-template <typename type, typename ...types>
-constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
+template <typename type, typename ...arg_types>
+constexpr auto & get(seqan3::pod_tuple<arg_types...> & t) noexcept
+//!\cond
+    requires meta::in<meta::list<arg_types...>, type>::value &&
+             (meta::find_index<meta::list<arg_types...>, type>::value ==
+              meta::reverse_find_index<meta::list<arg_types...>, type>::value)
+//!\endcond
 {
-    return seqan3::get<meta::find_index<meta::list<types...>, type>::value>(t);
+    return seqan3::get<meta::find_index<meta::list<arg_types...>, type>::value>(t);
 }
 
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
 //!\relates seqan3::pod_tuple
-template <typename type, typename ...types>
-constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
+template <typename type, typename ...arg_types>
+constexpr auto const & get(seqan3::pod_tuple<arg_types...> const & t) noexcept
+//!\cond
+    requires meta::in<meta::list<arg_types...>, type>::value &&
+             (meta::find_index<meta::list<arg_types...>, type>::value ==
+              meta::reverse_find_index<meta::list<arg_types...>, type>::value)
+//!\endcond
 {
-    return seqan3::get<meta::find_index<meta::list<types...>, type>::value>(t);
+    return seqan3::get<meta::find_index<meta::list<arg_types...>, type>::value>(t);
 }
 
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
 //!\relates seqan3::pod_tuple
-template <typename type, typename ...types>
-constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
+template <typename type, typename ...arg_types>
+constexpr auto && get(seqan3::pod_tuple<arg_types...> && t) noexcept
+//!\cond
+    requires meta::in<meta::list<arg_types...>, type>::value &&
+             (meta::find_index<meta::list<arg_types...>, type>::value ==
+              meta::reverse_find_index<meta::list<arg_types...>, type>::value)
+//!\endcond
 {
-    return seqan3::get<meta::find_index<meta::list<types...>, type>::value>(std::move(t));
+    return seqan3::get<meta::find_index<meta::list<arg_types...>, type>::value>(std::move(t));
 }
 
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
 //!\relates seqan3::pod_tuple
-template <typename type, typename ...types>
-constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
+template <typename type, typename ...arg_types>
+constexpr auto const && get(seqan3::pod_tuple<arg_types...> const && t) noexcept
+//!\cond
+    requires meta::in<meta::list<arg_types...>, type>::value &&
+             (meta::find_index<meta::list<arg_types...>, type>::value ==
+              meta::reverse_find_index<meta::list<arg_types...>, type>::value)
+//!\endcond
 {
-    return seqan3::get<meta::find_index<meta::list<types...>, type>::value>(std::move(t));
+    return seqan3::get<meta::find_index<meta::list<arg_types...>, type>::value>(std::move(t));
 }
 //!\}
 

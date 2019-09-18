@@ -89,7 +89,7 @@ matrix:
     addons:
       apt:
         # adds epstopdf, ghostscript, latex
-        packages: ['texlive-font-utils', 'ghostscript', 'texlive-latex-base']
+        packages: ['texlive-font-utils', 'ghostscript', 'texlive-latex-extra']
     env:
       - BUILD=documentation
       - CMAKE_VERSION=3.7.2
@@ -97,7 +97,7 @@ matrix:
       directories:
           - /tmp/doxygen-download
     before_install:
-       - DOXYGEN_VER=1.8.13
+       - DOXYGEN_VER=1.8.16
        - DOXYGEN_FOLDER=doxygen-${DOXYGEN_VER}
        - mkdir -p /tmp/doxygen-download
        - wget --no-clobber --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VER}/${DOXYGEN_FOLDER}.linux.bin.tar.gz

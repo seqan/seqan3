@@ -127,7 +127,7 @@ public:
     constexpr aligned_sequence_builder & operator=(aligned_sequence_builder &&) = default; //!< Defaulted.
     ~aligned_sequence_builder() = default; //!< Defaulted.
 
-    /*\brief Construction from the underlying sequences.
+    /*!\brief Construction from the underlying sequences.
      * \param[in] fst_rng The first range to build the aligned sequence for.
      * \param[in] sec_rng The second range to build the aligned sequence for.
      */

@@ -952,7 +952,6 @@ public:
     {
         std::swap(data, rhs.data);
     }
-    //!\}
 
     /*!\brief Swap contents with another instance.
      * \param lhs The first instance.

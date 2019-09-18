@@ -223,15 +223,18 @@ private:
  * \relates seqan3::value_list_validator
  * \{
  */
-
+//!\brief Deduction guide for `std::vector` over an arithmetic type.
 template <arithmetic option_value_type>
 value_list_validator(std::vector<option_value_type>) -> value_list_validator<double>;
 
+//!\brief Deduction guide for `std::initializer_list` over an arithmetic type.
 template <arithmetic option_value_type>
 value_list_validator(std::initializer_list<option_value_type>) -> value_list_validator<double>;
 
+//!\brief Deduction guide for `std::vector` over `const char *`.
 value_list_validator(std::vector<const char *>) -> value_list_validator<std::string>;
 
+//!\brief Deduction guide for `std::initializer_list` over `const char *`.
 value_list_validator(std::initializer_list<const char *>) -> value_list_validator<std::string>;
 //!\}
 

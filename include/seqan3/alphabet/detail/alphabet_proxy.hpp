@@ -190,7 +190,9 @@ private:
     //!\brief Assignment from any type that the emulated type is assignable from.
     template <typename indirect_assignable_type>
     constexpr derived_type & operator=(indirect_assignable_type const & c) noexcept
+    //!\cond
         requires weakly_assignable_from<alphabet_type, indirect_assignable_type>
+    //!\endcond
     {
         alphabet_type a{};
         a = c;
@@ -207,6 +209,7 @@ public:
      *        the assignment operator which invokes derived behaviour.
      * \{
      */
+    //!\brief Assigns a rank.
     constexpr derived_type & assign_rank(alphabet_rank_t<alphabet_type> const r) noexcept
     {
         alphabet_type tmp{};
@@ -214,16 +217,22 @@ public:
         return operator=(tmp);
     }
 
+    //!\brief Assigns a character.
     constexpr derived_type & assign_char(char_type const c) noexcept
+    //!\cond
         requires writable_alphabet<alphabet_type>
+    //!\endcond
     {
         alphabet_type tmp{};
         assign_char_to(c, tmp);
         return operator=(tmp);
     }
 
+    //!\brief Assigns a phred.
     constexpr derived_type & assign_phred(phred_type const c) noexcept
+    //!\cond
         requires writable_quality_alphabet<alphabet_type>
+    //!\endcond
     {
         alphabet_type tmp{};
         assign_phred_to(c, tmp);
@@ -251,8 +260,11 @@ public:
         return operator alphabet_type();
     }
 
+    //!\brief Returns the character.
     constexpr auto to_char() const noexcept
+    //!\cond
         requires alphabet<alphabet_type>
+    //!\endcond
     {
         /* (smehringer) Explicit conversion instead of static_cast:
          * See explanation in to_phred().
@@ -260,8 +272,11 @@ public:
         return seqan3::to_char(operator alphabet_type());
     }
 
+    //!\brief Returns the phred.
     constexpr auto to_phred() const noexcept
+    //!\cond
         requires quality_alphabet<alphabet_type>
+    //!\endcond
     {
         using seqan3::to_phred;
         /* (smehringer) Explicit conversion instead of static_cast:
@@ -287,7 +302,9 @@ public:
 
     //!\brief Delegate to the emulated type's validator.
     static constexpr bool char_is_valid(char_type const c) noexcept
+    //!\cond
         requires writable_alphabet<alphabet_type>
+    //!\endcond
     {
         return char_is_valid_for<alphabet_type>(c);
     }
