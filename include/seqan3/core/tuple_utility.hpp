@@ -98,7 +98,7 @@ namespace seqan3
  *
  * Concurrent invocations of this functions are thread safe.
  */
-template <size_t pivot_c, template <typename ...> typename tuple_t, typename ... ts>
+template <size_t pivot_c, template <typename ...> typename tuple_t, typename ...ts>
 //!\cond
     requires tuple_like<tuple_t<ts...>>
 //!\endcond
@@ -111,7 +111,7 @@ constexpr auto tuple_split(tuple_t<ts...> const & t)
 }
 
 //!\copydoc seqan3::tuple_split
-template <size_t pivot_c, template <typename ...> typename tuple_t, typename ... ts>
+template <size_t pivot_c, template <typename ...> typename tuple_t, typename ...ts>
 //!\cond
     requires tuple_like<tuple_t<ts...>>
 //!\endcond

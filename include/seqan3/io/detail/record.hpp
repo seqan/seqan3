@@ -61,7 +61,7 @@ template <typename field_types,
           typename field_types_as_ids,
           typename selected_field_ids,
           size_t field_no = 0,
-          typename ... return_types>
+          typename ...return_types>
 struct select_types_with_ids                               // unconstrained template is recursion anchor
 {
     //!\brief The return type.
@@ -76,7 +76,7 @@ template <typename field_types,
           typename field_types_as_ids,
           typename selected_field_ids,
           size_t field_no = 0,
-          typename ... return_types>
+          typename ...return_types>
 using select_types_with_ids_t = typename select_types_with_ids<field_types,
                                                                field_types_as_ids,
                                                                selected_field_ids,
@@ -87,7 +87,7 @@ template <typename field_types,
           typename field_types_as_ids,
           typename selected_field_ids,
           size_t field_no,
-          typename ... return_types>
+          typename ...return_types>
     requires field_no < selected_field_ids::as_array.size() // perform recursion while not at end
 struct select_types_with_ids<field_types, field_types_as_ids, selected_field_ids, field_no, return_types...>
 {
@@ -135,7 +135,7 @@ auto const & get_or_ignore(record<field_types, field_ids> const & r)
 }
 
 //!\copydoc seqan3::detail::get_or_ignore
-template <size_t i, typename ... types>
+template <size_t i, typename ...types>
 auto & get_or_ignore(std::tuple<types...> & t)
 {
     if constexpr (i < sizeof...(types))
@@ -145,7 +145,7 @@ auto & get_or_ignore(std::tuple<types...> & t)
 }
 
 //!\copydoc seqan3::detail::get_or_ignore
-template <size_t i, typename ... types>
+template <size_t i, typename ...types>
 auto const & get_or_ignore(std::tuple<types...> const & t)
 {
     if constexpr (i < sizeof...(types))
@@ -184,7 +184,7 @@ decltype(auto) get_or(record<field_types, field_ids> const & r, or_type && or_va
 }
 
 //!\copydoc seqan3::detail::get_or
-template <size_t i, typename or_type, typename ... types>
+template <size_t i, typename or_type, typename ...types>
 decltype(auto) get_or(std::tuple<types...> & t, or_type && or_value)
 {
     if constexpr (i < sizeof...(types))
@@ -194,7 +194,7 @@ decltype(auto) get_or(std::tuple<types...> & t, or_type && or_value)
 }
 
 //!\copydoc seqan3::detail::get_or
-template <size_t i, typename or_type, typename ... types>
+template <size_t i, typename or_type, typename ...types>
 decltype(auto) get_or(std::tuple<types...> const & t, or_type && or_value)
 {
     if constexpr (i < sizeof...(types))

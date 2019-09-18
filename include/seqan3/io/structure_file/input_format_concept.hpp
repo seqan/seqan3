@@ -159,7 +159,7 @@ constexpr bool is_type_list_of_structure_file_input_formats_v = false;
  * \ingroup core
  * \see seqan3::type_list_specialisationOfstructure_file_input_formats
  */
-template <typename ... ts>
+template <typename ...ts>
 constexpr bool is_type_list_of_structure_file_input_formats_v<type_list<ts...>>
                 = (structure_file_input_format<ts> && ...);
 

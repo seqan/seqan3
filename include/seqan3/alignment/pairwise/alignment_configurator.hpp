@@ -185,7 +185,7 @@ private:
      * \tparam config_type The configuration for which to select the correct gap policy.
      * \tparam trait_types A template parameter pack with additional traits to augment the selected policy.
      */
-    template <typename config_type, typename ... trait_types>
+    template <typename config_type, typename ...trait_types>
     struct select_gap_policy
     {
     private:
@@ -209,7 +209,7 @@ private:
      * \tparam config_type The configuration for which to select the correct gap initialisation policy.
      * \tparam trait_types A template parameter pack with additional traits to augment the selected policy.
      */
-    template <typename config_type, typename ... trait_types>
+    template <typename config_type, typename ...trait_types>
     struct select_gap_init_policy
     {
     private:

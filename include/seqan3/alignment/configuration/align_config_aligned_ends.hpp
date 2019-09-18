@@ -407,7 +407,7 @@ private:
  * \relates seqan3::end_gaps
  * \tparam ends_t A template parameter pack containing at most 4 sequence end-gap specifiers.
  */
-template <typename ... ends_t>
+template <typename ...ends_t>
 end_gaps(ends_t const & ...) -> end_gaps<ends_t...>;
 //!\}
 

@@ -67,7 +67,7 @@ struct is_configuration_valid :
  * \relates seqan3::detail::is_configuration_valid
  * \ingroup algorithm
  */
-template <typename query_t, typename ... compare_types>
+template <typename query_t, typename ...compare_types>
 inline constexpr bool is_configuration_valid_v = is_configuration_valid<query_t, compare_types...>::value;
 
 // ----------------------------------------------------------------------------

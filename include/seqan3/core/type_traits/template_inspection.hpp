@@ -57,17 +57,17 @@ struct transfer_template_args_onto
  */
 template <template <typename ...> typename source_template,
           template <typename ...> typename target_template,
-          typename ... source_arg_types>
+          typename ...source_arg_types>
 //!\cond
     requires requires ()
     {
-        std::declval<target_template <source_arg_types...>>();
+        std::declval<target_template<source_arg_types...>>();
     }
 //!\endcond
-struct transfer_template_args_onto<source_template <source_arg_types...>, target_template>
+struct transfer_template_args_onto<source_template<source_arg_types...>, target_template>
 {
     //!\brief The return type: the target type specialised by the unpacked types in the list.
-    using type = target_template <source_arg_types...>;
+    using type = target_template<source_arg_types...>;
 };
 
 /*!\brief Shortcut for seqan3::detail::transfer_template_args_onto (transformation_trait shortcut).
@@ -110,13 +110,13 @@ template <template <auto ...> typename source_template,
 //!\cond
     requires requires ()
     {
-        std::declval<target_template <source_varg_types...>>();
+        std::declval<target_template<source_varg_types...>>();
     }
 //!\endcond
-struct transfer_template_vargs_onto<source_template <source_varg_types...>, target_template>
+struct transfer_template_vargs_onto<source_template<source_varg_types...>, target_template>
 {
     //!\brief The return type: the target type specialised by the unpacked types in the list.
-    using type = target_template <source_varg_types...>;
+    using type = target_template<source_varg_types...>;
 };
 
 /*!\brief Shortcut for seqan3::detail::transfer_template_vargs_onto (transformation_trait shortcut).
@@ -209,7 +209,7 @@ inline constexpr bool is_value_specialisation_of_v = is_value_specialisation_of<
  * \tparam templ_t    The type template that should be specialised.
  * \tparam spec_t     The specialisation for the type template.
  */
-template <typename fallback_t, template <typename...> typename templ_t, typename ...spec_t>
+template <typename fallback_t, template <typename ...> typename templ_t, typename ...spec_t>
 struct valid_template_spec_or
 {
     //!\brief The resulting type.
@@ -217,7 +217,7 @@ struct valid_template_spec_or
 };
 
 //!\overload
-template <typename fallback_t, template <typename...> typename templ_t, typename ...spec_t>
+template <typename fallback_t, template <typename ...> typename templ_t, typename ...spec_t>
 //!\cond
     requires requires { typename templ_t<spec_t...>; }
 //!\endcond
@@ -234,7 +234,7 @@ struct valid_template_spec_or<fallback_t, templ_t, spec_t...>
  * \tparam templ_t    The type template that should be specialised.
  * \tparam spec_t     The specialisation for the type template.
  */
-template <typename fallback_t, template <typename...> typename templ_t, typename ...spec_t>
+template <typename fallback_t, template <typename ...> typename templ_t, typename ...spec_t>
 using valid_template_spec_or_t = typename valid_template_spec_or<fallback_t, templ_t, spec_t...>::type;
 
 } // namespace seqan3::detail

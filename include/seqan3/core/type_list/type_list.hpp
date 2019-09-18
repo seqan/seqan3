@@ -27,7 +27,7 @@ namespace seqan3
  * [meta::list](https://ericniebler.github.io/range-v3/structmeta_1_1list.html).
  * \ingroup type_list
  */
-template <typename ... types>
+template <typename ...types>
 using type_list = meta::list<types...>;
 
 } // namespace seqan3

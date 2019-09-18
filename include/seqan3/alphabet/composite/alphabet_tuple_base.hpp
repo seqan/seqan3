@@ -55,7 +55,7 @@ inline bool constexpr one_component_is = false;
 //!\cond
 
 // default
-template <typename ... tuple_comps,
+template <typename ...tuple_comps,
           typename tuple_derived_t,
           template <typename> typename fun_t,
           typename other_t>
@@ -67,7 +67,7 @@ inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tupl
     //TODO do without meta
 
 // guard against self
-template <typename ... tuple_comps,
+template <typename ...tuple_comps,
           typename tuple_derived_t,
           template <typename> typename fun_t>
 inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
@@ -76,7 +76,7 @@ inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tupl
                                        alphabet_tuple_base<tuple_derived_t, tuple_comps...>> = false;
 
 // guard against self (derived)
-template <typename ... tuple_comps,
+template <typename ...tuple_comps,
           typename tuple_derived_t,
           template <typename> typename fun_t>
 inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
@@ -85,7 +85,7 @@ inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tupl
                                        tuple_derived_t> = false;
 
 // guard against types that have conversion operators to derived
-template <typename ... tuple_comps,
+template <typename ...tuple_comps,
           typename tuple_derived_t,
           template <typename> typename fun_t,
           typename other_t>
@@ -96,7 +96,7 @@ inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tupl
                                        other_t> = false;
 
 // guard against components
-template <typename ... tuple_comps,
+template <typename ...tuple_comps,
           typename tuple_derived_t,
           template <typename> typename fun_t,
           typename other_t>
@@ -110,7 +110,7 @@ inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tupl
 
 // during comparisons, guard against types that could be converted to self (because that is preferred)
 // (may not be done during assignment or construction because of recursiveness)
-template <typename ... tuple_comps,
+template <typename ...tuple_comps,
           typename tuple_derived_t,
           typename other_t>
     requires implicitly_convertible_to<other_t, tuple_derived_t>
@@ -118,7 +118,7 @@ inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tupl
                                        tuple_derived_t,
                                        seqan3::detail::weakly_equality_comparable_with,
                                        other_t> = false;
-template <typename ... tuple_comps,
+template <typename ...tuple_comps,
           typename tuple_derived_t,
           typename other_t>
     requires implicitly_convertible_to<other_t, tuple_derived_t>

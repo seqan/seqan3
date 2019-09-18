@@ -592,7 +592,7 @@ public:
      *
      * \include test/snippet/io/alignment_file/emplace_back.cpp
      */
-    template <typename arg_t, typename ... arg_types>
+    template <typename arg_t, typename ...arg_types>
     void emplace_back(arg_t && arg, arg_types && ... args)
     {
         push_back(std::tie(arg, args...));

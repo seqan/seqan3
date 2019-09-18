@@ -213,7 +213,7 @@ public:
     }
 
     //!\copydoc value_or
-    template <template <typename...> typename query_t, typename default_t>
+    template <template <typename ...> typename query_t, typename default_t>
     constexpr decltype(auto) value_or(default_t && default_value) & noexcept
     {
         if constexpr (exists<query_t>())
@@ -228,7 +228,7 @@ public:
     }
 
     //!\copydoc value_or
-    template <template <typename...> typename query_t, typename default_t>
+    template <template <typename ...> typename query_t, typename default_t>
     constexpr decltype(auto) value_or(default_t && default_value) const & noexcept
     {
         if constexpr (exists<query_t>())
@@ -243,7 +243,7 @@ public:
     }
 
     //!\copydoc value_or
-    template <template <typename...> typename query_t, typename default_t>
+    template <template <typename ...> typename query_t, typename default_t>
     constexpr decltype(auto) value_or(default_t && default_value) && noexcept
     {
         if constexpr (exists<query_t>())
@@ -258,7 +258,7 @@ public:
     }
 
     //!\copydoc value_or
-    template <template <typename...> typename query_t, typename default_t>
+    template <template <typename ...> typename query_t, typename default_t>
     constexpr decltype(auto) value_or(default_t && default_value) const && noexcept
     {
         if constexpr (exists<query_t>())
@@ -279,7 +279,7 @@ public:
         return !meta::empty<meta::find<type_list<configs_t...>, query_t>>::value;
     }
     //!\brief Checks if the given type exists in the tuple.
-    template <template <typename...> typename query_t>
+    template <template <typename ...> typename query_t>
     static constexpr bool exists() noexcept
     {
         return !meta::empty<meta::find_if<type_list<configs_t...>, detail::is_same_configuration_f<query_t>>>::value;
@@ -415,12 +415,12 @@ private:
      * \{
      */
     //!\brief Constructs from std::tuple.
-    template <typename ... _configs_t>
+    template <typename ..._configs_t>
     explicit constexpr configuration(std::tuple<_configs_t...> const & cfg) : base_type{cfg}
     {}
 
     //!\brief Constructs from std::tuple.
-    template <typename ... _configs_t>
+    template <typename ..._configs_t>
     explicit constexpr configuration(std::tuple<_configs_t...> && cfg) : base_type{std::move(cfg)}
     {}
     //!\}

@@ -74,7 +74,7 @@ class combined_adaptor;
  *   just forward to other adaptors).
  * * `seqan3::views::deep` : Wraps an adaptor closure object or proto adaptor object and modifies the behaviour.
  */
-template <typename derived_type, typename ... stored_args_ts>
+template <typename derived_type, typename ...stored_args_ts>
 class adaptor_base
 {
 private:
@@ -287,7 +287,7 @@ public:
  *
  * \snippet include/seqan3/range/views/single_pass_input.hpp adaptor_def
  */
-template <template <typename, typename...> typename view_type>
+template <template <typename, typename ...> typename view_type>
 class adaptor_for_view_without_args : public adaptor_base<adaptor_for_view_without_args<view_type>>
 {
 private:
@@ -303,7 +303,7 @@ private:
      * \param[in] args      The arguments to the constructor.
      * \returns An instance of `view_type`.
      */
-    template <typename ... arg_types>
+    template <typename ...arg_types>
     static auto impl(arg_types && ... args)
     {
         return view_type{std::forward<arg_types>(args)...};
@@ -365,7 +365,7 @@ public:
  *
  * Note that the proto-adaptor does not provide `operator|`, this is only required of adaptor closure objects.
  */
-template <typename functor_type, typename ... stored_args_ts>
+template <typename functor_type, typename ...stored_args_ts>
 class adaptor_from_functor :
     public adaptor_base<adaptor_from_functor<functor_type, stored_args_ts...>, stored_args_ts...>
 {

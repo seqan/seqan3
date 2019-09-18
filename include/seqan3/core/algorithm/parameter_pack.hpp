@@ -98,7 +98,7 @@ constexpr void for_each_type(unary_function_t && fn)
  *
  * \sa seqan3::detail::for_each_value
  */
-template <template <typename...> typename type_list_t, typename ...args_t, typename unary_function_t>
+template <template <typename ...> typename type_list_t, typename ...args_t, typename unary_function_t>
 //!\cond
     requires (std::invocable<unary_function_t, std::type_identity<args_t>> && ... && true)
 //!\endcond
