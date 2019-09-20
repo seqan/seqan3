@@ -16,7 +16,7 @@
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>
-#include <seqan3/core/type_list/all.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 
 namespace seqan3
 {

@@ -22,7 +22,7 @@
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/argument_parser/validators.hpp>
 #include <seqan3/core/detail/reflection.hpp>
-#include <seqan3/core/type_list/all.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/std/filesystem>
 
 namespace seqan3::detail

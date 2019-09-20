@@ -31,8 +31,7 @@
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
-#include <seqan3/core/type_list/all.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/filesystem>

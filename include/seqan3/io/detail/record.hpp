@@ -14,8 +14,7 @@
 
 #pragma once
 
-#include <seqan3/core/type_list/all.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/range/views/repeat.hpp>
 #include <seqan3/std/ranges>

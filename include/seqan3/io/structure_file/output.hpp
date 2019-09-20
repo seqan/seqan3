@@ -25,9 +25,7 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 #include <seqan3/alphabet/structure/all.hpp>
-#include <seqan3/core/type_list/all.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
