@@ -35,6 +35,19 @@ constexpr ptrdiff_t find()
     return ((SEQAN3_IS_SAME(query_t, pack_t) ? false : ++i) && ...) ? -1 : i;
 }
 
+/*!\brief Implementation for seqan3::pack_traits::find_if.
+ * \tparam pred_t   The predicate that is being evaluated.
+ * \tparam pack_t   The type pack.
+ * \returns The position of the first type `t` in `pack_t` for whom `pred_t<t>::value` is true.
+ * \ingroup type_list
+ */
+template <template <typename> typename pred_t, typename ...pack_t>
+constexpr ptrdiff_t find_if()
+{
+    ptrdiff_t i = 0;
+    return ((pred_t<pack_t>::value ? false : ++i) && ...) ? -1 : i;
+}
+
 /*!\brief Implementation for seqan3::pack_traits::at.
  * \tparam idx      The index.
  * \tparam head_t   Currently viewed pack_t element.
@@ -131,6 +144,27 @@ inline constexpr ptrdiff_t count =  (SEQAN3_IS_SAME(query_t, pack_t) + ... + 0);
  */
 template <typename query_t, typename ...pack_t>
 inline constexpr ptrdiff_t find = seqan3::pack_traits::detail::find<query_t, pack_t...>();
+
+/*!\brief Get the index of the first type in a pack that satisfies the given predicate.
+ * \tparam pred_t   The predicate that is being evaluated (a class template).
+ * \tparam pack_t   The type pack.
+ * \returns The index or `-1` if no types match.
+ * \ingroup type_list
+ *
+ * \details
+ *
+ * Note that the predicate must be given as a type template (variable templates cannot be passed as template arguments
+ * unfortunately). This means e.g. `find_if<std::is_integral, float, double, int, float>` (not `std::is_integral_v`!).
+ *
+ * ### (Compile-time) Complexity
+ *
+ * * Number of template instantiations: O(n), possibly == `i`, where `i` is the return value
+ * * Other operations: O(n), possibly == `i`, where `i` is the return value
+ *
+ *  Only the predicate is instantiated.
+ */
+template <template <typename> typename pred_t, typename ...pack_t>
+inline constexpr ptrdiff_t find_if = seqan3::pack_traits::detail::find_if<pred_t, pack_t...>();
 
 /*!\brief Whether a type occurs in a pack or not.
  * \tparam query_t  The type you are searching for.
@@ -294,6 +328,20 @@ template <typename ...pack1_t,
           typename ...pack2_t>
 type_list<pack1_t..., pack2_t...> concat(type_list<pack1_t...>, type_list<pack2_t...>);
 
+/*!\brief Implementation for seqan3::list_traits::concat [overload for more than two lists].
+ * \tparam pack1_t      Types in the first type list.
+ * \tparam pack2_t      Types in the second type list.
+ * \tparam more_lists_t The remaining type lists.
+ * \ingroup type_list
+ */
+template <typename ...pack1_t,
+          typename ...pack2_t,
+          typename ...more_lists_t>
+auto concat(type_list<pack1_t...>, type_list<pack2_t...>, more_lists_t ...)
+{
+    return concat(type_list<pack1_t..., pack2_t...>{}, more_lists_t{}...);
+}
+
 /*!\brief Implementation for seqan3::list_traits::drop_front.
  * \tparam pack_t   Types in the type list.
  * \ingroup type_list
@@ -395,6 +443,19 @@ inline constexpr ptrdiff_t find = -1;
 template <typename query_t, typename ...pack_t>
 inline constexpr ptrdiff_t find<query_t,type_list<pack_t...>> = seqan3::pack_traits::detail::find<query_t, pack_t...>();
 
+//!\cond
+template <template <typename> typename pred_t, seqan3::detail::type_list_specialisation list_t>
+inline constexpr ptrdiff_t find_if = -1;
+//!\endcond
+
+/*!\brief Get the index of the first type in a type list that satisfies the given predicate.
+ * \ingroup type_list
+ * \copydetails seqan3::pack_traits::find_if
+ */
+template <template <typename> typename pred_t, typename ...pack_t>
+inline constexpr ptrdiff_t find_if<pred_t, type_list<pack_t...>> =
+    seqan3::pack_traits::detail::find_if<pred_t, pack_t...>();
+
 /*!\brief Whether a type occurs in a type list or not.
  * \ingroup type_list
  * \copydetails seqan3::pack_traits::contains
@@ -480,11 +541,16 @@ using back = typename decltype(detail::back(list_t{}))::type;
  *
  * ### (Compile-time) Complexity
  *
- * * Number of template instantiations: O(1)
- * * Other operations: O(1)
+ * * Number of template instantiations: O(n) in the number of type lists
+ * * Other operations: O(n) in the number of type lists
+ *
+ * Complexity is independent of the number of types in each list.
  */
-template <seqan3::detail::type_list_specialisation list1_t, seqan3::detail::type_list_specialisation list2_t>
-using concat = decltype(detail::concat(list1_t{}, list2_t{}));
+template <typename ...lists_t>
+//!\cond
+    requires (seqan3::detail::type_list_specialisation<lists_t> && ...)
+//!\endcond
+using concat = decltype(detail::concat(lists_t{}...));
 
 /*!\brief Return a seqan3::type_list of all the types in the type list, except the first.
  * \tparam list_t The (input) type list.

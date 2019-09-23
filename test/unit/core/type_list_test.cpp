@@ -54,6 +54,16 @@ TEST(pack_traits, find)
                1u);
 }
 
+TEST(pack_traits, find_if)
+{
+    EXPECT_EQ((pack_traits::find_if<std::is_integral>),
+               -1ll);
+    EXPECT_EQ((pack_traits::find_if<std::is_integral, float, double const>),
+               -1ll);
+    EXPECT_EQ((pack_traits::find_if<std::is_integral, float, int, double const, long>),
+               1ll);
+}
+
 TEST(pack_traits, contains)
 {
     EXPECT_EQ((pack_traits::contains<int>),
@@ -202,6 +212,16 @@ TEST(list_traits, find)
                1u);
 }
 
+TEST(list_traits, find_if)
+{
+    EXPECT_EQ((list_traits::find_if<std::is_integral, type_list<>>),
+               -1ll);
+    EXPECT_EQ((list_traits::find_if<std::is_integral, type_list<float, double const>>),
+               -1ll);
+    EXPECT_EQ((list_traits::find_if<std::is_integral, type_list<float, int, double const, long>>),
+               1ll);
+}
+
 TEST(list_traits, contains)
 {
     EXPECT_EQ((list_traits::contains<int, type_list<>>),
@@ -236,6 +256,12 @@ TEST(list_traits, concat)
 {
     EXPECT_TRUE((std::is_same_v<list_traits::concat<type_list<int, bool &, double const>, type_list<long, float>>,
                                 type_list<int, bool &, double const, long, float>>));
+
+    EXPECT_TRUE((std::is_same_v<list_traits::concat<type_list<int, bool &, double const>,
+                                                    type_list<long, float>,
+                                                    type_list<>,
+                                                    type_list<long &>>,
+                                type_list<int, bool &, double const, long, float, long &>>));
 }
 
 TEST(list_traits, drop_front)
