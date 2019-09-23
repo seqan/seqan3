@@ -197,8 +197,7 @@ private:
         }
         //!\}
 
-        /*!
-ame Arithmetic operators
+        /*!\name Arithmetic operators
          * \{
         */
         //!\brief Pre-increment, returns updated iterator.
@@ -394,8 +393,7 @@ ame Arithmetic operators
         {}
         //!\}
 
-        /*!
-ame Arithmetic operators
+        /*!\name Arithmetic operators
         * \{
         */
         //!\brief Pre-increment, returns updated iterator.

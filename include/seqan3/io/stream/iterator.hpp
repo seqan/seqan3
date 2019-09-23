@@ -106,8 +106,7 @@ public:
     }
     //!\}
 
-    /*!
-ame Arithmetic operators
+    /*!\name Arithmetic operators
      * \{
      */
     //!\brief Advance by one and rebuffer if necessary (vtable lookup iff rebuffering).

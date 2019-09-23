@@ -171,8 +171,7 @@ public:
     }
     //!\}
 
-    /*!
-ame Arithmetic operators
+    /*!\name Arithmetic operators
      * \brief Unless specialised in derived_type, all operators perform base_t's operator and cast to derived_t.
      * \{
     */

@@ -147,8 +147,7 @@ private:
             }
             //!\}
 
-            /*!
-ame Arithmetic operators
+            /*!\name Arithmetic operators
              * \{
              */
             //!\brief Advances the iterator by one.
@@ -348,8 +347,7 @@ ame Arithmetic operators
         }
         //!\}
 
-        /*!
-ame Arithmetic operators
+        /*!\name Arithmetic operators
          * \{
          */
         //!\brief Increments by one.

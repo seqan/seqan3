@@ -163,8 +163,7 @@ public:
     }
     //!\}
 
-    /*!
-ame Arithmetic additive operators.
+    /*!\name Arithmetic additive operators.
      * \brief Only available if the corresponding skills from seqan3::detail::strong_type_skill are added and
      *        the underlying type supports this operation.
      * \{
@@ -188,8 +187,7 @@ ame Arithmetic additive operators.
     }
     //!\}
 
-    /*!
-ame Arithmetic multiplicative operators.
+    /*!\name Arithmetic multiplicative operators.
      * \brief Only available if the corresponding skills from seqan3::detail::strong_type_skill are added and
      *        the underlying type supports this operation.
      * \{

@@ -126,8 +126,7 @@ private:
         using iterator_category     = iterator_tag_t<base_base_t>;
         //!\}
 
-        /*!
-ame Arithmetic operators
+        /*!\name Arithmetic operators
          * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
          * \{
          */

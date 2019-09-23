@@ -266,8 +266,7 @@ private:
         using iterator_category     = std::input_iterator_tag;                                      //!< Always input.
         //!\}
 
-        /*!
-ame Arithmetic operators
+        /*!\name Arithmetic operators
          * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
          * \{
          */
