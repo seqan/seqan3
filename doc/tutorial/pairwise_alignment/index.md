@@ -21,9 +21,8 @@ The goal of the pairwise alignment is to obtain an optimal transcript that descr
 to each other by means of substitutions, insertions, or deletions. The computed transcript describes then the operations
 necessary to translate the one sequence into the other, as can be seen in the following picture.
 
-\htmlonly
-<img src="doc/tutorial/pairwise_alignment/align_transcript.png" alt="A transcript between two aligned sequences" style="width:300px;"/>
-\endhtmlonly
+\image html align_transcript.png
+\image latex align_transcript.png width=\\textwidth
 
 The alignment problem is solved with a dynamic programming (DP) algorithm which runs in \f$ (\mathcal{O}(n^2))\f$ time
 and space. Besides the global alignment approach many more variations of this DP based algorithm have been developed

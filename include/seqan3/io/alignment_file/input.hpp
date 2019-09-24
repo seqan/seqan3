@@ -1121,7 +1121,7 @@ alignment_file_input(stream_type && stream,
 template <input_stream stream_type,
           std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
-          alignment_file_input_format  file_format>
+          alignment_file_input_format file_format>
 alignment_file_input(stream_type & stream,
                      ref_ids_t &,
                      ref_sequences_t &,

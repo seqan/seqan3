@@ -140,23 +140,12 @@ public:
      *
      * | TAG | Description and Rules                                            |
      * | --- | ---------------------------------------------------------------- |
-     * | AH  | Indicates that this sequence is an alternate locus. The value is
-     *         the locus in the primary assembly for which this sequence is an
-     *         alternative, in the format 'chr:start-end', 'chr' (if known),
-     *         or '*' (if unknown), where 'chr' is a sequence in the primary assembly.
-     *         Must not be present on sequences in the primary assembly. |
-     * | AN  | Alternative reference sequence names. A comma-separated list
-     *         of alternative names that tools may use when referring to this
-     *         reference sequence. These alternative names are not used elsewhere
-     *         within the SAM file; in  particular, they must not appear in alignment
-     *         records’ RNAME or RNEXT fields. regular expression : name (, name )*
-     *         where name is [0-9A-Za-z][0-9A-Za-z*+.@ |-]* |
+     * | AH  | Indicates that this sequence is an alternate locus. The value is the locus in the primary assembly for which this sequence is an alternative, in the format 'chr:start-end', 'chr' (if known), or '*' (if unknown), where 'chr' is a sequence in the primary assembly. Must not be present on sequences in the primary assembly. |
+     * | AN  | Alternative reference sequence names. A comma-separated list of alternative names that tools may use when referring to this reference sequence. These alternative names are not used elsewhere within the SAM file; in  particular, they must not appear in alignment records’ RNAME or RNEXT fields. regular expression : name (, name )* where name is [0-9A-Za-z][0-9A-Za-z*+.@ \|-]* |
      * | AS  | Genome assembly identifier. |
      * | M5  | MD5 checksum of the sequence.  See Section 1.3.1 |
      * | SP  | Species. |
-     * | UR  | URI of the sequence.  This value may start with one of the standard
-     *         protocols, e.g http:  or ftp:. If it does not start with one of these
-     *         protocols, it is assumed to be a file-system path |
+     * | UR  | URI of the sequence.  This value may start with one of the standard protocols, e.g http:  or ftp:. If it does not start with one of these protocols, it is assumed to be a file-system path |
      */
     std::vector<std::tuple<int32_t, std::string>> ref_id_info{};
 
@@ -179,25 +168,16 @@ public:
      *
      * | TAG | Description and Rules                                            |
      * | --- | ---------------------------------------------------------------- |
-     * | BC  | Barcode sequence identifying the sample or library. This value is
-     *         the expected barcode bases as read by the sequencing machine in
-     *         the absence of errors. If there are several barcodes for the
-     *         sample/library (e.g., one on each end of the template), the
-     *         recommended implementation concatenates all the barcodes separating
-     *         them with hyphens ('-'). |
+     * | BC  | Barcode sequence identifying the sample or library. This value is the expected barcode bases as read by the sequencing machine in the absence of errors. If there are several barcodes for the sample/library (e.g., one on each end of the template), the recommended implementation concatenates all the barcodes separating them with hyphens ('-'). |
      * | CN  | Name of sequencing center producing the read. |
      * | DS  | Description.  UTF-8 encoding may be used. |
      * | DT  | Date the run was produced (ISO8601 date or date/time). |
-     * | FO  | Flow order. The array of nucleotide bases that correspond to the
-     *         nucleotides used for each flow of each read. Multi-base flows are
-     *         encoded in IUPAC format, and non-nucleotide flows by various other
-     *         characters. Format : /\*|[ACMGRSVTWYHKDBN]+/ |
+     * | FO  | Flow order. The array of nucleotide bases that correspond to the nucleotides used for each flow of each read. Multi-base flows are encoded in IUPAC format, and non-nucleotide flows by various other characters. Format : /\*\|[ACMGRSVTWYHKDBN]+/ |
      * | KS  | The array of nucleotide bases that correspond to the key sequence of each read. |
      * | LB  | Library. |
      * | PG  | Programs used for processing the read group. |
      * | PI  | Predicted median insert size. |
-     * | PL  | Platform/technology used to produce the reads.
-     *         Valid values : CAPILLARY, LS454, ILLUMINA, SOLID, HELICOS, IONTORRENT, ONT, and PACBIO. |
+     * | PL  | Platform/technology used to produce the reads. Valid values : CAPILLARY, LS454, ILLUMINA, SOLID, HELICOS, IONTORRENT, ONT, and PACBIO. |
      * | PM  | Platform model. Free-form text providing further details of the platform/technology used. |
      * | PU  | Platform unit (e.g. flowcell-barcode.lane for Illumina or slide for SOLiD). Unique identifier. |
      * | SM  | Sample. Use pool name where a pool is being sequenced. |
