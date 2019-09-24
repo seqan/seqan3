@@ -109,6 +109,8 @@ namespace seqan3::pack_traits
  *
  * * Number of template instantiations: O(1)
  * * Other operations: O(1)
+ *
+ * \include test/snippet/core/type_list/pack_traits_size.cpp
  */
 template <typename ...pack_t>
 inline constexpr size_t size = sizeof...(pack_t);
@@ -125,6 +127,8 @@ inline constexpr size_t size = sizeof...(pack_t);
  *
  * * Number of template instantiations: O(1)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/pack_traits_count.cpp
  */
 template <typename query_t, typename ...pack_t>
 inline constexpr ptrdiff_t count =  (SEQAN3_IS_SAME(query_t, pack_t) + ... + 0);
@@ -141,6 +145,8 @@ inline constexpr ptrdiff_t count =  (SEQAN3_IS_SAME(query_t, pack_t) + ... + 0);
  *
  * * Number of template instantiations: O(1)
  * * Other operations: O(n), possibly == `i`, where `i` is the return value
+ *
+ * \include test/snippet/core/type_list/pack_traits_find.cpp
  */
 template <typename query_t, typename ...pack_t>
 inline constexpr ptrdiff_t find = seqan3::pack_traits::detail::find<query_t, pack_t...>();
@@ -162,6 +168,8 @@ inline constexpr ptrdiff_t find = seqan3::pack_traits::detail::find<query_t, pac
  * * Other operations: O(n), possibly == `i`, where `i` is the return value
  *
  *  Only the predicate is instantiated.
+ *
+ * \include test/snippet/core/type_list/pack_traits_find_if.cpp
  */
 template <template <typename> typename pred_t, typename ...pack_t>
 inline constexpr ptrdiff_t find_if = seqan3::pack_traits::detail::find_if<pred_t, pack_t...>();
@@ -178,6 +186,8 @@ inline constexpr ptrdiff_t find_if = seqan3::pack_traits::detail::find_if<pred_t
  *
  * * Number of template instantiations: O(1)
  * * Other operations: O(n), possibly == `i`, where `i` is the index of the first occurrence
+ *
+ * \include test/snippet/core/type_list/pack_traits_find.cpp
  */
 template <typename query_t, typename ...pack_t>
 inline constexpr bool contains = (find<query_t, pack_t...> != -1);
@@ -200,6 +210,8 @@ inline constexpr bool contains = (find<query_t, pack_t...> != -1);
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/pack_traits_at.cpp
  */
 template <ptrdiff_t idx, typename ...pack_t>
 //!\cond
@@ -218,6 +230,8 @@ using at = typename decltype(detail::at<idx, pack_t...>())::type;
  *
  * * Number of template instantiations: O(1)
  * * Other operations: O(1)
+ *
+ * \include test/snippet/core/type_list/pack_traits_front.cpp
  */
 template <typename ...pack_t>
 //!\cond
@@ -238,6 +252,8 @@ using front = typename decltype(detail::front<pack_t...>())::type;
  *
  * Notably faster than `seqan3::pack_traits::at<size<pack...> - 1, pack...>` (no recursive template
  * instantiations).
+ *
+ * \include test/snippet/core/type_list/pack_traits_back.cpp
  */
 template <typename ...pack_t>
 //!\cond
@@ -261,6 +277,8 @@ using back = typename decltype((std::type_identity<pack_t>{}, ...))::type; // us
  *
  * * Number of template instantiations: O(1)
  * * Other operations: O(1)
+ *
+ * \include test/snippet/core/type_list/pack_traits_drop_front.cpp
  */
 template <typename ...pack_t>
 //!\cond
@@ -282,6 +300,8 @@ using drop_front = typename decltype(detail::drop_front<pack_t...>())::type;
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(1)
+ *
+ * \include test/snippet/core/type_list/pack_traits_transform.cpp
  */
 template <template <typename> typename trait_t, typename ...pack_t>
 using transform = seqan3::type_list<trait_t<pack_t>...>;
@@ -414,6 +434,8 @@ inline constexpr size_t size = 0;
 /*!\brief The size of a type list.
  * \ingroup type_list
  * \copydetails seqan3::pack_traits::size
+ *
+ * \include test/snippet/core/type_list/list_traits_size.cpp
  */
 template <typename ...pack_t>
 inline constexpr size_t size<type_list<pack_t...>> = sizeof...(pack_t);
@@ -426,6 +448,8 @@ inline constexpr ptrdiff_t count = -1;
 /*!\brief Count the occurrences of a type in a type list.
  * \ingroup type_list
  * \copydetails seqan3::pack_traits::count
+ *
+ * \include test/snippet/core/type_list/list_traits_count.cpp
  */
 template <typename query_t, typename ...pack_t>
 inline constexpr ptrdiff_t count<query_t, type_list<pack_t...>> =
@@ -439,6 +463,8 @@ inline constexpr ptrdiff_t find = -1;
 /*!\brief Get the index of the first occurrence of a type in a type list.
  * \ingroup type_list
  * \copydetails seqan3::pack_traits::find
+ *
+ * \include test/snippet/core/type_list/list_traits_find.cpp
  */
 template <typename query_t, typename ...pack_t>
 inline constexpr ptrdiff_t find<query_t,type_list<pack_t...>> = seqan3::pack_traits::detail::find<query_t, pack_t...>();
@@ -451,6 +477,8 @@ inline constexpr ptrdiff_t find_if = -1;
 /*!\brief Get the index of the first type in a type list that satisfies the given predicate.
  * \ingroup type_list
  * \copydetails seqan3::pack_traits::find_if
+ *
+ * \include test/snippet/core/type_list/list_traits_find.cpp
  */
 template <template <typename> typename pred_t, typename ...pack_t>
 inline constexpr ptrdiff_t find_if<pred_t, type_list<pack_t...>> =
@@ -459,6 +487,8 @@ inline constexpr ptrdiff_t find_if<pred_t, type_list<pack_t...>> =
 /*!\brief Whether a type occurs in a type list or not.
  * \ingroup type_list
  * \copydetails seqan3::pack_traits::contains
+ *
+ * \include test/snippet/core/type_list/list_traits_contains.cpp
  */
 template <typename query_t, seqan3::detail::type_list_specialisation list_t>
 inline constexpr bool contains = (find<query_t, list_t> != -1);
@@ -482,6 +512,8 @@ inline constexpr bool contains = (find<query_t, list_t> != -1);
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/list_traits_at.cpp
  */
 template <ptrdiff_t idx, seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -499,6 +531,8 @@ using at = typename decltype(detail::at<idx>(list_t{}))::type;
  *
  * * Number of template instantiations: O(1)
  * * Other operations: O(1)
+ *
+ * \include test/snippet/core/type_list/list_traits_front.cpp
  */
 template <seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -519,6 +553,8 @@ using front = typename decltype(detail::front(list_t{}))::type;
  *
  * Notably faster than `seqan3::pack_traits::at<size<pack...> - 1, pack...>` (no recursive template
  * instantiations).
+ *
+ * \include test/snippet/core/type_list/list_traits_back.cpp
  */
 template <seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -545,6 +581,8 @@ using back = typename decltype(detail::back(list_t{}))::type;
  * * Other operations: O(n) in the number of type lists
  *
  * Complexity is independent of the number of types in each list.
+ *
+ * \include test/snippet/core/type_list/list_traits_concat.cpp
  */
 template <typename ...lists_t>
 //!\cond
@@ -562,6 +600,8 @@ using concat = decltype(detail::concat(lists_t{}...));
  *
  * * Number of template instantiations: O(1)
  * * Other operations: O(1)
+ *
+ * \include test/snippet/core/type_list/list_traits_drop_front.cpp
  */
 template <seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -580,6 +620,8 @@ using drop_front = decltype(detail::drop_front(list_t{}));
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/list_traits_take.cpp
  */
 template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -598,6 +640,8 @@ using take = typename decltype(detail::split_after<i>(type_list<>{}, list_t{})):
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/list_traits_drop.cpp
  */
 template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -616,6 +660,8 @@ using drop = typename decltype(detail::split_after<i>(type_list<>{}, list_t{})):
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/list_traits_take_last.cpp
  */
 template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -634,6 +680,8 @@ using take_last = drop<size<list_t> - i, list_t>;
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/list_traits_drop_last.cpp
  */
 template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -652,6 +700,8 @@ using drop_last = take<size<list_t> - i, list_t>;
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/list_traits_drop_last.cpp
  */
 template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -673,6 +723,8 @@ using split_after = decltype(detail::split_after<i>(type_list<>{}, list_t{}));
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/list_traits_transform.cpp
  */
 template <template <typename> typename trait_t, seqan3::detail::type_list_specialisation list_t>
 using transform = decltype(detail::transform<trait_t>(list_t{}));
@@ -689,6 +741,8 @@ using transform = decltype(detail::transform<trait_t>(list_t{}));
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/list_traits_replace_at.cpp
  */
 template <typename replace_t, std::ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
 //!\cond
@@ -722,6 +776,8 @@ namespace seqan3::pack_traits
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/pack_traits_take.cpp
  */
 template <ptrdiff_t i, typename ...pack_t>
 //!\cond
@@ -740,6 +796,8 @@ using take = seqan3::list_traits::take<i, type_list<pack_t...>>;
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/pack_traits_drop.cpp
  */
 template <ptrdiff_t i, typename ...pack_t>
 //!\cond
@@ -758,6 +816,8 @@ using drop = seqan3::list_traits::drop<i, type_list<pack_t...>>;
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/pack_traits_take_last.cpp
  */
 template <ptrdiff_t i, typename ...pack_t>
 //!\cond
@@ -776,6 +836,8 @@ using take_last = seqan3::list_traits::take_last<i, type_list<pack_t...>>;
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/pack_traits_take_last.cpp
  */
 template <ptrdiff_t i, typename ...pack_t>
 //!\cond
@@ -794,6 +856,8 @@ using drop_last = seqan3::list_traits::drop_last<i, type_list<pack_t...>>;
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/pack_traits_take_last.cpp
  */
 template <ptrdiff_t i, typename ...pack_t>
 //!\cond
@@ -813,6 +877,8 @@ using split_after = seqan3::list_traits::split_after<i, type_list<pack_t...>>;
  *
  * * Number of template instantiations: O(n)
  * * Other operations: O(n)
+ *
+ * \include test/snippet/core/type_list/pack_traits_take_last.cpp
  */
 template <typename replace_t, std::ptrdiff_t i, typename ...pack_t>
 //!\cond
