@@ -78,7 +78,7 @@ enum class translation_frames : uint8_t
 };
 
 //!\brief Enable bitwise operators for enum translation_frames.
-template<>
+template <>
 constexpr bool add_enum_bitwise_operators<translation_frames> = true;
 
 }

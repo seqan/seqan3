@@ -30,7 +30,7 @@ template <typename word_t, bool is_semi_global, bool use_max_errors>
 class edit_distance_trace_matrix_full; //forward declaration
 
 //!\brief Store no state for state_t.
-template <typename state_t, typename...>
+template <typename state_t, typename ...>
 struct empty_state
 {};
 
@@ -42,7 +42,7 @@ using enable_state_t = std::conditional_t<enabled, state_t, empty_state<state_t>
  * \details
  * If `B` is true, <tt>selector<B, T, F>::template select</tt> inherits `T`, otherwise `F`.
  */
-template<bool B, template<typename...> typename T, template<typename...> typename F>
+template <bool B, template <typename ...> typename T, template <typename ...> typename F>
 struct selector
 {
     //!\brief Depending on `B`, `select` is the template template parameter `T` or `F`.
@@ -119,7 +119,7 @@ struct default_edit_distance_trait_type
 
 //!\brief A base class for edit_distance_unbanded.
 template <bool enable_policy,
-          template<typename...> typename policy_t,
+          template <typename ...> typename policy_t,
           typename edit_traits,
           typename derived_t>
 using edit_distance_base =

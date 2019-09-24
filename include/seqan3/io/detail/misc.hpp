@@ -28,12 +28,12 @@ namespace seqan3::detail
 
 //!\brief Base class to deduce the std::variant type from format tags.
 //!\ingroup io
-template <typename list_t, template <typename...> typename output_t>
+template <typename list_t, template <typename ...> typename output_t>
 struct variant_from_tags;
 
 //!\brief Transfers a list of format tags (`...ts`) onto a std::variant by specialising output_t with each.
 //!\ingroup io
-template <template <typename...> typename output_t, typename ...ts>
+template <template <typename ...> typename output_t, typename ...ts>
 struct variant_from_tags<meta::list<ts...>, output_t>
 {
     //!\brief The type of std::variant.

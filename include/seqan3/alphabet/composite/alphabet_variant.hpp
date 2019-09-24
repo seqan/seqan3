@@ -58,7 +58,7 @@ inline bool constexpr one_alternative_is = false;
 //!\cond
 
 // actual implementation
-template <typename ... alternatives,
+template <typename ...alternatives,
           template <typename> typename fun_t,
           typename target_t>
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
@@ -67,14 +67,14 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
  = !meta::empty<meta::find_if<meta::list<alternatives...>, fun_t<target_t>>>::value;
 
 // guard against self
-template <typename ... alternatives,
+template <typename ...alternatives,
           template <typename> typename fun_t>
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          alphabet_variant<alternatives...>> = false;
 
 // guard against types convertible to self without needing self's constructors
-template <typename ... alternatives,
+template <typename ...alternatives,
           template <typename> typename fun_t,
           typename target_t>
     requires convertible_to_by_member<target_t, alphabet_variant<alternatives...>>
@@ -83,7 +83,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          target_t> = false;
 
 // guard against tuple composites that contain the variant somewhere (they can implicitly convert at source)
-template <typename ... alternatives,
+template <typename ...alternatives,
           template <typename> typename fun_t,
           typename target_t>
     requires alphabet_tuple_base_specialisation<target_t> &&
@@ -94,7 +94,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          target_t> = false;
 
 // guard against alternatives
-template <typename ... alternatives,
+template <typename ...alternatives,
           template <typename> typename fun_t,
           typename target_t>
     requires type_in_pack_v<target_t, alternatives...>
@@ -103,7 +103,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          target_t> = false;
 
 // guard against alternatives (LHS and RHS switched)
-template <typename ... alternatives,
+template <typename ...alternatives,
           template <typename> typename fun_t,
           typename target_t>
     requires type_in_pack_v<target_t, alternatives...>
@@ -112,7 +112,7 @@ inline bool constexpr one_alternative_is<target_t,
                                          alphabet_variant<alternatives...>> = false;
 
 // guard against ranges and iterators over self to prevent recursive instantiation
-template <typename ... alternatives,
+template <typename ...alternatives,
           template <typename> typename fun_t,
           typename target_t>
     //NO, it's not possible to use the value_type type trait here
@@ -123,7 +123,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
 
 // guard against pairs/tuples that *might* contain self to prevent recursive instantiation
 // (applying tuple_like unfortunately does not work because it itself starts recursive instantiation)
-template <typename ... alternatives,
+template <typename ...alternatives,
           template <typename> typename fun_t,
           typename target_t>
     requires tuple_size<target_t> && !alphabet_tuple_base_specialisation<target_t>

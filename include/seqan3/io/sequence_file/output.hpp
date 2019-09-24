@@ -446,7 +446,7 @@ public:
      *
      * \include test/snippet/io/sequence_file/sequence_file_output_emplace_back.cpp
      */
-    template <typename arg_t, typename ... arg_types>
+    template <typename arg_t, typename ...arg_types>
     void emplace_back(arg_t && arg, arg_types && ... args)
     {
         push_back(std::tie(arg, args...));
@@ -589,7 +589,7 @@ public:
      *
      * \include test/snippet/io/sequence_file/sequence_file_output_col_based_writing.cpp
      */
-    template <typename ... arg_types>
+    template <typename ...arg_types>
     sequence_file_output & operator=(std::tuple<arg_types...> const & t)
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)

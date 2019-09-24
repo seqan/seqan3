@@ -23,7 +23,7 @@ namespace seqan3
  * \tparam structured_seq_combined Trait that exposes to the format whether seq and structure arguments are actually the
  * same/combined.
  */
-template<typename seq_legal_alphabet, bool structured_seq_combined>
+template <typename seq_legal_alphabet, bool structured_seq_combined>
 struct structure_file_input_options
 {
     //!\brief Read the ID string only up until the first whitespace character.

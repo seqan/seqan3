@@ -182,7 +182,7 @@ public:
      * \param[in] args             Further arguments (optional).
      * \returns A views::deep specialisation of a closure object, i.e. with stored arguments.
      */
-    template <typename first_arg_t, typename ... stored_arg_types>
+    template <typename first_arg_t, typename ...stored_arg_types>
     //!\cond
         requires !std::ranges::input_range<first_arg_t>
     //!\endcond
@@ -220,7 +220,7 @@ public:
      *
      * Recurses and calls std::views::transform if the underlying range is a range-of-ranges.
      */
-    template <std::ranges::input_range urng_t, typename ... stored_arg_types>
+    template <std::ranges::input_range urng_t, typename ...stored_arg_types>
     //!\cond
         requires sizeof...(stored_arg_types) > 0
     //!\endcond

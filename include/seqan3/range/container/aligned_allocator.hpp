@@ -145,7 +145,7 @@ public:
      * allocator for a different type.
      * \tparam new_value_type The other value type.
      */
-    template<typename new_value_type>
+    template <typename new_value_type>
     struct rebind
     {
         //!\brief The type of the allocator for a different value type.
