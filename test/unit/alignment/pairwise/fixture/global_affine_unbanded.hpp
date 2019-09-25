@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include <seqan3/alignment/configuration/align_config_mode.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_mode.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
@@ -49,31 +49,31 @@ static auto dna4_01 = []()
         alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
-        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
-        /*e*/  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
-        /*A*/  1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
-        /*C*/  2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-        /*G*/  3,  2,  2,  2,  2,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,
-        /*T*/  4,  3,  3,  3,  3,  3,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
-        /*A*/  5,  4,  3,  4,  4,  4,  4,  4,  4,  4,  5,  6,  7,  8,  9, 10, 11,
-        /*C*/  6,  5,  4,  3,  4,  5,  5,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
-        /*G*/  7,  6,  5,  4,  4,  4,  5,  6,  6,  6,  6,  6,  6,  6,  7,  8,  9,
-        /*T*/  8,  7,  6,  5,  5,  5,  5,  5,  6,  7,  7,  7,  7,  7,  7,  7,  8,
-        /*A*/  9,  8,  7,  6,  6,  6,  6,  6,  6,  6,  7,  8,  8,  8,  8,  8,  8
+         //        A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T
+                0 ,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,-25,-26,
+        /*A*/  -11,  4, -7, -8, -9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,
+        /*C*/  -12, -7, -1, -3, -4,-14,-15,-16,-17,-18,-19,-11,-12,-22,-23,-24,-25,
+        /*G*/  -13, -8,-12, -6, -8,  0,-10,-12,-13,-14,-15,-16,-16,-8 ,-18,-20,-21,
+        /*T*/  -14, -9,-13,-15,-11,-11,-5 , -6, -8,-18,-19,-20,-21,-19,-13,-14,-16,
+        /*A*/  -15,-10,-5 ,-16,-17,-12,-16,-10,-11, -4,-14,-16,-17,-18,-19,-18,-19,
+        /*C*/  -16,-11,-15, -1,-12,-13,-14,-15,-15,-15, -9,-10,-12,-21,-22,-23,-23,
+        /*G*/  -17,-12,-16,-12, -6, -8, -9,-19,-20,-16,-20,-14,-15, -8,-17,-20,-21,
+        /*T*/  -18,-13,-17,-13,-17,-11,-13, -5,-15,-17,-18,-19,-19,-19,-13,-13,-16,
+        /*A*/  -19,-14,-9 ,-14,-18,-16,-16,-16,-10,-11,-13,-23,-24,-20,-24,-18,-18
         },
         std::vector
         {
-        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
-        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*A*/U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,
-        /*A*/U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,
-        /*A*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D
+        //           A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T
+        /*e*/    N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*A*/    U  ,DUL,DUL,l  ,l  ,l  ,l  ,l  ,l  ,DUl,DUl,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*C*/    u  ,UL ,DUL,DUL,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,
+        /*G*/    u  ,uL ,DUL,DUl,DUL,Dul,DuL,l  ,l  ,l  ,l  ,l  ,DUl,Dul,Dul,l  ,l  ,
+        /*T*/    u  ,uL ,DuL,ul ,Dul,UL ,DUL,DUL,DUl,DUl,DUl,Dul,Dul,Ul ,DUl,DUl,DUl,
+        /*A*/    u  ,DuL,DuL,uL ,ul ,ul ,DUl,DUl,DUl,Dul,DuL,l  ,l  ,l  ,l  ,DUl,DUl,
+        /*C*/    u  ,uL ,DuL,Dul,DuL,ul ,l  ,l  ,Dul,Ul ,DUl,Dul,Dul,ul ,l  ,l  ,Dul,
+        /*G*/    u  ,uL ,DuL,Ul ,DuL,DuL,Dul,Dul,Dul,ul ,DUl,DUl,DUl,Dul,DuL,l  ,l  ,
+        /*T*/    u  ,uL ,DuL,ul ,DUL,Dul,DuL,Dul,DuL,ul ,l  ,l  ,Dul,Ul ,Dul,Dul,Dul,
+        /*A*/    u  ,DuL,DuL,uL ,Dul,ul ,Dul,Ul ,Dul,DuL,Dul,Dul,Dul,ul ,DUl,DUl,DUl
         }
     };
 }();
@@ -92,31 +92,64 @@ static auto dna4_02 = []()
         alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
         std::vector
         {
-        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
-        /*e*/  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
-        /*A*/  1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
-        /*C*/  2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-        /*G*/  3,  2,  2,  2,  2,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,
-        /*T*/  4,  3,  3,  3,  3,  3,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
-        /*A*/  5,  4,  3,  4,  4,  4,  4,  4,  4,  4,  5,  6,  7,  8,  9, 10, 11,
-        /*C*/  6,  5,  4,  3,  4,  5,  5,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
-        /*G*/  7,  6,  5,  4,  4,  4,  5,  6,  6,  6,  6,  6,  6,  6,  7,  8,  9,
-        /*T*/  8,  7,  6,  5,  5,  5,  5,  5,  6,  7,  7,  7,  7,  7,  7,  7,  8,
-        /*A*/  9,  8,  7,  6,  6,  6,  6,  6,  6,  6,  7,  8,  8,  8,  8,  8,  8
+        //		      A,  C,  G,  T,  A,  C,  G,  T,  A
+                  0,-11,-12,-13,-14,-15,-16,-17,-18,-19,
+        /*A*/	-11,  4, -7, -8, -9,-10,-11,-12,-13,-14,
+        /*A*/	-12, -7, -1,-12,-13, -5,-15,-16,-17, -9,
+        /*C*/	-13, -8, -3, -6,-15,-16, -1,-12,-13,-14,
+        /*C*/	-14, -9, -4, -8,-11,-17,-12, -6,-17,-18,
+        /*G*/	-15,-10,-14,  0,-11,-12,-13, -8,-11,-16,
+        /*G*/	-16,-11,-15,-10, -5,-16,-14, -9,-13,-16,
+        /*T*/	-17,-12,-16,-12, -6,-10,-15,-19, -5,-16,
+        /*T*/	-18,-13,-17,-13, -8,-11,-15,-20,-15,-10,
+        /*A*/	-19,-14,-18,-14,-18, -4,-15,-16,-17,-11,
+        /*A*/	-20,-15,-19,-15,-19,-14, -9,-20,-18,-13,
+        /*C*/	-21,-16,-11,-16,-20,-16,-10,-14,-19,-23,
+        /*C*/	-22,-17,-12,-16,-21,-17,-12,-15,-19,-24,
+        /*G*/	-23,-18,-22, -8,-19,-18,-21, -8,-19,-20,
+        /*G*/	-24,-19,-23,-18,-13,-19,-22,-17,-13,-24,
+        /*T*/	-25,-20,-24,-20,-14,-18,-23,-20,-13,-18,
+        /*T*/	-26,-21,-25,-21,-16,-19,-23,-21,-16,-18
         },
         std::vector
         {
-        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
-        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*A*/U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,
-        /*A*/U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,
-        /*A*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D
+        //		      A,  C,  G,  T,  A,  C,  G,  T,  A
+        /*e*/   N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*A*/   U  ,DUL,L  ,l  ,l  ,DUl,l  ,l  ,l  ,DUl,
+        /*A*/   u  ,DUL,DUL,DUL,DUl,DUl,DUl,DUl,DUl,DUl,
+        /*C*/   u  ,uL ,DUL,DuL,l  ,Ul ,Dul,L  ,l  ,l  ,
+        /*C*/   u  ,uL ,DuL,DUL,Dul,ul ,DUl,DUl,DUL,Dul,
+        /*G*/   u  ,uL ,DuL,Dul,L  ,l  ,ul ,DUl,Dul,l  ,
+        /*G*/   u  ,uL ,DuL,DUl,DUL,DuL,ul ,Dul,DUl,Dul,
+        /*T*/   u  ,uL ,DuL,ul ,DUL,DuL,ul ,Dul,Dul,L  ,
+        /*T*/   u  ,uL ,DuL,ul ,DuL,DuL,Dul,Dul,DUl,Dul,
+        /*A*/   u  ,DuL,DuL,ul ,DuL,Dul,L  ,l  ,ul ,DUl,
+        /*A*/   u  ,DuL,DuL,ul ,DuL,DUl,DuL,DuL,ul ,Dul,
+        /*C*/   u  ,uL ,DuL,uL ,Dul,ul ,Dul,DuL,ul ,Dul,
+        /*C*/   u  ,uL ,DuL,DuL,Dul,ul ,Dul,DuL,Dul,Dul,
+        /*G*/   u  ,uL ,DuL,Dul,L  ,ul ,ul ,Dul,L  ,l  ,
+        /*G*/   u  ,uL ,DuL,Dul,DuL,uL ,ul ,DUl,Dul,DuL,
+        /*T*/   u  ,uL ,DuL,ul ,DuL,DuL,ul ,ul ,Dul,DuL,
+        /*T*/   u  ,uL ,DuL,ul ,DuL,DuL,Dul,ul ,Dul,DuL,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
     };
 }();

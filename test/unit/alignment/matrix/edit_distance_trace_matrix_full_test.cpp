@@ -62,7 +62,7 @@ TEST(global, epsilon)
 
     // row-wise matrix
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{NON}};
+    std::vector<std::vector<detail::trace_directions>> expect{{N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -79,7 +79,7 @@ TEST(global, epsilon_row)
 
     // row-wise matrix
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{NON, L, L, L, L}};
+    std::vector<std::vector<detail::trace_directions>> expect{{N, l, l, l, l}};
 
     EXPECT_EQ(result, expect);
 }
@@ -104,15 +104,15 @@ TEST(global, single_word)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  },
-        {U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL },
-        {U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  },
-        {U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  },
-        {U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  },
-        {U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  },
-        {U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU },
-        {U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,DU ,DU },
-        {U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,DL ,DUL}
+        {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
+        {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl },
+        {u  ,u  ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  },
+        {u  ,u  ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  },
+        {u  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  },
+        {u  ,Du ,D  ,Dul,Du ,Du ,Du ,Du ,D  ,D  },
+        {u  ,u  ,u  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du },
+        {u  ,u  ,u  ,u  ,D  ,D  ,Dl ,Dul,Du ,Du },
+        {u  ,u  ,u  ,u  ,Du ,Du ,D  ,D  ,Dl ,Dul}
     };
 
     EXPECT_EQ(result, expect);
@@ -158,24 +158,24 @@ TEST(global, multiple_words)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  },
-        {U  ,D  ,L  ,L  ,L  ,DL ,L  ,L  ,L  ,DL },
-        {U  ,DU ,D  ,DL ,DL ,D  ,L  ,L  ,L  ,DL },
-        {U  ,U  ,D  ,DL ,DL ,DUL,D  ,L  ,L  ,L  },
-        {U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,DL ,DL },
-        {U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,DL ,DL },
-        {U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,DL },
-        {U  ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,DL },
-        {U  ,U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  },
-        {U  ,DU ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  },
-        {U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU },
-        {U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DL ,DUL},
-        {U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,DL },
-        {U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DL },
-        {U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL },
-        {U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL },
-        {U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  },
-        {U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  }
+        {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
+        {u  ,D  ,l  ,l  ,l  ,Dl ,l  ,l  ,l  ,Dl },
+        {u  ,Du ,D  ,Dl ,Dl ,D  ,l  ,l  ,l  ,Dl },
+        {u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,l  ,l  ,l  },
+        {u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  ,Dl ,Dl },
+        {u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,Dl ,Dl },
+        {u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  ,Dl },
+        {u  ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,Dl },
+        {u  ,u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  },
+        {u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  },
+        {u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du },
+        {u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul},
+        {u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,Dl },
+        {u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dl },
+        {u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl },
+        {u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl },
+        {u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  },
+        {u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  }
     };
 
     EXPECT_EQ(result, expect);
@@ -200,7 +200,7 @@ TEST(semi_global, epsilon)
 
     // row-wise matrix
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{NON}};
+    std::vector<std::vector<detail::trace_directions>> expect{{N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -217,7 +217,7 @@ TEST(semi_global, epsilon_row)
 
     // row-wise matrix
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{NON, NON, NON, NON, NON}};
+    std::vector<std::vector<detail::trace_directions>> expect{{N, N, N, N, N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -242,15 +242,15 @@ TEST(semi_global, single_word)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,NON},
-        {U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,D  },
-        {U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,U  },
-        {U  ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,U  },
-        {U  ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,U  },
-        {U  ,DU ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,D  },
-        {U  ,U  ,U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU },
-        {U  ,U  ,U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU },
-        {U  ,U  ,U  ,U  ,DU ,U  ,D  ,D  ,DL ,DUL}
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  },
+        {u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,D  },
+        {u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,u  },
+        {u  ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,u  },
+        {u  ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,u  },
+        {u  ,Du ,D  ,u  ,Du ,Du ,Du ,Du ,D  ,D  },
+        {u  ,u  ,u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du },
+        {u  ,u  ,u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du },
+        {u  ,u  ,u  ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul}
     };
 
     EXPECT_EQ(result, expect);
@@ -296,24 +296,24 @@ TEST(semi_global, multiple_words)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,NON},
-        {U  ,D  ,DUL,DU ,DU ,D  ,DUL,DU ,DU ,D  },
-        {U  ,DU ,D  ,DUL,DU ,DU ,D  ,DL ,DUL,DU },
-        {U  ,U  ,D  ,DL ,DUL,U  ,DU ,D  ,DL ,U  },
-        {U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,DL ,UL },
-        {U  ,U  ,U  ,D  ,DL ,DUL,U  ,DU ,D  ,D  },
-        {U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,D  },
-        {U  ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,DU ,DU },
-        {U  ,U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  },
-        {U  ,DU ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,DU },
-        {U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU },
-        {U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DUL,U  },
-        {U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,U  },
-        {U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DUL},
-        {U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL },
-        {U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL },
-        {U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  },
-        {U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  }
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  },
+        {u  ,D  ,Dul,Du ,Du ,D  ,Dul,Du ,Du ,D  },
+        {u  ,Du ,D  ,Dul,Du ,Du ,D  ,Dl ,Dul,Du },
+        {u  ,u  ,D  ,Dl ,Dul,u  ,Du ,D  ,Dl ,u  },
+        {u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,Dl ,ul },
+        {u  ,u  ,u  ,D  ,Dl ,Dul,u  ,Du ,D  ,D  },
+        {u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,D  },
+        {u  ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,Du ,Du },
+        {u  ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  },
+        {u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,Du },
+        {u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du },
+        {u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,u  },
+        {u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,u  },
+        {u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul},
+        {u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl },
+        {u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl },
+        {u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  },
+        {u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  }
     };
 
     EXPECT_EQ(result, expect);
@@ -338,7 +338,7 @@ TEST(global_max_errors, epsilon)
 
     // row-wise matrix
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{NON}};
+    std::vector<std::vector<detail::trace_directions>> expect{{N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -355,7 +355,7 @@ TEST(global_max_errors, epsilon_row)
 
     // row-wise matrix
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{NON, L, L,NON,NON}};
+    std::vector<std::vector<detail::trace_directions>> expect{{N, l, l, N, N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -380,15 +380,15 @@ TEST(global_max_errors, single_word_1)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  },
-        {U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL },
-        {U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  },
-        {U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  },
-        {U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  },
-        {U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  },
-        {NON,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU },
-        {NON,NON,U  ,U  ,D  ,D  ,DL ,DUL,NON,NON},
-        {NON,NON,NON,U  ,DU ,DU ,D  ,D  ,NON,NON}
+        {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
+        {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl },
+        {u  ,u  ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  },
+        {u  ,u  ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  },
+        {u  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  },
+        {u  ,Du ,D  ,Dul,Du ,Du ,Du ,Du ,D  ,D  },
+        {N  ,u  ,u  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du },
+        {N  ,N  ,u  ,u  ,D  ,D  ,Dl ,Dul,N  ,N  },
+        {N  ,N  ,N  ,u  ,Du ,Du ,D  ,D  ,N  ,N  }
     };
 
     EXPECT_EQ(result, expect);
@@ -414,15 +414,15 @@ TEST(global_max_errors, single_word_2)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  },
-        {U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL },
-        {U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  },
-        {U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  },
-        {U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  },
-        {NON,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  },
-        {NON,NON,U  ,D  ,DL ,DUL,NON,NON,NON,NON},
-        {NON,NON,NON,U  ,D  ,D  ,NON,NON,NON,NON},
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,NON}
+        {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
+        {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl },
+        {u  ,u  ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  },
+        {u  ,u  ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  },
+        {u  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  },
+        {N  ,Du ,D  ,Dul,Du ,Du ,Du ,Du ,D  ,D  },
+        {N  ,N  ,u  ,D  ,Dl ,Dul,N  ,N  ,N  ,N  },
+        {N  ,N  ,N  ,u  ,D  ,D  ,N  ,N  ,N  ,N  },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  }
     };
 
     EXPECT_EQ(result, expect);
@@ -448,15 +448,15 @@ TEST(global_max_errors, single_word_3)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,NON,NON},
-        {U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,NON,NON},
-        {U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,NON,NON},
-        {U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,NON,NON},
-        {NON,U  ,DU ,DU ,DU ,DU ,D  ,D  ,NON,NON},
-        {NON,NON,D  ,DUL,NON,NON,NON,NON,NON,NON},
-        {NON,NON,NON,D  ,NON,NON,NON,NON,NON,NON},
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,NON},
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,NON}
+        {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,N  ,N  },
+        {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,N  ,N  },
+        {u  ,u  ,D  ,D  ,Dl ,l  ,l  ,l  ,N  ,N  },
+        {u  ,u  ,Du ,Du ,D  ,D  ,Dl ,l  ,N  ,N  },
+        {N  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,N  ,N  },
+        {N  ,N  ,D  ,Dul,N  ,N  ,N  ,N  ,N  ,N  },
+        {N  ,N  ,N  ,D  ,N  ,N  ,N  ,N  ,N  ,N  },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  }
     };
 
     EXPECT_EQ(result, expect);
@@ -482,16 +482,16 @@ TEST(global_max_errors, multiple_words_1)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  },
-        {U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL },
-        {U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  },
-        {U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  },
-        {U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  },
-        {U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  },
-        {NON,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU },
-        {NON,NON,U  ,U  ,D  ,D  ,DL ,DUL,NON,NON},
-        {NON,NON,NON,U  ,DU ,DU ,D  ,D  ,NON,NON},
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,NON}
+        {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
+        {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl },
+        {u  ,u  ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  },
+        {u  ,u  ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  },
+        {u  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  },
+        {u  ,Du ,D  ,Dul,Du ,Du ,Du ,Du ,D  ,D  },
+        {N  ,u  ,u  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du },
+        {N  ,N  ,u  ,u  ,D  ,D  ,Dl ,Dul,N  ,N  },
+        {N  ,N  ,N  ,u  ,Du ,Du ,D  ,D  ,N  ,N  },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  }
     };
 
     EXPECT_EQ(result, expect);
@@ -537,24 +537,24 @@ TEST(global_max_errors, multiple_words_2)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  },
-        {U  ,D  ,L  ,L  ,L  ,DL ,L  ,L  ,L  ,DL },
-        {U  ,DU ,D  ,DL ,DL ,D  ,L  ,L  ,L  ,DL },
-        {U  ,U  ,D  ,DL ,DL ,DUL,D  ,L  ,L  ,L  },
-        {U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,DL ,DL },
-        {U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,DL ,DL },
-        {U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  ,DL },
-        {U  ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  ,DL },
-        {U  ,U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU ,D  },
-        {NON,DU ,U  ,U  ,U  ,D  ,DL ,DL ,DUL,D  },
-        {NON,NON,U  ,U  ,U  ,DU ,D  ,DL ,DL ,DU },
-        {NON,NON,NON,U  ,U  ,U  ,D  ,DL ,DL ,DUL},
-        {NON,NON,NON,NON,U  ,U  ,DU ,D  ,DL ,DL },
-        {NON,NON,NON,NON,NON,U  ,U  ,D  ,DL ,DL },
-        {NON,NON,NON,NON,NON,NON,U  ,DU ,D  ,DL },
-        {NON,NON,NON,NON,NON,NON,NON,U  ,D  ,DL },
-        {NON,NON,NON,NON,NON,NON,NON,NON,DU ,D  },
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,D  }
+        {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
+        {u  ,D  ,l  ,l  ,l  ,Dl ,l  ,l  ,l  ,Dl },
+        {u  ,Du ,D  ,Dl ,Dl ,D  ,l  ,l  ,l  ,Dl },
+        {u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,l  ,l  ,l  },
+        {u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  ,Dl ,Dl },
+        {u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,Dl ,Dl },
+        {u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  ,Dl },
+        {u  ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,Dl },
+        {u  ,u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  },
+        {N  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  },
+        {N  ,N  ,u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du },
+        {N  ,N  ,N  ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul},
+        {N  ,N  ,N  ,N  ,u  ,u  ,Du ,D  ,Dl ,Dl },
+        {N  ,N  ,N  ,N  ,N  ,u  ,u  ,D  ,Dl ,Dl },
+        {N  ,N  ,N  ,N  ,N  ,N  ,u  ,Du ,D  ,Dl },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,u  ,D  ,Dl },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,Du ,D  },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,D  }
     };
 
     EXPECT_EQ(result, expect);
@@ -579,7 +579,7 @@ TEST(semi_global_max_errors, epsilon)
 
     // row-wise matrix
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{NON}};
+    std::vector<std::vector<detail::trace_directions>> expect{{N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -596,7 +596,7 @@ TEST(semi_global_max_errors, epsilon_row)
 
     // row-wise matrix
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{NON,NON,NON,NON,NON}};
+    std::vector<std::vector<detail::trace_directions>> expect{{N, N, N, N, N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -621,15 +621,15 @@ TEST(semi_global_max_errors, single_word)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,NON},
-        {U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,D  },
-        {U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,U  },
-        {U  ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,U  },
-        {U  ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,U  },
-        {U  ,DU ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,D  },
-        {NON,U  ,U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU },
-        {NON,NON,U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU },
-        {NON,NON,NON,U  ,DU ,U  ,D  ,D  ,DL ,NON}
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  },
+        {u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,D  },
+        {u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,u  },
+        {u  ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,u  },
+        {u  ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,u  },
+        {u  ,Du ,D  ,u  ,Du ,Du ,Du ,Du ,D  ,D  },
+        {N  ,u  ,u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du },
+        {N  ,N  ,u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du },
+        {N  ,N  ,N  ,u  ,Du ,u  ,D  ,D  ,Dl ,N  }
     };
 
     EXPECT_EQ(result, expect);
@@ -675,24 +675,24 @@ TEST(semi_global_max_errors, multiple_words)
     std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
     std::vector<std::vector<detail::trace_directions>> expect
     {
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,NON},
-        {U  ,D  ,DUL,DU ,DU ,D  ,DUL,DU ,DU ,D  },
-        {U  ,DU ,D  ,DUL,DU ,DU ,D  ,DL ,DUL,DU },
-        {U  ,U  ,D  ,DL ,DUL,U  ,DU ,D  ,DL ,U  },
-        {U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,DL ,UL },
-        {U  ,U  ,U  ,D  ,DL ,DUL,U  ,DU ,D  ,D  },
-        {U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,D  },
-        {U  ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,DU ,DU },
-        {U  ,U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  },
-        {NON,DU ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,DU },
-        {NON,NON,U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU },
-        {NON,NON,NON,U  ,U  ,U  ,D  ,DL ,DUL,U  },
-        {NON,NON,NON,NON,U  ,U  ,DU ,D  ,DL ,U  },
-        {NON,NON,NON,NON,NON,U  ,U  ,D  ,DL ,DUL},
-        {NON,NON,NON,NON,NON,NON,U  ,DU ,D  ,DL },
-        {NON,NON,NON,NON,NON,NON,NON,U  ,D  ,DL },
-        {NON,NON,NON,NON,NON,NON,NON,NON,DU ,D  },
-        {NON,NON,NON,NON,NON,NON,NON,NON,NON,D  }
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  },
+        {u  ,D  ,Dul,Du ,Du ,D  ,Dul,Du ,Du ,D  },
+        {u  ,Du ,D  ,Dul,Du ,Du ,D  ,Dl ,Dul,Du },
+        {u  ,u  ,D  ,Dl ,Dul,u  ,Du ,D  ,Dl ,u  },
+        {u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,Dl ,ul },
+        {u  ,u  ,u  ,D  ,Dl ,Dul,u  ,Du ,D  ,D  },
+        {u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,D  },
+        {u  ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,Du ,Du },
+        {u  ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  },
+        {N  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,Du },
+        {N  ,N  ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du },
+        {N  ,N  ,N  ,u  ,u  ,u  ,D  ,Dl ,Dul,u  },
+        {N  ,N  ,N  ,N  ,u  ,u  ,Du ,D  ,Dl ,u  },
+        {N  ,N  ,N  ,N  ,N  ,u  ,u  ,D  ,Dl ,Dul},
+        {N  ,N  ,N  ,N  ,N  ,N  ,u  ,Du ,D  ,Dl },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,u  ,D  ,Dl },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,Du ,D  },
+        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,D  }
     };
 
     EXPECT_EQ(result, expect);
