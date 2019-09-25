@@ -119,8 +119,8 @@ public:
         band_col_index = std::min<int32_t>(std::max<int32_t>(band.upper_bound, 0), matrix_base_t::num_cols - 1);
         band_row_index = std::min<int32_t>(std::abs(std::min<int32_t>(band.lower_bound, 0)),
                                            matrix_base_t::num_rows - 1);
-        band_size = band_col_index + band_row_index + 1;
 
+        band_size = band_col_index + band_row_index + 1;
         // Reserve one more cell to deal with last cell in the banded column which needs only the diagonal and up cell.
         matrix_base_t::pool.resize(band_size + 1, element_type{initial_value, initial_value});
     }
@@ -146,8 +146,9 @@ private:
         assert(slice_end > 0);
         assert(slice_begin < slice_end);
 
-        return alignment_column_type{*this, column_data_view_type{std::addressof(matrix_base_t::pool[slice_begin]),
-                                                                  std::addressof(matrix_base_t::pool[slice_end])}};
+        return alignment_column_type{*this,
+                                     column_data_view_type{std::addressof(matrix_base_t::pool[slice_begin]),
+                                                           std::addressof(matrix_base_t::pool[slice_end])}};
     }
 
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::make_proxy
