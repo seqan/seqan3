@@ -377,6 +377,13 @@ public:
     SEQAN3_DOXYGEN_ONLY(size_t first;)
     //!\brief The begin/end position of the alignment in the second sequence.
     SEQAN3_DOXYGEN_ONLY(size_t second;)
+
+    //!\privatesection
+    //!\brief Implicit conversion to seqan3::detail::matrix_coordinate.
+    constexpr operator detail::matrix_coordinate() const
+    {
+        return detail::matrix_coordinate{detail::row_index_type{second}, detail::column_index_type{first}};
+    }
 };
 
 /*!\brief A seqan3::alignment_coordinate can be printed to the seqan3::debug_stream.

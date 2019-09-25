@@ -322,3 +322,12 @@ TEST(alignment_coordinate, basic)
     EXPECT_EQ(test4.first, 10u);
     EXPECT_EQ(test4.second, 5u);
 }
+
+TEST(alignment_coordinate, matrix_coordainte_conversion)
+{
+    alignment_coordinate co{detail::column_index_type{10u}, detail::row_index_type{5u}};
+    detail::matrix_coordinate mc = co;
+
+    EXPECT_EQ(mc.col, 10u);
+    EXPECT_EQ(mc.row, 5u);
+}
