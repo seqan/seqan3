@@ -15,6 +15,7 @@
 #include <tuple>
 
 #include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/pairwise/detail/alignment_algorithm_cache.hpp>
 
 namespace seqan3::detail
 {

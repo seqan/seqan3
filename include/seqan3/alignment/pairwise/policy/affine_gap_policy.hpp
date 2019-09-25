@@ -136,7 +136,7 @@ private:
      */
     template <typename cell_t>
     constexpr void compute_first_band_cell(cell_t && current_cell,
-                                           alignment_algorithm_cache<score_t> & cache & cache,
+                                           alignment_algorithm_cache<score_t> & cache,
                                            score_t const score) const noexcept
     {
         // Compute the diagonal score and the compare with the previous horizontal value.
