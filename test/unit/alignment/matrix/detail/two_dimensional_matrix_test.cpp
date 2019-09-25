@@ -145,6 +145,42 @@ TYPED_TEST(two_dimensional_matrix_test, at)
     EXPECT_THROW((matrix.at({row_index_type{2u}, column_index_type{4u}})), std::invalid_argument);
 }
 
+TYPED_TEST(two_dimensional_matrix_test, conversion)
+{
+    using matrix_type = typename TestFixture::matrix_type;
+
+    matrix_type matrix{number_rows{3}, number_cols{4}};
+    auto it = std::copy(this->expected_range.begin(), this->expected_range.end(), matrix.begin());
+
+    if constexpr (TypeParam::value == matrix_major_order::row)
+    {
+        using converted_t = two_dimensional_matrix<uint32_t, std::allocator<uint32_t>, matrix_major_order::column>;
+        converted_t converted = static_cast<converted_t>(matrix);
+        EXPECT_EQ(converted.rows(), matrix.rows());
+        EXPECT_EQ(converted.cols(), matrix.cols());
+        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{0u}}]), 0u);
+        EXPECT_EQ((converted[{row_index_type{1u}, column_index_type{0u}}]), 4u);
+        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{1u}}]), 1u);
+        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{3u}}]), 3u);
+        EXPECT_EQ((converted[{row_index_type{2u}, column_index_type{0u}}]), 8u);
+        EXPECT_EQ((converted[{row_index_type{2u}, column_index_type{3u}}]), 11u);
+    }
+    else
+    {
+        using converted_t = two_dimensional_matrix<uint32_t, std::allocator<uint32_t>, matrix_major_order::row>;
+        converted_t converted = static_cast<converted_t>(matrix);
+        EXPECT_EQ(converted.rows(), matrix.rows());
+        EXPECT_EQ(converted.cols(), matrix.cols());
+        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{0u}}]), 0u);
+        EXPECT_EQ((converted[{row_index_type{1u}, column_index_type{0u}}]), 1u);
+        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{1u}}]), 3u);
+        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{3u}}]), 9u);
+        EXPECT_EQ((converted[{row_index_type{2u}, column_index_type{0u}}]), 2u);
+        EXPECT_EQ((converted[{row_index_type{2u}, column_index_type{3u}}]), 11u);
+
+    }
+}
+
 //-----------------------------------------------------------------------------
 // Iterator tests
 //-----------------------------------------------------------------------------

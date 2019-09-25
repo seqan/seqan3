@@ -254,6 +254,34 @@ public:
     }
     //!\}
 
+    /*!\brief Explicit conversion to other matrix major order.
+     * \tparam other_value_t The target value type; must be assignable from `value_t`.
+     * \tparam other_allocator_t The allocator type used for the target matrix.
+     * \tparam other_order The other seqan3::detail::matrix_major_order; must not be the same as `order`.
+     *
+     * \details
+     *
+     * Copies the matrix cell by cell.
+     */
+    template <typename other_value_t, typename other_allocator_t, matrix_major_order other_order>
+        requires order != other_order && std::assignable_from<other_value_t &, value_t &>
+    explicit constexpr operator two_dimensional_matrix<other_value_t, other_allocator_t, other_order>() const
+    {
+        using converted_t = two_dimensional_matrix<other_value_t, other_allocator_t, other_order>;
+        converted_t tmp{number_rows{rows()}, number_cols{cols()}};
+
+        for (size_t i = 0; i < cols(); ++i)
+        {
+            for (size_t j = 0; j < rows(); ++j)
+            {
+                matrix_coordinate coord{row_index_type{j}, column_index_type{i}};
+                tmp[coord] = (*this)[coord];
+            }
+        }
+
+        return tmp;
+    }
+
 private:
 
     storage_type storage; //!< The matrix as a one-dimensional (flattened) vector of entries.
