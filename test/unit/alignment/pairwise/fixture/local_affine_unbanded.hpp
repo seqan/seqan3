@@ -104,8 +104,8 @@ static auto dna4_04 = []()
         0,
         "",
         "",
-        alignment_coordinate{column_index_type{0u}, row_index_type{6u}}, // in SeqAn2 both coordinates are (0,0)
-        alignment_coordinate{column_index_type{0u}, row_index_type{6u}}
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}}
     };
 }();
 

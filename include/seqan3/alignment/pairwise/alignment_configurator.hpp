@@ -18,6 +18,10 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
+#include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
+#include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
+#include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
 #include <seqan3/alignment/pairwise/policy/all.hpp>
 #include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
@@ -141,45 +145,25 @@ private:
 
     /*!\brief Transformation trait that chooses the correct matrix policy.
      * \tparam config_type The configuration for which to select the correct matrix policy.
-     * \tparam trait_types A template parameter pack with additional traits to augment the selected policy.
+     * \tparam score_t The value type used for the score matrix.
+     * \tparam trace_t The value type used for the trace matrix.
      */
-    template <typename config_type, typename score_allocator_t, typename trace_allocator_t>
+    template <typename config_type, typename score_t, typename trace_t>
     struct select_matrix_policy
     {
     private:
-
-        //!\brief Selects the correct alignment matrix policy based on the stored config types.
-        template <typename config_t>
-        static constexpr auto select() noexcept
-        {
-            // Check whether traceback was requested or not.
-            if constexpr (std::is_same_v<typename trace_allocator_t::value_type, ignore_t>)
-            {  // No traceback
-                if constexpr (config_t::template exists<align_cfg::band>())
-                    return deferred_crtp_base<banded_score_dp_matrix_policy, score_allocator_t>{};
-                else
-                    return deferred_crtp_base<unbanded_score_dp_matrix_policy, score_allocator_t>{};
-            }
-            else
-            {  // requested traceback
-                if constexpr (config_t::template exists<align_cfg::band>())
-                {
-                    return deferred_crtp_base<banded_score_trace_dp_matrix_policy,
-                                              score_allocator_t,
-                                              trace_allocator_t>{};
-                }
-                else
-                {
-                    return deferred_crtp_base<unbanded_score_trace_dp_matrix_policy,
-                                              score_allocator_t,
-                                              trace_allocator_t>{};
-                }
-            }
-        }
+        //!\brief The selected score matrix for either banded or unbanded alignments.
+        using score_matrix_t = std::conditional_t<config_type::template exists<align_cfg::band>(),
+                                                  alignment_score_matrix_one_column_banded<score_t>,
+                                                  alignment_score_matrix_one_column<score_t>>;
+        //!\brief The selected trace matrix for either banded or unbanded alignments.
+        using trace_matrix_t = std::conditional_t<config_type::template exists<align_cfg::band>(),
+                                                  alignment_trace_matrix_full_banded<trace_t>,
+                                                  alignment_trace_matrix_full<trace_t>>;
 
     public:
         //!\brief The matrix policy based on the configurations given by `config_type`.
-        using type = decltype(select<config_type>());
+        using type = deferred_crtp_base<alignment_matrix_policy, score_matrix_t, trace_matrix_t>;
     };
 
     /*!\brief Transformation trait that chooses the correct gap policy.
@@ -189,21 +173,8 @@ private:
     template <typename config_type, typename ...trait_types>
     struct select_gap_policy
     {
-    private:
-
-        //!\brief Selects the correct gap policy based on the stored config types.
-        template <typename config_t>
-        static constexpr auto select() noexcept
-        {
-            if constexpr (config_t::template exists<align_cfg::band>())
-                return deferred_crtp_base<affine_gap_banded_policy, trait_types...>{};
-            else
-                return deferred_crtp_base<affine_gap_policy, trait_types...>{};
-        }
-
-    public:
         //!\brief The matrix policy based on the configurations given by `config_type`.
-        using type = decltype(select<config_type>());
+        using type = deferred_crtp_base<affine_gap_policy, trait_types...>;
     };
 
     /*!\brief Transformation trait that chooses the correct gap initialisation policy.
@@ -213,21 +184,8 @@ private:
     template <typename config_type, typename ...trait_types>
     struct select_gap_init_policy
     {
-    private:
-
-        //!\brief Selects the correct gap init policy based on the stored config types.
-        template <typename config_t>
-        static constexpr auto select() noexcept
-        {
-            if constexpr (config_t::template exists<align_cfg::band>())
-                return deferred_crtp_base<affine_gap_banded_init_policy, trait_types...>{};
-            else
-                return deferred_crtp_base<affine_gap_init_policy, trait_types...>{};
-        }
-
-    public:
         //!\brief The matrix policy based on the configurations given by `config_type`.
-        using type = decltype(select<config_type>());
+        using type = deferred_crtp_base<affine_gap_init_policy, trait_types...>;
     };
 
 public:
@@ -449,21 +407,6 @@ private:
      */
     template <typename function_wrapper_t, typename ...policies_t, typename config_t>
     static constexpr function_wrapper_t configure_free_ends_optimum_search(config_t const & cfg);
-
-    /*!\brief Determines the trace type.
-     * \tparam config_t The configuration type.
-     */
-    template <typename config_t>
-    struct configure_trace_type
-    {
-        //!\brief If traceback is enabled resolves to seqan3::detail::trace_directions,
-        //!\      otherwise seqan3::detail::ignore_t.
-        using type = std::conditional_t<config_t::template exists<align_cfg::result<with_alignment_type>>() ||
-                                        config_t::template exists<align_cfg::result<with_front_coordinate_type>>(),
-                                        trace_directions,
-                                        ignore_t>;
-    };
-
 };
 
 //!\cond
@@ -473,27 +416,23 @@ template <typename function_wrapper_t, typename config_t>
 constexpr function_wrapper_t alignment_configurator::configure_free_ends_initialisation(config_t const & cfg)
 {
     // ----------------------------------------------------------------------------
-    // score and cell type
+    // score type
     // ----------------------------------------------------------------------------
 
     using score_type = int32_t;
-    using trace_type = typename configure_trace_type<config_t>::type;
-    using cell_type = std::tuple<score_type, score_type, trace_type>;
 
     // ----------------------------------------------------------------------------
     // dynamic programming matrix
     // ----------------------------------------------------------------------------
 
-    using dp_matrix_t = typename select_matrix_policy<config_t,
-                                                      std::allocator<cell_type>,
-                                                      std::allocator<trace_type>>::type;
+    using dp_matrix_t = typename select_matrix_policy<config_t, score_type, trace_directions>::type;
 
     // ----------------------------------------------------------------------------
     // affine gap kernel
     // ----------------------------------------------------------------------------
 
     using local_t = std::bool_constant<config_t::template exists<align_cfg::mode<detail::local_alignment_type>>()>;
-    using affine_t = typename select_gap_policy<config_t, cell_type, local_t>::type;
+    using affine_t = typename select_gap_policy<config_t, score_type, local_t>::type;
 
     // ----------------------------------------------------------------------------
     // configure initialisation policy
