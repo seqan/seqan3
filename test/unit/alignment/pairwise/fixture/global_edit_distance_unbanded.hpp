@@ -54,17 +54,17 @@ static auto dna4_01 = []()
         },
         std::vector
         {
-        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
-        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*A*/U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,
-        /*A*/U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,
-        /*A*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D
+        //      e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
+        /*e*/ N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*A*/ u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*C*/ u  ,u  ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,l  ,l  ,l  ,l  ,
+        /*G*/ u  ,u  ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,l  ,l  ,
+        /*T*/ u  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,
+        /*A*/ u  ,Du ,D  ,Dul,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*C*/ u  ,u  ,u  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,
+        /*G*/ u  ,u  ,u  ,u  ,D  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,
+        /*T*/ u  ,u  ,u  ,u  ,Du ,Du ,D  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,
+        /*A*/ u  ,Du ,Du ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du ,D
         }
     };
 }();
@@ -124,17 +124,17 @@ static auto dna4_02 = []()
         },
         std::vector
         {
-        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
-        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*A*/U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,
-        /*A*/U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,U  ,D  ,DL ,D  ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,U  ,DU ,D  ,DUL,D  ,D  ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,UL ,DU ,DU ,D  ,DUL,DU ,D  ,D  ,DL ,
-        /*A*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,DL ,D  ,DUL,D  ,DUL,DU ,DU ,D
+        //      e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
+        /*e*/ N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*A*/ u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*C*/ u  ,u  ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,l  ,l  ,l  ,l  ,
+        /*G*/ u  ,u  ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,l  ,l  ,
+        /*T*/ u  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,
+        /*A*/ u  ,Du ,D  ,Dul,Du ,Du ,Du ,Du ,D  ,Dl ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*C*/ u  ,u  ,u  ,D  ,Dl ,Dul,Du ,Du ,u  ,D  ,Dl ,D  ,Dl ,l  ,l  ,l  ,l  ,
+        /*G*/ u  ,u  ,u  ,u  ,D  ,D  ,Dl ,Dul,u  ,Du ,D  ,Dul,D  ,D  ,Dl ,l  ,l  ,
+        /*T*/ u  ,u  ,u  ,u  ,Du ,Du ,D  ,D  ,ul ,Du ,Du ,D  ,Dul,Du ,D  ,D  ,Dl ,
+        /*A*/ u  ,Du ,Du ,u  ,Du ,Du ,Du ,Du ,D  ,Dl ,D  ,Dul,D  ,Dul,Du ,Du ,D
         }
     };
 }();
@@ -241,7 +241,7 @@ static auto dna4_03 = []()
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
         std::vector<int>{0},
-        std::vector<detail::trace_directions>{NON}
+        std::vector<detail::trace_directions>{N}
     };
 }();
 
@@ -278,17 +278,17 @@ static auto aa27_01 = []()
         },
         std::vector
         {
-        //     e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
-        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*U*/U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*W*/U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,
-        /*R*/U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,
-        /*I*/U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,
-        /*U*/U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*W*/U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,
-        /*R*/U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,
-        /*I*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,
-        /*U*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D
+        //      e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
+        /*e*/ N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*u*/ u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*W*/ u  ,u  ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,l  ,l  ,l  ,l  ,
+        /*R*/ u  ,u  ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,l  ,l  ,
+        /*I*/ u  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl ,Dl ,
+        /*u*/ u  ,Du ,D  ,Dul,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*W*/ u  ,u  ,u  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,
+        /*R*/ u  ,u  ,u  ,u  ,D  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,
+        /*I*/ u  ,u  ,u  ,u  ,Du ,Du ,D  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,
+        /*u*/ u  ,Du ,Du ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du ,D
         }
     };
 }();
