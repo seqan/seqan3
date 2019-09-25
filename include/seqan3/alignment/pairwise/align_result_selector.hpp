@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <optional>
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
@@ -127,11 +128,13 @@ private:
         if constexpr (configuration_t::template exists<detail::algorithm_debugging>())
         {
             using as_type_list = transfer_template_args_onto_t<alignment_result_value_t, type_list>;
-            using score_matrix_t = two_dimensional_matrix<int32_t, std::allocator<int32_t>, matrix_major_order::column>;
-            using trace_matrix_t = two_dimensional_matrix<trace_directions,
-                                                          std::allocator<trace_directions>,
+            using score_matrix_t = two_dimensional_matrix<std::optional<int32_t>,
+                                                          std::allocator<std::optional<int32_t>>,
                                                           matrix_major_order::column>;
-            // Get the trace matrix only if result configuration requested alignment
+            using trace_matrix_t = two_dimensional_matrix<std::optional<trace_directions>,
+                                                        std::allocator<std::optional<trace_directions>>,
+                                                        matrix_major_order::column>;
+
             if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type>>())
             {
                 using with_score_t = list_traits::replace_at<score_matrix_t, 5, as_type_list>;

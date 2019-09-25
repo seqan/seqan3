@@ -206,10 +206,5 @@ private:
 //!\brief Deduces the type from the passed constructor arguments.
 template <std::ranges::viewable_range fst_rng_t, std::ranges::viewable_range sec_rng_t>
 aligned_sequence_builder(fst_rng_t, sec_rng_t) -> aligned_sequence_builder<fst_rng_t, sec_rng_t>;
-
-//!\brief Deduces the type from the passed constructor arguments.
-template <std::ranges::viewable_range fst_rng_t, std::ranges::viewable_range sec_rng_t>
-aligned_sequence_builder(fst_rng_t, sec_rng_t, std::optional<static_band>)
-    -> aligned_sequence_builder<fst_rng_t, sec_rng_t>;
 //!\}
 } // namespace seqan3::detail
