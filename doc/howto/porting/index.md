@@ -71,6 +71,23 @@ Some components that are rather independent and good first targets to start port
   * The argument parser.
   * Input and Output.
 
+## The argument parser version check feature
+
+The major change is that we do not provide a cmake-level directive to turn off version checking.
+Instead, the current implementation lets you disable the version check in the following ways:
+
+  1. The developer can disable the feature permanently on construction of the seqan3::argument_parser.
+  2. The administrator or user can deactivate the feature globally on their system via the environment variable
+     `SEQAN3_NO_VERSION_CHECK`.
+  3. The user can disable the feature temporarily for one day via a command-line option when calling the application.
+
+Otherwise, if non of the above happened, the user will be prompted at the first call of the application to select
+a configuration (Never/Always/Yes/No). However, if the application is executed in a non-terminal process,
+e.g within a cron job or a workflow, no prompt will be issued but instead the version check will be triggered in
+the background. This will happen no more than once per day.
+
+If you are interested in the new argument parser design, take a look at our tutorial \ref tutorial_argument_parser.
+
 ## SeqAn2 features missing from SeqAn3
 
 This is a non-exhaustive list of features that are currently missing, but **will be ported**:
