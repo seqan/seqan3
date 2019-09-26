@@ -197,7 +197,7 @@ for (int h = 0; h < axis_agent.size(); ++h)
                 {
                     if (agent == "osx") // build on macos
                     {
-                        node("$agent && $axis_compiler_value")
+                        node("$agent && $axis_compiler_value && !catalina") // disable catalina builds for now.
                         {
                             run_unit_tests(env.NODE_NAME,
                                            axis_compiler_value,
