@@ -159,7 +159,8 @@ public:
         if (trace_begin.row >= static_cast<size_t>(band_size) || trace_begin.col >= matrix_base_t::num_cols)
             throw std::invalid_argument{"The given coordinate exceeds the trace matrix size."};
 
-        return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin}},
+        return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin},
+                                       column_index_type{band_col_index}},
                       std::ranges::default_sentinel};
     }
 

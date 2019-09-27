@@ -54,6 +54,12 @@ TEST_F(trace_iterator_fixture, concepts)
     EXPECT_FALSE(std::ranges::bidirectional_range<path_type>);
 }
 
+TEST_F(trace_iterator_fixture, type_deduction)
+{
+    trace_iterator it{matrix.begin()};
+    EXPECT_TRUE((std::is_same_v<decltype(it), seqan3::detail::trace_iterator<decltype(matrix.begin())>>));
+}
+
 TEST_F(trace_iterator_fixture, trace_path_2_3)
 {
     std::vector vec = path(matrix_offset{row_index_type{2}, column_index_type{3}}) | views::to<std::vector>;

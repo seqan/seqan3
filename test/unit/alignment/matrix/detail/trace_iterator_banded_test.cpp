@@ -31,20 +31,29 @@ struct trace_iterator_banded_test : public ::testing::Test
     static constexpr trace_directions LO = trace_directions::left_open;
 
     two_dimensional_matrix<trace_directions> matrix{number_rows{5}, number_cols{6}, std::vector
-    {
+    {  // emulating band {row:2, col:2}
          N,  N,  L,  D,  D,  L,
          N, LO,  D,  D, UO, UO,
          N,  D,  D, LO,  D,  U,
         UO,  D,  D,  D,  D,  N,
          U,  D,  D,  D,  N,  N
     }};
+            // Band view
+        //   0  1  2  3  4  5
+        //0  N LO  L
+        //1 UO  D  D  D
+        //2  U  D  D  D  D
+        //3     D  D LO UO  L
+        //4        D  D  D UO
+        //5           D  D  U
 
-    using trace_iterator_type = decltype(trace_iterator_banded{matrix.begin()});
+    using trace_iterator_type = decltype(trace_iterator_banded{matrix.begin(), column_index_type{0}});
     using path_type = std::ranges::subrange<trace_iterator_type, std::ranges::default_sentinel_t>;
 
     path_type path(matrix_offset const & offset)
     {
-        return path_type{trace_iterator_type{matrix.begin() + offset}, std::ranges::default_sentinel};
+        return path_type{trace_iterator_type{matrix.begin() + offset, column_index_type{2}},
+                         std::ranges::default_sentinel};
     }
 };
 
@@ -54,6 +63,12 @@ TEST_F(trace_iterator_banded_test, concepts)
     EXPECT_TRUE(std::ranges::input_range<path_type>);
     EXPECT_TRUE(std::ranges::forward_range<path_type>);
     EXPECT_FALSE(std::ranges::bidirectional_range<path_type>);
+}
+
+TEST_F(trace_iterator_banded_test, type_deduction)
+{
+    trace_iterator_banded it{matrix.begin(), column_index_type{0u}};
+    EXPECT_TRUE((std::is_same_v<decltype(it), seqan3::detail::trace_iterator_banded<decltype(matrix.begin())>>));
 }
 
 TEST_F(trace_iterator_banded_test, trace_path_2_5)
@@ -69,31 +84,31 @@ TEST_F(trace_iterator_banded_test, coordinate)
     auto p = path(matrix_offset{row_index_type{2}, column_index_type{5}});
     auto it = p.begin();
 
-    EXPECT_EQ(it.coordinate().row, 2u);
+    EXPECT_EQ(it.coordinate().row, 5u);
     EXPECT_EQ(it.coordinate().col, 5u);
     ++it;
-    EXPECT_EQ(it.coordinate().row, 1u);
+    EXPECT_EQ(it.coordinate().row, 4u);
     EXPECT_EQ(it.coordinate().col, 5u);
     ++it;
-    EXPECT_EQ(it.coordinate().row, 0u);
+    EXPECT_EQ(it.coordinate().row, 3u);
     EXPECT_EQ(it.coordinate().col, 5u);
     ++it;
-    EXPECT_EQ(it.coordinate().row, 1u);
+    EXPECT_EQ(it.coordinate().row, 3u);
     EXPECT_EQ(it.coordinate().col, 4u);
     ++it;
-    EXPECT_EQ(it.coordinate().row, 2u);
+    EXPECT_EQ(it.coordinate().row, 3u);
     EXPECT_EQ(it.coordinate().col, 3u);
     ++it;
     EXPECT_EQ(it.coordinate().row, 3u);
     EXPECT_EQ(it.coordinate().col, 2u);
     ++it;
-    EXPECT_EQ(it.coordinate().row, 3u);
+    EXPECT_EQ(it.coordinate().row, 2u);
     EXPECT_EQ(it.coordinate().col, 1u);
     ++it;
-    EXPECT_EQ(it.coordinate().row, 3u);
+    EXPECT_EQ(it.coordinate().row, 1u);
     EXPECT_EQ(it.coordinate().col, 0u);
     ++it;
-    EXPECT_EQ(it.coordinate().row, 2u);
+    EXPECT_EQ(it.coordinate().row, 0u);
     EXPECT_EQ(it.coordinate().col, 0u);
 }
 
@@ -107,7 +122,7 @@ struct iterator_fixture<trace_iterator_banded_test> : public trace_iterator_band
     using base_t = trace_iterator_banded_test;
 
     using iterator_type = typename base_t::trace_iterator_type;
-    using const_iterator_type = decltype(trace_iterator_banded{base_t::matrix.cbegin()});
+    using const_iterator_type = decltype(trace_iterator_banded{base_t::matrix.cbegin(), column_index_type{0}});
 
     // Test forward iterator concept.
     using iterator_tag = std::forward_iterator_tag;
@@ -117,12 +132,14 @@ struct iterator_fixture<trace_iterator_banded_test> : public trace_iterator_band
     {
         auto begin()
         {
-            return iterator_type{matrix.begin() + matrix_offset{row_index_type{2}, column_index_type{5}}};
+            return iterator_type{matrix.begin() + matrix_offset{row_index_type{2}, column_index_type{5}},
+                                 column_index_type{2}};
         }
 
         auto begin() const
         {
-            return const_iterator_type{matrix.cbegin() + matrix_offset{row_index_type{2}, column_index_type{5}}};
+            return const_iterator_type{matrix.cbegin() + matrix_offset{row_index_type{2}, column_index_type{5}},
+                                       column_index_type{2}};
         }
 
         auto end() { return std::ranges::default_sentinel; }
