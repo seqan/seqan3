@@ -54,8 +54,14 @@ public:
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
      * \param[in] matrix_iter The underlying matrix iterator.
+     * \param[in] pivot_column The last column index which is still inside of the band in the first row of the
+     *                         banded matrix.
      */
-    constexpr trace_iterator_banded(matrix_iter_t const matrix_iter) noexcept : base_t{matrix_iter}
+    template <typename index_t>
+    constexpr trace_iterator_banded(matrix_iter_t const matrix_iter, column_index_type<index_t> const & pivot_column)
+        noexcept :
+        base_t{matrix_iter},
+        pivot_column{static_cast<size_t>(pivot_column.get())}
     {}
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
@@ -75,6 +81,14 @@ public:
     {}
     //!\}
 
+    //!\copydoc seqan3::detail::trace_iterator_base::coordinate()
+    [[nodiscard]] constexpr matrix_coordinate coordinate() const noexcept
+    {
+        auto coord = base_t::coordinate();
+        coord.row += static_cast<int32_t>(coord.col - pivot_column);
+        return coord;
+    }
+
 private:
     //!\copydoc seqan3::detail::trace_iterator_base::go_left
     constexpr void go_left(matrix_iter_t & iter) const noexcept
@@ -91,14 +105,16 @@ private:
         // So going diagonal means go to the previous column and stay in the same row.
         iter -= matrix_offset{row_index_type{0}, column_index_type{1}};
     }
+
+    size_t pivot_column{}; //!< The largest column index which is inside of the band in the first row of the matrix.
 };
 
 /*!\name Type deduction guides
  * \{
  */
 //!\brief Deduces the template argument from the passed iterator.
-template <two_dimensional_matrix_iterator matrix_iter_t>
-trace_iterator_banded(matrix_iter_t const) -> trace_iterator_banded<matrix_iter_t>;
+// template <two_dimensional_matrix_iterator matrix_iter_t>
+// trace_iterator_banded(matrix_iter_t const) -> trace_iterator_banded<matrix_iter_t>;
 //!\}
 
 } // namespace seqan3::detail
