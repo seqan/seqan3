@@ -110,8 +110,8 @@ struct iterator_fixture<typename decorator_t::iterator_ra> : iterator_fixture<ty
 
         decorator_t::iterator_ra begin() { return range.begin_ra(); }
         decorator_t::iterator_ra end()   { return range.end_ra(); }
-        decorator_t::const_iterator_ra cbegin(){ return range.cbegin_ra(); }
-        decorator_t::const_iterator_ra cend()  { return range.cend_ra(); }
+        decorator_t::const_iterator_ra begin() const { return range.cbegin_ra(); }
+        decorator_t::const_iterator_ra end()   const { return range.cend_ra(); }
     };
 
     expose_random_access_iterator test_range{};

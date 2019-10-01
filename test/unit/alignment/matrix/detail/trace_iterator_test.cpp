@@ -197,13 +197,13 @@ struct iterator_fixture<trace_iterator_fixture> : public trace_iterator_fixture
             return iterator_type{matrix.begin() + matrix_offset{row_index_type{2}, column_index_type{3}}};
         }
 
-        auto cbegin() const
+        auto begin() const
         {
             return const_iterator_type{matrix.cbegin() + matrix_offset{row_index_type{2}, column_index_type{3}}};
         }
 
         auto end() { return std::ranges::default_sentinel; }
-        auto cend() const { return std::ranges::default_sentinel; }
+        auto end() const { return std::ranges::default_sentinel; }
 
         decltype(base_t::matrix) matrix;
     };
