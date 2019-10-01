@@ -30,12 +30,11 @@ namespace seqan3::views
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup views
  *
- * Calls seqan3::nucleotide_alphabet::complement() on every element of the input range.
+ * \details
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/complement.hpp>
- * ```
+ * \header_file{seqan3/range/views/complement.hpp}
+ *
+ * Calls seqan3::nucleotide_alphabet::complement() on every element of the input range.
  *
  * ### View properties
  *

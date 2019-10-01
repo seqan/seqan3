@@ -579,10 +579,7 @@ namespace seqan3::views
  *
  * \details
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/take.hpp>
- * ```
+ * \header_file{seqan3/range/views/take.hpp}
  *
  * ### View properties
  *

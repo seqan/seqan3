@@ -211,15 +211,12 @@ namespace seqan3::views
  *
  * \details
  *
+ * \header_file{seqan3/range/views/persist.hpp}
+ *
  * For ranges that model std::ranges::viewable_range, this adaptor just returns std::views::all. However this adaptor
  * can also take ranges that are not "viewable", e.g. temporaries of containers. It wraps them in a shared pointer
  * internally so all view requirements like constant copy are satisfied. However construction and copying might be
  * slightly slower, because of reference counting.
- *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/persist.hpp>
- * ```
  *
  * ### View properties
  *

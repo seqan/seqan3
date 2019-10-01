@@ -89,12 +89,9 @@ namespace seqan3::views
  *
  * \details
  *
- * This view can be used to do easy quality based trimming of sequences.
+ * \header_file{seqan3/range/views/trim.hpp}
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/trim.hpp>
- * ```
+ * This view can be used to do easy quality based trimming of sequences.
  *
  * ### View properties
  *

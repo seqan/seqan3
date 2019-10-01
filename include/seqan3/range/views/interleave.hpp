@@ -325,15 +325,12 @@ namespace seqan3::views
  *
  * \details
  *
+ * \header_file{seqan3/range/views/interleave.hpp}
+ *
  * This view can be used to insert one range into another range at regular intervals. It behaves essentially like
  * `| std::views::chunk(step_size) | views::join(inserted_range)` except that for input that models
  * std::ranges::random_access_range and std::ranges::sized_range a more efficient data structure is returned
  * (otherwise it returns exactly the above combination of views).
- *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/interleave.hpp>
- * ```
  *
  * ### View properties
  *

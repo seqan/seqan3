@@ -36,10 +36,7 @@ namespace seqan3::views
  *
  * \details
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/take_exactly.hpp>
- * ```
+ * \header_file{seqan3/range/views/take_exactly.hpp}
  *
  * ### View properties
  *

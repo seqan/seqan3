@@ -71,10 +71,7 @@ namespace seqan3
  *
  * \details
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/search/algorithm/search.hpp>
- * ```
+ * \header_file{seqan3/search/algorithm/search.hpp}
  *
  * ### Complexity
  *
