@@ -158,6 +158,7 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
 
     std::vector<std::thread> workers;
     std::atomic<size_t> registered_writer = 0;
+    std::atomic<size_t> registered_reader = 0;
     queue_op_status push_status = queue_op_status::success;
     queue_op_status pop_status = queue_op_status::success;
     for (size_t tid = 0; tid < thread_count; ++tid)
@@ -167,10 +168,10 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
             // Become writer!
             if (tid < writer_count)
             {
-                {  // Wait until all writer are present.
+                {  // Wait until all reader are present.
                     spin_delay delay{};
-                    registered_writer.fetch_add(1);
-                    while (registered_writer.load() < writer_count)
+                    ++registered_writer;
+                    while (registered_reader.load() < (thread_count - writer_count))
                         delay.wait();
                 }
 
@@ -189,9 +190,10 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
                         push_status = ex;
                     }
                 }
-               // printf("stop writer #%ld %lu\n", tid, offset_end - offset);
+                // printf("stop writer #%ld %lu\n", tid, offset_end - offset);
                 // Last writer! No more values will come, so we close the queue.
-                if (registered_writer.fetch_sub(1) == 1)
+                ++registered_writer;
+                if (registered_writer.load() == (2 * writer_count))
                 {
                     queue.close();
                     // printf("writer #%ld closed the queue\n", tid);
@@ -204,6 +206,7 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
 
                 {  // Wait until all writers are setup.
                     spin_delay delay{};
+                    ++registered_reader;
                     while (registered_writer.load() < writer_count)
                         delay.wait();
                 }
