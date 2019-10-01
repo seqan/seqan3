@@ -216,13 +216,17 @@ public:
         }
 
         // READ STRUCTURE (if present)
+        [[maybe_unused]] int64_t structure_length{};
         if constexpr (!detail::decays_to_ignore_v<structure_type>)
         {
             if constexpr (structured_seq_combined)
             {
                 assert(std::addressof(seq) == std::addressof(structure));
                 using alph_type = typename value_type_t<structure_type>::structure_alphabet_type;
-                std::ranges::copy(read_structure<alph_type>(stream_view), begin(structure));
+                // We need the structure_length parameter to count the length of the structure while reading
+                // because we cannot infer it from the (already resized) structure_seq object.
+                auto res = std::ranges::copy(read_structure<alph_type>(stream_view), std::ranges::begin(structure));
+                structure_length = std::ranges::distance(std::ranges::begin(structure), res.out);
 
                 if constexpr (!detail::decays_to_ignore_v<bpp_type>)
                     detail::bpp_from_rna_structure<alph_type>(bpp, structure);
@@ -231,25 +235,27 @@ public:
             {
                 using alph_type = value_type_t<structure_type>;
                 std::ranges::copy(read_structure<alph_type>(stream_view), std::back_inserter(structure));
+                structure_length = std::ranges::distance(structure);
 
                 if constexpr (!detail::decays_to_ignore_v<bpp_type>)
                     detail::bpp_from_rna_structure<alph_type>(bpp, structure);
             }
-            if constexpr (!detail::decays_to_ignore_v<seq_type>)
-                if (size(seq) != size(structure))
-                    throw parse_error{"Found sequence and associated structure of different length."};
         }
         else if constexpr (!detail::decays_to_ignore_v<bpp_type>)
         {
             detail::bpp_from_rna_structure<wuss51>(bpp, read_structure<wuss51>(stream_view));
-
-            if constexpr (!detail::decays_to_ignore_v<seq_type>)
-                if (size(seq) != size(bpp))
-                    throw parse_error{"Found sequence and associated structure of different length."};
+            structure_length = std::ranges::distance(bpp);
         }
         else
         {
             detail::consume(stream_view | views::take_until(is_space)); // until whitespace
+        }
+
+        if constexpr (!detail::decays_to_ignore_v<seq_type> &&
+                      !(detail::decays_to_ignore_v<structure_type> && detail::decays_to_ignore_v<bpp_type>))
+        {
+            if (std::ranges::distance(seq) != structure_length)
+                throw parse_error{"Found sequence and associated structure of different length."};
         }
 
         // READ ENERGY (if present)
