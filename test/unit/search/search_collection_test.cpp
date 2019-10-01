@@ -111,6 +111,18 @@ TYPED_TEST(search_test, error_free)
     }
 }
 
+TYPED_TEST(search_test, convertible_query)
+{
+    using result_t = std::pair<typename TypeParam::size_type, typename TypeParam::size_type>;
+    using hits_result_t = std::vector<result_t>;
+    std::vector<qualified<dna4, phred42>> query{{'A'_dna4, '!'_phred42},
+                                                {'C'_dna4, '!'_phred42},
+                                                {'G'_dna4, '!'_phred42},
+                                                {'T'_dna4, '!'_phred42}};
+
+    EXPECT_EQ(uniquify(search(query, this->index)), (hits_result_t{{0, 0}, {0, 4}, {0, 8}, {1, 0}, {1, 4}, {1, 8}}));
+}
+
 TYPED_TEST(search_test, multiple_queries)
 {
     using result_t = std::vector<std::pair<typename TypeParam::size_type, typename TypeParam::size_type>>;
