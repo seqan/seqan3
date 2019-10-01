@@ -176,37 +176,51 @@ public:
      * \{
     */
     //!\brief Pre-increment, return updated iterator.
+    //!\cond
+    template <typename base_t_ = base_t>
+    //!\endcond
     constexpr derived_t & operator++() noexcept(noexcept(++std::declval<base_t &>()))
     //!\cond
-        requires std::input_iterator<base_t>
+        requires requires (base_t_ i) { ++i; }
     //!\endcond
     {
         ++(*this_to_base());
         return *this_derived();
     }
 
-    //!\brief Post-increment of non-copyable iterators returns void.
-    constexpr void operator++(int) noexcept(noexcept(++std::declval<derived_t &>()))
+    //!\brief Post-increment of input iterators that do not return a copy of themselves but `void` or a proxy type.
+    //!\cond
+    template <typename base_t_ = base_t>
+    //!\endcond
+    constexpr auto operator++(int) noexcept(noexcept(std::declval<base_t &>()++))
+    //!\cond
+        requires requires (base_t_ i) { i++; requires !std::same_as<decltype(i++), base_t_>; }
+    //!\endcond
     {
-        ++(*this_derived());
+        return (*this_to_base())++;
     }
 
     //!\brief Post-increment, return previous iterator state.
-    constexpr derived_t operator++(int) noexcept(noexcept(++std::declval<derived_t &>()) &&
+    //!\cond
+    template <typename base_t_ = base_t>
+    //!\endcond
+    constexpr derived_t operator++(int) noexcept(noexcept(std::declval<base_t &>()++) &&
                                                  noexcept(derived_t(std::declval<base_t &>())))
     //!\cond
-        requires std::semiregular<base_t>
+        requires requires (base_t_ i) { i++; requires std::same_as<decltype(i++), base_t_>; } &&
+                 std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        derived_t cpy{*this_to_base()};
-        ++(*this_derived());
-        return cpy;
+        return derived_t{(*this_to_base())++};
     }
 
     //!\brief Pre-decrement, return updated iterator.
+    //!\cond
+    template <typename base_t_ = base_t>
+    //!\endcond
     constexpr derived_t & operator--() noexcept(noexcept(--std::declval<base_t &>()))
     //!\cond
-        requires std::bidirectional_iterator<base_t>
+        requires requires (base_t_ i) { --i; }
     //!\endcond
     {
         --(*this_to_base());
@@ -214,21 +228,25 @@ public:
     }
 
     //!\brief Post-decrement, return previous iterator state.
-    constexpr derived_t operator--(int) noexcept(noexcept(--std::declval<derived_t &>()) &&
+    //!\cond
+    template <typename base_t_ = base_t>
+    //!\endcond
+    constexpr derived_t operator--(int) noexcept(noexcept(std::declval<base_t &>()--) &&
                                                  noexcept(derived_t{std::declval<base_t &>()}))
     //!\cond
-        requires std::bidirectional_iterator<base_t>
+        requires requires (base_t_ i) { i--; } && std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        derived_t cpy{*this_to_base()};
-        --(*this_derived());
-        return cpy;
+        return derived_t{(*this_to_base())--};
     }
 
     //!\brief Move iterator to the right.
+    //!\cond
+    template <typename base_t_ = base_t>
+    //!\endcond
     constexpr derived_t & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() += skip))
     //!\cond
-        requires std::random_access_iterator<base_t>
+        requires requires (base_t_ i, difference_type const n) { i += n; }
     //!\endcond
     {
         *this_to_base() += skip;
@@ -236,71 +254,71 @@ public:
     }
 
     //!\brief Returns an iterator which is advanced by `skip` positions.
-    constexpr derived_t operator+(difference_type const skip) const
-        noexcept(noexcept(std::declval<derived_t &>() += skip) && noexcept(derived_t{std::declval<base_t &>()}))
     //!\cond
-        requires std::random_access_iterator<base_t>
+    template <typename base_t_ = base_t>
+    //!\endcond
+    constexpr derived_t operator+(difference_type const skip) const
+        noexcept(noexcept(std::declval<base_t &>() + skip) && noexcept(derived_t{std::declval<base_t &>()}))
+    //!\cond
+        requires requires (base_t_ const i, difference_type const n) { i + n; } &&
+                 std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        derived_t cpy{*this_to_base()};
-        return cpy += skip;
+        return derived_t{*this_to_base() + skip};
     }
 
     //!\brief Non-member operator+ delegates to non-friend operator+.
     constexpr friend derived_t operator+(difference_type const skip, derived_t const & it)
-        noexcept(noexcept(it + skip))
+        noexcept(noexcept(skip + std::declval<base_t const &>()))
     //!\cond
-        requires std::random_access_iterator<base_t>
+        requires requires (base_t const i, difference_type const n) { n + i; } &&
+                 std::constructible_from<derived_t, base_t>
     //!\endcond
     {
-        return it + skip;
+        return derived_t{skip + static_cast<base_t const &>(it)};
     }
 
     //!\brief Decrement iterator by skip.
-    constexpr derived_t & operator-=(difference_type const skip) noexcept(noexcept(std::declval<derived_t &>() += skip))
     //!\cond
-        requires std::random_access_iterator<base_t>
+    template <typename base_t_ = base_t>
+    //!\endcond
+    constexpr derived_t & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -= skip))
+    //!\cond
+        requires requires (base_t_ i, difference_type const n) { i -= n; }
     //!\endcond
     {
-        return *this_derived() += -skip;
+        *this_to_base() -= skip;
+        return *this_derived();
     }
 
     //!\brief Return decremented copy of this iterator.
+    //!\cond
+    template <typename base_t_ = base_t>
+    //!\endcond
     constexpr derived_t operator-(difference_type const skip) const
-        noexcept(noexcept(std::declval<derived_t &>() -= skip) && noexcept(derived_t(std::declval<base_t &>())))
+        noexcept(noexcept(std::declval<base_t const &>() - skip) && noexcept(derived_t(std::declval<base_t &>())))
     //!\cond
-        requires std::random_access_iterator<base_t>
+        requires requires (base_t_ i, difference_type const n) { i - n; } &&
+                 std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        derived_t cpy{*this_to_base()};
-        return cpy -= skip;
-    }
-
-    //!\brief Non-member operator- delegates to non-friend operator-.
-    constexpr friend derived_t operator-(difference_type const skip, derived_t const & it)
-        noexcept(noexcept(std::declval<derived_t &>() - skip))
-    //!\cond
-        requires std::random_access_iterator<base_t>
-    //!\endcond
-    {
-        return it - skip;
+        return derived_t{*this_to_base() - skip};
     }
 
     //!\brief Return offset between this and remote iterator's position.
     constexpr difference_type operator-(derived_t const rhs) const
         noexcept(noexcept(std::declval<base_t &>() - std::declval<base_t &>()))
     //!\cond
-        requires std::random_access_iterator<base_t>
+        requires std::sized_sentinel_for<base_t, base_t>
     //!\endcond
     {
-        assert(*rhs.this_to_base() <= *this_to_base());
         return static_cast<difference_type>(*this_to_base() - *rhs.this_to_base());
     }
     //!\}
 
     /*!\name Reference/Dereference operators
      * \{
-    */
+     */
     //!\brief Dereference operator returns element currently pointed at.
     constexpr reference operator*() noexcept(noexcept(*std::declval<base_t &>()))
     //!\cond
@@ -338,23 +356,29 @@ public:
     }
 
     //!\brief Return underlying container value currently pointed at.
-    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n)
-        noexcept(noexcept(*std::declval<derived_t &>()) && noexcept(std::declval<derived_t &>() + 3))
     //!\cond
-        requires std::random_access_iterator<base_t>
+    template <typename base_t_ = base_t>
+    //!\endcond
+    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n)
+        noexcept(noexcept(std::declval<base_t &>()[0]))
+    //!\cond
+        requires requires (base_t_ i, difference_type const n) { i[n]; }
     //!\endcond
     {
-        return *(*this_derived() + n);
+        return (*this_to_base())[n];
     }
 
     //!\brief Return underlying container value currently pointed at.
-    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n) const
-        noexcept(noexcept(*std::declval<derived_t const &>()) && noexcept(std::declval<derived_t const &>() + 3))
     //!\cond
-        requires std::random_access_iterator<base_t>
+    template <typename base_t_ = base_t>
+    //!\endcond
+    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n) const
+        noexcept(noexcept(std::declval<base_t const &>()[0]))
+    //!\cond
+        requires requires (base_t_ const i, difference_type const n) { i[n]; }
     //!\endcond
     {
-        return *(*this_derived() + n);
+        return (*this_to_base())[n];
     }
     //!\}
 

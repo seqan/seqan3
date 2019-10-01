@@ -24,10 +24,12 @@ private:
 public:
     // the member types are never imported automatically, but can be explicitly inherited:
     using typename base_t::value_type;
-    using typename base_t::pointer;
+    using typename base_t::difference_type;
     using typename base_t::iterator_category;
     // this member type is overwritten as we do above:
     using reference = value_type;
+    // Explicitly set the pointer to void as we return a temporary.
+    using pointer = void;
 
     // define rule-of-six:
     my_iterator() = default;
@@ -46,6 +48,17 @@ public:
     {
         return complement(base_t::operator*());
     }
+
+    // Since the reference type changed we might as well need to override the subscript-operator.
+    reference operator[](difference_type const n) const noexcept
+        requires std::random_access_iterator<std::ranges::iterator_t<urng_t>>
+    {
+        return complement(base_t::operator[](n));
+    }
+
+    // We delete arrow operator because of the temporary. An alternative could be to return the temporary
+    // wrapped in a std::unique_ptr.
+    pointer operator->() const noexcept = delete;
 };
 
 // The inherited_iterator_base creates the necessary code so we also model RandomAccess now!
