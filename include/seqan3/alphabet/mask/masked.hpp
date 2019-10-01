@@ -60,7 +60,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr masked() : base_type{} {}                      //!< Defaulted.
+    constexpr masked() = default;                            //!< Defaulted.
     constexpr masked(masked const &) = default;              //!< Defaulted.
     constexpr masked(masked &&) = default;                   //!< Defaulted.
     constexpr masked & operator =(masked const &) = default; //!< Defaulted.
