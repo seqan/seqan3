@@ -312,7 +312,7 @@ public:
             auto seq_stream = field_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                            {
                                                if (!is_legal_alph(c))
-                                                   throw format_error{std::string{"Encountered an unexpected letter: "} +
+                                                   throw parse_error{std::string{"Encountered an unexpected letter: "} +
                                                                      is_legal_alph.msg.str() +
                                                                      " evaluated to false on " +
                                                                      detail::make_printable(c)};

@@ -183,7 +183,7 @@ TEST_F(sam_format, format_error_illegal_character_in_seq)
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\tAC!T\t*\n"));
 
     alignment_file_input fin{istream, format_sam{}};
-    EXPECT_THROW(fin.begin(), format_error);
+    EXPECT_THROW(fin.begin(), parse_error);
 }
 
 TEST_F(sam_format, format_error_invalid_arithmetic_value)

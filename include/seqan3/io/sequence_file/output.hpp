@@ -603,7 +603,7 @@ public:
     //!\}
 
     //!\brief The options are public and its members can be set directly.
-    sequence_file_output_options options;
+    sequence_file_output_options options{};
 
     /*!\cond DEV
      * \brief Expose a reference to the secondary stream. [public, but not documented as part of the API]

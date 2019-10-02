@@ -56,7 +56,7 @@ void write3(benchmark::State & state)
 {
     std::ostringstream ostream;
     detail::sequence_file_output_format_REMOVEME<format_fasta> format;
-    sequence_file_output_options options;
+    sequence_file_output_options options{};
 
     for (auto _ : state)
     {

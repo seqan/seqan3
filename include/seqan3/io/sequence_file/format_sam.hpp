@@ -19,10 +19,13 @@
 #include <vector>
 
 #include <seqan3/io/alignment_file/format_sam.hpp>
+#include <seqan3/io/exception.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
+#include <seqan3/range/views/take_until.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -71,7 +74,7 @@ public:
               typename id_type,
               typename qual_type>
     void read(stream_type                                                               & stream,
-              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & SEQAN3_DOXYGEN_ONLY(options),
+              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
               seq_type                                                                  & sequence,
               id_type                                                                   & id,
               qual_type                                                                 & qualities)
@@ -96,11 +99,14 @@ public:
         }
 
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
-            if (std::distance(std::ranges::begin(sequence), std::ranges::end(sequence)) == 0)
-                throw format_error{"The sequence information must not be empty."};
+            if (std::ranges::distance(sequence) == 0)
+                throw parse_error{"The sequence information must not be empty."};
         if constexpr (!detail::decays_to_ignore_v<id_type>)
-            if (std::distance(std::ranges::begin(id), std::ranges::end(id)) == 0)
-                throw format_error{"The sequence information must not be empty."};
+            if (std::ranges::distance(id) == 0)
+                throw parse_error{"The id information must not be empty."};
+
+        if (options.truncate_ids)
+            id = id | views::take_until_and_consume(is_space) | std::ranges::to<id_type>;
     }
 
 private:

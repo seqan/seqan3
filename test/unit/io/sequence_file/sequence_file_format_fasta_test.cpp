@@ -6,76 +6,23 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <sstream>
+#include <string>
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/quality/all.hpp>
-#include <seqan3/io/sequence_file/input_format_concept.hpp>
-#include <seqan3/io/sequence_file/output_format_concept.hpp>
-#include <seqan3/io/sequence_file/format_fasta.hpp>
-#include <seqan3/range/views/convert.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/io/sequence_file/all.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
+#include "sequence_file_format_test_template.hpp"
+
 using namespace seqan3;
 
-// ----------------------------------------------------------------------------
-// general
-// ----------------------------------------------------------------------------
-
-TEST(general, concepts)
+template <>
+struct sequence_file_read<format_fasta> : public sequence_file_data
 {
-    EXPECT_TRUE((sequence_file_input_format<format_fasta>));
-    EXPECT_TRUE((sequence_file_output_format<format_fasta>));
-}
-
-// ----------------------------------------------------------------------------
-// reading
-// ----------------------------------------------------------------------------
-
-struct read : public ::testing::Test
-{
-    std::vector<std::string> expected_ids
-    {
-        { "ID1" },
-        { "ID2" },
-        { "ID3 lala" },
-    };
-
-    std::vector<dna5_vector> expected_seqs
-    {
-        { "ACGTTTTTTTTTTTTTTT"_dna5 },
-        { "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5 },
-        { "ACGTTTA"_dna5 },
-    };
-
-    detail::sequence_file_input_format_REMOVEME<format_fasta> format;
-
-    sequence_file_input_options<dna5, false> options;
-
-    std::string id;
-    dna5_vector seq;
-
-    void do_read_test(std::string const & input)
-    {
-        std::stringstream istream{input};
-
-        for (unsigned i = 0; i < 3; ++i)
-        {
-            id.clear();
-            seq.clear();
-
-            EXPECT_NO_THROW(( format.read(istream, options, seq, id, std::ignore) ));
-
-            EXPECT_TRUE((std::ranges::equal(seq, expected_seqs[i])));
-            EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
-        }
-    }
-};
-
-TEST_F(read, standard)
-{
-    std::string input
+    std::string standard_input
     {
         "> ID1\n"
         "ACGTTTTTTTTTTTTTTT\n"
@@ -85,8 +32,67 @@ TEST_F(read, standard)
         "ACGTTTA\n"
     };
 
-    do_read_test(input);
-}
+    std::string illegal_alphabet_character_input
+    {
+        "> ID1\n"
+        "ACGPTTTTTTTTTTTTTT\n"
+        "> ID2\n"
+        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
+        "> ID3 lala\n"
+        "ACGTTTA\n"
+    };
+
+    std::string standard_output
+    {
+        "> ID1\n"
+        "ACGTTTTTTTTTTTTTTT\n"
+        "> ID2\n"
+        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\nTT\n"
+        //                                             linebreak inserted after 80 char  ^
+        "> ID3 lala\n"
+        "ACGTTTA\n"
+    };
+
+    std::string no_or_ill_formatted_id_input
+    {
+        "! ID1\n"
+        "ACGTTTTTTTTTTTTTTT\n"
+    };
+};
+
+// ---------------------------------------------------------------------------------------------------------------------
+// parametrized tests
+// ---------------------------------------------------------------------------------------------------------------------
+
+INSTANTIATE_TYPED_TEST_CASE_P(fasta, sequence_file_read, format_fasta);
+INSTANTIATE_TYPED_TEST_CASE_P(fasta, sequence_file_write, format_fasta);
+
+// ----------------------------------------------------------------------------
+// reading
+// ----------------------------------------------------------------------------
+
+struct read : public sequence_file_data
+{
+    sequence_file_input_options<dna15, false> options{};
+
+    std::string id;
+    dna5_vector seq;
+
+    void do_read_test(std::string const & input)
+    {
+        std::stringstream istream{input};
+
+        sequence_file_input fin{istream, format_fasta{}, fields<field::ID, field::SEQ>{}};
+        fin.options = options;
+
+        auto it = fin.begin();
+        for (unsigned i = 0; i < 3; ++i, ++it)
+        {
+            EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(*it), seqs[i])));
+            EXPECT_EQ(get<field::ID>(*it), ids[i]);
+        }
+    }
+};
 
 TEST_F(read, newline_before_eof)
 {
@@ -176,138 +182,6 @@ TEST_F(read, mixed_issues)
     do_read_test(input);
 }
 
-TEST_F(read, options_truncate_ids)
-{
-    std::string input
-    {
-        "> ID1\n"
-        "ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
-        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
-        "ACGTTTA\n"
-    };
-
-    options.truncate_ids = true;
-    expected_ids[2] = "ID3"; // "lala" is stripped
-    do_read_test(input);
-}
-
-TEST_F(read, only_seq)
-{
-    std::string input
-    {
-        "> ID1\n"
-        "ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
-        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
-        "ACGTTTA\n"
-    };
-
-    std::stringstream istream{input};
-
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        id.clear();
-        seq.clear();
-
-        format.read(istream, options, seq, std::ignore, std::ignore);
-
-        EXPECT_TRUE((std::ranges::equal(seq, expected_seqs[i])));
-    }
-}
-
-TEST_F(read, only_id)
-{
-    std::string input
-    {
-        "> ID1\n"
-        "ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
-        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
-        "ACGTTTA\n"
-    };
-
-    std::stringstream istream{input};
-
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        id.clear();
-        seq.clear();
-
-        format.read(istream, options, std::ignore, id, std::ignore);
-
-        EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
-    }
-}
-
-TEST_F(read, seq_qual)
-{
-    std::string input
-    {
-        "> ID1\n"
-        "ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
-        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
-        "ACGTTTA\n"
-    };
-
-    std::stringstream istream{input};
-    sequence_file_input_options<dna5, true> options2;
-
-    std::vector<qualified<dna5, phred42>> seq_qual;
-
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        id.clear();
-        seq_qual.clear();
-
-        format.read(istream, options2, seq_qual, id, seq_qual);
-
-        EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
-        EXPECT_TRUE((std::ranges::equal(seq_qual | views::convert<dna5>, expected_seqs[i])));
-    }
-}
-
-TEST_F(read, fail_no_id)
-{
-    std::string input
-    {
-        "! ID1\n"
-        "ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
-        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
-        "ACGTTTA\n"
-    };
-
-    std::stringstream istream{input};
-
-    EXPECT_THROW( (format.read(istream, options, std::ignore, std::ignore, std::ignore)),
-                  parse_error );
-}
-
-TEST_F(read, fail_wrong_char)
-{
-    std::string input
-    {
-        "> ID1\n"
-        "ACGPTTTTTTTTTTTTTT\n"
-        "> ID2\n"
-        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
-        "ACGTTTA\n"
-    };
-
-    std::stringstream istream{input};
-
-    EXPECT_THROW( (format.read(istream, options, seq, id, std::ignore)),
-                  parse_error );
-}
-
 // ----------------------------------------------------------------------------
 // writing
 // ----------------------------------------------------------------------------
@@ -328,92 +202,21 @@ struct write : public ::testing::Test
         "Test3"
     };
 
-    detail::sequence_file_output_format_REMOVEME<format_fasta> format;
-
-    sequence_file_output_options options;
+    sequence_file_output_options options{};
 
     std::ostringstream ostream;
 
     void do_write_test()
     {
+        sequence_file_output fout{ostream, format_fasta{}, fields<field::SEQ, field::ID>{}};
+        fout.options = options;
+
         for (unsigned i = 0; i < 3; ++i)
-            EXPECT_NO_THROW(( format.write(ostream, options, seqs[i], ids[i], std::ignore) ));
+            EXPECT_NO_THROW(( fout.emplace_back(seqs[i], ids[i]) ));
 
         ostream.flush();
     }
 };
-
-TEST_F(write, arg_handling_id_missing)
-{
-    EXPECT_THROW( (format.write(ostream, options, seqs[0], std::ignore, std::ignore)),
-                   std::logic_error );
-}
-
-TEST_F(write, arg_handling_id_empty)
-{
-    EXPECT_THROW( (format.write(ostream, options, seqs[0], std::string_view{""}, std::ignore)),
-                   std::runtime_error );
-}
-
-TEST_F(write, arg_handling_seq_missing)
-{
-    EXPECT_THROW( (format.write(ostream, options, std::ignore, ids[0], std::ignore)),
-                   std::logic_error );
-}
-
-TEST_F(write, arg_handling_seq_empty)
-{
-    EXPECT_THROW( (format.write(ostream, options, std::string_view{""}, ids[0], std::ignore)),
-                   std::runtime_error );
-}
-
-TEST_F(write, default_options)
-{
-    std::string comp
-    {
-        "> TEST 1\n"
-        "ACGT\n"
-        "> Test2\n"
-        "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGG\nCTGNAGGCTGN\n"
-        //                                             linebreak inserted after 80 char  ^
-        "> Test3\n"
-        "GGAGTATAATATATATATATATAT\n"
-    };
-
-    do_write_test();
-
-    EXPECT_EQ(ostream.str(), comp);
-}
-
-TEST_F(write, seq_qual)
-{
-    auto convert_to_qualified = std::views::transform([] (auto const in)
-    {
-        return qualified<dna5, phred42>{} = in;
-    });
-
-    for (unsigned i = 0; i < 3; ++i)
-        EXPECT_NO_THROW(( format.write(ostream,
-                                       options,
-                                       seqs[i] | convert_to_qualified,
-                                       ids[i],
-                                       seqs[i] | convert_to_qualified) ));
-
-    ostream.flush();
-
-    std::string comp
-    {
-        "> TEST 1\n"
-        "ACGT\n"
-        "> Test2\n"
-        "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGG\nCTGNAGGCTGN\n"
-        //                                             linebreak inserted after 80 char  ^
-        "> Test3\n"
-        "GGAGTATAATATATATATATATAT\n"
-    };
-
-    EXPECT_EQ(ostream.str(), comp);
-}
 
 TEST_F(write, options_letters_per_line)
 {
