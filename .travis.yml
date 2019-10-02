@@ -79,6 +79,7 @@ matrix:
       - BUILD=header
       - BUILD_TYPE=Release
       - CMAKE_VERSION=3.7.2
+      - CXXFLAGS="-Wno-deprecated-declarations"
   - << : *linux-gcc-7
     env:
       - BUILD=snippet
