@@ -12,6 +12,7 @@
 #include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/trim.hpp>
 #include <seqan3/std/ranges>
 
@@ -26,18 +27,18 @@ TEST(view_trim, standalone)
 
     // trim by phred_value
     auto v1 = vec | views::trim(20u);                        // == ['I','I','?','5']
-    EXPECT_EQ(v1 | std::ranges::to<std::vector>, cmp1);
+    EXPECT_EQ(v1 | views::to<std::vector>, cmp1);
 
     // trim by quality character
     auto v2 = vec | views::trim(phred42{40});             // == ['I','I']
-    EXPECT_EQ(v2 | std::ranges::to<std::vector>, cmp2);
+    EXPECT_EQ(v2 | views::to<std::vector>, cmp2);
 
     // function syntax
     auto v3 = views::trim(vec, 20u);                         // == ['I','I','?','5']
-    EXPECT_EQ(v3 | std::ranges::to<std::vector>, cmp1);
+    EXPECT_EQ(v3 | views::to<std::vector>, cmp1);
 
     // combinability
-    std::string v4 = views::trim(vec, 20u) | views::to_char | std::ranges::to<std::string>;  // == "II?5"
+    std::string v4 = views::trim(vec, 20u) | views::to_char | views::to<std::string>;  // == "II?5"
     EXPECT_EQ("II?5", v4);
 }
 
@@ -51,18 +52,18 @@ TEST(view_trim, qualified)
 
     // trim by phred_value
     auto v1 = vec | views::trim(20u);
-    EXPECT_EQ(v1 | std::ranges::to<std::vector>, cmp1);
+    EXPECT_EQ(v1 | views::to<std::vector>, cmp1);
 
     // trim by quality character
     auto v2 = vec | views::trim(dna5q{'C'_dna5, phred42{40}});
-    EXPECT_EQ(v2 | std::ranges::to<std::vector>, cmp2);
+    EXPECT_EQ(v2 | views::to<std::vector>, cmp2);
 
     // function syntax
     auto v3 = views::trim(vec, 20u);
-    EXPECT_EQ(v3 | std::ranges::to<std::vector>, cmp1);
+    EXPECT_EQ(v3 | views::to<std::vector>, cmp1);
 
     // combinability
-    std::string v4 = views::trim(vec, 20u) | views::to_char;
+    std::string v4 = views::trim(vec, 20u) | views::to_char | views::to<std::string>;
     EXPECT_EQ("AGGA", v4);
 }
 

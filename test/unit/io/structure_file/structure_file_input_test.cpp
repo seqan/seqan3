@@ -168,7 +168,9 @@ TEST_F(structure_file_input_class, guided_stream_constructor)
 TEST_F(structure_file_input_class, guided_stream_constructor_and_custom_fields)
 {
     /* guided stream constructor + custom fields */
-    structure_file_input fin{std::wistringstream{"> ID\nACGU\n....\n" | views::convert<wchar_t>},
+    structure_file_input fin{std::wistringstream{"> ID\nACGU\n....\n"
+                                                 | views::convert<wchar_t>
+                                                 | views::to<std::wstring>},
                              format_vienna{},
                              fields<field::SEQ>{}};
 

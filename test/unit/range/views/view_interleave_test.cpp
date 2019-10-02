@@ -13,6 +13,8 @@
 #include <seqan3/range/views/view_all.hpp>
 #include <seqan3/std/ranges>
 
+#include <seqan3/test/pretty_printing.hpp>
+
 #include <gtest/gtest.h>
 
 using namespace seqan3;
@@ -87,6 +89,7 @@ TEST(view_interleave, concepts)
     EXPECT_FALSE((std::ranges::output_range<decltype(v2), dna4>));
 }
 
+#if 0 // blocked by https://github.com/ericniebler/range-v3/issues/1320
 TEST(view_interleave, chunk_join)
 {
     std::forward_list<dna4> u{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4};
@@ -104,3 +107,4 @@ TEST(view_interleave, chunk_join)
         it++;
     }
 }
+#endif

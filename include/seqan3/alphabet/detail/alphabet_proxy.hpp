@@ -318,7 +318,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator==(derived_type const lhs, t const rhs) noexcept
-        -> std::enable_if_t<!std::same_as<derived_type, t> && std::detail::weakly_equality_comparable_with<alphabet_type, t>,
+        -> std::enable_if_t<!std::same_as<derived_type, t> && seqan3::detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
         return (static_cast<alphabet_type>(lhs) == rhs);
@@ -327,7 +327,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator==(t const lhs, derived_type const rhs) noexcept
-        -> std::enable_if_t<!std::same_as<derived_type, t> && std::detail::weakly_equality_comparable_with<alphabet_type, t>,
+        -> std::enable_if_t<!std::same_as<derived_type, t> && seqan3::detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
         return (rhs == lhs);
@@ -336,7 +336,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator!=(derived_type const lhs, t const rhs) noexcept
-        -> std::enable_if_t<!std::same_as<derived_type, t> && std::detail::weakly_equality_comparable_with<alphabet_type, t>,
+        -> std::enable_if_t<!std::same_as<derived_type, t> && seqan3::detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
         return !(lhs == rhs);
@@ -345,7 +345,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator!=(t const lhs, derived_type const rhs) noexcept
-        -> std::enable_if_t<!std::same_as<derived_type, t> && std::detail::weakly_equality_comparable_with<alphabet_type, t>,
+        -> std::enable_if_t<!std::same_as<derived_type, t> && seqan3::detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
         return (rhs != lhs);

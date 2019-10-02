@@ -22,7 +22,9 @@
 #include <variant>
 #include <vector>
 
-#include <range/v3/algorithm/equal.hpp>
+// remove the following after range-v3 is updated to 1.0
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
@@ -1169,3 +1171,4 @@ struct tuple_element<elem_no,
 {};
 
 } // namespace std
+#pragma GCC diagnostic pop

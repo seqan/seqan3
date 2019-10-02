@@ -43,14 +43,19 @@ namespace seqan3::views
  * | std::ranges::forward_range       |                                       | *preserved*                     |
  * | std::ranges::bidirectional_range |                                       | *preserved*                     |
  * | std::ranges::random_access_range |                                       | *preserved*                     |
- * |                                  |                                       |                                  |
+ * | std::ranges::contiguous_range    |                                       | *lost*¹                         |
+ * |                                  |                                       |                                 |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                    |
  * | std::ranges::view                |                                       | *guaranteed*                    |
  * | std::ranges::sized_range         |                                       | *preserved*                     |
  * | std::ranges::common_range        |                                       | *preserved*                     |
- * | std::ranges::output_range        |                                       | *lost*                          |
+ * | std::ranges::output_range        |                                       | *lost*¹                         |
  * | seqan3::const_iterable_range     |                                       | *preserved*                     |
- * |                                  |                                       |                                  |
- * | std::ranges::range_reference_t   | seqan3::convertible_to<out_t>          | `out_t`                         |
+ * |                                  |                                       |                                 |
+ * | std::ranges::range_reference_t   | seqan3::convertible_to<out_t>         | `out_t`                         |
+ *
+ * ¹ These are preserved if `out_t` is the same as `std::ranges::range_reference_t<urng_t>`, i.e. no conversion
+ * takes place.
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -64,12 +69,15 @@ namespace seqan3::views
  * \hideinitializer
  */
 template <typename out_t>
-auto const convert = std::views::transform([] (auto const & in) -> out_t
+auto const convert = std::views::transform([] (auto && in) -> out_t
 {
-    if constexpr (implicitly_convertible_to<std::remove_reference_t<decltype(in)>, out_t>)
-        return in;
+    static_assert(std::convertible_to<decltype(in) &&, out_t> || explicitly_convertible_to<decltype(in) &&, out_t>,
+                  "The reference type of the input to views::convert is not convertible to out_t.");
+
+    if constexpr (std::convertible_to<decltype(in) &&, out_t>)
+        return std::forward<decltype(in)>(in);
     else
-        return static_cast<out_t>(in);
+        return static_cast<out_t>(std::forward<decltype(in)>(in));
 });
 
 //!\}

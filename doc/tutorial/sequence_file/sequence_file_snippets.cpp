@@ -105,7 +105,7 @@ record_type rec = std::move(*fin.begin()); // avoid copying
 sequence_file_input fin1{"/tmp/my.fastq"};
 sequence_file_input fin2{"/tmp/my.fastq"}; // for simplicity we take the same file
 
-for (auto && [rec1, rec2] : std::views::zip(fin1, fin2)) // && is important! because views::zip returns temporaries
+for (auto && [rec1, rec2] : views::zip(fin1, fin2)) // && is important! because views::zip returns temporaries
 {
     if (get<field::ID>(rec1) != get<field::ID>(rec2))
         throw std::runtime_error("Oh oh your pairs don't match.");

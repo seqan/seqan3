@@ -178,7 +178,7 @@ class async_input_buffer_view<urng_t>::async_input_buffer_iterator
     contrib::fixed_buffer_queue<value_type_t<urng_t>> * buffer_ptr = nullptr;
 
     //!\brief The cached value this iterator holds.
-    value_type_t<urng_t> cached_value;
+    mutable value_type_t<urng_t> cached_value;
 
     //!\brief Whether this iterator is at end (the buffer is empty and closed).
     bool at_end = false;
@@ -225,14 +225,8 @@ public:
     /*!\name Access operations
      * \{
      */
-    //!\brief Dereferences the cached iterator.
-    reference operator*() noexcept
-    {
-        return cached_value;
-    }
-
-    //!\brief Dereferences the cached iterator.
-    value_type const & operator*() const noexcept
+    //!\brief Return the cached value.
+    reference operator*() const noexcept
     {
         return cached_value;
     }

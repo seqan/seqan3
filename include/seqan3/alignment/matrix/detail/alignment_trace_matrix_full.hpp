@@ -16,6 +16,7 @@
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_proxy.hpp>
 #include <seqan3/alignment/matrix/detail/trace_iterator.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 
@@ -67,7 +68,7 @@ protected:
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::column_data_view_type
     using column_data_view_type = std::conditional_t<coordinate_only,
                                         decltype(std::views::iota(coordinate_type{}, coordinate_type{})),
-                                        decltype(std::views::zip(std::declval<std::span<element_type>>(),
+                                        decltype(views::zip(std::declval<std::span<element_type>>(),
                                                                 std::declval<std::span<element_type>>(),
                                                                 std::views::iota(coordinate_type{}, coordinate_type{})))>;
 
@@ -166,10 +167,10 @@ private:
         else
         {
             matrix_coordinate current_position{row_index_type{0u}, column_index_type{column_index}};
-            auto col = std::views::zip(std::span<element_type>{std::addressof(matrix_base_t::data[current_position]),
+            auto col = views::zip(std::span<element_type>{std::addressof(matrix_base_t::data[current_position]),
                                                                matrix_base_t::num_rows},
-                                      std::span<element_type>{matrix_base_t::cache_left},
-                                      std::views::iota(std::move(row_begin), std::move(row_end)));
+                                  std::span<element_type>{matrix_base_t::cache_left},
+                                  std::views::iota(std::move(row_begin), std::move(row_end)));
             return alignment_column_type{*this, column_data_view_type{col}};
         }
     }

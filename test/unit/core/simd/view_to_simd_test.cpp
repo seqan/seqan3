@@ -49,7 +49,7 @@ public:
         {
             // Generate sequences that end on different boundaries
             size_t l = simd_traits<simd_t>::length * 64 - (i * simd_traits<simd_t>::length) - i;
-            std::ranges::copy(test::generate_sequence<value_type_t<container_t>>(l), std::back_inserter(sequences[i]));
+            std::ranges::copy(test::generate_sequence<value_type_t<container_t>>(l), std::ranges::back_inserter(sequences[i]));
         }
 
         transformed_simd_vec.resize(simd_traits<simd_t>::length * 64, simd::fill<simd_t>(padding_value_dna4));  // longest sequence in set.
@@ -263,7 +263,7 @@ TYPED_TEST(view_to_simd_test, empty_underlying_range)
 TYPED_TEST(view_to_simd_test, too_many_sequences)
 {
     typename TestFixture::container_t cont;
-    std::ranges::copy("ACGTACGACT"_dna4, std::back_inserter(cont));
+    std::ranges::copy("ACGTACGACT"_dna4, std::ranges::back_inserter(cont));
     this->sequences.push_back(cont);
 
     EXPECT_THROW(typename TestFixture::view_to_simd_type{this->sequences}, std::invalid_argument);

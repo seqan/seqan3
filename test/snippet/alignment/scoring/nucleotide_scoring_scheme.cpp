@@ -4,6 +4,7 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/core/debug_stream.hpp>
+#include <seqan3/range/views/zip.hpp>
 
 int main()
 {
@@ -34,7 +35,7 @@ std::vector<seqan3::dna15> two = "ATACTA"_dna15;
 seqan3::nucleotide_scoring_scheme scheme3; // hamming distance is default
 
 int score = 0;
-for (auto pair : std::views::zip(one, two))
+for (auto pair : seqan3::views::zip(one, two))
     score += scheme3.score(std::get<0>(pair), std::get<1>(pair));
 seqan3::debug_stream << "Score: " << score << "\n"; // == 0 - 1 + 0 - 1 + 0 + 0 = -2
 }

@@ -39,7 +39,7 @@ namespace seqan3::views
  *
  * This adaptor returns a single line **excluding** the end-line character(s), *but moving the cursor behind them
  * for single-pass ranges.* I.e. for all ranges that satisfy std::ranges::forward_range this is the same as calling
- * ranges::views::take_while:
+ * std::views::take_while:
  * \snippet test/snippet/range/views/take_line_adaptor_def.cpp usage
  * but for *single pass input ranges* this means that any endline characters after the returned range are also consumed
  * (this potentially includes multiple newline characters).

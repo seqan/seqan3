@@ -12,6 +12,7 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/complement.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
@@ -22,29 +23,29 @@ TEST(view_complement, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation
-    dna5_vector v = foo | views::complement | std::ranges::to<std::vector>;
+    dna5_vector v = foo | views::complement | views::to<std::vector>;
     EXPECT_EQ(v, "TGCAT"_dna5);
 
     // function notation
-    dna5_vector v2(views::complement(foo) | std::ranges::to<std::vector>);
+    dna5_vector v2(views::complement(foo) | views::to<std::vector>);
     EXPECT_EQ(v2, "TGCAT"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | views::complement | std::views::reverse | std::ranges::to<std::vector>;
+    dna5_vector v3 = foo | views::complement | std::views::reverse | views::to<std::vector>;
     EXPECT_EQ(v3, "TACGT"_dna5);
 
     dna5_vector const bar{"ACGTA"_dna5};
 
     // const pipe notation
-    dna5_vector v4 = bar | views::complement | std::ranges::to<std::vector>;
+    dna5_vector v4 = bar | views::complement | views::to<std::vector>;
     EXPECT_EQ(v4, "TGCAT"_dna5);
 
     // const function notation
-    dna5_vector v5(views::complement(bar) | std::ranges::to<std::vector>);
+    dna5_vector v5(views::complement(bar) | views::to<std::vector>);
     EXPECT_EQ(v5, "TGCAT"_dna5);
 
     // const combinability
-    dna5_vector v6 = bar | views::complement | std::views::reverse | std::ranges::to<std::vector>;
+    dna5_vector v6 = bar | views::complement | std::views::reverse | views::to<std::vector>;
     EXPECT_EQ(v6, "TACGT"_dna5);
 }
 

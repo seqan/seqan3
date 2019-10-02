@@ -19,6 +19,7 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
@@ -34,32 +35,32 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
     // pipe notation
     auto v = vec | adaptor(1, 4);
-    EXPECT_EQ("oob", v | std::ranges::to<std::string>);
+    EXPECT_EQ("oob", v | views::to<std::string>);
 
     // function notation
-    std::string v2{adaptor(vec, 1, 4) | std::ranges::to<std::string>};
+    std::string v2{adaptor(vec, 1, 4) | views::to<std::string>};
     EXPECT_EQ("oob", v2);
 
     // combinability
     auto v3 = vec | adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
-    EXPECT_EQ("o", v3 | std::ranges::to<std::string>);
-    std::string v3b = vec | std::views::reverse | adaptor(1, 4) | ranges::view::unique | std::ranges::to<std::string>;
+    EXPECT_EQ("o", v3 | views::to<std::string>);
+    std::string v3b = vec | std::views::reverse | adaptor(1, 4) | ranges::view::unique | views::to<std::string>;
     EXPECT_EQ("abo", v3b);
 
     // store arg
     auto a0 = adaptor(1, 4);
     auto v4 = vec | a0;
-    EXPECT_EQ("oob", v4 | std::ranges::to<std::string>);
+    EXPECT_EQ("oob", v4 | views::to<std::string>);
 
     // store combined
     auto a1 = adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
     auto v5 = vec | a1;
-    EXPECT_EQ("o", v5 | std::ranges::to<std::string>);
+    EXPECT_EQ("o", v5 | views::to<std::string>);
 
     // store combined in middle
     auto a2 = std::views::reverse | adaptor(1, 4) | ranges::view::unique;
     auto v6 = vec | a2;
-    EXPECT_EQ("abo", v6 | std::ranges::to<std::string>);
+    EXPECT_EQ("abo", v6 | views::to<std::string>);
 }
 
 template <typename adaptor_t>
@@ -122,7 +123,7 @@ TEST(view_slice, underlying_is_shorter)
 
     std::string v;
     // full parsing on conversion
-    EXPECT_NO_THROW(( v = vec | views::single_pass_input | views::slice(1, 4) | std::ranges::to<std::string> ));
+    EXPECT_NO_THROW(( v = vec | views::single_pass_input | views::slice(1, 4) | views::to<std::string> ));
     EXPECT_EQ("oob", v);
 }
 

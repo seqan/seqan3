@@ -116,7 +116,7 @@ template <typename ...tuple_comps,
     requires implicitly_convertible_to<other_t, tuple_derived_t>
 inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
                                        tuple_derived_t,
-                                       seqan3::detail::weakly_equality_comparable_with,
+                                       seqan3::detail::weakly_equality_comparable_with_,
                                        other_t> = false;
 template <typename ...tuple_comps,
           typename tuple_derived_t,
@@ -509,10 +509,10 @@ public:
     template <typename indirect_component_type>
     constexpr bool operator==(indirect_component_type const rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_equality_comparable_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_equality_comparable_with_, indirect_component_type>
     //!\endcond
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with<indirect_component_type>>>;
+        using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with_<indirect_component_type>>>;
         return get<component_type>(*this) == rhs;
     }
 
@@ -520,10 +520,10 @@ public:
     template <typename indirect_component_type>
     constexpr bool operator!=(indirect_component_type const rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_equality_comparable_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_equality_comparable_with_, indirect_component_type>
     //!\endcond
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with<indirect_component_type>>>;
+        using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with_<indirect_component_type>>>;
         return get<component_type>(*this) != rhs;
     }
 

@@ -17,6 +17,7 @@
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_proxy.hpp>
 #include <seqan3/alignment/matrix/detail/trace_iterator_banded.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 
@@ -70,7 +71,7 @@ protected:
     //!\copydoc alignment_matrix_column_major_range_base::column_data_view_type
     using column_data_view_type = std::conditional_t<coordinate_only,
                                         decltype(std::views::iota(coordinate_type{}, coordinate_type{})),
-                                        decltype(std::views::zip(std::declval<std::span<element_type>>(),
+                                        decltype(views::zip(std::declval<std::span<element_type>>(),
                                                                 std::declval<std::span<element_type>>(),
                                                                 std::views::iota(coordinate_type{}, coordinate_type{})))>;
 
@@ -196,7 +197,7 @@ private:
                                          column_index_type{column_index}};
             size_type slice_size =  slice_end - slice_begin;
             // We need to jump to the offset.
-            auto col = std::views::zip(
+            auto col = views::zip(
                             std::span<element_type>{std::addressof(matrix_base_t::data[band_begin]), slice_size},
                             std::span<element_type>{std::addressof(matrix_base_t::cache_left[slice_begin]), slice_size},
                             std::views::iota(std::move(row_begin), std::move(row_end)));

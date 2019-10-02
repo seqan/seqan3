@@ -14,6 +14,7 @@
 
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/views/persist.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
@@ -30,42 +31,42 @@ TEST(view_persist, delegate_to_view_all)
 
     // pipe notation
     auto v = vec | views::persist;
-    EXPECT_EQ("foo", std::string{v});
+    EXPECT_EQ("foo", v | views::to<std::string>);
 
     // function notation
-    std::string v2 = views::persist(vec) | std::ranges::to<std::string>;
+    std::string v2 = views::persist(vec) | views::to<std::string>;
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = vec | views::persist | ranges::view::unique;
-    EXPECT_EQ("fo", std::string{v3});
-    std::string v3b = vec | std::views::reverse | views::persist | ranges::view::unique | std::ranges::to<std::string>;
+    EXPECT_EQ("fo", v3 | views::to<std::string>);
+    std::string v3b = vec | std::views::reverse | views::persist | ranges::view::unique | views::to<std::string>;
     EXPECT_EQ("of", v3b);
 
     // store combined
     auto a1 = views::persist | ranges::view::unique;
     auto v5 = vec | a1;
-    EXPECT_EQ("fo", std::string{v5});
+    EXPECT_EQ("fo", v5 | views::to<std::string>);
 }
 
 TEST(view_persist, wrap_temporary)
 {
     // pipe notation
     auto v = std::string{"foo"} | views::persist;
-    EXPECT_EQ("foo", std::string(v));
+    EXPECT_EQ("foo", v | views::to<std::string>);
 
     // function notation
-    std::string v2 = views::persist(std::string{"foo"}) | std::ranges::to<std::string>;
+    std::string v2 = views::persist(std::string{"foo"}) | views::to<std::string>;
     EXPECT_EQ("foo", v2);
 
     // combinability
     auto v3 = std::string{"foo"} | views::persist | ranges::view::unique;
-    EXPECT_EQ("fo", std::string(v3));
+    EXPECT_EQ("fo", v3 | views::to<std::string>);
     std::string v3b = std::string{"foo"}
                     | views::persist
                     | std::views::filter(is_char<'o'>)
                     | ranges::view::unique
-                    | std::ranges::to<std::string>;
+                    | views::to<std::string>;
     EXPECT_EQ("o", v3b);
 }
 
@@ -74,16 +75,16 @@ TEST(view_persist, const_)
     // inner const
     using t = std::string const;
     auto v = t{"foo"} | views::persist;
-    EXPECT_EQ("foo", std::string{v});
+    EXPECT_EQ("foo", v | views::to<std::string>);
 
     // outer const
     auto const & v2 = std::string{"foo"} | views::persist;
-    EXPECT_EQ("foo", std::string{v2});
+    EXPECT_EQ("foo", v2 | views::to<std::string>);
 
     // inner + outer const
     using t = std::string const;
     auto const & v3 = t{"foo"} | views::persist;
-    EXPECT_EQ("foo", std::string{v3});
+    EXPECT_EQ("foo", v3 | views::to<std::string>);
 }
 
 TEST(view_persist, concepts)

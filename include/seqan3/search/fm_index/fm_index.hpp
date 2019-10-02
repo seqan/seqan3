@@ -17,7 +17,9 @@
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/range/shortcuts.hpp>
+#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to_rank.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
@@ -298,7 +300,8 @@ private:
                                            return r + 1;
                                        })
                                    }
-                                   | std::views::join(delimiter);
+                                   | views::join(delimiter)
+                                   | views::to<std::vector<uint8_t>>;
 
         std::ranges::copy((tmp | std::views::reverse), seqan3::begin(tmp_text));
 
@@ -308,7 +311,7 @@ private:
         //                   | views::deep{std::views::transform([] (uint8_t const r) { return r + 1; })} // increase rank
         //                   | views::deep{std::views::reverse}
         //                   | std::views::reverse
-        //                   | std::views::join(delimiter), // join with delimiter
+        //                   | views::join(delimiter), // join with delimiter
         //                   seqan3::begin(tmp_text));
 
         sdsl::construct_im(index, tmp_text, 0);

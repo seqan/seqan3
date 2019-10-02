@@ -7,8 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>

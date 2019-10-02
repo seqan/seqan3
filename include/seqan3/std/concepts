@@ -22,7 +22,8 @@
 #include <functional>
 #include <type_traits>
 
-#include <range/v3/utility/common_type.hpp>
+#include <concepts/concepts.hpp>
+#include <range/v3/functional/concepts.hpp>
 
 #include <seqan3/core/type_traits/basic.hpp>
 
@@ -51,13 +52,62 @@
  *
  */
 
-namespace std
-{
-
 /*!\defgroup concepts concepts
  * \ingroup std
  * \brief The \<concepts\> header from C++20's standard library.
  */
+
+// see https://github.com/seqan/seqan3/projects/19#card-27177080 :
+#if 0
+namespace std
+{
+
+namespace
+{
+
+// from concept/concepts.hpp (also range-v3)
+using namespace ::concepts;
+
+// missing from range-v3
+template <class B>
+SEQAN3_CONCEPT boolean =
+    movable<seqan3::remove_cvref_t<B>> &&
+    requires(std::remove_reference_t<B> const & b1,
+             std::remove_reference_t<B> const & b2, bool const a)
+    {
+        requires convertible_to<const std::remove_reference_t<B>&, bool>;
+        !b1;      requires convertible_to<decltype(!b1), bool>;
+        b1 && a;  requires same_as<decltype(b1 && a), bool>;
+        b1 || a;  requires same_as<decltype(b1 || a), bool>;
+        b1 && b2; requires same_as<decltype(b1 && b2), bool>;
+        a && b2;  requires same_as<decltype(a && b2), bool>;
+        b1 || b2; requires same_as<decltype(b1 || b2), bool>;
+        a || b2;  requires same_as<decltype(a || b2), bool>;
+        b1 == b2; requires convertible_to<decltype(b1 == b2), bool>;
+        b1 == a;  requires convertible_to<decltype(b1 == a), bool>;
+        a == b2;  requires convertible_to<decltype(a == b2), bool>;
+        b1 != b2; requires convertible_to<decltype(b1 != b2), bool>;
+        b1 != a;  requires convertible_to<decltype(b1 != a), bool>;
+        a != b2;  requires convertible_to<decltype(a != b2), bool>;
+  };
+
+// from range/v3/functional/concepts.hpp
+using ::ranges::invocable;
+using ::ranges::predicate;
+using ::ranges::regular_invocable;
+using ::ranges::relation;
+using ::ranges::strict_weak_order;
+
+} // anonymous namespace
+
+} // namespace std
+
+#else  // old code
+
+#include <range/v3/utility/common_type.hpp>
+
+namespace std
+{
 
 //!\addtogroup concepts
 //!\{
@@ -393,12 +443,12 @@ namespace std
 //!\}
 //!\cond
 template < class T >
-SEQAN3_CONCEPT equality_comparable = detail::weakly_equality_comparable_with<T, T>;
+SEQAN3_CONCEPT equality_comparable = std::detail::weakly_equality_comparable_with<T, T>;
 //!\endcond
 
 /*!\interface   std::equality_comparable_with <>
- * \extends     std::detail::weakly_equality_comparable_with
- * \brief       Requires std::detail::weakly_equality_comparable_witht<t1,t2>, but also that t1 and t2, as well as
+ * \extends     seqan3::detail::weakly_equality_comparable_with
+ * \brief       Requires seqan3::detail::weakly_equality_comparable_witht<t1,t2>, but also that t1 and t2, as well as
  *              their common_reference_t satisfy std::equality_comparable.
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
@@ -601,5 +651,7 @@ SEQAN3_CONCEPT strict_weak_order = relation<R, T, U>;
 //!\}
 
 } // namespace std
+
+#endif // compile check
 
 #endif // not __has_include(<concepts>)

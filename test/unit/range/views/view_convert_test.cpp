@@ -12,6 +12,7 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/convert.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;
@@ -22,16 +23,16 @@ TEST(view_convert, basic)
     std::vector<bool> cmp{1, 1, 0, 1, 0, 0, 1, 1, 1};
 
     // pipe notation
-    std::vector<bool> v = vec | views::convert<bool> | std::ranges::to<std::vector>;
+    std::vector<bool> v = vec | views::convert<bool> | views::to<std::vector>;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    std::vector<bool> v2(views::convert<bool>(vec) | std::ranges::to<std::vector>);
+    std::vector<bool> v2(views::convert<bool>(vec) | views::to<std::vector>);
     EXPECT_EQ(cmp, v2);
 
     // combinability
     std::vector<bool> cmp2{1, 1, 1, 0, 0, 1, 0, 1, 1};
-    std::vector<bool> v3 = vec | views::convert<bool> | std::views::reverse | std::ranges::to<std::vector>;
+    std::vector<bool> v3 = vec | views::convert<bool> | std::views::reverse | views::to<std::vector>;
     EXPECT_EQ(cmp2, v3);
 }
 
@@ -41,16 +42,16 @@ TEST(view_convert, explicit_conversion)
     dna4_vector cmp{"ACGATAGGA"_dna4};
 
     // pipe notation
-    dna4_vector v = vec | views::convert<dna4> | std::ranges::to<std::vector>;
+    dna4_vector v = vec | views::convert<dna4> | views::to<std::vector>;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    dna4_vector v2(views::convert<dna4>(vec) | std::ranges::to<std::vector>);
+    dna4_vector v2(views::convert<dna4>(vec) | views::to<std::vector>);
     EXPECT_EQ(cmp, v2);
 
     // combinability
     dna4_vector cmp2{"AGGATAGCA"_dna4};
-    dna4_vector v3 = vec | views::convert<dna4> | std::views::reverse | std::ranges::to<std::vector>;
+    dna4_vector v3 = vec | views::convert<dna4> | std::views::reverse | views::to<std::vector>;
     EXPECT_EQ(cmp2, v3);
 }
 

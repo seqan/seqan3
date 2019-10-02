@@ -25,8 +25,26 @@ namespace seqan3::detail
  * \{
  */
 
+/*!\interface   seqan3::detail::weakly_equality_comparable_with <>
+ * \tparam t1   The first type to compare.
+ * \tparam t2   The second type to compare.
+ * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
+ */
+//!\cond
+template <class T, class U>
+SEQAN3_CONCEPT weakly_equality_comparable_with =
+    requires(std::remove_reference_t<T> const & t,
+             std::remove_reference_t<U> const & u)
+    {
+        t == u ? 1 : 0;
+        t != u ? 1 : 0;
+        u == t ? 1 : 0;
+        u != t ? 1 : 0;
+    };
+//!\endcond
+
 /*!\interface   seqan3::detail::weakly_equality_comparable_by_members_with <>
- * \brief       Like std::detail::weakly_equality_comparable_with, but considers only member operators of the LHS.
+ * \brief       Like seqan3::detail::weakly_equality_comparable_with, but considers only member operators of the LHS.
  */
 //!\cond
 template <typename lhs_t, typename rhs_t>

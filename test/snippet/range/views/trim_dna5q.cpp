@@ -6,6 +6,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/range/views/trim.hpp>
 #include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/to.hpp>
 
 int main()
 {
@@ -23,13 +24,13 @@ int main()
 
     // trim by phred_value
     auto v1 = vec | seqan3::views::trim(20u);
-    assert(std::vector<seqan3::dna5q>(v1) == cmp);
+    assert((v1 | seqan3::views::to<std::vector>) == cmp);
 
     // trim by quality character; in this case the nucleotide part of the character is irrelevant
     auto v2 = vec | seqan3::views::trim(seqan3::dna5q{'C'_dna5, '5'_phred42});
-    assert(std::vector<seqan3::dna5q>(v2) == cmp);
+    assert((v2 | seqan3::views::to<std::vector>) == cmp);
 
     // combinability
     auto v3 = seqan3::views::trim(vec, 20u) | seqan3::views::to_char;
-    assert(std::ranges::equal(std::string_view{"AGGA"}, v3));
+    assert(std::ranges::equal(std::string{"AGGA"}, v3 | seqan3::views::to<std::string>));
 }

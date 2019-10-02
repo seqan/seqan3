@@ -445,13 +445,13 @@ public:
     constexpr bool operator==(indirect_alternative_type const rhs) const noexcept
     //!\cond
         requires detail::one_alternative_is<alphabet_variant,
-                                            detail::weakly_equality_comparable_with,
+                                            detail::weakly_equality_comparable_with_,
                                             indirect_alternative_type>
     //!\endcond
     {
         using alternative_t =
             meta::front<meta::find_if<alternatives,
-                                      detail::weakly_equality_comparable_with<indirect_alternative_type>>>;
+                                      detail::weakly_equality_comparable_with_<indirect_alternative_type>>>;
         return is_alternative<alternative_t>() && (convert_unsafely_to<alternative_t>() == rhs);
     }
 
@@ -460,7 +460,7 @@ public:
     constexpr bool operator!=(indirect_alternative_type const rhs) const noexcept
     //!\cond
         requires detail::one_alternative_is<alphabet_variant,
-                                            detail::weakly_equality_comparable_with,
+                                            detail::weakly_equality_comparable_with_,
                                             indirect_alternative_type>
     //!\endcond
     {

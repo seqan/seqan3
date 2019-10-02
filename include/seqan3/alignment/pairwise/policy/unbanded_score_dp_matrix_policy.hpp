@@ -15,14 +15,10 @@
 #include <vector>
 #include <tuple>
 
-#include <range/v3/view/iota.hpp>
-#include <range/v3/view/repeat_n.hpp>
-#include <range/v3/view/transform.hpp>
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/span>
 #include <seqan3/std/ranges>
 
@@ -90,7 +86,7 @@ private:
         advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_end{column_index_type{current_column_index}, row_index_type{dimension_second_range}};
 
-        return std::views::zip(std::span{score_matrix},
+        return views::zip(std::span{score_matrix},
                                std::views::iota(col_begin, col_end),
                                views::repeat_n(std::ignore, dimension_second_range) | std::views::common);
     }

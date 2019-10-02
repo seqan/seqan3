@@ -22,6 +22,8 @@
 
 #ifndef __cpp_lib_ranges  // If not C++20 ranges available, implement via range-v3.
 
+#include <seqan3/std/ranges>
+
 #include <range/v3/algorithm/all_of.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/copy_n.hpp>
@@ -37,80 +39,4 @@
 #include <range/v3/algorithm/sort.hpp>
 #include <range/v3/algorithm/transform.hpp>
 
-#include <seqan3/core/platform.hpp>
-
-namespace std::ranges
-{
-
-/*!\typedef std::ranges::all_of
- * \brief Alias for ranges::all_of. Checks if unary predicate `p` returns `true` for all elements in the range.
- */
-using SEQAN3_DOXYGEN_ONLY(all_of =) ::ranges::all_of;
-
-/*!\typedef std::ranges::copy
- * \brief Alias for ranges::copy. Copies a range of elements to a new location.
- */
-using SEQAN3_DOXYGEN_ONLY(copy =) ::ranges::copy;
-
-/*!\typedef std::ranges::copy_n
- * \brief Alias for ranges::copy_n. Copies a range of exactly n elements to a new location.
- */
-using SEQAN3_DOXYGEN_ONLY(copy_n =) ::ranges::copy_n;
-
-/*!\typedef std::ranges::equal
-* \brief Alias for ranges::equal. Determines if two sets of elements are the same.
-*/
-using SEQAN3_DOXYGEN_ONLY(equal =) ::ranges::equal;
-
-/*!\typedef std::ranges::fill
- * \brief Alias for ranges::fill. Assigns a value to the elements of a range.
- */
-using SEQAN3_DOXYGEN_ONLY(fill =) ::ranges::fill;
-
-/*!\typedef std::ranges::find_if_not
-* \brief Alias for ranges::find_if_not. Returns the first element in the range for which the predicate returns false.
-*/
-using SEQAN3_DOXYGEN_ONLY(find_if_not =) ::ranges::find_if_not;
-
-/*!\typedef std::ranges::find_if
-* \brief Alias for ranges::find_if. Returns the first element in the range for which the predicate returns true.
-*/
-using SEQAN3_DOXYGEN_ONLY(find_if =) ::ranges::find_if;
-
-/*!\typedef std::ranges::find
-* \brief Alias for ranges::find. Returns the first element in the range equal to the given value.
-*/
-using SEQAN3_DOXYGEN_ONLY(find =) ::ranges::find;
-
-/*!\typedef std::ranges::for_each
- * \brief Alias for ranges::for_each. Applies a function object to the elements of a range.
- */
-using SEQAN3_DOXYGEN_ONLY(for_each =) ::ranges::for_each;
-
-/*!\typedef std::ranges::max_element
- * \brief Alias for ranges::max_element. Finds the greatest element in the range.
- */
-using SEQAN3_DOXYGEN_ONLY(max_element =) ::ranges::max_element;
-
-/*!\typedef std::ranges::move_backward
- * \brief Alias for ranges::move_backward. Moves a range of elements backward to a new location starting from the end.
- */
-using SEQAN3_DOXYGEN_ONLY(move_backward =) ::ranges::move_backward;
-
-/*!\typedef std::ranges::move
- * \brief Alias for ranges::move. Moves a range of elements to a new location.
- */
-using SEQAN3_DOXYGEN_ONLY(move =) ::ranges::move;
-
-/*!\typedef std::ranges::sort
-* \brief Alias for ranges::sort. Sorts a range.
-*/
-using SEQAN3_DOXYGEN_ONLY(sort =) ::ranges::sort;
-
-/*!\typedef std::ranges::transform
-* \brief Alias for ranges::transform. Transforms a range.
-*/
-using SEQAN3_DOXYGEN_ONLY(transform =) ::ranges::transform;
-
-} // namespace std::ranges
 #endif  // __cpp_lib_ranges

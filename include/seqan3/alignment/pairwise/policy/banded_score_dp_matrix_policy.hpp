@@ -22,6 +22,7 @@
 #include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 
@@ -125,9 +126,9 @@ public:
             col_end{column_index_type{current_column_index}, row_index_type{col_begin.second + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
-        auto zip_score = std::views::zip(std::span{std::addressof(*current_matrix_iter), span},
+        auto zip_score = views::zip(std::span{std::addressof(*current_matrix_iter), span},
                                            std::span{std::addressof(*(current_matrix_iter + 1)), span});
-        return std::views::zip(std::move(zip_score),
+        return views::zip(std::move(zip_score),
                                std::views::iota(col_begin, col_end),
                                views::repeat_n(std::ignore, span) | std::views::common);
     }

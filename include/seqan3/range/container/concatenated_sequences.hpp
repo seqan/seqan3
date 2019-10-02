@@ -22,6 +22,7 @@
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/std/iterator>
@@ -951,7 +952,7 @@ public:
             return begin() + pos_as_num;
 
         /* TODO implement views::flat_repeat_n that is like
-         *  views::repeat_n(value, count) | std::views::join | ranges::view::bounded;
+         *  views::repeat_n(value, count) | views::join | ranges::view::bounded;
          * but preserves random access and size.
          *
          * then do
@@ -1032,9 +1033,10 @@ public:
         if (last - first == 0)
             return begin() + pos_as_num;
 
-        auto const ilist = std::ranges::subrange<begin_iterator_type, end_iterator_type>(first,
-                                                                                  last,
-                                                                                  std::distance(first, last));
+        auto const ilist =
+            std::ranges::subrange<begin_iterator_type, end_iterator_type>(first,
+                                                                          last,
+                                                                          std::ranges::distance(first, last));
 
         data_delimiters.reserve(data_values.size() + ilist.size());
         data_delimiters.insert(data_delimiters.begin() + pos_as_num,
@@ -1046,12 +1048,7 @@ public:
         size_type full_len = 0;
         for (size_type i = 0; i < ilist.size(); ++i, ++first)
         {
-            // constant for sized ranges and/or random access ranges, linear otherwise
-            if constexpr (std::ranges::sized_range<std::decay_t<decltype(*first)>>)
-                full_len += seqan3::size(*first);
-            else
-                full_len += std::distance(seqan3::begin(*first), seqan3::end(*first));
-
+            full_len += std::ranges::distance(*first);
             data_delimiters[pos_as_num + 1 + i] += full_len;
         }
 
@@ -1329,7 +1326,7 @@ public:
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
     constexpr bool operator<=(concatenated_sequences const & rhs) const noexcept
     {
-        return raw_data() <= rhs.data();
+        return raw_data() <= rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.

@@ -7,6 +7,7 @@
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/views/char_to.hpp>
+#include <seqan3/range/views/to.hpp>
 
 using namespace seqan3;
 
@@ -26,7 +27,7 @@ int main (int argc, char * argv[])
     }
 
     // Convert the input to a dna5 sequence.
-    std::vector<dna5> sequence{input | views::char_to<dna5>};
+    std::vector<dna5> sequence = input | views::char_to<dna5> | views::to<std::vector>;
 
     // Initialise an array with count values for dna5 symbols.
     std::array<size_t, dna5::alphabet_size> count{}; // default initialised with zeroes

@@ -17,6 +17,7 @@
 #include <vector>
 
 #include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/core/type_list/traits.hpp>
@@ -96,7 +97,7 @@ struct bgzf_compression
     template <typename char_t, ptrdiff_t extend>
     static bool validate_header(std::span<char_t, extend> header)
     {
-        static_assert(std::detail::weakly_equality_comparable_with<char_t, char>,
+        static_assert(seqan3::detail::weakly_equality_comparable_with<char_t, char>,
                       "The given char type of the span must be comparable with char.");
 
         return (header[0] == magic_header[0] &&                                                     // GZ_ID1

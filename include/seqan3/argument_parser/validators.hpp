@@ -25,6 +25,7 @@
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/drop.hpp>
+#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to_lower.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
@@ -496,7 +497,7 @@ public:
     std::string get_help_page_message() const
     {
         return detail::to_string("Valid input file formats: [",
-                                 extensions | std::views::join(std::string{", "}),
+                                 extensions | views::join(std::string{", "}),
                                  "]");
     }
 };
@@ -599,7 +600,7 @@ public:
     std::string get_help_page_message() const
     {
         return detail::to_string("Valid output file formats: [",
-                                 extensions | std::views::join(std::string{", "}),
+                                 extensions | views::join(std::string{", "}),
                                  "]");
     }
 };

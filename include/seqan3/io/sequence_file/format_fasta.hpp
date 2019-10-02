@@ -34,6 +34,7 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
+#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
@@ -188,7 +189,7 @@ protected:
                 std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank)        // skip leading >
                                               | views::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
                                               | views::char_to<value_type_t<id_type>>,
-                                  std::back_inserter(id));                                      // … ^A is old delimiter
+                                  std::ranges::back_inserter(id));                               // … ^A is old delimiter
 
                 // consume rest of line
                 detail::consume(stream_view | views::take_line_or_throw);
@@ -222,7 +223,7 @@ protected:
                 std::ranges::copy(stream_view | views::take_line_or_throw                    // read line
                                               | std::views::drop_while(is_id || is_blank)    // skip leading >
                                               | views::char_to<value_type_t<id_type>>,
-                                  std::back_inserter(id));
+                                  std::ranges::back_inserter(id));
             #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
             }
         }
@@ -266,7 +267,7 @@ protected:
 
         #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
 
-            std::ranges::copy(stream_view | views::take_until(is_id)                      // until next header (or end)
+            std::ranges::copy(stream_view | views::take_until(is_id)                   // until next header (or end)
                                           | std::views::filter(!(is_space || is_digit))// ignore whitespace and numbers
                                           | std::views::transform([not_in_alph] (char const c)
                                             {
@@ -278,9 +279,9 @@ protected:
                                                                         detail::make_printable(c)};
                                                 }
                                                 return c;
-                                            })                                           // enforce legal alphabet
-                                          | views::char_to<value_type_t<seq_type>>,       // convert to actual target alphabet
-                              std::back_inserter(seq));
+                                            })                                      // enforce legal alphabet
+                                          | views::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
+                              std::ranges::back_inserter(seq));
         #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
         }
         else
@@ -398,7 +399,7 @@ public:
             //TODO: combining chunk and join is substantially faster than views::interleave (2.5x), why?
             std::ranges::copy(seq | views::to_char
                                   | ranges::view::chunk(options.fasta_letters_per_line)
-                                  | std::views::join(options.add_carriage_return
+                                  | views::join(options.add_carriage_return
                                                     ? std::string_view{"\r\n"}
                                                     : std::string_view{"\n"}),
                               stream_it);
