@@ -1,4 +1,4 @@
-# Indexing and searching with SeqAn3 {#tutorial_index_search}
+# Indexing and searching with SeqAn {#tutorial_index_search}
 
 <b>Learning Objective:</b><br>
 In this tutorial you will learn how to construct an index and conduct searches.
@@ -25,10 +25,10 @@ The general solution is to use a data structure called **index**. An index is bu
 to be computed once for a given data set. It is used to speed up the search in the reference and can be re-used by
 storing it to disk and loading it again without recomputation.
 
-There are two groups of indices: hash tables and suffix-based indices. SeqAn3 implements the FM-Index and Bi-FM-Index
+There are two groups of indices: hash tables and suffix-based indices. SeqAn implements the FM-Index and Bi-FM-Index
 as suffix-based indices. While the Bi-FM-Index needs more space (a factor of about 2), it allows faster searches.
 
-Given an index, SeqAn3 will choose the best search strategy for you. Since very different algorithms may be selected
+Given an index, SeqAn will choose the best search strategy for you. Since very different algorithms may be selected
 internally depending on the configuration, it is advisable to do benchmarks with your application. A rule of thumb is
 to use the Bi-FM-Index when allowing more than 2 errors.
 

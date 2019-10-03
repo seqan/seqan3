@@ -152,7 +152,7 @@ namespace seqan3
  * ### File I/O pipelines
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
- * files are also input ranges in SeqAn3:
+ * files are also input ranges in SeqAn:
  *
  * \include test/snippet/io/alignment_file/alignment_file_output_input_range.cpp
  *

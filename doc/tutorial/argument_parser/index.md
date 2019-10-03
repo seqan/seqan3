@@ -1,4 +1,4 @@
-# Parsing command line arguments with SeqAn3 {#tutorial_argument_parser}
+# Parsing command line arguments with SeqAn {#tutorial_argument_parser}
 
 <b>Learning Objective:</b> <br>
 You will learn how to use the seqan3::argument_parser class to parse command line arguments. This tutorial is a walkthrough with links to the API documentation and is also meant as a source for copy-and-paste code.
@@ -11,7 +11,7 @@ You will learn how to use the seqan3::argument_parser class to parse command lin
 
 # Introduction
 
-An easy and very flexible interface to a program is through the command line. This tutorial explains how to parse the command line using the SeqAn3 library’s seqan3::argument_parser class.
+An easy and very flexible interface to a program is through the command line. This tutorial explains how to parse the command line using the SeqAn library’s seqan3::argument_parser class.
 
 This class will give you the following functionality:
 
@@ -43,7 +43,7 @@ We will get to know the wide functionality of the argument parser by writing a l
 
 We want to build an application that is able to read the file with or without a header line, select certain seasons and compute the average or median from the "Avg. U.S. viewers (millions)" of the selected seasons.
 
-# The SeqAn3 argument parser class
+# The SeqAn argument parser class
 
 Before we add any of the options, flags, and positional options, we will take a look at the seqan3::argument_parser class itself. It is constructed by giving a program's name and passing the parameters `argc` and `argv` from main. Note that no command line arguments have been parsed so far, but we can now add more information to the parser. After adding all desired information, the parsing is triggered by calling the seqan3::argument_parser::parse member function. Since the function throws in case any errors occur, we need to wrap it into a try-catch block. Here is a first working example:
 
@@ -150,7 +150,7 @@ So how does this look like? The following code snippet adds a positional option 
 
 Additionally to the variable that will store the value, you need to pass a description. This description will help users of your application to understand how the option is affecting your program.
 
-\note As the name suggest, positional options are identified by their position. In SeqAn3, the first `add_positional_option()` will be linked to the first command line argument that is neither an option-value pair nor a flag. So the order of initialising your parser determines the order of assigning command line arguments to the respective variables.
+\note As the name suggest, positional options are identified by their position. In SeqAn, the first `add_positional_option()` will be linked to the first command line argument that is neither an option-value pair nor a flag. So the order of initialising your parser determines the order of assigning command line arguments to the respective variables.
 We personally recommend to always use regular options (id-value pairs) because they are more expressive and it is easier to spot errors.
 
 You can add an option like this:
@@ -342,9 +342,9 @@ A *validator* is a [functor](https://stackoverflow.com/questions/356950/what-are
 
 \attention You can pass a validator to the seqan3::argument_parser::add_option function only after passing the seqan3::option_spec parameter. Pass the seqan3::option_spec::DEFAULT tag, if there are no further restrictions on your option.
 
-## SeqAn3 validators
+## SeqAn validators
 
-The following validators are provided in the SeqAn3 library and can be included with the following header:
+The following validators are provided in the SeqAn library and can be included with the following header:
 
 \snippet doc/tutorial/argument_parser/small_snippets.cpp validator_include
 
@@ -384,7 +384,7 @@ Add a seqan3::value_list_validator to the `-a/--aggregate-by` option that sets t
 
 ### The file validator
 
-SeqAn3 offers two file validator types: the seqan3::input_file_validator and the seqan3::output_file_validator.
+SeqAn offers two file validator types: the seqan3::input_file_validator and the seqan3::output_file_validator.
 On construction, the validator receives a list (vector) of valid file extensions that are tested against the extension
 of the parsed option value.
 The validator throws a seqan3::parser_invalid_argument exception whenever a given filename's extension is not in the
@@ -405,7 +405,7 @@ Using the seqan3::output_file_validator:
 
 ### The directory validator
 
-In addition to the file validator types, SeqAn3 offers directory validator types. These are useful if one needs
+In addition to the file validator types, SeqAn offers directory validator types. These are useful if one needs
 to provide an input directory (using the seqan3::input_directory_validator) or output directory
 (using the seqan3::output_directory_validator) where multiple files need to be read from or written to.
 The seqan3::input_directory_validator checks whether the specified path is a directory and is readable.

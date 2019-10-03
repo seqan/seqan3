@@ -1,8 +1,8 @@
-# First steps with SeqAn3 {#tutorial_first_example}
+# First steps with SeqAn {#tutorial_first_example}
 
 ***Learning Objective:***
 
-This tutorial walks you through small SeqAn3 programs. It is intended to give you a short overview
+This tutorial walks you through small SeqAn programs. It is intended to give you a short overview
 of what to expect in the other tutorials and how to use this documentation.
 
 \tutorial_head{Easy, 30 min, \ref setup, [Ranges](https://github.com/seqan/seqan3/wiki/Ranges)\,
@@ -31,7 +31,7 @@ This is a code snippet. You will see many code snippets in our documentation.
 Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
 other statements implied by the text. You can copy'n'paste freely from these examples,
-this implies no copyright-obligations (however distributing SeqAn3 or an application
+this implies no copyright-obligations (however distributing SeqAn or an application
 using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html).
 
 You may ask, why we do not use std::cout or std::cerr for console output.
@@ -57,7 +57,7 @@ so don't worry too much if your solution is different from ours.
 # Parse command line arguments
 
 After we have seen the *Hello World!* program, we want to go a bit further and parse arguments from the command line.
-The following snippet shows you how this is done in SeqAn3. Here the program expects a string argument in the
+The following snippet shows you how this is done in SeqAn. Here the program expects a string argument in the
 program call and prints it to your terminal.
 
 \snippet introduction_argument_parser.cpp argparse
@@ -78,10 +78,10 @@ You may have spotted that the blue coloured keywords link you directly to the re
 This is helpful if you need further information on a function, concept or class. We recommend you to open them
 in separate browser tabs such that you can easily switch back to the tutorial.
 
-## Modules in SeqAn3
+## Modules in SeqAn
 
-You have just been introduced to one of the **Modules** of SeqAn3, the *Argument Parser*.
-Modules structure the SeqAn3 library into logical units, as there are for instance `alignment`, `alphabet`,
+You have just been introduced to one of the **Modules** of SeqAn, the *Argument Parser*.
+Modules structure the SeqAn library into logical units, as there are for instance `alignment`, `alphabet`,
 `argument_parser`, `io`, `search` and some more. See the *API Reference (Modules)* section in the
 navigation column for a complete overview.
 
@@ -99,7 +99,7 @@ you can enter it in the search bar (top-right).
 
 # Read sequence files
 
-Let's look at some functions of the IO module: SeqAn3 provides fast and easy access to biological file formats.
+Let's look at some functions of the IO module: SeqAn provides fast and easy access to biological file formats.
 The following code example demonstrates the interface of seqan3::sequence_file_input.
 
 \snippet introduction_align.cpp sequence_input_include
@@ -123,7 +123,7 @@ AGTGATACT
 
 \assignment{Exercise: Read a FastA file}
 Combine the code from above to read a FastA file and store its sequences in a std::vector of type seqan3::dna5_vector
-(which is a common DNA sequence type in SeqAn3). Use the argument parser for obtaining the filename as command line
+(which is a common DNA sequence type in SeqAn). Use the argument parser for obtaining the filename as command line
 argument to your program (e.g. call `./myprogram seq.fasta`).
 \endassignment
 \solution
@@ -154,10 +154,10 @@ you wish to compute a traceback or not. The configurations have their own namesp
 be combined via the logical OR operator (`|`) for building combinations. Check out the alignment tutorial if you want to learn more.
 
 \note
-We use a lot of Modern C++ in SeqAn3 so some things might look alien at first,
+We use a lot of Modern C++ in SeqAn so some things might look alien at first,
 e.g. type templates are used like ordinary types in many situations (no `<>`).
 We also always use `{}` to initialise objects and not `()` which is only used for function calls.
 In general the style should be much easier for newcomers.
 
-Now that you reached the end of this first tutorial, you know how SeqAn3 code looks like and you are able
+Now that you reached the end of this first tutorial, you know how SeqAn code looks like and you are able
 to write some first code fragments. Let's go more into detail with the module-based tutorials!

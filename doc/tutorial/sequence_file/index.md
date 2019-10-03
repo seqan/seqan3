@@ -1,7 +1,7 @@
 # Sequence File Input and Output {#tutorial_sequence_file}
 
 <b>Learning Objective:</b> <br/>
-You will get an overview of how file Input/Output is handled in seqan3 and learn how to read and write
+You will get an overview of how file Input/Output is handled in SeqAn and learn how to read and write
 sequence files. This tutorial is a walk-through with links into the API documentation and also meant as a
 source for copy-and-paste code.
 
@@ -9,10 +9,10 @@ source for copy-and-paste code.
 
 [TOC]
 
-# File I/O in SeqAn3
+# File I/O in SeqAn
 
 Most file formats in bioinformatics are structured as lists of records.
-In SeqAn3 we model our files as a **range over records**.
+In SeqAn we model our files as a **range over records**.
 This interface allows us to easily stream over a file, apply filters and convert formats,
 sometimes only in a single line of code.
 The file format is automatically detected by the file name extension and compressed files can be handled
@@ -24,7 +24,7 @@ for (auto & record : file)
 ```
 
 We will explain the details about reading and writing files in the [Sequence File](#section_sequence_files) section below.
-Currently, SeqAn3 supports the following file formats:
+Currently, SeqAn supports the following file formats:
 
 - Sequence file formats:
   - seqan3::format_fasta
@@ -44,7 +44,7 @@ You can check whether you have installed these libraries by running `cmake .` in
 If `-- Optional dependency: ZLIB-x.x.x found.` is displayed on the command line then you can read/write
 compressed files in your programs. TODO what about bz2
 
-## Basic layout of SeqAn3 file objects
+## Basic layout of SeqAn file objects
 
 Before we dive into the details, we will outline the general design of our file objects,
 hoping that it will make the following tutorial easier to understand.
@@ -81,7 +81,7 @@ CCCCCCCCCCCCCCC
 CGATCGATC
 ```
 
-In SeqAn3 we provide the seqan3::format_fasta to read sequence files in FASTA format.
+In SeqAn we provide the seqan3::format_fasta to read sequence files in FASTA format.
 
 ### FASTQ format
 
@@ -98,7 +98,7 @@ CGATCGATC
 IIIIIIIII
 ```
 
-In SeqAn3 we provide the seqan3::format_fastq to read sequence files in FASTQ format.
+In SeqAn we provide the seqan3::format_fastq to read sequence files in FASTQ format.
 
 ### EMBL format
 
@@ -116,14 +116,14 @@ SQ   Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
      cacaattact tccacaaatg cagttgaagc ttctactctt cttgacatag gtaacctgag
 ```
 
-In SeqAn3 we provide the seqan3::format_embl to read sequence files in EMBL format.
+In SeqAn we provide the seqan3::format_embl to read sequence files in EMBL format.
 
 ### File extensions
 
 The formerly introduced formats can be identified by the following file name extensions
 (this is important for automatic format detection from a file name as you will learn in the next section).
 
-| File Format | SeqAn3 format class  | File Extensions                                   |
+| File Format | SeqAn format class   | File Extensions                                   |
 | ------------| ---------------------|---------------------------------------------------|
 | FASTA       | seqan3::format_fasta |   `.fa`, `.fasta`, `.fna`, `.ffn`, `.ffa`, `.frn` |
 | FASTQ       | seqan3::format_fastq |   `.fq`, `.fastq`                                 |
@@ -156,7 +156,7 @@ which introduces reading a file with custom selected fields.
 
 # Reading a sequence file
 
-You can include the SeqAn3 sequence file functionality with:
+You can include the SeqAn sequence file functionality with:
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include
 

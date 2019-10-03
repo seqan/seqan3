@@ -16,7 +16,7 @@
 #include <seqan3/range/decorator/gap_decorator.hpp>
 
 /*!\defgroup decorator Decorator
- * \brief The decorator submodule contains special SeqAn3 decorators and generic decorator concepts.
+ * \brief The decorator submodule contains special SeqAn decorators and generic decorator concepts.
  * \ingroup range
  * \sa seqan3/range/decorator/all.hpp
  */

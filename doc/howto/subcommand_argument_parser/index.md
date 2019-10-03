@@ -2,7 +2,7 @@
 
 [TOC]
 
-This HowTo shows you how to write an argument parser with subcommand like `git push` using SeqAn3.
+This HowTo shows you how to write an argument parser with subcommand like `git push` using SeqAn.
 
 \tutorial_head{Easy, 15 min, \ref tutorial_argument_parser, }
 

@@ -312,11 +312,11 @@ inline auto constexpr is_xdigit = is_in_interval<'0', '9'> ||
  * \details
  *
  * Char predicates are function like objects that can be used to check if a character `c` fulfills certain
- * constraints. SeqAn3 implements all predicates also available in the standard library and some more.
+ * constraints. SeqAn implements all predicates also available in the standard library and some more.
  *
  * ### Disjunction and Negation
  *
- * In contrast to the standard library (where the checks are implemented as functions), the functors in SeqAn3 can be
+ * In contrast to the standard library (where the checks are implemented as functions), the functors in SeqAn can be
  * joined efficiently, maintaining constant-time evaluation independent of the number of checks. Functors can be
  * combined with the `||-operator` or negated via the `!-operator`:
  *

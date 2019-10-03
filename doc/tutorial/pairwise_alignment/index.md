@@ -2,7 +2,7 @@
 
 <b>Learning Objective:</b> <br/>
 
-In this tutorial you will learn how to compute pairwise sequence alignments with SeqAn3.
+In this tutorial you will learn how to compute pairwise sequence alignments with SeqAn.
 This tutorial is a walkthrough with links to the API documentation and is also meant as a source for copy-and-paste code.
 
 \tutorial_head{Intermediate, 60-90 min, \ref setup \ref tutorial_alphabets \ref tutorial_ranges, }
@@ -32,7 +32,7 @@ thus, with all possible configurations, is a very versatile and powerful tool to
 
 # Computing pairwise alignments
 
-Let us first have look at an example of computing a global alignment in SeqAn3.
+Let us first have look at an example of computing a global alignment in SeqAn.
 
 \includelineno doc/tutorial/pairwise_alignment/pairwise_alignment_first_global.cpp
 
@@ -82,7 +82,7 @@ the result values.
 
 \endsolution
 
-Congratulations, you have computed your first pairwise alignment with seqan3!
+Congratulations, you have computed your first pairwise alignment with SeqAn!
 As you can see, the interface is really simple, yet the configuration object makes it extremely flexible to conduct
 various different alignment calculations. In the following chapter you will learn more about the various configuration
 possibilities.

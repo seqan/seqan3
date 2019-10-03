@@ -38,7 +38,7 @@
  *
  * \details
  *
- * SeqAn3 makes heavy use of views as defined in the
+ * SeqAn makes heavy use of views as defined in the
  * [Ranges Technical Specification](https://en.cppreference.com/w/cpp/experimental/ranges). From the original
  * documentation:  <i>"A view is a lightweight wrapper that presents a view of an underlying sequence of elements in
  * some custom way without mutating or copying it. Views are cheap to create and copy, and have non-owning reference
@@ -49,9 +49,9 @@
  *
  * See the \link range range module \endlink for how views relate to containers and decorators.
  *
- * Most views provided by SeqAn3 are specific to biological operations, like seqan3::views::trim which trims
+ * Most views provided by SeqAn are specific to biological operations, like seqan3::views::trim which trims
  * sequences based on the quality or seqan3::views::complement which generates the complement of a nucleotide sequence.
- * But SeqAn3 also provides some general purpose views.
+ * But SeqAn also provides some general purpose views.
  *
  * ### Namespaces
  *
@@ -176,7 +176,7 @@
 
 /*!
  * \namespace seqan3::views
- * \brief The SeqAn3 namespace for views.
+ * \brief The SeqAn namespace for views.
  *
  * Since views often have name clashes with regular functions and ranges they are implemented in the sub
  * namespace `view`.

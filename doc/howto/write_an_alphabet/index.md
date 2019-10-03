@@ -2,7 +2,7 @@
 
 [TOC]
 
-This HowTo documents how to write a custom alphabet that can be used with the algorithms and data structures in SeqAn3.
+This HowTo documents how to write a custom alphabet that can be used with the algorithms and data structures in SeqAn.
 
 \tutorial_head{Moderate, 45 min, \ref tutorial_concepts\, \ref tutorial_alphabets, \ref alphabet}
 
@@ -135,7 +135,7 @@ your type also model these concepts.
 \snippet dna2_alphabet.cpp writable_alphabet
 \endsolution
 
-At this point the seqan3::alphabet concept should be modelled successfully and even seqan3::writable_alphabet 
+At this point the seqan3::alphabet concept should be modelled successfully and even seqan3::writable_alphabet
 is fine because we implemented `assign_char` and `char_is_valid`.
 \snippet dna2_alphabet.cpp writable_alphabet_concept
 

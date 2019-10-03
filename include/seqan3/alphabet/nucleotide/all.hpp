@@ -72,7 +72,7 @@
  *
  * ###Printing and conversion to char
  *
- * As with all alphabets in SeqAn3, none of the nucleotide alphabets can be directly converted to char or printed.
+ * As with all alphabets in SeqAn, none of the nucleotide alphabets can be directly converted to char or printed.
  * You need to explicitly call seqan3::to_char to convert to char. The only exception is seqan3::debug_stream
  * which does this conversion to char automatically.
  *

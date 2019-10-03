@@ -69,7 +69,7 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
     }
     else if (extension == ".zst")
     {
-        throw file_open_error{"Trying to write a zst'ed file, but SeqAn3 does not yet support this."};
+        throw file_open_error{"Trying to write a zst'ed file, but SeqAn does not yet support this."};
     }
 
     return {&primary_stream, stream_deleter_noop};

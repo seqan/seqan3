@@ -32,7 +32,7 @@
  * \todo k-mer indices are coming soon. Stay tuned!
  * \endif
  *
- * SeqAn3 currently supports very fast FM indices. For more details visit the \ref submodule_fm_index
+ * SeqAn currently supports very fast FM indices. For more details visit the \ref submodule_fm_index
  * "FM Index submodule".
  *
  */

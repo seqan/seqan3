@@ -546,7 +546,7 @@ DAMAGE.)"};
         }
 
         strem << views::repeat_n('=', 80) << to_text("\n\\fB")
-              << "This program contains SeqAn3 code licensed under the following terms:\n" << to_text("\\fP")
+              << "This program contains SeqAn code licensed under the following terms:\n" << to_text("\\fP")
               << views::repeat_n('-', 80) << '\n' << seqan_license << '\n';
 
         std::exit(EXIT_SUCCESS);

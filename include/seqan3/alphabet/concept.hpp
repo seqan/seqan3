@@ -795,7 +795,7 @@ SEQAN3_CONCEPT semialphabet =
  *
  * ### Serialisation
  *
- * Types that model the concept (and all refinements) can be serialised via SeqAn3
+ * Types that model the concept (and all refinements) can be serialised via SeqAn
  * serialisation support.
  * The rank value is (de-)serialised, types need not provide any overloads themselves.
  */
@@ -879,7 +879,7 @@ SEQAN3_CONCEPT alphabet = semialphabet<t> && requires (t v)
  *
  * ### Serialisation
  *
- * Types that model the concept (and all refinements) can be serialised via SeqAn3
+ * Types that model the concept (and all refinements) can be serialised via SeqAn
  * serialisation support.
  * The rank value is (de-)serialised, types need not provide any overloads themselves.
  */

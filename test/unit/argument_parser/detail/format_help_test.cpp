@@ -278,7 +278,7 @@ TEST(help_page_printing, copyright)
                    "--------------------------------------------------------------------------------\n"
                    "myApp copyright information not available.\n"
                    "================================================================================\n"
-                   "This program contains SeqAn3 code licensed under the following terms:\n"
+                   "This program contains SeqAn code licensed under the following terms:\n"
                    "--------------------------------------------------------------------------------\n"
                    + license_string;
 
@@ -299,7 +299,7 @@ TEST(help_page_printing, copyright)
                    "short copyright line 1\n"
                    "short copyright line 2\n"
                    "================================================================================\n"
-                   "This program contains SeqAn3 code licensed under the following terms:\n"
+                   "This program contains SeqAn code licensed under the following terms:\n"
                    "--------------------------------------------------------------------------------\n"
                    + license_string;
 
@@ -319,7 +319,7 @@ TEST(help_page_printing, copyright)
                    "long copyright line 1\n"
                    "long copyright line 2\n"
                    "================================================================================\n"
-                   "This program contains SeqAn3 code licensed under the following terms:\n"
+                   "This program contains SeqAn code licensed under the following terms:\n"
                    "--------------------------------------------------------------------------------\n"
                    + license_string;
 
