@@ -468,12 +468,9 @@ namespace seqan3::views
  *
  * \details
  *
- * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
+ * \header_file{seqan3/range/views/translate.hpp}
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/translate.hpp>
- * ```
+ * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
  *
  * ### View properties
  *
@@ -772,12 +769,9 @@ namespace seqan3::views
  *
  * \details
  *
- * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
+ * \header_file{seqan3/range/views/translate.hpp}
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/translate.hpp>
- * ```
+ * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
  *
  * ### View properties
  *

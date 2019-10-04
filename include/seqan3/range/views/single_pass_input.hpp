@@ -336,16 +336,13 @@ namespace seqan3::views
  *
  * \details
  *
+ * \header_file{seqan3/range/views/single_pass_input.hpp}
+ *
  * This view adds single-pass semantics to any input view. This means, that `begin` always returns the iterator
  * to the current location in the underlying range after `k` elements have been already consumed and not to the begin
  * of the underlying range, i.e. it mirrors the behavior of an input stream.
  * Note, the view updates an internal state after moving the associated iterator.
  * Thus, the `const begin` and `const end` are explicitly deleted.
- *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/single_pass_input.hpp>
- * ```
  *
  * ### View properties
  *

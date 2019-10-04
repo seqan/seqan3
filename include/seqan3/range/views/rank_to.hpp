@@ -31,10 +31,9 @@ namespace seqan3::views
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup views
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/rank_to.hpp>
- * ```
+ * \details
+ *
+ * \header_file{seqan3/range/views/rank_to.hpp}
  *
  * ### View properties
  *

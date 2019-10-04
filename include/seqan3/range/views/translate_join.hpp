@@ -337,6 +337,8 @@ namespace seqan3::views
  *
  * \details
  *
+ * \header_file{seqan3/range/views/translate_join.hpp}
+ *
  * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
  * This view only operates on two-dimensional input (range of ranges) and outputs a range of ranges no matter the number of input sequences or
  * the number of translation frames given. Therefore, it has the same capabilities as the standard view_translate but concatenates the different
@@ -351,11 +353,6 @@ namespace seqan3::views
  * std::vector<std::vector<dna5>> vec {...};
  * auto v = vec | views::translate | views::join;
  * Except that the performance is better and the returned range still models std::ranges::random_access_range and std::ranges::sized_range.
- * ```
- *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/translate_join.hpp>
  * ```
  *
  * ### View properties

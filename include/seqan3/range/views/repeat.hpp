@@ -314,10 +314,7 @@ namespace seqan3::views
  *
  * \details
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/repeat.hpp>
- * ```
+ * \header_file{seqan3/range/views/repeat.hpp}
  *
  * ### View properties
  *

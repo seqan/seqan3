@@ -665,6 +665,8 @@ namespace seqan3::views
  *
  * \details
  *
+ * \header_file{seqan3/core/simd/view_to_simd.hpp}
+ *
  * This view can be used to transform a collection of sequences into chunks of simd vectors. This transformation is
  * also known as Array-of-Structure to Structure-of-Array transformation. It is used to transform the memory layout of
  * the sequences to a more efficient form when used in vectorised algorithms. The number of sequences contained in the
@@ -675,11 +677,6 @@ namespace seqan3::views
  * original order. The returned range itself is a range-of-ranges. When dereferencing the iterator a std::array with
  * simd length many vectors is returned. If a sequence is empty or ends before the largest sequence in the collection,
  * it can be padded with an optional value.
- *
- * **Header**
- * ```cpp
- *      #include <seqan3/core/simd/view_to_simd.hpp>
- * ```
  *
  * ### View properties
  *

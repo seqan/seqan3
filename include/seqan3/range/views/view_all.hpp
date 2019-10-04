@@ -113,10 +113,7 @@ namespace seqan3::views
  *
  * \details
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/view_all.hpp>
- * ```
+ * \header_file{seqan3/range/views/view_all.hpp}
  *
  * ### View properties
  *

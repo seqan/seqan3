@@ -31,10 +31,9 @@ namespace seqan3::views
                         See below for the properties of the returned range.
  * \ingroup views
  *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/get.hpp>
- * ```
+ * \details
+ *
+ * \header_file{seqan3/range/views/get.hpp}
  *
  * ### View properties
  *

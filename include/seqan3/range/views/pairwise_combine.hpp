@@ -675,6 +675,8 @@ namespace seqan3::views
  *
  * \details
  *
+ * \header_file{seqan3/range/views/pairwise_combine.hpp}
+ *
  * This view generates two-element tuples representing all unique combinations of the elements of the underlying range
  * (the order of the elements is undefined). If the underlying range has less than two elements the returned range is
  * empty, otherwise the size of the returned range corresponds to the binomial coefficient `n choose 2`, where `n` is
@@ -689,11 +691,6 @@ namespace seqan3::views
  * The returned iterator from begin does not model [Cpp17Iterator](https://en.cppreference.com/w/cpp/named_req/Iterator)
  * since it does not return a reference to the represented type but a prvalue. Thus this iterator might not be usable
  * within some legacy algorithms of the STL. But it is guaranteed to work with the ranges algorithms.
- *
- * **Header**
- * ```cpp
- *      #include <seqan3/range/views/pairwise_combine.hpp>
- * ```
  *
  * ### View properties
  *
