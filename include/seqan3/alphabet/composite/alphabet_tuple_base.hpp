@@ -235,18 +235,8 @@ private:
                 + to_rank() * alphabet_tuple_base::cummulative_alph_sizes[index]);
         }
 
-        /*!\name Associated types
-         * \{
-         */
-        using typename base_t::rank_type;
-        using typename base_t::char_type;
-        using typename base_t::phred_type;
-        //!\}
-
     public:
         //Import from base type:
-        using base_t::to_rank;
-        using base_t::alphabet_size;
         using base_t::operator=;
 
         /*!\name Constructors, destructor and assignment

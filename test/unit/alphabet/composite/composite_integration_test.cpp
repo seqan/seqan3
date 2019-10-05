@@ -333,3 +333,21 @@ TEST(composite, custom_comparison)
     EXPECT_EQ(t51, (qualified<gapped<dna4>, phred42>{'C'_dna4, phred42{3}}));
     EXPECT_EQ((qualified<dna4, phred42>{'C'_dna4, phred42{3}}), t51);
 }
+
+TEST(composite, get_)
+{
+    qualified<qualified<gapped<dna4>, phred42>, phred42> t51{qualified<gapped<dna4>, phred42>{'C'_dna4, phred42{3}}};
+    EXPECT_EQ(get<0>(t51),            'C'_dna4);
+    EXPECT_EQ(get<0>(get<0>(t51)),    'C'_dna4);
+
+    EXPECT_EQ(get<0>(t51),            'C'_rna4);
+    EXPECT_EQ(get<0>(get<0>(t51)),    'C'_rna4);
+
+    EXPECT_NE(get<0>(t51),            gap{});
+    EXPECT_NE(get<0>(get<0>(t51)),    gap{});
+
+    EXPECT_EQ(get<0>(t51),            gapped<dna4>('C'_dna4));
+    EXPECT_EQ(get<0>(get<0>(t51)),    gapped<dna4>('C'_dna4));
+
+    EXPECT_NE(get<0>(t51),            phred42{0});
+}
