@@ -9,5 +9,5 @@ int main()
     seqan3::cigar_op match{'M'_cigar_op};
 
     // you can print cigar_op values:
-    seqan3::debug_stream << match << std::endl; // M
+    seqan3::debug_stream << match << '\n'; // M
 }

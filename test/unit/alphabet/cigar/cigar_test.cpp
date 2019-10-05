@@ -11,36 +11,31 @@
 
 #include "../alphabet_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(cigar, alphabet_, cigar);
 INSTANTIATE_TYPED_TEST_CASE_P(cigar, semi_alphabet_test, cigar);
-// note: cigar is not usable in constexpr context.
+INSTANTIATE_TYPED_TEST_CASE_P(cigar, semi_alphabet_constexpr, cigar);
 
 TEST(cigar, brace_init)
 {
     cigar c1{uint32_t{223}, 'M'_cigar_op};
-    EXPECT_EQ(c1.to_char(), small_string<11>{"223M"});
+    EXPECT_EQ(c1.to_string(), small_string<11>{"223M"});
 }
 
-TEST(cigar, to_char)
+TEST(cigar, to_string)
 {
     cigar c1{};
 
     assign_rank_to(uint32_t{223}, get<0>(c1));
     assign_char_to('M', get<1>(c1));
-    EXPECT_EQ(c1.to_char(), small_string<11>{"223M"});
+    EXPECT_EQ(c1.to_string(), small_string<11>{"223M"});
 }
 
-TEST(cigar, assign_char)
+TEST(cigar, assign_string)
 {
     cigar c1{};
-    c1.assign_char("223M");
+    c1.assign_string("223M");
     EXPECT_EQ(uint32_t{223}, to_rank(get<0>(c1)));
-    EXPECT_EQ('M',           to_char(get<1>(c1)));
+    EXPECT_EQ('M',           get<1>(c1).to_char());
 }
 
-TEST(cigar, assign_char_strictly_to)
-{
-    EXPECT_THROW(assign_char_strictly_to("FOO", cigar{}), invalid_char_assignment);
-    EXPECT_THROW(assign_char_strictly_to("223MZ", cigar{}), invalid_char_assignment);
-}
