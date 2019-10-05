@@ -489,8 +489,7 @@ protected:
             }
         }
 
-        using seqan3::assign_rank_to;
-        return assign_rank_to(to_rank() - partial_sum_sizes[index], alternative_t{});
+        return seqan3::assign_rank_to(to_rank() - partial_sum_sizes[index], alternative_t{});
     }
 
     /*!\brief Compile-time generated lookup table which contains the partial

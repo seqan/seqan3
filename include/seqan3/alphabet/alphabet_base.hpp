@@ -180,43 +180,37 @@ public:
     //!\brief Checks whether the letters `lhs` and `rhs` are equal.
     friend constexpr bool operator==(derived_type const lhs, derived_type const rhs) noexcept
     {
-        using seqan3::to_rank;
-        return to_rank(lhs) == to_rank(rhs);
+        return seqan3::to_rank(lhs) == seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letters `lhs` and `rhs` are unequal.
     friend constexpr bool operator!=(derived_type const lhs, derived_type const rhs) noexcept
     {
-        using seqan3::to_rank;
-        return to_rank(lhs) != to_rank(rhs);
+        return seqan3::to_rank(lhs) != seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letter `lhs` is smaller than `rhs`.
     friend constexpr bool operator<(derived_type const lhs, derived_type const rhs) noexcept
     {
-        using seqan3::to_rank;
-        return to_rank(lhs) < to_rank(rhs);
+        return seqan3::to_rank(lhs) < seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letter `lhs` is greater than `rhs`.
     friend constexpr bool operator>(derived_type const lhs, derived_type const rhs) noexcept
     {
-        using seqan3::to_rank;
-        return to_rank(lhs) > to_rank(rhs);
+        return seqan3::to_rank(lhs) > seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letter `lhs` is smaller than or equal to `rhs`.
     friend constexpr bool operator<=(derived_type const lhs, derived_type const rhs) noexcept
     {
-        using seqan3::to_rank;
-        return to_rank(lhs) <= to_rank(rhs);
+        return seqan3::to_rank(lhs) <= seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letter `lhs` is bigger than or equal to `rhs`.
     friend constexpr bool operator>=(derived_type const lhs, derived_type const rhs) noexcept
     {
-        using seqan3::to_rank;
-        return to_rank(lhs) >= to_rank(rhs);
+        return seqan3::to_rank(lhs) >= seqan3::to_rank(rhs);
     }
     //!\}
 

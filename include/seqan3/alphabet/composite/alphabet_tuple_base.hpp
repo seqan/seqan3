@@ -438,8 +438,7 @@ public:
         using t = meta::at_c<component_list, index>;
         t val{};
 
-        using seqan3::assign_rank_to;
-        assign_rank_to(l.to_component_rank<index>(), val);
+        seqan3::assign_rank_to(l.to_component_rank<index>(), val);
 
         return component_proxy<t, index>{val, l};
     }
@@ -469,8 +468,7 @@ public:
         using t = meta::at_c<component_list, index>;
         t val{};
 
-        using seqan3::assign_rank_to;
-        assign_rank_to(l.to_component_rank<index>(), val);
+        seqan3::assign_rank_to(l.to_component_rank<index>(), val);
 
         return val;
     }
@@ -610,8 +608,7 @@ private:
     template <std::size_t ...idx>
     static constexpr rank_type rank_sum_helper(component_types ... components, std::index_sequence<idx...> const &) noexcept
     {
-        using seqan3::to_rank;
-        return ((to_rank(components) * cummulative_alph_sizes[idx]) + ...);
+        return ((seqan3::to_rank(components) * cummulative_alph_sizes[idx]) + ...);
     }
 };
 

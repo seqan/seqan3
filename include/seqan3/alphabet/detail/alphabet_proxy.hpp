@@ -278,7 +278,6 @@ public:
         requires quality_alphabet<alphabet_type>
     //!\endcond
     {
-        using seqan3::to_phred;
         /* (smehringer) Explicit conversion instead of static_cast:
          * The tuple composite qualified returns a component_proxy which inherits from alphabet_proxy_base.
          * The qualified alphabet itself inherits from quality_base.
@@ -288,15 +287,14 @@ public:
          * constructor uses `assign_phred_to(to_phred(other), static_cast<derived_type &>(*this))`; (here) which again
          * tries to call to_phred of the alphabet_proxy => infinite loop :boom:
          */
-        return to_phred(operator alphabet_type());
+        return seqan3::to_phred(operator alphabet_type());
     }
 
 #if 0 // this currently causes GCC ICE in alphabet_tuple_base test
     constexpr alphabet_type complement() const noexcept
         requires nucleotide_alphabet<alphabet_type>
     {
-        using seqan3::complement;
-        return complement(static_cast<alphabet_type>(*this));
+        return seqan3::complement(static_cast<alphabet_type>(*this));
     }
 #endif
 
