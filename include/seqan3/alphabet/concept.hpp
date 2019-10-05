@@ -268,6 +268,7 @@ public:
         {
             { impl(priority_tag<2>{}, a) };
             requires noexcept(impl(priority_tag<2>{}, a));
+            requires builtin_character<decltype(impl(priority_tag<2>{}, a))>;
         }
     //!\endcond
     constexpr decltype(auto) operator()(alph_t const a) const noexcept
@@ -302,7 +303,7 @@ namespace seqan3
  *   3. A member function called `to_char()`.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
- * but recommended).
+ * but recommended) and if the returned type models seqan3::builtin_character.
  *
  * Every alphabet type must provide one of the above.
  *
