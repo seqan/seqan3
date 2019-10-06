@@ -36,7 +36,7 @@ constexpr size_t default_sequence_length = 50; //length of nucleotide and qualit
 
 std::string generate_fastq_file(size_t const entries_size)
 {
-    std::string file{};
+    std::stringstream file{};
     std::string const id{"@name"};
 
     auto seed = default_seed;
@@ -44,15 +44,15 @@ std::string generate_fastq_file(size_t const entries_size)
     for (size_t i = 0; i < entries_size; ++i, ++seed)
     {
         auto seq = test::generate_sequence<dna5>(default_sequence_length, 0, seed);
-        auto seq_view = (seq | views::to_char);
+        auto seq_as_chars = seq | views::to_char;
 
         auto qual = test::generate_sequence<phred42>(default_sequence_length, 0, seed);
-        auto qual_view = (qual | views::to_char);
+        auto qual_as_chars = qual | views::to_char;
 
-        file += id + '\n' + (seq_view ) + '\n' + '+' + '\n' + qual_string + '\n';
+        file << id << '\n' << seq_as_chars << '\n' << '+' << '\n' << qual_as_chars << '\n';
     }
 
-    return file;
+    return file.str();
 }
 
 // ============================================================================
@@ -91,28 +91,11 @@ void fastq_write_to_stream(benchmark::State & state)
 // ============================================================================
 void fastq_read_from_stream(benchmark::State & state)
 {
-    sequence_file_format_fastq format;
-    sequence_file_input_options<dna5, false> const options{};
+    std::istringstream istream{file};
+    sequence_file_input fin{istream, format_fastq{}};
 
-    std::string id{};
-    std::vector<dna5> seq{};
-    std::vector<phred42> qual{};
-
-    size_t entries_size = state.range(0);
-    auto file = generate_fastq_file(entries_size);
-
-    for (auto _ : state)
-    {
-        std::istringstream istream{file};
-        // same constant as seqan2 benchmark
-
-        for (size_t i = 0; i < entries_size; ++i)
-            format.read(istream, options, seq, id, qual);
-
-        id.clear();
-        seq.clear();
-        qual.clear();
-    }
+    for (auto[seq, id, qual] : fin)
+    {}
 }
 
 // ============================================================================
@@ -170,10 +153,8 @@ void fastq_read_from_disk(benchmark::State & state)
     {
         sequence_file_input fin{path};
 
-        // read all records and store in internal buffer
-        auto it = fin.begin();
-        while (it != fin.end())
-            ++it;
+        for (auto[seq, id, qual] : fin)
+        {}
     }
 }
 
