@@ -20,7 +20,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/tmp_filename.hpp>
@@ -44,12 +44,12 @@ std::string generate_fastq_file(size_t const entries_size)
     for (size_t i = 0; i < entries_size; ++i, ++seed)
     {
         auto seq = test::generate_sequence<dna5>(default_sequence_length, 0, seed);
-        std::string seq_string = seq | view::to_char;
+        auto seq_view = (seq | views::to_char);
 
         auto qual = test::generate_sequence<phred42>(default_sequence_length, 0, seed);
-        std::string qual_string = qual | view::to_char;
+        auto qual_view = (qual | views::to_char);
 
-        file += id + '\n' + seq_string + '\n' + '+' + '\n' + qual_string + '\n';
+        file += id + '\n' + (seq_view ) + '\n' + '+' + '\n' + qual_string + '\n';
     }
 
     return file;
@@ -76,19 +76,14 @@ auto create_fastq_file(size_t const entries)
 // ============================================================================
 void fastq_write_to_stream(benchmark::State & state)
 {
-    std::ostringstream ostream;
-
-    sequence_file_format_fastq format;
-    sequence_file_output_options options{};
+    sequence_file_output fout{ostream, format_fastq{}};
 
     std::string const id{"@name"};
     auto seq = test::generate_sequence<dna5>(default_sequence_length, 0, default_seed);
     auto qual = test::generate_sequence<phred42>(default_sequence_length, 0, default_seed);
 
     for (auto _ : state)
-    {
-        format.write(ostream, options, seq, id, qual);
-    }
+        fout.emplace_back(seq, id, qual);
 }
 
 // ============================================================================
