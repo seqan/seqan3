@@ -18,8 +18,8 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
+#include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/test/performance/sequence_generator.hpp>
@@ -49,7 +49,7 @@ std::string generate_fastq_file(size_t const entries_size)
         auto qual = test::generate_sequence<phred42>(default_sequence_length, 0, seed);
         auto qual_as_chars = qual | views::to_char;
 
-        file << id << '\n' << seq_as_chars << '\n' << '+' << '\n' << qual_as_chars << '\n';
+        file << id << '\n' << std::string(seq_as_chars.begin(), seq_as_chars.end()) << '\n' << '+' << '\n' << std::string(qual_as_chars.begin(), qual_as_chars.end()) << '\n';
     }
 
     return file.str();
@@ -76,6 +76,7 @@ auto create_fastq_file(size_t const entries)
 // ============================================================================
 void fastq_write_to_stream(benchmark::State & state)
 {
+    std::ostringstream ostream;
     sequence_file_output fout{ostream, format_fastq{}};
 
     std::string const id{"@name"};
@@ -91,11 +92,19 @@ void fastq_write_to_stream(benchmark::State & state)
 // ============================================================================
 void fastq_read_from_stream(benchmark::State & state)
 {
-    std::istringstream istream{file};
+    std::istringstream istream{generate_fastq_file(state.range(0))};
     sequence_file_input fin{istream, format_fastq{}};
 
-    for (auto[seq, id, qual] : fin)
-    {}
+    for (auto _ : state)
+    {
+        for (auto[seq, id, qual] : fin)
+        {
+            //silences [-Werror=unused-variable], no performance impact
+            (void)seq, (void)id, (void)qual;
+        }
+    }
+
+
 }
 
 // ============================================================================
@@ -144,8 +153,6 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
 // ============================================================================
 void fastq_read_from_disk(benchmark::State & state)
 {
-    sequence_file_format_fastq format;
-
     auto file = create_fastq_file(state.range(0));
     auto path = file.get_path();
 
@@ -154,7 +161,10 @@ void fastq_read_from_disk(benchmark::State & state)
         sequence_file_input fin{path};
 
         for (auto[seq, id, qual] : fin)
-        {}
+        {
+            //silences [-Werror=unused-variable], no performance impact
+            (void)seq, (void)id, (void)qual;
+        }
     }
 }
 
