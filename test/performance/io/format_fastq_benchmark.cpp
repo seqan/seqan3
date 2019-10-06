@@ -56,6 +56,22 @@ std::string generate_fastq_file(size_t const entries_size)
 }
 
 // ============================================================================
+// save file on disc temporarily
+// ============================================================================
+auto create_fastq_file(size_t const entries)
+{
+    // create temporary file, automatically removed on destruction
+    test::tmp_filename fastq_file{"tmp.fastq"};
+    auto fastq_file_path = fastq_file.get_path();
+
+    // fill temporary file with a fastq file
+    std::ofstream ostream{fastq_file_path};
+    ostream << generate_fastq_file(entries);
+    ostream.close();
+    return fastq_file;
+}
+
+// ============================================================================
 // write 3-line entry to stream as often as possible
 // ============================================================================
 void fastq_write_to_stream(benchmark::State & state)
@@ -152,18 +168,12 @@ void fastq_read_from_disk(benchmark::State & state)
 {
     sequence_file_format_fastq format;
 
-    // create temporary file, automatically removed on destruction
-    test::tmp_filename file_name{"tmp.fastq"};
-    auto tmp_path = file_name.get_path();
-
-    // fill temporary file with a fastq file
-    std::ofstream ostream{tmp_path};
-    ostream << generate_fastq_file(state.range(0));
-    ostream.close();
+    auto file = create_fastq_file(state.range(0));
+    auto path = file.get_path();
 
     for (auto _ : state)
     {
-        sequence_file_input fin{tmp_path};
+        sequence_file_input fin{path};
 
         // read all records and store in internal buffer
         auto it = fin.begin();
