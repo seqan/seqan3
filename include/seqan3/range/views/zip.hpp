@@ -311,6 +311,15 @@ private:
     //!\brief The iterators of each range in `urng_t`.
     std::tuple<std::ranges::iterator_t<maybe_const<urng_t>>...> iterators{};
 
+    auto& current() noexcept requires all_forward
+    { return this->iterators; }
+    auto& current() const noexcept {
+        if constexpr (all_forward)
+            return this->iterators;
+        else
+            return this->parent->iterators;
+    }
+
 public:
     /*!\name Associated types
      * \{
@@ -323,9 +332,6 @@ public:
     using pointer = void;
     //!\brief Reference to `value_type`.
     using reference = common_tuple<std::ranges::iter_reference_t<std::ranges::iterator_t<maybe_const<urng_t>>>...>;
-    //!\brief Reference to `value_type`.
-    using const_reference = common_tuple<std::ranges::iter_reference_t<std::ranges::iterator_t<
-                                maybe_const<urng_t>>> const...>;
     //!\brief Tag this class depending on which concept are modelled by `urng_t`.
     using iterator_category = std::conditional_t<all_random_access, std::random_access_iterator_tag,
                                 std::conditional_t<all_bidi, std::bidirectional_iterator_tag,
@@ -365,18 +371,9 @@ public:
     //!\}
 
     //!\brief Dereferences the iterators.
-    constexpr auto operator*() noexcept(noexcept((*std::declval<std::ranges::iterator_t<urng_t>>(), ...)))
+    constexpr auto operator*() const noexcept(noexcept(((void)*std::declval<std::ranges::iterator_t<urng_t>>(), ...)))
     {
-        return reference{*std::get<N>(iterators)...};
-    }
-
-    //!\brief Dereferences the iterators.
-    constexpr auto operator*() const noexcept(noexcept((*std::declval<std::ranges::iterator_t<urng_t const>>(), ...)))
-    //!\cond
-        requires (std::input_or_output_iterator<std::ranges::iterator_t<maybe_const<urng_t const>>> && ...)
-    //!\endcond
-    {
-        return const_reference{*std::get<N>(iterators)...};
+        return reference{*std::get<N>(current())...};
     }
 
     /*!\name Arithmetic operators
@@ -384,14 +381,14 @@ public:
      */
 
     //!\brief Increments the iterator by one.
-    constexpr zip_iterator& operator++() noexcept(noexcept((++std::declval<std::ranges::iterator_t<urng_t>>(), ...)))
+    constexpr zip_iterator& operator++() noexcept(noexcept((++std::declval<std::ranges::iterator_t<urng_t> &>(), ...)))
     {
-        (++std::get<N>(iterators), ...);
+        (++std::get<N>(current()), ...);
         return *this;
     }
 
     //!\brief Returns an iterator incremented by one.
-    constexpr auto operator++(int) noexcept(noexcept((++std::declval<std::ranges::iterator_t<urng_t>>(), ...)) &&
+    constexpr auto operator++(int) noexcept(noexcept((++std::declval<std::ranges::iterator_t<urng_t> &>(), ...)) &&
                                        (std::is_nothrow_copy_constructible_v<std::ranges::iterator_t<urng_t>> && ...))
     {
         zip_iterator tmp{*this};
@@ -400,18 +397,18 @@ public:
     }
 
     //!\brief Decrements the iterator by one.
-    constexpr zip_iterator& operator--() noexcept(noexcept((--std::declval<std::ranges::iterator_t<urng_t>>(), ...)))
+    constexpr zip_iterator& operator--() noexcept(noexcept((--std::declval<std::ranges::iterator_t<urng_t> &>(), ...)))
     //!\cond
         requires all_bidi
     //!\endcond
     {
-        (--std::get<N>(iterators), ...);
+        (--std::get<N>(current()), ...);
         return *this;
     }
 
     //!\brief Returns an iterator decremented by one.
     constexpr zip_iterator operator--(int) noexcept(noexcept(
-        (--std::declval<std::ranges::iterator_t<urng_t>>(), ...)) &&
+        (--std::declval<std::ranges::iterator_t<urng_t> &>(), ...)) &&
         (std::is_nothrow_copy_constructible_v<std::ranges::iterator_t<urng_t>> && ...))
     //!\cond
         requires all_bidi
@@ -424,18 +421,18 @@ public:
 
     //!\brief Advances the iterator by `n` positions.
     constexpr zip_iterator& operator+=(difference_type n) noexcept(noexcept(
-        ((std::declval<std::ranges::iterator_t<urng_t>>() += n), ...)))
+        ((std::declval<std::ranges::iterator_t<urng_t> &>() += n), ...)))
     //!\cond
         requires all_random_access
     //!\endcond
     {
-        ((std::get<N>(iterators) += n), ...);
+        ((std::get<N>(current()) += n), ...);
         return *this;
     }
 
     //!\brief Returns an iterator advanced by `n` positions.
     friend constexpr zip_iterator operator+(zip_iterator const & lhs, difference_type n) noexcept(noexcept(
-        ((std::declval<std::ranges::iterator_t<urng_t>>() += n), ...)) &&
+        ((std::declval<std::ranges::iterator_t<urng_t> &>() += n), ...)) &&
         (std::is_nothrow_copy_constructible_v<std::ranges::iterator_t<urng_t>> && ...))
     //!\cond
         requires all_random_access
@@ -447,7 +444,7 @@ public:
 
     //!\brief Returns an iterator advanced by `n` positions.
     friend constexpr zip_iterator operator+(difference_type n, zip_iterator const & rhs) noexcept(noexcept(
-        ((std::declval<std::ranges::iterator_t<urng_t>>() += n), ...)) &&
+        ((std::declval<std::ranges::iterator_t<urng_t> &>() += n), ...)) &&
         (std::is_nothrow_copy_constructible_v<std::ranges::iterator_t<urng_t>> && ...))
     //!\cond
         requires all_random_access
@@ -458,18 +455,18 @@ public:
 
     //!\brief Advances the iterator by `-n` positions.
     constexpr zip_iterator& operator-=(difference_type n) noexcept(noexcept(
-        ((std::declval<std::ranges::iterator_t<urng_t>>() -= n), ...)))
+        ((std::declval<std::ranges::iterator_t<urng_t> &>() -= n), ...)))
     //!\cond
         requires all_random_access
     //!\endcond
     {
-        ((std::get<N>(iterators) += n), ...);
+        ((std::get<N>(current()) += n), ...);
         return *this;
     }
 
     //!\brief Returns an iterator advanced by `-n` positions.
     friend constexpr zip_iterator operator-(zip_iterator const & lhs, difference_type n) noexcept(noexcept(
-        ((std::declval<std::ranges::iterator_t<urng_t>>() -= n), ...)) &&
+        ((std::declval<std::ranges::iterator_t<urng_t> &>() -= n), ...)) &&
         (std::is_nothrow_copy_constructible_v<std::ranges::iterator_t<urng_t>> && ...))
     //!\cond
         requires all_random_access
@@ -495,7 +492,7 @@ public:
 
     //!\brief Accesses an element by index.
     constexpr auto operator[](difference_type n) const noexcept(noexcept(
-        (std::declval<std::ranges::iterator_t<urng_t>>()[n], ...)))
+        ((void)std::declval<std::ranges::iterator_t<urng_t>>()[n], ...)))
     //!\cond
         requires all_random_access
     //!\endcond
