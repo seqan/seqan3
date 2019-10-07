@@ -12,12 +12,16 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 using namespace seqan3;
 
 using masked_types = ::testing::Types<masked<dna4>, masked<dna5>>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(masked, alphabet_, masked_types);
+INSTANTIATE_TYPED_TEST_CASE_P(masked, semi_alphabet_test, masked_types);
 INSTANTIATE_TYPED_TEST_CASE_P(masked, alphabet_constexpr, masked_types);
+INSTANTIATE_TYPED_TEST_CASE_P(masked, semi_alphabet_constexpr, masked_types);

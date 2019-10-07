@@ -9,11 +9,15 @@
 #include <seqan3/alphabet/nucleotide/dna3bs.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, alphabet_, dna3bs);
+INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, semi_alphabet_test, dna3bs);
 INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, alphabet_constexpr, dna3bs);
+INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, semi_alphabet_constexpr, dna3bs);
 
 TEST(dna3bs, concept_check)
 {

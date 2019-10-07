@@ -8,11 +8,15 @@
 #include <seqan3/alphabet/structure/dssp9.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 INSTANTIATE_TYPED_TEST_CASE_P(dssp9, alphabet_, dssp9);
+INSTANTIATE_TYPED_TEST_CASE_P(dssp9, semi_alphabet_test, dssp9);
 INSTANTIATE_TYPED_TEST_CASE_P(dssp9, alphabet_constexpr, dssp9);
+INSTANTIATE_TYPED_TEST_CASE_P(dssp9, semi_alphabet_constexpr, dssp9);
 
 // assign_char functions
 TEST(dssp9, assign_char)

@@ -7,15 +7,19 @@
 
 #include <range/v3/view/zip.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 #include "aminoacid_test_template.hpp"
 
 #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
 #include <seqan3/range/views/zip.hpp>
 
 INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, alphabet_, aa10murphy);
+INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, semi_alphabet_test, aa10murphy);
 INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, alphabet_constexpr, aa10murphy);
+INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, semi_alphabet_constexpr, aa10murphy);
 INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, aminoacid, aa10murphy);
 
 TEST(aa10murphy, assign_char)

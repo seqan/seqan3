@@ -16,8 +16,10 @@
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 #include "../composite/alphabet_tuple_base_test_template.hpp"
 
 using namespace seqan3;
@@ -69,5 +71,7 @@ using qualified_types = ::testing::Types<qualified<dna4, phred42>,
                                          dna4q>;
 
 INSTANTIATE_TYPED_TEST_CASE_P(qualified, alphabet_, qualified_types);
+INSTANTIATE_TYPED_TEST_CASE_P(qualified, semi_alphabet_test, qualified_types);
 INSTANTIATE_TYPED_TEST_CASE_P(qualified, alphabet_constexpr, qualified_types);
+INSTANTIATE_TYPED_TEST_CASE_P(qualified, semi_alphabet_constexpr, qualified_types);
 INSTANTIATE_TYPED_TEST_CASE_P(qualified, alphabet_tuple_base_test, qualified_types);

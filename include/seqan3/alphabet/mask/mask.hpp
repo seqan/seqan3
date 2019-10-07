@@ -44,7 +44,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr mask() : base_t{} {}                      //!< Defaulted.
+    constexpr mask() = default;                         //!< Defaulted.
     constexpr mask(mask const &) = default;             //!< Defaulted.
     constexpr mask(mask &&) = default;                  //!< Defaulted.
     constexpr mask & operator=(mask const &) = default; //!< Defaulted.

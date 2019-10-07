@@ -8,8 +8,10 @@
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 using namespace seqan3;
 
@@ -32,4 +34,6 @@ public:
 };
 
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, alphabet_, alphabet_proxy_example);
+INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, semi_alphabet_test, alphabet_proxy_example);
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, alphabet_constexpr, alphabet_proxy_example);
+INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, semi_alphabet_constexpr, alphabet_proxy_example);

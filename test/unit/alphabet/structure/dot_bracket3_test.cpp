@@ -9,11 +9,15 @@
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet_, dot_bracket3);
+INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, semi_alphabet_test, dot_bracket3);
 INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet_constexpr, dot_bracket3);
+INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, semi_alphabet_constexpr, dot_bracket3);
 
 // concepts
 TEST(dot_bracket3, concept_check)

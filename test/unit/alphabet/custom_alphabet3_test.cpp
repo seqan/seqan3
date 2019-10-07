@@ -9,6 +9,8 @@
 
 #include "alphabet_test_template.hpp"
 #include "alphabet_constexpr_test_template.hpp"
+#include "semi_alphabet_test_template.hpp"
+#include "semi_alphabet_constexpr_test_template.hpp"
 
 // Tests the capabilities of the explicit alphabet customisation
 
@@ -78,4 +80,6 @@ static_assert(seqan3::alphabet<third_party_ns::third_party_type>);
 //![third_party_type]
 
 INSTANTIATE_TYPED_TEST_CASE_P(third_party_type, alphabet_,           third_party_ns::third_party_type);
+INSTANTIATE_TYPED_TEST_CASE_P(third_party_type, semi_alphabet_test,  third_party_ns::third_party_type);
 INSTANTIATE_TYPED_TEST_CASE_P(third_party_type, alphabet_constexpr,  third_party_ns::third_party_type);
+INSTANTIATE_TYPED_TEST_CASE_P(third_party_type, semi_alphabet_constexpr, third_party_ns::third_party_type);

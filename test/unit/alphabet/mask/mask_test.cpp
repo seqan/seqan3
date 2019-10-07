@@ -9,13 +9,13 @@
 
 #include <seqan3/alphabet/mask/mask.hpp>
 
+#include "../semi_alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+
 using namespace seqan3;
 
-TEST(mask, concept_check)
-{
-    EXPECT_TRUE(semialphabet<mask>);
-    EXPECT_TRUE(detail::constexpr_semialphabet<mask>);
-}
+INSTANTIATE_TYPED_TEST_CASE_P(mask, semi_alphabet_test, mask);
+INSTANTIATE_TYPED_TEST_CASE_P(mask, semi_alphabet_constexpr, mask);
 
 TEST(mask, assign_rank)
 {
@@ -48,24 +48,4 @@ TEST(mask, assign_rank)
     mask const crmask{lmask};
     EXPECT_EQ(std::move(crmask).to_rank(), lmask.to_rank());
     EXPECT_TRUE((std::is_same_v<decltype(std::move(crmask)), mask const &&>));
-}
-
-// ------------------------------------------------------------------
-// comparators
-// ------------------------------------------------------------------
-TEST(mask, compare)
-{
-    EXPECT_TRUE(mask::MASKED == mask::MASKED);
-    EXPECT_TRUE(mask::MASKED != mask::UNMASKED);
-    EXPECT_TRUE(mask::MASKED > mask::UNMASKED);
-    EXPECT_TRUE(mask::UNMASKED < mask::MASKED);
-    EXPECT_TRUE(mask::MASKED >= mask::UNMASKED);
-    EXPECT_TRUE(mask::UNMASKED <= mask::MASKED);
-
-    EXPECT_FALSE(mask::MASKED == mask::UNMASKED);
-    EXPECT_FALSE(mask::MASKED != mask::MASKED);
-    EXPECT_FALSE(mask::MASKED > mask::MASKED);
-    EXPECT_FALSE(mask::UNMASKED < mask::UNMASKED);
-    EXPECT_FALSE(mask::MASKED <= mask::UNMASKED);
-    EXPECT_FALSE(mask::UNMASKED >= mask::MASKED);
 }

@@ -9,15 +9,23 @@
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-#include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet_, wuss51);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss51, semi_alphabet_test, wuss51);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet_constexpr, wuss51);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss51, semi_alphabet_constexpr, wuss51);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss15, alphabet_, wuss<15>);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss15, semi_alphabet_test, wuss<15>);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss15, alphabet_constexpr, wuss<15>);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss15, semi_alphabet_constexpr, wuss<15>);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet_, wuss<67>);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss67, semi_alphabet_test, wuss<67>);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet_constexpr, wuss<67>);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss67, semi_alphabet_constexpr, wuss<67>);
 
 // assign_char functions
 TEST(wuss, assign_char)

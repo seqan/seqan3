@@ -10,8 +10,10 @@
 #include <seqan3/alphabet/cigar/cigar.hpp>
 
 #include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
 
 INSTANTIATE_TYPED_TEST_CASE_P(cigar, alphabet_, cigar);
+INSTANTIATE_TYPED_TEST_CASE_P(cigar, semi_alphabet_test, cigar);
 // note: cigar is not usable in constexpr context.
 
 TEST(cigar, brace_init)
