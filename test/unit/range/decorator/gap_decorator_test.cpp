@@ -14,6 +14,7 @@
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
+#include <seqan3/range/views/enforce_random_access.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/ranges>
 
@@ -58,7 +59,7 @@ public:
 INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator, aligned_sequence_, test_types);
 
 template <>
-struct iterator_fixture<decorator_t::iterator> : public ::testing::Test
+struct iterator_fixture<typename decorator_t::iterator> : public ::testing::Test
 {
     using iterator_tag = std::bidirectional_iterator_tag;
     static constexpr bool const_iterable = true;
@@ -75,51 +76,38 @@ struct iterator_fixture<decorator_t::iterator> : public ::testing::Test
     }
 
     std::vector<gapped<dna4>> expected_range = [this] ()
-        {
-            std::vector<gapped<dna4>> tmp{};
-            std::copy(vec.begin(), vec.end(), std::ranges::back_inserter(tmp));
-            initialise_with_gaps(tmp);
-            return tmp;
-        }();
+    {
+        std::vector<gapped<dna4>> tmp{};
+        assign_unaligned(tmp, vec);
+        initialise_with_gaps(tmp);
+        return tmp;
+    }();
 
     decorator_t test_range = [this] ()
-        {
-            decorator_t tmp{vec};
-            initialise_with_gaps(tmp);
-            return tmp;
-        }();
+    {
+        decorator_t tmp{vec};
+        initialise_with_gaps(tmp);
+        return tmp;
+    }();
 };
 
+struct random_access_iterator_test
+{};
+
 template <>
-struct iterator_fixture<decorator_t::iterator_ra> : iterator_fixture<decorator_t::iterator>
+struct iterator_fixture<random_access_iterator_test> : iterator_fixture<typename decorator_t::iterator>
 {
+    using base_t = iterator_fixture<typename decorator_t::iterator>;
+
     using iterator_tag = std::random_access_iterator_tag;
     static constexpr bool const_iterable = true;
 
-    // expected_range is inherited
-
-    struct expose_random_access_iterator
-    {
-        std::vector<dna4> const vec{"ACTGACTG"_dna4};
-        decorator_t range = [this] ()
-            {
-                decorator_t tmp{vec};
-                iterator_fixture<decorator_t::iterator>::initialise_with_gaps(tmp);
-                return tmp;
-            }();
-
-        decorator_t::iterator_ra begin() { return range.begin_ra(); }
-        decorator_t::iterator_ra end()   { return range.end_ra(); }
-        decorator_t::const_iterator_ra cbegin(){ return range.cbegin_ra(); }
-        decorator_t::const_iterator_ra cend()  { return range.cend_ra(); }
-    };
-
-    expose_random_access_iterator test_range{};
+    decltype(base_t::test_range | views::enforce_random_access) test_range = base_t::test_range
+                                                                          | views::enforce_random_access;
 };
 
-using test_type = ::testing::Types<decorator_t::iterator, decorator_t::iterator_ra>;
-
-INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator, iterator_fixture, test_type);
+INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator, iterator_fixture, typename decorator_t::iterator);
+INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator_random_access, iterator_fixture, random_access_iterator_test);
 
 // ---------------------------------------------------------------------------------------------------------------------
 // typed test

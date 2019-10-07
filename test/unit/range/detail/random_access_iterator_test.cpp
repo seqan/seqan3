@@ -32,9 +32,9 @@ struct iterator_fixture<seqan3::detail::random_access_iterator<std::vector<int>>
         std::vector<int> rng{1, 2, 3, 4, 5, 6, 7, 8};
 
         iterator_type begin() { return iterator_type{rng}; }
-        iterator_type end()   { return iterator_type{rng, rng.size()}; }
-        const_iterator_type cbegin(){ return const_iterator_type{rng}; }
-        const_iterator_type cend()  { return const_iterator_type{rng, rng.size()}; }
+        iterator_type end() { return iterator_type{rng, rng.size()}; }
+        const_iterator_type begin() const { return const_iterator_type{rng}; }
+        const_iterator_type end() const { return const_iterator_type{rng, rng.size()}; }
     };
 
     std::vector<int> expected_range{1, 2, 3, 4, 5, 6, 7, 8};
