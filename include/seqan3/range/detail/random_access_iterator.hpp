@@ -176,8 +176,7 @@ public:
     }
     //!\}
 
-    /*!
-ame Arithmetic operators
+    /*!\name Arithmetic operators
      * \brief seqan3::detail::random_access_iterator_base operators are used unless specialised in derived type.
      * \{
     */

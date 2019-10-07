@@ -278,8 +278,7 @@ public:
     }
     //!\}
 
-    /*!
-ame Arithmetic operators
+    /*!\name Arithmetic operators
      * \{
      */
     //!\brief Advances the iterator to the next chunk.

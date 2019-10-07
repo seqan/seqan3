@@ -159,8 +159,7 @@ public:
     SEQAN3_DOXYGEN_ONLY(constexpr seqan3::detail::matrix_coordinate coordinate() const noexcept {})
     //!\}
 
-    /*!
-ame Arithmetic operators
+    /*!\name Arithmetic operators
      * \{
      */
 
