@@ -130,8 +130,11 @@ private:
          * Allows construction of a const iterator (operating on a const range) from a non-const iterator.
          * This special constructor is needed as it is not covered by the standard copy and move constructors.
          */
-        template <std::convertible_to<range_type &> other_range_type>
-            requires std::same_as<std::remove_const_t<other_range_type>, std::remove_const_t<range_type>>
+        template <typename other_range_type>
+        //!\cond
+            requires std::convertible_to<other_range_type, range_type &> &&
+                     std::same_as<std::remove_const_t<other_range_type>, std::remove_const_t<range_type>>
+        //!\endcond
         constexpr iterator_type(iterator_type<other_range_type> other) noexcept :
             iterator_type{std::move(other.first_it), std::move(other.begin_it), std::move(other.end_it)}
         {}
