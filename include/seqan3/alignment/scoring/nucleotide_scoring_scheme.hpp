@@ -39,25 +39,31 @@ class nucleotide_scoring_scheme : public scoring_scheme_base<nucleotide_scoring_
 private:
     //!\brief Type of the CRTP-base.
     using base_t = scoring_scheme_base<nucleotide_scoring_scheme, dna15, score_type>;
+
+    //!\brief Befriend base_t so it can access itself through this derived type.
+    friend base_t;
+
 public:
+    //!\privatesection
+    //!\copydoc scoring_scheme_base::matrix_type
+    using typename base_t::matrix_type;
+    //!\publicsection
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    //NOTE(h-2): unfortunately these are not inherited in the documentation
     //!\copydoc scoring_scheme_base::scoring_scheme_base()
-    SEQAN3_DOXYGEN_ONLY(( constexpr nucleotide_scoring_scheme() noexcept {} ))
+    constexpr nucleotide_scoring_scheme() noexcept = default;
     //!\copydoc scoring_scheme_base::scoring_scheme_base(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
-    SEQAN3_DOXYGEN_ONLY((
-      template <arithmetic score_arg_t>
-      constexpr nucleotide_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms) {}
-    ))
-    //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_type const & _matrix)
-    SEQAN3_DOXYGEN_ONLY(( constexpr nucleotide_scoring_scheme(matrix_type const & _matrix) noexcept {} ))
+    template <arithmetic score_arg_t>
+    constexpr nucleotide_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
+        : base_t{ms, mms}
+    {}
+    //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_type const & matrix)
+    constexpr nucleotide_scoring_scheme(matrix_type const & matrix) noexcept
+        : base_t{matrix}
+    {}
     //!\}
-
-    //!\privatesection
-    //!\brief Inherit the base class's constructors.
-    using base_t::base_t;
 };
 
 /*!\name Type deduction guides

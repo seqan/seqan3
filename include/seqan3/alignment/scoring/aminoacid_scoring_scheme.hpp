@@ -81,27 +81,30 @@ private:
 
     //!\brief Make the base's private member visible.
     using base_t::matrix;
+
+    //!\brief Befriend base_t so it can access itself through this derived type.
+    friend base_t;
+
 public:
     //!\privatesection
-    //!\brief Inherit the base class's constructors.
-    using base_t::base_t;
-    //!\brief Make the base's private member type visible.
+    //!\copydoc scoring_scheme_base::matrix_type
     using typename base_t::matrix_type;
     //!\publicsection
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    //NOTE(h-2): unfortunately these are not inherited in the documentation
     //!\copydoc scoring_scheme_base::scoring_scheme_base()
-    SEQAN3_DOXYGEN_ONLY(( constexpr aminoacid_scoring_scheme() noexcept {} ))
+    constexpr aminoacid_scoring_scheme() noexcept = default;
     //!\copydoc scoring_scheme_base::scoring_scheme_base(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
-    SEQAN3_DOXYGEN_ONLY((
-      template <arithmetic score_arg_t>
-      constexpr aminoacid_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms) {}
-    ))
-    //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_type const & _matrix)
-    SEQAN3_DOXYGEN_ONLY(( constexpr aminoacid_scoring_scheme(matrix_type const & _matrix) noexcept {} ))
+    template <arithmetic score_arg_t>
+    constexpr aminoacid_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
+        : base_t{ms, mms}
+    {}
+    //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_type const & matrix)
+    constexpr aminoacid_scoring_scheme(matrix_type const & matrix) noexcept
+        : base_t{matrix}
+    {}
 
     //!\brief Construct for seqan3::aminoacid_similarity_matrix.
     //!\copydetails set_similarity_matrix()

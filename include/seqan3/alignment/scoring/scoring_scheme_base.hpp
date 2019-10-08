@@ -150,9 +150,9 @@ private:
     /*!\brief Constructor for a custom scheme (delegates to set_custom_matrix()).
      * \copydetails set_custom_matrix()
      */
-    constexpr scoring_scheme_base(matrix_type const & _matrix) noexcept
+    constexpr scoring_scheme_base(matrix_type const & matrix) noexcept
     {
-        set_custom_matrix(_matrix);
+        set_custom_matrix(matrix);
     }
     //!\}
 
@@ -192,11 +192,11 @@ public:
     }
 
     /*!\brief Set a custom scheme by passing a full matrix with arbitrary content.
-     * \param[in] _matrix A full matrix that is copied into the scheme.
+     * \param[in] matrix A full matrix that is copied into the scheme.
      */
-    constexpr void set_custom_matrix(matrix_type const & _matrix) noexcept
+    constexpr void set_custom_matrix(matrix_type const & matrix) noexcept
     {
-        std::ranges::copy(_matrix, begin(matrix));
+        std::ranges::copy(matrix, this->matrix.begin());
     }
     //!\}
 
