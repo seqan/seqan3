@@ -25,21 +25,22 @@
 namespace seqan3
 {
 
-/*!\brief The cigar alphabet pairs a counter with a seqan3::cigar_op letter.
+/*!\brief The cigar semialphabet pairs a counter with a seqan3::cigar_op letter.
  * \ingroup cigar
- * \implements seqan3::writable_alphabet
+ * \implements seqan3::writable_semialphabet
  * \implements seqan3::trivially_copyable
  * \implements seqan3::standard_layout
  * \implements std::regular
  *
  * \details
  *
- * This alphabet represents a unit in a CIGAR string, typically found in the
+ * This semialphabet represents a unit in a CIGAR string, typically found in the
  * SAM and BAM formats. It consists of a number and a seqan3::cigar_op symbol.
  *
- * The "char representation" of this alphabet is a seqan3::small_string. This
- * has some implications when using it in code that doesn't expect a range
- * of symbols.
+ * It has a "visual representation", but since this is a string and not a char,
+ * the type only models seqan3::writable_semialphabet and not
+ * seqan3::writable_alphabet.
+ * Members for reading/writing the string are provided.
  *
  * To avoid confusion between string and char literal, this alphabet has
  * no user defined literal operators. Always assign from a pair of
@@ -102,8 +103,8 @@ public:
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the character representation.
-    small_string<11> to_char() const noexcept
+    //!\brief Return the string representation.
+    small_string<11> to_string() const noexcept
     {
         small_string<11> ret{}; // maximum number of digits for uint32_t + 1 char for the cigar_op
         ret.resize(11);
@@ -121,8 +122,8 @@ public:
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from the character representation.
-    cigar & assign_char(small_string<11> const s) noexcept
+    //!\brief Assign from the string representation.
+    cigar & assign_string(small_string<11> const s) noexcept
     {
         uint32_t num{};
         auto [ ptr, errc ] = std::from_chars(s.data(), s.data() + 10, num);
@@ -165,7 +166,7 @@ public:
 template <typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, cigar const c)
 {
-    s << to_char(c);
+    s << c.to_string();
     return s;
 }
 

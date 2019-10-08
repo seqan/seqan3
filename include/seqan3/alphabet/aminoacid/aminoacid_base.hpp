@@ -71,9 +71,8 @@ public:
     //!\endcond
     explicit constexpr aminoacid_base(other_aa_type const & other) noexcept
     {
-        using seqan3::to_rank;
         static_cast<derived_type &>(*this) =
-            detail::convert_through_char_representation<derived_type, other_aa_type>[to_rank(other)];
+            detail::convert_through_char_representation<derived_type, other_aa_type>[seqan3::to_rank(other)];
     }
     //!\}
 

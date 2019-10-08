@@ -36,8 +36,7 @@ struct hash<alphabet_t>
      */
     size_t operator()(alphabet_t const character) const noexcept
     {
-        using seqan3::to_rank;
-        return to_rank(character);
+        return seqan3::to_rank(character);
     }
 };
 

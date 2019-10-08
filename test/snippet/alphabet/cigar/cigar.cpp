@@ -6,8 +6,8 @@ using seqan3::operator""_cigar_op;
 int main()
 {
     seqan3::cigar c{13, 'M'_cigar_op};
-    seqan3::debug_stream << c << std::endl; // "13M"
+    seqan3::debug_stream << c << '\n'; // "13M"
 
-    seqan3::assign_char_to("14X", c);
-    seqan3::debug_stream << c << std::endl; // "14X"
+    c.assign_string("14X");
+    seqan3::debug_stream << c << '\n'; // "14X"
 }

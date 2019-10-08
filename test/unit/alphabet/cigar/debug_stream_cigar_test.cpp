@@ -17,7 +17,7 @@ TEST(debug_stream_test, cigar)
     debug_stream_type my_stream{o};
 
     cigar c1{};
-    c1.assign_char("223M");
+    c1.assign_string("223M");
 
     my_stream << c1;
 
