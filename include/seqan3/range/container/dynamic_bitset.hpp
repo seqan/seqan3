@@ -49,6 +49,10 @@ template <size_t bit_capacity = 58>
 class dynamic_bitset
 {
 private:
+    //!\brief Befriend other template instantiations of dynamic_bitset.
+    template <size_t>
+    friend class dynamic_bitset;
+
     //!\brief A bit field representing size and bit information stored in one `uint64_t`.
     struct bitfield
     {
@@ -1082,13 +1086,13 @@ public:
     //!\brief Direct access to the underlying bit field.
     constexpr bitfield * raw_data() noexcept
     {
-        return data;
+        return &data;
     }
 
     //!\copydoc raw_data()
     constexpr bitfield const * raw_data() const noexcept
     {
-        return data;
+        return &data;
     }
     //!\}
 
@@ -1580,19 +1584,13 @@ public:
      */
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity /* resolves ambiguousness when comparing two dynamic_bitsets of unequal capacity */
-    //!\endcond
     friend constexpr bool operator==(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
-        return lhs.data.size == rhs.data.size && lhs.data.bits == rhs.data.bits;
+        return lhs.data.size == rhs.raw_data()->size && lhs.data.bits == rhs.raw_data()->bits;
     }
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator!=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs == rhs);
@@ -1600,29 +1598,20 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator<(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
-        return lhs.data.bits < rhs.data.bits;
+        return lhs.data.bits < rhs.raw_data()->bits;
     }
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator>(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
-        return lhs.data.bits > rhs.data.bits;
+        return lhs.data.bits > rhs.raw_data()->bits;
     }
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator<=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs > rhs);
@@ -1630,9 +1619,6 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator>=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs < rhs);
