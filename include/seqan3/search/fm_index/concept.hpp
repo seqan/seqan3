@@ -110,7 +110,6 @@ SEQAN3_CONCEPT fm_index_specialisation = std::semiregular<t> && requires (t inde
                                                    std::vector<typename t::char_type>> const text)
     {
         { t(text) };
-        { index.construct(text) } -> void;
     };
 
     { index.begin() } -> typename t::cursor_type;

@@ -99,8 +99,6 @@ private:
     template <typename _index_t>
     friend class bi_fm_index_cursor;
 
-    // friend detail::get_suffix_array_range;
-
     //!\brief Helper function to recompute text positions since the indexed text is reversed.
     size_type offset() const noexcept
     {

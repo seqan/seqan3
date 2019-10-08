@@ -130,8 +130,8 @@ private:
             throw std::invalid_argument("The text that is indexed cannot be empty.");
 
         auto rev_text = std::views::reverse(text);
-        fwd_fm.construct(text);
-        rev_fm.construct(rev_text);
+        fwd_fm = fm_index_type{text};
+        rev_fm = fm_index_type{rev_text};
     }
 
     //!\overload
@@ -154,8 +154,9 @@ private:
             throw std::invalid_argument("The text that is indexed cannot be empty.");
 
         auto rev_text = text | views::deep{std::views::reverse} | std::views::reverse;
-        fwd_fm.construct(text);
-        rev_fm.construct(rev_text);
+
+        fwd_fm = fm_index_type{text};
+        rev_fm = fm_index_type{rev_text};
     }
 
 public:
@@ -175,7 +176,7 @@ public:
      * \{
      */
     //!\brief The type of the bidirectional cursor.
-    using cursor_type = bi_fm_index_cursor<bi_fm_index<alphabet_t, text_layout_mode, sdsl_index_type>>;
+    using cursor_type = bi_fm_index_cursor<bi_fm_index>;
     //!\brief The type of the unidirectional cursor on the original text.
     using fwd_cursor_type = fm_index_cursor<fm_index_type>;
     //!\brief The type of the unidirectional cursor on the reversed text.
@@ -183,8 +184,8 @@ public:
 
     //!\}
 
-    template <typename fm_index_t>
-    friend class fm_index_cursor;
+    template <typename bi_fm_index_t>
+    friend class bi_fm_index_cursor;
 
     /*!\name Constructors, destructor and assignment
      * \{
