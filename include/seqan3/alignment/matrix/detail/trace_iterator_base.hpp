@@ -140,7 +140,7 @@ public:
     }
 
     //!\brief Returns the current coordinate in two-dimensional space.
-    constexpr matrix_coordinate coordinate() const noexcept
+    [[nodiscard]] constexpr matrix_coordinate coordinate() const noexcept
     {
         return matrix_iter.coordinate();
     }

@@ -104,6 +104,13 @@ struct matrix_index
     {}
     //!\}
 
+    //!\brief Explicit conversion to the a std::pair.
+    template <std::integral first_index_t, std::integral second_index_t>
+    constexpr explicit operator std::pair<first_index_t, second_index_t>() const noexcept
+    {
+        return std::pair{static_cast<first_index_t>(col), static_cast<second_index_t>(row)};
+    }
+
     index_t row{}; //!< The row index.
     index_t col{}; //!< The column index.
 };

@@ -73,12 +73,4 @@ public:
     //!\}
 };
 
-/*!\name Type deduction guides
- * \{
- */
-//!\brief Deduces the template argument from the passed iterator.
-template <two_dimensional_matrix_iterator matrix_iter_t>
-trace_iterator(matrix_iter_t const) -> trace_iterator<matrix_iter_t>;
-//!\}
-
 } // namespace seqan3::detail
