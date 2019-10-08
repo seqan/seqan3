@@ -234,9 +234,10 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
-        requires std::constructible_from<value_type, reference_t<begin_it_type>>
+        requires std::sentinel_for<end_it_type, begin_it_type> &&
+                 std::constructible_from<value_type, reference_t<begin_it_type>>
     //!\endcond
     constexpr dynamic_bitset(begin_it_type begin_it, end_it_type end_it) noexcept:
         dynamic_bitset{}
@@ -484,9 +485,10 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
-        requires std::constructible_from<value_type, reference_t<begin_it_type>>
+        requires std::sentinel_for<end_it_type, begin_it_type> &&
+                 std::constructible_from<value_type, reference_t<begin_it_type>>
     //!\endcond
     constexpr void assign(begin_it_type begin_it, end_it_type end_it) noexcept
     {
@@ -1281,9 +1283,10 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
-        requires std::constructible_from<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
+        requires std::sentinel_for<end_it_type, begin_it_type> &&
+                 std::constructible_from<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
     //!\endcond
     constexpr iterator insert(const_iterator pos, begin_it_type begin_it, end_it_type end_it) noexcept
     {
