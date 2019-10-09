@@ -1799,7 +1799,6 @@ public:
     }
     //!\}
 
-private:
     //!\cond DEV
     /*!\brief Serialisation support function.
      * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.

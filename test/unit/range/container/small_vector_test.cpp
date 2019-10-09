@@ -13,6 +13,7 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/container/small_vector.hpp>
 #include <seqan3/std/ranges>
+#include <seqan3/test/cereal.hpp>
 
 using namespace seqan3;
 
@@ -392,4 +393,10 @@ TEST(small_vector, resize)
 {
     constexpr bool res = resize_test();
     EXPECT_TRUE(res);
+}
+
+TEST(small_vector, serialisation)
+{
+    small_vector hello{std::array{'h','e','l','l','o'}};
+    test::do_serialisation(hello);
 }

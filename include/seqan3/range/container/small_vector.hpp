@@ -947,6 +947,8 @@ protected:
     //!\brief The size of the actual contained data_.
     size_type sz{0};
 
+public:
+    //!\cond DEV
     /*!\brief Serialisation support function.
      * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
      * \param archive The archive being serialised from/to.
@@ -959,6 +961,7 @@ protected:
         archive(data_);
         archive(sz);
     }
+    //!\endcond
 };
 
 /*!\name Type deduction guides
