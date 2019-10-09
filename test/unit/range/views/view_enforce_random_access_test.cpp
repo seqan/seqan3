@@ -29,6 +29,7 @@ public:
     template <typename u_iterator_t>
     class test_iterator : public detail::inherited_iterator_base<test_iterator<u_iterator_t>, u_iterator_t>
     {
+    public:
         using base_t = detail::inherited_iterator_base<test_iterator<u_iterator_t>, u_iterator_t>;
         using iterator_category = std::bidirectional_iterator_tag;
 
@@ -184,7 +185,7 @@ TYPED_TEST(enforce_random_access_test, adaptor)
 // ----------------------------------------------------------------------------
 
 template <typename rng_t>
-class iterator_fixture<std::type_identity<rng_t>> : public ::testing::Test
+struct iterator_fixture<std::type_identity<rng_t>> : public ::testing::Test
 {
     static_assert(!std::ranges::random_access_range<rng_t>);
 
