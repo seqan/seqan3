@@ -263,11 +263,17 @@ public:
      *        e.g. seqan3::alphabet_variant.
      * \{
      */
+private:
+    //!\brief work around a gcc bug that disables short-circuiting of operator&& in an enable_if_t of a friend function
+    template <typename t>
+    static constexpr bool is_alphabet_comparable_with = !std::is_same_v<derived_type, t> &&
+                                                        detail::weakly_equality_comparable_with<alphabet_type, t>;
+
+public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator==(derived_type const lhs, t const rhs) noexcept
-        -> std::enable_if_t<!std::same_as<derived_type, t> && detail::weakly_equality_comparable_with<alphabet_type, t>,
-                            bool>
+        -> std::enable_if_t<is_alphabet_comparable_with<t>, bool>
     {
         return (lhs.operator alphabet_type() == rhs);
     }
@@ -275,8 +281,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator==(t const lhs, derived_type const rhs) noexcept
-        -> std::enable_if_t<!std::same_as<derived_type, t> && detail::weakly_equality_comparable_with<alphabet_type, t>,
-                            bool>
+        -> std::enable_if_t<is_alphabet_comparable_with<t>, bool>
     {
         return (rhs == lhs);
     }
@@ -284,8 +289,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator!=(derived_type const lhs, t const rhs) noexcept
-        -> std::enable_if_t<!std::same_as<derived_type, t> && detail::weakly_equality_comparable_with<alphabet_type, t>,
-                            bool>
+        -> std::enable_if_t<is_alphabet_comparable_with<t>, bool>
     {
         return !(lhs == rhs);
     }
@@ -293,8 +297,7 @@ public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
     friend constexpr auto operator!=(t const lhs, derived_type const rhs) noexcept
-        -> std::enable_if_t<!std::same_as<derived_type, t> && detail::weakly_equality_comparable_with<alphabet_type, t>,
-                            bool>
+        -> std::enable_if_t<is_alphabet_comparable_with<t>, bool>
     {
         return (rhs != lhs);
     }
