@@ -20,6 +20,7 @@
 #include <type_traits>
 #include <vector>
 
+#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/parallel/detail/spin_delay.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/container/concept.hpp>
@@ -47,6 +48,42 @@ enum struct buffer_queue_policy : uint8_t
     dynamic
 };
 
+// Ringbuffer implementation:
+// The underlying buffer has size (number of actual elements + 1). This is a trick to easily check if the queue is empty
+// or full. Furthermore, the ring buffer uses 4 pointers. The actual push_back and pop_front position as well as
+// the pending push_back and pop_front position. The latter indicates the position that have been advanced concurrently
+// by multiple threads from either end.
+//
+// head: position to read/extract from the queue (first inserted elment) => pop_front_position
+// tail: position where to write to/push new elements to the queue => push_back_position
+// head_read: The actual position after x threads concurrently popped from the queue. => pending_pop_front_position
+// tail_write: The actual position after x threads concurrently pushed to the queue. => pending_push_back_position
+//  [  ?  ]  [  4  ]  [  3  ]  [  8  ]  [  0  ]  [  x  ]  [  ?  ]
+//                       |                          ^
+//                       v                          |
+//             head            headRead   tail  tailWrite
+//
+// valid buffer between  [headRead, tail)
+// currently filled      [tail, tailWrite)
+// currently removed     [head, headRead)
+//
+// State: empty = (head == tail)
+//  [  ?  ]  [  ?  ]  [  ?  ]  [  ?  ]  [  ?  ]  [  ?  ]  [  ?  ]
+//                                        tail
+//                                        head
+// The head is on the same position as tail.
+// This means that currently no element is in the buffer.
+
+// State: full = (tail + 1 == head)
+//  [  2  ]  [  4  ]  [  3  ]  [  ?  ]  [  8  ]  [  0  ]  [  7  ]
+//                               tail
+//                                        head
+// The tail is one position before the head.
+// This means that currently no element can be added to the buffer since it is full.
+// Strategies are to either wait until some elements have been popped or to expand the capacity of the
+// queue by one, inserting the element at the current tail position and moving all elements starting from head one
+// position to the right.
+
 template <std::semiregular value_t,
           sequence_container buffer_t = std::vector<value_t>,
           buffer_queue_policy buffer_policy = buffer_queue_policy::dynamic>
@@ -72,15 +109,15 @@ public:
     // you can set the initial capacity here
     explicit buffer_queue(size_type const init_capacity)
     {
-        data.resize(init_capacity + 1);
-        roundSize = static_cast<size_type>(1) << static_cast<size_type>(std::log2(data.size() - 1) + 1);
+        buffer.resize(init_capacity + 1);
+        ring_buffer_capacity = seqan3::detail::next_power_of_two(buffer.size());
     }
 
     template <std::ranges::input_range range_type>
         requires std::convertible_to<value_type_t<range_type>, value_type>
     buffer_queue(size_type const init_capacity, range_type && r) : buffer_queue{init_capacity}
     {
-        std::ranges::copy(r, std::ranges::begin(data));
+        std::ranges::copy(r, std::ranges::begin(buffer));
     }
 
     /*!\name Waiting operations
@@ -191,46 +228,94 @@ public:
     bool is_empty() const noexcept
     {
         std::unique_lock write_lock(mutex);
-        return headPos == tailPos;
+        return pop_front_position == push_back_position;
     }
 
     bool is_full() const noexcept
     {
         std::unique_lock write_lock(mutex);
-        return size_impl() == data.max_size();
+        return is_ring_buffer_exhausted(pop_front_position, push_back_position);
     }
 
     size_type size() const noexcept
     {
         std::unique_lock write_lock(mutex);
-        return size_impl();
+        if (to_buffer_position(pop_front_position) <= to_buffer_position(push_back_position))
+        {
+            return to_buffer_position(push_back_position) - to_buffer_position(pop_front_position);
+        }
+        else
+        {
+            assert(buffer.size() > (to_buffer_position(pop_front_position) - to_buffer_position(push_back_position)));
+            return buffer.size() - (to_buffer_position(pop_front_position) - to_buffer_position(push_back_position));
+        }
     }
     //!\}
 private:
 
-    // Needed in two functions that both acquire exclusive rights.
-    size_type size_impl() const noexcept
+    /*!\brief Checks if the capacity of the ring buffer is exhausted.
+     * \param[in] from The thread local position to read from the buffer.
+     * \param[in] to The thread local position to write to the buffer.
+     *
+     * \details
+     *
+     * The seqan3::contrib::buffer_queue::cyclic_increment ensures that the `push_back_position` is at least
+     * `ring_buffer_capacity` many slots ahead of `pop_front_position` if the queue is full.
+     */
+    constexpr bool is_ring_buffer_exhausted(size_type const from, size_type const to) const
     {
-        size_type mask = roundSize - 1;
-        if ((headPos & mask) <= (tailPos & mask))
-            return tailPos - headPos;
-        else
-            return tailPos - headPos - (roundSize - data.size());
+        assert(to <= (from + ring_buffer_capacity + 1)); // The tail cannot overwrite the head.
+
+        return to >= from + ring_buffer_capacity;
     }
 
-    size_type cyclic_increment(size_type value,
-                               size_type modulo,
-                               size_type roundSize)
+    /*!\brief Maps the given position to the respective position within the ring buffer.
+     * \param[in] position The position to map to the ring buffer position.
+     *
+     * \details
+     *
+     * In an emulated ring buffer the actual position within the buffer can be computed using
+     * `position % buffer.size()`. The current implementation uses a trick to compute the modulo by means of a bitwise
+     * and-operation which is supposedly faster than modulo. To do so, the position is masked with
+     * `ring_buffer_capacity - 1`, where `ring_buffer_capacity` is always the next integer number greater or equal
+     * than `buffer.size()` that is also a power-of-two. Accordingly, positions smaller than the size of the buffer
+     * won't be changed and positions that reach the buffer size are updated by
+     * seqan3::contrib::buffer_queue::cyclic_increment in such a way that the masking still works correctly.
+     */
+    constexpr size_type to_buffer_position(size_type const position) const
+    {
+       return position & (ring_buffer_capacity - 1);
+    }
+
+    /*!\brief Increments the given position by one and returns the next position in the buffer.
+     * \param[in] position The position to increment.
+     *
+     * \details
+     *
+     * Increments the given position by one. If the position reached the end of the (linear) buffer it emulates a
+     * wrap around by adding `ring_buffer_capacity - buffer.size()` to the current position.
+     * With this implementation trick it is possible to compute the modulo to get the respective ring buffer position
+     * using the function seqan3::contrib::buffer_queue::to_buffer_position.
+     *
+     * ### Example
+     *
+     * Assume the buffer has at the moment space for 12 elements. Accordingly, the ring_buffer_capacity is set to 16.
+     * If the next ring buffer write position is 12 we need a wrap around in the ring-buffer in order to start at
+     * position 0 of the actual underlying buffer instead. To do so the remaining difference between buffer size and
+     * ring buffer capacity is added such that the postion is now a multiple of `ring_buffer_capacity`.
+     * Accordingly, the modulo operation to receive the actual ring-buffer position can be replaced by
+     * `position & (ring_buffer_capacity - 1)`.
+     */
+    size_type cyclic_increment(size_type position)
     {
         // invariants:
-        //   - roundSize is a power of 2
-        //   - (value % roundSize) is in [0, modulo)
+        //   - ring_buffer_capacity is a power of 2
+        //   - (position % ring_buffer_capacity) is in [0, buffer.size())
         //
-        // return the next greater value that fulfils the invariants
-        // increment write position & roundSize 2^b- 1 -> all bits set.
-        if ((++value & (roundSize - 1)) >= modulo)
-            value += roundSize - modulo;
-        return value;
+        // return the next greater position that fulfils the invariants
+        if (to_buffer_position(++position) >= buffer.size())
+            position += ring_buffer_capacity - buffer.size();  // If the position reached
+        return position;
     }
 
     template <typename value2_t>
@@ -246,14 +331,14 @@ private:
                  (buffer_policy == buffer_queue_policy::dynamic)
     bool overflow(value2_t && value);
 
-    //!\brief The ring buffer.
-    buffer_t data;
+    //!\brief The buffer that is used as ring buffer.
+    buffer_t buffer;
     alignas(std::hardware_destructive_interference_size) std::shared_mutex mutable mutex{};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    headPos{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    headReadPos{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    tailPos{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    tailWritePos{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    roundSize{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    pop_front_position{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    pending_pop_front_position{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    push_back_position{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    pending_push_back_position{0};
+    alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    ring_buffer_capacity{0};
     alignas(std::hardware_destructive_interference_size) std::atomic<bool>         closed_flag{false};
 };
 
@@ -281,47 +366,52 @@ inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t &&
 {
     // try to extend capacity
     std::unique_lock write_lock{mutex};
-    size_type cap = data.size();
-    size_type roundSize = this->roundSize;
-    size_type headPos = this->headPos;
-    size_type tailPos = this->tailPos;
 
-    assert(tailPos == this->tailWritePos);
-    assert(headPos == this->headReadPos);
+    size_type old_size = buffer.size();
+    size_type ring_buffer_capacity = this->ring_buffer_capacity;
+    size_type local_front = this->pop_front_position;
+    size_type local_back = this->push_back_position;
+
+    // Expects no pending pushes or pops in unique lock.
+    assert(local_back == this->pending_push_back_position);
+    assert(local_front == this->pending_pop_front_position);
 
     bool valueWasAppended = false;
 
     // did we reach the capacity limit (another thread could have done the upgrade already)?
-    if (cyclic_increment(tailPos, cap, roundSize) >= headPos + roundSize)
+    // buffer is full if tail_pos + 1 == head_pos
+    if (is_ring_buffer_exhausted(local_front, cyclic_increment(local_back)))
     {
-        if (cap != 0)
+        // In case of a full queue write the value into the additional slot.
+        // Note, that the ring-buffer implementation uses one additional field which is not used except
+        // when overflow happens. This invariant is used, to simply check for the full/empty state of the queue.
+        if (old_size != 0)
         {
-            // tailPos & roundSize - 1 == tailPos % capacity
-            auto it = std::ranges::begin(data) + (tailPos & (roundSize - 1));
+            auto it = std::ranges::begin(buffer) + to_buffer_position(local_back);
             *it = std::forward<value2_t>(value);
-            tailPos = headPos + roundSize;
+            local_back = local_front + ring_buffer_capacity;
             valueWasAppended = true;
         }
 
-        assert(tailPos == headPos + roundSize);
+        assert(is_ring_buffer_exhausted(local_front, local_back));
 
-        // get positions of head/tail in current data sequence
-        size_type headIdx = headPos & (roundSize - 1);
-        size_type tailIdx = tailPos & (roundSize - 1);
+        // get positions of head/tail in current buffer sequence
+        size_type front_buffer_position = to_buffer_position(local_front);
+        size_type back_buffer_position = to_buffer_position(local_back);
 
-        // increase capacity
-        data.resize(cap + 1);
-        size_type delta = data.size() - cap;
-        assert(delta == 1);
-        roundSize = static_cast<size_type>(1) << ((data.size() > 1) ? static_cast<size_type>(std::log2(data.size() - 1) + 1) : 1);
+        // increase capacity by one and move all elements from current pop_front_position one to the right.
+        buffer.resize(old_size + 1);
+        ring_buffer_capacity = seqan3::detail::next_power_of_two(buffer.size());
+        std::ranges::move_backward(std::span{buffer.data() + front_buffer_position, buffer.data() + old_size},
+                                   buffer.data() + buffer.size());
 
-        std::ranges::move_backward(std::span{data.data() + headIdx, data.data() + cap}, data.data() + data.size());
-        if (cap != 0)
+        // Update the pop_front and push_back positions.
+        if (old_size != 0)
         {
-            this->headReadPos = this->headPos = headIdx + delta;
-            this->tailWritePos = this->tailPos = tailIdx + roundSize;
+            this->pending_pop_front_position = this->pop_front_position = front_buffer_position + 1;
+            this->pending_push_back_position = this->push_back_position = back_buffer_position + ring_buffer_capacity;
         }
-        this->roundSize = roundSize;
+        this->ring_buffer_capacity = ring_buffer_capacity;
     }
     return valueWasAppended;
 }
@@ -346,66 +436,51 @@ inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t &&
  *                            Default is @link ParallelismTags#Parallel @endlink.
  * @return        bool        Returns <tt>true</tt> if a value could be dequeued and <tt>false</tt> otherwise.
  */
-
-//
-//  [  ?  ]  [  4  ]  [  3  ]  [  8  ]  [  0  ]  [  x  ]  [  ?  ]
-//                       |                          ^
-//                       v                          |
-//             head            headRead   tail  tailWrite
-//
-// empty = (head == tail)
-// full = (tail + 1 == head)
-//
-// valid data between  [headRead, tail)
-// currently filled    [tail, tailWrite)
-// currently removed   [head, headRead)
-
 template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
 inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(value_t & result)
 {
     // try to extract a value
     std::shared_lock  read_lock{mutex};
 
-    size_type cap = data.size();
-    size_type roundSize = this->roundSize;
-    size_type headReadPos;
-    size_type newHeadReadPos;
-    detail::spin_delay spinDelay;
+    size_type local_pending_pop_front_position{};
+    size_type next_local_pop_front_position{};
+    detail::spin_delay spinDelay{};
 
+    local_pending_pop_front_position = this->pending_pop_front_position;
     // wait for queue to become filled
     while (true)
     {
-        headReadPos = this->headReadPos;
-        size_type tailPos = this->tailPos;
+        size_type local_push_back_position = this->push_back_position;
 
-        assert(headReadPos <= tailPos);
+        assert(local_pending_pop_front_position <= local_push_back_position);
 
-        // return if queue is empty
-        if (headReadPos == tailPos)
+        // Check if queue is empty
+        if (local_pending_pop_front_position == local_push_back_position)
         {
-            if (is_closed())  // if empty and closed, no more data is expected.
-                return queue_op_status::closed;
-            return queue_op_status::empty;
+            return is_closed() ? queue_op_status::closed : queue_op_status::empty;
         }
 
-        newHeadReadPos = cyclic_increment(headReadPos, cap, roundSize);
-
-        if (this->headReadPos.compare_exchange_weak(headReadPos, newHeadReadPos))
+        // Get the next ring-buffer position to read from.
+        next_local_pop_front_position = cyclic_increment(local_pending_pop_front_position);
+        // Did another/other thread(s) already acquired this slot?
+        // If yes, try with next position. If not, break and read from aquired position.
+        if (this->pending_pop_front_position.compare_exchange_weak(local_pending_pop_front_position,
+                                                                   next_local_pop_front_position))
             break;
 
         spinDelay.wait();
     }
 
-    // extract value and destruct it in the data string
-    result = std::ranges::iter_move(data.begin() + (headReadPos & (roundSize - 1)));
+    // Store the value from the aquired read position.
+    result = std::ranges::iter_move(buffer.begin() + to_buffer_position(local_pending_pop_front_position));
 
-    // wait for pending previous reads and synchronize headPos to headReadPos
+    // wait for pending previous reads and synchronize pop_front_position to local_pending_pop_front_position
     {
         detail::spin_delay delay{};
-        size_type old = headReadPos;
-        while (!this->headPos.compare_exchange_weak(old, newHeadReadPos))
+        size_type acquired_slot = local_pending_pop_front_position;
+        while (!this->pop_front_position.compare_exchange_weak(acquired_slot, next_local_pop_front_position))
         {
-            old = headReadPos;
+            acquired_slot = local_pending_pop_front_position;
             delay.wait();  // add adapting delay in case of high contention.
         }
     }
@@ -436,7 +511,6 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
  *                            @endlink tag can only be used if one thread calls <tt>appendValue</tt> at a time.
  *                            Default is @link ParallelismTags#Parallel @endlink.
  */
-//
 template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
     requires std::convertible_to<value2_t, value_t>
@@ -451,35 +525,41 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(
         if (is_closed())
             return queue_op_status::closed;
 
-        size_type cap = data.size();
-        size_type roundSize = this->roundSize;
+        // Current up to date position to push an element to
+        size_type local_pending_push_back_position = this->pending_push_back_position;
 
         while (true)
         {
-            size_type tailWritePos = this->tailWritePos;
-            size_type newTailWritePos = cyclic_increment(tailWritePos, cap, roundSize);
-            size_type headPos = this->headPos;
+            // Get the next potential position to write the value too.
+            size_type next_local_push_back_position = cyclic_increment(local_pending_push_back_position);
+            size_type local_pop_front_position = this->pop_front_position;
 
-            assert(newTailWritePos <= (headPos + roundSize + 1));
-
-            // break if we have a wrap around, i.e. queue is full
-            if (newTailWritePos >= headPos + roundSize)
+            // Check if there are enough slots to write to.
+            // If not either wait or try to overflow if it is a dynamic queue.
+            if (is_ring_buffer_exhausted(local_pop_front_position, next_local_push_back_position))
                 break;
 
-            if (this->tailWritePos.compare_exchange_weak(tailWritePos, newTailWritePos))
+            // Did another/other thread(s) acquired the current pending position before this thread
+            // If yes, try again if not, write into acquired slot.
+            if (this->pending_push_back_position.compare_exchange_weak(local_pending_push_back_position,
+                                                                       next_local_push_back_position))
             {
-                auto it = std::ranges::begin(data) + (tailWritePos & (roundSize - 1));
+                // Current thread acquired the local_pending_push_back_position and can now write the value into the
+                // proper slot of the ring buffer.
+                auto it = std::ranges::begin(buffer) + to_buffer_position(local_pending_push_back_position);
                 *it = std::forward<value2_t>(value);
-                // here we construct the value into the reserved storage.
 
-                // wait for pending previous writes and synchronise tailPos to tailWritePos
+                // wait for pending previous writes and synchronise push_back_position to
+                // local_pending_push_back_position
                 {
                     detail::spin_delay delay{};
-                    size_type old = tailWritePos;
-                    while (!this->tailPos.compare_exchange_weak(old, newTailWritePos))
+                    // the slot this thread acquired to write to
+                    size_type acquired_slot = local_pending_push_back_position;
+                    while (!this->push_back_position.compare_exchange_weak(acquired_slot,
+                                                                           next_local_push_back_position))
                     {
-                        old = tailWritePos;
-                        delay.wait();  // add adapting delay in case of high contention.
+                        acquired_slot = local_pending_push_back_position;
+                        delay.wait();
                     }
                 }
                 return queue_op_status::success;
@@ -492,7 +572,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(
     // if possible extend capacity and return.
     if (overflow(std::forward<value2_t>(value)))
     {
-        return queue_op_status::success;  // always return success, since the queue dynamically resizes and cannot be full.
+        return queue_op_status::success; // always return success, since the queue resizes and cannot be full.
     }
 
     // We could not extend the queue so it must be full.
