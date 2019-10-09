@@ -176,6 +176,7 @@ public:
               typename ref_id_type,
               typename ref_offset_type,
               typename align_type,
+              typename cigar_type,
               typename flag_type,
               typename mapq_type,
               typename qual_type,
@@ -195,6 +196,7 @@ public:
               ref_id_type                                             & ref_id,
               ref_offset_type                                         & ref_offset,
               align_type                                              & align,
+              cigar_type                                              & cigar_vector,
               flag_type                                               & flag,
               mapq_type                                               & mapq,
               mate_type                                               & mate,
@@ -214,7 +216,7 @@ public:
         value_type_t<decltype(header.ref_ids())> ref_id_tmp{};
         [[maybe_unused]] int32_t offset_tmp{};
         [[maybe_unused]] int32_t soft_clipping_end{};
-        [[maybe_unused]] std::vector<std::pair<char, size_t>> cigar{};
+        [[maybe_unused]] std::vector<cigar> tmp_cigar_vector{};
         [[maybe_unused]] int32_t ref_length{0}, seq_length{0}; // length of aligned part for ref and query
 
         // Header
@@ -250,11 +252,13 @@ public:
 
         // Field 6: CIGAR
         // -------------------------------------------------------------------------------------------------------------
-        if constexpr (!detail::decays_to_ignore_v<align_type>)
+        if constexpr (!detail::decays_to_ignore_v<align_type> || !detail::decays_to_ignore_v<cigar_type>)
         {
             if (!is_char<'*'>(*std::ranges::begin(stream_view))) // no cigar information given
             {
-                std::tie(cigar, ref_length, seq_length, offset_tmp, soft_clipping_end) = parse_cigar(field_view);
+                std::tie(tmp_cigar_vector, ref_length, seq_length) = parse_cigar(field_view);
+                transfer_soft_clipping_to(tmp_cigar_vector, offset_tmp, soft_clipping_end);
+                // the actual cigar_vector is swapped with tmp_cigar_vector at the end to avoid copying
             }
             else
             {
@@ -329,7 +333,7 @@ public:
                                   "If you want to read ALIGNMENT but not SEQ, the alignment"
                                   " object must store a sequence container at the second (query) position.");
 
-                    if (!cigar.empty()) // only parse alignment if cigar information was given
+                    if (!tmp_cigar_vector.empty()) // only parse alignment if cigar information was given
                     {
 
                         auto tmp_iter = std::ranges::begin(seq_stream);
@@ -359,7 +363,7 @@ public:
 
                 if constexpr (!detail::decays_to_ignore_v<align_type>)
                 {
-                    if (!cigar.empty()) // if no alignment info is given, the field::ALIGNMENT should remain empty
+                    if (!tmp_cigar_vector.empty()) // if no alignment info is given, the field::ALIGNMENT should remain empty
                     {
                         assign_unaligned(get<1>(align),
                                          seq | views::slice(static_cast<decltype(std::ranges::size(seq))>(offset_tmp),
@@ -415,8 +419,11 @@ public:
                 }
             }
 
-            construct_alignment(align, cigar, ref_idx, ref_seqs, ref_offset_tmp, ref_length);
+            construct_alignment(align, tmp_cigar_vector, ref_idx, ref_seqs, ref_offset_tmp, ref_length);
         }
+
+        if constexpr (!detail::decays_to_ignore_v<cigar_type>)
+            std::swap(cigar_vector, tmp_cigar_vector);
     }
 
 protected:
@@ -478,26 +485,110 @@ protected:
         }
     }
 
+    /*!\brief Updates the sequence lengths by `cigar_count` depending on the cigar operation `op`.
+     * \param[in, out]  ref_length      The reference sequence's length.
+     * \param[in, out]  seq_length      The query sequence's length.
+     * \param[in]       cigar_operation The cigar operation.
+     * \param[in]       cigar_count     The cigar count value to add to the length depending on the cigar operation.
+     */
+    static void update_alignment_lengths(int32_t & ref_length,
+                                         int32_t & seq_length,
+                                         char const cigar_operation,
+                                         uint32_t const cigar_count)
+    {
+        switch (cigar_operation)
+        {
+            case 'M': case '=': case 'X': ref_length += cigar_count, seq_length += cigar_count; break;
+            case 'D': case 'N':           ref_length += cigar_count; break;
+            case 'I' :                    seq_length += cigar_count; break;
+            case 'S': case 'H': case 'P': break; // no op (soft-clipping or padding does not increase either length)
+            default: throw format_error{"Illegal cigar operation: " + std::string{cigar_operation}};
+        }
+    };
+
+    /*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
+     * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
+     *                          std::ranges::input_range.
+     * \param[in]  cigar_input  The single pass input view over the cigar string to parse.
+     *
+     * \returns A tuple of size three containing (1) std::vector over seqan3::cigar, that describes
+     *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length.
+     *
+     * \details
+     *
+     * For example, the view over the cigar string "1H4M1D2M2S" will return
+     * `{[(H,1), (M,4), (D,1), (M,2), (S,2)], 7, 6}`.
+     */
+    template <typename cigar_input_type>
+    [[nodiscard]] std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_type && cigar_input) const
+    {
+        std::vector<cigar> operations{};
+        std::array<char, 20> buffer{}; // buffer to parse numbers with from_chars. Biggest number should fit in uint64_t
+        char cigar_operation{};
+        uint32_t cigar_count{};
+        int32_t ref_length{}, seq_length{}; // length of aligned part for ref and query
+
+        // transform input into a single input view if it isn't already
+        auto cigar_view = cigar_input | views::single_pass_input;
+
+        // parse the rest of the cigar
+        // -------------------------------------------------------------------------------------------------------------
+        while (std::ranges::begin(cigar_view) != std::ranges::end(cigar_view)) // until stream is not empty
+        {
+            auto buff_end = (std::ranges::copy(cigar_view | views::take_until_or_throw(!is_digit), buffer.data())).out;
+            cigar_operation = *std::ranges::begin(cigar_view);
+            std::ranges::next(std::ranges::begin(cigar_view));
+
+            if (std::from_chars(buffer.begin(), buff_end, cigar_count).ec != std::errc{})
+                throw format_error{"Corrupted cigar string encountered"};
+
+            update_alignment_lengths(ref_length, seq_length, cigar_operation, cigar_count);
+            operations.emplace_back(cigar_count, cigar_op{}.assign_char(cigar_operation));
+        }
+
+        return {operations, ref_length, seq_length};
+    }
+
+    /*!\brief Transfer soft clipping information from the \p cigar_vector to \p sc_begin and \p sc_end.
+     * \param[in] cigar_vector The cigar information to parse for soft-clipping.
+     * \param[in,out] sc_begin The soft clipping at the beginning of the alignment to set.
+     * \param[in,out] sc_end   The soft clipping at the end of the alignment to set.
+     */
+    void transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector, int32_t & sc_begin, int32_t & sc_end) const
+    {
+        // check for soft clipping at the first two positions
+        if (!cigar_vector.empty() && 'S'_cigar_op == cigar_vector[0])
+            sc_begin = get<0>(cigar_vector[0]);
+        else if (cigar_vector.size() > 1 && 'S'_cigar_op == cigar_vector[1])
+            sc_begin = get<0>(cigar_vector[1]);
+
+        // check for soft clipping at the last two positions
+        if (cigar_vector.size() > 1 && 'S'_cigar_op == cigar_vector[cigar_vector.size() - 1])
+            sc_end = get<0>(cigar_vector[cigar_vector.size() - 1]);
+        else if (cigar_vector.size() > 2 && 'S'_cigar_op == cigar_vector[cigar_vector.size() - 2])
+            sc_end = get<0>(cigar_vector[cigar_vector.size() - 2]);
+    }
+
     /*!\brief Construct the field::ALIGNMENT depending on the given information.
-     * \tparam align_type    The alignment type.
-     * \tparam ref_seqs_type The type of reference sequences (might decay to ignore).
-     * \param[in,out] align  The alignment (pair of aligned sequences) to fill.
-     * \param[in] cigar      The cigar information to convert to an alignment.
-     * \param[in] rid        The index of the reference sequence in header.ref_ids().
-     * \param[in] ref_seqs   The reference sequence information.
-     * \param[in] ref_start  The start position of the alignment in the reference sequence.
-     * \param[in] ref_length The length of the aligned reference sequence.
+     * \tparam align_type      The alignment type.
+     * \tparam ref_seqs_type   The type of reference sequences (might decay to ignore).
+     * \param[in,out] align    The alignment (pair of aligned sequences) to fill.
+     * \param[in] cigar_vector The cigar information to convert to an alignment.
+     * \param[in] rid          The index of the reference sequence in header.ref_ids().
+     * \param[in] ref_seqs     The reference sequence information.
+     * \param[in] ref_start    The start position of the alignment in the reference sequence.
+     * \param[in] ref_length   The length of the aligned reference sequence.
      */
     template <typename align_type, typename ref_seqs_type>
     void construct_alignment(align_type                           & align,
-                             std::vector<std::pair<char, size_t>> & cigar,
+                             std::vector<cigar>                   & cigar_vector,
                              [[maybe_unused]] int32_t               rid,
                              [[maybe_unused]] ref_seqs_type       & ref_seqs,
                              [[maybe_unused]] int32_t               ref_start,
                              size_t                                 ref_length)
     {
         if (rid > -1 && ref_start > -1 &&       // read is mapped
-            !cigar.empty() &&                   // alignment field was not empty
+            !cigar_vector.empty() &&                   // alignment field was not empty
             !std::ranges::empty(get<1>(align))) // seq field was not empty
         {
             if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>)
@@ -521,7 +612,7 @@ protected:
             }
 
             // insert gaps according to the cigar information
-            detail::alignment_from_cigar(align, cigar);
+            detail::alignment_from_cigar(align, cigar_vector);
         }
         else // not enough information for an alignment, assign an empty view/dummy_sequence
         {
@@ -1004,6 +1095,7 @@ public:
                ref_id_type                            && ref_id,
                std::optional<int32_t>                    ref_offset,
                align_type                             && align,
+               std::vector<cigar>                const & cigar_vector,
                uint16_t                                  flag,
                uint8_t                                   mapq,
                mate_type                              && mate,
@@ -1197,6 +1289,11 @@ public:
             off_end -= std::ranges::size(get<1>(align));
 
             write_range(stream_it, detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));
+        }
+        else if (!cigar_vector.empty())
+        {
+            for (auto & c : cigar_vector)
+                stream << c.to_string(); // returns a small_vector instead of char so write_range doesn't work
         }
         else
         {

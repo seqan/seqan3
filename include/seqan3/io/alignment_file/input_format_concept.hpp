@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include <seqan3/alphabet/cigar/cigar.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
@@ -65,6 +66,7 @@ SEQAN3_CONCEPT alignment_file_input_format =
               std::optional<int32_t>                                              & ref_id,
               std::optional<int32_t>                                              & ref_offset,
               std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>>     & align,
+              std::vector<cigar>                                                  & cigar,
               uint16_t                                                            & flag,
               uint8_t                                                             & mapq,
               std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> & mate,
@@ -87,6 +89,7 @@ SEQAN3_CONCEPT alignment_file_input_format =
              ref_id,
              ref_offset,
              align,
+             cigar,
              flag,
              mapq,
              mate,
@@ -98,6 +101,7 @@ SEQAN3_CONCEPT alignment_file_input_format =
              options,
              std::ignore,
              header,
+             std::ignore,
              std::ignore,
              std::ignore,
              std::ignore,
@@ -124,8 +128,8 @@ SEQAN3_CONCEPT alignment_file_input_format =
 /*!\fn void read(stream_type & stream, alignment_file_input_options<seq_legal_alph_type> const & options,
  *               ref_seqs_type & ref_seqs, header_type & header,
  *               seq_type & seq, qual_type & qual, id_type & id, offset_type & offset, ref_seq_type & ref_seq,
- *               ref_id_type & ref_id, ref_offset_type & ref_offset, align_type & align, flag_type & flag,
- *               mapq_type & mapq, mate_type & mate, tag_dict_type & tag_dict, e_value_type & e_value,
+ *               ref_id_type & ref_id, ref_offset_type & ref_offset, align_type & align, cigar_type & cigar_vector,
+ *               flag_type & flag, mapq_type & mapq, mate_type & mate, tag_dict_type & tag_dict, e_value_type & e_value,
  *               bit_score_type & bit_score)
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \tparam stream_type        The input stream type; Must be derived from std::ostream.
@@ -138,6 +142,7 @@ SEQAN3_CONCEPT alignment_file_input_format =
  * \tparam ref_id_type        Type of the seqan3::field::REF_ID input (see seqan3::alignment_file_input_traits).
  * \tparam ref_offset_type    Type of the seqan3::field::REF_OFFSET input (see seqan3::alignment_file_input_traits).
  * \tparam align_type         Type of the seqan3::field::ALIGNMENT input (see seqan3::alignment_file_input_traits).
+ * \tparam cigar_type         Type of the seqan3::field::CIGAR input (a std::vector<cigar> or std::ignore).
  * \tparam flag_type          Type of the seqan3::field::FLAG input (see seqan3::alignment_file_input_traits).
  * \tparam mapq_type          Type of the seqan3::field::MAPQ input (see seqan3::alignment_file_input_traits).
  * \tparam mate_type          std::tuple<ref_id_type, ref_offset_type, int32_t> or decltype(std::ignore).
@@ -157,6 +162,7 @@ SEQAN3_CONCEPT alignment_file_input_format =
  * \param[out]    ref_id      The buffer for seqan3::field::REF_ID input.
  * \param[out]    ref_offset  The buffer for seqan3::field::REF_OFFSET input.
  * \param[out]    align       The buffer for seqan3::field::ALIGNMENT input.
+ * \param[out]    cigar_vector The buffer for seqan3::field::CIGAR input.
  * \param[out]    flag        The buffer for seqan3::field::FLAG input.
  * \param[out]    mapq        The buffer for seqan3::field::MAPQ input.
  * \param[out]    mate        The buffer for seqan3::field::MATE input.

@@ -86,7 +86,7 @@ public:
         {
             tmp_qual.clear();
             align_format.read(stream, align_options, std::ignore, default_header, sequence, tmp_qual, id,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
+                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
                               std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
 
             for (auto sit = tmp_qual.begin(), dit = std::ranges::begin(sequence); sit != tmp_qual.end(); ++sit, ++dit)
@@ -95,7 +95,7 @@ public:
         else
         {
             align_format.read(stream, align_options, std::ignore, default_header, sequence, qualities, id,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
+                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
                               std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
         }
 
@@ -159,10 +159,9 @@ public:
 
         alignment_file_output_options output_options;
 
-        align_format.write(stream, output_options, std::ignore,
-                           default_or(sequence), default_or(qualities), default_or(id),
-                           0, std::string_view{}, std::string_view{}, -1, default_align_t{}, 0, 0,
-                           default_mate_t{}, sam_tag_dictionary{}, 0, 0);
+        align_format.write(stream, output_options, std::ignore, default_or(sequence), default_or(qualities),
+                           default_or(id), 0, std::string_view{}, std::string_view{}, -1, default_align_t{},
+                           std::vector<cigar>{}, 0, 0, default_mate_t{}, sam_tag_dictionary{}, 0, 0);
     }
 
 private:

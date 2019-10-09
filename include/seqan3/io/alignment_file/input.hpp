@@ -20,6 +20,7 @@
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/cigar/cigar.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
@@ -253,12 +254,13 @@ struct alignment_file_input_default_traits
  *   12. seqan3::field::TAGS
  *   13. seqan3::field::EVALUE
  *   14. seqan3::field::BIT_SCORE
+ *   15. seqan3::field::CIGAR
  *
  * There exists one more field for alignment files, the seqan3::field::HEADER_PTR, but this field is mostly used
  * internally. Please see the seqan3::alignment_file_output::header member function for details on how to access the
  * seqan3::alignment_file_header of the file.)
  *
- * All of these fields are retrieved by default (and in that order).
+ * All of these fields are retrieved by default (and in that order) except the field::CIGAR.
  * Note that some of the fields are specific to the SAM format (e.g. seqan3::field::FLAG) while others are specific to
  * BLAST format (e.g. seqan3::field::BIT_SCORE). Please see the corresponding formats for more details
  * (seqan3::format_sam).
@@ -448,6 +450,8 @@ public:
                                          typename traits_type::quality_alphabet>;
     //!\brief The type of field::FLAG is fixed to uint16_t.
     using flag_type                = uint16_t;
+    //!\brief The type of field::CIGAR is fixed to std::vector<cigar>.
+    using cigar_type               = std::vector<cigar>;
     //!\brief The type of field::MATE is fixed to std::tuple<ref_id_type, ref_offset_type, int32_t>).
     using mate_type                = std::tuple<ref_id_type, ref_offset_type, int32_t>;
     //!\brief The type of field::EVALUE is fixed to double.
@@ -478,6 +482,7 @@ public:
                                   ref_id_type,
                                   ref_offset_type,
                                   alignment_type,
+                                  std::vector<cigar>,
                                   mapq_type,
                                   quality_type,
                                   flag_type,
@@ -497,6 +502,7 @@ public:
                              field::REF_ID,
                              field::REF_OFFSET,
                              field::ALIGNMENT,
+                             field::CIGAR,
                              field::MAPQ,
                              field::QUAL,
                              field::FLAG,
@@ -970,6 +976,7 @@ protected:
                        detail::get_or_ignore<field::REF_ID>(record_buffer),
                        detail::get_or_ignore<field::REF_OFFSET>(record_buffer),
                        detail::get_or_ignore<field::ALIGNMENT>(record_buffer),
+                       detail::get_or_ignore<field::CIGAR>(record_buffer),
                        detail::get_or_ignore<field::FLAG>(record_buffer),
                        detail::get_or_ignore<field::MAPQ>(record_buffer),
                        detail::get_or_ignore<field::MATE>(record_buffer),
