@@ -10,7 +10,7 @@
 #include <iostream>
 #include <numeric>
 
-#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/simd/simd_algorithm.hpp>
 #include <seqan3/test/simd_utility.hpp>
@@ -202,7 +202,7 @@ TYPED_TEST(simd_algorithm_upcast, signed)
 {
     using list = typename TestFixture::target_list_signed_t;
 
-    detail::for_each_type([this] (auto type_id)
+    detail::for_each<list>([this] (auto type_id)
     {
         using target_type = typename decltype(type_id)::type;
         using src_simd_t = simd_type_t<TypeParam>;
@@ -214,14 +214,14 @@ TYPED_TEST(simd_algorithm_upcast, signed)
         // Need to compare elementwise since the simd types are not equal and not comparable with `SIMD_EQ`.
         for (size_t i  = 0; i < simd_traits<target_simd_t>::length; ++i)
             EXPECT_EQ(t[i], static_cast<target_type>(static_cast<TypeParam>(-10)));
-    }, list{});
+    });
 }
 
 TYPED_TEST(simd_algorithm_upcast, unsigned)
 {
     using list = typename TestFixture::target_list_unsigned_t;
 
-    detail::for_each_type([this] (auto type_id)
+    detail::for_each<list>([this] (auto type_id)
     {
         using target_type = typename decltype(type_id)::type;
         using src_simd_t = simd_type_t<TypeParam>;
@@ -233,5 +233,5 @@ TYPED_TEST(simd_algorithm_upcast, unsigned)
         // Need to compare elementwise since the simd types are not equal and not comparable with `SIMD_EQ`.
         for (size_t i  = 0; i < simd_traits<target_simd_t>::length; ++i)
             EXPECT_EQ(t[i], static_cast<target_type>(static_cast<TypeParam>(-10)));
-    }, list{});
+    });
 }

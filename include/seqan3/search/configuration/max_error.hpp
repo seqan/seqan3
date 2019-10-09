@@ -17,7 +17,7 @@
 
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
-#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 #include <seqan3/search/configuration/max_error_common.hpp>
@@ -115,7 +115,7 @@ public:
     //!\endcond
         : base_t{}
     {
-        detail::for_each_value([this](auto e)
+        detail::for_each([this](auto e)
         {
             base_t::value[remove_cvref_t<decltype(e)>::_id()] = e.get();
         }, std::forward<errors_t>(errors)...);

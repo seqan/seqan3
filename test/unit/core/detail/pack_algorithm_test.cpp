@@ -7,13 +7,51 @@
 
 #include <gtest/gtest.h>
 
+#include <sstream>
+
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 
 using namespace seqan3;
 
-TEST(parameter_pack, for_each_value)
+//-----------------------------------------------------------------------------
+// all_of
+//-----------------------------------------------------------------------------
+
+struct is_integral_fn
+{
+    bool operator()(...) { return false; }
+
+    template <typename identity_t>
+        requires std::integral<typename identity_t::type>
+    bool operator()(identity_t) { return true; }
+};
+
+auto is_value_type_integral = [] (auto value)
+{
+    return std::is_integral_v<decltype(value)>;
+};
+
+TEST(pack_algorithm, all_of_in_type_list)
+{
+    EXPECT_TRUE(detail::all_of<type_list<>>(is_integral_fn{}));
+    EXPECT_TRUE((detail::all_of<type_list<int8_t, int16_t, uint32_t>>(is_integral_fn{})));
+    EXPECT_FALSE((detail::all_of<type_list<int8_t, int16_t, uint32_t, float>>(is_integral_fn{})));
+}
+
+TEST(pack_algorithm, all_of_values)
+{
+    EXPECT_TRUE(detail::all_of(is_value_type_integral));
+    EXPECT_TRUE((detail::all_of(is_value_type_integral, int8_t{}, int16_t{}, uint32_t{})));
+    EXPECT_FALSE((detail::all_of(is_value_type_integral, int8_t{}, int16_t{}, uint32_t{}, float{})));
+}
+
+//-----------------------------------------------------------------------------
+// for_each
+//-----------------------------------------------------------------------------
+
+TEST(pack_algorithm, for_each_value)
 {
     int i = 0;
     auto fn = [&i](int arg)
@@ -22,17 +60,17 @@ TEST(parameter_pack, for_each_value)
         ++i;
     };
 
-    detail::for_each_value(fn);
+    detail::for_each(fn);
     EXPECT_EQ(i, 0);
-    detail::for_each_value(fn, 0);
+    detail::for_each(fn, 0);
     EXPECT_EQ(i, 1);
-    detail::for_each_value(fn, 1, 2);
+    detail::for_each(fn, 1, 2);
     EXPECT_EQ(i, 3);
-    detail::for_each_value(fn, 3, 4, 5);
+    detail::for_each(fn, 3, 4, 5);
     EXPECT_EQ(i, 6);
 }
 
-TEST(parameter_pack, for_each_value2)
+TEST(pack_algorithm, for_each_value2)
 {
     std::stringstream stream{};
 
@@ -44,10 +82,10 @@ TEST(parameter_pack, for_each_value2)
             stream << arg << ";";
     };
 
-    detail::for_each_value(fn);
-    detail::for_each_value(fn, 0);
-    detail::for_each_value(fn, 1.0, '2');
-    detail::for_each_value(fn, "3;4", -5, 'C'_dna4);
+    detail::for_each(fn);
+    detail::for_each(fn, 0);
+    detail::for_each(fn, 1.0, '2');
+    detail::for_each(fn, "3;4", -5, 'C'_dna4);
 
     EXPECT_EQ(stream.str(), "0;1;2;3;4;-5;C;");
 }
@@ -75,22 +113,7 @@ void print_to_stream(std::stringstream & stream, std::type_identity<type>)
         stream << type{-4} << ";";
 }
 
-TEST(parameter_pack, for_each_type)
-{
-    std::stringstream stream{};
-
-    auto fn = [&stream](auto id)
-    {
-        print_to_stream(stream, id);
-    };
-
-    detail::for_each_type<bool, uint8_t, int8_t, uint16_t, int16_t,
-                          uint32_t, int32_t, uint64_t, int64_t>(fn);
-
-    EXPECT_EQ(stream.str(), "0;1;-1;2;-2;3;-3;4;-4;");
-}
-
-TEST(type_list, for_each_type)
+TEST(pack_algorithm, for_each_type_in_type_list)
 {
     std::stringstream stream{};
 
@@ -101,23 +124,12 @@ TEST(type_list, for_each_type)
 
     using types = type_list<bool, uint8_t, int8_t, uint16_t, int16_t,
                             uint32_t, int32_t, uint64_t, int64_t>;
-    detail::for_each_type(fn, types{});
+    detail::for_each<types>(fn);
 
     EXPECT_EQ(stream.str(), "0;1;-1;2;-2;3;-3;4;-4;");
-}
 
-TEST(tuple, for_each_type)
-{
-    std::stringstream stream{};
-
-    auto fn = [&stream](auto id)
-    {
-        print_to_stream(stream, id);
-    };
-
-    using tuple = std::tuple<bool, uint8_t, int8_t, uint16_t, int16_t,
-                             uint32_t, int32_t, uint64_t, int64_t>;
-    detail::for_each_type(fn, tuple{});
+    stream.str("");
+    detail::for_each<types>(fn);
 
     EXPECT_EQ(stream.str(), "0;1;-1;2;-2;3;-3;4;-4;");
 }
