@@ -39,6 +39,7 @@ class edit_distance_unbanded_max_errors_policy :
     edit_traits
 //!\endcond
 {
+protected:
     static_assert(edit_traits::use_max_errors, "This policy assumes that edit_traits::use_max_errors is true.");
 
     //!\brief Befriends the derived type.
@@ -205,6 +206,7 @@ class edit_distance_unbanded_global_policy :
     edit_traits
 //!\endcond
 {
+protected:
     static_assert(edit_traits::is_global || edit_traits::is_semi_global,
                   "This policy assumes that edit_traits::is_global or edit_traits::is_semi_global is true.");
 
@@ -329,6 +331,7 @@ template <typename derived_t, typename edit_traits>
 class edit_distance_unbanded_semi_global_policy :
     public edit_distance_unbanded_global_policy<derived_t, edit_traits>
 {
+protected:
     static_assert(edit_traits::is_semi_global, "This policy assumes that edit_traits::is_semi_global is true.");
 
     //!\brief Befriends the derived type.
@@ -352,7 +355,7 @@ class edit_distance_unbanded_semi_global_policy :
     //!\brief The base policy of this policy.
     using base_t = edit_distance_unbanded_global_policy<derived_t, edit_traits>;
     //!\cond
-    using typename base_t::database_iterator;
+    using database_iterator = typename edit_traits::database_iterator;
     using base_t::_best_score;
     //!\endcond
     /*!\name Semi-Global Policy: Protected Attributes
@@ -416,6 +419,7 @@ class edit_distance_unbanded_score_matrix_policy :
     edit_traits
 //!\endcond
 {
+protected:
     static_assert(edit_traits::compute_score_matrix,
                   "This policy assumes that edit_traits::compute_score_matrix is true.");
 
@@ -494,6 +498,7 @@ class edit_distance_unbanded_trace_matrix_policy :
     edit_traits
 //!\endcond
 {
+protected:
     static_assert(edit_traits::compute_trace_matrix,
                   "This policy assumes that edit_traits::compute_trace_matrix is true.");
 
@@ -713,6 +718,22 @@ public:
     using edit_traits::word_size;
 
 private:
+    //!\brief Allows seqan3::detail::edit_distance_unbanded_max_errors_policy to access this class.
+    template <typename other_derived_t, typename other_edit_traits>
+    friend class edit_distance_unbanded_max_errors_policy;
+    //!\brief Allows seqan3::detail::edit_distance_unbanded_global_policy to access this class.
+    template <typename other_derived_t, typename other_edit_traits>
+    friend class edit_distance_unbanded_global_policy;
+    //!\brief Allows seqan3::detail::edit_distance_unbanded_semi_global_policy to access this class.
+    template <typename other_derived_t, typename other_edit_traits>
+    friend class edit_distance_unbanded_semi_global_policy;
+    //!\brief Allows seqan3::detail::edit_distance_unbanded_score_matrix_policy to access this class.
+    template <typename other_derived_t, typename other_edit_traits>
+    friend class edit_distance_unbanded_score_matrix_policy;
+    //!\brief Allows seqan3::detail::edit_distance_unbanded_trace_matrix_policy to access this class.
+    template <typename other_derived_t, typename other_edit_traits>
+    friend class edit_distance_unbanded_trace_matrix_policy;
+
     using typename edit_traits::database_iterator;
     using typename edit_traits::query_alphabet_type;
     using typename edit_traits::result_value_type;

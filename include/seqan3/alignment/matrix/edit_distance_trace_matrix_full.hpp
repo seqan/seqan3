@@ -50,6 +50,10 @@ public:
      ~edit_distance_trace_matrix_full() = default;                                                   //!< Defaulted
 
  protected:
+     //!\brief Allow seqan3::detail::edit_distance_unbanded_trace_matrix_policy to access the private constructor.
+     template <typename derived_t, typename edit_traits>
+     friend class edit_distance_unbanded_trace_matrix_policy;
+
      /*!\brief Construct the score_matrix by giving the number of rows within the matrix.
       * \param rows_size \copydoc rows_size
       */
