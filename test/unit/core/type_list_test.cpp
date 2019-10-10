@@ -12,8 +12,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
-#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/core/type_list/all.hpp>
 
 using namespace seqan3;
 
@@ -21,7 +20,7 @@ TEST(type_list, basic)
 {
     using t = type_list<int, char, double>;
 
-    EXPECT_TRUE((std::is_same_v<meta::at_c<t, 1>, char>));
+    EXPECT_TRUE((std::is_same_v<list_traits::at<1, t>, char>));
 }
 
 // ----------------------------------------------------------------------------

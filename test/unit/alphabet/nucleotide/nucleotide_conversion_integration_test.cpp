@@ -10,6 +10,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 
 using namespace seqan3;
@@ -26,9 +27,9 @@ TYPED_TEST_CASE(nucleotide_conversion, nucleotide_gtest_types);
 // conversion to any other nucleotide type
 TYPED_TEST(nucleotide_conversion, explicit_conversion)
 {
-    meta::for_each(nucleotide_types{}, [&] (auto && nucl) constexpr
+    detail::for_each<nucleotide_types>([&] (auto nucl) constexpr
     {
-        using out_type = std::decay_t<decltype(nucl)>;
+        using out_type = std::decay_t<typename decltype(nucl)::type>;
         EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('A')), out_type{}.assign_char('A'));
         EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('C')), out_type{}.assign_char('C'));
         EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('G')), out_type{}.assign_char('G'));
