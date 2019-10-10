@@ -14,16 +14,10 @@
 
 #pragma once
 
-#include <seqan3/alignment/pairwise/policy/affine_gap_banded_init_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/affine_gap_banded_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/alignment_matrix_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/banded_score_dp_matrix_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/banded_score_trace_dp_matrix_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/unbanded_score_trace_dp_matrix_policy.hpp>
 
 //!\cond DEV
 /*!\defgroup alignment_policy Alignment policies
@@ -47,53 +41,12 @@
  * non-stateless policies, as they can affect the internal memory layout which can result in performance regressions.
  * The state of a policy should therefore be carefully tested with benchmarks.
  *
- * ### Customisation point
+ * ### Customising the alignment algorithm
  *
  * An alignment policy serves as a customisation point to the alignment algorithm which has to implement a specific
  * set of functions that are called by the actual seqan3::detail::alignment_algorithm type. These policies further
  * separate logical units of the alignment algorithm, i.e. the initialisation, the computation, and the memory
  * allocation of the alignment matrix.
- *
- * # Matrix policies
- *
- * matrix policies are used to allocate and to provide an iterable interface to the alignment matrix.
- * These policies maintain the alignment matrix in their own state.
- * The following table shows the functions that are required by the seqan3::detail::alignment_algorithm.
- *
- * Function name     | Arguments               | Return value                                                                 |
- * ----------------- | ----------------------- | ---------------------------------------------------------------------------- |
- * `allocate_matrix` | &Oslash;                | `void`                                                                       |
- * `current_column`  | &Oslash;                | *implementation defined* - see below                                         |
- * `go_next_column`  | &Oslash;                | `void`                                                                       |
- * `parse_traceback` | `alignment_coordinate`  | `tuple<alignment_coordinate, tuple<deque<gap_segment>, deque<gap_segment>>>` |
- *
- * - allocate_matrix:
- *
- *    Is called at the beginning of the alignment algorithm and allocates the memory for the alignment matrix and
- *    possibly resets some internal matrix pointers.
- *
- * - current_column:
- *
- *     Returns the current column to be computed. The return type can be any type that supports structured bindings,
- *     where the first parameter is at least a std::ranges::forward_range over the score matrix and the second argument
- *     is at least a std::ranges::forward_range over the traceback matrix or std::ignore if the traceback shall not
- *     be computed.
- *
- * - go_next_column:
- *
- *     Is called at the end of a column computation and moves internal matrix pointers to the next column.
- *
- * - parse_traceback:
- *
- *     This function is only required if the alignment is requested. It gets the coordinate where the traceback
- *     should be started and returns a tuple with the front coordinate and the two iterable ranges containing
- *     seqan3::detail::gap_segment s. These gap segments store the gaps within the first sequence and the second
- *     sequence respectively.
- *
- * ### Existing matrix policies:
- *
- *  - seqan3::detail::unbanded_score_dp_matrix_policy
- *  - seqan3::detail::unbanded_score_trace_dp_matrix_policy
  *
  * # Gap policies
  *
@@ -155,9 +108,9 @@
  *
  * Function name             | Arguments                     | Return value                         |
  * ------------------------- | ----------------------------- | ------------------------------------ |
- * `check_score`             | `score const`, `optimum &`    | `void`                               |
- * `check_score_last_row`    | `score const`, `optimum &`    | `void`                               |
- * `check_score_last_column` | `rng_t &&`, `optimum &`       | `void`                               |
+ * `check_score`             | `cell const`, `optimum &`     | `void`                               |
+ * `check_score_last_row`    | `cell const`, `optimum &`     | `void`                               |
+ * `check_score_last_column` | `cell const`, `optimum &`     | `void`                               |
  *
  * - check_score:
  *

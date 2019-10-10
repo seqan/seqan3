@@ -23,7 +23,7 @@
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_cache.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/alignment_matrix_policy.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 
