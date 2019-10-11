@@ -63,7 +63,7 @@ struct alphabet<uint_type>
      * \param[in] intgr The alphabet letter that you wish to convert to char.
      * \returns The letter's value in the alphabet's rank type (usually `uint`).
      */
-    static constexpr auto to_char(uint_type const intgr) noexcept
+    static constexpr [[nodiscard]] auto to_char(uint_type const intgr) noexcept
     {
         if constexpr (std::same_as<uint_type, uint8_t>)
             return static_cast<char>(intgr);
@@ -77,7 +77,7 @@ struct alphabet<uint_type>
      * \param[in] intgr The alphabet letter that you wish to convert to rank.
      * \returns `intgr`.
      */
-    static constexpr uint_type to_rank(uint_type const intgr) noexcept
+    static constexpr [[nodiscard]] uint_type to_rank(uint_type const intgr) noexcept
     {
         return intgr;
     }

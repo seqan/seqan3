@@ -28,7 +28,7 @@ namespace seqan3::detail
 //!\brief Helper function for seqan3::simd::fill.
 //!\ingroup simd
 template <simd::simd_concept simd_t, size_t... I>
-constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>)
+constexpr [[nodiscard]] simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>)
 {
     return simd_t{((void)I, scalar)...};
 }
@@ -36,7 +36,7 @@ constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scala
 //!\brief Helper function for seqan3::simd::iota.
 //!\ingroup simd
 template <simd::simd_concept simd_t, typename scalar_t, scalar_t... I>
-constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t, I...>)
+constexpr [[nodiscard]] simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t, I...>)
 {
     return simd_t{static_cast<scalar_t>(offset + I)...};
 }
@@ -56,7 +56,7 @@ constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t
  * the destination vector.
  */
 template <size_t divisor, simd_concept simd_t>
-constexpr simd_t extract_impl(simd_t const & src, uint8_t const mask)
+constexpr [[nodiscard]] simd_t extract_impl(simd_t const & src, uint8_t const mask)
 {
     simd_t dst{};
     constexpr size_t chunk = simd_traits<simd_t>::length / divisor;
@@ -74,7 +74,7 @@ constexpr simd_t extract_impl(simd_t const & src, uint8_t const mask)
  * \ingroup simd
  */
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
-constexpr target_simd_t upcast_signed(source_simd_t const & src)
+constexpr [[nodiscard]] target_simd_t upcast_signed(source_simd_t const & src)
 {
     if constexpr (simd_traits<source_simd_t>::max_length == 16) // SSE4
     {
@@ -167,7 +167,7 @@ constexpr target_simd_t upcast_signed(source_simd_t const & src)
  * \ingroup simd
  */
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
-constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
+constexpr [[nodiscard]] target_simd_t upcast_unsigned(source_simd_t const & src)
 {
     if constexpr (simd_traits<source_simd_t>::max_length == 16) // SSE4
     {
@@ -276,10 +276,10 @@ constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
  * ```
  */
 template <uint8_t index, simd::simd_concept simd_t>
+constexpr [[nodiscard]] simd_t extract_halve(simd_t const & src)
 //!\cond
     requires detail::is_builtin_simd_v<simd_t>
 //!\endcond
-constexpr simd_t extract_halve(simd_t const & src)
 {
     static_assert(index < 2, "The index must be in the range of [0, 1]");
 
@@ -314,10 +314,10 @@ constexpr simd_t extract_halve(simd_t const & src)
  * ```
  */
 template <uint8_t index, simd::simd_concept simd_t>
+constexpr [[nodiscard]] simd_t extract_quarter(simd_t const & src)
 //!\cond
     requires detail::is_builtin_simd_v<simd_t>
 //!\endcond
-constexpr simd_t extract_quarter(simd_t const & src)
 {
     static_assert(index < 4, "The index must be in the range of [0, 1, 2, 3]");
 
@@ -352,10 +352,10 @@ constexpr simd_t extract_quarter(simd_t const & src)
  * ```
  */
 template <uint8_t index, simd::simd_concept simd_t>
+constexpr [[nodiscard]] simd_t extract_eighth(simd_t const & src)
 //!\cond
     requires detail::is_builtin_simd_v<simd_t>
 //!\endcond
-constexpr simd_t extract_eighth(simd_t const & src)
 {
     static_assert(index < 8, "The index must be in the range of [0, 1, 2, 3, 4, 5, 6, 7]");
 
@@ -384,7 +384,7 @@ inline namespace simd
  * \include test/snippet/core/simd/fill.cpp
  */
 template <simd::simd_concept simd_t>
-constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
+constexpr [[nodiscard]] simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
     return detail::fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});
@@ -400,7 +400,7 @@ constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
  * \include test/snippet/core/simd/iota.cpp
  */
 template <simd::simd_concept simd_t>
-constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
+constexpr [[nodiscard]] simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
     using scalar_type = typename simd_traits<simd_t>::scalar_type;
@@ -417,10 +417,10 @@ constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
  * \include test/snippet/core/simd/simd_load.cpp
  */
 template <simd::simd_concept simd_t>
+constexpr [[nodiscard]] simd_t load(void const * mem_addr)
 //!\cond
     requires detail::is_builtin_simd_v<simd_t>
 //!\endcond
-constexpr simd_t load(void const * mem_addr)
 {
     assert(mem_addr != nullptr);
 
@@ -496,11 +496,11 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
  * \include test/snippet/core/simd/simd_upcast.cpp
  */
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
+constexpr [[nodiscard]] target_simd_t upcast(source_simd_t const & src)
 //!\cond
     requires detail::is_builtin_simd_v<target_simd_t> &&
              detail::is_builtin_simd_v<source_simd_t>
 //!\endcond
-constexpr target_simd_t upcast(source_simd_t const & src)
 {
     static_assert(simd_traits<target_simd_t>::length <= simd_traits<source_simd_t>::length,
                   "The length of the target simd type must be greater or equal than the length of the source simd type.");

@@ -120,7 +120,9 @@ public:
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
     //!\endcond
-    constexpr bool operator==(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
+    [[nodiscard]]
+    constexpr bool
+    operator==(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return pos == rhs.pos;
     }
@@ -130,6 +132,7 @@ public:
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
     //!\endcond
+    [[nodiscard]]
     constexpr bool operator!=(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return !(*this == rhs);
@@ -140,6 +143,7 @@ public:
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
     //!\endcond
+    [[nodiscard]]
     constexpr bool operator<(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return static_cast<bool>(pos < rhs.pos);
@@ -150,6 +154,7 @@ public:
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
     //!\endcond
+    [[nodiscard]]
     constexpr bool operator>(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return pos > rhs.pos;
@@ -160,6 +165,7 @@ public:
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
     //!\endcond
+    [[nodiscard]]
     constexpr bool operator<=(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return pos <= rhs.pos;
@@ -170,6 +176,7 @@ public:
     //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
     //!\endcond
+    [[nodiscard]]
     constexpr bool operator>=(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return pos >= rhs.pos;
@@ -262,18 +269,21 @@ public:
      * \{
     */
     //!\brief Dereference operator returns element currently pointed at.
+    [[nodiscard]]
     constexpr reference operator*() const noexcept(noexcept((*host)[pos]))
     {
         return (*host)[pos];
     }
 
     //!\brief Return pointer to this iterator.
+    [[nodiscard]]
     constexpr pointer operator->() const noexcept(noexcept((&host)[pos]))
     {
         return &host[pos];
     }
 
     //!\brief Return underlying container value currently pointed at.
+    [[nodiscard]]
     constexpr reference operator[](position_type const n) const noexcept(noexcept((*host)[pos+n]))
     {
         return (*host)[pos + n];
@@ -283,12 +293,14 @@ public:
 private:
 
     //!\brief Cast this to derived type.
+    [[nodiscard]]
     constexpr derived_t* this_derived()
     {
         return static_cast<derived_t*>(this);
     }
 
     //!\copydoc this_derived
+    [[nodiscard]]
     constexpr derived_t const * this_derived() const
     {
         return static_cast<derived_t const *>(this);

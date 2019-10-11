@@ -80,12 +80,14 @@ public:
      * \{
      */
     //!\brief Returns the iterator to the begin of the range.
+    [[nodiscard]]
     constexpr auto begin() noexcept
     {
         return enforced_random_access_iterator<decltype(std::ranges::begin(urng))>{std::ranges::begin(urng)};
     }
 
     //!\copydoc seqan3::detail::view_enforce_random_access::begin
+    [[nodiscard]]
     constexpr auto begin() const noexcept
     //!\cond
         requires const_iterable_range<urng_t>
@@ -95,6 +97,7 @@ public:
     }
 
     //!\copydoc seqan3::detail::view_enforce_random_access::begin
+    [[nodiscard]]
     constexpr auto cbegin() const noexcept
     //!\cond
         requires const_iterable_range<urng_t>
@@ -111,6 +114,7 @@ public:
      * seqan3::detail::view_enforce_random_access::enforced_random_access_iterator initialised with the end of the
      * underlying range. Otherwise it returns the sentinel of the underlying range.
      */
+    [[nodiscard]]
     constexpr auto end() noexcept
     {
         if constexpr (std::ranges::common_range<urng_t>)
@@ -120,6 +124,7 @@ public:
     }
 
     //!\copydoc seqan3::detail::view_enforce_random_access::end
+    [[nodiscard]]
     constexpr auto end() const noexcept
     //!\cond
         requires const_iterable_range<urng_t>
@@ -132,6 +137,7 @@ public:
     }
 
     //!\copydoc seqan3::detail::view_enforce_random_access::end
+    [[nodiscard]]
     constexpr auto cend() const noexcept
     //!\cond
         requires const_iterable_range<urng_t>
@@ -196,6 +202,7 @@ public:
     using base_t::operator==;
     using base_t::operator!=;
     //!\brief Tests if iterator is at the end.
+    [[nodiscard]]
     friend constexpr bool operator==(enforced_random_access_iterator const & lhs,
                                      std::ranges::sentinel_t<urng_t> const & rhs)
         noexcept(noexcept(std::declval<underlying_iter_t const &>() ==
@@ -205,6 +212,7 @@ public:
     }
 
     //!\brief Tests if iterator is at the end.
+    [[nodiscard]]
     friend constexpr bool operator==(std::ranges::sentinel_t<urng_t> const & lhs,
                                      enforced_random_access_iterator const & rhs)
         noexcept(noexcept(std::declval<underlying_iter_t const &>() ==
@@ -214,6 +222,7 @@ public:
     }
 
     //!\brief Tests if iterator is not at the end.
+    [[nodiscard]]
     friend constexpr bool operator!=(enforced_random_access_iterator const & lhs,
                                      std::ranges::sentinel_t<urng_t> const & rhs)
         noexcept(noexcept(std::declval<underlying_iter_t const &>() !=
@@ -223,6 +232,7 @@ public:
     }
 
     //!\brief Tests if iterator is not at the end.
+    [[nodiscard]]
     friend constexpr bool operator!=(std::ranges::sentinel_t<urng_t> const & lhs,
                                      enforced_random_access_iterator const & rhs)
         noexcept(noexcept(std::declval<underlying_iter_t const &>() !=

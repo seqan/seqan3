@@ -141,6 +141,7 @@ private:
          * \{
          */
          //!\brief Accesses the pointed-to element
+         [[nodiscard]]
         constexpr reference operator*() const
             noexcept(noexcept(*std::declval<underlying_iterator_type>()))
         {
@@ -150,6 +151,7 @@ private:
         /*!\brief Access the element at the given index
          * \param[in] index The index of the element to be returned.
          */
+        [[nodiscard]]
         constexpr reference operator[](size_t const index)
             noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
         //!\cond
@@ -303,6 +305,7 @@ private:
             requires std::equality_comparable_with<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
                      std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
+        [[nodiscard]]
         constexpr bool operator==(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() == std::declval<underlying_iterator_type &>()))
         {
@@ -315,6 +318,7 @@ private:
             requires std::equality_comparable_with<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
                      std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
+        [[nodiscard]]
         constexpr bool operator!=(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() != std::declval<underlying_iterator_type &>()))
         {
@@ -328,6 +332,7 @@ private:
                                                    std::ranges::iterator_t<other_range_type>> &&
                      std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
+        [[nodiscard]]
         constexpr bool operator<(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() < std::declval<underlying_iterator_type &>()))
         {
@@ -341,6 +346,7 @@ private:
                                                    std::ranges::iterator_t<other_range_type>> &&
                      std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
+        [[nodiscard]]
         constexpr bool operator>(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() > std::declval<underlying_iterator_type &>()))
 
@@ -355,6 +361,7 @@ private:
                                                    std::ranges::iterator_t<other_range_type>> &&
                      std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
+        [[nodiscard]]
         constexpr bool operator<=(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() <= std::declval<underlying_iterator_type &>()))
         {
@@ -368,6 +375,7 @@ private:
                                                    std::ranges::iterator_t<other_range_type>> &&
                      std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
+        [[nodiscard]]
         constexpr bool operator>=(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() >= std::declval<underlying_iterator_type &>()))
         {
@@ -567,12 +575,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     constexpr iterator begin() noexcept
     {
         return {std::ranges::begin(u_range), std::ranges::begin(u_range), std::ranges::end(u_range)};
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     constexpr const_iterator begin() const noexcept
     //!\cond
         requires const_iterable_range<underlying_range_type>
@@ -582,6 +592,7 @@ public:
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     constexpr const_iterator cbegin() const noexcept
     //!\cond
         requires const_iterable_range<underlying_range_type>
@@ -603,12 +614,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     constexpr iterator end() noexcept
     {
         return {back_iterator, std::ranges::begin(u_range), std::ranges::end(u_range)};
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     constexpr const_iterator end() const noexcept
     //!\cond
         requires const_iterable_range<underlying_range_type>
@@ -618,6 +631,7 @@ public:
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     constexpr const_iterator cend() const noexcept
     //!\cond
         requires const_iterable_range<underlying_range_type>
@@ -631,6 +645,7 @@ public:
      * \{
      */
     //!\brief Computes the size based on the size of the underlying range.
+    [[nodiscard]]
     constexpr size_type size() const noexcept
     //!\cond
         requires std::ranges::sized_range<underlying_range_type>

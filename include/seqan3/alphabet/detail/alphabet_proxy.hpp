@@ -216,13 +216,13 @@ public:
     }
 
     //!\brief Returns the rank.
-    constexpr auto to_rank() const noexcept
+    constexpr [[nodiscard]] auto to_rank() const noexcept
     {
         return seqan3::to_rank(operator alphabet_type());
     }
 
     //!\brief Returns the character.
-    constexpr auto to_char() const noexcept
+    constexpr [[nodiscard]] auto to_char() const noexcept
     //!\cond
         requires alphabet<alphabet_type>
     //!\endcond
@@ -231,7 +231,7 @@ public:
     }
 
     //!\brief Returns the phred score.
-    constexpr auto to_phred() const noexcept
+    constexpr [[nodiscard]] auto to_phred() const noexcept
     //!\cond
         requires quality_alphabet<alphabet_type>
     //!\endcond
@@ -240,7 +240,7 @@ public:
     }
 
     //!\brief Returns the complement.
-    constexpr alphabet_type complement() const noexcept
+    constexpr [[nodiscard]] alphabet_type complement() const noexcept
     //!\cond
         requires nucleotide_alphabet<alphabet_type>
     //!\endcond
@@ -249,7 +249,7 @@ public:
     }
 
     //!\brief Delegate to the emulated type's validator.
-    static constexpr bool char_is_valid(char_type const c) noexcept
+    static constexpr [[nodiscard]] bool char_is_valid(char_type const c) noexcept
     //!\cond
         requires writable_alphabet<alphabet_type>
     //!\endcond
@@ -265,7 +265,7 @@ public:
      */
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
-    friend constexpr auto operator==(derived_type const lhs, t const rhs) noexcept
+    friend constexpr [[nodiscard]] auto operator==(derived_type const lhs, t const rhs) noexcept
         -> std::enable_if_t<!std::same_as<derived_type, t> && detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
@@ -274,7 +274,7 @@ public:
 
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
-    friend constexpr auto operator==(t const lhs, derived_type const rhs) noexcept
+    friend constexpr [[nodiscard]] auto operator==(t const lhs, derived_type const rhs) noexcept
         -> std::enable_if_t<!std::same_as<derived_type, t> && detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
@@ -283,7 +283,7 @@ public:
 
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
-    friend constexpr auto operator!=(derived_type const lhs, t const rhs) noexcept
+    friend constexpr [[nodiscard]] auto operator!=(derived_type const lhs, t const rhs) noexcept
         -> std::enable_if_t<!std::same_as<derived_type, t> && detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {
@@ -292,7 +292,7 @@ public:
 
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.
     template <typename t>
-    friend constexpr auto operator!=(t const lhs, derived_type const rhs) noexcept
+    friend constexpr [[nodiscard]] auto operator!=(t const lhs, derived_type const rhs) noexcept
         -> std::enable_if_t<!std::same_as<derived_type, t> && detail::weakly_equality_comparable_with<alphabet_type, t>,
                             bool>
     {

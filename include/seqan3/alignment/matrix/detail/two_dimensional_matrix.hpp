@@ -366,7 +366,7 @@ public:
     }
 
     //!\copydoc seqan3::detail::two_dimensional_matrix_iterator::coordinate()
-    matrix_coordinate coordinate() const noexcept
+    [[nodiscard]] matrix_coordinate coordinate() const noexcept
     {
         assert(matrix_ptr != nullptr);
 

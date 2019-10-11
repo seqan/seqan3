@@ -119,7 +119,8 @@ public:
 
 private:
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::initialise_column
-    constexpr alignment_column_type initialise_column(size_type const SEQAN3_DOXYGEN_ONLY(column_index)) noexcept
+    constexpr [[nodiscard]] alignment_column_type
+    initialise_column(size_type const SEQAN3_DOXYGEN_ONLY(column_index)) noexcept
     {
         return alignment_column_type{*this, column_data_view_type{std::addressof(matrix_base_t::pool[0]),
                                                                   matrix_base_t::num_rows}};
@@ -127,7 +128,7 @@ private:
 
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::make_proxy
     template <std::random_access_iterator iter_t>
-    constexpr value_type make_proxy(iter_t host_iter) noexcept
+    constexpr [[nodiscard]] value_type make_proxy(iter_t host_iter) noexcept
     {
         return {std::get<0>(*host_iter),            // current
                 std::get<0>(matrix_base_t::cache),  // last diagonal

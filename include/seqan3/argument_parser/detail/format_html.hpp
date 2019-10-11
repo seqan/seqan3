@@ -77,7 +77,7 @@ private:
     }
 
     //!\brief Prints a help page header in HTML format to std::cout.
-    void print_header()
+    void print_header() const
     {
         // Print HTML boilerplate header.
         std::cout << "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" "
@@ -207,7 +207,7 @@ private:
      *
      * \param[in] input The text to transform.
      */
-    std::string to_html(std::string const & input)
+    [[noreturn]] std::string to_html(std::string const & input) const
     {
         std::string buffer = escape_special_xml_chars(input);
         std::string result;

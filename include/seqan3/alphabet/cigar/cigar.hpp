@@ -104,7 +104,7 @@ public:
      * \{
      */
     //!\brief Return the string representation.
-    small_string<11> to_string() const noexcept
+    [[nodiscard]] small_string<11> to_string() const noexcept
     {
         small_string<11> ret{}; // maximum number of digits for uint32_t + 1 char for the cigar_op
         ret.resize(11);

@@ -1,4 +1,4 @@
-// -----------------------------------------------------------------------------------------------------
+[[nodiscard]] // -----------------------------------------------------------------------------------------------------
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
@@ -313,37 +313,37 @@ public:
      * \{
      */
     //!\brief Returns the begin to the string.
-    constexpr iterator begin() noexcept
+    constexpr [[nodiscard]] iterator begin() noexcept
     {
         return &data_[0];
     }
 
     //!\copydoc seqan3::small_vector::begin()
-    constexpr const_iterator begin() const noexcept
+    constexpr [[nodiscard]] const_iterator begin() const noexcept
     {
         return &data_[0];
     }
 
     //!\copydoc seqan3::small_vector::begin()
-    constexpr const_iterator cbegin() const noexcept
+    constexpr [[nodiscard]] const_iterator cbegin() const noexcept
     {
         return &data_[0];
     }
 
     //!\brief Returns iterator past the end of the vector.
-    constexpr iterator end() noexcept
+    constexpr [[nodiscard]] iterator end() noexcept
     {
         return &data_[sz];
     }
 
     //!\copydoc seqan3::small_vector::end()
-    constexpr const_iterator end() const noexcept
+    constexpr [[nodiscard]] const_iterator end() const noexcept
     {
         return &data_[sz];
     }
 
     //!\copydoc seqan3::small_vector::end()
-    constexpr const_iterator cend() const noexcept
+    constexpr [[nodiscard]] const_iterator cend() const noexcept
     {
         return &data_[sz];
     }
@@ -367,7 +367,7 @@ public:
      *
      * Throws std::out_of_range if `i >= size()`.
      */
-    reference at(size_type const i)
+    [[nodiscard]] reference at(size_type const i)
     {
         if (i >= size()) // [[unlikely]]
         {
@@ -377,7 +377,7 @@ public:
     }
 
     //!\copydoc at()
-    const_reference at(size_type const i) const
+    [[nodiscard]] const_reference at(size_type const i) const
     {
         if (i >= size()) // [[unlikely]]
         {
@@ -401,14 +401,14 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr reference operator[](size_type const i) noexcept
+    constexpr [[nodiscard]] reference operator[](size_type const i) noexcept
     {
         assert(i < size());
         return data_[i];
     }
 
     //!\copydoc operator[]()
-    constexpr const_reference operator[](size_type const i) const noexcept
+    constexpr [[nodiscard]] const_reference operator[](size_type const i) const noexcept
     {
         assert(i < size());
         return data_[i];
@@ -427,14 +427,14 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr reference front() noexcept
+    constexpr [[nodiscard]] reference front() noexcept
     {
         assert(size() > 0);
         return (*this)[0];
     }
 
     //!\copydoc front()
-    constexpr const_reference front() const noexcept
+    constexpr [[nodiscard]] const_reference front() const noexcept
     {
         assert(size() > 0);
         return (*this)[0];
@@ -453,27 +453,27 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr reference back() noexcept
+    constexpr [[nodiscard]] reference back() noexcept
     {
         assert(size() > 0);
         return (*this)[size()-1];
     }
 
     //!\copydoc back()
-    constexpr const_reference back() const noexcept
+    constexpr [[nodiscard]] const_reference back() const noexcept
     {
         assert(size() > 0);
         return (*this)[size()-1];
     }
 
     //!\brief Direct access to the underlying array.
-    constexpr value_type * data() noexcept
+    constexpr [[nodiscard]] value_type * data() noexcept
     {
         return data_.data();
     }
 
     //!\copydoc data()
-    constexpr value_type const * data() const noexcept
+    constexpr [[nodiscard]] value_type const * data() const noexcept
     {
         return data_.data();
     }
@@ -493,7 +493,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr bool empty() const noexcept
+    constexpr [[nodiscard]] bool empty() const noexcept
     {
         return size() == 0;
     }
@@ -509,7 +509,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr size_type size() const noexcept
+    constexpr [[nodiscard]] size_type size() const noexcept
     {
         return sz;
     }
@@ -528,7 +528,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr size_type max_size() const noexcept
+    constexpr [[nodiscard]] size_type max_size() const noexcept
     {
         return capacity_;
     }
@@ -544,7 +544,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr size_type capacity() const noexcept
+    constexpr [[nodiscard]] size_type capacity() const noexcept
     {
         return capacity_;
     }
@@ -872,7 +872,8 @@ public:
     //!\cond
         requires cap2 <= capacity_ /* resolves ambiguousness when comparing two small_vectors of unequal capacity */
     //!\endcond
-    friend constexpr bool operator==(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator==(small_vector const & lhs,
+                                                   small_vector<value_type, cap2> const & rhs) noexcept
     {
         return std::ranges::equal(lhs, rhs);
     }
@@ -882,7 +883,8 @@ public:
     //!\cond
         requires cap2 <= capacity_
     //!\endcond
-    friend constexpr bool operator!=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator!=(small_vector const & lhs,
+                                                   small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
@@ -892,7 +894,8 @@ public:
     //!\cond
         requires cap2 <= capacity_
     //!\endcond
-    friend constexpr bool operator<(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator<(small_vector const & lhs,
+                                                   small_vector<value_type, cap2> const & rhs) noexcept
     {
         for (size_t i = 0; i < std::min(lhs.size(), rhs.size()); ++i)
             if (lhs[i] > rhs[i])
@@ -907,7 +910,8 @@ public:
     //!\cond
         requires cap2 <= capacity_
     //!\endcond
-    friend constexpr bool operator>(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator>(small_vector const & lhs,
+                                                   small_vector<value_type, cap2> const & rhs) noexcept
     {
         for (size_t i = 0; i < std::min(lhs.size(), rhs.size()); ++i)
             if (lhs[i] < rhs[i])
@@ -922,7 +926,8 @@ public:
     //!\cond
         requires cap2 <= capacity_
     //!\endcond
-    friend constexpr bool operator<=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator<=(small_vector const & lhs,
+                                                   small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs > rhs);
     }
@@ -932,7 +937,8 @@ public:
     //!\cond
         requires cap2 <= capacity_
     //!\endcond
-    friend constexpr bool operator>=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator>=(small_vector const & lhs,
+                                                   small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs < rhs);
     }

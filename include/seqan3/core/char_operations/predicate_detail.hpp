@@ -47,7 +47,7 @@ public:
     using base_t::base_t;
 
     //!\brief Return a new bitset that is a logical disjunction of the two given ones.
-    constexpr constexpr_pseudo_bitset operator|(constexpr_pseudo_bitset rhs) const noexcept
+    constexpr [[nodiscard]] constexpr_pseudo_bitset operator|(constexpr_pseudo_bitset rhs) const noexcept
     {
         for (size_t i = 0; i < N; ++i)
             rhs[i] = rhs[i] || base_t::operator[](i);
@@ -55,7 +55,7 @@ public:
         return rhs;
     }
     //!\brief Return a new bitset with all bits flipped.
-    constexpr constexpr_pseudo_bitset operator~() const noexcept
+    constexpr [[nodiscard]] constexpr_pseudo_bitset operator~() const noexcept
     {
         constexpr_pseudo_bitset ret{};
         for (size_t i = 0; i < N; ++i)
@@ -172,13 +172,13 @@ struct char_predicate_base
      */
     //!\brief Combines the result of two seqan3::detail::char_predicate via logical disjunction.
     template <char_predicate rhs_t>
-    constexpr auto operator||(rhs_t const &) const
+    constexpr [[nodiscard]] auto operator||(rhs_t const &) const
     {
         return char_predicate_combiner<derived_t, rhs_t>{};
     }
 
     //!\brief Return a new condition with all bits flipped.
-    constexpr auto operator!() const
+    constexpr [[nodiscard]] auto operator!() const
     {
         return char_predicate_negator<derived_t>{};
     }
@@ -189,7 +189,7 @@ struct char_predicate_base
      */
     //!\brief Invokes the condition on `val`.
     template <std::integral value_t>
-    constexpr bool operator()(value_t const val) const noexcept
+    constexpr [[nodiscard]] bool operator()(value_t const val) const noexcept
     //!\cond
         requires sizeof(value_t) == 1
     //!\endcond
@@ -199,7 +199,7 @@ struct char_predicate_base
 
     //!\overload
     template <std::integral value_t>
-    constexpr bool operator()(value_t const val) const noexcept
+    constexpr [[nodiscard]] bool operator()(value_t const val) const noexcept
     //!\cond
         requires sizeof(value_t) != 1
     //!\endcond
@@ -213,7 +213,7 @@ struct char_predicate_base
      * \{
      */
     //!\brief Returns the message representing this condition as std::string.
-    std::string message() const
+    [[nodiscard]] std::string message() const
     {
         return derived_t::msg;
     }

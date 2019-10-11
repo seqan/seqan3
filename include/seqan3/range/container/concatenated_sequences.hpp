@@ -465,13 +465,13 @@ public:
     }
 
     //!\copydoc begin()
-    const_iterator begin() const noexcept
+    [[nodiscard]] const_iterator begin() const noexcept
     {
         return const_iterator{*this};
     }
 
     //!\copydoc begin()
-    const_iterator cbegin() const noexcept
+    [[nodiscard]] const_iterator cbegin() const noexcept
     {
         return const_iterator{*this};
     }
@@ -495,13 +495,13 @@ public:
     }
 
     //!\copydoc end()
-    const_iterator end() const noexcept
+    [[nodiscard]] const_iterator end() const noexcept
     {
         return const_iterator{*this, size()};
     }
 
     //!\copydoc end()
-    const_iterator cend() const noexcept
+    [[nodiscard]] const_iterator cend() const noexcept
     {
         return const_iterator{*this, size()};
     }
@@ -523,7 +523,7 @@ public:
      *
      * Strong exception guarantee (never modifies data)..
      */
-    reference at(size_type const i)
+    [[nodiscard]] reference at(size_type const i)
     {
         //TODO add SEQAN_UNLIKELY
         if (i >= size())
@@ -532,7 +532,7 @@ public:
     }
 
     //!\copydoc at()
-    const_reference at(size_type const i) const
+    [[nodiscard]] const_reference at(size_type const i) const
     {
         //TODO add SEQAN_UNLIKELY
         if (i >= size())
@@ -554,14 +554,14 @@ public:
      *
      * Strong exception guarantee (never modifies data)..
      */
-    reference operator[](size_type const i)
+    [[nodiscard]] reference operator[](size_type const i)
     {
         assert(i < size());
         return data_values | views::slice(data_delimiters[i], data_delimiters[i+1]);
     }
 
     //!\copydoc operator[]()
-    const_reference operator[](size_type const i) const
+    [[nodiscard]] const_reference operator[](size_type const i) const
     {
         assert(i < size());
         return data_values | ranges::view::const_ | views::slice(data_delimiters[i], data_delimiters[i+1]);
@@ -579,14 +579,14 @@ public:
      *
      * Strong exception guarantee (never modifies data).
      */
-    reference front()
+    [[nodiscard]]reference front()
     {
         assert(size() > 0);
         return (*this)[0];
     }
 
     //!\copydoc front()
-    const_reference front() const
+    [[nodiscard]]const_reference front() const
     {
         assert(size() > 0);
         return (*this)[0];
@@ -604,14 +604,14 @@ public:
      *
      * Strong exception guarantee (never modifies data)..
      */
-    reference back()
+    [[nodiscard]] reference back()
     {
         assert(size() > 0);
         return (*this)[size()-1];
     }
 
     //!\copydoc back()
-    const_reference back() const
+    [[nodiscard]] const_reference back() const
     {
         assert(size() > 0);
         return (*this)[size()-1];
@@ -631,13 +631,13 @@ public:
      *
      * Strong exception guarantee (never modifies data).
      */
-    reference concat()
+    [[nodiscard]] reference concat()
     {
         return data_values | views::slice(static_cast<size_type>(0), concat_size());
     }
 
     //!\copydoc concat()
-    const_reference concat() const
+    [[nodiscard]] const_reference concat() const
     {
         return data_values | ranges::view::const_ | views::slice(static_cast<size_type>(0), concat_size());
     }
@@ -651,13 +651,13 @@ public:
      *
      * The exact representation of the data is implementation defined. Do not rely on it for API stability.
      */
-    std::pair<decltype(data_values) &, decltype(data_delimiters) &> raw_data()
+    [[nodiscard]] std::pair<decltype(data_values) &, decltype(data_delimiters) &> raw_data()
     {
         return {data_values, data_delimiters};
     }
 
     //!\copydoc raw_data()
-    std::pair<decltype(data_values) const &, decltype(data_delimiters) const &> raw_data() const
+    [[nodiscard]] std::pair<decltype(data_values) const &, decltype(data_delimiters) const &> raw_data() const
     {
         return {std::as_const(data_values), std::as_const(data_delimiters)};
     }
@@ -691,7 +691,7 @@ public:
      *
      * No-throw guarantee.
      */
-    bool empty() const noexcept
+    [[nodiscard]] bool empty() const noexcept
     {
         return size() == 0;
     }
@@ -707,7 +707,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type size() const noexcept
+    [[nodiscard]] size_type size() const noexcept
     {
         return data_delimiters.size() - 1;
     }
@@ -726,7 +726,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type max_size() const noexcept
+    [[nodiscard]] size_type max_size() const noexcept
     {
         return data_delimiters.max_size() - 1;
     }
@@ -746,7 +746,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type capacity() const noexcept
+    [[nodiscard]] size_type capacity() const noexcept
     {
         return data_delimiters.capacity();
     }
@@ -818,7 +818,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type concat_size() const noexcept
+    [[nodiscard]] size_type concat_size() const noexcept
     {
         return data_values.size();
     }
@@ -834,7 +834,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type concat_capacity() const noexcept
+    [[nodiscard]] size_type concat_capacity() const noexcept
     {
         return data_values.capacity();
     }
@@ -1300,37 +1300,37 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    constexpr bool operator==(concatenated_sequences const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator==(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() == rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
-    constexpr bool operator!=(concatenated_sequences const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator!=(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() != rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is less than `rhs`.
-    constexpr bool operator<(concatenated_sequences const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() < rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
-    constexpr bool operator>(concatenated_sequences const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() > rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
-    constexpr bool operator<=(concatenated_sequences const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<=(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() <= rhs.raw_data();
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-    constexpr bool operator>=(concatenated_sequences const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>=(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() >= rhs.raw_data();
     }

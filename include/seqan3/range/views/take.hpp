@@ -202,6 +202,7 @@ private:
          */
 
         //!\brief Checks whether `*this` is equal to `rhs`.
+        [[nodiscard]]
         constexpr bool operator==(iterator_type const & rhs) const
             noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
         //!\cond
@@ -212,6 +213,7 @@ private:
         }
 
         //!\copydoc operator==()
+        [[nodiscard]]
         constexpr bool operator==(sentinel_type const & rhs) const
             noexcept(!or_throw && noexcept(std::declval<base_base_t const &>() == std::declval<sentinel_type const &>()))
         {
@@ -238,6 +240,7 @@ private:
         }
 
         //!\brief Checks whether `*this` is not equal to `rhs`.
+        [[nodiscard]]
         constexpr bool operator!=(sentinel_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         {
@@ -245,6 +248,7 @@ private:
         }
 
         //!\copydoc operator!=()
+        [[nodiscard]]
         constexpr bool operator!=(iterator_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         //!\cond
@@ -255,6 +259,7 @@ private:
         }
 
         //!\brief Checks whether `lhs` is not equal to `rhs`.
+        [[nodiscard]]
         constexpr friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs != lhs))
         {
             return rhs != lhs;
@@ -270,6 +275,7 @@ private:
          * \param n Position relative to current location.
          * \return A reference to the element at relative location.
          */
+        [[nodiscard]]
         constexpr reference operator[](std::make_unsigned_t<difference_type> const n) const
             noexcept(noexcept(std::declval<base_base_t &>()[0]))
         //!\cond
@@ -381,6 +387,7 @@ public:
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     constexpr auto begin() const noexcept
         requires const_iterable_range<urng_t>
     {
@@ -391,6 +398,7 @@ public:
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     constexpr auto cbegin() const noexcept
         requires const_iterable_range<urng_t>
     {
@@ -422,6 +430,7 @@ public:
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     constexpr auto end() const noexcept
         requires const_iterable_range<urng_t>
     {
@@ -432,6 +441,7 @@ public:
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     constexpr auto cend() const noexcept
         requires const_iterable_range<urng_t>
     {
@@ -456,6 +466,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     constexpr size_type size() const noexcept
         requires exactly || std::ranges::sized_range<urng_t>
     {

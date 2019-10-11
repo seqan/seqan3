@@ -43,7 +43,7 @@ public:
     //!\cond
         requires requires (rna_structure_t const chr) { { impl(priority_tag<2>{}, chr) }; }
     //!\endcond
-    constexpr auto operator()(rna_structure_t const chr) const noexcept
+    constexpr [[noreturn]] bool operator()(rna_structure_t const chr) const noexcept
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::is_pair_open().");
@@ -66,7 +66,7 @@ namespace seqan3
 /*!\brief Check whether the given character represents a rightward interaction in an RNA structure.
  * \tparam your_type Type of the argument.
  * \param  chr       The RNA structure character whose property is checked.
- * \returns True if the character represents a rightward interaction, False otherwise.
+ * \returns `true` if the character represents a rightward interaction, `false` otherwise.
  * \ingroup structure
  * \details
  *
@@ -92,7 +92,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto is_pair_open = detail::adl_only::is_pair_open_fn{};
+inline constexpr bool is_pair_open = detail::adl_only::is_pair_open_fn{};
 //!\}
 
 } // namespace seqan3
@@ -122,7 +122,7 @@ public:
     //!\cond
         requires requires (rna_structure_t const chr) { { impl(priority_tag<2>{}, chr) }; }
     //!\endcond
-    constexpr auto operator()(rna_structure_t const chr) const noexcept
+    constexpr [[noreturn]] bool operator()(rna_structure_t const chr) const noexcept
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::is_pair_close().");
@@ -145,7 +145,7 @@ namespace seqan3
 /*!\brief Check whether the given character represents a leftward interaction in an RNA structure.
  * \tparam your_type Type of the argument.
  * \param  chr       The RNA structure character whose property is checked.
- * \returns True if the character represents a leftward interaction, False otherwise.
+ * \returns `true` if the character represents a leftward interaction, `false` otherwise.
  * \ingroup structure
  * \details
  *
@@ -171,7 +171,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto is_pair_close = detail::adl_only::is_pair_close_fn{};
+inline constexpr bool is_pair_close = detail::adl_only::is_pair_close_fn{};
 //!\}
 
 } // namespace seqan3
@@ -201,7 +201,7 @@ public:
     //!\cond
         requires requires (rna_structure_t const chr) { { impl(priority_tag<2>{}, chr) }; }
     //!\endcond
-    constexpr auto operator()(rna_structure_t const chr) const noexcept
+    constexpr [[noreturn]] bool operator()(rna_structure_t const chr) const noexcept
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::is_unpaired().");
@@ -224,7 +224,7 @@ namespace seqan3
 /*!\brief Check whether the given character represents an unpaired nucleotide in an RNA structure.
  * \tparam your_type Type of the argument.
  * \param  chr       The RNA structure character whose property is checked.
- * \returns True if the character represents an unpaired site, False otherwise.
+ * \returns `true` if the character represents an unpaired site, `false` otherwise.
  * \ingroup structure
  * \details
  *
@@ -250,7 +250,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto is_unpaired = detail::adl_only::is_unpaired_fn{};
+inline constexpr bool is_unpaired = detail::adl_only::is_unpaired_fn{};
 //!\}
 
 } // namespace seqan3
@@ -289,7 +289,7 @@ public:
     //!\cond
         requires requires { { impl(priority_tag<2>{}, s_alph_t{}, dummy{}) }; }
     //!\endcond
-    constexpr auto operator()() const noexcept
+    constexpr [[noreturn]] auto operator()() const noexcept
     {
         static_assert(noexcept(impl(priority_tag<2>{}, s_alph_t{})),
             "Only overloads that are marked noexcept are picked up by seqan3::max_pseudoknot_depth.");
@@ -390,7 +390,7 @@ public:
     //!\cond
         requires requires (rna_structure_t const chr) { { impl(priority_tag<2>{}, chr) }; }
     //!\endcond
-    constexpr auto operator()(rna_structure_t const chr) const noexcept
+    constexpr [[noreturn]] auto operator()(rna_structure_t const chr) const noexcept
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::pseudoknot_id().");

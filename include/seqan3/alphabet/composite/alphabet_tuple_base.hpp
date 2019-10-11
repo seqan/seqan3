@@ -451,7 +451,7 @@ public:
      * \returns A copy of the contained element.
      */
     template <size_t index>
-    friend constexpr auto get(alphabet_tuple_base const & l) noexcept
+    friend constexpr [[nodiscard]] auto get(alphabet_tuple_base const & l) noexcept
     {
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
@@ -468,7 +468,7 @@ public:
      * \returns A copy of the contained element.
      */
     template <typename type>
-    friend constexpr type get(alphabet_tuple_base const & l) noexcept
+    friend constexpr [[nodiscard]] type get(alphabet_tuple_base const & l) noexcept
     //!\cond
         requires is_unique_component<type>
     //!\endcond
@@ -495,7 +495,7 @@ public:
      */
     //!\brief Checks whether `*this` is equal to `rhs`.
     template <typename indirect_component_type>
-    constexpr bool operator==(indirect_component_type const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator==(indirect_component_type const rhs) const noexcept
     //!\cond
         requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_equality_comparable_with_, indirect_component_type>
     //!\endcond
@@ -506,7 +506,7 @@ public:
 
     //!\brief Checks whether `*this` is unequal to `rhs`.
     template <typename indirect_component_type>
-    constexpr bool operator!=(indirect_component_type const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator!=(indirect_component_type const rhs) const noexcept
     //!\cond
         requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_equality_comparable_with_, indirect_component_type>
     //!\endcond
@@ -517,7 +517,7 @@ public:
 
     //!\brief Checks whether `*this` is smaller than `rhs`.
     template <typename indirect_component_type>
-    constexpr bool operator<(indirect_component_type const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<(indirect_component_type const rhs) const noexcept
     //!\cond
         requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with_, indirect_component_type>
     //!\endcond
@@ -528,7 +528,7 @@ public:
 
     //!\brief Checks whether `*this` is greater than `rhs`.
     template <typename indirect_component_type>
-    constexpr bool operator>(indirect_component_type const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>(indirect_component_type const rhs) const noexcept
     //!\cond
         requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with_, indirect_component_type>
     //!\endcond
@@ -539,7 +539,7 @@ public:
 
     //!\brief Checks whether `*this` is smaller than or equal to `rhs`.
     template <typename indirect_component_type>
-    constexpr bool operator<=(indirect_component_type const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<=(indirect_component_type const rhs) const noexcept
     //!\cond
         requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with_, indirect_component_type>
     //!\endcond
@@ -550,7 +550,7 @@ public:
 
     //!\brief Checks whether `*this` is bigger than or equal to `rhs`.
     template <typename indirect_component_type>
-    constexpr bool operator>=(indirect_component_type const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>=(indirect_component_type const rhs) const noexcept
     //!\cond
         requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with_, indirect_component_type>
     //!\endcond
@@ -563,7 +563,7 @@ public:
 private:
     //!\brief Return the rank of the i-th component.
     template <size_t index>
-    constexpr rank_type to_component_rank() const noexcept
+    constexpr [[nodiscard]] rank_type to_component_rank() const noexcept
     {
         return (to_rank() / cummulative_alph_sizes[index]) % seqan3::alphabet_size<meta::at_c<component_list, index>>;
     }
@@ -596,7 +596,8 @@ private:
 
     //!\brief For the given components, compute the combined rank.
     template <std::size_t ...idx>
-    static constexpr rank_type rank_sum_helper(component_types ... components, std::index_sequence<idx...> const &) noexcept
+    static constexpr [[nodiscard]] rank_type
+    rank_sum_helper(component_types ... components, std::index_sequence<idx...> const &) noexcept
     {
         return ((seqan3::to_rank(components) * cummulative_alph_sizes[idx]) + ...);
     }

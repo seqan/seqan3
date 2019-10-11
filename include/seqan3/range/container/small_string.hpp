@@ -173,13 +173,13 @@ public:
      * \{
      */
     //!\brief Returns the maximal size which equals the capacity.
-    static constexpr size_type max_size() noexcept
+    static constexpr [[nodiscard]] size_type max_size() noexcept
     {
         return capacity_;
     }
 
     //!\brief Returns the maximal capacity.
-    static constexpr size_type capacity() noexcept
+    static constexpr [[nodiscard]] size_type capacity() noexcept
     {
         return capacity_;
     }
@@ -300,7 +300,7 @@ public:
      *
      * Linear in the size of the string.
      */
-    std::string str() const
+    [[nodiscard]] std::string str() const
     {
         return std::string{this->cbegin(), this->cend()};
     }
@@ -317,7 +317,7 @@ public:
      *
      * Constant.
      */
-    constexpr char const * c_str() const noexcept
+    constexpr [[nodiscard]] char const * c_str() const noexcept
     {
         return data_.data();
     }

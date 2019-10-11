@@ -88,13 +88,13 @@ public:
      * \{
      */
     //!\copydoc seqan3::alphabet_base::to_char
-    constexpr char_type to_char() const noexcept
+    constexpr [[noreturn]] char_type to_char() const noexcept
     {
         return static_cast<char_type>(to_rank()) + derived_type::offset_char;
     }
 
     //!\brief Return the alphabet's value in phred representation.
-    constexpr phred_type to_phred() const noexcept
+    constexpr [[noreturn]] phred_type to_phred() const noexcept
     {
         return static_cast<phred_type>(to_rank()) + derived_type::offset_phred;
     }

@@ -128,7 +128,7 @@ public:
     //!\}
 
     //!\brief Read current value from buffer (no vtable lookup, safe if not at end).
-    reference operator*() const
+    [[nodiscard]] reference operator*() const
     {
         assert(stream_buf != nullptr);
         return *stream_buf->gptr();
@@ -139,7 +139,8 @@ public:
      * \{
      */
     //!\brief True if the read buffer is not empty; involves no vtable lookup.
-    friend bool operator==(fast_istreambuf_iterator const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    friend [[nodiscard]] bool operator==(fast_istreambuf_iterator const & lhs,
+                                         std::ranges::default_sentinel_t const &) noexcept
     {
         assert(lhs.stream_buf != nullptr);
         // compare size of remaining buffer; since ++ always resizes if possible, safe to compare pointers here
@@ -147,19 +148,22 @@ public:
     }
 
     //!\brief True if the read buffer is empty; involves no vtable lookup.
-    friend bool operator!=(fast_istreambuf_iterator const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    friend [[nodiscard]] bool operator!=(fast_istreambuf_iterator const & lhs,
+                                         std::ranges::default_sentinel_t const &) noexcept
     {
         return !(lhs == std::ranges::default_sentinel);
     }
 
     //!\brief True if the read buffer is not empty; involves no vtable lookup.
-    friend bool operator==(std::ranges::default_sentinel_t const &, fast_istreambuf_iterator const & rhs) noexcept
+    friend [[nodiscard]] bool operator==(std::ranges::default_sentinel_t const &,
+                                         fast_istreambuf_iterator const & rhs) noexcept
     {
         return rhs == std::ranges::default_sentinel;
     }
 
     //!\brief True if the read buffer is empty; involves no vtable lookup.
-    friend bool operator!=(std::ranges::default_sentinel_t const &, fast_istreambuf_iterator const & rhs) noexcept
+    friend [[nodiscard]] bool operator!=(std::ranges::default_sentinel_t const &,
+                                         fast_istreambuf_iterator const & rhs) noexcept
     {
         return !(rhs == std::ranges::default_sentinel);
     }

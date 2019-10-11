@@ -104,7 +104,7 @@ public:
      * \{
      */
     //!\brief Return a character.
-    constexpr char_type to_char() const noexcept
+    constexpr [[nodiscard]] char_type to_char() const noexcept
     {
         if (seqan3::to_rank(get<1>(*this)))
         {
@@ -135,7 +135,7 @@ public:
      *
      * Guaranteed not to throw.
      */
-    static constexpr bool char_is_valid(char_type const c) noexcept
+    static constexpr [[nodiscard]] bool char_is_valid(char_type const c) noexcept
     {
         return masked{}.assign_char(c).to_char() == c;
     }

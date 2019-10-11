@@ -48,6 +48,7 @@ struct fm_index_cursor_node
     sdsl_char_type last_char;
 
     //!\brief Comparison of two cursor nodes.
+    [[nodiscard]]
     bool operator==(fm_index_cursor_node const & rhs) const
     {
         // NOTE: last_char is implementation specific for cycle_back().
@@ -57,6 +58,7 @@ struct fm_index_cursor_node
     }
 
     //!\brief Comparison of two cursor nodes.
+    [[nodiscard]]
     bool operator!=(fm_index_cursor_node const & rhs) const
     {
         return !(*this == rhs);

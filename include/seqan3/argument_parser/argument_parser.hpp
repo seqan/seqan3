@@ -406,7 +406,7 @@ public:
 
     //!\brief Returns a reference to the sub-parser instance if
     //!       \link subcommand_arg_parse subcommand parsing \endlink was enabled.
-    argument_parser & get_sub_parser()
+    [[nodiscard]] argument_parser & get_sub_parser()
     {
         if (sub_parser == nullptr)
         {
@@ -702,7 +702,7 @@ private:
     *          otherwise.
     */
     template <typename id_type>
-    bool id_exists(id_type const & id)
+    [[nodiscard]] bool id_exists(id_type const & id)
     {
         if (detail::format_parse::is_empty_id(id))
             return false;

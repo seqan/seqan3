@@ -301,7 +301,8 @@ public:
     //!\cond
         requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
-    constexpr bool operator==(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
+    constexpr[[nodiscard]]  bool
+    operator==(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter == rhs.as_derived().host_iter;
     }
@@ -311,7 +312,8 @@ public:
     //!\cond
         requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
-    constexpr bool operator!=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
+    constexpr [[nodiscard]] bool
+    operator!=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return !(*this == rhs);
     }
@@ -321,7 +323,8 @@ public:
     //!\cond
         requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
-    constexpr bool operator<(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
+    constexpr [[nodiscard]] bool
+    operator<(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter < rhs.as_derived().host_iter;
     }
@@ -331,7 +334,8 @@ public:
     //!\cond
         requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
-    constexpr bool operator<=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
+    constexpr [[nodiscard]] bool
+    operator<=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter <= rhs.as_derived().host_iter;
     }
@@ -341,7 +345,8 @@ public:
     //!\cond
         requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
-    constexpr bool operator>(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
+    constexpr [[nodiscard]] bool
+    operator>(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter > rhs.as_derived().host_iter;
     }
@@ -351,7 +356,8 @@ public:
     //!\cond
         requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
     //!\endcond
-    constexpr bool operator>=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
+    constexpr [[nodiscard]] bool
+    operator>=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter >= rhs.as_derived().host_iter;
     }

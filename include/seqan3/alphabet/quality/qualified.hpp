@@ -125,13 +125,13 @@ public:
      * \{
      */
     //!\brief Return the phred value. This reads the internal quality letter.
-    constexpr phred_type to_phred() const noexcept
+    constexpr [[noreturn]] phred_type to_phred() const noexcept
     {
         return seqan3::to_phred(get<1>(*this));
     }
 
     //!\brief Return a character. This reads the internal sequence letter.
-    constexpr char_type to_char() const noexcept
+    constexpr [[noreturn]] char_type to_char() const noexcept
     {
         return seqan3::to_char(get<0>(*this));
     }
@@ -140,7 +140,7 @@ public:
      * \sa seqan3::complement
      * \sa seqan3::nucleotide_alphabet::complement
      */
-    constexpr qualified complement() const noexcept
+    constexpr [[noreturn]] qualified complement() const noexcept
         requires nucleotide_alphabet<sequence_alphabet_t>
     {
         return qualified{seqan3::complement(get<0>(*this)), get<1>(*this)};
@@ -148,7 +148,7 @@ public:
     //!\}
 
     //!\brief Validate whether a character is valid in the sequence alphabet.
-    static constexpr bool char_is_valid(char_type const c) noexcept
+    static constexpr [[noreturn]] bool char_is_valid(char_type const c) noexcept
     {
         return char_is_valid_for<sequence_alphabet_type>(c);
     }

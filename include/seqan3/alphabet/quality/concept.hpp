@@ -37,10 +37,10 @@ private:
 public:
     //!\brief Operator definition.
     template <typename alph_t>
+    constexpr [[nodiscard]] auto operator()(alph_t const chr) const noexcept
     //!\cond
         requires requires (alph_t const chr) { { impl(priority_tag<2>{}, chr) }; }
     //!\endcond
-    constexpr auto operator()(alph_t const chr) const noexcept
     {
         static_assert(noexcept(impl(priority_tag<2>{}, chr)),
             "Only overloads that are marked noexcept are picked up by seqan3::to_phred().");

@@ -185,7 +185,7 @@ private:
     * \param[in] long_id The name of the long identifier.
     * \returns The input long name prepended with a double dash.
     */
-    std::string prepend_dash(std::string const & long_id)
+    [[noreturn]] std::string prepend_dash(std::string const & long_id) const
     {
         return ("--" + long_id);
     }
@@ -194,7 +194,7 @@ private:
     * \param[in] short_id The name of the short identifier.
     * \returns The input short name prepended with a single dash.
     */
-    std::string prepend_dash(char const short_id)
+    [[noreturn]] std::string prepend_dash(char const short_id) const
     {
         return ("-" + std::string(1, short_id));
     }
@@ -204,7 +204,7 @@ private:
     * \param[in] long_id  The name of the long identifier.
     * \returns The short_id prepended with a single dash and the long_id prepended with a double dash, separated by '/'.
     */
-    std::string combine_option_names(char const short_id, std::string const & long_id)
+    [[noreturn]] std::string combine_option_names(char const short_id, std::string const & long_id) const
     {
         if (short_id == '\0')
             return prepend_dash(long_id);
@@ -227,7 +227,8 @@ private:
      *       that "-idValue" arguments are correctly identified.
      */
     template <typename id_type>
-    std::vector<std::string>::iterator find_option_id(std::vector<std::string>::iterator const begin_it, id_type const & id)
+    [[noreturn]] std::vector<std::string>::iterator find_option_id(std::vector<std::string>::iterator const begin_it,
+                                                                   id_type const & id) const
     {
         if (is_empty_id(id))
             return end_of_options_it;
@@ -246,7 +247,7 @@ private:
     /*!\brief Returns true and removes the long identifier if it is in format_parse::argv.
      * \param[in] long_id The long identifier of the flag to check.
      */
-    bool flag_is_set(std::string const & long_id)
+    [[noreturn]] bool flag_is_set(std::string const & long_id) const
     {
         auto it = std::find(argv.begin(), end_of_options_it, prepend_dash(long_id));
 
@@ -259,7 +260,7 @@ private:
     /*!\brief Returns true and removes the short identifier if it is in format_parse::argv.
      * \param[in] short_id The short identifier of the flag to check.
      */
-    bool flag_is_set(char const short_id)
+    [[noreturn]] bool flag_is_set(char const short_id) const
     {
         // short flags need special attention, since they could be grouped (-rGv <=> -r -G -v)
         for (std::string & arg : argv)
@@ -295,7 +296,7 @@ private:
     //!\cond
         requires input_stream_over<std::istringstream, option_t>
     //!\endcond
-    void retrieve_value(option_t & value, std::string const & in)
+    void retrieve_value(option_t & value, std::string const & in) const
     {
         std::istringstream stream{in};
         stream >> value;
@@ -306,7 +307,7 @@ private:
     }
 
     //!\cond
-    void retrieve_value(std::string & value, std::string const & in)
+    void retrieve_value(std::string & value, std::string const & in) const
     {
         value = in;
     }
@@ -324,7 +325,7 @@ private:
     //!\cond
         requires input_stream_over<std::istringstream, typename container_option_t::value_type>
     //!\cond
-    void retrieve_value(container_option_t & value, std::string const & in)
+    void retrieve_value(container_option_t & value, std::string const & in) const
     {
         typename container_option_t::value_type tmp;
 
@@ -348,7 +349,7 @@ private:
     //!\cond
         requires input_stream_over<std::istringstream, option_t>
     //!\endcond
-    void retrieve_value(option_t & value, std::string const & in)
+    void retrieve_value(option_t & value, std::string const & in) const
     {
         auto res = std::from_chars(&in[0], &in[in.size()], value);
 
@@ -371,7 +372,7 @@ private:
      *
      * This function delegates to std::from_chars.
      */
-    void retrieve_value(bool & value, std::string const & in)
+    void retrieve_value(bool & value, std::string const & in) const
     {
         if (in == "0")
             value = false;
@@ -391,6 +392,8 @@ private:
      * \param[in]  option_it The iterator where the option identifier was found.
      * \param[in]  id        The option identifier supplied on the command line.
      *
+     * \returns `true` on success and `false` otherwise.
+     *
      * \throws seqan3::parser_invalid_argument
      *
      * \details
@@ -398,13 +401,11 @@ private:
      * The value at option_it is inspected whether it is an '-key value', '-key=value'
      * or '-keyValue' pair and the input is extracted accordingly. The input
      * will then be tried to be casted into the `value` parameter.
-     *
-     * Returns true on success and false otherwise.
      */
     template <typename option_type, typename id_type>
     bool identify_and_retrieve_option_value(option_type & value,
                                             std::vector<std::string>::iterator & option_it,
-                                            id_type const & id)
+                                            id_type const & id) const
     {
         if (option_it != end_of_options_it)
         {
@@ -459,6 +460,8 @@ private:
      * \param[out] value Stores the value found in argv, casted by retrieve_value.
      * \param[in]  id    The option identifier supplied on the command line.
      *
+     * \returns `true` on success, `false` otherwise.
+     *
      * \throws seqan3::option_declared_multiple_times
      *
      * \details
@@ -467,12 +470,11 @@ private:
      * the following position in argv is tried to be casted into value
      * and the identifier and value argument are removed from argv.
      *
-     * Returns true on success and false otherwise. This is needed to catch
-     * the user error of supplying multiple arguments for the same
+     * The return value is needed to catch the user error of supplying multiple arguments for the same
      * (non container!) option by specifying the short AND long identifier.
      */
     template <typename option_type, typename id_type>
-    bool get_option_by_id(option_type & value, id_type const & id)
+    [[noexcept]] bool get_option_by_id(option_type & value, id_type const & id) const
     {
         auto it = find_option_id(argv.begin(), id);
 
@@ -491,17 +493,18 @@ private:
      * \param[out] value Stores all values found in argv, casted by retrieve_value.
      * \param[in]  id    The option identifier supplied on the command line.
      *
+     * \returns `true` on success, `false` otherwise.
+     *
      * \details
      *
      * Since option_type is a container, the option is a list and can be parsed
      * multiple times.
-     *
      */
     template <sequence_container option_type, typename id_type>
     //!cond
         requires !std::is_same_v<option_type, std::string>
     //!\endcond
-    bool get_option_by_id(option_type & value, id_type const & id)
+    bool get_option_by_id(option_type & value, id_type const & id) const
     {
         auto it = find_option_id(argv.begin(), id);
         bool seen_at_least_once{it != end_of_options_it};
@@ -528,7 +531,7 @@ private:
      * In addition this function removes "--" (if specified) from argv to
      * clean argv for positional option retrieval.
      */
-    void check_for_unknown_ids()
+    void check_for_unknown_ids() const
     {
         for (auto it = argv.begin(); it != end_of_options_it; ++it)
         {
@@ -568,7 +571,7 @@ private:
      * therefore removed from argv.
      * Thus, all remaining non-empty arguments are too much.
      */
-    void check_for_left_over_args()
+    void check_for_left_over_args() const
     {
         if (std::find_if(argv.begin(), argv.end(), [](std::string const & s){return (s != "");}) != argv.end())
             throw too_many_arguments("Too many arguments provided. Please see -h/--help for more information.");
@@ -599,7 +602,7 @@ private:
                      char const short_id,
                      std::string const & long_id,
                      option_spec const & spec,
-                     validator_type && validator)
+                     validator_type && validator) const
     {
         bool short_id_is_set{get_option_by_id(value, short_id)};
         bool long_id_is_set{get_option_by_id(value, long_id)};
@@ -640,7 +643,7 @@ private:
      */
     void get_flag(bool & value,
                   char const short_id,
-                  std::string const & long_id)
+                  std::string const & long_id) const
     {
         value = flag_is_set(short_id) || flag_is_set(long_id);
     }

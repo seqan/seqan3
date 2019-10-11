@@ -146,7 +146,7 @@ public:
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
+    [[nodiscard]] std::string get_help_page_message() const
     {
         return detail::to_string("Value must be in range [", min, ",", max, "].");
     }
@@ -209,7 +209,7 @@ public:
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
+    [[nodiscard]] std::string get_help_page_message() const
     {
         return detail::to_string("Value must be one of ", std::views::all(values), ".");
     }
@@ -494,7 +494,7 @@ public:
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
+    [[nodiscard]] std::string get_help_page_message() const
     {
         return detail::to_string("Valid input file formats: [",
                                  extensions | views::join(std::string{", "}),

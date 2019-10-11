@@ -34,29 +34,29 @@ template <detail::config_element ... configs_t>
 class configuration;
 
 template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
-constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
-                         pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
+constexpr [[nodiscard]] auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                                       pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
 {
     return configuration{static_cast<lhs_derived_t &&>(lhs)}.push_back(static_cast<rhs_derived_t &&>(rhs));
 }
 
 template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
-constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
-                         pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
+constexpr [[nodiscard]] auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                                       pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
 {
     return configuration{static_cast<lhs_derived_t &&>(lhs)}.push_back(static_cast<rhs_derived_t const &>(rhs));
 }
 
 template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
-constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
-                         pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
+constexpr [[nodiscard]] auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                                       pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
 {
     return configuration{static_cast<lhs_derived_t const &>(lhs)}.push_back(static_cast<rhs_derived_t &&>(rhs));
 }
 
 template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
-constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
-                         pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
+constexpr [[nodiscard]] auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                                       pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
 {
     return configuration{static_cast<lhs_derived_t const &>(lhs)}.push_back(static_cast<rhs_derived_t const &>(rhs));
 }
@@ -122,7 +122,7 @@ public:
      */
 
     //!\brief Returns the number of contained config elements.
-    constexpr size_t size() const noexcept
+    constexpr [[nodiscard]] size_t size() const noexcept
     {
         return std::tuple_size_v<base_type>;
     }
@@ -154,7 +154,7 @@ public:
      * Constant time.
      */
     template <typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) & noexcept
+    constexpr [[nodiscard]] decltype(auto) value_or(default_t && default_value) & noexcept
     {
         if constexpr (exists<query_t>())
         {
@@ -169,7 +169,7 @@ public:
 
     //!\copydoc value_or
     template <typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) const & noexcept
+    constexpr [[nodiscard]] decltype(auto) value_or(default_t && default_value) const & noexcept
     {
         if constexpr (exists<query_t>())
         {
@@ -184,7 +184,7 @@ public:
 
     //!\copydoc value_or
     template <typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) && noexcept
+    constexpr [[nodiscard]] decltype(auto) value_or(default_t && default_value) && noexcept
     {
         if constexpr (exists<query_t>())
         {
@@ -199,7 +199,7 @@ public:
 
     //!\copydoc value_or
     template <typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) const && noexcept
+    constexpr [[nodiscard]] decltype(auto) value_or(default_t && default_value) const && noexcept
     {
         if constexpr (exists<query_t>())
         {
@@ -214,7 +214,7 @@ public:
 
     //!\copydoc value_or
     template <template <typename ...> typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) & noexcept
+    constexpr [[nodiscard]] decltype(auto) value_or(default_t && default_value) & noexcept
     {
         if constexpr (exists<query_t>())
         {
@@ -229,7 +229,7 @@ public:
 
     //!\copydoc value_or
     template <template <typename ...> typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) const & noexcept
+    constexpr [[nodiscard]] decltype(auto) value_or(default_t && default_value) const & noexcept
     {
         if constexpr (exists<query_t>())
         {
@@ -244,7 +244,7 @@ public:
 
     //!\copydoc value_or
     template <template <typename ...> typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) && noexcept
+    constexpr [[nodiscard]] decltype(auto) value_or(default_t && default_value) && noexcept
     {
         if constexpr (exists<query_t>())
         {
@@ -259,7 +259,7 @@ public:
 
     //!\copydoc value_or
     template <template <typename ...> typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) const && noexcept
+    constexpr [[nodiscard]] decltype(auto) value_or(default_t && default_value) const && noexcept
     {
         if constexpr (exists<query_t>())
         {
@@ -274,13 +274,13 @@ public:
 
     //!\brief Checks if the given type exists in the tuple.
     template <typename query_t>
-    static constexpr bool exists() noexcept
+    static constexpr [[nodiscard]] bool exists() noexcept
     {
         return !meta::empty<meta::find<type_list<configs_t...>, query_t>>::value;
     }
     //!\brief Checks if the given type exists in the tuple.
     template <template <typename ...> typename query_t>
-    static constexpr bool exists() noexcept
+    static constexpr [[nodiscard]] bool exists() noexcept
     {
         return !meta::empty<meta::find_if<type_list<configs_t...>, detail::is_same_configuration_f<query_t>>>::value;
     }
@@ -299,23 +299,23 @@ public:
      * \returns A new seqan3::configuration containing `lhs` and `rhs`.
      */
     template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
-    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
-                                    pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs);
+    friend constexpr [[nodiscard]] auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                                                  pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs);
 
     //!\overload
     template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
-    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
-                                    pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
+    friend constexpr [[nodiscard]] auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                                                  pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
 
     //!\overload
     template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
-    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
-                                    pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs);
+    friend constexpr [[nodiscard]] auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                                                  pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs);
 
     //!\overload
     template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
-    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
-                                    pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
+    friend constexpr [[nodiscard]] auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                                                  pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
 
     /*!\brief Combines a seqan3::configuration with a seqan3::pipeable_config_element.
      * \tparam rhs_derived_t The derived type of the right hand side operand.
@@ -325,32 +325,32 @@ public:
      * \returns A new seqan3::configuration adding `rhs` to the passed `lhs` object.
      */
     template <typename rhs_derived_t, typename rhs_value_t>
-    friend constexpr auto operator|(configuration && lhs,
-                                    pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
+    friend constexpr [[nodiscard]] auto operator|(configuration && lhs,
+                                                  pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
     {
         return std::move(lhs).push_back(static_cast<rhs_derived_t &&>(rhs));
     }
 
     //!\overload
     template <typename rhs_derived_t, typename rhs_value_t>
-    friend constexpr auto operator|(configuration const & lhs,
-                                    pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
+    friend constexpr [[nodiscard]] auto operator|(configuration const & lhs,
+                                                  pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
     {
         return lhs.push_back(static_cast<rhs_derived_t &&>(rhs));
     }
 
     //!\overload
     template <typename rhs_derived_t, typename rhs_value_t>
-    friend constexpr auto operator|(configuration && lhs,
-                                    pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
+    friend constexpr [[nodiscard]] auto operator|(configuration && lhs,
+                                                  pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
     {
         return std::move(lhs).push_back(static_cast<rhs_derived_t const &>(rhs));
     }
 
     //!\overload
     template <typename rhs_derived_t, typename rhs_value_t>
-    friend constexpr auto operator|(configuration const & lhs,
-                                    pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
+    friend constexpr [[nodiscard]] auto operator|(configuration const & lhs,
+                                                  pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
     {
         return lhs.push_back(static_cast<rhs_derived_t const &>(rhs));
     }
@@ -362,8 +362,8 @@ public:
      * \returns A new seqan3::configuration as the result of concatenating `lhs` and `rhs`.
      */
     template <typename ...rhs_configs_t>
-    friend constexpr auto operator|(configuration && lhs,
-                                    configuration<rhs_configs_t...> && rhs)
+    friend constexpr [[nodiscard]] auto operator|(configuration && lhs,
+                                                  configuration<rhs_configs_t...> && rhs)
     {
         using lhs_base_t = typename configuration::base_type;
         using rhs_base_t = typename configuration<rhs_configs_t...>::base_type;
@@ -374,8 +374,8 @@ public:
 
     //!\overload
     template <typename ...rhs_configs_t>
-    friend constexpr auto operator|(configuration const & lhs,
-                                    configuration<rhs_configs_t...> && rhs)
+    friend constexpr [[nodiscard]] auto operator|(configuration const & lhs,
+                                                  configuration<rhs_configs_t...> && rhs)
     {
         using lhs_base_t = typename configuration::base_type;
         using rhs_base_t = typename configuration<rhs_configs_t...>::base_type;
@@ -386,8 +386,8 @@ public:
 
     //!\overload
     template <typename ...rhs_configs_t>
-    friend constexpr auto operator|(configuration && lhs,
-                                    configuration<rhs_configs_t...> const & rhs)
+    friend constexpr [[nodiscard]] auto operator|(configuration && lhs,
+                                                  configuration<rhs_configs_t...> const & rhs)
     {
         using lhs_base_t = typename configuration::base_type;
         using rhs_base_t = typename configuration<rhs_configs_t...>::base_type;
@@ -398,8 +398,8 @@ public:
 
     //!\overload
     template <typename ...rhs_configs_t>
-    friend constexpr auto operator|(configuration const & lhs,
-                                    configuration<rhs_configs_t...> const & rhs)
+    friend constexpr [[nodiscard]] auto operator|(configuration const & lhs,
+                                                  configuration<rhs_configs_t...> const & rhs)
     {
         using lhs_base_t = typename configuration::base_type;
         using rhs_base_t = typename configuration<rhs_configs_t...>::base_type;
@@ -436,7 +436,7 @@ private:
         requires detail::is_type_specialisation_of_v<tuple_t, std::tuple> &&
                  std::tuple_size_v<remove_cvref_t<tuple_t>> > 0
     //!\endcond
-    static constexpr auto make_configuration(tuple_t && tpl)
+    static constexpr [[nodiscard]] auto make_configuration(tuple_t && tpl)
     {
         auto make_config = [](auto && tpl)
         {
@@ -487,7 +487,7 @@ private:
      * Strong exception guarantee.
      */
     template <detail::config_element config_element_t>
-    constexpr auto push_back(config_element_t elem) const &
+    constexpr [[nodiscard]] auto push_back(config_element_t elem) const &
     {
         static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
                                                             configs_t...>,
@@ -501,7 +501,7 @@ private:
 
     //!\copydoc push_back
     template <detail::config_element config_element_t>
-    constexpr auto push_back(config_element_t elem) &&
+    constexpr [[nodiscard]] auto push_back(config_element_t elem) &&
     {
         static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
                                                             configs_t...>,

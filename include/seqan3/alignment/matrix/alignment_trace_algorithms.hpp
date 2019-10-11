@@ -38,8 +38,8 @@ namespace seqan3::detail
      requires matrix<remove_cvref_t<trace_matrix_t>> &&
               std::same_as<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions>
  //!\endcond
-inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
-                                                       alignment_coordinate const back_coordinate)
+inline [[nodiscard]] alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
+                                                                     alignment_coordinate const back_coordinate)
 {
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
@@ -102,11 +102,11 @@ template <
              std::same_as<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions> &&
              detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<alignment_t>>
 //!\endcond
-inline alignment_t alignment_trace(database_t && database,
-                                   query_t && query,
-                                   trace_matrix_t && matrix,
-                                   alignment_coordinate const back_coordinate,
-                                   alignment_coordinate const front_coordinate)
+inline [[nodiscard]] alignment_t alignment_trace(database_t && database,
+                                                 query_t && query,
+                                                 trace_matrix_t && matrix,
+                                                 alignment_coordinate const back_coordinate,
+                                                 alignment_coordinate const front_coordinate)
 {
     constexpr auto N = trace_directions::none;
     constexpr auto D = trace_directions::diagonal;

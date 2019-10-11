@@ -137,6 +137,7 @@ private:
          * \{
          */
         //!\brief Delegate comparison to base_base_t.
+        [[nodiscard]]
         bool operator==(iterator_type const & rhs) const
             noexcept(noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
         //!\cond
@@ -147,6 +148,7 @@ private:
         }
 
         //!\brief Evaluate functor, possibly throw.
+        [[nodiscard]]
         bool operator==(sentinel_type const & rhs) const
             noexcept(!or_throw &&
                      noexcept(std::declval<base_base_t &>() == std::declval<sentinel_type &>()) &&
@@ -164,6 +166,7 @@ private:
         }
 
         //!\brief Switch lhs and rhs for comparison.
+        [[nodiscard]]
         friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs)
             noexcept(noexcept(rhs == lhs))
         {
@@ -171,6 +174,7 @@ private:
         }
 
         //!\brief Switch lhs and rhs for comparison.
+        [[nodiscard]]
         bool operator!=(sentinel_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         {
@@ -178,6 +182,7 @@ private:
         }
 
         //!\brief Delegate comparison to base_base_t.
+        [[nodiscard]]
         bool operator!=(iterator_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         //!\cond
@@ -188,6 +193,7 @@ private:
         }
 
         //!\brief Switch lhs and rhs for comparison.
+        [[nodiscard]]
         friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs)
             noexcept(noexcept(rhs != lhs))
         {
@@ -303,6 +309,7 @@ private:
          * \{
          */
         //!\brief Return the saved at_end state.
+        [[nodiscard]]
         bool operator==(sentinel_type const & rhs) const
             noexcept(!or_throw &&
                      noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
@@ -323,6 +330,7 @@ private:
         }
 
         //!\brief Return the saved at_end state.
+        [[nodiscard]]
         friend bool operator==(sentinel_type const & lhs, iterator_type_consume_input const & rhs)
             noexcept(noexcept(rhs == lhs))
         {
@@ -330,6 +338,7 @@ private:
         }
 
         //!\brief Return the saved at_end state.
+        [[nodiscard]]
         bool operator!=(sentinel_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type_consume_input &>() == rhs))
         {
@@ -337,6 +346,7 @@ private:
         }
 
         //!\brief Return the saved at_end state.
+        [[nodiscard]]
         friend bool operator!=(sentinel_type const & lhs, iterator_type_consume_input const & rhs)
             noexcept(noexcept(rhs != lhs))
         {
@@ -425,6 +435,7 @@ public:
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     const_iterator begin() const noexcept
         requires const_iterable
     {
@@ -432,6 +443,7 @@ public:
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     const_iterator cbegin() const noexcept
         requires const_iterable
     {
@@ -457,6 +469,7 @@ public:
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     auto end() const noexcept
         requires const_iterable
     {
@@ -464,6 +477,7 @@ public:
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     auto cend() const noexcept
         requires const_iterable
     {

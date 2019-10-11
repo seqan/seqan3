@@ -248,18 +248,21 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     iterator begin() noexcept
     {
         return {*this, 0};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator begin() const noexcept
     {
         return {*this, 0};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator cbegin() const noexcept
     {
         return begin();
@@ -278,18 +281,21 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     iterator end() noexcept
     {
         return {*this, size()};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator end() const noexcept
     {
         return {*this, size()};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator cend() const noexcept
     {
         return end();
@@ -307,6 +313,7 @@ public:
      *
      * Strong exception guarantee (never modifies data).
      */
+    [[nodiscard]]
     size_type size()
     {
         switch (tf)
@@ -333,6 +340,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     size_type size() const
     {
         switch (tf)
@@ -376,6 +384,7 @@ public:
      *
      * Constant.
      */
+    [[nodiscard]]
     reference operator[](size_type const n)
     {
         assert(n < size());
@@ -406,6 +415,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     const_reference operator[](size_type const n) const
     {
         assert(n < size());

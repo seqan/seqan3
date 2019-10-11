@@ -104,7 +104,7 @@ struct type_list_expander<type_list_t<args_t...>>
  * \sa https://en.cppreference.com/w/cpp/language/parameter_pack
  */
 template <typename unary_predicate_t, typename ...pack_t>
-[[nodiscard]] constexpr bool all_of(unary_predicate_t && fn, pack_t && ...args)
+constexpr [[nodiscard]] bool all_of(unary_predicate_t && fn, pack_t && ...args)
 //!\cond
     requires (std::predicate<unary_predicate_t, pack_t> && ...)
 //!\endcond
@@ -147,7 +147,7 @@ template <typename unary_predicate_t, typename ...pack_t>
  * [Compile-time complexity: Linear number of template instantiations.]
  */
 template <typename type_list_t, typename unary_predicate_t>
-[[nodiscard]] constexpr bool all_of(unary_predicate_t && fn)
+constexpr [[nodiscard]] bool all_of(unary_predicate_t && fn)
 //!\cond
     requires type_list_specialisation<type_list_t>
 //!\endcond

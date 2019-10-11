@@ -180,6 +180,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool operator==(fm_index_cursor const & rhs) const noexcept
     {
         assert(index != nullptr);
@@ -202,6 +203,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool operator!=(fm_index_cursor const & rhs) const noexcept
     {
         assert(index != nullptr);
@@ -394,6 +396,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     size_type last_rank() const noexcept
     {
         // parent_lb > parent_rb --> invalid interval
@@ -416,6 +419,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     size_type query_length() const noexcept
     {
         assert(index != nullptr);
@@ -442,6 +446,7 @@ public:
      * No-throw guarantee.
      */
     template <std::ranges::range text_t>
+    [[nodiscard]]
     auto path_label(text_t && text) const noexcept
     //!\cond
         requires index_t::text_layout_mode == text_layout::single
@@ -459,6 +464,7 @@ public:
 
     //!\overload
     template <std::ranges::range text_t>
+    [[nodiscard]]
     auto path_label(text_t && text) const noexcept
     //!\cond
         requires index_t::text_layout_mode == text_layout::collection
@@ -486,6 +492,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     size_type count() const noexcept
     {
         assert(index != nullptr);
@@ -504,6 +511,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
+    [[nodiscard]]
     std::vector<size_type> locate() const
     //!\cond
         requires index_t::text_layout_mode == text_layout::single
@@ -520,6 +528,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     std::vector<std::pair<size_type, size_type>> locate() const
     //!\cond
         requires index_t::text_layout_mode == text_layout::collection
@@ -551,6 +560,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
+    [[nodiscard]]
     auto lazy_locate() const
     //!\cond
         requires index_t::text_layout_mode == text_layout::single
@@ -563,6 +573,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     auto lazy_locate() const
     //!\cond
         requires index_t::text_layout_mode == text_layout::collection

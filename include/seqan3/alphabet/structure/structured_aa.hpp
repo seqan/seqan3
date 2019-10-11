@@ -112,14 +112,14 @@ public:
      * \{
      */
     //!\brief Return a character. This reads the internal sequence letter.
-    constexpr char_type to_char() const noexcept
+    constexpr [[noreturn]] char_type to_char() const noexcept
     {
         return seqan3::to_char(get<0>(*this));
     }
     //!\}
 
     //!\brief Validate whether a character is valid in the sequence alphabet.
-    static constexpr bool char_is_valid(char_type const c) noexcept
+    static constexpr [[noreturn]] bool char_is_valid(char_type const c) noexcept
     {
         return char_is_valid_for<sequence_alphabet_type>(c);
     }

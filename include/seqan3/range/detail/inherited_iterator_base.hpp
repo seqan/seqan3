@@ -111,7 +111,7 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    constexpr bool operator==(derived_t const & rhs) const
+    constexpr [[nodiscard]] bool operator==(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() == std::declval<base_t &>()))
     //!\cond
         requires std::equality_comparable<base_t>
@@ -121,7 +121,7 @@ public:
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
-    constexpr bool operator!=(derived_t const & rhs) const
+    constexpr [[nodiscard]] bool operator!=(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() == std::declval<base_t &>()))
     //!\cond
         requires std::equality_comparable<base_t>
@@ -131,7 +131,7 @@ public:
     }
 
     //!\brief Checks whether `*this` is less than `rhs`.
-    constexpr bool operator<(derived_t const & rhs) const
+    constexpr [[nodiscard]] bool operator<(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() < std::declval<base_t &>()))
     //!\cond
         requires std::totally_ordered<base_t>
@@ -141,7 +141,7 @@ public:
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
-    constexpr bool operator>(derived_t const & rhs) const
+    constexpr [[nodiscard]] bool operator>(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() > std::declval<base_t &>()))
     //!\cond
         requires std::totally_ordered<base_t>
@@ -151,7 +151,7 @@ public:
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
-    constexpr bool operator<=(derived_t const & rhs) const
+    constexpr [[nodiscard]] bool operator<=(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() > std::declval<base_t &>()))
     //!\cond
         requires std::totally_ordered<base_t>
@@ -161,7 +161,7 @@ public:
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-    constexpr bool operator>=(derived_t const & rhs) const
+    constexpr [[nodiscard]] bool operator>=(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() < std::declval<base_t &>()))
     //!\cond
         requires std::totally_ordered<base_t>
@@ -320,7 +320,7 @@ public:
      * \{
      */
     //!\brief Dereference operator returns element currently pointed at.
-    constexpr reference operator*() noexcept(noexcept(*std::declval<base_t &>()))
+    constexpr [[nodiscard]] reference operator*() noexcept(noexcept(*std::declval<base_t &>()))
     //!\cond
         requires std::readable<base_t>
     //!\endcond
@@ -329,7 +329,7 @@ public:
     }
 
     //!\brief Dereference operator returns element currently pointed at.
-    constexpr decltype(auto) operator*() const noexcept(noexcept(*std::declval<base_t const &>()))
+    constexpr [[nodiscard]] decltype(auto) operator*() const noexcept(noexcept(*std::declval<base_t const &>()))
     //!\cond
         requires std::readable<base_t>
     //!\endcond
@@ -338,7 +338,7 @@ public:
     }
 
     //!\brief Return pointer to this iterator.
-    constexpr pointer operator->() noexcept(noexcept(*std::declval<base_t &>()))
+    constexpr [[nodiscard]] pointer operator->() noexcept(noexcept(*std::declval<base_t &>()))
     //!\cond
         requires std::input_iterator<base_t>
     //!\endcond
@@ -347,7 +347,7 @@ public:
     }
 
     //!\brief Return pointer to this iterator.
-    constexpr decltype(auto) operator->() const noexcept(noexcept(*std::declval<base_t const &>()))
+    constexpr [[nodiscard]] decltype(auto) operator->() const noexcept(noexcept(*std::declval<base_t const &>()))
     //!\cond
         requires std::input_iterator<base_t>
     //!\endcond
@@ -359,7 +359,7 @@ public:
     //!\cond
     template <typename base_t_ = base_t>
     //!\endcond
-    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n)
+    constexpr [[nodiscard]] decltype(auto) operator[](std::make_signed_t<difference_type> const n)
         noexcept(noexcept(std::declval<base_t &>()[0]))
     //!\cond
         requires requires (base_t_ i, difference_type const n) { i[n]; }
@@ -372,7 +372,7 @@ public:
     //!\cond
     template <typename base_t_ = base_t>
     //!\endcond
-    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n) const
+    constexpr [[nodiscard]] decltype(auto) operator[](std::make_signed_t<difference_type> const n) const
         noexcept(noexcept(std::declval<base_t const &>()[0]))
     //!\cond
         requires requires (base_t_ const i, difference_type const n) { i[n]; }
@@ -390,19 +390,19 @@ private:
     friend derived_t;
 
     //!\brief Cast this to derived type.
-    constexpr derived_t * this_derived()
+    constexpr [[nodiscard]] derived_t * this_derived()
     {
         return static_cast<derived_t*>(this);
     }
 
     //!\copydoc this_derived
-    constexpr derived_t const * this_derived() const
+    constexpr [[nodiscard]] derived_t const * this_derived() const
     {
         return static_cast<derived_t const *>(this);
     }
 
     //!\brief Cast this to base type.
-    constexpr base_t * this_to_base()
+    constexpr [[nodiscard]] base_t * this_to_base()
     {
         if constexpr (wrap_base)
             return &member;
@@ -411,7 +411,7 @@ private:
     }
 
     //!\copydoc this_to_base
-    constexpr base_t const * this_to_base() const
+    constexpr [[nodiscard]] base_t const * this_to_base() const
     {
         if constexpr (wrap_base)
             return &member;

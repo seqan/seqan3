@@ -179,11 +179,13 @@ namespace sdsl
             ar(CEREAL_NVP(m_sigma));
         }
 
+        [[nodiscard]]
         bool operator==(plain_byte_alphabet const & other) const noexcept
         {
             return (m_C == other.m_C) && (m_sigma == other.m_sigma);
         }
 
+        [[nodiscard]]
         bool operator!=(plain_byte_alphabet const & other) const noexcept
         {
             return !(*this == other);

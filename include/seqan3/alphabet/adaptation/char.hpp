@@ -65,7 +65,7 @@ struct alphabet<char_type>
      * \param[in] chr The alphabet letter that you wish to convert to char (no-op).
      * \returns `chr`.
      */
-    static constexpr char_type to_char(char_type const chr) noexcept
+    static constexpr [[nodiscard]] char_type to_char(char_type const chr) noexcept
     {
         return chr;
     }
@@ -74,7 +74,7 @@ struct alphabet<char_type>
      * \param[in] chr The alphabet letter that you wish to convert to rank.
      * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
      */
-    static constexpr auto to_rank(char_type const chr) noexcept
+    static constexpr [[nodiscard]] auto to_rank(char_type const chr) noexcept
     {
         return static_cast<detail::min_viable_uint_t<alphabet_size - 1>>(chr);
     }

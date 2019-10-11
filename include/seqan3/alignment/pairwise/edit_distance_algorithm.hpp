@@ -68,7 +68,9 @@ public:
      * \param[in] second_range   The second sequence (or packed sequences).
      */
     template <std::ranges::forward_range first_range_t, std::ranges::forward_range second_range_t>
-    constexpr auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
+    constexpr [[nodiscard]] auto operator()(size_t const idx,
+                                            first_range_t && first_range,
+                                            second_range_t && second_range)
     {
         using edit_traits = default_edit_distance_trait_type<first_range_t,
                                                              second_range_t,

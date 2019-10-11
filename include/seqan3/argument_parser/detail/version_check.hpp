@@ -225,7 +225,7 @@ public:
     }
 
     //!\brief Returns a writable path to store timestamp and version files or an empty path if none exists.
-    static std::filesystem::path get_path()
+    static [[nodiscard]] std::filesystem::path get_path() const
     {
         using namespace std::filesystem;
 
@@ -295,7 +295,8 @@ public:
      * if possible (seqan3::detail::is_terminal()), what he wants to do, set the according cookie for the next time
      * and continue. If we cannot ask the user, the default kicks in (do the check).
      */
-    bool decide_if_check_is_performed(bool developer_approval, std::optional<bool> user_approval)
+    [[nodiscard]] bool decide_if_check_is_performed(bool const developer_approval,
+                                                    std::optional<bool> const user_approval) const
     {
         if (!developer_approval)
             return false;
@@ -442,7 +443,7 @@ public:
 
 private:
     //!\brief Returns the command line call as a std::string of an available program depending on the environment.
-    static std::string get_program()
+    static [[nodiscard]] std::string get_program() const
     {
 #if defined(_WIN32)
         return "powershell.exe -NoLogo -NonInteractive -Command \"& {Invoke-WebRequest -erroraction 'silentlycontinue' -OutFile";
@@ -464,7 +465,7 @@ private:
     }
 
     //!\brief Reads the timestamp file if possible and returns the time difference to the current time.
-    double get_time_diff_to_current(std::string const & str_time) const
+    [[nodiscard]] double get_time_diff_to_current(std::string const & str_time) const
     {
         namespace co = std::chrono;
         double curr = co::duration_cast<co::seconds>(co::system_clock::now().time_since_epoch()).count();
@@ -478,7 +479,7 @@ private:
     /*!\brief Parses a version string into an array of length 3.
      * \param[in] str The version string that must match seqan3::detail::version_regex.
      */
-    std::array<int, 3> get_numbers_from_version_string(std::string const & str) const
+    [[nodiscard]] std::array<int, 3> get_numbers_from_version_string(std::string const & str) const
     {
         std::array<int, 3> result{};
 
@@ -497,7 +498,7 @@ private:
      * \param[in] msg      The message to write into the file (no newline is appended).
      */
     template <typename msg_type>
-    void write_cookie(msg_type && msg)
+    void write_cookie(msg_type && msg) const
     {
         // The current time
         namespace co = std::chrono;

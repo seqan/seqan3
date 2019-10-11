@@ -226,12 +226,14 @@ public:
      * \{
      */
     //!\brief Return the cached value.
+    [[nodiscard]]
     reference operator*() const noexcept
     {
         return cached_value;
     }
 
     //!\brief Returns pointer to the pointed-to object.
+    [[nodiscard]]
     pointer operator->() const noexcept
     {
         return std::addressof(cached_value);
@@ -266,6 +268,7 @@ public:
      * \{
      */
     //!\brief Compares for equality with sentinel.
+    [[nodiscard]]
     friend constexpr bool operator==(async_input_buffer_iterator const & lhs,
                                      std::ranges::default_sentinel_t const &) noexcept
     {
@@ -273,6 +276,7 @@ public:
     }
 
     //!\copydoc operator==
+    [[nodiscard]]
     friend constexpr bool operator==(std::ranges::default_sentinel_t const &,
                                      async_input_buffer_iterator const & rhs) noexcept
     {
@@ -280,6 +284,7 @@ public:
     }
 
     //!\brief Compares for inequality with sentinel.
+    [[nodiscard]]
     friend constexpr bool operator!=(async_input_buffer_iterator const & lhs,
                                      std::ranges::default_sentinel_t const &) noexcept
     {
@@ -287,6 +292,7 @@ public:
     }
 
     //!\copydoc operator!=
+    [[nodiscard]]
     friend constexpr bool operator!=(std::ranges::default_sentinel_t const &,
                                      async_input_buffer_iterator const & rhs) noexcept
     {

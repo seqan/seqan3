@@ -24,7 +24,7 @@ namespace seqan3::detail
  * \returns A concatenated string of all values (no separator in between is added).
  */
 template <typename ...value_type>
-std::string to_string(value_type && ...values)
+[[nodiscard]] std::string to_string(value_type && ...values)
 {
     std::stringstream stream;
     debug_stream_type dstream{stream};

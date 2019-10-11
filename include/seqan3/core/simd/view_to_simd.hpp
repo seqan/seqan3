@@ -174,7 +174,7 @@ public:
      *
      * Only available if the inner range types model std::ranges::sized_range.
      */
-    constexpr size_t size() const noexcept
+    constexpr [[nodiscard]] size_t size() const noexcept
     //!\cond
         requires std::ranges::sized_range<inner_range_type>
     //!\endcond
@@ -317,25 +317,27 @@ public:
      * \{
      */
     //!\brief Returns `true` if iterator reached the end, otherwise `false`.
-    constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
+    constexpr [[nodiscard]] bool operator==(std::ranges::default_sentinel_t const &) const noexcept
     {
         return at_end;
     }
 
     //!\copydoc seqan3::detail::view_to_simd::iterator_type::operator==
-    friend constexpr bool operator==(std::ranges::default_sentinel_t const &, iterator_type const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator==(std::ranges::default_sentinel_t const &,
+                                                   iterator_type const & rhs) noexcept
     {
         return rhs.at_end;
     }
 
     //!\brief Returns `true` if iterator did not reach the end yet, otherwise `false`.
-    constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
+    constexpr [[nodiscard]] bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
     {
         return !at_end;
     }
 
     //!\copydoc seqan3::detail::view_to_simd::iterator_type::operator!=
-    friend constexpr bool operator!=(std::ranges::default_sentinel_t const &, iterator_type const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator!=(std::ranges::default_sentinel_t const &,
+                                                   iterator_type const & rhs) noexcept
     {
         return !rhs.at_end;
     }
@@ -352,7 +354,7 @@ private:
      * function is a noop. In the other cases the corresponding parts of the source vector are extracted and
      * upcasted to the target simd type.
      */
-    auto unpack(max_simd_type const & row) const
+    [[nodiscard]] auto unpack(max_simd_type const & row) const
     {
         if constexpr (chunk_size == simd_traits<max_simd_type>::length / 2)  // upcast into 2 vectors.
         {
@@ -426,7 +428,7 @@ private:
     /*!\brief Checks if all sequence iterators reached the end.
      * \returns `true` if all iterators reached the end, otherwise `false`.
      */
-    constexpr bool all_iterators_reached_sentinel() const noexcept
+    constexpr [[nodiscard]] bool all_iterators_reached_sentinel() const noexcept
     {
         return std::ranges::all_of(views::zip(cached_iter, cached_sentinel), [] (auto && tpl)
     {
@@ -445,8 +447,8 @@ private:
      * reached it will return the padding value instead.
      */
     template <size_t ...indices>
-    constexpr simd_t convert_single_column(std::index_sequence<indices...> const & SEQAN3_DOXYGEN_ONLY(idx_seq))
-        noexcept
+    constexpr [[nodiscard]] simd_t
+    convert_single_column(std::index_sequence<indices...> const & SEQAN3_DOXYGEN_ONLY(idx_seq)) noexcept
     {
         // Gets the current character from the sequence at index `idx` and increments the respective iterator.
         return simd_t

@@ -50,7 +50,8 @@ class rna15;
  * No-throw guarantee.
  */
 template <genetic_code gc = genetic_code::CANONICAL, nucleotide_alphabet nucl_type>
-constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) noexcept
+constexpr [[nodiscard]] aa27
+translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) noexcept
 {
     if constexpr (std::same_as<nucl_type, dna4> || std::same_as<nucl_type, dna5> || std::same_as<nucl_type, dna15>)
     {
@@ -102,7 +103,7 @@ template <genetic_code gc = genetic_code::CANONICAL, typename tuple_type>
              nucleotide_alphabet<std::tuple_element_t<1, tuple_type>> &&
              nucleotide_alphabet<std::tuple_element_t<2, tuple_type>>
 //!\endcond
-constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (tuple_type const & input_tuple) noexcept
+constexpr [[nodiscard]] aa27 translate_triplet SEQAN3_DEPRECATED_310 (tuple_type const & input_tuple) noexcept
 {
     return translate_triplet(std::get<0>(input_tuple), std::get<1>(input_tuple), std::get<2>(input_tuple));
 }
@@ -130,7 +131,7 @@ template <genetic_code gc = genetic_code::CANONICAL, std::ranges::input_range ra
 //!\cond
     requires nucleotide_alphabet<reference_t<std::decay_t<range_type>>>
 //!\endcond
-constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_range)
+constexpr [[nodiscard]] aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_range)
 {
     auto n1 = begin(input_range);
     auto n2 = ++n1;
@@ -166,7 +167,7 @@ template <genetic_code gc = genetic_code::CANONICAL, std::ranges::random_access_
 //!\cond
     requires nucleotide_alphabet<reference_t<std::decay_t<rng_t>>>
 //!\endcond
-constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (rng_t && input_range)
+constexpr [[nodiscard]] aa27 translate_triplet SEQAN3_DEPRECATED_310 (rng_t && input_range)
 {
     assert(input_range.begin() != end(input_range));
     assert(input_range.begin() + 1 != end(input_range));

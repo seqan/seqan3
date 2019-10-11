@@ -116,7 +116,7 @@ public:
      *    In this case, the reference information is parsed from the records field::REF_ID and stored in the header.
      *    This member function then provides access to the unique list of reference ids encountered in the records.
      */
-    ref_ids_type & ref_ids()
+    [[nodiscard]] ref_ids_type & ref_ids()
     {
         return *ref_ids_ptr;
     }

@@ -109,18 +109,21 @@ private:
         using base_t::operator!=;
 
         //!\brief Equality comparison to the sentinel always returns false on an infinite view.
+        [[nodiscard]]
         constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
         {
             return false;
         }
 
         //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
+        [[nodiscard]]
         constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
         {
             return true;
         }
 
         //!\brief Equality comparison to the sentinel always returns false on an infinite view.
+        [[nodiscard]]
         friend constexpr bool operator==(std::ranges::default_sentinel_t const &,
                                          repeat_view_iterator const &) noexcept
         {
@@ -128,6 +131,7 @@ private:
         }
 
         //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
+        [[nodiscard]]
         friend constexpr bool operator!=(std::ranges::default_sentinel_t const &,
                                          repeat_view_iterator const &) noexcept
         {
@@ -193,18 +197,21 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     constexpr iterator begin() noexcept
     {
         return iterator{*this};
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     constexpr const_iterator begin() const noexcept
     {
         return const_iterator{*this};
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     constexpr const_iterator cbegin() const noexcept
     {
         return const_iterator{*this};
@@ -225,18 +232,21 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     constexpr sentinel_type end() noexcept
     {
         return {};
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     constexpr sentinel_type end() const noexcept
     {
         return {};
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     constexpr sentinel_type cend() const noexcept
     {
         return {};
@@ -262,12 +272,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     constexpr const_reference operator[](difference_type const SEQAN3_DOXYGEN_ONLY(n)) const noexcept
     {
         return *single_value.begin();
     }
 
     //!\copydoc operator[]()
+    [[nodiscard]]
     constexpr reference operator[](difference_type const SEQAN3_DOXYGEN_ONLY(n)) noexcept
     {
         return *single_value.begin();

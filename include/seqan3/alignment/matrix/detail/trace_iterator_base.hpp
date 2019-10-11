@@ -193,37 +193,39 @@ public:
      * \{
      */
     //!\brief Returns `true` if both iterators are equal, `false` otherwise.
-    constexpr friend bool operator==(derived_t const & lhs, derived_t const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool operator==(derived_t const & lhs, derived_t const & rhs) noexcept
     {
         return lhs.matrix_iter == rhs.matrix_iter;
     }
 
     //!\brief Returns `true` if the pointed-to-element is seqan3::detail::trace_directions::none.
-    constexpr friend bool operator==(derived_t const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    constexpr [[nodiscard]] friend bool operator==(derived_t const & lhs, std::ranges::default_sentinel_t const &) noexcept
     {
         return *lhs.matrix_iter == trace_directions::none;
     }
 
     //!\brief copydoc operator==()
-    constexpr friend bool operator==(std::ranges::default_sentinel_t const &, derived_t const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool operator==(std::ranges::default_sentinel_t const &, derived_t const & rhs) noexcept
     {
         return rhs == std::ranges::default_sentinel;
     }
 
     //!\brief Returns `true` if both iterators are not equal, `false` otherwise.
-    constexpr friend bool operator!=(derived_t const & lhs, derived_t const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool operator!=(derived_t const & lhs, derived_t const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     //!\brief Returns `true` if the pointed-to-element is not seqan3::detail::trace_directions::none.
-    constexpr friend bool operator!=(derived_t const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    constexpr [[nodiscard]] friend bool
+    operator!=(derived_t const & lhs, std::ranges::default_sentinel_t const &) noexcept
     {
         return !(lhs == std::ranges::default_sentinel);
     }
 
     //!\brief copydoc operator!=()
-    constexpr friend bool operator!=(std::ranges::default_sentinel_t const &, derived_t const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool
+    operator!=(std::ranges::default_sentinel_t const &, derived_t const & rhs) noexcept
     {
         return !(rhs == std::ranges::default_sentinel);
     }
@@ -277,13 +279,13 @@ private:
     }
 
     //!\brief Cast this object to its derived type.
-    constexpr derived_t & derived() noexcept
+    constexpr [[nodiscard]] derived_t & derived() noexcept
     {
         return static_cast<derived_t &>(*this);
     }
 
     //!\overload
-    constexpr derived_t const & derived() const noexcept
+    constexpr [[nodiscard]] derived_t const & derived() const noexcept
     {
         return static_cast<derived_t const &>(*this);
     }

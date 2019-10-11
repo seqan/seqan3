@@ -713,7 +713,7 @@ public:
      *
      * \sa seqan3::alignment_file_header
      */
-    auto & header()
+    [[nodiscard]] auto & header()
     {
         if constexpr (std::same_as<ref_ids_type, ref_info_not_given>)
             throw std::logic_error{"Please construct your file with reference id and length information in order "

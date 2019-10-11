@@ -101,7 +101,7 @@ private:
         }
 
         //!\brief Returns the inverted value of the referenced bit.
-        constexpr bool operator~() const noexcept
+        constexpr [[nodiscard]] bool operator~() const noexcept
         {
             return !static_cast<bool>(internal.bits & mask);
         }
@@ -508,13 +508,13 @@ public:
     }
 
     //!\copydoc begin()
-    constexpr const_iterator begin() const noexcept
+    constexpr [[nodiscard]] const_iterator begin() const noexcept
     {
         return const_iterator{*this};
     }
 
     //!\copydoc begin()
-    constexpr const_iterator cbegin() const noexcept
+    constexpr [[nodiscard]] const_iterator cbegin() const noexcept
     {
         return begin();
     }
@@ -533,13 +533,13 @@ public:
     }
 
     //!\copydoc end()
-    constexpr const_iterator end() const noexcept
+    constexpr [[nodiscard]] const_iterator end() const noexcept
     {
         return const_iterator{*this, size()};
     }
 
     //!\copydoc end()
-    constexpr const_iterator cend() const noexcept
+    constexpr [[nodiscard]] const_iterator cend() const noexcept
     {
         return end();
     }
@@ -653,7 +653,7 @@ public:
      *
      * Constant.
      */
-    constexpr dynamic_bitset operator~() const noexcept
+    constexpr [[nodiscard]] dynamic_bitset operator~() const noexcept
     {
         dynamic_bitset tmp{*this};
         tmp.flip();
@@ -731,7 +731,7 @@ public:
      *
      * Constant.
      */
-    constexpr dynamic_bitset operator>>(size_t const count) const noexcept
+    constexpr [[nodiscard]] dynamic_bitset operator>>(size_t const count) const noexcept
     {
         assert(count > 0);
         assert(count < size());
@@ -758,7 +758,7 @@ public:
      *
      * Constant.
      */
-    constexpr dynamic_bitset operator<<(size_t const count) const noexcept
+    constexpr [[nodiscard]] dynamic_bitset operator<<(size_t const count) const noexcept
     {
         assert(count > 0);
         assert(count < size());
@@ -923,7 +923,7 @@ public:
     /*!\brief Checks if all bit are set.
      * \returns `true` if all bits are set or the bitset is empty, `false` otherwise.
      */
-    constexpr bool all() const noexcept
+    constexpr [[nodiscard]] bool all() const noexcept
     {
         return count() == size();
     }
@@ -931,7 +931,7 @@ public:
     /*!\brief Checks if any bit is set.
      * \returns `true` if any bit is set, `false` otherwise.
      */
-    constexpr bool any() const noexcept
+    constexpr [[nodiscard]] bool any() const noexcept
     {
         return count() != 0;
     }
@@ -939,13 +939,13 @@ public:
     /*!\brief Checks if no bit is set.
      * \returns `true` if no bit is set, `false` otherwise.
      */
-    constexpr bool none() const noexcept
+    constexpr [[nodiscard]] bool none() const noexcept
     {
         return count() == 0;
     }
 
     //!\brief Returns the number of set bits.
-    constexpr size_type count() const noexcept
+    constexpr [[nodiscard]] size_type count() const noexcept
     {
         return detail::popcount(data.bits);
     }
@@ -965,7 +965,7 @@ public:
      *
      * Throws std::out_of_range if `i >= size()`.
      */
-    constexpr reference at(size_t const i)
+    constexpr [[nodiscard]] reference at(size_t const i)
     {
         if (i >= size()) // [[unlikely]]
             throw std::out_of_range{"Trying to access position " + std::to_string(i) +
@@ -974,7 +974,7 @@ public:
     }
 
     //!\copydoc at()
-    constexpr const_reference at(size_t const i) const
+    constexpr [[nodiscard]] const_reference at(size_t const i) const
     {
         if (i >= size()) // [[unlikely]]
             throw std::out_of_range{"Trying to access position " + std::to_string(i) +
@@ -983,7 +983,7 @@ public:
     }
 
     //!\copydoc at()
-    constexpr const_reference test(size_t const i) const
+    constexpr [[nodiscard]] const_reference test(size_t const i) const
     {
         return at(i);
     }
@@ -1009,14 +1009,14 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr reference operator[](size_t const i) noexcept
+    constexpr [[nodiscard]] reference operator[](size_t const i) noexcept
     {
         assert(i < size());
         return {data, i};
     }
 
     //!\copydoc operator[]()
-    constexpr const_reference operator[](size_t const i) const noexcept
+    constexpr [[nodiscard]] const_reference operator[](size_t const i) const noexcept
     {
         assert(i < size());
         return data.bits & 1ULL << i;
@@ -1038,14 +1038,14 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr reference front() noexcept
+    constexpr [[nodiscard]] reference front() noexcept
     {
         assert(size() > 0);
         return (*this)[0];
     }
 
     //!\copydoc front()
-    constexpr const_reference front() const noexcept
+    constexpr [[nodiscard]] const_reference front() const noexcept
     {
         assert(size() > 0);
         return (*this)[0];
@@ -1066,27 +1066,27 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr reference back() noexcept
+    constexpr [[nodiscard]] reference back() noexcept
     {
         assert(size() > 0);
         return (*this)[size() - 1];
     }
 
     //!\copydoc back()
-    constexpr const_reference back() const noexcept
+    constexpr [[nodiscard]] const_reference back() const noexcept
     {
         assert(size() > 0);
         return (*this)[size() - 1];
     }
 
     //!\brief Direct access to the underlying bit field.
-    constexpr bitfield * raw_data() noexcept
+    constexpr [[nodiscard]] bitfield * raw_data() noexcept
     {
         return data;
     }
 
     //!\copydoc raw_data()
-    constexpr bitfield const * raw_data() const noexcept
+    constexpr [[nodiscard]] bitfield const * raw_data() const noexcept
     {
         return data;
     }
@@ -1108,7 +1108,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr bool empty() const noexcept
+    constexpr [[nodiscard]] bool empty() const noexcept
     {
         return size() == 0;
     }
@@ -1126,7 +1126,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr size_type size() const noexcept
+    constexpr [[nodiscard]] size_type size() const noexcept
     {
         return data.size;
     }
@@ -1149,7 +1149,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr size_type max_size() const noexcept
+    constexpr [[nodiscard]] size_type max_size() const noexcept
     {
         return capacity();
     }
@@ -1167,7 +1167,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr size_type capacity() const noexcept
+    constexpr [[nodiscard]] size_type capacity() const noexcept
     {
         return bit_capacity;
     }
@@ -1526,7 +1526,8 @@ public:
     //!\cond
         requires cap <= bit_capacity
     //!\endcond
-    friend constexpr dynamic_bitset operator&(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
+    friend constexpr [[nodiscard]] dynamic_bitset operator&(dynamic_bitset const & lhs,
+                                                            dynamic_bitset<cap> const & rhs) noexcept
     {
         assert(lhs.size() == rhs.size());
         dynamic_bitset tmp{lhs};
@@ -1546,7 +1547,8 @@ public:
     //!\cond
         requires cap <= bit_capacity
     //!\endcond
-    friend constexpr dynamic_bitset operator^(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
+    friend constexpr [[nodiscard]] dynamic_bitset operator^(dynamic_bitset const & lhs,
+                                                            dynamic_bitset<cap> const & rhs) noexcept
     {
         assert(lhs.size() == rhs.size());
         dynamic_bitset tmp{lhs};
@@ -1566,7 +1568,8 @@ public:
     //!\cond
         requires cap <= bit_capacity
     //!\endcond
-    friend constexpr dynamic_bitset operator|(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
+    friend constexpr [[nodiscard]] dynamic_bitset operator|(dynamic_bitset const & lhs,
+                                                            dynamic_bitset<cap> const & rhs) noexcept
     {
         assert(lhs.size() == rhs.size());
         dynamic_bitset tmp{lhs};
@@ -1583,7 +1586,7 @@ public:
     //!\cond
         requires cap <= bit_capacity /* resolves ambiguousness when comparing two dynamic_bitsets of unequal capacity */
     //!\endcond
-    friend constexpr bool operator==(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator==(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return lhs.data.size == rhs.data.size && lhs.data.bits == rhs.data.bits;
     }
@@ -1593,7 +1596,7 @@ public:
     //!\cond
         requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator!=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator!=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
@@ -1603,7 +1606,7 @@ public:
     //!\cond
         requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator<(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator<(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return lhs.data.bits < rhs.data.bits;
     }
@@ -1613,7 +1616,7 @@ public:
     //!\cond
         requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator>(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator>(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return lhs.data.bits > rhs.data.bits;
     }
@@ -1623,7 +1626,7 @@ public:
     //!\cond
         requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator<=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator<=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs > rhs);
     }
@@ -1633,7 +1636,7 @@ public:
     //!\cond
         requires cap <= bit_capacity
     //!\endcond
-    friend constexpr bool operator>=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
+    friend constexpr [[nodiscard]] bool operator>=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs < rhs);
     }
@@ -1663,7 +1666,7 @@ public:
      * Throws std::bad_alloc from the `std::string` constructor.
      */
     template <typename char_t = char>
-    std::string to_string(char_t zero = char_t{'0'}, char_t one = char_t{'1'}) const
+    [[nodiscard]] std::string to_string(char_t zero = char_t{'0'}, char_t one = char_t{'1'}) const
     {
         std::string str{};
         str.reserve(size());
@@ -1687,7 +1690,7 @@ public:
      *
      * Throws std::overflow_error if the value cannot be represented in `unsigned long`.
      */
-    inline constexpr unsigned long to_ulong() const
+    constexpr [[nodiscard]] unsigned long to_ulong() const
     {
         if constexpr (std::numeric_limits<unsigned long>::max() < std::numeric_limits<size_t>::max())
         {
@@ -1712,7 +1715,7 @@ public:
      *
      * Throws std::overflow_error if the value cannot be represented in `unsigned long long`.
      */
-    inline constexpr unsigned long long to_ullong() const
+    constexpr [[nodiscard]] unsigned long long to_ullong() const
     {
         if constexpr (std::numeric_limits<unsigned long long>::max() < std::numeric_limits<size_t>::max())
         {

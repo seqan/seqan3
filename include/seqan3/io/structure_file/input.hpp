@@ -897,7 +897,7 @@ public:
      *
      * No-throw guarantee.
      */
-    reference front() noexcept
+    [[nodiscard]] reference front() noexcept
     {
         return *begin();
     }

@@ -139,25 +139,25 @@ public:
     * \{
     */
     //!\brief Returns the underlying value.
-    constexpr value_t & get() & noexcept
+    constexpr [[nodiscard]] value_t & get() & noexcept
     {
         return value;
     }
 
     //!\brief Returns the underlying value.
-    constexpr value_t const & get() const & noexcept
+    constexpr [[nodiscard]] value_t const & get() const & noexcept
     {
         return value;
     }
 
     //!\brief Returns the underlying value as rvalue.
-    constexpr value_t && get() && noexcept
+    constexpr [[nodiscard]] value_t && get() && noexcept
     {
         return std::move(value);
     }
 
     //!\brief Returns the underlying value as rvalue.
-    constexpr value_t const && get() const && noexcept
+    constexpr [[nodiscard]] value_t const && get() const && noexcept
     {
         return std::move(value);
     }

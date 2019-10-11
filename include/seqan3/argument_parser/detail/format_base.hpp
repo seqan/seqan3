@@ -40,7 +40,7 @@ protected:
      * \returns The type of the value as a string.
      */
     template <typename value_type>
-    static std::string get_type_name_as_string(value_type const & /**/)
+    static [[noreturn]] std::string get_type_name_as_string(value_type const & /**/) const
     {
         using type = std::decay_t<value_type>;
         using types = meta::list<int8_t,
@@ -86,7 +86,7 @@ protected:
     //!\cond
         requires !std::is_same_v<container_type, std::string>
     //!\endcond
-    static std::string get_type_name_as_string(container_type const & /**/)
+    static [[noreturn]] std::string get_type_name_as_string(container_type const & /**/) const
     {
         typename container_type::value_type tmp;
         return get_type_name_as_string(tmp);
@@ -98,7 +98,7 @@ protected:
      * \returns The type of the value as string.
      */
     template <typename option_value_type>
-    static std::string option_type_and_list_info(option_value_type const & value)
+    static [[noreturn]] std::string option_type_and_list_info(option_value_type const & value) const
     {
         return ("(\\fI" + get_type_name_as_string(value) + "\\fP)");
     }
@@ -113,7 +113,7 @@ protected:
     //!\cond
         requires sequence_container<container_type> && !std::is_same_v<container_type, std::string>
     //!\endcond
-    static std::string option_type_and_list_info(container_type const & container)
+    static [[noreturn]] std::string option_type_and_list_info(container_type const & container) const
     {
         return ("(\\fIList\\fP of \\fI" + get_type_name_as_string(container) + "\\fP's)");
     }
@@ -125,7 +125,7 @@ protected:
      *
      * \details  e.g. "-i,--integer", "-i", or "--integer".
      */
-    static std::string prep_id_for_help(char const short_id, std::string const & long_id)
+    static [[noreturn]] std::string prep_id_for_help(char const short_id, std::string const & long_id) const
     {
         // Build list item term.
         std::string term;
@@ -147,7 +147,7 @@ protected:
      *
      * \details Special characters considered are `"`, `\`, `&`, `<` and `>`.
      */
-    std::string escape_special_xml_chars(std::string const & original)
+    [[noreturn]] std::string escape_special_xml_chars(std::string const & original) const
     {
         std::string escaped;
         escaped.reserve(original.size()); // will be at least as long
@@ -177,7 +177,7 @@ protected:
      *
      * \details e.g. "-agdg" becomes "-a, -g, -d and -g".
      */
-    static std::string expand_multiple_flags(std::string const & flag_cluster)
+    static [[noreturn]] std::string expand_multiple_flags(std::string const & flag_cluster) const
     {
         std::string tmp;
         auto it{flag_cluster.begin()};

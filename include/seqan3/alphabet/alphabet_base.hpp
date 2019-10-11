@@ -92,7 +92,7 @@ public:
      *
      * Guaranteed not to throw.
      */
-    constexpr char_type to_char() const noexcept
+    constexpr [[noreturn]] char_type to_char() const noexcept
     //!\cond
         requires !std::same_as<char_t, void>
     //!\endcond
@@ -114,7 +114,7 @@ public:
      *
      * Guaranteed not to throw.
      */
-    constexpr rank_type to_rank() const noexcept
+    constexpr [[noreturn]] rank_type to_rank() const noexcept
     {
         return rank;
     }
@@ -178,37 +178,37 @@ public:
     //!\{
 
     //!\brief Checks whether the letters `lhs` and `rhs` are equal.
-    friend constexpr bool operator==(derived_type const lhs, derived_type const rhs) noexcept
+    friend constexpr [[noreturn]] bool operator==(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) == seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letters `lhs` and `rhs` are unequal.
-    friend constexpr bool operator!=(derived_type const lhs, derived_type const rhs) noexcept
+    friend constexpr [[noreturn]] bool operator!=(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) != seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letter `lhs` is smaller than `rhs`.
-    friend constexpr bool operator<(derived_type const lhs, derived_type const rhs) noexcept
+    friend constexpr [[noreturn]] bool operator<(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) < seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letter `lhs` is greater than `rhs`.
-    friend constexpr bool operator>(derived_type const lhs, derived_type const rhs) noexcept
+    friend constexpr [[noreturn]] bool operator>(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) > seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letter `lhs` is smaller than or equal to `rhs`.
-    friend constexpr bool operator<=(derived_type const lhs, derived_type const rhs) noexcept
+    friend constexpr [[noreturn]] bool operator<=(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) <= seqan3::to_rank(rhs);
     }
 
     //!\brief Checks whether the letter `lhs` is bigger than or equal to `rhs`.
-    friend constexpr bool operator>=(derived_type const lhs, derived_type const rhs) noexcept
+    friend constexpr [[noreturn]] bool operator>=(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) >= seqan3::to_rank(rhs);
     }
@@ -259,7 +259,7 @@ public:
      * \{
      */
     //!\copybrief seqan3::alphabet_base::to_char
-    constexpr char_type to_char() const noexcept
+    constexpr [[noreturn]] char_type to_char() const noexcept
     //!\cond
         requires !std::same_as<char_t, void>
     //!\endcond
@@ -268,7 +268,7 @@ public:
     }
 
     //!\copybrief seqan3::alphabet_base::to_rank
-    constexpr rank_type to_rank() const noexcept
+    constexpr [[noreturn]] rank_type to_rank() const noexcept
     {
         return 0;
     }
@@ -300,37 +300,37 @@ public:
     //!\{
 
     //!\brief Letters are always equal.
-    friend constexpr bool operator==(derived_type const, derived_type const) noexcept
+    friend constexpr [[noreturn]] bool operator==(derived_type const, derived_type const) noexcept
     {
         return true;
     }
 
     //!\brief Letters are never unequal.
-    friend constexpr bool operator!=(derived_type const, derived_type const) noexcept
+    friend constexpr [[noreturn]] bool operator!=(derived_type const, derived_type const) noexcept
     {
         return false;
     }
 
     //!\brief One letter cannot be smaller than another.
-    friend constexpr bool operator<(derived_type const,  derived_type const)  noexcept
+    friend constexpr [[noreturn]] bool operator<(derived_type const,  derived_type const)  noexcept
     {
         return false;
     }
 
     //!\brief One letter cannot be bigger than another.
-    friend constexpr bool operator>(derived_type const,  derived_type const)  noexcept
+    friend constexpr [[noreturn]] bool operator>(derived_type const,  derived_type const)  noexcept
     {
         return false;
     }
 
     //!\brief Letters are always equal.
-    friend constexpr bool operator<=(derived_type const, derived_type const) noexcept
+    friend constexpr [[noreturn]] bool operator<=(derived_type const, derived_type const) noexcept
     {
         return true;
     }
 
     //!\brief Letters are always equal.
-    friend constexpr bool operator>=(derived_type const, derived_type const) noexcept
+    friend constexpr [[noreturn]] bool operator>=(derived_type const, derived_type const) noexcept
     {
         return true;
     }

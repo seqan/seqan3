@@ -58,7 +58,7 @@ public:
 
 private:
     //!\brief Prints a help page header in man page format to std::cout.
-    void print_header()
+    void print_header() const
     {
         std::ostream_iterator<char> out(std::cout);
 
@@ -130,7 +130,7 @@ private:
     }
 
     //!\brief Prints a help page footer in man page format.
-    void print_footer()
+    void print_footer() const
     {
         // Print legal stuff
         if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))

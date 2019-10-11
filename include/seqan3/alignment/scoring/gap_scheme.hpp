@@ -178,26 +178,26 @@ public:
      */
     /*!\brief Return the gap score.
      */
-    constexpr score_t & get_gap_score() noexcept
+    constexpr [[nodiscard]] score_t & get_gap_score() noexcept
     {
         return gap;
     }
 
     //!\copydoc seqan3::gap_score
-    constexpr score_t get_gap_score() const noexcept
+    constexpr [[nodiscard]] score_t get_gap_score() const noexcept
     {
         return gap;
     }
 
     /*!\brief Return the gap open score.
      */
-    constexpr score_t & get_gap_open_score() noexcept
+    constexpr [[nodiscard]] score_t & get_gap_open_score() noexcept
     {
         return gap_open;
     }
 
     //!\copydoc seqan3::gap_open_score
-    constexpr score_t get_gap_open_score() const noexcept
+    constexpr [[nodiscard]] score_t get_gap_open_score() const noexcept
     {
         return gap_open;
     }
@@ -206,7 +206,7 @@ public:
      * \param number_of_consecutive_gaps The number of consecutive gaps that you wish to know the score for.
      * \returns A signed integer (usually 64bit) that holds the score computed based on the selected scheme.
      */
-    constexpr ptrdiff_t score(size_t const number_of_consecutive_gaps) const noexcept
+    constexpr [[nodiscard]] ptrdiff_t score(size_t const number_of_consecutive_gaps) const noexcept
     {
         return (gap_open * (number_of_consecutive_gaps ? 1 : 0)) + number_of_consecutive_gaps * gap;
     }
@@ -217,13 +217,13 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    constexpr bool operator==(gap_scheme const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator==(gap_scheme const & rhs) const noexcept
     {
         return std::tie(gap, gap_open) == std::tie(rhs.gap, rhs.gap_open);
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
-    constexpr bool operator!=(gap_scheme const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator!=(gap_scheme const & rhs) const noexcept
     {
         return !(*this == rhs);
     }

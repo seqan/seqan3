@@ -127,7 +127,7 @@ public:
      *
      * Thread-safe.
      */
-    bool try_wait() const noexcept
+    [[nodiscard]] bool try_wait() const noexcept
     {
         return counter.load(std::memory_order_acquire) == 0;
     }

@@ -93,7 +93,7 @@ public:
      *
      * Guaranteed not to throw.
      */
-    static constexpr bool char_is_valid(char_type const c) noexcept
+    static constexpr [[nodiscard]] bool char_is_valid(char_type const c) noexcept
     {
         return valid_char_table[static_cast<uint8_t>(c)];
     }

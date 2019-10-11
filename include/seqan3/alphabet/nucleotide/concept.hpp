@@ -46,7 +46,7 @@ public:
             requires std::same_as<nucleotide_t, decltype(impl(priority_tag<2>{}, nucl))>;
         }
     //!\endcond
-    constexpr nucleotide_t operator()(nucleotide_t const nucl) const noexcept
+    constexpr [[nodiscard]] nucleotide_t operator()(nucleotide_t const nucl) const noexcept
     {
         return impl(priority_tag<2>{}, nucl);
     }

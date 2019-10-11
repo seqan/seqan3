@@ -140,60 +140,70 @@ private:
         //!\{
 
         //!\brief Compare to iterator on text.
+        [[nodiscard]]
         friend bool operator==(shape_iterator const & lhs, sentinel_t const & rhs) noexcept
         {
             return lhs.text_right == rhs;
         }
 
         //!\brief Compare to iterator on text.
+        [[nodiscard]]
         friend bool operator==(sentinel_t const & lhs, shape_iterator const & rhs) noexcept
         {
             return lhs == rhs.text_right;
         }
 
         //!\brief Compare to another shape_iterator.
+        [[nodiscard]]
         friend bool operator==(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return std::tie(lhs.text_right, lhs.shape_) == std::tie(rhs.text_right, rhs.shape_);
         }
 
         //!\brief Compare to iterator on text.
+        [[nodiscard]]
         friend bool operator!=(shape_iterator const & lhs, sentinel_t const & rhs) noexcept
         {
             return !(lhs == rhs);
         }
 
         //!\brief Compare to iterator on text.
+        [[nodiscard]]
         friend bool operator!=(sentinel_t const & lhs, shape_iterator const & rhs) noexcept
         {
             return !(lhs == rhs);
         }
 
         //!\brief Compare to another shape_iterator.
+        [[nodiscard]]
         friend bool operator!=(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return !(lhs == rhs);
         }
 
         //!\brief Compare to another shape_iterator.
+        [[nodiscard]]
         friend bool operator<(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return (lhs.shape_ <= rhs.shape_) && (lhs.text_right < rhs.text_right);
         }
 
         //!\brief Compare to another shape_iterator.
+        [[nodiscard]]
         friend bool operator>(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return (lhs.shape_ >= rhs.shape_) && (lhs.text_right > rhs.text_right);
         }
 
         //!\brief Compare to another shape_iterator.
+        [[nodiscard]]
         friend bool operator<=(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return (lhs.shape_ <= rhs.shape_) && (lhs.text_right <= rhs.text_right);
         }
 
         //!\brief Compare to another shape_iterator.
+        [[nodiscard]]
         friend bool operator>=(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
         {
             return (lhs.shape_ >= rhs.shape_) && (lhs.text_right >= rhs.text_right);
@@ -349,6 +359,7 @@ private:
         /*!\brief Move the iterator by a given offset and return the corresponding hash value.
          * \attention This function is only avaible if `it_t` models std::random_access_iterator.
          */
+        [[nodiscard]]
         value_type operator[](difference_type const n)
         //!\cond
             requires std::random_access_iterator<it_t>
@@ -360,6 +371,7 @@ private:
         }
 
         //!\brief Return the hash value.
+        [[nodiscard]]
         value_type operator*() const noexcept
         {
             return hash_value + to_rank(*text_right);
@@ -546,12 +558,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     auto begin() noexcept
     {
         return shape_iterator<urng_t>{std::ranges::begin(urange), shape_};
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     auto begin() const noexcept
     //!\cond
         requires const_iterable_range<urng_t>
@@ -561,6 +575,7 @@ public:
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     auto cbegin() const noexcept
     //!\cond
         requires const_iterable_range<urng_t>
@@ -584,12 +599,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     auto end() noexcept
     {
         return std::ranges::end(urange);
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     auto end() const noexcept
     //!\cond
         requires const_iterable_range<urng_t>
@@ -599,6 +616,7 @@ public:
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     auto cend() const noexcept
     //!\cond
         requires const_iterable_range<urng_t>

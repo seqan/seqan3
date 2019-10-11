@@ -222,6 +222,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     size_type size() const noexcept
     {
         return fwd_fm.size();
@@ -238,6 +239,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool empty() const noexcept
     {
         return size() == 0;
@@ -254,6 +256,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool operator==(bi_fm_index const & rhs) const noexcept
     {
         return std::tie(fwd_fm, rev_fm) == std::tie(rhs.fwd_fm, rhs.rev_fm);
@@ -270,6 +273,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool operator!=(bi_fm_index const & rhs) const noexcept
     {
         return !(*this == rhs);
@@ -289,6 +293,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     cursor_type begin() const noexcept
     {
         return {*this};
@@ -306,6 +311,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     fwd_cursor_type fwd_begin() const noexcept
     {
        return {fwd_fm};
@@ -325,6 +331,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     rev_cursor_type rev_begin() const noexcept
     {
        return {rev_fm};

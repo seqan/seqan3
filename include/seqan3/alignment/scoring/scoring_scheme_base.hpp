@@ -212,14 +212,14 @@ public:
      */
     template <explicitly_convertible_to<alphabet_t> alph1_t,
               explicitly_convertible_to<alphabet_t> alph2_t>
-    constexpr score_t & score(alph1_t const alph1, alph2_t const alph2) noexcept
+    constexpr [[nodiscard]] score_t & score(alph1_t const alph1, alph2_t const alph2) noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }
 
     //!\copydoc score
     template <explicitly_convertible_to<alphabet_t> alph1_t, explicitly_convertible_to<alphabet_t> alph2_t>
-    constexpr score_t score(alph1_t const alph1, alph2_t const alph2) const noexcept
+    constexpr [[nodiscard]] score_t score(alph1_t const alph1, alph2_t const alph2) const noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }

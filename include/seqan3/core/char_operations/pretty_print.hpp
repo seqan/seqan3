@@ -45,7 +45,7 @@ namespace seqan3::detail
  *
  * Thread-safe.
  */
-inline std::string make_printable(char const c)
+inline [[nodiscard]] std::string make_printable(char const c)
 {
     switch (c)
     {

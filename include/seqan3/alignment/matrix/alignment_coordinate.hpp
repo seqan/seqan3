@@ -118,38 +118,38 @@ public:
     //!\}
 
      //!\cond
-    constexpr friend bool operator==(advanceable_alignment_coordinate const & lhs,
-                                     advanceable_alignment_coordinate const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool operator==(advanceable_alignment_coordinate const & lhs,
+                                                   advanceable_alignment_coordinate const & rhs) noexcept
     {
         return std::tie(lhs.first, lhs.second) == std::tie(rhs.first, rhs.second);
     }
 
-    constexpr friend bool operator!=(advanceable_alignment_coordinate const & lhs,
-                                     advanceable_alignment_coordinate const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool operator!=(advanceable_alignment_coordinate const & lhs,
+                                                   advanceable_alignment_coordinate const & rhs) noexcept
     {
         return std::tie(lhs.first, lhs.second) != std::tie(rhs.first, rhs.second);
     }
 
-    constexpr friend bool operator<=(advanceable_alignment_coordinate const & lhs,
-                                     advanceable_alignment_coordinate const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool operator<=(advanceable_alignment_coordinate const & lhs,
+                                                   advanceable_alignment_coordinate const & rhs) noexcept
     {
         return std::tie(lhs.first, lhs.second) <= std::tie(rhs.first, rhs.second);
     }
 
-    constexpr friend bool operator< (advanceable_alignment_coordinate const & lhs,
-                                     advanceable_alignment_coordinate const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool operator< (advanceable_alignment_coordinate const & lhs,
+                                                   advanceable_alignment_coordinate const & rhs) noexcept
     {
         return std::tie(lhs.first, lhs.second) < std::tie(rhs.first, rhs.second);
     }
 
-    constexpr friend bool operator>=(advanceable_alignment_coordinate const & lhs,
-                                     advanceable_alignment_coordinate const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool operator>=(advanceable_alignment_coordinate const & lhs,
+                                                   advanceable_alignment_coordinate const & rhs) noexcept
     {
         return std::tie(lhs.first, lhs.second) >= std::tie(rhs.first, rhs.second);
     }
 
-    constexpr friend bool operator> (advanceable_alignment_coordinate const & lhs,
-                                     advanceable_alignment_coordinate const & rhs) noexcept
+    constexpr [[nodiscard]] friend bool operator> (advanceable_alignment_coordinate const & lhs,
+                                                   advanceable_alignment_coordinate const & rhs) noexcept
     {
         return std::tie(lhs.first, lhs.second) > std::tie(rhs.first, rhs.second);
     }

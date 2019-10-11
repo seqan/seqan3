@@ -90,7 +90,7 @@ template <matrix matrix1_t, matrix matrix2_t>
 //!\cond
     requires std::equality_comparable_with<typename matrix1_t::reference, typename matrix2_t::reference>
 //!\endcond
-inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
+inline [[nodiscard]] bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {
     if (lhs.rows() != rhs.rows())
         return false;
@@ -116,7 +116,7 @@ template <matrix matrix1_t, matrix matrix2_t>
 //!\cond
     requires std::equality_comparable_with<typename matrix1_t::reference, typename matrix2_t::reference>
 //!\endcond
-inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
+inline [[nodiscard]] bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {
     return !(lhs == rhs);
 }

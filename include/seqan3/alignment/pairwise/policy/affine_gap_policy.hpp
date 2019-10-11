@@ -133,7 +133,7 @@ private:
      * \returns The created cache.
      */
     template <typename gap_scheme_t>
-    constexpr auto make_cache(gap_scheme_t && scheme) const noexcept
+    constexpr [[nodiscard]] auto make_cache(gap_scheme_t && scheme) const noexcept
     {
         alignment_optimum opt{std::numeric_limits<score_t>::lowest(),
                               alignment_coordinate{column_index_type{0u}, row_index_type{0u}}};

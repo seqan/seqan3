@@ -336,7 +336,7 @@ public:
     //!\brief Whether the variant alphabet currently holds a value of the given alternative.
     //!\tparam index Index of the alternative to check for.
     template <size_t index>
-    constexpr bool is_alternative() const noexcept
+    constexpr [[nodiscard]] bool is_alternative() const noexcept
     {
         static_assert(index < alphabet_size, "The alphabet_variant contains less alternatives than you are checking.");
         return (to_rank() >= partial_sum_sizes[index]) && (to_rank() < partial_sum_sizes[index + 1]);
@@ -347,7 +347,7 @@ public:
      * \throws std::bad_variant_access If the variant_alphabet currently holds the value of a different alternative.
      */
     template <size_t index>
-    constexpr auto convert_to() const
+    constexpr [[nodiscard]] auto convert_to() const
     {
         return convert_impl<index, true>();
     }
@@ -356,7 +356,7 @@ public:
      * \tparam index Index of the alternative to check for.
      */
     template <size_t index>
-    constexpr auto convert_unsafely_to() const noexcept
+    constexpr [[nodiscard]] auto convert_unsafely_to() const noexcept
     {
         return convert_impl<index, false>();
     }
@@ -369,7 +369,7 @@ public:
      * \tparam alternative_t The type of the alternative that you wish to check for.
      */
     template <typename alternative_t>
-    constexpr bool is_alternative() const noexcept
+    constexpr [[nodiscard]] bool is_alternative() const noexcept
     //!\cond
         requires holds_alternative<alternative_t>()
     //!\endcond
@@ -383,7 +383,7 @@ public:
      * \throws std::bad_variant_access If the variant_alphabet currently holds the value of a different alternative.
      */
     template <typename alternative_t>
-    constexpr alternative_t convert_to() const
+    constexpr [[nodiscard]] alternative_t convert_to() const
     //!\cond
         requires holds_alternative<alternative_t>()
     //!\endcond
@@ -396,7 +396,7 @@ public:
      * \tparam alternative_t The type of the alternative that you wish to check for.
      */
     template <typename alternative_t>
-    constexpr alternative_t convert_unsafely_to() const noexcept
+    constexpr [[nodiscard]] alternative_t convert_unsafely_to() const noexcept
     //!\cond
         requires holds_alternative<alternative_t>()
     //!\endcond
@@ -414,7 +414,7 @@ public:
      */
     //!\brief Checks for equality.
     template <typename alternative_t>
-    constexpr bool operator==(alternative_t const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator==(alternative_t const rhs) const noexcept
     //!\cond
         requires holds_alternative<alternative_t>()
     //!\endcond
@@ -424,7 +424,7 @@ public:
 
     //!\brief Checks for inequality.
     template <typename alternative_t>
-    constexpr bool operator!=(alternative_t const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator!=(alternative_t const rhs) const noexcept
     //!\cond
         requires holds_alternative<alternative_t>()
     //!\endcond
@@ -442,7 +442,7 @@ public:
      */
     //!\brief Checks for equality.
     template <typename indirect_alternative_type>
-    constexpr bool operator==(indirect_alternative_type const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator==(indirect_alternative_type const rhs) const noexcept
     //!\cond
         requires detail::one_alternative_is<alphabet_variant,
                                             detail::weakly_equality_comparable_with_,
@@ -457,7 +457,7 @@ public:
 
     //!\brief Checks for inequality.
     template <typename indirect_alternative_type>
-    constexpr bool operator!=(indirect_alternative_type const rhs) const noexcept
+    constexpr [[nodiscard]] bool operator!=(indirect_alternative_type const rhs) const noexcept
     //!\cond
         requires detail::one_alternative_is<alphabet_variant,
                                             detail::weakly_equality_comparable_with_,
@@ -567,7 +567,7 @@ protected:
     //!\cond
         requires holds_alternative<alternative_t>()
     //!\endcond
-    static constexpr rank_type rank_by_type_(alternative_t const & alternative) noexcept
+    static constexpr [[nodiscard]] rank_type rank_by_type_(alternative_t const & alternative) noexcept
     {
         constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
         return rank_by_index_<index>(alternative);

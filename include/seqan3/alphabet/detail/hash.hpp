@@ -34,7 +34,7 @@ struct hash<alphabet_t>
      * \returns size_t.
      * \sa seqan3::to_rank.
      */
-    size_t operator()(alphabet_t const character) const noexcept
+    [[nodiscard]] size_t operator()(alphabet_t const character) const noexcept
     {
         return seqan3::to_rank(character);
     }
@@ -56,7 +56,7 @@ struct hash<urng_t>
                         range of the range must model seqan3::semialphabet.
      * \returns size_t.
      */
-    size_t operator()(urng_t const & range) const noexcept
+    [[nodiscard]] size_t operator()(urng_t const & range) const noexcept
     {
         using alphabet_t = seqan3::value_type_t<urng_t>;
         size_t result{0};

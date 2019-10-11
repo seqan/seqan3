@@ -1065,7 +1065,7 @@ public:
     /*!\brief Writes the optional fields of the seqan3::sam_tag_dictionary.
      * \param[in] tag_dict The tag dictionary to print.
      */
-    static std::string get_tag_dict_str(sam_tag_dictionary const & tag_dict)
+    static [[nodiscard]] std::string get_tag_dict_str(sam_tag_dictionary const & tag_dict)
     {
         std::string result{};
 
@@ -1149,7 +1149,7 @@ public:
     }
 
     //!\brief Computes the bin number for a given region [beg, end), copied from the official SAM specifications.
-    static uint16_t reg2bin(int32_t beg, int32_t end) noexcept
+    static [[nodiscard]] uint16_t reg2bin(int32_t beg, int32_t end) noexcept
     {
         --end;
         if (beg >> 14 == end >> 14) return ((1 << 15) - 1) / 7 + (beg >> 14);

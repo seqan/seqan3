@@ -405,6 +405,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     size_type size() const noexcept
     {
         return index.size();
@@ -421,6 +422,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool empty() const noexcept
     {
         return size() == 0;
@@ -437,6 +439,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool operator==(fm_index const & rhs) const noexcept
     {
         // (void) rhs;
@@ -454,6 +457,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool operator!=(fm_index const & rhs) const noexcept
     {
         return !(*this == rhs);
@@ -473,6 +477,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     cursor_type begin() const noexcept
     {
         return {*this};

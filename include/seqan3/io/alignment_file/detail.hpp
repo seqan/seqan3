@@ -81,7 +81,7 @@ struct view_equality_fn
  * \sa seqan3::aligned_sequence
  */
 template <typename reference_char_type, typename query_char_type>
-[[nodiscard]] constexpr cigar_op map_aligned_values_to_cigar_op(reference_char_type const reference_char,
+constexpr [[nodiscard]] cigar_op map_aligned_values_to_cigar_op(reference_char_type const reference_char,
                                                                 query_char_type const query_char,
                                                                 bool const extended_cigar)
 //!\cond
@@ -135,7 +135,7 @@ template <typename reference_char_type, typename query_char_type>
  * \sa seqan3::aligned_sequence
  */
 template <tuple_like alignment_type>
-[[nodiscard]] inline std::vector<cigar> get_cigar_vector(alignment_type && alignment,
+inline [[nodiscard]] std::vector<cigar> get_cigar_vector(alignment_type && alignment,
                                                          uint32_t const query_start_pos = 0,
                                                          uint32_t const query_end_pos = 0,
                                                          bool const extended_cigar = false)
@@ -202,7 +202,7 @@ template <tuple_like alignment_type>
  *
  * The transformation is done by printing the vector with the seqan3::debug_stream.
  */
-[[nodiscard]] inline std::string get_cigar_string(std::vector<cigar> const & cigar_vector)
+inline [[nodiscard]] std::string get_cigar_string(std::vector<cigar> const & cigar_vector)
 {
     std::string result{};
     std::ranges::for_each(cigar_vector, [&result] (auto & cig) { result.append(cig.to_string()); });
@@ -244,7 +244,7 @@ template <tuple_like alignment_type>
  * \sa seqan3::aligned_sequence
  */
 template <tuple_like alignment_type>
-[[nodiscard]] inline std::string get_cigar_string(alignment_type && alignment,
+inline [[nodiscard]] std::string get_cigar_string(alignment_type && alignment,
                                                   uint32_t const query_start_pos = 0,
                                                   uint32_t const query_end_pos = 0,
                                                   bool const extended_cigar = false)
@@ -292,7 +292,7 @@ template <tuple_like alignment_type>
  * \sa seqan3::aligned_sequence
  */
 template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range query_seq_type>
-[[nodiscard]] inline std::string get_cigar_string(ref_seq_type && ref_seq,
+inline [[nodiscard]] std::string get_cigar_string(ref_seq_type && ref_seq,
                                                   query_seq_type && query_seq,
                                                   uint32_t const query_start_pos = 0,
                                                   uint32_t const query_end_pos = 0,

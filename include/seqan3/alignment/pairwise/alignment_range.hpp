@@ -101,27 +101,27 @@ class alignment_range
          */
 
         //!\brief Checks whether `*this` is equal to the sentinel.
-        constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
+        constexpr [[nodiscard]] bool operator==(std::ranges::default_sentinel_t const &) const noexcept
         {
             return range_ptr->eof();
         }
 
         //!\brief Checks whether `lhs` is equal to `rhs`.
-        friend constexpr bool operator==(std::ranges::default_sentinel_t const & lhs,
-                                         iterator_type const & rhs) noexcept
+        friend constexpr [[nodiscard]] bool operator==(std::ranges::default_sentinel_t const & lhs,
+                                                       iterator_type const & rhs) noexcept
         {
             return rhs == lhs;
         }
 
         //!\brief Checks whether `*this` is not equal to the sentinel.
-        constexpr bool operator!=(std::ranges::default_sentinel_t const & rhs) const noexcept
+        constexpr bool [[nodiscard]] operator!=(std::ranges::default_sentinel_t const & rhs) const noexcept
         {
             return !(*this == rhs);
         }
 
         //!\brief Checks whether `lhs` is not equal to `rhs`.
-        friend constexpr bool operator!=(std::ranges::default_sentinel_t const & lhs,
-                                         iterator_type const & rhs) noexcept
+        friend constexpr [[nodiscard]] bool operator!=(std::ranges::default_sentinel_t const & lhs,
+                                                       iterator_type const & rhs) noexcept
         {
             return rhs != lhs;
         }
@@ -231,7 +231,7 @@ protected:
     }
 
     //!\brief Returns whether the executor buffer reached is end.
-    constexpr bool eof() const noexcept
+    constexpr [[nodiscard]] bool eof() const noexcept
     {
         return eof_flag;
     }

@@ -89,7 +89,7 @@ public:
 
 public:
     //!\copydoc seqan3::detail::matrix::at
-    reference at(matrix_coordinate const & coordinate) const noexcept
+    [[nodiscard]] reference at(matrix_coordinate const & coordinate) const noexcept
     {
         size_t row = coordinate.row;
         size_t col = coordinate.col;
@@ -129,13 +129,13 @@ public:
     }
 
     //!\copydoc seqan3::detail::matrix::rows
-    size_t rows() const noexcept
+    [[nodiscard]] size_t rows() const noexcept
     {
         return rows_size;
     }
 
     //!\copydoc seqan3::detail::matrix::cols
-    size_t cols() const noexcept
+    [[nodiscard]] size_t cols() const noexcept
     {
         return columns.size();
     }

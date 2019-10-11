@@ -51,7 +51,7 @@ constexpr auto sizeof_bits = min_viable_uint_v<CHAR_BIT * sizeof(type_t)>;
  *
  * \sa https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
  */
-constexpr bool is_power_of_two(size_t const n)
+constexpr [[nodiscard]] bool is_power_of_two(size_t const n)
 {
     return n > 0 && (n & (n-1)) == 0;
 }
@@ -67,7 +67,7 @@ constexpr bool is_power_of_two(size_t const n)
  *
  * \sa https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
  */
-constexpr size_t next_power_of_two(size_t n)
+constexpr [[nodiscard]] size_t next_power_of_two(size_t n)
 {
     if (n == 0)
         return 1;
@@ -103,7 +103,7 @@ constexpr size_t next_power_of_two(size_t n)
 * Constant.
 */
 template <std::unsigned_integral unsigned_t>
-constexpr uint8_t popcount(unsigned_t const n) noexcept
+constexpr [[nodiscard]] uint8_t popcount(unsigned_t const n) noexcept
 {
 #if defined(__GNUC__)
     if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
@@ -143,7 +143,7 @@ constexpr uint8_t popcount(unsigned_t const n) noexcept
 * Constant.
 */
 template <std::unsigned_integral unsigned_t>
-constexpr uint8_t count_leading_zeros(unsigned_t const n) noexcept
+constexpr [[nodiscard]] uint8_t count_leading_zeros(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
 #if defined(__GNUC__)
@@ -184,7 +184,7 @@ constexpr uint8_t count_leading_zeros(unsigned_t const n) noexcept
  * Constant.
  */
 template <std::unsigned_integral unsigned_t>
-constexpr uint8_t count_trailing_zeros(unsigned_t const n) noexcept
+constexpr [[nodiscard]] uint8_t count_trailing_zeros(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
 #if defined(__GNUC__)
@@ -225,7 +225,7 @@ constexpr uint8_t count_trailing_zeros(unsigned_t const n) noexcept
  * Constant.
  */
 template <std::unsigned_integral unsigned_t>
-constexpr uint8_t most_significant_bit_set(unsigned_t const n) noexcept
+constexpr [[nodiscard]] uint8_t most_significant_bit_set(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
 #if defined(__GNUC__)
@@ -248,7 +248,7 @@ constexpr uint8_t most_significant_bit_set(unsigned_t const n) noexcept
  * unchanged input value. Other systems with mixed endianness are not supported.
  */
 template <std::integral type>
-constexpr type to_little_endian(type const in) noexcept
+constexpr [[nodiscard]] type to_little_endian(type const in) noexcept
 {
     if constexpr (endian::native == endian::little)
     {

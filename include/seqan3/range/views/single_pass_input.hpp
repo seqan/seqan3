@@ -233,12 +233,14 @@ public:
      * \{
      */
     //!\brief Dereferences the cached iterator.
+    [[nodiscard]]
     reference operator*() const noexcept
     {
         return *cached();
     }
 
     //!\brief Returns pointer to the pointed-to object.
+    [[nodiscard]]
     pointer operator->() const noexcept
     //!\cond
         requires !std::is_void_v<pointer>
@@ -279,12 +281,14 @@ public:
      * \{
      */
     //!\brief Compares for equality with sentinel.
+    [[nodiscard]]
     constexpr bool operator==(sentinel_type const & s) const noexcept
     {
         return cached() == s;
     }
 
     //!\copydoc operator==
+    [[nodiscard]]
     friend constexpr bool
     operator==(sentinel_type const & s,
                single_pass_input_iterator<single_pass_input_view<view_type>> const & rhs) noexcept
@@ -293,12 +297,14 @@ public:
     }
 
     //!\brief Compares for inequality with sentinel.
+    [[nodiscard]]
     constexpr bool operator!=(sentinel_type const & rhs) const noexcept
     {
         return !(*this == rhs);
     }
 
     //!\copydoc operator!=
+    [[nodiscard]]
     friend constexpr bool
     operator!=(sentinel_type const & s,
                single_pass_input_iterator<single_pass_input_view<view_type>> const & rhs) noexcept

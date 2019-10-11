@@ -94,7 +94,7 @@ public:
             requires std::integral<decltype(impl(priority_tag<2>{}, a))>;
         }
     //!\endcond
-    constexpr auto operator()(alph_t const a) const noexcept
+    constexpr [[noreturn]] auto operator()(alph_t const a) const noexcept
     {
         return impl(priority_tag<2>{}, a);
     }
@@ -271,7 +271,7 @@ public:
             requires builtin_character<decltype(impl(priority_tag<2>{}, a))>;
         }
     //!\endcond
-    constexpr decltype(auto) operator()(alph_t const a) const noexcept
+    constexpr [[noreturn]] decltype(auto) operator()(alph_t const a) const noexcept
     {
         return impl(priority_tag<2>{}, a);
     }
@@ -459,7 +459,7 @@ public:
             requires std::convertible_to<decltype(impl(priority_tag<3>{}, a)), bool>;
         }
     //!\endcond
-    constexpr bool operator()(alphabet_char_t<alph_t> const a) const noexcept
+    constexpr [[noreturn]] bool operator()(alphabet_char_t<alph_t> const a) const noexcept
     {
         return impl(priority_tag<3>{}, a);
     }
@@ -640,7 +640,7 @@ public:
             requires std::integral<remove_cvref_t<decltype(impl(priority_tag<2>{}, s_alph_t{}, dummy{}))>>;
         }
     //!\endcond
-    constexpr auto operator()() const noexcept
+    constexpr [[noreturn]] auto operator()() const noexcept
     {
         // The following cannot be added to the list of constraints, because it is not properly deferred
         // for incomplete types which leads to breakage.

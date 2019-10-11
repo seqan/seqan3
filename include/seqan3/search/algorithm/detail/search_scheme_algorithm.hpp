@@ -40,6 +40,7 @@ namespace seqan3::detail
  *
  * Strong exception guarantee.
  */
+[[nodiscard]]
 inline std::vector<search_dyn> compute_ss(uint8_t const min_error, uint8_t const max_error)
 {
     // TODO: Replace this at least by the pigeonhole principle or even better by 01*0 schemes.
@@ -68,6 +69,7 @@ inline std::vector<search_dyn> compute_ss(uint8_t const min_error, uint8_t const
  * Strong exception guarantee.
  */
 template <typename search_scheme_t>
+[[nodiscard]]
 inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size_t const query_length)
 {
     using blocks_length_type = typename search_scheme_t::value_type::blocks_length_type;
@@ -126,6 +128,7 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size
 // forward declaration
 template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
+[[nodiscard]]
 inline bool search_ss(cursor_t cur, query_t & query,
                       typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                       uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,
@@ -164,6 +167,7 @@ inline bool search_ss(cursor_t cur, query_t & query,
  */
 template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
+[[nodiscard]]
 inline bool search_ss_exact(cursor_t cur, query_t & query,
                             typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                             uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
@@ -213,6 +217,7 @@ inline bool search_ss_exact(cursor_t cur, query_t & query,
  */
 template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
+[[nodiscard]]
 inline bool search_ss_deletion(cursor_t cur, query_t & query,
                                typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                                uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
@@ -267,6 +272,7 @@ inline bool search_ss_deletion(cursor_t cur, query_t & query,
  */
 template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
+[[nodiscard]]
 inline bool search_ss_children(cursor_t cur, query_t & query,
                                typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                                uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
@@ -361,6 +367,7 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
  */
 template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t,
           typename blocks_length_t, typename delegate_t>
+[[nodiscard]]
 inline bool search_ss(cursor_t cur, query_t & query,
                       typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                       uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,

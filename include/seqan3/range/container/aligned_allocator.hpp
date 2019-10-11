@@ -95,8 +95,7 @@ public:
      * \throws Throws std::bad_alloc if allocation fails.
      * \sa https://en.cppreference.com/w/cpp/memory/allocator/allocate
      */
-    [[nodiscard]]
-    pointer allocate(size_type n)
+    [[nodiscard]] pointer allocate(size_type n)
     {
         constexpr size_type max_size = std::numeric_limits<size_type>::max() / sizeof(value_type);
         if (n > max_size)
@@ -157,14 +156,14 @@ public:
      */
     //!\brief Returns true if the memory-alignment matches.
     template <class value_type2, size_t alignment2>
-    constexpr bool operator==(aligned_allocator<value_type2, alignment2> const &) noexcept
+    constexpr [[nodiscard]] bool operator==(aligned_allocator<value_type2, alignment2> const &) noexcept
     {
         return alignment == alignment2;
     }
 
     //!\brief Returns false if the memory-alignment mismatches.
     template <class value_type2, size_t alignment2>
-    constexpr bool operator!=(aligned_allocator<value_type2, alignment2> const &) noexcept
+    constexpr [[nodiscard]] bool operator!=(aligned_allocator<value_type2, alignment2> const &) noexcept
     {
         return alignment != alignment2;
     }

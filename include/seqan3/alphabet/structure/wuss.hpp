@@ -90,7 +90,7 @@ public:
     /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
      */
-    constexpr bool is_pair_open() const noexcept
+    constexpr [[noreturn]] bool is_pair_open() const noexcept
     {
         return interaction_tab[to_rank()] < 0;
     }
@@ -98,7 +98,7 @@ public:
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
      * \returns True if the letter represents a leftward interaction, False otherwise.
      */
-    constexpr bool is_pair_close() const noexcept
+    constexpr [[noreturn]] bool is_pair_close() const noexcept
     {
         return interaction_tab[to_rank()] > 0;
     }
@@ -106,7 +106,7 @@ public:
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
      * \returns True if the letter represents an unpaired site, False otherwise.
      */
-    constexpr bool is_unpaired() const noexcept
+    constexpr [[noreturn]] bool is_unpaired() const noexcept
     {
         return interaction_tab[to_rank()] == 0;
     }
@@ -122,7 +122,7 @@ public:
      * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
      * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
      */
-    constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
+    constexpr [[noreturn]] std::optional<uint8_t> pseudoknot_id() const noexcept
     {
         if (interaction_tab[to_rank()] != 0)
             return std::abs(interaction_tab[to_rank()]) - 1;

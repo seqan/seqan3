@@ -107,14 +107,14 @@ class edit_distance_unbanded_max_errors_policy :
     }
 
     //!\brief Returns true if the current active cell is within the last row.
-    bool is_last_active_cell_within_last_row() const noexcept
+    [[nodiscard]] bool is_last_active_cell_within_last_row() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         return (self->score_mask == this->last_score_mask) && (this->last_block == self->vp.size() - 1u);
     }
 
     //!\brief Decrement the last active cell position.
-    bool prev_last_active_cell() noexcept
+    [[nodiscard]] bool prev_last_active_cell() noexcept
     {
         derived_t * self = static_cast<derived_t *>(this);
         self->score_mask >>= 1u;
@@ -148,7 +148,7 @@ class edit_distance_unbanded_max_errors_policy :
     /*!\brief Use the ukkonen trick and update the last active cell.
      * \returns `true` if computation should be aborted, `false` if computation should continue.
      */
-    bool update_last_active_cell() noexcept
+    [[nodiscard]] bool update_last_active_cell() noexcept
     {
         derived_t * self = static_cast<derived_t *>(this);
         // update the last active cell
@@ -185,8 +185,8 @@ class edit_distance_unbanded_max_errors_policy :
     //!\}
 
     //!\copydoc edit_distance_score_matrix_full::max_rows
-    static size_t max_rows(word_type const score_mask, unsigned const last_block,
-                           score_type const score, score_type const max_errors) noexcept
+    static [[nodiscard]] size_t max_rows(word_type const score_mask, unsigned const last_block,
+                                         score_type const score, score_type const max_errors) noexcept
     {
         using score_matrix_type = typename edit_traits::score_matrix_type;
         return score_matrix_type::max_rows(score_mask,
@@ -252,7 +252,7 @@ class edit_distance_unbanded_global_policy :
     }
 
     //!\brief Returns true if the computation produced a valid alignment.
-    bool is_valid() const noexcept
+    [[nodiscard]] bool is_valid() const noexcept
     {
         [[maybe_unused]] derived_t const * self = static_cast<derived_t const *>(this);
         // This condition uses the observation that after each computation of a column, _score has either the initial
@@ -268,7 +268,7 @@ class edit_distance_unbanded_global_policy :
     }
 
     //!\brief Returns an invalid_coordinate for this alignment.
-    alignment_coordinate invalid_coordinate() const noexcept
+    [[nodiscard]] alignment_coordinate invalid_coordinate() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         return {column_index_type{std::ranges::size(self->database)}, row_index_type{std::ranges::size(self->query)}};
@@ -282,7 +282,7 @@ class edit_distance_unbanded_global_policy :
     }
 
     //!\brief Returns the first component of the #back_coordinate.
-    size_t back_coordinate_first() const noexcept
+    [[nodiscard]] size_t back_coordinate_first() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         return std::ranges::size(self->database);
@@ -296,7 +296,7 @@ public:
      */
     //!\brief Return the score of the alignment.
     //!       Only available if default_edit_distance_trait_type::compute_score is true.
-    std::optional<score_type> score() const noexcept
+    [[nodiscard]] std::optional<score_type> score() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         static_assert(edit_traits::compute_score, "score() can only be computed if you specify the result type within "
@@ -309,7 +309,7 @@ public:
 
     //!\brief Return the end position of the alignment
     //!       Only available if default_edit_distance_trait_type::compute_back_coordinate is true.
-    alignment_coordinate back_coordinate() const noexcept
+    [[nodiscard]] alignment_coordinate back_coordinate() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         static_assert(edit_traits::compute_back_coordinate, "back_coordinate() can only be computed if you specify the"
@@ -397,7 +397,7 @@ class edit_distance_unbanded_semi_global_policy :
     }
 
     //!\copydoc edit_distance_unbanded_global_policy::back_coordinate_first
-    size_t back_coordinate_first() const noexcept
+    [[nodiscard]] size_t back_coordinate_first() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         // offset == 0u is a special case if database sequence is empty, because in this case the best column is zero.
@@ -476,7 +476,7 @@ public:
     /*!\brief Return the score matrix of the alignment.
      * Only available if default_edit_distance_trait_type::compute_score_matrix is true.
      */
-    score_matrix_type const & score_matrix() const noexcept
+    [[nodiscard]] score_matrix_type const & score_matrix() const noexcept
     {
         static_assert(edit_traits::compute_score_matrix, "score_matrix() can only be computed if you specify the "
                                                          "result type within your alignment config.");
@@ -562,7 +562,7 @@ public:
      * \{
      */
     //!\brief Return the trace matrix of the alignment.
-    trace_matrix_type const & trace_matrix() const noexcept
+    [[nodiscard]] trace_matrix_type const & trace_matrix() const noexcept
     {
         static_assert(edit_traits::compute_trace_matrix, "trace_matrix() can only be computed if you specify the "
                                                          "result type within your alignment config.");
@@ -571,7 +571,7 @@ public:
 
     //!\brief Return the begin position of the alignment.
     //!       Only available if default_edit_distance_trait_type::compute_front_coordinate is true.
-    alignment_coordinate front_coordinate() const noexcept
+    [[nodiscard]] alignment_coordinate front_coordinate() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         static_assert(edit_traits::compute_front_coordinate, "front_coordinate() can only be computed if you specify "
@@ -585,7 +585,7 @@ public:
 
     //!\brief Return the alignment, i.e. the actual base pair matching.
     //!       Only available if default_edit_distance_trait_type::compute_sequence_alignment is true.
-    auto alignment() const noexcept
+    [[nodiscard]] auto alignment() const noexcept
     {
         using alignment_t = decltype(result_value_type{}.alignment);
 
@@ -639,7 +639,7 @@ public:
     //!\}
 
     //!\brief Get the stored reference.
-    value_t & get() const noexcept
+    [[nodiscard]] value_t & get() const noexcept
     {
         assert(ptr != nullptr);
         return *ptr;
@@ -1015,7 +1015,7 @@ public:
      * \param[in]     idx The index of the currently processed sequence pair.
      * \returns A reference to the filled alignment result.
      */
-    alignment_result<result_value_type> operator()(size_t const idx)
+    [[nodiscard]] alignment_result<result_value_type> operator()(size_t const idx)
     {
         compute();
         result_value_type res_vt{};

@@ -105,12 +105,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     const_iterator begin() const noexcept
     {
         return seqan3::begin(*urange);
     }
 
     //!\copydoc begin()
+    [[nodiscard]]
     const_iterator cbegin() const noexcept
     {
         return begin();
@@ -129,12 +131,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     auto end() const noexcept
     {
         return seqan3::end(*urange);
     }
 
     //!\copydoc end()
+    [[nodiscard]]
     auto cend() const noexcept
     {
         return end();

@@ -135,18 +135,21 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     iterator begin() noexcept
     {
         return {*this, 0};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator begin() const noexcept
     {
         return {*this, 0};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator cbegin() const noexcept
     {
         return begin();
@@ -165,18 +168,21 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     iterator end() noexcept
     {
         return {*this, size()};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator end() const noexcept
     {
         return {*this, size()};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator cend() const noexcept
     {
         return end();
@@ -191,6 +197,7 @@ public:
      * Constant.
      *
      */
+    [[nodiscard]]
     size_type size()
     {
         return std::ranges::size(urange) +
@@ -200,6 +207,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     size_type size() const
     {
         return std::ranges::size(urange) +
@@ -223,6 +231,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     reference operator[](size_type const i)
     {
         size_t combined_size = step_size + std::ranges::size(inserted_range);
@@ -234,6 +243,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     const_reference operator[](size_type const i) const
     {
         size_t combined_size = step_size + std::ranges::size(inserted_range);

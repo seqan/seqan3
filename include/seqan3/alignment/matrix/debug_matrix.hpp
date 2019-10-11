@@ -129,7 +129,7 @@ public:
     //!\}
 
     //!\copydoc seqan3::detail::matrix::rows
-    size_t rows() const noexcept
+    [[nodiscard]] size_t rows() const noexcept
     {
         if (!_transpose)
             return _rows.value_or(_matrix.rows());
@@ -138,7 +138,7 @@ public:
     }
 
     //!\copydoc seqan3::detail::matrix::cols
-    size_t cols() const noexcept
+    [[nodiscard]] size_t cols() const noexcept
     {
         if (!_transpose)
             return _cols.value_or(_matrix.cols());
@@ -147,7 +147,7 @@ public:
     }
 
     //!\copydoc seqan3::detail::debug_matrix::_first_sequence
-    first_sequence_t const & first_sequence() const noexcept
+    [[nodiscard]] first_sequence_t const & first_sequence() const noexcept
     {
         if (!_transpose)
             return _first_sequence;
@@ -156,7 +156,7 @@ public:
     }
 
     //!\copydoc seqan3::detail::debug_matrix::_second_sequence
-    second_sequence_t const & second_sequence() const noexcept
+    [[nodiscard]] second_sequence_t const & second_sequence() const noexcept
     {
         if (!_transpose)
             return _second_sequence;
@@ -165,7 +165,7 @@ public:
     }
 
     //!\copydoc seqan3::detail::matrix::at
-    const_reference at(matrix_coordinate const & coordinate) const noexcept
+    [[nodiscard]] const_reference at(matrix_coordinate const & coordinate) const noexcept
     {
         size_t row = coordinate.row;
         size_t col = coordinate.col;
@@ -209,7 +209,7 @@ public:
      * \param masking_matrix \copydoc _masking_matrix
      * \returns *this
      */
-    debug_matrix & mask_matrix(row_wise_matrix<bool> masking_matrix) noexcept
+    [[nodiscard]] debug_matrix & mask_matrix(row_wise_matrix<bool> masking_matrix) noexcept
     {
         assert(masking_matrix.rows() == rows());
         assert(masking_matrix.cols() == cols());
@@ -222,7 +222,7 @@ public:
      * \param masking_vector The masking vector to construct the masking_matrix.
      * \returns *this
      */
-    debug_matrix & mask_matrix(std::vector<bool> masking_vector) noexcept
+    [[nodiscard]] debug_matrix & mask_matrix(std::vector<bool> masking_vector) noexcept
     {
         return mask_matrix(row_wise_matrix<bool>{number_rows{rows()},
                                                  number_cols{cols()},
@@ -234,7 +234,7 @@ public:
      * \param new_cols \copydoc _cols
      * \returns *this
      */
-    debug_matrix & sub_matrix(size_t const new_rows, size_t const new_cols) noexcept
+    [[nodiscard]] debug_matrix & sub_matrix(size_t const new_rows, size_t const new_cols) noexcept
     {
         assert(new_rows <= rows());
         assert(new_cols <= cols());
@@ -254,7 +254,7 @@ public:
     /*!\brief Transposes the current matrix.
      * \returns *this
      */
-    debug_matrix & transpose_matrix() noexcept
+    [[nodiscard]] debug_matrix & transpose_matrix() noexcept
     {
         _transpose = !_transpose;
         return *this;
@@ -362,7 +362,7 @@ public:
     }
 
     //!\brief Determines the largest width of all entries in the matrix, e.g. `-152` has width 4.
-    size_t auto_column_width(fmtflags2 const flags) const noexcept
+    [[nodiscard]] size_t auto_column_width(fmtflags2 const flags) const noexcept
     {
         size_t col_width = 1;
         for (size_t row = 0; row < rows(); ++row)
@@ -375,7 +375,7 @@ public:
 
 protected:
     //!\brief Same as at(*coordinate*), but as string.
-    std::string entry_at(matrix_coordinate const coordinate, fmtflags2 flags) const noexcept
+    [[nodiscard]] std::string entry_at(matrix_coordinate const coordinate, fmtflags2 flags) const noexcept
     {
         format_type const & symbols = (flags & fmtflags2::utf8) == fmtflags2::utf8 ? unicode : csv;
 
@@ -388,7 +388,7 @@ protected:
 
     //!\brief Convert a value into a std::string.
     template <typename value_type>
-    static std::string as_string(value_type && entry, fmtflags2 const flags) noexcept
+    [[nodiscard]] static std::string as_string(value_type && entry, fmtflags2 const flags) noexcept
     {
         std::stringstream strstream;
         debug_stream_type stream{strstream};
@@ -398,7 +398,7 @@ protected:
 
     //!\brief The length of the *str* (traceback symbols are unicode aware).
     //!\sa https://en.wikipedia.org/wiki/UTF-8 for encoding details
-    static size_t unicode_str_length(std::string const & str) noexcept
+    [[nodiscard]] static size_t unicode_str_length(std::string const & str) noexcept
     {
         size_t length = 0u;
         for (auto it = str.cbegin(); it < str.cend(); ++it, ++length)

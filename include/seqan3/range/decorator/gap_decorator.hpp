@@ -152,7 +152,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type size() const noexcept
+    [[nodiscard]] size_type size() const noexcept
     {
         if (anchors.size())
             return anchors.rbegin()->second + ungapped_view.size();
@@ -314,13 +314,13 @@ public:
      *
      * No-throw guarantee.
      */
-    const_iterator begin() const noexcept
+    [[nodiscard]] const_iterator begin() const noexcept
     {
         return iterator{*this};
     }
 
     //!\copydoc begin()
-    const_iterator cbegin() const noexcept
+    [[nodiscard]] const_iterator cbegin() const noexcept
     {
         return const_iterator{*this};
     }
@@ -338,13 +338,13 @@ public:
      *
      * No-throw guarantee.
      */
-    const_iterator end() const noexcept
+    [[nodiscard]] const_iterator end() const noexcept
     {
         return iterator{*this, size()};
     }
 
     //!\copydoc end()
-    const_iterator cend() const noexcept
+    [[nodiscard]] const_iterator cend() const noexcept
     {
         return const_iterator{*this, size()};
     }
@@ -365,7 +365,7 @@ public:
      *
      * Throws std::out_of_range exception if \p i is out of range.
      */
-    reference at(size_type const i)
+    [[nodiscard]] reference at(size_type const i)
     {
         if (i >= size()) // [[unlikely]]
             throw std::out_of_range{"Trying to access element behind the last in gap_decorator."};
@@ -373,7 +373,7 @@ public:
     }
 
     //!\copydoc at()
-    const_reference at(size_type const i) const
+    [[nodiscard]] const_reference at(size_type const i) const
     {
         if (i >= size()) // [[unlikely]]
             throw std::out_of_range{"Trying to access element behind the last in gap_decorator."};
@@ -391,7 +391,7 @@ public:
      * \f$O(\log k)\f$ where \f$k\f$ is the number of gaps.
      *
      */
-    constexpr reference operator[](size_type const i) const noexcept
+    constexpr [[nodiscard]] reference operator[](size_type const i) const noexcept
     {
         return *iterator{*this, i};
     }
@@ -417,7 +417,7 @@ public:
      */
 
     //!\brief Checks whether `lhs` is equal to `rhs`.
-    friend bool operator==(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
+    friend [[nodiscard]] bool operator==(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         if (lhs.size()  == rhs.size()  &&
             lhs.anchors == rhs.anchors &&
@@ -430,13 +430,13 @@ public:
     }
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
-    friend bool operator!=(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
+    friend [[nodiscard]] bool operator!=(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     //!\brief Checks whether `lhs` is less than `rhs`.
-    friend bool operator<(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
+    friend [[nodiscard]] bool operator<(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         auto lit = lhs.begin();
         auto rit = rhs.begin();
@@ -453,7 +453,7 @@ public:
     }
 
     //!\brief Checks whether `lhs` is less than or equal to `rhs`.
-    friend bool operator<=(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
+    friend [[nodiscard]] bool operator<=(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         auto lit = lhs.begin();
         auto rit = rhs.begin();
@@ -470,13 +470,13 @@ public:
     }
 
     //!\brief Checks whether `lhs` is greater than `rhs`.
-    friend bool operator>(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
+    friend [[nodiscard]] bool operator>(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         return !(lhs <= rhs);
     }
 
     //!\brief Checks whether `lhs` is greater than or equal to `rhs`.
-    friend bool operator>=(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
+    friend [[nodiscard]] bool operator>=(gap_decorator const & lhs, gap_decorator const & rhs) noexcept
     {
         return !(lhs < rhs);
     }
@@ -507,7 +507,7 @@ private:
      * ### Exceptions
      * No-throw guarantee.
      */
-    constexpr size_type gap_length(set_iterator_type it) const noexcept
+    constexpr [[nodiscard]] size_type gap_length(set_iterator_type it) const noexcept
     {
         return (it == anchors.begin()) ? it->second : it->second - (*std::prev(it)).second;
     }
@@ -826,13 +826,13 @@ public:
      * \{
      */
     //!\brief Dereference operator returns a copy of the element currently pointed at.
-    constexpr reference operator*() const noexcept
+    constexpr [[nodiscard]] reference operator*() const noexcept
     {
         return (is_at_gap) ? reference{gap{}} : reference{host->ungapped_view[ungapped_view_pos]};
     }
 
     //!\brief Return underlying container value currently pointed at.
-    constexpr reference operator[](difference_type const n) const noexcept
+    constexpr [[nodiscard]] reference operator[](difference_type const n) const noexcept
     {
         return *(*this + n);
     }
@@ -844,42 +844,48 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    constexpr friend bool operator==(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
+    constexpr friend [[nodiscard]] bool operator==(gap_decorator_iterator const & lhs,
+                                                   gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos == rhs.pos;
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
-    constexpr friend bool operator!=(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
+    constexpr friend [[nodiscard]] bool operator!=(gap_decorator_iterator const & lhs,
+                                                   gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos != rhs.pos;
     }
 
     //!\brief Checks whether `*this` is less than `rhs`.
-    constexpr friend bool operator<(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
+    constexpr friend [[nodiscard]] bool operator<(gap_decorator_iterator const & lhs,
+                                                  gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos < rhs.pos;
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
-    constexpr friend bool operator>(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
+    constexpr friend [[nodiscard]] bool operator>(gap_decorator_iterator const & lhs,
+                                                  gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos > rhs.pos;
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
-    constexpr friend bool operator<=(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
+    constexpr friend [[nodiscard]] bool operator<=(gap_decorator_iterator const & lhs,
+                                                   gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos <= rhs.pos;
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-    constexpr friend bool operator>=(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs)
+    constexpr friend [[nodiscard]] bool operator>=(gap_decorator_iterator const & lhs,
+                                                   gap_decorator_iterator const & rhs)
         noexcept
     {
         return lhs.pos >= rhs.pos;

@@ -148,7 +148,7 @@ public:
     //!\}
 
     //!\copydoc seqan3::detail::alignment_trace_matrix_full::trace_path
-    auto trace_path(matrix_coordinate const & trace_begin)
+    [[nodiscard]] auto trace_path(matrix_coordinate const & trace_begin)
     {
         static_assert(!coordinate_only, "Requested trace but storing the trace was disabled!");
 
@@ -173,7 +173,7 @@ public:
 
 private:
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::initialise_column
-    constexpr alignment_column_type initialise_column(size_type const column_index) noexcept
+    constexpr [[nodiscard]] alignment_column_type initialise_column(size_type const column_index) noexcept
     {
         int32_t slice_begin = std::max<int32_t>(0, band_col_index - column_index);
         int32_t row_end_index = column_index - band_col_index + band_size;
@@ -208,7 +208,7 @@ private:
 
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::make_proxy
     template <std::random_access_iterator iter_t>
-    constexpr value_type make_proxy(iter_t host_iter) noexcept
+    constexpr [[nodiscard]] value_type make_proxy(iter_t host_iter) noexcept
     {
         if constexpr (coordinate_only)
         {

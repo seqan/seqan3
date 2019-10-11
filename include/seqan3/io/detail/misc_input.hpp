@@ -39,7 +39,7 @@ namespace seqan3::detail
  * \param[in] query     The range that is expected to be the shorter one.
  */
 template <std::ranges::forward_range ref_t, std::ranges::forward_range query_t>
-inline bool starts_with(ref_t && reference, query_t && query)
+inline [[nodiscard]] bool starts_with(ref_t && reference, query_t && query)
 //!\cond
     requires std::equality_comparable_with<reference_t<ref_t>, reference_t<query_t>>
 //!\endcond

@@ -45,7 +45,8 @@ template <size_t beg,
 //!\cond
     requires tuple_like<tuple_t<ts...>> && tuple_like<tuple_t<>>
 //!\endcond
-constexpr auto tuple_split(tuple_t<ts...> const & t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
+constexpr [[nodiscard]] auto tuple_split(tuple_t<ts...> const & t,
+                                         std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
     return tuple_t<std::tuple_element_t<beg + Is, tuple_t<ts...>>...>{std::get<beg + Is>(t)...};
 }
@@ -58,7 +59,8 @@ template <size_t beg,
 //!\cond
     requires tuple_like<tuple_t<ts...>> && tuple_like<tuple_t<>>
 //!\endcond
-constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
+constexpr [[nodiscard]] auto tuple_split(tuple_t<ts...> && t,
+                                         std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
     return tuple_t<std::tuple_element_t<beg + Is, tuple_t<ts...>>...>{std::move(std::get<beg + Is>(t))...};
 }
@@ -102,7 +104,7 @@ template <size_t pivot_c, template <typename ...> typename tuple_t, typename ...
 //!\cond
     requires tuple_like<tuple_t<ts...>>
 //!\endcond
-constexpr auto tuple_split(tuple_t<ts...> const & t)
+constexpr [[nodiscard]] auto tuple_split(tuple_t<ts...> const & t)
 {
     static_assert(pivot_c <= sizeof...(ts));
 
@@ -115,7 +117,7 @@ template <size_t pivot_c, template <typename ...> typename tuple_t, typename ...
 //!\cond
     requires tuple_like<tuple_t<ts...>>
 //!\endcond
-constexpr auto tuple_split(tuple_t<ts...> && t)
+constexpr [[nodiscard]] auto tuple_split(tuple_t<ts...> && t)
 {
     static_assert(pivot_c <= sizeof...(ts));
 
@@ -150,7 +152,7 @@ constexpr auto tuple_split(tuple_t<ts...> && t)
  * Concurrent invocations of this functions are thread safe.
  */
 template <typename pivot_t, tuple_like tuple_t>
-constexpr auto tuple_split(tuple_t && t)
+constexpr [[nodiscard]] auto tuple_split(tuple_t && t)
 {
     constexpr size_t pivot_c = meta::find_index<detail::tuple_type_list_t<remove_cvref_t<tuple_t>>, pivot_t>::value;
 
@@ -180,7 +182,7 @@ constexpr auto tuple_split(tuple_t && t)
  * Concurrent invocations of this functions are thread safe.
  */
 template <tuple_like tuple_t>
-constexpr auto tuple_pop_front(tuple_t && t)
+constexpr [[nodiscard]] auto tuple_pop_front(tuple_t && t)
 {
     static_assert(std::tuple_size_v<remove_cvref_t<tuple_t>> > 0);
 

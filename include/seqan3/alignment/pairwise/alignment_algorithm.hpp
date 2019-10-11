@@ -141,7 +141,7 @@ public:
      * and at most \f$ O(N^2) \f$ space.
      */
     template <std::ranges::forward_range first_range_t, std::ranges::forward_range second_range_t>
-    auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
+    [[nodiscard]] auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
         requires !is_banded
     {
         assert(cfg_ptr != nullptr);
@@ -233,7 +233,7 @@ public:
      * and at most \f$ O(N*k) \f$ space.
      */
     template <std::ranges::forward_range first_range_t, std::ranges::forward_range second_range_t>
-    auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
+    [[nodiscard]] auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
         requires is_banded
     {
         assert(cfg_ptr != nullptr);

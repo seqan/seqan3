@@ -151,7 +151,7 @@ public:
     /*!\brief Returns the alignment identifier.
      * \return The id field.
      */
-    constexpr id_t id() const noexcept
+    constexpr [[nodiscard]] id_t id() const noexcept
     {
         static_assert(!std::is_same_v<id_t, std::nullopt_t *>,
                       "Identifier is not available but should.");
@@ -161,7 +161,7 @@ public:
     /*!\brief Returns the alignment score.
      * \return The score field.
      */
-    constexpr score_t score() const noexcept
+    constexpr [[nodiscard]] score_t score() const noexcept
     {
         static_assert(!std::is_same_v<score_t, std::nullopt_t *>,
                       "Alignment score is not available but should.");
@@ -174,7 +174,7 @@ public:
      * \note This function is only available if the back coordinate was requested via the alignment configuration
      * (see seqan3::align_cfg::result).
      */
-    constexpr back_coord_t const & back_coordinate() const noexcept
+    constexpr [[nodiscard]] back_coord_t const & back_coordinate() const noexcept
     {
         static_assert(!std::is_same_v<back_coord_t, std::nullopt_t *>,
                       "Trying to access the back coordinate, although it was not requested in the alignment "
@@ -192,7 +192,7 @@ public:
      * \note This function is only available if the front coordinate was requested via the alignment configuration
      * (see seqan3::align_cfg::result).
      */
-    constexpr front_coord_t const & front_coordinate() const noexcept
+    constexpr [[nodiscard]] front_coord_t const & front_coordinate() const noexcept
     {
         static_assert(!std::is_same_v<front_coord_t, std::nullopt_t *>,
                       "Trying to access the front coordinate, although it was not requested in the alignment "
@@ -206,7 +206,7 @@ public:
      * \note This function is only available if the alignment was requested via the alignment configuration
      * (see seqan3::align_cfg::result).
      */
-    constexpr alignment_t const & alignment() const noexcept
+    constexpr [[nodiscard]] alignment_t const & alignment() const noexcept
     {
         static_assert(!std::is_same_v<alignment_t, std::nullopt_t *>,
                       "Trying to access the alignment, although it was not requested in the alignment configuration.");
@@ -226,7 +226,7 @@ public:
      * \note This function is only available if the debug mode was requested via the alignment configuration
      * (see seqan3::align_cfg::debug).
      */
-    constexpr auto const & score_matrix() const noexcept
+    constexpr [[nodiscard]] auto const & score_matrix() const noexcept
     {
         static_assert(!std::is_same_v<decltype(data.score_debug_matrix), std::nullopt_t *>,
                       "Trying to access the score matrix, although it was not requested in the alignment configuration.");
@@ -244,7 +244,7 @@ public:
      * \note This function is only available if the debug mode and the alignment was requested via the alignment
      * configuration (see seqan3::align_cfg::debug and seqan3::align_cfg::result).
      */
-    constexpr auto const & trace_matrix() const noexcept
+    constexpr [[nodiscard]] auto const & trace_matrix() const noexcept
     {
         static_assert(!std::is_same_v<decltype(data.trace_debug_matrix), std::nullopt_t *>,
                       "Trying to access the trace matrix, although it was not requested in the alignment configuration.");

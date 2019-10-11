@@ -105,7 +105,7 @@ protected:
     };
 
     //!\brief Prints a help page header to std::cout.
-    void print_header()
+    void print_header() const
     {
         std::ostream_iterator<char> out(std::cout);
 
@@ -197,7 +197,7 @@ protected:
     }
 
     //!\brief Prints the version information to std::cout.
-    void print_version()
+    void print_version() const
     {
         std::ostream_iterator<char> out(std::cout);
 
@@ -221,7 +221,7 @@ protected:
     }
 
     //!\brief Prints a help page footer to std::cout.
-    void print_footer()
+    void print_footer() const
     {
         print_version();
 
@@ -259,7 +259,7 @@ protected:
     /*!\brief Formats text for pretty command line printing.
      * \param[in] str The input string to format for correct command line printing.
      */
-    std::string to_text(std::string const & str)
+    [[noreturn]] std::string to_text(std::string const & str) const
     {
         std::string result;
 
@@ -318,7 +318,7 @@ protected:
      * \param[in] text The string to compute the width for on the command line.
      * /detail Note: "\-" has length 1, "\fI", "\fB", "\fP" have length 0.
      */
-    unsigned text_width(std::string const & text)
+    [[noreturn]] unsigned text_width(std::string const & text) const
     {
         unsigned result = 0;
 
@@ -366,7 +366,7 @@ protected:
      * \param[in] text   The string to print on the command line.
      * \param[in] tab    The position offset (indentation) to start printing at.
      */
-    void print_text(std::string const & text, unsigned const tab)
+    void print_text(std::string const & text, unsigned const tab) const
     {
         unsigned pos = tab;
         std::ostream_iterator<char> out(std::cout);

@@ -361,13 +361,13 @@ public:
     }
 
     //!\copydoc begin()
-    const_iterator begin() const noexcept
+    [[nodiscard]] const_iterator begin() const noexcept
     {
         return const_iterator{*this};
     }
 
     //!\copydoc begin()
-    const_iterator cbegin() const noexcept
+    [[nodiscard]] const_iterator cbegin() const noexcept
     {
         return const_iterator{*this};
     }
@@ -391,13 +391,13 @@ public:
     }
 
     //!\copydoc end()
-    const_iterator end() const noexcept
+    [[nodiscard]] const_iterator end() const noexcept
     {
         return const_iterator{*this, size()};
     }
 
     //!\copydoc end()
-    const_iterator cend() const noexcept
+    [[nodiscard]] const_iterator cend() const noexcept
     {
         return const_iterator{*this, size()};
     }
@@ -419,7 +419,7 @@ public:
      *
      * Throws std::out_of_range if `i >= size()`.
      */
-    reference at(size_type const i)
+    [[nodiscard]] reference at(size_type const i)
     {
         if (i >= size()) // [[unlikely]]
         {
@@ -429,7 +429,7 @@ public:
     }
 
     //!\copydoc at()
-    const_reference at(size_type const i) const
+    [[nodiscard]] const_reference at(size_type const i) const
     {
         if (i >= size()) // [[unlikely]]
         {
@@ -453,14 +453,14 @@ public:
      *
      * No-throw guarantee.
      */
-    reference operator[](size_type const i) noexcept
+    [[nodiscard]] reference operator[](size_type const i) noexcept
     {
         assert(i < size());
         return data[i];
     }
 
     //!\copydoc operator[]()
-    const_reference operator[](size_type const i) const noexcept
+    [[nodiscard]] const_reference operator[](size_type const i) const noexcept
     {
         assert(i < size());
         return assign_rank_to(data[i], const_reference{});
@@ -479,14 +479,14 @@ public:
      *
      * No-throw guarantee.
      */
-    reference front() noexcept
+    [[nodiscard]] reference front() noexcept
     {
         assert(size() > 0);
         return (*this)[0];
     }
 
     //!\copydoc front()
-    const_reference front() const noexcept
+    [[nodiscard]] const_reference front() const noexcept
     {
         assert(size() > 0);
         return (*this)[0];
@@ -505,14 +505,14 @@ public:
      *
      * No-throw guarantee.
      */
-    reference back() noexcept
+    [[nodiscard]] reference back() noexcept
     {
         assert(size() > 0);
         return (*this)[size()-1];
     }
 
     //!\copydoc back()
-    const_reference back() const noexcept
+    [[nodiscard]] const_reference back() const noexcept
     {
         assert(size() > 0);
         return (*this)[size()-1];
@@ -527,13 +527,13 @@ public:
      *
      * The exact representation of the data is implementation defined. Do not rely on it for API stability.
      */
-    constexpr data_type & raw_data() noexcept
+    constexpr [[nodiscard]] data_type & raw_data() noexcept
     {
         return data;
     }
 
     //!\copydoc raw_data()
-    constexpr data_type const & raw_data() const noexcept
+    constexpr [[nodiscard]] data_type const & raw_data() const noexcept
     {
         return data;
     }
@@ -553,7 +553,7 @@ public:
      *
      * No-throw guarantee.
      */
-    bool empty() const noexcept
+    [[nodiscard]] bool empty() const noexcept
     {
         return size() == 0;
     }
@@ -569,7 +569,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type size() const noexcept
+    [[nodiscard]] size_type size() const noexcept
     {
         return data.size();
     }
@@ -588,7 +588,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type max_size() const noexcept
+    [[nodiscard]] size_type max_size() const noexcept
     {
         return data.max_size();
     }
@@ -608,7 +608,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type capacity() const noexcept
+    [[nodiscard]] size_type capacity() const noexcept
     {
         return data.capacity();
     }
@@ -982,37 +982,37 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    constexpr bool operator==(bitcompressed_vector const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator==(bitcompressed_vector const & rhs) const noexcept
     {
         return data == rhs.data;
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
-    constexpr bool operator!=(bitcompressed_vector const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator!=(bitcompressed_vector const & rhs) const noexcept
     {
         return data != rhs.data;
     }
 
     //!\brief Checks whether `*this` is less than `rhs`.
-    constexpr bool operator<(bitcompressed_vector const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<(bitcompressed_vector const & rhs) const noexcept
     {
         return data < rhs.data;
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
-    constexpr bool operator>(bitcompressed_vector const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>(bitcompressed_vector const & rhs) const noexcept
     {
         return data > rhs.data;
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
-    constexpr bool operator<=(bitcompressed_vector const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<=(bitcompressed_vector const & rhs) const noexcept
     {
         return data <= rhs.data;
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-    constexpr bool operator>=(bitcompressed_vector const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>=(bitcompressed_vector const & rhs) const noexcept
     {
         return data >= rhs.data;
     }

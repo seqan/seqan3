@@ -79,7 +79,7 @@ namespace seqan3
  * In contrast to std::tolower this function is independent of locale and can be evaluated in a `constexpr` context.
  */
 template <builtin_character char_type>
-constexpr char_type to_lower(char_type const c) noexcept
+constexpr [[nodiscard]] char_type to_lower(char_type const c) noexcept
 {
     using u_t = std::make_unsigned_t<char_type>;
     return detail::to_lower_table<char_type>[static_cast<u_t>(c)];
@@ -95,7 +95,7 @@ constexpr char_type to_lower(char_type const c) noexcept
  * In contrast to std::to_upper this function is independent of locale and can be evaluated in a `constexpr` context.
  */
 template <builtin_character char_type>
-constexpr char_type to_upper(char_type const c) noexcept
+constexpr [[nodiscard]] char_type to_upper(char_type const c) noexcept
 {
     using u_t = std::make_unsigned_t<char_type>;
     return detail::to_upper_table<char_type>[static_cast<u_t>(c)];

@@ -143,7 +143,7 @@ inline constexpr bool has_type_valid_formats<query_t> = true;
  * Strong exception guarantee. No input is modified. Might throw std::bad_alloc.
  */
 template <typename formats_t>
-inline std::vector<std::string> valid_file_extensions()
+inline [[nodiscard]] std::vector<std::string> valid_file_extensions()
 {
     static_assert(has_member_file_extensions<formats_t>,
                   "Expects that all formats have a static member file_extensions storing the extensions in a range");

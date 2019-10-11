@@ -70,13 +70,13 @@ public:
      *
      * Internally calls std::filesystem::remove on the stored std::filesystem::path.
      */
-    bool remove()
+    [[nodiscard]] bool remove()
     {
         return std::filesystem::remove(entry);
     }
 
     //!\copydoc remove
-    bool remove_no_throw() const noexcept
+    [[nodiscard]] bool remove_no_throw() const noexcept
     {
         std::error_code ec;
         return std::filesystem::remove(entry, ec);
@@ -91,7 +91,7 @@ public:
     *
     * Internally calls std::filesystem::remove_all on the stored std::filesystem::path.
     */
-    std::uintmax_t remove_all()
+    [[nodiscard]] std::uintmax_t remove_all()
     {
         return std::filesystem::remove_all(entry);
     }

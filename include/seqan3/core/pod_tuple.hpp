@@ -68,37 +68,37 @@ struct pod_tuple<type0, types...>
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    constexpr bool operator==(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator==(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) == std::tie(rhs._head, rhs._tail);
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
-    constexpr bool operator!=(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator!=(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) != std::tie(rhs._head, rhs._tail);
     }
 
     //!\brief Checks whether `*this` is less than `rhs`.
-    constexpr bool operator<(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) < std::tie(rhs._head, rhs._tail);
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
-    constexpr bool operator>(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) > std::tie(rhs._head, rhs._tail);
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
-    constexpr bool operator<=(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<=(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) <= std::tie(rhs._head, rhs._tail);
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-    constexpr bool operator>=(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>=(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) >= std::tie(rhs._head, rhs._tail);
     }
@@ -124,37 +124,37 @@ struct pod_tuple<type0>
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    constexpr bool operator==(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator==(pod_tuple const & rhs) const noexcept
     {
         return _head == rhs._head;
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
-    constexpr bool operator!=(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator!=(pod_tuple const & rhs) const noexcept
     {
         return _head != rhs._head;
     }
 
     //!\brief Checks whether `*this` is less than `rhs`.
-    constexpr bool operator<(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<(pod_tuple const & rhs) const noexcept
     {
         return _head < rhs._head;
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
-    constexpr bool operator>(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>(pod_tuple const & rhs) const noexcept
     {
         return _head > rhs._head;
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
-    constexpr bool operator<=(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator<=(pod_tuple const & rhs) const noexcept
     {
         return _head <= rhs._head;
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-    constexpr bool operator>=(pod_tuple const & rhs) const noexcept
+    constexpr [[nodiscard]] bool operator>=(pod_tuple const & rhs) const noexcept
     {
         return _head >= rhs._head;
     }
@@ -297,73 +297,6 @@ constexpr auto const && get(seqan3::pod_tuple<arg_types...> const && t) noexcept
 
 namespace std
 {
-
-//!\cond
-template <std::size_t i, typename ...types>
-constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
-    requires i < sizeof...(types)
-{
-    return seqan3::get<i>(t);
-}
-
-template <std::size_t i, typename ...types>
-constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
-    requires i < sizeof...(types)
-{
-    return seqan3::get<i>(t);
-}
-
-template <std::size_t i, typename ...types>
-constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
-    requires i < sizeof...(types)
-{
-    return seqan3::get<i>(std::move(t));
-}
-
-template <std::size_t i, typename ...types>
-constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
-    requires i < sizeof...(types)
-{
-    return seqan3::get<i>(std::move(t));
-}
-
-template <typename type, typename ...types>
-constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
-{
-    return seqan3::get<type>(t);
-}
-
-template <typename type, typename ...types>
-constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
-{
-    return seqan3::get<type>(t);
-}
-
-template <typename type, typename ...types>
-constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
-{
-    return seqan3::get<type>(std::move(t));
-}
-
-template <typename type, typename ...types>
-constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
-    requires meta::in<meta::list<types...>, type>::value &&
-             (meta::find_index<meta::list<types...>, type>::value ==
-              meta::reverse_find_index<meta::list<types...>, type>::value)
-{
-    return seqan3::get<type>(std::move(t));
-}
-//!\endcond
-
 /*!\brief Obtains the type of the specified element.
  * \implements seqan3::transformation_trait
  * \relates seqan3::pod_tuple

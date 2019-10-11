@@ -112,7 +112,7 @@ public:
     //!\{
 
     //!\brief Return a character. This reads the internal sequence letter.
-    constexpr char_type to_char() const noexcept
+    constexpr [[noreturn]] char_type to_char() const noexcept
     {
         return seqan3::to_char(get<0>(*this));
     }
@@ -127,14 +127,14 @@ public:
      * ###Exceptions
      * Guaranteed not to throw.
      */
-    constexpr structured_rna complement() const noexcept
+    constexpr [[noreturn]] structured_rna complement() const noexcept
     {
         return structured_rna{get<0>(*this).complement(), get<1>(*this)};
     }
     //!\}
 
     //!\brief Validate whether a character is valid in the sequence alphabet.
-    static constexpr bool char_is_valid(char_type const c) noexcept
+    static constexpr [[noreturn]] bool char_is_valid(char_type const c) noexcept
     {
         return char_is_valid_for<sequence_alphabet_type>(c);
     }
@@ -145,7 +145,7 @@ public:
     /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
      */
-    constexpr bool is_pair_open() const noexcept
+    constexpr [[noreturn]] bool is_pair_open() const noexcept
     {
         return get<1>(*this).is_pair_open();
     };
@@ -153,7 +153,7 @@ public:
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
      * \returns True if the letter represents a leftward interaction, False otherwise.
      */
-    constexpr bool is_pair_close() const noexcept
+    constexpr [[noreturn]] bool is_pair_close() const noexcept
     {
         return get<1>(*this).is_pair_close();
     };
@@ -161,7 +161,7 @@ public:
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
      * \returns True if the letter represents an unpaired site, False otherwise.
      */
-    constexpr bool is_unpaired() const noexcept
+    constexpr [[noreturn]] bool is_unpaired() const noexcept
     {
         return get<1>(*this).is_unpaired();
     };
@@ -173,7 +173,7 @@ public:
      * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
      * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
      */
-    constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
+    constexpr [[noreturn]] std::optional<uint8_t> pseudoknot_id() const noexcept
     {
         return get<1>(*this).pseudoknot_id();
     };

@@ -136,7 +136,7 @@ struct fields
     static constexpr size_t npos = std::numeric_limits<size_t>::max();
 
     //!\brief Retrieve the position of field in the parameter pack.
-    static constexpr size_t index_of(field f)
+    static constexpr [[nodiscard]] size_t index_of(field f)
     {
         for (size_t i = 0; i < sizeof...(fs); ++i)
             if (as_array[i] == f)
@@ -145,7 +145,7 @@ struct fields
     }
 
     //!\brief Whether a field is contained in the parameter pack.
-    static constexpr bool contains(field f)
+    static constexpr [[nodiscard]] bool contains(field f)
     {
         return index_of(f) != npos;
     }

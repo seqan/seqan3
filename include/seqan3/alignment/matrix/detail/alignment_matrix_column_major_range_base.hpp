@@ -175,37 +175,37 @@ private:
              * \{
              */
             //!\brief Returns `true` if the host iterator reached the end, `false` otherwise.
-            constexpr bool operator==(sentinel const & rhs) const noexcept
+            [[nodiscard]] constexpr bool operator==(sentinel const & rhs) const noexcept
             {
                 return host_iter == rhs;
             }
 
             //!\copydoc operator==
-            friend constexpr bool operator==(sentinel const & lhs, iterator_type const & rhs) noexcept
+            friend [[nodiscard]] constexpr bool operator==(sentinel const & lhs, iterator_type const & rhs) noexcept
             {
                 return rhs == lhs;
             }
 
             //!\brief Returns `true` if both iterators are equal, `false` otherwise.
-            constexpr bool operator==(iterator_type const & rhs) const noexcept
+            constexpr [[nodiscard]] bool operator==(iterator_type const & rhs) const noexcept
             {
                 return (host_ptr == rhs.host_ptr) && (host_iter == rhs.host_iter);
             }
 
             //!\brief Returns `true` if the host iterator did not reach the end, `false` otherwise.
-            constexpr bool operator!=(sentinel const & rhs) const noexcept
+            constexpr [[nodiscard]] bool operator!=(sentinel const & rhs) const noexcept
             {
                 return !(*this == rhs);
             }
 
             //!\copydoc operator!=
-            friend constexpr bool operator!=(sentinel const & lhs, iterator_type const & rhs) noexcept
+            friend [[nodiscard]] constexpr bool operator!=(sentinel const & lhs, iterator_type const & rhs) noexcept
             {
                 return rhs != lhs;
             }
 
             //!\brief Returns `true` if both iterators are not equal, `false` otherwise.
-            constexpr bool operator!=(iterator_type const & rhs) const noexcept
+            constexpr [[nodiscard]] bool operator!=(iterator_type const & rhs) const noexcept
             {
                 return !(*this == rhs);
             }

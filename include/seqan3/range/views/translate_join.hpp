@@ -149,12 +149,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     iterator begin() noexcept
     {
         return {*this, 0};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator begin() const noexcept
         requires const_iterable_range<urng_t>
     {
@@ -162,6 +164,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator cbegin() const noexcept
         requires const_iterable_range<urng_t>
     {
@@ -181,12 +184,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     iterator end() noexcept
     {
         return {*this, size()};
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator end() const noexcept
         requires const_iterable_range<urng_t>
     {
@@ -194,6 +199,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     const_iterator cend() const noexcept
         requires const_iterable_range<urng_t>
     {
@@ -212,12 +218,14 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     size_type size() noexcept
     {
         return (size_type) seqan3::size(urange) * selected_frames.size();
     }
 
     //!\overload
+    [[nodiscard]]
     size_type size() const noexcept
         requires const_iterable_range<urng_t>
     {
@@ -242,6 +250,7 @@ public:
      *
      * Constant.
      */
+    [[nodiscard]]
     reference operator[](size_type const n)
     {
         assert(n < size());
@@ -251,6 +260,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     const_reference operator[](size_type const n) const
         requires const_iterable_range<urng_t>
     {

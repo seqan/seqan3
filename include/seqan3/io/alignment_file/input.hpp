@@ -805,7 +805,7 @@ public:
      *
      * No-throw guarantee.
      */
-    reference front() noexcept
+    [[nodiscard]] reference front() noexcept
     {
         return *begin();
     }
@@ -826,7 +826,7 @@ public:
      *
      * \sa seqan3::alignment_file_header
      */
-    header_type & header()
+    [[nodiscard]] header_type & header()
     {
         // make sure header is read
         if (!first_record_was_read)

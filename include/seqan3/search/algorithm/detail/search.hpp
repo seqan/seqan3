@@ -43,6 +43,7 @@ namespace seqan3::detail
  * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
 template <typename index_t, typename query_t, typename configuration_t>
+[[nodiscard]]
 inline auto search_single(index_t const & index, query_t & query, configuration_t const & cfg)
 {
     using cfg_t = remove_cvref_t<configuration_t>;
@@ -177,6 +178,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
  * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
 template <typename index_t, typename queries_t, typename configuration_t>
+[[nodiscard]]
 inline auto search_all(index_t const & index, queries_t & queries, configuration_t const & cfg)
 {
     using cfg_t = remove_cvref_t<configuration_t>;

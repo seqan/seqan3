@@ -57,7 +57,7 @@ inline bool is_terminal()
  * TIOCGWINSZ is the command (number) to trigger filling the winsize struct.
  * STDOUT_FILENO is the default file descriptor (STDOUT_FILENO == fileno(stdout)).
  */
-inline unsigned get_terminal_width()
+inline [[nodiscard]] unsigned get_terminal_width()
 {
 #ifndef _WIN32
 

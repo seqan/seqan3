@@ -59,6 +59,7 @@ enum class error_type : uint8_t
  * No-throw guarantee if invoking the delegate also guarantees no-throw.
  */
 template <bool abort_on_hit, typename query_t, typename cursor_t, typename delegate_t>
+[[nodiscard]]
 inline bool search_trivial(cursor_t cur,
                            query_t & query,
                            typename cursor_t::size_type const query_pos,

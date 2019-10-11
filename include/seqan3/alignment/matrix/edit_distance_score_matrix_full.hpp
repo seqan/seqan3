@@ -102,8 +102,8 @@ public:
      * \return Number of max rows in the current column.
      */
     template <typename score_type>
-    static size_t max_rows(word_type const score_mask, unsigned const last_block,
-                           score_type const score, score_type const max_errors) noexcept
+    static [[nodiscard]] size_t max_rows(word_type const score_mask, unsigned const last_block,
+                                         score_type const score, score_type const max_errors) noexcept
     {
         size_t const offset = score_mask == 0u ? 0u : most_significant_bit_set(score_mask) + 1u;
         size_t const active_row = word_size * last_block + offset;
@@ -115,7 +115,7 @@ public:
      * \param  vn     \copydoc score_matrix_state::vn
      * \return Delta score.
      */
-    static score_type score_delta_of_word(word_type const & vp, word_type const & vn) noexcept
+    static [[nodiscard]] score_type score_delta_of_word(word_type const & vp, word_type const & vn) noexcept
     {
         score_type const p = std::bitset<word_size>{vp}.count();
         score_type const n = std::bitset<word_size>{vn}.count();
@@ -124,7 +124,7 @@ public:
 
 public:
     //!\copydoc seqan3::detail::matrix::at
-    reference at(matrix_coordinate const & coordinate) const noexcept
+    [[nodiscard]] reference at(matrix_coordinate const & coordinate) const noexcept
     {
         size_t col = coordinate.col;
         size_t row = coordinate.row;
@@ -155,13 +155,13 @@ public:
     }
 
     //!\copydoc seqan3::detail::matrix::rows
-    size_t rows() const noexcept
+    [[nodiscard]] size_t rows() const noexcept
     {
         return rows_size;
     }
 
     //!\copydoc seqan3::detail::matrix::cols
-    size_t cols() const noexcept
+    [[nodiscard]] size_t cols() const noexcept
     {
         return columns.size();
     }

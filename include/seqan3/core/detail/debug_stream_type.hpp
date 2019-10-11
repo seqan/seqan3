@@ -159,7 +159,7 @@ public:
      * \{
      */
     //!\brief Retrieve the format flags from the stream.
-    fmtflags flags() const
+    [[nodiscard]] fmtflags flags() const
     {
         return stream->flags();
     }
@@ -195,7 +195,7 @@ public:
      * \{
      */
     //!\copybrief flags()
-    fmtflags2 flags2() const
+    [[nodiscard]] fmtflags2 flags2() const
     {
         return flgs2;
     }

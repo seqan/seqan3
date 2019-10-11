@@ -137,7 +137,7 @@ public:
      * \returns A std::ranges::subrange over the corresponding trace path.
      * \throws std::invalid_argument if the specified coordinate is out of range.
      */
-    auto trace_path(matrix_coordinate const & trace_begin)
+    [[nodiscard]] auto trace_path(matrix_coordinate const & trace_begin)
     {
         static_assert(!coordinate_only, "Requested trace but storing the trace was disabled!");
 
@@ -154,7 +154,7 @@ public:
 
 private:
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::initialise_column
-    constexpr alignment_column_type initialise_column(size_type const column_index) noexcept
+    constexpr [[nodiscard]] alignment_column_type initialise_column(size_type const column_index) noexcept
     {
         coordinate_type row_begin{column_index_type{column_index}, row_index_type{0u}};
         coordinate_type row_end{column_index_type{column_index}, row_index_type{matrix_base_t::num_rows}};
@@ -177,7 +177,7 @@ private:
 
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::make_proxy
     template <std::random_access_iterator iter_t>
-    constexpr value_type make_proxy(iter_t host_iter) noexcept
+    constexpr [[nodiscard]] value_type make_proxy(iter_t host_iter) noexcept
     {
         if constexpr (coordinate_only)
         {

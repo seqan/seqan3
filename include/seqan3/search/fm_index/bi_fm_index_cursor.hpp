@@ -135,6 +135,7 @@ private:
 #endif
 
     //!\brief Helper function to recompute text positions since the indexed text is reversed.
+    [[nodiscard]]
     size_type offset() const noexcept
     {
         assert(index->size() > query_length());
@@ -143,6 +144,7 @@ private:
 
     //!\brief Optimized bidirectional search without alphabet mapping
     template <detail::sdsl_index csa_t>
+    [[nodiscard]]
     bool bidirectional_search(csa_t const & csa, sdsl_char_type const c,
                               size_type & l_fwd, size_type & r_fwd,
                               size_type & l_bwd, size_type & r_bwd) const noexcept
@@ -197,6 +199,7 @@ private:
 
     //!\brief Optimized bidirectional search for cycle_back() and cycle_front() without alphabet mapping
     template <detail::sdsl_index csa_t>
+    [[nodiscard]]
     bool bidirectional_search_cycle(csa_t const & csa, sdsl_char_type const c,
                                     size_type const l_parent, size_type const r_parent,
                                     size_type & l_fwd, size_type & r_fwd,
@@ -270,6 +273,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool operator==(bi_fm_index_cursor const & rhs) const noexcept
     {
         assert(index != nullptr);
@@ -293,6 +297,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     bool operator!=(bi_fm_index_cursor const & rhs) const noexcept
     {
         assert(index != nullptr);
@@ -727,6 +732,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     size_type last_rank() noexcept
     {
         assert(index != nullptr && query_length() > 0);
@@ -746,6 +752,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     size_type query_length() const noexcept
     {
         assert(index != nullptr);
@@ -778,6 +785,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     fwd_cursor to_fwd_cursor() const noexcept
     {
         assert(index != nullptr);
@@ -823,6 +831,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     rev_cursor to_rev_cursor() const noexcept
     {
         assert(index != nullptr);
@@ -860,6 +869,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
     //!\cond
@@ -878,6 +888,7 @@ public:
 
     //!\overload
     template <std::ranges::range text_t>
+    [[nodiscard]]
     auto path_label(text_t && text) const noexcept
     //!\cond
         requires index_t::text_layout_mode == text_layout::collection
@@ -905,6 +916,7 @@ public:
      *
      * No-throw guarantee.
      */
+    [[nodiscard]]
     size_type count() const noexcept
     {
         assert(index != nullptr && (1 + fwd_rb - fwd_lb == 1 + rev_rb - rev_lb));
@@ -923,6 +935,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
+    [[nodiscard]]
     std::vector<size_type> locate() const
     //!\cond
         requires index_t::text_layout_mode == text_layout::single
@@ -939,6 +952,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     std::vector<std::pair<size_type, size_type>> locate() const
     //!\cond
         requires index_t::text_layout_mode == text_layout::collection
@@ -970,6 +984,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
+    [[nodiscard]]
     auto lazy_locate() const
     //!\cond
         requires index_t::text_layout_mode == text_layout::single
@@ -985,6 +1000,7 @@ public:
     }
 
     //!\overload
+    [[nodiscard]]
     auto lazy_locate() const
     //!\cond
         requires index_t::text_layout_mode == text_layout::collection

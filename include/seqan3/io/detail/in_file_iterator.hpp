@@ -127,29 +127,29 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to the sentinel.
-    constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
+    constexpr [[nodiscard]] bool operator==(std::ranges::default_sentinel_t const &) const noexcept
     {
         assert(host != nullptr);
         return host->at_end;
     }
 
     //!\brief Checks whether `*this` is not equal to the sentinel.
-    constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
+    constexpr [[nodiscard]] bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
     {
         assert(host != nullptr);
         return !host->at_end;
     }
 
     //!\brief Checks whether `it` is equal to the sentinel.
-    constexpr friend bool operator==(std::ranges::default_sentinel_t const &,
-                                     in_file_iterator const & it) noexcept
+    constexpr friend [[nodiscard]] bool operator==(std::ranges::default_sentinel_t const &,
+                                                   in_file_iterator const & it) noexcept
     {
         return (it == std::ranges::default_sentinel);
     }
 
     //!\brief Checks whether `it` is not equal to the sentinel.
-    constexpr friend bool operator!=(std::ranges::default_sentinel_t const &,
-                                     in_file_iterator const & it) noexcept
+    constexpr friend [[nodiscard]] bool operator!=(std::ranges::default_sentinel_t const &,
+                                                   in_file_iterator const & it) noexcept
     {
         return (it != std::ranges::default_sentinel);
     }
