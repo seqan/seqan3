@@ -197,13 +197,27 @@ for (int h = 0; h < axis_agent.size(); ++h)
                 {
                     if (agent == "osx") // build on macos
                     {
-                        node("$agent && $axis_compiler_value && !catalina") // disable catalina builds for now.
+                        if (axis_compiler_value == "g++-9")  // enable catalina builds for g++-9.
                         {
-                            run_unit_tests(env.NODE_NAME,
-                                           axis_compiler_value,
-                                           axis_build_type_value,
-                                           test_model,
-                                           axis_cereal_value)
+                            node("$agent && $axis_compiler_value && catalina")
+                            {
+                                run_unit_tests(env.NODE_NAME,
+                                               axis_compiler_value,
+                                               axis_build_type_value,
+                                               test_model,
+                                               axis_cereal_value)
+                            }
+                        }
+                        else
+                        {  // disable catalina builds for non g++-9.
+                            node("$agent && $axis_compiler_value && !catalina")
+                            {
+                                run_unit_tests(env.NODE_NAME,
+                                               axis_compiler_value,
+                                               axis_build_type_value,
+                                               test_model,
+                                               axis_cereal_value)
+                            }
                         }
                     }
                     else  // build ubuntu
