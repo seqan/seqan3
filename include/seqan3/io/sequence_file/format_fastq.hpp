@@ -6,8 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::format_fastq tag and the seqan3::sequence_file_input_format_REMOVEME and
- *        seqan3::sequence_file_output_format_REMOVEME specialisation for this tag.
+ * brief Provides the seqan3::format_fastq.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -45,7 +44,7 @@
 namespace seqan3
 {
 
-/*!\brief       The FastQ format. (tag)
+/*!\brief       The FastQ format.
  * \implements  SequenceFileFormat
  * \ingroup     sequence
  *
@@ -76,54 +75,39 @@ namespace seqan3
  *   * writing the ID to the `+`-line also (line is always ignored when reading)
  *
  */
-struct format_fastq
+class format_fastq
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    format_fastq() noexcept = default; //!< Defaulted.
+    format_fastq(format_fastq const &) noexcept = default; //!< Defaulted.
+    format_fastq & operator=(format_fastq const &) noexcept = default; //!< Defaulted.
+    format_fastq(format_fastq &&) noexcept = default; //!< Defaulted.
+    format_fastq & operator=(format_fastq &&) noexcept = default; //!< Defaulted.
+    ~format_fastq() noexcept = default; //!< Defaulted.
+    //!\}
+
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
         { "fastq" },
         { "fq"    }
     };
-};
 
-} // namespace seqan
-
-namespace seqan3::detail
-{
-
-//!\brief The seqan3::sequence_file_input_format_REMOVEME specialisation that handles formatted FASTQ input.
-//!\ingroup sequence
-template <>
-class sequence_file_input_format_REMOVEME<format_fastq>
-{
-public:
-    //!\brief Exposes the format tag that this class is specialised with.
-    using format_tag = format_fastq;
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    sequence_file_input_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME const &)                      = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME const &)          = delete;
-    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_input_format_REMOVEME()                                              noexcept = default; //!< Defaulted.
-    //!\}
-
-    //!\copydoc sequence_file_input_format::read
+protected:
+    //!\copydoc sequence_file_input_format::read_sequence_record
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void read(stream_type                                                            & stream,
-              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
-              seq_type                                                               & sequence,
-              id_type                                                                & id,
-              qual_type                                                              & qualities)
+    void read_sequence_record(stream_type                                                               & stream,
+                              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
+                              seq_type                                                                  & sequence,
+                              id_type                                                                   & id,
+                              qual_type                                                                 & qualities)
     {
         auto stream_view = views::istreambuf(stream);
         auto stream_it = begin(stream_view);
@@ -223,40 +207,17 @@ public:
             detail::consume(qview);
         }
     }
-};
 
-//!\brief The seqan3::sequence_file_output_format_REMOVEME specialisation that can write formatted FASTQ.
-//!\ingroup sequence
-template <>
-class sequence_file_output_format_REMOVEME<format_fastq>
-{
-public:
-    //!\brief Exposes the format tag that this class is specialised with.
-    using format_tag = format_fastq;
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    sequence_file_output_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME const &)                      = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME const &)          = delete;
-    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_output_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
-    //!\}
-
-    //!\copydoc sequence_file_output_format::write
+    //!\copydoc sequence_file_output_format::write_sequence_record
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void write(stream_type                     & stream,
-               sequence_file_output_options const & options,
-               seq_type                       && sequence,
-               id_type                        && id,
-               qual_type                      && qualities)
+    void write_sequence_record(stream_type                     & stream,
+                               sequence_file_output_options const & options,
+                               seq_type                       && sequence,
+                               id_type                        && id,
+                               qual_type                      && qualities)
     {
         seqan3::ostreambuf_iterator stream_it{stream};
 
@@ -324,4 +285,4 @@ public:
     }
 };
 
-} // namespace seqan3::detail
+} // namespace seqan

@@ -25,10 +25,12 @@
 namespace seqan3::detail
 {
 
-//!\brief The structure file output format base class.
-template <typename t>
-class structure_file_output_format_REMOVEME
-{};
+template <typename format_type>
+struct structure_file_output_format_exposer : public format_type
+{
+public:
+    using format_type::write_structure_record;
+};
 
 } // namespace seqan3::detail
 
@@ -47,30 +49,30 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT structure_file_output_format = requires(detail::structure_file_output_format_REMOVEME<t> & v,
-                                                    std::ofstream & f,
-                                                    structure_file_output_options & options,
-                                                    rna5_vector & seq,
-                                                    std::string & id,
-                                                    std::vector<std::set<std::pair<double, size_t>>> & bpp,
-                                                    std::vector<wuss51> & structure,
-                                                    std::vector<structured_rna<rna5, wuss51>> & structured_seq,
-                                                    double energy,
-                                                    double react,
-                                                    double react_err,
-                                                    std::string & comment,
-                                                    size_t offset)
+SEQAN3_CONCEPT structure_file_output_format = requires(detail::structure_file_output_format_exposer<t> & v,
+                                                       std::ofstream & f,
+                                                       structure_file_output_options & options,
+                                                       rna5_vector & seq,
+                                                       std::string & id,
+                                                       std::vector<std::set<std::pair<double, size_t>>> & bpp,
+                                                       std::vector<wuss51> & structure,
+                                                       std::vector<structured_rna<rna5, wuss51>> & structured_seq,
+                                                       double energy,
+                                                       double react,
+                                                       double react_err,
+                                                       std::string & comment,
+                                                       size_t offset)
 {
     t::file_extensions;
 
-    { v.write(f, options, seq,            id,          bpp,         structure,
-                          energy,         react,       react_err,   comment,        offset)      } -> void;
-    { v.write(f, options, seq,            id,          bpp,         std::ignore,
-                          std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
-    { v.write(f, options, structured_seq, id,          std::ignore, structured_seq,
-                          energy,         std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
-    { v.write(f, options, std::ignore,    std::ignore, std::ignore, std::ignore,
-                          std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
+    { v.write_structure_record(f, options, seq,            id,          bpp,         structure,
+                               energy,         react,       react_err,   comment,        offset)      } -> void;
+    { v.write_structure_record(f, options, seq,            id,          bpp,         std::ignore,
+                               std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
+    { v.write_structure_record(f, options, structured_seq, id,          std::ignore, structured_seq,
+                               energy,         std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
+    { v.write_structure_record(f, options, std::ignore,    std::ignore, std::ignore, std::ignore,
+                               std::ignore,    std::ignore, std::ignore, std::ignore,    std::ignore) } -> void;
     // the last is required to be compile time valid, but should always throw at run-time.
 };
 //!\endcond
@@ -81,17 +83,17 @@ SEQAN3_CONCEPT structure_file_output_format = requires(detail::structure_file_ou
  * \{
  */
 
-/*!\fn void write(stream_type & stream,
- *                structure_file_output_options const & options,
- *                seq_type && seq,
- *                id_type && id,
- *                bpp_type && bpp,
- *                structure_type && structure,
- *                energy_type && energy,
- *                react_type && react,
- *                react_type && react_err,
- *                comment_type && comment,
- *                offset_type && offset)
+/*!\fn void write_structure_record(stream_type & stream,
+ *                                 structure_file_output_options const & options,
+ *                                 seq_type && seq,
+ *                                 id_type && id,
+ *                                 bpp_type && bpp,
+ *                                 structure_type && structure,
+ *                                 energy_type && energy,
+ *                                 react_type && react,
+ *                                 react_type && react_err,
+ *                                 comment_type && comment,
+ *                                 offset_type && offset)
  * \brief Write the given fields to the specified stream.
  * \tparam stream_type      Output stream, must satisfy seqan3::output_stream_over with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::output_range

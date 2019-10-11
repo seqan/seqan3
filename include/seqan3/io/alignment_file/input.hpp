@@ -859,7 +859,7 @@ protected:
         static_assert(list_traits::contains<format_type, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
 
-        format = detail::alignment_file_input_format_REMOVEME<format_type>{};
+        format = detail::alignment_file_input_format_exposer<format_type>{};
         secondary_stream = detail::make_secondary_istream(*primary_stream);
     }
 
@@ -895,7 +895,8 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::alignment_file_input_format_REMOVEME>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats,
+                                                           detail::alignment_file_input_format_exposer>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
@@ -964,26 +965,25 @@ protected:
         {
             std::visit([&] (auto & f)
             {
-                f.read(*secondary_stream,
-                       options,
-                       ref_seq_info,
-                       *header_ptr,
-                       detail::get_or_ignore<field::SEQ>(record_buffer),
-                       detail::get_or_ignore<field::QUAL>(record_buffer),
-                       detail::get_or_ignore<field::ID>(record_buffer),
-                       detail::get_or_ignore<field::OFFSET>(record_buffer),
-                       detail::get_or_ignore<field::REF_SEQ>(record_buffer),
-                       detail::get_or_ignore<field::REF_ID>(record_buffer),
-                       detail::get_or_ignore<field::REF_OFFSET>(record_buffer),
-                       detail::get_or_ignore<field::ALIGNMENT>(record_buffer),
-                       detail::get_or_ignore<field::CIGAR>(record_buffer),
-                       detail::get_or_ignore<field::FLAG>(record_buffer),
-                       detail::get_or_ignore<field::MAPQ>(record_buffer),
-                       detail::get_or_ignore<field::MATE>(record_buffer),
-                       detail::get_or_ignore<field::TAGS>(record_buffer),
-                       detail::get_or_ignore<field::EVALUE>(record_buffer),
-                       detail::get_or_ignore<field::BIT_SCORE>(record_buffer));
-
+                f.read_alignment_record(*secondary_stream,
+                                        options,
+                                        ref_seq_info,
+                                        *header_ptr,
+                                        detail::get_or_ignore<field::SEQ>(record_buffer),
+                                        detail::get_or_ignore<field::QUAL>(record_buffer),
+                                        detail::get_or_ignore<field::ID>(record_buffer),
+                                        detail::get_or_ignore<field::OFFSET>(record_buffer),
+                                        detail::get_or_ignore<field::REF_SEQ>(record_buffer),
+                                        detail::get_or_ignore<field::REF_ID>(record_buffer),
+                                        detail::get_or_ignore<field::REF_OFFSET>(record_buffer),
+                                        detail::get_or_ignore<field::ALIGNMENT>(record_buffer),
+                                        detail::get_or_ignore<field::CIGAR>(record_buffer),
+                                        detail::get_or_ignore<field::FLAG>(record_buffer),
+                                        detail::get_or_ignore<field::MAPQ>(record_buffer),
+                                        detail::get_or_ignore<field::MATE>(record_buffer),
+                                        detail::get_or_ignore<field::TAGS>(record_buffer),
+                                        detail::get_or_ignore<field::EVALUE>(record_buffer),
+                                        detail::get_or_ignore<field::BIT_SCORE>(record_buffer));
             }, format);
         };
 

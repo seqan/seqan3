@@ -37,7 +37,7 @@
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/format_genbank.hpp>
-#include <seqan3/io/sequence_file/format_sam.hpp>
+#include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/views/convert.hpp>
@@ -296,7 +296,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{detail::sequence_file_output_format_REMOVEME<file_format>{}}
+        format{detail::sequence_file_output_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -310,7 +310,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{detail::sequence_file_output_format_REMOVEME<file_format>{}}
+        format{detail::sequence_file_output_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -634,7 +634,8 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::sequence_file_output_format_REMOVEME>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats,
+                                                           detail::sequence_file_output_format_exposer>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -656,19 +657,19 @@ protected:
         {
             if constexpr (!detail::decays_to_ignore_v<seq_qual_t>)
             {
-                f.write(*secondary_stream,
-                        options,
-                        seq_qual | views::get<0>,
-                        id,
-                        seq_qual | views::get<1>);
+                f.write_sequence_record(*secondary_stream,
+                                        options,
+                                        seq_qual | views::get<0>,
+                                        id,
+                                        seq_qual | views::get<1>);
             }
             else
             {
-                f.write(*secondary_stream,
-                        options,
-                        seq,
-                        id,
-                        qual);
+                f.write_sequence_record(*secondary_stream,
+                                        options,
+                                        seq,
+                                        id,
+                                        qual);
             }
         }, format);
     }
@@ -706,18 +707,18 @@ protected:
                 auto zipped = views::zip(seq_quals, ids);
 
                 for (auto && v : zipped)
-                    f.write(*secondary_stream,
-                            options,
-                            std::get<0>(v) | views::get<0>,
-                            std::get<1>(v),
-                            std::get<0>(v) | views::get<1>);
+                    f.write_sequence_record(*secondary_stream,
+                                            options,
+                                            std::get<0>(v) | views::get<0>,
+                                            std::get<1>(v),
+                                            std::get<0>(v) | views::get<1>);
             }
             else
             {
                 auto zipped = views::zip(seqs, ids, quals);
 
                 for (auto && v : zipped)
-                    f.write(*secondary_stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v));
+                    f.write_sequence_record(*secondary_stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v));
             }
         }, format);
     }

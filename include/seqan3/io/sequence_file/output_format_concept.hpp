@@ -25,10 +25,12 @@
 namespace seqan3::detail
 {
 
-//!\brief The sequence file output format base class.
-template <typename t>
-class sequence_file_output_format_REMOVEME
-{};
+template <typename format_type>
+struct sequence_file_output_format_exposer : public format_type
+{
+public:
+    using format_type::write_sequence_record;
+};
 
 } // namespace seqan3::detail
 
@@ -47,19 +49,20 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_output_format_REMOVEME<t> & v,
-                                                    std::ofstream                  & f,
-                                                    sequence_file_output_options   & options,
-                                                    dna5_vector                    & seq,
-                                                    std::string                    & id,
-                                                    std::vector<phred42>           & qual,
-                                                    std::vector<dna5q>             & seq_qual)
+
+SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_output_format_exposer<t> & v,
+                                                       std::ofstream                                  & f,
+                                                       sequence_file_output_options                   & options,
+                                                       dna5_vector                                    & seq,
+                                                       std::string                                    & id,
+                                                       std::vector<phred42>                           & qual,
+                                                       std::vector<dna5q>                             & seq_qual)
 {
     t::file_extensions;
 
-    { v.write(f, options, seq,         id,          qual)        } -> void;
-    { v.write(f, options, std::ignore, id,          std::ignore) } -> void;
-    { v.write(f, options, std::ignore, std::ignore, std::ignore) } -> void;
+    { v.write_sequence_record(f, options, seq,         id,          qual)        } -> void;
+    { v.write_sequence_record(f, options, std::ignore, id,          std::ignore) } -> void;
+    { v.write_sequence_record(f, options, std::ignore, std::ignore, std::ignore) } -> void;
     // the last is required to be compile time valid, but should always throw at run-time.
 };
 //!\endcond
@@ -70,7 +73,7 @@ SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_out
  * \{
  */
 
-/*!\fn void write(stream_type & stream, seqan3::sequence_file_output_options const & options, seq_type && sequence,
+/*!\fn void write_sequence_record(stream_type & stream, seqan3::sequence_file_output_options const & options, seq_type && sequence,
  *                id_type && id, qual_type && qualities)
  * \brief Write the given fields to the specified stream.
  * \tparam stream_type      Output stream, must satisfy seqan3::output_stream_over with `char`.

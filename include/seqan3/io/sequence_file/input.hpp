@@ -41,7 +41,7 @@
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/format_genbank.hpp>
-#include <seqan3/io/sequence_file/format_sam.hpp>
+#include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
 namespace seqan3
@@ -549,7 +549,7 @@ public:
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
-        format{detail::sequence_file_input_format_REMOVEME<file_format>{}}
+        format{detail::sequence_file_input_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -565,7 +565,7 @@ public:
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
-        format{detail::sequence_file_input_format_REMOVEME<file_format>{}}
+        format{detail::sequence_file_input_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -747,7 +747,8 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::sequence_file_input_format_REMOVEME>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats,
+                                                           detail::sequence_file_input_format_exposer>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -772,19 +773,19 @@ protected:
             // read new record
             if constexpr (selected_field_ids::contains(field::SEQ_QUAL))
             {
-                f.read(*secondary_stream,
-                       options,
-                       detail::get_or_ignore<field::SEQ_QUAL>(record_buffer),
-                       detail::get_or_ignore<field::ID>(record_buffer),
-                       detail::get_or_ignore<field::SEQ_QUAL>(record_buffer));
+                f.read_sequence_record(*secondary_stream,
+                                       options,
+                                       detail::get_or_ignore<field::SEQ_QUAL>(record_buffer),
+                                       detail::get_or_ignore<field::ID>(record_buffer),
+                                       detail::get_or_ignore<field::SEQ_QUAL>(record_buffer));
             }
             else
             {
-                f.read(*secondary_stream,
-                       options,
-                       detail::get_or_ignore<field::SEQ>(record_buffer),
-                       detail::get_or_ignore<field::ID>(record_buffer),
-                       detail::get_or_ignore<field::QUAL>(record_buffer));
+                f.read_sequence_record(*secondary_stream,
+                                       options,
+                                       detail::get_or_ignore<field::SEQ>(record_buffer),
+                                       detail::get_or_ignore<field::ID>(record_buffer),
+                                       detail::get_or_ignore<field::QUAL>(record_buffer));
             }
         }, format);
     }

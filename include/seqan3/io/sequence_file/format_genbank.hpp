@@ -43,7 +43,7 @@
 namespace seqan3
 {
 
-/*!\brief       The GenBank format (tag).
+/*!\brief       The GenBank format.
  * \implements  seqan3::sequence_file_input_format
  * \implements  seqan3::sequence_file_output_format
  * \ingroup     sequence
@@ -69,8 +69,20 @@ namespace seqan3
  * Qualities passed to the write function are ignored.
  *
  */
-struct format_genbank
+class format_genbank
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    format_genbank() noexcept = default; //!< Defaulted.
+    format_genbank(format_genbank const &) noexcept = default; //!< Defaulted.
+    format_genbank & operator=(format_genbank const &) noexcept = default; //!< Defaulted.
+    format_genbank(format_genbank &&) noexcept = default; //!< Defaulted.
+    format_genbank & operator=(format_genbank &&) noexcept = default; //!< Defaulted.
+    ~format_genbank() noexcept = default; //!< Defaulted.
+    //!\}
+
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
@@ -78,46 +90,19 @@ struct format_genbank
         { "gb" },
         { "gbk" },
     };
-};
 
-} // namespace seqan
-
-namespace seqan3::detail
-{
-
-//!\brief The seqan3::sequence_file_input_format_REMOVEME specialisation that handles formatted Genbank input.
-//!\ingroup sequence
-template <>
-class sequence_file_input_format_REMOVEME<format_genbank>
-{
-public:
-    //!\brief Exposes the format tag that this class is specialised with.
-    using format_tag = format_genbank;
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    sequence_file_input_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME const &)                      = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME const &)          = delete;
-    sequence_file_input_format_REMOVEME(sequence_file_input_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_input_format_REMOVEME & operator=(sequence_file_input_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_input_format_REMOVEME()                                              noexcept = default; //!< Defaulted.
-    //!\}
-
-    //!\copydoc sequence_file_input_format::read
+protected:
+    //!\copydoc sequence_file_input_format::read_sequence_record
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void read(stream_type                                                               & stream,
-              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
-              seq_type                                                                  & sequence,
-              id_type                                                                   & id,
-              qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
+    void read_sequence_record(stream_type & stream,
+                              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
+                              seq_type    & sequence,
+                              id_type     & id,
+                              qual_type   & SEQAN3_DOXYGEN_ONLY(qualities))
     {
         auto stream_view = views::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
@@ -192,40 +177,17 @@ public:
             ++stream_it; // consume "/n"
         }
     }
-};
 
-//!\brief The seqan3::sequence_file_output_format_REMOVEME specialisation that can write formatted Genbank output.
-//!\ingroup sequence
-template <>
-class sequence_file_output_format_REMOVEME<format_genbank>
-{
-public:
-    //!\brief Exposes the format tag that this class is specialised with.
-    using format_tag = format_genbank;
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    sequence_file_output_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME const &)                      = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME const &)          = delete;
-    sequence_file_output_format_REMOVEME(sequence_file_output_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
-    sequence_file_output_format_REMOVEME & operator=(sequence_file_output_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
-    ~sequence_file_output_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
-    //!\}
-
-    //!\copydoc sequence_file_output_format::write
+    //!\copydoc sequence_file_output_format::write_sequence_record
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void write(stream_type                        & stream,
-               sequence_file_output_options const & options,
-               seq_type                           && sequence,
-               id_type                            && id,
-               qual_type                          && SEQAN3_DOXYGEN_ONLY(qualities))
+    void write_sequence_record(stream_type                        & stream,
+                               sequence_file_output_options const & options,
+                               seq_type                           && sequence,
+                               id_type                            && id,
+                               qual_type                          && SEQAN3_DOXYGEN_ONLY(qualities))
     {
         seqan3::ostreambuf_iterator stream_it{stream};
         size_t sequence_size{0};
@@ -292,4 +254,4 @@ public:
     }
 };
 
-} // namespace seqan3::detail
+} // namespace seqan

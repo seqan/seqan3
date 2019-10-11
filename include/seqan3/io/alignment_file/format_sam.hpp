@@ -6,8 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::format_sam tag and the seqan3::alignment_file_input_format_REMOVEME and
- *        seqan3::alignment_file_output_format_REMOVEME specialisation for this tag.
+ * \brief Provides the seqan3::format_sam.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -34,6 +33,7 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/iterator.hpp>
+#include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/char_to.hpp>
@@ -48,7 +48,6 @@
 #include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
-#include <seqan3/version.hpp>
 
 namespace seqan3
 {
@@ -125,8 +124,20 @@ namespace seqan3
  * The SAM header (if present) is read/written once in the beginning before the
  * first record is read/written.
  */
-struct format_sam
+class format_sam
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    format_sam() = default; //!< Defaulted.
+    format_sam(format_sam const &) = default; //!< Defaulted.
+    format_sam & operator=(format_sam const &) = default; //!< Defaulted.
+    format_sam(format_sam &&) = default; //!< Defaulted.
+    format_sam & operator=(format_sam &&) = default; //!< Defaulted.
+    ~format_sam() = default; //!< Defaulted.
+    //!\}
+
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
@@ -135,36 +146,80 @@ struct format_sam
 
     //!\brief The format version string.
     static constexpr char format_version[4] = "1.6";
-};
 
-} // namespace seqan3
+protected:
+    // Note that some member variables and functions are protected, because format_bam inherits from format_sam.
 
-namespace seqan3::detail
-{
+    //!\brief A buffer used when parsing arithmetic values with std::from_chars.
+    std::array<char, 316> buffer{}; // Doubles can be up to 316 characters
 
-//!\brief The seqan3::alignment_file_input_format_REMOVEME specialisation that handles formatted SAM input.
-//!\ingroup alignment_file
-template <>
-class alignment_file_input_format_REMOVEME<format_sam>
-{
-public:
-    //!\brief Exposes the format tag that this class is specialised with
-    using format_tag = format_sam;
+    //!\brief A variable that tracks whether the content of header has been written or not.
+    bool written_header{false};
 
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    alignment_file_input_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_input_format_REMOVEME(alignment_file_input_format_REMOVEME const &)                      = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_input_format_REMOVEME & operator=(alignment_file_input_format_REMOVEME const &)          = delete;
-    alignment_file_input_format_REMOVEME(alignment_file_input_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
-    alignment_file_input_format_REMOVEME & operator=(alignment_file_input_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
-    ~alignment_file_input_format_REMOVEME()                                               noexcept = default; //!< Defaulted.
-    //!\}
+    //!\copydoc sequence_file_input_format::read_sequence_record
+    template <typename stream_type,     // constraints checked by file
+              typename seq_legal_alph_type, bool seq_qual_combined,
+              typename seq_type,        // other constraints checked inside function
+              typename id_type,
+              typename qual_type>
+    void read_sequence_record(stream_type                                                               & stream,
+                              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
+                              seq_type                                                                  & sequence,
+                              id_type                                                                   & id,
+                              qual_type                                                                 & qualities)
+    {
+        alignment_file_input_options<seq_legal_alph_type> align_options;
 
-    //!\copydoc alignment_file_input_format::read
+        if constexpr (seq_qual_combined)
+        {
+            tmp_qual.clear();
+            read_alignment_record(stream, align_options, std::ignore, default_header, sequence, tmp_qual, id,
+                                  std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
+                                  std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
+
+            for (auto sit = tmp_qual.begin(), dit = std::ranges::begin(sequence); sit != tmp_qual.end(); ++sit, ++dit)
+                get<1>(*dit).assign_char(*sit);
+        }
+        else
+        {
+            read_alignment_record(stream, align_options, std::ignore, default_header, sequence, qualities, id,
+                                  std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
+                                  std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
+        }
+
+        if constexpr (!detail::decays_to_ignore_v<seq_type>)
+            if (std::ranges::distance(sequence) == 0)
+                throw parse_error{"The sequence information must not be empty."};
+        if constexpr (!detail::decays_to_ignore_v<id_type>)
+            if (std::ranges::distance(id) == 0)
+                throw parse_error{"The id information must not be empty."};
+
+        if (options.truncate_ids)
+            id = id | views::take_until_and_consume(is_space) | views::to<id_type>;
+    }
+
+    //!\copydoc sequence_file_output_format::write_sequence_record
+    template <typename stream_type,     // constraints checked by file
+              typename seq_type,        // other constraints checked inside function
+              typename id_type,
+              typename qual_type>
+    void write_sequence_record(stream_type                        & stream,
+                               sequence_file_output_options const & SEQAN3_DOXYGEN_ONLY(options),
+                               seq_type                           && sequence,
+                               id_type                            && id,
+                               qual_type                          && qualities)
+    {
+        using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
+        using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
+
+        alignment_file_output_options output_options;
+
+        write_alignment_record(stream, output_options, std::ignore, default_or(sequence), default_or(qualities),
+                               default_or(id), 0, std::string_view{}, std::string_view{}, -1, default_align_t{},
+                               std::vector<cigar>{}, 0, 0, default_mate_t{}, sam_tag_dictionary{}, 0, 0);
+    }
+
+    //!\copydoc alignment_file_input_format::read_alignment_record
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
               typename ref_seqs_type,
@@ -184,25 +239,25 @@ public:
               typename tag_dict_type,
               typename e_value_type,
               typename bit_score_type>
-    void read(stream_type                                             & stream,
-              alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
-              ref_seqs_type                                           & ref_seqs,
-              alignment_file_header<ref_ids_type>                     & header,
-              seq_type                                                & seq,
-              qual_type                                               & qual,
-              id_type                                                 & id,
-              offset_type                                             & offset,
-              ref_seq_type                                            & SEQAN3_DOXYGEN_ONLY(ref_seq),
-              ref_id_type                                             & ref_id,
-              ref_offset_type                                         & ref_offset,
-              align_type                                              & align,
-              cigar_type                                              & cigar_vector,
-              flag_type                                               & flag,
-              mapq_type                                               & mapq,
-              mate_type                                               & mate,
-              tag_dict_type                                           & tag_dict,
-              e_value_type                                            & SEQAN3_DOXYGEN_ONLY(e_value),
-              bit_score_type                                          & SEQAN3_DOXYGEN_ONLY(bit_score))
+    void read_alignment_record(stream_type                                             & stream,
+              alignment_file_input_options<seq_legal_alph_type>                  const & SEQAN3_DOXYGEN_ONLY(options),
+              ref_seqs_type                                                            & ref_seqs,
+              alignment_file_header<ref_ids_type>                                      & header,
+              seq_type                                                                 & seq,
+              qual_type                                                                & qual,
+              id_type                                                                  & id,
+              offset_type                                                              & offset,
+              ref_seq_type                                                             & SEQAN3_DOXYGEN_ONLY(ref_seq),
+              ref_id_type                                                              & ref_id,
+              ref_offset_type                                                          & ref_offset,
+              align_type                                                               & align,
+              cigar_type                                                               & cigar_vector,
+              flag_type                                                                & flag,
+              mapq_type                                                                & mapq,
+              mate_type                                                                & mate,
+              tag_dict_type                                                            & tag_dict,
+              e_value_type                                                             & SEQAN3_DOXYGEN_ONLY(e_value),
+              bit_score_type                                                           & SEQAN3_DOXYGEN_ONLY(bit_score))
     {
         static_assert(detail::decays_to_ignore_v<ref_offset_type> ||
                       detail::is_type_specialisation_of_v<ref_offset_type, std::optional>,
@@ -387,8 +442,9 @@ public:
             if (std::ranges::distance(seq) != 0 && std::ranges::distance(qual) != 0 &&
                 std::ranges::distance(seq) != std::ranges::distance(qual))
             {
-                throw format_error{to_string("Sequence length (", std::ranges::distance(seq), ") and quality length (",
-                                             std::ranges::distance(qual), ") must be the same.")};
+                throw format_error{detail::to_string("Sequence length (", std::ranges::distance(seq),
+                                                     ") and quality length (", std::ranges::distance(qual),
+                                                     ") must be the same.")};
             }
         }
 
@@ -426,13 +482,279 @@ public:
             std::swap(cigar_vector, tmp_cigar_vector);
     }
 
-protected:
-    //!\privatesection
-    //!\brief A buffer used when parsing arithmetic values with std::from_chars.
-    std::array<char, 316> buffer{}; // Doubles can be up to 316 characters
+    //!\copydoc alignment_file_output_format::write_alignment_record
+    template <typename stream_type,
+              typename header_type,
+              typename seq_type,
+              typename id_type,
+              typename ref_seq_type,
+              typename ref_id_type,
+              typename align_type,
+              typename qual_type,
+              typename mate_type,
+              typename tag_dict_type,
+              typename e_value_type,
+              typename bit_score_type>
+    void write_alignment_record(stream_type                            &  stream,
+               alignment_file_output_options                     const &  options,
+               header_type                                            && header,
+               seq_type                                               && seq,
+               qual_type                                              && qual,
+               id_type                                                && id,
+               int32_t                                                   offset,
+               ref_seq_type                                           && SEQAN3_DOXYGEN_ONLY(ref_seq),
+               ref_id_type                                            && ref_id,
+               std::optional<int32_t>                                    ref_offset,
+               align_type                                             && align,
+               std::vector<cigar>                                const & cigar_vector,
+               uint16_t                                                  flag,
+               uint8_t                                                   mapq,
+               mate_type                                              && mate,
+               tag_dict_type                                          && tag_dict,
+               e_value_type                                           && SEQAN3_DOXYGEN_ONLY(e_value),
+               bit_score_type                                         && SEQAN3_DOXYGEN_ONLY(bit_score))
+    {
+        /* Note the following general things:
+         *
+         * - Given the SAM specifications, all fields may be empty
+         *
+         * - arithmetic values default to 0 while all others default to '*'
+         *
+         * - Because of the former, arithmetic values can be directly streamed
+         *   into 'stream' as operator<< is defined for all arithmetic types
+         *   and the default value (0) is also the SAM default.
+         *
+         * - All other non-arithmetic values need to be checked for emptiness
+         */
 
-    //!\brief Tracks whether reference information (\@SR tag) were found in the header
-    bool ref_info_present_in_header{false};
+        // ---------------------------------------------------------------------
+        // Type Requirements (as static asserts for user friendliness)
+        // ---------------------------------------------------------------------
+        static_assert((std::ranges::forward_range<seq_type>        &&
+                      alphabet<reference_t<seq_type>>),
+                      "The seq object must be a std::ranges::forward_range over "
+                      "letters that model seqan3::alphabet.");
+
+        static_assert((std::ranges::forward_range<id_type>         &&
+                      alphabet<reference_t<id_type>>),
+                      "The id object must be a std::ranges::forward_range over "
+                      "letters that model seqan3::alphabet.");
+
+        if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
+        {
+            static_assert((std::ranges::forward_range<ref_id_type> ||
+                           std::integral<std::remove_reference_t<ref_id_type>> ||
+                           detail::is_type_specialisation_of_v<remove_cvref_t<ref_id_type>, std::optional>),
+                          "The ref_id object must be a std::ranges::forward_range "
+                          "over letters that model seqan3::alphabet.");
+
+            if constexpr (std::integral<remove_cvref_t<ref_id_type>> ||
+                          detail::is_type_specialisation_of_v<remove_cvref_t<ref_id_type>, std::optional>)
+                static_assert(!detail::decays_to_ignore_v<header_type>,
+                              "If you give indices as reference id information the header must also be present.");
+        }
+
+        static_assert(tuple_like<remove_cvref_t<align_type>>,
+                      "The align object must be a std::pair of two ranges whose "
+                      "value_type is comparable to seqan3::gap");
+
+        static_assert((std::tuple_size_v<remove_cvref_t<align_type>> == 2 &&
+                       std::equality_comparable_with<gap, reference_t<decltype(std::get<0>(align))>> &&
+                       std::equality_comparable_with<gap, reference_t<decltype(std::get<1>(align))>>),
+                      "The align object must be a std::pair of two ranges whose "
+                      "value_type is comparable to seqan3::gap");
+
+        static_assert((std::ranges::forward_range<qual_type>       &&
+                       alphabet<reference_t<qual_type>>),
+                      "The qual object must be a std::ranges::forward_range "
+                      "over letters that model seqan3::alphabet.");
+
+        static_assert(tuple_like<remove_cvref_t<mate_type>>,
+                      "The mate object must be a std::tuple of size 3 with "
+                      "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
+                      "2) a std::integral or std::optional<std::integral>, and "
+                      "3) a std::integral.");
+
+        static_assert(((std::ranges::forward_range<decltype(std::get<0>(mate))>     ||
+                        std::integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
+                        detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>) &&
+                      (std::integral<remove_cvref_t<decltype(std::get<1>(mate))>> ||
+                       detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<1>(mate))>, std::optional>) &&
+                      std::integral<remove_cvref_t<decltype(std::get<2>(mate))>>),
+                      "The mate object must be a std::tuple of size 3 with "
+                      "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
+                      "2) a std::integral or std::optional<std::integral>, and "
+                      "3) a std::integral.");
+
+        if constexpr (std::integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
+                      detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>)
+            static_assert(!detail::decays_to_ignore_v<header_type>,
+                          "If you give indices as mate reference id information the header must also be present.");
+
+        static_assert(std::same_as<remove_cvref_t<tag_dict_type>, sam_tag_dictionary>,
+                      "The tag_dict object must be of type seqan3::sam_tag_dictionary.");
+
+        // ---------------------------------------------------------------------
+        // logical Requirements
+        // ---------------------------------------------------------------------
+        if constexpr (!detail::decays_to_ignore_v<header_type> &&
+                      !detail::decays_to_ignore_v<ref_id_type> &&
+                      !std::integral<std::remove_reference_t<ref_id_type>> &&
+                      !detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
+        {
+
+            if (options.sam_require_header && !std::ranges::empty(ref_id))
+            {
+                auto id_it = header.ref_dict.end();
+
+                if constexpr (std::ranges::contiguous_range<decltype(ref_id)> &&
+                              std::ranges::sized_range<decltype(ref_id)> &&
+                              forwarding_range<decltype(ref_id)>)
+                {
+                    id_it = header.ref_dict.find(std::span{std::ranges::data(ref_id), std::ranges::size(ref_id)});
+                }
+                else
+                {
+                    using header_ref_id_type = std::remove_reference_t<decltype(header.ref_ids()[0])>;
+
+                    static_assert(implicitly_convertible_to<ref_id_type, header_ref_id_type>,
+                                  "The ref_id type is not convertible to the reference id information stored in the "
+                                  "reference dictionary of the header object.");
+
+                    id_it = header.ref_dict.find(ref_id);
+                }
+
+                if (id_it == header.ref_dict.end()) // no reference id matched
+                    throw format_error{detail::to_string("The ref_id '", ref_id, "' was not in the list of references:",
+                                                         header.ref_ids())};
+            }
+        }
+
+        if (ref_offset.has_value() && (ref_offset.value() + 1) < 0)
+            throw format_error{"The ref_offset object must be an std::integral >= 0."};
+
+        // ---------------------------------------------------------------------
+        // Writing the Header on first call
+        // ---------------------------------------------------------------------
+        if constexpr (!detail::decays_to_ignore_v<header_type>)
+        {
+            if (options.sam_require_header && !written_header)
+            {
+                write_header(stream, options, header);
+                written_header = true;
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // Writing the Record
+        // ---------------------------------------------------------------------
+        seqan3::ostreambuf_iterator stream_it{stream};
+        char const separator{'\t'};
+
+        write_range(stream_it, std::forward<id_type>(id));
+
+        stream << separator;
+
+        stream << flag << separator;
+
+        if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
+        {
+            if constexpr (std::integral<std::remove_reference_t<ref_id_type>>)
+            {
+                write_range(stream_it, (header.ref_ids())[ref_id]);
+            }
+            else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
+            {
+                if (ref_id.has_value())
+                    write_range(stream_it, (header.ref_ids())[ref_id.value()]);
+                else
+                    stream << '*';
+            }
+            else
+            {
+                write_range(stream_it, std::forward<ref_id_type>(ref_id));
+            }
+        }
+        else
+        {
+            stream << '*';
+        }
+
+        stream << separator;
+
+        // SAM is 1 based, 0 indicates unmapped read if optional is not set
+        stream << (ref_offset.value_or(-1) + 1) << separator;
+
+        stream << static_cast<unsigned>(mapq) << separator;
+
+        if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
+        {
+            // compute possible distance from alignment end to sequence end
+            // which indicates soft clipping at the end.
+            // This should be replace by a free count_gaps function for
+            // aligned sequences which is more efficient if possible.
+            size_t off_end{std::ranges::size(seq) - offset};
+            for (auto chr : get<1>(align))
+                if (chr == gap{})
+                    ++off_end;
+            off_end -= std::ranges::size(get<1>(align));
+
+            write_range(stream_it, detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));
+        }
+        else if (!cigar_vector.empty())
+        {
+            for (auto & c : cigar_vector)
+                stream << c.to_string(); // returns a small_vector instead of char so write_range doesn't work
+        }
+        else
+        {
+            stream << '*';
+        }
+
+        stream << separator;
+
+        if constexpr (std::integral<std::remove_reference_t<decltype(get<0>(mate))>>)
+        {
+            write_range(stream_it, (header.ref_ids())[get<0>(mate)]);
+        }
+        else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<decltype(get<0>(mate))>, std::optional>)
+        {
+            if (get<0>(mate).has_value())
+                // value_or(0) instead of value() (which is equivalent here) as a
+                // workaround for a ubsan false-positive in GCC8: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90058
+                write_range(stream_it, header.ref_ids()[get<0>(mate).value_or(0)]);
+            else
+                stream << '*';
+        }
+        else
+        {
+            write_range(stream_it, get<0>(mate));
+        }
+
+        stream << separator;
+
+        if constexpr (detail::is_type_specialisation_of_v<remove_cvref_t<decltype(get<1>(mate))>, std::optional>)
+        {
+            // SAM is 1 based, 0 indicates unmapped read if optional is not set
+            stream << (get<1>(mate).value_or(-1) + 1) << separator;
+        }
+        else
+        {
+            stream << get<1>(mate) << separator;
+        }
+
+        stream << get<2>(mate) << separator;
+
+        write_range(stream_it, std::forward<seq_type>(seq));
+
+        stream << separator;
+
+        write_range(stream_it, std::forward<qual_type>(qual));
+
+        write_tag_fields(stream, std::forward<tag_dict_type>(tag_dict), separator);
+
+        detail::write_eol(stream_it, options.add_carriage_return);
+    }
 
     /*!\brief Checks for known reference ids or adds a new reference is and assigns a reference id to `ref_id`.
      * \tparam ref_id_type         The type of the reference id (usually a views::all over ref_id_tmp_type).
@@ -485,7 +807,6 @@ protected:
         }
     }
 
-public:
     /*!\brief Updates the sequence lengths by `cigar_count` depending on the cigar operation `op`.
      * \param[in, out]  ref_length      The reference sequence's length.
      * \param[in, out]  seq_length      The query sequence's length.
@@ -507,7 +828,6 @@ public:
         }
     };
 
-protected:
     /*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
      * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
      *                          std::ranges::input_range.
@@ -968,8 +1288,8 @@ protected:
                     auto id_it = hdr.ref_dict.find(id);
 
                     if (id_it == hdr.ref_dict.end())
-                        throw format_error{to_string("Unknown reference name '", id, "' found in SAM header ",
-                                                     "(header.ref_ids(): ", hdr.ref_ids(), ").")};
+                        throw format_error{detail::to_string("Unknown reference name '", id, "' found in SAM header ",
+                                                             "(header.ref_ids(): ", hdr.ref_ids(), ").")};
 
                     auto & given_ref_info = hdr.ref_id_info[id_it->second];
 
@@ -1063,310 +1383,6 @@ protected:
             }
         }
     }
-};
-
-//!\brief The seqan3::alignment_file_output_format_REMOVEME specialisation that can write formatted SAM.
-//!\ingroup alignment_file
-template <>
-class alignment_file_output_format_REMOVEME<format_sam>
-{
-public:
-    //!\brief Exposes the format tag that this class is specialised with
-    using format_tag = format_sam;
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    alignment_file_output_format_REMOVEME()                                                 noexcept = default; //!< Defaulted.
-    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_output_format_REMOVEME(alignment_file_output_format_REMOVEME const &)                      = delete;
-    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_output_format_REMOVEME & operator=(alignment_file_output_format_REMOVEME const &)          = delete;
-    alignment_file_output_format_REMOVEME(alignment_file_output_format_REMOVEME &&)                  noexcept = default; //!< Defaulted.
-    alignment_file_output_format_REMOVEME & operator=(alignment_file_output_format_REMOVEME &&)      noexcept = default; //!< Defaulted.
-    ~alignment_file_output_format_REMOVEME()                                                noexcept = default; //!< Defaulted.
-    //!\}
-
-    //!\copydoc alignment_file_output_format::write
-    template <typename stream_type,
-              typename header_type,
-              typename seq_type,
-              typename id_type,
-              typename ref_seq_type,
-              typename ref_id_type,
-              typename align_type,
-              typename qual_type,
-              typename mate_type,
-              typename tag_dict_type,
-              typename e_value_type,
-              typename bit_score_type>
-    void write(stream_type                            &  stream,
-               alignment_file_output_options const    &  options,
-               header_type                            && header,
-               seq_type                               && seq,
-               qual_type                              && qual,
-               id_type                                && id,
-               int32_t                                   offset,
-               ref_seq_type                           && SEQAN3_DOXYGEN_ONLY(ref_seq),
-               ref_id_type                            && ref_id,
-               std::optional<int32_t>                    ref_offset,
-               align_type                             && align,
-               std::vector<cigar>                const & cigar_vector,
-               uint16_t                                  flag,
-               uint8_t                                   mapq,
-               mate_type                              && mate,
-               tag_dict_type                          && tag_dict,
-               e_value_type                           && SEQAN3_DOXYGEN_ONLY(e_value),
-               bit_score_type                         && SEQAN3_DOXYGEN_ONLY(bit_score))
-    {
-        /* Note the following general things:
-         *
-         * - Given the SAM specifications, all fields may be empty
-         *
-         * - arithmetic values default to 0 while all others default to '*'
-         *
-         * - Because of the former, arithmetic values can be directly streamed
-         *   into 'stream' as operator<< is defined for all arithmetic types
-         *   and the default value (0) is also the SAM default.
-         *
-         * - All other non-arithmetic values need to be checked for emptiness
-         */
-
-        // ---------------------------------------------------------------------
-        // Type Requirements (as static asserts for user friendliness)
-        // ---------------------------------------------------------------------
-        static_assert((std::ranges::forward_range<seq_type>        &&
-                      alphabet<reference_t<seq_type>>),
-                      "The seq object must be a std::ranges::forward_range over "
-                      "letters that model seqan3::alphabet.");
-
-        static_assert((std::ranges::forward_range<id_type>         &&
-                      alphabet<reference_t<id_type>>),
-                      "The id object must be a std::ranges::forward_range over "
-                      "letters that model seqan3::alphabet.");
-
-        if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
-        {
-            static_assert((std::ranges::forward_range<ref_id_type> ||
-                           std::integral<std::remove_reference_t<ref_id_type>> ||
-                           detail::is_type_specialisation_of_v<remove_cvref_t<ref_id_type>, std::optional>),
-                          "The ref_id object must be a std::ranges::forward_range "
-                          "over letters that model seqan3::alphabet.");
-
-            if constexpr (std::integral<remove_cvref_t<ref_id_type>> ||
-                          detail::is_type_specialisation_of_v<remove_cvref_t<ref_id_type>, std::optional>)
-                static_assert(!detail::decays_to_ignore_v<header_type>,
-                              "If you give indices as reference id information the header must also be present.");
-        }
-
-        static_assert(tuple_like<remove_cvref_t<align_type>>,
-                      "The align object must be a std::pair of two ranges whose "
-                      "value_type is comparable to seqan3::gap");
-
-        static_assert((std::tuple_size_v<remove_cvref_t<align_type>> == 2 &&
-                       std::equality_comparable_with<gap, reference_t<decltype(std::get<0>(align))>> &&
-                       std::equality_comparable_with<gap, reference_t<decltype(std::get<1>(align))>>),
-                      "The align object must be a std::pair of two ranges whose "
-                      "value_type is comparable to seqan3::gap");
-
-        static_assert((std::ranges::forward_range<qual_type>       &&
-                       alphabet<reference_t<qual_type>>),
-                      "The qual object must be a std::ranges::forward_range "
-                      "over letters that model seqan3::alphabet.");
-
-        static_assert(tuple_like<remove_cvref_t<mate_type>>,
-                      "The mate object must be a std::tuple of size 3 with "
-                      "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
-                      "2) a std::integral or std::optional<std::integral>, and "
-                      "3) a std::integral.");
-
-        static_assert(((std::ranges::forward_range<decltype(std::get<0>(mate))>     ||
-                        std::integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
-                        detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>) &&
-                      (std::integral<remove_cvref_t<decltype(std::get<1>(mate))>> ||
-                       detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<1>(mate))>, std::optional>) &&
-                      std::integral<remove_cvref_t<decltype(std::get<2>(mate))>>),
-                      "The mate object must be a std::tuple of size 3 with "
-                      "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
-                      "2) a std::integral or std::optional<std::integral>, and "
-                      "3) a std::integral.");
-
-        if constexpr (std::integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
-                      detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>)
-            static_assert(!detail::decays_to_ignore_v<header_type>,
-                          "If you give indices as mate reference id information the header must also be present.");
-
-        static_assert(std::same_as<remove_cvref_t<tag_dict_type>, sam_tag_dictionary>,
-                      "The tag_dict object must be of type seqan3::sam_tag_dictionary.");
-
-        // ---------------------------------------------------------------------
-        // logical Requirements
-        // ---------------------------------------------------------------------
-        if constexpr (!detail::decays_to_ignore_v<header_type> &&
-                      !detail::decays_to_ignore_v<ref_id_type> &&
-                      !std::integral<std::remove_reference_t<ref_id_type>> &&
-                      !detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
-        {
-
-            if (options.sam_require_header && !std::ranges::empty(ref_id))
-            {
-                auto id_it = header.ref_dict.end();
-
-                if constexpr (std::ranges::contiguous_range<decltype(ref_id)> &&
-                              std::ranges::sized_range<decltype(ref_id)> &&
-                              forwarding_range<decltype(ref_id)>)
-                {
-                    id_it = header.ref_dict.find(std::span{std::ranges::data(ref_id), std::ranges::size(ref_id)});
-                }
-                else
-                {
-                    using header_ref_id_type = std::remove_reference_t<decltype(header.ref_ids()[0])>;
-
-                    static_assert(implicitly_convertible_to<ref_id_type, header_ref_id_type>,
-                                  "The ref_id type is not convertible to the reference id information stored in the "
-                                  "reference dictionary of the header object.");
-
-                    id_it = header.ref_dict.find(ref_id);
-                }
-
-                if (id_it == header.ref_dict.end()) // no reference id matched
-                    throw format_error{detail::to_string("The ref_id '", ref_id, "' was not in the list of references:",
-                                                         header.ref_ids())};
-            }
-        }
-
-        if (ref_offset.has_value() && (ref_offset.value() + 1) < 0)
-            throw format_error{"The ref_offset object must be an std::integral >= 0."};
-
-        // ---------------------------------------------------------------------
-        // Writing the Header on first call
-        // ---------------------------------------------------------------------
-        if constexpr (!detail::decays_to_ignore_v<header_type>)
-        {
-            if (options.sam_require_header && !written_header)
-            {
-                write_header(stream, options, header);
-                written_header = true;
-            }
-        }
-
-        // ---------------------------------------------------------------------
-        // Writing the Record
-        // ---------------------------------------------------------------------
-        seqan3::ostreambuf_iterator stream_it{stream};
-        char const separator{'\t'};
-
-        write_range(stream_it, std::forward<id_type>(id));
-
-        stream << separator;
-
-        stream << flag << separator;
-
-        if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
-        {
-            if constexpr (std::integral<std::remove_reference_t<ref_id_type>>)
-            {
-                write_range(stream_it, (header.ref_ids())[ref_id]);
-            }
-            else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
-            {
-                if (ref_id.has_value())
-                    write_range(stream_it, (header.ref_ids())[ref_id.value()]);
-                else
-                    stream << '*';
-            }
-            else
-            {
-                write_range(stream_it, std::forward<ref_id_type>(ref_id));
-            }
-        }
-        else
-        {
-            stream << '*';
-        }
-
-        stream << separator;
-
-        // SAM is 1 based, 0 indicates unmapped read if optional is not set
-        stream << (ref_offset.value_or(-1) + 1) << separator;
-
-        stream << static_cast<unsigned>(mapq) << separator;
-
-        if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
-        {
-            // compute possible distance from alignment end to sequence end
-            // which indicates soft clipping at the end.
-            // This should be replace by a free count_gaps function for
-            // aligned sequences which is more efficient if possible.
-            size_t off_end{std::ranges::size(seq) - offset};
-            for (auto chr : get<1>(align))
-                if (chr == gap{})
-                    ++off_end;
-            off_end -= std::ranges::size(get<1>(align));
-
-            write_range(stream_it, detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));
-        }
-        else if (!cigar_vector.empty())
-        {
-            for (auto & c : cigar_vector)
-                stream << c.to_string(); // returns a small_vector instead of char so write_range doesn't work
-        }
-        else
-        {
-            stream << '*';
-        }
-
-        stream << separator;
-
-        if constexpr (std::integral<std::remove_reference_t<decltype(get<0>(mate))>>)
-        {
-            write_range(stream_it, (header.ref_ids())[get<0>(mate)]);
-        }
-        else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<decltype(get<0>(mate))>, std::optional>)
-        {
-            if (get<0>(mate).has_value())
-                // value_or(0) instead of value() (which is equivalent here) as a
-                // workaround for a ubsan false-positive in GCC8: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90058
-                write_range(stream_it, header.ref_ids()[get<0>(mate).value_or(0)]);
-            else
-                stream << '*';
-        }
-        else
-        {
-            write_range(stream_it, get<0>(mate));
-        }
-
-        stream << separator;
-
-        if constexpr (detail::is_type_specialisation_of_v<remove_cvref_t<decltype(get<1>(mate))>, std::optional>)
-        {
-            // SAM is 1 based, 0 indicates unmapped read if optional is not set
-            stream << (get<1>(mate).value_or(-1) + 1) << separator;
-        }
-        else
-        {
-            stream << get<1>(mate) << separator;
-        }
-
-        stream << get<2>(mate) << separator;
-
-        write_range(stream_it, std::forward<seq_type>(seq));
-
-        stream << separator;
-
-        write_range(stream_it, std::forward<qual_type>(qual));
-
-        write_tag_fields(stream, std::forward<tag_dict_type>(tag_dict), separator);
-
-        detail::write_eol(stream_it, options.add_carriage_return);
-    }
-
-protected:
-    //!\privatesection
-    //!\brief The format version string.
-    static constexpr char format_version[4] = "1.6";
-    //!\brief A variable that tracks whether the content of header has been written or not.
-    bool written_header{false};
 
     /*!\brief Writes a field value to the stream.
      * \tparam stream_it_t The stream iterator type.
@@ -1594,6 +1610,32 @@ protected:
             detail::write_eol(stream_it, options.add_carriage_return);
         }
     }
+
+private:
+    //!\brief Stores quality values temporarily if seq and qual information are combined (not supported by SAM yet).
+    std::string tmp_qual{};
+
+    //!\brief An empty dummy container to pass to align_format.write() such that an empty field is written.
+    static constexpr std::string_view dummy{};
+
+    //!\brief The default header for the alignment format.
+    alignment_file_header<> default_header{};
+
+    //!\brief Tracks whether reference information (\@SR tag) were found in the SAM header
+    bool ref_info_present_in_header{false};
+
+    //!brief Returns a reference to dummy if passed a std::ignore.
+    std::string_view const & default_or(detail::ignore_t) const noexcept
+    {
+        return dummy;
+    }
+
+    //!brief Returns the input unchanged.
+    template <typename t>
+    decltype(auto) default_or(t && v) const noexcept
+    {
+        return std::forward<t>(v);
+    }
 };
 
-} // namespace seqan3::detail
+} // namespace seqan3

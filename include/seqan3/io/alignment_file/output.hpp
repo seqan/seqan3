@@ -337,7 +337,7 @@ public:
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{detail::alignment_file_output_format_REMOVEME<file_format>{}}
+        format{detail::alignment_file_output_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -350,7 +350,7 @@ public:
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_type{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{detail::alignment_file_output_format_REMOVEME<file_format>{}}
+        format{detail::alignment_file_output_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -741,7 +741,8 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::alignment_file_output_format_REMOVEME>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats,
+                                                           detail::alignment_file_output_format_exposer>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
@@ -793,11 +794,26 @@ protected:
         {
             // use header from record if explicitly given, e.g. file_output = file_input
             if constexpr (!std::same_as<record_header_ptr_t, std::nullptr_t>)
-                f.write(*secondary_stream, options, *record_header_ptr, std::forward<pack_type>(remainder)...);
+            {
+                f.write_alignment_record(*secondary_stream,
+                                         options,
+                                         *record_header_ptr,
+                                         std::forward<pack_type>(remainder)...);
+            }
             else if constexpr (std::same_as<ref_ids_type, ref_info_not_given>)
-                f.write(*secondary_stream, options, std::ignore, std::forward<pack_type>(remainder)...);
+            {
+                f.write_alignment_record(*secondary_stream,
+                                         options,
+                                         std::ignore,
+                                         std::forward<pack_type>(remainder)...);
+            }
             else
-                f.write(*secondary_stream, options, *header_ptr, std::forward<pack_type>(remainder)...);
+            {
+                f.write_alignment_record(*secondary_stream,
+                                         options,
+                                         *header_ptr,
+                                         std::forward<pack_type>(remainder)...);
+            }
         }, format);
     }
 
