@@ -87,17 +87,17 @@ template <typename test_type>
 struct iterator_fixture<inner_iterator<test_type>> : iterator_fixture<outer_iterator<test_type>>
 {
     using base_t = iterator_fixture<outer_iterator<test_type>>;
+    using base_t::N;
 
     using iterator_tag = std::forward_iterator_tag;
     static constexpr bool const_iterable = false;
 
     decltype(*base_t::test_range.begin()) test_range = *base_t::test_range.begin();
-    std::vector<std::pair<std::pair<size_t, size_t>,
-                          seqan3::detail::trace_directions>> expected_range{{{0, 0}, base_t::N},
-                                                                            {{1, 0}, base_t::N},
-                                                                            {{2, 0}, base_t::N},
-                                                                            {{3, 0}, base_t::N},
-                                                                            {{4, 0}, base_t::N}};
+    std::vector<std::pair<std::pair<size_t, size_t>, seqan3::detail::trace_directions>> expected_range{{{0, 0}, N},
+                                                                                                       {{1, 0}, N},
+                                                                                                       {{2, 0}, N},
+                                                                                                       {{3, 0}, N},
+                                                                                                       {{4, 0}, N}};
 
     template <typename lhs_t, typename rhs_t>
     static void expect_eq(lhs_t lhs, rhs_t rhs)
