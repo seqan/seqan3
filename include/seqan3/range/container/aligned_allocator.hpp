@@ -11,7 +11,6 @@
  */
 
 #pragma once
-
 #include <limits>
 #include <memory>
 #include <type_traits>
@@ -107,6 +106,9 @@ public:
         void * p{};
         if (int res = posix_memalign(&p, alignment, n * sizeof(value_type)); res == 0 && p != nullptr)
             return static_cast<pointer>(p);
+#elif defined(_WIN32)
+        if (auto p = static_cast<pointer>(_aligned_malloc(n * sizeof(value_type), alignment)))
+            return p;
 #else
         // NOTE:
         // Allocate size bytes of uninitialized storage whose alignment is
