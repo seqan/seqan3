@@ -19,6 +19,7 @@
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/to_string.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/io/detail/misc.hpp>
@@ -138,7 +139,7 @@ public:
      */
     template <std::ranges::forward_range range_type>
     //!\cond
-        requires arithmetic<value_type_t<range_type>>
+        requires arithmetic<std::ranges::range_value_t<range_type>>
     //!\endcond
     void operator()(range_type const & range) const
     {
@@ -165,9 +166,13 @@ private:
  *
  * \details
  *
- * On construction, the validator must receive a list (vector) of valid values.
+ * On construction, the validator must receive a range or parameter pack of valid values.
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever a given value is not in the given list.
+ *
+ * \note In order to simplify the chaining of validators, the option value type is deduced to `double` for ranges whose
+ *       value type models seqan3::arithmetic, and to `std::string` if the ranges value type is convertible to it.
+ *       Otherwise, the option value type is deduced to the value type of the range.
  *
  * \include test/snippet/argument_parser/validators_2.cpp
  */
@@ -178,11 +183,45 @@ public:
     //!\brief Type of values that are tested by validator
     using value_type = option_value_type;
 
-    /*!\brief Constructing from a vector.
-     * \param[in] v The vector of valid values to test.
+    /*!\name Constructors, destructor and assignment
+     * \{
      */
-    value_list_validator(std::vector<value_type> v) : values{std::move(v)}
-    {}
+    value_list_validator() = default;                                         //!< Defaulted.
+    value_list_validator(value_list_validator const &) = default;             //!< Defaulted.
+    value_list_validator(value_list_validator &&) = default;                  //!< Defaulted.
+    value_list_validator & operator=(value_list_validator const &) = default; //!< Defaulted.
+    value_list_validator & operator=(value_list_validator &&) = default;      //!< Defaulted.
+    ~value_list_validator() = default;                                        //!< Defaulted.
+
+    /*!\brief Constructing from a range.
+     * \tparam range_type The type of range; must model std::ranges::forward_range and value_list_validator::value_type
+     *                    must be constructible from the rvalue reference type of the given range.
+     * \param[in] rng The range of valid values to test.
+     */
+    template <std::ranges::forward_range range_type>
+    //!\cond
+        requires std::constructible_from<option_value_type, std::ranges::range_rvalue_reference_t<range_type>>
+    //!\endcond
+    value_list_validator(range_type rng)
+    {
+        values.clear();
+        std::ranges::move(std::move(rng), std::ranges::back_inserter(values));
+    }
+
+    /*!\brief Constructing from a parameter pack.
+     * \tparam option_types The type of option values in the parameter pack; The value_list_validator::value_type must
+     *                      be constructible from each type in the parameter pack.
+     * \param[in] opts The parameter pack values.
+     */
+    template <typename ...option_types>
+    //!\cond
+        requires (std::constructible_from<option_value_type, option_types> && ...)
+    //!\endcond
+    value_list_validator(option_types && ...opts)
+    {
+        (values.emplace_back(std::forward<option_types>(opts)), ...);
+    }
+    //!\}
 
     /*!\brief Tests whether cmp lies inside values.
      * \param cmp The input value to check.
@@ -201,11 +240,11 @@ public:
      */
     template <std::ranges::forward_range range_type>
     //!\cond
-        requires std::convertible_to<value_type_t<range_type>, value_type const &>
+        requires std::convertible_to<std::ranges::range_value_t<range_type>, option_value_type>
     //!\endcond
     void operator()(range_type const & range) const
     {
-        std::for_each(range.begin(), range.end(), [&] (auto cmp) { (*this)(cmp); });
+        std::for_each(std::ranges::begin(range), std::ranges::end(range), [&] (auto cmp) { (*this)(cmp); });
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
@@ -217,26 +256,45 @@ public:
 private:
 
     //!\brief Minimum of the range to test.
-    std::vector<value_type> values;
+    std::vector<value_type> values{};
 };
 
 /*!\brief Type deduction guides
  * \relates seqan3::value_list_validator
  * \{
  */
-//!\brief Deduction guide for `std::vector` over an arithmetic type.
-template <arithmetic option_value_type>
-value_list_validator(std::vector<option_value_type>) -> value_list_validator<double>;
+//!\brief Deduction guide for a parameter pack over an arithmetic type.
+template <arithmetic ...option_types>
+value_list_validator(option_types...) -> value_list_validator<double>;
 
-//!\brief Deduction guide for `std::initializer_list` over an arithmetic type.
-template <arithmetic option_value_type>
-value_list_validator(std::initializer_list<option_value_type>) -> value_list_validator<double>;
+//!\brief Deduction guide for ranges over an arithmetic type.
+template <std::ranges::forward_range range_type>
+//!\cond
+    requires arithmetic<std::ranges::range_value_t<range_type>>
+//!\endcond
+value_list_validator(range_type && rng) -> value_list_validator<double>;
 
-//!\brief Deduction guide for `std::vector` over `const char *`.
-value_list_validator(std::vector<const char *>) -> value_list_validator<std::string>;
+//!\brief Given a parameter pack of types that are convertible to std::string, delegate to value type std::string.
+template <typename ...option_types>
+//!\cond
+    requires (std::constructible_from<std::string, option_types> && ...)
+//!\endcond
+value_list_validator(option_types...) -> value_list_validator<std::string>;
 
-//!\brief Deduction guide for `std::initializer_list` over `const char *`.
-value_list_validator(std::initializer_list<const char *>) -> value_list_validator<std::string>;
+//!\brief Deduction guide for ranges over a value type convertible to std::string.
+template <std::ranges::forward_range range_type>
+//!\cond
+    requires std::constructible_from<std::string, std::ranges::range_value_t<range_type>>
+//!\endcond
+value_list_validator(range_type && rng) -> value_list_validator<std::string>;
+
+//!\brief Deduction guide for a parameter pack.
+template <typename ...option_types>
+value_list_validator(option_types...) -> value_list_validator<seqan3::pack_traits::front<option_types...>>;
+
+//!\brief Deduction guide for ranges.
+template <std::ranges::forward_range range_type>
+value_list_validator(range_type && rng) -> value_list_validator<std::ranges::range_value_t<range_type>>;
 //!\}
 
 /*!\brief An abstract base class for the file and directory validators.
@@ -287,7 +345,7 @@ public:
      */
     template <std::ranges::forward_range range_type>
     //!\cond
-        requires std::convertible_to<value_type_t<range_type>, std::filesystem::path const &>
+        requires std::convertible_to<std::ranges::range_value_t<range_type>, std::filesystem::path const &>
     //!\endcond
     void operator()(range_type const & v) const
     {
@@ -808,7 +866,7 @@ public:
      */
     template <std::ranges::forward_range range_type>
     //!\cond
-        requires std::convertible_to<value_type_t<range_type>, value_type const &>
+        requires std::convertible_to<std::ranges::range_value_t<range_type>, value_type const &>
     //!\endcond
     void operator()(range_type const & v) const
     {

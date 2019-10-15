@@ -13,6 +13,7 @@
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/views/persist.hpp>
+#include <seqan3/range/views/take.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/test/tmp_filename.hpp>
 
@@ -689,18 +690,44 @@ TEST(validator_test, arithmetic_range_validator_error)
     EXPECT_THROW(parser7.parse(), validation_failed);
 }
 
+enum class foo
+{
+    one,
+    two,
+    three
+};
+
 TEST(validator_test, value_list_validator_success)
 {
+    // type deduction
+    // --------------
+    // all arithmetic types are deduced to double in order to easily allow chaining of arithmetic validators
+    EXPECT_TRUE((std::same_as<value_list_validator<double>, decltype(value_list_validator{1})>));
+    // The same holds for a range of arithmetic types
+    std::vector v{1, 2, 3};
+    EXPECT_TRUE((std::same_as<value_list_validator<double>, decltype(value_list_validator{v})>));
+    EXPECT_TRUE((std::same_as<value_list_validator<double>, decltype(value_list_validator{v | views::take(2)})>));
+    // const char * is deduced to std::string
+    std::vector v2{"ha", "ba", "ma"};
+    EXPECT_TRUE((std::same_as<value_list_validator<std::string>, decltype(value_list_validator{"ha", "ba", "ma"})>));
+    EXPECT_TRUE((std::same_as<value_list_validator<std::string>, decltype(value_list_validator{v2})>));
+    EXPECT_TRUE((std::same_as<value_list_validator<std::string>, decltype(value_list_validator{v2 | views::take(2)})>));
+    // custom types are used as is
+    EXPECT_TRUE((std::same_as<value_list_validator<foo>, decltype(value_list_validator{foo::one, foo::two})>));
+
+    // usage
+    // -----
     std::string option_value;
     int option_value_int;
     std::vector<std::string> option_vector;
     std::vector<int> option_vector_int;
 
     // option
+    std::vector<std::string> valid_str_values{"ha", "ba", "ma"};
     const char * argv[] = {"./argument_parser_test", "-s", "ba"};
     argument_parser parser{"test_parser", 3, argv, false};
     parser.add_option(option_value, 's', "string-option", "desc",
-                      option_spec::DEFAULT, value_list_validator{{"ha", "ba", "ma"}});
+                      option_spec::DEFAULT, value_list_validator{valid_str_values | views::take(2)});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
@@ -711,7 +738,7 @@ TEST(validator_test, value_list_validator_success)
     const char * argv2[] = {"./argument_parser_test", "-i", "-21"};
     argument_parser parser2{"test_parser", 3, argv2, false};
     parser2.add_option(option_value_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>{{0, -21, 10}});
+                       option_spec::DEFAULT, value_list_validator<int>{0, -21, 10});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser2.parse());
@@ -721,7 +748,7 @@ TEST(validator_test, value_list_validator_success)
     // positional option
     const char * argv3[] = {"./argument_parser_test", "ma"};
     argument_parser parser3{"test_parser", 2, argv3, false};
-    parser3.add_positional_option(option_value, "desc", value_list_validator{{"ha", "ba", "ma"}});
+    parser3.add_positional_option(option_value, "desc", value_list_validator{valid_str_values});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser3.parse());
@@ -731,8 +758,7 @@ TEST(validator_test, value_list_validator_success)
     // positional option - vector
     const char * argv4[] = {"./argument_parser_test", "ha", "ma"};
     argument_parser parser4{"test_parser", 3, argv4, false};
-    parser4.add_positional_option(option_vector, "desc",
-                                  value_list_validator{{"ha", "ba", "ma"}});
+    parser4.add_positional_option(option_vector, "desc", value_list_validator{"ha", "ba", "ma"});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser4.parse());
@@ -744,7 +770,7 @@ TEST(validator_test, value_list_validator_success)
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "48"};
     argument_parser parser5{"test_parser", 5, argv5, false};
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>{{-10,48,50}});
+                       option_spec::DEFAULT, value_list_validator<int>{-10, 48, 50});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser5.parse());
@@ -757,7 +783,7 @@ TEST(validator_test, value_list_validator_success)
     const char * argv7[] = {"./argument_parser_test", "-h"};
     argument_parser parser7{"test_parser", 2, argv7, false};
     parser7.add_option(option_vector_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>{{-10,48,50}});
+                       option_spec::DEFAULT, value_list_validator<int>{-10, 48, 50});
 
     option_vector_int.clear();
     testing::internal::CaptureStdout();
@@ -767,7 +793,7 @@ TEST(validator_test, value_list_validator_success)
                            "===========" +
                            basic_options_str +
                            "    -i, --int-option (List of signed 32 bit integer's)"
-                           "          desc Default: []. Value must be one of [-10,48,50]." +
+                           "          desc Default: []. Value must be one of [-10, 48, 50]." +
                            basic_version_str);
     EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)),
                                expected | std::views::filter(!is_space)));
@@ -784,14 +810,14 @@ TEST(validator_test, value_list_validator_error)
     const char * argv[] = {"./argument_parser_test", "-s", "sa"};
     argument_parser parser{"test_parser", 3, argv, false};
     parser.add_option(option_value, 's', "string-option", "desc",
-                      option_spec::DEFAULT, value_list_validator{{"ha", "ba", "ma"}});
+                      option_spec::DEFAULT, value_list_validator{"ha", "ba", "ma"});
 
     EXPECT_THROW(parser.parse(), validation_failed);
 
     // positional option
     const char * argv3[] = {"./argument_parser_test", "30"};
     argument_parser parser3{"test_parser", 2, argv3, false};
-    parser3.add_positional_option(option_value_int, "desc", value_list_validator{{0, 5, 10}});
+    parser3.add_positional_option(option_value_int, "desc", value_list_validator{0, 5, 10});
 
     EXPECT_THROW(parser3.parse(), validation_failed);
 
@@ -799,7 +825,7 @@ TEST(validator_test, value_list_validator_error)
     const char * argv4[] = {"./argument_parser_test", "fo", "ma"};
     argument_parser parser4{"test_parser", 3, argv4, false};
     parser4.add_positional_option(option_vector, "desc",
-                                  value_list_validator{{"ha", "ba", "ma"}});
+                                  value_list_validator{"ha", "ba", "ma"});
 
     EXPECT_THROW(parser4.parse(), validation_failed);
 
@@ -807,7 +833,7 @@ TEST(validator_test, value_list_validator_error)
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "488"};
     argument_parser parser5{"test_parser", 5, argv5, false};
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>{{-10,48,50}});
+                       option_spec::DEFAULT, value_list_validator<int>{-10, 48, 50});
 
     EXPECT_THROW(parser5.parse(), validation_failed);
 }

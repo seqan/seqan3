@@ -90,7 +90,7 @@ void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
 
     //![value_list_validator]
     parser.add_option(args.aggregate_by, 'a', "aggregate-by", "Choose your method of aggregation.",
-                      option_spec::DEFAULT, value_list_validator{{"median", "mean"}});
+                      option_spec::DEFAULT, value_list_validator{"median", "mean"});
     //![value_list_validator]
 
     parser.add_flag(args.header_is_set, 'H', "header-is-set", "Let us know whether your data file contains a "
