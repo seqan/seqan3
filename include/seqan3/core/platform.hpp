@@ -224,6 +224,15 @@
 #   endif
 #endif
 
+//!\brief Requires statements are not properly lazy evaluated.
+#ifndef SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
+#   if defined(__GNUC__) && (__GNUC__ <= 8)
+#       define SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES 0
+#   endif
+#endif
+
 // ============================================================================
 //  Backmatter
 // ============================================================================
