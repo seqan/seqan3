@@ -312,3 +312,20 @@ TEST(alphabet_variant_test, convert_by_type)
     gap g = u.convert_unsafely_to<gap>();
     EXPECT_EQ(g, gap{});
 }
+
+TEST(alphabet_variant_test, two_different_variants)
+{
+    alphabet_variant<dna4, gap> l{gap{}};
+    alphabet_variant<dna5, gap> r{gap{}};
+
+    EXPECT_EQ(l, r);
+
+    l = 'A'_dna4;
+    r = 'C'_dna5;
+    // r = 'A'_dna5 would also not be equal, because dna4 and dna5 are not comparable, only gap and both aren't gap
+
+    EXPECT_NE(l, r);
+
+    alphabet_variant<rna4, gap> r2{'A'_rna4};
+    EXPECT_EQ(l, r2); // this works because rna4 and dna4 are implicitly convertible to each other
+}
