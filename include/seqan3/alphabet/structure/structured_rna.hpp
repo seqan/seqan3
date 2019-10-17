@@ -90,12 +90,6 @@ public:
 
     // Inherit operators from base
     using base_type::operator=;
-    using base_type::operator==;
-    using base_type::operator!=;
-    using base_type::operator>=;
-    using base_type::operator<=;
-    using base_type::operator<;
-    using base_type::operator>;
 
     //!\name Write functions
     //!\{

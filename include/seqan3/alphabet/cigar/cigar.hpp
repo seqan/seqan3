@@ -93,12 +93,6 @@ public:
 
     // Inherit operators from base
     using base_t::operator=;
-    using base_t::operator==;
-    using base_t::operator!=;
-    using base_t::operator>=;
-    using base_t::operator<=;
-    using base_t::operator<;
-    using base_t::operator>;
 
     /*!\name Read functions
      * \{

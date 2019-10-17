@@ -86,12 +86,6 @@ public:
 
     // Inherit operators from base
     using base_type::operator=;
-    using base_type::operator==;
-    using base_type::operator!=;
-    using base_type::operator>=;
-    using base_type::operator<=;
-    using base_type::operator<;
-    using base_type::operator>;
 
     //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr qualified(component_type const alph) noexcept {} ))
