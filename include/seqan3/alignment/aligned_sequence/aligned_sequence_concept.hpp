@@ -194,10 +194,10 @@ SEQAN3_CONCEPT aligned_sequence =
     requires { typename detail::unaligned_seq_t<t>; } &&
     requires (t v, detail::unaligned_seq_t<t> unaligned)
     {
-        { insert_gap(v, v.begin()) } -> typename t::iterator; // global functions for generic usability
-        { insert_gap(v, v.begin(), 2) } -> typename t::iterator;
-        { erase_gap(v, v.begin()) } -> typename t::iterator;
-        { erase_gap(v, v.begin(), v.end()) } -> typename t::iterator;
+        { insert_gap(v, std::ranges::begin(v)) } -> std::ranges::iterator_t<t>; // global functions for generic usability
+        { insert_gap(v, std::ranges::begin(v), 2) } -> std::ranges::iterator_t<t>;
+        { erase_gap(v, std::ranges::begin(v)) } -> std::ranges::iterator_t<t>;
+        { erase_gap(v, std::ranges::begin(v), std::ranges::end(v)) } -> std::ranges::iterator_t<t>;
         { assign_unaligned(v, unaligned) } -> void;
     };
 //!\endcond
@@ -374,13 +374,13 @@ template <typename range_type>
 //!\cond
     requires requires (range_type v)
         {
-            v.insert_gap(typename range_type::iterator{});
-            v.insert_gap(typename range_type::iterator{}, typename range_type::size_type{});
+            v.insert_gap(std::ranges::iterator_t<range_type>{});
+            v.insert_gap(std::ranges::iterator_t<range_type>{}, typename range_type::size_type{});
         }
 //!\endcond
-typename range_type::iterator insert_gap(range_type & rng,
-                                         typename range_type::iterator const it,
-                                         typename range_type::size_type const size = 1)
+std::ranges::iterator_t<range_type> insert_gap(range_type & rng,
+                                               std::ranges::iterator_t<range_type> const it,
+                                               typename range_type::size_type const size = 1)
 {
     return rng.insert_gap(it, size);
 }
@@ -399,10 +399,10 @@ typename range_type::iterator insert_gap(range_type & rng,
  */
 template <typename range_type>
 //!\cond
-    requires requires (range_type v) { v.erase_gap(typename range_type::iterator{}); }
+    requires requires (range_type v) { v.erase_gap(std::ranges::iterator_t<range_type>{}); }
 //!\endcond
-typename range_type::iterator erase_gap(range_type & rng,
-                                        typename range_type::iterator const it)
+std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
+                                              std::ranges::iterator_t<range_type> const it)
 {
     return rng.erase_gap(it);
 }
@@ -423,11 +423,11 @@ typename range_type::iterator erase_gap(range_type & rng,
  */
 template <typename range_type>
 //!\cond
-    requires requires (range_type v) { v.erase_gap(typename range_type::iterator{}, typename range_type::iterator{}); }
+    requires requires (range_type v) { v.erase_gap(std::ranges::iterator_t<range_type>{}, std::ranges::iterator_t<range_type>{}); }
 //!\endcond
-typename range_type::iterator erase_gap(range_type & rng,
-                                        typename range_type::iterator const first,
-                                        typename range_type::iterator const last)
+std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
+                                              std::ranges::iterator_t<range_type> const first,
+                                              std::ranges::iterator_t<range_type> const last)
 {
     return rng.erase_gap(first, last);
 }
