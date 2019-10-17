@@ -59,7 +59,7 @@ public:
 INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator, aligned_sequence_, test_types);
 
 template <>
-struct iterator_fixture<typename decorator_t::iterator> : public ::testing::Test
+struct iterator_fixture<std::ranges::iterator_t<decorator_t>> : public ::testing::Test
 {
     using iterator_tag = std::bidirectional_iterator_tag;
     static constexpr bool const_iterable = true;
@@ -95,9 +95,9 @@ struct random_access_iterator_test
 {};
 
 template <>
-struct iterator_fixture<random_access_iterator_test> : iterator_fixture<typename decorator_t::iterator>
+struct iterator_fixture<random_access_iterator_test> : iterator_fixture<std::ranges::iterator_t<decorator_t>>
 {
-    using base_t = iterator_fixture<typename decorator_t::iterator>;
+    using base_t = iterator_fixture<std::ranges::iterator_t<decorator_t>>;
 
     using iterator_tag = std::random_access_iterator_tag;
     static constexpr bool const_iterable = true;
@@ -106,7 +106,7 @@ struct iterator_fixture<random_access_iterator_test> : iterator_fixture<typename
                                                                           | views::enforce_random_access;
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator, iterator_fixture, typename decorator_t::iterator);
+INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator, iterator_fixture, std::ranges::iterator_t<decorator_t>);
 INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator_random_access, iterator_fixture, random_access_iterator_test);
 
 // ---------------------------------------------------------------------------------------------------------------------
