@@ -123,7 +123,6 @@ TYPED_TEST_P(aligned_sequence_, insert_zero_gaps)
     auto it = insert_gap(aligned_seq, std::ranges::next(begin(aligned_seq), 1), 0);
     typename TypeParam::value_type val{'C'_dna4};
     EXPECT_EQ(*it, val);
-    EXPECT_TRUE((ranges::equal(aligned_seq, seq)));
     EXPECT_EQ(to_string(aligned_seq), "ACTA");
 }
 
