@@ -31,8 +31,9 @@ namespace seqan3::detail
 template <typename char_t, typename tuple_t, std::size_t ...I>
 void print_tuple(debug_stream_type<char_t> & s, tuple_t && t, std::index_sequence<I...> const &)
 {
+    using std::get;
     s << '(';
-    ((s << (I == 0 ? "" : ",") << std::get<I>(t)), ...);
+    ((s << (I == 0 ? "" : ",") << get<I>(t)), ...);
     s << ')';
 }
 
