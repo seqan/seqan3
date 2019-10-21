@@ -7,6 +7,7 @@ int main(int argc, char * argv[])
 {
     // Create a buffer for the input.
     std::string input{};
+
     // Initialise the Argument Parser and add an option.
     seqan3::argument_parser parser("My-first-program", argc, argv);
     parser.add_positional_option(input, "Give me text.");
@@ -23,5 +24,6 @@ int main(int argc, char * argv[])
     }
 
     seqan3::debug_stream << "The text was: " << input << "\n";
+    return 0;
 }
 //! [argparse]
