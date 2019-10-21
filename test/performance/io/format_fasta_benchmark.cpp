@@ -55,17 +55,16 @@ static std::string fasta_file = []()
 void write3(benchmark::State & state)
 {
     std::ostringstream ostream;
-    detail::sequence_file_output_format_REMOVEME<format_fasta> format;
-    sequence_file_output_options options{};
+    sequence_file_output fout{ostream, format_fasta{}, fields<field::ID, field::SEQ>{}};
 
     for (auto _ : state)
     {
         for (size_t i = 0; i < iterations_per_run; ++i)
-            format.write(ostream, options, fasta_seq, fasta_hdr, std::ignore);
+            fout.emplace_back(fasta_seq, fasta_hdr);
     }
 
     ostream = std::ostringstream{};
-    format.write(ostream, options, fasta_seq, fasta_hdr, std::ignore);
+    fout.emplace_back(fasta_seq, fasta_hdr);
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
@@ -101,25 +100,17 @@ BENCHMARK(write2);
 
 void read3(benchmark::State & state)
 {
-    std::string id;
-    dna5_vector seq;
-
-    detail::sequence_file_input_format_REMOVEME<format_fasta> format;
-    sequence_file_input_options<dna5, false> options;
-
     std::istringstream istream{fasta_file};
+    sequence_file_input fin{istream, format_fasta{}};
 
     for (auto _ : state)
     {
         istream.clear();
         istream.seekg(0, std::ios::beg);
 
+        auto it = fin.begin();
         for (size_t i = 0; i < iterations_per_run; ++i)
-        {
-            format.read(istream, options, seq, id, std::ignore);
-            id.clear();
-            seq.clear();
-        }
+            it++;
     }
 
     size_t bytes_per_run = fasta_file.size();
