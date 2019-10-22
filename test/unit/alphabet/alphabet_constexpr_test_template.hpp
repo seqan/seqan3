@@ -38,7 +38,7 @@ TYPED_TEST_P(alphabet_constexpr, global_assign_char)
 
 TYPED_TEST_P(alphabet_constexpr, global_to_char)
 {
-    constexpr TypeParam t0{};
+    constexpr TypeParam t0{TypeParam{}};
     [[maybe_unused]] constexpr alphabet_char_t<TypeParam> c = seqan3::to_char(t0);
 }
 
