@@ -490,7 +490,7 @@ protected:
         return std::tuple{operations, ref_length, seq_length};
     }
 
-    // inherit read_field function from format_sam
+    //!\brief inherit read_field function from format_sam
     using sam_fmt::read_field;
 
     /*!\brief Reads a arithmetic field from binary stream by directly reinterpreting the bits.
