@@ -86,8 +86,9 @@ public:
     constexpr span(iterator_t f, index_type count) noexcept : data_{addressof(*f)}
         { (void) count; assert(span_extent == count); } // "size mismatch in span's constructor (f, count)"
 
-    template <contiguous_iterator iterator_t, sized_sentinel_for<iterator_t> sentinel_t>
-        requires is_convertible_v<remove_reference_t<iter_reference_t<iterator_t>>(*)[], element_type(*)[]> &&
+    template <contiguous_iterator iterator_t, typename sentinel_t>
+        requires sized_sentinel_for<sentinel_t, iterator_t> &&
+                 is_convertible_v<remove_reference_t<iter_reference_t<iterator_t>>(*)[], element_type(*)[]> &&
                  !is_convertible_v<sentinel_t, size_t>
     constexpr span(iterator_t f, sentinel_t l) noexcept : data_{addressof(*f)}
         { (void) l; assert(span_extent == distance(f, l)); } // "size mismatch in span's constructor (first, last)"
@@ -237,10 +238,11 @@ public:
     constexpr span(iterator_t f, index_type count) noexcept : data_{addressof(*f)}, size_{count}
     {}
 
-    template <contiguous_iterator iterator, sized_sentinel_for<iterator> sentinel>
-        requires is_convertible_v<remove_reference_t<iter_reference_t<iterator>>(*)[], element_type(*)[]> &&
-                 !is_convertible_v<sentinel, size_t>
-    constexpr span(iterator f, sentinel l) noexcept : data_{addressof(*f)}, size_{static_cast<index_type>(distance(f, l))}
+    template <contiguous_iterator iterator, typename sentinel_t>
+        requires sized_sentinel_for<sentinel_t, iterator> &&
+                 is_convertible_v<remove_reference_t<iter_reference_t<iterator>>(*)[], element_type(*)[]> &&
+                 !is_convertible_v<sentinel_t, size_t>
+    constexpr span(iterator f, sentinel_t l) noexcept : data_{addressof(*f)}, size_{static_cast<index_type>(distance(f, l))}
     {}
 
     template <size_t span_sz>
@@ -402,7 +404,8 @@ template <class span_tp, ptrdiff_t span_extent>
 template <contiguous_iterator iterator_t>
     span(iterator_t, size_t) -> span<remove_reference_t<iter_reference_t<iterator_t>>>;
 
-template <contiguous_iterator iterator_t, sized_sentinel_for<iterator_t> sentinel_t>
+template <contiguous_iterator iterator_t, typename sentinel_t>
+    requires sized_sentinel_for<sentinel_t, iterator_t>
     span(iterator_t, sentinel_t) -> span<remove_reference_t<iter_reference_t<iterator_t>>>;
 
 template <class span_tp, size_t span_sz>
