@@ -16,9 +16,7 @@ using namespace seqan3;
 
 template <typename test_t>
 struct align_cfg_result_test : public ::testing::Test
-{
-
-};
+{};
 
 using test_types = ::testing::Types<detail::with_score_type,
                                     detail::with_back_coordinate_type,
@@ -69,4 +67,15 @@ TYPED_TEST(align_cfg_result_test, configuration)
         EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::result>(cfg).value)>,
                                     TypeParam>));
     }
+}
+
+TYPED_TEST(align_cfg_result_test, score_type)
+{
+    // second template argument defaulted
+    EXPECT_TRUE((std::is_same_v<decltype(align_cfg::result{TypeParam{}}),
+                                align_cfg::result<TypeParam, int32_t>>));
+
+    // second template argument deduced in construction
+    EXPECT_TRUE((std::is_same_v<decltype(align_cfg::result{TypeParam{}, using_score_type<double>}),
+                                align_cfg::result<TypeParam, double>>));
 }
