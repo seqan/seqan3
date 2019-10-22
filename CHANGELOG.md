@@ -75,6 +75,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 ## Notable Bug-fixes
 
 * Copying and moving the `seqan3::fm_index` and `seqan3::bi_fm_index` now work properly.
+* Searching in the `seqan3::fm_index` and `seqan3::bi_fm_index` constructed from a text collection containing a single
+  text now return correct result.
 
 # 3.0.0 ("Escala")
 
