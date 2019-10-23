@@ -329,7 +329,7 @@ public:
     //!\brief Type for representing positions in the indexed text.
     using size_type = typename sdsl_index_type::size_type;
     //!\brief The type of the (unidirectional) cursor.
-    using cursor_type = fm_index_cursor<fm_index<alphabet_t, text_layout_mode, sdsl_index_type>>;
+    using cursor_type = fm_index_cursor<fm_index>;
     //!\}
 
     template <typename bi_fm_index_t>

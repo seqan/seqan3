@@ -27,9 +27,8 @@ TYPED_TEST_P(fm_index_test, ctr)
 
     text_t text(10); // initialized with smallest char
 
-    // default/zero construction
-    index_t fm0;
-    fm0.construct(text);
+    // construction from text
+    index_t fm0{text};
 
     // copy construction
     index_t fm1{fm0};
@@ -85,7 +84,7 @@ TYPED_TEST_P(fm_index_test, size)
     EXPECT_TRUE(fm.empty());
 
     text_t text(8);
-    fm.construct(text);
+    fm = index_t{text};
     EXPECT_EQ(fm.size(), 9u); // including a sentinel character
 }
 
