@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <array>
+
 #include <seqan3/core/simd/all.hpp>
 
 //!\cond DEV
@@ -19,8 +21,8 @@
  * seqan3::simd::simd_type variables matches. It is like  #EXPECT_EQ, but for seqan3::simd::simd_type
  * types.
  * \ingroup simd
- * \param  left  of type seqan3::simd::simd_type
- * \param  right of type seqan3::simd::simd_type
+ * \param[in] left_simd_argument Left hand side operand of type seqan3::simd::simd_type.
+ * \param[in] right_simd_argument Right hand side operand of type seqan3::simd::simd_type.
  *
  * \attention
  * This macro can handle multiple "," which is normally a limitation of macros.
@@ -30,14 +32,14 @@
  * \include test/snippet/core/simd/simd_test_utility.cpp
  */
 #define SIMD_EQ(...) do { \
-    auto [left, right] = std::make_tuple(__VA_ARGS__); \
-    static_assert(seqan3::simd::simd_concept<decltype(left)>, "The left argument of SIMD_EQ is not a simd_type"); \
-    static_assert(seqan3::simd::simd_concept<decltype(right)>, "The right argument of SIMD_EQ is not a simd_type"); \
-    static_assert(std::is_same_v<decltype(left), decltype(right)>, "The left and right argument of SIMD_EQ don't have the same type."); \
-    using _simd_traits_t = seqan3::simd::simd_traits<decltype(left)>; \
-    std::vector<typename _simd_traits_t::scalar_type> left_simd(_simd_traits_t::length), right_simd(_simd_traits_t::length); \
+    auto [left_simd_argument, right_simd_argument] = std::tuple{__VA_ARGS__}; \
+    static_assert(seqan3::simd::simd_concept<decltype(left_simd_argument)>, "The left argument of SIMD_EQ is not a simd_type"); \
+    static_assert(seqan3::simd::simd_concept<decltype(right_simd_argument)>, "The right argument of SIMD_EQ is not a simd_type"); \
+    static_assert(std::is_same_v<decltype(left_simd_argument), decltype(right_simd_argument)>, "The left and right argument of SIMD_EQ don't have the same type."); \
+    using _simd_traits_t = seqan3::simd::simd_traits<decltype(left_simd_argument)>; \
+    std::array<typename _simd_traits_t::scalar_type, _simd_traits_t::length> left_simd_argument_as_array{}, right_simd_argument_as_array{}; \
     for (size_t i = 0; i < _simd_traits_t::length; ++i) \
-    { left_simd[i] = left[i]; right_simd[i] = right[i]; } \
-    EXPECT_EQ(left_simd, right_simd); \
+    { left_simd_argument_as_array[i] = left_simd_argument[i]; right_simd_argument_as_array[i] = right_simd_argument[i]; } \
+    EXPECT_EQ(left_simd_argument_as_array, right_simd_argument_as_array); \
 } while (false)
 //!\endcond
