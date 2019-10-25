@@ -21,6 +21,7 @@
 #include <seqan3/alignment/configuration/align_config_mode.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_vectorise.hpp>
 #include <seqan3/alignment/configuration/detail.hpp>
 
 /*!\namespace seqan3::align_cfg

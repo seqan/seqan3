@@ -32,7 +32,7 @@ enum struct align_config_id : uint8_t
     parallel,     //!< ID for the seqan3::align_cfg::parallel option.
     result,       //!< ID for the \ref seqan3::align_cfg::result "result" option.
     scoring,      //!< ID for the \ref seqan3::align_cfg::scoring "scoring" option.
-    vectorise,    //!< ID for the seqan3::align_cfg::vectorise option.
+    vectorise,    //!< ID for the \ref seqan3::align_cfg::vectorise "vectorise" option.
     SIZE          //!< Represents the number of configuration elements.
 };
 
