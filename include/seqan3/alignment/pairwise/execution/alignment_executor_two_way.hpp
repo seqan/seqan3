@@ -22,7 +22,6 @@
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
-#include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/view_all.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
@@ -57,10 +56,11 @@ private:
      * \{
      */
     //!\brief The underlying resource type.
-    using resource_type       = decltype(views::single_pass_input(views::zip(std::declval<resource_t>(),
-                                                                                std::views::iota(0))));
+    using resource_type = decltype(views::zip(std::declval<resource_t>(), std::views::iota(0)));
+    //!\brief The iterator over the underlying resource.
+    using resource_iterator_t = std::ranges::iterator_t<resource_type>;
     //!\brief The value type of the resource.
-    using resource_value_type = value_type_t<resource_type>;
+    using resource_value_type = std::ranges::range_value_t<resource_type>;
     //!\}
 
     /*!\name Buffer types
@@ -89,15 +89,49 @@ public:
     //!\}
 
     /*!\name Constructors, destructor and assignment
-     * \brief The class is not copy-constructible or copy-assignable but allows move construction and assignment.
+     * \brief The class is move-only, i.e. it is not copy-constructible or copy-assignable.
      * \{
      */
-    alignment_executor_two_way() = delete;                                               //!< This is a move-only type.
-    alignment_executor_two_way(alignment_executor_two_way const &) = delete;             //!< This is a move-only type.
-    alignment_executor_two_way(alignment_executor_two_way &&) = default;                 //!< Defaulted
-    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete; //!< This is a move-only type.
-    alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default;    //!< Defaulted
-    ~alignment_executor_two_way() = default;                                             //!< Defaulted
+    //!\brief Deleted default constructor because this class manages an external resource.
+    alignment_executor_two_way() = delete;
+    //!\brief This class provides unique ownership over the managed resource and is therefor not copyable.
+    alignment_executor_two_way(alignment_executor_two_way const &) = delete;
+
+    /*!\brief Move constructs the resource of the other executor.
+     * \param[in] other The other alignment executor (prvalue) to move from.
+     *
+     * \details
+     *
+     * Handling the move of the underlying resource, respectively result buffer, requires some non-default operations.
+     * The iterator holding the current state of the executor must be reinitailised after the resource and buffer have
+     * been moved.
+     *
+     * ### Exception
+     *
+     * no-throw guarantee.
+     *
+     * ### Complexity
+     *
+     * Constant if the underlying resource type models std::ranges::random_access_range, otherwise linear.
+     */
+    alignment_executor_two_way(alignment_executor_two_way && other) noexcept
+    {
+        move_initialise(std::move(other));
+    }
+
+    //!\brief This class provides unique ownership over the managed resource and is therefor not copyable.
+    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete;
+
+    //!\brief Move assigns from the resource of another executor.
+    //!\copydetails seqan3::detail::alignment_executor_two_way::alignment_executor_two_way(alignment_executor_two_way && other)
+    alignment_executor_two_way & operator=(alignment_executor_two_way && other)
+    {
+        move_initialise(std::move(other));
+        return *this;
+    }
+
+    //!\brief Defaulted.
+    ~alignment_executor_two_way() = default;
 
     /*!\brief Constructs this executor with the passed range of alignment instances.
      * \param[in] resrc The underlying resource containing the sequence pairs to align.
@@ -112,6 +146,7 @@ public:
     alignment_executor_two_way(resource_t resrc,
                                alignment_algorithm_t fn) :
         resource{views::zip(std::forward<resource_t>(resrc), std::views::iota(0))},
+        resource_it{resource.begin()},
         kernel{std::move(fn)}
     {
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
@@ -185,7 +220,7 @@ public:
     //!\brief Checks whether the end of the input resource was reached.
     bool is_eof() noexcept
     {
-        return std::ranges::begin(resource) == std::ranges::end(resource);
+        return resource_it == std::ranges::end(resource);
     }
     //!\}
 
@@ -217,10 +252,9 @@ private:
         // Apply the alignment execution.
         size_t count = 0;
         size_t buffer_limit = in_avail();
-        for (auto resource_iter = std::ranges::begin(resource);
-             count < buffer_limit && !is_eof(); ++count, ++resource_iter, ++gptr)
+        for (; count < buffer_limit && !is_eof(); ++count, ++resource_it, ++gptr)
         {
-            auto && [tpl, idx] = *resource_iter;
+            auto && [tpl, idx] = *resource_it;
             auto && [first_seq, second_seq] = tpl;
             buffer_pointer write_to = gptr;
             exec_handler.execute(kernel,
@@ -251,6 +285,25 @@ private:
         buffer.resize(size);
         setg(std::ranges::end(buffer), std::ranges::end(buffer));
     }
+
+    //!\brief Helper function to move initialise `this` from `other`.
+    //!\copydetails seqan3::detail::alignment_executor_two_way::alignment_executor_two_way(alignment_executor_two_way && other)
+    void move_initialise(alignment_executor_two_way && other) noexcept
+    {
+        kernel = std::move(other.kernel);
+        // Get the old resource position.
+        std::ptrdiff_t old_resource_pos = std::ranges::distance(other.resource.begin(), other.resource_it);
+        // Move the resource and set the iterator state accordingly.
+        resource = std::move(other.resource);
+        resource_it = std::ranges::next(resource.begin(), old_resource_pos);
+
+        // Get the old get pointer positions.
+        std::ptrdiff_t old_gptr_pos = other.gptr - buffer.begin();
+        std::ptrdiff_t old_egptr_pos = other.egptr - buffer.begin();
+        // Move the buffer and set the get pointer accordingly.
+        buffer = std::move(other.buffer);
+        setg(buffer.begin() + old_gptr_pos, buffer.begin() + old_egptr_pos);
+    }
     //!\}
 
     //!\brief Indicates the end-of-stream.
@@ -261,6 +314,8 @@ private:
 
     //!\brief The underlying resource containing the alignment instances.
     resource_type resource{};
+    //!\brief The iterator over the resource that stores the current state of the executor.
+    resource_iterator_t resource_it{};
     //!\brief Selects the correct alignment to execute.
     alignment_algorithm_t kernel{};
 
