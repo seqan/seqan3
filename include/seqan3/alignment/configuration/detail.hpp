@@ -29,7 +29,7 @@ enum struct align_config_id : uint8_t
     global,       //!< ID for the \ref seqan3::global_alignment "global alignment" option.
     local,        //!< ID for the \ref seqan3::local_alignment "local alignment" option.
     max_error,    //!< ID for the \ref seqan3::align_cfg::max_error "max_error" option.
-    parallel,     //!< ID for the seqan3::align_cfg::parallel option.
+    parallel,     //!< ID for the \ref seqan3::align_cfg::parallel "parallel" option.
     result,       //!< ID for the \ref seqan3::align_cfg::result "result" option.
     scoring,      //!< ID for the \ref seqan3::align_cfg::scoring "scoring" option.
     vectorise,    //!< ID for the seqan3::align_cfg::vectorise option.
