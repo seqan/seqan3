@@ -698,7 +698,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
         // ---------------------------------------------------------------------
         // Writing the BAM Header on first call
         // ---------------------------------------------------------------------
-        if (!written_header)
+        if (!header_was_written)
         {
             stream << "BAM\1";
             std::ostringstream os;
@@ -722,7 +722,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
                 std::ranges::copy_n(reinterpret_cast<char *>(&get<0>(header.ref_id_info[ridx])), 4, stream_it);
             }
 
-            written_header = true;
+            header_was_written = true;
         }
 
         // ---------------------------------------------------------------------

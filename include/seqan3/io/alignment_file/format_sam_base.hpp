@@ -77,10 +77,10 @@ protected:
     static constexpr char format_version[4] = "1.6";
 
     //!\brief A buffer used when parsing arithmetic values with std::from_chars.
-    std::array<char, 316> buffer{}; // Doubles can be up to 316 characters
+    std::array<char, 316> arithmetic_buffer{}; // Doubles can be up to 316 characters
 
     //!\brief A variable that tracks whether the content of header has been written or not.
-    bool written_header{false};
+    bool header_was_written{false};
 
     //!\brief Tracks whether reference information (\@SR tag) were found in the SAM header
     bool ref_info_present_in_header{false};
@@ -391,17 +391,18 @@ template <typename stream_view_t, arithmetic arithmetic_target_type>
 inline void format_sam_base::read_field(stream_view_t && stream_view, arithmetic_target_type & arithmetic_target)
 {
     // unfortunately std::from_chars only accepts char const * so we need a buffer.
-    auto [ignore, end] = std::ranges::copy(stream_view, buffer.data());
+    auto [ignore, end] = std::ranges::copy(stream_view, arithmetic_buffer.data());
     (void) ignore;
-    std::from_chars_result res = std::from_chars(buffer.begin(), end, arithmetic_target);
+    std::from_chars_result res = std::from_chars(arithmetic_buffer.begin(), end, arithmetic_target);
 
     if (res.ec == std::errc::invalid_argument || res.ptr != end)
-        throw format_error{std::string("[CORRUPTED SAM FILE] The string '") + std::string(buffer.begin(), end) +
+        throw format_error{std::string("[CORRUPTED SAM FILE] The string '") +
+                                       std::string(arithmetic_buffer.begin(), end) +
                                        "' could not be cast into type " +
                                        detail::get_display_name_v<arithmetic_target_type>.str()};
 
     if (res.ec == std::errc::result_out_of_range)
-        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(buffer.begin(), end) +
+        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end) +
                                        "' into type " + detail::get_display_name_v<arithmetic_target_type>.str() +
                                        " would cause an overflow."};
 }

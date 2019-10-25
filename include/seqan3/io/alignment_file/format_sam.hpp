@@ -764,10 +764,10 @@ inline void format_sam::write_alignment_record(stream_type & stream,
     // ---------------------------------------------------------------------
     if constexpr (!detail::decays_to_ignore_v<header_type>)
     {
-        if (options.sam_require_header && !written_header)
+        if (options.sam_require_header && !header_was_written)
         {
             write_header(stream, options, header);
-            written_header = true;
+            header_was_written = true;
         }
     }
 
