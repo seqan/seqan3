@@ -17,6 +17,8 @@
 
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/pairwise/detail/alignment_algorithm_cache.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 
 namespace seqan3::detail
 {
@@ -25,25 +27,30 @@ namespace seqan3::detail
 // affine_gap_policy
 // ----------------------------------------------------------------------------
 
-/*!\brief The hot kernel implementation using affine gaps.
+/*!\brief The CRTP-policy that computes a single cell in the alignment matrix.
  * \ingroup alignment_policy
- * \tparam derived_t   The derived alignment algorithm.
- * \tparam cell_t      The cell type of the dynamic programming matrix.
+ * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
+ *                               CRTP-policy.
+ * \tparam score_t The score type of the dynamic programming matrix; must model seqan3::arithmetic.
+ * \tparam align_local_t A std::bool_constant to switch between local and global alignment.
+ *
+ * \details
+ *
+ * This CRTP-policy implements the recursion for the alignment algorithm with affine gaps. See
+ * `Osamu Gotoh, Optimal sequence alignment allowing for long gaps, Bulletin of Mathematical Biology, Volume 52,
+ *  Issue 3, 1990, Pages 359-373, ISSN 0092-8240, https://doi.org/10.1016/S0092-8240(05)80216-2.`
+ * for more information.
+ *
+ * \remarks The template parameters of this CRTP-policy are selected in the
+ *          seqan3::detail::alignment_configurator::select_gap_policy when selecting the alignment for the given
+ *          configuration.
  */
-template <typename derived_t, typename cell_t, typename align_local_t = std::false_type>
+template <typename alignment_algorithm_t, typename score_t, typename align_local_t = std::false_type>
 class affine_gap_policy
 {
 private:
-
     //!\brief Befriends the derived class to grant it access to the private members.
-    friend derived_t;
-
-    /*!\name Member types
-     * \{
-     */
-    //!\brief The underlying score type.
-    using score_t = std::tuple_element_t<0, cell_t>;
-    //!\}
+    friend alignment_algorithm_t;
 
     /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
@@ -58,73 +65,102 @@ private:
     //!\}
 
     /*!\brief Computes the score of the current cell.
-     * \tparam  matrix_entry_type The type of the current cell.
-     * \tparam  cache_type        The type of the cache.
+     * \tparam cell_t The type of the current cell [for detailed information on the type see below].
      * \param[in,out] current_cell The current cell in the dynamic programming matrix.
      * \param[in,out] cache        The cache storing hot helper variables.
      * \param[in]     score        The score of comparing the respective letters of the first and the second sequence.
+     *
+     * \details
+     *
+     * `cell_t` is the result type of dereferencing the zipped iterator over the respective alignment score matrix and
+     * the alignment trace matrix used inside of the seqan3::detail::alignment_matrix_policy. The first parameter
+     * stored in the zipped tuple is the seqan3::detail::alignment_score_matrix_proxy and the second value is the
+     * seqan3::detail::alignment_trace_matrix_proxy.
      */
-    template <typename matrix_entry_type, typename cache_t>
-    constexpr void compute_cell(matrix_entry_type && current_cell,
-                                cache_t & cache,
+    template <typename cell_t>
+    constexpr void compute_cell(cell_t && current_cell,
+                                alignment_algorithm_cache<score_t> & cache,
                                 score_t const score) const noexcept
     {
-        using std::get;
-
-        // Unpack the cached variables.
-        auto & [score_entry, coordinate, trace_value] = current_cell;
-        auto & [main_score, hz_score, hz_trace]       = score_entry;
-        auto & [prev_cell, gap_open, gap_extend, opt] = cache;
-        auto & [prev_score, vt_score, vt_trace]       = prev_cell;
-
-        //TODO For the local alignment we might be able to use GCC overflow builtin arithmetics, which
-        // allows us to check if overflow/underflow would happen. Not sure, if this helps with the performance though.
-        // (see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html)
-
+        // score_cell = seqan3::detail::alignment_score_matrix_proxy
+        // trace_cell = seqan3::detail::alignment_trace_matrix_proxy
+        auto & [score_cell, trace_cell] = current_cell;
+        constexpr bool with_trace = !decays_to_ignore_v<std::remove_reference_t<decltype(trace_cell.current)>>;
         // Precompute the diagonal score.
-        score_t tmp = prev_score + score;
+        score_t tmp = score_cell.diagonal + score;
 
-        // Compute where the max comes from.
-        if constexpr (decays_to_ignore_v<decltype(trace_value)>) // Don't compute a traceback
+        if constexpr (with_trace)
         {
-            tmp = (tmp < vt_score) ? vt_score : tmp;
-            tmp = (tmp < hz_score) ? hz_score : tmp;
-            if constexpr (align_local_t::value)
-                tmp = (tmp < 0) ? 0 : tmp;
-        }
-        else  // Compute any traceback
-        {
-            tmp = (tmp < vt_score) ? (trace_value = vt_trace, vt_score)
-                                   : (trace_value = trace_directions::diagonal | vt_trace, tmp);
-            tmp = (tmp < hz_score) ? (trace_value = hz_trace, hz_score)
-                                   : (trace_value |= hz_trace, tmp);
-            if constexpr (align_local_t::value)
-                tmp = (tmp < 0) ? (trace_value = trace_directions::none, 0) : tmp;
-        }
-        // Cache the current main score for the next diagonal computation and update the current score.
-        prev_score = main_score;
-        main_score = tmp;
-        // Check if this was the optimum. Possibly a noop.
-        static_cast<derived_t const &>(*this).check_score(
-                alignment_optimum{tmp, static_cast<alignment_coordinate>(coordinate)}, opt);
-
-        // Prepare horizontal and vertical score for next column.
-        tmp += gap_open;
-        vt_score += gap_extend;
-        hz_score += gap_extend;
-
-        if constexpr (decays_to_ignore_v<decltype(trace_value)>)
-        {
-            vt_score = (vt_score < tmp) ? tmp : vt_score;
-            hz_score = (hz_score < tmp) ? tmp : hz_score;
+            tmp = (tmp < score_cell.up) ? (trace_cell.current = trace_cell.up, score_cell.up)
+                                        : (trace_cell.current = trace_directions::diagonal | trace_cell.up, tmp);
+            tmp = (tmp < score_cell.r_left) ? (trace_cell.current = trace_cell.r_left, score_cell.r_left)
+                                            : (trace_cell.current |= trace_cell.r_left, tmp);
         }
         else
         {
-            vt_score = (vt_score < tmp) ? (vt_trace = trace_directions::up_open, tmp)
-                                        : (vt_trace = trace_directions::up, vt_score);
-            hz_score = (hz_score < tmp) ? (hz_trace = trace_directions::left_open, tmp)
-                                        : (hz_trace = trace_directions::left, hz_score);
+            tmp = (tmp < score_cell.up) ? score_cell.up : tmp;
+            tmp = (tmp < score_cell.r_left) ? score_cell.r_left : tmp;
         }
+
+        if constexpr (align_local_t::value)
+            tmp = (tmp < 0) ? (trace_cell.current = trace_directions::none, 0) : tmp;
+
+        // Store the current max score.
+        score_cell.current = tmp;
+        // Check if this was the optimum. Possibly a noop.
+        static_cast<alignment_algorithm_t const &>(*this).check_score(current_cell, cache);
+
+        // Prepare horizontal and vertical score for next column.
+        tmp += cache.gap_open_score;
+        score_cell.up += cache.gap_extension_score;
+        score_cell.w_left = score_cell.r_left + cache.gap_extension_score;
+
+        score_cell.up = (score_cell.up < tmp) ? (trace_cell.up = trace_directions::up_open, tmp)
+                                              : (trace_cell.up = trace_directions::up, score_cell.up);
+        score_cell.w_left = (score_cell.w_left < tmp) ? (trace_cell.w_left = trace_directions::left_open, tmp)
+                                                      : (trace_cell.w_left = trace_directions::left, score_cell.w_left);
+    }
+
+    /*!\brief Computes the score of the first cell within the band.
+     * \tparam cell_t The type of the current cell [for detailed information on the type see below].
+     * \param[in,out] current_cell    The current cell in the dynamic programming matrix.
+     * \param[in,out] cache           The cache storing hot helper variables.
+     * \param[in]     score           The score of comparing the respective letters of the first and the second sequence.
+     *
+     * \details
+     *
+     * `cell_t` is the result type of dereferencing the zipped iterator over the respective alignment score matrix and
+     * the alignment trace matrix used inside of the seqan3::detail::alignment_matrix_policy. The first parameter
+     * stored in the zipped tuple is the seqan3::detail::alignment_score_matrix_proxy and the second value is the
+     * seqan3::detail::alignment_trace_matrix_proxy.
+     */
+    template <typename cell_t>
+    constexpr void compute_first_band_cell(cell_t && current_cell,
+                                           alignment_algorithm_cache<score_t> & cache,
+                                           score_t const score) const noexcept
+    {
+        // Compute the diagonal score and the compare with the previous horizontal value.
+        // score_cell = seqan3::detail::alignment_score_matrix_proxy
+        // trace_cell = seqan3::detail::alignment_trace_matrix_proxy
+        auto & [score_cell, trace_cell] = current_cell;
+        score_cell.current = score_cell.diagonal + score;
+
+        score_cell.current = (score_cell.current < score_cell.r_left)
+                                ? (trace_cell.current = trace_cell.r_left, score_cell.r_left)
+                                : (trace_cell.current = trace_directions::diagonal, score_cell.current);
+
+        if constexpr (align_local_t::value)
+        {
+            score_cell.current = (score_cell.current < 0) ? (trace_cell.current = trace_directions::none, 0)
+                                                          : score_cell.current;
+        }
+        // Check if this was the optimum. Possibly a noop.
+        static_cast<alignment_algorithm_t const &>(*this).check_score(current_cell, cache);
+
+        // At the top of the band we can not come from up but only diagonal or left, so the next vertical must be a
+        // gap open.
+        score_cell.up = score_cell.current + cache.gap_open_score;  // add gap open cost
+        trace_cell.up = trace_directions::up_open;
     }
 
     /*!\brief Creates the cache used for affine gap computation.
@@ -135,12 +171,8 @@ private:
     template <typename gap_scheme_t>
     constexpr auto make_cache(gap_scheme_t && scheme) const noexcept
     {
-        alignment_optimum opt{std::numeric_limits<score_t>::lowest(),
-                              alignment_coordinate{column_index_type{0u}, row_index_type{0u}}};
-        return std::tuple{cell_t{},
-                          static_cast<score_t>(scheme.get_gap_open_score() + scheme.get_gap_score()),
-                          static_cast<score_t>(scheme.get_gap_score()),
-                          std::move(opt)};
+        return alignment_algorithm_cache{static_cast<score_t>(scheme.get_gap_open_score() + scheme.get_gap_score()),
+                                         static_cast<score_t>(scheme.get_gap_score())};
     }
 };
 

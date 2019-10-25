@@ -15,6 +15,7 @@
 #include <tuple>
 
 #include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/pairwise/detail/alignment_algorithm_cache.hpp>
 
 namespace seqan3::detail
 {
@@ -35,19 +36,24 @@ struct default_affine_init_traits
     using free_second_leading_t = std::false_type;
 };
 
-/*!\brief Implements the initialisation of the dynamic programming matrix with affine gaps.
+/*!\brief The CRTP-policy that implements the initialisation of the dynamic programming matrix with affine gaps.
  * \ingroup alignment_policy
- * \tparam derived_t   The derived alignment algorithm.
+ * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
+ *                               CRTP-policy.
  * \tparam traits_type The traits type to determine the initialisation rules of the dynamic programming matrix.
  *                     Defaults to seqan3::detail::default_affine_init_traits.
+ *
+ * \remarks The template parameters of this CRTP-policy are selected in the
+ *          seqan3::detail::alignment_configurator::select_gap_init_policy when selecting the alignment for the given
+ *          configuration.
  */
 template <typename derived_t, typename traits_type = default_affine_init_traits>
 class affine_gap_init_policy
 {
 private:
-
     //!\brief Befriends the derived class to grant it access to the private members.
     friend derived_t;
+
     /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
@@ -61,112 +67,133 @@ private:
     //!\}
 
     /*!\brief Initialises the origin of the dynamic programming matrix.
-     * \tparam        cell_t       The underlying cell type.
-     * \tparam        cache_t      The type of the cache.
+     * \tparam cell_t  The underlying cell type.
+     * \tparam score_t The score type used inside of the alignment algorithm.
      * \param[in,out] current_cell The current cell in the dynamic programming matrix.
      * \param[in,out] cache        The cache storing hot helper variables.
+     *
+     * \details
+     *
+     * `cell_t` is the result type of dereferencing the zipped iterator over the respective alignment score matrix and
+     * the alignment trace matrix used inside of the seqan3::detail::alignment_matrix_policy. The first parameter
+     * stored in the zipped tuple is the seqan3::detail::alignment_score_matrix_proxy and the second value is the
+     * seqan3::detail::alignment_trace_matrix_proxy.
      */
-    template <typename cell_t, typename cache_t>
-    constexpr auto init_origin_cell(cell_t && current_cell, cache_t & cache) const noexcept
+    template <typename cell_t, typename score_t>
+    constexpr auto init_origin_cell(cell_t && current_cell, alignment_algorithm_cache<score_t> & cache) const noexcept
     {
-        using std::get;
+        // score_cell = seqan3::detail::alignment_score_matrix_proxy
+        // trace_cell = seqan3::detail::alignment_trace_matrix_proxy
+        auto & [score_cell, trace_cell] = current_cell;
 
-        auto & [main_score, hz_score, hz_trace] = get<0>(current_cell);
-        auto & prev_cell = get<0>(cache);
-        auto & vt_score = get<1>(prev_cell);
+        // Initialise the first cell.
+        score_cell.current = 0;
+        trace_cell.current = trace_directions::none;
 
-        main_score = 0;
-        get<2>(current_cell) = trace_directions::none; // store the trace direction
+        static_cast<derived_t const &>(*this).check_score(current_cell, cache);
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
         {
-            vt_score = 0;
-            get<2>(prev_cell) = trace_directions::none;  // cache vertical trace
+            score_cell.up = 0;
+            trace_cell.up = trace_directions::none;  // cache vertical trace
         }
-        else
+        else // Initialise with gap_open score
         {
-            vt_score = get<1>(cache);
-            get<2>(prev_cell) = trace_directions::up_open; // cache vertical trace
+            score_cell.up = cache.gap_open_score;
+            trace_cell.up = trace_directions::up_open; // cache vertical trace
         }
 
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
         {
-            hz_score = 0;
-            hz_trace = trace_directions::none; // cache horizontal trace
+            score_cell.w_left = 0;
+            trace_cell.w_left = trace_directions::none; // cache horizontal trace
         }
-        else
+        else // Initialise with gap_open score
         {
-            hz_score = get<1>(cache);
-            hz_trace = trace_directions::left_open; // cache horizontal trace
+            score_cell.w_left = cache.gap_open_score;
+            trace_cell.w_left = trace_directions::left_open; // cache horizontal trace
         }
     }
 
     /*!\brief Initialises a cell in the first column of the dynamic programming matrix.
-     * \tparam        cell_t       The underlying cell type.
-     * \tparam        cache_t      The type of the cache.
+     * \tparam cell_t  The underlying cell type.
+     * \tparam score_t The score type used inside of the alignment algorithm.
      * \param[in,out] current_cell The current cell in the dynamic programming matrix.
      * \param[in,out] cache        The cache storing hot helper variables.
+     *
+     * \details
+     *
+     * `cell_t` is the result type of dereferencing the zipped iterator over the respective alignment score matrix and
+     * the alignment trace matrix used inside of the seqan3::detail::alignment_matrix_policy. The first parameter
+     * stored in the zipped tuple is the seqan3::detail::alignment_score_matrix_proxy and the second value is the
+     * seqan3::detail::alignment_trace_matrix_proxy.
      */
-    template <typename cell_t, typename cache_t>
-    constexpr auto init_column_cell(cell_t && current_cell, cache_t & cache) const noexcept
+    template <typename cell_t, typename score_t>
+    constexpr auto init_column_cell(cell_t && current_cell, alignment_algorithm_cache<score_t> & cache) const noexcept
     {
-        using std::get;
+        // score_cell = seqan3::detail::alignment_score_matrix_proxy
+        // trace_cell = seqan3::detail::alignment_trace_matrix_proxy
+        auto & [score_cell, trace_cell] = current_cell;
 
-        auto & [main_score, hz_score, hz_trace] = get<0>(current_cell);
-        auto & prev_cell = get<0>(cache);
-        auto & vt_score = get<1>(prev_cell);
+        score_cell.current = score_cell.up;
+        trace_cell.current = trace_cell.up;
 
-        main_score = vt_score;
-        get<2>(current_cell) = get<2>(prev_cell); // store the trace direction
+        static_cast<derived_t const &>(*this).check_score(current_cell, cache);
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
         {
-            vt_score = 0;
-            get<2>(prev_cell) = trace_directions::none; // cache vertical trace
+            score_cell.up = 0;
         }
         else
         {
-            vt_score += get<2>(cache);
-            get<2>(prev_cell) = trace_directions::up; // cache vertical trace
+            score_cell.up += cache.gap_extension_score;
+            trace_cell.up = trace_directions::up; // cache vertical trace
         }
 
-        hz_score = main_score + get<1>(cache);
-        hz_trace = trace_directions::left_open;  // cache horizontal trace
+        score_cell.w_left = score_cell.current + cache.gap_open_score;
+        trace_cell.w_left = trace_directions::left_open;  // cache horizontal trace
     }
 
     /*!\brief Initialises a cell in the first row of the dynamic programming matrix.
-     * \tparam        cell_t       The underlying cell type.
-     * \tparam        cache_t      The type of the cache.
+     * \tparam cell_t  The underlying cell type.
+     * \tparam score_t The score type used inside of the alignment algorithm.
      * \param[in,out] current_cell The current cell in the dynamic programming matrix.
      * \param[in,out] cache        The cache storing hot helper variables.
+     *
+     * \details
+     *
+     * `cell_t` is the result type of dereferencing the zipped iterator over the respective alignment score matrix and
+     * the alignment trace matrix used inside of the seqan3::detail::alignment_matrix_policy. The first parameter
+     * stored in the zipped tuple is the seqan3::detail::alignment_score_matrix_proxy and the second value is the
+     * seqan3::detail::alignment_trace_matrix_proxy.
      */
-    template <typename cell_t, typename cache_t>
-    constexpr auto init_row_cell(cell_t && current_cell, cache_t & cache) const noexcept
+    template <typename cell_t, typename score_t>
+    constexpr auto init_row_cell(cell_t && current_cell, alignment_algorithm_cache<score_t> & cache) const noexcept
     {
-        using std::get;
+        // score_cell = seqan3::detail::alignment_score_matrix_proxy
+        // trace_cell = seqan3::detail::alignment_trace_matrix_proxy
+        auto & [score_cell, trace_cell] = current_cell;
 
-        auto & [main_score, hz_score, hz_trace] = get<0>(current_cell);
-        auto & [prev_score, vt_score, vt_trace] = get<0>(cache);
+        score_cell.current = score_cell.r_left;
+        trace_cell.current = trace_cell.r_left;
 
-        prev_score = main_score;
-        main_score = hz_score;
-        get<2>(current_cell) = hz_trace; // store the trace direction
+        static_cast<derived_t const &>(*this).check_score(current_cell, cache);
 
-        vt_score += main_score + get<1>(cache);
-        vt_trace = trace_directions::up_open; // cache vertical trace
-        // Initialise the horizontal matrix cell according to the traits settings.
+        score_cell.up = score_cell.current + cache.gap_open_score;
+        trace_cell.up = trace_directions::up_open;
+
         if constexpr (traits_type::free_first_leading_t::value)
         {
-            hz_score = 0;
-            hz_trace = trace_directions::none;
+            score_cell.w_left = 0;
+            trace_cell.w_left = trace_directions::none;
         }
         else
         {
-            hz_score += get<2>(cache);
-            hz_trace = trace_directions::left;
+            score_cell.w_left = score_cell.r_left + cache.gap_extension_score;
+            trace_cell.w_left = trace_directions::left;
         }
     }
 };
