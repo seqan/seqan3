@@ -29,6 +29,7 @@
 #include <seqan3/argument_parser/detail/version_check.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/detail/terminal.hpp>
+#include <seqan3/core/detail/test_accessor.hpp>
 #include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/io/stream/concept.hpp>
 
@@ -535,6 +536,9 @@ private:
 
     //!\brief Whether the **user** specified to perform the version check (true) or not (false), default unset.
     std::optional<bool> version_check_user_decision;
+
+    //!\brief Befriend seqan3::detail::test_accessor to grant access to version_check_future.
+    friend struct ::seqan3::detail::test_accessor;
 
     //!\brief The future object that keeps track of the detached version check call thread.
     std::future<bool> version_check_future;
