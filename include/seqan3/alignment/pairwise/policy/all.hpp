@@ -57,7 +57,7 @@
  * Function name     | Arguments                              | Return value                         |
  * ----------------- | -------------------------------------- | ------------------------------------ |
  * `compute_cell`    | `cell &&`, `cache &`, `score const &`  | `void`                               |
- * `make_cache`      | `gap_scheme const &`                   | alignment_algorithm_cache            |
+ * `make_cache`      | `gap_scheme const &`                   | alignment_algorithm_state            |
  *
  * - compute_cell:
  *

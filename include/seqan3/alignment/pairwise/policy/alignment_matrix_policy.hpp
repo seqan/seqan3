@@ -12,10 +12,14 @@
 
 #pragma once
 
+#include <limits>
+#include <tuple>
+
 #include <seqan3/alignment/band/static_band.hpp>
-#include <seqan3/alignment/pairwise/detail/alignment_algorithm_cache.hpp>
+#include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/zip.hpp>
 
 namespace seqan3::detail
 {
@@ -58,35 +62,35 @@ private:
     //!}
 
     /*!\brief Allocates the memory of the underlying matrices.
-     * \tparam fst_range_t The type of the first sequence to align; must model std::forward_ranges.
-     * \tparam snd_range_t The type of the second sequence to align; must model std::forward_ranges.
-     * \tparam fst_range_t The type of the first sequence to align.
-     * \tparam sec_range_t The type of the second sequence to align.
-     * \param[in] fst_range The first sequence to align.
-     * \param[in] snd_range The second sequence to align.
+     * \tparam sequence1_t The type of the first sequence to align; must model std::forward_ranges.
+     * \tparam sequence2_t The type of the second sequence to align; must model std::forward_ranges.
+     *
+     * \param[in] sequence1 The first sequence to align.
+     * \param[in] sequence2 The second sequence to align.
      *
      * \details
      *
      * Initialises the underlying score and trace matrices and sets the respective matrix iterators to the begin of the
      * corresponding matrix.
      */
-    template <typename fst_range_t, typename snd_range_t>
-    constexpr void allocate_matrix(fst_range_t && fst_range, snd_range_t && snd_range)
+    template <typename sequence1_t, typename sequence2_t>
+    constexpr void allocate_matrix(sequence1_t && sequence1, sequence2_t && sequence2)
     {
-        score_matrix = score_matrix_t{fst_range, snd_range};
-        trace_matrix = trace_matrix_t{fst_range, snd_range};
+        score_matrix = score_matrix_t{sequence1, sequence2};
+        trace_matrix = trace_matrix_t{sequence1, sequence2};
 
         initialise_matrix_iterator();
     }
 
     /*!\brief Allocates the memory of the underlying matrices.
-     * \tparam fst_range_t The type of the first sequence to align; must model std::forward_ranges.
-     * \tparam snd_range_t The type of the second sequence to align; must model std::forward_ranges.
+     * \tparam sequence1_t The type of the first sequence to align; must model std::forward_ranges.
+     * \tparam sequence2_t The type of the second sequence to align; must model std::forward_ranges.
      * \tparam score_t The score type used inside of the alignment algorithm.
-     * \param[in] fst_range The first sequence to align.
-     * \param[in] snd_range The second sequence to align.
+     *
+     * \param[in] sequence1 The first sequence to align.
+     * \param[in] sequence2 The second sequence to align.
      * \param[in] band The band used to initialise the matrices.
-     * \param[in] cache The current cache used by the alignment algorithm.
+     * \param[in] state The current state used by the alignment algorithm.
      *
      * \details
      *
@@ -99,17 +103,17 @@ private:
      * In the algorithm we never write to this cell and only add the extension costs to the read value. This way we
      * can get the smallest possible value as an infinity.
      */
-    template <typename fst_range_t, typename snd_range_t, typename score_t>
-    constexpr void allocate_matrix(fst_range_t && fst_range,
-                                   snd_range_t && snd_range,
+    template <typename sequence1_t, typename sequence2_t, typename score_t>
+    constexpr void allocate_matrix(sequence1_t && sequence1,
+                                   sequence2_t && sequence2,
                                    static_band const & band,
-                                   alignment_algorithm_cache<score_t> const & cache)
+                                   alignment_algorithm_state<score_t> const & state)
     {
-        assert(cache.gap_extension_score <= 0); // We expect it to be always non-positive.
+        assert(state.gap_extension_score <= 0); // We expect it to never be positive.
 
-        score_t inf = std::numeric_limits<score_t>::lowest() - cache.gap_extension_score;
-        score_matrix = score_matrix_t{fst_range, snd_range, band, inf};
-        trace_matrix = trace_matrix_t{fst_range, snd_range, band};
+        score_t inf = std::numeric_limits<score_t>::lowest() - state.gap_extension_score;
+        score_matrix = score_matrix_t{sequence1, sequence2, band, inf};
+        trace_matrix = trace_matrix_t{sequence1, sequence2, band};
 
         initialise_matrix_iterator();
     }
@@ -122,10 +126,10 @@ private:
     }
 
     /*!\brief Slices the sequences according to the band parameters.
-    * \tparam fst_range_t The type of the first sequence to align; must model std::forward_ranges.
-    * \tparam snd_range_t The type of the second sequence to align; must model std::forward_ranges.
-    * \param[in] fst_range The first sequence to align.
-    * \param[in] snd_range The second sequence to align.
+    * \tparam sequence1_t The type of the first sequence to align; must model std::forward_ranges.
+    * \tparam sequence2_t The type of the second sequence to align; must model std::forward_ranges.
+    * \param[in] sequence1 The first sequence to align.
+    * \param[in] sequence2 The second sequence to align.
     * \param[in] band The seqan3::static_band used to limit the alignment space.
     *
     * \details
@@ -133,37 +137,61 @@ private:
     * If the band does not intersect with the origin or the sink of the matrix the sequences are sliced such that the
     * band starts in the origin and ends in the sink.
     */
-    template <typename fst_range_t, typename snd_range_t>
-    constexpr auto slice_sequences(fst_range_t & fst_range,
-                                   snd_range_t & snd_range,
+    template <typename sequence1_t, typename sequence2_t>
+    constexpr auto slice_sequences(sequence1_t & sequence1,
+                                   sequence2_t & sequence2,
                                    static_band const & band) const noexcept
     {
-        size_t size_fst = std::ranges::distance(std::ranges::begin(fst_range), std::ranges::end(fst_range));
-        size_t size_snd = std::ranges::distance(std::ranges::begin(snd_range), std::ranges::end(snd_range));
+        size_t seq1_size = std::ranges::distance(sequence1);
+        size_t seq2_size = std::ranges::distance(sequence2);
 
-        auto trim_fst_range = [&] () constexpr
+        auto trim_sequence1 = [&] () constexpr
         {
             size_t begin_pos = std::max<std::ptrdiff_t>(band.lower_bound - 1, 0);
-            size_t end_pos = std::min<std::ptrdiff_t>(band.upper_bound + size_snd, size_fst);
-            return fst_range | views::slice(begin_pos, end_pos);
+            size_t end_pos = std::min<std::ptrdiff_t>(band.upper_bound + seq2_size, seq1_size);
+            return sequence1 | views::slice(begin_pos, end_pos);
         };
 
-        auto trim_snd_range = [&] () constexpr
+        auto trim_sequence2 = [&] () constexpr
         {
             size_t begin_pos = std::abs(std::min<std::ptrdiff_t>(band.upper_bound + 1, 0));
-            size_t end_pos = std::min<std::ptrdiff_t>(size_fst - band.lower_bound, size_snd);
-            return snd_range | views::slice(begin_pos, end_pos);
+            size_t end_pos = std::min<std::ptrdiff_t>(seq1_size - band.lower_bound, seq2_size);
+            return sequence2 | views::slice(begin_pos, end_pos);
         };
 
-        return std::tuple{trim_fst_range(), trim_snd_range()};
+        return std::tuple{trim_sequence1(), trim_sequence2()};
+    }
+
+    /*!\brief Returns the current alignment column.
+     * \returns The current alignment column as a zipped view over the score matrix and trace matrix column.
+     *
+     * \details
+     *
+     * The current alignment column is a zipped view over the current score matrix column and trace matrix column.
+     * These columns are managed by the corresponding alignment matrix policy.
+     */
+    constexpr auto current_alignment_column() noexcept
+    {
+        assert(!std::ranges::empty(*score_matrix_iter));
+        assert(!std::ranges::empty(*trace_matrix_iter));
+
+        return views::zip(*score_matrix_iter, *trace_matrix_iter);
+    }
+
+    /*!\brief Moves to the next alignment column.
+     *
+     * \details
+     *
+     * Increments the underlying matrix iterators for the score matrix and the trace matrix.
+     */
+    constexpr void next_alignment_column() noexcept
+    {
+        ++score_matrix_iter;
+        ++trace_matrix_iter;
     }
 
     score_matrix_t score_matrix{}; //!< The scoring matrix.
     trace_matrix_t trace_matrix{}; //!< The trace matrix if needed.
-
-    //!\brief Allow seqan3::detail::find_optimum_policy to access score_matrix_iter.
-    template <typename other_alignment_algorithm_t, typename other_traits_type>
-    friend class find_optimum_policy;
 
     typename score_matrix_t::iterator score_matrix_iter{}; //!< The matrix iterator over the score matrix.
     typename trace_matrix_t::iterator trace_matrix_iter{}; //!< The matrix iterator over the trace matrix.

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::alignment_algorithm_cache.
+ * \brief Provides seqan3::detail::alignment_algorithm_state.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -17,36 +17,43 @@
 
 namespace seqan3::detail
 {
-/*!\brief Local cache for the standard alignment algorithm.
+/*!\brief Local state for the standard alignment algorithm.
  * \tparam score_type The type of the score.
  * \ingroup pairwise_alignment
  *
  * \details
  *
- * This cache is used internally for the standard alignment algorithm and caches the gap extension and gap open scores
+ * This state is used internally for the standard alignment algorithm and caches the gap extension and gap open scores
  * as well as the current alignment optimum.
  * The alignment optimum stores the current score and the corresponding matrix coordinate in
  * the underlying two-dimensional matrix.
  */
 template <typename score_type>
-struct alignment_algorithm_cache
+struct alignment_algorithm_state
 {
-    //!\brief The cached gap open score.
-    score_type gap_open_score{};
     //!\brief The cached gap extension score.
     score_type gap_extension_score{};
+    //!\brief The cached gap open score.
+    score_type gap_open_score{};
     //!\brief The current alignment optimum.
     alignment_optimum<score_type> optimum{std::numeric_limits<score_type>::lowest(),
                                           alignment_coordinate{column_index_type{0u}, row_index_type{0u}}};
+
+    //!\brief Resets the alignment optimum to the default initialised optimum.
+    constexpr void reset_optimum() noexcept
+    {
+        optimum = alignment_optimum<score_type>{std::numeric_limits<score_type>::lowest(),
+                                                alignment_coordinate{column_index_type{0u}, row_index_type{0u}}};
+    }
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::detail::alignment_algorithm_cache
+ * \relates seqan3::detail::alignment_algorithm_state
  * \{
  */
 
 //!\brief Deduces the template parameter for the score type from construction with gap open and gap extension scores.
 template <typename score_type>
-alignment_algorithm_cache(score_type, score_type) -> alignment_algorithm_cache<score_type>;
+alignment_algorithm_state(score_type, score_type) -> alignment_algorithm_state<score_type>;
 //!\}
 }  // namespace seqan3::detail
