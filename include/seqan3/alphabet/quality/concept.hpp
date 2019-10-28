@@ -29,7 +29,7 @@ void to_phred(args_t ...) = delete;
 //!\brief Functor definition for seqan3::to_phred.
 struct to_phred_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::to_phred(v)) // explicit customisation
     SEQAN3_CPO_IMPL(1, to_phred(v)                                       ) // ADL
     SEQAN3_CPO_IMPL(0, v.to_phred()                                      ) // member
@@ -115,7 +115,7 @@ void assign_phred_to(args_t ...) = delete;
 //!\ingroup quality
 struct assign_phred_to_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, (seqan3::custom::alphabet<decltype(v)>::assign_phred_to(args..., v))) // explicit customisation
     SEQAN3_CPO_IMPL(1, (assign_phred_to(args..., v)                                       )) // ADL
     SEQAN3_CPO_IMPL(0, (v.assign_phred(args...)                                           )) // member

@@ -30,7 +30,7 @@ void complement(args_t ...) = delete;
 //!\brief Functor definition for seqan3::complement.
 struct complement_fn
 {
-private:
+public:
     SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::complement(v)) // explicit customisation
     SEQAN3_CPO_IMPL(1, complement(v)                                       ) // ADL
     SEQAN3_CPO_IMPL(0, v.complement()                                      ) // member

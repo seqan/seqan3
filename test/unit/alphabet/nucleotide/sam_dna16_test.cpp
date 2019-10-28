@@ -51,8 +51,12 @@ TEST(sam_dna16, nucleotide)
 
 TEST(sam_dna16, to_char_assign_char)
 {
-    for (char chr : sam_dna16::rank_to_char)
+    using rank_t = alphabet_rank_t<sam_dna16>;
+    for (rank_t rank = 0; rank < alphabet_size<sam_dna16>; ++rank)
+    {
+        char chr = to_char(assign_rank_to(rank, sam_dna16{}));
         EXPECT_EQ(to_char(sam_dna16{}.assign_char(chr)), chr);
+    }
 
     EXPECT_EQ(to_char(sam_dna16{}.assign_char('a')), 'A');
     EXPECT_EQ(to_char(sam_dna16{}.assign_char('c')), 'C');

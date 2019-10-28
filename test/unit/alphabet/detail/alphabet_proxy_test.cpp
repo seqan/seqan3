@@ -18,7 +18,8 @@ using namespace seqan3;
 class alphabet_proxy_example : public alphabet_proxy<alphabet_proxy_example, dna4>
 {
 private:
-    using base_t = alphabet_proxy<alphabet_proxy_example, dna4>;
+    using alphabet_type = dna4;
+    using base_t = alphabet_proxy<alphabet_proxy_example, alphabet_type>;
     friend base_t;
 
     constexpr void on_update() noexcept
@@ -31,6 +32,11 @@ public:
     constexpr alphabet_proxy_example & operator=(alphabet_proxy_example const &) = default;
     constexpr alphabet_proxy_example & operator=(alphabet_proxy_example &&) = default;
     ~alphabet_proxy_example() = default;
+
+    constexpr alphabet_proxy_example(alphabet_type const a) noexcept : base_t{a}
+    {};
+
+    using base_t::operator=;
 };
 
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, alphabet_, alphabet_proxy_example);
@@ -107,7 +113,8 @@ static_assert(seqan3::alphabet<my_namespace::my_alph>);
 class alphabet_proxy_example2 : public alphabet_proxy<alphabet_proxy_example2, my_namespace::my_alph>
 {
 private:
-    using base_t = alphabet_proxy<alphabet_proxy_example2, my_namespace::my_alph>;
+    using alphabet_type = my_namespace::my_alph;
+    using base_t = alphabet_proxy<alphabet_proxy_example2, alphabet_type>;
     friend base_t;
 
     constexpr void on_update() noexcept
@@ -120,6 +127,9 @@ public:
     constexpr alphabet_proxy_example2 & operator=(alphabet_proxy_example2 const &) = default;
     constexpr alphabet_proxy_example2 & operator=(alphabet_proxy_example2 &&) = default;
     ~alphabet_proxy_example2() = default;
+
+    constexpr alphabet_proxy_example2(alphabet_type const a) noexcept : base_t{a}
+    {};
 };
 
 INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy2, alphabet_, alphabet_proxy_example2);
