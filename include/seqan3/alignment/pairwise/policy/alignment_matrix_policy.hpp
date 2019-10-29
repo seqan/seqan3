@@ -161,6 +161,10 @@ private:
     score_matrix_t score_matrix{}; //!< The scoring matrix.
     trace_matrix_t trace_matrix{}; //!< The trace matrix if needed.
 
+    //!\brief Allow seqan3::detail::find_optimum_policy to access score_matrix_iter.
+    template <typename other_alignment_algorithm_t, typename other_traits_type>
+    friend class find_optimum_policy;
+
     typename score_matrix_t::iterator score_matrix_iter{}; //!< The matrix iterator over the score matrix.
     typename trace_matrix_t::iterator trace_matrix_iter{}; //!< The matrix iterator over the trace matrix.
 };
