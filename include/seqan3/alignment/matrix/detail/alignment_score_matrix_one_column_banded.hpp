@@ -56,9 +56,10 @@ protected:
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::column_data_view_type
     using column_data_view_type = std::span<element_type>;
 
-    using matrix_base_t::num_cols;
-
 public:
+    using matrix_base_t::num_cols;
+    using matrix_base_t::num_rows;
+
     /*!\name Associated types
      * \{
      */
