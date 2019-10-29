@@ -23,6 +23,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Argument parser
 * Simplified reading file extensions from formatted files in the input/output file validators.
+* The seqan3::value_list_validator is now constructible from a range or a parameter pack.
 * Enable subcommand argument parsing ([How-to](https://docs.seqan.de/seqan/3-master-user/subcommand_arg_parse.html)).
 
 #### Core
@@ -42,6 +43,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Argument parser
 
+* The seqan3::value_list_validator is not constructible from a std::initialiser_list any more
+  (e.g. `seqan3::value_list_validator{{1,2,3}}` does **not** work, use `seqan3::value_list_validator{1,2,3}` instead).
 * **Changed class signature of input/output file validators:**
   Most user code will be unaffected; to fix possible compiler errors you need to add an empty template parameter list to
   the respective instances (e.g. change `input_file_validator` to `input_file_validator<>`).
