@@ -1,0 +1,1 @@
+seqan3_test(simd_match_mismatch_scoring_scheme_test.cpp)
