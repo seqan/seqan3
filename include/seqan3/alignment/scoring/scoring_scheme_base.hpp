@@ -150,9 +150,9 @@ private:
     /*!\brief Constructor for a custom scheme (delegates to set_custom_matrix()).
      * \copydetails set_custom_matrix()
      */
-    constexpr scoring_scheme_base(matrix_type const & _matrix) noexcept
+    constexpr scoring_scheme_base(matrix_type const & matrix) noexcept
     {
-        set_custom_matrix(_matrix);
+        set_custom_matrix(matrix);
     }
     //!\}
 
@@ -192,11 +192,11 @@ public:
     }
 
     /*!\brief Set a custom scheme by passing a full matrix with arbitrary content.
-     * \param[in] _matrix A full matrix that is copied into the scheme.
+     * \param[in] matrix A full matrix that is copied into the scheme.
      */
-    constexpr void set_custom_matrix(matrix_type const & _matrix) noexcept
+    constexpr void set_custom_matrix(matrix_type const & matrix) noexcept
     {
-        std::ranges::copy(_matrix, begin(matrix));
+        std::ranges::copy(matrix, this->matrix.begin());
     }
     //!\}
 
@@ -210,15 +210,20 @@ public:
      * \param[in] alph2   The second letter to score.
      * \return The score of the two letters in the current scheme.
      */
-    template <explicitly_convertible_to<alphabet_t> alph1_t,
-              explicitly_convertible_to<alphabet_t> alph2_t>
+    template <typename alph1_t, typename alph2_t>
+    //!\cond
+        requires explicitly_convertible_to<alph1_t, alphabet_t> && explicitly_convertible_to<alph2_t, alphabet_t>
+    //!\endcond
     constexpr score_t & score(alph1_t const alph1, alph2_t const alph2) noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }
 
     //!\copydoc score
-    template <explicitly_convertible_to<alphabet_t> alph1_t, explicitly_convertible_to<alphabet_t> alph2_t>
+    template <typename alph1_t, typename alph2_t>
+    //!\cond
+        requires explicitly_convertible_to<alph1_t, alphabet_t> && explicitly_convertible_to<alph2_t, alphabet_t>
+    //!\endcond
     constexpr score_t score(alph1_t const alph1, alph2_t const alph2) const noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];

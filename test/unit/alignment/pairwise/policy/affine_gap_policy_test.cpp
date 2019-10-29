@@ -46,7 +46,7 @@ public:
 };
 
 template <typename test_types>
-class affine_gap_fixture : public ::testing::Test
+struct affine_gap_fixture : public ::testing::Test
 {
     using score_matrix_t = std::tuple_element_t<0, test_types>;
     using trace_matrix_t = std::tuple_element_t<1, test_types>;
