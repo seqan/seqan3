@@ -64,11 +64,11 @@ TYPED_TEST(simd_match_mismatch_scoring_scheme_test, construct_from_scoring_schem
     using scalar_t = typename simd_traits<TypeParam>::scalar_type;
     using scheme_t = simd_match_mismatch_scoring_scheme<TypeParam, dna4, detail::global_alignment_type>;
 
-    int64_t to_big = static_cast<int64_t>(std::numeric_limits<scalar_t>::max()) + 1;
-    int64_t to_small = static_cast<int64_t>(std::numeric_limits<scalar_t>::lowest()) - 1;
-    EXPECT_THROW((scheme_t{nucleotide_scoring_scheme<int64_t>{match_score{to_big}, mismatch_score<int64_t>{-5}}}),
+    int64_t too_big = static_cast<int64_t>(std::numeric_limits<scalar_t>::max()) + 1;
+    int64_t too_small = static_cast<int64_t>(std::numeric_limits<scalar_t>::lowest()) - 1;
+    EXPECT_THROW((scheme_t{nucleotide_scoring_scheme<int64_t>{match_score{too_big}, mismatch_score<int64_t>{-5}}}),
                  std::invalid_argument);
-    EXPECT_THROW((scheme_t{nucleotide_scoring_scheme<int64_t>{match_score<int64_t>{4}, mismatch_score{to_small}}}),
+    EXPECT_THROW((scheme_t{nucleotide_scoring_scheme<int64_t>{match_score<int64_t>{4}, mismatch_score{too_small}}}),
                  std::invalid_argument);
 }
 

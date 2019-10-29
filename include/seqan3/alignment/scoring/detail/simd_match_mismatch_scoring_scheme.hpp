@@ -23,7 +23,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief A vectorised scoring scheme scheme handling matches and mismatches only.
+/*!\brief A vectorised scoring scheme handling matches and mismatches only.
  * \ingroup scoring
  * \tparam simd_score_t The type of the simd vector; must model seqan3::detail::simd_concept.
  * \tparam alphabet_t The type of the alphabet over which to define the scoring scheme; must model seqan3::semialphabet
@@ -44,13 +44,13 @@ namespace seqan3::detail
  *
  * During the vectorised alignment multiple sequences are packed into one simd vector.
  * To handle sequences with different sizes in the vectorised alignment algorithm the smaller sequences are filled up
- * with special padding symbols. These padding symbols are chosen in a way that allow the computation of the alignments
+ * with special padding symbols. These padding symbols are chosen in a way that allows the computation of the alignments
  * without the need of masking the results for invalid positions within the matrix because a specific position might
  * have exceeded the original sequence size.
  * To do so, the global alignment uses the same padding symbol for the first sequence pack and the second sequence
  * pack. This padding symbol is distinct to any symbol in the underlying alphabet of the sequences.
  * The score function is adapted in a way that a comparison with a padding symbol always yields a match.
- * Thus, after the end of a sequence within the pack has reached the score can only grow.
+ * Thus, after the end of a sequence within the pack is reached the score can only grow.
  * The respective score can then be inferred from the projected position of the last row or column of the
  * vectorised matrix depending on the the corresponding alignment configuration.
  *
@@ -72,17 +72,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    //!\brief Default.
+    //!\brief Defaulted.
     constexpr simd_match_mismatch_scoring_scheme() = default;
-    //!\brief Default.
+    //!\brief Defaulted.
     constexpr simd_match_mismatch_scoring_scheme(simd_match_mismatch_scoring_scheme const &) = default;
-    //!\brief Default.
+    //!\brief Defaulted.
     constexpr simd_match_mismatch_scoring_scheme(simd_match_mismatch_scoring_scheme &&) = default;
-    //!\brief Default.
+    //!\brief Defaulted.
     constexpr simd_match_mismatch_scoring_scheme & operator=(simd_match_mismatch_scoring_scheme const &) = default;
-    //!\brief Default.
+    //!\brief Defaulted.
     constexpr simd_match_mismatch_scoring_scheme & operator=(simd_match_mismatch_scoring_scheme &&) = default;
-    //!\brief Default.
+    //!\brief Defaulted.
     ~simd_match_mismatch_scoring_scheme() = default;
 
     //!\copydoc seqan3::detail::simd_match_mismatch_scoring_scheme::initialise_from_scalar_scoring_scheme
@@ -113,7 +113,8 @@ public:
     /*!\brief Computes the score for two simd vectors.
      * \param[in] lhs The left operand to compare.
      * \param[in] rhs The right operand to compare.
-     * \returns
+     *
+     * \returns The simd score with match and mismatch scores after comparing both input operands.
      *
      * \details
      *
@@ -168,8 +169,7 @@ private:
     template <typename scoring_scheme_t>
     constexpr void initialise_from_scalar_scoring_scheme(scoring_scheme_t const & scoring_scheme)
     {
-        using score_t = decltype(std::declval<scoring_scheme_t const &>().score(seqan3::assign_rank_to(0, alphabet_t{}),
-                                                                                seqan3::assign_rank_to(0, alphabet_t{})));
+        using score_t = decltype(std::declval<scoring_scheme_t const &>().score(alphabet_t{}, alphabet_t{}));
         using simd_scalar_t = typename simd_traits<simd_score_t>::scalar_type;
 
         score_t scalar_match_score = scoring_scheme.score(seqan3::assign_rank_to(0, alphabet_t{}),
