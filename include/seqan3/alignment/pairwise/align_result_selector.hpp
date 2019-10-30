@@ -75,24 +75,25 @@ private:
     //!\brief Helper function to determine the actual result type.
     static constexpr auto select()
     {
-        using score_type = int32_t;
-
-        if constexpr (std::remove_reference_t<configuration_t>::template exists<align_cfg::result>())
+        if constexpr (configuration_t::template exists<align_cfg::result>())
         {
-            if constexpr (configuration_t::template exists<align_cfg::result<with_back_coordinate_type>>())
+            using result_type = decltype(get<align_cfg::result>(std::declval<configuration_t>()));
+	        using score_type = typename std::remove_reference_t<result_type>::score_type;
+
+            if constexpr (configuration_t::template exists<align_cfg::result<with_back_coordinate_type, score_type>>())
             {
                 return alignment_result_value_type<uint32_t,
                                                    score_type,
                                                    alignment_coordinate>{};
             }
-            else if constexpr (configuration_t::template exists<align_cfg::result<with_front_coordinate_type>>())
+            else if constexpr (configuration_t::template exists<align_cfg::result<with_front_coordinate_type, score_type>>())
             {
                 return alignment_result_value_type<uint32_t,
                                                    score_type,
                                                    alignment_coordinate,
                                                    alignment_coordinate>{};
             }
-            else if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type>>())
+            else if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type, score_type>>())
             {
                 // Due to an error with gcc8 we define these types beforehand.
                 using first_gapped_seq_type = gapped<value_type_t<first_range_t>>;
@@ -117,7 +118,7 @@ private:
         }
         else
         {
-            return alignment_result_value_type<uint32_t, score_type>{};
+            return alignment_result_value_type<uint32_t, int32_t>{};
         }
     }
 

@@ -63,6 +63,18 @@ TEST(alignment_selector, align_result_selector_with_list)
     }
 }
 
+TEST(alignment_selector, align_result_selector_using_score_type)
+{
+    using seq1_t = std::vector<dna4>;
+    using seq2_t = std::list<dna4>;
+
+    auto cfg = align_cfg::edit | align_cfg::result{with_back_coordinate, using_score_type<double>};
+    using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
+
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), double>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().back_coordinate()), alignment_coordinate const &>));
+}
+
 TEST(alignment_selector, align_result_selector_with_vector)
 {
     using seq_t = std::vector<dna4>;

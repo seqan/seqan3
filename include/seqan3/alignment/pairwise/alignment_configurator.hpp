@@ -419,7 +419,7 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
     // score type
     // ----------------------------------------------------------------------------
 
-    using score_type = int32_t;
+    using score_type = typename std::remove_reference_t<decltype(get<align_cfg::result>(cfg))>::score_type;
 
     // ----------------------------------------------------------------------------
     // dynamic programming matrix

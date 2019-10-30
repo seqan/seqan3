@@ -203,3 +203,18 @@ TEST(alignment_configurator, configure_affine_local_alignment)
 
     EXPECT_TRUE(run_test(cfg));
 }
+
+TEST(alignment_configurator, configure_result_score_type)
+{
+    auto cfg = align_cfg::edit | align_cfg::result{with_back_coordinate, using_score_type<double>};
+
+    auto r = setup();
+    auto fn = detail::alignment_configurator::configure<decltype(r)>(cfg);
+    auto & [seq1, seq2] = *std::ranges::begin(r);
+
+    auto res = fn(0u, seq1 | views::all, seq2 | views::all);
+
+    EXPECT_EQ(res.score(), 0);
+    EXPECT_EQ(res.back_coordinate(), (alignment_coordinate{detail::column_index_type{4u}, detail::row_index_type{4u}}));
+    EXPECT_TRUE((std::same_as<decltype(res.score()), double>));
+}
