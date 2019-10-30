@@ -504,7 +504,8 @@ private:
 
         if constexpr (result_config_t::rank >= 1)  // compute back coordinate
         {
-            res.back_coordinate = this->alignment_state.optimum.coordinate;
+            res.back_coordinate = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
+                                                       row_index_type{this->alignment_state.optimum.row_index}};
             // At some point this needs to be refactored so that it is not necessary to adapt the coordinate.
             if constexpr (is_banded)
                 res.back_coordinate.second += res.back_coordinate.first - this->trace_matrix.band_col_index;
@@ -514,8 +515,9 @@ private:
         {
             // Get a aligned sequence builder for banded or un-banded case.
             aligned_sequence_builder builder{sequence1, sequence2};
-
-            auto trace_res = builder(this->trace_matrix.trace_path(this->alignment_state.optimum.coordinate));
+            auto optimum_coordinate = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
+                                                           row_index_type{this->alignment_state.optimum.row_index}};
+            auto trace_res = builder(this->trace_matrix.trace_path(optimum_coordinate));
             res.front_coordinate.first = trace_res.first_sequence_slice_positions.first;
             res.front_coordinate.second = trace_res.second_sequence_slice_positions.first;
 
