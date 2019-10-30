@@ -16,14 +16,38 @@ namespace seqan3::test::alignment::fixture
 
 static constexpr auto INF = std::nullopt;
 
-static constexpr auto NON = detail::trace_directions::none;
-static constexpr auto D = detail::trace_directions::diagonal;
-static constexpr auto U = detail::trace_directions::up;
-static constexpr auto L = detail::trace_directions::left;
-static constexpr auto DU = D | U;
-static constexpr auto UL = U | L;
-static constexpr auto DL = D | L;
-static constexpr auto DUL = D | U | L;
+static constexpr auto N     = detail::trace_directions::none;
+static constexpr auto D     = detail::trace_directions::diagonal;
+static constexpr auto u     = detail::trace_directions::up;
+static constexpr auto l     = detail::trace_directions::left;
+static constexpr auto U     = detail::trace_directions::up_open;
+static constexpr auto L     = detail::trace_directions::left_open;
+static constexpr auto DU    = D | U;
+static constexpr auto UL    = U | L;
+static constexpr auto DL    = D | L;
+static constexpr auto DUL   = D | U | L;
+static constexpr auto Du    = D | u;
+static constexpr auto Uu    = U | u;
+static constexpr auto uL    = u | L;
+static constexpr auto DuL   = D | u | L;
+static constexpr auto DUu   = D | U | u;
+static constexpr auto UuL   = U | u | L;
+static constexpr auto DUuL  = D | U | u | L;
+static constexpr auto Dl    = D | l;
+static constexpr auto Ul    = U | l;
+static constexpr auto DUl   = D | U | l;
+static constexpr auto Ll    = L | l;
+static constexpr auto DLl   = D | L | l;
+static constexpr auto ULl   = U | L | l;
+static constexpr auto DULl  = D | U | L | l;
+static constexpr auto ul    = u | l;
+static constexpr auto Dul   = D | u | l;
+static constexpr auto Uul   = U | u | l ;
+static constexpr auto DUul  = D | U | u | l;
+static constexpr auto uLl   = u | L | l;
+static constexpr auto DuLl  = D | u | L | l;
+static constexpr auto UuLl  = U | u | L | l;
+static constexpr auto DUuLl = D | U | u | L | l;
 
 template <typename sequence1_t, typename sequence2_t, typename config_t, typename score_t,
           typename score_vector_or_matrix_t, typename trace_vector_or_matrix_t>

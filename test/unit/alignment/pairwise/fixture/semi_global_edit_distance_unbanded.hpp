@@ -56,16 +56,16 @@ static auto dna4_01 = []()
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
-        /*e*/NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,
-        /*A*/U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,
-        /*C*/U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,
-        /*G*/U  ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,
-        /*T*/U  ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,
-        /*A*/U  ,DU ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,
-        /*C*/U  ,U  ,U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,D  ,D  ,DUL,DU ,DU ,DU ,
-        /*G*/U  ,U  ,U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,U  ,DU ,D  ,DL ,DUL,DU ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,U  ,DU ,U  ,D  ,D  ,DL ,
-        /*A*/U  ,DU ,DU ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,U  ,DU ,U  ,DU ,DU ,D
+        /*e*/N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,
+        /*A*/u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,
+        /*C*/u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,
+        /*G*/u  ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,
+        /*T*/u  ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,
+        /*A*/u  ,Du ,D  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,D  ,u  ,Du ,Du ,Du ,Du ,D  ,
+        /*C*/u  ,u  ,u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,D  ,D  ,Dul,Du ,Du ,Du ,
+        /*G*/u  ,u  ,u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,u  ,Du ,D  ,Dl ,Dul,Du ,
+        /*T*/u  ,u  ,u  ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,u  ,Du ,u  ,D  ,D  ,Dl ,
+        /*A*/u  ,Du ,Du ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,u  ,Du ,u  ,Du ,Du ,D
         }
     };
 }();
@@ -111,23 +111,23 @@ static auto dna4_01T = []()
         std::vector
         {
         //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
-        /*e*/NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,
-        /*A*/U  ,D  ,DUL,DU ,DU ,D  ,DUL,DU ,DU ,D  ,
-        /*A*/U  ,DU ,D  ,DUL,DU ,DU ,D  ,DUL,DU ,DU ,
-        /*C*/U  ,U  ,D  ,DL ,DUL,U  ,D  ,DL ,DUL,U  ,
-        /*C*/U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,DL ,U  ,
-        /*G*/U  ,U  ,U  ,D  ,DL ,DUL,U  ,D  ,DL ,DUL,
-        /*G*/U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,DL ,
-        /*T*/U  ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,D  ,DL ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,
-        /*A*/U  ,DU ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,D  ,
-        /*A*/U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,
-        /*C*/U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,
-        /*C*/U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,U  ,
-        /*G*/U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DUL,
-        /*G*/U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D
+        /*e*/N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,
+        /*A*/u  ,D  ,Dul,Du ,Du ,D  ,Dul,Du ,Du ,D  ,
+        /*A*/u  ,Du ,D  ,Dul,Du ,Du ,D  ,Dul,Du ,Du ,
+        /*C*/u  ,u  ,D  ,Dl ,Dul,u  ,D  ,Dl ,Dul,u  ,
+        /*C*/u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,Dl ,u  ,
+        /*G*/u  ,u  ,u  ,D  ,Dl ,Dul,u  ,D  ,Dl ,Dul,
+        /*G*/u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,Dl ,
+        /*T*/u  ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,D  ,Dl ,
+        /*T*/u  ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,
+        /*A*/u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,D  ,
+        /*A*/u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,
+        /*C*/u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,
+        /*C*/u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,
+        /*G*/u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,
+        /*G*/u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,
+        /*T*/u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,
+        /*T*/u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D
         }
     };
 }();
@@ -166,16 +166,16 @@ static auto dna4_02 = []()
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  A,  A,  A,  C,  C,  G,  G,  T,  T,
-        /*e*/NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,
-        /*A*/U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,
-        /*C*/U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,U  ,DU ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,
-        /*G*/U  ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,U  ,DU ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,
-        /*T*/U  ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,UL ,DU ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,
-        /*A*/U  ,DU ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,DL ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,
-        /*C*/U  ,U  ,U  ,D  ,D  ,DUL,DU ,DU ,U  ,D  ,DUL,D  ,D  ,DUL,DU ,DU ,DU ,
-        /*G*/U  ,U  ,U  ,U  ,DU ,D  ,DL ,DUL,U  ,DU ,D  ,U  ,DU ,D  ,DL ,DUL,DU ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,U  ,D  ,D  ,UL ,DU ,DU ,DU ,DU ,U  ,D  ,D  ,DL ,
-        /*A*/U  ,DU ,DU ,U  ,DU ,U  ,DU ,DU ,D  ,DL ,D  ,DUL,DU ,U  ,DU ,DU ,D
+        /*e*/N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,
+        /*A*/u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,D  ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,
+        /*C*/u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,u  ,Du ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,
+        /*G*/u  ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,u  ,Du ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,
+        /*T*/u  ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,ul ,Du ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,
+        /*A*/u  ,Du ,D  ,u  ,Du ,Du ,Du ,Du ,D  ,Dl ,D  ,u  ,Du ,Du ,Du ,Du ,D  ,
+        /*C*/u  ,u  ,u  ,D  ,D  ,Dul,Du ,Du ,u  ,D  ,Dul,D  ,D  ,Dul,Du ,Du ,Du ,
+        /*G*/u  ,u  ,u  ,u  ,Du ,D  ,Dl ,Dul,u  ,Du ,D  ,u  ,Du ,D  ,Dl ,Dul,Du ,
+        /*T*/u  ,u  ,u  ,u  ,Du ,u  ,D  ,D  ,ul ,Du ,Du ,Du ,Du ,u  ,D  ,D  ,Dl ,
+        /*A*/u  ,Du ,Du ,u  ,Du ,u  ,Du ,Du ,D  ,Dl ,D  ,Dul,Du ,u  ,Du ,Du ,D
         }
     };
 }();
@@ -278,7 +278,7 @@ static auto dna4_03 = []()
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
         std::vector<int>{0},
-        std::vector<detail::trace_directions>{NON}
+        std::vector<detail::trace_directions>{N}
     };
 }();
 
@@ -316,16 +316,16 @@ static auto aa27_01 = []()
         std::vector
         {
         //     e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
-        /*e*/NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,
-        /*U*/U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,
-        /*W*/U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,
-        /*R*/U  ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,
-        /*I*/U  ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,
-        /*U*/U  ,DU ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,
-        /*W*/U  ,U  ,U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,D  ,D  ,DUL,DU ,DU ,DU ,
-        /*R*/U  ,U  ,U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,U  ,DU ,D  ,DL ,DUL,DU ,
-        /*I*/U  ,U  ,U  ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,U  ,DU ,U  ,D  ,D  ,DL ,
-        /*U*/U  ,DU ,DU ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,U  ,DU ,U  ,DU ,DU ,D
+        /*e*/N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,
+        /*U*/u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,
+        /*W*/u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,
+        /*R*/u  ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,
+        /*I*/u  ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,
+        /*U*/u  ,Du ,D  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,D  ,u  ,Du ,Du ,Du ,Du ,D  ,
+        /*W*/u  ,u  ,u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,D  ,D  ,Dul,Du ,Du ,Du ,
+        /*R*/u  ,u  ,u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,u  ,Du ,D  ,Dl ,Dul,Du ,
+        /*I*/u  ,u  ,u  ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,u  ,Du ,u  ,D  ,D  ,Dl ,
+        /*U*/u  ,Du ,Du ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,u  ,Du ,u  ,Du ,Du ,D
         }
     };
 }();
@@ -371,23 +371,23 @@ static auto aa27_01T = []()
         std::vector
         {
         //     e,  U,  W,  R,  I,  U,  W,  R,  I,  U
-        /*e*/NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,
-        /*U*/U  ,D  ,DUL,DU ,DU ,D  ,DUL,DU ,DU ,D  ,
-        /*U*/U  ,DU ,D  ,DUL,DU ,DU ,D  ,DUL,DU ,DU ,
-        /*W*/U  ,U  ,D  ,DL ,DUL,U  ,D  ,DL ,DUL,U  ,
-        /*W*/U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,DL ,U  ,
-        /*R*/U  ,U  ,U  ,D  ,DL ,DUL,U  ,D  ,DL ,DUL,
-        /*R*/U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,DL ,
-        /*I*/U  ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,D  ,DL ,
-        /*I*/U  ,U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,D  ,
-        /*U*/U  ,DU ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,D  ,
-        /*U*/U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,U  ,DU ,
-        /*W*/U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DUL,U  ,
-        /*W*/U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,U  ,
-        /*R*/U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,DUL,
-        /*R*/U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D  ,DL ,
-        /*I*/U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,D  ,DL ,
-        /*I*/U  ,U  ,U  ,U  ,DU ,U  ,U  ,U  ,DU ,D
+        /*e*/N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,
+        /*U*/u  ,D  ,Dul,Du ,Du ,D  ,Dul,Du ,Du ,D  ,
+        /*U*/u  ,Du ,D  ,Dul,Du ,Du ,D  ,Dul,Du ,Du ,
+        /*W*/u  ,u  ,D  ,Dl ,Dul,u  ,D  ,Dl ,Dul,u  ,
+        /*W*/u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,Dl ,u  ,
+        /*R*/u  ,u  ,u  ,D  ,Dl ,Dul,u  ,D  ,Dl ,Dul,
+        /*R*/u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,Dl ,
+        /*I*/u  ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,D  ,Dl ,
+        /*I*/u  ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,
+        /*U*/u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,D  ,
+        /*U*/u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,
+        /*W*/u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,
+        /*W*/u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,
+        /*R*/u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,
+        /*R*/u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,
+        /*I*/u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,
+        /*I*/u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D
         }
     };
 }();
