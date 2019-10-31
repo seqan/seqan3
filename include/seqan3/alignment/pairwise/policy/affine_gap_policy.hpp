@@ -171,7 +171,10 @@ private:
      * \details
      *
      * Gets the stored gap scheme from the configuration or uses a default gap scheme if not set and initialises the
-     * alignment algorithm state with the respective gap extension and gap open costs.
+     * alignment algorithm state with the respective gap extension and gap open costs. If the gap scheme was not
+     * specified by the user the following defaults are used:
+     *  * `-1` for the gap extension score, and
+     *  * `-10` for the gap open score.
      */
     template <typename alignment_configuration_t>
     constexpr void initialise_alignment_state(alignment_configuration_t const & config) noexcept

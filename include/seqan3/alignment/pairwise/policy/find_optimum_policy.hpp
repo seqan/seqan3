@@ -82,7 +82,7 @@ protected:
      */
     template <typename cell_t, typename score_t>
     constexpr void check_score_of_cell([[maybe_unused]] cell_t const & current_cell,
-                               [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
+                                       [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
         if constexpr (traits_type::find_in_every_cell_type::value)
             check_and_update(current_cell, state);

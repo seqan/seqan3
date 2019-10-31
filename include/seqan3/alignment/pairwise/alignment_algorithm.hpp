@@ -122,7 +122,7 @@ public:
      * \details
      *
      * Maintains a copy of the configuration object on the heap using a std::shared_ptr. In addition, the alignment
-     * state, which depends on the selected gap policy is initialised.
+     * state is initialised.
      */
     explicit constexpr alignment_algorithm(config_t const & cfg) : cfg_ptr{std::make_shared<config_t>(cfg)}
     {
@@ -149,9 +149,8 @@ public:
      *
      * \details
      *
-     * Uses the standard dynamic programming algorithm to compute the pairwise sequence alignment. Depending on the
-     * configuration different optimisations are used to reduce the required space and runtime, e.g. using a banded
-     * alignment.
+     * Uses the standard dynamic programming algorithm to compute the pairwise sequence alignment. The space and
+     * runtime complexities depend on the selected configurations (see below).
      *
      * ### Exception
      *
@@ -166,15 +165,16 @@ public:
      *
      * The following table lists the runtime and space complexities for the banded and unbanded algorithm dependent
      * on the configured seqan3::align_cfg::result.
-     * `n` is the size of the longest sequence and `k` is the size of the band.
+     * Let `n` be the length of the first sequence, `m` be the length of the second sequence and `k` be the size of
+     * the band.
      *
      * |                        | unbanded         | banded            |
      * |:----------------------:|:----------------:|:-----------------:|
-     * |runtime                 |\f$ O(n^2) \f$    |\f$ O(n*k) \f$     |
-     * |space (score only)      |\f$ O(n) \f$      |\f$ O(k) \f$       |
-     * |space (end positions)   |\f$ O(n) \f$      |\f$ O(k) \f$       |
-     * |space (begin positions) |\f$ O(n^2) \f$    |\f$ O(n*k) \f$     |
-     * |space (alignment)       |\f$ O(n^2) \f$    |\f$ O(n*k) \f$     |
+     * |runtime                 |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
+     * |space (score only)      |\f$ O(m) \f$      |\f$ O(k) \f$       |
+     * |space (end positions)   |\f$ O(m) \f$      |\f$ O(k) \f$       |
+     * |space (begin positions) |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
+     * |space (alignment)       |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
      */
     template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
     auto operator()(size_t const idx, sequence1_t && sequence1, sequence2_t && sequence2)
@@ -575,7 +575,6 @@ private:
 
     //!\brief The alignment configuration stored on the heap.
     std::shared_ptr<config_t> cfg_ptr{};
-    //TODO Does this has an effect on the runtime in parallel mode due to increased copying time?
     //!\brief The scoring scheme used for this alignment algorithm.
     score_scheme_t score_scheme{};
     //!\brief Stores the currently processed alignment column.
