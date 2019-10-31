@@ -133,10 +133,10 @@ template <typename alignment_result_tag_t = detail::with_score_type, typename sc
              std::same_as<alignment_result_tag_t, detail::with_front_coordinate_type> ||
              std::same_as<alignment_result_tag_t, detail::with_alignment_type>
 //!\endcond
-class result : public pipeable_config_element<result<alignment_result_tag_t>, alignment_result_tag_t>
+class result : public pipeable_config_element<result<alignment_result_tag_t, score_t>, alignment_result_tag_t>
 {
     //!\brief The base type of this class.
-    using base_t = pipeable_config_element<result<alignment_result_tag_t>, alignment_result_tag_t>;
+    using base_t = pipeable_config_element<result<alignment_result_tag_t, score_t>, alignment_result_tag_t>;
 public:
     //!\brief The score type of the alignment result.
     using score_type = score_t;
