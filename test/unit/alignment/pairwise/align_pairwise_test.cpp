@@ -58,11 +58,12 @@ TYPED_TEST(align_pairwise_test, single_pair)
     auto p = std::tie(seq1, seq2);
 
     {  // the score
-        configuration cfg = align_cfg::edit | align_cfg::result{with_score};
+        configuration cfg = align_cfg::edit | align_cfg::result{with_score, using_score_type<double>};
 
         for (auto && res : call_alignment<TypeParam>(p, cfg))
         {
-            EXPECT_EQ(res.score(), -4);
+            EXPECT_EQ(res.score(), -4.0);
+            EXPECT_TRUE((std::same_as<decltype(res.score()), double>));
         }
     }
 
@@ -117,7 +118,7 @@ TYPED_TEST(align_pairwise_test, collection)
     auto p = std::tie(seq1, seq2);
     std::vector<decltype(p)> vec{10, p};
 
-    configuration cfg = align_cfg::edit | align_cfg::result{with_alignment};
+    configuration cfg = align_cfg::edit | align_cfg::result{with_alignment, using_score_type<double>};
     for (auto && res : call_alignment<TypeParam>(vec, cfg))
     {
         EXPECT_EQ(res.score(), -4);
