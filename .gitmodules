@@ -6,4 +6,4 @@
 	url = https://github.com/ericniebler/range-v3
 [submodule "cereal"]
 	path = submodules/cereal
-	url = https://github.com/h-2/cereal
+	url = https://github.com/USCiLab/cereal
