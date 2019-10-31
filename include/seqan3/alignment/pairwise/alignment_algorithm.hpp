@@ -191,10 +191,59 @@ public:
     }
     //!\}
 
-private:
-    /*!\brief Checks if the band parameters are valid for the given sequences.
-     * \tparam sequence1_t The type of the first sequence.
-     * \tparam sequence2_t The type of the second sequence.
+    /*!\brief Invokes the actual alignment computation given two sequences.
+     * \tparam    sequence_pairs_t  The type of the range over indexed sequence pairs; must model std::ranges::forward_range.
+     *  and the value type of the range must model seqan3::tuple_like and with a tuple size of 2.
+     *
+     *
+     * \param[in] idx The index of the first sequence pair.
+     * \param[in] indexed_sequence_pairs  The range of indexed sequence pairs to align.
+     *
+     * \returns A std::vector over seqan3::alignment_result containing the results of the computed alignments.
+     *
+     * \details
+     *
+     * The algorithm always computes a pairwise alignment of two sequences over either a regular alphabet or
+     * packed alphabets in a SIMD vector. In the latter case an inter-vectorisation layout
+     * is used to compute l many pairwise alignments in parallel using special extended register instructions.
+     *
+     * ### Exception
+     *
+     * Strong exception guarantee.
+     *
+     * ### Thread-safety
+     *
+     * Calls to this functions in a concurrent environment are not thread safe. Instead use a copy of the alignment
+     * algorithm type.
+     *
+     * ### Complexity
+     *
+     * The code always runs in \f$ O(N^2) \f$ time and depending on the configuration requires at least \f$ O(N) \f$
+     * and at most \f$ O(N^2) \f$ space.
+     */
+    template <std::ranges::forward_range sequence_pairs_t>
+    //!\cond
+        requires tuple_like<std::ranges::range_value_t<sequence_pairs_t>> &&
+                 std::tuple_size_v<std::ranges::range_value_t<sequence_pairs_t>> == 2
+    //!\endcond
+    auto operator()(size_t idx, sequence_pairs_t && sequence_pairs)
+    {
+        static_assert(std::ranges::view<sequence_pairs_t>, "Expected a view!");
+
+        using sequence_pairs_t = std::tuple_element_t<0, std::ranges::range_value_t<indexed_sequence_pairs_t>>;
+        using sequence1_t = std::tuple_element_t<0, sequence_pairs_t>;
+        using sequence2_t = std::tuple_element_t<1, sequence_pairs_t>;
+        using result_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
+        std::vector<result_t> results;
+
+        for (auto && [sequence1, sequence2] : sequence_pairs)
+            results.push_back((*this)(idx++, sequence1, sequence2);
+        return results;
+    }
+
+    /*!\brief Invokes the banded alignment computation given two sequences.
+     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::forward_range.
+     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::forward_range.
      *
      * \param[in] sequence1 The first sequence.
      * \param[in] sequence2 The second sequence.
