@@ -20,7 +20,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief A global configuration type used to enable vectorisation of the alignment algorithm.
+/*!\brief A tag to select the vectorised alignment algorithm.
  * \ingroup alignment_configuration
  */
 struct vectorise_tag : public pipeable_config_element<vectorise_tag, empty_type>
@@ -34,13 +34,17 @@ struct vectorise_tag : public pipeable_config_element<vectorise_tag, empty_type>
 namespace seqan3::align_cfg
 {
 
-/*!\brief Enables that the alignment computation is performed with SIMD vectors.
+/*!\brief Enables the vectorised alignment computation if possible for the current configuration.
  * \ingroup alignment_configuration
  *
  * \details
  *
- * SIMD vectors allow the computation of several pairwise alignments simultaneously in one process.
- * Depending on your processor architecture you can gain a significant speed-up.
+ * In the vectorised alignment computation several pairwise sequence alignments are processed simultaneously in one
+ * invocation. To do so, we pack the alignments in so called extended SIMD registers which allow to compute a single
+ * instruction on multiple data at the same time. Depending on your processor architecture you can gain a significant
+ * speed-up, e.g. by running up to 64 alignments in parallel on the latest intel CPUs. In our mode we vectorise
+ * multiple alignments and not a single alignment. This means that you should provide many sequences to compute as
+ * one batch rather than computing them separately as there won't be performance gains.
  *
  * \sa For further information on SIMD see https://en.wikipedia.org/wiki/SIMD.
  *
