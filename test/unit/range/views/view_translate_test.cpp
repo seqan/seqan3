@@ -231,3 +231,30 @@ TYPED_TEST(nucleotide, view_translate_concepts)
     EXPECT_TRUE(std::ranges::sized_range<reference_t<decltype(v1)>>);
     EXPECT_TRUE(std::ranges::view<reference_t<decltype(v1)>>);
 }
+
+TYPED_TEST(nucleotide, issue1339)
+{
+    // empty input
+    std::string in{};
+    std::vector<TypeParam> vec = in | views::char_to<TypeParam> | views::to<std::vector>;
+
+    auto v = vec | views::translate;
+
+    auto out_vecvec = v | views::to<std::vector<std::vector<aa27>>>;
+
+    EXPECT_EQ(out_vecvec.size(), 6u);
+    for (auto & out_vec : out_vecvec)
+        EXPECT_TRUE(out_vec.empty());
+
+    // input of size 1
+    in = "A";
+    vec = in | views::char_to<TypeParam> | views::to<std::vector>;
+
+    v = vec | views::translate;
+
+    out_vecvec = v | views::to<std::vector<std::vector<aa27>>>;
+
+    EXPECT_EQ(out_vecvec.size(), 6u);
+    for (auto & out_vec : out_vecvec)
+        EXPECT_TRUE(out_vec.empty());
+}
