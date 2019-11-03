@@ -254,6 +254,22 @@ TEST_F(sam_format, format_error_invalid_sam_tag_format)
     }
 }
 
+TEST_F(sam_format, short_cigar_string_with_softclipping)
+{
+	// The member function transfer_soft_clipping_to needs to work on 2 element cigar strings
+    {
+        std::istringstream istream("id	16	ref	0	255	10M5S	*	0	0	AGAGGGGGATAACCA	*\n");
+        alignment_file_input fin{istream, ref_ids, ref_sequences, format_sam{}, fields<field::ALIGNMENT>{}};
+        EXPECT_TRUE((std::ranges::equal(get<1>(get<0>(*fin.begin())), "AGAGGGGGAT"_dna5)));
+    }
+
+    {
+        std::istringstream istream("id	16	ref	0	255	5S10M	*	0	0	AGAGGGGGATAACCA	*\n");
+        alignment_file_input fin{istream, ref_ids, ref_sequences, format_sam{}, fields<field::ALIGNMENT>{}};
+        EXPECT_TRUE((std::ranges::equal(get<1>(get<0>(*fin.begin())), "GGGATAACCA"_dna5)));
+    }
+}
+
 TEST_F(sam_format, write_different_header)
 {
     std::ostringstream ostream;

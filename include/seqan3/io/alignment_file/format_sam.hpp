@@ -558,17 +558,19 @@ protected:
      */
     void transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector, int32_t & sc_begin, int32_t & sc_end) const
     {
+        auto v_size = cigar_vector.size();
+
         // check for soft clipping at the first two positions
         if (!cigar_vector.empty() && 'S'_cigar_op == cigar_vector[0])
             sc_begin = get<0>(cigar_vector[0]);
-        else if (cigar_vector.size() > 1 && 'S'_cigar_op == cigar_vector[1])
+        else if (v_size > 1 && 'H'_cigar_op == cigar_vector[0] && 'S'_cigar_op == cigar_vector[1])
             sc_begin = get<0>(cigar_vector[1]);
 
         // check for soft clipping at the last two positions
-        if (cigar_vector.size() > 1 && 'S'_cigar_op == cigar_vector[cigar_vector.size() - 1])
-            sc_end = get<0>(cigar_vector[cigar_vector.size() - 1]);
-        else if (cigar_vector.size() > 2 && 'S'_cigar_op == cigar_vector[cigar_vector.size() - 2])
-            sc_end = get<0>(cigar_vector[cigar_vector.size() - 2]);
+        if (v_size > 1 && 'S'_cigar_op == cigar_vector[v_size - 1])
+            sc_end = get<0>(cigar_vector[v_size - 1]);
+        else if (v_size > 2 && 'H'_cigar_op == cigar_vector[v_size - 1] && 'S'_cigar_op == cigar_vector[v_size - 2])
+            sc_end = get<0>(cigar_vector[v_size - 2]);
     }
 
     /*!\brief Construct the field::ALIGNMENT depending on the given information.
