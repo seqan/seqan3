@@ -70,10 +70,10 @@ private:
 
 protected:
     /*!\brief Checks if a given cell is a new optimum in the alignment.
-     * \tparam cell_t The type of the cell.
+     * \tparam cell_t The type of the alignment matrix cell.
      * \tparam score_t The type of the score.
      *
-     * \param[in] current_cell The current computed cell.
+     * \param[in] current_cell The currently computed alignment matrix cell.
      * \param[in,out] state The state with the current optimum to update.
      *
      * \details
@@ -97,7 +97,7 @@ protected:
     friend class affine_gap_init_policy;
 
     /*!\brief Checks if a cell in the last row of the alignment matrix is a new optimum in the alignment.
-     * \tparam cell_t The type of the cell.
+     * \tparam cell_t The type of the alignment matrix cell.
      * \tparam score_t The type of the score.
      *
      * \param[in] last_row_cell The cell of the current column in the last row of the alignment matrix.
@@ -167,11 +167,18 @@ protected:
     }
 
     /*!\brief Tests if the score in the current cell is greater than the current alignment optimum.
-     * \tparam cell_t The type of the alignment matrix cell.
+     * \tparam cell_t The type of the alignment matrix cell. The cell type corresponds to the value type of the range
+     *                returned by seqan3::detail::alignment_matrix_policy::current_alignment_column.
      * \tparam score_t The alignment algorithm score type.
      *
      * \param[in] cell The current cell to get the score and the coordinate from.
      * \param[in,out] state The state with the current optimum to update.
+     *
+     * \details
+     *
+     * Checks for a new cell in the alignment matrix. If the given score of the alignment matrix cell is greater than
+     * the current optimum stored in the given alignment state the new score and the respective alignment matrix cells
+     * is stored as the new alignment optimum.
      */
     template <typename cell_t, typename score_t>
     constexpr void check_and_update(cell_t const & cell, alignment_algorithm_state<score_t> & state) const noexcept
