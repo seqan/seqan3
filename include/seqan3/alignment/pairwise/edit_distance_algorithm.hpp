@@ -12,6 +12,9 @@
 
 #pragma once
 
+#include <tuple>
+
+#include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 
 namespace seqan3::detail
@@ -60,9 +63,42 @@ public:
     {}
     //!}
 
+    /*!\brief Invokes the alignment computation for every indexed sequence pair contained in the given range.
+     * \tparam indexed_sequence_pairs_t The type of the range of the indexed sequence pairs; must model
+     *                                  seqan3::detail::indexed_sequence_pairs.
+     *
+     * \param[in] indexed_sequence_pairs The indexed sequence pairs to align.
+     *
+     * \returns A std::vector over seqan3::alignment_result.
+     *
+     * \details
+     *
+     * Computes for each contained sequence pair the respective alignment and returns all alignment results in a
+     * vector.
+     */
+    template <indexed_sequence_pair_range indexed_sequence_pairs_t>
+    constexpr auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs)
+    {
+        using indexed_sequence_pair_t = std::ranges::range_value_t<indexed_sequence_pairs_t>; // The value type.
+        using sequence_pair_t = std::tuple_element_t<0, indexed_sequence_pair_t>; // The sequence pair type.
+        using sequence1_t = std::remove_reference_t<std::tuple_element_t<0, sequence_pair_t>>;
+        using sequence2_t = std::remove_reference_t<std::tuple_element_t<1, sequence_pair_t>>;
+        using alignment_result_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
+
+        using std::get;
+
+        std::vector<alignment_result_t> result_vector{};  // Stores the results.
+        for (auto && [sequence_pair, index] : indexed_sequence_pairs)
+            result_vector.push_back((*this)(index, get<0>(sequence_pair), get<1>(sequence_pair)));
+
+        return result_vector;
+    }
+
     /*!\brief Invokes the actual alignment computation given two sequences.
-     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::forward_range.
-     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::forward_range.
+     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model
+     *                           std::ranges::forward_range.
+     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model
+     *                           std::ranges::forward_range.
      * \param[in] idx            The index of the current sequence pair.
      * \param[in] first_range    The first sequence (or packed sequences).
      * \param[in] second_range   The second sequence (or packed sequences).
