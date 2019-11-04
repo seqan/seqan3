@@ -558,19 +558,31 @@ protected:
      */
     void transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector, int32_t & sc_begin, int32_t & sc_end) const
     {
-        auto v_size = cigar_vector.size();
+        // Checks if the given index in the cigar vector is a soft clip.
+        auto soft_clipping_at = [&] (size_t const index) { return cigar_vector[index] == 'S'_cigar_op; };
+        // Checks if the given index in the cigar vector is a hard clip.
+        auto hard_clipping_at = [&] (size_t const index) { return cigar_vector[index] == 'H'_cigar_op; };
+        // Checks if the given cigar vector as at least min_size many elements.
+        auto vector_size_at_least = [&] (size_t const min_size) { return cigar_vector.size() >= min_size; };
+        // Returns the cigar count of the ith cigar element in the given cigar vector.
+        auto cigar_count_at = [&] (size_t const index) { return get<0>(cigar_vector[index]); };
 
         // check for soft clipping at the first two positions
-        if (!cigar_vector.empty() && 'S'_cigar_op == cigar_vector[0])
-            sc_begin = get<0>(cigar_vector[0]);
-        else if (v_size > 1 && 'H'_cigar_op == cigar_vector[0] && 'S'_cigar_op == cigar_vector[1])
-            sc_begin = get<0>(cigar_vector[1]);
+        if (vector_size_at_least(1) && soft_clipping_at(0))
+            sc_begin = cigar_count_at(0);
+        else if (vector_size_at_least(2) && hard_clipping_at(0) && soft_clipping_at(1))
+            sc_begin = cigar_count_at(1);
 
-        // check for soft clipping at the last two positions
-        if (v_size > 1 && 'S'_cigar_op == cigar_vector[v_size - 1])
-            sc_end = get<0>(cigar_vector[v_size - 1]);
-        else if (v_size > 2 && 'H'_cigar_op == cigar_vector[v_size - 1] && 'S'_cigar_op == cigar_vector[v_size - 2])
-            sc_end = get<0>(cigar_vector[v_size - 2]);
+        // Check for soft clipping at the last two positions. But only if the vector size has at least 2, respectively
+        // 3 elements. Accordingly, if the following arithmetics overflow they are protected by the corresponding
+        // if expressions below.
+        auto last_index = cigar_vector.size() - 1;
+        auto second_last_index = last_index - 1;
+
+        if (vector_size_at_least(2) && soft_clipping_at(last_index))
+            sc_end = cigar_count_at(last_index);
+        else if (vector_size_at_least(3) && hard_clipping_at(last_index) && soft_clipping_at(second_last_index))
+            sc_end = cigar_count_at(second_last_index);
     }
 
     /*!\brief Construct the field::ALIGNMENT depending on the given information.
