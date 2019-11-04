@@ -142,6 +142,50 @@ public:
         assert(static_cast<size_t>(std::ranges::distance(entries)) == (row_dim.get() * col_dim.get()));
         storage = std::move(entries);
     }
+
+    /*!\brief Explicit construction from the other major-order.
+     * \tparam other_value_t The target value type; must be assignable from `value_t`.
+     * \tparam other_allocator_t The allocator type used for the target matrix.
+     * \tparam other_order The other seqan3::detail::matrix_major_order.
+     *
+     * \details
+     *
+     * Copies the matrix cell by cell, rearranging the stored elements in the internal memory to represent the
+     * converted major-order.
+     *
+     * Consider the following matrix:
+     *
+     * 0  1  2  3
+     * 4  5  6  7
+     * 8  9  10 11
+     *
+     * In row-major-order the data is stored in a flat vector in the following way:
+     * 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+     *
+     * Converting it to column-major-order will rearrange the elements:
+     * 0, 4, 8, 1, 5, 9, 2, 6, 10, 3, 7, 11
+     *
+     * Note that the matrix is not transposed, so that the general layout as displayed above will remain the same.
+     * It only changes the matrix major order, i.e. data stored row wise is now stored column wise and vice versa.
+     */
+    template <typename other_value_t, typename other_allocator_t, matrix_major_order other_order>
+    //!\cond
+        requires std::assignable_from<other_value_t &, value_t &>
+    //!\endcond
+    explicit constexpr two_dimensional_matrix(two_dimensional_matrix<other_value_t,
+                                                                     other_allocator_t,
+                                                                     other_order> const & matrix) :
+        two_dimensional_matrix{number_rows{matrix.rows()}, number_cols{matrix.cols()}}
+    {
+        for (size_t i = 0; i < cols(); ++i)
+        {
+            for (size_t j = 0; j < rows(); ++j)
+            {
+                matrix_coordinate coord{row_index_type{j}, column_index_type{i}};
+                (*this)[coord] = matrix[coord];
+            }
+        }
+    }
     //!\}
 
     /*!\brief Returns a reference to the element at the given coordinate.
@@ -255,52 +299,6 @@ public:
         return end();
     }
     //!\}
-
-    /*!\brief Explicit transformation to the other major-order.
-     * \tparam other_value_t The target value type; must be assignable from `value_t`.
-     * \tparam other_allocator_t The allocator type used for the target matrix.
-     * \tparam other_order The other seqan3::detail::matrix_major_order; must not be the same as `order`.
-     *
-     * \details
-     *
-     * Copies the matrix cell by cell, rearranging the stored elements in the internal memory to represent the
-     * converted major-order.
-     *
-     * Consider the following matrix:
-     *
-     * 0  1  2  3
-     * 4  5  6  7
-     * 8  9  10 11
-     *
-     * In row-major-order the data is stored in a flat vector in the following way:
-     * 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-     *
-     * Converting it to column-major-order will rearrange the elements:
-     * 0, 4, 8, 1, 5, 9, 2, 6, 10, 3, 7, 11
-     *
-     * Note that the matrix is not transposed, such that the general layout as displayed above will remain the same.
-     * It only changes the matrix major order, i.e. data stored row wise is now stored column wise and vice versa.
-     */
-    template <typename other_value_t, typename other_allocator_t, matrix_major_order other_order>
-    //!\cond
-        requires order != other_order && std::assignable_from<other_value_t &, value_t &>
-    //!\endcond
-    explicit constexpr operator two_dimensional_matrix<other_value_t, other_allocator_t, other_order>() const
-    {
-        using converted_t = two_dimensional_matrix<other_value_t, other_allocator_t, other_order>;
-        converted_t tmp{number_rows{rows()}, number_cols{cols()}};
-
-        for (size_t i = 0; i < cols(); ++i)
-        {
-            for (size_t j = 0; j < rows(); ++j)
-            {
-                matrix_coordinate coord{row_index_type{j}, column_index_type{i}};
-                tmp[coord] = (*this)[coord];
-            }
-        }
-
-        return tmp;
-    }
 
 private:
 
