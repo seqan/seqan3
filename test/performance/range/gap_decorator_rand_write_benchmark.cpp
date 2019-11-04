@@ -87,7 +87,7 @@ template <typename gap_decorator_t, bool gapped_flag>
 void delete_random(benchmark::State & state)
 {
     unsigned int seq_len = state.range(0);
-    using iterator_type = typename gap_decorator_t::iterator;
+    using iterator_type = std::ranges::iterator_t<gap_decorator_t>;
     using size_type = typename gap_decorator_t::size_type;
     using sequence_type = remove_cvref_t<detail::unaligned_seq_t<gap_decorator_t>>;
     sequence_type seq(seq_len, 'A'_dna4);
