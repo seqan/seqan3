@@ -14,6 +14,8 @@ public:
     // Alias the base class
     using base_t = alignment_matrix_column_major_range_base<my_matrix>;
 
+    friend base_t;
+
     // Inherit the alignment column type defined in the base class. This type is returned in initialise_column.
     using typename base_t::alignment_column_type;
 
@@ -37,7 +39,7 @@ public:
         data.resize(num_rows * num_cols);
     }
 
-private:
+protected:
 
     std::vector<int> data{};
     size_t num_rows{};

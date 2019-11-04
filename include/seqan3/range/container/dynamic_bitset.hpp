@@ -49,6 +49,10 @@ template <size_t bit_capacity = 58>
 class dynamic_bitset
 {
 private:
+    //!\brief Befriend other template instantiations of dynamic_bitset.
+    template <size_t>
+    friend class dynamic_bitset;
+
     //!\brief A bit field representing size and bit information stored in one `uint64_t`.
     struct bitfield
     {
@@ -230,9 +234,10 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
-        requires std::constructible_from<value_type, reference_t<begin_it_type>>
+        requires std::sentinel_for<end_it_type, begin_it_type> &&
+                 std::constructible_from<value_type, reference_t<begin_it_type>>
     //!\endcond
     constexpr dynamic_bitset(begin_it_type begin_it, end_it_type end_it) noexcept:
         dynamic_bitset{}
@@ -480,9 +485,10 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
-        requires std::constructible_from<value_type, reference_t<begin_it_type>>
+        requires std::sentinel_for<end_it_type, begin_it_type> &&
+                 std::constructible_from<value_type, reference_t<begin_it_type>>
     //!\endcond
     constexpr void assign(begin_it_type begin_it, end_it_type end_it) noexcept
     {
@@ -1082,13 +1088,13 @@ public:
     //!\brief Direct access to the underlying bit field.
     constexpr bitfield * raw_data() noexcept
     {
-        return data;
+        return &data;
     }
 
     //!\copydoc raw_data()
     constexpr bitfield const * raw_data() const noexcept
     {
-        return data;
+        return &data;
     }
     //!\}
 
@@ -1277,9 +1283,10 @@ public:
      *
      * No-throw guarantee.
      */
-    template <std::forward_iterator begin_it_type, std::sentinel_for<begin_it_type> end_it_type>
+    template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
-        requires std::constructible_from<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
+        requires std::sentinel_for<end_it_type, begin_it_type> &&
+                 std::constructible_from<value_type, /*ranges::iter_reference_t*/reference_t<begin_it_type>>
     //!\endcond
     constexpr iterator insert(const_iterator pos, begin_it_type begin_it, end_it_type end_it) noexcept
     {
@@ -1580,19 +1587,13 @@ public:
      */
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity /* resolves ambiguousness when comparing two dynamic_bitsets of unequal capacity */
-    //!\endcond
     friend constexpr bool operator==(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
-        return lhs.data.size == rhs.data.size && lhs.data.bits == rhs.data.bits;
+        return lhs.data.size == rhs.raw_data()->size && lhs.data.bits == rhs.raw_data()->bits;
     }
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator!=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs == rhs);
@@ -1600,29 +1601,20 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator<(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
-        return lhs.data.bits < rhs.data.bits;
+        return lhs.data.bits < rhs.raw_data()->bits;
     }
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator>(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
-        return lhs.data.bits > rhs.data.bits;
+        return lhs.data.bits > rhs.raw_data()->bits;
     }
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator<=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs > rhs);
@@ -1630,9 +1622,6 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap>
-    //!\cond
-        requires cap <= bit_capacity
-    //!\endcond
     friend constexpr bool operator>=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs < rhs);
@@ -1799,7 +1788,6 @@ public:
     }
     //!\}
 
-private:
     //!\cond DEV
     /*!\brief Serialisation support function.
      * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.

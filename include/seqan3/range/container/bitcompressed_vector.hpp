@@ -214,10 +214,11 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::forward_iterator begin_iterator_type, std::sentinel_for<begin_iterator_type> end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     bitcompressed_vector(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires std::common_reference_with<value_type_t<begin_iterator_type>, value_type>
+        requires std::sentinel_for<end_iterator_type, begin_iterator_type> &&
+                 std::common_reference_with<value_type_t<begin_iterator_type>, value_type>
     //!\endcond
     {
         insert(cend(), begin_it, end_it);
@@ -311,10 +312,11 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::forward_iterator begin_iterator_type, std::sentinel_for<begin_iterator_type> end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires std::common_reference_with<value_type_t<begin_iterator_type>, value_type>
+        requires std::sentinel_for<end_iterator_type, begin_iterator_type> &&
+                 std::common_reference_with<value_type_t<begin_iterator_type>, value_type>
     //!\endcond
     {
         bitcompressed_vector rhs{begin_it, end_it};
@@ -751,10 +753,11 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
      */
-    template <std::forward_iterator begin_iterator_type, std::sentinel_for<begin_iterator_type> end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires std::common_reference_with<value_type_t<begin_iterator_type>, value_type>
+        requires std::sentinel_for<end_iterator_type, begin_iterator_type> &&
+                 std::common_reference_with<value_type_t<begin_iterator_type>, value_type>
     //!\endcond
     {
         auto const pos_as_num = std::distance(cbegin(), pos);

@@ -140,7 +140,7 @@ void insert_gaps(std::vector<typename gap_decorator_t::size_type> & gaps, gap_de
 {
     typename gap_decorator_t::size_type gap_acc = 0;
     typename gap_decorator_t::size_type insert_pos = 0;
-    typename gap_decorator_t::iterator it;
+    std::ranges::iterator_t<gap_decorator_t> it;
     for (typename gap_decorator_t::size_type i = 0; i < gaps.size(); ++i)
     {
         if (gaps[i])

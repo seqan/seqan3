@@ -84,7 +84,7 @@ template <std::ranges::viewable_range inner_type>
 class gap_decorator
 {
 private:
-    // Declaration of class's iterator types; for the defintion see below.
+    // Declaration of class's iterator types; for the definition see below.
     class gap_decorator_iterator;
 
     //!\brief The iterator type of this container (a bidirectional iterator).

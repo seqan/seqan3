@@ -298,10 +298,11 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::forward_iterator begin_iterator_type, std::sized_sentinel_for<begin_iterator_type> end_iterator_type>
+    template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     concatenated_sequences(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires is_compatible_this<begin_iterator_type>
+        requires std::sized_sentinel_for<end_iterator_type, begin_iterator_type> &&
+                 is_compatible_this<begin_iterator_type>
     //!\endcond
     {
         insert(cend(), begin_it, end_it);
