@@ -26,7 +26,7 @@ int main ()
 
 //! [rank]
     // Get the rank type of the alphabet (here uint8_t).
-    using rank_type = dna4::rank_type;
+    using rank_type = seqan3::alphabet_rank_t<dna4>;
 
     // Retrieve the numerical representation (rank) of the objects.
     rank_type rank_a = ade.to_rank();   // => 0
@@ -37,7 +37,7 @@ int main ()
 
 //! [char]
     // Get the character type of the alphabet (here char).
-    using char_type = dna4::char_type;
+    using char_type = seqan3::alphabet_char_t<dna4>;
 
     // Retrieve the character representation.
     char_type char_a = ade.to_char();   // => 'A'
