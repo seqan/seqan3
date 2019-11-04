@@ -11,6 +11,7 @@
 
 #include <seqan3/range/views/enforce_random_access.hpp>
 #include <seqan3/range/views/to_char.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 #include "../iterator_test_template.hpp"
