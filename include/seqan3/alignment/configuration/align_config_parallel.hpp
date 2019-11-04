@@ -18,15 +18,18 @@
 
 namespace seqan3::align_cfg
 {
-/*!\brief Sets a flag whether the alignment computation should be performed in parallel.
+/*!\brief Enables the parallel execution of the alignment algorithm if possible for the given configuration.
  * \ingroup alignment_configuration
  *
  * \details
  *
- * Parallel computing allows many calculations or the execution of processes to be performed simultaneously.
+ * With this configuration you can enable the parallel execution of the pairwise sequence alignment. This means that for
+ * a batch of pairwise sequence alignments the specified number of threads will be spawned to compute them in parallel.
+ * Note that only independent alignment computations can be executed in parallel, i.e. you use this method when
+ * computing a batch of alignments rather than executing them separately.
  * Depending on your processor architecture you can gain a significant speed-up.
  *
- * The value represents the number of threads to be used. The default value (0) uses all available cores of your CPU.
+ * The value represents the number of threads to be used and must be greater than `0`.
  *
  * ### Example
  *

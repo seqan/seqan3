@@ -22,7 +22,7 @@ TEST(align_config_parallel, config_element)
 
 TEST(align_config_parallel, configuration)
 {
-    {
+    { // from lvalue.
         align_cfg::parallel elem{2};
         configuration cfg{elem};
         EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::parallel>(cfg).value)>, uint32_t>));
@@ -30,7 +30,7 @@ TEST(align_config_parallel, configuration)
         EXPECT_EQ(get<align_cfg::parallel>(cfg).value, 2u);
     }
 
-    {
+    { // from rvalue.
         configuration cfg{align_cfg::parallel{2}};
         EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::parallel>(cfg).value)>, uint32_t>));
 
