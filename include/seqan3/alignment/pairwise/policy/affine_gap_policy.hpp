@@ -12,12 +12,9 @@
 
 #pragma once
 
-#include <limits>
-#include <tuple>
-
-#include <seqan3/alignment/matrix/alignment_optimum.hpp>
+#include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
-#include <seqan3/alignment/pairwise/detail/alignment_algorithm_cache.hpp>
+#include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 
 namespace seqan3::detail
@@ -52,6 +49,9 @@ private:
     //!\brief Befriends the derived class to grant it access to the private members.
     friend alignment_algorithm_t;
 
+    //!\brief The state of the alignment algorithm for affine gaps.
+    using alignment_state_t = alignment_algorithm_state<score_t>;
+
     /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
@@ -79,7 +79,7 @@ private:
      */
     template <typename cell_t>
     constexpr void compute_cell(cell_t && current_cell,
-                                alignment_algorithm_cache<score_t> & cache,
+                                alignment_algorithm_state<score_t> & cache,
                                 score_t const score) const noexcept
     {
         // score_cell = seqan3::detail::alignment_score_matrix_proxy
@@ -108,7 +108,7 @@ private:
         // Store the current max score.
         score_cell.current = tmp;
         // Check if this was the optimum. Possibly a noop.
-        static_cast<alignment_algorithm_t const &>(*this).check_score(current_cell, cache);
+        static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(current_cell, cache);
 
         // Prepare horizontal and vertical score for next column.
         tmp += cache.gap_open_score;
@@ -136,7 +136,7 @@ private:
      */
     template <typename cell_t>
     constexpr void compute_first_band_cell(cell_t && current_cell,
-                                           alignment_algorithm_cache<score_t> & cache,
+                                           alignment_algorithm_state<score_t> & cache,
                                            score_t const score) const noexcept
     {
         // Compute the diagonal score and the compare with the previous horizontal value.
@@ -155,7 +155,7 @@ private:
                                                           : score_cell.current;
         }
         // Check if this was the optimum. Possibly a noop.
-        static_cast<alignment_algorithm_t const &>(*this).check_score(current_cell, cache);
+        static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(current_cell, cache);
 
         // At the top of the band we can not come from up but only diagonal or left, so the next vertical must be a
         // gap open.
@@ -163,17 +163,29 @@ private:
         trace_cell.up = trace_directions::up_open;
     }
 
-    /*!\brief Creates the cache used for affine gap computation.
-     * \tparam    gap_scheme_t The type of the gap scheme.
-     * \param[in] scheme       The configured gap scheme.
-     * \returns The created cache.
+    /*!\brief Initialise the alignment state for affine gap computation.
+     * \tparam alignment_configuration_t The type of alignment configuration.
+     * \param[in] config The alignment configuration.
+     * \returns The initialised seqan3::detail::alignment_algorithm_state.
+     *
+     * \details
+     *
+     * Gets the stored gap scheme from the configuration or uses a default gap scheme if not set and initialises the
+     * alignment algorithm state with the respective gap extension and gap open costs. If the gap scheme was not
+     * specified by the user the following defaults are used:
+     *  * `-1` for the gap extension score, and
+     *  * `-10` for the gap open score.
      */
-    template <typename gap_scheme_t>
-    constexpr auto make_cache(gap_scheme_t && scheme) const noexcept
+    template <typename alignment_configuration_t>
+    constexpr void initialise_alignment_state(alignment_configuration_t const & config) noexcept
     {
-        return alignment_algorithm_cache{static_cast<score_t>(scheme.get_gap_open_score() + scheme.get_gap_score()),
-                                         static_cast<score_t>(scheme.get_gap_score())};
+        auto scheme = config.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}, gap_open_score{-10}});
+
+        alignment_state.gap_extension_score = static_cast<score_t>(scheme.get_gap_score());
+        alignment_state.gap_open_score = static_cast<score_t>(scheme.get_gap_score() + scheme.get_gap_open_score());
     }
+
+    alignment_state_t alignment_state{}; //!< The internal alignment state tracking the current alignment optimum.
 };
 
 } // namespace seqan3::detail

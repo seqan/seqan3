@@ -15,7 +15,7 @@
 #include <tuple>
 
 #include <seqan3/alignment/matrix/trace_directions.hpp>
-#include <seqan3/alignment/pairwise/detail/alignment_algorithm_cache.hpp>
+#include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 
 namespace seqan3::detail
 {
@@ -47,12 +47,12 @@ struct default_affine_init_traits
  *          seqan3::detail::alignment_configurator::select_gap_init_policy when selecting the alignment for the given
  *          configuration.
  */
-template <typename derived_t, typename traits_type = default_affine_init_traits>
+template <typename alignment_algorithm_t, typename traits_type = default_affine_init_traits>
 class affine_gap_init_policy
 {
 private:
     //!\brief Befriends the derived class to grant it access to the private members.
-    friend derived_t;
+    friend alignment_algorithm_t;
 
     /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
@@ -66,11 +66,12 @@ private:
     ~affine_gap_init_policy() noexcept = default;                                                    //!< Defaulted
     //!\}
 
-    /*!\brief Initialises the origin of the dynamic programming matrix.
+    /*!\brief Initialises the first cell of the dynamic programming matrix.
      * \tparam cell_t  The underlying cell type.
      * \tparam score_t The score type used inside of the alignment algorithm.
-     * \param[in,out] current_cell The current cell in the dynamic programming matrix.
-     * \param[in,out] cache        The cache storing hot helper variables.
+     *
+     * \param[in,out] origin_cell The first cell of the dynamic programming matrix.
+     * \param[in,out] state The state with gap information and the current alignment optimum.
      *
      * \details
      *
@@ -80,48 +81,49 @@ private:
      * seqan3::detail::alignment_trace_matrix_proxy.
      */
     template <typename cell_t, typename score_t>
-    constexpr auto init_origin_cell(cell_t && current_cell, alignment_algorithm_cache<score_t> & cache) const noexcept
+    constexpr auto init_origin_cell(cell_t && origin_cell, alignment_algorithm_state<score_t> & state) const noexcept
     {
         // score_cell = seqan3::detail::alignment_score_matrix_proxy
         // trace_cell = seqan3::detail::alignment_trace_matrix_proxy
-        auto & [score_cell, trace_cell] = current_cell;
+        auto & [score_cell, trace_cell] = origin_cell;
 
         // Initialise the first cell.
         score_cell.current = 0;
         trace_cell.current = trace_directions::none;
 
-        static_cast<derived_t const &>(*this).check_score(current_cell, cache);
+        static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(origin_cell, state);
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
         {
             score_cell.up = 0;
-            trace_cell.up = trace_directions::none;  // cache vertical trace
+            trace_cell.up = trace_directions::none;
         }
         else // Initialise with gap_open score
         {
-            score_cell.up = cache.gap_open_score;
-            trace_cell.up = trace_directions::up_open; // cache vertical trace
+            score_cell.up = state.gap_open_score;
+            trace_cell.up = trace_directions::up_open;
         }
 
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
         {
             score_cell.w_left = 0;
-            trace_cell.w_left = trace_directions::none; // cache horizontal trace
+            trace_cell.w_left = trace_directions::none;
         }
         else // Initialise with gap_open score
         {
-            score_cell.w_left = cache.gap_open_score;
-            trace_cell.w_left = trace_directions::left_open; // cache horizontal trace
+            score_cell.w_left = state.gap_open_score;
+            trace_cell.w_left = trace_directions::left_open;
         }
     }
 
     /*!\brief Initialises a cell in the first column of the dynamic programming matrix.
      * \tparam cell_t  The underlying cell type.
      * \tparam score_t The score type used inside of the alignment algorithm.
-     * \param[in,out] current_cell The current cell in the dynamic programming matrix.
-     * \param[in,out] cache        The cache storing hot helper variables.
+     *
+     * \param[in,out] column_cell A cell of the first row of the dynamic programming matrix.
+     * \param[in,out] state The state with gap information and the current alignment optimum.
      *
      * \details
      *
@@ -131,16 +133,16 @@ private:
      * seqan3::detail::alignment_trace_matrix_proxy.
      */
     template <typename cell_t, typename score_t>
-    constexpr auto init_column_cell(cell_t && current_cell, alignment_algorithm_cache<score_t> & cache) const noexcept
+    constexpr auto init_column_cell(cell_t && column_cell, alignment_algorithm_state<score_t> & state) const noexcept
     {
         // score_cell = seqan3::detail::alignment_score_matrix_proxy
         // trace_cell = seqan3::detail::alignment_trace_matrix_proxy
-        auto & [score_cell, trace_cell] = current_cell;
+        auto & [score_cell, trace_cell] = column_cell;
 
         score_cell.current = score_cell.up;
         trace_cell.current = trace_cell.up;
 
-        static_cast<derived_t const &>(*this).check_score(current_cell, cache);
+        static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(column_cell, state);
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
@@ -149,19 +151,20 @@ private:
         }
         else
         {
-            score_cell.up += cache.gap_extension_score;
-            trace_cell.up = trace_directions::up; // cache vertical trace
+            score_cell.up += state.gap_extension_score;
+            trace_cell.up = trace_directions::up;
         }
 
-        score_cell.w_left = score_cell.current + cache.gap_open_score;
-        trace_cell.w_left = trace_directions::left_open;  // cache horizontal trace
+        score_cell.w_left = score_cell.current + state.gap_open_score;
+        trace_cell.w_left = trace_directions::left_open;
     }
 
     /*!\brief Initialises a cell in the first row of the dynamic programming matrix.
      * \tparam cell_t  The underlying cell type.
      * \tparam score_t The score type used inside of the alignment algorithm.
-     * \param[in,out] current_cell The current cell in the dynamic programming matrix.
-     * \param[in,out] cache        The cache storing hot helper variables.
+     *
+     * \param[in,out] row_cell A cell of the first row of the dynamic programming matrix.
+     * \param[in,out] state The state with gap information and the current alignment optimum.
      *
      * \details
      *
@@ -171,18 +174,18 @@ private:
      * seqan3::detail::alignment_trace_matrix_proxy.
      */
     template <typename cell_t, typename score_t>
-    constexpr auto init_row_cell(cell_t && current_cell, alignment_algorithm_cache<score_t> & cache) const noexcept
+    constexpr auto init_row_cell(cell_t && row_cell, alignment_algorithm_state<score_t> & state) const noexcept
     {
         // score_cell = seqan3::detail::alignment_score_matrix_proxy
         // trace_cell = seqan3::detail::alignment_trace_matrix_proxy
-        auto & [score_cell, trace_cell] = current_cell;
+        auto & [score_cell, trace_cell] = row_cell;
 
         score_cell.current = score_cell.r_left;
         trace_cell.current = trace_cell.r_left;
 
-        static_cast<derived_t const &>(*this).check_score(current_cell, cache);
+        static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(row_cell, state);
 
-        score_cell.up = score_cell.current + cache.gap_open_score;
+        score_cell.up = score_cell.current + state.gap_open_score;
         trace_cell.up = trace_directions::up_open;
 
         if constexpr (traits_type::free_first_leading_t::value)
@@ -192,7 +195,7 @@ private:
         }
         else
         {
-            score_cell.w_left = score_cell.r_left + cache.gap_extension_score;
+            score_cell.w_left = score_cell.r_left + state.gap_extension_score;
             trace_cell.w_left = trace_directions::left;
         }
     }

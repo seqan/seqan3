@@ -14,16 +14,8 @@
 
 #include <type_traits>
 
-#include <range/v3/algorithm/for_each.hpp>
-
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
-#include <seqan3/alignment/pairwise/detail/alignment_algorithm_cache.hpp>
-#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
-#include <seqan3/range/shortcuts.hpp>
-#include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
+#include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 
 namespace seqan3::detail
 {
@@ -58,12 +50,12 @@ struct default_find_optimum_trait
  * This class determines the matrix wide optimum. The search space can be further refined using the
  * `traits_type` which configures the search space of the alignment matrix.
  */
-template <typename derived_t, typename traits_type = default_find_optimum_trait>
+template <typename alignment_algorithm_t, typename traits_type = default_find_optimum_trait>
 class find_optimum_policy
 {
 private:
     //!\brief Befriends the derived class to grant it access to the private members.
-    friend derived_t;
+    friend alignment_algorithm_t;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -77,102 +69,124 @@ private:
     //!\}
 
 protected:
-    /*!\brief Checks every cell of the dynamic programming matrix.
+    /*!\brief Checks if a given cell is a new optimum in the alignment.
+     * \tparam cell_t The type of the alignment matrix cell.
      * \tparam score_t The type of the score.
-     * \param[in] current_cell The current cell.
-     * \param[in,out] cache The cache with the current optimum to update.
+     *
+     * \param[in] current_cell The currently computed alignment matrix cell.
+     * \param[in,out] state The state with the current optimum to update.
      *
      * \details
      *
      * This function resolves to a "NO-OP" function if the trait for searching every cell is set to std::false_type.
      */
     template <typename cell_t, typename score_t>
-    constexpr void check_score([[maybe_unused]] cell_t const & current_cell,
-                               [[maybe_unused]] alignment_algorithm_cache<score_t> & cache) const noexcept
+    constexpr void check_score_of_cell([[maybe_unused]] cell_t const & current_cell,
+                                       [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
-        using std::get;
-
         if constexpr (traits_type::find_in_every_cell_type::value)
-        {
-            cache.optimum = (get<0>(current_cell).current > cache.optimum.score)
-                            ? alignment_optimum{get<0>(current_cell).current, get<1>(current_cell).coordinate}
-                            : cache.optimum;
-        }
-
+            check_and_update(current_cell, state);
     }
 
     //!\brief Allow seqan3::detail::affine_gap_policy to access check_score.
     template <typename other_alignment_algorithm_t, typename score_t, typename is_local_t>
     friend class affine_gap_policy;
 
-    //!\brief Allow seqan3::detail::affine_gap_banded_policy to access check_score.
-    template <typename other_alignment_algorithm_t, typename score_t, typename is_local_t>
-    friend class affine_gap_banded_policy;
-
     //!\brief Allow seqan3::detail::affine_gap_init_policy to access check_score.
     template <typename other_alignment_algorithm_t, typename other_traits_type>
     friend class affine_gap_init_policy;
 
-    /*!\brief Checks a cell of the last row of the dynamic programming matrix.
+    /*!\brief Checks if a cell in the last row of the alignment matrix is a new optimum in the alignment.
+     * \tparam cell_t The type of the alignment matrix cell.
      * \tparam score_t The type of the score.
-     * \param[in] current_cell The current cell.
-     * \param[in,out] cache The cache with the current optimum to update.
+     *
+     * \param[in] last_row_cell The cell of the current column in the last row of the alignment matrix.
+     * \param[in,out] state The state with the current optimum to update.
      *
      * \details
      *
-     * This function resolves to a "NO-OP" function if the trait for searching the last row is set to std::false_type.
-     * Due to a column based iteration layout this computes only one cell at a time. The alignment algorithm
-     * takes care of calling this function for the appropriate cells.
+     * This function resolves to a "NO-OP" function if the trait for searching the last row is set to std::false_type
+     * or if the trait for searching every cell is set to std::true_type.
      */
     template <typename cell_t, typename score_t>
-    constexpr void check_score_last_row([[maybe_unused]] cell_t const & current_cell,
-                                        [[maybe_unused]] alignment_algorithm_cache<score_t> & cache) const noexcept
+    constexpr void check_score_of_last_row_cell([[maybe_unused]] cell_t const & last_row_cell,
+                                                [[maybe_unused]] alignment_algorithm_state<score_t> & state) const
+        noexcept
     {
-        using std::get;
+        // Only search in last row if requested and not done already.
+        if constexpr (!traits_type::find_in_every_cell_type::value && traits_type::find_in_last_row_type::value)
+            check_and_update(last_row_cell, state);
+    }
 
-        if constexpr (traits_type::find_in_last_row_type::value)
+    /*!\brief Checks all cells of the last alignment column for a new alignment optimum.
+     * \tparam alignment_column_t The type of an alignment column.
+     * \tparam score_t The type of the optimal score.
+     *
+     * \param[in] last_column The last column of the alignment matrix.
+     * \param[in,out] state The state with the current optimum to update.
+     *
+     * \details
+     *
+     * This function resolves to a "NO-OP" function if the trait for searching the last column is set to std::false_type
+     * or if the trait for searching every cell is set to std::true_type.
+     */
+    template <typename alignment_column_t, typename score_t>
+    constexpr void check_score_of_cells_in_last_column([[maybe_unused]] alignment_column_t && last_column,
+                                                       [[maybe_unused]] alignment_algorithm_state<score_t> & state)
+        const noexcept
+    {
+        // Only check last cell if not done before.
+        if constexpr (!traits_type::find_in_every_cell_type::value && traits_type::find_in_last_column_type::value)
+            for (auto && cell : last_column)
+                check_and_update(cell, state);
+    }
+
+    /*!\brief Checks if the last cell of the alignment matrix is a new optimum in the alignment.
+     * \tparam cell_t The type of the last cell.
+     * \tparam score_t The type of the score.
+     *
+     * \param[in] last_cell The last cell of the alignment matrix.
+     * \param[in,out] state The state with the current optimum to update.
+     *
+     * \details
+     *
+     * This function resolves to a "NO-OP" function if the last cell has been checked already as part of the last
+     * row, last column, or in case every cell was checked.
+     */
+    template <typename cell_t, typename score_t>
+    constexpr void check_score_of_last_cell([[maybe_unused]] cell_t const & last_cell,
+                                            [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
+    {
+        // Only check last cell if not done before.
+        if constexpr (!traits_type::find_in_every_cell_type::value &&
+                      !traits_type::find_in_last_row_type::value &&
+                      !traits_type::find_in_last_column_type::value)
         {
-            cache.optimum = (get<0>(current_cell).current > cache.optimum.score)
-                            ? alignment_optimum{get<0>(current_cell).current, get<1>(current_cell).coordinate}
-                            : cache.optimum;
+            check_and_update(last_cell, state);
         }
     }
 
-    /*!\brief Checks the complete last column for the optimal score.
-     * \tparam rng_t   The type of the last column; must model std::ranges::bidirectional_range.
-     * \tparam score_t The type of the optimal score.
-     * \param[in] current_cell The current cell.
-     * \param[in,out] cache The cache with the current optimum to update.
+    /*!\brief Tests if the score in the current cell is greater than the current alignment optimum.
+     * \tparam cell_t The type of the alignment matrix cell. The cell type corresponds to the value type of the range
+     *                returned by seqan3::detail::alignment_matrix_policy::current_alignment_column.
+     * \tparam score_t The alignment algorithm score type.
+     *
+     * \param[in] cell The current cell to get the score and the coordinate from.
+     * \param[in,out] state The state with the current optimum to update.
      *
      * \details
      *
-     * This function checks only the last element of the column (the score for the global alignment)
-     * if the trait for searching the last column is set to std::false_type.
-     * Due to a column based iteration layout the entire last column can be searched at once.
+     * Checks for a new cell in the alignment matrix. If the given score of the alignment matrix cell is greater than
+     * the current optimum stored in the given alignment state the new score and the respective alignment matrix cells
+     * is stored as the new alignment optimum.
      */
     template <typename cell_t, typename score_t>
-    constexpr void check_score_last_column_or_cell([[maybe_unused]] cell_t const & current_cell,
-                                                   alignment_algorithm_cache<score_t> & cache) const noexcept
+    constexpr void check_and_update(cell_t const & cell, alignment_algorithm_state<score_t> & state) const noexcept
     {
-        using std::get;
-        // Only check the entire column if it was configured to search here.
-        if constexpr (traits_type::find_in_last_column_type::value)
-        {
-            // get the iterator from the class itself.
-            derived_t const * me = static_cast<derived_t const *>(this);
-            std::ranges::for_each(views::zip(*me->score_matrix_iter, *me->trace_matrix_iter), [&](auto && cell)
-            {
-                cache.optimum = (get<0>(cell).current > cache.optimum.score)
-                                ? alignment_optimum{get<0>(cell).current, get<1>(cell).coordinate}
-                                : cache.optimum;
-            });
-        }
-        else  // Only check the last cell for the global alignment.
-        {
-            cache.optimum = (get<0>(current_cell).current > cache.optimum.score)
-                                ? alignment_optimum{get<0>(current_cell).current, get<1>(current_cell).coordinate}
-                                : cache.optimum;
-        }
+        auto const & [score_cell, trace_cell] = cell;
+        state.optimum = (score_cell.current > state.optimum.score)
+                        ? alignment_optimum{score_cell.current, trace_cell.coordinate}
+                        : state.optimum;
     }
 };
 

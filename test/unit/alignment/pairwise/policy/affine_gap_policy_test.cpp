@@ -9,7 +9,7 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/pairwise/detail/alignment_algorithm_cache.hpp>
+#include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
@@ -40,8 +40,8 @@ public:
     using init_base_t::init_column_cell;
     using init_base_t::init_row_cell;
 
-    template <typename cell_t, typename cache_t>
-    void check_score(cell_t & /*cell*/, cache_t const & /*cache*/) const
+    template <typename cell_t, typename state_t>
+    void check_score_of_cell(cell_t & /*cell*/, state_t const & /*state*/) const
     {}
 };
 
@@ -72,8 +72,8 @@ struct affine_gap_fixture : public ::testing::Test
         }
         score_matrix_iter = score_matrix.begin();
         trace_matrix_iter = trace_matrix.begin();
-        cache.gap_open_score = -10;
-        cache.gap_extension_score = -1;
+        state.gap_open_score = -10;
+        state.gap_extension_score = -1;
     }
 
     auto column()
@@ -82,7 +82,7 @@ struct affine_gap_fixture : public ::testing::Test
     }
 
     affine_gap_policy_mock<int> mock{};
-    alignment_algorithm_cache<int> cache{};
+    alignment_algorithm_state<int> state{};
 
     score_matrix_t score_matrix{};
     trace_matrix_t trace_matrix{};
@@ -113,16 +113,16 @@ TYPED_TEST(affine_gap_fixture, compute_cell)
     auto zip_column = this->column();
     auto it = zip_column.begin();
 
-    this->mock.init_origin_cell(*it, this->cache);
+    this->mock.init_origin_cell(*it, this->state);
     ++it;
-    this->mock.init_column_cell(*it, this->cache);
+    this->mock.init_column_cell(*it, this->state);
     ++this->score_matrix_iter;
     ++this->trace_matrix_iter;
     zip_column = this->column();
     it = zip_column.begin();
-    this->mock.init_row_cell(*it, this->cache);
+    this->mock.init_row_cell(*it, this->state);
     ++it;
-    this->mock.compute_cell(*it, this->cache, 5);
+    this->mock.compute_cell(*it, this->state, 5);
 
     auto [score_cell, trace_cell] = *it;
 
