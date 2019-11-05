@@ -215,7 +215,7 @@ public:
      */
     template <typename ...option_types>
     //!\cond
-        requires (std::constructible_from<option_value_type, option_types> && ...)
+        requires ((std::constructible_from<option_value_type, option_types> && ...))
     //!\endcond
     value_list_validator(option_types && ...opts)
     {

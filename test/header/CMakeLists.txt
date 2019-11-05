@@ -70,12 +70,23 @@ macro (seqan3_header_test component header_base_path exclude_regex)
 #include <gtest/gtest.h>
 #include <benchmark/benchmark.h>
 TEST(${header_test_name_safe}) {}")
+
             # test that seqan3 headers include platform.hpp
             if ("${component}" MATCHES "seqan3")
                 file (APPEND "${header_target_source}" "
 #ifndef SEQAN3_DOXYGEN_ONLY
 #error \"Your header file is missing #include <seqan3/core/platform.hpp>\"
 #endif")
+
+                # test whether seqan3 has the visibility bug on lower gcc versions
+                # https://github.com/seqan/seqan3/issues/1317
+                file (APPEND "${header_target_source}" "
+class A{ int i{5}; };
+
+template <typename t>
+SEQAN3_CONCEPT private_bug = requires(t a){a.i;};
+
+static_assert(!private_bug<A>, \"See https://github.com/seqan/seqan3/issues/1317\");")
             endif ()
 
             add_library (${header_target} OBJECT "${header_target_source}")
