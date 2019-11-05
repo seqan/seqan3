@@ -14,6 +14,7 @@
 
 #include <functional>
 
+#include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/range/views/view_all.hpp>
 #include <seqan3/std/concepts>
@@ -66,21 +67,19 @@ public:
     /*!\brief Takes underlying range of sequence pairs and invokes an alignment on each instance.
      * \tparam algorithm_t              The type of the alignment algorithm.
      * \tparam indexed_sequence_pairs_t The type of underlying sequence pairs annotated with an index;
-     *                                  must model std::ranges::forward_range.
+     *                                  must model seqan3::detail::indexed_sequence_pair_range.
      * \tparam delegate_type            The type of the callable invoked on the std::invoke_result of `algorithm_t`.
      *
      * \param[in] algorithm              The alignment algorithm to invoke.
      * \param[in] indexed_sequence_pairs The range of underlying annotated sequence pairs to be aligned.
      * \param[in] delegate               A callable which will be invoked on each result of the computed alignments.
      */
-    template <typename algorithm_t, std::ranges::forward_range indexed_sequence_pairs_t, typename delegate_type>
+    template <typename algorithm_t, indexed_sequence_pair_range indexed_sequence_pairs_t, typename delegate_type>
     void execute(algorithm_t && algorithm,
-                 indexed_sequence_pairs_t indexed_sequence_pairs,
+                 indexed_sequence_pairs_t && indexed_sequence_pairs,
                  delegate_type && delegate)
     {
-        using std::get;
-        for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
-            execute(std::forward<algorithm_t>(algorithm), idx, get<0>(sequence_pair), get<1>(sequence_pair), delegate);
+        delegate(algorithm(std::forward<indexed_sequence_pairs_t>(indexed_sequence_pairs)));
     }
 
     //!\brief Waits for the submitted alignments jobs to finish. (Noop).
