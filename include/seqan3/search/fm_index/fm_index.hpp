@@ -201,7 +201,7 @@ private:
         // * choose between in-memory/external and construction algorithms
         // * sdsl construction currently only works for int_vector, std::string and char *, not ranges in general
         // uint8_t largest_char = 0;
-        sdsl::int_vector<8> tmp_text(text.size());
+        sdsl::int_vector<8> tmp_text(std::ranges::distance(text));
 
         std::ranges::copy(text
                           | views::to_rank
@@ -257,7 +257,7 @@ private:
             {
                 all_empty = false;
             }
-            text_size += 1 + t.size(); // text size and delimiter (sum will be 1 for empty texts)
+            text_size += 1 + std::ranges::distance(t); // text size and delimiter (sum will be 1 for empty texts)
         }
 
         if (all_empty)
@@ -272,14 +272,15 @@ private:
         for (auto && t : text)
         {
             pos[prefix_sum] = 1;
-            prefix_sum += t.size() + 1;
+            prefix_sum += std::ranges::distance(t) + 1;
         }
 
         text_begin    = sdsl::sd_vector(pos);
         text_begin_ss = sdsl::select_support_sd<1>(&text_begin);
         text_begin_rs = sdsl::rank_support_sd<1>(&text_begin);
 
-        sdsl::int_vector<8> tmp_text(text_size - 1); // last text in collection needs no delimiter
+        // last text in collection needs no delimiter if we have more than one text in the collection
+        sdsl::int_vector<8> tmp_text(text_size - (std::ranges::distance(text) > 1));
 
         constexpr uint8_t delimiter = sigma >= 255 ? 255 : sigma + 1;
 
@@ -302,6 +303,10 @@ private:
                                    }
                                    | views::join(delimiter)
                                    | views::to<std::vector<uint8_t>>;
+
+        // we need at least one delimiter
+        if (std::ranges::distance(text) == 1)
+            tmp.push_back(delimiter);
 
         std::ranges::copy((tmp | std::views::reverse), seqan3::begin(tmp_text));
 

@@ -123,6 +123,18 @@ TYPED_TEST(search_test, convertible_query)
     EXPECT_EQ(uniquify(search(query, this->index)), (hits_result_t{{0, 0}, {0, 4}, {0, 8}, {1, 0}, {1, 4}, {1, 8}}));
 }
 
+TYPED_TEST(search_test, single_element_collection)
+{
+    using result_t = std::pair<typename TypeParam::size_type, typename TypeParam::size_type>;
+    using hits_result_t = std::vector<result_t>;
+
+    std::vector<std::vector<dna4>> text{"ACGATACG"_dna4};
+    TypeParam index{text};
+
+    configuration const cfg = max_error{total{1}, substitution{1}, insertion{0}, deletion{0}};
+    EXPECT_EQ(uniquify(search("ACGACACG"_dna4, index, cfg)), (hits_result_t{{0, 0}}));
+}
+
 TYPED_TEST(search_test, multiple_queries)
 {
     using result_t = std::vector<std::pair<typename TypeParam::size_type, typename TypeParam::size_type>>;
