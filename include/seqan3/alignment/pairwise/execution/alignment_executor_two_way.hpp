@@ -137,8 +137,11 @@ public:
      * \tparam exec_policy_t The type of the execution policy; seqan3::is_execution_policy must return `true`. Defaults
      *                       to seqan3::sequenced_policy.
      * \param[in] resrc The underlying resource containing the sequence pairs to align.
-     * \param[in] fn    The alignment kernel to invoke on the sequences pairs.
-     * \param[in] exec  Optional execution policy to use. Defaults to seqan3::seq.
+     * \param[in] fn The alignment kernel to invoke on the sequences pairs.
+     * \param[in] chunk_size The number of sequence pairs to invoke the alignment algorithm with.
+     * \param[in] exec Optional execution policy to use. Defaults to seqan3::seq.
+     *
+     * \throws std::invalid_argument if the chunk size is less than 1.
      *
      * \details
      *
@@ -152,14 +155,19 @@ public:
     //!\endcond
     alignment_executor_two_way(resource_t resrc,
                                alignment_algorithm_t fn,
+                               size_t chunk_size = 1u,
                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
         resource{views::zip(std::forward<resource_t>(resrc), std::views::iota(0))},
         resource_it{resource.begin()},
-        kernel{std::move(fn)}
+        kernel{std::move(fn)},
+        _chunk_size{chunk_size}
     {
         static_assert(!std::same_as<exec_policy_t, parallel_unsequenced_policy>,
                       "Parallel unsequenced execution not supported!");
         static_assert(!std::same_as<exec_policy_t, unsequenced_policy>, "Unsequenced execution not supported!");
+
+        if (chunk_size == 0u)
+            throw std::invalid_argument{"The chunk size must be greater than 0."};
 
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
             init_buffer(std::ranges::distance(resrc));
@@ -210,6 +218,12 @@ public:
     bool is_eof() noexcept
     {
         return resource_it == std::ranges::end(resource);
+    }
+
+    //!\brief Returns the selected chunk size.
+    constexpr size_t chunk_size() const noexcept
+    {
+        return _chunk_size;
     }
     //!\}
 
@@ -314,6 +328,8 @@ private:
     buffer_pointer gptr{};
     //!\brief The end get pointer in the buffer.
     buffer_pointer egptr{};
+    //!\brief The size of the chunks to call the stored algorithm with.
+    size_t _chunk_size{};
 };
 
 /*!\name Type deduction guides
@@ -329,7 +345,7 @@ alignment_executor_two_way(resource_rng_t &&, func_t) ->
 //!\brief Deduce the type from the provided arguments and set the sequential execution handler.
 template <typename resource_rng_t, typename func_t, typename exec_policy_t>
     requires is_execution_policy_v<exec_policy_t>
-alignment_executor_two_way(resource_rng_t &&, func_t, exec_policy_t const &) ->
+alignment_executor_two_way(resource_rng_t &&, func_t, size_t, exec_policy_t const &) ->
     alignment_executor_two_way<resource_rng_t,
                                func_t,
                                std::conditional_t<std::same_as<exec_policy_t, parallel_policy>,

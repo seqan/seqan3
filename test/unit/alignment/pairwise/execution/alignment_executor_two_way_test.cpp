@@ -38,50 +38,84 @@ struct dummy_alignment
 
 template <typename t>
 struct alignment_executor_two_way_test : public ::testing::Test
-{};
+{
+    // Some globally defined test types
+    using seq_type = all_view<std::string &>;
+    using sequence_pair_t = std::pair<std::string, std::string>;
+    using sequence_pairs_t = std::vector<sequence_pair_t>;
+    using algorithm_t = std::function<size_t(size_t const, seq_type, seq_type)>;
 
-using testing_types = ::testing::Types<detail::execution_handler_sequential, detail::execution_handler_parallel>;
+    sequence_pair_t sequence_pair{"AACGTACGT", "ATCGTCCGT"};
+    sequence_pairs_t sequence_pairs{5, sequence_pair};
+    algorithm_t algorithm{dummy_alignment{}};
+};
+
+using testing_types = testing::Types<detail::execution_handler_sequential, detail::execution_handler_parallel>;
 TYPED_TEST_CASE(alignment_executor_two_way_test, testing_types);
-
-// Some globally defined test types
-using seq_type = all_view<std::string &>;
-
-inline static std::tuple single{std::string{"AACGTACGT"}, std::string{"ATCGTCCGT"}};
-inline static std::vector<decltype(single)> collection{5, single};
-inline static std::function<size_t(size_t const, seq_type, seq_type)> fn{dummy_alignment{}};
 
 TYPED_TEST(alignment_executor_two_way_test, construction)
 {
-    using type = detail::alignment_executor_two_way<std::add_lvalue_reference_t<decltype(collection)>,
-                                                    decltype(fn),
-                                                    TypeParam>;
+    using alignment_executor_t = detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+                                                                    typename TestFixture::algorithm_t,
+                                                                    TypeParam>;
 
-    EXPECT_FALSE(std::is_default_constructible_v<type>);
-    EXPECT_FALSE(std::is_copy_constructible_v<type>);
-    EXPECT_TRUE(std::is_move_constructible_v<type>);
-    EXPECT_FALSE(std::is_copy_assignable_v<type>);
-    EXPECT_TRUE(std::is_move_assignable_v<type>);
+    EXPECT_FALSE(std::is_default_constructible_v<alignment_executor_t>);
+    EXPECT_FALSE(std::is_copy_constructible_v<alignment_executor_t>);
+    EXPECT_TRUE(std::is_move_constructible_v<alignment_executor_t>);
+    EXPECT_FALSE(std::is_copy_assignable_v<alignment_executor_t>);
+    EXPECT_TRUE(std::is_move_assignable_v<alignment_executor_t>);
+}
+
+TYPED_TEST(alignment_executor_two_way_test, construct_with_chunk_size)
+{
+    using alignment_executor_t = detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+                                                                    typename TestFixture::algorithm_t,
+                                                                    TypeParam>;
+
+    {  // default chunk size should be 1.
+        alignment_executor_t exec{this->sequence_pairs, this->algorithm};
+        EXPECT_EQ(exec.chunk_size(), 1u);
+    }
+
+    { // chunk size should be 4.
+        alignment_executor_t exec{this->sequence_pairs, this->algorithm, 4};
+        EXPECT_EQ(exec.chunk_size(), 4u);
+    }
+
+    { // with chunk size and execution policy.
+        alignment_executor_t exec{this->sequence_pairs, this->algorithm, 4, seq};
+        EXPECT_EQ(exec.chunk_size(), 4u);
+    }
+
+    { // throw with invalid chunk size.
+        EXPECT_THROW((alignment_executor_t{this->sequence_pairs, this->algorithm, 0, seq}),
+                     std::invalid_argument);
+    }
 }
 
 TYPED_TEST(alignment_executor_two_way_test, is_eof)
 {
-    using type = detail::alignment_executor_two_way<std::add_lvalue_reference_t<decltype(collection)>,
-                                                    decltype(fn),
-                                                    TypeParam>;
-    type exec{collection, fn};
+    using alignment_executor_t = detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+                                                                    typename TestFixture::algorithm_t,
+                                                                    TypeParam>;
+
+    alignment_executor_t exec{this->sequence_pairs, this->algorithm};
     EXPECT_FALSE(exec.is_eof());
 }
 
-TEST(alignment_executor_two_way, type_deduction)
+TYPED_TEST(alignment_executor_two_way_test, type_deduction)
 {
-    detail::alignment_executor_two_way exec{collection, fn};
+    detail::alignment_executor_two_way exec{this->sequence_pairs, this->algorithm};
     EXPECT_FALSE(exec.is_eof());
 }
 
 TYPED_TEST(alignment_executor_two_way_test, bump)
 {
-    using t = detail::alignment_executor_two_way<decltype(collection) &, decltype(fn), TypeParam>;
-    t exec{collection, fn};
+    using alignment_executor_t = detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+                                                                    typename TestFixture::algorithm_t,
+                                                                    TypeParam>;
+
+    alignment_executor_t exec{this->sequence_pairs, this->algorithm};
 
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
@@ -93,8 +127,10 @@ TYPED_TEST(alignment_executor_two_way_test, bump)
 
 TYPED_TEST(alignment_executor_two_way_test, in_avail)
 {
-    using t = detail::alignment_executor_two_way<decltype(collection) &, decltype(fn), TypeParam>;
-    t exec{collection, fn};
+    using alignment_executor_t = detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+                                                                    typename TestFixture::algorithm_t,
+                                                                    TypeParam>;
+    alignment_executor_t exec{this->sequence_pairs, this->algorithm};
 
     EXPECT_EQ(exec.in_avail(), 0u);
     EXPECT_EQ(exec.bump().value(), 7u);
@@ -104,28 +140,36 @@ TYPED_TEST(alignment_executor_two_way_test, in_avail)
         EXPECT_EQ(exec.in_avail(), 0u);
 }
 
-TYPED_TEST(alignment_executor_two_way_test, lvalue_single_view)
+TYPED_TEST(alignment_executor_two_way_test, lvalue_sequence_pair_view)
 {
-    auto v = std::views::single(single);
-    using t = detail::alignment_executor_two_way<decltype(v), decltype(fn), TypeParam>;
+    auto v = std::views::single(this->sequence_pair);
+    using alignment_executor_t = detail::alignment_executor_two_way<decltype(v),
+                                                                    typename TestFixture::algorithm_t,
+                                                                    TypeParam>;
 
-    t exec{v, fn};
+    alignment_executor_t exec{v, this->algorithm};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TYPED_TEST(alignment_executor_two_way_test, rvalue_single_view)
+TYPED_TEST(alignment_executor_two_way_test, rvalue_sequence_pair_view)
 {
-    using t = detail::alignment_executor_two_way<decltype(std::views::single(single)), decltype(fn), TypeParam>;
-    t exec{std::views::single(single), fn};
+    using alignment_executor_t = detail::alignment_executor_two_way<decltype(std::views::single(this->sequence_pair)),
+                                                                    typename TestFixture::algorithm_t,
+                                                                    TypeParam>;
+
+    alignment_executor_t exec{std::views::single(this->sequence_pair), this->algorithm};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TYPED_TEST(alignment_executor_two_way_test, lvalue_collection)
+TYPED_TEST(alignment_executor_two_way_test, lvalue_sequence_pairs)
 {
-    using t = detail::alignment_executor_two_way<decltype(collection) &, decltype(fn), TypeParam>;
-    t exec{collection, fn};
+    using alignment_executor_t = detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+                                                                    typename TestFixture::algorithm_t,
+                                                                    TypeParam>;
+
+    alignment_executor_t exec{this->sequence_pairs, this->algorithm};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
@@ -134,10 +178,13 @@ TYPED_TEST(alignment_executor_two_way_test, lvalue_collection)
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TYPED_TEST(alignment_executor_two_way_test, rvalue_collection_view)
+TYPED_TEST(alignment_executor_two_way_test, rvalue_sequence_pairs_view)
 {
-    using t = detail::alignment_executor_two_way<decltype(collection | views::persist), decltype(fn), TypeParam>;
-    t exec{collection | views::persist, fn};
+    using alignment_executor_t = detail::alignment_executor_two_way<decltype(this->sequence_pairs | views::persist),
+                                                                    typename TestFixture::algorithm_t,
+                                                                    TypeParam>;
+
+    alignment_executor_t exec{this->sequence_pairs | views::persist, this->algorithm};
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.bump().value(), 7u);
