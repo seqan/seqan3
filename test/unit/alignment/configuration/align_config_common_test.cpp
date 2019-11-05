@@ -26,7 +26,8 @@ using test_types = ::testing::Types<align_cfg::aligned_ends<std::remove_const_t<
                                     align_cfg::mode<detail::global_alignment_type>,
                                     align_cfg::mode<detail::local_alignment_type>,
                                     align_cfg::result<>,
-                                    align_cfg::scoring<nucleotide_scoring_scheme<int8_t>>>;
+                                    align_cfg::scoring<nucleotide_scoring_scheme<int8_t>>,
+                                    detail::vectorise_tag>;
 
 TYPED_TEST_CASE(alignment_configuration_test, test_types);
 
