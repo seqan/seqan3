@@ -99,15 +99,15 @@ public:
     /*!\brief Invokes the passed alignment instance in a non-blocking manner.
      * \copydetails execution_handler_sequential::execute
      */
-    template <typename fn_type, typename first_range_type, typename second_range_type, typename delegate_type>
+    template <typename algorithm_t, typename first_range_type, typename second_range_type, typename delegate_type>
     //!\cond
-        requires std::invocable<fn_type, size_t const, first_range_type, second_range_type> &&
-                 std::invocable<delegate_type, std::invoke_result_t<fn_type,
+        requires std::invocable<algorithm_t, size_t const, first_range_type, second_range_type> &&
+                 std::invocable<delegate_type, std::invoke_result_t<algorithm_t,
                                                                     size_t const,
                                                                     first_range_type,
                                                                     second_range_type>>
     //!\endcond
-    void execute(fn_type && func,
+    void execute(algorithm_t && algorithm,
                  size_t const idx,
                  first_range_type first_range,
                  second_range_type second_range,
@@ -120,7 +120,7 @@ public:
 
         task_type task = [=, first_range = std::move(first_range), second_range = std::move(second_range)] ()
         {
-            delegate(func(idx, std::move(first_range), std::move(second_range)));
+            delegate(algorithm(idx, std::move(first_range), std::move(second_range)));
         };
         // Asynchronously pushes the task to the queue.
         [[maybe_unused]] contrib::queue_op_status status = state->queue.wait_push(std::move(task));
