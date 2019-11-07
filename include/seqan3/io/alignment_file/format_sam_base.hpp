@@ -74,7 +74,7 @@ protected:
     //!\}
 
     //!\brief The format version string.
-    static constexpr char format_version[4] = "1.6";
+    static constexpr std::array format_version{'1', '.', '6'};
 
     //!\brief A buffer used when parsing arithmetic values with std::from_chars.
     std::array<char, 316> arithmetic_buffer{}; // Doubles can be up to 316 characters
@@ -671,7 +671,7 @@ inline void format_sam_base::write_header(stream_t & stream,
 
     // (@HD) Write header line [required].
     stream << "@HD\tVN:";
-    stream << format_version;
+    std::ranges::copy(format_version, stream_it);
 
     if (!header.sorting.empty())
         stream << "\tSO:" << header.sorting;
