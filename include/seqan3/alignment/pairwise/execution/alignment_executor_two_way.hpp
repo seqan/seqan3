@@ -161,9 +161,6 @@ public:
         kernel{std::move(fn)},
         _chunk_size{chunk_size}
     {
-        static_assert(!std::same_as<exec_policy_t, parallel_unsequenced_policy>,
-                      "Parallel unsequenced execution not supported!");
-        static_assert(!std::same_as<exec_policy_t, unsequenced_policy>, "Unsequenced execution not supported!");
 
         if (chunk_size == 0u)
             throw std::invalid_argument{"The chunk size must be greater than 0."};
@@ -176,6 +173,7 @@ public:
         else
             init_buffer(chunk_size);
     }
+
     //!}
 
     /*!\name Get area
