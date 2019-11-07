@@ -134,48 +134,37 @@ public:
     ~alignment_executor_two_way() = default;
 
     /*!\brief Constructs this executor with the passed range of alignment instances.
+     * \tparam exec_policy_t The type of the execution policy; seqan3::is_execution_policy must return `true`. Defaults
+     *                       to seqan3::sequenced_policy.
      * \param[in] resrc The underlying resource containing the sequence pairs to align.
      * \param[in] fn    The alignment kernel to invoke on the sequences pairs.
+     * \param[in] exec  Optional execution policy to use. Defaults to seqan3::seq.
      *
      * \details
      *
      * Forwards the resource range as a zipped view with an index view to provide internal ids for the alignments.
-     * If the execution handler is parallel it allocates a buffer of the size of the given resource range.
+     * If the execution handler is parallel, it allocates a buffer of the size of the given resource range.
      * Otherwise the buffer size is 1.
      */
+    template <typename exec_policy_t = sequenced_policy>
+    //!\cond
+        requires is_execution_policy_v<exec_policy_t>
+    //!\endcond
     alignment_executor_two_way(resource_t resrc,
-                               alignment_algorithm_t fn) :
+                               alignment_algorithm_t fn,
+                               exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
         resource{views::zip(std::forward<resource_t>(resrc), std::views::iota(0))},
         resource_it{resource.begin()},
         kernel{std::move(fn)}
     {
+        static_assert(!std::same_as<exec_policy_t, parallel_unsequenced_policy>,
+                      "Parallel unsequenced execution not supported!");
+        static_assert(!std::same_as<exec_policy_t, unsequenced_policy>, "Unsequenced execution not supported!");
+
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
             init_buffer(std::ranges::distance(resrc));
         else
             init_buffer(1);
-    }
-
-    /*!\brief Constructs this executor with the passed range of alignment instances.
-     * \param[in] resrc The underlying resource containing the sequence pairs to align.
-     * \param[in] fn    The alignment kernel to invoke on the sequences pairs.
-     * \param[in] exec  The execution policy to use.
-     *
-     * \details
-     *
-     * This constructor is used to type deduce the execution handler type from the passed execution policy.
-     * The given execution policy is ignored.
-     */
-    template <typename exec_policy_t>
-        requires is_execution_policy_v<exec_policy_t>
-    alignment_executor_two_way(resource_t resrc,
-                               alignment_algorithm_t fn,
-                               exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec)) :
-        alignment_executor_two_way{std::move(resrc), std::move(fn)}
-    {
-        static_assert(!std::same_as<exec_policy_t, parallel_unsequenced_policy>,
-                      "Parallel unsequenced execution not supported!");
-        static_assert(!std::same_as<exec_policy_t, unsequenced_policy>,
-                      "Unsequenced execution not supported!");
     }
     //!}
 
