@@ -173,20 +173,14 @@ protected:
      *
      * \param[in] cell The current cell to get the score and the coordinate from.
      * \param[in,out] state The state with the current optimum to update.
-     *
-     * \details
-     *
-     * Checks for a new cell in the alignment matrix. If the given score of the alignment matrix cell is greater than
-     * the current optimum stored in the given alignment state the new score and the respective alignment matrix cells
-     * is stored as the new alignment optimum.
      */
     template <typename cell_t, typename score_t>
     constexpr void check_and_update(cell_t const & cell, alignment_algorithm_state<score_t> & state) const noexcept
     {
         auto const & [score_cell, trace_cell] = cell;
-        state.optimum = (score_cell.current > state.optimum.score)
-                        ? alignment_optimum{score_cell.current, trace_cell.coordinate}
-                        : state.optimum;
+        state.optimum.update_if_new_optimal_score(score_cell.current,
+                                                  column_index_type{trace_cell.coordinate.first},
+                                                  row_index_type{trace_cell.coordinate.second});
     }
 };
 

@@ -14,74 +14,119 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/core/simd/simd_algorithm.hpp>
+#include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
 
-/*!\brief Stores the current optimum of the alignment algorithms.
+/*!\brief Stores the current optimum of the alignment algorithm.
  * \ingroup alignment_matrix
- * \tparam score_t The type of the tracked alignment score.
+ *
+ * \tparam score_t The type of the tracked alignment score; must model either seqan3::arithmetic or
+ *                 seqan3::simd_concept.
  *
  * \details
  *
- * This is an aggregate type, so the score needs to be passed before the seqan3::alignment_coordinate during
- * construction.
+ * Stores the optimal score of the alignment computation and the corresponding indices of the cell with the optimal
+ * score within the alignment matrix.
+ * In case the optimum is used for the vectorised alignment computation this optimum stores the optimal scores and the
+ * respective cells as simd vectors.
  */
-template <arithmetic score_t>
+template <typename score_t>
 struct alignment_optimum
+#if SEQAN3_DOXYGEN_ONLY(1)0
 {
-    //!\brief The optimal score.
+    //!\brief The index type used to store the alignment coordinates of the optimum.
+    using index_t = IMPLEMENTATION_DEFINED;
+
+    //!\brief The index of the alignment matrix column.
+    index_t column_index{};
+    //!\brief The index of the alignment matrix row.
+    index_t row_index{};
+    //!\brief The optimal score whose initialisation is implementation defined.
+    score_t score = IMPLEMENTATION_DEFINED;
+
+    /*!\brief Compares the score with the given score and updates the optimum if the new score is bigger than
+     *        the current one.
+     *
+     * \tparam column_index_t The index type for the column index; must model std::unsigned_integral.
+     * \tparam row_index_t The index type for the row index; must model std::unsigned_integral.
+     *
+     * \param[in] compare_score The new score to compare with.
+     * \param[in] column_index The respective column index of the alignment matrix.
+     * \param[in] row_index The respective row index of the alignment matrix.
+     *
+     * \details
+     *
+     * Only updates the current optimum if the new score is greater than the current one. Note in the case of computing
+     * a vectorised alignment only the positions of the simd vector are updated whose score is greater than the current
+     * scores.
+     */
+    template <typename column_index_t, typename row_index_t>
+    void update_if_new_optimal_score(score_t const & compare_score,
+                                     column_index_type<column_index_t> column_index,
+                                     row_index_type<row_index_t> row_index) noexcept;
+}
+#endif //SEQAN3_DOXYGEN_ONLY(1): This code block is only dis
+;
+
+//!\cond
+template <arithmetic score_t>
+struct alignment_optimum<score_t>
+{
+    size_t column_index{};
+    size_t row_index{};
     score_t score{std::numeric_limits<score_t>::lowest()};
-    //!\brief The corresponding coordinate within the alignment matrix.
-    alignment_coordinate coordinate{};
+
+    template <std::integral column_index_t, std::integral row_index_t>
+    constexpr void update_if_new_optimal_score(score_t const & compare_score,
+                                               column_index_type<column_index_t> column_index,
+                                               row_index_type<row_index_t> row_index) noexcept
+    {
+        score = (compare_score > score)
+              ? (this->column_index = column_index.get(), this->row_index = row_index.get(), compare_score)
+              : score;
+    }
 };
 
+template <simd_concept score_t>
+struct alignment_optimum<score_t>
+{
+    using scalar_t = typename simd_traits<score_t>::scalar_type;
+
+    score_t column_index{};
+    score_t row_index{};
+    score_t score{simd::fill<score_t>(std::numeric_limits<scalar_t>::lowest())};
+
+    template <std::integral column_index_t, std::integral row_index_t>
+    constexpr void update_if_new_optimal_score(score_t const & compare_score,
+                                               column_index_type<column_index_t> column_index,
+                                               row_index_type<row_index_t> row_index) noexcept
+    {
+        auto mask = compare_score > score;
+        score = mask ? compare_score : score;
+        this->column_index = mask ? simd::fill<score_t>(column_index.get()) : this->column_index;
+        this->row_index = mask ? simd::fill<score_t>(row_index.get()) : this->row_index;
+    }
+};
+//!\endcond
+
 /*!\name Type deduction guides
+ * \relates seqan3::detail::alignment_optimum
  * \{
  */
 //!\brief Default constructed objects deduce to `int32_t`.
 alignment_optimum() -> alignment_optimum<int32_t>;
 
-//!\brief Deduce the score type.
-template <arithmetic score_t>
-alignment_optimum(score_t const, alignment_coordinate const) ->
-    alignment_optimum<std::remove_reference_t<score_t>>;
+//!\brief Construction from column index, row index and the score deduces the score type.
+template <typename column_index_t, typename row_index_t, typename score_t>
+alignment_optimum(column_index_t, row_index_t, score_t) -> alignment_optimum<score_t>;
 //!\}
-
-/*!\brief A less than comparator for two seqan3::detail::alignment_optimum objects.
- * \ingroup alignment_matrix
- *
- * \details
- *
- * This function object is used in std::max functions to compare two seqan3::detail::alignment_optimum objects.
- */
-struct alignment_optimum_compare_less
-{
-
-    /*!\brief Function call operator that implements less than comparison.
-     * \tparam lhs_t The type of the left-hand side operand. Must be a type specialisation of
-     *               seqan3::detail::alignment_optimum.
-     * \tparam rhs_t The type of the right-hand side operand. Must be a type specialisation of
-     *               seqan3::detail::alignment_optimum.
-     *
-     * \param[in] lhs The left-hand side operand.
-     * \param[in] rhs The right-hand side operand.
-     *
-     * \returns bool `true` if `lhs.score < rhs.score`, otherwise `false`.
-     */
-    template <typename lhs_t, typename rhs_t>
-    //!\cond
-        requires (is_type_specialisation_of_v<lhs_t, alignment_optimum> &&
-                  is_type_specialisation_of_v<rhs_t, alignment_optimum>)
-    //!\endcond
-    constexpr bool operator()(lhs_t const & lhs, rhs_t const & rhs) const
-    {
-        return lhs.score < rhs.score;
-    }
-};
 
 } // namespace seqan3::detail

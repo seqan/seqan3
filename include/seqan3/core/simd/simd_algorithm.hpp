@@ -28,7 +28,7 @@ namespace seqan3::detail
 //!\brief Helper function for seqan3::simd::fill.
 //!\ingroup simd
 template <simd::simd_concept simd_t, size_t... I>
-constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>)
+constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>) noexcept
 {
     return simd_t{((void)I, scalar)...};
 }
@@ -384,7 +384,7 @@ inline namespace simd
  * \include test/snippet/core/simd/fill.cpp
  */
 template <simd::simd_concept simd_t>
-constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
+constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar) noexcept
 {
     constexpr size_t length = simd_traits<simd_t>::length;
     return detail::fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});

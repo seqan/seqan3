@@ -10,66 +10,137 @@
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
+#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/core/simd/concept.hpp>
+
+#include <seqan3/test/simd_utility.hpp>
 
 using namespace seqan3;
 
-TEST(alignment_optimum, construction)
+template <typename scalar_t>
+struct extract_scalar_type
 {
-    EXPECT_TRUE((std::is_default_constructible<detail::alignment_optimum<int32_t>>::value));
-    EXPECT_TRUE((std::is_copy_constructible<detail::alignment_optimum<int32_t>>::value));
-    EXPECT_TRUE((std::is_copy_assignable<detail::alignment_optimum<int32_t>>::value));
-    EXPECT_TRUE((std::is_move_constructible<detail::alignment_optimum<int32_t>>::value));
-    EXPECT_TRUE((std::is_move_assignable<detail::alignment_optimum<int32_t>>::value));
-    EXPECT_TRUE((std::is_destructible<detail::alignment_optimum<int32_t>>::value));
+    using type = scalar_t;
+};
+
+template <simd_concept simd_t>
+struct extract_scalar_type<simd_t>
+{
+    using type = typename simd_traits<simd_t>::scalar_type;
+};
+
+template <typename test_t>
+struct alignment_optimum_test : public ::testing::Test
+{
+    using scalar_t = typename extract_scalar_type<test_t>::type;
+
+    template <typename lhs_t, typename rhs_t>
+    void expect_eq(lhs_t lhs, rhs_t rhs)
+    {
+        if constexpr (simd_concept<lhs_t> && simd_concept<rhs_t>)
+            SIMD_EQ(lhs, rhs);
+        else if constexpr (simd_concept<lhs_t> && std::integral<rhs_t>)
+            SIMD_EQ(lhs, simd::fill<lhs_t>(rhs));
+        else
+            EXPECT_EQ(lhs, static_cast<lhs_t>(rhs));
+    }
+};
+
+using score_types = ::testing::Types<int32_t, simd_type_t<int32_t>>;
+
+TYPED_TEST_CASE(alignment_optimum_test, score_types);
+
+TYPED_TEST(alignment_optimum_test, construction)
+{
+    using alignment_optimum_t = detail::alignment_optimum<TypeParam>;
+
+    EXPECT_TRUE(std::is_nothrow_default_constructible_v<TypeParam>);
+    EXPECT_TRUE(std::is_nothrow_default_constructible_v<alignment_optimum_t>);
+    EXPECT_TRUE(std::is_nothrow_copy_constructible_v<alignment_optimum_t>);
+    EXPECT_TRUE(std::is_nothrow_copy_assignable_v<alignment_optimum_t>);
+    EXPECT_TRUE(std::is_nothrow_move_constructible_v<alignment_optimum_t>);
+    EXPECT_TRUE(std::is_nothrow_move_assignable_v<alignment_optimum_t>);
+    EXPECT_TRUE(std::is_destructible_v<alignment_optimum_t>);
 }
 
-TEST(alignment_optimum, type_deduction)
+TYPED_TEST(alignment_optimum_test, type_deduction)
 {
-    detail::alignment_optimum def_ao{};
-    EXPECT_TRUE((std::is_same_v<decltype(def_ao), detail::alignment_optimum<int32_t>>));
+    detail::alignment_optimum default_optimum{};
+    EXPECT_TRUE((std::is_same_v<decltype(default_optimum), detail::alignment_optimum<int32_t>>));
 
-    alignment_coordinate coordinate{};
-    coordinate.first = 2u;
-    coordinate.second = 3u;
-    detail::alignment_optimum ao{10, coordinate};
-    EXPECT_TRUE((std::is_same_v<decltype(ao), detail::alignment_optimum<int32_t>>));
+    detail::alignment_optimum deduced_optimum{TypeParam{1}, TypeParam{2}, TypeParam{10}};
+    EXPECT_TRUE((std::is_same_v<decltype(deduced_optimum), detail::alignment_optimum<TypeParam>>));
 }
 
-TEST(alignment_optimum, access)
+TYPED_TEST(alignment_optimum_test, default_constructed)
 {
-    detail::alignment_optimum def_ao{};
+    using scalar_t = typename TestFixture::scalar_t;
+    detail::alignment_optimum<TypeParam> default_optimum{};
 
-    EXPECT_EQ(def_ao.score, std::numeric_limits<int32_t>::lowest());
-    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.first), static_cast<size_t>(0));
-    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.second), static_cast<size_t>(0));
-
-    alignment_coordinate coordinate{};
-    coordinate.first = 2u;
-    coordinate.second = 3u;
-    detail::alignment_optimum ao{10, coordinate};
-    EXPECT_EQ(ao.score, 10);
-    EXPECT_EQ(static_cast<size_t>(ao.coordinate.first), static_cast<size_t>(2));
-    EXPECT_EQ(static_cast<size_t>(ao.coordinate.second), static_cast<size_t>(3));
+    this->expect_eq(default_optimum.score, std::numeric_limits<scalar_t>::lowest());
+    this->expect_eq(default_optimum.column_index, 0u);
+    this->expect_eq(default_optimum.row_index, 0u);
 }
 
-TEST(alignment_optimum, max)
+TYPED_TEST(alignment_optimum_test, general_construction)
 {
-    detail::alignment_optimum def_ao{};
+    detail::alignment_optimum optimum{TypeParam{1}, TypeParam{2}, TypeParam{10}};
 
-    EXPECT_EQ(def_ao.score, std::numeric_limits<int32_t>::lowest());
-    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.first), static_cast<size_t>(0));
-    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.second), static_cast<size_t>(0));
+    this->expect_eq(optimum.score, TypeParam{10});
+    this->expect_eq(optimum.column_index, TypeParam{1});
+    this->expect_eq(optimum.row_index, TypeParam{2});
+}
 
-    alignment_coordinate coordinate{};
-    coordinate.first = 2u;
-    coordinate.second = 3u;
-    detail::alignment_optimum ao{10, coordinate};
-    EXPECT_EQ(ao.score, 10);
-    EXPECT_EQ(static_cast<size_t>(ao.coordinate.first), static_cast<size_t>(2));
-    EXPECT_EQ(static_cast<size_t>(ao.coordinate.second), static_cast<size_t>(3));
+TYPED_TEST(alignment_optimum_test, update_if_new_optimal_score)
+{
+    using scalar_t = typename TestFixture::scalar_t;
+    detail::alignment_optimum<TypeParam> optimum{};
 
-    auto val = std::max(def_ao, ao, detail::alignment_optimum_compare_less{});
-    EXPECT_EQ(ao.score, 10);
-    EXPECT_EQ(static_cast<size_t>(val.coordinate.first), static_cast<size_t>(2));
-    EXPECT_EQ(static_cast<size_t>(val.coordinate.second), static_cast<size_t>(3));
+    this->expect_eq(optimum.score, std::numeric_limits<scalar_t>::lowest());
+    this->expect_eq(optimum.column_index, 0u);
+    this->expect_eq(optimum.row_index, 0u);
+
+    // Bigger score.
+    optimum.update_if_new_optimal_score(TypeParam{10}, detail::column_index_type{1}, detail::row_index_type{2});
+
+    this->expect_eq(optimum.score, TypeParam{10});
+    this->expect_eq(optimum.column_index, 1u);
+    this->expect_eq(optimum.row_index, 2u);
+
+    // Same score.
+    optimum.update_if_new_optimal_score(TypeParam{10}, detail::column_index_type{4}, detail::row_index_type{5});
+
+    this->expect_eq(optimum.score, TypeParam{10});
+    this->expect_eq(optimum.column_index, 1u);
+    this->expect_eq(optimum.row_index, 2u);
+
+    // Lower score.
+    optimum.update_if_new_optimal_score(TypeParam{7}, detail::column_index_type{4}, detail::row_index_type{5});
+
+    this->expect_eq(optimum.score, TypeParam{10});
+    this->expect_eq(optimum.column_index, 1u);
+    this->expect_eq(optimum.row_index, 2u);
+
+    // Mixed score differences
+    if constexpr (simd_concept<TypeParam>)
+    { // The following will only work if the simd type has more than one element.
+        if constexpr (simd_traits<TypeParam>::length > 1)
+        {
+            TypeParam score_vector{5};
+            TypeParam cmp_col_index = optimum.column_index;
+            TypeParam cmp_row_index = optimum.row_index;
+
+            score_vector[1] = 11;
+            cmp_col_index[1] = 3;
+            cmp_row_index[1] = 7;
+
+            optimum.update_if_new_optimal_score(score_vector, detail::column_index_type{3}, detail::row_index_type{7});
+
+            TypeParam cmp_score_vector{10};
+            cmp_score_vector[1] = 11;
+            this->expect_eq(optimum.score, cmp_score_vector);
+            this->expect_eq(optimum.column_index, cmp_col_index);
+            this->expect_eq(optimum.row_index, cmp_row_index);
+        }
+    }
 }

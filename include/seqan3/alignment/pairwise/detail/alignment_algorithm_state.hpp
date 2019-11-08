@@ -14,11 +14,13 @@
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
+#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/simd/concept.hpp>
 
 namespace seqan3::detail
 {
 /*!\brief Local state for the standard alignment algorithm.
- * \tparam score_type The type of the score.
+ * \tparam score_type The type of the score; must model seqan3::arithmetic or seqan3::simd::simd_concept.
  * \ingroup pairwise_alignment
  *
  * \details
@@ -29,6 +31,9 @@ namespace seqan3::detail
  * the underlying two-dimensional matrix.
  */
 template <typename score_type>
+//!\cond
+    requires arithmetic<score_type> || simd_concept<score_type>
+//!\endcond
 struct alignment_algorithm_state
 {
     //!\brief The cached gap extension score.
@@ -36,14 +41,12 @@ struct alignment_algorithm_state
     //!\brief The cached gap open score.
     score_type gap_open_score{};
     //!\brief The current alignment optimum.
-    alignment_optimum<score_type> optimum{std::numeric_limits<score_type>::lowest(),
-                                          alignment_coordinate{column_index_type{0u}, row_index_type{0u}}};
+    alignment_optimum<score_type> optimum{};
 
     //!\brief Resets the alignment optimum to the default initialised optimum.
     constexpr void reset_optimum() noexcept
     {
-        optimum = alignment_optimum<score_type>{std::numeric_limits<score_type>::lowest(),
-                                                alignment_coordinate{column_index_type{0u}, row_index_type{0u}}};
+        optimum = alignment_optimum<score_type>{};
     }
 };
 
