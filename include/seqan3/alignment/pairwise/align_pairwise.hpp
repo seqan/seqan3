@@ -201,7 +201,7 @@ constexpr auto align_pairwise(exec_policy_t const & exec,
     // Configure the alignment algorithm.
     auto kernel = detail::alignment_configurator::configure<decltype(seq_view)>(config);
     // Create a two-way executor for the alignment.
-    detail::alignment_executor_two_way executor{std::move(seq_view), kernel, exec};
+    detail::alignment_executor_two_way executor{std::move(seq_view), kernel, 1, exec};
     // Return the range over the alignments.
     return alignment_range{std::move(executor)};
 }
