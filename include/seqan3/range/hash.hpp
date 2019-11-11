@@ -12,34 +12,11 @@
 
 #pragma once
 
-#include <functional>
-
-#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/hash.hpp>
+#include <seqan3/core/type_traits/range.hpp>
 
 namespace std
 {
-/*!\brief Struct for hashing a character.
- * \ingroup alphabet
- * \tparam alphabet_t The type of character to hash; Must model seqan3::semialphabet.
- */
-template <typename alphabet_t>
-    //!\cond
-    requires seqan3::semialphabet<alphabet_t>
-    //!\endcond
-struct hash<alphabet_t>
-{
-    /*!\brief Compute the hash for a character.
-     * \param[in] character The character to process. Must model seqan3::semialphabet.
-     *
-     * \returns size_t.
-     * \sa seqan3::to_rank.
-     */
-    size_t operator()(alphabet_t const character) const noexcept
-    {
-        return seqan3::to_rank(character);
-    }
-};
-
 /*!\brief Struct for hashing a range of characters.
  * \ingroup alphabet
  * \tparam urng_t The type of the range; Must model std::ranges::input_range and the reference type of the range of the
@@ -69,4 +46,5 @@ struct hash<urng_t>
         return result;
     }
 };
+
 } // namespace std

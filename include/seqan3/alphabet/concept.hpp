@@ -1044,5 +1044,3 @@ SEQAN3_CONCEPT writable_constexpr_alphabet =
 //!\endcond
 
 } // namespace seqan3::detail
-
-#include <seqan3/alphabet/detail/hash.hpp>
