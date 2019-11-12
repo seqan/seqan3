@@ -17,6 +17,7 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/test/cereal.hpp>
 
@@ -250,9 +251,9 @@ TYPED_TEST(generic, convertability)
     if constexpr (detail::is_type_specialisation_of_v<TypeParam, aminoacid_scoring_scheme>)
     {
         using aa_types = type_list<aa27, aa20>;
-        meta::for_each(aa_types{}, [&] (auto && aa) constexpr
+        detail::for_each<aa_types>([&] (auto aa) constexpr
         {
-            using nucl_t = std::decay_t<decltype(aa)>;
+            using nucl_t = std::decay_t<typename decltype(aa)::type>;
 
             EXPECT_EQ(scheme.score('C'_aa27,                  'G'_aa27),
                       scheme.score(nucl_t{}.assign_char('C'), nucl_t{}.assign_char('G')));
@@ -263,9 +264,9 @@ TYPED_TEST(generic, convertability)
     {
 
         using nucl_types = type_list<dna4, dna5, dna15, rna4, rna5, rna15>;
-        meta::for_each(nucl_types{}, [&] (auto && nucl) constexpr
+        detail::for_each<nucl_types>([&] (auto nucl) constexpr
         {
-            using nucl_t = std::decay_t<decltype(nucl)>;
+            using nucl_t = std::decay_t<typename decltype(nucl)::type>;
 
             EXPECT_EQ(scheme.score('C'_dna15,                 'G'_dna15),
                       scheme.score(nucl_t{}.assign_char('C'), nucl_t{}.assign_char('G')));

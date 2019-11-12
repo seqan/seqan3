@@ -12,6 +12,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
 
 using namespace seqan3;
@@ -27,9 +28,9 @@ TYPED_TEST_CASE(quality_conversion, quality_conversion_gtest_types);
 
 TYPED_TEST(quality_conversion, explicit_conversion)
 {
-    meta::for_each(quality_conversion_types{}, [&] (auto && qual) constexpr
+    detail::for_each<quality_conversion_types>([&] (auto qual) constexpr
     {
-        using out_type = std::decay_t<decltype(qual)>;
+        using out_type = std::decay_t<typename decltype(qual)::type>;
         EXPECT_EQ(static_cast<out_type>(TypeParam{ 0}), out_type{ 0});
         EXPECT_EQ(static_cast<out_type>(TypeParam{ 5}), out_type{ 5});
         EXPECT_EQ(static_cast<out_type>(TypeParam{15}), out_type{15});

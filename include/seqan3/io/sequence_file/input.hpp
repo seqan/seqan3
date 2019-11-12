@@ -28,7 +28,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/filesystem>
@@ -551,7 +551,7 @@ public:
         primary_stream{&stream, stream_deleter_noop},
         format{detail::sequence_file_input_format_REMOVEME<file_format>{}}
     {
-        static_assert(meta::in<valid_formats, file_format>::value,
+        static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
 
         // possibly add intermediate compression stream
@@ -567,7 +567,7 @@ public:
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         format{detail::sequence_file_input_format_REMOVEME<file_format>{}}
     {
-        static_assert(meta::in<valid_formats, file_format>::value,
+        static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
 
         // possibly add intermediate compression stream
