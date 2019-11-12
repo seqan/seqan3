@@ -17,6 +17,7 @@
 #include <type_traits>
 #include <vector>
 
+#include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
 #include <seqan3/core/parallel/detail/reader_writer_manager.hpp>
 #include <seqan3/core/platform.hpp>
@@ -123,6 +124,33 @@ public:
             delegate(algorithm(idx, std::move(first_range), std::move(second_range)));
         };
         // Asynchronously pushes the task to the queue.
+        [[maybe_unused]] contrib::queue_op_status status = state->queue.wait_push(std::move(task));
+        assert(status == contrib::queue_op_status::success);
+    }
+
+    /*!\brief Takes underlying range of sequence pairs and invokes an alignment on each instance.
+     * \tparam algorithm_t              The type of the alignment algorithm.
+     * \tparam indexed_sequence_pairs_t The type of underlying sequence pairs annotated with an index;
+     *                                  must model seqan3::detail::indexed_sequence_pair_range.
+     * \tparam delegate_type            The type of the callable invoked on the std::invoke_result of `algorithm_t`.
+     *
+     * \param[in] algorithm              The alignment algorithm to invoke.
+     * \param[in] indexed_sequence_pairs The range of underlying annotated sequence pairs to be aligned.
+     * \param[in] delegate               A callable which will be invoked on each result of the computed alignments.
+     */
+    template <typename algorithm_t, indexed_sequence_pair_range indexed_sequence_pairs_t, typename delegate_type>
+    void execute(algorithm_t && algorithm,
+                 indexed_sequence_pairs_t indexed_sequence_pairs,
+                 delegate_type && delegate)
+    {
+        assert(state != nullptr);
+
+        // Asynchronously pushes the alignment job as a task to the queue.
+        task_type task = [=, indexed_sequence_pairs = std::move(indexed_sequence_pairs)] ()
+        {
+            delegate(algorithm(std::move(indexed_sequence_pairs)));
+        };
+
         [[maybe_unused]] contrib::queue_op_status status = state->queue.wait_push(std::move(task));
         assert(status == contrib::queue_op_status::success);
     }
