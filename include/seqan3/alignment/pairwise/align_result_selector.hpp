@@ -71,54 +71,48 @@ template <std::ranges::forward_range first_range_t,
 struct align_result_selector
 {
 private:
-
     //!\brief Helper function to determine the actual result type.
     static constexpr auto select()
     {
-        if constexpr (configuration_t::template exists<align_cfg::result>())
+        static_assert(configuration_t::template exists<align_cfg::result>());
+
+        using result_type = decltype(get<align_cfg::result>(std::declval<configuration_t>()));
+        using score_type = typename std::remove_reference_t<result_type>::score_type;
+
+        if constexpr (configuration_t::template exists<align_cfg::result<with_back_coordinate_type, score_type>>())
         {
-            using result_type = decltype(get<align_cfg::result>(std::declval<configuration_t>()));
-	        using score_type = typename std::remove_reference_t<result_type>::score_type;
+            return alignment_result_value_type<uint32_t,
+                                               score_type,
+                                               alignment_coordinate>{};
+        }
+        else if constexpr (configuration_t::template exists<align_cfg::result<with_front_coordinate_type, score_type>>())
+        {
+            return alignment_result_value_type<uint32_t,
+                                               score_type,
+                                               alignment_coordinate,
+                                               alignment_coordinate>{};
+        }
+        else if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type, score_type>>())
+        {
+            // Due to an error with gcc8 we define these types beforehand.
+            using first_gapped_seq_type = gapped<value_type_t<first_range_t>>;
+            using second_gapped_seq_type = gapped<value_type_t<second_range_t>>;
 
-            if constexpr (configuration_t::template exists<align_cfg::result<with_back_coordinate_type, score_type>>())
-            {
-                return alignment_result_value_type<uint32_t,
-                                                   score_type,
-                                                   alignment_coordinate>{};
-            }
-            else if constexpr (configuration_t::template exists<align_cfg::result<with_front_coordinate_type, score_type>>())
-            {
-                return alignment_result_value_type<uint32_t,
-                                                   score_type,
-                                                   alignment_coordinate,
-                                                   alignment_coordinate>{};
-            }
-            else if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type, score_type>>())
-            {
-                // Due to an error with gcc8 we define these types beforehand.
-                using first_gapped_seq_type = gapped<value_type_t<first_range_t>>;
-                using second_gapped_seq_type = gapped<value_type_t<second_range_t>>;
+            // We use vectors of gapped sequence if the gap decorator cannot be used.
+            using fallback_t = std::tuple<std::vector<first_gapped_seq_type>, std::vector<second_gapped_seq_type>>;
 
-                // We use vectors of gapped sequence if the gap decorator cannot be used.
-                using fallback_t = std::tuple<std::vector<first_gapped_seq_type>, std::vector<second_gapped_seq_type>>;
+            // If the ranges are RandomAccess and Sized we can use the Gap Decorator, otherwise fallback_t.
+            using decorator_t = alignment_type<first_range_t, second_range_t>;
 
-                // If the ranges are RandomAccess and Sized we can use the Gap Decorator, otherwise fallback_t.
-                using decorator_t = alignment_type<first_range_t, second_range_t>;
-
-                return alignment_result_value_type<uint32_t,
-                                                   score_type,
-                                                   alignment_coordinate,
-                                                   alignment_coordinate,
-                                                   detail::transformation_trait_or_t<decorator_t, fallback_t>>{};
-            }
-            else
-            {
-                return alignment_result_value_type<uint32_t, score_type>{};
-            }
+            return alignment_result_value_type<uint32_t,
+                                               score_type,
+                                               alignment_coordinate,
+                                               alignment_coordinate,
+                                               detail::transformation_trait_or_t<decorator_t, fallback_t>>{};
         }
         else
         {
-            return alignment_result_value_type<uint32_t, int32_t>{};
+            return alignment_result_value_type<uint32_t, score_type>{};
         }
     }
 
