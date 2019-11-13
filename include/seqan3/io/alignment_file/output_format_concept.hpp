@@ -29,10 +29,12 @@
 namespace seqan3::detail
 {
 
-//!\brief The alignment file output format base class.
-template <typename t>
-class alignment_file_output_format_REMOVEME
-{};
+template <typename format_type>
+struct alignment_file_output_format_exposer : public format_type
+{
+public:
+    using format_type::write_alignment_record;
+};
 
 } // namespace seqan3::detail
 
@@ -53,7 +55,7 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT alignment_file_output_format =
-    requires (detail::alignment_file_output_format_REMOVEME<t>                              & v,
+    requires (detail::alignment_file_output_format_exposer<t>                      & v,
               std::ofstream                                                        & stream,
               alignment_file_output_options                                        & options,
               alignment_file_header<>                                              & header,
@@ -75,25 +77,25 @@ SEQAN3_CONCEPT alignment_file_output_format =
 {
     t::file_extensions;
 
-    { v.write(stream,
-              options,
-              header,
-              seq,
-              qual,
-              id,
-              offset,
-              ref_seq,
-              ref_id,
-              ref_offset,
-              align,
-              cigar,
-              flag,
-              mapq,
-              mate,
-              tag_dict,
-              e_value,
-              bit_score
-              ) } -> void;
+    { v.write_alignment_record(stream,
+                               options,
+                               header,
+                               seq,
+                               qual,
+                               id,
+                               offset,
+                               ref_seq,
+                               ref_id,
+                               ref_offset,
+                               align,
+                               cigar,
+                               flag,
+                               mapq,
+                               mate,
+                               tag_dict,
+                               e_value,
+                               bit_score
+                               ) } -> void;
 };
 //!\endcond
 
@@ -103,24 +105,24 @@ SEQAN3_CONCEPT alignment_file_output_format =
  * \{
  */
 
-/*!\fn void write(stream_type                            &  stream,
-                  alignment_file_output_options const    &  options,
-                  alignment_file_header<>                & header,
-                  seq_type                               && seq,
-                  qual_type                              && qual,
-                  id_type                                && id,
-                  offset_type                            && offset,
-                  ref_seq_type                           && ref_seq,
-                  ref_id_type                            && ref_id,
-                  ref_offset_type                        && ref_offset,
-                  align_type                             && align,
-                  std::vector<cigar>                     &  cigar_vector,
-                  flag_type                              && flag,
-                  mapq_type                              && mapq,
-                  mate_type                              && mate,
-                  tag_dict_type                          && tag_dict,
-                  e_value_type                           && e_value,
-                  bit_score_type                         && bit_score)
+/*!\fn void write_alignment_record(stream_type                            &  stream,
+                                   alignment_file_output_options const    &  options,
+                                   alignment_file_header<>                & header,
+                                   seq_type                               && seq,
+                                   qual_type                              && qual,
+                                   id_type                                && id,
+                                   offset_type                            && offset,
+                                   ref_seq_type                           && ref_seq,
+                                   ref_id_type                            && ref_id,
+                                   ref_offset_type                        && ref_offset,
+                                   align_type                             && align,
+                                   std::vector<cigar>                     &  cigar_vector,
+                                   flag_type                              && flag,
+                                   mapq_type                              && mapq,
+                                   mate_type                              && mate,
+                                   tag_dict_type                          && tag_dict,
+                                   e_value_type                           && e_value,
+                                   bit_score_type                         && bit_score)
  * \brief Write the given fields to the specified stream.
  * \tparam stream_type      Output stream, must model seqan3::output_stream_over with `char`.
  * \tparam seq_type         Type of the seqan3

@@ -26,10 +26,12 @@
 namespace seqan3::detail
 {
 
-//!\brief The sequence file input format base class.
-template <typename format_tag>
-class sequence_file_input_format_REMOVEME
-{};
+template <typename format_type>
+struct sequence_file_input_format_exposer : public format_type
+{
+public:
+    using format_type::read_sequence_record;
+};
 
 } // namespace seqan3::detail
 
@@ -48,19 +50,20 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_input_format_REMOVEME<t>    & v,
-                                                   std::ifstream                            & f,
-                                                   sequence_file_input_options<dna5, false> & options,
-                                                   dna5_vector                              & seq,
-                                                   std::string                              & id,
-                                                   std::vector<phred42>                     & qual,
-                                                   std::vector<dna5q>                       & seq_qual)
+
+SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_input_format_exposer<t> & v,
+                                                      std::ifstream                                 & f,
+                                                      sequence_file_input_options<dna5, false>      & options,
+                                                      dna5_vector                                   & seq,
+                                                      std::string                                   & id,
+                                                      std::vector<phred42>                          & qual,
+                                                      std::vector<dna5q>                            & seq_qual)
 {
     t::file_extensions;
 
-    { v.read(f, options, seq,         id,          qual)        } -> void;
-    { v.read(f, options, seq_qual,    id,          seq_qual)    } -> void;
-    { v.read(f, options, std::ignore, std::ignore, std::ignore) } -> void;
+    { v.read_sequence_record(f, options, seq,         id,          qual)        } -> void;
+    { v.read_sequence_record(f, options, seq_qual,    id,          seq_qual)    } -> void;
+    { v.read_sequence_record(f, options, std::ignore, std::ignore, std::ignore) } -> void;
 };
 //!\endcond
 
@@ -70,7 +73,7 @@ SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_inpu
  * \{
  */
 
-/*!\fn void read(stream_type & stream, seqan3::sequence_file_input_options const & options, seq_type & sequence,
+/*!\fn void read_sequence_record(stream_type & stream, seqan3::sequence_file_input_options const & options, seq_type & sequence,
  *               id_type & id, qual_type & qualities)
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \tparam stream_type      Input stream, must satisfy seqan3::input_stream_over with `char`.

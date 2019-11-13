@@ -30,10 +30,12 @@
 namespace seqan3::detail
 {
 
-//!\brief The alignment file input format base class.
-template <typename t>
-class alignment_file_input_format_REMOVEME
-{};
+template <typename format_type>
+struct alignment_file_input_format_exposer : public format_type
+{
+public:
+    using format_type::read_alignment_record;
+};
 
 } // namespace seqan3::detail
 
@@ -53,7 +55,7 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT alignment_file_input_format =
-    requires (detail::alignment_file_input_format_REMOVEME<t>                              & v,
+    requires (detail::alignment_file_input_format_exposer<t>                      & v,
               std::ifstream                                                       & stream,
               alignment_file_input_options<dna5>                                  & options,
               std::vector<dna5_vector>                                            & ref_sequences,
@@ -77,45 +79,45 @@ SEQAN3_CONCEPT alignment_file_input_format =
     t::file_extensions;
     // std::same_as<decltype(t::file_extensions), std::vector<std::string>>;
 
-    { v.read(stream,
-             options,
-             ref_sequences,
-             header,
-             seq,
-             qual,
-             id,
-             offset,
-             ref_seq,
-             ref_id,
-             ref_offset,
-             align,
-             cigar,
-             flag,
-             mapq,
-             mate,
-             tag_dict,
-             e_value,
-             bit_score)};
+    { v.read_alignment_record(stream,
+                              options,
+                              ref_sequences,
+                              header,
+                              seq,
+                              qual,
+                              id,
+                              offset,
+                              ref_seq,
+                              ref_id,
+                              ref_offset,
+                              align,
+                              cigar,
+                              flag,
+                              mapq,
+                              mate,
+                              tag_dict,
+                              e_value,
+                              bit_score)};
 
-    { v.read(stream,
-             options,
-             std::ignore,
-             header,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore,
-             std::ignore)};
+    { v.read_alignment_record(stream,
+                              options,
+                              std::ignore,
+                              header,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore,
+                              std::ignore)};
 };
 //!\endcond
 
@@ -125,12 +127,25 @@ SEQAN3_CONCEPT alignment_file_input_format =
  * \{
  */
 
-/*!\fn void read(stream_type & stream, alignment_file_input_options<seq_legal_alph_type> const & options,
- *               ref_seqs_type & ref_seqs, header_type & header,
- *               seq_type & seq, qual_type & qual, id_type & id, offset_type & offset, ref_seq_type & ref_seq,
- *               ref_id_type & ref_id, ref_offset_type & ref_offset, align_type & align, cigar_type & cigar_vector,
- *               flag_type & flag, mapq_type & mapq, mate_type & mate, tag_dict_type & tag_dict, e_value_type & e_value,
- *               bit_score_type & bit_score)
+/*!\fn void read_alignment_record(stream_type & stream,
+ *                                alignment_file_input_options<seq_legal_alph_type> const & options,
+ *                                ref_seqs_type & ref_seqs,
+ *                                header_type & header,
+ *                                seq_type & seq,
+ *                                qual_type & qual,
+ *                                id_type & id,
+ *                                offset_type & offset,
+ *                                ref_seq_type & ref_seq,
+ *                                ref_id_type & ref_id,
+ *                                ref_offset_type & ref_offset,
+ *                                align_type & align,
+ *                                cigar_type & cigar_vector,
+ *                                flag_type & flag,
+ *                                mapq_type & mapq,
+ *                                mate_type & mate,
+ *                                tag_dict_type & tag_dict,
+ *                                e_value_type & e_value,
+ *                                bit_score_type & bit_score)
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \tparam stream_type        The input stream type; Must be derived from std::ostream.
  * \tparam ref_seqs_type      e.g. std::deque<ref_sequence_type> or decltype(std::ignore).

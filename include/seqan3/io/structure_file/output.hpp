@@ -301,7 +301,7 @@ public:
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{detail::structure_file_output_format_REMOVEME<file_format>{}}
+        format{detail::structure_file_output_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -314,7 +314,7 @@ public:
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{detail::structure_file_output_format_REMOVEME<file_format>{}}
+        format{detail::structure_file_output_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -657,7 +657,8 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats, detail::structure_file_output_format_REMOVEME>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats,
+                                                           detail::structure_file_output_format_exposer>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -693,31 +694,31 @@ protected:
         {
             if constexpr (!detail::decays_to_ignore_v<structured_seq_type>)
             {
-                f.write(*secondary_stream,
-                        options,
-                        structured_seq | views::get<0>,
-                        id,
-                        bpp,
-                        structured_seq | views::get<1>,
-                        energy,
-                        react,
-                        react_error,
-                        comment,
-                        offset);
+                f.write_structure_record(*secondary_stream,
+                                         options,
+                                         structured_seq | views::get<0>,
+                                         id,
+                                         bpp,
+                                         structured_seq | views::get<1>,
+                                         energy,
+                                         react,
+                                         react_error,
+                                         comment,
+                                         offset);
             }
             else
             {
-                f.write(*secondary_stream,
-                        options,
-                        seq,
-                        id,
-                        bpp,
-                        structure,
-                        energy,
-                        react,
-                        react_error,
-                        comment,
-                        offset);
+                f.write_structure_record(*secondary_stream,
+                                         options,
+                                         seq,
+                                         id,
+                                         bpp,
+                                         structure,
+                                         energy,
+                                         react,
+                                         react_error,
+                                         comment,
+                                         offset);
             }
         }, format);
     }
@@ -769,17 +770,17 @@ protected:
 
                 for (auto && v : zipped)
                 {
-                    f.write(*secondary_stream,
-                            options,
-                            std::get<0>(v) | views::get<0>, // seq
-                            std::get<1>(v),  // id
-                            std::get<2>(v),  // bpp
-                            std::get<0>(v) | views::get<1>, // structure
-                            std::get<3>(v),  // energy
-                            std::get<4>(v),  // react
-                            std::get<5>(v),  // react_error
-                            std::get<6>(v),  // comment
-                            std::get<7>(v)); // offset
+                    f.write_structure_record(*secondary_stream,
+                                             options,
+                                             std::get<0>(v) | views::get<0>, // seq
+                                             std::get<1>(v),  // id
+                                             std::get<2>(v),  // bpp
+                                             std::get<0>(v) | views::get<1>, // structure
+                                             std::get<3>(v),  // energy
+                                             std::get<4>(v),  // react
+                                             std::get<5>(v),  // react_error
+                                             std::get<6>(v),  // comment
+                                             std::get<7>(v)); // offset
                 }
             }
             else
@@ -788,8 +789,17 @@ protected:
 
                 for (auto && v : zipped)
                 {
-                    f.write(*secondary_stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v), std::get<3>(v),
-                            std::get<4>(v), std::get<5>(v), std::get<6>(v), std::get<7>(v), std::get<8>(v));
+                    f.write_structure_record(*secondary_stream,
+                                             options,
+                                             std::get<0>(v),
+                                             std::get<1>(v),
+                                             std::get<2>(v),
+                                             std::get<3>(v),
+                                             std::get<4>(v),
+                                             std::get<5>(v),
+                                             std::get<6>(v),
+                                             std::get<7>(v),
+                                             std::get<8>(v));
                 }
             }
         }, format);

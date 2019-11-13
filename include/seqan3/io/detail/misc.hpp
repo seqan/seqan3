@@ -78,14 +78,13 @@ void set_format(format_variant_type & format,
         extension = extension.substr(1); // drop leading "."
         detail::for_each<valid_formats>([&] (auto fmt)
         {
-            using fmt_type = remove_cvref_t<typename decltype(fmt)::type>;
-            using fmt_tag  = typename fmt_type::format_tag;
+            using fm_type = typename decltype(fmt)::type; // remove type_identity wrapper
 
-            for (auto const & ext : fmt_tag::file_extensions)
+            for (auto const & ext : fm_type::file_extensions)
             {
                 if (std::ranges::equal(ext, extension))
                 {
-                    format = fmt_type{};
+                    format = fm_type{};
                     format_found = true;
                     return;
                 }
