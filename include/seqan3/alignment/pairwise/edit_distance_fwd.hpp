@@ -94,9 +94,7 @@ struct default_edit_distance_trait_type
     //!\brief Whether the alignment is a global alignment or not.
     static constexpr bool is_global = !is_semi_global;
     //!\brief Whether the alignment configuration indicates to compute and/or store the score.
-    static constexpr bool compute_score = align_config_type::template exists<align_cfg::result<with_score_type,
-                                                                                               score_type>>() ||
-                                          !std::same_as<decltype(result_value_type{}.back_coordinate), std::nullopt_t *>;
+    static constexpr bool compute_score = true;
     //!\brief Whether the alignment configuration indicates to compute and/or store the back coordinate.
     static constexpr bool compute_back_coordinate = !std::same_as<decltype(result_value_type{}.back_coordinate),
                                                                std::nullopt_t *>;
