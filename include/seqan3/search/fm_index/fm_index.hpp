@@ -203,7 +203,7 @@ private:
         // uint8_t largest_char = 0;
         sdsl::int_vector<8> tmp_text(std::ranges::distance(text));
 
-        std::ranges::copy(text
+        std::ranges::move(text
                           | views::to_rank
                           | std::views::transform([] (uint8_t const r)
                           {
@@ -217,7 +217,7 @@ private:
                               return r + 1;
                           })
                           | std::views::reverse,
-                          seqan3::begin(tmp_text)); // reverse and increase rank by one
+                          std::ranges::begin(tmp_text)); // reverse and increase rank by one
 
         sdsl::construct_im(index, tmp_text, 0);
 
@@ -265,17 +265,19 @@ private:
 
         constexpr auto sigma = alphabet_size<alphabet_t>;
 
-        // bitvector where 1 marks the begin position of a single text from the collection in the concatenated text
-        sdsl::bit_vector pos(text_size, 0);
+        // Instead of creating a bitvector of size `text_size`, setting the bits to 1 and then compressing it, we can
+        // use the `sd_vector_builder(text_size, number_of_ones)` because we know the parameters and the 1s we want to
+        // set are in a strictly increasing order. This inplace construction of the compressed vector saves memory.
+        sdsl::sd_vector_builder builder(text_size, std::ranges::distance(text));
         size_t prefix_sum{0};
 
         for (auto && t : text)
         {
-            pos[prefix_sum] = 1;
+            builder.set(prefix_sum);
             prefix_sum += std::ranges::distance(t) + 1;
         }
 
-        text_begin    = sdsl::sd_vector(pos);
+        text_begin    = sdsl::sd_vector<>(builder);
         text_begin_ss = sdsl::select_support_sd<1>(&text_begin);
         text_begin_rs = sdsl::rank_support_sd<1>(&text_begin);
 
@@ -284,40 +286,33 @@ private:
 
         constexpr uint8_t delimiter = sigma >= 255 ? 255 : sigma + 1;
 
-        std::vector<uint8_t> tmp = text
-                                   | views::deep{views::to_rank}
-                                   | views::deep
-                                   {
-                                       std::views::transform([] (uint8_t const r)
-                                       {
-                                           if constexpr (sigma >= 255)
-                                           {
-                                               if (r >= 254)
-                                                   throw std::out_of_range("The input text cannot be indexed, because"
-                                                                           " for full character alphabets the last one/"
-                                                                           "two values are reserved (single sequence/"
-                                                                           "collection).");
-                                           }
-                                           return r + 1;
-                                       })
-                                   }
-                                   | views::join(delimiter)
-                                   | views::to<std::vector<uint8_t>>;
+
+        std::ranges::move(text
+                          | views::deep{views::to_rank}
+                          | views::deep
+                          {
+                              std::views::transform([] (uint8_t const r)
+                              {
+                                  if constexpr (sigma >= 255)
+                                  {
+                                      if (r >= 254)
+                                          throw std::out_of_range("The input text cannot be indexed, because"
+                                                                  " for full character alphabets the last one/"
+                                                                  "two values are reserved (single sequence/"
+                                                                  "collection).");
+                                  }
+                                  return r + 1;
+                              })
+                          }
+                          | views::join(delimiter),
+                          std::ranges::begin(tmp_text));
+
 
         // we need at least one delimiter
         if (std::ranges::distance(text) == 1)
-            tmp.push_back(delimiter);
+            tmp_text.back() = delimiter;
 
-        std::ranges::copy((tmp | std::views::reverse), seqan3::begin(tmp_text));
-
-        //!\if DEV \todo Replace with this once this does not cause debug builds to exceed max memory on travis \endif
-        // std::ranges::copy(text
-        //                   | views::deep{views::to_rank}
-        //                   | views::deep{std::views::transform([] (uint8_t const r) { return r + 1; })} // increase rank
-        //                   | views::deep{std::views::reverse}
-        //                   | std::views::reverse
-        //                   | views::join(delimiter), // join with delimiter
-        //                   seqan3::begin(tmp_text));
+        std::ranges::reverse(tmp_text);
 
         sdsl::construct_im(index, tmp_text, 0);
     }
