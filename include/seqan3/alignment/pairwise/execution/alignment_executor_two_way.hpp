@@ -22,6 +22,7 @@
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
+#include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/view_all.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
@@ -56,7 +57,7 @@ private:
      * \{
      */
     //!\brief The underlying resource type.
-    using resource_type = decltype(views::zip(std::declval<resource_t>(), std::views::iota(0)));
+    using resource_type = decltype(views::zip(std::declval<resource_t>(), std::views::iota(0)) | views::chunk(1));
     //!\brief The iterator over the underlying resource.
     using resource_iterator_t = std::ranges::iterator_t<resource_type>;
     //!\brief The value type of the resource.
@@ -157,8 +158,6 @@ public:
                                alignment_algorithm_t fn,
                                size_t chunk_size = 1u,
                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
-        resource{views::zip(std::forward<resource_t>(resrc), std::views::iota(0))},
-        resource_it{resource.begin()},
         kernel{std::move(fn)},
         _chunk_size{chunk_size}
     {
@@ -169,10 +168,13 @@ public:
         if (chunk_size == 0u)
             throw std::invalid_argument{"The chunk size must be greater than 0."};
 
+        resource = views::zip(std::forward<resource_t>(resrc), std::views::iota(0)) | views::chunk(chunk_size);
+        resource_it = resource.begin();
+
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
             init_buffer(std::ranges::distance(resrc));
         else
-            init_buffer(1);
+            init_buffer(chunk_size);
     }
     //!}
 
@@ -252,19 +254,27 @@ private:
         // Reset the get pointer.
         setg(std::ranges::begin(buffer), std::ranges::end(buffer));
 
+        using std::get;
+
         // Apply the alignment execution.
         size_t count = 0;
         size_t buffer_limit = in_avail();
-        for (; count < buffer_limit && !is_eof(); ++count, ++resource_it, ++gptr)
+        assert(buffer_limit >= chunk_size());
+
+        while (count < buffer_limit && !is_eof())
         {
-            auto && [tpl, idx] = *resource_it;
-            auto && [first_seq, second_seq] = tpl;
-            buffer_pointer write_to = gptr;
-            exec_handler.execute(kernel,
-                                 idx,
-                                 first_seq | views::all,
-                                 second_seq | views::all,
-                                 [write_to] (auto && res) { *write_to = std::move(res); });
+            for (auto && [sequence_pair, idx] : *resource_it)
+            {
+                buffer_pointer write_to = gptr;
+                exec_handler.execute(kernel,
+                                     idx,
+                                     get<0>(sequence_pair) | views::all,
+                                     get<1>(sequence_pair) | views::all,
+                                     [write_to] (auto && res) { *write_to = std::move(res); });
+                ++gptr;
+                ++count;
+            }
+            ++resource_it;
         }
 
         exec_handler.wait();
