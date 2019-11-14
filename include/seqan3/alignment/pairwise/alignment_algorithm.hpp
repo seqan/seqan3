@@ -22,6 +22,7 @@
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
+#include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 
 #include <seqan3/core/detail/empty_type.hpp>
@@ -187,11 +188,68 @@ public:
         // Reset the alignment state's optimum between executions of the alignment algorithm.
         this->alignment_state.reset_optimum();
 
-        return compute_matrix(idx, sequence1, sequence2);
+        return alignment_result{compute_matrix(idx, sequence1, sequence2)};
     }
     //!\}
 
-private:
+    /*!\brief Computes the pairwise sequence alignment for the given range over indexed sequence pairs.
+     * \tparam indexed_sequence_pairs_t The type of indexed_sequence_pairs; must model
+     *                                  seqan3::detail::indexed_sequence_pair_range.
+     *
+     * \param[in] indexed_sequence_pairs A range over indexed sequence pairs to be aligned.
+     *
+     * \returns A std::vector over seqan3::alignment_result with the requested alignment results for every
+     *          sequence pair in the given range.
+     *
+     * \throws std::bad_alloc during allocation of the alignment matrices or
+     *         seqan3::invalid_alignment_configuration if an invalid configuration for the given sequences is detected.
+     *
+     * \details
+     *
+     * Uses the standard dynamic programming algorithm to compute the pairwise sequence alignment for each
+     * sequence pair. The space and runtime complexities depend on the selected configurations (see below).
+     *
+     * ### Exception
+     *
+     * Strong exception guarantee. Might throw std::bad_alloc or seqan3::invalid_alignment_configuration.
+     *
+     * ### Thread-safety
+     *
+     * Calls to this functions in a concurrent environment are not thread safe. Instead use a copy of the alignment
+     * algorithm type.
+     *
+     * ### Complexity
+     *
+     * The following table lists the runtime and space complexities for the banded and unbanded algorithm dependent
+     * on the configured seqan3::align_cfg::result per sequence pair.
+     * Let `n` be the length of the first sequence, `m` be the length of the second sequence and `k` be the size of
+     * the band.
+     *
+     * |                        | unbanded         | banded            |
+     * |:----------------------:|:----------------:|:-----------------:|
+     * |runtime                 |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
+     * |space (score only)      |\f$ O(m) \f$      |\f$ O(k) \f$       |
+     * |space (end positions)   |\f$ O(m) \f$      |\f$ O(k) \f$       |
+     * |space (begin positions) |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
+     * |space (alignment)       |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
+     */
+    template <indexed_sequence_pair_range indexed_sequence_pairs_t>
+    auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs)
+    {
+        using sequence_pairs_t = std::tuple_element_t<0, std::ranges::range_value_t<indexed_sequence_pairs_t>>;
+        using sequence1_t = std::tuple_element_t<0, sequence_pairs_t>;
+        using sequence2_t = std::tuple_element_t<1, sequence_pairs_t>;
+        using result_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
+
+        using std::get;
+
+        std::vector<alignment_result<result_t>> results{};
+        for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
+            results.emplace_back((*this)(idx, get<0>(sequence_pair), get<1>(sequence_pair)));
+
+        return results;
+    }
+
     /*!\brief Checks if the band parameters are valid for the given sequences.
      * \tparam sequence1_t The type of the first sequence.
      * \tparam sequence2_t The type of the second sequence.
