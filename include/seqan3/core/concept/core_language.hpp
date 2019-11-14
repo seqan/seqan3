@@ -16,7 +16,6 @@
 
 #include <seqan3/core/platform.hpp>
 #include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

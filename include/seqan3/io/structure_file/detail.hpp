@@ -16,6 +16,8 @@
 #include <stack>
 
 #include <seqan3/alphabet/structure/concept.hpp>
+#include <seqan3/io/exception.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

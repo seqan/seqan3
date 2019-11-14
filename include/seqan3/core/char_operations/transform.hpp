@@ -13,7 +13,6 @@
 #pragma once
 
 #include <array>
-#include <cmath>
 
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/int_types.hpp>

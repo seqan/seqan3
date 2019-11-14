@@ -11,7 +11,7 @@ struct my_iterator : std::ranges::iterator_t<urng_t>
 {
 //![start]
     //![static_assert]
-    static_assert(nucleotide_alphabet<reference_t<urng_t>>,
+    static_assert(nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>,
                   "You can only iterate over ranges of nucleotides!");
     //![static_assert]
 

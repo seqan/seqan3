@@ -16,10 +16,7 @@
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
-#include <seqan3/core/detail/reflection.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/core/type_traits/function.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/std/type_traits>
 
 // ============================================================================
 // forwards
@@ -547,7 +544,7 @@ struct assign_char_strictly_to_fn
     decltype(auto) operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t & a) const
     {
         if (!seqan3::char_is_valid_for<alph_t>(r))
-            throw seqan3::invalid_char_assignment{seqan3::detail::get_display_name_v<alph_t>, r};
+            throw seqan3::invalid_char_assignment{"Alphabet", r};
 
         return seqan3::assign_char_to(r, a);
     }
@@ -1044,5 +1041,3 @@ SEQAN3_CONCEPT writable_constexpr_alphabet =
 //!\endcond
 
 } // namespace seqan3::detail
-
-#include <seqan3/alphabet/detail/hash.hpp>

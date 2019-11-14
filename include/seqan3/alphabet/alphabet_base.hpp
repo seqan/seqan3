@@ -14,7 +14,6 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/type_traits>
 

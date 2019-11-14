@@ -13,9 +13,9 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 
 namespace seqan3

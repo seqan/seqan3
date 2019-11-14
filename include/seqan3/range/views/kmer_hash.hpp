@@ -15,6 +15,7 @@
 #include <cmath>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/range/hash.hpp>
 #include <seqan3/search/kmer_index/shape.hpp>
 
 namespace seqan3::detail

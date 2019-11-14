@@ -23,9 +23,6 @@
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
-#include <seqan3/range/views/take.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 
 namespace seqan3
 {

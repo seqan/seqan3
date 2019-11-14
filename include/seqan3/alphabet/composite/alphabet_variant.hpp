@@ -21,17 +21,10 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/alphabet/alphabet_base.hpp>
-#include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/core/type_traits/pack.hpp>
-#include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/core/tuple_utility.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/type_traits>
 
 namespace seqan3::detail
 {

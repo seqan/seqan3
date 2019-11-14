@@ -1,5 +1,6 @@
 #include <seqan3/alphabet/quality/phred63.hpp>
 #include <seqan3/core/debug_stream.hpp>
+#include <seqan3/std/algorithm>
 
 int main()
 {
@@ -11,5 +12,5 @@ int main()
     // This is the same as a sequence of char literals:
     std::vector<seqan3::phred63> qual_vec2 = {'#'_phred63, '#'_phred63, '#'_phred63, '!'_phred63};
 
-    seqan3::debug_stream << ranges::equal(qual_vec, qual_vec2) << std::endl; // prints 1 (true)
+    seqan3::debug_stream << std::ranges::equal(qual_vec, qual_vec2) << std::endl; // prints 1 (true)
 }
