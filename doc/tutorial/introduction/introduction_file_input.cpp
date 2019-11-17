@@ -1,21 +1,22 @@
 //! [fileinput_1]
 #include <string>
-#include <seqan3/io/sequence_file/input.hpp>    // for sequence_file_input
 #include <seqan3/core/debug_stream.hpp>         // for debug_stream
+#include <seqan3/io/sequence_file/input.hpp>    // for sequence_file_input
 //! [fileinput_1]
 
-#include <seqan3/io/sequence_file/output.hpp>   // to create temp file
-#include <seqan3/alphabet/nucleotide/dna4.hpp>  // to create right datastructure in temp file
+#include <filesystem>                           // to create temp directory 
+#include <seqan3/alphabet/nucleotide/dna4.hpp>  // to create right datastructure in tmp file
+#include <seqan3/io/sequence_file/output.hpp>   // to create tmp file
 
 //! [fileinput_2]
 int main ()
 {
 //! [fileinput_2]
 
-    // Creating a temp FastA file with sequences.
-    // It's necessary, because some review processes in GitHub won't allow using
-    // an alreadys existing file. So you can use the whole code from this file or
-    // the snippets, shown in the introduction.
+    // Creating a tmp FastA file with sequences.
+    // It's necessary, because some review processes in GitHub don't allow using
+    // an alreadys existing file. So you can use the whole code from this file as
+    // an example or the collection of snippets, shown in the introduction.
 
     auto tmp_dir = std::filesystem::temp_directory_path();
     std::string filename{tmp_dir/"seq.fasta"};
@@ -30,6 +31,8 @@ int main ()
     }
 
 /*
+
+// This is just to show the right source code in introduction (refering to collection of snippets).
 //! [fileinput_3]
     // Initialise a file input object with a FastA file.
     std::string filename = "../input/seq.fasta";

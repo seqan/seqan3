@@ -1,8 +1,10 @@
 //! [read]
+#include <string>                               // for filename
+#include <vector>                               // for standard vector as "container"
 #include <seqan3/argument_parser/all.hpp>       // for argument_parser
-#include <seqan3/io/sequence_file/input.hpp>    // for sequence_file_input
-#include <seqan3/alphabet/nucleotide/dna5.hpp>  // for dna5 datastrucutre, not necessary because include in debug_stream, but for better understanding
+#include <seqan3/alphabet/nucleotide/dna5.hpp>  // for dna5 datastrucutre
 #include <seqan3/core/debug_stream.hpp>         // for debug_stream
+#include <seqan3/io/sequence_file/input.hpp>    // for sequence_file_input
 
 int main(int argc, char * argv[])
 {
@@ -23,7 +25,8 @@ int main(int argc, char * argv[])
 
     seqan3::debug_stream << "Reading file " << filename << "\n";
 
-    // Create the vector to store sequences of type seqan3::dna5_vector, which means elemtens of type seqan3::dna5_vector.
+    // Create the vector to store sequences of type seqan3::dna5_vector, 
+    // which means elemtens of type seqan3::dna5_vector.
     std::vector<seqan3::dna5_vector> sequences;
 
     // Iterate through the file and store the sequences.
