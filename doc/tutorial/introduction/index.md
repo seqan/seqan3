@@ -32,10 +32,12 @@ This is a code snippet. You will see many code snippets in our documentation.
 Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
 other statements implied by the text. 
-# This information is no longer necessary, because all code snippets will be completed (regarding to agreement with eseiler).
-# But I leave it here, until whole tutorial is done.
+[//]: # This information is no longer necessary, because all code snippets will be completed (regarding to agreement 
+[//]: # with eseiler). But I leave it here, until whole tutorial is done.
 
-You can copy'n'paste freely from the code snippets, this implies no copyright-obligations (however distributing SeqAn or an application using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html)).
+You can copy'n'paste freely from the code snippets, this implies no copyright-obligations (however distributing 
+SeqAn or an application using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) 
+and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html)).
 
 You may ask, why we do not use std::cout or std::cerr for console output.
 Actually, for the given text it does not make a difference since seqan3::debug_stream prints to std::cerr as well.
@@ -135,7 +137,7 @@ argument to your program (e.g. call `./myprogram seq.fasta`).
 \snippet introduction_read_fasta.cpp read
 \endsolution
 
-Missing `include <vector>` and `include <string>`? As shown above, they are already part of seqan3! Note that the same code can also read FastQ files and the `qual` variable will not be empty then. If you like, try it!
+Note that the same code can also read FastQ files and the `qual` variable will not be empty then. If you like, try it!
 
 \note
 SeqAn3 uses `snake_case` for almost everything, also class names. Only C++ concepts are named using `CamelCase`.
@@ -155,9 +157,13 @@ algorithm which then executes all alignments in parallel and stores the results 
 objects. The second argument to seqan3::align_pairwise is the *configuration* which allows you to specify
 a lot of parameters for the alignment computation, for instance score functions, banded alignment and whether
 you wish to compute a traceback or not. The configurations have their own namespace seqan3::align_cfg and can
-be combined via the logical OR operator (`|`) for building combinations. Check out the alignment tutorial if you want to learn more.
+be combined via the logical OR operator (`|`) for building combinations. Check out the alignment tutorial if you want 
+to learn more.
 
-Note: In general, we give `using namespace seqan3;` a miss, to show which parts are from SeqAn3 and which arn't. But for better readabiliy we use a `using` declaration for the namespace member `_dna5`. You can give it a miss, if you work with the overall namespace or declare it in lines 20 and 21 directly.
+\note
+In general, we omit `using namespace seqan3;`, to show which parts are from SeqAn3 and which aren't. But 
+for better readability we use a `using` declaration for the namespace member `_dna5`. You can skip it, if you 
+work with the overall namespace or declare it in lines 20 and 21 directly.
 
 \note
 We use a lot of Modern C++ in SeqAn so some things might look alien at first,

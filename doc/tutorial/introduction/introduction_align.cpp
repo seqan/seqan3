@@ -1,4 +1,6 @@
 //! [alignment]
+#include <filesystem>                                                       // for tmp_dir
+#include <vector>                                                           // for std::vector 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>   // for alignment stream operator
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>                     // for align_pairwise
 #include <seqan3/alphabet/nucleotide/dna5.hpp>                              // for dna5 datastrucutre
