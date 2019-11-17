@@ -105,7 +105,10 @@ you can enter it in the search bar (top-right).
 Let's look at some functions of the IO module: SeqAn provides fast and easy access to biological file formats.
 The following code example demonstrates the interface of seqan3::sequence_file_input.
 
-\snippet introduction_file_input.cpp fileinput
+\snippet introduction_file_input.cpp fileinput_1
+\snippet introduction_file_input.cpp fileinput_2
+\snippet introduction_file_input.cpp fileinput_3
+\snippet introduction_file_input.cpp fileinput_4
 
 Can you imagine anything easier? After you have initialised the instance with a filename,
 you can simply step through the file in a for loop and retrieve the fields via
