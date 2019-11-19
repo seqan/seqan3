@@ -15,7 +15,7 @@
  #include <seqan3/alphabet/cigar/cigar_op.hpp>
 
  /*!\defgroup cigar CIGAR
-  * \brief Provides the CIGAR operation alphabet, along with the CIGAR cartesian composition.
+  * \brief Provides (semi-)alphabets for representing elements in CIGAR strings.
   * \ingroup alphabet
   *
   * \details
