@@ -13,31 +13,33 @@
 #include "../semi_alphabet_test_template.hpp"
 #include <seqan3/alphabet/cigar/cigar_op.hpp>
 
-INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, alphabet_, cigar_op);
-INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, semi_alphabet_test, cigar_op);
-INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, alphabet_constexpr, cigar_op);
-INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, semi_alphabet_constexpr, cigar_op);
+INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, alphabet_, seqan3::cigar_op);
+INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, semi_alphabet_test, seqan3::cigar_op);
+INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, alphabet_constexpr, seqan3::cigar_op);
+INSTANTIATE_TYPED_TEST_CASE_P(cigar_op, semi_alphabet_constexpr, seqan3::cigar_op);
+
+using seqan3::operator""_cigar_op;
 
 TEST(cigar_op, to_char_assign_char)
 {
     for (char chr : std::string{"MDISHNPX="})
-        EXPECT_EQ(to_char(cigar_op{}.assign_char(chr)), chr);
+        EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{}.assign_char(chr)), chr);
 }
 
 TEST(cigar_op, char_literal)
 {
-    EXPECT_EQ(to_char(cigar_op{'M'_cigar_op}), 'M');
-    EXPECT_EQ(to_char(cigar_op{'D'_cigar_op}), 'D');
-    EXPECT_EQ(to_char(cigar_op{'I'_cigar_op}), 'I');
-    EXPECT_EQ(to_char(cigar_op{'S'_cigar_op}), 'S');
-    EXPECT_EQ(to_char(cigar_op{'H'_cigar_op}), 'H');
-    EXPECT_EQ(to_char(cigar_op{'N'_cigar_op}), 'N');
-    EXPECT_EQ(to_char(cigar_op{'P'_cigar_op}), 'P');
-    EXPECT_EQ(to_char(cigar_op{'X'_cigar_op}), 'X');
-    EXPECT_EQ(to_char(cigar_op{'='_cigar_op}), '=');
+    EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{'M'_cigar_op}), 'M');
+    EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{'D'_cigar_op}), 'D');
+    EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{'I'_cigar_op}), 'I');
+    EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{'S'_cigar_op}), 'S');
+    EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{'H'_cigar_op}), 'H');
+    EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{'N'_cigar_op}), 'N');
+    EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{'P'_cigar_op}), 'P');
+    EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{'X'_cigar_op}), 'X');
+    EXPECT_EQ(seqan3::to_char(seqan3::cigar_op{'='_cigar_op}), '=');
 }
 
 TEST(cigar_op, assign_char_strictly_to)
 {
-    EXPECT_THROW(assign_char_strictly_to('A', cigar_op{}), invalid_char_assignment);
+    EXPECT_THROW(seqan3::assign_char_strictly_to('A', seqan3::cigar_op{}), seqan3::invalid_char_assignment);
 }

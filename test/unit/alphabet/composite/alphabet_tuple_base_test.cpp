@@ -11,8 +11,8 @@
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 
-#include "alphabet_tuple_base_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
+#include "alphabet_tuple_base_test_template.hpp"
 
 using namespace seqan3;
 
