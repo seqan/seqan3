@@ -35,10 +35,8 @@ namespace seqan3
 
 /*!\brief Computes the pairwise alignment for a pair of sequences or a range over sequence pairs.
  * \ingroup pairwise_alignment
- * \tparam exec_policy_t      The type of the execution policy; std::is_execution_policy_v must evaluate to true.
  * \tparam sequence_t         The type of sequence pairs (see details for more information on the type constraints).
  * \tparam alignment_config_t The type of the alignment configuration; must be a seqan3::configuration.
- * \param[in] exec            The execution policy to use. Defaults to seqan3::seq.
  * \param[in] seq             A tuple with two sequences or a range over such tuples.
  * \param[in] config          The object storing the alignment configuration.
  * \return A seqan3::alignment_range.
@@ -47,8 +45,7 @@ namespace seqan3
  *
  * This function computes the pairwise alignment for the given sequences. During the setup phase the most efficient
  * implementation is selected depending on the configurations stored in the given seqan3::configuration object.
- * In addition, the alignments can be computed in parallel if seqan3::par is given as the execution policy.
- * On default the algorithm uses sequential execution (seqan3::seq).
+ * The configuration also holds settings for parallel or vectorised execution.
  *
  * ### Compute a single alignment
  *
@@ -66,7 +63,7 @@ namespace seqan3
  *
  * In many cases one needs to compute multiple pairwise alignments. Accordingly, the align_pairwise interface allows
  * to pass a range over sequence pairs. The alignment algorithm will be configured only once for all submitted
- * alignments and then computes the alignments sequentially or in parallel depending on the given execution policy.
+ * alignments and then computes the alignments sequentially or in parallel depending on the given configuration.
  * Since there is always a certain amount of initial setup involving runtime checks required, it is advisable to pass
  * many sequence-pairs to this algorithm instead of repeatedly calling it with a single pair.
  *
@@ -74,9 +71,9 @@ namespace seqan3
  *
  * For each sequence pair one or more \ref seqan3::alignment_result "seqan3::alignment_result"s can be computed.
  * The seqan3::align_pairwise function returns an seqan3::alignment_range which can be used to iterate over the
- * alignments. If the sequenced execution policy is used the alignments are computed on-demand when iterating over the
- * results. In case of a parallel execution all alignments are computed at once in parallel when calling `begin`
- * on the associated seqan3::alignment_range.
+ * alignments. If the `vectorise` configurations are omitted the alignments are computed on-demand when iterating over
+ * the results. In case of a parallel execution all alignments are computed at once in parallel when calling `begin` on
+ * the associated seqan3::alignment_range.
  *
  * The following snippets demonstrate the single element and the range based interface.
  *
