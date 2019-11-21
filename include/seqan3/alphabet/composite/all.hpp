@@ -16,7 +16,7 @@
 #include <seqan3/alphabet/composite/semialphabet_any.hpp>
 
 /*!\defgroup composite Composite
- * \brief Provides data structures joining multiple alphabets into a single alphabet.
+ * \brief Provides templates for combining existing alphabets into new alphabet types.
  * \ingroup alphabet
  *
  * \details

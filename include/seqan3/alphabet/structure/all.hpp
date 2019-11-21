@@ -11,7 +11,7 @@
  *
  * \defgroup structure Structure
  * \ingroup alphabet
- * \brief The structure module contains alphabets for RNA and protein structure.
+ * \brief Provides types to represent single elements of RNA and protein structures.
  *
  * \details
  *
