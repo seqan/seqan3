@@ -35,8 +35,8 @@ static auto dna4_01 = []()
 } // namespace seqan3::test::alignment::fixture::collection::global::affine::unbanded
 
 using pairwise_global_affine_collection_unbanded_testing_types = ::testing::Types<
-        pairwise_alignment_fixture<&collection::global::affine::unbanded::dna4_01, sequenced_policy>,
-        pairwise_alignment_fixture<&collection::global::affine::unbanded::dna4_01, parallel_policy>
+        pairwise_alignment_fixture<&collection::global::affine::unbanded::dna4_01, detail::vectorise_tag>,
+        pairwise_alignment_fixture<&collection::global::affine::unbanded::dna4_01, align_cfg::parallel>
     >;
 
 INSTANTIATE_TYPED_TEST_CASE_P(pairwise_global_affine_collection_unbanded,

@@ -93,9 +93,9 @@ void seqan3_affine_dna4_parallel(benchmark::State & state)
     int64_t total = 0;
     for (auto _ : state)
     {
-        for (auto && res : align_pairwise(seqan3::par,
-                                          data,
-                                          affine_cfg | align_cfg::result{result_t{}}))
+        for (auto && res : align_pairwise(data, affine_cfg |
+                                          align_cfg::result{result_t{}} |
+                                          align_cfg::parallel{std::thread::hardware_concurrency()}))
         {
             total += res.score();
         }
@@ -121,7 +121,7 @@ void seqan3_affine_dna4_omp_for(benchmark::State & state)
         #pragma omp parallel for num_threads(std::thread::hardware_concurrency()) schedule(guided)
         for (size_t i = 0; i < zip.size(); ++i)
         {
-            auto rng = align_pairwise(seqan3::seq, zip[i], affine_cfg | align_cfg::result{result_t{}});
+            auto rng = align_pairwise(zip[i], affine_cfg | align_cfg::result{result_t{}});
             auto res = *rng.begin();
             total += res.score();
         }

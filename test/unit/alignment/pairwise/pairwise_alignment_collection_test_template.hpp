@@ -44,7 +44,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, score)
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_score};
     auto [database, query] = fixture.get_sequences();
-    auto alignment_rng = align_pairwise(typename TestFixture::policy_t{}, views::zip(database, query), align_cfg);
+    auto alignment_rng = align_pairwise(views::zip(database, query), align_cfg | typename TestFixture::policy_t{});
 
     auto scores = fixture.get_scores();
     EXPECT_TRUE((std::ranges::equal(alignment_rng | std::views::transform([] (auto res) { return res.score(); } ),
@@ -56,7 +56,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, back_coordinate)
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_back_coordinate};
     auto [database, query] = fixture.get_sequences();
-    auto res_vec = align_pairwise(typename TestFixture::policy_t{}, views::zip(database, query), align_cfg)
+    auto res_vec = align_pairwise(views::zip(database, query), align_cfg | typename TestFixture::policy_t{})
                  | views::to<std::vector>;
 
     EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
@@ -70,7 +70,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_front_coordinate};
     auto [database, query] = fixture.get_sequences();
-    auto res_vec = align_pairwise(typename TestFixture::policy_t{}, views::zip(database, query), align_cfg)
+    auto res_vec = align_pairwise(views::zip(database, query), align_cfg | typename TestFixture::policy_t{})
                  | views::to<std::vector>;
 
     EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
@@ -86,7 +86,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
     auto const & fixture = this->fixture();
     configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
     auto [database, query] = fixture.get_sequences();
-    auto res_vec = align_pairwise(typename TestFixture::policy_t{}, views::zip(database, query), align_cfg)
+    auto res_vec = align_pairwise(views::zip(database, query), align_cfg | typename TestFixture::policy_t{})
                  | views::to<std::vector>;
 
     EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),

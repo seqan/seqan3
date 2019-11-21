@@ -35,10 +35,8 @@ namespace seqan3
 
 /*!\brief Computes the pairwise alignment for a pair of sequences or a range over sequence pairs.
  * \ingroup pairwise_alignment
- * \tparam exec_policy_t      The type of the execution policy; std::is_execution_policy_v must evaluate to true.
  * \tparam sequence_t         The type of sequence pairs (see details for more information on the type constraints).
  * \tparam alignment_config_t The type of the alignment configuration; must be a seqan3::configuration.
- * \param[in] exec            The execution policy to use. Defaults to seqan3::seq.
  * \param[in] seq             A tuple with two sequences or a range over such tuples.
  * \param[in] config          The object storing the alignment configuration.
  * \return A seqan3::alignment_range.
@@ -47,8 +45,7 @@ namespace seqan3
  *
  * This function computes the pairwise alignment for the given sequences. During the setup phase the most efficient
  * implementation is selected depending on the configurations stored in the given seqan3::configuration object.
- * In addition, the alignments can be computed in parallel if seqan3::par is given as the execution policy.
- * On default the algorithm uses sequential execution (seqan3::seq).
+ * The configuration also holds settings for parallel or vectorised execution.
  *
  * ### Compute a single alignment
  *
@@ -66,7 +63,7 @@ namespace seqan3
  *
  * In many cases one needs to compute multiple pairwise alignments. Accordingly, the align_pairwise interface allows
  * to pass a range over sequence pairs. The alignment algorithm will be configured only once for all submitted
- * alignments and then computes the alignments sequentially or in parallel depending on the given execution policy.
+ * alignments and then computes the alignments sequentially or in parallel depending on the given configuration.
  * Since there is always a certain amount of initial setup involving runtime checks required, it is advisable to pass
  * many sequence-pairs to this algorithm instead of repeatedly calling it with a single pair.
  *
@@ -74,9 +71,9 @@ namespace seqan3
  *
  * For each sequence pair one or more \ref seqan3::alignment_result "seqan3::alignment_result"s can be computed.
  * The seqan3::align_pairwise function returns an seqan3::alignment_range which can be used to iterate over the
- * alignments. If the sequenced execution policy is used the alignments are computed on-demand when iterating over the
- * results. In case of a parallel execution all alignments are computed at once in parallel when calling `begin`
- * on the associated seqan3::alignment_range.
+ * alignments. If the `vectorise` configurations are omitted the alignments are computed on-demand when iterating over
+ * the results. In case of a parallel execution all alignments are computed at once in parallel when calling `begin` on
+ * the associated seqan3::alignment_range.
  *
  * The following snippets demonstrate the single element and the range based interface.
  *
@@ -129,30 +126,6 @@ namespace seqan3
  * i.e. it is safe to call in parallel with the same input under the condition that the input sequences do not change
  * when being iterated over.
  */
-template <typename exec_policy_t, typename sequence_t, typename alignment_config_t>
-//!\cond
-    requires is_execution_policy_v<exec_policy_t> &&
-             detail::align_pairwise_single_input<std::remove_reference_t<sequence_t>> &&
-             std::copy_constructible<std::remove_reference_t<sequence_t>> &&
-             detail::is_type_specialisation_of_v<alignment_config_t, configuration>
-//!\endcond
-constexpr auto align_pairwise(exec_policy_t const & exec,
-                              sequence_t && seq,
-                              alignment_config_t const & config)
-{
-    static_assert(std::tuple_size_v<std::remove_reference_t<sequence_t>> == 2,
-                  "Alignment configuration error: Expects exactly two sequences for pairwise alignments.");
-
-    static_assert(std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<sequence_t>>> &&
-                  std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
-                  "Alignment configuration error: The tuple elements must model std::ranges::viewable_range.");
-
-    return align_pairwise(exec, std::views::single(std::forward<sequence_t>(seq)), config);
-}
-
-/*!\overload
- * \ingroup pairwise_alignment
- */
 template <typename sequence_t, typename alignment_config_t>
 //!\cond
     requires detail::align_pairwise_single_input<std::remove_reference_t<sequence_t>> &&
@@ -168,24 +141,14 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
                   std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
                   "Alignment configuration error: The tuple elements must model std::ranges::viewable_range.");
 
-    return align_pairwise(seqan3::seq, std::forward<sequence_t>(seq), config);
+    return align_pairwise(std::views::single(std::forward<sequence_t>(seq)), config);
 }
 
 //!\cond
 template <typename sequence_t, typename alignment_config_t>
     requires detail::align_pairwise_range_input_concept<sequence_t> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
-constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
-{
-    return align_pairwise(seqan3::seq, std::forward<sequence_t>(seq), config);
-}
-
-template <typename exec_policy_t, typename sequence_t, typename alignment_config_t>
-    requires is_execution_policy_v<exec_policy_t> &&
-             detail::align_pairwise_range_input_concept<sequence_t> &&
-             detail::is_type_specialisation_of_v<alignment_config_t, configuration>
-constexpr auto align_pairwise(exec_policy_t const & exec,
-                              sequence_t && seq,
+constexpr auto align_pairwise(sequence_t && sequences,
                               alignment_config_t const & config)
 {
     using first_seq_t  = std::tuple_element_t<0, value_type_t<sequence_t>>;
@@ -197,11 +160,38 @@ constexpr auto align_pairwise(exec_policy_t const & exec,
                   "Alignment configuration error: The sequence must model random_access_range and sized_range.");
 
     // Pipe with views::persist to allow rvalue non-view ranges.
-    auto seq_view = std::forward<sequence_t>(seq) | views::persist;
+    auto seq_view = std::forward<sequence_t>(sequences) | views::persist;
     // Configure the alignment algorithm.
     auto kernel = detail::alignment_configurator::configure<decltype(seq_view)>(config);
+
+    //!brief Lambda function to translate specified parallel and or vectorised configurations into their execution rules.
+    constexpr auto get_execution_rule = [] ()
+    {
+        using exec_rule = std::remove_reference_t<alignment_config_t>;
+
+        if constexpr (exec_rule::template exists<align_cfg::parallel>())
+        {
+            if constexpr (exec_rule::template exists<detail::vectorise_tag>())
+            {
+                return seqan3::par_unseq;
+            }
+            else
+            {
+                return seqan3::par;
+            }
+        }
+        else if constexpr (exec_rule::template exists<detail::vectorise_tag>())
+        {
+            return seqan3::unseq;
+        }
+        else
+        {
+            return seqan3::seq;
+        }
+    };
+
     // Create a two-way executor for the alignment.
-    detail::alignment_executor_two_way executor{std::move(seq_view), kernel, 1, exec};
+    detail::alignment_executor_two_way executor{std::move(seq_view), kernel, 1, get_execution_rule()};
     // Return the range over the alignments.
     return alignment_range{std::move(executor)};
 }

@@ -29,7 +29,10 @@ template <typename t>
 struct align_pairwise_test : ::testing::Test
 {};
 
-using testing_types = ::testing::Types<void, sequenced_policy, parallel_policy>;
+using testing_types = ::testing::Types<void,
+                                       align_cfg::parallel,
+                                       detail::vectorise_tag,
+                                       configuration<align_cfg::parallel, detail::vectorise_tag>>;
 
 TYPED_TEST_CASE(align_pairwise_test, testing_types);
 
@@ -37,9 +40,14 @@ template <typename type_param_t, typename seq_t, typename cfg_t>
 auto call_alignment(seq_t && seq, cfg_t && cfg)
 {
     if constexpr (std::same_as<type_param_t, void>)
+    {
         return align_pairwise(std::forward<seq_t>(seq), std::forward<cfg_t>(cfg));
+    }
     else
-        return align_pairwise(type_param_t{}, std::forward<seq_t>(seq), std::forward<cfg_t>(cfg));
+    {
+        auto && config = cfg | type_param_t{};
+        return align_pairwise(std::forward<seq_t>(seq), std::forward<decltype(config)>(config));
+    }
 }
 
 TYPED_TEST(align_pairwise_test, single_pair)
