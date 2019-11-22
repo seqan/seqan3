@@ -104,7 +104,7 @@ private:
             return 0;
         else
             return static_cast<common_difference_t<std::ranges::iterator_t<urng_t>...>>(
-                       std::min({std::ranges::size(std::get<N>(urange))...}));
+                       std::min<size_t>({std::ranges::size(std::get<N>(urange))...}));
     }
 
 public:
