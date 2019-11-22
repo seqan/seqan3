@@ -11,7 +11,9 @@
 
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/chunk.hpp>
+#include <seqan3/range/views/zip.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -27,9 +29,9 @@ auto run_test(config_t const & cfg)
     auto r = setup();
     auto configuration_result = detail::alignment_configurator::configure<decltype(r)>(cfg);
     auto algorithm = configuration_result.first;
-    auto & [seq1, seq2] = *std::ranges::begin(r);
 
-    return algorithm(0u, seq1 | views::all, seq2 | views::all);
+    auto indexed_sequence_pairs = views::zip(r, std::views::iota(0)) | views::chunk(1);
+    return algorithm(*indexed_sequence_pairs.begin())[0];
 }
 
 TEST(alignment_configurator, configure_edit)

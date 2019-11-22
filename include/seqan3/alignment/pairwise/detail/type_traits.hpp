@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides utility traits for the configuration and execution of the alignment algorithm.
+ * \brief Provides helper type traits for the configuration and execution of the alignment algorithm.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -28,7 +28,7 @@ namespace seqan3::detail
  *
  * \details
  *
- * This transformation trait transforms a range over sequence pairs into an indexed range over sequence pairs.
+ * This transformation trait transforms a range over sequence pairs into a range over indexed sequence pairs.
  * In addition, the range is chunked which is the common interface for alignment algorithms.
  * The returned type models seqan3::detail::indexed_sequence_pair_range.
  */

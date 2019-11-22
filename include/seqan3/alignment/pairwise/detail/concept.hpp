@@ -29,7 +29,7 @@ namespace seqan3::detail
  *
  * \details
  *
- * This concept checks if the given type models a seqan3::tuple_like type with exactly two elements and that both
+ * This concept checks if the given type models seqan3::tuple_like with exactly two elements and that both
  * types in the tuple model std::ranges::forward_range. Furthermore, the value type of both ranges must model
  * seqan3::semialphabet.
  */
@@ -47,14 +47,14 @@ SEQAN3_CONCEPT sequence_pair = requires ()
 //!\endcond
 
 /*!\interface seqan3::detail::sequence_pair_range <>
- * \brief A helper concept to check if a type is a range over seqan3::detail::sequence_pair's.
+ * \brief A helper concept to check if a type is a range over seqan3::detail::sequence_pair.
  * \ingroup pairwise_alignment
  *
  * \tparam t The type to check.
  *
  * \details
  *
- * This concept checks if the given type models a std::ranges::forward_range over and that the value type of the
+ * This concept checks if the given type models a std::ranges::forward_range and that the value type of the
  * range models seqan3::detail::sequence_pair.
  */
 //!\cond
@@ -76,7 +76,8 @@ SEQAN3_CONCEPT sequence_pair_range = std::ranges::forward_range<t> && sequence_p
  * The caller can then infer the aligned sequences from the returned seqan3::alignment_result.
  * The layout of this indexed sequence type looks as follows:
  * * the first type of the pair must model seqan3::detail::sequence_pair, and
- * * the second type of the pair refers to the respective index type.
+ * * the second type of the pair refers to the respective index type, which can be any type but must model
+ *   std::copy_constructible.
  */
 //!\cond
 template <typename t>
@@ -86,6 +87,7 @@ SEQAN3_CONCEPT indexed_sequence_pair_range = std::ranges::forward_range<t> &&
     requires tuple_like<decltype(value)>;
     requires std::tuple_size_v<decltype(value)> == 2;
     requires sequence_pair<std::tuple_element_t<0, decltype(value)>>;
+    requires std::copy_constructible<std::tuple_element_t<1, decltype(value)>>;
 };
 //!\endcond
 }  // namespace seqan3::detail

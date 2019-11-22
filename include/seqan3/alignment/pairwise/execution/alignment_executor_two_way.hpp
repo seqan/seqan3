@@ -17,6 +17,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/pairwise/alignment_range.hpp>
+#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/execution/execution_handler_parallel.hpp>
 #include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
 #include <seqan3/core/parallel/execution.hpp>
@@ -56,19 +57,19 @@ private:
     /*!\name Resource types
      * \{
      */
-    //!\brief The underlying resource type.
-    using resource_type = decltype(views::zip(std::declval<resource_t>(), std::views::iota(0)) | views::chunk(1));
+    //!\brief The underlying resource type augmented with an index and a chunked view.
+    using chunked_resource_type = typename chunked_indexed_sequence_pairs<resource_t>::type;
     //!\brief The iterator over the underlying resource.
-    using resource_iterator_t = std::ranges::iterator_t<resource_type>;
-    //!\brief The value type of the resource.
-    using resource_value_type = std::ranges::range_value_t<resource_type>;
+    using chunked_resource_iterator = std::ranges::iterator_t<chunked_resource_type>;
     //!\}
 
     /*!\name Buffer types
      * \{
      */
     //!\brief The result of invoking the alignment instance.
-    using buffer_value_type = typename alignment_algorithm_t::result_type;
+    using alignment_result_type = typename alignment_algorithm_t::result_type;
+    //!\brief The actual alignment result.
+    using buffer_value_type = std::ranges::range_value_t<alignment_result_type>;
     //!\brief The internal buffer.
     using buffer_type       = std::vector<buffer_value_type>;
     //!\brief The pointer type of the buffer.
@@ -80,7 +81,6 @@ public:
     /*!\name Member types
      * \{
      */
-
     //!\brief The result type of invoking the alignment instance.
     using value_type      = buffer_value_type;
     //!\brief A reference to the alignment result.
@@ -165,13 +165,13 @@ public:
         if (chunk_size == 0u)
             throw std::invalid_argument{"The chunk size must be greater than 0."};
 
-        resource = views::zip(std::forward<resource_t>(resrc), std::views::iota(0)) | views::chunk(chunk_size);
-        resource_it = resource.begin();
+        chunked_resource = views::zip(std::forward<resource_t>(resrc), std::views::iota(0)) | views::chunk(chunk_size);
+        chunked_resource_it = chunked_resource.begin();
 
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
             init_buffer(std::ranges::distance(resrc));
         else
-            init_buffer(chunk_size);
+            init_buffer(_chunk_size);
     }
 
     //!}
@@ -217,7 +217,7 @@ public:
     //!\brief Checks whether the end of the input resource was reached.
     bool is_eof() noexcept
     {
-        return resource_it == std::ranges::end(resource);
+        return chunked_resource_it == std::ranges::end(chunked_resource);
     }
 
     //!\brief Returns the selected chunk size.
@@ -257,27 +257,24 @@ private:
         // Apply the alignment execution.
         size_t count = 0;
         size_t buffer_limit = in_avail();
-        assert(buffer_limit >= chunk_size());
 
-        while (count < buffer_limit && !is_eof())
+        for (size_t current_chunk_size = std::ranges::distance(*chunked_resource_it);
+             count < buffer_limit && !is_eof();
+             count += current_chunk_size, gptr += current_chunk_size, ++chunked_resource_it)
         {
-            for (auto && [sequence_pair, idx] : *resource_it)
+            auto && current_chunk = std::ranges::iter_move(chunked_resource_it);
+            current_chunk_size = std::ranges::distance(current_chunk);
+            assert(in_avail() >= current_chunk_size);
+
+            exec_handler.execute(kernel, std::move(current_chunk), [write_to = gptr] (auto && alignment_results)
             {
-                buffer_pointer write_to = gptr;
-                exec_handler.execute(kernel,
-                                     idx,
-                                     get<0>(sequence_pair) | views::all,
-                                     get<1>(sequence_pair) | views::all,
-                                     [write_to] (auto && res) { *write_to = std::move(res); });
-                ++gptr;
-                ++count;
-            }
-            ++resource_it;
+                std::ranges::move(alignment_results, write_to);
+            });
         }
 
         exec_handler.wait();
 
-        // Update the available get position if the buffer was consumed completely.
+        // Update the available get positions to cover the part of the buffer that was filled.
         setg(std::ranges::begin(buffer), std::ranges::begin(buffer) + count);
 
         return in_avail();
@@ -302,11 +299,13 @@ private:
     void move_initialise(alignment_executor_two_way && other) noexcept
     {
         kernel = std::move(other.kernel);
+        _chunk_size = std::move(other._chunk_size);
         // Get the old resource position.
-        std::ptrdiff_t old_resource_pos = std::ranges::distance(other.resource.begin(), other.resource_it);
+        std::ptrdiff_t old_resource_pos = std::ranges::distance(other.chunked_resource.begin(),
+                                                                other.chunked_resource_it);
         // Move the resource and set the iterator state accordingly.
-        resource = std::move(other.resource);
-        resource_it = std::ranges::next(resource.begin(), old_resource_pos);
+        chunked_resource = std::move(other.chunked_resource);
+        chunked_resource_it = std::ranges::next(chunked_resource.begin(), old_resource_pos);
 
         // Get the old get pointer positions.
         std::ptrdiff_t old_gptr_pos = other.gptr - buffer.begin();
@@ -324,9 +323,9 @@ private:
     execution_handler_t exec_handler{};
 
     //!\brief The underlying resource containing the alignment instances.
-    resource_type resource{};
+    chunked_resource_type chunked_resource{};
     //!\brief The iterator over the resource that stores the current state of the executor.
-    resource_iterator_t resource_it{};
+    chunked_resource_iterator chunked_resource_it{};
     //!\brief Selects the correct alignment to execute.
     alignment_algorithm_t kernel{};
 
