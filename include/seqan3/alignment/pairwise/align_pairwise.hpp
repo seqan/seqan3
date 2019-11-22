@@ -153,8 +153,8 @@ template <typename sequence_t, typename alignment_config_t>
 constexpr auto align_pairwise(sequence_t && sequences,
                               alignment_config_t const & config)
 {
-    using first_seq_t  = std::tuple_element_t<0, value_type_t<sequence_t>>;
-    using second_seq_t = std::tuple_element_t<1, value_type_t<sequence_t>>;
+    using first_seq_t  = std::tuple_element_t<0, std::ranges::range_value_t<sequence_t>>;
+    using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<sequence_t>>;
 
     static_assert(std::ranges::random_access_range<first_seq_t> && std::ranges::sized_range<first_seq_t>,
                   "Alignment configuration error: The sequence must model random_access_range and sized_range.");
