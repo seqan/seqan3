@@ -56,6 +56,29 @@ SEQAN3_CONCEPT align_pairwise_single_input =
     std::ranges::viewable_range<std::tuple_element_t<0, value_t>> &&
     std::ranges::viewable_range<std::tuple_element_t<1, value_t>>;
 
+/*!\brief A transformation trait to extract the score type used within the seqan3::align_cfg::result object.
+ * \implements seqan3::transformation_trait
+ * \ingroup pairwise_alignment
+ *
+ * \tparam config_t The alignment configuration type; must be of type seqan3::configuration and must contain
+ *                  a seqan3::align_cfg::result object.
+ */
+template <typename config_t>
+//!\cond
+    requires is_type_specialisation_of_v<config_t, configuration> && config_t::template exists<align_cfg::result>()
+//!\endcond
+struct align_config_result_score
+{
+private:
+
+    //!\brief Helper type definition to store the type of the result config.
+    using result_config_t = std::remove_reference_t<decltype(seqan3::get<align_cfg::result>(std::declval<config_t>()))>;
+public:
+
+    //!\brief The score type used for the alignment result configuration.
+    using type = typename result_config_t::score_type;
+};
+
 /*!\brief A helper concept to test for correct range input in seqan3::align_pairwise.
  * \ingroup pairwise_alignment
  *
@@ -194,15 +217,22 @@ public:
      * \tparam config_t    The alignment configuration type; must be a specialisation of seqan3::configuration.
      * \param[in] cfg      The configuration object.
      *
-     * \returns std::function wrapper of the configured alignment algorithm.
+     * \returns a std::pair over std::function wrapper of the configured alignment algorithm and the adapted
+     *          alignment configuration.
      *
      * \details
      *
      * This function reads the seqan3::configuration object and generates the corresponding alignment algorithm type.
-     * During this process some runtime configurations are converted to static configurations if required. The return
-     * type is a std::function which is generated in the following way:
+     * During this process some runtime configurations are converted to static configurations if required.
+     * In case of an missing configuration that has a default, e.g. the seqan3::align_cfg::result option, the
+     * default version of this configuration element is added to the passed configuration object.
+     * The return is a pair over a std::function object and the configuration object. Thus, the calling function
+     * has access to the possibly modified configuration object. This way it can examine the same configurations as
+     * were used for the algorithm configuration.
+     * The function object type is determined using the following type trait:
      *
      * \include snippet/alignment/pairwise/alignment_configurator.cpp
+     *
      *
      * The arguments to the function object are two ranges, which always need to be passed as lvalue references.
      * Note that even if they are not passed as const lvalue reference (which is not possible, since not all views are
@@ -217,10 +247,7 @@ public:
 
         if constexpr (!config_t::template exists<align_cfg::result>())
         {
-            // ----------------------------------------------------------------------------
             // Set the default result value to be computed.
-            // ----------------------------------------------------------------------------
-
             return configure<sequences_t>(cfg | align_cfg::result{with_score});
         }
         else
@@ -287,7 +314,7 @@ public:
                     {
                         if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
                             (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
-                            return configure_edit_distance<function_wrapper_t>(cfg);
+                            return std::pair{configure_edit_distance<function_wrapper_t>(cfg), cfg};
                     }
                 }
             }
@@ -301,7 +328,7 @@ public:
                 throw invalid_alignment_configuration{"The align_cfg::max_error configuration is only allowed for "
                                                       "the specific edit distance computation."};
             // Configure the alignment algorithm.
-            return configure_free_ends_initialisation<function_wrapper_t>(cfg);
+            return std::pair{configure_free_ends_initialisation<function_wrapper_t>(cfg), cfg};
         }
     }
 

@@ -22,38 +22,39 @@ auto setup()
 }
 
 template <typename config_t>
-bool run_test(config_t const & cfg)
+auto run_test(config_t const & cfg)
 {
     auto r = setup();
-    auto fn = detail::alignment_configurator::configure<decltype(r)>(cfg);
+    auto configuration_result = detail::alignment_configurator::configure<decltype(r)>(cfg);
+    auto algorithm = configuration_result.first;
     auto & [seq1, seq2] = *std::ranges::begin(r);
 
-    return fn(0u, seq1 | views::all, seq2 | views::all).score() == 0;
+    return algorithm(0u, seq1 | views::all, seq2 | views::all);
 }
 
 TEST(alignment_configurator, configure_edit)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit));
+    EXPECT_EQ(run_test(align_cfg::edit).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_end_position)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{with_back_coordinate}));
+    EXPECT_EQ(run_test(align_cfg::edit | align_cfg::result{with_back_coordinate}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_begin_position)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{with_front_coordinate}));
+    EXPECT_EQ(run_test(align_cfg::edit | align_cfg::result{with_front_coordinate}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_trace)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{with_alignment}));
+    EXPECT_EQ(run_test(align_cfg::edit | align_cfg::result{with_alignment}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_semi)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::aligned_ends{free_ends_first}));
+    EXPECT_EQ(run_test(align_cfg::edit | align_cfg::aligned_ends{free_ends_first}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_banded)
@@ -64,7 +65,7 @@ TEST(alignment_configurator, configure_edit_banded)
 
 TEST(alignment_configurator, configure_edit_max_error)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::max_error{3u}));
+    EXPECT_EQ(run_test(align_cfg::edit | align_cfg::max_error{3u}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_global)
@@ -73,7 +74,7 @@ TEST(alignment_configurator, configure_affine_global)
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}};
 
-    EXPECT_TRUE(run_test(cfg));
+    EXPECT_EQ(run_test(cfg).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_global_max_error)
@@ -93,7 +94,7 @@ TEST(alignment_configurator, configure_affine_global_end_position)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{with_back_coordinate};
 
-    EXPECT_TRUE(run_test(cfg));
+    EXPECT_EQ(run_test(cfg).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_global_begin_position)
@@ -103,7 +104,7 @@ TEST(alignment_configurator, configure_affine_global_begin_position)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{with_front_coordinate};
 
-    EXPECT_TRUE(run_test(cfg));
+    EXPECT_EQ(run_test(cfg).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_global_trace)
@@ -113,7 +114,7 @@ TEST(alignment_configurator, configure_affine_global_trace)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{with_alignment};
 
-    EXPECT_TRUE(run_test(cfg));
+    EXPECT_EQ(run_test(cfg).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_global_banded)
@@ -124,7 +125,7 @@ TEST(alignment_configurator, configure_affine_global_banded)
                    align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                    align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}};
 
-        EXPECT_TRUE(run_test(cfg));
+        EXPECT_EQ(run_test(cfg).score(), 0);
     }
 
     {  // invalid band
@@ -150,9 +151,9 @@ TEST(alignment_configurator, configure_affine_global_banded_with_alignment)
     auto cfg_begin = cfg | align_cfg::result{with_front_coordinate};
     auto cfg_end = cfg | align_cfg::result{with_back_coordinate};
 
-    EXPECT_TRUE(run_test(cfg_end));
-    EXPECT_TRUE(run_test(cfg_trace));
-    EXPECT_TRUE(run_test(cfg_begin));
+    EXPECT_EQ(run_test(cfg_end).score(), 0);
+    EXPECT_EQ(run_test(cfg_trace).score(), 0);
+    EXPECT_EQ(run_test(cfg_begin).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_global_semi)
@@ -162,7 +163,7 @@ TEST(alignment_configurator, configure_affine_global_semi)
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::aligned_ends{free_ends_all};
 
-    EXPECT_TRUE(run_test(cfg));
+    EXPECT_EQ(run_test(cfg).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_local)
@@ -171,7 +172,7 @@ TEST(alignment_configurator, configure_affine_local)
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}};
 
-    EXPECT_TRUE(run_test(cfg));
+    EXPECT_EQ(run_test(cfg).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_local_back_coordinate)
@@ -181,7 +182,7 @@ TEST(alignment_configurator, configure_affine_local_back_coordinate)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{with_back_coordinate};
 
-    EXPECT_TRUE(run_test(cfg));
+    EXPECT_EQ(run_test(cfg).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_local_front_coordinate)
@@ -191,7 +192,7 @@ TEST(alignment_configurator, configure_affine_local_front_coordinate)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{with_front_coordinate};
 
-    EXPECT_TRUE(run_test(cfg));
+    EXPECT_EQ(run_test(cfg).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_local_alignment)
@@ -201,20 +202,17 @@ TEST(alignment_configurator, configure_affine_local_alignment)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{with_alignment};
 
-    EXPECT_TRUE(run_test(cfg));
+    EXPECT_EQ(run_test(cfg).score(), 0);
 }
 
 TEST(alignment_configurator, configure_result_score_type)
 {
     auto cfg = align_cfg::edit | align_cfg::result{with_back_coordinate, using_score_type<double>};
 
-    auto r = setup();
-    auto fn = detail::alignment_configurator::configure<decltype(r)>(cfg);
-    auto & [seq1, seq2] = *std::ranges::begin(r);
+    auto result = run_test(cfg);
 
-    auto res = fn(0u, seq1 | views::all, seq2 | views::all);
-
-    EXPECT_EQ(res.score(), 0);
-    EXPECT_EQ(res.back_coordinate(), (alignment_coordinate{detail::column_index_type{4u}, detail::row_index_type{4u}}));
-    EXPECT_TRUE((std::same_as<decltype(res.score()), double>));
+    EXPECT_DOUBLE_EQ(result.score(), 0.0);
+    EXPECT_EQ(result.back_coordinate(),
+              (alignment_coordinate{detail::column_index_type{4u}, detail::row_index_type{4u}}));
+    EXPECT_TRUE((std::same_as<decltype(result.score()), double>));
 }
