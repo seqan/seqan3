@@ -251,7 +251,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr auto size() noexcept
+    constexpr size_t size() noexcept
     //!\cond
         requires all_sized
     //!\endcond
@@ -260,7 +260,7 @@ public:
     }
 
     //!\copydoc size()
-    constexpr auto size() const noexcept
+    constexpr size_t size() const noexcept
     //!\cond
         requires all_sized_const
     //!\endcond
