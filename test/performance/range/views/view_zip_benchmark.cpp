@@ -11,7 +11,10 @@
 
 #include <seqan3/range/views/repeat.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/test/pretty_printing.hpp>
+
+#if __has_include(<range/v3/view/zip.hpp>)
+    #include <range/v3/view/zip.hpp>
+#endif
 
 using namespace seqan3;
 
@@ -68,14 +71,16 @@ BENCHMARK_TEMPLATE(zip_factory, decltype(seqan3::views::zip), std::vector<size_t
 BENCHMARK_TEMPLATE(zip_factory, decltype(seqan3::views::zip), std::vector<size_t>, decltype(views::repeat('L')));
 BENCHMARK_TEMPLATE(zip_factory, decltype(seqan3::views::zip), std::vector<size_t>, decltype(views::repeat('L')), decltype(views::repeat('L')));
 
-BENCHMARK_TEMPLATE(zip_factory, decltype(std::views::zip), std::vector<size_t>);
-BENCHMARK_TEMPLATE(zip_factory, decltype(std::views::zip), std::vector<size_t>, std::vector<size_t>);
-BENCHMARK_TEMPLATE(zip_factory, decltype(std::views::zip), std::vector<size_t>, std::vector<size_t>, std::vector<size_t>);
-BENCHMARK_TEMPLATE(zip_factory, decltype(std::views::zip), std::vector<size_t>, std::vector<size_t>, std::vector<size_t>, std::vector<size_t>);
-BENCHMARK_TEMPLATE(zip_factory, decltype(std::views::zip), std::vector<size_t>, std::vector<size_t>, std::vector<char>);
-BENCHMARK_TEMPLATE(zip_factory, decltype(std::views::zip), std::vector<size_t>, std::vector<size_t>, std::vector<std::string>);
-BENCHMARK_TEMPLATE(zip_factory, decltype(std::views::zip), std::vector<size_t>, decltype(views::repeat('L')));
-BENCHMARK_TEMPLATE(zip_factory, decltype(std::views::zip), std::vector<size_t>, decltype(views::repeat('L')), decltype(views::repeat('L')));
+#if __has_include(<range/v3/view/zip.hpp>)
+BENCHMARK_TEMPLATE(zip_factory, decltype(ranges::views::zip), std::vector<size_t>);
+BENCHMARK_TEMPLATE(zip_factory, decltype(ranges::views::zip), std::vector<size_t>, std::vector<size_t>);
+BENCHMARK_TEMPLATE(zip_factory, decltype(ranges::views::zip), std::vector<size_t>, std::vector<size_t>, std::vector<size_t>);
+BENCHMARK_TEMPLATE(zip_factory, decltype(ranges::views::zip), std::vector<size_t>, std::vector<size_t>, std::vector<size_t>, std::vector<size_t>);
+BENCHMARK_TEMPLATE(zip_factory, decltype(ranges::views::zip), std::vector<size_t>, std::vector<size_t>, std::vector<char>);
+BENCHMARK_TEMPLATE(zip_factory, decltype(ranges::views::zip), std::vector<size_t>, std::vector<size_t>, std::vector<std::string>);
+BENCHMARK_TEMPLATE(zip_factory, decltype(ranges::views::zip), std::vector<size_t>, decltype(views::repeat('L')));
+BENCHMARK_TEMPLATE(zip_factory, decltype(ranges::views::zip), std::vector<size_t>, decltype(views::repeat('L')), decltype(views::repeat('L')));
+#endif
 
 // ============================================================================
 //  run

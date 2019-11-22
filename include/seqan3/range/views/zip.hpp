@@ -81,10 +81,7 @@ private:
     //!\brief Indicates whether all types in `urng_t const` model std::ranges::sized_range.
     static constexpr bool all_sized_const = (std::ranges::sized_range<urng_t const> && ...);
 
-    //!\brief The underlying ranges.
-    std::tuple<urng_t...> urange{};
-    //!\brief The iterators of the underlying ranges.
-    std::tuple<std::ranges::iterator_t<urng_t>...> iterators{};
+
 
     /*!\brief Helper function for calling begin on each iterator in `iterators`.
      * \tparam N Pack of size_t.
@@ -111,6 +108,10 @@ private:
     }
 
 public:
+    //!\brief The underlying ranges.
+    std::tuple<urng_t...> urange{};
+    //!\brief The iterators of the underlying ranges.
+    std::tuple<std::ranges::iterator_t<urng_t>...> iterators{};
     /*!\name Associated types
      * \{
      */
@@ -308,8 +309,7 @@ private:
 
     //!\brief A pointer to the parent view.
     parent_t * parent = nullptr;
-    //!\brief The iterators of each range in `urng_t`.
-    std::tuple<std::ranges::iterator_t<maybe_const<urng_t>>...> iterators{};
+
 
     auto& current() noexcept requires all_forward
     { return this->iterators; }
@@ -321,6 +321,8 @@ private:
     }
 
 public:
+    //!\brief The iterators of each range in `urng_t`.
+    std::tuple<std::ranges::iterator_t<maybe_const<urng_t>>...> iterators{};
     /*!\name Associated types
      * \{
      */
@@ -655,10 +657,11 @@ private:
     static_assert(std::same_as<std::index_sequence_for<urng_t...>, std::index_sequence<N...>>,
                   "The number of ranges differes from the passed template parameter.");
 
-    //!\brief The sentinels of each range in `urng_t`.
-    std::tuple<std::ranges::sentinel_t<maybe_const<urng_t>>...> iterators{};
+
 
 public:
+    //!\brief The sentinels of each range in `urng_t`.
+    std::tuple<std::ranges::sentinel_t<maybe_const<urng_t>>...> iterators{};
     /*!\name Constructors, destructor and assignment
      * \{
      */
