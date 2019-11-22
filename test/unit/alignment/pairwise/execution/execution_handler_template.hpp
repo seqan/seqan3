@@ -67,53 +67,6 @@ auto simulate_alignment_with_range = [] (auto indexed_sequence_pairs)
 
 TYPED_TEST_CASE_P(execution_handler);
 
-TYPED_TEST_P(execution_handler, execute_with_lvalue)
-{
-    std::vector<std::pair<size_t, size_t>> buffer;
-    buffer.resize(this->total_size);
-
-    TypeParam exec_handler{};
-
-    size_t pos = 0;
-    for (unsigned i = 0; i < this->total_size; ++i, ++pos)
-    {
-        auto seq_collection1_as_view = this->sequence_collection1[i] | views::all;
-        auto seq_collection2_as_view = this->sequence_collection2[i] | views::all;
-        exec_handler.execute(simulate_alignment,
-                             i,
-                             seq_collection1_as_view,
-                             seq_collection2_as_view,
-                             [pos, &buffer] (auto && res) { buffer[pos] = std::move(res); });
-    }
-
-    exec_handler.wait();
-
-    this->check_result(buffer);
-}
-
-TYPED_TEST_P(execution_handler, execute_with_rvalue)
-{
-    std::vector<std::pair<size_t, size_t>> buffer;
-    buffer.resize(this->total_size);
-
-    TypeParam exec_handler{};
-
-    size_t pos = 0;
-
-    for (unsigned i = 0; i < this->total_size; ++i, ++pos)
-    {
-        exec_handler.execute(simulate_alignment,
-                             i,
-                             this->sequence_collection1[i] | views::all,
-                             this->sequence_collection2[i] | views::all,
-                             [&buffer, pos] (auto && res) { buffer[pos] = std::move(res); });
-    }
-
-    exec_handler.wait();
-
-    this->check_result(buffer);
-}
-
 TYPED_TEST_P(execution_handler, execute_as_indexed_sequence_pairs)
 {
     std::vector<std::pair<size_t, size_t>> buffer;
@@ -145,6 +98,4 @@ TYPED_TEST_P(execution_handler, execute_as_indexed_sequence_pairs)
 }
 
 REGISTER_TYPED_TEST_CASE_P(execution_handler,
-                           execute_with_lvalue,
-                           execute_with_rvalue,
                            execute_as_indexed_sequence_pairs);
