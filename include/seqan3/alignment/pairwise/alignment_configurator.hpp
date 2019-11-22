@@ -232,6 +232,7 @@ public:
      *
      * \include snippet/alignment/pairwise/alignment_configurator.cpp
      *
+     *
      * The arguments to the function object are two ranges, which always need to be passed as lvalue references.
      * Note that even if they are not passed as const lvalue reference (which is not possible, since not all views are
      * const-iterable), they are not modified within the alignment algorithm.
