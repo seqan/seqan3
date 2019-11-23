@@ -23,7 +23,7 @@ int main()
     auto to_soa = batch | seqan3::views::to_simd<uint16x8_t>(8);
 
     size_t chunk_count = 0;
-    for (auto & chunk : to_soa)
+    for (auto && chunk : to_soa)
     {
         seqan3::debug_stream << "Chunk " << chunk_count++ << ":\n";
         for (auto & vec : chunk)
