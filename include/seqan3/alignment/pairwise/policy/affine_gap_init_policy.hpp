@@ -88,33 +88,33 @@ private:
         auto & [score_cell, trace_cell] = origin_cell;
 
         // Initialise the first cell.
-        score_cell.current = 0;
-        trace_cell.current = trace_directions::none;
+        score_cell.current = convert_to_simd_maybe<score_t>(0);
+        trace_cell.current = convert_to_simd_maybe<score_t>(trace_directions::none);
 
         static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(origin_cell, state);
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
         {
-            score_cell.up = 0;
-            trace_cell.up = trace_directions::none;
+            score_cell.up = convert_to_simd_maybe<score_t>(0);
+            trace_cell.up = convert_to_simd_maybe<score_t>(trace_directions::none);
         }
         else // Initialise with gap_open score
         {
             score_cell.up = state.gap_open_score;
-            trace_cell.up = trace_directions::up_open;
+            trace_cell.up = convert_to_simd_maybe<score_t>(trace_directions::up_open);
         }
 
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
         {
-            score_cell.w_left = 0;
-            trace_cell.w_left = trace_directions::none;
+            score_cell.w_left = convert_to_simd_maybe<score_t>(0);
+            trace_cell.w_left = convert_to_simd_maybe<score_t>(trace_directions::none);
         }
         else // Initialise with gap_open score
         {
             score_cell.w_left = state.gap_open_score;
-            trace_cell.w_left = trace_directions::left_open;
+            trace_cell.w_left = convert_to_simd_maybe<score_t>(trace_directions::left_open);
         }
     }
 
@@ -147,16 +147,16 @@ private:
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
         {
-            score_cell.up = 0;
+            score_cell.up = convert_to_simd_maybe<score_t>(0);
         }
         else
         {
             score_cell.up += state.gap_extension_score;
-            trace_cell.up = trace_directions::up;
+            trace_cell.up = convert_to_simd_maybe<score_t>(trace_directions::up);
         }
 
         score_cell.w_left = score_cell.current + state.gap_open_score;
-        trace_cell.w_left = trace_directions::left_open;
+        trace_cell.w_left = convert_to_simd_maybe<score_t>(trace_directions::left_open);
     }
 
     /*!\brief Initialises a cell in the first row of the dynamic programming matrix.
@@ -186,19 +186,46 @@ private:
         static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(row_cell, state);
 
         score_cell.up = score_cell.current + state.gap_open_score;
-        trace_cell.up = trace_directions::up_open;
+        trace_cell.up = convert_to_simd_maybe<score_t>(trace_directions::up_open);
 
         if constexpr (traits_type::free_first_leading_t::value)
         {
-            score_cell.w_left = 0;
-            trace_cell.w_left = trace_directions::none;
+            score_cell.w_left = convert_to_simd_maybe<score_t>(0);
+            trace_cell.w_left = convert_to_simd_maybe<score_t>(trace_directions::none);
         }
         else
         {
             score_cell.w_left = score_cell.r_left + state.gap_extension_score;
-            trace_cell.w_left = trace_directions::left;
+            trace_cell.w_left = convert_to_simd_maybe<score_t>(trace_directions::left);
         }
     }
+
+private:
+    /*!\brief Converts the given value into a simd vector or just returns the value if alignment is not
+     *        executed in vectorised mode.
+     * \tparam score_t The type of the score; must model either seqan3::simd::simd_concept or
+     *                 seqan3::arithmetic.
+     * \tparam value_t The value type to convert; must model seqan3::arithmetic.
+     *
+     * \param[in] value The value to possibly convert.
+     *
+     * \returns A simd vector filled with the given value or the value itself if the alignment is not executed
+     *          in vectorised mode.
+     */
+    template <typename score_t, typename value_t>
+    constexpr auto convert_to_simd_maybe(value_t const value) const noexcept
+    {
+        if constexpr (simd_concept<score_t>)
+        {
+            using scalar_t = typename simd_traits<score_t>::scalar_type;
+            return simd::fill<score_t>(static_cast<scalar_t>(value));
+        }
+        else
+        {
+            return value;
+        }
+    }
+
 };
 
 } // namespace seqan3::detail
