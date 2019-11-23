@@ -57,18 +57,18 @@ private:
     //!\brief Befriends the derived class to grant it access to the private members.
     friend alignment_algorithm_t;
 
-    //!\brief The state of the alignment algorithm for affine gaps.
+    //!\brief The type of state of the alignment algorithm for affine gaps.
     using alignment_state_t = alignment_algorithm_state<score_t>;
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr simd_affine_gap_policy() noexcept = default; //!< Defaulted
-    constexpr simd_affine_gap_policy(simd_affine_gap_policy const &) noexcept = default; //!< Defaulted
-    constexpr simd_affine_gap_policy(simd_affine_gap_policy &&) noexcept = default; //!< Defaulted
-    constexpr simd_affine_gap_policy & operator=(simd_affine_gap_policy const &) noexcept = default; //!< Defaulted
-    constexpr simd_affine_gap_policy & operator=(simd_affine_gap_policy &&) noexcept = default; //!< Defaulted
-    ~simd_affine_gap_policy() noexcept = default; //!< Defaulted
+    constexpr simd_affine_gap_policy() noexcept = default; //!< Defaulted.
+    constexpr simd_affine_gap_policy(simd_affine_gap_policy const &) noexcept = default; //!< Defaulted.
+    constexpr simd_affine_gap_policy(simd_affine_gap_policy &&) noexcept = default; //!< Defaulted.
+    constexpr simd_affine_gap_policy & operator=(simd_affine_gap_policy const &) noexcept = default; //!< Defaulted.
+    constexpr simd_affine_gap_policy & operator=(simd_affine_gap_policy &&) noexcept = default; //!< Defaulted.
+    ~simd_affine_gap_policy() noexcept = default; //!< Defaulted.
     //!\}
 
     /*!\brief Computes the score of the current simd cell.
@@ -84,7 +84,7 @@ private:
      * stored in the zipped tuple is the seqan3::detail::alignment_score_matrix_proxy and the second value is the
      * seqan3::detail::alignment_trace_matrix_proxy.
      *
-     * In order to compute the maximum for two simd vectors gcc implements the ternary operator such that
+     * In order to compute the maximum for two simd vectors, gcc implements the ternary operator such that
      * `std::max(a, b)` can be implemented as `(a > b) ? a : b`, where `(a > b)` returns a mask vector. This implements
      * the compare-and-blend approach for simd vector types.
      */

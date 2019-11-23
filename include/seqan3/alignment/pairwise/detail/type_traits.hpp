@@ -95,7 +95,7 @@ struct alignment_configuration_traits
                                                             return 1;
                                                     }();
     //!\brief The rank of the selected result type.
-    static constexpr int8_t result_type_rank = static_cast<size_t>(decltype(std::declval<result_t>().value)::rank);
+    static constexpr int8_t result_type_rank = static_cast<int8_t>(decltype(std::declval<result_t>().value)::rank);
 };
 
 }  // namespace seqan3::detail

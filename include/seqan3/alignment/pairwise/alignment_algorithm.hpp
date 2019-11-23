@@ -194,7 +194,7 @@ public:
     }
 
     //!\overload
-    template <std::ranges::forward_range indexed_sequence_pairs_t>
+    template <indexed_sequence_pair_range indexed_sequence_pairs_t>
     auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs)
     //!\cond
         requires traits_t::is_vectorised
@@ -587,7 +587,9 @@ private:
      * coordinates as well as the trace matrix if applicable.
      */
     template <typename index_t, typename sequence1_t, typename sequence2_t>
+    //!\cond
         requires !traits_t::is_vectorised
+    //!\endcond
     constexpr auto make_alignment_result(index_t const idx,
                                          sequence1_t & sequence1,
                                          sequence2_t & sequence2)

@@ -74,7 +74,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
     {
         auto [database, query] = fixture.get_sequences();
         auto res_vec = align_pairwise(views::zip(database, query), align_cfg)
-                    | views::to<std::vector>;
+                     | views::to<std::vector>;
 
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                         fixture.get_scores())));
@@ -96,7 +96,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
     {
         auto [database, query] = fixture.get_sequences();
         auto res_vec = align_pairwise(views::zip(database, query), align_cfg)
-                    | views::to<std::vector>;
+                     | views::to<std::vector>;
 
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                         fixture.get_scores())));

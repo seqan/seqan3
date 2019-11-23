@@ -162,8 +162,8 @@ private:
     template <typename traits_t>
     struct select_gap_policy
     {
-    private:
 
+    private:
         //!\brief The score type for the alignment computation.
         using score_t = typename traits_t::score_t;
         //!\brief The is_local constant converted to a type.
