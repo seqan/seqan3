@@ -22,6 +22,8 @@
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
+#include <seqan3/alignment/pairwise/detail/concept.hpp>
+#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/execution/all.hpp>
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/parallel/execution.hpp>
@@ -148,7 +150,7 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
 
 //!\cond
 template <typename sequence_t, typename alignment_config_t>
-    requires detail::align_pairwise_range_input_concept<sequence_t> &&
+    requires detail::align_pairwise_range_input<sequence_t> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
 constexpr auto align_pairwise(sequence_t && sequences,
                               alignment_config_t const & config)
@@ -166,26 +168,20 @@ constexpr auto align_pairwise(sequence_t && sequences,
     // Configure the alignment algorithm.
     auto && [algorithm, adapted_config] = detail::alignment_configurator::configure<decltype(seq_view)>(config);
 
+    using traits_t = detail::alignment_configuration_traits<remove_cvref_t<decltype(adapted_config)>>;
     //!brief Lambda function to translate specified parallel and or vectorised configurations into their execution rules.
     constexpr auto get_execution_rule = [] ()
     {
-        if constexpr (alignment_config_t::template exists<align_cfg::parallel>())
-                return seqan3::par;
+        if constexpr (traits_t::is_parallel)
+            return seqan3::par;
         else
             return seqan3::seq;
     };
 
-    size_t chunk_size = 1;
-    if constexpr (alignment_config_t::template exists<detail::vectorise_tag>())
-    {
-        using score_t = typename detail::align_config_result_score<decltype(adapted_config)>::type;
-        chunk_size = simd_traits<simd_type_t<score_t>>::length;
-    }
-
     // Create a two-way executor for the alignment.
     detail::alignment_executor_two_way executor{std::move(seq_view),
                                                 std::move(algorithm),
-                                                chunk_size,
+                                                traits_t::alignments_per_vector,
                                                 get_execution_rule()};
     // Return the range over the alignments.
     return alignment_range{std::move(executor)};

@@ -23,11 +23,18 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
+#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 
 #include <seqan3/core/detail/empty_type.hpp>
+#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/core/simd/simd_traits.hpp>
+#include <seqan3/core/simd/view_to_simd.hpp>
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
+#include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/drop.hpp>
+#include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -73,19 +80,9 @@ class alignment_algorithm :
     public invoke_deferred_crtp_base<algorithm_policies_t, alignment_algorithm<config_t, algorithm_policies_t...>>...
 {
 private:
-    //!\brief Check if the alignment is banded.
-    static constexpr bool is_banded = config_t::template exists<align_cfg::band>();
-    //!\brief Check if debug mode is enabled.
-    static constexpr bool is_debug_mode = config_t::template exists<detail::algorithm_debugging>();
 
-    //!\brief The type of the stored scoring scheme.
-    using score_scheme_t = decltype(seqan3::get<align_cfg::scoring>(std::declval<config_t>()).value);
-    //!\brief The type of a column inside of the score matrix.
-    using score_matrix_column_t =
-        std::ranges::iter_value_t<decltype(std::declval<alignment_algorithm>().score_matrix_iter)>;
-    //!\brief The type of a column inside of the trace matrix.
-    using trace_matrix_column_t =
-        std::ranges::iter_value_t<decltype(std::declval<alignment_algorithm>().trace_matrix_iter)>;
+    //!\brief The alignment configuration traits type with auxiliary information extracted from the configuration type.
+    using traits_t = alignment_configuration_traits<config_t>;
     //!\brief The type of an alignment column as defined by the respective matrix policy.
     using alignment_column_t = decltype(std::declval<alignment_algorithm>().current_alignment_column());
     //!\brief The iterator type over the alignment column.
@@ -93,14 +90,14 @@ private:
 
     //!\brief The type of the score debug matrix.
     using score_debug_matrix_t =
-        std::conditional_t<is_debug_mode,
-                           two_dimensional_matrix<std::optional<int32_t>,
-                                                  std::allocator<std::optional<int32_t>>,
+        std::conditional_t<traits_t::is_debug,
+                           two_dimensional_matrix<std::optional<typename traits_t::original_score_t>,
+                                                  std::allocator<std::optional<typename traits_t::original_score_t>>,
                                                   matrix_major_order::column>,
                            empty_type>;
     //!\brief The type of the trace debug matrix.
     using trace_debug_matrix_t =
-        std::conditional_t<is_debug_mode,
+        std::conditional_t<traits_t::is_debug,
                            two_dimensional_matrix<std::optional<trace_directions>,
                                                   std::allocator<std::optional<trace_directions>>,
                                                   matrix_major_order::column>,
@@ -127,7 +124,7 @@ public:
      */
     explicit constexpr alignment_algorithm(config_t const & cfg) : cfg_ptr{std::make_shared<config_t>(cfg)}
     {
-        score_scheme = seqan3::get<align_cfg::scoring>(*cfg_ptr).value;
+        this->scoring_scheme = seqan3::get<align_cfg::scoring>(*cfg_ptr).value;
         this->initialise_alignment_state(*cfg_ptr);
     }
     //!\}
@@ -177,6 +174,9 @@ public:
      * |space (alignment)       |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
      */
     template <indexed_sequence_pair_range indexed_sequence_pairs_t>
+    //!\cond
+        requires !traits_t::is_vectorised
+    //!\endcond
     auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs)
     {
         using sequence_pairs_t = std::tuple_element_t<0, std::ranges::range_value_t<indexed_sequence_pairs_t>>;
@@ -192,8 +192,65 @@ public:
 
         return results;
     }
+
+    //!\overload
+    template <std::ranges::forward_range indexed_sequence_pairs_t>
+    auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs)
+    //!\cond
+        requires traits_t::is_vectorised
+    //!\endcond
+    {
+        assert(cfg_ptr != nullptr);
+
+        static_assert(simd_concept<typename traits_t::score_t>, "Expected simd score type.");
+        static_assert(simd_concept<typename traits_t::trace_t>, "Expected simd trace type.");
+
+        // Extract the batch of sequences for the first and the second sequence.
+        auto sequence1_range = indexed_sequence_pairs | views::get<0> | views::get<0>;
+        auto sequence2_range = indexed_sequence_pairs | views::get<0> | views::get<1>;
+
+        // Convert batch of sequences to sequence of simd vectors.
+        auto simd_sequences1 = convert_batch_of_sequences_to_simd_vector(sequence1_range);
+        auto simd_sequences2 = convert_batch_of_sequences_to_simd_vector(sequence2_range);
+
+        // Reset the alignment state's optimum between executions of the alignment algorithm.
+        this->alignment_state.reset_optimum();
+
+        compute_matrix(simd_sequences1, simd_sequences2);
+
+        return make_alignment_result(indexed_sequence_pairs | views::get<1>, sequence1_range, sequence2_range);
+    }
     //!\}
 private:
+
+    /*!\brief Converts a batch of sequences to a sequence of simd vectors.
+     * \tparam sequence_range_t The type of the range over sequences; must model std::ranges::forward_range.
+     *
+     * \param[in] sequences The batch of sequences to transform.
+     *
+     * \returns a sequence over simd vectors.
+     *
+     * \details
+     *
+     * Expects that the size of the batch is less or equal than the number of alignments that can be computed within one
+     * simd vector. Applies an Array-of-Structures (AoS) to Structure-of-Arrays (SoA) transformation by storing one
+     * column of the batch as a simd vector.
+     */
+    template <typename sequence_range_t>
+    constexpr auto convert_batch_of_sequences_to_simd_vector(sequence_range_t & sequences)
+    {
+        assert(static_cast<size_t>(std::ranges::distance(sequences)) <= traits_t::alignments_per_vector);
+
+        using simd_score_t = typename traits_t::score_t;
+
+        std::vector<simd_score_t, aligned_allocator<simd_score_t, alignof(simd_score_t)>> simd_sequence{};
+
+        for (auto && simd_vector_chunk : sequences | views::to_simd<simd_score_t>)
+            for (auto && simd_vector : simd_vector_chunk)
+                simd_sequence.push_back(std::move(simd_vector));
+
+        return simd_sequence;
+    }
 
     /*!\brief Computes the pairwise sequence alignment for a single pair of sequences.
      * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
@@ -217,13 +274,27 @@ private:
     {
         assert(cfg_ptr != nullptr);
 
-        if constexpr (is_debug_mode)
+        if constexpr (traits_t::is_debug)
             initialise_debug_matrices(sequence1, sequence2);
 
         // Reset the alignment state's optimum between executions of the alignment algorithm.
         this->alignment_state.reset_optimum();
 
-        return alignment_result{compute_matrix(idx, sequence1, sequence2)};
+        if constexpr (traits_t::is_banded)
+        {
+            // Get the band and check if band configuration is valid.
+            auto const & band = seqan3::get<align_cfg::band>(*cfg_ptr).value;
+            check_valid_band_parameter(sequence1, sequence2, band);
+            auto && [subsequence1, subsequence2] = this->slice_sequences(sequence1, sequence2, band);
+            // It would be great to use this interface here instead
+            compute_matrix(subsequence1, subsequence2, band);
+            return make_alignment_result(idx, subsequence1, subsequence2);
+        }
+        else
+        {
+            compute_matrix(sequence1, sequence2);
+            return make_alignment_result(idx, sequence1, sequence2);
+        }
     }
 
     /*!\brief Checks if the band parameters are valid for the given sequences.
@@ -293,18 +364,16 @@ private:
     }
 
     /*!\brief Compute the alignment by iterating over the alignment matrix in a column wise manner.
-     * \tparam index_t The type of the index.
      * \tparam sequence1_t The type of the first sequence.
      * \tparam sequence2_t The type of the second sequence.
      *
-     * \param[in] idx The corresponding index for the given sequence pair.
      * \param[in] sequence1 The first sequence.
      * \param[in] sequence2 The second sequence.
      */
-    template <typename index_t, typename sequence1_t, typename sequence2_t>
-    auto compute_matrix(index_t const idx, sequence1_t & sequence1, sequence2_t & sequence2)
+    template <typename sequence1_t, typename sequence2_t>
+    void compute_matrix(sequence1_t & sequence1, sequence2_t & sequence2)
     //!\cond
-        requires !is_banded
+        requires !traits_t::is_banded
     //!\endcond
     {
         // ----------------------------------------------------------------------------
@@ -328,42 +397,35 @@ private:
         // Wrap up phase: track score in last column and prepare the alignment result.
         // ----------------------------------------------------------------------------
 
-        return finalise_alignment(idx, sequence1, sequence2);
+        finalise_alignment();
     }
 
     //!\overload
-    template <typename index_t, typename sequence1_t, typename sequence2_t>
-    auto compute_matrix(index_t const idx, sequence1_t & sequence1, sequence2_t & sequence2)
+    template <typename sequence1_t, typename sequence2_t>
+    void compute_matrix(sequence1_t & sequence1, sequence2_t & sequence2, static_band const & band)
     //!\cond
-        requires is_banded
+        requires traits_t::is_banded
     //!\endcond
     {
         // ----------------------------------------------------------------------------
         // Initialisation phase: allocate memory and initialise first column.
         // ----------------------------------------------------------------------------
 
-        // Get the band and check if band configuration is valid.
-        auto const & band = seqan3::get<align_cfg::band>(*cfg_ptr).value;
-        check_valid_band_parameter(sequence1, sequence2, band);
-
-        // Slice sequences such that band starts in origin and ends in sink.
-        auto && [seq1_slice, seq2_slice] = this->slice_sequences(sequence1, sequence2, band);
-
         // Allocate and initialise first column.
-        this->allocate_matrix(seq1_slice, seq2_slice, band, this->alignment_state);
+        this->allocate_matrix(sequence1, sequence2, band, this->alignment_state);
         size_t last_row_index = this->score_matrix.band_row_index;
-        initialise_first_alignment_column(seq2_slice | views::take(last_row_index));
+        initialise_first_alignment_column(sequence2 | views::take(last_row_index));
 
         // ----------------------------------------------------------------------------
         // 1st recursion phase: iterate as long as the band intersects with the first row.
         // ----------------------------------------------------------------------------
 
-        size_t seq2_slice_size = std::ranges::distance(seq2_slice);
-        for (auto const & seq1_value : seq1_slice | views::take(this->score_matrix.band_col_index))
+        size_t sequence2_size = std::ranges::distance(sequence2);
+        for (auto const & seq1_value : sequence1 | views::take(this->score_matrix.band_col_index))
         {
-            compute_alignment_column<true>(seq1_value, seq2_slice | views::take(++last_row_index));
+            compute_alignment_column<true>(seq1_value, sequence2 | views::take(++last_row_index));
             // Only if band reached last row of matrix the last cell might be tracked.
-            finalise_last_cell_in_column(last_row_index >= seq2_slice_size);
+            finalise_last_cell_in_column(last_row_index >= sequence2_size);
         }
 
         // ----------------------------------------------------------------------------
@@ -371,19 +433,19 @@ private:
         // ----------------------------------------------------------------------------
 
         size_t first_row_index = 0;
-        for (auto const & seq1_value : seq1_slice | views::drop(this->score_matrix.band_col_index))
+        for (auto const & seq1_value : sequence1 | views::drop(this->score_matrix.band_col_index))
         {
             // In the second phase the band moves in every column one base down on the second sequence.
-            compute_alignment_column<false>(seq1_value, seq2_slice | views::slice(first_row_index++, ++last_row_index));
+            compute_alignment_column<false>(seq1_value, sequence2 | views::slice(first_row_index++, ++last_row_index));
             // Only if band reached last row of matrix the last cell might be tracked.
-            finalise_last_cell_in_column(last_row_index >= seq2_slice_size);
+            finalise_last_cell_in_column(last_row_index >= sequence2_size);
         }
 
         // ----------------------------------------------------------------------------
         // Wrap up phase: track score in last column and prepare the alignment result.
         // ----------------------------------------------------------------------------
 
-        return finalise_alignment(idx, seq1_slice, seq2_slice);
+        finalise_alignment();
     }
 
     /*!\brief Initialises the first column of the alignment matrix.
@@ -415,7 +477,7 @@ private:
 
         // Finalise the last cell of the initial column.
         bool at_last_row = true;
-        if constexpr (is_banded) // If the band reaches until the last row of the matrix.
+        if constexpr (traits_t::is_banded) // If the band reaches until the last row of the matrix.
             at_last_row = static_cast<size_t>(this->score_matrix.band_row_index) == this->score_matrix.num_rows - 1;
 
         finalise_last_cell_in_column(at_last_row);
@@ -453,12 +515,14 @@ private:
         {
             this->compute_first_band_cell(*alignment_column_it,
                                           this->alignment_state,
-                                          score_scheme.score(seq1_value, *seq2_it));
+                                          this->scoring_scheme.score(seq1_value, *seq2_it));
             ++seq2_it;
         }
 
         for (; seq2_it != std::ranges::end(sequence2); ++seq2_it)
-            this->compute_cell(*++alignment_column_it, this->alignment_state, score_scheme.score(seq1_value, *seq2_it));
+            this->compute_cell(*++alignment_column_it,
+                               this->alignment_state,
+                               this->scoring_scheme.score(seq1_value, *seq2_it));
     }
 
     /*!\brief Finalises the last cell of the current alignment column.
@@ -476,8 +540,19 @@ private:
         if (at_last_row)
             this->check_score_of_last_row_cell(*alignment_column_it, this->alignment_state);
 
-        if constexpr (is_debug_mode)
+        if constexpr (traits_t::is_debug)
             dump_alignment_column();
+    }
+
+    //!\brief Checks the last cell, respectively column for the alignment optimum.
+    constexpr void finalise_alignment() noexcept
+    {
+        // ----------------------------------------------------------------------------
+        // Check for the optimum in last cell/column.
+        // ----------------------------------------------------------------------------
+
+        this->check_score_of_cells_in_last_column(alignment_column, this->alignment_state);
+        this->check_score_of_last_cell(*alignment_column_it, this->alignment_state);
     }
 
     /*!\brief Creates a new alignment result from the current alignment optimum and for the given pair of sequences.
@@ -489,13 +564,13 @@ private:
      * \param[in] sequence1 The first range to get the alignment for if requested.
      * \param[in] sequence2 The second range to get the alignment for if requested.
      *
-     * \returns A seqan3::alignment_result with the requested alignment outcomes.
+     * \returns A seqan3::alignment_result with the requested alignment outcomes. A std::vector over
+     *          seqan3::alignment_result objects if the alignment is run in vectorisation mode.
      *
      * \details
      *
-     * At first the last column/cell of the alignment matrix is checked for a new alignment optimum.
-     * Then the alignment result is prepared. Depending on the selected configuration the following is extracted and/or
-     * computed:
+     * Fills the alignment result with the requested values. Depending on the selected configuration the following
+     * is extracted and/or computed:
      *
      * 1. The alignment score.
      * 2. The end positions of the aligned range for the first and second sequence.
@@ -504,19 +579,19 @@ private:
      *
      * If the alignment is run in debug mode (see seqan3::align_cfg::debug) the debug score and optionally trace matrix
      * are stored in the alignment result as well.
+     *
+     * ### Vectorisation
+     *
+     * In vectorisation mode this interface takes as input argument ranges over the indices and the corresponding
+     * sequences. Then it extracts the alignment result for every element in the range from the vectorised scores and
+     * coordinates as well as the trace matrix if applicable.
      */
     template <typename index_t, typename sequence1_t, typename sequence2_t>
-    constexpr auto finalise_alignment(index_t const & idx,
-                                      sequence1_t && sequence1,
-                                      sequence2_t && sequence2)
+        requires !traits_t::is_vectorised
+    constexpr auto make_alignment_result(index_t const idx,
+                                         sequence1_t & sequence1,
+                                         sequence2_t & sequence2)
     {
-        // ----------------------------------------------------------------------------
-        // Check for the optimum in last cell/column.
-        // ----------------------------------------------------------------------------
-
-        this->check_score_of_cells_in_last_column(alignment_column, this->alignment_state);
-        this->check_score_of_last_cell(*alignment_column_it, this->alignment_state);
-
         // ----------------------------------------------------------------------------
         // Build the alignment result
         // ----------------------------------------------------------------------------
@@ -524,28 +599,25 @@ private:
         static_assert(config_t::template exists<align_cfg::result>(),
                       "The configuration must contain an align_cfg::result element.");
 
-        using result_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
-        result_t res{};
+        using result_value_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
+        result_value_t res{};
 
         res.id = idx;
 
-        using result_config_t = std::remove_reference_t<
-                decltype(seqan3::get<align_cfg::result>(std::declval<config_t>()).value)>;
-
         // Choose what needs to be computed.
-        if constexpr (result_config_t::rank >= 0)  // compute score
+        if constexpr (traits_t::result_type_rank >= 0)  // compute score
             res.score = this->alignment_state.optimum.score;
 
-        if constexpr (result_config_t::rank >= 1)  // compute back coordinate
+        if constexpr (traits_t::result_type_rank >= 1)  // compute back coordinate
         {
             res.back_coordinate = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
                                                        row_index_type{this->alignment_state.optimum.row_index}};
             // At some point this needs to be refactored so that it is not necessary to adapt the coordinate.
-            if constexpr (is_banded)
+            if constexpr (traits_t::is_banded)
                 res.back_coordinate.second += res.back_coordinate.first - this->trace_matrix.band_col_index;
         }
 
-        if constexpr (result_config_t::rank >= 2) // compute front coordinate
+        if constexpr (traits_t::result_type_rank >= 2) // compute front coordinate
         {
             // Get a aligned sequence builder for banded or un-banded case.
             aligned_sequence_builder builder{sequence1, sequence2};
@@ -555,19 +627,58 @@ private:
             res.front_coordinate.first = trace_res.first_sequence_slice_positions.first;
             res.front_coordinate.second = trace_res.second_sequence_slice_positions.first;
 
-            if constexpr (result_config_t::rank == 3) // compute alignment
+            if constexpr (traits_t::result_type_rank == 3) // compute alignment
                 res.alignment = std::move(trace_res.alignment);
         }
 
         // Store the matrices in debug mode.
-        if constexpr (is_debug_mode)
+        if constexpr (traits_t::is_debug)
         {
             res.score_debug_matrix = std::move(score_debug_matrix);
-            if constexpr (result_config_t::rank == 3) // compute alignment
+            if constexpr (traits_t::result_type_rank == 3) // compute alignment
                 res.trace_debug_matrix = std::move(trace_debug_matrix);
         }
 
         return res;
+    }
+
+    //!\overload
+    template <typename index_range_t, typename sequence1_range_t, typename sequence2_range_t>
+    //!\cond
+        requires traits_t::is_vectorised
+    //!\endcond
+    constexpr auto make_alignment_result(index_range_t && index_range,
+                                         sequence1_range_t && sequence1_range,
+                                         [[maybe_unused]] sequence2_range_t && sequence2_range)
+    {
+        using sequence1_t = std::ranges::range_value_t<sequence1_range_t>;
+        using sequence2_t = std::ranges::range_value_t<sequence2_range_t>;
+
+        using result_value_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
+
+        size_t number_of_computed_alignments = std::ranges::distance(sequence1_range);
+        auto index_it = std::ranges::begin(index_range);
+        std::vector<alignment_result<result_value_t>> results{number_of_computed_alignments};
+        // Note we are not using the index range as it might be an infinity range.
+        for (size_t i = 0; i < number_of_computed_alignments; ++i, ++index_it)
+        {
+            result_value_t res{};
+            res.id = *index_it;
+
+            // Choose what needs to be computed.
+            if constexpr (traits_t::result_type_rank >= 0)  // compute score
+                res.score = this->alignment_state.optimum.score[i];
+
+            if constexpr (traits_t::result_type_rank >= 1)  // compute back coordinate
+            {
+                res.back_coordinate.first = this->alignment_state.optimum.column_index[i];
+                res.back_coordinate.second = this->alignment_state.optimum.row_index[i];
+            }
+
+            results[i] = std::move(res);
+        }
+
+        return results;
     }
 
     /*!\brief Dumps the current alignment matrix in the debug score matrix and if requested debug trace matrix.
@@ -585,7 +696,7 @@ private:
         auto column = this->current_alignment_column();
 
         auto coord = get<1>(column.front()).coordinate;
-        if constexpr (is_banded)
+        if constexpr (traits_t::is_banded)
             coord.second += coord.first - this->score_matrix.band_col_index;
 
         matrix_offset offset{row_index_type{static_cast<std::ptrdiff_t>(coord.second)},
@@ -611,8 +722,6 @@ private:
 
     //!\brief The alignment configuration stored on the heap.
     std::shared_ptr<config_t> cfg_ptr{};
-    //!\brief The scoring scheme used for this alignment algorithm.
-    score_scheme_t score_scheme{};
     //!\brief Stores the currently processed alignment column.
     alignment_column_t alignment_column{};
     //!\brief Stores the state of the currently processed alignment column.
