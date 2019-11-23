@@ -165,7 +165,7 @@ public:
         if (chunk_size == 0u)
             throw std::invalid_argument{"The chunk size must be greater than 0."};
 
-        chunked_resource = views::zip(std::forward<resource_t>(resrc), std::views::iota(0)) | views::chunk(chunk_size);
+        chunked_resource = views::zip(std::forward<resource_t>(resrc), std::views::iota(0)) | views::chunk(_chunk_size);
         chunked_resource_it = chunked_resource.begin();
 
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
