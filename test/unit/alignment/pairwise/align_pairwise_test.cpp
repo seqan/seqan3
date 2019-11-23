@@ -38,9 +38,7 @@ struct align_pairwise_test : ::testing::Test
 };
 
 using testing_types = ::testing::Types<void,
-                                       align_cfg::parallel,
-                                       detail::vectorise_tag,
-                                       configuration<align_cfg::parallel, detail::vectorise_tag>>;
+                                       align_cfg::parallel>;
 
 TYPED_TEST_CASE(align_pairwise_test, testing_types);
 

@@ -29,14 +29,14 @@ static auto dna4_01 = []()
     for (size_t i = 0; i < 100; ++i)
         data.push_back(fixture::global::affine::unbanded::dna4_01);
 
-    return alignment_fixture_collection{fixture::global::affine::unbanded::dna4_01.config, data};
+    auto config = fixture::global::affine::unbanded::dna4_01.config | align_cfg::parallel{4};
+    return alignment_fixture_collection{config, data};
 }();
 
 } // namespace seqan3::test::alignment::fixture::collection::global::affine::unbanded
 
 using pairwise_global_affine_collection_unbanded_testing_types = ::testing::Types<
-        pairwise_alignment_fixture<&collection::global::affine::unbanded::dna4_01, detail::vectorise_tag>,
-        pairwise_alignment_fixture<&collection::global::affine::unbanded::dna4_01, align_cfg::parallel>
+        pairwise_alignment_fixture<&collection::global::affine::unbanded::dna4_01>
     >;
 
 INSTANTIATE_TYPED_TEST_CASE_P(pairwise_global_affine_collection_unbanded,
