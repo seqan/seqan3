@@ -13,7 +13,10 @@
 #pragma once
 
 #include <thread>
-#include <xmmintrin.h>
+
+#if defined(__SSE2__)  // AMD and Intel
+#include <xmmintrin.h>  // _mm_pause()
+#endif
 
 #include <seqan3/core/platform.hpp>
 
@@ -72,8 +75,12 @@ private:
     {
         #if defined(__SSE2__)  // AMD and Intel
             _mm_pause();
+        #elif defined(__arm__) || defined(__aarch64__) // arm big endian / arm64
+            __asm__ __volatile__ ("yield" ::: "memory");
         #elif defined(__ia64__)  // IA64
             __asm__ __volatile__ ("hint @pause");
+        #elif defined(__powerpc__) || defined(__ppc__) || defined(__PPC__) // PowerPC
+            __asm__ __volatile__ ("or 27,27,27" ::: "memory");
         #else  // everything else.
             asm volatile ("nop" ::: "memory");  // default operation - does nothing => Might lead to passive spinning.
         #endif
