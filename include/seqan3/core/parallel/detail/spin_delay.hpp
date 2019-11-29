@@ -75,6 +75,8 @@ private:
     {
         #if defined(__SSE2__)  // AMD and Intel
             _mm_pause();
+        #elif defined(__armel__) || defined(__ARMEL__) // arm, but broken? ; repeat of default case as armel also defines __arm__
+            asm volatile ("nop" ::: "memory");  // default operation - does nothing => Might lead to passive spinning.
         #elif defined(__arm__) || defined(__aarch64__) // arm big endian / arm64
             __asm__ __volatile__ ("yield" ::: "memory");
         #elif defined(__ia64__)  // IA64
