@@ -230,8 +230,8 @@ public:
      */
     template <typename option_type, validator validator_type = detail::default_validator<option_type>>
     //!\cond
-        requires (input_stream_over<std::istringstream, option_type> ||
-                  input_stream_over<std::istringstream, typename option_type::value_type>) &&
+        requires (argument_parser_compatible_option<option_type> ||
+                  argument_parser_compatible_option<typename option_type::value_type>) &&
                   std::invocable<validator_type, option_type>
     //!\endcond
     void add_option(option_type & value,
@@ -292,8 +292,8 @@ public:
      */
     template <typename option_type, validator validator_type = detail::default_validator<option_type>>
     //!\cond
-        requires (input_stream_over<std::istringstream, option_type> ||
-                  input_stream_over<std::istringstream, typename option_type::value_type>) &&
+        requires (argument_parser_compatible_option<option_type> ||
+                  argument_parser_compatible_option<typename option_type::value_type>) &&
                   std::invocable<validator_type, option_type>
     //!\endcond
     void add_positional_option(option_type & value,

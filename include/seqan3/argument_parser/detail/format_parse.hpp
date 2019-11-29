@@ -283,13 +283,11 @@ private:
     }
 
     /*!\brief Tries to cast an input string into a value.
-     *
-     * \tparam option_t Must satisfy the seqan3::input_stream_over.
-     *
+     * \tparam option_t Must model seqan3::input_stream_over.
      * \param[out] value Stores the casted value.
      * \param[in]  in    The input argument to be casted.
      *
-     * \throws seqan3::parser_invalid_argument
+     * \throws seqan3::type_conversion_failed
      */
     template <typename option_t>
     //!\cond
@@ -301,8 +299,33 @@ private:
         stream >> value;
 
         if (stream.fail() || !stream.eof())
+        {
             throw type_conversion_failed("Argument " + in + " could not be casted to type " +
                                          get_type_name_as_string(value) + ".");
+        }
+    }
+
+    /*!\brief Sets an option value depending on the keys found in seqan3::enumeration_names<option_t>.
+     * \tparam option_t Must model seqan3::named_enumeration.
+     * \param[out] value Stores the cast value.
+     * \param[in]  in    The input argument to be cast.
+     *
+     * \throws seqan3::type_conversion_failed
+     */
+    template <named_enumeration option_t>
+    void retrieve_value(option_t & value, std::string_view const in)
+    {
+        auto map = seqan3::enumeration_names<option_t>;
+
+        if (auto it = map.find(in); it == map.end())
+        {
+            throw type_conversion_failed("Argument " + std::string{in} + " could not be cast to enum type " +
+                                         get_display_name_v<option_t>.str() + ".");
+        }
+        else
+        {
+            value = it->second;
+        }
     }
 
     //!\cond
