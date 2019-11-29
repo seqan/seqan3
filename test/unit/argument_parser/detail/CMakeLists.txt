@@ -1,4 +1,4 @@
-add_definitions(-DSEQAN_INCLUDE_DIR="${SEQAN3_INCLUDE_DIR}")
+add_definitions(-DSEQAN3_TEST_LICENSE_DIR="${seqan3_test_unit_BINARY_DIR}/..")
 seqan3_test(format_help_test.cpp)
 seqan3_test(format_html_test.cpp)
 seqan3_test(format_man_test.cpp)

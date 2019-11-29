@@ -42,7 +42,12 @@ file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
 add_library (seqan3_test INTERFACE)
 target_compile_options (seqan3_test INTERFACE "-pedantic"  "-Wall" "-Wextra" "-Werror")
 target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
-target_include_directories (seqan3_test INTERFACE "${SEQAN3_CLONE_DIR}/test/include/")
+if (SEQAN3_CLONE_DIR)
+    target_include_directories (seqan3_test INTERFACE "${SEQAN3_CLONE_DIR}/test/include/")
+else ()
+    target_include_directories (seqan3_test INTERFACE "${CMAKE_CURRENT_LIST_DIR}/include/")
+endif ()
+
 add_library (seqan3::test ALIAS seqan3_test)
 
 # seqan3::test::performance specifies required flags, includes and libraries
