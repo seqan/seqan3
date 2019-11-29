@@ -23,6 +23,7 @@
 #include <seqan3/alphabet/cigar/cigar.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
+#include <seqan3/io/alignment_file/misc.hpp>
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 
@@ -68,7 +69,7 @@ SEQAN3_CONCEPT alignment_file_output_format =
               std::optional<int32_t>                                               & ref_offset,
               std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>>      & align,
               std::vector<cigar>                                                   & cigar,
-              uint16_t                                                             & flag,
+              sam_flag                                                             & flag,
               uint8_t                                                              & mapq,
               std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>  & mate,
               sam_tag_dictionary                                                   & tag_dict,

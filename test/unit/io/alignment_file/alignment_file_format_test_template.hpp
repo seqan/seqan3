@@ -101,11 +101,11 @@ struct alignment_file_data : public ::testing::Test
                                                     'T'_dna5, 'A'_dna5, gap{}, 'T'_dna5}}
     };
 
-    std::vector<uint16_t> flags
+    std::vector<sam_flag> flags
     {
-        41u,
-        42u,
-        43u
+        sam_flag{41u},
+        sam_flag{42u},
+        sam_flag{43u}
     };
 
     std::vector<uint8_t> mapqs
@@ -244,7 +244,7 @@ TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
     EXPECT_TRUE(!get<field::REF_OFFSET>(*fin.begin()).has_value());
     EXPECT_TRUE(std::ranges::empty(get<0>(get<field::ALIGNMENT>(*fin.begin()))));
     EXPECT_TRUE(std::ranges::empty(get<1>(get<field::ALIGNMENT>(*fin.begin()))));
-    EXPECT_EQ(get<field::FLAG>(*fin.begin()), 0u);
+    EXPECT_EQ(get<field::FLAG>(*fin.begin()), sam_flag{0u});
     EXPECT_EQ(get<field::MAPQ>(*fin.begin()), 0u);
     EXPECT_TRUE(!get<0>(get<field::MATE>(*fin.begin())).has_value());
     EXPECT_TRUE(!get<1>(get<field::MATE>(*fin.begin())).has_value());
@@ -390,8 +390,18 @@ TYPED_TEST_P(alignment_file_write, write_empty_members)
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
-        fout.emplace_back(&(this->header), std::string_view{}, 0, std::string_view{}, -1, 0, default_align_t{}, 0,
-                          default_mate_t{},  std::string_view{},  std::string_view{}, sam_tag_dictionary{});
+        fout.emplace_back(&(this->header),
+                          std::string_view{},
+                          sam_flag::none,
+                          std::string_view{},
+                          -1,
+                          0,
+                          default_align_t{},
+                          0,
+                          default_mate_t{},
+                          std::string_view{},
+                          std::string_view{},
+                          sam_tag_dictionary{});
     }
 
     this->ostream.flush();

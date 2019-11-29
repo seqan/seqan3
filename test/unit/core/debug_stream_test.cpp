@@ -14,6 +14,7 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/core/debug_stream.hpp>
+#include <seqan3/io/alignment_file/misc.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/std/filesystem>
@@ -259,4 +260,14 @@ TEST(debug_stream_test, named_enumeration)
     my_stream << fo;
     o.flush();
     EXPECT_EQ(o.str(), "one<UNKNOWN_VALUE>");
+}
+
+TEST(debug_stream_test, sam_flags)
+{
+    std::ostringstream o{};
+    debug_stream_type my_stream{o};
+
+    my_stream << seqan3::sam_flag::none << "," << seqan3::sam_flag::unmapped;
+    o.flush();
+    EXPECT_EQ(o.str(), "0,4");
 }

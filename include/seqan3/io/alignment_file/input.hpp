@@ -142,7 +142,7 @@ SEQAN3_CONCEPT alignment_file_input_traits = requires (t v)
 
     // field::OFFSET is fixed to int32_t
     // field::REF_OFFSET is fixed to std::optional<int32_t>
-    // field::FLAG is fixed to uint16_t
+    // field::FLAG is fixed to seqan3::sam_flag
     // field::MAPQ is fixed to uint8_t
     // field::EVALUE is fixed to double
     // field::BITSCORE is fixed to double
@@ -365,20 +365,20 @@ struct alignment_file_input_default_traits
 template <
     alignment_file_input_traits                     traits_type_        = alignment_file_input_default_traits<>,
     detail::fields_specialisation                               selected_field_ids_ = fields<field::SEQ,
-                                                                              field::ID,
-                                                                              field::OFFSET,
-                                                                              field::REF_SEQ,
-                                                                              field::REF_ID,
-                                                                              field::REF_OFFSET,
-                                                                              field::ALIGNMENT,
-                                                                              field::MAPQ,
-                                                                              field::QUAL,
-                                                                              field::FLAG,
-                                                                              field::MATE,
-                                                                              field::TAGS,
-                                                                              field::EVALUE,
-                                                                              field::BIT_SCORE,
-                                                                              field::HEADER_PTR>,
+                                                                                             field::ID,
+                                                                                             field::OFFSET,
+                                                                                             field::REF_SEQ,
+                                                                                             field::REF_ID,
+                                                                                             field::REF_OFFSET,
+                                                                                             field::ALIGNMENT,
+                                                                                             field::MAPQ,
+                                                                                             field::QUAL,
+                                                                                             field::FLAG,
+                                                                                             field::MATE,
+                                                                                             field::TAGS,
+                                                                                             field::EVALUE,
+                                                                                             field::BIT_SCORE,
+                                                                                             field::HEADER_PTR>,
     detail::type_list_of_alignment_file_input_formats  valid_formats_    = type_list<format_sam, format_bam>,
     std::integral                                stream_char_type_ = char>
 class alignment_file_input
@@ -448,8 +448,8 @@ public:
     //!\brief The type of field::QUAL (default std::vector<seqan3::phred42>).
     using quality_type             = typename traits_type::template quality_container<
                                          typename traits_type::quality_alphabet>;
-    //!\brief The type of field::FLAG is fixed to uint16_t.
-    using flag_type                = uint16_t;
+    //!\brief The type of field::FLAG is fixed to seqan3::sam_flag.
+    using flag_type                = sam_flag;
     //!\brief The type of field::CIGAR is fixed to std::vector<cigar>.
     using cigar_type               = std::vector<cigar>;
     //!\brief The type of field::MATE is fixed to std::tuple<ref_id_type, ref_offset_type, int32_t>).

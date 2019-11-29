@@ -31,6 +31,7 @@
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
 #include <seqan3/io/alignment_file/input_options.hpp>
+#include <seqan3/io/alignment_file/misc.hpp>
 #include <seqan3/io/alignment_file/output_format_concept.hpp>
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
@@ -139,7 +140,7 @@ protected:
                                 [[maybe_unused]] std::optional<int32_t> ref_offset,
                                 [[maybe_unused]] align_type && align,
                                 [[maybe_unused]] cigar_type && cigar_vector,
-                                [[maybe_unused]] uint16_t flag,
+                                [[maybe_unused]] sam_flag const flag,
                                 [[maybe_unused]] uint8_t mapq,
                                 [[maybe_unused]] mate_type && mate,
                                 [[maybe_unused]] tag_dict_type && tag_dict,
@@ -163,7 +164,7 @@ private:
         uint32_t mapq:8;        //!< The mapping quality.
         uint32_t bin:16;        //!< The bin number.
         uint32_t n_cigar_op:16; //!< The number of cigar operations of the alignment.
-        uint32_t flag:16;       //!< The flag value.
+        sam_flag flag;          //!< The flag value (uint16_t enum).
         int32_t l_seq;          //!< The number of bases of the read sequence.
         int32_t next_refID;     //!< The reference id of the mate.
         int32_t next_pos;       //!< The begin position of the mate alignment.
@@ -309,8 +310,8 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     static_assert(detail::decays_to_ignore_v<mapq_type> || std::same_as<mapq_type, uint8_t>,
                   "The type of field::MAPQ must be uint8_t.");
 
-    static_assert(detail::decays_to_ignore_v<flag_type> || std::same_as<flag_type, uint16_t>,
-                  "The type of field::FLAG must be uint8_t.");
+    static_assert(detail::decays_to_ignore_v<flag_type> || std::same_as<flag_type, sam_flag>,
+                  "The type of field::FLAG must be seqan3::sam_flag.");
 
     using stream_buf_t = std::istreambuf_iterator<typename stream_type::char_type>;
     auto stream_view = std::ranges::subrange<decltype(stream_buf_t{stream}), decltype(stream_buf_t{})>
@@ -609,7 +610,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
                                                [[maybe_unused]] std::optional<int32_t> ref_offset,
                                                [[maybe_unused]] align_type && align,
                                                [[maybe_unused]] cigar_type && cigar_vector,
-                                               [[maybe_unused]] uint16_t flag,
+                                               [[maybe_unused]] sam_flag const flag,
                                                [[maybe_unused]] uint8_t mapq,
                                                [[maybe_unused]] mate_type && mate,
                                                [[maybe_unused]] tag_dict_type && tag_dict,

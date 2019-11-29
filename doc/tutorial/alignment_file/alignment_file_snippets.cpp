@@ -56,8 +56,8 @@ int main()
 
     alignment_file_output fout{filename, fields<field::FLAG, field::MAPQ>{}};
 
-    size_t mymapq{60};
-    uint8_t flag{0};
+    size_t mymapq{0};
+    seqan3::sam_flag flag{seqan3::sam_flag::unmapped};
 
     // ...
 
