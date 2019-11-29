@@ -18,9 +18,6 @@ set (SEQAN3_DOXYGEN_INPUT_DIR "${CMAKE_SOURCE_DIR}")
 
 include (seqan3-doxygen.cmake)
 
-### Find python interpreter
-find_package(PythonInterp REQUIRED)
-
 ### Enable testing
 enable_testing()
 
