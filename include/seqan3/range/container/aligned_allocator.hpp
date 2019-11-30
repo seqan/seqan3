@@ -111,9 +111,11 @@ public:
      * [operator new](https://en.cppreference.com/w/cpp/memory/new/operator_new).
      * If the given `alignment` is bigger than
      * [__STDCPP_DEFAULT_NEW_ALIGNMENT__](https://en.cppreference.com/w/cpp/memory/new/align_val_t) the alignment
-     * aware operator new that takes as second argument the alignment as std::align_val_t. The allocation methods
-     * used by the global operator new functions is unspecified, e.g. std::malloc or std::aligned_alloc. Accordingly,
-     * the requirements on the alignment and the size of allocated bytes is implementation defined.
+     * aware operator new that takes as second argument the alignment as std::align_val_t.
+     *
+     * \note We call the new operator with the semantic requirements that the c++ standard specifies/demands, but be
+     *       aware that users can overload any (global) ::operator new that might not adhere to the standard and might
+     *       cause std::bad_alloc or unaligned pointers.
      *
      * \sa https://en.cppreference.com/w/cpp/memory/allocator/allocate
      *
