@@ -13,8 +13,8 @@
 #pragma once
 
 #include <array>
-#include <immintrin.h>
 
+#include <simde/x86/sse2.h>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/detail/builtin_simd.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
@@ -49,13 +49,13 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
     // B0 B1 B2 ... Be Bf
     // ...
     // P0 P1 P2 ... Pe Pf
-    __m128i tmp1[16];
+    simde__m128i tmp1[16];
     for (int i = 0; i < 8; ++i)
     {
-        tmp1[i]   = _mm_unpacklo_epi8(reinterpret_cast<__m128i &>(matrix[2*i]),
-                                      reinterpret_cast<__m128i &>(matrix[2*i+1]));
-        tmp1[i+8] = _mm_unpackhi_epi8(reinterpret_cast<__m128i &>(matrix[2*i]),
-                                      reinterpret_cast<__m128i &>(matrix[2*i+1]));
+        tmp1[i]   = simde_mm_unpacklo_epi8(reinterpret_cast<simde__m128i &>(matrix[2*i]),
+                                      reinterpret_cast<simde__m128i &>(matrix[2*i+1]));
+        tmp1[i+8] = simde_mm_unpackhi_epi8(reinterpret_cast<simde__m128i &>(matrix[2*i]),
+                                      reinterpret_cast<simde__m128i &>(matrix[2*i+1]));
     }
     // tmp1[0]  = A0 B0 A1 B1 ... A7 B7
     // tmp1[1]  = C0 D0 C1 D1 ... C7 D7
@@ -64,11 +64,11 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
     // tmp1[8]  = A8 B8 A9 B9 ... Af Bf
     // ...
     // tmp1[15] = O8 P8 O9 P9 ... Of Pf
-    __m128i tmp2[16];
+    simde__m128i tmp2[16];
     for (int i = 0; i < 8; ++i)
     {
-        tmp2[i]   = _mm_unpacklo_epi16(tmp1[2*i], tmp1[2*i+1]);
-        tmp2[i+8] = _mm_unpackhi_epi16(tmp1[2*i], tmp1[2*i+1]);
+        tmp2[i]   = simde_mm_unpacklo_epi16(tmp1[2*i], tmp1[2*i+1]);
+        tmp2[i+8] = simde_mm_unpackhi_epi16(tmp1[2*i], tmp1[2*i+1]);
     }
     // tmp2[0]  = A0 B0 C0 D0 ... A3 B3 C3 D3
     // tmp2[1]  = E0 F0 G0 H0 ... E3 F3 G3 H3
@@ -84,8 +84,8 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
     // tmp2[15] = Mc Nc Oc Pc ... Mf Nf Of Pf
     for (int i = 0; i < 8; ++i)
     {
-        tmp1[i]   = _mm_unpacklo_epi32(tmp2[2*i], tmp2[2*i+1]);
-        tmp1[i+8] = _mm_unpackhi_epi32(tmp2[2*i], tmp2[2*i+1]);
+        tmp1[i]   = simde_mm_unpacklo_epi32(tmp2[2*i], tmp2[2*i+1]);
+        tmp1[i+8] = simde_mm_unpackhi_epi32(tmp2[2*i], tmp2[2*i+1]);
     }
     // tmp1[0]  = A0 B0 .... H0 A1 B1 .... H1
     // tmp1[1]  = I0 J0 .... P0 I1 J1 .... P1
@@ -94,8 +94,8 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
     // tmp1[1]  = I0 J0 .... P0 I1 J1 .... P1
     for (int i = 0; i < 8; ++i)
     {
-        matrix[bit_reverse[i]]   = reinterpret_cast<simd_t>(_mm_unpacklo_epi64(tmp1[2*i], tmp1[2*i+1]));
-        matrix[bit_reverse[i+8]] = reinterpret_cast<simd_t>(_mm_unpackhi_epi64(tmp1[2*i], tmp1[2*i+1]));
+        matrix[bit_reverse[i]]   = reinterpret_cast<simd_t>(simde_mm_unpacklo_epi64(tmp1[2*i], tmp1[2*i+1]));
+        matrix[bit_reverse[i+8]] = reinterpret_cast<simd_t>(simde_mm_unpackhi_epi64(tmp1[2*i], tmp1[2*i+1]));
     }
 }
 

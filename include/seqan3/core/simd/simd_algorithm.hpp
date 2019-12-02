@@ -13,9 +13,10 @@
 #pragma once
 
 #include <array>
-#include <immintrin.h>
 #include <utility>
 
+#include <simde/x86/sse4.1.h>
+#include <simde/x86/avx2.h>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/detail/builtin_simd.hpp>
 #include <seqan3/core/simd/detail/simd_algorithm_sse4.hpp>
@@ -83,77 +84,77 @@ constexpr target_simd_t upcast_signed(source_simd_t const & src)
         if constexpr (simd_traits<source_simd_t>::length == 16) // cast from epi8 ...
         {
             if constexpr (simd_traits<target_simd_t>::length == 8) // to epi16
-                return reinterpret_cast<target_simd_t>(_mm_cvtepi8_epi16(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepi8_epi16(reinterpret_cast<simde__m128i const &>(src)));
             if constexpr (simd_traits<target_simd_t>::length == 4) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm_cvtepi8_epi32(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepi8_epi32(reinterpret_cast<simde__m128i const &>(src)));
             if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm_cvtepi8_epi64(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepi8_epi64(reinterpret_cast<simde__m128i const &>(src)));
         }
         else if constexpr (simd_traits<source_simd_t>::length == 8) // cast from epi16 ...
         {
             if constexpr (simd_traits<target_simd_t>::length == 4) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm_cvtepi16_epi32(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepi16_epi32(reinterpret_cast<simde__m128i const &>(src)));
             if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm_cvtepi16_epi64(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepi16_epi64(reinterpret_cast<simde__m128i const &>(src)));
         }
         else  // cast from epi32 to epi64
         {
             static_assert(simd_traits<source_simd_t>::length == 4, "Expected 32 bit scalar type.");
-            return reinterpret_cast<target_simd_t>(_mm_cvtepi32_epi64(reinterpret_cast<__m128i const &>(src)));
+            return reinterpret_cast<target_simd_t>(simde_mm_cvtepi32_epi64(reinterpret_cast<simde__m128i const &>(src)));
         }
     }
     else if constexpr (simd_traits<source_simd_t>::max_length == 32) // AVX2
     {
         static_assert(simd_traits<target_simd_t>::max_length == 32, "Target vector has different byte size.");
-        __m128i const & tmp = _mm256_castsi256_si128(reinterpret_cast<__m256i const &>(src));
+        simde__m128i const & tmp = simde_mm256_castsi256_si128(reinterpret_cast<simde__m256i const &>(src));
         if constexpr (simd_traits<source_simd_t>::length == 32) // cast from epi8 ...
         {
             if constexpr (simd_traits<target_simd_t>::length == 16) // to epi16
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepi8_epi16(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepi8_epi16(tmp));
             if constexpr (simd_traits<target_simd_t>::length == 8) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepi8_epi32(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepi8_epi32(tmp));
             if constexpr (simd_traits<target_simd_t>::length == 4) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepi8_epi64(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepi8_epi64(tmp));
         }
         else if constexpr (simd_traits<source_simd_t>::length == 16) // cast from epi16 ...
         {
             if constexpr (simd_traits<target_simd_t>::length == 8) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepi16_epi32(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepi16_epi32(tmp));
             if constexpr (simd_traits<target_simd_t>::length == 4) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepi16_epi64(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepi16_epi64(tmp));
         }
         else // cast from epi32 to epi64
         {
             static_assert(simd_traits<source_simd_t>::length == 8, "Expected 32 bit scalar type.");
-            return reinterpret_cast<target_simd_t>(_mm256_cvtepi32_epi64(tmp));
+            return reinterpret_cast<target_simd_t>(simde_mm256_cvtepi32_epi64(tmp));
         }
     }
-    else if constexpr (simd_traits<source_simd_t>::max_length == 64) // AVX512
-    {
-        static_assert(simd_traits<target_simd_t>::max_length == 64, "Target vector has different byte size.");
-        __m512i const & tmp = reinterpret_cast<__m512i const &>(src);
-        if constexpr (simd_traits<source_simd_t>::length == 64) // cast from epi8 ...
-        {
-            if constexpr (simd_traits<target_simd_t>::length == 32) // to epi16
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepi8_epi16(_mm512_castsi512_si256(tmp)));
-            if constexpr (simd_traits<target_simd_t>::length == 16) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepi8_epi32(_mm512_castsi512_si128(tmp)));
-            if constexpr (simd_traits<target_simd_t>::length == 8) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepi8_epi64(_mm512_castsi512_si128(tmp)));
-        }
-        else if constexpr (simd_traits<source_simd_t>::length == 32) // cast from epi16 ...
-        {
-            if constexpr (simd_traits<target_simd_t>::length == 16) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepi16_epi32(_mm512_castsi512_si256(tmp)));
-            if constexpr (simd_traits<target_simd_t>::length == 8) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepi16_epi64(_mm512_castsi512_si128(tmp)));
-        }
-        else // cast from epi32 to epi64
-        {
-            static_assert(simd_traits<source_simd_t>::length == 16, "Expected 32 bit scalar type.");
-            return reinterpret_cast<target_simd_t>(_mm512_cvtepi32_epi64(_mm512_castsi512_si256(tmp)));
-        }
-    }
+    // else if constexpr (simd_traits<source_simd_t>::max_length == 64) // AVX512
+    // {
+    //     static_assert(simd_traits<target_simd_t>::max_length == 64, "Target vector has different byte size.");
+    //     __m512i const & tmp = reinterpret_cast<__m512i const &>(src);
+    //     if constexpr (simd_traits<source_simd_t>::length == 64) // cast from epi8 ...
+    //     {
+    //         if constexpr (simd_traits<target_simd_t>::length == 32) // to epi16
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepi8_epi16(simde_mm512_castsi512_si256(tmp)));
+    //         if constexpr (simd_traits<target_simd_t>::length == 16) // to epi32
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepi8_epi32(simde_mm512_castsi512_si128(tmp)));
+    //         if constexpr (simd_traits<target_simd_t>::length == 8) // to epi64
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepi8_epi64(simde_mm512_castsi512_si128(tmp)));
+    //     }
+    //     else if constexpr (simd_traits<source_simd_t>::length == 32) // cast from epi16 ...
+    //     {
+    //         if constexpr (simd_traits<target_simd_t>::length == 16) // to epi32
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepi16_epi32(simde_mm512_castsi512_si256(tmp)));
+    //         if constexpr (simd_traits<target_simd_t>::length == 8) // to epi64
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepi16_epi64(simde_mm512_castsi512_si128(tmp)));
+    //     }
+    //     else // cast from epi32 to epi64
+    //     {
+    //         static_assert(simd_traits<source_simd_t>::length == 16, "Expected 32 bit scalar type.");
+    //         return reinterpret_cast<target_simd_t>(simde_mm512_cvtepi32_epi64(simde_mm512_castsi512_si256(tmp)));
+    //     }
+    // }
     else
     {
         static_assert(simd_traits<source_simd_t>::max_length <= 32, "simd type is not supported.");
@@ -176,77 +177,77 @@ constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
         if constexpr (simd_traits<source_simd_t>::length == 16) // cast from epi8 ...
         {
             if constexpr (simd_traits<target_simd_t>::length == 8) // to epi16
-                return reinterpret_cast<target_simd_t>(_mm_cvtepu8_epi16(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepu8_epi16(reinterpret_cast<simde__m128i const &>(src)));
             if constexpr (simd_traits<target_simd_t>::length == 4) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm_cvtepu8_epi32(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepu8_epi32(reinterpret_cast<simde__m128i const &>(src)));
             if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm_cvtepu8_epi64(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepu8_epi64(reinterpret_cast<simde__m128i const &>(src)));
         }
         else if constexpr (simd_traits<source_simd_t>::length == 8) // cast from epi16 ...
         {
             if constexpr (simd_traits<target_simd_t>::length == 4) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm_cvtepu16_epi32(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepu16_epi32(reinterpret_cast<simde__m128i const &>(src)));
             if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm_cvtepu16_epi64(reinterpret_cast<__m128i const &>(src)));
+                return reinterpret_cast<target_simd_t>(simde_mm_cvtepu16_epi64(reinterpret_cast<simde__m128i const &>(src)));
         }
         else  // cast from epi32 to epi64
         {
             static_assert(simd_traits<source_simd_t>::length == 4, "Expected 32 bit scalar type.");
-            return reinterpret_cast<target_simd_t>(_mm_cvtepu32_epi64(reinterpret_cast<__m128i const &>(src)));
+            return reinterpret_cast<target_simd_t>(simde_mm_cvtepu32_epi64(reinterpret_cast<simde__m128i const &>(src)));
         }
     }
     else if constexpr (simd_traits<source_simd_t>::max_length == 32) // AVX2
     {
         static_assert(simd_traits<target_simd_t>::max_length == 32, "Target vector has different byte size.");
-        __m128i const & tmp = _mm256_castsi256_si128(reinterpret_cast<__m256i const &>(src));
+        simde__m128i const & tmp = simde_mm256_castsi256_si128(reinterpret_cast<simde__m256i const &>(src));
         if constexpr (simd_traits<source_simd_t>::length == 32) // cast from epi8 ...
         {
             if constexpr (simd_traits<target_simd_t>::length == 16) // to epi16
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepu8_epi16(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepu8_epi16(tmp));
             if constexpr (simd_traits<target_simd_t>::length == 8) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepu8_epi32(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepu8_epi32(tmp));
             if constexpr (simd_traits<target_simd_t>::length == 4) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepu8_epi64(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepu8_epi64(tmp));
         }
         else if constexpr (simd_traits<source_simd_t>::length == 16) // cast from epi16 ...
         {
             if constexpr (simd_traits<target_simd_t>::length == 8) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepu16_epi32(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepu16_epi32(tmp));
             if constexpr (simd_traits<target_simd_t>::length == 4) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm256_cvtepu16_epi64(tmp));
+                return reinterpret_cast<target_simd_t>(simde_mm256_cvtepu16_epi64(tmp));
         }
         else // cast from epi32 to epi64
         {
             static_assert(simd_traits<source_simd_t>::length == 8, "Expected 32 bit scalar type.");
-            return reinterpret_cast<target_simd_t>(_mm256_cvtepu32_epi64(tmp));
+            return reinterpret_cast<target_simd_t>(simde_mm256_cvtepu32_epi64(tmp));
         }
     }
-    else if constexpr (simd_traits<source_simd_t>::max_length == 64) // AVX512
-    {
-        static_assert(simd_traits<target_simd_t>::max_length == 64, "Target vector has different byte size.");
-        __m512i const & tmp = reinterpret_cast<__m512i const &>(src);
-        if constexpr (simd_traits<source_simd_t>::length == 64) // cast from epi8 ...
-        {
-            if constexpr (simd_traits<target_simd_t>::length == 32) // to epi16
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepu8_epi16(_mm512_castsi512_si256(tmp)));
-            if constexpr (simd_traits<target_simd_t>::length == 16) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepu8_epi32(_mm512_castsi512_si128(tmp)));
-            if constexpr (simd_traits<target_simd_t>::length == 8) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepu8_epi64(_mm512_castsi512_si128(tmp)));
-        }
-        else if constexpr (simd_traits<source_simd_t>::length == 32) // cast from epi16 ...
-        {
-            if constexpr (simd_traits<target_simd_t>::length == 16) // to epi32
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepu16_epi32(_mm512_castsi512_si256(tmp)));
-            if constexpr (simd_traits<target_simd_t>::length == 8) // to epi64
-                return reinterpret_cast<target_simd_t>(_mm512_cvtepu16_epi64(_mm512_castsi512_si128(tmp)));
-        }
-        else // cast from epi32 to epi64
-        {
-            static_assert(simd_traits<source_simd_t>::length == 16, "Expected 32 bit scalar type.");
-            return reinterpret_cast<target_simd_t>(_mm512_cvtepu32_epi64(_mm512_castsi512_si256(tmp)));
-        }
-    }
+    // else if constexpr (simd_traits<source_simd_t>::max_length == 64) // AVX512
+    // {
+    //     static_assert(simd_traits<target_simd_t>::max_length == 64, "Target vector has different byte size.");
+    //     __m512i const & tmp = reinterpret_cast<__m512i const &>(src);
+    //     if constexpr (simd_traits<source_simd_t>::length == 64) // cast from epi8 ...
+    //     {
+    //         if constexpr (simd_traits<target_simd_t>::length == 32) // to epi16
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepu8_epi16(simde_mm512_castsi512_si256(tmp)));
+    //         if constexpr (simd_traits<target_simd_t>::length == 16) // to epi32
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepu8_epi32(simde_mm512_castsi512_si128(tmp)));
+    //         if constexpr (simd_traits<target_simd_t>::length == 8) // to epi64
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepu8_epi64(simde_mm512_castsi512_si128(tmp)));
+    //     }
+    //     else if constexpr (simd_traits<source_simd_t>::length == 32) // cast from epi16 ...
+    //     {
+    //         if constexpr (simd_traits<target_simd_t>::length == 16) // to epi32
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepu16_epi32(simde_mm512_castsi512_si256(tmp)));
+    //         if constexpr (simd_traits<target_simd_t>::length == 8) // to epi64
+    //             return reinterpret_cast<target_simd_t>(simde_mm512_cvtepu16_epi64(simde_mm512_castsi512_si128(tmp)));
+    //     }
+    //     else // cast from epi32 to epi64
+    //     {
+    //         static_assert(simd_traits<source_simd_t>::length == 16, "Expected 32 bit scalar type.");
+    //         return reinterpret_cast<target_simd_t>(simde_mm512_cvtepu32_epi64(simde_mm512_castsi512_si256(tmp)));
+    //     }
+    // }
     else
     {
         static_assert(simd_traits<source_simd_t>::max_length <= 32, "simd type is not supported.");
@@ -286,7 +287,7 @@ constexpr simd_t extract_halve(simd_t const & src)
     if constexpr (simd_traits<simd_t>::length < 2) // In case there are less elements available return unchanged value.
             return src;
     else if constexpr (detail::is_native_builtin_simd_v<simd_t> && simd_traits<simd_t>::max_length == 16) // SSE4
-        return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), (index) << 3));
+        return reinterpret_cast<simd_t>(simde_mm_srli_si128(reinterpret_cast<simde__m128i const &>(src), (index) << 3));
     else // Elementwise extraction fall back.
         return detail::extract_impl<2>(src, index);
 }
@@ -324,7 +325,7 @@ constexpr simd_t extract_quarter(simd_t const & src)
     if constexpr (simd_traits<simd_t>::length < 4) // In case there are less elements available return unchanged value.
         return src;
     else if constexpr (detail::is_native_builtin_simd_v<simd_t> && simd_traits<simd_t>::max_length == 16) // SSE4
-        return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), index << 2));
+        return reinterpret_cast<simd_t>(simde_mm_srli_si128(reinterpret_cast<simde__m128i const &>(src), index << 2));
     else // auto vectorisable fall back
         return detail::extract_impl<4>(src, index);
 }
@@ -362,7 +363,7 @@ constexpr simd_t extract_eighth(simd_t const & src)
     if constexpr (simd_traits<simd_t>::length < 8) // In case there are less elements available return unchanged value.
         return src;
     else if constexpr (detail::is_native_builtin_simd_v<simd_t> && simd_traits<simd_t>::max_length == 16) // SSE4
-        return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), index << 1));
+        return reinterpret_cast<simd_t>(simde_mm_srli_si128(reinterpret_cast<simde__m128i const &>(src), index << 1));
     else // auto vectorisable fall back
         return detail::extract_impl<8>(src, index);
 }
@@ -427,11 +428,11 @@ constexpr simd_t load(void const * mem_addr)
     if constexpr (detail::is_native_builtin_simd_v<simd_t>)
     {
         if constexpr (simd_traits<simd_t>::max_length == 16)
-            return reinterpret_cast<simd_t>(_mm_loadu_si128(reinterpret_cast<__m128i const *>(mem_addr)));
+            return reinterpret_cast<simd_t>(simde_mm_loadu_si128(reinterpret_cast<simde__m128i const *>(mem_addr)));
         else if constexpr (simd_traits<simd_t>::max_length == 32)
-            return reinterpret_cast<simd_t>(_mm256_loadu_si256(reinterpret_cast<__m256i const *>(mem_addr)));
-        else if constexpr (simd_traits<simd_t>::max_length == 64)
-            return reinterpret_cast<simd_t>(_mm512_loadu_si512(mem_addr));
+            return reinterpret_cast<simd_t>(simde_mm256_loadu_si256(reinterpret_cast<simde__m256i const *>(mem_addr)));
+        // else if constexpr (simd_traits<simd_t>::max_length == 64)
+        //     return reinterpret_cast<simd_t>(simde_mm512_loadu_si512(mem_addr));
         else
             static_assert(simd_traits<simd_t>::max_length >= 16 && simd_traits<simd_t>::max_length <= 64,
                           "Unsupported simd type.");
