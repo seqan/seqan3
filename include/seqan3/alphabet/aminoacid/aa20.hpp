@@ -143,22 +143,6 @@ protected:
 } // namespace seqan3
 
 // ------------------------------------------------------------------
-// type traits
-// ------------------------------------------------------------------
-
-namespace seqan3
-{
-
-//!\brief Identifies aa20 as an amino acid alphabet (unary_type_trait specialisation).
-//!\implements unary_type_trait
-//!\see seqan3::is_aminoacid
-//!\ingroup aminoacid
-template <>
-struct is_aminoacid<aa20> : std::true_type {};
-
-} // namespace seqan3
-
-// ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
 

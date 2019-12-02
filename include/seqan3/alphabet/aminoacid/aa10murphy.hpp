@@ -160,17 +160,6 @@ protected:
 };
 
 // ------------------------------------------------------------------
-// type traits
-// ------------------------------------------------------------------
-
-//!\brief Identifies aa10murphy as an amino acid alphabet (unary_type_trait specialisation).
-//!\implements unary_type_trait
-//!\see seqan3::is_aminoacid
-//!\ingroup aminoacid
-template <>
-struct is_aminoacid<aa10murphy> : std::true_type {};
-
-// ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
 
