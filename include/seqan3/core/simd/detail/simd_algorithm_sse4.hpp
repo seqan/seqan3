@@ -40,7 +40,7 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
 
     // we need a look-up table to reverse the lowest 4 bits
     // in order to place the permute the transposed rows
-    constexpr std::array<char, 16> bit_reverse{0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15};
+    constexpr std::array<int8_t, 16> bit_reverse{0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15};
 
     // transpose a 16x16 byte matrix
     //
