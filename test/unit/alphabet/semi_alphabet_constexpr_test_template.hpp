@@ -9,8 +9,6 @@
 
 #include <seqan3/alphabet/concept.hpp>
 
-using namespace seqan3;
-
 template <typename T>
 using semi_alphabet_constexpr = ::testing::Test;
 
@@ -18,17 +16,17 @@ TYPED_TEST_CASE_P(semi_alphabet_constexpr);
 
 TYPED_TEST_P(semi_alphabet_constexpr, concept_check)
 {
-    EXPECT_TRUE(detail::constexpr_semialphabet<TypeParam>);
-    EXPECT_TRUE(detail::constexpr_semialphabet<TypeParam &>);
+    EXPECT_TRUE(seqan3::detail::constexpr_semialphabet<TypeParam>);
+    EXPECT_TRUE(seqan3::detail::constexpr_semialphabet<TypeParam &>);
 
-    EXPECT_TRUE(detail::constexpr_semialphabet<TypeParam const>);
-    EXPECT_TRUE(detail::constexpr_semialphabet<TypeParam const &>);
+    EXPECT_TRUE(seqan3::detail::constexpr_semialphabet<TypeParam const>);
+    EXPECT_TRUE(seqan3::detail::constexpr_semialphabet<TypeParam const &>);
 
-    EXPECT_TRUE(detail::writable_constexpr_semialphabet<TypeParam>);
-    EXPECT_TRUE(detail::writable_constexpr_semialphabet<TypeParam &>);
+    EXPECT_TRUE(seqan3::detail::writable_constexpr_semialphabet<TypeParam>);
+    EXPECT_TRUE(seqan3::detail::writable_constexpr_semialphabet<TypeParam &>);
 
-    EXPECT_FALSE(detail::writable_constexpr_semialphabet<TypeParam const>);
-    EXPECT_FALSE(detail::writable_constexpr_semialphabet<TypeParam const &>);
+    EXPECT_FALSE(seqan3::detail::writable_constexpr_semialphabet<TypeParam const>);
+    EXPECT_FALSE(seqan3::detail::writable_constexpr_semialphabet<TypeParam const &>);
 }
 
 TYPED_TEST_P(semi_alphabet_constexpr, default_value_constructor)
@@ -38,21 +36,21 @@ TYPED_TEST_P(semi_alphabet_constexpr, default_value_constructor)
 
 TYPED_TEST_P(semi_alphabet_constexpr, global_assign_rank)
 {
-    constexpr size_t rank = 1 % alphabet_size<TypeParam>;
+    constexpr size_t rank = 1 % seqan3::alphabet_size<TypeParam>;
     [[maybe_unused]] constexpr TypeParam t0{seqan3::assign_rank_to(rank, TypeParam{})};
 }
 
 TYPED_TEST_P(semi_alphabet_constexpr, global_to_rank)
 {
-    constexpr size_t rank = 1 % alphabet_size<TypeParam>;
+    constexpr size_t rank = 1 % seqan3::alphabet_size<TypeParam>;
     constexpr TypeParam t0{seqan3::assign_rank_to(rank, TypeParam{})};
-    constexpr bool b = (to_rank(t0) == rank);
+    constexpr bool b = (seqan3::to_rank(t0) == rank);
     EXPECT_TRUE(b);
 }
 
 TYPED_TEST_P(semi_alphabet_constexpr, copy_constructor)
 {
-    constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size<TypeParam>;
+    constexpr seqan3::alphabet_rank_t<TypeParam> rank = 1 % seqan3::alphabet_size<TypeParam>;
     constexpr TypeParam t1{seqan3::assign_rank_to(rank, TypeParam{})};
 
     constexpr TypeParam t2{t1};
@@ -63,7 +61,7 @@ TYPED_TEST_P(semi_alphabet_constexpr, copy_constructor)
 
 TYPED_TEST_P(semi_alphabet_constexpr, move_constructor)
 {
-    constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size<TypeParam>;
+    constexpr seqan3::alphabet_rank_t<TypeParam> rank = 1 % seqan3::alphabet_size<TypeParam>;
     constexpr TypeParam t0{seqan3::assign_rank_to(rank, TypeParam{})};
     constexpr TypeParam t1{t0};
 
@@ -75,7 +73,7 @@ TYPED_TEST_P(semi_alphabet_constexpr, move_constructor)
 
 TYPED_TEST_P(semi_alphabet_constexpr, copy_assignment)
 {
-    constexpr size_t rank = 1 % alphabet_size<TypeParam>;
+    constexpr size_t rank = 1 % seqan3::alphabet_size<TypeParam>;
     constexpr TypeParam t0{seqan3::assign_rank_to(rank, TypeParam{})};
     // constexpr context:
     constexpr TypeParam t3 = [&] () constexpr
@@ -91,7 +89,7 @@ TYPED_TEST_P(semi_alphabet_constexpr, copy_assignment)
 
 TYPED_TEST_P(semi_alphabet_constexpr, move_assignment)
 {
-    constexpr size_t rank = 1 % alphabet_size<TypeParam>;
+    constexpr size_t rank = 1 % seqan3::alphabet_size<TypeParam>;
     constexpr TypeParam t0{seqan3::assign_rank_to(rank, TypeParam{})};
     // constexpr context:
     constexpr TypeParam t3 = [&] () constexpr
@@ -107,7 +105,7 @@ TYPED_TEST_P(semi_alphabet_constexpr, move_assignment)
 
 TYPED_TEST_P(semi_alphabet_constexpr, comparison_operators)
 {
-    if constexpr (alphabet_size<TypeParam> == 1)
+    if constexpr (seqan3::alphabet_size<TypeParam> == 1)
     {
         constexpr TypeParam t0{};
         constexpr TypeParam t1{};

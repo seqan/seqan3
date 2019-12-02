@@ -7,4 +7,5 @@ int main()
     using seqan3::operator""_rna4;
 
     seqan3::alphabet_variant<seqan3::dna4, seqan3::gap> letter1{'C'_rna4};
+    seqan3::alphabet_variant<seqan3::dna4, seqan3::gap> letter2 = 'C'_rna4;
 }

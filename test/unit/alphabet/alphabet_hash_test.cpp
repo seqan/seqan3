@@ -13,12 +13,10 @@
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/range/hash.hpp>
 
-using namespace seqan3;
-
 template <typename T>
 using alphabet_hashing = ::testing::Test;
 
-using test_types = ::testing::Types<dna4, qualified<dna4, phred42>, gapped<dna4>>;
+using test_types = ::testing::Types<seqan3::dna4, seqan3::qualified<seqan3::dna4, seqan3::phred42>, seqan3::gapped<seqan3::dna4>>;
 
 TYPED_TEST_CASE(alphabet_hashing, test_types);
 
@@ -29,17 +27,17 @@ TYPED_TEST(alphabet_hashing, hash)
         std::hash<TypeParam> h{};
         if constexpr (std::same_as<TypeParam, char>)
         {
-            for (size_t i = 0; i < alphabet_size<TypeParam>/2; ++i)
+            for (size_t i = 0; i < seqan3::alphabet_size<TypeParam>/2; ++i)
             {
-                assign_rank_to(i, t0);
+                seqan3::assign_rank_to(i, t0);
                 ASSERT_EQ(h(t0), i);
             }
         }
         else
         {
-            for (size_t i = 0; i < alphabet_size<TypeParam>; ++i)
+            for (size_t i = 0; i < seqan3::alphabet_size<TypeParam>; ++i)
             {
-                assign_rank_to(i, t0);
+                seqan3::assign_rank_to(i, t0);
                 ASSERT_EQ(h(t0), i);
             }
         }
@@ -49,7 +47,7 @@ TYPED_TEST(alphabet_hashing, hash)
         text.reserve(4);
         for (size_t i = 0; i < 4; ++i)
         {
-            text.push_back(assign_rank_to(0, TypeParam{}));
+            text.push_back(seqan3::assign_rank_to(0, TypeParam{}));
         }
         std::hash<decltype(text)> h{};
         ASSERT_EQ(h(text), 0u);
@@ -58,23 +56,23 @@ TYPED_TEST(alphabet_hashing, hash)
         std::hash<TypeParam const> h{};
         if constexpr (std::same_as<TypeParam, char>)
         {
-            for (size_t i = 0; i < alphabet_size<TypeParam>/2; ++i)
+            for (size_t i = 0; i < seqan3::alphabet_size<TypeParam>/2; ++i)
             {
-                TypeParam const t0 = assign_rank_to(i, TypeParam{});
+                TypeParam const t0 = seqan3::assign_rank_to(i, TypeParam{});
                 ASSERT_EQ(h(t0), i);
             }
         }
         else
         {
-            for (size_t i = 0; i < alphabet_size<TypeParam>; ++i)
+            for (size_t i = 0; i < seqan3::alphabet_size<TypeParam>; ++i)
             {
-                TypeParam const t0 = assign_rank_to(i, TypeParam{});
+                TypeParam const t0 = seqan3::assign_rank_to(i, TypeParam{});
                 ASSERT_EQ(h(t0), i);
             }
         }
     }
     {
-        std::vector<TypeParam> const text(4, assign_rank_to(0, TypeParam{}));
+        std::vector<TypeParam> const text(4, seqan3::assign_rank_to(0, TypeParam{}));
         std::hash<decltype(text)> h{};
         ASSERT_EQ(h(text), 0u);
     }

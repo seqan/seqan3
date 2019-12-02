@@ -19,7 +19,7 @@
 
 #include <range/v3/view/slice.hpp>
 
-#include <seqan3/alphabet/all.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/slice.hpp>

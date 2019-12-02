@@ -14,6 +14,8 @@
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 
+using namespace seqan3;
+
 INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet_, wuss51);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss51, semi_alphabet_test, wuss51);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet_constexpr, wuss51);

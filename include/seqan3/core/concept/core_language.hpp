@@ -35,48 +35,46 @@ SEQAN3_CONCEPT weakly_equality_comparable_with =
     requires(std::remove_reference_t<T> const & t,
              std::remove_reference_t<U> const & u)
     {
-        t == u ? 1 : 0;
-        t != u ? 1 : 0;
-        u == t ? 1 : 0;
-        u != t ? 1 : 0;
+        std::convertible_to<decltype(t == u), bool>;
+        std::convertible_to<decltype(t != u), bool>;
+        std::convertible_to<decltype(u == t), bool>;
+        std::convertible_to<decltype(u != t), bool>;
     };
 //!\endcond
 
-/*!\interface   seqan3::detail::weakly_equality_comparable_by_members_with <>
- * \brief       Like seqan3::detail::weakly_equality_comparable_with, but considers only member operators of the LHS.
+//!\brief Binary type trait that behaves like the seqan3::detail::weakly_equality_comparable_with concept.
+template <typename lhs_t, typename rhs_t>
+struct weakly_equality_comparable_with_trait :
+    std::integral_constant<bool, weakly_equality_comparable_with<lhs_t, rhs_t>>
+{};
+
+/*!\interface   seqan3::detail::weakly_ordered_with <>
+ * \tparam t1   The first type to compare.
+ * \tparam t2   The second type to compare.
+ * \brief       Requires the two operands to be comparable with `<`, `<=`, `>` and `>=` in both directions.
  */
 //!\cond
-template <typename lhs_t, typename rhs_t>
-SEQAN3_CONCEPT weakly_equality_comparable_by_members_with = requires (lhs_t const & lhs, rhs_t const & rhs)
+template <typename t1, typename t2>
+SEQAN3_CONCEPT weakly_ordered_with = requires (std::remove_reference_t<t1> const & v1,
+                                               std::remove_reference_t<t2> const & v2)
 {
-    lhs.operator==(rhs); std::boolean<decltype(lhs.operator==(rhs))>;
-    lhs.operator!=(rhs); std::boolean<decltype(lhs.operator!=(rhs))>;
-};
-//!\endcond
-/*!\interface   seqan3::detail::weakly_ordered_by_members_with <>
- * \brief       Like seqan3::weakly_ordered_with, but considers only member operators of the LHS.
- */
-//!\cond
-template <typename lhs_t, typename rhs_t>
-SEQAN3_CONCEPT weakly_ordered_by_members_with = requires (lhs_t const & lhs, rhs_t const & rhs)
-{
-    lhs.operator< (rhs); std::boolean<decltype(lhs.operator< (rhs))>;
-    lhs.operator> (rhs); std::boolean<decltype(lhs.operator> (rhs))>;
-    lhs.operator<=(rhs); std::boolean<decltype(lhs.operator<=(rhs))>;
-    lhs.operator>=(rhs); std::boolean<decltype(lhs.operator>=(rhs))>;
+    std::convertible_to<decltype(v1 <  v2), bool>;
+    std::convertible_to<decltype(v1 <= v2), bool>;
+    std::convertible_to<decltype(v1 >  v2), bool>;
+    std::convertible_to<decltype(v1 >= v2), bool>;
+
+    std::convertible_to<decltype(v2 <  v1), bool>;
+    std::convertible_to<decltype(v2 <= v1), bool>;
+    std::convertible_to<decltype(v2 >  v1), bool>;
+    std::convertible_to<decltype(v2 >= v1), bool>;
 };
 //!\endcond
 
-/*!\interface   seqan3::detail::convertible_to_by_member <>
- * \brief       Like seqan3::implicitly_convertible_to, but only considers member operators of the source type.
- */
-//!\cond
-template <typename source_t, typename target_t>
-SEQAN3_CONCEPT convertible_to_by_member = requires (source_t s)
-{
-    { s.operator target_t() } -> target_t;
-};
-//!\endcond
+//!\brief Binary type trait that behaves like the seqan3::detail::weakly_ordered_with concept.
+template <typename lhs_t, typename rhs_t>
+struct weakly_ordered_with_trait : std::integral_constant<bool, weakly_ordered_with<lhs_t, rhs_t>>
+{};
+
 //!\}
 
 } // seqan3::detail
@@ -87,24 +85,6 @@ namespace seqan3
 /*!\addtogroup concept
  * \{
  */
-
-/*!\interface   seqan3::weakly_ordered_with <>
- * \tparam t1   The first type to compare.
- * \tparam t2   The second type to compare.
- * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
- * \sa          https://en.cppreference.com/w/cpp/experimental/ranges/concepts/weakly_equality_comparable_with
- */
-//!\cond
-template <typename t1, typename t2>
-SEQAN3_CONCEPT weakly_ordered_with = requires (std::remove_reference_t<t1> const & v1,
-                                             std::remove_reference_t<t2> const & v2)
-{
-    { v1 <  v2 } -> bool &&;
-    { v1 <= v2 } -> bool &&;
-    { v2 >  v1 } -> bool &&;
-    { v2 >= v1 } -> bool &&;
-};
-//!\endcond
 
 /*!\interface   seqan3::implicitly_convertible_to <>
  * \brief       Resolves to `std::ranges::implicitly_convertible_to<type1, type2>()`.

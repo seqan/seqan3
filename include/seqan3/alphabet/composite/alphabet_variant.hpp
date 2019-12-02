@@ -7,6 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
  * \brief Provides seqan3::alphabet_variant.
  */
@@ -23,109 +24,39 @@
 
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
+#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/pack.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 
 namespace seqan3::detail
 {
 
-/*!\brief Evaluates to true if the one of the alternatives of the seqan3::alphabet_variant satisifes a compile-time
- *        predicate.
- * \tparam variant_t A specialisation of seqan3::alphabet_variant.
- * \tparam fun_t    A template template that takes target_t as argument and exposes an `invoke` member type that
- *                  evaluates some predicate and returns `std::true_type` or `std::false_type`.
- * \tparam target_t The type you wish query.
- * \ingroup composite
- *
- * \details
- *
- * To prevent recursive template and/or concept instantiation this call needs to be guarded against many exceptions.
- * See the source file for more details.
- */
-// default is false
-template <typename variant_t,
-          template <typename> typename fun_t,
-          typename target_t>
-inline bool constexpr one_alternative_is = false;
+#if SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
+template <typename t>
+SEQAN3_CONCEPT variant_guard_pseudoalphabet = requires { requires seqan3::alphabet_size<t> > 0; };
+#endif
 
-//!\cond
+//!\brief Prevents wrong instantiations of std::alphabet_variant's constructors.
+template <typename other_t, typename ... alternative_types>
+inline constexpr bool variant_general_guard =
+        (!std::same_as<other_t,      alphabet_variant<alternative_types...>>) &&
+        (!std::is_base_of_v<alphabet_variant<alternative_types...>, other_t>) &&
+        (!(std::same_as<other_t,     alternative_types> || ...)) &&
+        (!list_traits::contains<alphabet_variant<alternative_types...>, recursive_required_types_t<other_t>>)
+#if SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
+        && variant_guard_pseudoalphabet<other_t>
+#endif
+        ;
 
-// actual implementation
-template <typename ...alternatives,
-          template <typename> typename fun_t,
-          typename target_t>
-inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
-                                         fun_t,
-                                         target_t>
- = !meta::empty<meta::find_if<meta::list<alternatives...>, fun_t<target_t>>>::value;
-
-// guard against self
-template <typename ...alternatives,
-          template <typename> typename fun_t>
-inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
-                                         fun_t,
-                                         alphabet_variant<alternatives...>> = false;
-
-// guard against types convertible to self without needing self's constructors
-template <typename ...alternatives,
-          template <typename> typename fun_t,
-          typename target_t>
-    requires convertible_to_by_member<target_t, alphabet_variant<alternatives...>>
-inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
-                                         fun_t,
-                                         target_t> = false;
-
-// guard against tuple composites that contain the variant somewhere (they can implicitly convert at source)
-template <typename ...alternatives,
-          template <typename> typename fun_t,
-          typename target_t>
-    requires alphabet_tuple_base_specialisation<target_t> &&
-             meta::in<detail::transformation_trait_or_t<recursive_tuple_components<target_t>, meta::list<>>,
-                      alphabet_variant<alternatives...>>::value
-inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
-                                         fun_t,
-                                         target_t> = false;
-
-// guard against alternatives
-template <typename ...alternatives,
-          template <typename> typename fun_t,
-          typename target_t>
-    requires type_in_pack_v<target_t, alternatives...>
-inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
-                                         fun_t,
-                                         target_t> = false;
-
-// guard against alternatives (LHS and RHS switched)
-template <typename ...alternatives,
-          template <typename> typename fun_t,
-          typename target_t>
-    requires type_in_pack_v<target_t, alternatives...>
-inline bool constexpr one_alternative_is<target_t,
-                                         fun_t,
-                                         alphabet_variant<alternatives...>> = false;
-
-// guard against ranges and iterators over self to prevent recursive instantiation
-template <typename ...alternatives,
-          template <typename> typename fun_t,
-          typename target_t>
-    //NO, it's not possible to use the value_type type trait here
-    requires requires { std::same_as<typename target_t::value_type, alphabet_variant<alternatives...>>; }
-inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
-                                         fun_t,
-                                         target_t> = false;
-
-// guard against pairs/tuples that *might* contain self to prevent recursive instantiation
-// (applying tuple_like unfortunately does not work because it itself starts recursive instantiation)
-template <typename ...alternatives,
-          template <typename> typename fun_t,
-          typename target_t>
-    requires tuple_size<target_t> && !alphabet_tuple_base_specialisation<target_t>
-inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
-                                         fun_t,
-                                         target_t> = false;
-
-//!\endcond
-
+//!\brief Prevents wrong instantiations of std::alphabet_variant's comparison operators.
+template <typename lhs_t, typename rhs_t, bool lhs_rhs_switched, typename ... alternative_types>
+inline constexpr bool variant_comparison_guard =
+    (instantiate_if_v<lazy<weakly_equality_comparable_with_trait, rhs_t, alternative_types>,
+                      (std::same_as<lhs_t, alphabet_variant<alternative_types...>>) &&
+                      (variant_general_guard<rhs_t, alternative_types...>)          &&
+                      !(lhs_rhs_switched && is_type_specialisation_of_v<rhs_t, alphabet_variant>)
+                      > || ...);
 } // namespace seqan3::detail
 
 namespace seqan3
@@ -222,6 +153,16 @@ public:
     using base_t::to_rank;
     using base_t::assign_rank;
 
+    //!\brief Expose the alternative types to concept checks in metaprogramming.
+    //!\private
+    using seqan3_required_types = type_list<alternative_types...>;
+    //!\brief Expose the recursive alternative types to concept checks in metaprogramming.
+    //!\private
+    using seqan3_recursive_required_types =
+        list_traits::concat<seqan3_required_types,
+                            detail::transformation_trait_or_t<detail::recursive_required_types<alternative_types>,
+                                                              type_list<>>...>;
+
     /*!\brief Returns true if alternative_t is one of the given alternative types.
      * \tparam alternative_t The type to check.
      *
@@ -251,67 +192,89 @@ public:
      */
     template <typename alternative_t>
     //!\cond
-        requires holds_alternative<alternative_t>()
+        requires (!std::same_as<alternative_t, alphabet_variant>) &&
+                 (!std::is_base_of_v<alphabet_variant, alternative_t>) &&
+                 (!list_traits::contains<alphabet_variant,
+                  detail::transformation_trait_or_t<detail::recursive_required_types<alternative_t>, type_list<>>>) &&
+                 holds_alternative<alternative_t>()
     //!\endcond
-    constexpr alphabet_variant(alternative_t const & alternative) noexcept
+    constexpr alphabet_variant(alternative_t const alternative) noexcept
     {
         assign_rank(rank_by_type_(alternative));
     }
 
-    /*!\brief Construction via the value of a type that an alternative type is constructible from.
-     * \tparam indirect_alternative_t A type that one of the alternative types is constructible from.
+    /*!\brief Constructor for arguments implicitly convertible to an alternative.
+     * \tparam indirect_alternative_t A type that is implicitly convertible to an alternative type.
      * \param  rhs The value that should be assigned.
      *
+     * \details
+     *
+     * This constructor is preferred over the explicit version.
+     *
+     * ### Example
+     *
      * \include test/snippet/alphabet/composite/alphabet_variant_conversion.cpp
-     * \attention When selecting the alternative alphabet types which require only implicit conversion
-     * or constructor calls, are preferred over those that require explicit ones.
+     *
+     *   * seqan3::dna4 and seqan3::rna4 are implicitly convertible to each other so the variant accepts either.
+     *   * Construction via `{}` considers implicit and explicit conversions.
+     *   * Construction via `=` considers only implicit conversions (but that is sufficient here).
      */
     template <typename indirect_alternative_t>
     //!\cond
-        requires !detail::one_alternative_is<alphabet_variant,
-                                             detail::implicitly_convertible_from,
-                                             indirect_alternative_t> &&
-                 detail::one_alternative_is<alphabet_variant,
-                                            detail::constructible_from,
-                                            indirect_alternative_t>
+        requires ((detail::instantiate_if_v<
+                        detail::lazy<std::is_convertible, indirect_alternative_t, alternative_types>,
+                        detail::variant_general_guard<indirect_alternative_t, alternative_types...>> || ...))
     //!\endcond
-    constexpr alphabet_variant(indirect_alternative_t const & rhs) noexcept
-    {
-        assign_rank(rank_by_type_(meta::front<meta::find_if<alternatives,
-                                                            detail::constructible_from<indirect_alternative_t>>>(rhs)));
-    }
-
-    //!\cond
-    template <typename indirect_alternative_t>
-        requires detail::one_alternative_is<alphabet_variant,
-                                            detail::implicitly_convertible_from,
-                                            indirect_alternative_t>
-    constexpr alphabet_variant(indirect_alternative_t const & rhs) noexcept
+    constexpr alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
         assign_rank(
             rank_by_type_(
                 meta::front<meta::find_if<alternatives,
                                           detail::implicitly_convertible_from<indirect_alternative_t>>>(rhs)));
     }
-    //!\endcond
 
-    /*!\brief Assignment via a value that one of the alternative types is assignable from.
-     * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
-     * \param  rhs The value of an alternative.
+    /*!\brief Constructor for arguments explicitly (but not implicitly) convertible to an alternative.
+     * \tparam indirect_alternative_t A type that is explicitly (but not implicitly) convertible to an alternative type.
+     * \param  rhs The value that should be assigned.
      *
-     * \include test/snippet/alphabet/composite/alphabet_variant_subtype_construction.cpp
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/alphabet/composite/alphabet_variant_conversion_explicit.cpp
+     *
+     *   * seqan3::dna4 and seqan3::dna5 are not implicitly convertible to each other, only explicitly.
+     *   * Construction via `{}` considers implicit and explicit conversions so this works.
+     *   * Construction via `=` considers only implicit conversions so it does not work.
      */
     template <typename indirect_alternative_t>
     //!\cond
-        requires !detail::one_alternative_is<alphabet_variant,
-                                             detail::implicitly_convertible_from,
-                                             indirect_alternative_t> &&             // constructor takes care
-                 !detail::one_alternative_is<alphabet_variant,
-                                             detail::constructible_from,
-                                             indirect_alternative_t> &&             // constructor takes care
-                 detail::one_alternative_is<alphabet_variant,
-                                            detail::assignable_from,
-                                            indirect_alternative_t>
+        requires ((!(detail::instantiate_if_v<
+                        detail::lazy<std::is_convertible, indirect_alternative_t, alternative_types>,
+                        detail::variant_general_guard<indirect_alternative_t, alternative_types...>> || ...)) &&
+                    (detail::instantiate_if_v<
+                        detail::lazy<std::is_constructible, alternative_types, indirect_alternative_t>,
+                        detail::variant_general_guard<indirect_alternative_t, alternative_types...>> || ...))
+    //!\endcond
+    constexpr explicit alphabet_variant(indirect_alternative_t const rhs) noexcept
+    {
+        assign_rank(rank_by_type_(meta::front<meta::find_if<alternatives,
+                                                            detail::constructible_from<indirect_alternative_t>>>(rhs)));
+    }
+
+
+    /*!\brief Assignment for arguments assignable to an alternative.
+     * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
+     * \param  rhs The value of an alternative.
+     *
+     * \details
+     *
+     * Most assignments happen through implicit conversion and the defaulted assignment operator. This is for the rest.
+     */
+    template <typename indirect_alternative_t>
+    //!\cond
+        requires (detail::variant_general_guard<indirect_alternative_t, alternative_types...> &&
+                  (weakly_assignable_from<alternative_types, indirect_alternative_t> || ...))
     //!\endcond
     constexpr alphabet_variant & operator=(indirect_alternative_t const & rhs) noexcept
     {
@@ -399,65 +362,74 @@ public:
     }
     //!\}
 
-    /*!\name Comparison operators (against alternatives)
-     * \brief Defines comparison against alternatives, e.g. `alphabet_variant<dna5, gap>{gap{}} == 'C'_dna5`. Only
-     *        (in-)equality comparison is explicitly defined, because it would be difficult to argue about e.g.
-     *        `alphabet_variant<dna5, gap>{gap{}} < 'C'_dna5`.
-     * \{
-     */
-    //!\brief Checks for equality.
-    template <typename alternative_t>
-    constexpr bool operator==(alternative_t const rhs) const noexcept
-    //!\cond
-        requires holds_alternative<alternative_t>()
-    //!\endcond
-    {
-        return is_alternative<alternative_t>() && (convert_unsafely_to<alternative_t>() == rhs);
-    }
-
-    //!\brief Checks for inequality.
-    template <typename alternative_t>
-    constexpr bool operator!=(alternative_t const rhs) const noexcept
-    //!\cond
-        requires holds_alternative<alternative_t>()
-    //!\endcond
-    {
-        return !operator==(rhs);
-    }
-    //!\}
-
     /*!\name Comparison operators (against indirect alternatives)
-     * \brief Defines comparison against types that are comparable with alternatives, e.g.
-     *        `alphabet_variant<dna5, gap>{'C'_dna5} == 'C'_rna5`. Only (in-)equality comparison is explicitly defined,
-     *        because it would be difficult to argue about e.g.
-     *        `alphabet_variant<dna5, gap>{gap{}} < 'C'_rna5`.
+     * \brief Defines comparison against types that are not subject to implicit construction/conversion but are
+     *        comparable against alternatives, e.g. `alphabet_variant<seqan3::rna4, seqan3::gap>` vs
+     *        `alphabet_variant<seqan3::dna4, seqan3::gap>`. Only (in-)equality comparison is defined as reasoning
+     *        about order of variants is inherently difficult.
      * \{
      */
-    //!\brief Checks for equality.
-    template <typename indirect_alternative_type>
-    constexpr bool operator==(indirect_alternative_type const rhs) const noexcept
-    //!\cond
-        requires detail::one_alternative_is<alphabet_variant,
-                                            detail::weakly_equality_comparable_with_,
-                                            indirect_alternative_type>
-    //!\endcond
+    /*!\brief (In-)Equality comparison against types comparable with alternatives but not convertible to the variant.
+     * \tparam alphabet_variant_t The type of the variant; given as template parameter to prevent conversion.
+     * \tparam indirect_alternative_type Must be comparable with an alternative's type.
+     * \param lhs Left-hand-side of comparison.
+     * \param rhs Right-hand-side of comparison.
+     * \returns `true` or `false`.
+     *
+     * \details
+     *
+     * To determine (in-)equality, it is first deduced which alternative the argument is comparable with.
+     * It is then checked if the variant currently is in that alternative's state and if yes whether the values compare
+     * to `true`; else `false` is returned.
+     */
+    template <typename alphabet_variant_t, typename indirect_alternative_type>
+    friend constexpr auto operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs) noexcept
+        -> std::enable_if_t<detail::variant_comparison_guard<alphabet_variant_t,
+                                                             indirect_alternative_type,
+                                                             false,
+                                                             alternative_types...>,
+                            bool>
     {
         using alternative_t =
             meta::front<meta::find_if<alternatives,
                                       detail::weakly_equality_comparable_with_<indirect_alternative_type>>>;
-        return is_alternative<alternative_t>() && (convert_unsafely_to<alternative_t>() == rhs);
+        return lhs.template is_alternative<alternative_t>() && (lhs.template convert_unsafely_to<alternative_t>() == rhs);
     }
 
-    //!\brief Checks for inequality.
-    template <typename indirect_alternative_type>
-    constexpr bool operator!=(indirect_alternative_type const rhs) const noexcept
-    //!\cond
-        requires detail::one_alternative_is<alphabet_variant,
-                                            detail::weakly_equality_comparable_with_,
-                                            indirect_alternative_type>
-    //!\endcond
+    //!\copydoc operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs)
+    template <typename alphabet_variant_t, typename indirect_alternative_type>
+    friend constexpr auto operator!=(alphabet_variant_t const lhs, indirect_alternative_type const rhs) noexcept
+        -> std::enable_if_t<detail::variant_comparison_guard<alphabet_variant_t,
+                                                             indirect_alternative_type,
+                                                             false,
+                                                             alternative_types...>,
+                            bool>
     {
-        return !operator==(rhs);
+        return !(lhs == rhs);
+    }
+
+    //!\copydoc operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs)
+    template <typename alphabet_variant_t, typename indirect_alternative_type, typename = void>
+    friend constexpr auto operator==(indirect_alternative_type const lhs, alphabet_variant_t const rhs) noexcept
+        -> std::enable_if_t<detail::variant_comparison_guard<alphabet_variant_t,
+                                                             indirect_alternative_type,
+                                                             true,
+                                                             alternative_types...>,
+                            bool>
+    {
+        return rhs == lhs;
+    }
+
+    //!\copydoc operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs)
+    template <typename alphabet_variant_t, typename indirect_alternative_type, typename = void>
+    friend constexpr auto operator!=(indirect_alternative_type const lhs, alphabet_variant_t const rhs) noexcept
+        -> std::enable_if_t<detail::variant_comparison_guard<alphabet_variant_t,
+                                                             indirect_alternative_type,
+                                                             true,
+                                                             alternative_types...>,
+                            bool>
+    {
+        return rhs != lhs;
     }
     //!\}
 
@@ -616,33 +588,5 @@ protected:
         return is_valid;
     }
 };
-
-/*!\name Comparison operators
- * \relates alphabet_variant
- * \brief Free function (in-)equality comparison operators that forward to member operators (for types != self).
- *\{
- */
-//!\brief Checks for equality.
-template <typename lhs_t, typename ...alternative_types>
-constexpr bool operator==(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
-//!\cond
-    requires detail::weakly_equality_comparable_by_members_with<alphabet_variant<alternative_types...>, lhs_t> &&
-             !detail::weakly_equality_comparable_by_members_with<lhs_t, alphabet_variant<alternative_types...>>
-//!\endcond
-{
-    return rhs == lhs;
-}
-
-//!\brief Checks for inequality.
-template <typename lhs_t, typename ...alternative_types>
-constexpr bool operator!=(lhs_t const lhs, alphabet_variant<alternative_types...> const rhs) noexcept
-//!\cond
-    requires detail::weakly_equality_comparable_by_members_with<alphabet_variant<alternative_types...>, lhs_t> &&
-             !detail::weakly_equality_comparable_by_members_with<lhs_t, alphabet_variant<alternative_types...>>
-//!\endcond
-{
-    return rhs != lhs;
-}
-//!\}
 
 } // namespace seqan3

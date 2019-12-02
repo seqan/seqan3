@@ -14,6 +14,8 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/core/type_traits/lazy.hpp>
 
 namespace seqan3::detail
 {
@@ -23,70 +25,106 @@ namespace seqan3::detail
 // ------------------------------------------------------------------
 
 /*!\interface seqan3::detail::alphabet_tuple_base_specialisation <>
- * \extends seqan3::semialphabet
- * \brief seqan3::alphabet_tuple_base and its specialisations model this concept.
- * \ingroup alphabet
+ * \brief seqan3::alphabet_tuple_base and its derivates model this concept.
+ * \ingroup composite
  *
  * \details
  *
- * This concept is necessary/helpful, because CRTP-specialisations cannot be tracked via regular inheritance or
+ * This concept is necessary/helpful, because CRTP-specialisations cannot easily be tracked via regular inheritance or
  * specialisation mechanisms.
  */
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT alphabet_tuple_base_specialisation = requires
 {
-    typename t::seqan3_tuple_components;
-    typename t::seqan3_recursive_tuple_components;
+    requires t::seqan3_alphabet_tuple_base_specialisation;
 };
 //!\endcond
 
 // ------------------------------------------------------------------
-// tuple_components
+// required_types
 // ------------------------------------------------------------------
 
-/*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list.
+/*!\brief A seqan3::type_list with types that the given type depends on.
  * \implements seqan3::transformation_trait
- * \ingroup alphabet
+ * \ingroup composite
+ *
+ * \details
+ *
+ * The list is empty by default. This trait maybe used in metaprogramming to indicate that certain types need to be
+ * complete and not depend on the given type to avoid recursive template instantiation.
  */
 template <typename t>
-struct tuple_components;
-
-/*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list
- *        [specialisation for seqan3::alphabet_tuple_base_specialisation].
- * \implements seqan3::transformation_trait
- * \ingroup alphabet
- */
-template <alphabet_tuple_base_specialisation t>
-struct tuple_components<t>
+struct required_types
 {
     //!\brief The returned type.
-    using type = typename t::seqan3_tuple_components;
+    using type = type_list<>;
 };
 
-// ------------------------------------------------------------------
-// recursive_tuple_components
-// ------------------------------------------------------------------
-
-/*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
- *        nested composites) as a meta::list [base template].
+/*!\brief A seqan3::type_list with types that the given type depends on.
+ *        [specialisation for seqan3::alphabet_variant and derivates of seqan3::alphabet_tuple_base].
  * \implements seqan3::transformation_trait
- * \ingroup alphabet
+ * \ingroup composite
+ *
+ * \details
+ *
+ * Exposes for seqan3::alphabet_tuple_base its components and for seqan3::alphabet_variant its alternatives.
  */
 template <typename t>
-struct recursive_tuple_components;
-
-/*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
- *        nested composites) as a meta::list [specialisation for seqan3::alphabet_tuple_base_specialisation].
- * \implements seqan3::transformation_trait
- * \ingroup alphabet
- */
-template <alphabet_tuple_base_specialisation t>
-struct recursive_tuple_components<t>
+//!\cond
+    requires requires { typename t::seqan3_required_types; }
+//!\endcond
+struct required_types<t>
 {
     //!\brief The returned type.
-    using type = typename t::seqan3_recursive_tuple_components;
+    using type = typename t::seqan3_required_types;
 };
+
+/*!\brief A seqan3::type_list with types that the given type depends on. [Trait shortcut]
+ * \relates seqan3::detail::required_types
+ */
+template <typename t>
+using required_types_t = typename required_types<t>::type;
+
+// ------------------------------------------------------------------
+// recursive_required_types
+// ------------------------------------------------------------------
+
+//TODO: This can be replaced with metaprogramming magic once a few more functions land in list_traits.
+
+/*!\brief Like seqan3::detail::required_types, but recursive.
+ * \implements seqan3::transformation_trait
+ * \ingroup composite
+ */
+template <typename t>
+struct recursive_required_types
+{
+    //!\brief The returned type.
+    using type = type_list<>;
+};
+
+/*!\brief Like seqan3::detail::required_types, but recursive.
+ * \implements seqan3::transformation_trait
+ * \ingroup composite
+ */
+template <typename t>
+//!\cond
+    requires requires
+    {
+        typename t::seqan3_recursive_required_types;
+    }
+//!\endcond
+struct recursive_required_types<t>
+{
+    //!\brief The returned type.
+    using type = typename t::seqan3_recursive_required_types;
+};
+
+/*!\brief Shortcut for seqan3::detail::recursive_required_types.
+ * \relates seqan3::detail::recursive_required_types
+ */
+template <typename t>
+using recursive_required_types_t = typename recursive_required_types<t>::type;
 
 // ------------------------------------------------------------------
 // Callable concept helpers for meta::invoke

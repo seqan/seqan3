@@ -72,6 +72,61 @@ template <typename t>
 using instantiate_t = typename instantiate<t>::type;
 
 // ----------------------------------------------------------------------------
+// instantiate_if
+// ----------------------------------------------------------------------------
+
+/*!\brief A transformation trait that instantiates seqan3::lazy types given a boolean condition.
+ *        Base template is std::false_type.
+ * \tparam t The type to operate on.
+ * \implements seqan3::transformation_trait
+ */
+template <typename t, bool condition>
+struct instantiate_if : std::false_type
+{};
+
+/*!\brief A transformation trait that instantiates seqan3::lazy types given a boolean condition.
+ *        If condition is true and parameter is not lazy, the type identity.
+ * \tparam t The type to operate on.
+ * \implements seqan3::transformation_trait
+ */
+template <typename t>
+struct instantiate_if<t, true> : std::type_identity<t>
+{};
+
+/*!\brief A transformation trait that instantiates seqan3::lazy types given a boolean condition.
+ *        If condition is true and parameter is lazy, the instantiated type.
+ * \tparam template_t The uninstantiated template.
+ * \tparam spec_t     The arguments to template_t.
+ * \implements seqan3::transformation_trait
+ */
+template <template <typename ...> typename template_t, typename ...spec_t>
+struct instantiate_if<lazy<template_t, spec_t...>, true>
+{
+    //!\brief Return type of the trait [instantiates the template arguments].
+    using type = template_t<spec_t...>;
+};
+
+/*!\brief A transformation trait that instantiates seqan3::lazy types, conditionally. Transformation trait shortcut.
+ * \tparam t The type to operate on.
+ * \relates seqan3::detail::instantiate_if
+ */
+template <typename t, bool condition>
+//!\cond
+    requires requires { typename instantiate_if<t, condition>::type; }
+//!\endcond
+using instantiate_if_t = typename instantiate_if<t, condition>::type;
+
+/*!\brief A transformation trait that instantiates seqan3::lazy types, conditionally. Type trait shortcut.
+ * \tparam t The type to operate on.
+ * \relates seqan3::detail::instantiate_if
+ */
+template <typename t, bool condition>
+//!\cond
+    requires requires { instantiate_if_t<t, condition>::value; }
+//!\endcond
+inline constexpr auto instantiate_if_v = instantiate_if_t<t, condition>::value;
+
+// ----------------------------------------------------------------------------
 // lazy_conditional
 // ----------------------------------------------------------------------------
 

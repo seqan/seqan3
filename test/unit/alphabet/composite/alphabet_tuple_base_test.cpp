@@ -11,6 +11,7 @@
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 
+#include "../semi_alphabet_test_template.hpp"
 #include "alphabet_tuple_base_test_template.hpp"
 
 using namespace seqan3;
@@ -21,13 +22,6 @@ struct test_composite : public alphabet_tuple_base<test_composite<type1, type2>,
     using base_t = alphabet_tuple_base<test_composite<type1, type2>, type1, type2>;
     using base_t::base_t;
     using base_t::operator=;
-
-    using base_t::operator==;
-    using base_t::operator!=;
-    using base_t::operator<;
-    using base_t::operator>;
-    using base_t::operator<=;
-    using base_t::operator>=;
 };
 
 template <>
@@ -68,4 +62,5 @@ public:
 
 using test_composite_types = ::testing::Types<test_composite<dna4, dna5>>;
 
+INSTANTIATE_TYPED_TEST_CASE_P(test_composite, semi_alphabet_test, test_composite_types);
 INSTANTIATE_TYPED_TEST_CASE_P(test_composite, alphabet_tuple_base_test, test_composite_types);

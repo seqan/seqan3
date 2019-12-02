@@ -260,20 +260,34 @@ TEST(composite_constexpr, custom_assignment)
 
 TEST(composite, custom_comparison)
 {
+    /* Tests marked with "// *" would not be possible if all single argument constructors of alphabet_variant
+     * are made explicit */
+
     qualified<dna4, phred42> t11{'C'_dna4, phred42{3}};
     EXPECT_EQ(t11, 'C'_dna4);
     EXPECT_EQ(t11, 'C'_rna4);
     EXPECT_EQ(t11, phred42{3});
+    EXPECT_LT(t11, 'G'_dna4);
+    EXPECT_LT(t11, 'G'_rna4);
+    EXPECT_LT(t11, phred42{4});
 
     EXPECT_EQ('C'_dna4,    t11);
     EXPECT_EQ('C'_rna4,    t11);
-    EXPECT_EQ(phred42{3}, t11);
+    EXPECT_EQ(phred42{3},  t11);
+    EXPECT_LT('A'_dna4,    t11);
+    EXPECT_LT('A'_rna4,    t11);
+    EXPECT_LT(phred42{2},  t11);
 
     qualified<aa27, phred63> t21{'K'_aa27, phred63{3}};
     EXPECT_EQ(t21, 'K'_aa27);
     EXPECT_EQ(t21, phred63{3});
+    EXPECT_LT(t21, 'L'_aa27);
+    EXPECT_LT(t21, phred63{4});
+
     EXPECT_EQ('K'_aa27,    t21);
     EXPECT_EQ(phred63{3},  t21);
+    EXPECT_LT('C'_aa27,    t21);
+    EXPECT_LT(phred63{2},  t21);
 
     qualified<gapped<dna4>, phred42> t31{'C'_dna4, phred42{3}};
     EXPECT_EQ(t31, 'C'_dna4);
@@ -281,57 +295,93 @@ TEST(composite, custom_comparison)
     EXPECT_EQ(t31, phred42{3});
     EXPECT_NE(t31, gap{});
     EXPECT_EQ(t31, gapped<dna4>('C'_dna4));
+    EXPECT_LT(t31, 'G'_dna4);                     // *
+    EXPECT_LT(t31, 'G'_rna4);                     // *
+    EXPECT_LT(t31, phred42{4});
+    EXPECT_LT(t31, gap{});                        // *
+    EXPECT_LT(t31, gapped<dna4>('G'_dna4));
 
     EXPECT_EQ('C'_dna4,                t31);
     EXPECT_EQ('C'_rna4,                t31);
-    EXPECT_EQ(phred42{3},             t31);
-    EXPECT_NE(gap{},               t31);
+    EXPECT_EQ(phred42{3},              t31);
+    EXPECT_NE(gap{},                   t31);
     EXPECT_EQ(gapped<dna4>('C'_dna4),  t31);
+    EXPECT_LT('A'_dna4,                t31);      // *
+    EXPECT_LT('A'_rna4,                t31);      // *
+    EXPECT_LT(phred42{2},              t31);
+    EXPECT_GT(gap{},                   t31);      // *
+    EXPECT_LT(gapped<dna4>('A'_dna4),  t31);
 
     gapped<qualified<dna4, phred42>> t41{qualified<dna4, phred42>{'C'_dna4, phred42{3}}};
-    gapped<qualified<dna4, phred42>> t42{qualified<dna4, phred42>{'C'_dna4, phred42{0}}};
-
-    EXPECT_EQ(t41, (gapped<qualified<dna4, phred42>>{qualified<dna4, phred42>{'C'_dna4, phred42{3}}}));
-    EXPECT_EQ(t42, 'C'_dna4);
+    EXPECT_EQ(t41, 'C'_dna4);
+    EXPECT_EQ(t41, 'C'_rna4);
+    EXPECT_EQ(t41, phred42{3});
     EXPECT_NE(t41, gap{});
-    EXPECT_NE(gap{}, t41);
+    EXPECT_EQ(t41, (qualified<dna4, phred42>{'C'_dna4, phred42{3}}));
+    EXPECT_EQ(t41, (gapped<qualified<dna4, phred42>>{qualified<dna4, phred42>{'C'_dna4, phred42{3}}}));
+//     EXPECT_LT(t41, 'G'_dna4);       // not supposed to work
+//     EXPECT_LT(t41, 'G'_rna4);       // not supposed to work
+//     EXPECT_LT(t41, phred42{4});     // would never be LT, because dna4 part of tuple defaulted to 'A' on RHS
+    EXPECT_LT(t41, gap{});                                                                                   // *
+    EXPECT_LT(t41, (qualified<dna4, phred42>{'G'_dna4, phred42{2}}));                                        // *
+    EXPECT_LT(t41, (gapped<qualified<dna4, phred42>>{qualified<dna4, phred42>{'G'_dna4, phred42{2}}}));
+
+    EXPECT_EQ('C'_dna4,                                         t41);
+    EXPECT_EQ('C'_rna4,                                         t41);
+    EXPECT_EQ(phred42{3},                                       t41);
+    EXPECT_EQ((qualified<dna4, phred42>{'C'_dna4, phred42{3}}), t41);
+    EXPECT_NE(gap{},                                            t41);
+//     EXPECT_LT('A'_dna4,                                         t41);  // not supposed to work
+//     EXPECT_LT('A'_rna4,                                         t41);  // not supposed to work
+//     EXPECT_LT(phred42{2},                                       t41);  // not supposed to work
+    EXPECT_LT((qualified<dna4, phred42>{'A'_dna4, phred42{2}}), t41);  // *
+    EXPECT_GT(gap{},                                            t41);  // *
 
     qualified<qualified<gapped<dna4>, phred42>, phred42> t51{qualified<gapped<dna4>, phred42>{'C'_dna4, phred42{3}}};
     EXPECT_EQ(t51, 'C'_dna4);
     EXPECT_EQ(t51, 'C'_rna4);
     EXPECT_NE(t51, gap{});
     EXPECT_EQ(t51, gapped<dna4>('C'_dna4));
-    EXPECT_EQ(t51, phred42{0});
+    EXPECT_EQ(t51, phred42{0}); // "outer" phred element
+    EXPECT_EQ(t51, (qualified<gapped<dna4>, phred42>{'C'_dna4, phred42{3}}));
+//     EXPECT_LT(t51, 'G'_dna4);                                                      // not supposed to work
+//     EXPECT_LT(t51, 'G'_rna4);                                                      // not supposed to work
+//     EXPECT_LT(t51, gap{});                                                         // not supposed to work
+//     EXPECT_LT(t51, gapped<dna4>('G'_dna4));                                        // not supposed to work
+    EXPECT_LT(t51, phred42{1});
+    EXPECT_LT(t51, (qualified<gapped<dna4>, phred42>{'C'_dna4, phred42{4}}));
 
-    EXPECT_EQ('C'_dna4,                t51);
-    EXPECT_EQ('C'_rna4,                t51);
-    EXPECT_EQ(phred42{0},             t51);
-    EXPECT_NE(gap{},               t51);
-    EXPECT_EQ(gapped<dna4>('C'_dna4),  t51);
+    EXPECT_EQ('C'_dna4,                                                 t51);
+    EXPECT_EQ('C'_rna4,                                                 t51);
+    EXPECT_NE(gap{},                                                    t51);
+    EXPECT_EQ(gapped<dna4>('C'_dna4),                                   t51);
+    EXPECT_EQ(phred42{0},                                               t51);
+    EXPECT_EQ((qualified<gapped<dna4>, phred42>{'C'_dna4, phred42{3}}), t51);
+//     EXPECT_LT('A'_dna4,                                                 t51);      // not supposed to work
+//     EXPECT_LT('A'_rna4,                                                 t51);      // not supposed to work
+//     EXPECT_GT(gap{},                                                    t51);      // not supposed to work
+//     EXPECT_LT(gapped<dna4>('A'_dna4),                                   t51);      // not supposed to work
+    EXPECT_GT(phred42{1},                                               t51);
+    EXPECT_GT((qualified<gapped<dna4>, phred42>{'C'_dna4, phred42{4}}), t51);
 
     gapped<alphabet_variant<dna4, phred42>> t61{'C'_rna4};
     EXPECT_EQ(t61, 'C'_rna4);
     EXPECT_EQ(t61, 'C'_dna4);
     EXPECT_NE(t61, gap{});
     EXPECT_NE(t61, phred42{0});
+    EXPECT_LT(t61, 'G'_rna4);              // *
+    EXPECT_LT(t61, 'G'_dna4);              // *
+    EXPECT_LT(t61, gap{});                 // *
+    EXPECT_LT(t61, phred42{1});            // *
 
     EXPECT_EQ('C'_rna4,    t61);
     EXPECT_EQ('C'_dna4,    t61);
-    EXPECT_NE(gap{},   t61);
-    EXPECT_NE(phred42{0}, t61);
-
-    EXPECT_EQ(t41, 'C'_dna4);
-    EXPECT_EQ(t41, 'C'_rna4);
-    EXPECT_EQ(t41, phred42{3});
-    EXPECT_EQ(t41, (qualified<dna4, phred42>{'C'_dna4, phred42{3}}));
-
-    EXPECT_EQ('C'_dna4,                                         t41);
-    EXPECT_EQ('C'_rna4,                                         t41);
-    EXPECT_EQ(phred42{3},                                      t41);
-    EXPECT_EQ((qualified<dna4, phred42>{'C'_dna4, phred42{3}}), t41);
-
-    EXPECT_EQ(t51, (qualified<gapped<dna4>, phred42>{'C'_dna4, phred42{3}}));
-    EXPECT_EQ((qualified<dna4, phred42>{'C'_dna4, phred42{3}}), t51);
+    EXPECT_NE(gap{},       t61);
+    EXPECT_NE(phred42{0},  t61);
+    EXPECT_LT('A'_rna4,    t61);           // *
+    EXPECT_LT('A'_dna4,    t61);           // *
+    EXPECT_GT(gap{},       t61);           // *
+    EXPECT_GT(phred42{0},  t61);           // *
 }
 
 TEST(composite, get_)
