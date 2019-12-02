@@ -51,7 +51,7 @@ namespace seqan3
  * \brief You can expect these (meta-)functions on all types that implement seqan3::validator.
  * \{
  */
-/*!\typedef     using value_type
+/*!\typedef     using option_value_type
  * \brief       The type of value on which the validator is called on.
  * \relates     seqan3::validator
  *
@@ -59,9 +59,9 @@ namespace seqan3
  * \attention This is a concept requirement, not an actual typedef (however types satisfying this concept
  * will provide an implementation).
  */
-/*!\fn              void operator()(value_type const & cmp) const
+/*!\fn              void operator()(option_value_type const & cmp) const
  * \brief           Validates the value 'cmp' and throws a seqan3::validation_failed on failure.
- * \tparam          value_type The type of the value to be validated.
+ * \tparam          option_value_type The type of the value to be validated.
  * \param[in,out]   cmp The value to be validated.
  * \relates         seqan3::validator
  * \throws          seqan3::validation_failed if value 'cmp' does not pass validation.
@@ -84,9 +84,9 @@ namespace seqan3
 template <typename validator_type>
 SEQAN3_CONCEPT validator = std::copyable<remove_cvref_t<validator_type>> &&
                            requires(validator_type validator,
-                                    typename std::remove_reference_t<validator_type>::value_type value)
+                                    typename std::remove_reference_t<validator_type>::option_value_type value)
 {
-    typename std::remove_reference_t<validator_type>::value_type;
+    typename std::remove_reference_t<validator_type>::option_value_type;
 
     { validator(value) } -> void;
     { validator.get_help_page_message() } -> std::string;
@@ -96,8 +96,6 @@ SEQAN3_CONCEPT validator = std::copyable<remove_cvref_t<validator_type>> &&
 /*!\brief A validator that checks whether a number is inside a given range.
  * \ingroup argument_parser
  * \implements seqan3::validator
- *
- * \tparam option_value_type Must be a (container of) arithmetic type(s).
  *
  * \details
  *
@@ -111,13 +109,13 @@ class arithmetic_range_validator
 {
 public:
     //!\brief The type of value that this validator invoked upon.
-    using value_type = double;
+    using option_value_type = double;
 
     /*!\brief The constructor.
      * \param[in] min_ Minimum set for the range to test.
      * \param[in] max_ Maximum set for the range to test.
      */
-    arithmetic_range_validator(value_type const min_, value_type const max_) :
+    arithmetic_range_validator(option_value_type const min_, option_value_type const max_) :
         min{min_}, max{max_}
     {}
 
@@ -125,7 +123,7 @@ public:
      * \param cmp The input value to check.
      * \throws parser_invalid_argument
      */
-    void operator()(value_type const & cmp) const
+    void operator()(option_value_type const & cmp) const
     {
         if (!((cmp <= max) && (cmp >= min)))
             throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not in range [", min, ",", max, "]."));
@@ -154,15 +152,16 @@ public:
 
 private:
     //!\brief Minimum of the range to test.
-    value_type min{};
+    option_value_type min{};
 
     //!\brief Maximum of the range to test.
-    value_type max{};
+    option_value_type max{};
 };
 
 /*!\brief A validator that checks whether a value is inside a list of valid values.
  * \ingroup argument_parser
  * \implements seqan3::validator
+ * \tparam option_value_t Must be a (container of) arithmetic type(s).
  *
  * \details
  *
@@ -176,12 +175,12 @@ private:
  *
  * \include test/snippet/argument_parser/validators_2.cpp
  */
-template <typename option_value_type>
+template <typename option_value_t>
 class value_list_validator
 {
 public:
     //!\brief Type of values that are tested by validator
-    using value_type = option_value_type;
+    using option_value_type = option_value_t;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -194,7 +193,7 @@ public:
     ~value_list_validator() = default;                                        //!< Defaulted.
 
     /*!\brief Constructing from a range.
-     * \tparam range_type The type of range; must model std::ranges::forward_range and value_list_validator::value_type
+     * \tparam range_type The type of range; must model std::ranges::forward_range and value_list_validator::option_value_type
      *                    must be constructible from the rvalue reference type of the given range.
      * \param[in] rng The range of valid values to test.
      */
@@ -209,7 +208,7 @@ public:
     }
 
     /*!\brief Constructing from a parameter pack.
-     * \tparam option_types The type of option values in the parameter pack; The value_list_validator::value_type must
+     * \tparam option_types The type of option values in the parameter pack; The value_list_validator::option_value_type must
      *                      be constructible from each type in the parameter pack.
      * \param[in] opts The parameter pack values.
      */
@@ -227,7 +226,7 @@ public:
      * \param cmp The input value to check.
      * \throws parser_invalid_argument
      */
-    void operator()(value_type const & cmp) const
+    void operator()(option_value_type const & cmp) const
     {
         if (!(std::find(values.begin(), values.end(), cmp) != values.end()))
             throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", std::views::all(values), "."));
@@ -256,7 +255,7 @@ public:
 private:
 
     //!\brief Minimum of the range to test.
-    std::vector<value_type> values{};
+    std::vector<option_value_type> values{};
 };
 
 /*!\brief Type deduction guides
@@ -314,7 +313,7 @@ class file_validator_base
 public:
 
     //!\brief Type of values that are tested by validator.
-    using value_type = std::string;
+    using option_value_type = std::string;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -336,7 +335,7 @@ public:
      */
     virtual void operator()(std::filesystem::path const & path) const = 0;
 
-    /*!\brief Tests whether every path in list \p v passes validation. See operator()(value_type const & value)
+    /*!\brief Tests whether every path in list \p v passes validation. See operator()(option_value_type const & value)
      *        for further information.
      * \tparam range_type The type of range to check; must model std::ranges::forward_range and the value type must
      *                    be convertible to std::filesystem::path.
@@ -473,7 +472,7 @@ public:
                   "Expected either a template type with a static member called valid_formats (a file type) or void.");
 
     // Import from base class.
-    using typename file_validator_base::value_type;
+    using typename file_validator_base::option_value_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -591,7 +590,7 @@ public:
                 "Expected either a template type with a static member called valid_formats (a file type) or void.");
 
     // Import from base class.
-    using typename file_validator_base::value_type;
+    using typename file_validator_base::option_value_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -681,7 +680,7 @@ class input_directory_validator : public file_validator_base
 {
 public:
     // Import from base class.
-    using typename file_validator_base::value_type;
+    using typename file_validator_base::option_value_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -753,7 +752,7 @@ class output_directory_validator : public file_validator_base
 {
 public:
     // Imported from base class.
-    using typename file_validator_base::value_type;
+    using typename file_validator_base::option_value_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -838,7 +837,7 @@ class regex_validator
 {
 public:
     //!\brief Type of values that are tested by validator.
-    using value_type = std::string;
+    using option_value_type = std::string;
 
     /*!\brief Constructing from a vector.
      * \param[in] pattern_ The pattern to match.
@@ -851,7 +850,7 @@ public:
      * \param[in] cmp The value to validate.
      * \throws parser_invalid_argument
      */
-    void operator()(value_type const & cmp) const
+    void operator()(option_value_type const & cmp) const
     {
         std::regex rgx(pattern);
         if (!std::regex_match(cmp, rgx))
@@ -866,7 +865,7 @@ public:
      */
     template <std::ranges::forward_range range_type>
     //!\cond
-        requires std::convertible_to<std::ranges::range_value_t<range_type>, value_type const &>
+        requires std::convertible_to<std::ranges::range_value_t<range_type>, option_value_type const &>
     //!\endcond
     void operator()(range_type const & v) const
     {
@@ -890,20 +889,21 @@ namespace detail
 /*!\brief Validator that always returns true.
  * \ingroup argument_parser
  * \implements seqan3::validator
+ * \tparam option_value_t Must be a (container of) arithmetic type(s).
  *
  * \details
  *
  * The default validator is needed to make the validator parameter of
  * argument_parser::add_option and argument_parser::add_option optional.
  */
-template <typename option_value_type>
+template <typename option_value_t>
 struct default_validator
 {
     //!\brief Type of values that are tested by validator
-    using value_type = option_value_type;
+    using option_value_type = option_value_t;
 
     //!\brief Value cmp always passes validation because the operator never throws.
-    void operator()(option_value_type const & /*cmp*/) const noexcept
+    void operator()(option_value_t const & /*cmp*/) const noexcept
     {}
 
     //!\brief Since no validation is happening the help message is empty.
@@ -919,20 +919,20 @@ struct default_validator
  *
  *\details
  *
- * Note that both validators must operate on the same value_type in order to
+ * Note that both validators must operate on the same option_value_type in order to
  * avoid unexpected behaviour and ensure that the seqan3::argument_parser::add_option
  * call is well-formed. (add_option(val, ...., validator) requires
- * that val is of same type as validator::value_type).
+ * that val is of same type as validator::option_value_type).
  */
 template <validator validator1_type, validator validator2_type>
 //!\cond
-    requires std::same_as<typename validator1_type::value_type, typename validator2_type::value_type>
+    requires std::same_as<typename validator1_type::option_value_type, typename validator2_type::option_value_type>
 //!\endcond
 class validator_chain_adaptor
 {
 public:
     //!\brief The underlying type in both validators.
-    using value_type = typename validator1_type::value_type;
+    using option_value_type = typename validator1_type::option_value_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -992,10 +992,10 @@ private:
  * \ingroup argument_parser
  * \tparam validator1_type The type of the fist validator;
  *                         Must satisfy the seqan3::validator and the
- *                         same value_type as the second validator type.
+ *                         same option_value_type as the second validator type.
  * \tparam validator2_type The type of the second validator;
  *                         Must satisfy the seqan3::validator and the
- *                         same value_type as the fist validator type.
+ *                         same option_value_type as the fist validator type.
  * \param[in] vali1 The first validator to chain.
  * \param[in] vali2 The second validator to chain.
  * \returns A new validator that tests a value for both vali1 and vali2.
@@ -1017,8 +1017,8 @@ private:
  */
 template <validator validator1_type, validator validator2_type>
 //!\cond
-    requires std::same_as<typename std::remove_reference_t<validator1_type>::value_type,
-                       typename std::remove_reference_t<validator2_type>::value_type>
+    requires std::same_as<typename std::remove_reference_t<validator1_type>::option_value_type,
+                       typename std::remove_reference_t<validator2_type>::option_value_type>
 //!\endcond
 auto operator|(validator1_type && vali1, validator2_type && vali2)
 {

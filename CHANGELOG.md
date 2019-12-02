@@ -48,6 +48,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * **Changed class signature of input/output file validators:**
   Most user code will be unaffected; to fix possible compiler errors you need to add an empty template parameter list to
   the respective instances (e.g. change `input_file_validator` to `input_file_validator<>`).
+* The member type that denotes which arguments a `validator` can validate has been renamed from `value_type` to
+  `option_value_type`.
 
 #### Core
 
