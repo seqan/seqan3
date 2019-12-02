@@ -7,3 +7,6 @@
 [submodule "cereal"]
 	path = submodules/cereal
 	url = https://github.com/USCiLab/cereal
+[submodule "submodules/simde/include"]
+	path = submodules/simde/include
+	url = https://github.com/nemequ/simde.git
