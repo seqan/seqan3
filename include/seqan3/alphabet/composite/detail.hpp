@@ -198,7 +198,7 @@ namespace seqan3
 template <typename ...alternative_types>
 //!\cond
     requires (detail::writable_constexpr_alphabet<alternative_types> && ...) &&
-             (!std::is_reference_v<alternative_types> && ...) &&
+             (std::regular<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond
@@ -208,7 +208,7 @@ template <typename derived_type,
           typename ...component_types>
 //!\cond
     requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
-             (!std::is_reference_v<component_types> && ...)
+             (std::regular<component_types> && ...)
 //!\endcond
 class alphabet_tuple_base;
 

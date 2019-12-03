@@ -34,28 +34,12 @@
 namespace seqan3::detail
 {
 
-#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-// mechanism to prevent triggering GCC bugs in comparison of alphabet tuples with their components.
-template <typename tuple_derived_t, typename t>
-inline constexpr bool is_component_proxy = false;
-
-template <typename tuple_derived_t, typename t>
-    requires requires
-    {
-        requires std::same_as<tuple_derived_t, typename t::seqan3_component_parent_type>;
-    }
-inline constexpr bool is_component_proxy<tuple_derived_t, t> = true;
-#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-
 //!\brief Prevents wrong instantiations of seqan3::alphabet_tuple_base's equality comparison operators.
 template <typename tuple_derived_t, typename rhs_t, typename ... component_types>
 inline constexpr bool tuple_general_guard =
                       (!std::same_as<rhs_t, tuple_derived_t>) &&
                       (!std::same_as<rhs_t, alphabet_tuple_base<component_types...>>) &&
                       (!std::is_base_of_v<tuple_derived_t, rhs_t>) &&
-#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-                      (!is_component_proxy<tuple_derived_t, rhs_t>) &&
-#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
                       (!(std::same_as<rhs_t, component_types> || ...)) &&
                       (!list_traits::contains<tuple_derived_t, recursive_required_types_t<rhs_t>>);
 
@@ -94,11 +78,11 @@ decltype(auto) get();
  * \ingroup composite
  * \implements seqan3::writable_semialphabet
  * \if DEV
- * \implements seqan3::detail::Constexprwritable_semialphabet
+ * \implements seqan3::detail::writable_constexpr_semialphabet
  * \tparam component_types Types of letters; must model seqan3::detail::writable_constexpr_semialphabet.
  * \else
- * \tparam component_types Types of letters; must model seqan3::writable_semialphabet and all required function calls
- * need to be callable in `constexpr`-context.
+ * \tparam component_types Types of letters; must model std::regular and seqan3::writable_semialphabet and all
+ * required function calls need to be callable in `constexpr`-context.
  * \endif
  *
  *
@@ -131,7 +115,7 @@ template <typename derived_type,
           typename ...component_types>
 //!\cond
     requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
-             (!std::is_reference_v<component_types> && ...)
+             (std::regular<component_types> && ...)
 //!\endcond
 class alphabet_tuple_base :
     public alphabet_base<derived_type,
@@ -177,20 +161,12 @@ private:
         //!\brief The implementation updates the rank in the parent object.
         constexpr void on_update() noexcept
         {
-            parent->assign_rank(
-                parent->to_rank()
-                - parent->template to_component_rank<index>() * alphabet_tuple_base::cummulative_alph_sizes[index]
-                + to_rank() * alphabet_tuple_base::cummulative_alph_sizes[index]);
+            parent->assign_component_rank<index>(to_rank());
         }
 
     public:
         //Import from base type:
         using base_t::operator=;
-
-    #if SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
-        // expose the parent's type to workaround GCC bugs in metaprogramming
-        using seqan3_component_parent_type = derived_type;
-    #endif
 
         /*!\name Constructors, destructor and assignment
          * \{
@@ -519,11 +495,8 @@ public:
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
         using t = meta::at_c<component_list, index>;
-        t val{};
 
-        seqan3::assign_rank_to(l.to_component_rank<index>(), val);
-
-        return val;
+        return seqan3::assign_rank_to(l.to_component_rank<index>(), t{});
     }
 
     /*!\copybrief get
@@ -685,7 +658,24 @@ private:
     template <size_t index>
     constexpr rank_type to_component_rank() const noexcept
     {
-        return (to_rank() / cummulative_alph_sizes[index]) % seqan3::alphabet_size<meta::at_c<component_list, index>>;
+        if constexpr (alphabet_size < 1024) // computation is cached for small alphabets
+        {
+            return rank_to_component_rank[index][to_rank()];
+        }
+        else
+        {
+            return (to_rank() / cummulative_alph_sizes[index]) %
+                seqan3::alphabet_size<pack_traits::at<index, component_types...>>;
+        }
+    }
+
+    //!\brief Assign via the rank of i-th component (does not update other components' state).
+    template <size_t index>
+    constexpr void assign_component_rank(ptrdiff_t const r) noexcept
+    {
+        assign_rank(static_cast<ptrdiff_t>(to_rank()) +
+                    ((r - static_cast<ptrdiff_t>(to_component_rank<index>())) *
+                     static_cast<ptrdiff_t>(cummulative_alph_sizes[index])));
     }
 
     //!\brief The cumulative alphabet size products are cached.
@@ -720,6 +710,28 @@ private:
     {
         return ((seqan3::to_rank(components) * cummulative_alph_sizes[idx]) + ...);
     }
+
+    //!\brief Conversion table from rank to the i-th component's rank.
+    static constexpr std::array<std::array<rank_type, alphabet_size < 1024 ? alphabet_size : 0>, // not for big alphs
+                                list_traits::size<component_list>> rank_to_component_rank
+    {
+        [] () constexpr
+        {
+            std::array<std::array<rank_type, alphabet_size < 1024 ? alphabet_size : 0>, // not for big alphs
+                       list_traits::size<component_list>> ret{};
+
+            if constexpr (alphabet_size < 1024)
+            {
+                std::array<size_t, alphabet_size> alph_sizes{ seqan3::alphabet_size<component_types>... };
+
+                for (size_t i = 0; i < list_traits::size<component_list>; ++i)
+                    for (size_t j = 0; j < static_cast<size_t>(alphabet_size); ++j)
+                        ret[i][j] = (j / cummulative_alph_sizes[i]) % alph_sizes[i];
+            }
+
+            return ret;
+        }()
+    };
 };
 
 } // namespace seqan3
