@@ -237,7 +237,7 @@ SEQAN3_CONCEPT quality_alphabet = alphabet<t> && requires(t qual)
 // seqan3::writable_quality_alphabet
 // ============================================================================
 
-/*!\interface seqan3::quality_alphabet <>
+/*!\interface seqan3::writable_quality_alphabet <>
  * \extends seqan3::alphabet
  * \brief A concept that indicates whether a writable alphabet represents quality scores.
  * \ingroup quality
