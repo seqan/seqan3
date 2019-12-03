@@ -161,17 +161,6 @@ protected:
 };
 
 // ------------------------------------------------------------------
-// type traits
-// ------------------------------------------------------------------
-
-//!\brief Identifies aa10li as an amino acid alphabet (unary_type_trait specialisation).
-//!\implements unary_type_trait
-//!\see seqan3::is_aminoacid
-//!\ingroup aminoacid
-template <>
-struct is_aminoacid<aa10li> : std::true_type {};
-
-// ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
 

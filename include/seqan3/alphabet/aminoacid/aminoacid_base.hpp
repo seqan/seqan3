@@ -26,7 +26,7 @@ namespace seqan3
  * \tparam size         The size of the alphabet.
  */
 template <typename derived_type, auto size>
-class aminoacid_base : public alphabet_base<derived_type, size, char>
+class aminoacid_base : public alphabet_base<derived_type, size, char>, public aminoacid_empty_base
 {
 private:
     //!\brief Type of the base class.
@@ -69,10 +69,23 @@ public:
                  !std::same_as<derived_type, other_aa_type> &&
                  aminoacid_alphabet<other_aa_type>
     //!\endcond
-    explicit constexpr aminoacid_base(other_aa_type const & other) noexcept
+    explicit constexpr aminoacid_base(other_aa_type const other) noexcept
     {
-        static_cast<derived_type &>(*this) =
-            detail::convert_through_char_representation<derived_type, other_aa_type>[seqan3::to_rank(other)];
+        if constexpr (is_constexpr_default_constructible_v<other_aa_type> &&
+#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
+                      writable_alphabet<other_aa_type>
+#else
+                      detail::writable_constexpr_alphabet<other_aa_type>
+#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
+                     )
+        {
+            static_cast<derived_type &>(*this) =
+                detail::convert_through_char_representation<derived_type, other_aa_type>[seqan3::to_rank(other)];
+        }
+        else
+        {
+            seqan3::assign_char_to(seqan3::to_char(other), static_cast<derived_type &>(*this));
+        }
     }
     //!\}
 

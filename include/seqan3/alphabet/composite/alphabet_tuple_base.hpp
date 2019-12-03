@@ -34,7 +34,7 @@
 namespace seqan3::detail
 {
 
-#if SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
+#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
 // mechanism to prevent triggering GCC bugs in comparison of alphabet tuples with their components.
 template <typename tuple_derived_t, typename t>
 inline constexpr bool is_component_proxy = false;
@@ -45,7 +45,7 @@ template <typename tuple_derived_t, typename t>
         requires std::same_as<tuple_derived_t, typename t::seqan3_component_parent_type>;
     }
 inline constexpr bool is_component_proxy<tuple_derived_t, t> = true;
-#endif // SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
+#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
 
 //!\brief Prevents wrong instantiations of seqan3::alphabet_tuple_base's equality comparison operators.
 template <typename tuple_derived_t, typename rhs_t, typename ... component_types>
@@ -53,9 +53,9 @@ inline constexpr bool tuple_general_guard =
                       (!std::same_as<rhs_t, tuple_derived_t>) &&
                       (!std::same_as<rhs_t, alphabet_tuple_base<component_types...>>) &&
                       (!std::is_base_of_v<tuple_derived_t, rhs_t>) &&
-#if SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
+#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
                       (!is_component_proxy<tuple_derived_t, rhs_t>) &&
-#endif // SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
+#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
                       (!(std::same_as<rhs_t, component_types> || ...)) &&
                       (!list_traits::contains<tuple_derived_t, recursive_required_types_t<rhs_t>>);
 
@@ -195,7 +195,8 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr component_proxy() : base_t{}, parent{} {}                        //!< Defaulted.
+        //!\brief Deleted, because using this proxy without parent would be undefined behaviour.
+        component_proxy() = delete;
         constexpr component_proxy(component_proxy const &) = default;              //!< Defaulted.
         constexpr component_proxy(component_proxy &&) = default;                   //!< Defaulted.
         constexpr component_proxy & operator=(component_proxy const &) = default;  //!< Defaulted.

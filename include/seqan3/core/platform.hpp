@@ -224,12 +224,12 @@
 #   endif
 #endif
 
-//!\brief Requires statements are not properly lazy evaluated.
-#ifndef SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
-#   if defined(__GNUC__) && (__GNUC__ <= 8)
-#       define SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES 1
+//!\brief Various concept problems only present in GCC7 and GCC8.
+#ifndef SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
+#   if defined(__GNUC__) && ((__GNUC__ == 7) || (__GNUC__ == 8))
+#       define SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES 1
 #   else
-#       define SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES 0
+#       define SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES 0
 #   endif
 #endif
 

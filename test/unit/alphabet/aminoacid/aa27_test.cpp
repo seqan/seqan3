@@ -5,22 +5,20 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <range/v3/view/zip.hpp>
-
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 #include "aminoacid_test_template.hpp"
 
-#include <seqan3/alphabet/aminoacid/aa20.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, alphabet_, aa20);
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, semi_alphabet_test, aa20);
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, alphabet_constexpr, aa20);
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, semi_alphabet_constexpr, aa20);
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, aminoacid, aa20);
+INSTANTIATE_TYPED_TEST_CASE_P(aa27, alphabet_, aa27);
+INSTANTIATE_TYPED_TEST_CASE_P(aa27, semi_alphabet_test, aa27);
+INSTANTIATE_TYPED_TEST_CASE_P(aa27, alphabet_constexpr, aa27);
+INSTANTIATE_TYPED_TEST_CASE_P(aa27, semi_alphabet_constexpr, aa27);
+INSTANTIATE_TYPED_TEST_CASE_P(aa27, aminoacid, aa27);
 
 TEST(aa27, assign_char)
 {

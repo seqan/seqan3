@@ -45,8 +45,8 @@ struct priority_tag<0>
 #define SEQAN3_CPO_IMPL(PRIO, TERM)                                                                                  \
 /*!\brief A customisation point overload.*/                                                                          \
 template <typename t, typename ...arg_ts>                                                                            \
-static constexpr decltype(auto) impl(seqan3::detail::priority_tag<PRIO> const &,                                     \
-                                     t && v,                                                                         \
+static constexpr decltype(auto) impl(seqan3::detail::priority_tag<PRIO>,                                             \
+                                     [[maybe_unused]] t && v,                                                        \
                                      [[maybe_unused]] arg_ts && ... args)                                            \
     noexcept(noexcept(TERM))                                                                                         \
     requires requires (seqan3::detail::priority_tag<PRIO> const &/*<- need for doxygen*/, t && v, arg_ts && ... args)\

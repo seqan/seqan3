@@ -235,4 +235,15 @@ struct valid_template_spec_or<fallback_t, templ_t, spec_t...>
 template <typename fallback_t, template <typename ...> typename templ_t, typename ...spec_t>
 using valid_template_spec_or_t = typename valid_template_spec_or<fallback_t, templ_t, spec_t...>::type;
 
+// ----------------------------------------------------------------------------
+// strip_type_identity
+// ----------------------------------------------------------------------------
+
+/*!\brief A transformation trait shortcut that returns the type inside a std::type_identity or the type itself.
+ * \tparam t The type to operate on.
+ */
+template <typename t>
+using strip_type_identity_t = std::conditional_t<is_type_specialisation_of_v<t, std::type_identity>,
+                                                 transformation_trait_or_t<t, void>,
+                                                 t>;
 } // namespace seqan3::detail

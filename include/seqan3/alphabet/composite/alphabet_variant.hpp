@@ -32,10 +32,10 @@
 namespace seqan3::detail
 {
 
-#if SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
+#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
 template <typename t>
 SEQAN3_CONCEPT variant_guard_pseudoalphabet = requires { requires seqan3::alphabet_size<t> > 0; };
-#endif
+#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
 
 //!\brief Prevents wrong instantiations of std::alphabet_variant's constructors.
 template <typename other_t, typename ... alternative_types>
@@ -44,9 +44,9 @@ inline constexpr bool variant_general_guard =
         (!std::is_base_of_v<alphabet_variant<alternative_types...>, other_t>) &&
         (!(std::same_as<other_t,     alternative_types> || ...)) &&
         (!list_traits::contains<alphabet_variant<alternative_types...>, recursive_required_types_t<other_t>>)
-#if SEQAN3_WORKAROUND_GCC_LAZY_REQUIRES
+#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
         && variant_guard_pseudoalphabet<other_t>
-#endif
+#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
         ;
 
 //!\brief Prevents wrong instantiations of std::alphabet_variant's comparison operators.
