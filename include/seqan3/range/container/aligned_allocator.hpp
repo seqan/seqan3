@@ -23,16 +23,20 @@ namespace seqan3
 
 /*!\brief Allocates uninitialized storage whose memory-alignment is specified by *alignment*.
  * \tparam value_t     \copydoc aligned_allocator::value_type
- * \tparam alignment_v \copydoc aligned_allocator::alignment
+ * \tparam alignment_v \copydoc aligned_allocator::alignment; defaults to `__STDCPP_DEFAULT_NEW_ALIGNMENT__`.
  * \ingroup container
  *
  * \details
  *
- * This class allocates memory at the given alignment boundary. If the specified `alignment` is not supported by the
+ * This class allocates memory at the given `alignment_v` offset. This makes sure that the allocated memory
+ * starts at a memory offset equal to some multiple of the word size. More formally, a memory address `a`, is said to
+ * be `n`-byte aligned when `n` is a power of two and `a` is a multiple of `n` bytes.
+ *
+ * If the specified `alignment` is not supported (e.g. alignments that are not a power of two) by the
  * used allocation method a std::bad_alloc exception will be thrown. For requested alignments larger than
  * `__STDCPP_DEFAULT_NEW_ALIGNMENT__`, also called new-extended alignments, the storage will have the alignment
  * specified by the value `alignment`. Otherwise, the storage is aligned for any object that does not have new-extended
- * alignment, e.g. int or double, and is of the requested size.
+ * alignment, e.g. `int` or `double`, and is of the requested size.
  *
  * \include test/snippet/range/container/aligned_allocator.cpp
  *
@@ -65,7 +69,7 @@ template <typename value_t, size_t alignment_v = __STDCPP_DEFAULT_NEW_ALIGNMENT_
 class aligned_allocator
 {
 public:
-    //!\brief The memory-alignment of the allocation. Defaults to `__STDCPP_DEFAULT_NEW_ALIGNMENT__`.
+    //!\brief The memory-alignment of the allocation.
     static constexpr size_t alignment = alignment_v;
 
     //!\brief The value type of the allocation
@@ -110,8 +114,8 @@ public:
      * Allocates `n * sizeof(value_type)` bytes of uninitialized storage by calling
      * [operator new](https://en.cppreference.com/w/cpp/memory/new/operator_new).
      * If the given `alignment` is bigger than
-     * [__STDCPP_DEFAULT_NEW_ALIGNMENT__](https://en.cppreference.com/w/cpp/memory/new/align_val_t) the alignment
-     * aware operator new that takes as second argument the alignment as std::align_val_t.
+     * [__STDCPP_DEFAULT_NEW_ALIGNMENT__](https://en.cppreference.com/w/cpp/memory/new/align_val_t), the alignment
+     * aware operator new that takes as second argument the desired alignment of type std::align_val_t is used.
      *
      * \note We call the new operator with the semantic requirements that the c++ standard specifies/demands, but be
      *       aware that users can overload any (global) ::operator new that might not adhere to the standard and might

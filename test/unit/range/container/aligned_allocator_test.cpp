@@ -48,7 +48,7 @@ TEST(aligned_allocator, conversion_constructor)
     [[maybe_unused]] aligned_allocator<float, 16> float_alloc{int_alloc};
 }
 
-TEST(aligned_allocator, request_to_much_memory)
+TEST(aligned_allocator, request_too_much_memory)
 {
     aligned_allocator<int, 16> alloc{};
     EXPECT_THROW((void) alloc.allocate(std::numeric_limits<uint64_t>::max()), std::bad_alloc);
