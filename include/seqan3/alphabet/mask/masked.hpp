@@ -28,8 +28,7 @@ namespace seqan3
  * \implements seqan3::standard_layout
  * \implements std::regular
  *
- * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semialphabet.
- * \tparam mask_t Types of masked letter; must satisfy seqan3::semialphabet, defaults to seqan3::mask.
+ * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::writable_alphabet and std::regular.
  *
  * \details
  * The masked composite represents a seqan3::alphabet_tuple_base of any given alphabet with the
@@ -38,15 +37,15 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/mask/masked.cpp
  */
- template <typename sequence_alphabet_t>
+ template <writable_alphabet sequence_alphabet_t>
 //!\cond
-    requires writable_alphabet<sequence_alphabet_t>
+    requires std::regular<sequence_alphabet_t>
 //!\endcond
 class masked : public alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
 {
 private:
     //!\brief The base type.
-    using base_type = alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>;
+    using base_t = alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>;
 
 public:
     //!\brief First template parameter as member type.
@@ -55,7 +54,8 @@ public:
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = alphabet_char_t<sequence_alphabet_type>;
 
-    using base_type::alphabet_size;
+    using base_t::alphabet_size;
+    using typename base_t::rank_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -67,20 +67,11 @@ public:
     constexpr masked & operator =(masked &&) = default;      //!< Defaulted.
     ~masked() = default;                                     //!< Defaulted.
 
-    using base_type::base_type; // Inherit non-default constructors
-
-    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr masked(component_type const alph) {} ))
-    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr masked(indirect_component_type const alph) {} ))
-    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr masked & operator=(component_type const alph) {} ))
-    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr masked & operator=(indirect_component_type const alph) {} ))
+    using base_t::base_t; // Inherit non-default constructors
     //!\}
 
     // Inherit operators from base
-    using base_type::operator=;
+    using base_t::operator=;
 
     /*!\name Write functions
      * \{
@@ -88,8 +79,8 @@ public:
     //!\brief Assign from a character.
     constexpr masked & assign_char(char_type const c) noexcept
     {
-        seqan3::assign_char_to(c, get<0>(*this));
-        seqan3::assign_rank_to(is_lower(c), get<1>(*this));
+        using index_t = std::make_unsigned_t<char_type>;
+        base_t::assign_rank(char_to_rank[static_cast<index_t>(c)]);
         return *this;
     }
     //!\}
@@ -100,39 +91,48 @@ public:
     //!\brief Return a character.
     constexpr char_type to_char() const noexcept
     {
-        if (seqan3::to_rank(get<1>(*this)))
-        {
-            return to_lower(seqan3::to_char(get<0>(*this)));
-        }
-        else
-        {
-            return seqan3::to_char(get<0>(*this));
-        }
+        return rank_to_char[base_t::to_rank()];
     }
     //!\}
 
-    /*!\brief Validate whether a character value has a one-to-one mapping to an alphabet value.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
-     * wrapper.
-     *
-     * Default implementation: True for all character values that are reproduced by #to_char() after being assigned
-     * to the alphabet.
-     *
-     * ###Complexity
-     *
-     * Constant.
-     *
-     * ###Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    static constexpr bool char_is_valid(char_type const c) noexcept
+protected:
+    //!\brief Rank to char conversion table.
+    static constexpr std::array<char_type, alphabet_size> rank_to_char
     {
-        return masked{}.assign_char(c).to_char() == c;
-    }
+        [] ()
+        {
+            std::array<char_type, alphabet_size> ret{};
+
+            for (size_t i = 0; i < alphabet_size; ++i)
+            {
+                ret[i] = (i < alphabet_size / 2)
+                       ? seqan3::to_char(seqan3::assign_rank_to(i, sequence_alphabet_type{}))
+                       : to_lower(seqan3::to_char(seqan3::assign_rank_to(i / 2, sequence_alphabet_type{})));
+            }
+
+            return ret;
+        } ()
+    };
+
+    //!\brief Char to rank conversion table.
+    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank
+    {
+        [] ()
+        {
+            std::array<rank_type, detail::size_in_values_v<char_type>> ret{};
+
+            for (size_t i = 0; i < 256; ++i)
+            {
+                char_type c = static_cast<char_type>(i);
+
+                ret[i] = is_lower(c)
+                       ? seqan3::to_rank(seqan3::assign_char_to(c, sequence_alphabet_type{})) * 2
+                       : seqan3::to_rank(seqan3::assign_char_to(c, sequence_alphabet_type{}));
+            }
+
+            return ret;
+        } ()
+    };
 };
 
 //!\brief Type deduction guide enables usage of masked without specifying template args.
