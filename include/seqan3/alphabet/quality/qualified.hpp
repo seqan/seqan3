@@ -82,9 +82,10 @@ public:
     constexpr qualified & operator =(qualified &&)      noexcept = default; //!< Defaulted.
     ~qualified()                                        noexcept = default; //!< Defaulted.
 
-    using base_type::base_type; // Inherit non-default constructors
-
-    // Inherit operators from base
+    // Inherit from base:
+    using base_type::base_type;         // non-default constructors
+    using base_type::alphabet_size;
+    using base_type::to_rank;
     using base_type::operator=;
 
     //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
@@ -103,7 +104,14 @@ public:
     //!\brief Assign from a character. This modifies the internal sequence letter.
     constexpr qualified & assign_char(char_type const c) noexcept
     {
-        seqan3::assign_char_to(c, get<0>(*this));
+        base_type::assign_rank(
+            (seqan3::to_rank(seqan3::assign_char_to(c, sequence_alphabet_type{})) *
+             base_type::cummulative_alph_sizes[0]) +
+            (base_type::template to_component_rank<1>() * base_type::cummulative_alph_sizes[1]));
+
+        // The above is noticeably faster than (no subtraction and no division):
+        // base_type::template assign_component_rank<0>(
+        //     seqan3::to_rank(seqan3::assign_char_to(c, sequence_alphabet_type{})));
         return *this;
     }
 
@@ -121,13 +129,13 @@ public:
     //!\brief Return the phred value. This reads the internal quality letter.
     constexpr phred_type to_phred() const noexcept
     {
-        return seqan3::to_phred(get<1>(*this));
+        return rank_to_phred[to_rank()];
     }
 
     //!\brief Return a character. This reads the internal sequence letter.
     constexpr char_type to_char() const noexcept
     {
-        return seqan3::to_char(get<0>(*this));
+        return rank_to_char[to_rank()];
     }
 
     /*!\brief Return a qualified where the quality is preserved, but the sequence letter is complemented.
@@ -146,6 +154,47 @@ public:
     {
         return char_is_valid_for<sequence_alphabet_type>(c);
     }
+
+protected:
+    //!\privatesection
+
+    //!\brief Rank to char conversion table.
+    static std::array<char_type, alphabet_size> constexpr rank_to_char
+    {
+        [] () constexpr
+        {
+            std::array<char_type, alphabet_size> ret{};
+
+            for (size_t i = 0; i < alphabet_size; ++i)
+            {
+                size_t seq_rank = (i / base_type::cummulative_alph_sizes[0]) %
+                                  seqan3::alphabet_size<quality_alphabet_type>;
+
+                ret[i] = seqan3::to_char(seqan3::assign_rank_to(seq_rank, sequence_alphabet_type{}));
+            }
+
+            return ret;
+        }()
+    };
+
+    //!\brief Rank to phred conversion table.
+    static std::array<char_type, alphabet_size> constexpr rank_to_phred
+    {
+        [] () constexpr
+        {
+            std::array<char_type, alphabet_size> ret{};
+
+            for (size_t i = 0; i < alphabet_size; ++i)
+            {
+                size_t qual_rank = (i / base_type::cummulative_alph_sizes[1]) %
+                                    seqan3::alphabet_size<quality_alphabet_type>;
+
+                ret[i] = seqan3::to_phred(seqan3::assign_rank_to(qual_rank, quality_alphabet_type{}));
+            }
+
+            return ret;
+        }()
+    };
 };
 
 //!\brief Type deduction guide enables usage of qualified without specifying template args.
