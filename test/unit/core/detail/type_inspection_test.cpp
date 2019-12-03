@@ -21,8 +21,8 @@ struct bar
 {};
 } // namespace foo
 
-// Some types to test if type inspetion works as expected.
-// Note, that the returned name might differ between compiler vendors and thus must be adapted accordingly,
+// Some types to test if type inspection works as expected.
+// Note that the returned name might differ between compiler vendors and thus must be adapted accordingly
 // in case this tests fails for those vendors.
 using reflection_types = ::testing::Types<char, char16_t, char32_t, short, double,
                                           foo::bar<char>, foo::bar<foo::bar<char, double>>>;
