@@ -29,15 +29,7 @@ TEST(alignment_selector, align_result_selector_with_list)
     using seq1_t = std::vector<dna4>;
     using seq2_t = std::list<dna4>;
 
-    { // test case I
-        auto cfg = align_cfg::edit;
-        using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
-
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().id()), uint32_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), int32_t>));
-    }
-
-    { // test case II
+    {
         auto cfg = align_cfg::edit | align_cfg::result{with_score};
         using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
 
@@ -45,7 +37,7 @@ TEST(alignment_selector, align_result_selector_with_list)
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), int32_t>));
     }
 
-    { // test case III
+    {
         auto cfg = align_cfg::edit | align_cfg::result{with_alignment};
         using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
 
@@ -61,6 +53,18 @@ TEST(alignment_selector, align_result_selector_with_list)
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().alignment()),
                                     std::tuple<gapped_seq1_t, gapped_seq2_t> const &>));
     }
+}
+
+TEST(alignment_selector, align_result_selector_using_score_type)
+{
+    using seq1_t = std::vector<dna4>;
+    using seq2_t = std::list<dna4>;
+
+    auto cfg = align_cfg::edit | align_cfg::result{with_back_coordinate, using_score_type<double>};
+    using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
+
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), double>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().back_coordinate()), alignment_coordinate const &>));
 }
 
 TEST(alignment_selector, align_result_selector_with_vector)

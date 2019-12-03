@@ -3,7 +3,7 @@
 int main()
 {
     using sequences_t = std::vector<std::pair<std::string, std::string>>;
-    using config_t = decltype(seqan3::align_cfg::edit);
+    using config_t = decltype(seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_score});
 
     using first_seq_t = std::tuple_element_t<0, seqan3::value_type_t<std::remove_reference_t<sequences_t>>>;
     using second_seq_t = std::tuple_element_t<1, seqan3::value_type_t<std::remove_reference_t<sequences_t>>>;

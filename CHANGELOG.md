@@ -21,6 +21,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## New features
 
+#### Alignment
+* The score type used in the alignment score matrix and the result type is now configurable through a template
+  argument of the seqan3::align_cfg::result configuration.
+
 #### Argument parser
 * Simplified reading file extensions from formatted files in the input/output file validators.
 * The seqan3::value_list_validator is now constructible from a range or a parameter pack.

@@ -61,17 +61,19 @@ template <std::ranges::viewable_range database_t,
           typename word_t = uint_fast64_t>
 struct default_edit_distance_trait_type
 {
+    //!\brief The type of the alignment config.
+    using align_config_type = std::remove_reference_t<align_config_t>;
     //!\brief The type of one machine word.
     using word_type = word_t;
     static_assert(std::is_unsigned_v<word_type>, "the word type of edit_distance_unbanded must be unsigned.");
     //!\brief The type of the score.
-    using score_type = int;
+    static_assert(align_config_type::template exists<align_cfg::result>(), "We assume the result type was configured.");
+    using score_type = typename std::remove_reference_t<
+                           decltype(get<align_cfg::result>(align_config_type{}))>::score_type;
     //!\brief The type of the database sequence.
     using database_type = std::remove_reference_t<database_t>;
     //!\brief The type of the query sequence.
     using query_type = std::remove_reference_t<query_t>;
-    //!\brief The type of the alignment config.
-    using align_config_type = std::remove_reference_t<align_config_t>;
 
     //!\brief The size of one machine word.
     static constexpr uint8_t word_size = sizeof_bits<word_type>;
@@ -91,10 +93,8 @@ struct default_edit_distance_trait_type
     static constexpr bool is_semi_global = is_semi_global_t::value;
     //!\brief Whether the alignment is a global alignment or not.
     static constexpr bool is_global = !is_semi_global;
-
     //!\brief Whether the alignment configuration indicates to compute and/or store the score.
-    static constexpr bool compute_score = align_config_type::template exists<align_cfg::result<with_score_type>>() ||
-                                          !std::same_as<decltype(result_value_type{}.back_coordinate), std::nullopt_t *>;
+    static constexpr bool compute_score = true;
     //!\brief Whether the alignment configuration indicates to compute and/or store the back coordinate.
     static constexpr bool compute_back_coordinate = !std::same_as<decltype(result_value_type{}.back_coordinate),
                                                                std::nullopt_t *>;

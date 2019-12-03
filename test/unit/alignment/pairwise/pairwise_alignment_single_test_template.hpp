@@ -51,7 +51,9 @@ TYPED_TEST_P(pairwise_alignment_test, score)
 TYPED_TEST_P(pairwise_alignment_test, back_coordinate)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_back_coordinate} | align_cfg::debug;
+
+    configuration align_cfg = fixture.config | align_cfg::result{with_back_coordinate, using_score_type<double>}
+                                             | align_cfg::debug;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -60,6 +62,7 @@ TYPED_TEST_P(pairwise_alignment_test, back_coordinate)
     auto res = *alignment_rng.begin();
 
     EXPECT_EQ(res.score(), fixture.score);
+    EXPECT_TRUE((std::same_as<decltype(res.score()), double>));
     EXPECT_EQ(res.back_coordinate(), fixture.back_coordinate);
 }
 

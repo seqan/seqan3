@@ -78,4 +78,8 @@ TYPED_TEST(align_cfg_result_test, score_type)
     // second template argument deduced in construction
     EXPECT_TRUE((std::is_same_v<decltype(align_cfg::result{TypeParam{}, using_score_type<double>}),
                                 align_cfg::result<TypeParam, double>>));
+
+    // member type variable `score_type`
+    EXPECT_TRUE((std::is_same_v<typename decltype(align_cfg::result{TypeParam{}, using_score_type<double>})::score_type,
+                                double>));
 }
