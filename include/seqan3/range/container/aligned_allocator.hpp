@@ -22,8 +22,8 @@ namespace seqan3
 {
 
 /*!\brief Allocates uninitialized storage whose memory-alignment is specified by *alignment*.
- * \tparam value_t     \copydoc aligned_allocator::value_type
- * \tparam alignment_v \copydoc aligned_allocator::alignment; defaults to `__STDCPP_DEFAULT_NEW_ALIGNMENT__`.
+ * \tparam value_t     The value type of the allocation.
+ * \tparam alignment_v The memory-alignment of the allocation; defaults to `__STDCPP_DEFAULT_NEW_ALIGNMENT__`.
  * \ingroup container
  *
  * \details
@@ -72,13 +72,13 @@ public:
     //!\brief The memory-alignment of the allocation.
     static constexpr size_t alignment = alignment_v;
 
-    //!\brief The value type of the allocation
+    //!\brief The value type of the allocation.
     using value_type = value_t;
-    //!\brief The pointer type of the allocation
+    //!\brief The pointer type of the allocation.
     using pointer = value_type*;
-    //!\brief The difference type of the allocation
+    //!\brief The difference type of the allocation.
     using difference_type = typename std::pointer_traits<pointer>::difference_type;
-    //!\brief The size type of the allocation
+    //!\brief The size type of the allocation.
     using size_type = std::make_unsigned_t<difference_type>;
 
     //!\brief Are any two allocators of the same aligned_allocator type always compare equal?
@@ -118,7 +118,7 @@ public:
      * aware operator new that takes as second argument the desired alignment of type std::align_val_t is used.
      *
      * \note We call the new operator with the semantic requirements that the c++ standard specifies/demands, but be
-     *       aware that users can overload any (global) ::operator new that might not adhere to the standard and might
+     *       aware that users can overload any (global) `operator new` that might not adhere to the standard and might
      *       cause std::bad_alloc or unaligned pointers.
      *
      * \sa https://en.cppreference.com/w/cpp/memory/allocator/allocate
