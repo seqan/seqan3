@@ -1,2 +1,4 @@
-
-seqan3_benchmark(alphabet_benchmark.cpp)
+seqan3_benchmark(alphabet_assign_char_benchmark.cpp)
+seqan3_benchmark(alphabet_assign_rank_benchmark.cpp)
+seqan3_benchmark(alphabet_to_char_benchmark.cpp)
+seqan3_benchmark(alphabet_to_rank_benchmark.cpp)
