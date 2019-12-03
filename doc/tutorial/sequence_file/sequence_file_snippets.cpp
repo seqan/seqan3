@@ -38,15 +38,22 @@ AGCGATCGAGGAATATAT
 IIIIHHGIIIIHHGIIIH
 )//![fastq_file]";
 
-        std::ofstream file{"/tmp/my.fastq"};
+        std::ofstream file{std::filesystem::temp_directory_path()/"my.fastq"};
         std::string str{file_raw};
         file << str.substr(1); // skip first newline
 
-        std::ofstream file2{"/tmp/my.qq"};
+        std::ofstream file2{std::filesystem::temp_directory_path()/"my.qq"};
         file2 << str.substr(1); // skip first newline
 
-        std::ofstream file3{"/tmp/my.fasta"};
+        std::ofstream file3{std::filesystem::temp_directory_path()/"my.fasta"};
         file3 << ">seq1\nAVAV\n>seq2\nAVAVA\n";
+    }
+
+    ~write_file_dummy_struct()
+    {
+        std::filesystem::remove(std::filesystem::temp_directory_path()/"my.fastq");
+        std::filesystem::remove(std::filesystem::temp_directory_path()/"my.qq");
+        std::filesystem::remove(std::filesystem::temp_directory_path()/"my.fasta");
     }
 };
 
@@ -64,7 +71,7 @@ debug_stream << format_fastq::file_extensions << std::endl; // prints [fastq,fq]
 
 //![modify_file_extensions]
 format_fastq::file_extensions.push_back("qq");
-sequence_file_input fin{"/tmp/my.qq"}; // detects FASTQ format
+sequence_file_input fin{std::filesystem::temp_directory_path()/"my.qq"}; // detects FASTQ format
 //![modify_file_extensions]
 }
 
@@ -78,13 +85,13 @@ sequence_file_input fin{std::cin, format_fasta{}};
 
 {
 //![amino_acid_type_trait]
-sequence_file_input<sequence_file_input_default_traits_aa> fin{"/tmp/my.fasta"};
+sequence_file_input<sequence_file_input_default_traits_aa> fin{std::filesystem::temp_directory_path()/"my.fasta"};
 //![amino_acid_type_trait]
 }
 
 {
 //![record_type]
-sequence_file_input fin{"/tmp/my.fastq"};
+sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
 using record_type = typename decltype(fin)::record_type;
 
 // Because `fin` is a range, we can access the first element by dereferencing fin.begin()
@@ -93,7 +100,7 @@ record_type rec = *fin.begin();
 }
 
 {
-sequence_file_input fin{"/tmp/my.fastq"};
+sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
 using record_type = typename decltype(fin)::record_type;
 //![record_type2]
 record_type rec = std::move(*fin.begin()); // avoid copying
@@ -102,8 +109,8 @@ record_type rec = std::move(*fin.begin()); // avoid copying
 
 {
 //![paired_reads]
-sequence_file_input fin1{"/tmp/my.fastq"};
-sequence_file_input fin2{"/tmp/my.fastq"}; // for simplicity we take the same file
+sequence_file_input fin1{std::filesystem::temp_directory_path()/"my.fastq"};
+sequence_file_input fin2{std::filesystem::temp_directory_path()/"my.fastq"}; // for simplicity we take the same file
 
 for (auto && [rec1, rec2] : views::zip(fin1, fin2)) // && is important! because views::zip returns temporaries
 {
@@ -115,7 +122,7 @@ for (auto && [rec1, rec2] : views::zip(fin1, fin2)) // && is important! because 
 
 {
 //![read_in_batches]
-sequence_file_input fin{"/tmp/my.fastq"};
+sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
 
 for (auto && records : fin | ranges::view::chunk(10)) // && is important! because views::chunk returns temporaries
 {
@@ -128,7 +135,7 @@ for (auto && records : fin | ranges::view::chunk(10)) // && is important! becaus
 
 {
 //![quality_filter]
-sequence_file_input fin{"/tmp/my.fastq"};
+sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
 
 // std::views::filter takes a function object (a lambda in this case) as input that returns a boolean
 auto minimum_quality_filter = std::views::filter([] (auto const & rec)
@@ -147,22 +154,29 @@ for (auto & rec : fin | minimum_quality_filter)
 
 {
 //![piping_in_out]
-sequence_file_input fin{"/tmp/my.fastq"};
-sequence_file_output fout{"/tmp/output.fastq"};
+auto tmp_dir = std::filesystem::temp_directory_path();
+
+sequence_file_input fin{tmp_dir/"my.fastq"};
+sequence_file_output fout{tmp_dir/"output.fastq"};
 
 // the following are equivalent:
 fin | fout;
 
 fout = fin;
 
-sequence_file_output{"/tmp/output.fastq"} = sequence_file_input{"/tmp/my.fastq"};
+sequence_file_output{tmp_dir/"output.fastq"} = sequence_file_input{tmp_dir/"my.fastq"};
 //![piping_in_out]
 }
 
 {
 //![file_conversion]
-sequence_file_output{"/tmp/output.fasta"} = sequence_file_input{"/tmp/my.fastq"};
+auto tmp_dir = std::filesystem::temp_directory_path();
+
+sequence_file_output{tmp_dir/"output.fasta"} = sequence_file_input{tmp_dir/"my.fastq"};
 //![file_conversion]
 }
+
+std::filesystem::remove(std::filesystem::temp_directory_path()/"output.fasta");
+std::filesystem::remove(std::filesystem::temp_directory_path()/"output.fastq");
 
 }

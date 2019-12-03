@@ -31,6 +31,12 @@ r003	2064	chr2	18	10	5M	*	0	0	TAGGC	*
         std::string fasta_file_rawstr{fasta_file_raw};
         reffile << fasta_file_rawstr.substr(1); // skip first newline
     }
+
+    ~write_file_dummy_struct()
+    {
+        std::filesystem::remove(std::filesystem::temp_directory_path()/"mapping.sam");
+        std::filesystem::remove(std::filesystem::temp_directory_path()/"reference.fasta");
+    }
 };
 
 write_file_dummy_struct go{};

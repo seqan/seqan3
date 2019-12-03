@@ -26,6 +26,11 @@ IIIIHHGIIIIHHGIIIH
         std::string str{file_raw};
         file << str.substr(1); // skip first newline
     }
+
+    ~write_file_dummy_struct()
+    {
+        std::filesystem::remove(std::filesystem::temp_directory_path()/"my.fastq");
+    }
 };
 
 write_file_dummy_struct go{};

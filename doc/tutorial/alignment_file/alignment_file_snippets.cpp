@@ -24,6 +24,11 @@ r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
         std::string str{file_raw};
         file << str.substr(1); // skip first newline
     }
+
+    ~write_file_dummy_struct()
+    {
+        std::filesystem::remove(std::filesystem::temp_directory_path()/"example.sam");
+    }
 };
 
 write_file_dummy_struct go{};
@@ -115,7 +120,7 @@ int main()
     }
 //![alignments_with_ref]
 }
-
+std::filesystem::remove(std::filesystem::temp_directory_path()/"out.sam");
 //![main_end]
 }
 //![main_end]
