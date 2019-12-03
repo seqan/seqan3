@@ -15,29 +15,29 @@ using int16x_t = seqan3::simd::simd_type<int16_t>::type;
 
 TEST(simd, auto_length)
 {
-    if constexpr(simd_traits<int16x_t>::max_length == 64)
+    if constexpr(simd_traits<int16x_t>::max_length == 64u)
     {
         using int16x32_t = seqan3::simd::simd_type<int16_t, 32>::type; // avx512 512bit
         EXPECT_TRUE((std::is_same_v<int16x_t, int16x32_t>));
-        EXPECT_EQ(simd_traits<int16x_t>::length, 32);
+        EXPECT_EQ(simd_traits<int16x_t>::length, 32u);
     }
-    else if constexpr(simd_traits<int16x_t>::max_length == 32)
+    else if constexpr(simd_traits<int16x_t>::max_length == 32u)
     {
         using int16x16_t = seqan3::simd::simd_type<int16_t, 16>::type; // avx2 256bit
         EXPECT_TRUE((std::is_same_v<int16x_t, int16x16_t>));
-        EXPECT_EQ(simd_traits<int16x_t>::length, 16);
+        EXPECT_EQ(simd_traits<int16x_t>::length, 16u);
     }
-    else if constexpr(simd_traits<int16x_t>::max_length == 16)
+    else if constexpr(simd_traits<int16x_t>::max_length == 16u)
     {
         using int16x8_t = seqan3::simd::simd_type<int16_t, 8>::type; // sse4 128bit
         EXPECT_TRUE((std::is_same_v<int16x_t, int16x8_t>));
-        EXPECT_EQ(simd_traits<int16x_t>::length, 8);
+        EXPECT_EQ(simd_traits<int16x_t>::length, 8u);
     }
-    else if constexpr(simd_traits<int16x_t>::max_length == 1)
+    else if constexpr(simd_traits<int16x_t>::max_length == 1u)
     {
         using int16x1_t = seqan3::simd::simd_type<int16_t, 1>::type; // scalar fallback
         EXPECT_TRUE((std::is_same_v<int16x_t, int16x1_t>));
-        EXPECT_EQ(simd_traits<int16x_t>::length, 1);
+        EXPECT_EQ(simd_traits<int16x_t>::length, 1u);
     }
     else
     {
