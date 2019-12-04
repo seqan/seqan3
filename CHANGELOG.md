@@ -33,7 +33,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### Core
 * Added traits for "metaprogramming" with `seqan3::type_list` and type packs.
 
-#### Input/Output
+#### I/O
 
 * Asynchronous input (background file reading) supported via seqan3::view::async_input_buffer.
 * Reading field::CIGAR into a vector over seqan3::cigar is supported via seqan3::alignment_file_input.
@@ -57,6 +57,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 * **The `type_list` header has moved:**
   If you included `<seqan3/core/type_list.hpp>` you need to change the path to `<seqan3/core/type_list/type_list.hpp>`.
+
+#### I/O
+
+* The field-based in- and output interface for structure files through std::get and std::tie has been removed.
+  Output can instead be achieved with seqan3::views:zip(), for input we will implement unzip() in the future.
 
 #### Range
 
