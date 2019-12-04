@@ -135,63 +135,6 @@ public:
     /*!\name Invocation
      * \{
      */
-    /*!\brief Computes the pairwise sequence alignment for the given pair of sequences.
-     * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
-     * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.
-     *
-     * \param[in] idx The index of the current processed sequence pair.
-     * \param[in] sequence1 The first sequence (or packed sequences).
-     * \param[in] sequence2 The second sequence (or packed sequences).
-     *
-     * \returns A seqan3::alignment_result with the requested alignment outcomes.
-     *
-     * \throws std::bad_alloc during allocation of the alignment matrices or
-     *         seqan3::invalid_alignment_configuration if an invalid configuration for the given sequences is detected.
-     *
-     * \details
-     *
-     * Uses the standard dynamic programming algorithm to compute the pairwise sequence alignment. The space and
-     * runtime complexities depend on the selected configurations (see below).
-     *
-     * ### Exception
-     *
-     * Strong exception guarantee. Might throw std::bad_alloc or seqan3::invalid_alignment_configuration.
-     *
-     * ### Thread-safety
-     *
-     * Calls to this functions in a concurrent environment are not thread safe. Instead use a copy of the alignment
-     * algorithm type.
-     *
-     * ### Complexity
-     *
-     * The following table lists the runtime and space complexities for the banded and unbanded algorithm dependent
-     * on the configured seqan3::align_cfg::result.
-     * Let `n` be the length of the first sequence, `m` be the length of the second sequence and `k` be the size of
-     * the band.
-     *
-     * |                        | unbanded         | banded            |
-     * |:----------------------:|:----------------:|:-----------------:|
-     * |runtime                 |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
-     * |space (score only)      |\f$ O(m) \f$      |\f$ O(k) \f$       |
-     * |space (end positions)   |\f$ O(m) \f$      |\f$ O(k) \f$       |
-     * |space (begin positions) |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
-     * |space (alignment)       |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
-     */
-    template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
-    auto operator()(size_t const idx, sequence1_t && sequence1, sequence2_t && sequence2)
-    {
-        assert(cfg_ptr != nullptr);
-
-        if constexpr (is_debug_mode)
-            initialise_debug_matrices(sequence1, sequence2);
-
-        // Reset the alignment state's optimum between executions of the alignment algorithm.
-        this->alignment_state.reset_optimum();
-
-        return alignment_result{compute_matrix(idx, sequence1, sequence2)};
-    }
-    //!\}
-
     /*!\brief Computes the pairwise sequence alignment for the given range over indexed sequence pairs.
      * \tparam indexed_sequence_pairs_t The type of indexed_sequence_pairs; must model
      *                                  seqan3::detail::indexed_sequence_pair_range.
@@ -245,9 +188,42 @@ public:
 
         std::vector<alignment_result<result_t>> results{};
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
-            results.emplace_back((*this)(idx, get<0>(sequence_pair), get<1>(sequence_pair)));
+            results.emplace_back(compute_single_pair(idx, get<0>(sequence_pair), get<1>(sequence_pair)));
 
         return results;
+    }
+    //!\}
+private:
+
+    /*!\brief Computes the pairwise sequence alignment for a single pair of sequences.
+     * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
+     * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.
+     *
+     * \param[in] idx The index of the current processed sequence pair.
+     * \param[in] sequence1 The first sequence (or packed sequences).
+     * \param[in] sequence2 The second sequence (or packed sequences).
+     *
+     * \returns A seqan3::alignment_result with the requested alignment outcomes.
+     *
+     * \throws std::bad_alloc during allocation of the alignment matrices or
+     *         seqan3::invalid_alignment_configuration if an invalid configuration for the given sequences is detected.
+     *
+     * \details
+     *
+     * Uses the standard dynamic programming algorithm to compute the pairwise sequence alignment.
+     */
+    template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
+    constexpr auto compute_single_pair(size_t const idx, sequence1_t && sequence1, sequence2_t && sequence2)
+    {
+        assert(cfg_ptr != nullptr);
+
+        if constexpr (is_debug_mode)
+            initialise_debug_matrices(sequence1, sequence2);
+
+        // Reset the alignment state's optimum between executions of the alignment algorithm.
+        this->alignment_state.reset_optimum();
+
+        return alignment_result{compute_matrix(idx, sequence1, sequence2)};
     }
 
     /*!\brief Checks if the band parameters are valid for the given sequences.

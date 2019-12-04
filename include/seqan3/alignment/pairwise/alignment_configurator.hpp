@@ -336,7 +336,6 @@ public:
     }
 
 private:
-
     /*!\brief Configures the edit distance algorithm.
      * \tparam function_wrapper_t The invocable alignment function type-erased via std::function.
      * \tparam config_t           The alignment configuration type.

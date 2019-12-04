@@ -89,12 +89,13 @@ public:
 
         std::vector<alignment_result<alignment_result_value_t>> result_vector{};  // Stores the results.
         for (auto && [sequence_pair, index] : indexed_sequence_pairs)
-            result_vector.push_back((*this)(index, get<0>(sequence_pair), get<1>(sequence_pair)));
+            result_vector.push_back(compute_single_pair(index, get<0>(sequence_pair), get<1>(sequence_pair)));
 
         return result_vector;
     }
+private:
 
-    /*!\brief Invokes the actual alignment computation given two sequences.
+    /*!\brief Invokes the actual alignment computation for a single pair of sequences.
      * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model
      *                           std::ranges::forward_range.
      * \tparam    second_range_t The type of the second sequence (or packed sequences); must model
@@ -104,7 +105,7 @@ public:
      * \param[in] second_range   The second sequence (or packed sequences).
      */
     template <std::ranges::forward_range first_range_t, std::ranges::forward_range second_range_t>
-    constexpr auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
+    constexpr auto compute_single_pair(size_t const idx, first_range_t && first_range, second_range_t && second_range)
     {
         using edit_traits = default_edit_distance_trait_type<first_range_t,
                                                              second_range_t,
@@ -114,7 +115,6 @@ public:
         return algo(idx);
     }
 
-private:
     //!\brief The alignment configuration stored on the heap.
     std::shared_ptr<remove_cvref_t<config_t>> cfg_ptr{};
 };
