@@ -7,7 +7,9 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/repeat.hpp>
+#include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/zip.hpp>
@@ -50,27 +52,20 @@ protected:
     }
 };
 
+TEST_F(zip_test, crash)
+{
+    seqan3::dna4_vector a{"AAAAA"_dna4};
+    seqan3::dna4_vector b{"TTTTT"_dna4};
+    std::tuple<seqan3::dna4_vector, seqan3::dna4_vector> d{a, b};
+    auto w = ranges::views::single(d);
+    auto v = views::zip(w, std::views::iota(0))  | views::chunk(1);
+    v.begin();
+    v.end();
+    (void) v;
+}
+
 TEST_F(zip_test, concepts)
 {
-    // using t [[maybe_unused]] = decltype(views::zip(std::declval<std::vector<int> &>(), std::declval<std::vector<int> &>()));
-    // using test [[maybe_unused]] = decltype(views::single_pass_input(views::zip(std::declval<std::vector<int> &>(), views::repeat('L'))));
-    // using resource_t [[maybe_unused]] = std::span<std::tuple<int, int>>;
-    // using calamitas [[maybe_unused]] = decltype(views::single_pass_input(views::zip(std::declval<resource_t>(), std::views::iota(1))));
-    // using minimal_calamitas [[maybe_unused]] = decltype(views::single_pass_input(views::zip(views::repeat('l'))));
-    // using not_calamitas [[maybe_unused]] = decltype(views::single_pass_input(views::zip(std::declval<resource_t>(), std::declval<std::vector<int> &>())));
-
-    auto v9 = views::single_pass_input(views::zip(std::views::iota(0)));
-    using T = decltype(v9);
-    using it_t = std::ranges::iterator_t<T>;
-    auto it = v9.begin();
-    auto it2 = v9.end();
-    (void) it;
-    (void) it2;
-    static_assert(std::same_as<decltype(*std::declval<it_t>()), std::ranges::iter_reference_t<it_t>>);
-    static_assert(std::same_as<decltype(ranges::_::iter_move(std::declval<it_t>())), std::ranges::iter_rvalue_reference_t<it_t>>);
-    // using minimal_calamitas [[maybe_unused]] = decltype(views::single_pass_input(views::zip(std::views::iota(0))));
-    // requires_<same_as<decltype (ranges::_::iter_move(i)), ranges::iter_rvalue_reference_t<I> > >)
-
     EXPECT_TRUE((std::ranges::range<rng_not_common_t>));
     EXPECT_TRUE((std::ranges::range<rng_common_t>));
     EXPECT_TRUE((std::ranges::range<rng_const_t>));
