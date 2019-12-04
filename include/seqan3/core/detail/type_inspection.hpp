@@ -16,6 +16,8 @@
 #include <cxxabi.h>
 #endif // defined(__GNUC__) || defined(__clang__)
 
+#include <functional>
+#include <memory>
 #include <string>
 #include <typeinfo>
 
