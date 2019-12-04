@@ -83,11 +83,11 @@ public:
         using sequence_pair_t = std::tuple_element_t<0, indexed_sequence_pair_t>; // The sequence pair type.
         using sequence1_t = std::remove_reference_t<std::tuple_element_t<0, sequence_pair_t>>;
         using sequence2_t = std::remove_reference_t<std::tuple_element_t<1, sequence_pair_t>>;
-        using alignment_result_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
+        using alignment_result_value_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
 
         using std::get;
 
-        std::vector<alignment_result_t> result_vector{};  // Stores the results.
+        std::vector<alignment_result<alignment_result_value_t>> result_vector{};  // Stores the results.
         for (auto && [sequence_pair, index] : indexed_sequence_pairs)
             result_vector.push_back((*this)(index, get<0>(sequence_pair), get<1>(sequence_pair)));
 

@@ -84,7 +84,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
 TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_alignment, using_score_type<double>};
+    configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
     auto [database, query] = fixture.get_sequences();
     auto res_vec = align_pairwise(views::zip(database, query), align_cfg | typename TestFixture::policy_t{})
                  | views::to<std::vector>;
