@@ -87,8 +87,7 @@ private:
     static constexpr bool fast_load = std::ranges::contiguous_range<inner_range_type> &&
                                       std::sized_sentinel_for<std::ranges::iterator_t<inner_range_type>,
                                                               std::ranges::sentinel_t<inner_range_type>> &&
-                                      sizeof(alphabet_rank_t<value_type_t<inner_range_type>>) == 1 &&
-                                      sizeof(scalar_type) <= 2; // micro benchmark suggest using int8_t or int16_t has best performance.
+                                      sizeof(alphabet_rank_t<value_type_t<inner_range_type>>) == 1;
 
     //!\brief The size of one chunk. Equals the number of elements in the simd vector.
     static constexpr uint8_t chunk_size = simd_traits<simd_t>::length;
@@ -212,7 +211,7 @@ public:
      */
     using reference = std::span<std::ranges::range_value_t<chunk_type>>; //!< The reference type.
     using value_type = chunk_type; //!< The value type.
-    using pointer = chunk_type *; //!< The pointer type.
+    using pointer = void; //!< The pointer type.
     using difference_type = ptrdiff_t; //!< The difference type.
     using iterator_category = std::input_iterator_tag; //!< The iterator category.
     using iterator_concept = iterator_category; //!< The iterator concept.
@@ -252,9 +251,6 @@ public:
             cached_iter[seq_id] = std::ranges::begin(this_view.empty_inner_range);
             cached_sentinel[seq_id] = std::ranges::end(this_view.empty_inner_range);
         }
-
-        // initialises the chunk sizes for the respective chunks.
-        std::ranges::fill(current_chunk_sizes, chunk_size);
         // Check if this is the final chunk already.
         final_chunk = all_iterators_reached_sentinel();
 
@@ -271,13 +267,7 @@ public:
     {
         assert(this_view != nullptr);
         return std::span{this_view->cached_simd_chunks[current_chunk_pos].begin(),
-                         current_chunk_sizes[current_chunk_pos]};
-    }
-
-    //!\brief Returns a pointer to the current chunk of simd vectors.
-    constexpr pointer operator->() const noexcept
-    {
-        return std::addressof(this->operator*());
+                         (current_chunk_pos == final_chunk_pos) ? final_chunk_size : chunk_size};
     }
     //!\}
 
@@ -359,26 +349,26 @@ private:
     {
         if constexpr (chunk_size == simd_traits<max_simd_type>::length / 2)  // upcast into 2 vectors.
         {
-            return std::array{simd::upcast<simd_t>(extract_halve<0>(row)),  // 1. halve
-                                simd::upcast<simd_t>(extract_halve<1>(row))}; // 2. halve
+            return std::array{simd::upcast<simd_t>(extract_halve<0>(row)),  // 1. half
+                              simd::upcast<simd_t>(extract_halve<1>(row))}; // 2. half
         }
         else if constexpr (chunk_size == simd_traits<max_simd_type>::length / 4) // upcast into 4 vectors.
         {
             return std::array{simd::upcast<simd_t>(extract_quarter<0>(row)),  // 1. quarter
-                                simd::upcast<simd_t>(extract_quarter<1>(row)),  // 2. quarter
-                                simd::upcast<simd_t>(extract_quarter<2>(row)),  // 3. quarter
-                                simd::upcast<simd_t>(extract_quarter<3>(row))}; // 4. quarter
+                              simd::upcast<simd_t>(extract_quarter<1>(row)),  // 2. quarter
+                              simd::upcast<simd_t>(extract_quarter<2>(row)),  // 3. quarter
+                              simd::upcast<simd_t>(extract_quarter<3>(row))}; // 4. quarter
         }
         else if constexpr (chunk_size == simd_traits<max_simd_type>::length / 8) // upcast into 8 vectors.
         {
             return std::array{simd::upcast<simd_t>(extract_eighth<0>(row)),   // 1. eighth
-                                simd::upcast<simd_t>(extract_eighth<1>(row)),   // 2. eighth
-                                simd::upcast<simd_t>(extract_eighth<2>(row)),   // 3. eighth
-                                simd::upcast<simd_t>(extract_eighth<3>(row)),   // 4. eighth
-                                simd::upcast<simd_t>(extract_eighth<4>(row)),   // 5. eighth
-                                simd::upcast<simd_t>(extract_eighth<5>(row)),   // 6. eighth
-                                simd::upcast<simd_t>(extract_eighth<6>(row)),   // 7. eighth
-                                simd::upcast<simd_t>(extract_eighth<7>(row))};  // 8. eighth
+                              simd::upcast<simd_t>(extract_eighth<1>(row)),   // 2. eighth
+                              simd::upcast<simd_t>(extract_eighth<2>(row)),   // 3. eighth
+                              simd::upcast<simd_t>(extract_eighth<3>(row)),   // 4. eighth
+                              simd::upcast<simd_t>(extract_eighth<4>(row)),   // 5. eighth
+                              simd::upcast<simd_t>(extract_eighth<5>(row)),   // 6. eighth
+                              simd::upcast<simd_t>(extract_eighth<6>(row)),   // 7. eighth
+                              simd::upcast<simd_t>(extract_eighth<7>(row))};  // 8. eighth
         }
         else
         {
@@ -442,9 +432,6 @@ private:
     /*!\brief Convert a single column into a simd vector.
      * \tparam indices A non-type template parameter pack over the sequence indices.
      *
-     * \param[out] distances_to_end Stores the distance between the end of a sequence and end of the chunk for each
-     *                              sequence.
-     *
      * \returns A simd vector filled with the symbols of the sequences at the current position.
      *
      * \details
@@ -452,7 +439,7 @@ private:
      * Converts a single column over the sequences into a simd type. If the end of one sequence was already
      * reached it will return the padding value instead.
      */
-    constexpr simd_t convert_single_column(std::array<uint8_t, chunk_size> & distances_to_end)
+    constexpr simd_t convert_single_column()
         noexcept
     {
         simd_t simd_column{};
@@ -460,7 +447,6 @@ private:
         {
             if (cached_iter[idx] == cached_sentinel[idx])
             {
-                ++distances_to_end[idx];
                 simd_column[idx] = this_view->padding_value;
             }
             else
@@ -470,6 +456,32 @@ private:
             }
         };
         return simd_column;
+    }
+
+    /*!\brief Updates the end of the final chunk and sets the index of the final chunk.
+     *
+     * \tparam array_t The array type containing the iterators over sequences.
+     * \param[in] iterators_before_update The array containing the iterators before the load operations.
+     *
+     * \details
+     *
+     * Sets the index of the final chunk (`final_chunk_pos`) and updates the end position of the final chunk such that
+     * the view ends at the last character of the longest sequences contained in the set of sequences to be transformed.
+     */
+    template <typename array_t>
+    constexpr void update_final_chunk_position(array_t const & iterators_before_update) noexcept
+    {
+        size_t max_distance = 0;
+        for (auto && [it, sent] : views::zip(iterators_before_update, cached_sentinel))
+            max_distance = std::max<size_t>(std::ranges::distance(it, sent), max_distance);
+
+        assert(max_distance > 0);
+        assert(max_distance <= (total_chunks * chunk_size));
+
+        --max_distance;
+        final_chunk_pos = max_distance  / chunk_size;
+        // first we should be able to check the chunk position.
+        final_chunk_size = (max_distance % chunk_size) + 1;
     }
 
     //!\brief Fetches the next available chunk(s).
@@ -505,48 +517,34 @@ private:
         // (32 bit) or 256 2x2 matrices (64 bit).
 
         constexpr int8_t max_size = simd_traits<simd_t>::max_length;
-        constexpr int8_t num_chunks = chunks_per_load;
         std::array<max_simd_type, max_size> matrix{};
-        final_chunk_pos = 0;  // reset the final chunk position, since this could be the last load.
-        size_t max_size_of_last_chunk = 0; // The maximum of all last chunk sizes. Only relevant for the final chunk.
+        decltype(cached_iter) iterators_before_update{cached_iter}; // Keep track of iterators before the update.
         // Iterate over each sequence.
         for (uint8_t sequence_pos = 0; sequence_pos < chunk_size; ++sequence_pos)
         {  // Iterate over each block depending on the packing of the target simd vector.
-            uint8_t last_chunk_pos = 0;
-            for (uint8_t chunk_pos = 0; chunk_pos < num_chunks; ++chunk_pos)
+            for (uint8_t chunk_pos = 0; chunk_pos < chunks_per_load; ++chunk_pos)
             {
                 uint8_t pos = chunk_pos * chunk_size + sequence_pos; // matrix entry to fill
-                size_t current_chunk_size = cached_sentinel[sequence_pos] - cached_iter[sequence_pos];
-                max_size_of_last_chunk = std::max(max_size_of_last_chunk, current_chunk_size);
-                if (current_chunk_size >= max_size) // not in final block
-                {
+                if (cached_sentinel[sequence_pos] - cached_iter[sequence_pos] >= max_size)
+                { // Not in final block, thus load directly from memory.
                     matrix[pos] = simd::load<max_simd_type>(std::addressof(*cached_iter[sequence_pos]));
                     std::advance(cached_iter[sequence_pos], max_size);
-                    last_chunk_pos += num_chunks; // We have read num_chunks at once.
                 }
                 else  // Loads the final block byte wise in order to not load from uninitialised memory.
                 {
                     matrix[pos] = simd::fill<max_simd_type>(~0);
                     auto & sequence_it = cached_iter[sequence_pos];
                     for (int8_t idx = 0; sequence_it != cached_sentinel[sequence_pos]; ++sequence_it, ++idx)
-                    {
                         matrix[pos][idx] = seqan3::to_rank(*sequence_it);
-                        if (idx % chunk_size == 0)
-                            ++last_chunk_pos; // increment whenever we store an element from the num_chunks boundary
-                    }
                 }
             }
-            // Subtract one from last_chunk_pos to get the correct 0-based index.
-            final_chunk_pos = std::max<int8_t>(final_chunk_pos, --last_chunk_pos);
         }
 
+        // Handle final chunk which might not end at an offset which is not a multiple of `chunk_size`.
         final_chunk = all_iterators_reached_sentinel();
 
         if (final_chunk)
-        { // Store the size of the last chunk.
-            size_t size_of_last_chunk = max_size_of_last_chunk % chunk_size;
-            current_chunk_sizes[final_chunk_pos] = (size_of_last_chunk == 0) ? chunk_size : size_of_last_chunk;
-        }
+            update_final_chunk_position(iterators_before_update);
 
         simd::transpose(matrix);
         split_into_sub_matrices(std::move(matrix));
@@ -562,14 +560,14 @@ private:
         if (at_end)  // reached end of stream.
             return;
 
-        std::array<uint8_t, chunk_size> distances_to_end{};
+        decltype(cached_iter) iterators_before_update{cached_iter}; // Keep track of iterators before the update.
         for (size_t i = 0; i < chunk_size; ++i)
-            this_view->cached_simd_chunks[0][i] = convert_single_column(distances_to_end);
+            this_view->cached_simd_chunks[0][i] = convert_single_column();
 
         final_chunk = all_iterators_reached_sentinel();
 
         if (final_chunk)
-            current_chunk_sizes[final_chunk_pos] -= *std::min_element(distances_to_end.begin(), distances_to_end.end());
+            update_final_chunk_position(iterators_before_update);
     }
 
     //!\brief Array containing the cached sequence iterators over the inner ranges.
@@ -578,10 +576,10 @@ private:
     std::array<std::ranges::sentinel_t<inner_range_type>, chunk_size> cached_sentinel{};
     //!\brief Pointer to the associated range.
     view_to_simd * this_view{nullptr};
-    //!\brief An array that stores the end position for every sequence within the current chunk.
-    std::array<uint8_t, total_chunks> current_chunk_sizes{};
+    //!\brief The size of the final chunk.
+    uint8_t final_chunk_size{chunk_size};
     //!\brief The final chunk position.
-    uint8_t final_chunk_pos{0};
+    uint8_t final_chunk_pos{total_chunks - 1};
     //!\brief The current chunk position.
     uint8_t current_chunk_pos{0};
     //!\brief Flag indicating that final chunk was reached.
