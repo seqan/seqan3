@@ -11,8 +11,6 @@
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/core/detail/type_inspection.hpp>
 
-using namespace seqan3;
-
 // Some test namespace to check if namespace information are preserved within the naming.
 namespace foo
 {
@@ -28,7 +26,7 @@ using reflection_types = ::testing::Types<char, char16_t, char32_t, short, doubl
                                           foo::bar<char>, foo::bar<foo::bar<char, double>>>;
 
 // Helper type list to use some traits functions on type lists.
-using as_type_list_t = detail::transfer_template_args_onto_t<reflection_types, type_list>;
+using as_type_list_t = seqan3::detail::transfer_template_args_onto_t<reflection_types, seqan3::type_list>;
 
 template <typename param_type>
 class type_inspection : public ::testing::Test
@@ -41,7 +39,7 @@ public:
     // Returns the name of the type according to the list of names defined above.
     std::string expected_name()
     {
-        return names[list_traits::find<param_type, as_type_list_t>];
+        return names[seqan3::list_traits::find<param_type, as_type_list_t>];
     }
 };
 
@@ -50,5 +48,5 @@ TYPED_TEST_CASE(type_inspection, reflection_types);
 
 TYPED_TEST(type_inspection, type_name_as_string)
 {
-    EXPECT_EQ(detail::type_name_as_string<TypeParam>, this->expected_name());
+    EXPECT_EQ(seqan3::detail::type_name_as_string<TypeParam>, this->expected_name());
 }
