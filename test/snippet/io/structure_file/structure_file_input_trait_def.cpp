@@ -15,6 +15,6 @@ int main()
     // ... input had amino acid sequences
     seqan3::structure_file_input<seqan3::structure_file_input_default_traits_aa,
                                  seqan3::fields<seqan3::field::SEQ, seqan3::field::ID, seqan3::field::STRUCTURE>,
-                                 seqan3::type_list<seqan3::format_vienna>,
-                                 char> fin{std::istringstream{input}, seqan3::format_vienna{}};
+                                 seqan3::type_list<seqan3::format_vienna>> fin{std::istringstream{input},
+                                                                               seqan3::format_vienna{}};
 }
