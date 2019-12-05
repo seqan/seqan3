@@ -97,37 +97,6 @@ public:
     }
     //!\}
 
-    /*!\brief Invokes the passed alignment instance in a non-blocking manner.
-     * \copydetails execution_handler_sequential::execute
-     */
-    template <typename algorithm_t, typename first_range_type, typename second_range_type, typename delegate_type>
-    //!\cond
-        requires std::invocable<algorithm_t, size_t const, first_range_type, second_range_type> &&
-                 std::invocable<delegate_type, std::invoke_result_t<algorithm_t,
-                                                                    size_t const,
-                                                                    first_range_type,
-                                                                    second_range_type>>
-    //!\endcond
-    void execute(algorithm_t && algorithm,
-                 size_t const idx,
-                 first_range_type first_range,
-                 second_range_type second_range,
-                 delegate_type && delegate)
-    {
-        static_assert(std::ranges::view<first_range_type>, "Expected a view!");
-        static_assert(std::ranges::view<second_range_type>, "Expected a view!");
-
-        assert(state != nullptr);
-
-        task_type task = [=, first_range = std::move(first_range), second_range = std::move(second_range)] ()
-        {
-            delegate(algorithm(idx, std::move(first_range), std::move(second_range)));
-        };
-        // Asynchronously pushes the task to the queue.
-        [[maybe_unused]] contrib::queue_op_status status = state->queue.wait_push(std::move(task));
-        assert(status == contrib::queue_op_status::success);
-    }
-
     /*!\brief Takes underlying range of sequence pairs and invokes an alignment on each instance.
      * \tparam algorithm_t              The type of the alignment algorithm.
      * \tparam indexed_sequence_pairs_t The type of underlying sequence pairs annotated with an index;
