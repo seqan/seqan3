@@ -31,14 +31,26 @@ auto generate_sequence(size_t const len = 500,
                        size_t const seed = 0)
 {
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<uint8_t> dis_alpha(0, alphabet_size<alphabet_t> - 1);
+    size_t max_val{};
+
+    if constexpr (std::unsigned_integral<alphabet_t>)
+        max_val = std::numeric_limits<size_t>::max();
+    else
+        max_val = alphabet_size<alphabet_t> - 1ull;
+
+    std::uniform_int_distribution<size_t> dis_alpha(0ull, max_val);
     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
 
     std::vector<alphabet_t> sequence;
 
     size_t length = dis_length(gen);
     for (size_t l = 0; l < length; ++l)
-        sequence.push_back(alphabet_t{}.assign_rank(dis_alpha(gen)));
+    {
+        if constexpr (std::unsigned_integral<alphabet_t>)
+            sequence.push_back(dis_alpha(gen));
+        else
+            sequence.push_back(assign_rank_to(dis_alpha(gen), alphabet_t{}));
+    }
 
     return sequence;
 }
