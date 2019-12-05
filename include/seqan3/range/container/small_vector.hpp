@@ -939,6 +939,8 @@ public:
     //!\}
 
 protected:
+    //!\privatesection
+
     //!\brief Stores the actual data_.
     std::array<value_type, capacity_> data_{};
     //!\brief The size of the actual contained data_.

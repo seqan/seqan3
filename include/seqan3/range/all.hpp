@@ -40,7 +40,8 @@
  * \link std::ranges::input_range Input ranges \endlink have different *strengths* that are realised through more
  * refined concepts:
  *
- * std::ranges::input_range < std::ranges::forward_range < std::ranges::bidirectional_range < std::ranges::random_access_range
+ * std::ranges::input_range < std::ranges::forward_range < std::ranges::bidirectional_range <
+ * std::ranges::random_access_range < std::ranges::contiguous_range
  *
  * (Click on the respective concepts to learn the exact definitions)
  *
@@ -49,7 +50,7 @@
  *
  * ### Storage behaviour
  *
- * **containers** are the ranges most well known, they own their elements. SeqAn makes use of standard STL containers
+ * **Containers** are the ranges most well known, they own their elements. SeqAn makes use of standard STL containers
  * like `std::vector`, but also implements some custom containers. See the \link container container submodule \endlink
  * for more details.
  *
