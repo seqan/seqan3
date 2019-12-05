@@ -17,6 +17,6 @@ int main()
                                                                  seqan3::fields<seqan3::field::SEQ,
                                                                                 seqan3::field::ID,
                                                                                 seqan3::field::QUAL>,
-                                                                 seqan3::type_list<seqan3::format_fasta>, char>;
+                                                                 seqan3::type_list<seqan3::format_fasta>>;
     sequence_file_input_type fin{std::istringstream{input}, seqan3::format_fasta{}};
 }
