@@ -8,7 +8,7 @@
 #include <seqan3/range/views/pairwise_combine.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 int main()
 {
@@ -18,14 +18,14 @@ int main()
                     "AGGTACGAGCGACACT"_dna4};
 
     // Configure the alignment kernel.
-    auto config = align_cfg::edit |
-                  align_cfg::max_error{7u} |
-                  align_cfg::result{with_score};
+    auto config = seqan3::align_cfg::edit |
+                  seqan3::align_cfg::max_error{7u} |
+                  seqan3::align_cfg::result{seqan3::with_score};
 
     auto filter_v = std::views::filter([](auto && res) { return res.score() >= -6;});
 
-    for (auto const & res : align_pairwise(views::pairwise_combine(vec), config) | views::persist | filter_v)
+    for (auto const & res : seqan3::align_pairwise(seqan3::views::pairwise_combine(vec), config) | seqan3::views::persist | filter_v)
     {
-        debug_stream << "Score: " << res.score() << '\n';
+        seqan3::debug_stream << "Score: " << res.score() << '\n';
     }
 }

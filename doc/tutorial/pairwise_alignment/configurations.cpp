@@ -35,15 +35,14 @@ int main()
 {
 {
 //! [aligned_ends]
-using namespace seqan3;
 
-front_end_first fef{std::true_type{}};
-back_end_first bef{std::false_type{}};
-front_end_second fes{true};
-back_end_second bes{false};
+seqan3::front_end_first fef{std::true_type{}};
+seqan3::back_end_first bef{std::false_type{}};
+seqan3::front_end_second fes{true};
+seqan3::back_end_second bes{false};
 
-auto cfg_1 = align_cfg::aligned_ends{end_gaps{fef, bef, fes, bes}};
-auto cfg_2 = align_cfg::aligned_ends{end_gaps{fef, fes}};
+auto cfg_1 = seqan3::align_cfg::aligned_ends{seqan3::end_gaps{fef, bef, fes, bes}};
+auto cfg_2 = seqan3::align_cfg::aligned_ends{seqan3::end_gaps{fef, fes}};
 //! [aligned_ends]
 (void) cfg_1;
 (void) cfg_2;
@@ -51,15 +50,16 @@ auto cfg_2 = align_cfg::aligned_ends{end_gaps{fef, fes}};
 
 {
 //! [scoring_scheme]
-using namespace seqan3;
+using seqan3::operator""_dna4;
+using seqan3::operator""_aa27;
 
 // Define a simple scoring scheme with match and mismatch cost and get the score.
-nucleotide_scoring_scheme nc_scheme{match_score{4}, mismatch_score{-5}};
+seqan3::nucleotide_scoring_scheme nc_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}};
 auto sc_nc = nc_scheme.score('A'_dna4, 'C'_dna4); // sc_nc == -5.
 
 // Define a amino acid similarity matrix and get the score.
-aminoacid_scoring_scheme aa_scheme{};
-aa_scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM30);
+seqan3::aminoacid_scoring_scheme aa_scheme{};
+aa_scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::BLOSUM30);
 auto sc_aa = aa_scheme.score('M'_aa27, 'K'_aa27); // sc_aa == 2.
 //! [scoring_scheme]
 (void) sc_nc;
@@ -68,10 +68,9 @@ auto sc_aa = aa_scheme.score('M'_aa27, 'K'_aa27); // sc_aa == 2.
 
 {
 //! [gap_scheme]
-using namespace seqan3;
 
 // Define a gap scheme with custom gap scores.
-gap_scheme g{gap_score{-1}, gap_open_score{-10}};
+seqan3::gap_scheme g{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}};
 
 auto gap = g.get_gap_score();  // gap == -1
 auto gap_open = g.get_gap_open_score(); // gap_open == -10
@@ -82,30 +81,27 @@ auto gap_open = g.get_gap_open_score(); // gap_open == -10
 
 {
 //! [result]
-using namespace seqan3;
 
 // Configure the alignment to only compute the score.
-auto cfg = align_cfg::result{with_score};
+auto cfg = seqan3::align_cfg::result{seqan3::with_score};
 //! [result]
 (void) cfg;
 }
 
 {
 //! [band]
-using namespace seqan3;
 
 // Configure a banded alignment.
-auto cfg = align_cfg::band{static_band{lower_bound{-4}, upper_bound{4}}};
+auto cfg = seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-4}, seqan3::upper_bound{4}}};
 //! [band]
 (void) cfg;
 }
 
 {
 //! [edit]
-using namespace seqan3;
 
 // Configure an edit distance alignment.
-auto cfg = align_cfg::edit;
+auto cfg = seqan3::align_cfg::edit;
 //! [edit]
 (void) cfg;
 }
