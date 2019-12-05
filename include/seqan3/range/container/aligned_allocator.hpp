@@ -22,11 +22,21 @@ namespace seqan3
 {
 
 /*!\brief Allocates uninitialized storage whose memory-alignment is specified by *alignment*.
- * \tparam value_t     \copydoc aligned_allocator::value_type
- * \tparam alignment_v \copydoc aligned_allocator::alignment
+ * \tparam value_t     The value type of the allocation.
+ * \tparam alignment_v The memory-alignment of the allocation; defaults to `__STDCPP_DEFAULT_NEW_ALIGNMENT__`.
  * \ingroup container
  *
  * \details
+ *
+ * This class allocates memory at the given `alignment_v` offset. This makes sure that the allocated memory
+ * starts at a memory offset equal to some multiple of the word size. More formally, a memory address `a`, is said to
+ * be `n`-byte aligned when `n` is a power of two and `a` is a multiple of `n` bytes.
+ *
+ * If the specified `alignment` is not supported (e.g. alignments that are not a power of two) by the
+ * used allocation method a std::bad_alloc exception will be thrown. For requested alignments larger than
+ * `__STDCPP_DEFAULT_NEW_ALIGNMENT__`, also called new-extended alignments, the storage will have the alignment
+ * specified by the value `alignment`. Otherwise, the storage is aligned for any object that does not have new-extended
+ * alignment, e.g. `int` or `double`, and is of the requested size.
  *
  * \include test/snippet/range/container/aligned_allocator.cpp
  *
@@ -59,16 +69,16 @@ template <typename value_t, size_t alignment_v = __STDCPP_DEFAULT_NEW_ALIGNMENT_
 class aligned_allocator
 {
 public:
-    //!\brief The memory-alignment of the allocation
+    //!\brief The memory-alignment of the allocation.
     static constexpr size_t alignment = alignment_v;
 
-    //!\brief The value type of the allocation
+    //!\brief The value type of the allocation.
     using value_type = value_t;
-    //!\brief The pointer type of the allocation
+    //!\brief The pointer type of the allocation.
     using pointer = value_type*;
-    //!\brief The difference type of the allocation
+    //!\brief The difference type of the allocation.
     using difference_type = typename std::pointer_traits<pointer>::difference_type;
-    //!\brief The size type of the allocation
+    //!\brief The size type of the allocation.
     using size_type = std::make_unsigned_t<difference_type>;
 
     //!\brief Are any two allocators of the same aligned_allocator type always compare equal?
@@ -84,72 +94,108 @@ public:
     aligned_allocator& operator=(aligned_allocator &&)      = default; //!< Defaulted.
     ~aligned_allocator()                                    = default; //!< Defaulted.
 
-    //!\brief Copy constructor with different value type.
-    template <class other_value_type>
-    constexpr aligned_allocator(aligned_allocator<other_value_type, alignment> const &) noexcept
+    //!\brief Copy constructor with different value type and alignment.
+    template <class other_value_type, size_t other_alignment>
+    constexpr aligned_allocator(aligned_allocator<other_value_type, other_alignment> const &) noexcept
     {}
     //!\}
 
-    /*!\brief Allocates `n * sizeof(T)` bytes of uninitialized storage by calling std::aligned_alloc, but it is
-     * unspecified when and how this function is called.
-     * \throws Throws std::bad_alloc if allocation fails.
+    /*!\brief Allocates sufficiently large memory to hold `n` many elements of `value_type`.
+     *
+     * \param[in] n The number of elements for which to allocate the memory.
+     *
+     * \returns The pointer to the first block of allocated memory.
+     *
+     * \throws Throws std::bad_alloc if allocation fails, i.e. either the call to the throwing version of
+     *         operator new function throws or the requested memory exceeds the maximal number of elements to allocate.
+     *
+     * \details
+     *
+     * Allocates `n * sizeof(value_type)` bytes of uninitialized storage by calling
+     * [operator new](https://en.cppreference.com/w/cpp/memory/new/operator_new).
+     * If the given `alignment` is bigger than
+     * [__STDCPP_DEFAULT_NEW_ALIGNMENT__](https://en.cppreference.com/w/cpp/memory/new/align_val_t), the alignment
+     * aware operator new that takes as second argument the desired alignment of type std::align_val_t is used.
+     *
+     * \note We call the new operator with the semantic requirements that the c++ standard specifies/demands, but be
+     *       aware that users can overload any (global) `operator new` that might not adhere to the standard and might
+     *       cause std::bad_alloc or unaligned pointers.
+     *
      * \sa https://en.cppreference.com/w/cpp/memory/allocator/allocate
+     *
+     * ### Thread safety
+     *
+     * Thread-safe.
+     *
+     * ### Exception
+     *
+     * Strong exception guarantee.
      */
     [[nodiscard]]
-    pointer allocate(size_type n)
+    pointer allocate(size_type const n) const
     {
         constexpr size_type max_size = std::numeric_limits<size_type>::max() / sizeof(value_type);
         if (n > max_size)
-            throw std::bad_alloc();
+            throw std::bad_alloc{};
 
-        // NOTE: On macOS glibc does not implement aligned_alloc, so we need to fallback to posix_memalign instead.
-#if defined(__APPLE__) && (!defined(_GLIBCXX_HAVE_ALIGNED_ALLOC) && !defined(_ISOC11_SOURCE))
-        void * p{};
-        if (int res = posix_memalign(&p, alignment, n * sizeof(value_type)); res == 0 && p != nullptr)
-            return static_cast<pointer>(p);
-#else
-        // NOTE:
-        // Allocate size bytes of uninitialized storage whose alignment is
-        // specified by alignment. The size parameter must be an integral
-        // multiple of alignment.
-        //
-        // Passing a size which is not an integral multiple of alignment or an
-        // alignment which is not valid or not supported by the implementation
-        // causes the function to fail and return a null pointer (C11, as
-        // published, specified undefined behavior in this case, this was
-        // corrected by DR 460).
-        // https://en.cppreference.com/w/cpp/memory/c/aligned_alloc
-        if (auto p = static_cast<pointer>(std::aligned_alloc(alignment, n * sizeof(value_type))))
-            return p;
-#endif
-
-        throw std::bad_alloc();
+        size_t bytes_to_allocate = n * sizeof(value_type);
+        if constexpr (alignment <= __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+            return static_cast<pointer>(::operator new(bytes_to_allocate));
+        else // Use alignment aware allocator function.
+            return static_cast<pointer>(::operator new(bytes_to_allocate, static_cast<std::align_val_t>(alignment)));
     }
 
     /*!\brief Deallocates the storage referenced by the pointer p, which must be a pointer obtained by an earlier call
-     * to allocate().
+     * to seqan3::aligned_allocator::allocate.
+     *
+     * \param[in] p The pointer to the memory to be deallocated.
+     * \param[in] n The number of elements to be deallocated.
+     *
      * \details
      *
-     * The argument n must be equal to the first argument of the call to allocate() that originally produced p;
-     * otherwise, the behavior is undefined.
+     * The argument `n` must be equal to the first argument of the call to seqan3::aligned_allocator::allocate that
+     * originally produced `p`, otherwise the behavior is undefined. This function calls
+     * [operator delete](https://en.cppreference.com/w/cpp/memory/new/operator_delete) to deallocate the memory of
+     * specified size.
+     * If the given `alignment` is bigger than
+     * [__STDCPP_DEFAULT_NEW_ALIGNMENT__](https://en.cppreference.com/w/cpp/memory/new/align_val_t) the alignment
+     * aware operator delete that takes as third argument the alignment as std::align_val_t.
      *
-     * Calls std::free, but it is unspecified when and how it is called.
      * \sa https://en.cppreference.com/w/cpp/memory/allocator/deallocate
+     *
+     * ### Thread safety
+     *
+     * Thread-safe.
+     *
+     * ### Exception
+     *
+     * Nothrow guarantee.
      */
-    void deallocate(pointer p, size_type) noexcept
+    void deallocate(pointer const p, size_type const n) const noexcept
     {
-        std::free(p);
+        if constexpr (alignment <= __STDCPP_DEFAULT_NEW_ALIGNMENT__)
+            ::operator delete(p, n);
+        else // Use alignment aware deallocator function.
+            ::operator delete(p, n, static_cast<std::align_val_t>(alignment));
     }
 
     /*!\brief The aligned_allocator member template class aligned_allocator::rebind provides a way to obtain an
-     * allocator for a different type.
+     *        allocator for a different type.
+     *
      * \tparam new_value_type The other value type.
+     *
+     * \details
+     *
+     * If the alignment of the new type exceeds the alignment of the current allocator, the larger alignment will
+     * be used.
      */
     template <typename new_value_type>
     struct rebind
     {
+        //!\brief The alignment for the rebound allocator.
+        static constexpr size_t other_alignment = std::max(alignof(new_value_type), alignment);
         //!\brief The type of the allocator for a different value type.
-        using other = aligned_allocator<new_value_type, alignment>;
+        using other = aligned_allocator<new_value_type, other_alignment>;
     };
 
     /*!\name Comparison operators
