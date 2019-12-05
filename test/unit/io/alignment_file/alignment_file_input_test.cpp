@@ -116,8 +116,7 @@ TEST_F(alignment_file_input_f, construct_by_filename)
 
         EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
                                                fields<field::SEQ>,
-                                               type_list<format_sam>,
-                                               char>{filename.get_path(), fields<field::SEQ>{}} ));
+                                               type_list<format_sam>>{filename.get_path(), fields<field::SEQ>{}} ));
     }
 }
 
@@ -126,18 +125,16 @@ TEST_F(alignment_file_input_f, construct_from_stream)
     /* stream + format_tag */
     EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
                                            fields<field::SEQ, field::ID, field::QUAL>,
-                                           type_list<format_sam>,
-                                           char>{std::istringstream{input},
-                                                 format_sam{}} ));
+                                           type_list<format_sam>>{std::istringstream{input},
+                                                                  format_sam{}} ));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
                                            fields<field::SEQ, field::ID, field::QUAL>,
-                                           type_list<format_sam>,
-                                           char>{std::istringstream{input},
-                                                 format_sam{},
-                                                 fields<field::SEQ, field::ID, field::QUAL>{}} ));
+                                           type_list<format_sam>>{std::istringstream{input},
+                                                                  format_sam{},
+                                                                  fields<field::SEQ, field::ID, field::QUAL>{}} ));
 }
 
 TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
@@ -214,31 +211,6 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
-    }
-
-    /* guided stream constructor + custom fields + different stream char type */
-    {
-        auto winput = input | views::convert<wchar_t> | views::to<std::wstring>;
-        std::wistringstream ext{winput};
-        alignment_file_input fin{ext, format_sam{}, fields<field::SEQ>{}};
-
-        using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
-    }
-
-    /* guided stream temporary constructor + custom fields + different stream char type */
-    {
-        auto winput = input | views::convert<wchar_t> | views::to<std::wstring>;
-        alignment_file_input fin{std::wistringstream{winput}, format_sam{}, fields<field::SEQ>{}};
-
-        using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
     }
 }
 
