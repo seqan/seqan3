@@ -177,27 +177,6 @@ TEST(general, default_template_args_and_deduction_guides)
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
-
-    /* guided stream constructor + custom fields + different stream_char_type */
-    {
-        std::wostringstream ext{};
-        sequence_file_output fout{ext, format_fasta{}, fields<field::SEQ>{}};
-
-        using t = decltype(fout);
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));              // changed
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
-    }
-
-    /* guided stream temporary constructor + custom fields + different stream_char_type */
-    {
-        sequence_file_output fout{std::wostringstream{}, format_fasta{}, fields<field::SEQ>{}};
-
-        using t = decltype(fout);
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));              // changed
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
-    }
 }
 
 // ----------------------------------------------------------------------------

@@ -25,11 +25,29 @@
 namespace seqan3::detail
 {
 
+/*!\brief Internal class used to expose the actual format interface to write sequence records into the file.
+ * \ingroup sequence_file
+ *
+ * \tparam format_type The type of the format to be exposed.
+ *
+ * \details
+ *
+ * Exposes the protected member function `write_sequence_record` from the given `format_type`, such that the file can
+ * call the proper function for the selected format.
+ */
 template <typename format_type>
 struct sequence_file_output_format_exposer : public format_type
 {
 public:
-    using format_type::write_sequence_record;
+
+    // Can't use `using format_type::write_sequence_record` as it produces a hard failure in the format concept check
+    // for types that do not model the format concept, i.e. don't offer the proper write_sequence_record interface.
+    //!\brief Forwards to the seqan3::sequence_file_output_format::write_sequence_record interface.
+    template <typename ...ts>
+    void write_sequence_record(ts && ...args)
+    {
+        format_type::write_sequence_record(std::forward<ts>(args)...);
+    }
 };
 
 } // namespace seqan3::detail
@@ -49,7 +67,6 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-
 SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_output_format_exposer<t> & v,
                                                        std::ofstream                                  & f,
                                                        sequence_file_output_options                   & options,

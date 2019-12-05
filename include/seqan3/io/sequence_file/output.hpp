@@ -55,10 +55,10 @@ namespace seqan3
 /*!\brief A class for writing sequence files, e.g. FASTA, FASTQ ...
  * \ingroup sequence
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of fields IDs; only relevant if these
- * can't be deduced.
+ *                              can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- * seqan3::sequence_file_output_format).
- * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::builtin_character.
+ *                              seqan3::sequence_file_output_format).
+ *
  * \details
  *
  * ### Introduction
@@ -168,8 +168,7 @@ namespace seqan3
 
 template <detail::fields_specialisation selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::type_list_of_sequence_file_output_formats valid_formats_ =
-              type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>,
-          builtin_character stream_char_type_ = char>
+              type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>>
 class sequence_file_output
 {
 public:
@@ -181,8 +180,8 @@ public:
     using selected_field_ids    = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
     using valid_formats         = valid_formats_;
-    //!\brief Character type of the stream(s), usually `char`.
-    using stream_char_type      = stream_char_type_;
+    //!\brief Character type of the stream(s).
+    using stream_char_type      = char;
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
@@ -291,6 +290,9 @@ public:
      */
     template <output_stream stream_t,
               sequence_file_output_format file_format>
+    //!\cond
+        requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
+    //!\endcond
     sequence_file_output(stream_t                 & stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -305,6 +307,9 @@ public:
     //!\overload
     template <output_stream stream_t,
               sequence_file_output_format file_format>
+    //!\cond
+        requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
+    //!\endcond
     sequence_file_output(stream_t                && stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -733,44 +738,40 @@ protected:
  */
 
 //!\brief Deduction guide for given stream and file format.
-template <output_stream                 stream_t,
+template <output_stream stream_t,
           sequence_file_output_format file_format>
 sequence_file_output(stream_t &,
                      file_format const &)
     -> sequence_file_output<typename sequence_file_output<>::selected_field_ids,  // default field ids
-                            type_list<file_format>,
-                            typename std::remove_reference_t<stream_t>::char_type>;
+                            type_list<file_format>>;
 
 //!\overload
-template <output_stream                 stream_t,
+template <output_stream stream_t,
           sequence_file_output_format file_format>
 sequence_file_output(stream_t &&,
                      file_format const &)
     -> sequence_file_output<typename sequence_file_output<>::selected_field_ids,  // default field ids.
-                            type_list<file_format>,
-                            typename std::remove_reference_t<stream_t>::char_type>;
+                            type_list<file_format>>;
 
 //!\brief Deduction guide for given stream, file format and field ids.
-template <output_stream                 stream_t,
+template <output_stream stream_t,
           sequence_file_output_format file_format,
-          detail::fields_specialisation           selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 sequence_file_output(stream_t &&,
                      file_format const &,
                      selected_field_ids const &)
     -> sequence_file_output<selected_field_ids,
-                            type_list<file_format>,
-                            typename std::remove_reference_t<stream_t>::char_type>;
+                            type_list<file_format>>;
 
 //!\overload
-template <output_stream                 stream_t,
+template <output_stream stream_t,
           sequence_file_output_format file_format,
-          detail::fields_specialisation           selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 sequence_file_output(stream_t &,
                      file_format const &,
                      selected_field_ids const &)
     -> sequence_file_output<selected_field_ids,
-                            type_list<file_format>,
-                            typename std::remove_reference_t<stream_t>::char_type>;
+                            type_list<file_format>>;
 //!\}
 } // namespace seqan3
 
