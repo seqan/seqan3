@@ -32,7 +32,7 @@ namespace seqan3
 {
 
 /*!\brief A space-optimised version of std::vector that compresses multiple letters into a single byte.
- * \tparam alphabet_type The value type of the container, must satisfy seqan3::alphabet and not be `&`.
+ * \tparam alphabet_type The value type of the container, must satisfy seqan3::writable_semialphabet and std::regular.
  * \implements seqan3::reservible_container
  * \implements seqan3::cerealisable
  * \ingroup container
@@ -59,9 +59,9 @@ namespace seqan3
  * threads at the same time **is not safe** and will lead to corruption if both values are stored in the same
  * 64bit-block, i.e. if the distance between `i` and `j` is smaller than 64 / alphabet_size.
  */
-template <alphabet alphabet_type>
+template <writable_semialphabet alphabet_type>
 //!\cond
-    requires std::is_same_v<alphabet_type, std::remove_reference_t<alphabet_type>>
+    requires std::regular<alphabet_type>
 //!\endcond
 class bitcompressed_vector
 {
@@ -87,13 +87,13 @@ private:
         //!\brief Befriend the base type so it can call our #on_update().
         friend base_t;
 
-        //!\brief The proxy of the underlying data type; wrapped in semiregular_t, because it isn't semiregular itself.
-        ranges::semiregular_t<reference_t<data_type>> internal_proxy;
+        //!\brief The proxy of the underlying data type.
+        reference_t<data_type> internal_proxy;
 
         //!\brief Update the sdsl-proxy.
         constexpr void on_update() noexcept
         {
-            internal_proxy.get() = static_cast<base_t &>(*this).to_rank();
+            internal_proxy = static_cast<base_t &>(*this).to_rank();
         }
 
     public:
@@ -103,7 +103,8 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr reference_proxy_type()                                         noexcept = default; //!< Defaulted.
+        //!\brief Deleted, because using this proxy without a parent would be undefined behaviour.
+        reference_proxy_type() = delete;
         constexpr reference_proxy_type(reference_proxy_type const &)             noexcept = default; //!< Defaulted.
         constexpr reference_proxy_type(reference_proxy_type &&)                  noexcept = default; //!< Defaulted.
         constexpr reference_proxy_type & operator=(reference_proxy_type const &) noexcept = default; //!< Defaulted.
