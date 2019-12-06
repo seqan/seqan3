@@ -68,9 +68,9 @@ public:
 // condition_message_v
 // ----------------------------------------------------------------------------
 
-/*!\brief Defines a compound seqan3::small_string consisting of all given conditions separated by the
- *        operator-name `op`.
+/*!\brief Defines a compound std::string consisting of all given conditions separated by the operator-name `op`.
  * \ingroup stream
+ *
  * \tparam op               non-type template parameter specifying the separator character, e.g. '|'.
  * \tparam condition_head_t The first condition type in the message. Ensures that there is at least one type.
  * \tparam condition_ts     Remaining list of conditions separated by `op`.
@@ -101,7 +101,7 @@ class char_predicate_base;
  * \details
  *
  * An object of the type must be invocable with a std::integral type and supply a static constexpr `msg` member of type
- * seqan3::small_string.
+ * std::string.
  */
 //!\cond
 template <typename condition_t>
@@ -138,7 +138,6 @@ SEQAN3_CONCEPT char_predicate = requires
  * \brief Defines the condition msg. The type is deduced from the constant expression in the definition of the variable.
  */
 //!\}
-
 
 // ----------------------------------------------------------------------------
 // char_predicate
