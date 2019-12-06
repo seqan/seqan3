@@ -163,7 +163,7 @@ protected:
             if (!is_legal_seq(*begin(stream_view))) // if neither id nor seq found: throw
             {
                 throw parse_error{std::string{"Expected to be on beginning of ID or sequence, but "} +
-                                  is_id.msg.str() + " and " + is_legal_seq.msg.str() +
+                                  is_id.msg + " and " + is_legal_seq.msg +
                                   " evaluated to false on " + detail::make_printable(*begin(stream_view))};
             }
         }
@@ -179,7 +179,7 @@ protected:
                                                 if (!is_legal_seq(c))                    // enforce legal alphabet
                                                 {
                                                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                      is_legal_seq.msg.str() +
+                                                                      is_legal_seq.msg +
                                                                       " evaluated to false on " +
                                                                       detail::make_printable(c)};
                                                 }
@@ -370,7 +370,7 @@ private:
                                  {
                                      throw parse_error{
                                          std::string{"Encountered an unexpected letter: "} +
-                                         is_legal_structure.msg.str() +
+                                         is_legal_structure.msg +
                                          " evaluated to false on " + detail::make_printable(c)};
                                  }
                                  return c;

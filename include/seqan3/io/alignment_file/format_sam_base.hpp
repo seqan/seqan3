@@ -19,8 +19,8 @@
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/detail/to_string.hpp>
+#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
@@ -399,11 +399,11 @@ inline void format_sam_base::read_field(stream_view_t && stream_view, arithmetic
         throw format_error{std::string("[CORRUPTED SAM FILE] The string '") +
                                        std::string(arithmetic_buffer.begin(), end) +
                                        "' could not be cast into type " +
-                                       detail::get_display_name_v<arithmetic_target_type>.str()};
+                                       detail::type_name_as_string<arithmetic_target_type>};
 
     if (res.ec == std::errc::result_out_of_range)
         throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end) +
-                                       "' into type " + detail::get_display_name_v<arithmetic_target_type>.str() +
+                                       "' into type " + detail::type_name_as_string<arithmetic_target_type> +
                                        " would cause an overflow."};
 }
 

@@ -162,7 +162,7 @@ protected:
                                                 if (!is_legal_alph(c))
                                                 {
                                                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                      is_legal_alph.msg.str() +
+                                                                      is_legal_alph.msg +
                                                                       " evaluated to false on " +
                                                                       detail::make_printable(c)};
                                                 }

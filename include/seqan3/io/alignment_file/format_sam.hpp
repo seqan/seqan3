@@ -500,7 +500,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
                                        {
                                            if (!is_legal_alph(c))
                                                throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                 is_legal_alph.msg.str() +
+                                                                 is_legal_alph.msg +
                                                                  " evaluated to false on " +
                                                                  detail::make_printable(c)};
                                            return c;

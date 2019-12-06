@@ -18,7 +18,6 @@
 #include <vector>
 
 #include <range/v3/view/chunk.hpp>
-#include <range/v3/view/repeat_n.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
@@ -33,6 +32,7 @@
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/join.hpp>
+#include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_line.hpp>
@@ -176,7 +176,7 @@ protected:
                                         if (!is_legal_alph(c))
                                         {
                                             throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                              is_legal_alph.msg.str() +
+                                                              is_legal_alph.msg +
                                                               " evaluated to false on " +
                                                               detail::make_printable(c)};
                                         }
