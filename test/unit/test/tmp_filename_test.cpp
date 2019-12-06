@@ -67,3 +67,14 @@ TEST(tmp_filename_dtr, dtr)
     EXPECT_FALSE(fs::exists(path));
     EXPECT_FALSE(fs::exists(path.parent_path()));
 }
+
+// throw if invalid TMPDIR
+TEST(tmp_filename_throw, throw)
+{
+    if (!system("man putenv > /dev/null 2>&1"))
+    {
+        char str[] = "TMPDIR=/invalid";
+        putenv(str);
+        EXPECT_THROW(tmp_filename t1{"throw"}, std::filesystem::filesystem_error);
+    }
+}

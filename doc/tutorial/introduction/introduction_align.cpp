@@ -51,5 +51,6 @@ int main()
                                                           //            A-GTGATACT
     }
 //! [alignment]
+    std::filesystem::remove(filename);
     return 0;
 }
