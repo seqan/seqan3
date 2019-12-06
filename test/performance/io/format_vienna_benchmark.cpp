@@ -5,10 +5,6 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#if __has_include(<seqan/rna_io.h>)
-    #include <seqan/rna_io.h>
-#endif
-
 #include <sstream>
 #include <string>
 
@@ -17,7 +13,16 @@
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
+#include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
+#include <seqan3/test/seqan2.hpp>
+#include <seqan3/range/views/persist.hpp>
+#include <seqan3/range/views/to.hpp>
+#include <seqan3/range/views/to_char.hpp>
+
+#if SEQAN3_HAS_SEQAN2
+    #include <seqan/rna_io.h>
+#endif
 
 using namespace seqan3;
 using namespace seqan3::test;
@@ -25,15 +30,8 @@ using namespace seqan3::test;
 inline constexpr size_t iterations_per_run = 1024;
 
 inline std::string const header{"seq foobar blobber"};
-inline std::string const sequence
-{
-    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
-    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
-    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
-    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
-    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
-    "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGAACTAGACTAGCTACGATACTAGACTAGCTACGATCAGCTACGA"
-};
+auto const sequence = generate_sequence<rna4>(474, 0, 0) | views::persist | views::to_char | views::to<std::string>;
+
 inline std::string const structure
 {
     "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."
@@ -52,7 +50,7 @@ inline std::string const vienna_file = []()
     return file;
 }();
 
-void write3(benchmark::State & state)
+void write_seqan3(benchmark::State & state)
 {
     std::ostringstream ostream;
     structure_file_output fout{ostream, format_vienna{}};
@@ -70,10 +68,10 @@ void write3(benchmark::State & state)
     state.counters["bytes_per_run"] = bytes_per_run;
     state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
 }
-BENCHMARK(write3);
+BENCHMARK(write_seqan3);
 
-#if __has_include(<seqan/rna_io.h>)
-void write2(benchmark::State & state)
+#if SEQAN3_HAS_SEQAN2
+void write_seqan2(benchmark::State & state)
 {
     std::ostringstream ostream;
     seqan::RnaRecord record{};
@@ -94,10 +92,10 @@ void write2(benchmark::State & state)
     state.counters["bytes_per_run"] = bytes_per_run;
     state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
 }
-BENCHMARK(write2);
+BENCHMARK(write_seqan2);
 #endif
 
-void read3(benchmark::State & state)
+void read_seqan3(benchmark::State & state)
 {
     std::istringstream istream{vienna_file};
     structure_file_input fin{istream, format_vienna{}};
@@ -117,10 +115,10 @@ void read3(benchmark::State & state)
     state.counters["bytes_per_run"] = bytes_per_run;
     state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
 }
-BENCHMARK(read3);
+BENCHMARK(read_seqan3);
 
-#if __has_include(<seqan/rna_io.h>)
-void read2(benchmark::State & state)
+#if SEQAN3_HAS_SEQAN2
+void read_seqan2(benchmark::State & state)
 {
     seqan::RnaRecord record{};
     std::istringstream istream{vienna_file};
@@ -143,7 +141,7 @@ void read2(benchmark::State & state)
     state.counters["bytes_per_run"] = bytes_per_run;
     state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
 }
-BENCHMARK(read2);
+BENCHMARK(read_seqan2);
 #endif
 
 BENCHMARK_MAIN();
