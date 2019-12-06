@@ -44,7 +44,7 @@ inline std::string const structure
     "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))......."
 };
 
-static std::string vienna_file = []()
+inline std::string const vienna_file = []()
 {
     std::string file{};
     for (size_t idx = 0; idx < iterations_per_run; idx++)
