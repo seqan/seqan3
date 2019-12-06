@@ -452,7 +452,7 @@ constexpr simd_t load(void const * mem_addr)
 
 /*!\brief Transposes the given simd vector matrix.
  * \ingroup simd
- * \tparam simd_t The simd vector type; must model seqan3::detail::simd_concept and must be a simd built-in type.
+ * \tparam simd_t The simd vector type; must model seqan3::simd::simd_concept and must be a simd built-in type.
  * \param[in,out] matrix The matrix that is transposed in place.
  *
  * \details
