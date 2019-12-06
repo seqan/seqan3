@@ -85,20 +85,12 @@ namespace seqan3
  * \brief Type template of the seqan3::field::SEQ, a container template over `seq_alphabet`;
  * must satisfy seqan3::sequence_container.
  */
-/*!\typedef using seq_container_container
- * \brief Type template of a column of seqan3::field::SEQ, a container template that can hold multiple
- * `seq_container`; must satisfy seqan3::sequence_container.
- */
 /*!\typedef using id_alphabet
  * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::alphabet.
  */
 /*!\typedef using id_container
  * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
  * must satisfy seqan3::sequence_container.
- */
-/*!\typedef using id_container_container
- * \brief Type template of a column of seqan3::field::ID, a container template that can hold multiple
- * `id_container`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using bpp_prob
  * \brief Data type for the base pair probabilities in seqan3::field::BPP; must satisfy std::is_floating_point.
@@ -116,10 +108,6 @@ namespace seqan3
  * \brief Type template of the seqan3::field::BPP, a container template over a set (bpp_queue) of interactions;
  * must satisfy seqan3::sequence_container.
  */
-/*!\typedef using bpp_container_container
- * \brief Type template of a column of seqan3::field::BPP, a container template that can hold multiple
- * `bpp_container`; must satisfy seqan3::sequence_container.
- */
 /*!\typedef using structure_alphabet
  * \brief Alphabet of the characters for the seqan3::field::STRUCTURE; must satisfy seqan3::rna_structure_alphabet.
  */
@@ -127,19 +115,11 @@ namespace seqan3
  * \brief Type template of the seqan3::field::STRUCTURE, a container template over `structure_alphabet`;
  * must satisfy seqan3::sequence_container.
  */
-/*!\typedef using structure_container_container
- * \brief Type template of a column of seqan3::field::STRUCTURE, a container template that can hold multiple
- * `structure_container`; must satisfy seqan3::sequence_container.
- */
 /*!\typedef using energy_type
  * \brief Type template of the seqan3::field::ENERGY; must be std::optional of a type satisfying std::is_floating_point.
  * \details
  * If the file record contains an energy, the value can be obtained through dereference or std::optional::value.
  * Otherwise, operator bool or std::optional::has_value return false.
- */
-/*!\typedef using energy_container
- * \brief Type template of a column of seqan3::field::ENERGY, a container template that can hold multiple `energy_type`;
- * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using react_type
  * \brief Data type for the reactivity and reactivity error in seqan3::field::REACT and seqan3::field::REACT_ERR,
@@ -149,10 +129,6 @@ namespace seqan3
  * \brief Type template of the seqan3::field::REACT and seqan3::field::REACT_ERR, a container template over
  * `react_type`; must satisfy seqan3::sequence_container.
  */
-/*!\typedef using react_container_container
- * \brief Type template of a column of seqan3::field::REACT and seqan3::field::REACT_ERR, a container template that
- * can hold multiple `react_container`; must satisfy seqan3::sequence_container.
- */
 /*!\typedef using comment_alphabet
  * \brief Alphabet of the characters for the seqan3::field::COMMENT; must satisfy seqan3::alphabet.
  */
@@ -160,16 +136,8 @@ namespace seqan3
  * \brief Type template of the seqan3::field::COMMENT, a container template over `comment_alphabet`;
  * must satisfy seqan3::sequence_container.
  */
-/*!\typedef using comment_container_container
- * \brief Type template of a column of seqan3::field::COMMENT, a container template that can hold multiple
- * `comment_container`; must satisfy seqan3::sequence_container.
- */
 /*!\typedef using offset_type
  * \brief Type template of the seqan3::field::OFFSET; must statisfy std::numeric_limits::is_integer.
- */
-/*!\typedef using offset_container
- * \brief Type template of a column of seqan3::field::OFFSET, a container template that can hold multiple `offset_type`;
- * must satisfy seqan3::sequence_container.
  */
 //!\}
 //!\cond
@@ -182,18 +150,10 @@ SEQAN3_CONCEPT structure_file_input_traits = requires(t v)
     requires writable_alphabet<typename t::seq_legal_alphabet>;
     requires explicitly_convertible_to<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
     requires sequence_container<typename t::template seq_container<typename t::seq_alphabet>>;
-//    requires sequence_container
-//        <typename t::template seq_container_container
-//            <typename t::template seq_container
-//                <typename t::seq_alphabet>>>;
 
     // id
     requires writable_alphabet<typename t::id_alphabet>;
     requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
-//    requires sequence_container
-//        <typename t::template id_container_container
-//            <typename t::template id_container
-//                <typename t::id_alphabet>>>;
 
     // bpp
     requires std::is_floating_point_v<typename t::bpp_prob>;
@@ -211,21 +171,11 @@ SEQAN3_CONCEPT structure_file_input_traits = requires(t v)
 //            <typename t::template bpp_queue
 //                 <typename t::template bpp_item
 //                      <typename t::bpp_prob, typename t::bpp_partner>>>>;
-//    requires sequence_container
-//        <typename t::template bpp_container_container
-//            <typename t::template bpp_container
-//                <typename t::template bpp_queue
-//                    <typename t::template bpp_item
-//                        <typename t::bpp_prob, typename t::bpp_partner>>>>>;
 
     // structure
     requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
           || rna_structure_alphabet<typename t::structure_alphabet>;
     requires sequence_container<typename t::template structure_container<typename t::structure_alphabet>>;
-//    requires sequence_container
-//        <typename t::template structure_container_container
-//            <typename t::template structure_container
-//                <typename t::structure_alphabet>>>;
 
     // structured sequence: tuple composites of seq and structure
     requires std::is_base_of_v<alphabet_tuple_base
@@ -237,35 +187,20 @@ SEQAN3_CONCEPT structure_file_input_traits = requires(t v)
 //        <typename t::template structured_seq_container
 //            <typename t::template structured_seq_alphabet
 //                <typename t::seq_alphabet, typename t::structure_alphabet>>>;
-//    requires sequence_container
-//        <typename t::template structured_seq_container_container
-//            <typename t::template structured_seq_container
-//                <typename t::template structured_seq_alphabet
-//                    <typename t::seq_alphabet, typename t::structure_alphabet>>>>;
 
     // energy: std::optional of floating point number
     requires std::is_floating_point_v<typename t::energy_type::value_type>;
-    requires sequence_container<typename t::template energy_container<typename t::energy_type>>;
 
     // reactivity [error]
     requires std::is_floating_point_v<typename t::react_type>;
     requires sequence_container<typename t::template react_container<typename t::react_type>>;
-//    requires sequence_container
-//        <typename t::template react_container_container
-//            <typename t::template react_container
-//                <typename t::react_type>>>;
 
     // comment
     requires writable_alphabet<typename t::comment_alphabet>;
     requires sequence_container<typename t::template comment_container<typename t::comment_alphabet>>;
-//    requires sequence_container
-//        <typename t::template comment_container_container
-//            <typename t::template comment_container
-//                <typename t::comment_alphabet>>>;
 
     // offset
     requires std::numeric_limits<typename t::offset_type>::is_integer;
-    requires sequence_container<typename t::template offset_container<typename t::offset_type>>;
 };
 //!\endcond
 
@@ -305,10 +240,6 @@ struct structure_file_input_default_traits_rna
     template <typename _seq_alphabet>
     using seq_container                      = std::vector<_seq_alphabet>;
 
-    //!\brief The container for sequences is seqan3::concatenated_sequences.
-    template <typename _seq_container>
-    using seq_container_container            = concatenated_sequences<_seq_container>;
-
     // id
 
     //!\brief The alphabet for an identifier string is char.
@@ -317,10 +248,6 @@ struct structure_file_input_default_traits_rna
     //!\brief The string type for an identifier is std::basic_string.
     template <typename _id_alphabet>
     using id_container                       = std::basic_string<_id_alphabet>;
-
-    //!\brief The container for identifier strings is seqan3::concatenated_sequences.
-    template <typename _id_container>
-    using id_container_container             = concatenated_sequences<_id_container>;
 
     // base pair probability structure
 
@@ -342,10 +269,6 @@ struct structure_file_input_default_traits_rna
     template <typename _bpp_queue>
     using bpp_container                      = std::vector<_bpp_queue>;
 
-    //!\brief The container for interaction strings is std::vector.
-    template <typename _bpp_container>
-    using bpp_container_container            = std::vector<_bpp_container>;
-
     // fixed structure
 
     //!\brief The alphabet for a structure annotation is seqan3::phred42.
@@ -354,10 +277,6 @@ struct structure_file_input_default_traits_rna
     //!\brief The string type for a structure annotation is std::vector.
     template <typename _structure_alphabet>
     using structure_container                = std::vector<_structure_alphabet>;
-
-    //!\brief The container for structure annotation strings is seqan3::concatenated_sequences.
-    template <typename _structure_container>
-    using structure_container_container      = concatenated_sequences<_structure_container>;
 
     // combined sequence and structure
 
@@ -369,18 +288,10 @@ struct structure_file_input_default_traits_rna
     template <typename _structured_seq_alphabet>
     using structured_seq_container           = std::vector<_structured_seq_alphabet>;
 
-    //!\brief The container for sequences is seqan3::concatenated_sequences.
-    template <typename _structured_seq_container>
-    using structured_seq_container_container = concatenated_sequences<_structured_seq_container>;
-
     // energy
 
     //!\brief The type of the energy is std::optional<double>.
     using energy_type                        = std::optional<double>;
-
-    //!\brief The type of a container of energy values is std::vector.
-    template <typename _energy_type>
-    using energy_container                   = std::vector<_energy_type>;
 
     // reactivity [error]
 
@@ -391,10 +302,6 @@ struct structure_file_input_default_traits_rna
     template <typename _react_type>
     using react_container                    = std::vector<_react_type>;
 
-    //!\brief The type of a container of reactivity strings is std::vector.
-    template <typename _react_container>
-    using react_container_container          = std::vector<_react_container>;
-
     // comment
 
     //!\brief The alphabet for a comment string is char.
@@ -404,18 +311,10 @@ struct structure_file_input_default_traits_rna
     template <typename _comment_alphabet>
     using comment_container                  = std::basic_string<_comment_alphabet>;
 
-    //!\brief The container for comments is seqan3::concatenated_sequences.
-    template <typename _comment_container>
-    using comment_container_container        = concatenated_sequences<_comment_container>;
-
     // offset
 
     //!\brief The type of the offset is size_t.
     using offset_type                        = size_t;
-
-    //!\brief The type of a container of offset values is std::vector.
-    template <typename _offset_type>
-    using offset_container                   = std::vector<_offset_type>;
     //!\}
 };
 
@@ -560,20 +459,6 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *
  * You can check whether a file is at end by comparing begin() and end() (if they are the same, the file is at end).
  *
- * ### Column-based reading
- *
- * The record-based interface treats the file as a range of tuples (the records), but in certain situations it
- * is desirable to read the file by field, i.e. column wise (tuple-of-ranges, instead of range-of-tuples).
- *
- * This interface is less flexible, but can save you copy operations in certain scenarios, given that
- * you have sufficient memory to load the entire file at once:
- *
- * \include test/snippet/io/structure_file/structure_file_input_col_read.cpp
- *
- * Note that for this to make sense, your storage data types need to be identical to the corresponding column types
- * of the file. If you require different column types you can specify you own traits, see
- * seqan3::structure_file_input_traits.
- *
  * ### Formats
  *
  * Currently, the only implemented format is seqan3::format_vienna. More formats will follow soon.
@@ -670,47 +555,6 @@ public:
     //!\brief The type of the record, a specialisation of seqan3::record; acts as a tuple of the selected field types.
     using record_type    = record<detail::select_types_with_ids_t<field_types, field_ids, selected_field_ids>,
                                   selected_field_ids>;
-    //!\}
-
-    /*!\name Field column types and tuple type
-     * \brief These types are relevant for field/column-wise reading; they may be manipulated via the \ref traits_type
-     * to achieve different storage behaviour.
-     * \{
-     */
-    //!\brief Column type of field::SEQ (seqan3::concatenated_sequences<seq_type> by default).
-    using seq_column_type            = typename traits_type::template seq_container_container<seq_type>;
-    //!\brief Column type of field::ID (seqan3::concatenated_sequences<id_type> by default).
-    using id_column_type             = typename traits_type::template id_container_container<id_type>;
-    //!\brief Column type of field::BPP (std::vector<bpp_type> by default).
-    using bpp_column_type            = typename traits_type::template bpp_container_container<bpp_type>;
-    //!\brief Column type of field::STRUCTURE (seqan3::concatenated_sequences<structure_type> by default).
-    using structure_column_type      = typename traits_type::template structure_container_container<structure_type>;
-    //!\brief Column type of field::STRUCTURED_SEQ (seqan3::concatenated_sequences<structured_seq_type> by default).
-    using structured_seq_column_type = typename traits_type::template structured_seq_container_container
-        <structured_seq_type>;
-    //!\brief Column type of field::ENERGY (std::vector<energy_type> by default).
-    using energy_column_type         = typename traits_type::template energy_container<energy_type>;
-    //!\brief Column type of field::REACT and field::REACT_ERR (std::vector<react_type> by default).
-    using react_column_type          = typename traits_type::template react_container_container<react_type>;
-    //!\brief Column type of field::COMMENT (seqan3::concatenated_sequences<comment_type> by default).
-    using comment_column_type        = typename traits_type::template comment_container_container<comment_type>;
-    //!\brief Column type of field::OFFSET (std::vector<offset_type> by default).
-    using offset_column_type         = typename traits_type::template offset_container<offset_type>;
-
-    //!\brief The previously defined types aggregated in a seqan3::type_list.
-    using field_column_types         = type_list<seq_column_type,
-                                                 id_column_type,
-                                                 bpp_column_type,
-                                                 structure_column_type,
-                                                 structured_seq_column_type,
-                                                 energy_column_type,
-                                                 react_column_type,
-                                                 react_column_type,
-                                                 comment_column_type,
-                                                 offset_column_type>;
-    //!\brief The type emulated by the file when read column-wise.
-    using file_as_tuple_type     = record<detail::select_types_with_ids_t<field_column_types, field_ids,
-                                                                          selected_field_ids>, selected_field_ids>;
     //!\}
 
     /*!\name Range associated types
@@ -903,64 +747,6 @@ public:
     }
     //!\}
 
-    /*!\name Tuple interface
-     * \brief Provides functions for field-based ("column"-based) reading.
-     * \{
-     */
-    //!\brief Read the entire file into internal buffers and retrieve the specified column.
-    template <field f>
-    friend auto & get(structure_file_input & file)
-    {
-        static_assert(structure_file_input::selected_field_ids::contains(f),
-                      "You requested a field via get that was not selected for the file.");
-
-        file.read_columns();
-
-        return seqan3::get<f>(file.columns_buffer);
-    }
-
-    //!\copydoc get
-    template <field f>
-    friend auto && get(structure_file_input && file)
-    {
-        return std::move(get<f>(file));
-    }
-
-    //!\copydoc get
-    template <size_t i>
-    friend auto & get(structure_file_input & file)
-    {
-        static_assert(i < structure_file_input::selected_field_ids::as_array.size(),
-                      "You requested a field number larger than the number of selected fields for the file.");
-        file.read_columns();
-
-        return std::get<i>(file.columns_buffer);
-    }
-
-    //!\copydoc get
-    template <size_t i>
-    friend auto && get(structure_file_input && file)
-    {
-        return std::move(get<i>(file));
-    }
-
-    //!\copydoc get
-    template <typename t>
-    friend auto & get(structure_file_input & file)
-    {
-        file.read_columns();
-
-        return std::get<t>(file.columns_buffer);
-    }
-
-    //!\copydoc get
-    template <typename t>
-    friend auto && get(structure_file_input && file)
-    {
-        return std::move(get<t>(file));
-    }
-    //!\}
-
     //!\brief The options are public and its members can be set directly.
     structure_file_input_options<typename traits_type::seq_legal_alphabet,
                                  selected_field_ids::contains(field::STRUCTURED_SEQ)> options;
@@ -972,8 +758,6 @@ protected:
      */
     //!\brief Buffer for a single record.
     record_type record_buffer;
-    //!\brief Buffer of the entire file in columns.
-    file_as_tuple_type columns_buffer;
     //!\}
 
     /*!\name Stream / file access
@@ -1057,48 +841,6 @@ protected:
         }, format);
     }
 
-    //!\brief Read the entire file into the internal column buffers.
-    void read_columns()
-    {
-        //TODO don't do multiple visits
-        //TODO create specialised version for concatenated_sequences where we append on the concat
-        auto & seq_column_buffer            = detail::get_or_ignore<field::SEQ>(columns_buffer);
-        auto & id_column_buffer             = detail::get_or_ignore<field::ID>(columns_buffer);
-        auto & bpp_column_buffer            = detail::get_or_ignore<field::BPP>(columns_buffer);
-        auto & structure_column_buffer      = detail::get_or_ignore<field::STRUCTURE>(columns_buffer);
-        auto & structured_seq_column_buffer = detail::get_or_ignore<field::STRUCTURED_SEQ>(columns_buffer);
-        auto & energy_column_buffer         = detail::get_or_ignore<field::ENERGY>(columns_buffer);
-        auto & react_column_buffer          = detail::get_or_ignore<field::REACT>(columns_buffer);
-        auto & react_err_column_buffer      = detail::get_or_ignore<field::REACT_ERR>(columns_buffer);
-        auto & comment_column_buffer        = detail::get_or_ignore<field::COMMENT>(columns_buffer);
-        auto & offset_column_buffer         = detail::get_or_ignore<field::OFFSET>(columns_buffer);
-
-        // read the remaining records and split into column buffers
-        for (auto & rec : *this)
-        {
-            if constexpr (selected_field_ids::contains(field::SEQ))
-                seq_column_buffer.push_back(std::move(seqan3::get<field::SEQ>(rec)));
-            if constexpr (selected_field_ids::contains(field::ID))
-                id_column_buffer.push_back(std::move(seqan3::get<field::ID>(rec)));
-            if constexpr (selected_field_ids::contains(field::BPP))
-                bpp_column_buffer.push_back(std::move(seqan3::get<field::BPP>(rec)));
-            if constexpr (selected_field_ids::contains(field::STRUCTURE))
-                structure_column_buffer.push_back(std::move(seqan3::get<field::STRUCTURE>(rec)));
-            if constexpr (selected_field_ids::contains(field::STRUCTURED_SEQ))
-                structured_seq_column_buffer.push_back(std::move(seqan3::get<field::STRUCTURED_SEQ>(rec)));
-            if constexpr (selected_field_ids::contains(field::ENERGY))
-                energy_column_buffer.push_back(std::move(seqan3::get<field::ENERGY>(rec)));
-            if constexpr (selected_field_ids::contains(field::REACT))
-                react_column_buffer.push_back(std::move(seqan3::get<field::REACT>(rec)));
-            if constexpr (selected_field_ids::contains(field::REACT_ERR))
-                react_err_column_buffer.push_back(std::move(seqan3::get<field::REACT_ERR>(rec)));
-            if constexpr (selected_field_ids::contains(field::COMMENT))
-                comment_column_buffer.push_back(std::move(seqan3::get<field::COMMENT>(rec)));
-            if constexpr (selected_field_ids::contains(field::OFFSET))
-                offset_column_buffer.push_back(std::move(seqan3::get<field::OFFSET>(rec)));
-        }
-    }
-
     //!\brief Befriend iterator so it can access the buffers.
     friend iterator;
 };
@@ -1131,45 +873,4 @@ structure_file_input(stream_type & stream, file_format const &, selected_field_i
 
 } // namespace seqan3
 
-// ------------------------------------------------------------------
-// std-overloads for the tuple-like interface
-// ------------------------------------------------------------------
-
-namespace std
-{
-
-/*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
- * \implements seqan3::unary_type_trait
- * \ingroup structure_file
- * \see std::tuple_size_v
- */
-template <seqan3::structure_file_input_traits traits_type,
-          seqan3::detail::fields_specialisation selected_field_ids,
-          seqan3::detail::type_list_of_structure_file_input_formats valid_formats,
-          seqan3::builtin_character stream_char_t>
-struct tuple_size<seqan3::structure_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
-{
-    //!\brief The value equals the number of selected fields in the file.
-    static constexpr size_t value = selected_field_ids::as_array.size();
-};
-
-/*!\brief Obtains the type of the specified element.
- * \implements seqan3::transformation_trait
- * \ingroup structure_file
- * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
- */
-template <size_t elem_no,
-          seqan3::structure_file_input_traits traits_type,
-          seqan3::detail::fields_specialisation selected_field_ids,
-          seqan3::detail::type_list_of_structure_file_input_formats valid_formats,
-          seqan3::builtin_character stream_char_t>
-struct tuple_element<elem_no,
-                     seqan3::structure_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
-    : tuple_element<elem_no, typename seqan3::structure_file_input<traits_type,
-                                                                   selected_field_ids,
-                                                                   valid_formats,
-                                                                   stream_char_t>::file_as_tuple_type>
-{};
-
-} // namespace std
 #pragma GCC diagnostic pop

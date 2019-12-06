@@ -396,22 +396,9 @@ TEST_F(structure_file_output_rows, assign_structure_file_pipes)
 
 struct structure_file_output_columns : public structure_file_output_rows{};
 
-TEST_F(structure_file_output_columns, assign_record_of_columns)
+TEST_F(structure_file_output_columns, assign_columns)
 {
-    record<type_list<std::vector<rna5_vector>, std::vector<std::string>, std::vector<std::vector<wuss51>>>,
-           fields<field::SEQ, field::ID, field::STRUCTURE>> columns
-    {
-        seqs,
-        ids,
-        structures
-    };
-
-    assign_impl(columns);
-}
-
-TEST_F(structure_file_output_columns, assign_tuple_of_columns)
-{
-    assign_impl(std::tie(seqs, ids, structures));
+    assign_impl(views::zip(seqs, ids, structures));
 }
 
 // ----------------------------------------------------------------------------
