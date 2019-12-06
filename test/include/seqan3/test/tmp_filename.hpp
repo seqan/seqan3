@@ -118,6 +118,9 @@ public:
     }
 
     /*!\brief Destructs the temporary directory path.
+     *
+     * \details
+     *
      * Removes the temporary directory and all its subdirectories and files contained.
      */
     ~tmp_filename()

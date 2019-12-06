@@ -1,4 +1,6 @@
 #include <fstream>
+
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/std/filesystem>
 
 //![include_aligned_sequence]
@@ -7,6 +9,8 @@
 
 struct write_file_dummy_struct
 {
+    std::filesystem::path const file_path = std::filesystem::temp_directory_path()/"example.sam";
+
     write_file_dummy_struct()
     {
 
@@ -20,14 +24,18 @@ r003	2064	ref	29	17	5M	*	0	0	TAGGC	*
 r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 )//![sam_file]";
 
-        std::ofstream file{std::filesystem::temp_directory_path()/"example.sam"};
+        std::ofstream file{file_path};
         std::string str{file_raw};
         file << str.substr(1); // skip first newline
     }
 
     ~write_file_dummy_struct()
     {
-        std::filesystem::remove(std::filesystem::temp_directory_path()/"example.sam");
+        std::error_code ec{};
+        std::filesystem::remove(file_path, ec);
+
+        if (ec)
+            seqan3::debug_stream << "[WARNING] Could not delete " << file_path << ". " << ec.message() << '\n';
     }
 };
 

@@ -20,6 +20,8 @@
 
 struct write_file_dummy_struct
 {
+    std::filesystem::path const tmp_path = std::filesystem::temp_directory_path();
+
     write_file_dummy_struct()
     {
 
@@ -38,22 +40,36 @@ AGCGATCGAGGAATATAT
 IIIIHHGIIIIHHGIIIH
 )//![fastq_file]";
 
-        std::ofstream file{std::filesystem::temp_directory_path()/"my.fastq"};
+        std::ofstream file{tmp_path/"my.fastq"};
         std::string str{file_raw};
         file << str.substr(1); // skip first newline
 
-        std::ofstream file2{std::filesystem::temp_directory_path()/"my.qq"};
+        std::ofstream file2{tmp_path/"my.qq"};
         file2 << str.substr(1); // skip first newline
 
-        std::ofstream file3{std::filesystem::temp_directory_path()/"my.fasta"};
+        std::ofstream file3{tmp_path/"my.fasta"};
         file3 << ">seq1\nAVAV\n>seq2\nAVAVA\n";
     }
 
     ~write_file_dummy_struct()
     {
-        std::filesystem::remove(std::filesystem::temp_directory_path()/"my.fastq");
-        std::filesystem::remove(std::filesystem::temp_directory_path()/"my.qq");
-        std::filesystem::remove(std::filesystem::temp_directory_path()/"my.fasta");
+        std::error_code ec{};
+        std::filesystem::path file_path{};
+
+        file_path = tmp_path/"my.fastq";
+        std::filesystem::remove(file_path, ec);
+        if (ec)
+            seqan3::debug_stream << "[WARNING] Could not delete " << file_path << ". " << ec.message() << '\n';
+
+        file_path = tmp_path/"my.qq";
+        std::filesystem::remove(file_path, ec);
+        if (ec)
+            seqan3::debug_stream << "[WARNING] Could not delete " << file_path << ". " << ec.message() << '\n';
+
+        file_path = tmp_path/"my.fasta";
+        std::filesystem::remove(file_path, ec);
+        if (ec)
+            seqan3::debug_stream << "[WARNING] Could not delete " << file_path << ". " << ec.message() << '\n';
     }
 };
 
@@ -178,5 +194,4 @@ sequence_file_output{tmp_dir/"output.fasta"} = sequence_file_input{tmp_dir/"my.f
 
 std::filesystem::remove(std::filesystem::temp_directory_path()/"output.fasta");
 std::filesystem::remove(std::filesystem::temp_directory_path()/"output.fastq");
-
 }
