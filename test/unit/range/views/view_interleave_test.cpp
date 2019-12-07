@@ -10,7 +10,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/interleave.hpp>
 #include <seqan3/range/views/take.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/std/ranges>
 
 #include <seqan3/test/pretty_printing.hpp>
@@ -29,27 +29,27 @@ TEST(view_interleave, basic)
     size_t cmpsize = 18;
 
     // pipe notation
-    // explicitly call views::all
-    auto v0 = views::all(u) | views::interleave(s, views::all(i));
+    // explicitly call views::type_reduce
+    auto v0 = views::type_reduce(u) | views::interleave(s, views::type_reduce(i));
     EXPECT_TRUE(ranges::equal(cmp, v0));
     EXPECT_EQ(cmpsize, v0.size());
-    // don't call views::all
+    // don't call views::type_reduce
     auto v1 = u | views::interleave(s, i);
     EXPECT_TRUE(ranges::equal(cmp, v1));
 
     // function notation
-    // explicitly call views::all
-    auto v2{views::interleave(views::all(u), s, views::all(i))};
+    // explicitly call views::type_reduce
+    auto v2{views::interleave(views::type_reduce(u), s, views::type_reduce(i))};
     EXPECT_TRUE(ranges::equal(cmp, v2));
-    // don't call views::all
+    // don't call views::type_reduce
     auto v3{views::interleave(u, s, i)};
     EXPECT_TRUE(ranges::equal(cmp, v3));
 
     //combinability
-    // explicitly call views::all
-    auto v4 = views::all(u) | views::interleave(s, views::all(i)) | std::views::reverse | views::take(5);
+    // explicitly call views::type_reduce
+    auto v4 = views::type_reduce(u) | views::interleave(s, views::type_reduce(i)) | std::views::reverse | views::take(5);
     EXPECT_TRUE(ranges::equal(cmp_rev, v4));
-    // don't call views::all
+    // don't call views::type_reduce
     auto v5 = u | views::interleave(s, i) | std::views::reverse | views::take(5);
     EXPECT_TRUE(ranges::equal(cmp_rev, v5));
 }
@@ -60,7 +60,7 @@ TEST(view_interleave, concepts)
     std::string u{"FOOBARBAXBAT"};
     std::string i{"in"};
     size_t s = 3;
-    auto v1 = detail::view_interleave(views::all(u), s, views::all(i));
+    auto v1 = detail::view_interleave(views::type_reduce(u), s, views::type_reduce(i));
 
     EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);

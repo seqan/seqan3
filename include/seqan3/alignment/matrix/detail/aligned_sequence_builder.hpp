@@ -25,7 +25,7 @@
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/slice.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
@@ -128,8 +128,8 @@ public:
      * \param[in] sec_rng The second range to build the aligned sequence for.
      */
     constexpr aligned_sequence_builder(fst_sequence_t fst_rng, sec_sequence_t sec_rng) :
-        fst_rng{views::all(std::forward<fst_sequence_t>(fst_rng))},
-        sec_rng{views::all(std::forward<sec_sequence_t>(sec_rng))}
+        fst_rng{views::type_reduce(std::forward<fst_sequence_t>(fst_rng))},
+        sec_rng{views::type_reduce(std::forward<sec_sequence_t>(sec_rng))}
     {}
     //!\}
 
@@ -216,8 +216,8 @@ private:
         }
     }
 
-    all_view<fst_sequence_t> fst_rng; //!< A view over the first range.
-    all_view<sec_sequence_t> sec_rng; //!< A view over the second range.
+    type_reduce_view<fst_sequence_t> fst_rng; //!< A view over the first range.
+    type_reduce_view<sec_sequence_t> sec_rng; //!< A view over the second range.
 };
 
 /*!\name Type deduction guides

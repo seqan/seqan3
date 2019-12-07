@@ -16,7 +16,7 @@
 
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/core/platform.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
