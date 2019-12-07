@@ -15,13 +15,12 @@
 #include <type_traits>
 #include <vector>
 
-#include <range/v3/view/const.hpp>
-
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/range/views/as_const.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/slice.hpp>
@@ -50,13 +49,13 @@ namespace seqan3::detail
 template <typename value_type, bool const_>
 struct concatenated_sequences_reference_proxy :
     public std::conditional_t<const_,
-                              decltype(std::declval<value_type const &>() | ranges::view::const_ | views::slice(0,1)),
+                              decltype(std::declval<value_type const &>() | views::as_const | views::slice(0,1)),
                               decltype(std::declval<value_type &>() | views::slice(0,1))>
 {
     //!\brief The base type.
     using base_t =
         std::conditional_t<const_,
-                           decltype(std::declval<value_type const &>() | ranges::view::const_ | views::slice(0,1)),
+                           decltype(std::declval<value_type const &>() | views::as_const | views::slice(0,1)),
                            decltype(std::declval<value_type &>() | views::slice(0,1))>;
 
     //!\brief Inherit the base type's constructors.
@@ -565,7 +564,7 @@ public:
     const_reference operator[](size_type const i) const
     {
         assert(i < size());
-        return data_values | ranges::view::const_ | views::slice(data_delimiters[i], data_delimiters[i+1]);
+        return data_values | views::as_const | views::slice(data_delimiters[i], data_delimiters[i+1]);
     }
 
     /*!\brief Return the first element as a view. Calling front on an empty container is undefined.
@@ -640,7 +639,7 @@ public:
     //!\copydoc concat()
     const_reference concat() const
     {
-        return data_values | ranges::view::const_ | views::slice(static_cast<size_type>(0), concat_size());
+        return data_values | views::as_const | views::slice(static_cast<size_type>(0), concat_size());
     }
 
     /*!\brief Provides direct, unsafe access to underlying data structures.
