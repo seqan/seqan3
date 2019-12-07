@@ -54,6 +54,7 @@ write_file_dummy_struct go{};
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/all.hpp>
 #include <seqan3/range/views/get.hpp>
+#include <seqan3/range/views/move.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
@@ -80,10 +81,9 @@ int main()
                                  | length_filter                                    // apply length filter
                                  | std::views::take(2)                              // take first two records
                                  | seqan3::views::get<seqan3::field::id>            // select only ID from record
-                                 | seqan3::views::convert<std::string &&>           // mark ID to be moved out of record
+                                 | seqan3::views::move                              // mark ID to be moved out of record
                                  | seqan3::views::to<std::vector<std::string>>;     // convert to container
     // Note that you need to know the type of id (std::string)
-    // Converting to && prevents the IDs from being copied
 
     seqan3::debug_stream << ids << '\n';
 }
