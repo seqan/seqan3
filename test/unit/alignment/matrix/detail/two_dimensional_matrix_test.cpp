@@ -8,31 +8,122 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <numeric>
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
+#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/core/simd/simd_algorithm.hpp>
+#include <seqan3/test/simd_utility.hpp>
 
 #include "../../../range/iterator_test_template.hpp"
 
 using namespace seqan3;
 using namespace seqan3::detail;
 
-using row_wise = std::integral_constant<matrix_major_order, matrix_major_order::row>;
-using col_wise = std::integral_constant<matrix_major_order, matrix_major_order::column>;
+template <typename score_t, matrix_major_order order, typename allocator_t = std::allocator<score_t>>
+using test_matrix_t = seqan3::detail::two_dimensional_matrix<score_t, allocator_t, order>;
 
-template <typename constant_t>
-struct two_dimensional_matrix_test : public ::testing::Test
+template <typename score_type, matrix_major_order order = matrix_major_order::row>
+std::vector<score_type, std::allocator<score_type>> create_matrix_storage()
 {
-    using matrix_type = seqan3::detail::two_dimensional_matrix<int, std::allocator<int>, constant_t::value>;
+    // this is a small hack to allow simd types in an initialiser list on gcc 7;
+#if defined(__GNUC__) && (__GNUC__ == 7)
+    using storage_t = std::array<score_type, 12>;
+#else
+    using storage_t = std::vector<score_type>;
+#endif
 
-    std::vector<int> expected_range{0,  1,  2,  3,
-                                    4,  5,  6,  7,
-                                    8,  9, 10, 11};
+    // note: we represent the same matrix in one case with a row-wise data layout and in the other case with a
+    // column-wise data layout. Also note that the score_type can be a builtin integer or a simd vector of a builtin
+    // integer.
+    storage_t row_wise
+    {
+        score_type{0}, score_type{1}, score_type{ 2}, score_type{ 3},
+        score_type{4}, score_type{5}, score_type{ 6}, score_type{ 7},
+        score_type{8}, score_type{9}, score_type{10}, score_type{11}
+    };
+
+    storage_t column_wise
+    {
+        score_type{0}, score_type{4}, score_type{8},
+        score_type{1}, score_type{5}, score_type{9},
+        score_type{2}, score_type{6}, score_type{10},
+        score_type{3}, score_type{7}, score_type{11}
+    };
+
+    // for a simd vector we make sure that some simd values are completely set, i.e. each scalar value in that simd
+    // vector has some value.
+    if constexpr(seqan3::simd_concept<score_type>)
+    {
+        row_wise[5] = seqan3::simd::iota<score_type>(5); // 5, 6, 7, ...
+        row_wise[8] = seqan3::simd::fill<score_type>(8); // 8, 8, 8, ...
+
+        column_wise[4] = seqan3::simd::iota<score_type>(5);
+        column_wise[2] = seqan3::simd::fill<score_type>(8);
+    }
+
+    storage_t storage = order == matrix_major_order::row ? row_wise : column_wise;
+    return {storage.begin(), storage.end()};
+}
+
+template <typename score_t>
+struct make_unsigned_score_type : std::make_unsigned<score_t> {};
+
+template <simd::simd_concept simd_score_t>
+struct make_unsigned_score_type<simd_score_t>
+{
+    using score_type = typename simd::simd_traits<simd_score_t>::scalar_type;
+    using unsigned_score_type = std::make_unsigned_t<score_type>;
+    static constexpr auto length = simd::simd_traits<simd_score_t>::length;
+
+    using type = simd::simd_type_t<unsigned_score_type, length>;
 };
 
-using testing_types = ::testing::Types<row_wise, col_wise>;
+//-----------------------------------------------------------------------------
+// Matrix tests
+//-----------------------------------------------------------------------------
+
+template <typename matrix_t>
+struct two_dimensional_matrix_test;
+
+template <typename score_t, matrix_major_order order>
+struct two_dimensional_matrix_test<test_matrix_t<score_t, order>> : public ::testing::Test
+{
+    using matrix_type = test_matrix_t<score_t, order>;
+    using score_type = typename matrix_type::value_type;
+    static constexpr matrix_major_order matrix_order = order;
+
+    std::vector<score_type> expected_matrix_content{create_matrix_storage<score_type, matrix_major_order::row>()};
+    std::vector<score_type> matrix_storage{create_matrix_storage<score_type, matrix_order>()};
+
+    // Note: We construct the internal data representation of the matrix depending on the matrix_major_order.
+    // This will ensure that all test matrices are independent of the matrix_major_order when accessed via the same
+    // matrix coordinate.
+    matrix_type matrix{number_rows{3}, number_cols{4}, matrix_storage};
+
+    template <typename value1_t, typename value2_t>
+        requires !(seqan3::simd_concept<std::decay_t<value1_t>> && seqan3::simd_concept<std::decay_t<value2_t>>)
+    static void expect_eq(value1_t v1, value2_t v2)
+    {
+        EXPECT_EQ(v1, v2);
+    }
+
+    template <typename value1_t, typename value2_t>
+        requires (seqan3::simd_concept<std::decay_t<value1_t>> && seqan3::simd_concept<std::decay_t<value2_t>>)
+    static void expect_eq(value1_t && v1, value2_t && v2)
+    {
+        SIMD_EQ(v1, v2);
+    }
+};
+
+using testing_types = ::testing::Types<test_matrix_t<int, matrix_major_order::row>,
+                                       test_matrix_t<int, matrix_major_order::column>,
+                                       test_matrix_t<simd_type_t<int>, matrix_major_order::row>,
+                                       test_matrix_t<simd_type_t<int>, matrix_major_order::column>>;
 TYPED_TEST_CASE(two_dimensional_matrix_test, testing_types);
 
 TYPED_TEST(two_dimensional_matrix_test, concepts)
@@ -49,6 +140,7 @@ TYPED_TEST(two_dimensional_matrix_test, concepts)
 TYPED_TEST(two_dimensional_matrix_test, construction)
 {
     using matrix_type = typename TestFixture::matrix_type;
+    using score_type = typename TestFixture::score_type;
 
     EXPECT_TRUE(std::is_default_constructible_v<matrix_type>);
     EXPECT_TRUE(std::is_copy_constructible_v<matrix_type>);
@@ -58,6 +150,8 @@ TYPED_TEST(two_dimensional_matrix_test, construction)
     EXPECT_TRUE(std::is_destructible_v<matrix_type>);
 
     EXPECT_TRUE((std::is_constructible_v<matrix_type, number_rows, number_cols>));
+    EXPECT_TRUE((std::is_constructible_v<matrix_type, number_rows, number_cols, std::vector<score_type>>));
+    EXPECT_TRUE((std::is_constructible_v<matrix_type, number_rows, number_cols, matrix_type>));
 }
 
 TYPED_TEST(two_dimensional_matrix_test, cols)
@@ -78,104 +172,82 @@ TYPED_TEST(two_dimensional_matrix_test, rows)
 
 TYPED_TEST(two_dimensional_matrix_test, range)
 {
-    using matrix_type = typename TestFixture::matrix_type;
-
-    matrix_type matrix{number_rows{3}, number_cols{4}};
-    auto it = std::ranges::copy(this->expected_range, matrix.begin()).out;
-
-    EXPECT_EQ(it, matrix.end());
-    EXPECT_TRUE(std::equal(this->expected_range.begin(), this->expected_range.end(), matrix.begin()));
+    // For an explanation how this works see iterator_fixture further below in this file.
+    auto it = this->matrix_storage.begin();
+    for (auto cell: this->matrix)
+        this->expect_eq(cell, *(it++));
 }
 
 TYPED_TEST(two_dimensional_matrix_test, subscript)
 {
-    using matrix_type = typename TestFixture::matrix_type;
-
-    matrix_type matrix{number_rows{3}, number_cols{4}};
-    std::ranges::copy(this->expected_range, matrix.begin());
-
-    if constexpr (TypeParam::value == matrix_major_order::row)
-    {
-        EXPECT_EQ((matrix[{row_index_type{0u}, column_index_type{0u}}]), 0);
-        EXPECT_EQ((matrix[{row_index_type{1u}, column_index_type{0u}}]), 4);
-        EXPECT_EQ((matrix[{row_index_type{0u}, column_index_type{1u}}]), 1);
-        EXPECT_EQ((matrix[{row_index_type{0u}, column_index_type{3u}}]), 3);
-        EXPECT_EQ((matrix[{row_index_type{2u}, column_index_type{0u}}]), 8);
-        EXPECT_EQ((matrix[{row_index_type{2u}, column_index_type{3u}}]), 11);
-    }
-    else  // Column order.
-    {
-        EXPECT_EQ((matrix[{row_index_type{0u}, column_index_type{0u}}]), 0);
-        EXPECT_EQ((matrix[{row_index_type{1u}, column_index_type{0u}}]), 1);
-        EXPECT_EQ((matrix[{row_index_type{0u}, column_index_type{1u}}]), 3);
-        EXPECT_EQ((matrix[{row_index_type{0u}, column_index_type{3u}}]), 9);
-        EXPECT_EQ((matrix[{row_index_type{2u}, column_index_type{0u}}]), 2);
-        EXPECT_EQ((matrix[{row_index_type{2u}, column_index_type{3u}}]), 11);
-    }
+    // Note: Even if the internal storage has a different data layout, accessing the data via a matrix coordinate
+    // yields the same cell and thus the same data.
+    this->expect_eq(this->matrix[{row_index_type{0u}, column_index_type{0u}}], this->expected_matrix_content[0]);
+    this->expect_eq(this->matrix[{row_index_type{0u}, column_index_type{1u}}], this->expected_matrix_content[1]);
+    this->expect_eq(this->matrix[{row_index_type{0u}, column_index_type{2u}}], this->expected_matrix_content[2]);
+    this->expect_eq(this->matrix[{row_index_type{0u}, column_index_type{3u}}], this->expected_matrix_content[3]);
+    this->expect_eq(this->matrix[{row_index_type{1u}, column_index_type{0u}}], this->expected_matrix_content[4]);
+    this->expect_eq(this->matrix[{row_index_type{1u}, column_index_type{1u}}], this->expected_matrix_content[5]);
+    this->expect_eq(this->matrix[{row_index_type{1u}, column_index_type{2u}}], this->expected_matrix_content[6]);
+    this->expect_eq(this->matrix[{row_index_type{1u}, column_index_type{3u}}], this->expected_matrix_content[7]);
+    this->expect_eq(this->matrix[{row_index_type{2u}, column_index_type{0u}}], this->expected_matrix_content[8]);
+    this->expect_eq(this->matrix[{row_index_type{2u}, column_index_type{1u}}], this->expected_matrix_content[9]);
+    this->expect_eq(this->matrix[{row_index_type{2u}, column_index_type{2u}}], this->expected_matrix_content[10]);
+    this->expect_eq(this->matrix[{row_index_type{2u}, column_index_type{3u}}], this->expected_matrix_content[11]);
 }
 
 TYPED_TEST(two_dimensional_matrix_test, at)
 {
-    using matrix_type = typename TestFixture::matrix_type;
+    this->expect_eq(this->matrix.at({row_index_type{0u}, column_index_type{0u}}), this->expected_matrix_content[0]);
+    this->expect_eq(this->matrix.at({row_index_type{0u}, column_index_type{1u}}), this->expected_matrix_content[1]);
+    this->expect_eq(this->matrix.at({row_index_type{0u}, column_index_type{2u}}), this->expected_matrix_content[2]);
+    this->expect_eq(this->matrix.at({row_index_type{0u}, column_index_type{3u}}), this->expected_matrix_content[3]);
+    this->expect_eq(this->matrix.at({row_index_type{1u}, column_index_type{0u}}), this->expected_matrix_content[4]);
+    this->expect_eq(this->matrix.at({row_index_type{1u}, column_index_type{1u}}), this->expected_matrix_content[5]);
+    this->expect_eq(this->matrix.at({row_index_type{1u}, column_index_type{2u}}), this->expected_matrix_content[6]);
+    this->expect_eq(this->matrix.at({row_index_type{1u}, column_index_type{3u}}), this->expected_matrix_content[7]);
+    this->expect_eq(this->matrix.at({row_index_type{2u}, column_index_type{0u}}), this->expected_matrix_content[8]);
+    this->expect_eq(this->matrix.at({row_index_type{2u}, column_index_type{1u}}), this->expected_matrix_content[9]);
+    this->expect_eq(this->matrix.at({row_index_type{2u}, column_index_type{2u}}), this->expected_matrix_content[10]);
+    this->expect_eq(this->matrix.at({row_index_type{2u}, column_index_type{3u}}), this->expected_matrix_content[11]);
 
-    matrix_type matrix{number_rows{3}, number_cols{4}};
-    std::ranges::copy(this->expected_range, matrix.begin());
-
-    if constexpr (TypeParam::value == matrix_major_order::row)
-    {
-        EXPECT_EQ((matrix.at({row_index_type{0u}, column_index_type{0u}})), 0);
-        EXPECT_EQ((matrix.at({row_index_type{1u}, column_index_type{0u}})), 4);
-        EXPECT_EQ((matrix.at({row_index_type{0u}, column_index_type{1u}})), 1);
-        EXPECT_EQ((matrix.at({row_index_type{0u}, column_index_type{3u}})), 3);
-        EXPECT_EQ((matrix.at({row_index_type{2u}, column_index_type{0u}})), 8);
-        EXPECT_EQ((matrix.at({row_index_type{2u}, column_index_type{3u}})), 11);
-    }
-    else
-    {
-        EXPECT_EQ((matrix.at({row_index_type{0u}, column_index_type{0u}})), 0);
-        EXPECT_EQ((matrix.at({row_index_type{1u}, column_index_type{0u}})), 1);
-        EXPECT_EQ((matrix.at({row_index_type{0u}, column_index_type{1u}})), 3);
-        EXPECT_EQ((matrix.at({row_index_type{0u}, column_index_type{3u}})), 9);
-        EXPECT_EQ((matrix.at({row_index_type{2u}, column_index_type{0u}})), 2);
-        EXPECT_EQ((matrix.at({row_index_type{2u}, column_index_type{3u}})), 11);
-    }
-
-    EXPECT_THROW((matrix.at({row_index_type{3u}, column_index_type{3u}})), std::invalid_argument);
-    EXPECT_THROW((matrix.at({row_index_type{2u}, column_index_type{4u}})), std::invalid_argument);
+    EXPECT_THROW((this->matrix.at({row_index_type{3u}, column_index_type{3u}})), std::invalid_argument);
+    EXPECT_THROW((this->matrix.at({row_index_type{2u}, column_index_type{4u}})), std::invalid_argument);
 }
 
-TYPED_TEST(two_dimensional_matrix_test, conversion)
+TYPED_TEST(two_dimensional_matrix_test, construction_other_order)
 {
-    using matrix_type = typename TestFixture::matrix_type;
+    // Test that changing the matrix layout works.
+    static constexpr matrix_major_order other_matrix_order = TestFixture::matrix_order == matrix_major_order::row
+                                                                ? matrix_major_order::column
+                                                                : matrix_major_order::row;
 
-    matrix_type matrix{number_rows{3}, number_cols{4}};
-    std::ranges::copy(this->expected_range, matrix.begin());
+    // Test that the implicit conversion of the underlying value_type works.
+    // This does not work for every SIMD backend, in such a case we use the original score type.
+    using score_type = typename TestFixture::score_type;
+    using unsigned_score_type = typename make_unsigned_score_type<score_type>::type;
+    using new_score_type = std::conditional_t<std::assignable_from<score_type &, unsigned_score_type &>,
+                                              unsigned_score_type,
+                                              score_type>;
 
-    if constexpr (TypeParam::value == matrix_major_order::row)
+    // The new matrix type that has a new matrix major order and might have an implicit value conversion.
+    using converted_matrix_t = test_matrix_t<new_score_type, other_matrix_order>;
+    converted_matrix_t converted_matrix{this->matrix};
+
+    EXPECT_EQ(converted_matrix.rows(), this->matrix.rows());
+    EXPECT_EQ(converted_matrix.cols(), this->matrix.cols());
+
+    // Note: We changed the internal data layout, but accessing the converted matrix by a coordinate yields the same
+    // cell content as accessing the original matrix by the same coordinate.
+    for (unsigned row = 0; row < this->matrix.rows(); ++row)
     {
-        using converted_t = two_dimensional_matrix<uint32_t, std::allocator<uint32_t>, matrix_major_order::column>;
-        converted_t converted = static_cast<converted_t>(matrix);
-        EXPECT_EQ(converted.rows(), matrix.rows());
-        EXPECT_EQ(converted.cols(), matrix.cols());
-        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{0u}}]), 0u);
-        EXPECT_EQ((converted[{row_index_type{1u}, column_index_type{0u}}]), 4u);
-        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{1u}}]), 1u);
-        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{3u}}]), 3u);
-        EXPECT_EQ((converted[{row_index_type{2u}, column_index_type{0u}}]), 8u);
-        EXPECT_EQ((converted[{row_index_type{2u}, column_index_type{3u}}]), 11u);
-    }
-    else
-    {
-        using converted_t = two_dimensional_matrix<uint32_t, std::allocator<uint32_t>, matrix_major_order::row>;
-        converted_t converted = static_cast<converted_t>(matrix);
-        EXPECT_EQ(converted.rows(), matrix.rows());
-        EXPECT_EQ(converted.cols(), matrix.cols());
-        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{0u}}]), 0u);
-        EXPECT_EQ((converted[{row_index_type{1u}, column_index_type{0u}}]), 1u);
-        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{1u}}]), 3u);
-        EXPECT_EQ((converted[{row_index_type{0u}, column_index_type{3u}}]), 9u);
-        EXPECT_EQ((converted[{row_index_type{2u}, column_index_type{0u}}]), 2u);
-        EXPECT_EQ((converted[{row_index_type{2u}, column_index_type{3u}}]), 11u);
+        for (unsigned col = 0; col < this->matrix.cols(); ++col)
+        {
+            matrix_coordinate const idx{row_index_type{row}, column_index_type{col}};
+            new_score_type actual = converted_matrix[idx];
+            new_score_type expected = static_cast<new_score_type>(this->matrix[idx]);
+            this->expect_eq(actual, expected);
+        }
     }
 }
 
@@ -183,144 +255,101 @@ TYPED_TEST(two_dimensional_matrix_test, conversion)
 // Iterator tests
 //-----------------------------------------------------------------------------
 
-template <typename policy_t>
-struct iterator_fixture<two_dimensional_matrix_test<policy_t>> : two_dimensional_matrix_test<policy_t>
+template <typename score_t, matrix_major_order order>
+struct iterator_fixture<test_matrix_t<score_t, order>> : two_dimensional_matrix_test<test_matrix_t<score_t, order>>
 {
-    using base_t = two_dimensional_matrix_test<policy_t>;
-    using matrix_type = typename base_t::matrix_type;
+    using matrix_type = test_matrix_t<score_t, order>;
+    using base_t = two_dimensional_matrix_test<matrix_type>;
 
-    // Test random access range.
+    // test_range is a random access range.
     using iterator_tag = std::random_access_iterator_tag;
     static constexpr bool const_iterable = true;
 
-    matrix_type test_range{number_rows{3}, number_cols{4}, base_t::expected_range};
+    // This one is a bit tricky. The one dimensional overloads of the iterator advancing operations, like it+=5, have
+    // the property that they advance the iterator in major matrix order, e.g. it+=5 in a row-wise matrix will be the
+    // same as it+=matrix_offset{row{0}, col{5}} and it+=5 in a column-wise matrix will be the same as
+    // it+=matrix_offset{row{5}, col{0}}. This effectively means that the iterator behaves exactly like the iterator of
+    // the internal data storage, i.e. the iterator's behaviour does not depend on the major matrix order. Thus, passing
+    // expected_range as data storage into test_range, will result in an equal range as test_range.
+    std::vector<score_t> expected_range{this->expected_matrix_content};
+    matrix_type test_range{number_rows{3}, number_cols{4}, expected_range};
 };
 
-using iter_testing_types = ::testing::Types<two_dimensional_matrix_test<row_wise>,
-                                            two_dimensional_matrix_test<col_wise>>;
+INSTANTIATE_TYPED_TEST_CASE_P(two_dimensional_iterator, iterator_fixture, testing_types);
 
-INSTANTIATE_TYPED_TEST_CASE_P(two_dimensional_iterator, iterator_fixture, iter_testing_types);
-
-template <typename policy_t>
-struct iterator_fixture_two_dimensional : two_dimensional_matrix_test<policy_t>
+template <typename matrix_t>
+struct two_dimensional_matrix_iterator_test : two_dimensional_matrix_test<matrix_t>
 {
-    using base_t = two_dimensional_matrix_test<policy_t>;
-    using matrix_type = typename base_t::matrix_type;
+    using matrix_type = matrix_t;
+    using base_t = two_dimensional_matrix_test<matrix_type>;
     using iterator_type = typename matrix_type::iterator;
 
-    matrix_type test_range{number_rows{3}, number_cols{4}, base_t::expected_range};
+    matrix_type test_range{number_rows{3}, number_cols{4}, base_t::expected_matrix_content};
 };
 
-TYPED_TEST_CASE(iterator_fixture_two_dimensional, testing_types);
+TYPED_TEST_CASE(two_dimensional_matrix_iterator_test, testing_types);
 
-TYPED_TEST(iterator_fixture_two_dimensional, two_dimensional_concept)
+TYPED_TEST(two_dimensional_matrix_iterator_test, two_dimensional_concept)
 {
     EXPECT_TRUE(two_dimensional_matrix_iterator<typename TestFixture::iterator_type>);
 }
 
-TYPED_TEST(iterator_fixture_two_dimensional, update_by_matrix_offset_add)
+TYPED_TEST(two_dimensional_matrix_iterator_test, update_by_matrix_offset_add)
 {
-    auto it = this->test_range.begin();
+    auto it = this->matrix.begin();
     auto it_advanced = it += matrix_offset{row_index_type{1}, column_index_type{2}};
 
-    if constexpr (TypeParam::value == matrix_major_order::row)
-    {
-        EXPECT_EQ(*it, 6);
-        EXPECT_EQ(*it_advanced, 6);
-    }
-    else
-    {
-        EXPECT_EQ(*it, 7);
-        EXPECT_EQ(*it_advanced, 7);
-    }
+    this->expect_eq(*it, this->expected_matrix_content[6]);
+    this->expect_eq(*it_advanced, this->expected_matrix_content[6]);
 }
 
-TYPED_TEST(iterator_fixture_two_dimensional, advance_by_matrix_offset_add)
+TYPED_TEST(two_dimensional_matrix_iterator_test, advance_by_matrix_offset_add)
 {
-    auto it = this->test_range.begin();
+    auto it = this->matrix.begin();
     auto it_advanced = it + matrix_offset{row_index_type{1}, column_index_type{2}};
 
-    if constexpr (TypeParam::value == matrix_major_order::row)
-    {
-        EXPECT_EQ(*it, 0);
-        EXPECT_EQ(*it_advanced, 6);
-    }
-    else
-    {
-        EXPECT_EQ(*it, 0);
-        EXPECT_EQ(*it_advanced, 7);
-    }
+    this->expect_eq(*it, this->expected_matrix_content[0]);
+    this->expect_eq(*it_advanced, this->expected_matrix_content[6]);
 }
 
-TYPED_TEST(iterator_fixture_two_dimensional, advance_by_matrix_offset_add_friend)
+TYPED_TEST(two_dimensional_matrix_iterator_test, advance_by_matrix_offset_add_friend)
 {
-    auto it = this->test_range.begin();
+    auto it = this->matrix.begin();
     auto it_advanced = matrix_offset{row_index_type{1}, column_index_type{2}} + it;
 
-    if constexpr (TypeParam::value == matrix_major_order::row)
-    {
-        EXPECT_EQ(*it, 0);
-        EXPECT_EQ(*it_advanced, 6);
-    }
-    else
-    {
-        EXPECT_EQ(*it, 0);
-        EXPECT_EQ(*it_advanced, 7);
-    }
+    this->expect_eq(*it, this->expected_matrix_content[0]);
+    this->expect_eq(*it_advanced, this->expected_matrix_content[6]);
 }
 
-TYPED_TEST(iterator_fixture_two_dimensional, update_by_matrix_offset_subtract)
+TYPED_TEST(two_dimensional_matrix_iterator_test, update_by_matrix_offset_subtract)
 {
-    auto it = this->test_range.begin() + matrix_offset{row_index_type{2}, column_index_type{3}};
+    auto it = this->matrix.begin() + matrix_offset{row_index_type{2}, column_index_type{3}};
     auto it_advanced = it -= matrix_offset{row_index_type{1}, column_index_type{2}};
 
-    if constexpr (TypeParam::value == matrix_major_order::row)
-    {
-        EXPECT_EQ(*it, 5);
-        EXPECT_EQ(*it_advanced, 5);
-    }
-    else
-    {
-        EXPECT_EQ(*it, 4);
-        EXPECT_EQ(*it_advanced, 4);
-    }
+    this->expect_eq(*it, this->expected_matrix_content[5]);
+    this->expect_eq(*it_advanced, this->expected_matrix_content[5]);
 }
 
-TYPED_TEST(iterator_fixture_two_dimensional, advance_by_matrix_offset_subtract)
+TYPED_TEST(two_dimensional_matrix_iterator_test, advance_by_matrix_offset_subtract)
 {
-    auto it = this->test_range.begin() + matrix_offset{row_index_type{2}, column_index_type{3}};
+    auto it = this->matrix.begin() + matrix_offset{row_index_type{2}, column_index_type{3}};
     auto it_advanced = it - matrix_offset{row_index_type{1}, column_index_type{2}};
 
-    if constexpr (TypeParam::value == matrix_major_order::row)
-    {
-        EXPECT_EQ(*it, 11);
-        EXPECT_EQ(*it_advanced, 5);
-    }
-    else
-    {
-        EXPECT_EQ(*it, 11);
-        EXPECT_EQ(*it_advanced, 4);
-    }
+    this->expect_eq(*it, this->expected_matrix_content[11]);
+    this->expect_eq(*it_advanced, this->expected_matrix_content[5]);
 }
 
-TYPED_TEST(iterator_fixture_two_dimensional, coordinate)
+TYPED_TEST(two_dimensional_matrix_iterator_test, coordinate)
 {
-    auto it = this->test_range.begin();
-    std::ptrdiff_t pos = 0;
-    if constexpr (TypeParam::value == matrix_major_order::row)
+    auto it = this->matrix.begin();
+    matrix_offset col_inc{row_index_type{0}, column_index_type{1}};
+
+    // iterate row wise in the matrix
+    for (std::ptrdiff_t pos = 0; it != this->matrix.end(); it += col_inc, ++pos)
     {
-        for (; it != this->test_range.end(); ++it, ++pos)
-        {
-            EXPECT_EQ(it.coordinate().col, pos % this->test_range.cols());
-            EXPECT_EQ(it.coordinate().row, pos / this->test_range.cols());
-        }
-    }
-    else
-    {
-        for (; it != this->test_range.end(); ++it, ++pos)
-        {
-            EXPECT_EQ(it.coordinate().col, pos / this->test_range.rows());
-            EXPECT_EQ(it.coordinate().row, pos % this->test_range.rows());
-        }
+        auto expected_col = pos % this->matrix.cols();
+        auto expected_row = pos / this->matrix.cols();
+        EXPECT_EQ(it.coordinate().col, expected_col);
+        EXPECT_EQ(it.coordinate().row, expected_row);
     }
 }
