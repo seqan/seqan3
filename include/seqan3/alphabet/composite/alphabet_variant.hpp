@@ -66,11 +66,11 @@ namespace seqan3
  * \ingroup composite
  * \if DEV
  * \tparam ...alternative_types Types of possible values (at least 2); all must model
- *                              seqan3::detail::writable_constexpr_alphabet, not be references and be unique.
+ *                              seqan3::detail::writable_constexpr_alphabet, std::regular and be unique.
  * \implements seqan3::detail::writable_constexpr_alphabet
  * \else
  * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::writable_alphabet,
- *                              must not be references and must be unique; all required functions for
+ *                              std::regular and must be unique; all required functions for
  *                              seqan3::writable_alphabet need to be callable in a `constexpr`-context.
  * \endif
  * \implements seqan3::writable_alphabet
@@ -122,7 +122,7 @@ namespace seqan3
 template <typename ...alternative_types>
 //!\cond
     requires (detail::writable_constexpr_alphabet<alternative_types> && ...) &&
-             (!std::is_reference_v<alternative_types> && ...) &&
+             (std::regular<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond
@@ -464,7 +464,7 @@ protected:
      * alternative_types::alphabet_size's.
      *
      */
-    static constexpr std::array partial_sum_sizes = []() constexpr
+    static constexpr std::array<rank_type, sizeof...(alternative_types) + 1> partial_sum_sizes = []() constexpr
     {
         constexpr size_t N = sizeof...(alternative_types) + 1;
 
@@ -545,9 +545,9 @@ protected:
      * conflict will default to the first).
      *
      */
-    static constexpr std::array char_to_rank = []() constexpr
+    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank = []() constexpr
     {
-        constexpr size_t table_size = 1 << (sizeof(char_type) * 8);
+        constexpr size_t table_size = detail::size_in_values_v<char_type>;
 
         std::array<rank_type, table_size> char_to_rank{};
 

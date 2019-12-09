@@ -79,7 +79,7 @@ public:
     //!\brief Enable conversion of semialphabet_any into other (semi-)alphabet of the same size
     template <semialphabet other_alph_t>
     //!\cond
-        requires (alphabet_size<other_alph_t> == size)
+        requires ((alphabet_size<other_alph_t> == size) && std::regular<other_alph_t>)
     //!\endcond
     explicit operator other_alph_t() const
     {

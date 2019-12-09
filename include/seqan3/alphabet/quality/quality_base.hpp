@@ -87,16 +87,10 @@ public:
     /*!\name Read functions
      * \{
      */
-    //!\copydoc seqan3::alphabet_base::to_char
-    constexpr char_type to_char() const noexcept
-    {
-        return static_cast<char_type>(to_rank()) + derived_type::offset_char;
-    }
-
     //!\brief Return the alphabet's value in phred representation.
     constexpr phred_type to_phred() const noexcept
     {
-        return static_cast<phred_type>(to_rank()) + derived_type::offset_phred;
+        return rank_to_phred[to_rank()];
     }
     //!\}
 
@@ -157,6 +151,34 @@ protected:
                 else                                                   // map valid range to identity
                     ret[static_cast<rank_type>(i)] = i - derived_type::offset_char;
             }
+
+            return ret;
+        }()
+    };
+
+    //!\brief Rank to phred conversion table.
+    static std::array<phred_type, alphabet_size> constexpr rank_to_phred
+    {
+        [] () constexpr
+        {
+            std::array<phred_type, alphabet_size> ret{};
+
+            for (size_t i = 0; i < alphabet_size; ++i)
+                ret[i] = i + derived_type::offset_phred;
+
+            return ret;
+        }()
+    };
+
+    //!\brief Rank to char conversion table.
+    static std::array<char_type, alphabet_size> constexpr rank_to_char
+    {
+        [] () constexpr
+        {
+            std::array<char_type, alphabet_size> ret{};
+
+            for (size_t i = 0; i < alphabet_size; ++i)
+                ret[i] = i + derived_type::offset_char;
 
             return ret;
         }()
