@@ -491,6 +491,7 @@ template <simd::simd_concept simd_t>
 constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
 {
     std::array<simd_t, simd_traits<simd_t>::length> tmp{};
+
     for (size_t i = 0; i < matrix.size(); ++i)
         for (size_t j = 0; j < matrix.size(); ++j)
             tmp[j][i] = matrix[i][j];
