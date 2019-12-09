@@ -24,7 +24,7 @@ namespace seqan3::detail
 
 /*!\brief Transposes the given simd vector matrix using SSE4 intrinsics.
  * \ingroup simd
- * \tparam simd_t The simd vector type; must model seqan3::detail::simd_concept and must be a simd built-in and native
+ * \tparam simd_t The simd vector type; must model seqan3::simd::simd_concept and must be a simd built-in and native
  *                type.
  * \param[in,out] matrix The matrix that is transposed in place.
  *
