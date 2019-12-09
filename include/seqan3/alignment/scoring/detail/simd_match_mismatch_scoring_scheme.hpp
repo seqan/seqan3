@@ -150,6 +150,12 @@ public:
     }
     //!\}
 
+    //!\brief Returns the match score used for padded symbols.
+    constexpr auto padding_match_score() noexcept
+    {
+        return match_score[0];
+    }
+
 private:
     /*!\brief Initialises the simd vector match score and mismatch score from the given scoring scheme.
      * \tparam scoring_scheme_t The type of the underlying scoring scheme; must model seqan3::scoring_scheme for

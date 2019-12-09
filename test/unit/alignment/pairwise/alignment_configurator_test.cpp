@@ -210,7 +210,6 @@ TEST(alignment_configurator, configure_affine_local_alignment)
 TEST(alignment_configurator, configure_result_score_type)
 {
     auto cfg = align_cfg::edit | align_cfg::result{with_back_coordinate, using_score_type<double>};
-
     auto result = run_test(cfg);
 
     EXPECT_DOUBLE_EQ(result.score(), 0.0);
