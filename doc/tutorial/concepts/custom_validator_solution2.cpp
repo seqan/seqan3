@@ -4,9 +4,9 @@
 
 struct custom_validator
 {
-    using value_type = double; // used for all arithmetic types
+    using option_value_type = double; // used for all arithmetic types
 
-    void operator() (value_type const & val) const
+    void operator() (option_value_type const & val) const
     {
         if ((std::round(val)                         != val) ||  // not an integer
             (std::pow(std::round(std::sqrt(val)), 2) != val))    // not a square

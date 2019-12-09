@@ -2,9 +2,9 @@
 
 struct custom_validator
 {
-    using value_type = double; // used for all arithmetic types
+    using option_value_type = double; // used for all arithmetic types
 
-    void operator() (value_type const &) const
+    void operator() (option_value_type const &) const
     {
         // add implementation later
     }
