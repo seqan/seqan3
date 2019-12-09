@@ -20,6 +20,7 @@ namespace seqan3
 {
 
 /*!\interface seqan3::const_iterable_range <>
+ * \ingroup range
  * \extends std::input_range
  * \brief Specifies requirements of an input range type for which the `const` version of that type satisfies the
  * same strength input range concept as the non-const version.
@@ -48,6 +49,7 @@ SEQAN3_CONCEPT const_iterable_range =
 //!\endcond
 
 /*!\interface seqan3::forwarding_range<>
+ * \ingroup range
  * \extends std::ranges::range
  * \brief Specifies a range whose iterators may outlive the range and remain valid.
  * \see https://eel.is/c++draft/range.req
@@ -62,6 +64,7 @@ SEQAN3_CONCEPT forwarding_range = std::ranges::range<type> && requires (type && 
 //!\endcond
 
 /*!\interface seqan3::pseudo_random_access_iterator <>
+ * \ingroup range
  * \extends   std::forward_iterator
  * \brief     This concept checks if an iterator type models pseudo random access.
  *
@@ -112,6 +115,7 @@ SEQAN3_CONCEPT pseudo_random_access_iterator =
 //!\endcond
 
 /*!\interface seqan3::pseudo_random_access_range <>
+ * \ingroup range
  * \extends   std::ranges::forward_range
  * \brief     This concept checks if a type models a pseudo random access range.
  *
