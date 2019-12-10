@@ -252,9 +252,9 @@ With those information do the following:
 Your program should print the following:
 
 ```
-r001 mapped against 0 with 2 gaps in the read sequence and 2 gaps in the reference sequence.
+r001 mapped against 0 with 1 gaps in the read sequence and 2 gaps in the reference sequence.
 r003 mapped against 0 with 0 gaps in the read sequence and 0 gaps in the reference sequence.
-r004 mapped against 1 with 0 gaps in the read sequence and 0 gaps in the reference sequence.
+r004 mapped against 1 with 14 gaps in the read sequence and 0 gaps in the reference sequence.
 ```
 
 \endassignment

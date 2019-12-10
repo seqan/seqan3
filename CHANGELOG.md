@@ -62,7 +62,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### I/O
 
-* **Removed the field-based in- and output interface for structure files through std::get and std::tie:**
+* **Removed the field-based in- and output interface for sequence and structure files through std::get and std::tie:**
   Output can instead be achieved with seqan3::views:zip(), for input we will implement unzip() in the future.
 * The `field::flag` of SAM/BAM input and output is now an **enum** instead of a simple integer (see seqan3::sam_flag).
 * Uppercase seqan3::field names are deprecated. Use the lower case field names instead. You can easily find and replace

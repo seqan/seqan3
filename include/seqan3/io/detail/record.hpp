@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/range/views/repeat.hpp>
