@@ -29,11 +29,11 @@ int main(int argc, char ** argv)
         seqan3::bitcompressed_vector<seqan3::dna4> vector;
         vector.resize(size, 'A'_dna4);
         seqan3::debug_stream << "Allocated seqan3::bitcompressed_vector<seqan3::dna4> of size "
-                             << vector.size() << std::endl;
+                             << vector.size() << '\n';
     }
     else
     {
         std::vector<seqan3::dna4> vector{size};
-        seqan3::debug_stream << "Allocated std::vector<seqan3::dna4> of size " << vector.size() << std::endl;
+        seqan3::debug_stream << "Allocated std::vector<seqan3::dna4> of size " << vector.size() << '\n';
     }
 }

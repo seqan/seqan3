@@ -1,9 +1,9 @@
 #include <utility>
 #include <vector>
 
-#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
-#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
+#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 

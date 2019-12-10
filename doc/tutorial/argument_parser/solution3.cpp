@@ -50,12 +50,12 @@ void run_program(std::filesystem::path & path, uint32_t yr, std::string & aggr_b
         }
 
         if (aggr_by == "median")
-            seqan3::debug_stream << ([&v] () { std::sort(v.begin(), v.end()); return v[v.size()/2]; })() << std::endl;
+            seqan3::debug_stream << ([&v] () { std::sort(v.begin(), v.end()); return v[v.size()/2]; })() << '\n';
         else if (aggr_by == "mean")
             seqan3::debug_stream << ([&v] () { double sum{}; for (auto i : v) sum += i; return sum / v.size(); })()
-                                 << std::endl;
+                                 << '\n';
         else
-            seqan3::debug_stream << "I do not know the aggregation method " << aggr_by << std::endl;
+            seqan3::debug_stream << "I do not know the aggregation method " << aggr_by << '\n';
     }
     else
     {

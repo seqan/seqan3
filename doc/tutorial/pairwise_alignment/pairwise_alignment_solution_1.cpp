@@ -1,8 +1,8 @@
 #include <utility>
 #include <vector>
 
-#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/views/pairwise_combine.hpp>

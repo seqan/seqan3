@@ -37,6 +37,6 @@ int main()
     seqan3::alignment_file_input fin{tmp_dir/"my.sam", seqan3::fields<seqan3::field::cigar>{}};
 
     for (auto & [cigar] : fin)
-        seqan3::debug_stream << cigar << std::endl;
+        seqan3::debug_stream << cigar << '\n';
 }
 //![code]

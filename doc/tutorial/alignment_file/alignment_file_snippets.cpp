@@ -67,7 +67,7 @@ int main()
 
 {
 //![file_extensions]
-    seqan3::debug_stream << seqan3::format_sam::file_extensions << std::endl; // prints [fastq,fq]
+    seqan3::debug_stream << seqan3::format_sam::file_extensions << '\n'; // prints [fastq,fq]
     seqan3::format_sam::file_extensions.push_back("sm");
 //![file_extensions]
 }
@@ -93,9 +93,9 @@ int main()
 
     for (auto & [id, seq, flag /*order!*/] : fin)
     {
-        seqan3::debug_stream << id << std::endl;
-        seqan3::debug_stream << seq << std::endl;
-        seqan3::debug_stream << flag << std::endl;
+        seqan3::debug_stream << id << '\n';
+        seqan3::debug_stream << seq << '\n';
+        seqan3::debug_stream << flag << '\n';
     }
 //![read_custom_fields]
 }
@@ -108,7 +108,7 @@ int main()
 
     for (auto & [ id, alignment ] : fin)
     {
-        seqan3::debug_stream << id << ": " << std::get<1>(alignment) << std::endl;
+        seqan3::debug_stream << id << ": " << std::get<1>(alignment) << '\n';
     }
 //![alignments_without_ref]
 }
@@ -127,7 +127,7 @@ int main()
 
     for (auto & [ alignment ] : fin)
     {
-        seqan3::debug_stream << alignment << std::endl; // Now you can print the whole alignment!
+        seqan3::debug_stream << alignment << '\n'; // Now you can print the whole alignment!
     }
 //![alignments_with_ref]
 }

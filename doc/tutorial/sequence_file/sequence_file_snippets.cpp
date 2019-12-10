@@ -1,4 +1,3 @@
-#include <iostream>
 #include <fstream>
 
 #include <range/v3/numeric/accumulate.hpp>   // ranges::accumulate
@@ -80,7 +79,7 @@ int main()
 
 {
 //![file_extensions]
-seqan3::debug_stream << seqan3::format_fastq::file_extensions << std::endl; // prints [fastq,fq]
+seqan3::debug_stream << seqan3::format_fastq::file_extensions << '\n'; // prints [fastq,fq]
 //![file_extensions]
 
 //![modify_file_extensions]

@@ -59,6 +59,6 @@ int main()
     // But you can also do this:
     std::ranges::copy(fin, std::ranges::back_inserter(records));
 
-    seqan3::debug_stream << records << std::endl;
+    seqan3::debug_stream << records << '\n';
 }
 //![solution]

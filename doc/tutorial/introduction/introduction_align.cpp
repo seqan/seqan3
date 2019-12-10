@@ -1,8 +1,8 @@
 #include <seqan3/io/sequence_file/output.hpp>
 
 //! [sequence_input_include]
-#include <seqan3/io/sequence_file/input.hpp> // for sequence_file_input
 #include <seqan3/core/debug_stream.hpp>      // for debug_stream
+#include <seqan3/io/sequence_file/input.hpp> // for sequence_file_input
 //! [sequence_input_include]
 
 //! [alignment_include]
@@ -11,6 +11,8 @@
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>                   // for align_pairwise
 //! [alignment_include]
 
+using seqan3::operator""_dna4;
+
 int main()
 {
     auto tmp_dir = std::filesystem::temp_directory_path();
@@ -18,7 +20,6 @@ int main()
     {
         // Create a /tmp/my.fasta file.
         seqan3::sequence_file_output file_out{filename};
-        using seqan3::operator""_dna4;
         file_out.emplace_back("ACGTGATG"_dna4, std::string{"seq1"});
         file_out.emplace_back("AGTGATACT"_dna4, std::string{"seq2"});
     }

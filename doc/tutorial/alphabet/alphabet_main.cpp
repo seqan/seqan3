@@ -7,8 +7,6 @@
 #include <seqan3/alphabet/all.hpp> // for working with alphabets directly
 
 using seqan3::operator""_dna4;
-using seqan3::operator""_dna5;
-using seqan3::operator""_rna5;
 
 int main ()
 {
@@ -82,6 +80,7 @@ int main ()
     // Assign a gap symbol to a gapped RNA alphabet.
     seqan3::gapped<seqan3::rna5> sym = seqan3::gap{};                         // => -
 
+    using seqan3::operator""_rna5;
     // Each seqan3::rna5 symbol is still valid.
     sym = 'U'_rna5;                                   // => U
 
@@ -91,6 +90,8 @@ int main ()
     assert(size2 == 6u);
 
 //! [containers]
+    using seqan3::operator""_dna5;
+
     // Examples of different container types with SeqAn's alphabets.
     std::vector<seqan3::dna5> dna_sequence{"GATTANAG"_dna5};
     std::pair<seqan3::gapped<seqan3::dna4>, seqan3::gapped<seqan3::dna4>> alignment_column{seqan3::gap{}, thy};

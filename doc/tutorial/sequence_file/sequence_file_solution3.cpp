@@ -85,6 +85,6 @@ int main()
     // Note that you need to know the type of id (std::string)
     // Converting to && prevents the IDs from being copied
 
-    seqan3::debug_stream << ids << std::endl;
+    seqan3::debug_stream << ids << '\n';
 }
 //![solution]
