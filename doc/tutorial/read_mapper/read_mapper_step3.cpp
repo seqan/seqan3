@@ -13,18 +13,16 @@
 #include <seqan3/search/algorithm/all.hpp>
 #include <seqan3/std/span>
 
-using namespace seqan3;
-
 struct reference_storage_t
 {
     std::vector<std::string> ids;
-    std::vector<std::vector<dna5>> seqs;
+    std::vector<std::vector<seqan3::dna5>> seqs;
 };
 
 void read_reference(std::filesystem::path const & reference_path,
                     reference_storage_t & storage)
 {
-    sequence_file_input reference_in{reference_path};
+    seqan3::sequence_file_input reference_in{reference_path};
     for (auto & [seq, id, qual] : reference_in)
     {
         storage.ids.push_back(std::move(id));
@@ -39,25 +37,26 @@ void map_reads(std::filesystem::path const & query_path,
                reference_storage_t & storage,
                uint8_t const errors)
 {
-    bi_fm_index<dna5, text_layout::collection> index; // we need the alphabet and text layout before loading
+    // we need the alphabet and text layout before loading
+    seqan3::bi_fm_index<seqan3::dna5, seqan3::text_layout::collection> index;
     {
         std::ifstream is{index_path, std::ios::binary};
         cereal::BinaryInputArchive iarchive{is};
         iarchive(index);
     }
 
-    sequence_file_input query_in{query_path};
+    seqan3::sequence_file_input query_in{query_path};
 
-    configuration const search_config = search_cfg::max_error{search_cfg::total{errors}} |
-                                        search_cfg::mode{search_cfg::all_best};
+    seqan3::configuration const search_config = seqan3::search_cfg::max_error{seqan3::search_cfg::total{errors}} |
+                                                seqan3::search_cfg::mode{seqan3::search_cfg::all_best};
 
 //! [alignment_config]
-    configuration const align_config = align_cfg::edit |
-                                       align_cfg::aligned_ends{free_ends_first} |
-                                       align_cfg::result{with_alignment};
+    seqan3::configuration const align_config = seqan3::align_cfg::edit |
+                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
+                                               seqan3::align_cfg::result{seqan3::with_alignment};
 //! [alignment_config]
 
-    for (auto & [query, id, qual] : query_in | views::take(20))
+    for (auto & [query, id, qual] : query_in | seqan3::views::take(20))
     {
         auto positions = search(query, index, search_config);
         for (auto & [idx, pos] : positions)
@@ -65,14 +64,14 @@ void map_reads(std::filesystem::path const & query_path,
             size_t start = pos ? pos - 1 : 0;
             std::span text_view{std::data(storage.seqs[idx]) + start, query.size() + 1};
 
-            for (auto && alignment : align_pairwise(std::tie(text_view, query), align_config))
+            for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
             {
                 auto && [aligned_database, aligned_query] = alignment.alignment();
-                debug_stream << "id:       " << id << '\n';
-                debug_stream << "score:    " << alignment.score() << '\n';
-                debug_stream << "database: " << aligned_database << '\n';
-                debug_stream << "query:    "  << aligned_query << '\n';
-                debug_stream << "=============\n";
+                seqan3::debug_stream << "id:       " << id << '\n';
+                seqan3::debug_stream << "score:    " << alignment.score() << '\n';
+                seqan3::debug_stream << "database: " << aligned_database << '\n';
+                seqan3::debug_stream << "query:    "  << aligned_query << '\n';
+                seqan3::debug_stream << "=============\n";
             }
         }
     }
@@ -100,26 +99,31 @@ struct cmd_arguments
     uint8_t errors{0};
 };
 
-void initialise_argument_parser(argument_parser & parser, cmd_arguments & args)
+void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments & args)
 {
     parser.info.author = "E. coli";
     parser.info.short_description = "Map reads against a reference.";
     parser.info.version = "1.0.0";
-    parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.", option_spec::REQUIRED,
-                      input_file_validator{{"fa","fasta"}});
-    parser.add_option(args.query_path, 'q', "query", "The path to the query.", option_spec::REQUIRED,
-                      input_file_validator{{"fq","fastq"}});
-    parser.add_option(args.index_path, 'i', "index", "The path to the index.", option_spec::REQUIRED,
-                      input_file_validator{{"index"}});
-    parser.add_option(args.sam_path, 'o', "output", "The output SAM file path.", option_spec::DEFAULT,
-                      output_file_validator{{"sam"}});
-    parser.add_option(args.errors, 'e', "error", "Maximum allowed errors.", option_spec::DEFAULT,
-                      arithmetic_range_validator{0, 4});
+    parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.",
+                      seqan3::option_spec::REQUIRED,
+                      seqan3::input_file_validator{{"fa","fasta"}});
+    parser.add_option(args.query_path, 'q', "query", "The path to the query.",
+                      seqan3::option_spec::REQUIRED,
+                      seqan3::input_file_validator{{"fq","fastq"}});
+    parser.add_option(args.index_path, 'i', "index", "The path to the index.",
+                      seqan3::option_spec::REQUIRED,
+                      seqan3::input_file_validator{{"index"}});
+    parser.add_option(args.sam_path, 'o', "output", "The output SAM file path.",
+                      seqan3::option_spec::DEFAULT,
+                      seqan3::output_file_validator{{"sam"}});
+    parser.add_option(args.errors, 'e', "error", "Maximum allowed errors.",
+                      seqan3::option_spec::DEFAULT,
+                      seqan3::arithmetic_range_validator{0, 4});
 }
 
 int main(int argc, char const ** argv)
 {
-    argument_parser parser("Mapper", argc, argv);
+    seqan3::argument_parser parser("Mapper", argc, argv);
     cmd_arguments args{};
 
     initialise_argument_parser(parser, args);
@@ -128,7 +132,7 @@ int main(int argc, char const ** argv)
     {
         parser.parse();
     }
-    catch (parser_invalid_argument const & ext)
+    catch (seqan3::parser_invalid_argument const & ext)
     {
         std::cerr << "[PARSER ERROR] " << ext.what() << '\n';
         return -1;
