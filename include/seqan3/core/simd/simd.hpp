@@ -44,18 +44,18 @@ inline namespace simd
  */
 template <typename scalar_t,
           size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
-          typename simd_backend = detail::default_simd_backend<scalar_t, length>>
-struct simd_type : simd_backend
+          template <typename scalar_t_, size_t length_> typename simd_backend = detail::default_simd_backend>
+struct simd_type : simd_backend<scalar_t, length>
 {
     //!\brief The actual simd type.
-    using type = typename simd_backend::type;
+    using type = typename simd_backend<scalar_t, length>::type;
 };
 
 //!\brief Helper type of seqan3::simd::simd_type
 //!\ingroup simd
 template <typename scalar_t,
           size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
-          typename simd_backend = detail::default_simd_backend<scalar_t, length>>
+          template <typename scalar_t_, size_t length_> typename simd_backend = detail::default_simd_backend>
 using simd_type_t = typename simd_type<scalar_t, length, simd_backend>::type;
 
 } // inline namespace simd
