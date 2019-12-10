@@ -68,8 +68,10 @@ constexpr simd_t extract_impl(simd_t const & src, uint8_t const mask)
 }
 
 /*!\brief Upcasts the given vector into the target vector using signed extension of packed values.
- * \tparam target_simd_t The target simd type; must model seqan3::simd::simd_concept and must be a native builtin simd type.
- * \tparam source_simd_t The source simd type; must model seqan3::simd::simd_concept and must be a native builtin simd type.
+ * \tparam target_simd_t The target simd type; must model seqan3::simd::simd_concept and must be a native builtin simd
+ *                       type.
+ * \tparam source_simd_t The source simd type; must model seqan3::simd::simd_concept and must be a native builtin simd
+ *                       type.
  * \param[in] src The source to upcast into `target_simd_t`.
  * \ingroup simd
  */
@@ -161,8 +163,10 @@ constexpr target_simd_t upcast_signed(source_simd_t const & src)
 }
 
 /*!\brief Upcasts the given vector into the target vector using unsigned extension of packed values.
- * \tparam target_simd_t The target simd type; must model seqan3::simd::simd_concept and must be a native builtin simd type.
- * \tparam source_simd_t The source simd type; must model seqan3::simd::simd_concept and must be a native builtin simd type.
+ * \tparam target_simd_t The target simd type; must model seqan3::simd::simd_concept and must be a native builtin simd
+ *                       type.
+ * \tparam source_simd_t The source simd type; must model seqan3::simd::simd_concept and must be a native builtin simd
+ *                       type.
  * \param[in] src The source to upcast into `target_simd_t`.
  * \ingroup simd
  */
@@ -448,7 +452,7 @@ constexpr simd_t load(void const * mem_addr)
 
 /*!\brief Transposes the given simd vector matrix.
  * \ingroup simd
- * \tparam simd_t The simd vector type; must model seqan3::detail::simd_conceptand must be a simd built-in type.
+ * \tparam simd_t The simd vector type; must model seqan3::simd::simd_concept and must be a simd built-in type.
  * \param[in,out] matrix The matrix that is transposed in place.
  *
  * \details
