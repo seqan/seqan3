@@ -32,19 +32,20 @@ write_file_dummy_struct go{};
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
-
 int main()
 {
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
-    alignment_file_input fin{tmp_dir/"my.sam", fields<field::mapq>{}};
+    seqan3::alignment_file_input fin{tmp_dir/"my.sam", seqan3::fields<seqan3::field::mapq>{}};
 
     double sum{};
     size_t c{};
 
-    std::ranges::for_each(fin.begin(), fin.end(), [&sum, &c] (auto & rec) { sum += get<field::mapq>(rec); ++c; });
+    std::ranges::for_each(fin.begin(), fin.end(), [&sum, &c] (auto & rec)
+    {
+        sum += seqan3::get<seqan3::field::mapq>(rec); ++c;
+    });
 
-    debug_stream << "Average: " << (sum/c) << std::endl;
+    seqan3::debug_stream << "Average: " << (sum/c) << std::endl;
 }
 //![solution]
