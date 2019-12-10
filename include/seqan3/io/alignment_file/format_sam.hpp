@@ -27,6 +27,7 @@
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
 #include <seqan3/io/alignment_file/input_options.hpp>
+#include <seqan3/io/alignment_file/misc.hpp>
 #include <seqan3/io/alignment_file/output_format_concept.hpp>
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
@@ -220,14 +221,14 @@ protected:
                                 seq_type && seq,
                                 qual_type && qual,
                                 id_type && id,
-                                int32_t offset,
+                                int32_t const offset,
                                 ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                 ref_id_type && ref_id,
                                 std::optional<int32_t> ref_offset,
                                 align_type && align,
                                 std::vector<cigar> const & cigar_vector,
-                                uint16_t flag,
-                                uint8_t mapq,
+                                sam_flag const flag,
+                                uint8_t const mapq,
                                 mate_type && mate,
                                 tag_dict_type && tag_dict,
                                 e_value_type && SEQAN3_DOXYGEN_ONLY(e_value),
@@ -340,9 +341,24 @@ inline void format_sam::write_sequence_record(stream_type & stream,
 
     alignment_file_output_options output_options;
 
-    write_alignment_record(stream, output_options, std::ignore, default_or(sequence), default_or(qualities),
-                           default_or(id), 0, std::string_view{}, std::string_view{}, -1, default_align_t{},
-                           std::vector<cigar>{}, 0, 0, default_mate_t{}, sam_tag_dictionary{}, 0, 0);
+    write_alignment_record(stream,
+                           output_options,
+        /*header*/         std::ignore,
+        /*seq*/            default_or(sequence),
+        /*qual*/           default_or(qualities),
+        /*id*/             default_or(id),
+        /*offset*/         0,
+        /*ref_seq*/        std::string_view{},
+        /*ref_id*/         std::string_view{},
+        /*ref_offset*/     -1,
+        /*align*/          default_align_t{},
+        /*cigar_vector*/   std::vector<cigar>{},
+        /*flag*/           sam_flag::none,
+        /*mapq*/           0,
+        /*mate*/           default_mate_t{},
+        /*tag_dict*/       sam_tag_dictionary{},
+        /*e_value*/        0,
+        /*bit_score*/      0);
 }
 
 //!\copydoc alignment_file_input_format::read_alignment_record
@@ -414,7 +430,9 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     // -------------------------------------------------------------------------------------------------------------
     read_field(field_view, id);
 
-    read_field(field_view, flag);
+    uint16_t flag_integral{};
+    read_field(field_view, flag_integral);
+    flag = sam_flag{flag_integral};
 
     read_field(field_view, ref_id_tmp);
     check_and_assign_ref_id(ref_id, ref_id_tmp, header, ref_seqs);
@@ -627,14 +645,14 @@ inline void format_sam::write_alignment_record(stream_type & stream,
                                                seq_type && seq,
                                                qual_type && qual,
                                                id_type && id,
-                                               int32_t offset,
+                                               int32_t const offset,
                                                ref_seq_type && SEQAN3_DOXYGEN_ONLY(ref_seq),
                                                ref_id_type && ref_id,
                                                std::optional<int32_t> ref_offset,
                                                align_type && align,
                                                std::vector<cigar> const & cigar_vector,
-                                               uint16_t flag,
-                                               uint8_t mapq,
+                                               sam_flag const flag,
+                                               uint8_t const mapq,
                                                mate_type && mate,
                                                tag_dict_type && tag_dict,
                                                e_value_type && SEQAN3_DOXYGEN_ONLY(e_value),
@@ -781,7 +799,7 @@ inline void format_sam::write_alignment_record(stream_type & stream,
 
     stream << separator;
 
-    stream << flag << separator;
+    stream << static_cast<uint16_t>(flag) << separator;
 
     if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
     {

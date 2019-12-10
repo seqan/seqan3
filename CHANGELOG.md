@@ -64,6 +64,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 * The field-based in- and output interface for structure files through std::get and std::tie has been removed.
   Output can instead be achieved with seqan3::views:zip(), for input we will implement unzip() in the future.
+* The `field::FLAG` of SAM/BAM input and output is now an **enum** instead of a simple integer (see seqan3::sam_flag).
 
 #### Range
 

@@ -12,7 +12,7 @@ int main()
                                        seqan3::fields<seqan3::field::REF_OFFSET, seqan3::field::FLAG>{}};
 
     unsigned mapping_pos{1300};
-    unsigned flag{0};
+    seqan3::sam_flag flag{seqan3::sam_flag::none};
 
     // ...
 
