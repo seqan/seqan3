@@ -194,13 +194,10 @@ public:
      */
     std::optional<value_type> bump()
     {
-        if (gptr == buffer_pointer{} || in_avail() == 0)
-        {
-            if (underflow() == eof)
-            {
-                return {std::nullopt};
-            }
-        }
+        if (underflow() == eof)
+            return {std::nullopt};
+
+        assert(gptr < egptr);
         return {std::move(*gptr++)};
     }
 
