@@ -15,11 +15,16 @@
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/shortcuts.hpp>
 
+#include "../../range/iterator_test_template.hpp"
+
 using namespace seqan3;
+
+// ----------------------------------------------------------------------------
+// Simple executor used as mock for the test.
+// ----------------------------------------------------------------------------
 
 struct dummy_executor
 {
-
     using value_type      = size_t;
     using reference       = value_type;
     using difference_type = std::ptrdiff_t;
@@ -43,6 +48,31 @@ private:
 
     detail::single_pass_input_view<decltype(std::views::iota(0u, 10u))> generator{std::views::iota(0u, 10u)};
 };
+
+// ----------------------------------------------------------------------------
+// Testing iterator.
+// ----------------------------------------------------------------------------
+
+using alignment_range_t = alignment_range<dummy_executor>;
+using alignment_range_iterator = std::ranges::iterator_t<alignment_range_t>;
+
+template <>
+struct iterator_fixture<alignment_range_iterator> : ::testing::Test
+{
+    using iterator_tag = std::input_iterator_tag;
+    static constexpr bool const_iterable = false;
+
+    alignment_range_t test_range{dummy_executor{}};
+    std::vector<size_t> expected_range{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+};
+
+INSTANTIATE_TYPED_TEST_CASE_P(alignment_range_iterator,
+                              iterator_fixture,
+                              alignment_range_iterator);
+
+// ----------------------------------------------------------------------------
+// Testing alignment range concepts and interfaces.
+// ----------------------------------------------------------------------------
 
 TEST(alignment_range, concept_test)
 {
@@ -78,8 +108,8 @@ TEST(alignment_range, end)
 {
     alignment_range rng{dummy_executor{}};
     auto it = rng.end();
-    EXPECT_FALSE(it == begin(rng));
-    EXPECT_FALSE(begin(rng) == it);
+    EXPECT_FALSE(it == rng.begin());
+    EXPECT_FALSE(rng.begin() == it);
 }
 
 TEST(alignment_range, iterable)
@@ -95,5 +125,5 @@ TEST(alignment_range, iterable)
 TEST(alignment_range, default_construction)
 {
     alignment_range<dummy_executor> rng{};
-    EXPECT_TRUE(begin(rng) == end(rng));
+    EXPECT_THROW(rng.begin(), std::runtime_error);
 }
