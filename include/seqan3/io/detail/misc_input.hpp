@@ -26,6 +26,7 @@
     #include <seqan3/contrib/stream/gz_istream.hpp>
 #endif
 #include <seqan3/io/detail/magic_header.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
@@ -41,7 +42,8 @@ namespace seqan3::detail
 template <std::ranges::forward_range ref_t, std::ranges::forward_range query_t>
 inline bool starts_with(ref_t && reference, query_t && query)
 //!\cond
-    requires std::equality_comparable_with<reference_t<ref_t>, reference_t<query_t>>
+    requires std::equality_comparable_with<std::ranges::range_reference_t<ref_t>,
+                                           std::ranges::range_reference_t<query_t>>
 //!\endcond
 {
     auto rit  = std::ranges::begin(reference);
