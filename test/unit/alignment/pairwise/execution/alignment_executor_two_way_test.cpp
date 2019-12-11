@@ -144,6 +144,26 @@ TYPED_TEST(alignment_executor_two_way_test, bump)
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
+TYPED_TEST(alignment_executor_two_way_test, move_assignment)
+{
+    using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
+    using alignment_executor_t = detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+                                                                    algorithm_t,
+                                                                    TypeParam>;
+
+    alignment_executor_t exec{this->sequence_pairs, algorithm_t{dummy_alignment{}}};
+    alignment_executor_t exec_move_assigned{this->sequence_pairs, algorithm_t{dummy_alignment{}}, 2u};
+
+    exec_move_assigned = std::move(exec);
+
+    EXPECT_EQ(exec_move_assigned.bump().value(), 7u);
+    EXPECT_EQ(exec_move_assigned.bump().value(), 7u);
+    EXPECT_EQ(exec_move_assigned.bump().value(), 7u);
+    EXPECT_EQ(exec_move_assigned.bump().value(), 7u);
+    EXPECT_EQ(exec_move_assigned.bump().value(), 7u);
+    EXPECT_FALSE(static_cast<bool>(exec_move_assigned.bump()));
+}
+
 TYPED_TEST(alignment_executor_two_way_test, in_avail)
 {
     using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
