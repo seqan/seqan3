@@ -23,6 +23,7 @@
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
+#include <seqan3/io/alignment_file/format_sam_as_sequence_file_base.hpp>
 #include <seqan3/io/alignment_file/format_sam_base.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
@@ -121,8 +122,11 @@ namespace seqan3
  * The SAM header (if present) is read/written once in the beginning before the
  * first record is read/written.
  */
-class format_sam : private detail::format_sam_base
+class format_sam : protected format_sam_as_sequence_file_base<format_sam>,
+                   private detail::format_sam_base
 {
+    //!\brief Befriend the base class to get the sequence file interface.
+    friend class format_sam_as_sequence_file_base<format_sam>;
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -143,26 +147,9 @@ public:
     };
 
 protected:
-    template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type, bool seq_qual_combined,
-              typename seq_type,        // other constraints checked inside function
-              typename id_type,
-              typename qual_type>
-    void read_sequence_record(stream_type & stream,
-                              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
-                              seq_type & sequence,
-                              id_type & id,
-                              qual_type & qualities);
 
-    template <typename stream_type,     // constraints checked by file
-              typename seq_type,        // other constraints checked inside function
-              typename id_type,
-              typename qual_type>
-    void write_sequence_record(stream_type & stream,
-                               sequence_file_output_options const & SEQAN3_DOXYGEN_ONLY(options),
-                               seq_type && sequence,
-                               id_type && id,
-                               qual_type && qualities);
+    using format_sam_as_sequence_file_base<format_sam>::read_sequence_record;
+    using format_sam_as_sequence_file_base<format_sam>::write_sequence_record;
 
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
@@ -235,30 +222,8 @@ protected:
                                 bit_score_type && SEQAN3_DOXYGEN_ONLY(bit_score));
 
 private:
-    //!\brief Stores quality values temporarily if seq and qual information are combined (not supported by SAM yet).
-    std::string tmp_qual{};
-
-    //!\brief An empty dummy container to pass to align_format.write() such that an empty field is written.
-    static constexpr std::string_view dummy{};
-
-    //!\brief The default header for the alignment format.
-    alignment_file_header<> default_header{};
-
     //!\brief Tracks whether reference information (\@SR tag) were found in the SAM header
     bool ref_info_present_in_header{false};
-
-    //!brief Returns a reference to dummy if passed a std::ignore.
-    std::string_view const & default_or(detail::ignore_t) const noexcept
-    {
-        return dummy;
-    }
-
-    //!brief Returns the input unchanged.
-    template <typename t>
-    decltype(auto) default_or(t && v) const noexcept
-    {
-        return std::forward<t>(v);
-    }
 
     using format_sam_base::read_field; // inherit read_field functions from format_base explicitly
 
@@ -282,84 +247,6 @@ private:
     template <typename stream_t>
     void write_tag_fields(stream_t & stream, sam_tag_dictionary const & tag_dict, char const separator);
 };
-
-//!\copydoc sequence_file_input_format::read_sequence_record
-template <typename stream_type,     // constraints checked by file
-          typename seq_legal_alph_type, bool seq_qual_combined,
-          typename seq_type,        // other constraints checked inside function
-          typename id_type,
-          typename qual_type>
-inline void format_sam::read_sequence_record(stream_type & stream,
-                                             sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
-                                             seq_type & sequence,
-                                             id_type & id,
-                                             qual_type & qualities)
-{
-    alignment_file_input_options<seq_legal_alph_type> align_options;
-
-    if constexpr (seq_qual_combined)
-    {
-        tmp_qual.clear();
-        read_alignment_record(stream, align_options, std::ignore, default_header, sequence, tmp_qual, id,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
-
-        for (auto sit = tmp_qual.begin(), dit = std::ranges::begin(sequence); sit != tmp_qual.end(); ++sit, ++dit)
-            get<1>(*dit).assign_char(*sit);
-    }
-    else
-    {
-        read_alignment_record(stream, align_options, std::ignore, default_header, sequence, qualities, id,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
-    }
-
-    if constexpr (!detail::decays_to_ignore_v<seq_type>)
-        if (std::ranges::distance(sequence) == 0)
-            throw parse_error{"The sequence information must not be empty."};
-    if constexpr (!detail::decays_to_ignore_v<id_type>)
-        if (std::ranges::distance(id) == 0)
-            throw parse_error{"The id information must not be empty."};
-
-    if (options.truncate_ids)
-        id = id | views::take_until_and_consume(is_space) | views::to<id_type>;
-}
-
-//!\copydoc sequence_file_output_format::write_sequence_record
-template <typename stream_type,     // constraints checked by file
-          typename seq_type,        // other constraints checked inside function
-          typename id_type,
-          typename qual_type>
-inline void format_sam::write_sequence_record(stream_type & stream,
-                                              sequence_file_output_options const & SEQAN3_DOXYGEN_ONLY(options),
-                                              seq_type && sequence,
-                                              id_type && id,
-                                              qual_type && qualities)
-{
-    using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
-    using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
-
-    alignment_file_output_options output_options;
-
-    write_alignment_record(stream,
-                           output_options,
-        /*header*/         std::ignore,
-        /*seq*/            default_or(sequence),
-        /*qual*/           default_or(qualities),
-        /*id*/             default_or(id),
-        /*offset*/         0,
-        /*ref_seq*/        std::string_view{},
-        /*ref_id*/         std::string_view{},
-        /*ref_offset*/     -1,
-        /*align*/          default_align_t{},
-        /*cigar_vector*/   std::vector<cigar>{},
-        /*flag*/           sam_flag::none,
-        /*mapq*/           0,
-        /*mate*/           default_mate_t{},
-        /*tag_dict*/       sam_tag_dictionary{},
-        /*e_value*/        0,
-        /*bit_score*/      0);
-}
 
 //!\copydoc alignment_file_input_format::read_alignment_record
 template <typename stream_type,     // constraints checked by file
