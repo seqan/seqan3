@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <optional>
+#include <vector>
 
 #include <range/v3/view/iota.hpp>
 
@@ -16,8 +17,6 @@
 #include <seqan3/range/shortcuts.hpp>
 
 #include "../../range/iterator_test_template.hpp"
-
-using namespace seqan3;
 
 // ----------------------------------------------------------------------------
 // Simple executor used as mock for the test.
@@ -46,14 +45,14 @@ struct dummy_executor
 
 private:
 
-    detail::single_pass_input_view<decltype(std::views::iota(0u, 10u))> generator{std::views::iota(0u, 10u)};
+    seqan3::detail::single_pass_input_view<decltype(std::views::iota(0u, 10u))> generator{std::views::iota(0u, 10u)};
 };
 
 // ----------------------------------------------------------------------------
 // Testing iterator.
 // ----------------------------------------------------------------------------
 
-using alignment_range_t = alignment_range<dummy_executor>;
+using alignment_range_t = seqan3::alignment_range<dummy_executor>;
 using alignment_range_iterator = std::ranges::iterator_t<alignment_range_t>;
 
 template <>
@@ -76,37 +75,37 @@ INSTANTIATE_TYPED_TEST_CASE_P(alignment_range_iterator,
 
 TEST(alignment_range, concept_test)
 {
-    EXPECT_TRUE(std::ranges::input_range<alignment_range<dummy_executor>>);
-    EXPECT_FALSE(std::ranges::forward_range<alignment_range<dummy_executor>>);
+    EXPECT_TRUE(std::ranges::input_range<alignment_range_t>);
+    EXPECT_FALSE(std::ranges::forward_range<alignment_range_t>);
 }
 
 TEST(alignment_range, construction)
 {
-    EXPECT_TRUE(std::is_default_constructible_v<alignment_range<dummy_executor>>);
-    EXPECT_FALSE(std::is_copy_constructible_v<alignment_range<dummy_executor>>);
-    EXPECT_TRUE(std::is_move_constructible_v<alignment_range<dummy_executor>>);
-    EXPECT_FALSE(std::is_copy_assignable_v<alignment_range<dummy_executor>>);
-    EXPECT_TRUE(std::is_move_assignable_v<alignment_range<dummy_executor>>);
+    EXPECT_TRUE(std::is_default_constructible_v<alignment_range_t>);
+    EXPECT_FALSE(std::is_copy_constructible_v<alignment_range_t>);
+    EXPECT_TRUE(std::is_move_constructible_v<alignment_range_t>);
+    EXPECT_FALSE(std::is_copy_assignable_v<alignment_range_t>);
+    EXPECT_TRUE(std::is_move_assignable_v<alignment_range_t>);
 
-    EXPECT_TRUE((std::is_constructible_v<alignment_range<dummy_executor>, dummy_executor>));
+    EXPECT_TRUE((std::is_constructible_v<alignment_range_t, dummy_executor>));
 }
 
 TEST(alignment_range, type_deduction)
 {
-    alignment_range rng{dummy_executor{}};
-    EXPECT_TRUE((std::is_same_v<decltype(rng), alignment_range<dummy_executor>>));
+    seqan3::alignment_range rng{dummy_executor{}};
+    EXPECT_TRUE((std::is_same_v<decltype(rng), seqan3::alignment_range<dummy_executor>>));
 }
 
 TEST(alignment_range, begin)
 {
-    alignment_range rng{dummy_executor{}};
+    seqan3::alignment_range rng{dummy_executor{}};
     auto it = rng.begin();
     EXPECT_EQ(*it, 0u);
 }
 
 TEST(alignment_range, end)
 {
-    alignment_range rng{dummy_executor{}};
+    seqan3::alignment_range rng{dummy_executor{}};
     auto it = rng.end();
     EXPECT_FALSE(it == rng.begin());
     EXPECT_FALSE(rng.begin() == it);
@@ -114,7 +113,7 @@ TEST(alignment_range, end)
 
 TEST(alignment_range, iterable)
 {
-    alignment_range rng{dummy_executor{}};
+    seqan3::alignment_range rng{dummy_executor{}};
     size_t sum = 0;
     for (size_t res : rng)
         sum += res;
@@ -124,6 +123,6 @@ TEST(alignment_range, iterable)
 
 TEST(alignment_range, default_construction)
 {
-    alignment_range<dummy_executor> rng{};
+    seqan3::alignment_range<dummy_executor> rng{};
     EXPECT_THROW(rng.begin(), std::runtime_error);
 }
