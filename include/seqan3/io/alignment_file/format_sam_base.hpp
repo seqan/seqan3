@@ -6,7 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::format_sam_base that can be inherited from.
+ * \brief Provides the seqan3::detail::format_sam_base which provides shared functionality between
+ *        seqan3::format_sam and seqan3::format_bam.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
