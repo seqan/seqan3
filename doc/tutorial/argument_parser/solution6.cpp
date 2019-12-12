@@ -71,7 +71,7 @@ struct cmd_arguments
     bool header_is_set{};
 };
 
-void initialize_argument_parser(seqan3::argument_parser & parser, cmd_arguments & args)
+void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments & args)
 {
     parser.info.author = "Cercei";
     parser.info.short_description = "Aggregate average Game of Thrones viewers by season.";
@@ -101,7 +101,7 @@ int main(int argc, char ** argv)
     seqan3::argument_parser myparser{"Game-of-Parsing", argc, argv};        // initialise myparser
     cmd_arguments args{};
 
-    initialize_argument_parser(myparser, args);
+    initialise_argument_parser(myparser, args);
 
     try
     {

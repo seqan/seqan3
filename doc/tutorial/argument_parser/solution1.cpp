@@ -1,7 +1,7 @@
 #include <seqan3/argument_parser/all.hpp> // includes all necessary headers
 #include <seqan3/core/debug_stream.hpp>   // our custom output stream
 
-void initialize_argument_parser(seqan3::argument_parser & parser)
+void initialise_argument_parser(seqan3::argument_parser & parser)
 {
     parser.info.author = "Cersei";
     parser.info.short_description = "Aggregate average Game of Thrones viewers by season.";

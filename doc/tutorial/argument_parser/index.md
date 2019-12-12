@@ -116,7 +116,7 @@ Of course there is not much information to display yet, since we did not provide
 \assignment{Assignment 2}
 
 1. Extend the minimal example from assignment 1 by a function
-   `void initialize_argument_parser(seqan3::argument_parser & parser)`.
+   `void initialise_argument_parser(seqan3::argument_parser & parser)`.
 2. Within this function, customise the parser with the following information:
    * Set the author to your favourite Game of Thrones character (Don't have one? Really? Take "Cersei").
    * Set the short description to "Aggregate average US. Game of Thrones viewers by season.".

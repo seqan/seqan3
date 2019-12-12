@@ -115,7 +115,6 @@ int main()
 
 {
 //![alignments_with_ref]
-
     using seqan3::operator""_dna5;
 
     auto filename = std::filesystem::temp_directory_path()/"example.sam";

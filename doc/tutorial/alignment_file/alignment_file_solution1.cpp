@@ -28,9 +28,9 @@ write_file_dummy_struct go{};
 //![solution]
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/alignment_file/all.hpp>
+#include <seqan3/range/views/get.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
-#include <seqan3/range/views/get.hpp>
 
 int main()
 {
@@ -43,7 +43,8 @@ int main()
 
     std::ranges::for_each(fin.begin(), fin.end(), [&sum, &c] (auto & rec)
     {
-        sum += seqan3::get<seqan3::field::mapq>(rec); ++c;
+        sum += seqan3::get<seqan3::field::mapq>(rec);
+        ++c;
     });
 
     seqan3::debug_stream << "Average: " << (sum/c) << '\n';

@@ -16,8 +16,7 @@ int main()
     // Configure the alignment kernel.
     auto config = seqan3::align_cfg::mode{seqan3::global_alignment} |
                   seqan3::align_cfg::scoring{seqan3::aminoacid_scoring_scheme{
-                      seqan3::aminoacid_similarity_matrix::BLOSUM62
-                  }} |
+                      seqan3::aminoacid_similarity_matrix::BLOSUM62}} |
                   seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-2}, seqan3::gap_open_score{-9}}};
 
     for (auto const & res : seqan3::align_pairwise(std::tie(seq1, seq2), config))
