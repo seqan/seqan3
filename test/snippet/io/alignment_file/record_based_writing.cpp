@@ -23,7 +23,7 @@ int main()
     alignment_type dummy_alignment{}; // an empty dummy alignment
 
     using types        = seqan3::type_list<std::vector<seqan3::dna5>, std::string, alignment_type>;
-    using types_as_ids = seqan3::fields<seqan3::field::SEQ, seqan3::field::ID, seqan3::field::ALIGNMENT>;
+    using types_as_ids = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::alignment>;
     // the record type specifies the fields we want to write
     using record_type  = seqan3::record<types, types_as_ids>;
 

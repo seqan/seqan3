@@ -69,11 +69,11 @@ namespace seqan3
  * ### fields_specialisation
  *
  * The SAM format provides the following fields:
- * seqan3::field::ALIGNMENT, seqan3::field::SEQ, seqan3::field::QUAL,
- * seqan3::field::ID, seqan3::field::REF_SEQ, seqan3::field::REF_ID
- * seqan3::field::REF_OSSFET, seqan3::field::OFFSET, seqan3::field::FLAG,
- * seqan3::field::MAPQ and seqan3::field::MATE.
- * In addition there is the seqan3::field::HEADER_PTR, which is usually only used internally
+ * seqan3::field::alignment, seqan3::field::seq, seqan3::field::qual,
+ * seqan3::field::id, seqan3::field::ref_seq, seqan3::field::ref_id
+ * seqan3::field::ref_ossfet, seqan3::field::offset, seqan3::field::flag,
+ * seqan3::field::mapq and seqan3::field::mate.
+ * In addition there is the seqan3::field::header_ptr, which is usually only used internally
  * to provide the range-based functionality of the file.
  *
  * **None of the fields are required** when writing but will be defaulted
@@ -86,17 +86,17 @@ namespace seqan3
  *
  * | #  | SAM Column ID |  FIELD name                                       |
  * |:--:|:--------------|:--------------------------------------------------|
- * | 1  | QNAME         | seqan3::field::ID                                 |
- * | 2  | FLAG          | seqan3::field::FLAG                               |
- * | 3  | RNAME         | seqan3::field::REF_ID                             |
- * | 4  | POS           | seqan3::field::REF_OFFSET                         |
- * | 5  | MAPQ          | seqan3::field::MAPQ                               |
- * | 6  | CIGAR         | implicilty stored in seqan3::field::ALIGNMENT     |
- * | 7  | RNEXT         | seqan3::field::MATE (tuple pos 0)                 |
- * | 8  | PNEXT         | seqan3::field::MATE (tuple pos 1)                 |
- * | 9  | TLEN          | seqan3::field::MATE (tuple pos 2)                 |
- * | 10 | SEQ           | seqan3::field::SEQ                                |
- * | 11 | QUAL          | seqan3::field::QUAL                               |
+ * | 1  | QNAME         | seqan3::field::id                                 |
+ * | 2  | FLAG          | seqan3::field::flag                               |
+ * | 3  | RNAME         | seqan3::field::ref_id                             |
+ * | 4  | POS           | seqan3::field::ref_offset                         |
+ * | 5  | MAPQ          | seqan3::field::mapq                               |
+ * | 6  | CIGAR         | implicilty stored in seqan3::field::alignment     |
+ * | 7  | RNEXT         | seqan3::field::mate (tuple pos 0)                 |
+ * | 8  | PNEXT         | seqan3::field::mate (tuple pos 1)                 |
+ * | 9  | TLEN          | seqan3::field::mate (tuple pos 2)                 |
+ * | 10 | SEQ           | seqan3::field::seq                                |
+ * | 11 | QUAL          | seqan3::field::qual                               |
  *
  * The (read sequence/query) **OFFSET** will be required to store the soft
  * clipping information at the read start (end clipping will be automatically
@@ -445,7 +445,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     else if (ref_offset_tmp > -1)
         ref_offset = ref_offset_tmp;
     else if (ref_offset_tmp < -1)
-        throw format_error{"No negative values are allowed for field::REF_OFFSET."};
+        throw format_error{"No negative values are allowed for field::ref_offset."};
 
     read_field(field_view, mapq);
 
@@ -562,7 +562,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
 
             if constexpr (!detail::decays_to_ignore_v<align_type>)
             {
-                if (!tmp_cigar_vector.empty()) // if no alignment info is given, the field::ALIGNMENT should remain empty
+                if (!tmp_cigar_vector.empty()) // if no alignment info is given, the field::alignment should remain empty
                 {
                     assign_unaligned(get<1>(align),
                                      seq | views::slice(static_cast<decltype(std::ranges::size(seq))>(offset_tmp),

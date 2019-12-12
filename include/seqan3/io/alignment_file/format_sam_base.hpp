@@ -286,7 +286,7 @@ inline std::tuple<std::vector<cigar>, int32_t, int32_t> format_sam_base::parse_c
     return {operations, ref_length, seq_length};
 }
 
-/*!\brief Construct the field::ALIGNMENT depending on the given information.
+/*!\brief Construct the field::alignment depending on the given information.
  * \tparam align_type      The alignment type.
  * \tparam ref_seqs_type   The type of reference sequences (might decay to ignore).
  * \param[in,out] align    The alignment (pair of aligned sequences) to fill.

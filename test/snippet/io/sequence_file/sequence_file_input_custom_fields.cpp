@@ -18,7 +18,7 @@ int main()
 
     seqan3::sequence_file_input fin{std::istringstream{input},
                                     seqan3::format_fasta{},
-                                    seqan3::fields<seqan3::field::ID, seqan3::field::SEQ_QUAL>{}};
+                                    seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>{}};
 
     for (auto & [id, seq_qual] : fin) // the order is now different, "id" comes first, because it was specified first
     {

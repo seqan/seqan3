@@ -69,11 +69,11 @@ namespace seqan3
  *
  * ### fields_specialisation
  *
- * The Vienna format provides the fields seqan3::field::SEQ, seqan3::field::ID, seqan3::field::BPP (read only),
- * seqan3::field::STRUCTURE, seqan3::field::STRUCTURED_SEQ and seqan3::field::ENERGY.\n\n
- * If you select seqan3::field::STRUCTURED_SEQ you must not select seqan3::field::SEQ or seqan3::field::STRUCTURE.\n
- * Either the field seqan3::field::SEQ or the field seqan3::field::STRUCTURED_SEQ is required when writing.\n
- * The field seqan3::field::BPP is ignored when writing, but a structure string can be converted to bpp when reading.
+ * The Vienna format provides the fields seqan3::field::seq, seqan3::field::id, seqan3::field::bpp (read only),
+ * seqan3::field::structure, seqan3::field::structured_seq and seqan3::field::energy.\n\n
+ * If you select seqan3::field::structured_seq you must not select seqan3::field::seq or seqan3::field::structure.\n
+ * Either the field seqan3::field::seq or the field seqan3::field::structured_seq is required when writing.\n
+ * The field seqan3::field::bpp is ignored when writing, but a structure string can be converted to bpp when reading.
  *
  * ### Implementation notes
  *

@@ -20,10 +20,10 @@ int main()
 
     for (auto & rec : fin)
     {
-        seqan3::debug_stream << "id:  "              << get<seqan3::field::ID>(rec)         << '\n';
-        seqan3::debug_stream << "read sequence: "    << get<seqan3::field::SEQ>(rec)        << '\n';
-        seqan3::debug_stream << "mapping position: " << get<seqan3::field::REF_OFFSET>(rec) << '\n';
-        seqan3::debug_stream << "mapping quality: "  << get<seqan3::field::MAPQ>(rec)       << '\n';
+        seqan3::debug_stream << "id:  "              << get<seqan3::field::id>(rec)         << '\n';
+        seqan3::debug_stream << "read sequence: "    << get<seqan3::field::seq>(rec)        << '\n';
+        seqan3::debug_stream << "mapping position: " << get<seqan3::field::ref_offset>(rec) << '\n';
+        seqan3::debug_stream << "mapping quality: "  << get<seqan3::field::mapq>(rec)       << '\n';
 
         // there are more fields read on default
     }

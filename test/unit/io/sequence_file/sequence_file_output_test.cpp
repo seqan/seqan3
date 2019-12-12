@@ -99,29 +99,29 @@ TEST(general, construct_by_filename)
     /* filename + fields */
     {
         test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
-        EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ>,
-                                               type_list<format_fasta>>{filename.get_path(), fields<field::SEQ>{}} ));
+        EXPECT_NO_THROW(( sequence_file_output<fields<field::seq>,
+                                               type_list<format_fasta>>{filename.get_path(), fields<field::seq>{}} ));
     }
 }
 
 TEST(general, construct_from_stream)
 {
     /* stream + format_tag */
-    EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ, field::ID, field::QUAL>,
+    EXPECT_NO_THROW(( sequence_file_output<fields<field::seq, field::id, field::qual>,
                                            type_list<format_fasta>>{std::ostringstream{},
                                                             format_fasta{}} ));
 
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ, field::ID, field::QUAL>,
+    EXPECT_NO_THROW(( sequence_file_output<fields<field::seq, field::id, field::qual>,
                                            type_list<format_fasta>>{std::ostringstream{},
                                                                     format_fasta{},
-                                                                    fields<field::SEQ, field::ID, field::QUAL>{}} ));
+                                                                    fields<field::seq, field::id, field::qual>{}} ));
 }
 
 TEST(general, default_template_args_and_deduction_guides)
 {
-    using comp1 = fields<field::SEQ, field::ID, field::QUAL>;
+    using comp1 = fields<field::seq, field::id, field::qual>;
     using comp2 = type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>;
     using comp3 = char;
 
@@ -149,10 +149,10 @@ TEST(general, default_template_args_and_deduction_guides)
     {
         test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
 
-        sequence_file_output fout{filename.get_path(), fields<field::SEQ>{}};
+        sequence_file_output fout{filename.get_path(), fields<field::seq>{}};
 
         using t = decltype(fout);
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::seq>>));                   // changed
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -216,7 +216,7 @@ TEST(row, assign_to_iterator)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
         begin(file) = r;
     });
@@ -226,7 +226,7 @@ TEST(row, push_back_record)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
         file.push_back(r);
     });
@@ -236,7 +236,7 @@ TEST(row, push_back_record_rvalue)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
         file.push_back(std::move(r));
     });
@@ -246,7 +246,7 @@ TEST(row, push_back_record_const)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> const r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> const r{seqs[i], ids[i]};
 
         file.push_back(r);
     });
@@ -256,7 +256,7 @@ TEST(row, push_back_record_const_element)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector const, std::string const>, fields<field::SEQ, field::ID>> const r{seqs[i], ids[i]};
+        record<type_list<dna5_vector const, std::string const>, fields<field::seq, field::id>> const r{seqs[i], ids[i]};
 
         file.push_back(r);
     });
@@ -319,9 +319,9 @@ TEST(row, different_fields_in_record_and_file)
     qual.resize(seqs[1].size());
 
     record<type_list<std::vector<phred42>, std::string, dna5_vector>,
-           fields<field::QUAL, field::ID, field::SEQ>> rec{qual, ids[1], seqs[1]};
+           fields<field::qual, field::id, field::seq>> rec{qual, ids[1], seqs[1]};
 
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::SEQ, field::ID>{}};
+    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::seq, field::id>{}};
     fout.push_back(rec);
     fout.get_stream().flush();
 
@@ -336,7 +336,7 @@ TEST(row, different_fields_in_record_and_file)
 
 TEST(row, writing_seq_qual)
 {
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::ID, field::SEQ_QUAL>()};
+    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::id, field::seq_qual>()};
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)
@@ -358,7 +358,7 @@ TEST(row, writing_seq_qual)
 
 TEST(rows, assign_range_of_records)
 {
-    std::vector<record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>>> range;
+    std::vector<record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>>> range;
 
     for (size_t i = 0; i < 3; ++i)
         range.emplace_back(seqs[i], ids[i]);
@@ -368,7 +368,7 @@ TEST(rows, assign_range_of_records)
 
 TEST(rows, assign_range_of_records_const)
 {
-    std::vector<record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>>> range;
+    std::vector<record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>>> range;
 
     for (size_t i = 0; i < 3; ++i)
         range.emplace_back(seqs[i], ids[i]);
@@ -392,7 +392,7 @@ TEST(rows, assign_range_of_tuples)
 
 TEST(columns, assign_record_of_columns)
 {
-    record<type_list<std::vector<dna5_vector>, std::vector<std::string>>, fields<field::SEQ, field::ID> > columns
+    record<type_list<std::vector<dna5_vector>, std::vector<std::string>>, fields<field::seq, field::id> > columns
     {
         seqs,
         ids
@@ -408,7 +408,7 @@ TEST(columns, assign_tuple_of_columns)
 
 TEST(columns, writing_seq_qual)
 {
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::ID, field::SEQ_QUAL>()};
+    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::id, field::seq_qual>()};
     fout.options.fasta_letters_per_line = 0;
 
     std::vector<std::vector<qualified<dna5, phred42>>> seq_quals{3};
@@ -437,7 +437,7 @@ std::string compression_by_filename_impl([[maybe_unused]]test::tmp_filename & fi
 
         for (size_t i = 0; i < 3; ++i)
         {
-            record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+            record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
             fout.push_back(r);
         }
@@ -462,7 +462,7 @@ void compression_by_stream_impl(comp_stream_t & stream)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
         fout.push_back(r);
     }

@@ -19,18 +19,18 @@
 
 using namespace seqan3;
 
-using sam_fields = fields<field::HEADER_PTR,
-                          field::ID,
-                          field::FLAG,
-                          field::REF_ID,
-                          field::REF_OFFSET,
-                          field::MAPQ,
-                          field::ALIGNMENT,
-                          field::OFFSET,
-                          field::MATE,
-                          field::SEQ,
-                          field::QUAL,
-                          field::TAGS>;
+using sam_fields = fields<field::header_ptr,
+                          field::id,
+                          field::flag,
+                          field::ref_id,
+                          field::ref_offset,
+                          field::mapq,
+                          field::alignment,
+                          field::offset,
+                          field::mate,
+                          field::seq,
+                          field::qual,
+                          field::tags>;
 
 // global variables for reuse
 alignment_file_input_options<dna5> input_options;
@@ -215,18 +215,18 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
     size_t i{0};
     for (auto & rec : fin)
     {
-        EXPECT_EQ(get<field::SEQ>(rec), this->seqs[i]);
-        EXPECT_EQ(get<field::ID>(rec), this->ids[i]);
-        EXPECT_EQ(get<field::QUAL>(rec), this->quals[i]);
-        EXPECT_EQ(get<field::OFFSET>(rec), this->offsets[i]);
-        EXPECT_EQ(get<field::REF_ID>(rec), 0);
-        EXPECT_EQ(*get<field::REF_OFFSET>(rec), this->ref_offsets[i]);
-        EXPECT_TRUE(std::ranges::equal(get<0>(get<field::ALIGNMENT>(rec)), get<0>(this->alignments[i])));
-        EXPECT_TRUE(std::ranges::equal(get<1>(get<field::ALIGNMENT>(rec)), get<1>(this->alignments[i])));
-        EXPECT_EQ(get<field::FLAG>(rec), this->flags[i]);
-        EXPECT_EQ(get<field::MAPQ>(rec), this->mapqs[i]);
-        EXPECT_EQ(get<field::MATE>(rec), this->mates[i]);
-        EXPECT_EQ(get<field::TAGS>(rec), this->tag_dicts[i]);
+        EXPECT_EQ(get<field::seq>(rec), this->seqs[i]);
+        EXPECT_EQ(get<field::id>(rec), this->ids[i]);
+        EXPECT_EQ(get<field::qual>(rec), this->quals[i]);
+        EXPECT_EQ(get<field::offset>(rec), this->offsets[i]);
+        EXPECT_EQ(get<field::ref_id>(rec), 0);
+        EXPECT_EQ(*get<field::ref_offset>(rec), this->ref_offsets[i]);
+        EXPECT_TRUE(std::ranges::equal(get<0>(get<field::alignment>(rec)), get<0>(this->alignments[i])));
+        EXPECT_TRUE(std::ranges::equal(get<1>(get<field::alignment>(rec)), get<1>(this->alignments[i])));
+        EXPECT_EQ(get<field::flag>(rec), this->flags[i]);
+        EXPECT_EQ(get<field::mapq>(rec), this->mapqs[i]);
+        EXPECT_EQ(get<field::mate>(rec), this->mates[i]);
+        EXPECT_EQ(get<field::tags>(rec), this->tag_dicts[i]);
         ++i;
     }
 }
@@ -236,26 +236,26 @@ TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
     typename TestFixture::stream_type istream{this->empty_input};
     alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
 
-    EXPECT_TRUE(get<field::SEQ>(*fin.begin()).empty());
-    EXPECT_TRUE(get<field::ID>(*fin.begin()).empty());
-    EXPECT_TRUE(get<field::QUAL>(*fin.begin()).empty());
-    EXPECT_EQ(get<field::OFFSET>(*fin.begin()), 0);
-    EXPECT_TRUE(!get<field::REF_ID>(*fin.begin()).has_value());
-    EXPECT_TRUE(!get<field::REF_OFFSET>(*fin.begin()).has_value());
-    EXPECT_TRUE(std::ranges::empty(get<0>(get<field::ALIGNMENT>(*fin.begin()))));
-    EXPECT_TRUE(std::ranges::empty(get<1>(get<field::ALIGNMENT>(*fin.begin()))));
-    EXPECT_EQ(get<field::FLAG>(*fin.begin()), sam_flag{0u});
-    EXPECT_EQ(get<field::MAPQ>(*fin.begin()), 0u);
-    EXPECT_TRUE(!get<0>(get<field::MATE>(*fin.begin())).has_value());
-    EXPECT_TRUE(!get<1>(get<field::MATE>(*fin.begin())).has_value());
-    EXPECT_EQ(get<2>(get<field::MATE>(*fin.begin())), int32_t{});
-    EXPECT_TRUE(get<field::TAGS>(*fin.begin()).empty());
+    EXPECT_TRUE(get<field::seq>(*fin.begin()).empty());
+    EXPECT_TRUE(get<field::id>(*fin.begin()).empty());
+    EXPECT_TRUE(get<field::qual>(*fin.begin()).empty());
+    EXPECT_EQ(get<field::offset>(*fin.begin()), 0);
+    EXPECT_TRUE(!get<field::ref_id>(*fin.begin()).has_value());
+    EXPECT_TRUE(!get<field::ref_offset>(*fin.begin()).has_value());
+    EXPECT_TRUE(std::ranges::empty(get<0>(get<field::alignment>(*fin.begin()))));
+    EXPECT_TRUE(std::ranges::empty(get<1>(get<field::alignment>(*fin.begin()))));
+    EXPECT_EQ(get<field::flag>(*fin.begin()), sam_flag{0u});
+    EXPECT_EQ(get<field::mapq>(*fin.begin()), 0u);
+    EXPECT_TRUE(!get<0>(get<field::mate>(*fin.begin())).has_value());
+    EXPECT_TRUE(!get<1>(get<field::mate>(*fin.begin())).has_value());
+    EXPECT_EQ(get<2>(get<field::mate>(*fin.begin())), int32_t{});
+    EXPECT_TRUE(get<field::tags>(*fin.begin()).empty());
 }
 
 TYPED_TEST_P(alignment_file_read, read_in_almost_nothing)
 {
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
-    alignment_file_input fin{istream, TypeParam{}, fields<field::MAPQ>{}};
+    alignment_file_input fin{istream, TypeParam{}, fields<field::mapq>{}};
 
     size_t i{0};
     for (auto & [mapq] : fin)
@@ -266,7 +266,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 {
     {
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}, fields<field::ALIGNMENT>{}};
+        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}, fields<field::alignment>{}};
 
         size_t i{0};
         for (auto & [alignment] : fin)
@@ -279,10 +279,10 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 
     {   // empty cigar
         typename TestFixture::stream_type istream{this->empty_cigar};
-        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}, fields<field::ALIGNMENT>{}};
+        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}, fields<field::alignment>{}};
 
-        EXPECT_TRUE(std::ranges::empty(get<0>(get<field::ALIGNMENT>(*fin.begin()))));
-        EXPECT_TRUE(std::ranges::empty(get<1>(get<field::ALIGNMENT>(*fin.begin()))));
+        EXPECT_TRUE(std::ranges::empty(get<0>(get<field::alignment>(*fin.begin()))));
+        EXPECT_TRUE(std::ranges::empty(get<1>(get<field::alignment>(*fin.begin()))));
     }
 }
 
@@ -290,7 +290,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
 {
     {
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        alignment_file_input fin{istream, TypeParam{}, fields<field::ALIGNMENT>{}};
+        alignment_file_input fin{istream, TypeParam{}, fields<field::alignment>{}};
 
         size_t i{0};
         for (auto & [alignment] : fin)
@@ -299,10 +299,10 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
 
     {   // empty cigar
         typename TestFixture::stream_type istream{this->empty_cigar};
-        alignment_file_input fin{istream, TypeParam{}, fields<field::ALIGNMENT>{}};
+        alignment_file_input fin{istream, TypeParam{}, fields<field::alignment>{}};
 
-        EXPECT_TRUE(std::ranges::empty(get<0>(get<field::ALIGNMENT>(*fin.begin()))));
-        EXPECT_TRUE(std::ranges::empty(get<1>(get<field::ALIGNMENT>(*fin.begin()))));
+        EXPECT_TRUE(std::ranges::empty(get<0>(get<field::alignment>(*fin.begin()))));
+        EXPECT_TRUE(std::ranges::empty(get<1>(get<field::alignment>(*fin.begin()))));
     }
 }
 
@@ -310,7 +310,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_with_ref)
 {
     {   /*with reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}, fields<field::MATE>{}};
+        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}, fields<field::mate>{}};
 
         size_t i{0};
         for (auto & [mate] : fin)
@@ -324,7 +324,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
 
     {   /*no reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        alignment_file_input fin{istream, TypeParam{}, fields<field::MATE>{}};
+        alignment_file_input fin{istream, TypeParam{}, fields<field::mate>{}};
 
         size_t i{0};
         for (auto & [mate] : fin)
@@ -343,7 +343,7 @@ TYPED_TEST_P(alignment_file_read, cigar_vector)
     };
 
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
-    alignment_file_input fin{istream, TypeParam{}, fields<field::CIGAR>{}};
+    alignment_file_input fin{istream, TypeParam{}, fields<field::cigar>{}};
 
     size_t i{0};
     for (auto & [cigar_v] : fin)
@@ -522,18 +522,18 @@ TYPED_TEST_P(alignment_file_write, cigar_vector)
         this->tag_dicts[0]["AS"_tag] = 2;
         this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
 
-        alignment_file_output fout{this->ostream, TypeParam{}, fields<field::HEADER_PTR,
-                                                                      field::ID,
-                                                                      field::FLAG,
-                                                                      field::REF_ID,
-                                                                      field::REF_OFFSET,
-                                                                      field::MAPQ,
-                                                                      field::CIGAR, // cigar instead of alignment
-                                                                      field::OFFSET,
-                                                                      field::MATE,
-                                                                      field::SEQ,
-                                                                      field::QUAL,
-                                                                      field::TAGS>{}};
+        alignment_file_output fout{this->ostream, TypeParam{}, fields<field::header_ptr,
+                                                                      field::id,
+                                                                      field::flag,
+                                                                      field::ref_id,
+                                                                      field::ref_offset,
+                                                                      field::mapq,
+                                                                      field::cigar, // cigar instead of alignment
+                                                                      field::offset,
+                                                                      field::mate,
+                                                                      field::seq,
+                                                                      field::qual,
+                                                                      field::tags>{}};
 
         for (size_t i = 0ul; i < 3ul; ++i)
         {

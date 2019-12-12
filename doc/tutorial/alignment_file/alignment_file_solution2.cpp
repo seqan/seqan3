@@ -79,15 +79,15 @@ int main()
 
     // read in reference information
     sequence_file_input<my_traits> reference_file{tmp_dir/"reference.fasta"};
-    concatenated_sequences<std::string> ref_ids = get<field::ID>(reference_file);
-    std::vector<std::vector<dna5>> ref_seqs = get<field::SEQ>(reference_file);
+    concatenated_sequences<std::string> ref_ids = get<field::id>(reference_file);
+    std::vector<std::vector<dna5>> ref_seqs = get<field::seq>(reference_file);
 
     alignment_file_input mapping_file{tmp_dir/"mapping.sam",
                                       ref_ids,
                                       ref_seqs,
-                                      fields<field::ID,field::REF_ID, field::MAPQ, field::ALIGNMENT>{}};
+                                      fields<field::id,field::ref_id, field::mapq, field::alignment>{}};
 
-    auto mapq_filter = std::views::filter([] (auto & rec) { return get<field::MAPQ>(rec) >= 30; });
+    auto mapq_filter = std::views::filter([] (auto & rec) { return get<field::mapq>(rec) >= 30; });
 
     for (auto & [id, ref_id, mapq, alignment] : mapping_file | mapq_filter)
     {

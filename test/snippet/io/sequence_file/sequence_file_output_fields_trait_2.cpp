@@ -20,7 +20,7 @@ int main()
 {
     seqan3::sequence_file_input  fin{std::istringstream{input},
                                      seqan3::format_fastq{},
-                                     seqan3::fields<seqan3::field::SEQ, seqan3::field::ID, seqan3::field::QUAL>{}};
+                                     seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>{}};
     seqan3::sequence_file_output fout{std::ostringstream{},
                                       seqan3::format_fastq{}}; // doesn't have to match the configuration
 

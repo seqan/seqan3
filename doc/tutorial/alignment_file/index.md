@@ -58,22 +58,22 @@ with the only difference that **the header is mandatory**.
 
 The Alignment file abstraction supports writing the following fields:
 
-1. field::SEQ
-2. field::ID
-3. field::OFFSET
-4. field::REF_SEQ
-5. field::REF_ID
-6. field::REF_OFFSET
-7. field::ALIGNMENT
-8. field::MAPQ
-9. field::FLAG
-10. field::QUAL
-11. field::MATE
-12. field::TAGS
-13. field::EVALUE
-14. field::BIT_SCORE
+1. field::seq
+2. field::id
+3. field::offset
+4. field::ref_seq
+5. field::ref_id
+6. field::ref_offset
+7. field::alignment
+8. field::mapq
+9. field::flag
+10. field::qual
+11. field::mate
+12. field::tags
+13. field::evalue
+14. field::bit_score
 
-There is an additional field called seqan3::field::HEADER_PTR.
+There is an additional field called seqan3::field::header_ptr.
 It is used to transfer header information from seqan3::alignment_file_input to seqan3::alignment_file_output,
 but you needn't deal with this field manually.
 
@@ -82,17 +82,17 @@ To make things clearer, here is the table of SAM columns connected to the corres
 
 | #  | SAM Column ID |  FIELD name                                                                       |
 |:--:|:--------------|:----------------------------------------------------------------------------------|
-| 1  | QNAME         | seqan3::field::ID                                                                 |
-| 2  | FLAG          | seqan3::field::FLAG                                                               |
-| 3  | RNAME         | seqan3::field::REF_ID                                                             |
-| 4  | POS           | seqan3::field::REF_OFFSET                                                         |
-| 5  | MAPQ          | seqan3::field::MAPQ                                                               |
-| 6  | CIGAR         | implicitly stored in seqan3::field::ALIGNMENT or directly in seqan3::field::CIGAR |
-| 7  | RNEXT         | seqan3::field::MATE (tuple pos 0)                                                 |
-| 8  | PNEXT         | seqan3::field::MATE (tuple pos 1)                                                 |
-| 9  | TLEN          | seqan3::field::MATE (tuple pos 2)                                                 |
-| 10 | SEQ           | seqan3::field::SEQ                                                                |
-| 11 | QUAL          | seqan3::field::QUAL                                                               |
+| 1  | QNAME         | seqan3::field::id                                                                 |
+| 2  | FLAG          | seqan3::field::flag                                                               |
+| 3  | RNAME         | seqan3::field::ref_id                                                             |
+| 4  | POS           | seqan3::field::ref_offset                                                         |
+| 5  | MAPQ          | seqan3::field::mapq                                                               |
+| 6  | CIGAR         | implicitly stored in seqan3::field::alignment or directly in seqan3::field::cigar |
+| 7  | RNEXT         | seqan3::field::mate (tuple pos 0)                                                 |
+| 8  | PNEXT         | seqan3::field::mate (tuple pos 1)                                                 |
+| 9  | TLEN          | seqan3::field::mate (tuple pos 2)                                                 |
+| 10 | SEQ           | seqan3::field::seq                                                                |
+| 11 | QUAL          | seqan3::field::qual                                                               |
 
 ## File extensions
 
@@ -149,7 +149,7 @@ Note that this is possible for all SeqAn file objects.
 Let's assume we want to compute the average mapping quality of a SAM file.
 
 For this purpose, write a small program that
-    * only reads the mapping quality (field::MAPQ) out of a SAM file and
+    * only reads the mapping quality (field::mapq) out of a SAM file and
     * computes the average of all qualities.
 
 Use the following file to test your program:
@@ -246,7 +246,7 @@ With those information do the following:
   * For the resulting alignments, print which read was mapped against with reference id and
     the number of seqan3::gap's in each sequence (aligned reference and read sequence).
 
-\note reference ids (field::REF_ID) are given as an index of type `std::optional<int32_t>`
+\note reference ids (field::ref_id) are given as an index of type `std::optional<int32_t>`
       that denote the position of the reference id in the `ref_ids` vector passed to the alignment file.
 
 Your program should print the following:
@@ -268,7 +268,7 @@ r004 mapped against 1 with 0 gaps in the read sequence and 0 gaps in the referen
 ## Reading the CIGAR string
 
 If you are accustomed to the raw CIGAR information, we also provide reading the cigar information into a
-`std::vector<seqan3::cigar>` if you specify the `seqan3::field::CIGAR`.
+`std::vector<seqan3::cigar>` if you specify the `seqan3::field::cigar`.
 
 \snippet doc/tutorial/alignment_file/alignment_file_read_cigar.cpp code
 

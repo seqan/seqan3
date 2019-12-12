@@ -307,10 +307,10 @@ inline void format_bam::read_alignment_record(stream_type & stream,
                   "The ref_offset must be a specialisation of std::optional.");
 
     static_assert(detail::decays_to_ignore_v<mapq_type> || std::same_as<mapq_type, uint8_t>,
-                  "The type of field::MAPQ must be uint8_t.");
+                  "The type of field::mapq must be uint8_t.");
 
     static_assert(detail::decays_to_ignore_v<flag_type> || std::same_as<flag_type, sam_flag>,
-                  "The type of field::FLAG must be seqan3::sam_flag.");
+                  "The type of field::flag must be seqan3::sam_flag.");
 
     using stream_buf_t = std::istreambuf_iterator<typename stream_type::char_type>;
     auto stream_view = std::ranges::subrange<decltype(stream_buf_t{stream}), decltype(stream_buf_t{})>
@@ -391,16 +391,16 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     }
     else if (core.refID > -1) // not unmapped
     {
-        ref_id = core.refID;                                                   // field::REF_ID
+        ref_id = core.refID;                                                   // field::ref_id
     }
 
-    flag = core.flag;                                                          // field::FLAG
-    mapq = core.mapq;                                                          // field::MAPQ
+    flag = core.flag;                                                          // field::flag
+    mapq = core.mapq;                                                          // field::mapq
 
     if (core.pos > -1) // [[likely]]
-        ref_offset = core.pos;                                                 // field::REF_OFFSET
+        ref_offset = core.pos;                                                 // field::ref_offset
 
-    if constexpr (!detail::decays_to_ignore_v<mate_type>)                      // field::MATE
+    if constexpr (!detail::decays_to_ignore_v<mate_type>)                      // field::mate
     {
         if (core.next_refID > -1)
             get<0>(mate) = core.next_refID;
@@ -413,7 +413,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
     // read id
     // -------------------------------------------------------------------------------------------------------------
-    read_field(stream_view | views::take_exactly_or_throw(core.l_read_name - 1), id); // field::ID
+    read_field(stream_view | views::take_exactly_or_throw(core.l_read_name - 1), id); // field::id
     std::ranges::next(std::ranges::begin(stream_view)); // skip '\0'
 
     // read cigar string
@@ -552,8 +552,8 @@ inline void format_bam::read_alignment_record(stream_type & stream,
             { // maybe only throw in debug mode and otherwise return an empty alignment?
                 throw format_error{detail::to_string("The cigar string '", offset_tmp, "S", ref_length,
                                    "N' suggests that the cigar string exceeded 65535 elements and was therefore ",
-                                   "stored in the optional field CG. You need to read in the field::TAGS and "
-                                   "field::SEQ in order to access this information.")};
+                                   "stored in the optional field CG. You need to read in the field::tags and "
+                                   "field::seq in order to access this information.")};
             }
             else
             {

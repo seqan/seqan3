@@ -36,76 +36,112 @@ namespace seqan3
  *
  * | Field          | Sequence IO | Alignment IO | Structure IO |
  * | -------------- | ----------- | ------------ | ------------ |
- * | SEQ            |      ✅      |      ✅       |       ✅      |
- * | ID             |      ✅      |      ✅       |       ✅      |
- * | QUAL           |      ✅      |      ✅       |       ✅      |
- * | SEQ_QUAL       |      ✅      |      ✅       |       ✅      |
- * | OFFSET         |             |      ✅       |       ✅      |
- * | BPP            |             |              |       ✅      |
- * | STRUCTURE      |             |              |       ✅      |
- * | STRUCTURED_SEQ |             |              |       ✅      |
- * | ENERGY         |             |              |       ✅      |
- * | REACT          |             |              |       ✅      |
- * | REACT_ERR      |             |              |       ✅      |
- * | COMMENT        |             |              |       ✅      |
- * | ALIGNMENT      |             |      ✅       |              |
- * | REF_ID         |             |      ✅       |              |
- * | REF_SEQ        |             |      ✅       |              |
- * | REF_OFFSET     |             |      ✅       |              |
- * | HEADER_PTR     |             |      ✅       |              |
- * | FLAG           |             |      ✅       |              |
- * | MATE           |             |      ✅       |              |
- * | MAPQ           |             |      ✅       |              |
- * | CIGAR          |             |      ✅       |              |
- * | TAGS           |             |      ✅       |              |
- * | BIT_SCORE      |             |      ✅       |              |
- * | EVALUE         |             |      ✅       |              |
+ * | seq            |      ✅      |      ✅       |       ✅      |
+ * | id             |      ✅      |      ✅       |       ✅      |
+ * | qual           |      ✅      |      ✅       |       ✅      |
+ * | seq_qual       |      ✅      |      ✅       |       ✅      |
+ * | offset         |             |      ✅       |       ✅      |
+ * | bpp            |             |              |       ✅      |
+ * | structure      |             |              |       ✅      |
+ * | structured_seq |             |              |       ✅      |
+ * | energy         |             |              |       ✅      |
+ * | react          |             |              |       ✅      |
+ * | react_err      |             |              |       ✅      |
+ * | comment        |             |              |       ✅      |
+ * | alignment      |             |      ✅       |              |
+ * | ref_id         |             |      ✅       |              |
+ * | ref_seq        |             |      ✅       |              |
+ * | ref_offset     |             |      ✅       |              |
+ * | header_ptr     |             |      ✅       |              |
+ * | flag           |             |      ✅       |              |
+ * | mate           |             |      ✅       |              |
+ * | mapq           |             |      ✅       |              |
+ * | cigar          |             |      ✅       |              |
+ * | tags           |             |      ✅       |              |
+ * | bit_score      |             |      ✅       |              |
+ * | evalue         |             |      ✅       |              |
  */
 enum class field
 {
     // Fields used in multiple contexts ........................................
-    SEQ,            //!< The "sequence", usually a range of nucleotides or amino acids.
-    ID,             //!< The identifier, usually a string.
-    QUAL,           //!< The qualities, usually in phred-score notation.
-    SEQ_QUAL,       //!< Sequence and qualities combined in one range.
-    OFFSET,         //!< Sequence (SEQ) relative start position (0-based), unsigned value.
+    seq,            //!< The "sequence", usually a range of nucleotides or amino acids.
+    id,             //!< The identifier, usually a string.
+    qual,           //!< The qualities, usually in phred-score notation.
+    seq_qual,       //!< Sequence and qualities combined in one range.
+    offset,         //!< Sequence (SEQ) relative start position (0-based), unsigned value.
 
     // Fields unique to structure io ...........................................
-    BPP,            //!< Base pair probability matrix of interactions, usually a matrix of float numbers.
-    STRUCTURE,      //!< Fixed interactions, usually a string of structure alphabet characters.
-    STRUCTURED_SEQ, //!< Sequence and fixed interactions combined in one range.
-    ENERGY,         //!< Energy of a folded sequence, represented by one float number.
-    REACT,          //!< Reactivity values of the sequence characters given in a vector of float numbers.
-    REACT_ERR,      //!< Reactivity error values given in a vector corresponding to REACT.
-    COMMENT,        //!< Comment field of arbitrary content, usually a string.
+    bpp,            //!< Base pair probability matrix of interactions, usually a matrix of float numbers.
+    structure,      //!< Fixed interactions, usually a string of structure alphabet characters.
+    structured_seq, //!< Sequence and fixed interactions combined in one range.
+    energy,         //!< Energy of a folded sequence, represented by one float number.
+    react,          //!< Reactivity values of the sequence characters given in a vector of float numbers.
+    react_err,      //!< Reactivity error values given in a vector corresponding to REACT.
+    comment,        //!< Comment field of arbitrary content, usually a string.
 
     // Fields unique to alignment io ...........................................
-    ALIGNMENT,      //!< The (pairwise) alignment stored in an seqan3::alignment object.
-    REF_ID,         //!< The identifier of the (reference) sequence that SEQ was aligned to.
-    REF_SEQ,        //!< The (reference) "sequence" information, usually a range of nucleotides or amino acids.
-    REF_OFFSET,     //!< Sequence (REF_SEQ) relative start position (0-based), unsigned value.
-    HEADER_PTR,     //!< A pointer to the seqan3::alignment_file_header object storing header information.
+    alignment,      //!< The (pairwise) alignment stored in an seqan3::alignment object.
+    ref_id,         //!< The identifier of the (reference) sequence that SEQ was aligned to.
+    ref_seq,        //!< The (reference) "sequence" information, usually a range of nucleotides or amino acids.
+    ref_offset,     //!< Sequence (REF_SEQ) relative start position (0-based), unsigned value.
+    header_ptr,     //!< A pointer to the seqan3::alignment_file_header object storing header information.
 
-    FLAG,           //!< The alignment flag (bit information), `uint16_t` value.
-    MATE,           //!< The mate pair information given as a std::tuple of reference name, offset and template length.
-    MAPQ,           //!< The mapping quality of the SEQ alignment, usually a ohred-scaled score.
-    CIGAR,          //!< The cigar vector (std::vector<seqan3::cigar>) representing the alignment in SAM/BAM format.
-    TAGS,           //!< The optional tags in the SAM format, stored in a dictionary.
+    flag,           //!< The alignment flag (bit information), `uint16_t` value.
+    mate,           //!< The mate pair information given as a std::tuple of reference name, offset and template length.
+    mapq,           //!< The mapping quality of the SEQ alignment, usually a ohred-scaled score.
+    cigar,          //!< The cigar vector (std::vector<seqan3::cigar>) representing the alignment in SAM/BAM format.
+    tags,           //!< The optional tags in the SAM format, stored in a dictionary.
 
-    BIT_SCORE,      //!< The bit score (statistical significance indicator), unsigned value.
-    EVALUE,         //!< The e-value (length normalized bit score), `double` value.
+    bit_score,      //!< The bit score (statistical significance indicator), unsigned value.
+    evalue,         //!< The e-value (length normalized bit score), `double` value.
 
     // User defined field aliases .. ...........................................
-    USER_DEFINED_0, //!< Identifier for user defined file formats and specialisations.
-    USER_DEFINED_1, //!< Identifier for user defined file formats and specialisations.
-    USER_DEFINED_2, //!< Identifier for user defined file formats and specialisations.
-    USER_DEFINED_3, //!< Identifier for user defined file formats and specialisations.
-    USER_DEFINED_4, //!< Identifier for user defined file formats and specialisations.
-    USER_DEFINED_5, //!< Identifier for user defined file formats and specialisations.
-    USER_DEFINED_6, //!< Identifier for user defined file formats and specialisations.
-    USER_DEFINED_7, //!< Identifier for user defined file formats and specialisations.
-    USER_DEFINED_8, //!< Identifier for user defined file formats and specialisations.
-    USER_DEFINED_9, //!< Identifier for user defined file formats and specialisations.
+    user_defined_0, //!< Identifier for user defined file formats and specialisations.
+    user_defined_1, //!< Identifier for user defined file formats and specialisations.
+    user_defined_2, //!< Identifier for user defined file formats and specialisations.
+    user_defined_3, //!< Identifier for user defined file formats and specialisations.
+    user_defined_4, //!< Identifier for user defined file formats and specialisations.
+    user_defined_5, //!< Identifier for user defined file formats and specialisations.
+    user_defined_6, //!< Identifier for user defined file formats and specialisations.
+    user_defined_7, //!< Identifier for user defined file formats and specialisations.
+    user_defined_8, //!< Identifier for user defined file formats and specialisations.
+    user_defined_9, //!< Identifier for user defined file formats and specialisations.
+
+    // deprecated uppercase:
+    SEQ SEQAN3_DEPRECATED_310,            //!< Please use the field name in lower case.
+    ID SEQAN3_DEPRECATED_310,             //!< Please use the field name in lower case.
+    QUAL SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
+    SEQ_QUAL SEQAN3_DEPRECATED_310,       //!< Please use the field name in lower case.
+    OFFSET SEQAN3_DEPRECATED_310,         //!< Please use the field name in lower case.
+    BPP SEQAN3_DEPRECATED_310,            //!< Please use the field name in lower case.
+    STRUCTURE SEQAN3_DEPRECATED_310,      //!< Please use the field name in lower case.
+    STRUCTURED_SEQ SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    ENERGY SEQAN3_DEPRECATED_310,         //!< Please use the field name in lower case.
+    REACT SEQAN3_DEPRECATED_310,          //!< Please use the field name in lower case.
+    REACT_ERR SEQAN3_DEPRECATED_310,      //!< Please use the field name in lower case.
+    COMMENT SEQAN3_DEPRECATED_310,        //!< Please use the field name in lower case.
+    ALIGNMENT SEQAN3_DEPRECATED_310,      //!< Please use the field name in lower case.
+    REF_ID SEQAN3_DEPRECATED_310,         //!< Please use the field name in lower case.
+    REF_SEQ SEQAN3_DEPRECATED_310,        //!< Please use the field name in lower case.
+    REF_OFFSET SEQAN3_DEPRECATED_310,     //!< Please use the field name in lower case.
+    HEADER_PTR SEQAN3_DEPRECATED_310,     //!< Please use the field name in lower case.
+    FLAG SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
+    MATE SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
+    MAPQ SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
+    CIGAR SEQAN3_DEPRECATED_310,          //!< Please use the field name in lower case.
+    TAGS SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
+    BIT_SCORE SEQAN3_DEPRECATED_310,      //!< Please use the field name in lower case.
+    EVALUE SEQAN3_DEPRECATED_310,         //!< Please use the field name in lower case.
+    USER_DEFINED_0 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    USER_DEFINED_1 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    USER_DEFINED_2 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    USER_DEFINED_3 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    USER_DEFINED_4 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    USER_DEFINED_5 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    USER_DEFINED_6 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    USER_DEFINED_7 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    USER_DEFINED_8 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    USER_DEFINED_9 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
 };
 
 // ----------------------------------------------------------------------------
@@ -258,7 +294,7 @@ namespace seqan3
 {
 
 /*!\name Free function get() interface for seqan3::record based on seqan3::field.
- * \brief This is the tuple interface via seqan3::field, e.g. `get<field::SEQ>(tuple)`.
+ * \brief This is the tuple interface via seqan3::field, e.g. `get<field::seq>(tuple)`.
  * \relates seqan3::record
  * \{
  */

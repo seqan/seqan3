@@ -102,8 +102,8 @@ TEST_F(sequence_file_input_f, construct_by_filename)
         }
 
         EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
-                                             fields<field::SEQ>,
-                                             type_list<format_fasta>>{filename.get_path(), fields<field::SEQ>{}} ));
+                                             fields<field::seq>,
+                                             type_list<format_fasta>>{filename.get_path(), fields<field::seq>{}} ));
     }
 }
 
@@ -111,23 +111,22 @@ TEST_F(sequence_file_input_f, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
-                                         fields<field::SEQ, field::ID, field::QUAL>,
+                                         fields<field::seq, field::id, field::qual>,
                                          type_list<format_fasta>>{std::istringstream{input},
                                                                   format_fasta{}} ));
 
-
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
-                                          fields<field::SEQ, field::ID, field::QUAL>,
+                                          fields<field::seq, field::id, field::qual>,
                                           type_list<format_fasta>>{std::istringstream{input},
                                                                    format_fasta{},
-                                                                   fields<field::SEQ, field::ID, field::QUAL>{}} ));
+                                                                   fields<field::seq, field::id, field::qual>{}} ));
 }
 
 TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 {
     using comp0 = sequence_file_input_default_traits_dna;
-    using comp1 = fields<field::SEQ, field::ID, field::QUAL>;
+    using comp1 = fields<field::seq, field::id, field::qual>;
     using comp2 = type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>;
     using comp3 = char;
 
@@ -165,11 +164,11 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         }
 
-        sequence_file_input fin{filename.get_path(), fields<field::SEQ>{}};
+        sequence_file_input fin{filename.get_path(), fields<field::seq>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::seq>>));                   // changed
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -223,9 +222,9 @@ TEST_F(sequence_file_input_f, record_reading)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec),  id_comp[counter])));
-        EXPECT_TRUE(empty(get<field::QUAL>(rec)));
+        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec),  id_comp[counter])));
+        EXPECT_TRUE(empty(get<field::qual>(rec)));
 
         counter++;
     }
@@ -256,7 +255,7 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
     /* record based reading */
     sequence_file_input fin{std::istringstream{input},
                          format_fasta{},
-                         fields<field::ID, field::SEQ_QUAL>{}};
+                         fields<field::id, field::seq_qual>{}};
 
     size_t counter = 0;
     for (auto & [ id, seq_qual ] : fin)
@@ -287,11 +286,11 @@ TEST_F(sequence_file_input_f, record_reading_custom_options)
     fin.options.truncate_ids = true;
 
     auto it = fin.begin();
-    EXPECT_EQ(get<field::ID>(*it), "ID1");
+    EXPECT_EQ(get<field::id>(*it), "ID1");
     ++it;
-    EXPECT_EQ(get<field::ID>(*it), "ID2");
+    EXPECT_EQ(get<field::id>(*it), "ID2");
     ++it;
-    EXPECT_EQ(get<field::ID>(*it), "ID3");
+    EXPECT_EQ(get<field::id>(*it), "ID3");
 }
 
 TEST_F(sequence_file_input_f, file_view)
@@ -300,15 +299,15 @@ TEST_F(sequence_file_input_f, file_view)
 
     auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
-        return size(get<field::SEQ>(rec)) >= 5;
+        return size(get<field::seq>(rec)) >= 5;
     });
 
     size_t counter = 1; // the first record will be filtered out
     for (auto & rec : fin | minimum_length_filter)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec),  id_comp[counter])));
-        EXPECT_TRUE(empty(get<field::QUAL>(rec)));
+        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec),  id_comp[counter])));
+        EXPECT_TRUE(empty(get<field::qual>(rec)));
 
         counter++;
     }
@@ -320,7 +319,7 @@ TEST_F(sequence_file_input_f, column_reading)
 {
     sequence_file_input fin{std::istringstream{input}, format_fasta{}};
 
-    auto & seqs  = get<field::SEQ>(fin);                                    // by field
+    auto & seqs  = get<field::seq>(fin);                                    // by field
     auto & ids   = get<1>(fin);                                             // by index
     auto & quals = get<typename decltype(fin)::quality_column_type>(fin);   // by type
 
@@ -340,7 +339,7 @@ TEST_F(sequence_file_input_f, column_reading_temporary)
 {
     sequence_file_input{std::istringstream{input}, format_fasta{}};
 
-    auto seqs = get<field::SEQ>(sequence_file_input{std::istringstream{input}, format_fasta{}});
+    auto seqs = get<field::seq>(sequence_file_input{std::istringstream{input}, format_fasta{}});
 
     ASSERT_EQ(seqs.size(), 3ul);
 
@@ -394,9 +393,9 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), fix.seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec),  fix.id_comp[counter])));
-        EXPECT_TRUE(empty(get<field::QUAL>(rec)));
+        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), fix.seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec),  fix.id_comp[counter])));
+        EXPECT_TRUE(empty(get<field::qual>(rec)));
 
         counter++;
     }

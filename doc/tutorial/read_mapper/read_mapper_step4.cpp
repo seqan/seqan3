@@ -50,13 +50,13 @@ void map_reads(std::filesystem::path const & query_path,
     sequence_file_input query_in{query_path};
 
 //! [alignment_file_output]
-    alignment_file_output sam_out{sam_path, fields<field::SEQ,
-                                                   field::ID,
-                                                   field::REF_ID,
-                                                   field::REF_OFFSET,
-                                                   field::ALIGNMENT,
-                                                   field::QUAL,
-                                                   field::MAPQ>{}};
+    alignment_file_output sam_out{sam_path, fields<field::seq,
+                                                   field::id,
+                                                   field::ref_id,
+                                                   field::ref_offset,
+                                                   field::alignment,
+                                                   field::qual,
+                                                   field::mapq>{}};
 //! [alignment_file_output]
 
     configuration const search_config = search_cfg::max_error{search_cfg::total{errors}} |

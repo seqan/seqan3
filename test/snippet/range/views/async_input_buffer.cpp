@@ -55,7 +55,7 @@ int main()
             std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % 1000));
             // print current thread and sequence ID
             seqan3::debug_stream << "Thread: " << std::this_thread::get_id()             << '\t'
-                                 << "Seq:    " << seqan3::get<seqan3::field::ID>(record) << '\n';
+                                 << "Seq:    " << seqan3::get<seqan3::field::id>(record) << '\n';
 
         }
     };

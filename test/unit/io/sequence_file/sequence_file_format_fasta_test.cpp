@@ -82,14 +82,14 @@ struct read : public sequence_file_data
     {
         std::stringstream istream{input};
 
-        sequence_file_input fin{istream, format_fasta{}, fields<field::ID, field::SEQ>{}};
+        sequence_file_input fin{istream, format_fasta{}, fields<field::id, field::seq>{}};
         fin.options = options;
 
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
-            EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(*it), seqs[i])));
-            EXPECT_EQ(get<field::ID>(*it), ids[i]);
+            EXPECT_TRUE((std::ranges::equal(get<field::seq>(*it), seqs[i])));
+            EXPECT_EQ(get<field::id>(*it), ids[i]);
         }
     }
 };
@@ -208,7 +208,7 @@ struct write : public ::testing::Test
 
     void do_write_test()
     {
-        sequence_file_output fout{ostream, format_fasta{}, fields<field::SEQ, field::ID>{}};
+        sequence_file_output fout{ostream, format_fasta{}, fields<field::seq, field::id>{}};
         fout.options = options;
 
         for (unsigned i = 0; i < 3; ++i)

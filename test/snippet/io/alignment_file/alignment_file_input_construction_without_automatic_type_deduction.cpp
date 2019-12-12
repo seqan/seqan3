@@ -9,21 +9,21 @@ r001	99	ref	7	30	8M2I4M1D3M	=	37	39	TTAGATAAAGGATACTG	*)";
 int main()
 {
     // The default types; you can adjust this list if you don't want to read all this data.
-    using default_fields = seqan3::fields<seqan3::field::SEQ,
-                                          seqan3::field::ID,
-                                          seqan3::field::OFFSET,
-                                          seqan3::field::REF_SEQ,
-                                          seqan3::field::REF_ID,
-                                          seqan3::field::REF_OFFSET,
-                                          seqan3::field::ALIGNMENT,
-                                          seqan3::field::MAPQ,
-                                          seqan3::field::QUAL,
-                                          seqan3::field::FLAG,
-                                          seqan3::field::MATE,
-                                          seqan3::field::TAGS,
-                                          seqan3::field::EVALUE,
-                                          seqan3::field::BIT_SCORE,
-                                          seqan3::field::HEADER_PTR>;
+    using default_fields = seqan3::fields<seqan3::field::seq,
+                                          seqan3::field::id,
+                                          seqan3::field::offset,
+                                          seqan3::field::ref_seq,
+                                          seqan3::field::ref_id,
+                                          seqan3::field::ref_offset,
+                                          seqan3::field::alignment,
+                                          seqan3::field::mapq,
+                                          seqan3::field::qual,
+                                          seqan3::field::flag,
+                                          seqan3::field::mate,
+                                          seqan3::field::tags,
+                                          seqan3::field::evalue,
+                                          seqan3::field::bit_score,
+                                          seqan3::field::header_ptr>;
 
                                                                 // The expected format:
     using alignment_file_input_t = seqan3::alignment_file_input<seqan3::alignment_file_input_default_traits<>,

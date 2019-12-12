@@ -18,7 +18,7 @@ int main()
 
     seqan3::structure_file_input fin{std::istringstream{input},
                                      seqan3::format_vienna{},
-                                     seqan3::fields<seqan3::field::ID, seqan3::field::STRUCTURED_SEQ>{}};
+                                     seqan3::fields<seqan3::field::id, seqan3::field::structured_seq>{}};
 
     // note that the order is now different, "id" comes first, because it was specified first
     for (auto & [id, struc_seq] : fin)

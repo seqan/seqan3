@@ -403,22 +403,22 @@ TEST_F(bam_format, too_long_cigar_string_read)
 
         alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
 
-        EXPECT_TRUE(std::ranges::equal(get<0>(get<field::ALIGNMENT>(*fin.begin())), get<0>(this->alignments[0])));
-        EXPECT_TRUE(std::ranges::equal(get<1>(get<field::ALIGNMENT>(*fin.begin())), get<1>(this->alignments[0])));
-        EXPECT_EQ(get<field::TAGS>(*fin.begin()).size(), 0u); // redundant CG tag is removed
+        EXPECT_TRUE(std::ranges::equal(get<0>(get<field::alignment>(*fin.begin())), get<0>(this->alignments[0])));
+        EXPECT_TRUE(std::ranges::equal(get<1>(get<field::alignment>(*fin.begin())), get<1>(this->alignments[0])));
+        EXPECT_EQ(get<field::tags>(*fin.begin()).size(), 0u); // redundant CG tag is removed
     }
 
     {   // error: sam_tag_dictionary is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        alignment_file_input fin{stream, format_bam{}, fields<field::ALIGNMENT>{}};
+        alignment_file_input fin{stream, format_bam{}, fields<field::alignment>{}};
         ASSERT_THROW(fin.begin(), format_error);
     }
 
     {   // error: sequence is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        alignment_file_input fin{stream, format_bam{}, fields<field::ALIGNMENT, field::TAGS>{}};
+        alignment_file_input fin{stream, format_bam{}, fields<field::alignment, field::tags>{}};
         ASSERT_THROW(fin.begin(), format_error);
     }
 
@@ -496,13 +496,13 @@ TEST_F(bam_format, too_long_cigar_string_write)
     header.ref_dict[this->ref_id] = 0;
 
     {
-        alignment_file_output fout{os, format_bam{}, fields<field::HEADER_PTR,
-                                                            field::ID,
-                                                            field::SEQ,
-                                                            field::REF_ID,
-                                                            field::REF_OFFSET,
-                                                            field::ALIGNMENT,
-                                                            field::MAPQ>{}};
+        alignment_file_output fout{os, format_bam{}, fields<field::header_ptr,
+                                                            field::id,
+                                                            field::seq,
+                                                            field::ref_id,
+                                                            field::ref_offset,
+                                                            field::alignment,
+                                                            field::mapq>{}};
 
         fout.emplace_back(&header, std::string{"long_read"}, read, 0, 0, alignment, 255);
     }

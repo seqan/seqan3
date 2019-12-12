@@ -76,7 +76,7 @@ int main()
 
     auto length_filter = std::views::filter([] (auto & rec)
     {
-        return std::ranges::size(get<field::SEQ>(rec)) >= 5;
+        return std::ranges::size(get<field::seq>(rec)) >= 5;
     });
 
     fout = fin | length_filter;

@@ -60,18 +60,18 @@ namespace seqan3
  *
  * \details
  *
- * Note that the alphabet type of the seqan3::field::STRUCTURED_SEQ is a combined alphabet, i.e. either
+ * Note that the alphabet type of the seqan3::field::structured_seq is a combined alphabet, i.e. either
  * seqan3::structured_rna<sequence_alphabet, structure_alphabet> or
  * seqan3::structured_aa<sequence_alphabet, structure_alphabet> and the container type templates for
- * the field are those of seqan3::field::SEQ and seqan3::field::STRUCTURE, respectively.
+ * the field are those of seqan3::field::seq and seqan3::field::structure, respectively.
  *
  * \{
  */
 /*!\typedef using seq_alphabet
- * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::seq; must satisfy seqan3::alphabet.
  */
 /*!\typedef using seq_legal_alphabet
- * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::alphabet and be convertible to
+ * \brief Intermediate alphabet for seqan3::field::seq; must satisfy seqan3::alphabet and be convertible to
  * `seq_alphabet`.
  *
  * \details
@@ -82,21 +82,21 @@ namespace seqan3
  * character and produce an error.
  */
 /*!\typedef using seq_container
- * \brief Type template of the seqan3::field::SEQ, a container template over `seq_alphabet`;
+ * \brief Type template of the seqan3::field::seq, a container template over `seq_alphabet`;
  * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using id_alphabet
- * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::id; must satisfy seqan3::alphabet.
  */
 /*!\typedef using id_container
- * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
+ * \brief Type template of the seqan3::field::id, a container template over `id_alphabet`;
  * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using bpp_prob
- * \brief Data type for the base pair probabilities in seqan3::field::BPP; must satisfy std::is_floating_point.
+ * \brief Data type for the base pair probabilities in seqan3::field::bpp; must satisfy std::is_floating_point.
  */
 /*!\typedef using bpp_partner
- * \brief Data type for the partner index of an interaction in seqan3::field::BPP; must satisfy
+ * \brief Data type for the partner index of an interaction in seqan3::field::bpp; must satisfy
  * std::numeric_limits::is_integer.
  */
 /*!\typedef using bpp_queue
@@ -105,39 +105,39 @@ namespace seqan3
  * must satisfy seqan3::container and must provide an std::emplace(bpp_prob, bpp_partner) function.
  */
 /*!\typedef using bpp_container
- * \brief Type template of the seqan3::field::BPP, a container template over a set (bpp_queue) of interactions;
+ * \brief Type template of the seqan3::field::bpp, a container template over a set (bpp_queue) of interactions;
  * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using structure_alphabet
- * \brief Alphabet of the characters for the seqan3::field::STRUCTURE; must satisfy seqan3::rna_structure_alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::structure; must satisfy seqan3::rna_structure_alphabet.
  */
 /*!\typedef using structure_container
- * \brief Type template of the seqan3::field::STRUCTURE, a container template over `structure_alphabet`;
+ * \brief Type template of the seqan3::field::structure, a container template over `structure_alphabet`;
  * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using energy_type
- * \brief Type template of the seqan3::field::ENERGY; must be std::optional of a type satisfying std::is_floating_point.
+ * \brief Type template of the seqan3::field::energy; must be std::optional of a type satisfying std::is_floating_point.
  * \details
  * If the file record contains an energy, the value can be obtained through dereference or std::optional::value.
  * Otherwise, operator bool or std::optional::has_value return false.
  */
 /*!\typedef using react_type
- * \brief Data type for the reactivity and reactivity error in seqan3::field::REACT and seqan3::field::REACT_ERR,
+ * \brief Data type for the reactivity and reactivity error in seqan3::field::react and seqan3::field::react_err,
  * respectively; must satisfy std::is_floating_point.
  */
 /*!\typedef using react_container
- * \brief Type template of the seqan3::field::REACT and seqan3::field::REACT_ERR, a container template over
+ * \brief Type template of the seqan3::field::react and seqan3::field::react_err, a container template over
  * `react_type`; must satisfy seqan3::sequence_container.
  */
 /*!\typedef using comment_alphabet
- * \brief Alphabet of the characters for the seqan3::field::COMMENT; must satisfy seqan3::alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::comment; must satisfy seqan3::alphabet.
  */
 /*!\typedef using comment_container
- * \brief Type template of the seqan3::field::COMMENT, a container template over `comment_alphabet`;
+ * \brief Type template of the seqan3::field::comment, a container template over `comment_alphabet`;
  * must satisfy seqan3::sequence_container.
  */
 /*!\typedef using offset_type
- * \brief Type template of the seqan3::field::OFFSET; must statisfy std::numeric_limits::is_integer.
+ * \brief Type template of the seqan3::field::offset; must statisfy std::numeric_limits::is_integer.
  */
 //!\}
 //!\cond
@@ -363,20 +363,20 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *
  * The structured sequence file abstraction supports reading ten different fields:
  *
- *   1. seqan3::field::SEQ (sequence)
- *   2. seqan3::field::ID (identifier)
- *   3. seqan3::field::BPP (annotated sequence)
- *   4. seqan3::field::STRUCTURE (secondary structure)
- *   5. seqan3::field::STRUCTURED_SEQ (sequence and structure in one range)
- *   6. seqan3::field::ENERGY (minimum free energy)
- *   7. seqan3::field::REACT (reactivity)
- *   8. seqan3::field::REACT_ERR (reactivity error)
- *   9. seqan3::field::COMMENT (free text)
- *   10. seqan3::field::OFFSET (index of first sequence character)
+ *   1. seqan3::field::seq (sequence)
+ *   2. seqan3::field::id (identifier)
+ *   3. seqan3::field::bpp (annotated sequence)
+ *   4. seqan3::field::structure (secondary structure)
+ *   5. seqan3::field::structured_seq (sequence and structure in one range)
+ *   6. seqan3::field::energy (minimum free energy)
+ *   7. seqan3::field::react (reactivity)
+ *   8. seqan3::field::react_err (reactivity error)
+ *   9. seqan3::field::comment (free text)
+ *   10. seqan3::field::offset (index of first sequence character)
  *
- * The first three fields are retrieved by default (and in that order). The seqan3::field::STRUCTURED_SEQ may be
+ * The first three fields are retrieved by default (and in that order). The seqan3::field::structured_seq may be
  * selected to have sequence and structure directly stored in a more memory-efficient combined container.
- * If you select this field you must not select seqan3::field::SEQ or seqan3::field::STRUCTURE.
+ * If you select this field you must not select seqan3::field::seq or seqan3::field::structure.
  *
  * ### Construction and specialisation
  *
@@ -463,7 +463,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * Currently, the only implemented format is seqan3::format_vienna. More formats will follow soon.
  */
 template <structure_file_input_traits traits_type_ = structure_file_input_default_traits_rna,
-          detail::fields_specialisation selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
+          detail::fields_specialisation selected_field_ids_ = fields<field::seq, field::id, field::structure>,
           detail::type_list_of_structure_file_input_formats valid_formats_ = type_list<format_vienna>>
 class structure_file_input
 {
@@ -485,16 +485,16 @@ public:
     /*!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in
      * \ref field_types.
      */
-    using field_ids = fields<field::SEQ,
-                             field::ID,
-                             field::BPP,
-                             field::STRUCTURE,
-                             field::STRUCTURED_SEQ,
-                             field::ENERGY,
-                             field::REACT,
-                             field::REACT_ERR,
-                             field::COMMENT,
-                             field::OFFSET>;
+    using field_ids = fields<field::seq,
+                             field::id,
+                             field::bpp,
+                             field::structure,
+                             field::structured_seq,
+                             field::energy,
+                             field::react,
+                             field::react_err,
+                             field::comment,
+                             field::offset>;
 
     static_assert([]() constexpr
                   {
@@ -508,10 +508,10 @@ public:
 
     static_assert([]() constexpr
                   {
-                      return !(selected_field_ids::contains(field::STRUCTURED_SEQ) &&
-                               (selected_field_ids::contains(field::SEQ) ||
-                               (selected_field_ids::contains(field::STRUCTURE))));
-                  }(), "You may not select field::STRUCTURED_SEQ and either of field::SEQ and field::STRUCTURE "
+                      return !(selected_field_ids::contains(field::structured_seq) &&
+                               (selected_field_ids::contains(field::seq) ||
+                               (selected_field_ids::contains(field::structure))));
+                  }(), "You may not select field::structured_seq and either of field::seq and field::structure "
                        "at the same time.");
 
     /*!\name Field types and record type
@@ -752,7 +752,7 @@ public:
 
     //!\brief The options are public and its members can be set directly.
     structure_file_input_options<typename traits_type::seq_legal_alphabet,
-                                 selected_field_ids::contains(field::STRUCTURED_SEQ)> options;
+                                 selected_field_ids::contains(field::structured_seq)> options;
 
 protected:
     //!\privatesection
@@ -809,37 +809,37 @@ protected:
         std::visit([&] (auto & f)
         {
             // read new record
-            if constexpr (selected_field_ids::contains(field::STRUCTURED_SEQ))
+            if constexpr (selected_field_ids::contains(field::structured_seq))
             {
-                static_assert(!selected_field_ids::contains(field::STRUCTURE),
-                              "You may not select field::STRUCTURED_SEQ and field::STRUCTURE at the same time.");
-                static_assert(!selected_field_ids::contains(field::SEQ),
-                              "You may not select field::STRUCTURED_SEQ and field::SEQ at the same time.");
+                static_assert(!selected_field_ids::contains(field::structure),
+                              "You may not select field::structured_seq and field::structure at the same time.");
+                static_assert(!selected_field_ids::contains(field::seq),
+                              "You may not select field::structured_seq and field::seq at the same time.");
                 f.read_structure_record(*secondary_stream,
                                         options,
-                                        detail::get_or_ignore<field::STRUCTURED_SEQ>(record_buffer), // seq
-                                        detail::get_or_ignore<field::ID>(record_buffer),
-                                        detail::get_or_ignore<field::BPP>(record_buffer),
-                                        detail::get_or_ignore<field::STRUCTURED_SEQ>(record_buffer), // structure
-                                        detail::get_or_ignore<field::ENERGY>(record_buffer),
-                                        detail::get_or_ignore<field::REACT>(record_buffer),
-                                        detail::get_or_ignore<field::REACT_ERR>(record_buffer),
-                                        detail::get_or_ignore<field::COMMENT>(record_buffer),
-                                        detail::get_or_ignore<field::OFFSET>(record_buffer));
+                                        detail::get_or_ignore<field::structured_seq>(record_buffer), // seq
+                                        detail::get_or_ignore<field::id>(record_buffer),
+                                        detail::get_or_ignore<field::bpp>(record_buffer),
+                                        detail::get_or_ignore<field::structured_seq>(record_buffer), // structure
+                                        detail::get_or_ignore<field::energy>(record_buffer),
+                                        detail::get_or_ignore<field::react>(record_buffer),
+                                        detail::get_or_ignore<field::react_err>(record_buffer),
+                                        detail::get_or_ignore<field::comment>(record_buffer),
+                                        detail::get_or_ignore<field::offset>(record_buffer));
             }
             else
             {
                 f.read_structure_record(*secondary_stream,
                                         options,
-                                        detail::get_or_ignore<field::SEQ>(record_buffer),
-                                        detail::get_or_ignore<field::ID>(record_buffer),
-                                        detail::get_or_ignore<field::BPP>(record_buffer),
-                                        detail::get_or_ignore<field::STRUCTURE>(record_buffer),
-                                        detail::get_or_ignore<field::ENERGY>(record_buffer),
-                                        detail::get_or_ignore<field::REACT>(record_buffer),
-                                        detail::get_or_ignore<field::REACT_ERR>(record_buffer),
-                                        detail::get_or_ignore<field::COMMENT>(record_buffer),
-                                        detail::get_or_ignore<field::OFFSET>(record_buffer));
+                                        detail::get_or_ignore<field::seq>(record_buffer),
+                                        detail::get_or_ignore<field::id>(record_buffer),
+                                        detail::get_or_ignore<field::bpp>(record_buffer),
+                                        detail::get_or_ignore<field::structure>(record_buffer),
+                                        detail::get_or_ignore<field::energy>(record_buffer),
+                                        detail::get_or_ignore<field::react>(record_buffer),
+                                        detail::get_or_ignore<field::react_err>(record_buffer),
+                                        detail::get_or_ignore<field::comment>(record_buffer),
+                                        detail::get_or_ignore<field::offset>(record_buffer));
             }
         }, format);
     }

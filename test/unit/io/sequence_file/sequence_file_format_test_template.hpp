@@ -76,11 +76,11 @@ TYPED_TEST_P(sequence_file_read, standard)
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(*it), this->seqs[i])));
-        EXPECT_EQ(get<field::ID>(*it), this->ids[i]);
+        EXPECT_TRUE((std::ranges::equal(get<field::seq>(*it), this->seqs[i])));
+        EXPECT_EQ(get<field::id>(*it), this->ids[i]);
         if constexpr (std::same_as<TypeParam, format_fastq> || std::same_as<TypeParam, format_sam>)
         {
-            EXPECT_TRUE((std::ranges::equal(get<field::QUAL>(*it), this->quals[i])));
+            EXPECT_TRUE((std::ranges::equal(get<field::qual>(*it), this->quals[i])));
         }
     }
 }
@@ -88,7 +88,7 @@ TYPED_TEST_P(sequence_file_read, standard)
 TYPED_TEST_P(sequence_file_read, only_seq)
 {
     std::stringstream istream{this->standard_input};
-    sequence_file_input fin{istream, TypeParam{}, fields<field::SEQ>{}};
+    sequence_file_input fin{istream, TypeParam{}, fields<field::seq>{}};
 
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
@@ -98,7 +98,7 @@ TYPED_TEST_P(sequence_file_read, only_seq)
 TYPED_TEST_P(sequence_file_read, only_id)
 {
     std::stringstream istream{this->standard_input};
-    sequence_file_input fin{istream, TypeParam{}, fields<field::ID>{}};
+    sequence_file_input fin{istream, TypeParam{}, fields<field::id>{}};
 
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
@@ -108,20 +108,20 @@ TYPED_TEST_P(sequence_file_read, only_id)
 TYPED_TEST_P(sequence_file_read, seq_qual)
 {
     std::stringstream istream{this->standard_input};
-    sequence_file_input fin{istream, TypeParam{}, fields<field::ID, field::SEQ_QUAL>{}};
+    sequence_file_input fin{istream, TypeParam{}, fields<field::id, field::seq_qual>{}};
 
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::ID>(*it), this->ids[i])));
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ_QUAL>(*it) | views::convert<dna5>, this->seqs[i])));
+        EXPECT_TRUE((std::ranges::equal(get<field::id>(*it), this->ids[i])));
+        EXPECT_TRUE((std::ranges::equal(get<field::seq_qual>(*it) | views::convert<dna5>, this->seqs[i])));
     }
 }
 
 TYPED_TEST_P(sequence_file_read, options_truncate_ids)
 {
     std::stringstream istream{this->standard_input};
-    sequence_file_input fin{istream, TypeParam{}, fields<field::ID>{}};
+    sequence_file_input fin{istream, TypeParam{}, fields<field::id>{}};
     fin.options.truncate_ids = true;
     this->ids[2] = "ID3"; // "lala" is stripped
 
@@ -177,7 +177,7 @@ TYPED_TEST_P(sequence_file_write, seq_qual)
         return qualified<dna5, phred42>{get<0>(in), get<1>(in)};
     });
 
-    sequence_file_output fout{this->ostream, TypeParam{}, fields<field::ID, field::SEQ_QUAL>{}};
+    sequence_file_output fout{this->ostream, TypeParam{}, fields<field::id, field::seq_qual>{}};
 
     for (unsigned i = 0; i < 3; ++i)
     {
@@ -194,7 +194,7 @@ TYPED_TEST_P(sequence_file_write, arg_handling_id_missing)
 {
     if constexpr (!std::same_as<TypeParam, format_sam>)
     {
-        sequence_file_output fout{this->ostream, TypeParam{}, fields<field::SEQ>{}};
+        sequence_file_output fout{this->ostream, TypeParam{}, fields<field::seq>{}};
         EXPECT_THROW((fout.emplace_back(this->seqs[0])), std::logic_error);
     }
 }
@@ -203,7 +203,7 @@ TYPED_TEST_P(sequence_file_write, arg_handling_id_empty)
 {
     if constexpr (!std::same_as<TypeParam, format_sam>)
     {
-        sequence_file_output fout{this->ostream, TypeParam{}, fields<field::SEQ, field::ID>{}};
+        sequence_file_output fout{this->ostream, TypeParam{}, fields<field::seq, field::id>{}};
         EXPECT_THROW((fout.emplace_back(this->seqs[0], std::string_view{""}, std::ignore)), std::runtime_error);
     }
 }
@@ -212,7 +212,7 @@ TYPED_TEST_P(sequence_file_write, arg_handling_seq_missing)
 {
     if constexpr (!std::same_as<TypeParam, format_sam>)
     {
-        sequence_file_output fout{this->ostream, TypeParam{}, fields<field::ID>{}};
+        sequence_file_output fout{this->ostream, TypeParam{}, fields<field::id>{}};
         EXPECT_THROW((fout.emplace_back(this->ids[0])), std::logic_error);
     }
 }
@@ -221,7 +221,7 @@ TYPED_TEST_P(sequence_file_write, arg_handling_seq_empty)
 {
     if constexpr (!std::same_as<TypeParam, format_sam>)
     {
-        sequence_file_output fout{this->ostream, TypeParam{}, fields<field::SEQ, field::ID>{}};
+        sequence_file_output fout{this->ostream, TypeParam{}, fields<field::seq, field::id>{}};
         EXPECT_THROW((fout.emplace_back(std::string_view{""}, this->ids[0], std::ignore)), std::runtime_error);
     }
 }

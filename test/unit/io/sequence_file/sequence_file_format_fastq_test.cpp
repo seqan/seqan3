@@ -114,9 +114,9 @@ struct read : public sequence_file_data
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
-            EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(*it), seqs[i])));
-            EXPECT_TRUE((std::ranges::equal(get<field::ID>(*it), ids[i])));
-            EXPECT_TRUE((std::ranges::equal(get<field::QUAL>(*it), quals[i])));
+            EXPECT_TRUE((std::ranges::equal(get<field::seq>(*it), seqs[i])));
+            EXPECT_TRUE((std::ranges::equal(get<field::id>(*it), ids[i])));
+            EXPECT_TRUE((std::ranges::equal(get<field::qual>(*it), quals[i])));
         }
     }
 };
@@ -204,7 +204,7 @@ TEST_F(read, mixed_issues)
 TEST_F(read, only_qual)
 {
     std::stringstream istream{input};
-    sequence_file_input fin{istream, format_fastq{}, fields<field::QUAL>{}};
+    sequence_file_input fin{istream, format_fastq{}, fields<field::qual>{}};
 
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
@@ -272,7 +272,7 @@ struct write : public ::testing::Test
 
 TEST_F(write, arg_handling_qual_missing)
 {
-    sequence_file_output fout{ostream, format_fastq{}, fields<field::ID, field::SEQ>{}};
+    sequence_file_output fout{ostream, format_fastq{}, fields<field::id, field::seq>{}};
     EXPECT_THROW((fout.emplace_back(ids[0], seqs[0])), std::logic_error);
 }
 

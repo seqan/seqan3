@@ -55,7 +55,7 @@ static std::string fasta_file = []()
 void write3(benchmark::State & state)
 {
     std::ostringstream ostream;
-    sequence_file_output fout{ostream, format_fasta{}, fields<field::ID, field::SEQ>{}};
+    sequence_file_output fout{ostream, format_fasta{}, fields<field::id, field::seq>{}};
 
     for (auto _ : state)
     {

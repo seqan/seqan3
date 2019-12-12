@@ -57,8 +57,8 @@ namespace seqan3
  *
  * ### fields_specialisation
  *
- * The FastQ format provides the fields seqan3::field::SEQ, seqan3::field::ID and seqan3::field::QUAL; or alternatively
- * provides seqan3::field::SEQ_QUAL as a single field of sequence and quality. All three fields (or ID + SEQ_QUAL) are
+ * The FastQ format provides the fields seqan3::field::seq, seqan3::field::id and seqan3::field::qual; or alternatively
+ * provides seqan3::field::seq_qual as a single field of sequence and quality. All three fields (or ID + SEQ_QUAL) are
  * required when writing and the sequence and qualities are required to be of the same length.
  *
  * ### Encodings

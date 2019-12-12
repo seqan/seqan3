@@ -161,20 +161,20 @@ SEQAN3_CONCEPT alignment_file_output_format =
  * \param[in,out] stream The output stream to write into.
  * \param[in] options File specific options passed to the format.
  * \param[in] header A pointer to the header object of the file.
- * \param[in] seq The data for seqan3::field::SEQ, i.e. the query sequence.
- * \param[in] qual The data for seqan3::field::QUAL, e.g. the query quality sequence.
- * \param[in] id The data for seqan3::field::ID, e.g. the read id.
- * \param[in] offset The data for seqan3::field::OFFSET, i.e. the start position of the alignment in \p seq.
- * \param[in] ref_seq The data for seqan3::field::REF_OFFSET, i.e. the reference sequence.
- * \param[in] ref_id The data for seqan3::field::REF_ID, e.g. the reference id..
- * \param[in] ref_offset The data for seqan3::field::REF_OFFSET, i.e. the start position of the alignment in \p ref_seq.
- * \param[in] align The data for seqan3::field::ALIGN, e.g. the alignment between query and ref.
- * \param[in] cigar_vector The data for seqan3::field::CIGAR, e.g. representing the alignment between query and ref.
- * \param[in] flag The data for seqan3::field::FLAG, e.g. the SAM mapping flag value.
- * \param[in] mapq The data for seqan3::field::MAPQ, e.g. the mapping quality value.
- * \param[in] mate The data for seqan3::field::MATE, e.g. the mate information of paired reads.
- * \param[in] tag_dict The data for seqan3::field::TAGS, e.g. the optional SAM field tag dictionary.
- * \param[in] e_value The data for seqan3::field::E_VALUE, e.g. the e-value of the alignment (BLAST).
+ * \param[in] seq The data for seqan3::field::seq, i.e. the query sequence.
+ * \param[in] qual The data for seqan3::field::qual, e.g. the query quality sequence.
+ * \param[in] id The data for seqan3::field::id, e.g. the read id.
+ * \param[in] offset The data for seqan3::field::offset, i.e. the start position of the alignment in \p seq.
+ * \param[in] ref_seq The data for seqan3::field::ref_offset, i.e. the reference sequence.
+ * \param[in] ref_id The data for seqan3::field::ref_id, e.g. the reference id..
+ * \param[in] ref_offset The data for seqan3::field::ref_offset, i.e. the start position of the alignment in \p ref_seq.
+ * \param[in] align The data for seqan3::field::align, e.g. the alignment between query and ref.
+ * \param[in] cigar_vector The data for seqan3::field::cigar, e.g. representing the alignment between query and ref.
+ * \param[in] flag The data for seqan3::field::flag, e.g. the SAM mapping flag value.
+ * \param[in] mapq The data for seqan3::field::mapq, e.g. the mapping quality value.
+ * \param[in] mate The data for seqan3::field::mate, e.g. the mate information of paired reads.
+ * \param[in] tag_dict The data for seqan3::field::tags, e.g. the optional SAM field tag dictionary.
+ * \param[in] e_value The data for seqan3::field::e_value, e.g. the e-value of the alignment (BLAST).
  * \param[in] bit_score The data for seqan3::field::, e.g. the bit score of the alignment (BLAST).
  *
  */

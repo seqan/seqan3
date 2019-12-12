@@ -173,9 +173,9 @@ TEST_F(sam_format, header_errors)
 TEST_F(sam_format, windows_file)
 {
     std::istringstream istream(std::string("read1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\r\n"));
-    alignment_file_input fin{istream, format_sam{}, fields<field::ID>{}};
+    alignment_file_input fin{istream, format_sam{}, fields<field::id>{}};
 
-    EXPECT_EQ(get<field::ID>(*fin.begin()), std::string{"read1"});
+    EXPECT_EQ(get<field::id>(*fin.begin()), std::string{"read1"});
 }
 
 TEST_F(sam_format, format_error_illegal_character_in_seq)
@@ -259,13 +259,13 @@ TEST_F(sam_format, short_cigar_string_with_softclipping)
 	// The member function transfer_soft_clipping_to needs to work on 2 element cigar strings
     {
         std::istringstream istream("id	16	ref	0	255	10M5S	*	0	0	AGAGGGGGATAACCA	*\n");
-        alignment_file_input fin{istream, ref_ids, ref_sequences, format_sam{}, fields<field::ALIGNMENT>{}};
+        alignment_file_input fin{istream, ref_ids, ref_sequences, format_sam{}, fields<field::alignment>{}};
         EXPECT_TRUE((std::ranges::equal(get<1>(get<0>(*fin.begin())), "AGAGGGGGAT"_dna5)));
     }
 
     {
         std::istringstream istream("id	16	ref	0	255	5S10M	*	0	0	AGAGGGGGATAACCA	*\n");
-        alignment_file_input fin{istream, ref_ids, ref_sequences, format_sam{}, fields<field::ALIGNMENT>{}};
+        alignment_file_input fin{istream, ref_ids, ref_sequences, format_sam{}, fields<field::alignment>{}};
         EXPECT_TRUE((std::ranges::equal(get<1>(get<0>(*fin.begin())), "GGGATAACCA"_dna5)));
     }
 }
@@ -276,7 +276,7 @@ TEST_F(sam_format, write_different_header)
 
     auto write_header = [&] ()
     {
-        alignment_file_output fout{ostream, format_sam{}, fields<field::HEADER_PTR, field::REF_ID, field::REF_OFFSET>{}};
+        alignment_file_output fout{ostream, format_sam{}, fields<field::header_ptr, field::ref_id, field::ref_offset>{}};
         ASSERT_NO_THROW(fout.emplace_back(&header, this->ref_id, 0));
     };
 
