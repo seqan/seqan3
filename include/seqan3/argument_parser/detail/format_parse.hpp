@@ -17,6 +17,7 @@
 #include <vector>
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
+#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/charconv>
 
@@ -320,7 +321,7 @@ private:
         if (auto it = map.find(in); it == map.end())
         {
             throw type_conversion_failed("Argument " + std::string{in} + " could not be cast to enum type " +
-                                         get_display_name_v<option_t>.str() + ".");
+                                         type_name_as_string<option_t> + ".");
         }
         else
         {

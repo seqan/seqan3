@@ -14,7 +14,6 @@
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/std/algorithm>
 
 using namespace seqan3;

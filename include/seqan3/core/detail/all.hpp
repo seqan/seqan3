@@ -20,6 +20,6 @@
 #include <seqan3/core/detail/debug_stream_variant.hpp>
 #include <seqan3/core/detail/endian.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/core/detail/terminal.hpp>
+#include <seqan3/core/detail/type_inspection.hpp>

@@ -18,7 +18,7 @@ using namespace seqan3;
 template <char char_v>
 struct foo : seqan3::detail::char_predicate_base<foo<char_v>>
 {
-    inline static constexpr small_string msg{small_string{"foo_"} + small_string{char_v}};
+    inline static const std::string msg{std::string{"foo_"} + std::string{char_v}};
 
     using base_t = seqan3::detail::char_predicate_base<foo<char_v>>;
 
@@ -46,7 +46,7 @@ TEST(char_predicate_, basic)
 
 TEST(char_predicate_, char_predicate_msg)
 {
-    EXPECT_EQ(foo<'o'>::msg.str(), "foo_o"s);
+    EXPECT_EQ(foo<'o'>::msg, "foo_o"s);
 }
 
 TEST(char_predicate_, concept_)
@@ -95,7 +95,7 @@ TEST(char_predicate_, char_predicate_combiner_msg)
 {
     using namespace seqan3::detail;
     using or_t = detail::char_predicate_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
-    EXPECT_EQ(or_t::msg.str(),   "(foo_a || foo_A || foo_0)"s);
+    EXPECT_EQ(or_t::msg,   "(foo_a || foo_A || foo_0)"s);
 }
 
 TEST(char_predicate_, is_not)
@@ -116,7 +116,7 @@ TEST(char_predicate_, is_not_msg)
 {
     using namespace seqan3::detail;
     using fn = decltype(!is_alpha);
-    EXPECT_EQ(fn::msg.str(), "!(is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
+    EXPECT_EQ(fn::msg, "!(is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
 }
 
 TEST(char_predicate_, is_in_interval)
@@ -134,7 +134,7 @@ TEST(char_predicate_, is_in_interval)
 TEST(char_predicate_, is_in_interval_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((detail::is_in_interval_type<'a', 'z'>::msg.str()), "is_in_interval<'a', 'z'>"s);
+    EXPECT_EQ((detail::is_in_interval_type<'a', 'z'>::msg), "is_in_interval<'a', 'z'>"s);
 }
 
 TEST(char_predicate_, is_in_alphabet)
@@ -171,7 +171,7 @@ TEST(char_predicate_, is_in_alphabet)
 TEST(char_predicate_, is_in_alphabet_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((detail::is_in_alphabet_type<dna4>::msg.str()), "is_in_alphabet<seqan3::dna4>"s);
+    EXPECT_EQ((detail::is_in_alphabet_type<dna4>::msg), "is_in_alphabet<seqan3::dna4>"s);
 }
 
 TEST(char_predicate_, is_char)
@@ -193,8 +193,8 @@ TEST(char_predicate_, is_char)
 TEST(char_predicate_, is_char_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_char<to_char('A'_dna4)>.msg.str()), "is_char<'A'>"s);
-    EXPECT_EQ((is_char<'\t'>.msg.str()), "is_char<'\t'>"s);
+    EXPECT_EQ((is_char<to_char('A'_dna4)>.msg), "is_char<'A'>"s);
+    EXPECT_EQ((is_char<'\t'>.msg), "is_char<'\t'>"s);
 }
 
 TEST(char_predicate_, is_cntrl)

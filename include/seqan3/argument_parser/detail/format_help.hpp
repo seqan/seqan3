@@ -17,11 +17,10 @@
 #include <cassert>
 #include <iostream>
 
-#include <range/v3/view/repeat_n.hpp>
-
 #include <seqan3/argument_parser/detail/format_base.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/terminal.hpp>
+#include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/version.hpp>
 
 namespace seqan3::detail
@@ -498,7 +497,7 @@ public:
     void parse(argument_parser_meta_data const & parser_meta)
     {
         meta = parser_meta;
-        debug_stream_type strem{std::cout};
+        debug_stream_type stream{std::cout};
         std::string seqan_license{
 R"(Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
@@ -528,24 +527,24 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.)"};
 
-        strem << views::repeat_n('=', 80) << to_text("\n\\fB") << "Copyright information for "
+        stream << views::repeat_n('=', 80) << to_text("\n\\fB") << "Copyright information for "
               << meta.app_name << ":\n" << to_text("\\fP") << views::repeat_n('-', 80) << '\n';
 
         if (!empty(meta.long_copyright))
         {
-            strem << to_text("\\fP") << meta.long_copyright << "\n";
+            stream << to_text("\\fP") << meta.long_copyright << "\n";
         }
         else if (!empty(meta.short_copyright))
         {
-            strem << to_text("\\fP") << meta.app_name << " full copyright information not available. Displaying"
+            stream << to_text("\\fP") << meta.app_name << " full copyright information not available. Displaying"
                   << " short copyright information instead:\n" << to_text("\\fP") << meta.short_copyright << "\n";
         }
         else
         {
-            strem << to_text("\\fP") << meta.app_name << " copyright information not available.\n";
+            stream << to_text("\\fP") << meta.app_name << " copyright information not available.\n";
         }
 
-        strem << views::repeat_n('=', 80) << to_text("\n\\fB")
+        stream << views::repeat_n('=', 80) << to_text("\n\\fB")
               << "This program contains SeqAn code licensed under the following terms:\n" << to_text("\\fP")
               << views::repeat_n('-', 80) << '\n' << seqan_license << '\n';
 

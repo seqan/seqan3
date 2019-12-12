@@ -15,7 +15,7 @@
 
 #include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/all.hpp>
-#include <seqan3/core/detail/reflection.hpp>
+#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
@@ -59,8 +59,8 @@ void expect_same_types()
     constexpr bool val = std::is_same_v<list_traits::at<pos, list1>, list_traits::at<pos, list2>>;
     if constexpr (!val)
     {
-        std::cerr << "pos: " << pos << " \'" << detail::get_display_name_v<list_traits::at<pos, list1>>
-                  << "\' not equal to \'" << detail::get_display_name_v<list_traits::at<pos, list2>> << "\' \n";
+        std::cerr << "pos: " << pos << " \'" << detail::type_name_as_string<list_traits::at<pos, list1>>
+                  << "\' not equal to \'" << detail::type_name_as_string<list_traits::at<pos, list2>> << "\' \n";
     }
     EXPECT_TRUE(val);
 

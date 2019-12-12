@@ -21,7 +21,7 @@
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/argument_parser/validators.hpp>
-#include <seqan3/core/detail/reflection.hpp>
+#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/std/filesystem>
 
@@ -74,7 +74,7 @@ protected:
         if constexpr (list_traits::contains<type, types>)
             return names[list_traits::find<type, types>];
         else
-            return detail::get_display_name_v<value_type>.str();
+            return detail::type_name_as_string<value_type>;
     }
 
     /*!\brief Returns the `value_type` of the input container as a string (reflection).
