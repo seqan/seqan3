@@ -93,8 +93,7 @@ TEST_F(structure_file_input_class, construct_by_filename)
         test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
         EXPECT_NO_THROW((structure_file_input<structure_file_input_default_traits_rna,
                                               fields<field::SEQ>,
-                                              type_list<format_vienna>,
-                                              char>{filename.get_path(), fields<field::SEQ>{}}));
+                                              type_list<format_vienna>>{filename.get_path(), fields<field::SEQ>{}}));
     }
 }
 
@@ -103,18 +102,16 @@ TEST_F(structure_file_input_class, construct_from_stream)
     /* stream + format_tag */
     EXPECT_NO_THROW((structure_file_input<structure_file_input_default_traits_rna,
                                           fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                          type_list<format_vienna>,
-                                          char>{std::istringstream{"> ID\nACGU\n....\n"},
-                                                format_vienna{}}));
+                                          type_list<format_vienna>>{std::istringstream{"> ID\nACGU\n....\n"},
+                                                                    format_vienna{}}));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW((structure_file_input<structure_file_input_default_traits_rna,
                                           fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                          type_list<format_vienna>,
-                                          char>{std::istringstream{"> ID\nACGU\n....\n"},
-                                                format_vienna{},
-                                                fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
+                                          type_list<format_vienna>>{std::istringstream{"> ID\nACGU\n....\n"},
+                                                                    format_vienna{},
+                                                                    fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
 }
 
 TEST_F(structure_file_input_class, default_template_args)
@@ -163,22 +160,6 @@ TEST_F(structure_file_input_class, guided_stream_constructor)
     EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
     EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
     EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
-}
-
-TEST_F(structure_file_input_class, guided_stream_constructor_and_custom_fields)
-{
-    /* guided stream constructor + custom fields */
-    structure_file_input fin{std::wistringstream{"> ID\nACGU\n....\n"
-                                                 | views::convert<wchar_t>
-                                                 | views::to<std::wstring>},
-                             format_vienna{},
-                             fields<field::SEQ>{}};
-
-    using t = decltype(fin);
-    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_vienna>>));
-    EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));
 }
 
 TEST_F(structure_file_input_class, amino_acids_traits)

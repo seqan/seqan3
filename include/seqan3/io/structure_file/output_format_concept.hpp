@@ -25,11 +25,28 @@
 namespace seqan3::detail
 {
 
+/*!\brief Internal class used to expose the actual format interface to write structure records into the file.
+ * \ingroup structure_file
+ *
+ * \tparam format_type The type of the format to be exposed.
+ *
+ * \details
+ *
+ * Exposes the protected member function `write_structure_record` from the given `format_type`, such that the file can
+ * call the proper function for the selected format.
+ */
 template <typename format_type>
 struct structure_file_output_format_exposer : public format_type
 {
 public:
-    using format_type::write_structure_record;
+    // Can't use `using format_type::write_structure_record` as it produces a hard failure in the format concept check
+    // for types that do not model the format concept, i.e. don't offer the proper write_structure_record interface.
+    //!\brief Forwards to the seqan3::structure_file_output_format::write_structure_record interface.
+    template <typename ...ts>
+    void write_structure_record(ts && ...args)
+    {
+        format_type::write_structure_record(std::forward<ts>(args)...);
+    }
 };
 
 } // namespace seqan3::detail

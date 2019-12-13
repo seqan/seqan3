@@ -49,7 +49,6 @@ namespace seqan3
  *                              fields IDs; only relevant if these can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each
  *                              must model seqan3::alignment_file_output_format).
- * \tparam stream_char_type     The type of character of the underlying stream, must model seqan3::builtin_character.
  *
  * \details
  *
@@ -183,7 +182,6 @@ template <detail::fields_specialisation selected_field_ids_ =
                      field::BIT_SCORE,
                      field::HEADER_PTR>,
           detail::type_list_of_alignment_file_output_formats valid_formats_ = type_list<format_sam, format_bam>,
-          builtin_character stream_char_type_ = char,
           typename ref_ids_type = ref_info_not_given>
 class alignment_file_output
 {
@@ -196,8 +194,8 @@ public:
     using selected_field_ids    = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
     using valid_formats         = valid_formats_;
-    //!\brief Character type of the stream(s), usually `char`.
-    using stream_char_type      = stream_char_type_;
+    //!\brief Character type of the stream(s).
+    using stream_char_type      = char;
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
@@ -332,6 +330,9 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     template <output_stream stream_type, alignment_file_output_format file_format>
+    //!\cond
+        requires std::same_as<typename std::remove_reference_t<stream_type>::char_type, stream_char_type>
+    //!\endcond
     alignment_file_output(stream_type              & stream,
                           file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -345,6 +346,9 @@ public:
 
     //!\overload
     template <output_stream stream_type, alignment_file_output_format file_format>
+    //!\cond
+        requires std::same_as<typename std::remove_reference_t<stream_type>::char_type, stream_char_type>
+    //!\endcond
     alignment_file_output(stream_type             && stream,
                           file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -827,63 +831,58 @@ protected:
  */
 
 /*!\brief Deduces selected_field_ids from input and sets alignment_file_output::ref_ids_type to
- * seqan3::detail::ref_info_not_given. Valid formats and stream_char_type are defaulted.
+ *        seqan3::detail::ref_info_not_given. valid_formats is defaulted.
  */
-template <detail::fields_specialisation    selected_field_ids>
+template <detail::fields_specialisation selected_field_ids>
 alignment_file_output(std::filesystem::path, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              typename alignment_file_output<>::valid_formats,
-                             typename alignment_file_output<>::stream_char_type,
                              ref_info_not_given>;
 
-/*!\brief Deduces selected_field_ids, the valid format and the stream_char_type from input and
- * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
+/*!\brief Deduces selected_field_ids, and the valid format from input and
+ *        sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
  */
-template <output_stream                  stream_type,
+template <output_stream stream_type,
           alignment_file_output_format file_format,
-          detail::fields_specialisation            selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 alignment_file_output(stream_type &&, file_format const &, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              type_list<file_format>,
-                             typename std::remove_reference_t<stream_type>::char_type,
                              ref_info_not_given>;
 
-/*!\brief Deduces selected_field_ids, the valid format and the stream_char_type from input and
- * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
+/*!\brief Deduces selected_field_ids, and the valid format from input and
+ *        sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
  */
-template <output_stream                  stream_type,
+template <output_stream stream_type,
           alignment_file_output_format file_format,
-          detail::fields_specialisation            selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 alignment_file_output(stream_type &, file_format const &, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              type_list<file_format>,
-                             typename std::remove_reference_t<stream_type>::char_type,
                              ref_info_not_given>;
 
-/*!\brief Deduces the valid format and the stream_char_type from input and
- * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
+/*!\brief Deduces the valid format from input and sets alignment_file_output::ref_ids_type to
+ *        seqan3::detail::ref_info_not_given. selected_field_ids is defaulted.
  */
-template <output_stream                  stream_type,
+template <output_stream stream_type,
           alignment_file_output_format file_format>
 alignment_file_output(stream_type &&, file_format const &)
     -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
                              type_list<file_format>,
-                             typename std::remove_reference_t<stream_type>::char_type,
                              ref_info_not_given>;
 
-/*!\brief Deduces the valid format and the stream_char_type from input and
- * sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
+/*!\brief Deduces the valid format from input and sets alignment_file_output::ref_ids_type to
+ *        seqan3::detail::ref_info_not_given. selected_field_ids is defaulted.
  */
-template <output_stream                  stream_type,
+template <output_stream stream_type,
           alignment_file_output_format file_format>
 alignment_file_output(stream_type &, file_format const &)
     -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
                              type_list<file_format>,
-                             typename std::remove_reference_t<stream_type>::char_type,
                              ref_info_not_given>;
 
-//!\brief Deduces selected_field_ids and ref_ids_type from input. Valid formats and stream_char_type are defaulted.
-template <detail::fields_specialisation    selected_field_ids,
+//!\brief Deduces selected_field_ids and ref_ids_type from input. valid_formats is defaulted.
+template <detail::fields_specialisation selected_field_ids,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type>
 alignment_file_output(std::filesystem::path const &,
@@ -892,10 +891,9 @@ alignment_file_output(std::filesystem::path const &,
                       selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              typename alignment_file_output<>::valid_formats,
-                             typename alignment_file_output<>::stream_char_type,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduces ref_ids_type from input. Valid formats, selected_field_ids and stream_char_type are defaulted.
+//!\brief Deduces ref_ids_type from input. Valid formats, and selected_field_ids are defaulted.
 template <std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type>
 alignment_file_output(std::filesystem::path const &,
@@ -903,15 +901,14 @@ alignment_file_output(std::filesystem::path const &,
                       ref_lengths_type &&)
     -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
                              typename alignment_file_output<>::valid_formats,
-                             typename alignment_file_output<>::stream_char_type,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduces selected_field_ids, the valid format, stream_char_type and the ref_ids_type from input.
-template <output_stream                  stream_type,
+//!\brief Deduces selected_field_ids, the valid format, and the ref_ids_type from input.
+template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,
           alignment_file_output_format file_format,
-          detail::fields_specialisation            selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 alignment_file_output(stream_type &&,
                       ref_ids_type &&,
                       ref_lengths_type &&,
@@ -919,15 +916,14 @@ alignment_file_output(stream_type &&,
                       selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              type_list<file_format>,
-                             typename std::remove_reference_t<stream_type>::char_type,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduces selected_field_ids, the valid format, stream_char_type and the ref_ids_type from input.
-template <output_stream                  stream_type,
+//!\brief Deduces selected_field_ids, the valid format, and the ref_ids_type from input.
+template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,
           alignment_file_output_format file_format,
-          detail::fields_specialisation            selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 alignment_file_output(stream_type &,
                       ref_ids_type &&,
                       ref_lengths_type &&,
@@ -935,11 +931,10 @@ alignment_file_output(stream_type &,
                       selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              type_list<file_format>,
-                             typename std::remove_reference_t<stream_type>::char_type,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduces the valid format, stream_char_type and the ref_ids_type from input. selected_field_ids are defaulted.
-template <output_stream                  stream_type,
+//!\brief Deduces the valid format, and the ref_ids_type from input. selected_field_ids is defaulted.
+template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,
           alignment_file_output_format file_format>
@@ -949,11 +944,10 @@ alignment_file_output(stream_type &&,
                       file_format const &)
     -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
                              type_list<file_format>,
-                             typename std::remove_reference_t<stream_type>::char_type,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduces the valid format, stream_char_type and the ref_ids_type from input. selected_field_ids are defaulted.
-template <output_stream                  stream_type,
+//!\brief Deduces the valid format, and the ref_ids_type from input. selected_field_ids is defaulted.
+template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,
           alignment_file_output_format file_format>
@@ -963,7 +957,6 @@ alignment_file_output(stream_type &,
                       file_format const &)
     -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
                              type_list<file_format>,
-                             typename std::remove_reference_t<stream_type>::char_type,
                              std::remove_reference_t<ref_ids_type>>;
 //!\}
 

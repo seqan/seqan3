@@ -103,8 +103,7 @@ TEST_F(sequence_file_input_f, construct_by_filename)
 
         EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
                                              fields<field::SEQ>,
-                                             type_list<format_fasta>,
-                                             char>{filename.get_path(), fields<field::SEQ>{}} ));
+                                             type_list<format_fasta>>{filename.get_path(), fields<field::SEQ>{}} ));
     }
 }
 
@@ -113,18 +112,16 @@ TEST_F(sequence_file_input_f, construct_from_stream)
     /* stream + format_tag */
     EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
                                          fields<field::SEQ, field::ID, field::QUAL>,
-                                         type_list<format_fasta>,
-                                         char>{std::istringstream{input},
-                                               format_fasta{}} ));
+                                         type_list<format_fasta>>{std::istringstream{input},
+                                                                  format_fasta{}} ));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
                                           fields<field::SEQ, field::ID, field::QUAL>,
-                                          type_list<format_fasta>,
-                                          char>{std::istringstream{input},
-                                                format_fasta{},
-                                                fields<field::SEQ, field::ID, field::QUAL>{}} ));
+                                          type_list<format_fasta>>{std::istringstream{input},
+                                                                   format_fasta{},
+                                                                   fields<field::SEQ, field::ID, field::QUAL>{}} ));
 }
 
 TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
@@ -198,31 +195,6 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
-    }
-
-    /* guided stream constructor + custom fields + different stream char type */
-    {
-        auto winput = input | views::convert<wchar_t> | views::to<std::wstring>;
-        std::wistringstream ext{winput};
-        sequence_file_input fin{ext, format_fasta{}, fields<field::SEQ>{}};
-
-        using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));              // changed
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
-    }
-
-    /* guided stream temporary constructor + custom fields + different stream char type */
-    {
-        auto winput = input | views::convert<wchar_t> | views::to<std::wstring>;
-        sequence_file_input fin{std::wistringstream{winput}, format_fasta{}, fields<field::SEQ>{}};
-
-        using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));              // changed
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
     }
 }
 

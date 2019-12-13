@@ -31,11 +31,28 @@
 namespace seqan3::detail
 {
 
+/*!\brief Internal class used to expose the actual format interface to read alignment records from the file.
+ * \ingroup alignment_file
+ *
+ * \tparam format_type The type of the format to be exposed.
+ *
+ * \details
+ *
+ * Exposes the protected member function `read_alignment_record` from the given `format_type`, such that the file can
+ * call the proper function for the selected format.
+ */
 template <typename format_type>
 struct alignment_file_input_format_exposer : public format_type
 {
 public:
-    using format_type::read_alignment_record;
+    // Can't use `using format_type::read_alignment_record` as it produces a hard failure in the format concept check
+    // for types that do not model the format concept, i.e. don't offer the proper read_alignment_record interface.
+    //!\brief Forwards to the seqan3::alignment_file_input_format::read_alignment_record interface.
+    template <typename ...ts>
+    void read_alignment_record(ts && ...args)
+    {
+        format_type::read_alignment_record(std::forward<ts>(args)...);
+    }
 };
 
 } // namespace seqan3::detail

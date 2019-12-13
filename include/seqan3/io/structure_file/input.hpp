@@ -351,7 +351,6 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *                            must be in seqan3::structure_file_input::field_ids.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
  *                            seqan3::structure_file_input_format).
- * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::builtin_character.
  * \details
  *
  * ### Introduction
@@ -464,10 +463,8 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * Currently, the only implemented format is seqan3::format_vienna. More formats will follow soon.
  */
 template <structure_file_input_traits traits_type_ = structure_file_input_default_traits_rna,
-         detail::fields_specialisation selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
-         detail::type_list_of_structure_file_input_formats valid_formats_
-             = type_list<format_vienna>,
-         builtin_character stream_char_type_ = char>
+          detail::fields_specialisation selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
+          detail::type_list_of_structure_file_input_formats valid_formats_ = type_list<format_vienna>>
 class structure_file_input
 {
 public:
@@ -481,8 +478,8 @@ public:
     using selected_field_ids = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
     using valid_formats      = valid_formats_;
-    //!\brief Character type of the stream(s), usually `char`.
-    using stream_char_type   = stream_char_type_;
+    //!\brief Character type of the stream(s).
+    using stream_char_type   = char;
     //!\}
 
     /*!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in
@@ -641,6 +638,9 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     template <input_stream stream_t, structure_file_input_format file_format>
+    //!\cond
+        requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, char>
+    //!\endcond
     structure_file_input(stream_t & stream,
                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -656,6 +656,9 @@ public:
 
     //!\overload
     template <input_stream stream_t, structure_file_input_format file_format>
+    //!\cond
+        requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, char>
+    //!\endcond
     structure_file_input(stream_t && stream,
                          file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -851,24 +854,22 @@ protected:
  */
 
 //!\brief Deduction of the selected fields, the file format and the stream type.
-template <input_stream                 stream_type,
+template <input_stream stream_type,
           structure_file_input_format file_format,
-          detail::fields_specialisation           selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 structure_file_input(stream_type && stream, file_format const &, selected_field_ids const &)
     -> structure_file_input<typename structure_file_input<>::traits_type,       // actually use the default
                             selected_field_ids,
-                            type_list<file_format>,
-                            typename std::remove_reference_t<stream_type>::char_type>;
+                            type_list<file_format>>;
 
 //!\overload
-template <input_stream                 stream_type,
+template <input_stream stream_type,
           structure_file_input_format file_format,
-          detail::fields_specialisation           selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 structure_file_input(stream_type & stream, file_format const &, selected_field_ids const &)
     -> structure_file_input<typename structure_file_input<>::traits_type,       // actually use the default
                             selected_field_ids,
-                            type_list<file_format>,
-                            typename std::remove_reference_t<stream_type>::char_type>;
+                            type_list<file_format>>;
 //!\}
 
 } // namespace seqan3

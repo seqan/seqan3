@@ -90,8 +90,7 @@ TEST(general, construct_by_filename)
     {
         test::tmp_filename filename{"alignment_file_output_constructor.sam"};
         EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ>,
-                                                type_list<format_sam>,
-                                                char>{filename.get_path(), fields<field::SEQ>{}} ));
+                                                type_list<format_sam>>{filename.get_path(), fields<field::SEQ>{}} ));
     }
 }
 
@@ -99,16 +98,14 @@ TEST(general, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ, field::ID, field::QUAL>,
-                                            type_list<format_sam>,
-                                            char>{std::ostringstream{}, format_sam{}} ));
+                                            type_list<format_sam>>{std::ostringstream{}, format_sam{}} ));
 
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ, field::ID, field::QUAL>,
-                                            type_list<format_sam>,
-                                            char>{std::ostringstream{},
-                                                  format_sam{},
-                                                  fields<field::SEQ, field::ID, field::QUAL>{}} ));
+                                            type_list<format_sam>>{std::ostringstream{},
+                                                                   format_sam{},
+                                                                   fields<field::SEQ, field::ID, field::QUAL>{}} ));
 }
 
 TEST(general, default_template_args_and_deduction_guides)
@@ -182,27 +179,6 @@ TEST(general, default_template_args_and_deduction_guides)
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
-    }
-
-    /* guided stream constructor + custom fields + different stream_char_type */
-    {
-        std::wostringstream ext{};
-        alignment_file_output fout{ext, format_sam{}, fields<field::SEQ>{}};
-
-        using t = decltype(fout);
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>)); // changed
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
-    }
-
-    /* guided stream temporary constructor + custom fields + different stream_char_type */
-    {
-        alignment_file_output fout{std::wostringstream{}, format_sam{}, fields<field::REF_ID>{}};
-
-        using t = decltype(fout);
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::REF_ID>>));                // changed
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>)); // changed
-        EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
     }
 }
 
@@ -578,7 +554,6 @@ std::string compression_by_filename_impl(test::tmp_filename & filename)
         // explicitly only test compression on sam format
         alignment_file_output<typename alignment_file_output<>::selected_field_ids,
                              type_list<format_sam>,
-                             typename alignment_file_output<>::stream_char_type,
                              ref_info_not_given> fout{filename.get_path()};
 
         for (size_t i = 0; i < 3; ++i)

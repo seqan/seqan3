@@ -55,7 +55,6 @@ namespace seqan3
  *                            can't be deduced.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
  *                            seqan3::structure_file_output_format).
- * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::builtin_character.
  * \details
  *
  * ### Introduction
@@ -164,8 +163,7 @@ namespace seqan3
  */
 
 template <detail::fields_specialisation selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
-          detail::type_list_of_structure_file_output_formats valid_formats_ = type_list<format_vienna>,
-          builtin_character stream_char_type_ = char>
+          detail::type_list_of_structure_file_output_formats valid_formats_ = type_list<format_vienna>>
 class structure_file_output
 {
 public:
@@ -177,8 +175,8 @@ public:
     using selected_field_ids    = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
     using valid_formats         = valid_formats_;
-    //!\brief Character type of the stream(s), usually `char`.
-    using stream_char_type      = stream_char_type_;
+    //!\brief Character type of the stream(s).
+    using stream_char_type      = char;
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
@@ -296,6 +294,9 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     template <output_stream stream_t, structure_file_output_format file_format>
+    //!\cond
+        requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, char>
+    //!\endcond
     structure_file_output(stream_t & stream,
                           file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -309,6 +310,9 @@ public:
 
     //!\overload
     template <output_stream stream_t, structure_file_output_format file_format>
+    //!\cond
+        requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, char>
+    //!\endcond
     structure_file_output(stream_t && stream,
                           file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -650,22 +654,20 @@ protected:
  */
 
 //!\brief Deduction of the selected fields, the file format and the stream type.
-template <output_stream                  stream_t,
+template <output_stream stream_t,
           structure_file_output_format file_format,
-          detail::fields_specialisation            selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 structure_file_output(stream_t &&, file_format const &, selected_field_ids const &)
     -> structure_file_output<selected_field_ids,
-                             type_list<file_format>,
-                             typename std::remove_reference_t<stream_t>::char_type>;
+                             type_list<file_format>>;
 
 //!\overload
-template <output_stream                  stream_t,
+template <output_stream stream_t,
           structure_file_output_format file_format,
-          detail::fields_specialisation            selected_field_ids>
+          detail::fields_specialisation selected_field_ids>
 structure_file_output(stream_t &, file_format const &, selected_field_ids const &)
     -> structure_file_output<selected_field_ids,
-                             type_list<file_format>,
-                             typename std::remove_reference_t<stream_t>::char_type>;
+                             type_list<file_format>>;
 //!\}
 
 } // namespace seqan3

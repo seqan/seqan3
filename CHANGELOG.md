@@ -62,9 +62,16 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### I/O
 
-* The field-based in- and output interface for structure files through std::get and std::tie has been removed.
+* **Removed the field-based in- and output interface for structure files through std::get and std::tie:**
   Output can instead be achieved with seqan3::views:zip(), for input we will implement unzip() in the future.
 * The `field::FLAG` of SAM/BAM input and output is now an **enum** instead of a simple integer (see seqan3::sam_flag).
+
+* **Removed the char type from the input and output files:**
+  Most user code will be unaffected; however, if you have fully specified all templates of any of the input or output
+  files in your code, you need to remove the template parameter to select the char type of the stream
+  (e.g. change `seqan3::sequence_file_input<traits_t, fields_t, formats_t, char>` to
+  `seqan3::sequence_file_input<traits_t, fields_t, formats_t>`). Before this change, setting the char type gave the
+  impression that also streams over wide characters are supported which is not the case yet.
 
 #### Range
 
