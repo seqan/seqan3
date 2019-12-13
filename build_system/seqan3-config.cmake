@@ -75,6 +75,10 @@ cmake_minimum_required (VERSION 3.4...3.12)
 # Set initial variables
 # ----------------------------------------------------------------------------
 
+# make output globally quiet if required by find_package, this effects cmake functions like `check_*`
+set(CMAKE_REQUIRED_QUIET_SAVE ${CMAKE_REQUIRED_QUIET})
+set(CMAKE_REQUIRED_QUIET ${${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY})
+
 # ----------------------------------------------------------------------------
 # Greeter
 # ----------------------------------------------------------------------------
@@ -91,7 +95,6 @@ endif ()
 # Includes
 # ----------------------------------------------------------------------------
 
-include (FindPackageMessage)
 include (CheckIncludeFileCXX)
 include (CheckCXXSourceCompiles)
 include (FindPackageHandleStandardArgs)
@@ -541,6 +544,8 @@ find_package_handle_standard_args (${CMAKE_FIND_PACKAGE_NAME} REQUIRED_VARS SEQA
 foreach (package_var FOUND DIR ROOT CONFIG VERSION VERSION_MAJOR VERSION_MINOR VERSION_PATCH VERSION_TWEAK VERSION_COUNT)
     set (SEQAN3_${package_var} "${${CMAKE_FIND_PACKAGE_NAME}_${package_var}}")
 endforeach ()
+
+set (CMAKE_REQUIRED_QUIET ${CMAKE_REQUIRED_QUIET_SAVE})
 
 if (SEQAN3_FIND_DEBUG)
   message ("Result for ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
