@@ -556,7 +556,7 @@ constexpr target_simd_t upcast(source_simd_t const & src)
     else
     {
         static_assert(std::unsigned_integral<typename simd_traits<source_simd_t>::scalar_type>,
-                    "Expected unsigned scalar type.");
+                      "Expected unsigned scalar type.");
         return detail::upcast_unsigned<target_simd_t>(src);
     }
 }
