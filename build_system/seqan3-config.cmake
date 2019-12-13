@@ -82,9 +82,7 @@ set (seqan3_FOUND FALSE)
 set (SeqAn3_FOUND FALSE)
 
 # work around obscure case sensitivity problems in CMake (https://cmake.org/pipermail/cmake/2009-March/027414.html)
-set (FIND_NAME "${CMAKE_FIND_PACKAGE_NAME}")
-
-if (NOT FIND_NAME MATCHES "seqan3|SeqAn3|SEQAN3")
+if (NOT CMAKE_FIND_PACKAGE_NAME MATCHES "seqan3|SeqAn3|SEQAN3")
     message (FATAL_ERROR "You must give \"SEQAN3\", \"SeqAn3\" or \"seqan3\" as the package name to \
                           find_package (${CMAKE_FIND_PACKAGE_NAME}); other case/combinations are not supported.")
     return ()
@@ -98,7 +96,7 @@ string (ASCII 27 Esc)
 set (ColourBold "${Esc}[1m")
 set (ColourReset "${Esc}[m")
 
-if (NOT ${FIND_NAME}_FIND_QUIETLY)
+if (NOT ${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY)
     message (STATUS "${ColourBold}Finding SeqAn3 and checking requirements:${ColourReset}")
 endif ()
 
@@ -115,16 +113,16 @@ include (CheckCXXSourceCompiles)
 # ----------------------------------------------------------------------------
 
 macro (seqan3_config_print text)
-    if (NOT ${FIND_NAME}_FIND_QUIETLY)
+    if (NOT ${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY)
         message (STATUS "  ${text}")
     endif ()
 endmacro ()
 
 macro (seqan3_config_error text)
-    if (${FIND_NAME}_FIND_REQUIRED)
+    if (${CMAKE_FIND_PACKAGE_NAME}_FIND_REQUIRED)
         message (FATAL_ERROR ${text})
     else ()
-        if (NOT ${FIND_NAME}_FIND_QUIETLY)
+        if (NOT ${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY)
             message (WARNING ${text})
         endif ()
         return ()
@@ -575,7 +573,7 @@ set (SeqAn3_FOUND TRUE)
 # Print Variables
 # ----------------------------------------------------------------------------
 
-if (NOT ${FIND_NAME}_FIND_QUIETLY)
+if (NOT ${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY)
     message (STATUS "${ColourBold}Found SeqAn3:${ColourReset} ${SEQAN3_INCLUDE_DIR}/seqan3 (found version \"${SEQAN3_VERSION_STRING}\")")
 endif ()
 
@@ -603,7 +601,7 @@ if (SEQAN3_FIND_DEBUG)
   message ("  CMAKE_INCLUDE_PATH          ${CMAKE_INCLUDE_PATH}")
   message ("  SEQAN3_INCLUDE_DIR          ${SEQAN3_INCLUDE_DIR}")
   message ("")
-  message ("  ${FIND_NAME}_FOUND                ${${FIND_NAME}_FOUND}")
+  message ("  ${CMAKE_FIND_PACKAGE_NAME}_FOUND                ${${CMAKE_FIND_PACKAGE_NAME}_FOUND}")
   message ("  SEQAN3_HAS_ZLIB             ${ZLIB_FOUND}")
   message ("  SEQAN3_HAS_BZIP2            ${BZIP2_FOUND}")
   message ("")
