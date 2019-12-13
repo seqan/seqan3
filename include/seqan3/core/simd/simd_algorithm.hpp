@@ -283,12 +283,11 @@ constexpr simd_t extract_halve(simd_t const & src)
     return detail::extract_impl<2>(src, index);
 }
 
-template <uint8_t index, simd::simd_concept simd_t>
 //!\cond
+template <uint8_t index, simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
              detail::is_native_builtin_simd_v<simd_t> &&
              simd_traits<simd_t>::max_length == 16
-//!\endcond
 constexpr simd_t extract_halve(simd_t const & src)
 {
     static_assert(index < 2, "The index must be in the range of [0, 1]");
@@ -298,6 +297,7 @@ constexpr simd_t extract_halve(simd_t const & src)
     else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), (index) << 3));
 }
+//!\endcond
 
 /*!\brief Extracts one quarter of the given simd vector and stores it in the lower quarter of the target vector.
  * \ingroup simd
@@ -329,12 +329,11 @@ constexpr simd_t extract_quarter(simd_t const & src)
     return detail::extract_impl<4>(src, index);
 }
 
-template <uint8_t index, simd::simd_concept simd_t>
 //!\cond
+template <uint8_t index, simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
              detail::is_native_builtin_simd_v<simd_t> &&
              simd_traits<simd_t>::max_length == 16
-//!\endcond
 constexpr simd_t extract_quarter(simd_t const & src)
 {
     static_assert(index < 4, "The index must be in the range of [0, 1, 2, 3]");
@@ -344,6 +343,7 @@ constexpr simd_t extract_quarter(simd_t const & src)
     else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), index << 2));
 }
+//!\endcond
 
 /*!\brief Extracts one eighth of the given simd vector and stores it in the lower eighth of the target vector.
  * \ingroup simd
@@ -373,12 +373,11 @@ constexpr simd_t extract_eighth(simd_t const & src)
     return detail::extract_impl<8>(src, index);
 }
 
-template <uint8_t index, simd::simd_concept simd_t>
 //!\cond
+template <uint8_t index, simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
              detail::is_native_builtin_simd_v<simd_t> &&
              simd_traits<simd_t>::max_length == 16
-//!\endcond
 constexpr simd_t extract_eighth(simd_t const & src)
 {
     static_assert(index < 8, "The index must be in the range of [0, 1, 2, 3, 4, 5, 6, 7]");
@@ -388,6 +387,8 @@ constexpr simd_t extract_eighth(simd_t const & src)
     else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), index << 1));
 }
+//!\endcond
+
 } // namespace seqan3::detail
 
 namespace seqan3
@@ -450,11 +451,10 @@ constexpr simd_t load(void const * mem_addr)
     return tmp;
 }
 
-template <simd::simd_concept simd_t>
 //!\cond
+template <simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
              detail::is_native_builtin_simd_v<simd_t>
-//!\endcond
 constexpr simd_t load(void const * mem_addr)
 {
     assert(mem_addr != nullptr);
@@ -469,6 +469,7 @@ constexpr simd_t load(void const * mem_addr)
         static_assert(simd_traits<simd_t>::max_length >= 16 && simd_traits<simd_t>::max_length <= 64,
                       "Unsupported simd type.");
 }
+//!\endcond
 
 /*!\brief Transposes the given simd vector matrix.
  * \ingroup simd
@@ -532,12 +533,11 @@ constexpr target_simd_t upcast(source_simd_t const & src)
     return tmp;
 }
 
-template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 //!\cond
+template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
     requires detail::is_builtin_simd_v<target_simd_t> &&
              detail::is_builtin_simd_v<source_simd_t> &&
              detail::is_native_builtin_simd_v<source_simd_t>
-//!\endcond
 constexpr target_simd_t upcast(source_simd_t const & src)
 {
     static_assert(simd_traits<target_simd_t>::length <= simd_traits<source_simd_t>::length,
@@ -560,6 +560,8 @@ constexpr target_simd_t upcast(source_simd_t const & src)
         return detail::upcast_unsigned<target_simd_t>(src);
     }
 }
+//!\endcond
+
 } // inline namespace simd
 
 } // namespace seqan3
