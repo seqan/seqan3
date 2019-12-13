@@ -55,6 +55,12 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * The member type that denotes which arguments a `validator` can validate has been renamed from `value_type` to
   `option_value_type`.
 
+#### Build system
+
+* [find_package](https://cmake.org/cmake/help/latest/command/find_package.html#version-selection) now accepts minimum
+versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 with a version of `>= 3.0.1` and `< 4.0.0`).
+* The variable `SEQAN3_VERSION_STRING` defined by `find_package(SEQAN3)` was renamed to `SEQAN3_VERSION`.
+
 #### Core
 
 * **The `type_list` header has moved:**
