@@ -82,15 +82,11 @@ set (seqan3_FOUND FALSE)
 set (SeqAn3_FOUND FALSE)
 
 # work around obscure case sensitivity problems in CMake (https://cmake.org/pipermail/cmake/2009-March/027414.html)
-if (DEFINED seqan3_DIR)
-    set (FIND_NAME "seqan3")
-elseif (DEFINED SeqAn3_DIR)
-    set (FIND_NAME "SeqAn3")
-elseif (DEFINED SEQAN3_DIR)
-    set (FIND_NAME "SEQAN3")
-else ()
-    message (FATAL_ERROR "You must give \"SEQAN3\", \"SeqAn3\" or \"seqan3\" as the package name to find_package ();\n \
-                         other case/combinations are not supported.")
+set (FIND_NAME "${CMAKE_FIND_PACKAGE_NAME}")
+
+if (NOT FIND_NAME MATCHES "seqan3|SeqAn3|SEQAN3")
+    message (FATAL_ERROR "You must give \"SEQAN3\", \"SeqAn3\" or \"seqan3\" as the package name to \
+                          find_package (${CMAKE_FIND_PACKAGE_NAME}); other case/combinations are not supported.")
     return ()
 endif ()
 
