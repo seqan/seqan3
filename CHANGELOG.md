@@ -30,6 +30,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * The seqan3::value_list_validator is now constructible from a range or a parameter pack.
 * Enable subcommand argument parsing ([How-to](https://docs.seqan.de/seqan/3-master-user/subcommand_arg_parse.html)).
 
+#### Build system
+
+* `find_package(SeqAn3)` is now case-insensitive and always populates `SEQAN3_*` variables in all upper-case.
+
 #### Core
 * Added traits for "metaprogramming" with `seqan3::type_list` and type packs.
 

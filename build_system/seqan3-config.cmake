@@ -43,8 +43,6 @@
 # Once the search has been performed, the following variables will be set.
 #
 #   SEQAN3_FOUND            -- Indicate whether SeqAn was found and requirements met.
-#   SeqAn3_FOUND            -- the same as SEQAN3_FOUND
-#   seqan3_FOUND            -- the same as SEQAN3_FOUND
 #
 #   SEQAN3_VERSION_STRING   -- The version as string, e.g. "3.0.0"
 #   SEQAN3_VERSION_MAJOR    -- e.g. 3
@@ -77,17 +75,6 @@ cmake_minimum_required (VERSION 3.4...3.12)
 # Set initial variables
 # ----------------------------------------------------------------------------
 
-set (SEQAN3_FOUND FALSE)
-set (seqan3_FOUND FALSE)
-set (SeqAn3_FOUND FALSE)
-
-# work around obscure case sensitivity problems in CMake (https://cmake.org/pipermail/cmake/2009-March/027414.html)
-if (NOT CMAKE_FIND_PACKAGE_NAME MATCHES "seqan3|SeqAn3|SEQAN3")
-    message (FATAL_ERROR "You must give \"SEQAN3\", \"SeqAn3\" or \"seqan3\" as the package name to \
-                          find_package (${CMAKE_FIND_PACKAGE_NAME}); other case/combinations are not supported.")
-    return ()
-endif ()
-
 # ----------------------------------------------------------------------------
 # Greeter
 # ----------------------------------------------------------------------------
@@ -107,6 +94,7 @@ endif ()
 include (FindPackageMessage)
 include (CheckIncludeFileCXX)
 include (CheckCXXSourceCompiles)
+include (FindPackageHandleStandardArgs)
 
 # ----------------------------------------------------------------------------
 # Pretty printing and error handling
@@ -562,20 +550,8 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# We made it!
+# Export targets
 # ----------------------------------------------------------------------------
-
-set (SEQAN3_FOUND TRUE)
-set (seqan3_FOUND TRUE)
-set (SeqAn3_FOUND TRUE)
-
-# ----------------------------------------------------------------------------
-# Print Variables
-# ----------------------------------------------------------------------------
-
-if (NOT ${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY)
-    message (STATUS "${ColourBold}Found SeqAn3:${ColourReset} ${SEQAN3_INCLUDE_DIR}/seqan3 (found version \"${SEQAN3_VERSION_STRING}\")")
-endif ()
 
 separate_arguments (SEQAN3_CXX_FLAGS_LIST UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
 
@@ -592,6 +568,12 @@ add_library (seqan3::seqan3 ALIAS seqan3_seqan3)
 
 # propagate SEQAN3_INCLUDE_DIR into SEQAN3_INCLUDE_DIRS
 set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+
+# ----------------------------------------------------------------------------
+# Finish find_package call
+# ----------------------------------------------------------------------------
+
+find_package_handle_standard_args (${CMAKE_FIND_PACKAGE_NAME} REQUIRED_VARS SEQAN3_INCLUDE_DIR)
 
 # Set SEQAN3_* variables with the content of ${CMAKE_FIND_PACKAGE_NAME}_(FOUND|...|VERSION)
 # This needs to be done, because `find_package(SeqAn3)` might be called in any case-sensitive way and we want to
