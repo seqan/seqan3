@@ -40,13 +40,13 @@ struct alignment_score_matrix_one_column_test
 
 INSTANTIATE_TYPED_TEST_SUITE_P(one_column,
                                simulated_alignment_test,
-                               alignment_score_matrix_one_column_test<int32_t>);
+                               alignment_score_matrix_one_column_test<int32_t>, );
 
 using test_type = std::pair<detail::alignment_score_matrix_one_column<int32_t>, std::false_type>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(one_column,
                                alignment_matrix_base_test,
-                               test_type);
+                               test_type, );
 
 //-----------------------------------------------------------------------------
 // Test outer iterator
@@ -74,7 +74,7 @@ struct iterator_fixture<outer_iterator> : alignment_matrix_base_test<test_type>
 
 INSTANTIATE_TYPED_TEST_SUITE_P(score_matrix_outer_iterator,
                                iterator_fixture,
-                               outer_iterator);
+                               outer_iterator, );
 
 //-----------------------------------------------------------------------------
 // Test inner iterator
@@ -102,4 +102,4 @@ struct iterator_fixture<inner_iterator> : alignment_matrix_base_test<test_type>
 
 INSTANTIATE_TYPED_TEST_SUITE_P(score_matrix_inner_iterator,
                                iterator_fixture,
-                               inner_iterator);
+                               inner_iterator, );

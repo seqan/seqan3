@@ -41,4 +41,4 @@ using pairwise_global_affine_collection_unbanded_testing_types = ::testing::Type
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_global_affine_collection_unbanded,
                                pairwise_alignment_collection_test,
-                               pairwise_global_affine_collection_unbanded_testing_types);
+                               pairwise_global_affine_collection_unbanded_testing_types, );

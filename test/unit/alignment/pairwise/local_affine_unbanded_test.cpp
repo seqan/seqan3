@@ -25,4 +25,4 @@ using pairwise_local_affine_unbanded_testing_types = ::testing::Types<
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_local_affine_unbanded,
                                pairwise_alignment_test,
-                               pairwise_local_affine_unbanded_testing_types);
+                               pairwise_local_affine_unbanded_testing_types, );

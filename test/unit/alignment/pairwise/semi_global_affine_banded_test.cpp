@@ -21,4 +21,4 @@ using pairwise_semiglobal_affine_banded_testing_types = ::testing::Types<
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_semiglobal_affine_banded,
                                pairwise_alignment_test,
-                               pairwise_semiglobal_affine_banded_testing_types);
+                               pairwise_semiglobal_affine_banded_testing_types, );

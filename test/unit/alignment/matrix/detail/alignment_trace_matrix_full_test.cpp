@@ -25,7 +25,7 @@ using testing_types = ::testing::Types<trace_matrix_t, coo_matrix_t>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(full_matrix,
                                alignment_matrix_base_test,
-                               testing_types);
+                               testing_types, );
 
 //-----------------------------------------------------------------------------
 // Test outer iterator
@@ -74,7 +74,7 @@ using testing_types_outer = ::testing::Types<outer_iterator<trace_matrix_t>, out
 
 INSTANTIATE_TYPED_TEST_SUITE_P(trace_matrix_outer_iterator,
                                iterator_fixture,
-                               testing_types_outer);
+                               testing_types_outer, );
 
 //-----------------------------------------------------------------------------
 // Test inner iterator
@@ -109,7 +109,7 @@ using testing_types_inner = ::testing::Types<inner_iterator<trace_matrix_t>, inn
 
 INSTANTIATE_TYPED_TEST_SUITE_P(trace_matrix_inner_iterator,
                                iterator_fixture,
-                               testing_types_inner);
+                               testing_types_inner, );
 
 
 TEST(trace_matrix, trace_path)
