@@ -13,8 +13,8 @@
 #include "../semi_alphabet_test_template.hpp"
 #include "../semi_alphabet_constexpr_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(cigar, semi_alphabet_test, seqan3::cigar);
-INSTANTIATE_TYPED_TEST_CASE_P(cigar, semi_alphabet_constexpr, seqan3::cigar);
+INSTANTIATE_TYPED_TEST_SUITE_P(cigar, semi_alphabet_test, seqan3::cigar, );
+INSTANTIATE_TYPED_TEST_SUITE_P(cigar, semi_alphabet_constexpr, seqan3::cigar, );
 
 using namespace seqan3;
 
@@ -40,4 +40,3 @@ TEST(cigar, assign_string)
     EXPECT_EQ(uint32_t{223}, to_rank(get<0>(c1)));
     EXPECT_EQ('M',           get<1>(c1).to_char());
 }
-

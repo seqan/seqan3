@@ -237,8 +237,8 @@ struct alignment_file_read<format_bam> : public alignment_file_data
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(bam, alignment_file_read, format_bam);
-INSTANTIATE_TYPED_TEST_CASE_P(bam, alignment_file_write, format_bam);
+INSTANTIATE_TYPED_TEST_SUITE_P(bam, alignment_file_read, format_bam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(bam, alignment_file_write, format_bam, );
 
 // ---------------------------------------------------------------------------------------------------------------------
 // BAM specifics

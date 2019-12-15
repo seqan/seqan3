@@ -102,8 +102,8 @@ ORIGIN
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(genbank, sequence_file_read, format_genbank);
-INSTANTIATE_TYPED_TEST_CASE_P(genbank, sequence_file_write, format_genbank);
+INSTANTIATE_TYPED_TEST_SUITE_P(genbank, sequence_file_read, format_genbank, );
+INSTANTIATE_TYPED_TEST_SUITE_P(genbank, sequence_file_write, format_genbank, );
 
 // ----------------------------------------------------------------------------
 // reading

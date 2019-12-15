@@ -37,7 +37,7 @@ struct iterator_fixture<iterator_type> : public ::testing::Test
 };
 
 using test_type = ::testing::Types<iterator_type>;
-INSTANTIATE_TYPED_TEST_CASE_P(iterator_fixture, iterator_fixture, test_type);
+INSTANTIATE_TYPED_TEST_SUITE_P(iterator_fixture, iterator_fixture, test_type, );
 
 TEST(async_input_buffer, in_out)
 {

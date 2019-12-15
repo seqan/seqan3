@@ -17,11 +17,11 @@
 
 using namespace seqan3;
 
-INSTANTIATE_TYPED_TEST_CASE_P(phred68legacy, alphabet_, phred68legacy);
-INSTANTIATE_TYPED_TEST_CASE_P(phred68legacy, semi_alphabet_test, phred68legacy);
-INSTANTIATE_TYPED_TEST_CASE_P(phred68legacy, alphabet_constexpr, phred68legacy);
-INSTANTIATE_TYPED_TEST_CASE_P(phred68legacy, semi_alphabet_constexpr, phred68legacy);
-INSTANTIATE_TYPED_TEST_CASE_P(phred68legacy, phred, phred68legacy);
+INSTANTIATE_TYPED_TEST_SUITE_P(phred68legacy, alphabet_, phred68legacy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(phred68legacy, semi_alphabet_test, phred68legacy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(phred68legacy, alphabet_constexpr, phred68legacy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(phred68legacy, semi_alphabet_constexpr, phred68legacy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(phred68legacy, phred, phred68legacy, );
 
 TEST(phred68legacy, char_literal)
 {

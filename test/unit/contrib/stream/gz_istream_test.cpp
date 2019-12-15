@@ -28,4 +28,4 @@ public:
 
 using test_types = ::testing::Types<contrib::gz_istream>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(contrib_streams, istream, test_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, istream, test_types, );

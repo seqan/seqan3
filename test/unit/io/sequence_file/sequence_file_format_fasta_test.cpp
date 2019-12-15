@@ -64,8 +64,8 @@ struct sequence_file_read<format_fasta> : public sequence_file_data
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(fasta, sequence_file_read, format_fasta);
-INSTANTIATE_TYPED_TEST_CASE_P(fasta, sequence_file_write, format_fasta);
+INSTANTIATE_TYPED_TEST_SUITE_P(fasta, sequence_file_read, format_fasta, );
+INSTANTIATE_TYPED_TEST_SUITE_P(fasta, sequence_file_write, format_fasta, );
 
 // ----------------------------------------------------------------------------
 // reading

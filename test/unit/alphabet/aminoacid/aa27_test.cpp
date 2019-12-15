@@ -14,11 +14,11 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-INSTANTIATE_TYPED_TEST_CASE_P(aa27, alphabet_, aa27);
-INSTANTIATE_TYPED_TEST_CASE_P(aa27, semi_alphabet_test, aa27);
-INSTANTIATE_TYPED_TEST_CASE_P(aa27, alphabet_constexpr, aa27);
-INSTANTIATE_TYPED_TEST_CASE_P(aa27, semi_alphabet_constexpr, aa27);
-INSTANTIATE_TYPED_TEST_CASE_P(aa27, aminoacid, aa27);
+INSTANTIATE_TYPED_TEST_SUITE_P(aa27, alphabet_, aa27, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa27, semi_alphabet_test, aa27, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa27, alphabet_constexpr, aa27, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa27, semi_alphabet_constexpr, aa27, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa27, aminoacid, aa27, );
 
 TEST(aa27, assign_char)
 {

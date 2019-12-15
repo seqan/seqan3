@@ -9,6 +9,6 @@
 #include "fm_index_test_template.hpp"
 
 using t1 = std::pair<bi_fm_index<dna4, text_layout::single>, std::vector<dna4>>;
-INSTANTIATE_TYPED_TEST_CASE_P(dna4, fm_index_test, t1);
+INSTANTIATE_TYPED_TEST_SUITE_P(dna4, fm_index_test, t1, );
 using t2 = std::pair<bi_fm_index<dna4, text_layout::collection>, std::vector<std::vector<dna4>>>;
-INSTANTIATE_TYPED_TEST_CASE_P(dna4_collection, fm_index_collection_test, t2);
+INSTANTIATE_TYPED_TEST_SUITE_P(dna4_collection, fm_index_collection_test, t2, );

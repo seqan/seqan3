@@ -97,8 +97,8 @@ read1	41	*	1	61	1S1M1D1M1I	*	0	0	ACGT	!##$
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(sam, alignment_file_read, format_sam);
-INSTANTIATE_TYPED_TEST_CASE_P(sam, alignment_file_write, format_sam);
+INSTANTIATE_TYPED_TEST_SUITE_P(sam, alignment_file_read, format_sam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam, alignment_file_write, format_sam, );
 
 // ---------------------------------------------------------------------------------------------------------------------
 // SAM specifics

@@ -13,11 +13,11 @@
 #include "../semi_alphabet_test_template.hpp"
 #include "nucleotide_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(dna5, alphabet_, dna5);
-INSTANTIATE_TYPED_TEST_CASE_P(dna5, semi_alphabet_test, dna5);
-INSTANTIATE_TYPED_TEST_CASE_P(dna5, alphabet_constexpr, dna5);
-INSTANTIATE_TYPED_TEST_CASE_P(dna5, semi_alphabet_constexpr, dna5);
-INSTANTIATE_TYPED_TEST_CASE_P(dna5, nucleotide, dna5);
+INSTANTIATE_TYPED_TEST_SUITE_P(dna5, alphabet_, dna5, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna5, semi_alphabet_test, dna5, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna5, alphabet_constexpr, dna5, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna5, semi_alphabet_constexpr, dna5, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna5, nucleotide, dna5, );
 
 TEST(dna5, to_char_assign_char)
 {

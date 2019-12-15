@@ -16,11 +16,11 @@
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, alphabet_, aa20);
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, semi_alphabet_test, aa20);
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, alphabet_constexpr, aa20);
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, semi_alphabet_constexpr, aa20);
-INSTANTIATE_TYPED_TEST_CASE_P(aa20, aminoacid, aa20);
+INSTANTIATE_TYPED_TEST_SUITE_P(aa20, alphabet_, aa20, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa20, semi_alphabet_test, aa20, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa20, alphabet_constexpr, aa20, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa20, semi_alphabet_constexpr, aa20, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa20, aminoacid, aa20, );
 
 TEST(aa20, assign_char)
 {

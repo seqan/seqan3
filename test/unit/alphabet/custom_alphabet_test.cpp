@@ -73,7 +73,7 @@ constexpr my_alph & assign_char_to(char const c, my_alph & a) noexcept
 static_assert(seqan3::alphabet<my_namespace::my_alph>);
 //![my_alph]
 
-INSTANTIATE_TYPED_TEST_CASE_P(my_alph, alphabet_, my_namespace::my_alph);
-INSTANTIATE_TYPED_TEST_CASE_P(my_alph, semi_alphabet_test, my_namespace::my_alph);
-INSTANTIATE_TYPED_TEST_CASE_P(my_alph, alphabet_constexpr, my_namespace::my_alph);
-INSTANTIATE_TYPED_TEST_CASE_P(my_alph, semi_alphabet_constexpr, my_namespace::my_alph);
+INSTANTIATE_TYPED_TEST_SUITE_P(my_alph, alphabet_, my_namespace::my_alph, );
+INSTANTIATE_TYPED_TEST_SUITE_P(my_alph, semi_alphabet_test, my_namespace::my_alph, );
+INSTANTIATE_TYPED_TEST_SUITE_P(my_alph, alphabet_constexpr, my_namespace::my_alph, );
+INSTANTIATE_TYPED_TEST_SUITE_P(my_alph, semi_alphabet_constexpr, my_namespace::my_alph, );

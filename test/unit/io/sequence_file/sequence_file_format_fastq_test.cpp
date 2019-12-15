@@ -78,8 +78,8 @@ struct sequence_file_read<format_fastq> : public sequence_file_data
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(fastq, sequence_file_read, format_fastq);
-INSTANTIATE_TYPED_TEST_CASE_P(fastq, sequence_file_write, format_fastq);
+INSTANTIATE_TYPED_TEST_SUITE_P(fastq, sequence_file_read, format_fastq, );
+INSTANTIATE_TYPED_TEST_SUITE_P(fastq, sequence_file_write, format_fastq, );
 
 // ----------------------------------------------------------------------------
 // reading

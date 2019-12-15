@@ -14,10 +14,10 @@
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet_, seqan3::dot_bracket3);
-INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, semi_alphabet_test, seqan3::dot_bracket3);
-INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet_constexpr, seqan3::dot_bracket3);
-INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, semi_alphabet_constexpr, seqan3::dot_bracket3);
+INSTANTIATE_TYPED_TEST_SUITE_P(dot_bracket3, alphabet_, seqan3::dot_bracket3, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dot_bracket3, semi_alphabet_test, seqan3::dot_bracket3, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dot_bracket3, alphabet_constexpr, seqan3::dot_bracket3, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dot_bracket3, semi_alphabet_constexpr, seqan3::dot_bracket3, );
 
 using namespace seqan3;
 

@@ -275,7 +275,7 @@ struct iterator_fixture<test_matrix_t<score_t, order>> : two_dimensional_matrix_
     matrix_type test_range{number_rows{3}, number_cols{4}, expected_range};
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(two_dimensional_iterator, iterator_fixture, testing_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(two_dimensional_iterator, iterator_fixture, testing_types, );
 
 template <typename matrix_t>
 struct two_dimensional_matrix_iterator_test : two_dimensional_matrix_test<matrix_t>

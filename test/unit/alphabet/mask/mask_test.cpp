@@ -14,8 +14,8 @@
 
 using namespace seqan3;
 
-INSTANTIATE_TYPED_TEST_CASE_P(mask, semi_alphabet_test, mask);
-INSTANTIATE_TYPED_TEST_CASE_P(mask, semi_alphabet_constexpr, mask);
+INSTANTIATE_TYPED_TEST_SUITE_P(mask, semi_alphabet_test, mask, );
+INSTANTIATE_TYPED_TEST_SUITE_P(mask, semi_alphabet_constexpr, mask, );
 
 TEST(mask, assign_rank)
 {

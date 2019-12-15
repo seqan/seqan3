@@ -29,4 +29,4 @@ public:
 
 using test_types = ::testing::Types<contrib::bz2_ostream>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(contrib_streams, ostream, test_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, ostream, test_types, );

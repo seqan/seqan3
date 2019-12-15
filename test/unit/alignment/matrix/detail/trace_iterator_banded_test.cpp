@@ -152,4 +152,4 @@ struct iterator_fixture<trace_iterator_banded_test> : public trace_iterator_band
     std::vector<trace_directions> expected_range{U, U, L, L, L, D, D, U};
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(trace_iterator_banded, iterator_fixture, trace_iterator_banded_test);
+INSTANTIATE_TYPED_TEST_SUITE_P(trace_iterator_banded, iterator_fixture, trace_iterator_banded_test, );
