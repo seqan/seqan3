@@ -43,7 +43,7 @@ using alignment_result_test_types = ::testing::Types
        detail::alignment_result_value_type<uint32_t, float,   std::pair<size_t, size_t>, std::pair<size_t, size_t>,
                                        std::vector<aligned_seq_type>>>;
 
-TYPED_TEST_CASE(alignment_result_test, alignment_result_test_types);
+TYPED_TEST_SUITE(alignment_result_test, alignment_result_test_types, );
 
 TYPED_TEST(alignment_result_test, type_specialisation)
 {

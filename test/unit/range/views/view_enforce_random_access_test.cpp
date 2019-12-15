@@ -142,7 +142,7 @@ using testing_types = ::testing::Types<std::vector<int>,
                                        common_pseudo_random_access_range,
                                        sentinel_pseudo_random_access_range>;
 
-TYPED_TEST_CASE(enforce_random_access_test, testing_types);
+TYPED_TEST_SUITE(enforce_random_access_test, testing_types, );
 
 TYPED_TEST(enforce_random_access_test, concepts)
 {

@@ -86,8 +86,8 @@ class pairwise_combine_iterator_test : public pairwise_combine_base_test<t>
 
 using test_types = ::testing::Types<std::vector<char>, std::list<char>, std::forward_list<char>>;
 
-TYPED_TEST_CASE(pairwise_combine_test, test_types);
-TYPED_TEST_CASE(pairwise_combine_iterator_test, test_types);
+TYPED_TEST_SUITE(pairwise_combine_test, test_types, );
+TYPED_TEST_SUITE(pairwise_combine_iterator_test, test_types, );
 
 TYPED_TEST(pairwise_combine_iterator_test, concepts)
 {

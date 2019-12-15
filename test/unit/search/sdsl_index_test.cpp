@@ -25,7 +25,7 @@ using sdsl_index = csa_wt<wt_blcd<bit_vector, rank_support_v<>, select_support_s
 
 using alphabet_strategy_types = ::testing::Types<byte_alphabet, plain_byte_alphabet>;
 
-TYPED_TEST_CASE(sdsl_index_test, alphabet_strategy_types);
+TYPED_TEST_SUITE(sdsl_index_test, alphabet_strategy_types, );
 
 TYPED_TEST(sdsl_index_test, concepts)
 {

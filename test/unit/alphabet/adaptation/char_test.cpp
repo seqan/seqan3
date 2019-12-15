@@ -28,7 +28,7 @@ INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, semi_alphabet_constexpr, char_typ
 template <typename T>
 using char_adaptation = ::testing::Test;
 
-TYPED_TEST_CASE(char_adaptation, char_types);
+TYPED_TEST_SUITE(char_adaptation, char_types, );
 
 TYPED_TEST(char_adaptation, type_properties)
 {

@@ -31,7 +31,7 @@ class nucleotide : public ::testing::Test
 // add all alphabets here
 using nucleotide_types  = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15>;
 
-TYPED_TEST_CASE(nucleotide, nucleotide_types);
+TYPED_TEST_SUITE(nucleotide, nucleotide_types, );
 
 TYPED_TEST(nucleotide, view_translate_single)
 {

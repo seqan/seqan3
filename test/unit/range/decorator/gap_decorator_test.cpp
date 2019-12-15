@@ -116,7 +116,7 @@ INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator_random_access, iterator_fix
 template <typename t>
 class gap_decorator_f : public ::testing::Test {};
 
-TYPED_TEST_CASE(gap_decorator_f, test_types);
+TYPED_TEST_SUITE(gap_decorator_f, test_types, );
 
 // concept checks
 TYPED_TEST(gap_decorator_f, concept_checks)

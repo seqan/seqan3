@@ -20,7 +20,7 @@ using alphabet_cereal = ::testing::Test;
 
 using test_types = ::testing::Types<dna4, qualified<dna4, phred42>, gapped<dna4>>;
 
-TYPED_TEST_CASE(alphabet_cereal, test_types);
+TYPED_TEST_SUITE(alphabet_cereal, test_types, );
 
 TYPED_TEST(alphabet_cereal, serialisation)
 {

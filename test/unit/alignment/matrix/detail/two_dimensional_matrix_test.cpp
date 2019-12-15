@@ -124,7 +124,7 @@ using testing_types = ::testing::Types<test_matrix_t<int, matrix_major_order::ro
                                        test_matrix_t<int, matrix_major_order::column>,
                                        test_matrix_t<simd_type_t<int>, matrix_major_order::row>,
                                        test_matrix_t<simd_type_t<int>, matrix_major_order::column>>;
-TYPED_TEST_CASE(two_dimensional_matrix_test, testing_types);
+TYPED_TEST_SUITE(two_dimensional_matrix_test, testing_types, );
 
 TYPED_TEST(two_dimensional_matrix_test, concepts)
 {
@@ -287,7 +287,7 @@ struct two_dimensional_matrix_iterator_test : two_dimensional_matrix_test<matrix
     matrix_type test_range{number_rows{3}, number_cols{4}, base_t::expected_matrix_content};
 };
 
-TYPED_TEST_CASE(two_dimensional_matrix_iterator_test, testing_types);
+TYPED_TEST_SUITE(two_dimensional_matrix_iterator_test, testing_types, );
 
 TYPED_TEST(two_dimensional_matrix_iterator_test, two_dimensional_concept)
 {

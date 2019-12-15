@@ -26,7 +26,7 @@ public:
 
 using test_types = ::testing::Types<std::tuple<aminoacid_scoring_scheme<int8_t>, aa27>,
                                     std::tuple<nucleotide_scoring_scheme<int8_t>, dna15>>;
-TYPED_TEST_CASE(align_confg_scoring_test, test_types);
+TYPED_TEST_SUITE(align_confg_scoring_test, test_types, );
 
 TYPED_TEST(align_confg_scoring_test, config_element)
 {

@@ -29,7 +29,7 @@ using simd_test_types = ::testing::Types<//simd::simd_type_t<int8_t>,
                                          //simd::simd_type_t<int16_t>,
                                          simd::simd_type_t<int32_t>>;
 
-TYPED_TEST_CASE(simd_matrix_scoring_scheme_test, simd_test_types);
+TYPED_TEST_SUITE(simd_matrix_scoring_scheme_test, simd_test_types, );
 
 TYPED_TEST(simd_matrix_scoring_scheme_test, basic_construction)
 {

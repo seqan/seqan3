@@ -27,7 +27,7 @@ using container_types = ::testing::Types<std::vector<dna4>,
                                          bitcompressed_vector<dna4>,
                                          small_vector<dna4, 1000>>;
 
-TYPED_TEST_CASE(debug_stream_test, container_types);
+TYPED_TEST_SUITE(debug_stream_test, container_types, );
 
 TYPED_TEST(debug_stream_test, container)
 {

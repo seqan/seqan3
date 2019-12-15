@@ -24,7 +24,7 @@ using quality_conversion = ::testing::Test;
 using quality_conversion_types = type_list<phred42, phred63, phred68legacy>;
 using quality_conversion_gtest_types = detail::transfer_template_args_onto_t<quality_conversion_types, ::testing::Types>;
 
-TYPED_TEST_CASE(quality_conversion, quality_conversion_gtest_types);
+TYPED_TEST_SUITE(quality_conversion, quality_conversion_gtest_types, );
 
 TYPED_TEST(quality_conversion, explicit_conversion)
 {

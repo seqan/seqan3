@@ -31,7 +31,7 @@ using uint_adaptation = ::testing::Test;
 
 using uint_types = ::testing::Types<uint8_t, uint16_t, uint32_t>;
 
-TYPED_TEST_CASE(uint_adaptation, uint_types);
+TYPED_TEST_SUITE(uint_adaptation, uint_types, );
 
 TYPED_TEST(uint_adaptation, type_properties)
 {

@@ -36,7 +36,7 @@ public:
 using tuple_utility_types = ::testing::Types<std::tuple<int, long, bar, float>,
                                              pod_tuple<int, long, bar, float>>;
 
-TYPED_TEST_CASE(tuple_utility, tuple_utility_types);
+TYPED_TEST_SUITE(tuple_utility, tuple_utility_types, );
 
 TYPED_TEST(tuple_utility, tuple_type_list)
 {

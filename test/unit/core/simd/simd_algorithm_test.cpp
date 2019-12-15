@@ -86,7 +86,7 @@ using simd_load_types = ::testing::Types<simd_type_t<int8_t>,
                                          simd_type_t<int64_t>,
                                          simd_type_t<uint64_t>>;
 
-TYPED_TEST_CASE(simd_algorithm_load, simd_load_types);
+TYPED_TEST_SUITE(simd_algorithm_load, simd_load_types, );
 
 TYPED_TEST(simd_algorithm_load, load)
 {
@@ -108,7 +108,7 @@ using simd_extract_types = ::testing::Types<simd_type_t<uint8_t>,
                                             simd_type_t<uint16_t>,
                                             simd_type_t<int32_t>,
                                             simd_type_t<int64_t>>;
-TYPED_TEST_CASE(simd_algorithm_extract, simd_extract_types);
+TYPED_TEST_SUITE(simd_algorithm_extract, simd_extract_types, );
 
 TYPED_TEST(simd_algorithm_extract, extract_halve)
 {
@@ -196,7 +196,7 @@ public:
 };
 
 using upcast_test_types = ::testing::Types<int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t>;
-TYPED_TEST_CASE(simd_algorithm_upcast, upcast_test_types);
+TYPED_TEST_SUITE(simd_algorithm_upcast, upcast_test_types, );
 
 TYPED_TEST(simd_algorithm_upcast, signed)
 {

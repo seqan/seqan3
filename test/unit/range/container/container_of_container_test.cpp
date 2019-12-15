@@ -25,7 +25,7 @@ using container_of_container_types = ::testing::Types<std::vector<std::vector<dn
                                                       concatenated_sequences<std::vector<dna4>>,
                                                       concatenated_sequences<bitcompressed_vector<dna4>>>;
 
-TYPED_TEST_CASE(container_of_container, container_of_container_types);
+TYPED_TEST_SUITE(container_of_container, container_of_container_types, );
 
 using In = std::ranges::iterator_t<seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna4> > >;
 

@@ -35,7 +35,7 @@ INSTANTIATE_TYPED_TEST_CASE_P(gapped, semi_alphabet_constexpr, gapped_types);
 template <typename t>
 using gapped_test = ::testing::Test;
 
-TYPED_TEST_CASE(gapped_test, gapped_types);
+TYPED_TEST_SUITE(gapped_test, gapped_types, );
 
 TYPED_TEST(gapped_test, concept_check)
 {

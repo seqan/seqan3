@@ -23,7 +23,7 @@ class integral_from_char_test: public ::testing::Test { };
 using integral_types = ::testing::Types<int8_t, uint8_t, int16_t, uint16_t,
                                         int32_t, uint32_t, int64_t, uint64_t>;
 
-TYPED_TEST_CASE(integral_from_char_test, integral_types);
+TYPED_TEST_SUITE(integral_from_char_test, integral_types, );
 
 TYPED_TEST(integral_from_char_test, postive_number)
 {
@@ -260,7 +260,7 @@ class from_char_real_test: public ::testing::Test { };
 
 using real_types = ::testing::Types<float, double, long double>;
 
-TYPED_TEST_CASE(from_char_real_test, real_types);
+TYPED_TEST_SUITE(from_char_real_test, real_types, );
 
 TYPED_TEST(from_char_real_test, real_numbers)
 {

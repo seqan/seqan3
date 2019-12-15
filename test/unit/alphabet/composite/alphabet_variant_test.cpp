@@ -33,7 +33,7 @@ INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, semi_alphabet_constexpr, alphabe
 template <typename T>
 using alphabet_variant_test = ::testing::Test;
 
-TYPED_TEST_CASE(alphabet_variant_test, alphabet_variant_types);
+TYPED_TEST_SUITE(alphabet_variant_test, alphabet_variant_types, );
 
 TEST(alphabet_variant_test, initialise_from_component_alphabet)
 {

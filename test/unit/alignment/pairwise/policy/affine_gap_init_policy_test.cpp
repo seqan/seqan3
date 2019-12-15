@@ -102,7 +102,7 @@ using testing_types = ::testing::Types<
                std::true_type>
     >;
 
-TYPED_TEST_CASE(affine_gap_init_fixture, testing_types);
+TYPED_TEST_SUITE(affine_gap_init_fixture, testing_types, );
 
 TYPED_TEST(affine_gap_init_fixture, init_origin_cell)
 {

@@ -25,7 +25,7 @@ using container_of_container_types = ::testing::Types<std::vector<std::vector<dn
                                                       concatenated_sequences<std::vector<dna4>>,
                                                       concatenated_sequences<bitcompressed_vector<dna4>>>;
 
-TYPED_TEST_CASE(debug_stream_test, container_of_container_types);
+TYPED_TEST_SUITE(debug_stream_test, container_of_container_types, );
 
 TYPED_TEST(debug_stream_test, container_of_container)
 {
