@@ -177,7 +177,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, alignment)
     EXPECT_EQ(gapped_query    | views::to_char | views::to<std::string>, fixture.aligned_sequence2);
 }
 
-REGISTER_TYPED_TEST_CASE_P(edit_distance_unbanded_test,
+REGISTER_TYPED_TEST_SUITE_P(edit_distance_unbanded_test,
                            score,
                            score_matrix,
                            trace_matrix,

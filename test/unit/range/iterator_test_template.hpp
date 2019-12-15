@@ -494,7 +494,7 @@ TYPED_TEST_P(iterator_fixture, compare_geq)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(iterator_fixture,
+REGISTER_TYPED_TEST_SUITE_P(iterator_fixture,
                            concept_check,
                            const_non_const_compatibility,
                            dereference,

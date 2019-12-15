@@ -332,7 +332,7 @@ TYPED_TEST_P(aligned_sequence_, cigar_string)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(aligned_sequence_,
+REGISTER_TYPED_TEST_SUITE_P(aligned_sequence_,
                            fulfills_concept,
                            assign_unaligned_sequence,
                            assign_empty_unaligned_sequence,

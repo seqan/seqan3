@@ -145,7 +145,7 @@ TYPED_TEST_P(semi_alphabet_constexpr, comparison_operators)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(semi_alphabet_constexpr,
+REGISTER_TYPED_TEST_SUITE_P(semi_alphabet_constexpr,
                            concept_check,
                            default_value_constructor,
                            global_assign_rank,

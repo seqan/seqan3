@@ -166,7 +166,7 @@ TYPED_TEST_P(semi_alphabet_test, comparison_operators)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(semi_alphabet_test,
+REGISTER_TYPED_TEST_SUITE_P(semi_alphabet_test,
                            concept_check,
                            type_properties,
                            alphabet_size_,

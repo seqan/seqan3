@@ -97,5 +97,4 @@ TYPED_TEST_P(execution_handler, execute_as_indexed_sequence_pairs)
     this->check_result(buffer);
 }
 
-REGISTER_TYPED_TEST_CASE_P(execution_handler,
-                           execute_as_indexed_sequence_pairs);
+REGISTER_TYPED_TEST_SUITE_P(execution_handler, execute_as_indexed_sequence_pairs);

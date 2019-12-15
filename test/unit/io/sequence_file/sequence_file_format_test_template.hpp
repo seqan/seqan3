@@ -226,7 +226,7 @@ TYPED_TEST_P(sequence_file_write, arg_handling_seq_empty)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(sequence_file_read,
+REGISTER_TYPED_TEST_SUITE_P(sequence_file_read,
                            concept_check,
                            standard,
                            only_seq,
@@ -236,7 +236,7 @@ REGISTER_TYPED_TEST_CASE_P(sequence_file_read,
                            options_truncate_ids,
                            no_or_ill_formatted_id);
 
-REGISTER_TYPED_TEST_CASE_P(sequence_file_write,
+REGISTER_TYPED_TEST_SUITE_P(sequence_file_write,
                            concept_check,
                            standard,
                            seq_qual,

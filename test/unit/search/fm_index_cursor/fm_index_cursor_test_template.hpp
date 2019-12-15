@@ -302,6 +302,6 @@ TYPED_TEST_P(fm_index_cursor_test, concept_check)
     EXPECT_TRUE(fm_index_cursor_specialisation<TypeParam>);
 }
 
-REGISTER_TYPED_TEST_CASE_P(fm_index_cursor_test, ctr, begin, extend_right_range, extend_right_char,
+REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_test, ctr, begin, extend_right_range, extend_right_char,
                            extend_right_range_and_cycle, extend_right_char_and_cycle, extend_right_and_cycle, query,
                            last_rank, incomplete_alphabet, lazy_locate, concept_check);

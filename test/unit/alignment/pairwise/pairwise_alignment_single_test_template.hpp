@@ -108,7 +108,7 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
     EXPECT_TRUE(std::ranges::equal(static_cast<trace_matrix_t>(res.trace_matrix()), fixture.trace_vector));
 }
 
-REGISTER_TYPED_TEST_CASE_P(pairwise_alignment_test,
+REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_test,
                            score,
                            back_coordinate,
                            front_coordinate,

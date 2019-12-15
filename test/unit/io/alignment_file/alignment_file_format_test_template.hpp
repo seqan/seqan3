@@ -607,7 +607,7 @@ TYPED_TEST_P(alignment_file_write, format_errors)
                  format_error);
 }
 
-REGISTER_TYPED_TEST_CASE_P(alignment_file_read,
+REGISTER_TYPED_TEST_SUITE_P(alignment_file_read,
                            input_concept,
                            header_sucess,
                            read_in_all_data,
@@ -620,7 +620,7 @@ REGISTER_TYPED_TEST_CASE_P(alignment_file_read,
                            cigar_vector,
                            format_error_ref_id_not_in_reference_information);
 
-REGISTER_TYPED_TEST_CASE_P(alignment_file_write,
+REGISTER_TYPED_TEST_SUITE_P(alignment_file_write,
                            write_empty_members,
                            output_concept,
                            default_options_all_members_specified,
