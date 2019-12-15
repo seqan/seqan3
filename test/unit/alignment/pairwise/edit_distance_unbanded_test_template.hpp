@@ -71,7 +71,7 @@ template <typename fixture_t>
 class edit_distance_unbanded_test : public fixture_t
 {};
 
-TYPED_TEST_CASE_P(edit_distance_unbanded_test);
+TYPED_TEST_SUITE_P(edit_distance_unbanded_test);
 
 template <template <bool, typename...> typename edit_traits_type,
           bool compute_score_matrix = false,

@@ -32,7 +32,7 @@ template <typename fixture_t>
 class pairwise_alignment_test : public fixture_t
 {};
 
-TYPED_TEST_CASE_P(pairwise_alignment_test);
+TYPED_TEST_SUITE_P(pairwise_alignment_test);
 
 TYPED_TEST_P(pairwise_alignment_test, score)
 {

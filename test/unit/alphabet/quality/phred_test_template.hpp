@@ -14,7 +14,7 @@ using namespace seqan3;
 template <typename T>
 using phred = ::testing::Test;
 
-TYPED_TEST_CASE_P(phred);
+TYPED_TEST_SUITE_P(phred);
 
 // test provision of data type `phred_type` and phred converter.
 TYPED_TEST_P(phred, concept_check)
@@ -78,4 +78,4 @@ TYPED_TEST_P(phred, conversion_rank)
     EXPECT_EQ(v2.to_rank(),  23 - TypeParam::offset_phred);
 }
 
-REGISTER_TYPED_TEST_CASE_P(phred, concept_check, conversion_char, conversion_phred, conversion_rank);
+REGISTER_TYPED_TEST_SUITE_P(phred, concept_check, conversion_char, conversion_phred, conversion_rank);

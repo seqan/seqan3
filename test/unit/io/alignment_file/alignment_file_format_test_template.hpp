@@ -138,7 +138,7 @@ template <typename format_t>
 struct alignment_file_read : public alignment_file_data
 {};
 
-TYPED_TEST_CASE_P(alignment_file_read);
+TYPED_TEST_SUITE_P(alignment_file_read);
 
 // ----------------------------------------------------------------------------
 // general
@@ -375,7 +375,7 @@ struct alignment_file_write : public alignment_file_read<format_type>
     std::ostringstream ostream;
 };
 
-TYPED_TEST_CASE_P(alignment_file_write);
+TYPED_TEST_SUITE_P(alignment_file_write);
 
 TYPED_TEST_P(alignment_file_write, output_concept)
 {

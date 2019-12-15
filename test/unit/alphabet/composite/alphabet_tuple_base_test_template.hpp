@@ -15,7 +15,7 @@ using namespace seqan3;
 template <typename T>
 class alphabet_tuple_base_test : public ::testing::Test {};
 
-TYPED_TEST_CASE_P(alphabet_tuple_base_test);
+TYPED_TEST_SUITE_P(alphabet_tuple_base_test);
 
 TYPED_TEST_P(alphabet_tuple_base_test, concept_check)
 {

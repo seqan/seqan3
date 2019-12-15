@@ -12,7 +12,7 @@
 template <typename T>
 using semi_alphabet_constexpr = ::testing::Test;
 
-TYPED_TEST_CASE_P(semi_alphabet_constexpr);
+TYPED_TEST_SUITE_P(semi_alphabet_constexpr);
 
 TYPED_TEST_P(semi_alphabet_constexpr, concept_check)
 {

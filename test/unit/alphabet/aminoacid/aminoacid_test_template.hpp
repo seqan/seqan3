@@ -18,7 +18,7 @@ using namespace seqan3;
 template <typename T>
 using aminoacid = ::testing::Test;
 
-TYPED_TEST_CASE_P(aminoacid);
+TYPED_TEST_SUITE_P(aminoacid);
 
 TYPED_TEST_P(aminoacid, concept_check)
 {
@@ -42,4 +42,4 @@ TYPED_TEST_P(aminoacid, comparators)
     EXPECT_TRUE(TypeParam{}.assign_char('B') >= TypeParam{}.assign_char('A'));
 }
 
-REGISTER_TYPED_TEST_CASE_P(aminoacid, concept_check, comparators);
+REGISTER_TYPED_TEST_SUITE_P(aminoacid, concept_check, comparators);

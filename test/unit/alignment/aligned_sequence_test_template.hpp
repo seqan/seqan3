@@ -27,7 +27,7 @@ class aligned_sequence_ : public ::testing::Test
 
 seqan3::dna4_vector const seq = "ACTA"_dna4;
 
-TYPED_TEST_CASE_P(aligned_sequence_);
+TYPED_TEST_SUITE_P(aligned_sequence_);
 
 TYPED_TEST_P(aligned_sequence_, fulfills_concept)
 {

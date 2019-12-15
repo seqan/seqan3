@@ -22,7 +22,7 @@ template <typename T>
 class bi_fm_index_cursor_collection_test : public ::testing::Test
 {};
 
-TYPED_TEST_CASE_P(bi_fm_index_cursor_collection_test);
+TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test);
 
 TYPED_TEST_P(bi_fm_index_cursor_collection_test, begin)
 {

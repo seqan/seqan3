@@ -53,7 +53,7 @@ template <typename format_t>
 struct sequence_file_read : public sequence_file_data
 {};
 
-TYPED_TEST_CASE_P(sequence_file_read);
+TYPED_TEST_SUITE_P(sequence_file_read);
 
 // ----------------------------------------------------------------------------
 // general
@@ -152,7 +152,7 @@ template <typename format_type>
 struct sequence_file_write : public sequence_file_read<format_type>
 {};
 
-TYPED_TEST_CASE_P(sequence_file_write);
+TYPED_TEST_SUITE_P(sequence_file_write);
 
 TYPED_TEST_P(sequence_file_write, concept_check)
 {

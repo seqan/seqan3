@@ -17,7 +17,7 @@ using semi_alphabet_test = ::testing::Test;
 
 constexpr size_t maximum_iterations = 65536u;
 
-TYPED_TEST_CASE_P(semi_alphabet_test);
+TYPED_TEST_SUITE_P(semi_alphabet_test);
 
 TYPED_TEST_P(semi_alphabet_test, concept_check)
 {

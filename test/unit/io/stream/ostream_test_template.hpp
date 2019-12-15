@@ -25,7 +25,7 @@ class ostream : public ::testing::Test
 
 inline std::string const uncompressed{"The quick brown fox jumps over the lazy dog"};
 
-TYPED_TEST_CASE_P(ostream);
+TYPED_TEST_SUITE_P(ostream);
 
 TYPED_TEST_P(ostream, concept_check)
 {
@@ -73,4 +73,4 @@ TYPED_TEST_P(ostream, output_type_erased)
     EXPECT_EQ(buffer, TestFixture::compressed);
 }
 
-REGISTER_TYPED_TEST_CASE_P(ostream, concept_check, output, output_type_erased);
+REGISTER_TYPED_TEST_SUITE_P(ostream, concept_check, output, output_type_erased);

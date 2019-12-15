@@ -18,7 +18,7 @@ template <typename T>
 class fm_index_collection_test : public ::testing::Test
 {};
 
-TYPED_TEST_CASE_P(fm_index_collection_test);
+TYPED_TEST_SUITE_P(fm_index_collection_test);
 
 TYPED_TEST_P(fm_index_collection_test, ctr)
 {
@@ -155,4 +155,4 @@ TYPED_TEST_P(fm_index_collection_test, serialisation)
     test::do_serialisation(fm);
 }
 
-REGISTER_TYPED_TEST_CASE_P(fm_index_collection_test, ctr, swap, size, serialisation, concept_check, empty_text);
+REGISTER_TYPED_TEST_SUITE_P(fm_index_collection_test, ctr, swap, size, serialisation, concept_check, empty_text);

@@ -59,7 +59,7 @@ void expext_eq(A && a, B && b)
         EXPECT_EQ(a, b);
 }
 
-TYPED_TEST_CASE_P(iterator_fixture);
+TYPED_TEST_SUITE_P(iterator_fixture);
 
 TYPED_TEST_P(iterator_fixture, concept_check)
 {

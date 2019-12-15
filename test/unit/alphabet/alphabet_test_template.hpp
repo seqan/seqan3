@@ -16,7 +16,7 @@ using alphabet_ = ::testing::Test;
 
 constexpr size_t max_iterations = 65536u;
 
-TYPED_TEST_CASE_P(alphabet_);
+TYPED_TEST_SUITE_P(alphabet_);
 
 TYPED_TEST_P(alphabet_, concept_check)
 {
