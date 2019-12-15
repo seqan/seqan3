@@ -178,9 +178,9 @@ TYPED_TEST_P(edit_distance_unbanded_test, alignment)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(edit_distance_unbanded_test,
-                           score,
-                           score_matrix,
-                           trace_matrix,
-                           back_coordinate,
-                           front_coordinate,
-                           alignment);
+                            score,
+                            score_matrix,
+                            trace_matrix,
+                            back_coordinate,
+                            front_coordinate,
+                            alignment);

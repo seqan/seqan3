@@ -167,15 +167,15 @@ TYPED_TEST_P(semi_alphabet_test, comparison_operators)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(semi_alphabet_test,
-                           concept_check,
-                           type_properties,
-                           alphabet_size_,
-                           default_value_constructor,
-                           global_assign_rank_to,
-                           global_to_rank,
-                           copy_constructor,
-                           move_constructor,
-                           copy_assignment,
-                           move_assignment,
-                           swap,
-                           comparison_operators);
+                            concept_check,
+                            type_properties,
+                            alphabet_size_,
+                            default_value_constructor,
+                            global_assign_rank_to,
+                            global_to_rank,
+                            copy_constructor,
+                            move_constructor,
+                            copy_assignment,
+                            move_assignment,
+                            swap,
+                            comparison_operators);

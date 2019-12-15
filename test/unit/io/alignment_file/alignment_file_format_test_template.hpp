@@ -608,24 +608,24 @@ TYPED_TEST_P(alignment_file_write, format_errors)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(alignment_file_read,
-                           input_concept,
-                           header_sucess,
-                           read_in_all_data,
-                           read_in_all_but_empty_data,
-                           read_in_almost_nothing,
-                           read_in_alignment_only_with_ref,
-                           read_in_alignment_only_without_ref,
-                           read_mate_but_not_ref_id_with_ref,
-                           read_mate_but_not_ref_id_without_ref,
-                           cigar_vector,
-                           format_error_ref_id_not_in_reference_information);
+                            input_concept,
+                            header_sucess,
+                            read_in_all_data,
+                            read_in_all_but_empty_data,
+                            read_in_almost_nothing,
+                            read_in_alignment_only_with_ref,
+                            read_in_alignment_only_without_ref,
+                            read_mate_but_not_ref_id_with_ref,
+                            read_mate_but_not_ref_id_without_ref,
+                            cigar_vector,
+                            format_error_ref_id_not_in_reference_information);
 
 REGISTER_TYPED_TEST_SUITE_P(alignment_file_write,
-                           write_empty_members,
-                           output_concept,
-                           default_options_all_members_specified,
-                           write_ref_id_with_different_types,
-                           with_header,
-                           cigar_vector,
-                           special_cases,
-                           format_errors);
+                            write_empty_members,
+                            output_concept,
+                            default_options_all_members_specified,
+                            write_ref_id_with_different_types,
+                            with_header,
+                            cigar_vector,
+                            special_cases,
+                            format_errors);

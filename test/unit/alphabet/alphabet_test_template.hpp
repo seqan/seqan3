@@ -84,8 +84,8 @@ TYPED_TEST_P(alphabet_, global_to_char)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(alphabet_,
-                           concept_check,
-                           global_assign_char_to,
-                           global_char_is_valid_for,
-                           global_assign_char_strictly_to,
-                           global_to_char);
+                            concept_check,
+                            global_assign_char_to,
+                            global_char_is_valid_for,
+                            global_assign_char_strictly_to,
+                            global_to_char);

@@ -333,13 +333,13 @@ TYPED_TEST_P(aligned_sequence_, cigar_string)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(aligned_sequence_,
-                           fulfills_concept,
-                           assign_unaligned_sequence,
-                           assign_empty_unaligned_sequence,
-                           insert_erase_on_empty_sequence,
-                           insert_one_gap,
-                           insert_multiple_gaps,
-                           insert_zero_gaps,
-                           erase_one_gap,
-                           erase_multiple_gaps,
-                           cigar_string);
+                            fulfills_concept,
+                            assign_unaligned_sequence,
+                            assign_empty_unaligned_sequence,
+                            insert_erase_on_empty_sequence,
+                            insert_one_gap,
+                            insert_multiple_gaps,
+                            insert_zero_gaps,
+                            erase_one_gap,
+                            erase_multiple_gaps,
+                            cigar_string);

@@ -227,20 +227,20 @@ TYPED_TEST_P(sequence_file_write, arg_handling_seq_empty)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(sequence_file_read,
-                           concept_check,
-                           standard,
-                           only_seq,
-                           only_id,
-                           seq_qual,
-                           illegal_alphabet_character,
-                           options_truncate_ids,
-                           no_or_ill_formatted_id);
+                            concept_check,
+                            standard,
+                            only_seq,
+                            only_id,
+                            seq_qual,
+                            illegal_alphabet_character,
+                            options_truncate_ids,
+                            no_or_ill_formatted_id);
 
 REGISTER_TYPED_TEST_SUITE_P(sequence_file_write,
-                           concept_check,
-                           standard,
-                           seq_qual,
-                           arg_handling_id_missing,
-                           arg_handling_id_empty,
-                           arg_handling_seq_missing,
-                           arg_handling_seq_empty);
+                            concept_check,
+                            standard,
+                            seq_qual,
+                            arg_handling_id_missing,
+                            arg_handling_id_empty,
+                            arg_handling_seq_missing,
+                            arg_handling_seq_empty);

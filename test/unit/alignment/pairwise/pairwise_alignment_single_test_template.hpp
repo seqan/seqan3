@@ -109,7 +109,7 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_test,
-                           score,
-                           back_coordinate,
-                           front_coordinate,
-                           alignment);
+                            score,
+                            back_coordinate,
+                            front_coordinate,
+                            alignment);

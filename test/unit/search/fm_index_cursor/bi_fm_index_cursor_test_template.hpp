@@ -227,4 +227,4 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_test, begin, extend, extend_char, extend_range, extend_and_cycle,
-                           extend_range_and_cycle, to_fwd_cursor, to_rev_cursor);
+                            extend_range_and_cycle, to_fwd_cursor, to_rev_cursor);

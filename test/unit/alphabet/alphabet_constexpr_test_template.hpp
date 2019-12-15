@@ -41,6 +41,6 @@ TYPED_TEST_P(alphabet_constexpr, global_to_char)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(alphabet_constexpr,
-                           concept_check,
-                           global_assign_char,
-                           global_to_char);
+                            concept_check,
+                            global_assign_char,
+                            global_to_char);
