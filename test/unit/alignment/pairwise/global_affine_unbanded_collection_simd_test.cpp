@@ -18,27 +18,27 @@ using namespace seqan3;
 using namespace seqan3::detail;
 using namespace seqan3::test::alignment;
 
-namespace seqan3::test::alignment::collection::global::affine::unbanded
+namespace seqan3::test::alignment::collection::simd::global::affine::unbanded
 {
 
 static auto dna4_01 = []()
 {
-
     using fixture_t = decltype(fixture::global::affine::unbanded::dna4_01);
+
     std::vector<fixture_t> data;
     for (size_t i = 0; i < 100; ++i)
         data.push_back(fixture::global::affine::unbanded::dna4_01);
 
-    auto config = fixture::global::affine::unbanded::dna4_01.config | align_cfg::parallel{4};
+    auto config = fixture::global::affine::unbanded::dna4_01.config | align_cfg::vectorise;
     return alignment_fixture_collection{config, data};
 }();
 
-} // namespace seqan3::test::alignment::fixture::collection::global::affine::unbanded
+} // namespace seqan3::test::alignment::collection::simd::global::affine::unbanded
 
-using pairwise_global_affine_collection_unbanded_testing_types = ::testing::Types<
-        pairwise_alignment_fixture<&collection::global::affine::unbanded::dna4_01>
+using pairwise_collection_simd_global_affine_unbanded_testing_types = ::testing::Types<
+        pairwise_alignment_fixture<&collection::simd::global::affine::unbanded::dna4_01>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(pairwise_global_affine_collection_unbanded,
+INSTANTIATE_TYPED_TEST_CASE_P(pairwise_collection_simd_global_affine_unbanded,
                               pairwise_alignment_collection_test,
-                              pairwise_global_affine_collection_unbanded_testing_types);
+                              pairwise_collection_simd_global_affine_unbanded_testing_types);

@@ -105,6 +105,8 @@ public:
      */
     //!\brief Type of the score values.
     using score_type = score_t;
+    //!\brief Type of the underlying alphabet.
+    using alphabet_type = alphabet_t;
     //!\brief Size type that can hold the dimension of the matrix (i.e. size of the alphabet).
     using matrix_size_type = std::remove_const_t<decltype(alphabet_size<alphabet_t>)>;
     //!\}
