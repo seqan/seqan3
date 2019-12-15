@@ -152,7 +152,7 @@ void to_simd(benchmark::State& state)
     size_t value = 0;
     for (auto _ : state)
     {
-        for (auto & chunk : sequences | views::to_simd<simd_t>)
+        for (auto && chunk : sequences | views::to_simd<simd_t>)
             for (simd_t const & vec : chunk)
                 value += vec[0];
     }

@@ -41,6 +41,7 @@ public:
 
     static constexpr size_t padding_value_dna4 = alphabet_size<value_type_t<container_t>>;
     static constexpr size_t padding_value_custom = 8;
+    static constexpr size_t max_sequence_length = simd_traits<simd_t>::length * 64;
 
     void SetUp()
     {
@@ -48,12 +49,13 @@ public:
         for (size_t i = 0; i < simd_traits<simd_t>::length; ++i)
         {
             // Generate sequences that end on different boundaries
-            size_t l = simd_traits<simd_t>::length * 64 - (i * simd_traits<simd_t>::length) - i;
-            std::ranges::copy(test::generate_sequence<value_type_t<container_t>>(l), std::ranges::back_inserter(sequences[i]));
+            size_t l = max_sequence_length - (i * simd_traits<simd_t>::length) - i;
+            std::ranges::copy(test::generate_sequence<value_type_t<container_t>>(l),
+                              std::ranges::back_inserter(sequences[i]));
         }
 
-        transformed_simd_vec.resize(simd_traits<simd_t>::length * 64, simd::fill<simd_t>(padding_value_dna4));  // longest sequence in set.
-        transformed_simd_vec_padded.resize(simd_traits<simd_t>::length * 64, simd::fill<simd_t>(padding_value_custom));
+        transformed_simd_vec.resize(max_sequence_length, simd::fill<simd_t>(padding_value_dna4));
+        transformed_simd_vec_padded.resize(max_sequence_length, simd::fill<simd_t>(padding_value_custom));
 
         for (size_t i = 0; i < simd_traits<simd_t>::length; ++i)
         {
@@ -65,17 +67,20 @@ public:
         }
     }
 
-    void compare(auto rng, auto cmp)
+    void compare(auto simd_view, auto cmp)
     {
         auto it_cmp = cmp.begin();
-        for (auto & chunk : rng)
+        size_t simd_view_size = 0;
+        for (auto && chunk : simd_view)
         {
-            for (auto & vec : chunk)
+            simd_view_size += chunk.size();
+            for (size_t i = 0; i < chunk.size(); ++i)
             {
-                SIMD_EQ(vec, *it_cmp);
+                SIMD_EQ(chunk[i], *it_cmp);
                 ++it_cmp;
             }
         }
+        EXPECT_EQ(simd_view_size, cmp.size());
     }
 
     std::vector<container_t> sequences;
@@ -102,6 +107,7 @@ using test_types = ::testing::Types<std::tuple<std::vector<dna4>, simd_type_t<in
                                     std::tuple<std::deque<dna4>, simd_type_t<uint32_t>>,
                                     std::tuple<std::deque<dna4>, simd_type_t<uint64_t>>
                                    >;
+
 TYPED_TEST_CASE(view_to_simd_test, test_types);
 
 TEST(view_to_simd, concept_check)
@@ -217,8 +223,13 @@ TYPED_TEST(view_to_simd_test, fewer_sequences)
     using simd_t = typename TestFixture::simd_t;
     this->sequences.pop_back();
 
+    // delete the last sequence in the set.
     for (simd_t & vec : this->transformed_simd_vec)
         vec[simd_traits<simd_t>::length - 1] = TestFixture::padding_value_dna4;
+
+    // If simd size is only 1, the compare range needs to be cleared.
+    if (this->sequences.empty())
+        this->transformed_simd_vec.clear();
 
     auto v = this->sequences | views::to_simd<simd_t>;
     this->compare(v, this->transformed_simd_vec);
@@ -237,6 +248,10 @@ TYPED_TEST(view_to_simd_test, fewer_sequences_w_padding)
 
     for (simd_t & vec : this->transformed_simd_vec_padded)
         vec[simd_traits<simd_t>::length - 1] = TestFixture::padding_value_custom;
+
+    // If simd size is only 1, the compare range needs to be cleared.
+    if (this->sequences.empty())
+        this->transformed_simd_vec_padded.clear();
 
     auto v = this->sequences | views::to_simd<simd_t>(TestFixture::padding_value_custom);
     this->compare(v, this->transformed_simd_vec_padded);
@@ -267,4 +282,31 @@ TYPED_TEST(view_to_simd_test, too_many_sequences)
     this->sequences.push_back(cont);
 
     EXPECT_THROW(typename TestFixture::view_to_simd_type{this->sequences}, std::invalid_argument);
+}
+
+TYPED_TEST(view_to_simd_test, ends_not_on_chunk_boundary)
+{
+    using simd_t = typename TestFixture::simd_t;
+
+    constexpr size_t seq1_size = 10;
+    // modify the sequence to get a size that is not a multiple of simd length.
+    this->sequences[0].resize(seq1_size);
+
+    // Second longest sequence in the set now.
+    size_t new_max_length = TestFixture::max_sequence_length - simd_traits<simd_t>::length - 1;
+
+    // If simd size is only 1, the compare range only holds one sequence which must have the same size.
+    if (this->sequences.size() == 1)
+        new_max_length = seq1_size;
+
+    // First update the test vectors padding values
+    for (size_t i = seq1_size; i < new_max_length; ++i)
+        this->transformed_simd_vec[i][0] = this->padding_value_dna4;
+
+    // Second shrink test vector to second longest sequence.
+    this->transformed_simd_vec.resize(new_max_length);
+
+    // Now test against the test vector.
+    auto simd_view = this->sequences | views::to_simd<simd_t>;
+    this->compare(simd_view, this->transformed_simd_vec);
 }
