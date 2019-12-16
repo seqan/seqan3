@@ -44,7 +44,7 @@ public:
 };
 
 // Register test.
-TYPED_TEST_CASE(type_inspection, reflection_types);
+TYPED_TEST_SUITE(type_inspection, reflection_types, );
 
 TYPED_TEST(type_inspection, type_name_as_string)
 {
