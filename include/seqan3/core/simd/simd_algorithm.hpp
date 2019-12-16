@@ -280,20 +280,28 @@ constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
  * ```
  */
 template <uint8_t index, simd::simd_concept simd_t>
+constexpr simd_t extract_halve(simd_t const & src)
+{
+    static_assert(index < 2, "The index must be in the range of [0, 1]");
+
+    return detail::extract_impl<2>(src, index);
+}
+
 //!\cond
-    requires detail::is_builtin_simd_v<simd_t>
-//!\endcond
+template <uint8_t index, simd::simd_concept simd_t>
+    requires detail::is_builtin_simd_v<simd_t> &&
+             detail::is_native_builtin_simd_v<simd_t> &&
+             simd_traits<simd_t>::max_length == 16
 constexpr simd_t extract_halve(simd_t const & src)
 {
     static_assert(index < 2, "The index must be in the range of [0, 1]");
 
     if constexpr (simd_traits<simd_t>::length < 2) // In case there are less elements available return unchanged value.
-            return src;
-    else if constexpr (detail::is_native_builtin_simd_v<simd_t> && simd_traits<simd_t>::max_length == 16) // SSE4
+        return src;
+    else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), (index) << 3));
-    else // Elementwise extraction fall back.
-        return detail::extract_impl<2>(src, index);
 }
+//!\endcond
 
 /*!\brief Extracts one quarter of the given simd vector and stores it in the lower quarter of the target vector.
  * \ingroup simd
@@ -318,20 +326,28 @@ constexpr simd_t extract_halve(simd_t const & src)
  * ```
  */
 template <uint8_t index, simd::simd_concept simd_t>
+constexpr simd_t extract_quarter(simd_t const & src)
+{
+    static_assert(index < 4, "The index must be in the range of [0, 1, 2, 3]");
+
+    return detail::extract_impl<4>(src, index);
+}
+
 //!\cond
-    requires detail::is_builtin_simd_v<simd_t>
-//!\endcond
+template <uint8_t index, simd::simd_concept simd_t>
+    requires detail::is_builtin_simd_v<simd_t> &&
+             detail::is_native_builtin_simd_v<simd_t> &&
+             simd_traits<simd_t>::max_length == 16
 constexpr simd_t extract_quarter(simd_t const & src)
 {
     static_assert(index < 4, "The index must be in the range of [0, 1, 2, 3]");
 
     if constexpr (simd_traits<simd_t>::length < 4) // In case there are less elements available return unchanged value.
         return src;
-    else if constexpr (detail::is_native_builtin_simd_v<simd_t> && simd_traits<simd_t>::max_length == 16) // SSE4
+    else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), index << 2));
-    else // auto vectorisable fall back
-        return detail::extract_impl<4>(src, index);
 }
+//!\endcond
 
 /*!\brief Extracts one eighth of the given simd vector and stores it in the lower eighth of the target vector.
  * \ingroup simd
@@ -356,20 +372,27 @@ constexpr simd_t extract_quarter(simd_t const & src)
  * ```
  */
 template <uint8_t index, simd::simd_concept simd_t>
+constexpr simd_t extract_eighth(simd_t const & src)
+{
+    return detail::extract_impl<8>(src, index);
+}
+
 //!\cond
-    requires detail::is_builtin_simd_v<simd_t>
-//!\endcond
+template <uint8_t index, simd::simd_concept simd_t>
+    requires detail::is_builtin_simd_v<simd_t> &&
+             detail::is_native_builtin_simd_v<simd_t> &&
+             simd_traits<simd_t>::max_length == 16
 constexpr simd_t extract_eighth(simd_t const & src)
 {
     static_assert(index < 8, "The index must be in the range of [0, 1, 2, 3, 4, 5, 6, 7]");
 
     if constexpr (simd_traits<simd_t>::length < 8) // In case there are less elements available return unchanged value.
         return src;
-    else if constexpr (detail::is_native_builtin_simd_v<simd_t> && simd_traits<simd_t>::max_length == 16) // SSE4
+    else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), index << 1));
-    else // auto vectorisable fall back
-        return detail::extract_impl<8>(src, index);
 }
+//!\endcond
+
 } // namespace seqan3::detail
 
 namespace seqan3
@@ -421,34 +444,36 @@ constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
  * \include test/snippet/core/simd/simd_load.cpp
  */
 template <simd::simd_concept simd_t>
+constexpr simd_t load(void const * mem_addr)
+{
+    assert(mem_addr != nullptr);
+    simd_t tmp{};
+
+    for (size_t i = 0; i < simd_traits<simd_t>::length; ++i)
+        tmp[i] = *(static_cast<typename simd_traits<simd_t>::scalar_type const *>(mem_addr) + i);
+
+    return tmp;
+}
+
 //!\cond
-    requires detail::is_builtin_simd_v<simd_t>
-//!\endcond
+template <simd::simd_concept simd_t>
+    requires detail::is_builtin_simd_v<simd_t> &&
+             detail::is_native_builtin_simd_v<simd_t>
 constexpr simd_t load(void const * mem_addr)
 {
     assert(mem_addr != nullptr);
 
-    if constexpr (detail::is_native_builtin_simd_v<simd_t>)
-    {
-        if constexpr (simd_traits<simd_t>::max_length == 16)
-            return reinterpret_cast<simd_t>(_mm_loadu_si128(reinterpret_cast<__m128i const *>(mem_addr)));
-        else if constexpr (simd_traits<simd_t>::max_length == 32)
-            return reinterpret_cast<simd_t>(_mm256_loadu_si256(reinterpret_cast<__m256i const *>(mem_addr)));
-        else if constexpr (simd_traits<simd_t>::max_length == 64)
-            return reinterpret_cast<simd_t>(_mm512_loadu_si512(mem_addr));
-        else
-            static_assert(simd_traits<simd_t>::max_length >= 16 && simd_traits<simd_t>::max_length <= 64,
-                          "Unsupported simd type.");
-    }
-    else // Load element wise from memory location if no intrinsics can be used.
-    {
-        simd_t tmp{};
-        for (size_t i = 0; i < simd_traits<simd_t>::length; ++i)
-            tmp[i] = *(static_cast<typename simd_traits<simd_t>::scalar_type const *>(mem_addr) + i);
-
-        return tmp;
-    }
+    if constexpr (simd_traits<simd_t>::max_length == 16)
+        return reinterpret_cast<simd_t>(_mm_loadu_si128(reinterpret_cast<__m128i const *>(mem_addr)));
+    else if constexpr (simd_traits<simd_t>::max_length == 32)
+        return reinterpret_cast<simd_t>(_mm256_loadu_si256(reinterpret_cast<__m256i const *>(mem_addr)));
+    else if constexpr (simd_traits<simd_t>::max_length == 64)
+        return reinterpret_cast<simd_t>(_mm512_loadu_si512(mem_addr));
+    else
+        static_assert(simd_traits<simd_t>::max_length >= 16 && simd_traits<simd_t>::max_length <= 64,
+                      "Unsupported simd type.");
 }
+//!\endcond
 
 /*!\brief Transposes the given simd vector matrix.
  * \ingroup simd
@@ -468,28 +493,28 @@ constexpr simd_t load(void const * mem_addr)
  * Quadratic.
  */
 template <simd::simd_concept simd_t>
-//!\cond
-    requires detail::is_builtin_simd_v<simd_t>
-//!\endcond
 constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
 {
-    // If possible use transpose using intrinsics for SSE4
-    if constexpr (simd_traits<simd_t>::max_length == 16 &&
-                  simd_traits<simd_t>::length == 16 &&
-                  detail::is_native_builtin_simd_v<simd_t>)
-    {
-        detail::transpose_matrix_sse4(matrix);
-    }
-    else // Element wise transpose matrix which is possibly auto vectorised.
-    {
-        std::array<simd_t, simd_traits<simd_t>::length> tmp{};
-        for (size_t i = 0; i < matrix.size(); ++i)
-            for (size_t j = 0; j < matrix.size(); ++j)
-                tmp[j][i] = matrix[i][j];
+    std::array<simd_t, simd_traits<simd_t>::length> tmp{};
 
-        std::swap(tmp, matrix);
-    }
+    for (size_t i = 0; i < matrix.size(); ++i)
+        for (size_t j = 0; j < matrix.size(); ++j)
+            tmp[j][i] = matrix[i][j];
+
+    std::swap(tmp, matrix);
 }
+
+//!\cond
+template <simd::simd_concept simd_t>
+    requires detail::is_builtin_simd_v<simd_t> &&
+             detail::is_native_builtin_simd_v<simd_t> &&
+             simd_traits<simd_t>::max_length == 16 &&
+             simd_traits<simd_t>::length == 16
+constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
+{
+    detail::transpose_matrix_sse4(matrix);
+}
+//!\endcond
 
 /*!\brief Upcasts the given vector into the target vector using sign extension of packed values.
  * \ingroup simd
@@ -500,43 +525,47 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
  * \include test/snippet/core/simd/simd_upcast.cpp
  */
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
-//!\cond
-    requires detail::is_builtin_simd_v<target_simd_t> &&
-             detail::is_builtin_simd_v<source_simd_t>
-//!\endcond
 constexpr target_simd_t upcast(source_simd_t const & src)
 {
     static_assert(simd_traits<target_simd_t>::length <= simd_traits<source_simd_t>::length,
                   "The length of the target simd type must be greater or equal than the length of the source simd type.");
 
-    if constexpr (detail::is_native_builtin_simd_v<source_simd_t>)
-    {
-        if constexpr (simd_traits<source_simd_t>::length == simd_traits<target_simd_t>::length)
-        {
-            static_assert(simd_traits<target_simd_t>::max_length == simd_traits<source_simd_t>::max_length,
-                        "Target vector has a different byte size.");
-            return reinterpret_cast<target_simd_t>(src);  // Same packing so we do not cast.
-        }
-        else if constexpr (std::signed_integral<typename simd_traits<source_simd_t>::scalar_type>)
-        {
-            return detail::upcast_signed<target_simd_t>(src);
-        }
-        else
-        {
-            static_assert(std::unsigned_integral<typename simd_traits<source_simd_t>::scalar_type>,
-                        "Expected unsigned scalar type.");
-            return detail::upcast_unsigned<target_simd_t>(src);
-        }
-    }
-    else // Elementwise upcast if no intrinsics can be used.
-    {
-        target_simd_t tmp{};
-        for (unsigned i = 0; i < simd_traits<target_simd_t>::length; ++i)
-            tmp[i] = static_cast<typename simd_traits<target_simd_t>::scalar_type>(src[i]);
+    target_simd_t tmp{};
+    for (unsigned i = 0; i < simd_traits<target_simd_t>::length; ++i)
+        tmp[i] = static_cast<typename simd_traits<target_simd_t>::scalar_type>(src[i]);
 
-        return tmp;
+    return tmp;
+}
+
+//!\cond
+template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
+    requires detail::is_builtin_simd_v<target_simd_t> &&
+             detail::is_builtin_simd_v<source_simd_t> &&
+             detail::is_native_builtin_simd_v<source_simd_t>
+constexpr target_simd_t upcast(source_simd_t const & src)
+{
+    static_assert(simd_traits<target_simd_t>::length <= simd_traits<source_simd_t>::length,
+                  "The length of the target simd type must be greater or equal than the length of the source simd type.");
+
+    if constexpr (simd_traits<source_simd_t>::length == simd_traits<target_simd_t>::length)
+    {
+        static_assert(simd_traits<target_simd_t>::max_length == simd_traits<source_simd_t>::max_length,
+                    "Target vector has a different byte size.");
+        return reinterpret_cast<target_simd_t>(src);  // Same packing so we do not cast.
+    }
+    else if constexpr (std::signed_integral<typename simd_traits<source_simd_t>::scalar_type>)
+    {
+        return detail::upcast_signed<target_simd_t>(src);
+    }
+    else
+    {
+        static_assert(std::unsigned_integral<typename simd_traits<source_simd_t>::scalar_type>,
+                      "Expected unsigned scalar type.");
+        return detail::upcast_unsigned<target_simd_t>(src);
     }
 }
+//!\endcond
+
 } // inline namespace simd
 
 } // namespace seqan3
