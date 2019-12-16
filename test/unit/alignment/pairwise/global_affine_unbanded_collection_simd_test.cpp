@@ -40,5 +40,5 @@ using pairwise_collection_simd_global_affine_unbanded_testing_types = ::testing:
     >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_collection_simd_global_affine_unbanded,
-                              pairwise_alignment_collection_test,
-                              pairwise_collection_simd_global_affine_unbanded_testing_types);
+                               pairwise_alignment_collection_test,
+                               pairwise_collection_simd_global_affine_unbanded_testing_types, );
