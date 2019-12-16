@@ -39,6 +39,6 @@ using pairwise_collection_simd_global_affine_unbanded_testing_types = ::testing:
         pairwise_alignment_fixture<&collection::simd::global::affine::unbanded::dna4_01>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(pairwise_collection_simd_global_affine_unbanded,
+INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_collection_simd_global_affine_unbanded,
                               pairwise_alignment_collection_test,
                               pairwise_collection_simd_global_affine_unbanded_testing_types);
