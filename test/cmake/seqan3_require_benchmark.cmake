@@ -6,9 +6,7 @@
 # -----------------------------------------------------------------------------------------------------
 
 # Exposes the google-benchmark target `gbenchmark`.
-macro (seqan3_require_benchmark)
-    enable_testing ()
-
+macro (seqan3_require_benchmark_old gbenchmark_git_tag)
     set (gbenchmark_project_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
     list (APPEND gbenchmark_project_args "-DBENCHMARK_ENABLE_TESTING=false")
     # google-benchmarks suggest to use LTO (link-time optimisation), but we don't really need that because we are a
@@ -26,7 +24,7 @@ macro (seqan3_require_benchmark)
         gbenchmark_project
         PREFIX gbenchmark_project
         GIT_REPOSITORY "https://github.com/google/benchmark.git"
-        GIT_TAG "v1.5.0"
+        GIT_TAG "${gbenchmark_git_tag}"
         SOURCE_DIR "${SEQAN3_BENCHMARK_CLONE_DIR}"
         CMAKE_ARGS "${gbenchmark_project_args}"
         BUILD_BYPRODUCTS "${gbenchmark_path}"
@@ -47,4 +45,32 @@ macro (seqan3_require_benchmark)
     endif()
 
     unset (gbenchmark_path)
+endmacro ()
+
+macro (seqan3_require_benchmark)
+    enable_testing ()
+
+    set (gbenchmark_git_tag "v1.5.0")
+
+    if (NOT CMAKE_VERSION VERSION_LESS 3.14)
+        message (STATUS "Fetch google benchmark:")
+
+        include (FetchContent)
+        FetchContent_Declare (
+            gbenchmark_fetch_content
+            GIT_REPOSITORY "https://github.com/google/benchmark.git"
+            GIT_TAG "${gbenchmark_git_tag}"
+        )
+        option (BENCHMARK_ENABLE_TESTING "" OFF)
+        FetchContent_MakeAvailable(gbenchmark_fetch_content)
+
+        # NOTE: google benchmark's CMakeLists.txt already defines Shlwapi
+        add_library (gbenchmark ALIAS benchmark_main)
+    else ()
+        message (STATUS "Use google benchmark as external project:")
+
+        seqan3_require_benchmark_old ("${gtest_git_tag}")
+    endif ()
+
+    add_custom_target (gbenchmark_build DEPENDS gbenchmark)
 endmacro ()
