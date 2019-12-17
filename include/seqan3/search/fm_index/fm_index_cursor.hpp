@@ -82,7 +82,7 @@ private:
     //!\brief Type of the alphabet size in the underlying SDSL index.
     using sdsl_sigma_type = typename index_type::sdsl_sigma_type;
     //!\brief Alphabet type of the index.
-    using index_char_type = typename index_t::char_type;
+    using index_alphabet_type = typename index_t::alphabet_type;
     //!\}
 
     //!\brief Underlying FM index.
@@ -263,14 +263,14 @@ public:
     template <typename char_t>
     bool extend_right(char_t const c) noexcept
     {
-        static_assert(std::convertible_to<char_t, index_char_type>,
+        static_assert(std::convertible_to<char_t, index_alphabet_type>,
                      "The character must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
 
         size_type _lb = node.lb, _rb = node.rb;
 
-        sdsl_char_type c_char = to_rank(static_cast<index_char_type>(c)) + 1;
+        sdsl_char_type c_char = to_rank(static_cast<index_alphabet_type>(c)) + 1;
 
         if (backward_search(index->index, c_char, _lb, _rb))
         {
@@ -302,7 +302,7 @@ public:
     bool extend_right(seq_t && seq) noexcept
     {
         static_assert(std::ranges::forward_range<seq_t>, "The query must model forward_range.");
-        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, index_char_type>,
+        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, index_alphabet_type>,
                      "The alphabet of the sequence must be convertible to the alphabet of the index.");
 
         assert(index != nullptr); // range must not be empty!
@@ -315,7 +315,7 @@ public:
 
         for (auto it = std::ranges::begin(seq); it != std::ranges::end(seq); ++len, ++it)
         {
-            c = to_rank(static_cast<index_char_type>(*it)) + 1;
+            c = to_rank(static_cast<index_alphabet_type>(*it)) + 1;
 
             new_parent_lb = _lb;
             new_parent_rb = _rb;
@@ -447,7 +447,7 @@ public:
     {
         static_assert(std::ranges::input_range<text_t>, "The text must model input_range.");
         static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
-        static_assert(std::same_as<innermost_value_type_t<text_t>, index_char_type>,
+        static_assert(std::same_as<innermost_value_type_t<text_t>, index_alphabet_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 
@@ -464,7 +464,7 @@ public:
     {
         static_assert(std::ranges::input_range<text_t>, "The text collection must model input_range.");
         static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
-        static_assert(std::same_as<innermost_value_type_t<text_t>, index_char_type>,
+        static_assert(std::same_as<innermost_value_type_t<text_t>, index_alphabet_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 

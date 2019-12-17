@@ -69,11 +69,11 @@ public:
      * \{
      */
     //!\brief Type for the unidirectional cursor on the original text.
-    using fwd_cursor = fm_index_cursor<fm_index<typename index_type::char_type,
+    using fwd_cursor = fm_index_cursor<fm_index<typename index_type::alphabet_type,
                                                 index_type::text_layout_mode,
                                                 typename index_type::sdsl_index_type>>;
     //!\brief Type for the unidirectional cursor on the reversed text.
-    using rev_cursor = fm_index_cursor<fm_index<typename index_type::char_type,
+    using rev_cursor = fm_index_cursor<fm_index<typename index_type::alphabet_type,
                                                 index_type::text_layout_mode,
                                                 typename index_type::sdsl_index_type>>;
     //!\}
@@ -84,7 +84,7 @@ private:
     //!\brief Type of the alphabet size in the underlying SDSL index.
     using sdsl_sigma_type = typename index_type::sdsl_sigma_type;
     //!\brief Alphabet type of the index.
-    using index_char_type = typename index_t::char_type;
+    using index_alphabet_type = typename index_t::alphabet_type;
 
     //!\brief Type of the underlying FM index.
     index_type const * index;
@@ -416,14 +416,14 @@ public:
         fwd_cursor_last_used = true;
     #endif
 
-        static_assert(std::convertible_to<char_t, index_char_type>,
+        static_assert(std::convertible_to<char_t, index_alphabet_type>,
                      "The character must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
 
         size_type new_parent_lb = fwd_lb, new_parent_rb = fwd_rb;
 
-        auto c_char = to_rank(static_cast<index_char_type>(c)) + 1;
+        auto c_char = to_rank(static_cast<index_alphabet_type>(c)) + 1;
         if (bidirectional_search(index->fwd_fm.index, c_char, fwd_lb, fwd_rb, rev_lb, rev_rb))
         {
             parent_lb = new_parent_lb;
@@ -457,14 +457,14 @@ public:
         fwd_cursor_last_used = false;
     #endif
 
-        static_assert(std::convertible_to<char_t, index_char_type>,
+        static_assert(std::convertible_to<char_t, index_alphabet_type>,
                       "The character must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
 
         size_type new_parent_lb = rev_lb, new_parent_rb = rev_rb;
 
-        auto c_char = to_rank(static_cast<index_char_type>(c)) + 1;
+        auto c_char = to_rank(static_cast<index_alphabet_type>(c)) + 1;
         if (bidirectional_search(index->rev_fm.index, c_char, rev_lb, rev_rb, fwd_lb, fwd_rb))
         {
             parent_lb = new_parent_lb;
@@ -498,7 +498,7 @@ public:
     bool extend_right(seq_t && seq) noexcept
     {
         static_assert(std::ranges::forward_range<seq_t>, "The query must model forward_range.");
-        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, index_char_type>,
+        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, index_alphabet_type>,
                       "The alphabet of the sequence must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
@@ -517,7 +517,7 @@ public:
 
         for (auto it = first; it != last; ++len, ++it)
         {
-            c = to_rank(static_cast<index_char_type>(*it)) + 1;
+            c = to_rank(static_cast<index_alphabet_type>(*it)) + 1;
 
             new_parent_lb = _fwd_lb;
             new_parent_rb = _fwd_rb;
@@ -563,7 +563,7 @@ public:
     bool extend_left(seq_t && seq) noexcept
     {
         static_assert(std::ranges::bidirectional_range<seq_t>, "The query must model bidirectional_range.");
-        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, index_char_type>,
+        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, index_alphabet_type>,
                       "The alphabet of the sequence must be convertible to the alphabet of the index.");
         assert(index != nullptr);
 
@@ -584,7 +584,7 @@ public:
 
         for (auto it = first; it != last; ++len, ++it)
         {
-            c = to_rank(static_cast<index_char_type>(*it)) + 1;
+            c = to_rank(static_cast<index_alphabet_type>(*it)) + 1;
 
             new_parent_lb = _rev_lb;
             new_parent_rb = _rev_rb;
@@ -868,7 +868,7 @@ public:
     {
         static_assert(std::ranges::input_range<text_t>, "The text must model input_range.");
         static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
-        static_assert(std::same_as<innermost_value_type_t<text_t>, index_char_type>,
+        static_assert(std::same_as<innermost_value_type_t<text_t>, index_alphabet_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 
@@ -885,7 +885,7 @@ public:
     {
         static_assert(std::ranges::input_range<text_t>, "The text collection must model input_range.");
         static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
-        static_assert(std::same_as<innermost_value_type_t<text_t>, index_char_type>,
+        static_assert(std::same_as<innermost_value_type_t<text_t>, index_alphabet_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 

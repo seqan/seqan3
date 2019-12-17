@@ -50,11 +50,11 @@ class bi_fm_index_cursor;
  * ### Running time / Space consumption
  *
  * \f$SAMPLING\_RATE = 16\f$
- * \f$\Sigma\f$: alphabet_size<char_type> where char_type is the seqan3 alphabet type (e.g. dna4 has an alphabet size
- *               of 4).
+ * \f$\Sigma\f$: alphabet_size<alphabet_type> where alphabet_type is the seqan3 alphabet type (e.g. seqan3::dna4 has an
+ *               alphabet size of 4).
  *
- * For an index over a text collection a delimiter is added inbetween the texts. This causes sigma to increase by 1.
- * \attention For any alphabet, the symbol with rank 255 is not allowed to occur in the text. Addtionally,
+ * For an index over a text collection a delimiter is added in between the texts. This causes sigma to increase by 1.
+ * \attention For any alphabet, the symbol with rank 255 is not allowed to occur in the text. Additionally,
  *            rank 254 cannot occur when indexing text collections.
  *
  * \if DEV
@@ -90,8 +90,6 @@ using sdsl_wt_index_type =
  *            please hard-code your sdsl_index_type to a concrete type.
  */
 using default_sdsl_index_type = sdsl_wt_index_type;
-
-
 
 /*!\brief The SeqAn FM Index.
  * \implements seqan3::fm_index_specialisation
@@ -325,7 +323,7 @@ public:
      * \{
      */
     //!\brief The type of the underlying character of the indexed text.
-    using char_type = alphabet_t;
+    using alphabet_type = alphabet_t;
     //!\brief Type for representing positions in the indexed text.
     using size_type = typename sdsl_index_type::size_type;
     //!\brief The type of the (unidirectional) cursor.

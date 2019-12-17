@@ -167,7 +167,7 @@ public:
      * \{
      */
     //!\brief The type of the underlying character of the indexed text.
-    using char_type = typename fm_index_type::char_type;
+    using alphabet_type = typename fm_index_type::alphabet_type;
     //!\brief Type for representing positions in the indexed text.
     using size_type = typename sdsl_index_type::size_type;
     //!\}
