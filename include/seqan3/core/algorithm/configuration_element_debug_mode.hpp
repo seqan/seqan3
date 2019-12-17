@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::algorithm_debugging.
+ * \brief Provides seqan3::detail::debug_mode.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -17,7 +17,7 @@
 namespace seqan3::detail
 {
 /*!\brief A global configuration type used to enabled debugging of algorithms.
- * \ingroup alignment_configuration
+ * \ingroup algorithm
  * \tparam wrapped_config_id_t The algorithm specific configuration id wrapped in a std::integral_constant.
  *
  * \details
@@ -26,7 +26,7 @@ namespace seqan3::detail
  * trace matrix of the alignment algorithm.
  */
 template <typename wrapped_config_id_t>
-struct algorithm_debugging : public pipeable_config_element<algorithm_debugging<wrapped_config_id_t>, bool>
+struct debug_mode : public pipeable_config_element<debug_mode<wrapped_config_id_t>, bool>
 {
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr typename wrapped_config_id_t::value_type id{wrapped_config_id_t::value};

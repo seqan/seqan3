@@ -121,7 +121,7 @@ private:
     template <typename alignment_result_value_t>
     static constexpr auto augment_if_debug(alignment_result_value_t)
     {
-        if constexpr (configuration_t::template exists<detail::algorithm_debugging>())
+        if constexpr (configuration_t::template exists<detail::debug_mode>())
         {
             using as_type_list = transfer_template_args_onto_t<alignment_result_value_t, type_list>;
             using score_matrix_t = two_dimensional_matrix<std::optional<score_type>,

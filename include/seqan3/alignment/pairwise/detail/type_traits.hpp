@@ -69,7 +69,7 @@ struct alignment_configuration_traits
     //!\brief Flag indicating whether banded alignment mode is enabled.
     static constexpr bool is_banded = config_t::template exists<align_cfg::band>();
     //!\brief Flag indicating whether debug mode is enabled.
-    static constexpr bool is_debug = config_t::template exists<detail::algorithm_debugging>();
+    static constexpr bool is_debug = config_t::template exists<detail::debug_mode>();
 
     //!\brief The configured alignment mode.
     using alignment_mode_t = decltype(get<align_cfg::mode>(std::declval<config_t>()).value);
