@@ -40,13 +40,11 @@ write_file_dummy_struct go{};
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges> // std::ranges::copy
 
-using namespace seqan3;
-
 int main()
 {
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
-    sequence_file_input fin{tmp_dir/"my.fasta"};
+    seqan3::sequence_file_input fin{tmp_dir/"my.fasta"};
 
     using record_type = decltype(fin)::record_type;
     std::vector<record_type> records{};
@@ -61,6 +59,6 @@ int main()
     // But you can also do this:
     std::ranges::copy(fin, std::ranges::back_inserter(records));
 
-    debug_stream << records << std::endl;
+    seqan3::debug_stream << records << '\n';
 }
 //![solution]

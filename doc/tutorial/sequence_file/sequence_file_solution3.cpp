@@ -57,36 +57,34 @@ write_file_dummy_struct go{};
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
-
 int main()
 {
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
-    sequence_file_input fin{tmp_dir/"my.fastq"};
+    seqan3::sequence_file_input fin{tmp_dir/"my.fastq"};
 
     auto length_filter = std::views::filter([] (auto const & rec)
     {
-        return std::ranges::size(get<field::seq>(rec)) >= 5;
+        return std::ranges::size(seqan3::get<seqan3::field::seq>(rec)) >= 5;
     });
 
     // you can use a for loop
 
     // for (auto & rec : fin | length_filter | std::views::take(2))
     // {
-    //     debug_stream << "ID: " << get<field::id>(rec) << '\n';
+    //     seqan3::debug_stream << "ID: " << seqan3::get<seqan3::field::id>(rec) << '\n';
     // }
 
     // But you can also do this to retrieve all IDs into a vector:
     std::vector<std::string> ids = fin
-                                 | length_filter                                // apply length filter
-                                 | std::views::take(2)                          // take first two records
-                                 | views::get<field::id>                        // select only ID from record
-                                 | views::convert<std::string &&>               // mark ID to be moved out of record
-                                 | views::to<std::vector<std::string>>;         // convert to container
+                                 | length_filter                                    // apply length filter
+                                 | std::views::take(2)                              // take first two records
+                                 | seqan3::views::get<seqan3::field::id>            // select only ID from record
+                                 | seqan3::views::convert<std::string &&>           // mark ID to be moved out of record
+                                 | seqan3::views::to<std::vector<std::string>>;     // convert to container
     // Note that you need to know the type of id (std::string)
     // Converting to && prevents the IDs from being copied
 
-    debug_stream << ids << std::endl;
+    seqan3::debug_stream << ids << '\n';
 }
 //![solution]

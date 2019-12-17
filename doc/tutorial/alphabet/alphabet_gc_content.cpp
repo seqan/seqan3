@@ -9,7 +9,7 @@
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/to.hpp>
 
-using namespace seqan3;
+using seqan3::operator""_dna5;
 
 int main (int argc, char * argv[])
 {
@@ -22,18 +22,18 @@ int main (int argc, char * argv[])
     }
     catch (seqan3::parser_invalid_argument const & ext) // the input is invalid
     {
-        debug_stream << "[PARSER ERROR] " << ext.what() << '\n';
+        seqan3::debug_stream << "[PARSER ERROR] " << ext.what() << '\n';
         return 0;
     }
 
     // Convert the input to a dna5 sequence.
-    std::vector<dna5> sequence = input | views::char_to<dna5> | views::to<std::vector>;
+    std::vector<seqan3::dna5> sequence = input | seqan3::views::char_to<seqan3::dna5> | seqan3::views::to<std::vector>;
 
     // Initialise an array with count values for dna5 symbols.
-    std::array<size_t, dna5::alphabet_size> count{}; // default initialised with zeroes
+    std::array<size_t, seqan3::dna5::alphabet_size> count{}; // default initialised with zeroes
 
     // Increase the symbol count according to the sequence.
-    for (dna5 symbol : sequence)
+    for (seqan3::dna5 symbol : sequence)
         ++count[symbol.to_rank()];
 
     // Calculate the GC content: (#G + #C) / (#A + #T + #G + #C).
@@ -41,7 +41,7 @@ int main (int argc, char * argv[])
     size_t atgc = input.size() - count['N'_dna5.to_rank()];
     float gc_content = 1.0f * gc / atgc;
 
-    debug_stream << "The GC content of " << sequence << " is " << 100 * gc_content << "%.\n";
+    seqan3::debug_stream << "The GC content of " << sequence << " is " << 100 * gc_content << "%.\n";
 
     return 0;
 }

@@ -6,7 +6,7 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using namespace seqan3;
+using seqan3::operator""_aa27;
 
 int main()
 {
@@ -14,10 +14,11 @@ int main()
     auto seq2 = "AFLPGWQEENKLSKIWMKDCGCLW"_aa27;
 
     // Configure the alignment kernel.
-    auto config = align_cfg::mode{global_alignment} |
-                  align_cfg::scoring{aminoacid_scoring_scheme{aminoacid_similarity_matrix::BLOSUM62}} |
-                  align_cfg::gap{gap_scheme{gap_score{-2}, gap_open_score{-9}}};
+    auto config = seqan3::align_cfg::mode{seqan3::global_alignment} |
+                  seqan3::align_cfg::scoring{seqan3::aminoacid_scoring_scheme{
+                      seqan3::aminoacid_similarity_matrix::BLOSUM62}} |
+                  seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-2}, seqan3::gap_open_score{-9}}};
 
-    for (auto const & res : align_pairwise(std::tie(seq1, seq2), config))
-        debug_stream << "Score: " << res.score() << '\n';
+    for (auto const & res : seqan3::align_pairwise(std::tie(seq1, seq2), config))
+        seqan3::debug_stream << "Score: " << res.score() << '\n';
 }

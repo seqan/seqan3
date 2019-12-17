@@ -13,7 +13,6 @@ seqan3::cleanup index_file{"index.file"};
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/std/filesystem>
 
-using namespace seqan3;
 using namespace std::string_literals;
 
 int main()
@@ -24,8 +23,8 @@ int main()
 std::vector<std::string> text{{"Garfield the fat cat without a hat."},
                               {"He is infinite, he is eternal."},
                               {"Yet another text I have to think about."}};
-fm_index index{text};
-bi_fm_index bi_index{text};
+seqan3::fm_index index{text};
+seqan3::bi_fm_index bi_index{text};
 //![text_collection]
 }
 
@@ -37,7 +36,7 @@ bi_fm_index bi_index{text};
 #include <cereal/archives/binary.hpp>               // for storing/loading indices via cereal
 
 std::string text{"Garfield the fat cat without a hat."};
-fm_index index{text};
+seqan3::fm_index index{text};
 {
     std::ofstream os{"index.file", std::ios::binary};
     cereal::BinaryOutputArchive oarchive{os};
@@ -49,7 +48,7 @@ fm_index index{text};
 {
 //![load]
 // we need to tell the index that we work on a single text and a `char` alphabet before loading
-fm_index<char, text_layout::single> index;
+seqan3::fm_index<char, seqan3::text_layout::single> index;
 {
     std::ifstream is{"index.file", std::ios::binary};
     cereal::BinaryInputArchive iarchive{is};
@@ -62,50 +61,50 @@ fm_index<char, text_layout::single> index;
 {
 //![error_search]
 std::string text{"Garfield the fat cat without a hat."};
-fm_index index{text};
-configuration const cfg = search_cfg::max_error{search_cfg::total{1},
-                                                search_cfg::substitution{0},
-                                                search_cfg::insertion{1},
-                                                search_cfg::deletion{1}};
-debug_stream << search("cat"s, index, cfg) << '\n'; // [14,17,18,32]
+seqan3::fm_index index{text};
+seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1},
+                                                                seqan3::search_cfg::substitution{0},
+                                                                seqan3::search_cfg::insertion{1},
+                                                                seqan3::search_cfg::deletion{1}};
+seqan3::debug_stream << search("cat"s, index, cfg) << '\n'; // [14,17,18,32]
 //![error_search]
 }
 
 {
 //![multiple_queries]
 std::string text{"Garfield the fat cat without a hat."};
-fm_index index{text};
+seqan3::fm_index index{text};
 std::vector<std::string> query{"cat"s, "hat"s};
-debug_stream << search(query, index) << '\n'; // [[17],[31]]
+seqan3::debug_stream << search(query, index) << '\n'; // [[17],[31]]
 //![multiple_queries]
 }
 
 {
 //![error_sum]
-configuration const cfg = search_cfg::max_error{search_cfg::total{2},
-                                                search_cfg::substitution{2},
-                                                search_cfg::insertion{1},
-                                                search_cfg::deletion{1}};
+seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{2},
+                                                                seqan3::search_cfg::substitution{2},
+                                                                seqan3::search_cfg::insertion{1},
+                                                                seqan3::search_cfg::deletion{1}};
 //![error_sum]
 }
 
 {
 //![mode_best]
-configuration const cfg = search_cfg::max_error{search_cfg::total{1},
-                                                search_cfg::substitution{0},
-                                                search_cfg::insertion{1},
-                                                search_cfg::deletion{1}} |
-                          search_cfg::mode{search_cfg::best};
+seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1},
+                                                                seqan3::search_cfg::substitution{0},
+                                                                seqan3::search_cfg::insertion{1},
+                                                                seqan3::search_cfg::deletion{1}} |
+                                                                seqan3::search_cfg::mode{seqan3::search_cfg::best};
 //![mode_best]
 }
 
 {
 //![mode_strata]
-configuration const cfg = search_cfg::max_error{search_cfg::total{2},
-                                                search_cfg::substitution{0},
-                                                search_cfg::insertion{1},
-                                                search_cfg::deletion{1}} |
-                          search_cfg::mode{search_cfg::strata{2}};
+seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{2},
+                                                                seqan3::search_cfg::substitution{0},
+                                                                seqan3::search_cfg::insertion{1},
+                                                                seqan3::search_cfg::deletion{1}} |
+                                                                seqan3::search_cfg::mode{seqan3::search_cfg::strata{2}};
 //![mode_strata]
 }
 

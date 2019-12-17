@@ -4,11 +4,11 @@
 #include <seqan3/argument_parser/all.hpp>                       // include argument parser
 #include <seqan3/range/container/bitcompressed_vector.hpp>      // include bitcompressed vector
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser("Vector-implementations-comparison", argc, argv);
+    seqan3::argument_parser myparser("Vector-implementations-comparison", argc, argv);
     size_t size{};
     bool use_bitvector{};
     myparser.add_positional_option(size, "Size of vector");
@@ -18,21 +18,22 @@ int main(int argc, char ** argv)
     {
          myparser.parse();
     }
-    catch (parser_invalid_argument const & ext)                     // catch user errors
+    catch (seqan3::parser_invalid_argument const & ext)                     // catch user errors
     {
-        debug_stream << "[Error] " << ext.what() << "\n";
+        seqan3::debug_stream << "[Error] " << ext.what() << "\n";
         return -1;
     }
 
     if (use_bitvector)
     {
-        bitcompressed_vector<dna4> vector;
+        seqan3::bitcompressed_vector<seqan3::dna4> vector;
         vector.resize(size, 'A'_dna4);
-        debug_stream << "Allocated bitcompressed_vector<dna4> of size " << vector.size() << std::endl;
+        seqan3::debug_stream << "Allocated seqan3::bitcompressed_vector<seqan3::dna4> of size "
+                             << vector.size() << '\n';
     }
     else
     {
-        std::vector<dna4> vector{size};
-        debug_stream << "Allocated std::vector<dna4> of size " << vector.size() << std::endl;
+        std::vector<seqan3::dna4> vector{size};
+        seqan3::debug_stream << "Allocated std::vector<seqan3::dna4> of size " << vector.size() << '\n';
     }
 }

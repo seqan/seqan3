@@ -48,7 +48,7 @@ int main(int argc, char ** argv)
         return -1;
     }
 
-    seqan3::debug_stream << "Yeah!" << std::endl;
+    seqan3::debug_stream << "Yeah!\n";
 
     return 0;
 }

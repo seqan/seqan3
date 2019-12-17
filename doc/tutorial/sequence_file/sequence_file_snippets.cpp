@@ -1,4 +1,3 @@
-#include <iostream>
 #include <fstream>
 
 #include <range/v3/numeric/accumulate.hpp>   // ranges::accumulate
@@ -75,39 +74,37 @@ IIIIHHGIIIIHHGIIIH
 
 write_file_dummy_struct go{}; // write file
 
-using namespace seqan3;
-
 int main()
 {
 
 {
 //![file_extensions]
-debug_stream << format_fastq::file_extensions << std::endl; // prints [fastq,fq]
+seqan3::debug_stream << seqan3::format_fastq::file_extensions << '\n'; // prints [fastq,fq]
 //![file_extensions]
 
 //![modify_file_extensions]
-format_fastq::file_extensions.push_back("qq");
-sequence_file_input fin{std::filesystem::temp_directory_path()/"my.qq"}; // detects FASTQ format
+seqan3::format_fastq::file_extensions.push_back("qq");
+seqan3::sequence_file_input fin{std::filesystem::temp_directory_path()/"my.qq"}; // detects FASTQ format
 //![modify_file_extensions]
 }
 
 {
 /*
 //![construct_from_cin]
-sequence_file_input fin{std::cin, format_fasta{}};
+seqan3::sequence_file_input fin{std::cin, format_fasta{}};
 //![construct_from_cin]
 */
 }
 
 {
 //![amino_acid_type_trait]
-sequence_file_input<sequence_file_input_default_traits_aa> fin{std::filesystem::temp_directory_path()/"my.fasta"};
+seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_aa> fin{std::filesystem::temp_directory_path()/"my.fasta"};
 //![amino_acid_type_trait]
 }
 
 {
 //![record_type]
-sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
+seqan3::sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
 using record_type = typename decltype(fin)::record_type;
 
 // Because `fin` is a range, we can access the first element by dereferencing fin.begin()
@@ -116,7 +113,7 @@ record_type rec = *fin.begin();
 }
 
 {
-sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
+seqan3::sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
 using record_type = typename decltype(fin)::record_type;
 //![record_type2]
 record_type rec = std::move(*fin.begin()); // avoid copying
@@ -125,12 +122,13 @@ record_type rec = std::move(*fin.begin()); // avoid copying
 
 {
 //![paired_reads]
-sequence_file_input fin1{std::filesystem::temp_directory_path()/"my.fastq"};
-sequence_file_input fin2{std::filesystem::temp_directory_path()/"my.fastq"}; // for simplicity we take the same file
+// for simplicity we take the same file
+seqan3::sequence_file_input fin1{std::filesystem::temp_directory_path()/"my.fastq"};
+seqan3::sequence_file_input fin2{std::filesystem::temp_directory_path()/"my.fastq"};
 
-for (auto && [rec1, rec2] : views::zip(fin1, fin2)) // && is important! because views::zip returns temporaries
-{
-    if (get<field::id>(rec1) != get<field::id>(rec2))
+for (auto && [rec1, rec2] : seqan3::views::zip(fin1, fin2)) // && is important!
+{                                                           // because seqan3::views::zip returns temporaries
+    if (seqan3::get<seqan3::field::id>(rec1) != seqan3::get<seqan3::field::id>(rec2))
         throw std::runtime_error("Oh oh your pairs don't match.");
 }
 //![paired_reads]
@@ -138,32 +136,32 @@ for (auto && [rec1, rec2] : views::zip(fin1, fin2)) // && is important! because 
 
 {
 //![read_in_batches]
-sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
+seqan3::sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
 
-for (auto && records : fin | ranges::view::chunk(10)) // && is important! because views::chunk returns temporaries
-{
+for (auto && records : fin | ranges::view::chunk(10))   // && is important!
+{                                                       // because seqan3::views::chunk returns temporaries
     // `records` contains 10 elements (or less at the end)
-    debug_stream << "Taking the next 10 sequences:\n";
-    debug_stream << "ID:  " << get<field::id>(*records.begin()) << '\n'; // prints first ID in batch
-}
+    seqan3::debug_stream << "Taking the next 10 sequences:\n";
+    seqan3::debug_stream << "ID:  " << seqan3::get<seqan3::field::id>(*records.begin()) << '\n';
+}                                                                                           // prints first ID in batch
 //![read_in_batches]
 }
 
 {
 //![quality_filter]
-sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
+seqan3::sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
 
 // std::views::filter takes a function object (a lambda in this case) as input that returns a boolean
 auto minimum_quality_filter = std::views::filter([] (auto const & rec)
 {
-    auto qual = get<field::qual>(rec) | std::views::transform([] (auto q) { return q.to_phred(); });
+    auto qual = seqan3::get<seqan3::field::qual>(rec) | std::views::transform([] (auto q) { return q.to_phred(); });
     double sum = ranges::accumulate(qual.begin(), qual.end(), 0);
     return sum / std::ranges::size(qual) >= 40; // minimum average quality >= 40
 });
 
 for (auto & rec : fin | minimum_quality_filter)
 {
-    debug_stream << "ID: " << get<field::id>(rec) << '\n';
+    seqan3::debug_stream << "ID: " << seqan3::get<seqan3::field::id>(rec) << '\n';
 }
 //![quality_filter]
 }
@@ -172,15 +170,15 @@ for (auto & rec : fin | minimum_quality_filter)
 //![piping_in_out]
 auto tmp_dir = std::filesystem::temp_directory_path();
 
-sequence_file_input fin{tmp_dir/"my.fastq"};
-sequence_file_output fout{tmp_dir/"output.fastq"};
+seqan3::sequence_file_input fin{tmp_dir/"my.fastq"};
+seqan3::sequence_file_output fout{tmp_dir/"output.fastq"};
 
 // the following are equivalent:
 fin | fout;
 
 fout = fin;
 
-sequence_file_output{tmp_dir/"output.fastq"} = sequence_file_input{tmp_dir/"my.fastq"};
+seqan3::sequence_file_output{tmp_dir/"output.fastq"} = seqan3::sequence_file_input{tmp_dir/"my.fastq"};
 //![piping_in_out]
 }
 
@@ -188,7 +186,7 @@ sequence_file_output{tmp_dir/"output.fastq"} = sequence_file_input{tmp_dir/"my.f
 //![file_conversion]
 auto tmp_dir = std::filesystem::temp_directory_path();
 
-sequence_file_output{tmp_dir/"output.fasta"} = sequence_file_input{tmp_dir/"my.fastq"};
+seqan3::sequence_file_output{tmp_dir/"output.fasta"} = seqan3::sequence_file_input{tmp_dir/"my.fastq"};
 //![file_conversion]
 }
 

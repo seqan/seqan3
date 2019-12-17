@@ -8,8 +8,6 @@
 #include <seqan3/std/charconv>            // includes std::from_chars
 #include <seqan3/std/filesystem>          // use std::filesystem::path
 
-using namespace seqan3;
-
 // This is the program!
 // Take a look at it if you are interested in an example of parsing a data file.
 // -----------------------------------------------------------------------------
@@ -23,7 +21,7 @@ number_type to_number(range_type && range)
 
     if (res.ec != std::errc{})
     {
-        debug_stream << "Could not cast '" << range << "' to a valid number\n";
+        seqan3::debug_stream << "Could not cast '" << range << "' to a valid number\n";
         throw std::invalid_argument{"CAST ERROR"};
     }
     return num;
@@ -53,15 +51,16 @@ void run_program(std::filesystem::path & path, std::vector<uint8_t> sn, std::str
         //![altered_while]
 
         if (aggr_by == "median")
-            debug_stream << ([&v] () { std::sort(v.begin(), v.end()); return v[v.size()/2]; })() << std::endl;
+            seqan3::debug_stream << ([&v] () { std::sort(v.begin(), v.end()); return v[v.size()/2]; })() << '\n';
         else if (aggr_by == "mean")
-            debug_stream << ([&v] () { double sum{}; for (auto i : v) sum += i; return sum / v.size(); })() << std::endl;
+            seqan3::debug_stream << ([&v] () { double sum{}; for (auto i : v) sum += i; return sum / v.size(); })()
+                                 << '\n';
         else
-            debug_stream << "I do not know the aggregation method " << aggr_by << std::endl;
+            seqan3::debug_stream << "I do not know the aggregation method " << aggr_by << '\n';
     }
     else
     {
-        debug_stream << "Error: Cannot open file for reading.\n";
+        seqan3::debug_stream << "Error: Cannot open file for reading.\n";
     }
 }
 // -----------------------------------------------------------------------------
@@ -75,7 +74,7 @@ struct cmd_arguments
     bool header_is_set{};
 };
 
-void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
+void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments & args)
 {
     parser.info.author = "Cercei";
     parser.info.short_description = "Aggregate average Game of Thrones viewers by season.";
@@ -94,18 +93,18 @@ void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
 
 int main(int argc, char ** argv)
 {
-    argument_parser myparser{"Game-of-Parsing", argc, argv};        // initialise myparser
+    seqan3::argument_parser myparser{"Game-of-Parsing", argc, argv};        // initialise myparser
     cmd_arguments args{};
 
-    initialize_argument_parser(myparser, args);
+    initialise_argument_parser(myparser, args);
 
     try
     {
-         myparser.parse();                                          // trigger command line parsing
+         myparser.parse();                                                  // trigger command line parsing
     }
-    catch (parser_invalid_argument const & ext)                     // catch user errors
+    catch (seqan3::parser_invalid_argument const & ext)                     // catch user errors
     {
-        debug_stream << "[Winter has come] " << ext.what() << "\n"; // customise your error message
+        seqan3::debug_stream << "[Winter has come] " << ext.what() << "\n"; // customise your error message
         return -1;
     }
 
