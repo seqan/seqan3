@@ -26,7 +26,7 @@ namespace seqan3::detail
  *
  * \details
  *
- * The seqan3::search_cfg::id is used to identify a specific search configuration element independent of
+ * The seqan3::detail::search_config_id used to identify a specific search configuration element independent of
  * it's concrete type and position within the seqan3::search_cfg::search_configuration object.
  * Thus one can access the value of the corresponding configuration element via the special get interface.
  *
@@ -39,14 +39,14 @@ namespace seqan3::detail
  */
 enum struct search_config_id : uint8_t
 {
-    //!\brief Identifier for max_errors configuration.
-    max_error,
-    max_error_rate,
-    output,
-    mode,
+    max_error, //!< Identifier for the max_errors configuration.
+    max_error_rate, //!< Identifier for the max_error_rate configuration.
+    output, //!< Identifier for the output configuration.
+    mode, //!< Identifier for the search mode configuration.
+    parallel, //!< Identifier for the parallel execution configuration.
     //!\cond
     // ATTENTION: Must always be the last item; will be used to determine the number of ids.
-    SIZE
+    SIZE //!< Determines the size of the enum.
     //!\endcond
 };
 
@@ -61,19 +61,20 @@ enum struct search_config_id : uint8_t
  *
  * This matrix is used to check if the specified search configurations can be combined with each other.
  * A cell value `true`, indicates that the corresponding seqan3::detail::search_config_id in the current column can
- * be combined with the associated seqan3::search_cfg::id in the current row. The size of the matrix is determined by
- * the enum value `SIZE` of seqan3::detail::search_config_id.
+ * be combined with the associated seqan3::detail::search_config in the current row. The size of the matrix is
+ * determined by the enum value `SIZE` of seqan3::detail::search_config_id.
  */
 template <>
 inline constexpr std::array<std::array<bool, static_cast<uint8_t>(search_config_id::SIZE)>,
                             static_cast<uint8_t>(search_config_id::SIZE)> compatibility_table<search_config_id> =
 {
     {
-        // max_error, max_error_rate, output, mode
-        { 0, 0, 1, 1 },
-        { 0, 0, 1, 1 },
-        { 1, 1, 0, 1 },
-        { 1, 1, 1, 0 }
+        // max_error, max_error_rate, output, mode, parallel
+        { 0, 0, 1, 1, 1},
+        { 0, 0, 1, 1, 1},
+        { 1, 1, 0, 1, 1},
+        { 1, 1, 1, 0, 1},
+        { 1, 1, 1, 1, 0}
     }
 };
 
