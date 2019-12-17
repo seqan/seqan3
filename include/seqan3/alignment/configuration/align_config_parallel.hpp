@@ -9,12 +9,13 @@
  * \brief Provides seqan3::align_cfg::parallel configuration.
  * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/algorithm/configuration_element_parallel_mode.hpp>
 
 namespace seqan3::align_cfg
 {
@@ -35,11 +36,7 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_parallel_example.cpp
  */
-struct parallel : public pipeable_config_element<parallel, uint32_t>
-{
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::parallel};
-};
+using parallel = seqan3::detail::parallel_mode<std::integral_constant<detail::align_config_id,
+                                                                      detail::align_config_id::parallel>>;
 
 } // namespace seqan3::align_cfg
