@@ -13,8 +13,10 @@
 #pragma once
 
 #include <seqan3/core/type_traits/pre.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
+#include <seqan3/search/algorithm/search_result.hpp>
 #include <seqan3/search/configuration/all.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 
@@ -123,38 +125,58 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 
     // TODO: filter hits and only do it when necessary (depending on error types)
 
+    constexpr bool output_cursor = cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>();
+
+    using result_t = std::conditional_t<output_cursor,
+                                        search_result_value_type<typename index_t::cursor_type>,
+                                        search_result_value_type<typename index_t::cursor_type, size_t, size_t>>;
+
+    std::vector<result_t> results;
+
     // output cursors or text_positions
-    if constexpr (cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>())
+    if constexpr (output_cursor)
     {
-        return internal_hits;
+        for (auto && cursor : internal_hits)
+        {
+            results.emplace_back(0, cursor);
+        }
+
+        return results;
     }
     else
     {
-        using hit_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
-                                         std::pair<typename index_t::size_type, typename index_t::size_type>,
-                                         typename index_t::size_type>;
-        std::vector<hit_t> hits;
-
         if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_best>>())
         {
             // only one cursor is reported but it might contain more than one text position
             if (!internal_hits.empty())
             {
-                auto text_pos = internal_hits[0].lazy_locate();
-                hits.push_back(text_pos[0]);
+                results.emplace_back(0, internal_hits[0], internal_hits[0].lazy_locate()[0]);
             }
         }
         else
         {
-            for (auto const & cur : internal_hits)
+            // Store the results of locate (either `size_t` or `std::pair<size_t, size_t>`) for erasing duplicates.
+            decltype(internal_hits[0].locate()) hits;
+
+            for (auto && cursor : internal_hits)
             {
-                for (auto const & text_pos : cur.locate())
+                for (auto const & text_pos : cursor.locate())
+                {
                     hits.push_back(text_pos);
+                }
+
                 std::sort(hits.begin(), hits.end());
                 hits.erase(std::unique(hits.begin(), hits.end()), hits.end());
+
+                for (auto const & text_pos : hits)
+                {
+                    results.emplace_back(0, cursor, text_pos);
+                }
+
+                hits.clear();
             }
         }
-        return hits;
+        return results;
     }
 }
 
@@ -184,28 +206,32 @@ inline auto search_all(index_t const & index, queries_t & queries, configuration
     // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
     //                  duplicates. more efficient to call delegate once with one vector instead of calling
     //                  delegate for each hit separately at once.
-    using text_pos_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
-                                          std::pair<typename index_t::size_type, typename index_t::size_type>,
-                                          typename index_t::size_type>;
-    using hit_t = std::conditional_t<cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>(),
-                                     typename index_t::cursor_type,
-                                     text_pos_t>;
+
+    constexpr bool output_cursor = cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>();
+    using result_t = std::conditional_t<output_cursor,
+                                        search_result_value_type<typename index_t::cursor_type>,
+                                        search_result_value_type<typename index_t::cursor_type, size_t, size_t>>;
 
     if constexpr (std::ranges::forward_range<queries_t> && std::ranges::random_access_range<value_type_t<queries_t>>)
     {
         // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
-        std::vector<std::vector<hit_t>> hits;
-        hits.reserve(std::distance(queries.begin(), queries.end()));
-        for (auto const query : queries)
-        {
-            hits.push_back(search_single(index, query, cfg));
-        }
-        return hits;
+        return (views::zip(std::views::iota(0), queries) | std::views::transform([&index, &cfg] (auto && zipped_pair) {
+            std::vector<search_result<result_t>> result;
+            for (auto && res : search_single(index, zipped_pair.second, cfg))
+            {
+                res.query_id = zipped_pair.first;
+                result.push_back(search_result<result_t>{res});
+            }
+            return result;
+        }));
     }
     else // std::ranges::random_access_range<queries_t>
     {
         // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
-        return search_single(index, queries, cfg);
+        std::vector<search_result<result_t>> result;
+        for (auto && res : search_single(index, queries, cfg))
+            result.push_back(search_result<result_t>{res});
+        return result;
     }
 }
 
