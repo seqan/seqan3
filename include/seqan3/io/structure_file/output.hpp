@@ -153,7 +153,7 @@ namespace seqan3
  * The record-based interface treats the file as a range of tuples (the records), but in certain situations
  * you might have the data as columns, i.e. a tuple-of-ranges, instead of range-of-tuples.
  *
- * You can use column-based writing in that case, it uses operator=() and views::zip():
+ * You can use column-based writing in that case, it uses operator=() and seqan3::views::zip():
  *
  * \include test/snippet/io/structure_file/structure_file_output_col_based.cpp
  *

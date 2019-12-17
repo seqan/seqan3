@@ -66,7 +66,6 @@ write_file_dummy_struct go{};
 #include <seqan3/io/alignment_file/input.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
@@ -76,35 +75,36 @@ int main()
 
     // read in reference information
     seqan3::sequence_file_input reference_file{tmp_dir/"reference.fasta"};
-    seqan3::concatenated_sequences<std::string> ref_ids{};
-    std::vector<std::vector<seqan3::dna5>> ref_seqs{};
+    std::vector<std::string> ref_ids{};
+    std::vector<seqan3::dna5_vector> ref_seqs{};
 
-    for (auto const & record : reference_file)
+    for (auto && record : reference_file)
     {
-        ref_ids.push_back(seqan3::get<seqan3::field::id>(record));
-        ref_seqs.push_back(seqan3::get<seqan3::field::seq>(record));
+        ref_ids.push_back(std::move(seqan3::get<seqan3::field::id>(record)));
+        ref_seqs.push_back(std::move(seqan3::get<seqan3::field::seq>(record)));
     }
 
-    seqan3::alignment_file_input mapping_file{tmp_dir/"mapping.sam",
-                                              ref_ids,
-                                              ref_seqs,
-                                              seqan3::fields<seqan3::field::id,
-                                                             seqan3::field::ref_id,
-                                                             seqan3::field::mapq,
-                                                             seqan3::field::alignment>{}};
+    using field_type = seqan3::fields<seqan3::field::id,
+                                      seqan3::field::ref_id,
+                                      seqan3::field::mapq,
+                                      seqan3::field::alignment>;
+
+    seqan3::alignment_file_input mapping_file{tmp_dir/"mapping.sam", ref_ids, ref_seqs, field_type{}};
 
     auto mapq_filter = std::views::filter([] (auto & rec) { return seqan3::get<seqan3::field::mapq>(rec) >= 30; });
 
     for (auto & [id, ref_id, mapq, alignment] : mapping_file | mapq_filter)
     {
         using seqan3::get;
-        auto & ref = get<0>(alignment);
         size_t sum_ref{};
-        std::ranges::for_each(ref.begin(), ref.end(), [&sum_ref] (auto c) { if (c == seqan3::gap{}) ++sum_ref; });
+        for (auto const & char_ref : get<0>(alignment))
+            if (char_ref == seqan3::gap{})
+                ++sum_ref;
 
-        auto & read = get<1>(alignment);
         size_t sum_read{};
-        std::ranges::for_each(read.begin(), read.end(), [&sum_read] (auto c) { if (c == seqan3::gap{}) ++sum_read; });
+        for (auto const & char_read : get<1>(alignment))
+            if (char_read == seqan3::gap{})
+                ++sum_read;
 
         seqan3::debug_stream << id << " mapped against " << ref_id << " with "
                              << sum_read << " gaps in the read sequence and "
