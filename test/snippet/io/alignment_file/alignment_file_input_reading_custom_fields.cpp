@@ -18,11 +18,11 @@ int main()
 
     seqan3::alignment_file_input fin{std::istringstream{sam_file_raw},
                                      seqan3::format_sam{},
-                                     seqan3::fields<seqan3::field::FLAG, seqan3::field::MAPQ>{}};
+                                     seqan3::fields<seqan3::field::flag, seqan3::field::mapq>{}};
 
     for (auto & rec : fin)
     {
-        seqan3::debug_stream << "flag:  "            << get<seqan3::field::FLAG>(rec) << '\n';
-        seqan3::debug_stream << "mapping quality:  " << get<seqan3::field::MAPQ>(rec) << '\n';
+        seqan3::debug_stream << "flag:  "            << get<seqan3::field::flag>(rec) << '\n';
+        seqan3::debug_stream << "mapping quality:  " << get<seqan3::field::mapq>(rec) << '\n';
     }
 }

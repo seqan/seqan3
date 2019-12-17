@@ -89,42 +89,42 @@ TEST(general, construct_by_filename)
     /* filename + fields */
     {
         test::tmp_filename filename{"alignment_file_output_constructor.sam"};
-        EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ>,
-                                                type_list<format_sam>>{filename.get_path(), fields<field::SEQ>{}} ));
+        EXPECT_NO_THROW(( alignment_file_output<fields<field::seq>,
+                                                type_list<format_sam>>{filename.get_path(), fields<field::seq>{}} ));
     }
 }
 
 TEST(general, construct_from_stream)
 {
     /* stream + format_tag */
-    EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ, field::ID, field::QUAL>,
+    EXPECT_NO_THROW(( alignment_file_output<fields<field::seq, field::id, field::qual>,
                                             type_list<format_sam>>{std::ostringstream{}, format_sam{}} ));
 
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ, field::ID, field::QUAL>,
+    EXPECT_NO_THROW(( alignment_file_output<fields<field::seq, field::id, field::qual>,
                                             type_list<format_sam>>{std::ostringstream{},
                                                                    format_sam{},
-                                                                   fields<field::SEQ, field::ID, field::QUAL>{}} ));
+                                                                   fields<field::seq, field::id, field::qual>{}} ));
 }
 
 TEST(general, default_template_args_and_deduction_guides)
 {
-    using comp1 = fields<field::SEQ,
-                         field::ID,
-                         field::OFFSET,
-                         field::REF_SEQ,
-                         field::REF_ID,
-                         field::REF_OFFSET,
-                         field::ALIGNMENT,
-                         field::MAPQ,
-                         field::QUAL,
-                         field::FLAG,
-                         field::MATE,
-                         field::TAGS,
-                         field::EVALUE,
-                         field::BIT_SCORE,
-                         field::HEADER_PTR>;
+    using comp1 = fields<field::seq,
+                         field::id,
+                         field::offset,
+                         field::ref_seq,
+                         field::ref_id,
+                         field::ref_offset,
+                         field::alignment,
+                         field::mapq,
+                         field::qual,
+                         field::flag,
+                         field::mate,
+                         field::tags,
+                         field::evalue,
+                         field::bit_score,
+                         field::header_ptr>;
     using comp2 = type_list<format_sam, format_bam>;
     using comp3 = char;
 
@@ -152,10 +152,10 @@ TEST(general, default_template_args_and_deduction_guides)
     {
         test::tmp_filename filename{"alignment_file_output_constructor.sam"};
 
-        alignment_file_output fout{filename.get_path(), fields<field::ALIGNMENT>{}};
+        alignment_file_output fout{filename.get_path(), fields<field::alignment>{}};
 
         using t = decltype(fout);
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::ALIGNMENT>>));             // changed
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::alignment>>));             // changed
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -217,7 +217,7 @@ TEST(row, assign_to_iterator)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
         begin(file) = r;
     });
@@ -227,7 +227,7 @@ TEST(row, push_back_record)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
         file.push_back(r);
     });
@@ -237,7 +237,7 @@ TEST(row, push_back_record_rvalue)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
         file.push_back(std::move(r));
     });
@@ -247,7 +247,7 @@ TEST(row, push_back_record_const)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> const r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> const r{seqs[i], ids[i]};
 
         file.push_back(r);
     });
@@ -257,7 +257,7 @@ TEST(row, push_back_record_const_element)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector const, std::string const>, fields<field::SEQ, field::ID>> const r{seqs[i], ids[i]};
+        record<type_list<dna5_vector const, std::string const>, fields<field::seq, field::id>> const r{seqs[i], ids[i]};
 
         file.push_back(r);
     });
@@ -320,9 +320,9 @@ TEST(row, different_fields_in_record_and_file)
     qual.resize(seqs[1].size());
 
     record<type_list<std::vector<phred42>, std::string, dna5_vector>,
-           fields<field::QUAL, field::ID, field::SEQ>> rec{qual, ids[1], seqs[1]};
+           fields<field::qual, field::id, field::seq>> rec{qual, ids[1], seqs[1]};
 
-    alignment_file_output fout{std::ostringstream{}, format_sam{}, fields<field::SEQ, field::ID>{}};
+    alignment_file_output fout{std::ostringstream{}, format_sam{}, fields<field::seq, field::id>{}};
 
     fout.emplace_back("AGGCTGNAGGCTGNA"_dna5, std::string("read1"));
     // fout.emplace_back("AGGCTGNAGGCTGNA"_dna5, "read1"); // const char * is not allowed
@@ -348,7 +348,7 @@ TEST(row, print_header_in_file)
                                ref_ids,
                                ref_len,
                                format_sam{},
-                               fields<field::ID>{}};
+                               fields<field::id>{}};
 
     fout.emplace_back(std::string("read1"));
 
@@ -379,7 +379,7 @@ TEST(row, print_header_in_record)
 
     // no file header present
     {
-        alignment_file_output fout{std::ostringstream{}, format_sam{}, fields<field::HEADER_PTR>{}};
+        alignment_file_output fout{std::ostringstream{}, format_sam{}, fields<field::header_ptr>{}};
 
         fout.emplace_back(&header);
 
@@ -402,7 +402,7 @@ TEST(row, print_header_in_record)
                                    std::vector<std::string>{"other_ref1", "other_ref2"},
                                    std::vector<int32_t>{12, 13},
                                    format_sam{},
-                                   fields<field::HEADER_PTR>{}};
+                                   fields<field::header_ptr>{}};
 
         fout.emplace_back(&header);
 
@@ -426,7 +426,7 @@ TEST(row, print_header_in_record)
 
 TEST(rows, assign_range_of_records)
 {
-    std::vector<record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>>> range;
+    std::vector<record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>>> range;
 
     for (size_t i = 0; i < 3; ++i)
         range.emplace_back(seqs[i], ids[i]);
@@ -436,7 +436,7 @@ TEST(rows, assign_range_of_records)
 
 TEST(rows, assign_range_of_records_const)
 {
-    std::vector<record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>>> range;
+    std::vector<record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>>> range;
 
     for (size_t i = 0; i < 3; ++i)
         range.emplace_back(seqs[i], ids[i]);
@@ -558,7 +558,7 @@ std::string compression_by_filename_impl(test::tmp_filename & filename)
 
         for (size_t i = 0; i < 3; ++i)
         {
-            record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+            record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
             fout.push_back(r);
         }
@@ -583,7 +583,7 @@ void compression_by_stream_impl(comp_stream_t & stream)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
+        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
 
         fout.push_back(r);
     }

@@ -18,18 +18,18 @@ int main()
     for (auto & rec : fin)
     {
         // Check if a certain flag value (bit) is set:
-        if (static_cast<bool>(seqan3::get<seqan3::field::FLAG>(rec) & seqan3::sam_flag::unmapped))
-            std::cout << "Read " << seqan3::get<seqan3::field::ID>(rec) << " is unmapped\n";
+        if (static_cast<bool>(seqan3::get<seqan3::field::flag>(rec) & seqan3::sam_flag::unmapped))
+            std::cout << "Read " << seqan3::get<seqan3::field::id>(rec) << " is unmapped\n";
 
-        if (seqan3::get<seqan3::field::QUAL>(rec)[0] < seqan3::assign_char_to('@', seqan3::phred42{})) // low quality
+        if (seqan3::get<seqan3::field::qual>(rec)[0] < seqan3::assign_char_to('@', seqan3::phred42{})) // low quality
         {
             // Set a flag value (bit):
-            seqan3::get<seqan3::field::FLAG>(rec) &= seqan3::sam_flag::failed_filter;
+            seqan3::get<seqan3::field::flag>(rec) &= seqan3::sam_flag::failed_filter;
             // Note that this does not affect other flag values (bits),
-            // e.g. `seqan3::get<seqan3::field::FLAG>(rec) & seqan3::sam_flag::unmapped` may still be true
+            // e.g. `seqan3::get<seqan3::field::flag>(rec) & seqan3::sam_flag::unmapped` may still be true
         }
 
         // Unset a flag value (bit):
-        seqan3::get<seqan3::field::FLAG>(rec) &= ~seqan3::sam_flag::duplicate; // not marked as a duplicate anymore
+        seqan3::get<seqan3::field::flag>(rec) &= ~seqan3::sam_flag::duplicate; // not marked as a duplicate anymore
     }
 }

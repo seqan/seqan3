@@ -27,6 +27,6 @@ int main()
 
     seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
 
-    data_storage.sequences = std::move(get<seqan3::field::SEQ>(fin)); // we move the buffer directly into our storage
-    data_storage.ids       = std::move(get<seqan3::field::ID>(fin));  // we move the buffer directly into our storage
+    data_storage.sequences = std::move(get<seqan3::field::seq>(fin)); // we move the buffer directly into our storage
+    data_storage.ids       = std::move(get<seqan3::field::id>(fin));  // we move the buffer directly into our storage
 }

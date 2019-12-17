@@ -73,29 +73,29 @@ TEST(structure_file_output_class, construct_by_filename)
     /* filename + fields */
     {
         test::tmp_filename filename{"structure_file_output_constructor.dbn"};
-        EXPECT_NO_THROW((structure_file_output<fields<field::SEQ>,
+        EXPECT_NO_THROW((structure_file_output<fields<field::seq>,
                                                type_list<format_vienna>>
-                                               {filename.get_path(), fields<field::SEQ>{}}));
+                                               {filename.get_path(), fields<field::seq>{}}));
     }
 }
 
 TEST(structure_file_output_class, construct_from_stream)
 {
     /* stream + format_tag */
-    EXPECT_NO_THROW((structure_file_output<fields<field::SEQ, field::ID, field::STRUCTURE>,
+    EXPECT_NO_THROW((structure_file_output<fields<field::seq, field::id, field::structure>,
                                            type_list<format_vienna>>
                                            {std::ostringstream{}, format_vienna{}}));
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW((structure_file_output<fields<field::SEQ, field::ID, field::STRUCTURE>,
+    EXPECT_NO_THROW((structure_file_output<fields<field::seq, field::id, field::structure>,
                                            type_list<format_vienna>>
                      {std::ostringstream{}, format_vienna{},
-                      fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
+                      fields<field::seq, field::id, field::structure>{}}));
 }
 
 TEST(structure_file_output_class, default_template_args_and_deduction_guides)
 {
-    using comp1 = fields<field::SEQ, field::ID, field::STRUCTURE>;
+    using comp1 = fields<field::seq, field::id, field::structure>;
     using comp2 = type_list<format_vienna>;
     using comp3 = char;
 
@@ -121,10 +121,10 @@ TEST(structure_file_output_class, default_template_args_and_deduction_guides)
     /* guided filename constructor + custom fields */
     {
         test::tmp_filename filename{"structure_file_output_constructor.dbn"};
-        structure_file_output fout{filename.get_path(), fields<field::SEQ>{}};
+        structure_file_output fout{filename.get_path(), fields<field::seq>{}};
 
         using t = decltype(fout);
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::seq>>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -209,7 +209,7 @@ TEST_F(structure_file_output_row, assign_to_iterator)
     row_wise_impl([&] (auto & file, size_t i)
     {
         record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
-               fields<field::SEQ, field::ID, field::STRUCTURE>> r{seqs[i], ids[i], structures[i]};
+               fields<field::seq, field::id, field::structure>> r{seqs[i], ids[i], structures[i]};
         begin(file) = r;
     });
 }
@@ -219,7 +219,7 @@ TEST_F(structure_file_output_row, push_back_record)
     row_wise_impl([&] (auto & file, size_t i)
     {
         record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
-               fields<field::SEQ, field::ID, field::STRUCTURE>> r{seqs[i], ids[i], structures[i]};
+               fields<field::seq, field::id, field::structure>> r{seqs[i], ids[i], structures[i]};
         file.push_back(r);
     });
 }
@@ -229,7 +229,7 @@ TEST_F(structure_file_output_row, push_back_record_rvalue)
     row_wise_impl([&] (auto & file, size_t i)
     {
         record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
-               fields<field::SEQ, field::ID, field::STRUCTURE>> r{seqs[i], ids[i], structures[i]};
+               fields<field::seq, field::id, field::structure>> r{seqs[i], ids[i], structures[i]};
         file.push_back(std::move(r));
     });
 }
@@ -239,7 +239,7 @@ TEST_F(structure_file_output_row, push_back_record_const)
     row_wise_impl([&] (auto & file, size_t i)
     {
         record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
-               fields<field::SEQ, field::ID, field::STRUCTURE>> const r{seqs[i], ids[i], structures[i]};
+               fields<field::seq, field::id, field::structure>> const r{seqs[i], ids[i], structures[i]};
         file.push_back(r);
     });
 }
@@ -249,7 +249,7 @@ TEST_F(structure_file_output_row, push_back_record_const_element)
     row_wise_impl([&] (auto & file, size_t i)
     {
         record<type_list<rna5_vector const, std::string const, std::vector<wuss51> const>,
-               fields<field::SEQ, field::ID, field::STRUCTURE>> const r{seqs[i], ids[i], structures[i]};
+               fields<field::seq, field::id, field::structure>> const r{seqs[i], ids[i], structures[i]};
         file.push_back(r);
     });
 }
@@ -313,7 +313,7 @@ struct structure_file_output_rows : public structure_file_output_write
 TEST_F(structure_file_output_rows, assign_range_of_records)
 {
     std::vector<record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
-                fields<field::SEQ, field::ID, field::STRUCTURE>>> range;
+                fields<field::seq, field::id, field::structure>>> range;
 
     for (size_t idx = 0ul; idx < num_records; ++idx)
         range.emplace_back(seqs[idx], ids[idx], structures[idx]);
@@ -324,7 +324,7 @@ TEST_F(structure_file_output_rows, assign_range_of_records)
 TEST_F(structure_file_output_rows, assign_range_of_records_const)
 {
     std::vector<record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
-                fields<field::SEQ, field::ID, field::STRUCTURE>>> range;
+                fields<field::seq, field::id, field::structure>>> range;
 
     for (size_t idx = 0ul; idx < num_records; ++idx)
         range.emplace_back(seqs[idx], ids[idx], structures[idx]);
@@ -355,7 +355,7 @@ TEST_F(structure_file_output_rows, assign_structure_file_input)
     };
 
     structure_file_input fin{std::istringstream{inp}, format_vienna{},
-                             fields<field::SEQ, field::ID, field::STRUCTURE>{}};
+                             fields<field::seq, field::id, field::structure>{}};
     assign_impl(fin);
 }
 
@@ -395,7 +395,7 @@ struct structure_file_output_compression : public structure_file_output_write
             for (size_t idx = 0ul; idx < num_records; ++idx)
             {
                 record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
-                       fields<field::SEQ, field::ID, field::STRUCTURE>> rec{seqs[idx], ids[idx], structures[idx]};
+                       fields<field::seq, field::id, field::structure>> rec{seqs[idx], ids[idx], structures[idx]};
                 fout.push_back(rec);
             }
         }
@@ -414,7 +414,7 @@ struct structure_file_output_compression : public structure_file_output_write
         for (size_t idx = 0ul; idx < num_records; ++idx)
         {
             record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
-                   fields<field::SEQ, field::ID, field::STRUCTURE>> rec{seqs[idx], ids[idx], structures[idx]};
+                   fields<field::seq, field::id, field::structure>> rec{seqs[idx], ids[idx], structures[idx]};
             fout.push_back(rec);
         }
     }

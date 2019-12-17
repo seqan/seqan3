@@ -15,7 +15,7 @@ int main()
     bool criteria = true;
     seqan3::structure_file_input fin{std::istringstream{input},
                                      seqan3::format_vienna{},
-                                     seqan3::fields<seqan3::field::ID, seqan3::field::SEQ, seqan3::field::STRUCTURE>{}};
+                                     seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::structure>{}};
     // the output doesn't have to match the configuration of the input
     seqan3::structure_file_output fout{std::ostringstream{}, seqan3::format_vienna{}};
 

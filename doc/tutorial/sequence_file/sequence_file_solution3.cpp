@@ -67,21 +67,21 @@ int main()
 
     auto length_filter = std::views::filter([] (auto const & rec)
     {
-        return std::ranges::size(get<field::SEQ>(rec)) >= 5;
+        return std::ranges::size(get<field::seq>(rec)) >= 5;
     });
 
     // you can use a for loop
 
     // for (auto & rec : fin | length_filter | std::views::take(2))
     // {
-    //     debug_stream << "ID: " << get<field::ID>(rec) << '\n';
+    //     debug_stream << "ID: " << get<field::id>(rec) << '\n';
     // }
 
     // But you can also do this to retrieve all IDs into a vector:
     std::vector<std::string> ids = fin
                                  | length_filter                                // apply length filter
                                  | std::views::take(2)                          // take first two records
-                                 | views::get<field::ID>                        // select only ID from record
+                                 | views::get<field::id>                        // select only ID from record
                                  | views::convert<std::string &&>               // mark ID to be moved out of record
                                  | views::to<std::vector<std::string>>;         // convert to container
     // Note that you need to know the type of id (std::string)

@@ -167,41 +167,41 @@ SEQAN3_CONCEPT alignment_file_input_format =
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \tparam stream_type        The input stream type; Must be derived from std::ostream.
  * \tparam ref_seqs_type      e.g. std::deque<ref_sequence_type> or decltype(std::ignore).
- * \tparam seq_type           Type of the seqan3::field::SEQ input (see seqan3::alignment_file_input_traits).
- * \tparam qual_type          Type of the seqan3::field::QUAL input (see seqan3::alignment_file_input_traits).
- * \tparam id_type            Type of the seqan3::field::ID input (see seqan3::alignment_file_input_traits).
- * \tparam offset_type        Type of the seqan3::field::OFFSET input (see seqan3::alignment_file_input_traits).
- * \tparam ref_seq_type       Type of the seqan3::field::REF_SEQ input (see seqan3::alignment_file_input_traits).
- * \tparam ref_id_type        Type of the seqan3::field::REF_ID input (see seqan3::alignment_file_input_traits).
- * \tparam ref_offset_type    Type of the seqan3::field::REF_OFFSET input (see seqan3::alignment_file_input_traits).
- * \tparam align_type         Type of the seqan3::field::ALIGNMENT input (see seqan3::alignment_file_input_traits).
- * \tparam cigar_type         Type of the seqan3::field::CIGAR input (a std::vector<cigar> or std::ignore).
- * \tparam flag_type          Type of the seqan3::field::FLAG input (see seqan3::alignment_file_input_traits).
- * \tparam mapq_type          Type of the seqan3::field::MAPQ input (see seqan3::alignment_file_input_traits).
+ * \tparam seq_type           Type of the seqan3::field::seq input (see seqan3::alignment_file_input_traits).
+ * \tparam qual_type          Type of the seqan3::field::qual input (see seqan3::alignment_file_input_traits).
+ * \tparam id_type            Type of the seqan3::field::id input (see seqan3::alignment_file_input_traits).
+ * \tparam offset_type        Type of the seqan3::field::offset input (see seqan3::alignment_file_input_traits).
+ * \tparam ref_seq_type       Type of the seqan3::field::ref_seq input (see seqan3::alignment_file_input_traits).
+ * \tparam ref_id_type        Type of the seqan3::field::ref_id input (see seqan3::alignment_file_input_traits).
+ * \tparam ref_offset_type    Type of the seqan3::field::ref_offset input (see seqan3::alignment_file_input_traits).
+ * \tparam align_type         Type of the seqan3::field::alignment input (see seqan3::alignment_file_input_traits).
+ * \tparam cigar_type         Type of the seqan3::field::cigar input (a std::vector<cigar> or std::ignore).
+ * \tparam flag_type          Type of the seqan3::field::flag input (see seqan3::alignment_file_input_traits).
+ * \tparam mapq_type          Type of the seqan3::field::mapq input (see seqan3::alignment_file_input_traits).
  * \tparam mate_type          std::tuple<ref_id_type, ref_offset_type, int32_t> or decltype(std::ignore).
  * \tparam tag_dict_type      seqan3::sam_tag_dictionary or decltype(std::ignore).
- * \tparam e_value_type       Type of the seqan3::field::EVALUE input (see seqan3::alignment_file_input_traits).
- * \tparam bit_score_type     Type of the seqan3::field::BIT_SCORE input (see seqan3::alignment_file_input_traits).
+ * \tparam e_value_type       Type of the seqan3::field::evalue input (see seqan3::alignment_file_input_traits).
+ * \tparam bit_score_type     Type of the seqan3::field::bit_score input (see seqan3::alignment_file_input_traits).
  *
  * \param[in,out] stream      The input stream to read from.
  * \param[in]     options     File specific options passed to the format.
  * \param[out]    ref_seqs    The reference sequences to the corresponding alignments.
  * \param[out]    header      A pointer to the seqan3::alignment_file_header object.
- * \param[out]    seq         The buffer for seqan3::field::SEQ input.
- * \param[out]    qual        The buffer for seqan3::field::QUAL input.
- * \param[out]    id          The buffer for seqan3::field::ID input.
- * \param[out]    offset      The buffer for seqan3::field::OFFSET input.
- * \param[out]    ref_seq     The buffer for seqan3::field::REF_SEQ input.
- * \param[out]    ref_id      The buffer for seqan3::field::REF_ID input.
- * \param[out]    ref_offset  The buffer for seqan3::field::REF_OFFSET input.
- * \param[out]    align       The buffer for seqan3::field::ALIGNMENT input.
- * \param[out]    cigar_vector The buffer for seqan3::field::CIGAR input.
- * \param[out]    flag        The buffer for seqan3::field::FLAG input.
- * \param[out]    mapq        The buffer for seqan3::field::MAPQ input.
- * \param[out]    mate        The buffer for seqan3::field::MATE input.
- * \param[out]    tag_dict    The buffer for seqan3::field::TAGS input.
- * \param[out]    e_value     The buffer for seqan3::field::EVALUE input.
- * \param[out]    bit_score   The buffer for seqan3::field::BIT_SCORE input.
+ * \param[out]    seq         The buffer for seqan3::field::seq input.
+ * \param[out]    qual        The buffer for seqan3::field::qual input.
+ * \param[out]    id          The buffer for seqan3::field::id input.
+ * \param[out]    offset      The buffer for seqan3::field::offset input.
+ * \param[out]    ref_seq     The buffer for seqan3::field::ref_seq input.
+ * \param[out]    ref_id      The buffer for seqan3::field::ref_id input.
+ * \param[out]    ref_offset  The buffer for seqan3::field::ref_offset input.
+ * \param[out]    align       The buffer for seqan3::field::alignment input.
+ * \param[out]    cigar_vector The buffer for seqan3::field::cigar input.
+ * \param[out]    flag        The buffer for seqan3::field::flag input.
+ * \param[out]    mapq        The buffer for seqan3::field::mapq input.
+ * \param[out]    mate        The buffer for seqan3::field::mate input.
+ * \param[out]    tag_dict    The buffer for seqan3::field::tags input.
+ * \param[out]    e_value     The buffer for seqan3::field::evalue input.
+ * \param[out]    bit_score   The buffer for seqan3::field::bit_score input.
  *
  * \details
  *

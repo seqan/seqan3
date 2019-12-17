@@ -21,9 +21,9 @@ int main()
 
     auto minimum_length10_filter = std::views::filter([] (auto const & rec)
     {
-        return std::ranges::size(get<seqan3::field::SEQ>(rec)) >= 10;
+        return std::ranges::size(get<seqan3::field::seq>(rec)) >= 10;
     });
 
     for (auto & rec : fin | minimum_length10_filter) // only records with sequence length >= 10 will "appear"
-        seqan3::debug_stream << get<seqan3::field::ID>(rec) << '\n';
+        seqan3::debug_stream << get<seqan3::field::id>(rec) << '\n';
 }

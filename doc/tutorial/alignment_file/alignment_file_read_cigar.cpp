@@ -36,7 +36,7 @@ int main()
 {
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
-    alignment_file_input fin{tmp_dir/"my.sam", fields<field::CIGAR>{}};
+    alignment_file_input fin{tmp_dir/"my.sam", fields<field::cigar>{}};
 
     for (auto & [cigar] : fin)
         debug_stream << cigar << std::endl;

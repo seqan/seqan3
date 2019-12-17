@@ -115,8 +115,8 @@ TEST_F(alignment_file_input_f, construct_by_filename)
         }
 
         EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
-                                               fields<field::SEQ>,
-                                               type_list<format_sam>>{filename.get_path(), fields<field::SEQ>{}} ));
+                                               fields<field::seq>,
+                                               type_list<format_sam>>{filename.get_path(), fields<field::seq>{}} ));
     }
 }
 
@@ -124,26 +124,25 @@ TEST_F(alignment_file_input_f, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
-                                           fields<field::SEQ, field::ID, field::QUAL>,
+                                           fields<field::seq, field::id, field::qual>,
                                            type_list<format_sam>>{std::istringstream{input},
                                                                   format_sam{}} ));
 
-
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
-                                           fields<field::SEQ, field::ID, field::QUAL>,
+                                           fields<field::seq, field::id, field::qual>,
                                            type_list<format_sam>>{std::istringstream{input},
                                                                   format_sam{},
-                                                                  fields<field::SEQ, field::ID, field::QUAL>{}} ));
+                                                                  fields<field::seq, field::id, field::qual>{}} ));
 }
 
 TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
 {
     using comp0 = alignment_file_input_default_traits<>;
-    using comp1 = fields<field::SEQ, field::ID, field::OFFSET, field::REF_SEQ,
-                         field::REF_ID, field::REF_OFFSET, field::ALIGNMENT,
-                         field::MAPQ, field::QUAL, field::FLAG, field::MATE,
-                         field::TAGS, field::EVALUE, field::BIT_SCORE, field::HEADER_PTR>;
+    using comp1 = fields<field::seq, field::id, field::offset, field::ref_seq,
+                         field::ref_id, field::ref_offset, field::alignment,
+                         field::mapq, field::qual, field::flag, field::mate,
+                         field::tags, field::evalue, field::bit_score, field::header_ptr>;
     using comp2 = type_list<format_sam, format_bam>;
     using comp3 = char;
 
@@ -181,11 +180,11 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         }
 
-        alignment_file_input fin{filename.get_path(), fields<field::SEQ>{}};
+        alignment_file_input fin{filename.get_path(), fields<field::seq>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::seq>>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -239,9 +238,9 @@ TEST_F(alignment_file_input_f, record_reading)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec), id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::QUAL>(rec), qual_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec), id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::qual>(rec), qual_comp[counter])));
 
         counter++;
     }
@@ -254,7 +253,7 @@ TEST_F(alignment_file_input_f, record_reading_custom_fields)
     /* record based reading */
     alignment_file_input fin{std::istringstream{input},
                              format_sam{},
-                             fields<field::ID, field::SEQ>{}};
+                             fields<field::id, field::seq>{}};
 
     size_t counter = 0;
     for (auto & [ id, seq ] : fin)
@@ -274,15 +273,15 @@ TEST_F(alignment_file_input_f, file_view)
 
     auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
-        return size(get<field::SEQ>(rec)) >= 5;
+        return size(get<field::seq>(rec)) >= 5;
     });
 
     size_t counter = 1; // the first record will be filtered out
     for (auto & rec : fin | minimum_length_filter)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec), id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::QUAL>(rec), qual_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec), id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::qual>(rec), qual_comp[counter])));
 
         counter++;
     }
@@ -300,9 +299,9 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), fix.seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec),  fix.id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::QUAL>(rec), fix.qual_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), fix.seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec),  fix.id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::qual>(rec), fix.qual_comp[counter])));
 
         counter++;
     }
@@ -507,7 +506,7 @@ TEST_F(alignment_file_input_sam_format_f, construct_by_filename_and_read_alignme
         filecreator << input;
     }
 
-    alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, fields<field::ALIGNMENT>{}};
+    alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, fields<field::alignment>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
 
@@ -525,7 +524,7 @@ TEST_F(alignment_file_input_sam_format_f, construct_by_filename_and_read_alignme
 
 TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignments)
 {
-    alignment_file_input fin{std::istringstream{input}, ref_ids, ref_seqs, format_sam{}, fields<field::ALIGNMENT>{}};
+    alignment_file_input fin{std::istringstream{input}, ref_ids, ref_seqs, format_sam{}, fields<field::alignment>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
 
@@ -543,7 +542,7 @@ TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignme
 
 TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignment_with_dummy)
 {
-    alignment_file_input fin{std::istringstream{input}, format_sam{}, fields<field::ALIGNMENT>{}};
+    alignment_file_input fin{std::istringstream{input}, format_sam{}, fields<field::alignment>{}};
 
     size_t counter = 0;
     for (auto & [ alignment ] : fin)
@@ -601,10 +600,10 @@ TEST_F(alignment_file_input_bam_format_f, construct_by_filename)
         filecreator << binary_input;
     }
 
-    alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, fields<field::ID,
-                                                                            field::SEQ,
-                                                                            field::QUAL,
-                                                                            field::ALIGNMENT>{}};
+    alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, fields<field::id,
+                                                                            field::seq,
+                                                                            field::qual,
+                                                                            field::alignment>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
     EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});
@@ -629,10 +628,10 @@ TEST_F(alignment_file_input_bam_format_f, construct_by_stream)
 {
     std::istringstream stream{binary_input};
 
-    alignment_file_input fin{stream, ref_ids, ref_seqs, format_bam{}, fields<field::ID,
-                                                                             field::SEQ,
-                                                                             field::QUAL,
-                                                                             field::ALIGNMENT>{}};
+    alignment_file_input fin{stream, ref_ids, ref_seqs, format_bam{}, fields<field::id,
+                                                                             field::seq,
+                                                                             field::qual,
+                                                                             field::alignment>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
     EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});

@@ -8,7 +8,7 @@ int main()
 {
     seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
-    seqan3::record<seqan3::type_list<uint32_t, std::string>, seqan3::fields<seqan3::field::MAPQ, seqan3::field::ID>> r;
+    seqan3::record<seqan3::type_list<uint32_t, std::string>, seqan3::fields<seqan3::field::mapq, seqan3::field::id>> r;
 
     // ...
 

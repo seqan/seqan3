@@ -36,8 +36,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### I/O
 
 * Asynchronous input (background file reading) supported via seqan3::view::async_input_buffer.
-* Reading field::CIGAR into a vector over seqan3::cigar is supported via seqan3::alignment_file_input.
-* Writing field::CIGAR into a vector over seqan3::cigar is supported via seqan3::alignment_file_output.
+* Reading field::cigar into a vector over seqan3::cigar is supported via seqan3::alignment_file_input.
+* Writing field::cigar into a vector over seqan3::cigar is supported via seqan3::alignment_file_output.
 
 ## API changes
 
@@ -64,7 +64,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 * **Removed the field-based in- and output interface for structure files through std::get and std::tie:**
   Output can instead be achieved with seqan3::views:zip(), for input we will implement unzip() in the future.
-* The `field::FLAG` of SAM/BAM input and output is now an **enum** instead of a simple integer (see seqan3::sam_flag).
+* The `field::flag` of SAM/BAM input and output is now an **enum** instead of a simple integer (see seqan3::sam_flag).
+* Uppercase seqan3::field names are deprecated. Use the lower case field names instead. You can easily find and replace
+  all occurrences by the following regex: find `field::([A-Z_]+)` replace `field::\L$1`.
 
 * **Removed the char type from the input and output files:**
   Most user code will be unaffected; however, if you have fully specified all templates of any of the input or output

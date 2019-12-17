@@ -62,10 +62,10 @@ namespace seqan3
  * \{
  */
 /*!\typedef using sequence_alphabet
- * \brief Alphabet of the characters for the seqan3::field::SEQ; must model seqan3::alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::seq; must model seqan3::alphabet.
  */
 /*!\typedef using sequence_legal_alphabet
- * \brief Intermediate alphabet for seqan3::field::SEQ; must model seqan3::alphabet and be convertible to
+ * \brief Intermediate alphabet for seqan3::field::seq; must model seqan3::alphabet and be convertible to
  * `sequence_alphabet`.
  *
  * \details
@@ -76,18 +76,18 @@ namespace seqan3
  * character and produce an error.
  */
 /*!\typedef using sequence_container
- * \brief Type template of the seqan3::field::SEQ, a container template over `sequence_alphabet`;
+ * \brief Type template of the seqan3::field::seq, a container template over `sequence_alphabet`;
  * must model seqan3::sequence_container.
  */
 /*!\typedef using id_container
- * \brief Type template of the seqan3::field::ID, a container template over `char`;
+ * \brief Type template of the seqan3::field::id, a container template over `char`;
  * must model seqan3::sequence_container.
  */
 /*!\typedef using quality_alphabet
- * \brief Alphabet of the characters for the seqan3::field::QUAL; must model seqan3::writable_quality_alphabet.
+ * \brief Alphabet of the characters for the seqan3::field::qual; must model seqan3::writable_quality_alphabet.
  */
 /*!\typedef using quality_container
- * \brief Type template of the seqan3::field::QUAL, a container template over `quality_alphabet`;
+ * \brief Type template of the seqan3::field::qual, a container template over `quality_alphabet`;
  * must model seqan3::sequence_container.
  */
 /*!\typedef using ref_sequences
@@ -113,42 +113,42 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT alignment_file_input_traits = requires (t v)
 {
-    // field::SEQ
+    // field::seq
     requires writable_alphabet<typename t::sequence_alphabet>;
     requires writable_alphabet<typename t::sequence_legal_alphabet>;
     requires explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
     requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
-    // field::ID
+    // field::id
     requires sequence_container<typename t::template id_container<char>>;
 
-    // field::QUAL
+    // field::qual
     requires writable_quality_alphabet<typename t::quality_alphabet>;
     requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
 
-    // field::REF_SEQ
+    // field::ref_seq
     // either ref_info_not_given or a range over ranges over alphabet (e.g. std::vector<dna4_vector>)
     requires std::same_as<typename t::ref_sequences, ref_info_not_given> ||
          (std::ranges::forward_range<typename t::ref_sequences> &&
          std::ranges::forward_range<detail::transformation_trait_or_t<reference<typename t::ref_sequences>, dna4_vector>> &&
          alphabet<reference_t<detail::transformation_trait_or_t<reference<typename t::ref_sequences>, dna4_vector>>>);
 
-    // field::REF_ID
+    // field::ref_id
     requires alphabet<reference_t<reference_t<typename t::ref_ids>>> &&
              (!std::same_as<typename t::ref_sequences, ref_info_not_given> ||
               writable_alphabet<reference_t<reference_t<typename t::ref_ids>>>);
     requires std::ranges::forward_range<reference_t<typename t::ref_ids>>;
     requires std::ranges::forward_range<typename t::ref_ids>;
 
-    // field::OFFSET is fixed to int32_t
-    // field::REF_OFFSET is fixed to std::optional<int32_t>
-    // field::FLAG is fixed to seqan3::sam_flag
-    // field::MAPQ is fixed to uint8_t
-    // field::EVALUE is fixed to double
-    // field::BITSCORE is fixed to double
-    // field::MATE is fixed to std::tuple<ref_id_container<ref_id_alphabet>, ref_offset_type, int32_t>
+    // field::offset is fixed to int32_t
+    // field::ref_offset is fixed to std::optional<int32_t>
+    // field::flag is fixed to seqan3::sam_flag
+    // field::mapq is fixed to uint8_t
+    // field::evalue is fixed to double
+    // field::bitscore is fixed to double
+    // field::mate is fixed to std::tuple<ref_id_container<ref_id_alphabet>, ref_offset_type, int32_t>
 
-    // field::ALIGNMENT
+    // field::alignment
     // the alignment type cannot be configured.
     // Type of tuple entry 1 (reference) is set to
     // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
@@ -239,29 +239,29 @@ struct alignment_file_input_default_traits
  *
  * The Alignment file abstraction supports reading 14 different fields:
  *
- *   1. seqan3::field::SEQ
- *   2. seqan3::field::ID
- *   3. seqan3::field::OFFSET
- *   4. seqan3::field::REF_SEQ
- *   5. seqan3::field::REF_ID
- *   6. seqan3::field::REF_OFFSET
- *   7. seqan3::field::ALIGNMENT
- *   8. seqan3::field::MAPQ
- *   9. seqan3::field::QUAL
- *   10. seqan3::field::FLAG
- *   11. seqan3::field::MATE
- *   12. seqan3::field::TAGS
- *   13. seqan3::field::EVALUE
- *   14. seqan3::field::BIT_SCORE
- *   15. seqan3::field::CIGAR
+ *   1. seqan3::field::seq
+ *   2. seqan3::field::id
+ *   3. seqan3::field::offset
+ *   4. seqan3::field::ref_seq
+ *   5. seqan3::field::ref_id
+ *   6. seqan3::field::ref_offset
+ *   7. seqan3::field::alignment
+ *   8. seqan3::field::mapq
+ *   9. seqan3::field::qual
+ *   10. seqan3::field::flag
+ *   11. seqan3::field::mate
+ *   12. seqan3::field::tags
+ *   13. seqan3::field::evalue
+ *   14. seqan3::field::bit_score
+ *   15. seqan3::field::cigar
  *
- * There exists one more field for alignment files, the seqan3::field::HEADER_PTR, but this field is mostly used
+ * There exists one more field for alignment files, the seqan3::field::header_ptr, but this field is mostly used
  * internally. Please see the seqan3::alignment_file_output::header member function for details on how to access the
  * seqan3::alignment_file_header of the file.)
  *
- * All of these fields are retrieved by default (and in that order) except the field::CIGAR.
- * Note that some of the fields are specific to the SAM format (e.g. seqan3::field::FLAG) while others are specific to
- * BLAST format (e.g. seqan3::field::BIT_SCORE). Please see the corresponding formats for more details
+ * All of these fields are retrieved by default (and in that order) except the field::cigar.
+ * Note that some of the fields are specific to the SAM format (e.g. seqan3::field::flag) while others are specific to
+ * BLAST format (e.g. seqan3::field::bit_score). Please see the corresponding formats for more details
  * (seqan3::format_sam).
  *
  * ### Construction and specialisation
@@ -363,21 +363,21 @@ struct alignment_file_input_default_traits
  */
 template <
     alignment_file_input_traits traits_type_ = alignment_file_input_default_traits<>,
-    detail::fields_specialisation selected_field_ids_ = fields<field::SEQ,
-                                                               field::ID,
-                                                               field::OFFSET,
-                                                               field::REF_SEQ,
-                                                               field::REF_ID,
-                                                               field::REF_OFFSET,
-                                                               field::ALIGNMENT,
-                                                               field::MAPQ,
-                                                               field::QUAL,
-                                                               field::FLAG,
-                                                               field::MATE,
-                                                               field::TAGS,
-                                                               field::EVALUE,
-                                                               field::BIT_SCORE,
-                                                               field::HEADER_PTR>,
+    detail::fields_specialisation selected_field_ids_ = fields<field::seq,
+                                                               field::id,
+                                                               field::offset,
+                                                               field::ref_seq,
+                                                               field::ref_id,
+                                                               field::ref_offset,
+                                                               field::alignment,
+                                                               field::mapq,
+                                                               field::qual,
+                                                               field::flag,
+                                                               field::mate,
+                                                               field::tags,
+                                                               field::evalue,
+                                                               field::bit_score,
+                                                               field::header_ptr>,
     detail::type_list_of_alignment_file_input_formats valid_formats_ = type_list<format_sam, format_bam>>
 class alignment_file_input
 {
@@ -406,14 +406,14 @@ public:
      * to achieve different storage behaviour.
      * \{
      */
-    //!\brief The type of field::SEQ (default std::vector<seqan3::dna5>).
+    //!\brief The type of field::seq (default std::vector<seqan3::dna5>).
     using sequence_type            = typename traits_type::template sequence_container<
                                          typename traits_type::sequence_alphabet>;
-    //!\brief The type of field::ID (default std::string by default).
+    //!\brief The type of field::id (default std::string by default).
     using id_type                  = typename traits_type::template id_container<char>;
-    //!\brief The type of field::OFFSET is fixed to int32_t.
+    //!\brief The type of field::offset is fixed to int32_t.
     using offset_type              = int32_t;
-    /*!\brief The type of field::REF_SEQ (default depends on construction).
+    /*!\brief The type of field::ref_seq (default depends on construction).
      *
      * If no reference information are given on construction, this type deduces to a sized view that throws on
      * access (since there is nothing to access anyway). If the reference information are given, the type is deduced
@@ -426,50 +426,50 @@ public:
                                                         seqan3::reference<typename traits_type::ref_sequences const>,
                                                         dummy_ref_type> /* does not matter as type is not chosen */
                                                      >() | views::slice(0, 0))>;
-    /*!\brief The type of field::REF_ID is fixed to std::optional<int32_t>.
+    /*!\brief The type of field::ref_id is fixed to std::optional<int32_t>.
      *
-     * To be consistent with the BAM format, the field::REF_ID will hold the index to the actual reference
+     * To be consistent with the BAM format, the field::ref_id will hold the index to the actual reference
      * information stored in the header. If a read is unmapped, the optional will remain valueless.
      *
      * \attention SeqaAn3 transforms the 1-based SAM format position into a 0-based position.
      */
     using ref_id_type              = std::optional<int32_t>;
-    /*!\brief The type of field::REF_OFFSET is fixed to an std::optional<int32_t>.
+    /*!\brief The type of field::ref_offset is fixed to an std::optional<int32_t>.
      *
      * The SAM format is 1-based and a 0 in the ref_offset field indicated an unmapped read. Since we convert 1-based
      * positions to 0-based positions when reading the SAM format, we model the ref_offset_type as an std::optional.
      * If the input value is 0, the std::optional will remain valueless.
      */
     using ref_offset_type          = std::optional<int32_t>;
-    //!\brief The type of field::MAPQ is fixed to uint8_t.
+    //!\brief The type of field::mapq is fixed to uint8_t.
     using mapq_type                = uint8_t;
-    //!\brief The type of field::QUAL (default std::vector<seqan3::phred42>).
+    //!\brief The type of field::qual (default std::vector<seqan3::phred42>).
     using quality_type             = typename traits_type::template quality_container<
                                          typename traits_type::quality_alphabet>;
-    //!\brief The type of field::FLAG is fixed to seqan3::sam_flag.
+    //!\brief The type of field::flag is fixed to seqan3::sam_flag.
     using flag_type                = sam_flag;
-    //!\brief The type of field::CIGAR is fixed to std::vector<cigar>.
+    //!\brief The type of field::cigar is fixed to std::vector<cigar>.
     using cigar_type               = std::vector<cigar>;
-    //!\brief The type of field::MATE is fixed to std::tuple<ref_id_type, ref_offset_type, int32_t>).
+    //!\brief The type of field::mate is fixed to std::tuple<ref_id_type, ref_offset_type, int32_t>).
     using mate_type                = std::tuple<ref_id_type, ref_offset_type, int32_t>;
-    //!\brief The type of field::EVALUE is fixed to double.
+    //!\brief The type of field::evalue is fixed to double.
     using e_value_type             = double;
-    //!\brief The type of field::BITSCORE is fixed to double.
+    //!\brief The type of field::bitscore is fixed to double.
     using bitscore_type            = double;
-    //!\brief The type of field::HEADER_PTR (default: alignment_file_header<typename traits_type::ref_ids>).
+    //!\brief The type of field::header_ptr (default: alignment_file_header<typename traits_type::ref_ids>).
     using header_type              = alignment_file_header<typename traits_type::ref_ids>;
 
 private:
     //!\brief The type of the aligned query sequence (second type of the pair of alignment_type).
     using alignment_query_type = std::conditional_t<
-                                     selected_field_ids::contains(field::SEQ),
+                                     selected_field_ids::contains(field::seq),
                                      gap_decorator<
                                          decltype(std::declval<sequence_type &>() | views::slice(0, 0))>,
                                      typename traits_type::template sequence_container<
                                          gapped<typename traits_type::sequence_alphabet>>>;
 
 public:
-    //!\brief The type of field::ALIGNMENT (default: std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>).
+    //!\brief The type of field::alignment (default: std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>).
     using alignment_type = std::tuple<gap_decorator<ref_sequence_type>, alignment_query_type>;
 
     //!\brief The previously defined types aggregated in a seqan3::type_list.
@@ -493,22 +493,22 @@ public:
     /*!\brief The subset of seqan3::field tags that are valid for this file; order corresponds to the types in
      * \ref field_types.
      */
-    using field_ids = fields<field::SEQ,
-                             field::ID,
-                             field::OFFSET,
-                             field::REF_SEQ,
-                             field::REF_ID,
-                             field::REF_OFFSET,
-                             field::ALIGNMENT,
-                             field::CIGAR,
-                             field::MAPQ,
-                             field::QUAL,
-                             field::FLAG,
-                             field::MATE,
-                             field::TAGS,
-                             field::EVALUE,
-                             field::BIT_SCORE,
-                             field::HEADER_PTR>;
+    using field_ids = fields<field::seq,
+                             field::id,
+                             field::offset,
+                             field::ref_seq,
+                             field::ref_id,
+                             field::ref_offset,
+                             field::alignment,
+                             field::cigar,
+                             field::mapq,
+                             field::qual,
+                             field::flag,
+                             field::mate,
+                             field::tags,
+                             field::evalue,
+                             field::bit_score,
+                             field::header_ptr>;
 
     static_assert([] () constexpr
                   {
@@ -571,7 +571,7 @@ public:
      * \details
      *
      * In addition to the file name, you may specify a custom seqan3::fields object
-     * (e.g. `seqan3::fields<seqan3::field::SEQ>{}`) which may be easier than
+     * (e.g. `seqan3::fields<seqan3::field::seq>{}`) which may be easier than
      * defining all the template parameters.
      *
      * ### Decompression
@@ -597,7 +597,7 @@ public:
      * \details
      *
      * In addition to the stream and the format, you may specify a custom seqan3::fields object
-     * (e.g. `seqan3::fields<seqan3::field::SEQ>{}`) which may be easier than
+     * (e.g. `seqan3::fields<seqan3::field::seq>{}`) which may be easier than
      * defining all the template parameters.
      *
      * ### Decompression
@@ -645,7 +645,7 @@ public:
      * the parameters.
      *
      * In addition to the file name and reference information, you may specify a custom seqan3::fields object
-     * (e.g. `seqan3::fields<seqan3::field::SEQ>{}`) which may be easier than
+     * (e.g. `seqan3::fields<seqan3::field::seq>{}`) which may be easier than
      * defining all the template parameters.
      *
      * ### Decompression
@@ -682,7 +682,7 @@ public:
      * those information.
      *
      * In addition to the stream, reference information and format, you may specify a custom seqan3::fields object
-     * (e.g. `seqan3::fields<seqan3::field::SEQ>{}`) which may be easier than
+     * (e.g. `seqan3::fields<seqan3::field::seq>{}`) which may be easier than
      * defining all the template parameters.
      *
      * ### Decompression
@@ -955,7 +955,7 @@ protected:
     {
         // clear the record
         record_buffer.clear();
-        detail::get_or_ignore<field::HEADER_PTR>(record_buffer) = header_ptr.get();
+        detail::get_or_ignore<field::header_ptr>(record_buffer) = header_ptr.get();
 
         // at end if we could not read further
         if (std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
@@ -973,21 +973,21 @@ protected:
                                         options,
                                         ref_seq_info,
                                         *header_ptr,
-                                        detail::get_or_ignore<field::SEQ>(record_buffer),
-                                        detail::get_or_ignore<field::QUAL>(record_buffer),
-                                        detail::get_or_ignore<field::ID>(record_buffer),
-                                        detail::get_or_ignore<field::OFFSET>(record_buffer),
-                                        detail::get_or_ignore<field::REF_SEQ>(record_buffer),
-                                        detail::get_or_ignore<field::REF_ID>(record_buffer),
-                                        detail::get_or_ignore<field::REF_OFFSET>(record_buffer),
-                                        detail::get_or_ignore<field::ALIGNMENT>(record_buffer),
-                                        detail::get_or_ignore<field::CIGAR>(record_buffer),
-                                        detail::get_or_ignore<field::FLAG>(record_buffer),
-                                        detail::get_or_ignore<field::MAPQ>(record_buffer),
-                                        detail::get_or_ignore<field::MATE>(record_buffer),
-                                        detail::get_or_ignore<field::TAGS>(record_buffer),
-                                        detail::get_or_ignore<field::EVALUE>(record_buffer),
-                                        detail::get_or_ignore<field::BIT_SCORE>(record_buffer));
+                                        detail::get_or_ignore<field::seq>(record_buffer),
+                                        detail::get_or_ignore<field::qual>(record_buffer),
+                                        detail::get_or_ignore<field::id>(record_buffer),
+                                        detail::get_or_ignore<field::offset>(record_buffer),
+                                        detail::get_or_ignore<field::ref_seq>(record_buffer),
+                                        detail::get_or_ignore<field::ref_id>(record_buffer),
+                                        detail::get_or_ignore<field::ref_offset>(record_buffer),
+                                        detail::get_or_ignore<field::alignment>(record_buffer),
+                                        detail::get_or_ignore<field::cigar>(record_buffer),
+                                        detail::get_or_ignore<field::flag>(record_buffer),
+                                        detail::get_or_ignore<field::mapq>(record_buffer),
+                                        detail::get_or_ignore<field::mate>(record_buffer),
+                                        detail::get_or_ignore<field::tags>(record_buffer),
+                                        detail::get_or_ignore<field::evalue>(record_buffer),
+                                        detail::get_or_ignore<field::bit_score>(record_buffer));
             }, format);
         };
 

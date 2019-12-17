@@ -59,23 +59,23 @@ namespace seqan3
  *
  * The Alignment file abstraction supports writing following fields:
  *
- *   1. field::SEQ
- *   2. field::ID
- *   3. field::OFFSET
- *   4. field::REF_SEQ
- *   5. field::REF_ID
- *   6. field::REF_OFFSET
- *   7. field::ALIGNMENT
- *   8. field::MAPQ
- *   9. field::FLAG
- *   10. field::QUAL
- *   11. field::MATE
- *   12. field::TAGS
- *   13. field::EVALUE
- *   14. field::BIT_SCORE
- *   15. field::CIGAR
+ *   1. field::seq
+ *   2. field::id
+ *   3. field::offset
+ *   4. field::ref_seq
+ *   5. field::ref_id
+ *   6. field::ref_offset
+ *   7. field::alignment
+ *   8. field::mapq
+ *   9. field::flag
+ *   10. field::qual
+ *   11. field::mate
+ *   12. field::tags
+ *   13. field::evalue
+ *   14. field::bit_score
+ *   15. field::cigar
  *
- * There is an additional field called seqan3::field::HEADER_PTR. It is used to transfer
+ * There is an additional field called seqan3::field::header_ptr. It is used to transfer
  * header information from seqan3::alignment_file_input to seqan3::alignment_file_output,
  * but you needn't deal with this field manually.
  *
@@ -166,21 +166,21 @@ namespace seqan3
  *   * seqan3::format_bam
  */
 template <detail::fields_specialisation selected_field_ids_ =
-              fields<field::SEQ,
-                     field::ID,
-                     field::OFFSET,
-                     field::REF_SEQ,
-                     field::REF_ID,
-                     field::REF_OFFSET,
-                     field::ALIGNMENT,
-                     field::MAPQ,
-                     field::QUAL,
-                     field::FLAG,
-                     field::MATE,
-                     field::TAGS,
-                     field::EVALUE,
-                     field::BIT_SCORE,
-                     field::HEADER_PTR>,
+              fields<field::seq,
+                     field::id,
+                     field::offset,
+                     field::ref_seq,
+                     field::ref_id,
+                     field::ref_offset,
+                     field::alignment,
+                     field::mapq,
+                     field::qual,
+                     field::flag,
+                     field::mate,
+                     field::tags,
+                     field::evalue,
+                     field::bit_score,
+                     field::header_ptr>,
           detail::type_list_of_alignment_file_output_formats valid_formats_ = type_list<format_sam, format_bam>,
           typename ref_ids_type = ref_info_not_given>
 class alignment_file_output
@@ -199,22 +199,22 @@ public:
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
-    using field_ids             = fields<field::HEADER_PTR,
-                                         field::SEQ,
-                                         field::ID,
-                                         field::OFFSET,
-                                         field::REF_SEQ,
-                                         field::REF_ID,
-                                         field::REF_OFFSET,
-                                         field::ALIGNMENT,
-                                         field::CIGAR,
-                                         field::MAPQ,
-                                         field::FLAG,
-                                         field::QUAL,
-                                         field::MATE,
-                                         field::TAGS,
-                                         field::EVALUE,
-                                         field::BIT_SCORE>;
+    using field_ids             = fields<field::header_ptr,
+                                         field::seq,
+                                         field::id,
+                                         field::offset,
+                                         field::ref_seq,
+                                         field::ref_id,
+                                         field::ref_offset,
+                                         field::alignment,
+                                         field::cigar,
+                                         field::mapq,
+                                         field::flag,
+                                         field::qual,
+                                         field::mate,
+                                         field::tags,
+                                         field::evalue,
+                                         field::bit_score>;
 
     static_assert([] () constexpr
                   {
@@ -229,10 +229,10 @@ public:
 
     static_assert([] () constexpr
                   {
-                      return !(selected_field_ids::contains(field::ALIGNMENT) &&
-                               selected_field_ids::contains(field::CIGAR));
+                      return !(selected_field_ids::contains(field::alignment) &&
+                               selected_field_ids::contains(field::cigar));
                   }(),
-                  "You may not select field::ALIGNMENT and field::CIGAR at the same time.");
+                  "You may not select field::alignment and field::cigar at the same time.");
 
     /*!\name Range associated types
      * \brief Most of the range associated types are `void` for output ranges.
@@ -516,22 +516,22 @@ public:
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
-        write_record(detail::get_or<field::HEADER_PTR>(r, nullptr),
-                     detail::get_or<field::SEQ>(r, std::string_view{}),
-                     detail::get_or<field::QUAL>(r, std::string_view{}),
-                     detail::get_or<field::ID>(r, std::string_view{}),
-                     detail::get_or<field::OFFSET>(r, 0u),
-                     detail::get_or<field::REF_SEQ>(r, std::string_view{}),
-                     detail::get_or<field::REF_ID>(r, std::ignore),
-                     detail::get_or<field::REF_OFFSET>(r, std::optional<int32_t>{}),
-                     detail::get_or<field::ALIGNMENT>(r, default_align_t{}),
-                     detail::get_or<field::CIGAR>(r, std::vector<cigar>{}),
-                     detail::get_or<field::FLAG>(r, sam_flag::none),
-                     detail::get_or<field::MAPQ>(r, 0u),
-                     detail::get_or<field::MATE>(r, default_mate_t{}),
-                     detail::get_or<field::TAGS>(r, sam_tag_dictionary{}),
-                     detail::get_or<field::EVALUE>(r, 0u),
-                     detail::get_or<field::BIT_SCORE>(r, 0u));
+        write_record(detail::get_or<field::header_ptr>(r, nullptr),
+                     detail::get_or<field::seq>(r, std::string_view{}),
+                     detail::get_or<field::qual>(r, std::string_view{}),
+                     detail::get_or<field::id>(r, std::string_view{}),
+                     detail::get_or<field::offset>(r, 0u),
+                     detail::get_or<field::ref_seq>(r, std::string_view{}),
+                     detail::get_or<field::ref_id>(r, std::ignore),
+                     detail::get_or<field::ref_offset>(r, std::optional<int32_t>{}),
+                     detail::get_or<field::alignment>(r, default_align_t{}),
+                     detail::get_or<field::cigar>(r, std::vector<cigar>{}),
+                     detail::get_or<field::flag>(r, sam_flag::none),
+                     detail::get_or<field::mapq>(r, 0u),
+                     detail::get_or<field::mate>(r, default_mate_t{}),
+                     detail::get_or<field::tags>(r, sam_tag_dictionary{}),
+                     detail::get_or<field::evalue>(r, 0u),
+                     detail::get_or<field::bit_score>(r, 0u));
     }
 
     /*!\brief           Write a record in form of a std::tuple to the file.
@@ -565,22 +565,22 @@ public:
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
-        write_record(detail::get_or<selected_field_ids::index_of(field::HEADER_PTR)>(t, nullptr),
-                     detail::get_or<selected_field_ids::index_of(field::SEQ)>(t, std::string_view{}),
-                     detail::get_or<selected_field_ids::index_of(field::QUAL)>(t, std::string_view{}),
-                     detail::get_or<selected_field_ids::index_of(field::ID)>(t, std::string_view{}),
-                     detail::get_or<selected_field_ids::index_of(field::OFFSET)>(t, 0u),
-                     detail::get_or<selected_field_ids::index_of(field::REF_SEQ)>(t, std::string_view{}),
-                     detail::get_or<selected_field_ids::index_of(field::REF_ID)>(t, std::ignore),
-                     detail::get_or<selected_field_ids::index_of(field::REF_OFFSET)>(t, std::optional<int32_t>{}),
-                     detail::get_or<selected_field_ids::index_of(field::ALIGNMENT)>(t, default_align_t{}),
-                     detail::get_or<selected_field_ids::index_of(field::CIGAR)>(t, std::vector<cigar>{}),
-                     detail::get_or<selected_field_ids::index_of(field::FLAG)>(t, sam_flag::none),
-                     detail::get_or<selected_field_ids::index_of(field::MAPQ)>(t, 0u),
-                     detail::get_or<selected_field_ids::index_of(field::MATE)>(t, default_mate_t{}),
-                     detail::get_or<selected_field_ids::index_of(field::TAGS)>(t, sam_tag_dictionary{}),
-                     detail::get_or<selected_field_ids::index_of(field::EVALUE)>(t, 0u),
-                     detail::get_or<selected_field_ids::index_of(field::BIT_SCORE)>(t, 0u));
+        write_record(detail::get_or<selected_field_ids::index_of(field::header_ptr)>(t, nullptr),
+                     detail::get_or<selected_field_ids::index_of(field::seq)>(t, std::string_view{}),
+                     detail::get_or<selected_field_ids::index_of(field::qual)>(t, std::string_view{}),
+                     detail::get_or<selected_field_ids::index_of(field::id)>(t, std::string_view{}),
+                     detail::get_or<selected_field_ids::index_of(field::offset)>(t, 0u),
+                     detail::get_or<selected_field_ids::index_of(field::ref_seq)>(t, std::string_view{}),
+                     detail::get_or<selected_field_ids::index_of(field::ref_id)>(t, std::ignore),
+                     detail::get_or<selected_field_ids::index_of(field::ref_offset)>(t, std::optional<int32_t>{}),
+                     detail::get_or<selected_field_ids::index_of(field::alignment)>(t, default_align_t{}),
+                     detail::get_or<selected_field_ids::index_of(field::cigar)>(t, std::vector<cigar>{}),
+                     detail::get_or<selected_field_ids::index_of(field::flag)>(t, sam_flag::none),
+                     detail::get_or<selected_field_ids::index_of(field::mapq)>(t, 0u),
+                     detail::get_or<selected_field_ids::index_of(field::mate)>(t, default_mate_t{}),
+                     detail::get_or<selected_field_ids::index_of(field::tags)>(t, sam_tag_dictionary{}),
+                     detail::get_or<selected_field_ids::index_of(field::evalue)>(t, 0u),
+                     detail::get_or<selected_field_ids::index_of(field::bit_score)>(t, 0u));
     }
 
     /*!\brief            Write a record to the file by passing individual fields.

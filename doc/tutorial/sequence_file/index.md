@@ -52,7 +52,7 @@ hoping that it will make the following tutorial easier to understand.
 As mentioned above, our file object is a range over records.
 More specifically over objects of type seqan3::record which is basically just a std::tuple that holds the data.
 To identify or specialise which data is read/written and contained in the records,
-we use seqan3::field tags (e.g. seqan3::field::SEQ denotes sequence information).
+we use seqan3::field tags (e.g. seqan3::field::seq denotes sequence information).
 The seqan3::field tags are shared between file formats and allow for easy file conversion.
 
 Output files can handle various types that fulfill the requirements of the format (e.g.
@@ -142,10 +142,10 @@ You can also customise this list if you want to allow different or additional fi
 
 The Sequence file abstraction supports reading four different fields:
 
-  1. seqan3::field::SEQ
-  2. seqan3::field::ID
-  3. seqan3::field::QUAL
-  4. seqan3::field::SEQ_QUAL
+  1. seqan3::field::seq
+  2. seqan3::field::id
+  3. seqan3::field::qual
+  4. seqan3::field::seq_qual
 
 The first three fields are retrieved by default (and in that order!).
 The last field may be selected to directly store sequence and qualities in a more memory-efficient
@@ -377,8 +377,8 @@ These work similarly to how they work on an std::vector.
 
 If you pass a tuple to `push_back()` or give arguments to `emplace_back()` the order of elements is assumed
 to be the same as the one in the seqan3::sequence_file_output::selected_field_ids.
-For the above example the default FASTA fields are first seqan3::field::SEQ,
-second seqan3::field::ID and the third one seqan3::field::QUAL.
+For the above example the default FASTA fields are first seqan3::field::seq,
+second seqan3::field::id and the third one seqan3::field::qual.
 You may give less fields than are selected if the actual format you are writing to can cope with less
 (e.g. for FastA it is sufficient to give sequence and name information).
 

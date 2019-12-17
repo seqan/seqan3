@@ -35,7 +35,7 @@ TEST(general, concepts)
 struct structure_file_input_class : public ::testing::Test
 {
     using comp0 = structure_file_input_default_traits_rna;
-    using comp1 = fields<field::SEQ, field::ID, field::STRUCTURE>;
+    using comp1 = fields<field::seq, field::id, field::structure>;
     using comp2 = type_list<format_vienna>;
     using comp3 = char;
 
@@ -92,8 +92,8 @@ TEST_F(structure_file_input_class, construct_by_filename)
     {
         test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
         EXPECT_NO_THROW((structure_file_input<structure_file_input_default_traits_rna,
-                                              fields<field::SEQ>,
-                                              type_list<format_vienna>>{filename.get_path(), fields<field::SEQ>{}}));
+                                              fields<field::seq>,
+                                              type_list<format_vienna>>{filename.get_path(), fields<field::seq>{}}));
     }
 }
 
@@ -101,17 +101,16 @@ TEST_F(structure_file_input_class, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW((structure_file_input<structure_file_input_default_traits_rna,
-                                          fields<field::SEQ, field::ID, field::STRUCTURE>,
+                                          fields<field::seq, field::id, field::structure>,
                                           type_list<format_vienna>>{std::istringstream{"> ID\nACGU\n....\n"},
                                                                     format_vienna{}}));
 
-
     /* stream + format_tag + fields */
     EXPECT_NO_THROW((structure_file_input<structure_file_input_default_traits_rna,
-                                          fields<field::SEQ, field::ID, field::STRUCTURE>,
+                                          fields<field::seq, field::id, field::structure>,
                                           type_list<format_vienna>>{std::istringstream{"> ID\nACGU\n....\n"},
                                                                     format_vienna{},
-                                                                    fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
+                                                                    fields<field::seq, field::id, field::structure>{}}));
 }
 
 TEST_F(structure_file_input_class, default_template_args)
@@ -141,11 +140,11 @@ TEST_F(structure_file_input_class, guided_filename_constructor_and_custom_fields
 {
     /* guided filename constructor + custom fields */
     test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
-    structure_file_input fin{filename.get_path(), fields<field::SEQ>{}};
+    structure_file_input fin{filename.get_path(), fields<field::seq>{}};
 
     using t = decltype(fin);
     EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
+    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::seq>>));
     EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
     EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
 }
@@ -261,9 +260,9 @@ struct structure_file_input_read : public ::testing::Test
         counter = 0ul;
         for (auto & rec : fin)
         {
-            EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
-            EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec), id_comp[counter])));
-            EXPECT_TRUE((std::ranges::equal(get<field::STRUCTURE>(rec), structure_comp[counter])));
+            EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), seq_comp[counter])));
+            EXPECT_TRUE((std::ranges::equal(get<field::id>(rec), id_comp[counter])));
+            EXPECT_TRUE((std::ranges::equal(get<field::structure>(rec), structure_comp[counter])));
             ++counter;
         }
 
@@ -297,9 +296,9 @@ TEST_F(structure_file_input_read, record_general)
     size_t counter = 0ul;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec), id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::STRUCTURE>(rec), structure_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec), id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::structure>(rec), structure_comp[counter])));
         ++counter;
     }
     EXPECT_EQ(counter, num_records);
@@ -310,7 +309,7 @@ TEST_F(structure_file_input_read, record_struct_bind)
     /* record based reading */
     structure_file_input fin{std::istringstream{input},
                              format_vienna{},
-                             fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
+                             fields<field::seq, field::id, field::bpp, field::structure, field::energy>{}};
 
     size_t counter = 0ul;
     for (auto & [ sequence, id, bpp, structure, energy ] : fin)
@@ -330,7 +329,7 @@ TEST_F(structure_file_input_read, record_custom_fields)
     /* record based reading */
     structure_file_input fin{std::istringstream{input},
                              format_vienna{},
-                             fields<field::ID, field::STRUCTURED_SEQ>{}};
+                             fields<field::id, field::structured_seq>{}};
 
     size_t counter = 0ul;
     for (auto & [ id, seq_structure ] : fin)
@@ -346,21 +345,21 @@ TEST_F(structure_file_input_read, record_custom_fields)
 TEST_F(structure_file_input_read, record_file_view)
 {
     structure_file_input fin{std::istringstream{input}, format_vienna{},
-                             fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
+                             fields<field::seq, field::id, field::bpp, field::structure, field::energy>{}};
 
     auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
-        return size(get<field::SEQ>(rec)) >= 5;
+        return size(get<field::seq>(rec)) >= 5;
     });
 
     size_t counter = 0ul; // the first record will be filtered out
     for (auto & rec : fin | minimum_length_filter)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec),  id_comp[counter])));
-        bpp_test(get<field::BPP>(rec), interaction_comp[counter]);
-        EXPECT_TRUE((std::ranges::equal(get<field::STRUCTURE>(rec), structure_comp[counter])));
-        EXPECT_DOUBLE_EQ(get<field::ENERGY>(rec).value(), energy_comp[counter]);
+        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec),  id_comp[counter])));
+        bpp_test(get<field::bpp>(rec), interaction_comp[counter]);
+        EXPECT_TRUE((std::ranges::equal(get<field::structure>(rec), structure_comp[counter])));
+        EXPECT_DOUBLE_EQ(get<field::energy>(rec).value(), energy_comp[counter]);
         ++counter;
     }
     EXPECT_EQ(counter, num_records);

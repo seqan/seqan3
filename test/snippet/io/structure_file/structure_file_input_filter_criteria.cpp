@@ -20,7 +20,7 @@ int main()
 
     auto minimum_length5_filter = std::views::filter([] (auto const & rec)
     {
-        return std::ranges::size(get<seqan3::field::SEQ>(rec)) >= 5;
+        return std::ranges::size(get<seqan3::field::seq>(rec)) >= 5;
     });
 
     for (auto & rec : fin | minimum_length5_filter) // only record with sequence length >= 5 will "appear"

@@ -95,17 +95,17 @@ SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_inpu
  *               id_type & id, qual_type & qualities)
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \tparam stream_type      Input stream, must satisfy seqan3::input_stream_over with `char`.
- * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::output_range
+ * \tparam seq_type         Type of the seqan3::field::seq input; must satisfy std::ranges::output_range
  * over a seqan3::alphabet.
- * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::output_range
+ * \tparam id_type          Type of the seqan3::field::id input; must satisfy std::ranges::output_range
  * over a seqan3::alphabet.
- * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy std::ranges::output_range
+ * \tparam qual_type        Type of the seqan3::field::qual input; must satisfy std::ranges::output_range
  * over a seqan3::writable_quality_alphabet.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
- * \param[out]    sequence  The buffer for seqan3::field::SEQ input, i.e. the "sequence".
- * \param[out]    id        The buffer for seqan3::field::ID input, e.g. the header line in FastA.
- * \param[out]    qualities The buffer for seqan3::field::QUAL input.
+ * \param[out]    sequence  The buffer for seqan3::field::seq input, i.e. the "sequence".
+ * \param[out]    id        The buffer for seqan3::field::id input, e.g. the header line in FastA.
+ * \param[out]    qualities The buffer for seqan3::field::qual input.
  *
  * \details
  *
@@ -114,8 +114,8 @@ SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_inpu
  *   * The function must also accept std::ignore as parameter for any of the fields.
  *     [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
- *   * Instead of passing the fields seqan3::field::SEQ and seqan3::field::QUAL, you may also pass
- *     seqan3::field::SEQ_QUAL to both parameters. If you do, the seqan3::value_type_t of the argument must be
+ *   * Instead of passing the fields seqan3::field::seq and seqan3::field::qual, you may also pass
+ *     seqan3::field::seq_qual to both parameters. If you do, the seqan3::value_type_t of the argument must be
  *     a specialisation of seqan3::qualified and the second template parameter to
  *     seqan3::sequence_file_input_options must be set to true.
  */

@@ -59,7 +59,7 @@ namespace seqan3
  *
  * ### fields_specialisation
  *
- * The FastA format provides the fields seqan3::field::SEQ and seqan3::field::ID. Both fields are required when writing.
+ * The FastA format provides the fields seqan3::field::seq and seqan3::field::id. Both fields are required when writing.
  *
  * ### Implementation notes
  *

@@ -18,8 +18,8 @@ int main()
 
     for (auto & rec : fin)
     {
-        seqan3::debug_stream << "ID:  " << get<seqan3::field::ID>(rec) << '\n';
-        seqan3::debug_stream << "SEQ: " << get<seqan3::field::SEQ>(rec) << '\n';
+        seqan3::debug_stream << "ID:  " << get<seqan3::field::id>(rec) << '\n';
+        seqan3::debug_stream << "SEQ: " << get<seqan3::field::seq>(rec) << '\n';
         // a quality field also exists, but is not printed, because we know it's empty for FastA files.
     }
 }

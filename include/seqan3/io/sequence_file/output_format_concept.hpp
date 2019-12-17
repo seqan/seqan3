@@ -94,17 +94,17 @@ SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_out
  *                id_type && id, qual_type && qualities)
  * \brief Write the given fields to the specified stream.
  * \tparam stream_type      Output stream, must satisfy seqan3::output_stream_over with `char`.
- * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::output_range
+ * \tparam seq_type         Type of the seqan3::field::seq output; must satisfy std::ranges::output_range
  * over a seqan3::alphabet.
- * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::output_range
+ * \tparam id_type          Type of the seqan3::field::id output; must satisfy std::ranges::output_range
  * over a seqan3::alphabet.
- * \tparam qual_type        Type of the seqan3::field::QUAL output; must satisfy std::ranges::output_range
+ * \tparam qual_type        Type of the seqan3::field::qual output; must satisfy std::ranges::output_range
  * over a seqan3::quality_alphabet.
  * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.
- * \param[in]     sequence  The data for seqan3::field::SEQ, i.e. the "sequence".
- * \param[in]     id        The data for seqan3::field::ID, e.g. the header line in FastA.
- * \param[in]     qualities The data for seqan3::field::QUAL.
+ * \param[in]     sequence  The data for seqan3::field::seq, i.e. the "sequence".
+ * \param[in]     id        The data for seqan3::field::id, e.g. the header line in FastA.
+ * \param[in]     qualities The data for seqan3::field::qual.
  *
  * \details
  *
@@ -112,7 +112,7 @@ SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_out
  *
  *   * The format must also accept std::ignore as parameter for any of the fields, however it shall throw an exception
  * if one of the fields required for writing the format is marked as such. [this shall be checked inside the function]
- *   * The format does not handle seqan3::field::SEQ_QUAL, instead seqan3::sequence_file_output splits it into two views
+ *   * The format does not handle seqan3::field::seq_qual, instead seqan3::sequence_file_output splits it into two views
  *     and passes it to the format as if they were separate.
  */
 /*!\var static inline std::vector<std::string> seqan3::sequence_file_output_format::file_extensions

@@ -67,16 +67,16 @@ namespace seqan3
  *
  * The structured sequence file abstraction supports writing ten different fields:
  *
- *   1. seqan3::field::SEQ (sequence)
- *   2. seqan3::field::ID (identifier)
- *   3. seqan3::field::BPP (annotated sequence)
- *   4. seqan3::field::STRUCTURE (secondary structure)
- *   5. seqan3::field::STRUCTURED_SEQ (sequence and structure in one range)
- *   6. seqan3::field::ENERGY (minimum free energy)
- *   7. seqan3::field::REACT (reactivity)
- *   8. seqan3::field::REACT_ERR (reactivity error)
- *   9. seqan3::field::COMMENT (free text)
- *   10. seqan3::field::OFFSET (index of first sequence character)
+ *   1. seqan3::field::seq (sequence)
+ *   2. seqan3::field::id (identifier)
+ *   3. seqan3::field::bpp (annotated sequence)
+ *   4. seqan3::field::structure (secondary structure)
+ *   5. seqan3::field::structured_seq (sequence and structure in one range)
+ *   6. seqan3::field::energy (minimum free energy)
+ *   7. seqan3::field::react (reactivity)
+ *   8. seqan3::field::react_err (reactivity error)
+ *   9. seqan3::field::comment (free text)
+ *   10. seqan3::field::offset (index of first sequence character)
  *
  * The member functions take any and either of these fields. If the field ID of an argument cannot be deduced, it
  * is assumed to correspond to the field ID of the respective template parameter.
@@ -111,11 +111,11 @@ namespace seqan3
  * The easiest way to write to a sequence file is to use the push_back() or emplace_back() member functions. These
  * work similarly to how they work on an std::vector. If you pass a tuple to push_back() or give arguments to
  * emplace_back() the seqan3::field ID of the i-th tuple-element/argument is assumed to be the i-th value of
- * selected_field_ids, i.e. by default the first is assumed to be seqan3::field::SEQ, the second seqan3::field::ID
- * and the third one seqan3::field::STRUCTURE. You may give less fields than are selected, if the actual format you are
+ * selected_field_ids, i.e. by default the first is assumed to be seqan3::field::seq, the second seqan3::field::id
+ * and the third one seqan3::field::structure. You may give less fields than are selected, if the actual format you are
  * writing to can cope with less
- * (e.g. for Vienna it is sufficient to write seqan3::field::SEQ, seqan3::field::ID and seqan3::field::STRUCTURE,
- * even if selected_field_ids also contains seqan3::field::ENERGY).
+ * (e.g. for Vienna it is sufficient to write seqan3::field::seq, seqan3::field::id and seqan3::field::structure,
+ * even if selected_field_ids also contains seqan3::field::energy).
  *
  * You may also use the output file's iterator for writing, however, this rarely provides an advantage.
  *
@@ -161,8 +161,7 @@ namespace seqan3
  *
  * Currently, the only implemented format is seqan3::format_vienna. More formats will follow soon.
  */
-
-template <detail::fields_specialisation selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
+template <detail::fields_specialisation selected_field_ids_ = fields<field::seq, field::id, field::structure>,
           detail::type_list_of_structure_file_output_formats valid_formats_ = type_list<format_vienna>>
 class structure_file_output
 {
@@ -180,16 +179,16 @@ public:
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
-    using field_ids = fields<field::SEQ,
-                             field::ID,
-                             field::BPP,
-                             field::STRUCTURE,
-                             field::STRUCTURED_SEQ,
-                             field::ENERGY,
-                             field::REACT,
-                             field::REACT_ERR,
-                             field::COMMENT,
-                             field::OFFSET>;
+    using field_ids = fields<field::seq,
+                             field::id,
+                             field::bpp,
+                             field::structure,
+                             field::structured_seq,
+                             field::energy,
+                             field::react,
+                             field::react_err,
+                             field::comment,
+                             field::offset>;
 
     static_assert([] () constexpr
                   {
@@ -203,10 +202,10 @@ public:
 
     static_assert([] () constexpr
                   {
-                      return !(selected_field_ids::contains(field::STRUCTURED_SEQ) &&
-                               (selected_field_ids::contains(field::SEQ) ||
-                               (selected_field_ids::contains(field::STRUCTURE))));
-                  }(), "You may not select field::STRUCTURED_SEQ and either of field::SEQ and field::STRUCTURE "
+                      return !(selected_field_ids::contains(field::structured_seq) &&
+                               (selected_field_ids::contains(field::seq) ||
+                               (selected_field_ids::contains(field::structure))));
+                  }(), "You may not select field::structured_seq and either of field::seq and field::structure "
                        "at the same time.");
 
     /*!\name Range associated types
@@ -393,16 +392,16 @@ public:
         requires tuple_like<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
     {
-        write_record(detail::get_or_ignore<field::SEQ>(r),
-                     detail::get_or_ignore<field::ID>(r),
-                     detail::get_or_ignore<field::BPP>(r),
-                     detail::get_or_ignore<field::STRUCTURE>(r),
-                     detail::get_or_ignore<field::STRUCTURED_SEQ>(r),
-                     detail::get_or_ignore<field::ENERGY>(r),
-                     detail::get_or_ignore<field::REACT>(r),
-                     detail::get_or_ignore<field::REACT_ERR>(r),
-                     detail::get_or_ignore<field::COMMENT>(r),
-                     detail::get_or_ignore<field::OFFSET>(r));
+        write_record(detail::get_or_ignore<field::seq>(r),
+                     detail::get_or_ignore<field::id>(r),
+                     detail::get_or_ignore<field::bpp>(r),
+                     detail::get_or_ignore<field::structure>(r),
+                     detail::get_or_ignore<field::structured_seq>(r),
+                     detail::get_or_ignore<field::energy>(r),
+                     detail::get_or_ignore<field::react>(r),
+                     detail::get_or_ignore<field::react_err>(r),
+                     detail::get_or_ignore<field::comment>(r),
+                     detail::get_or_ignore<field::offset>(r));
     }
 
     /*!\brief           Write a record in form of a std::tuple to the file.
@@ -431,16 +430,16 @@ public:
         requires tuple_like<tuple_t>
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
-        write_record(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::ID)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::BPP)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURE)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURED_SEQ)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::ENERGY)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::REACT)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::REACT_ERR)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::COMMENT)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::OFFSET)>(t));
+        write_record(detail::get_or_ignore<selected_field_ids::index_of(field::seq)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::id)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::bpp)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::structure)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::structured_seq)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::energy)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::react)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::react_err)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::comment)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::offset)>(t));
     }
 
     /*!\brief            Write a record to the file by passing individual fields.
@@ -607,7 +606,7 @@ protected:
     {
         static_assert(detail::decays_to_ignore_v<structured_seq_type> ||
                       (detail::decays_to_ignore_v<seq_type> && detail::decays_to_ignore_v<structure_type>),
-                      "You may not select field::STRUCTURED_SEQ and either of field::SEQ and field::STRUCTURE "
+                      "You may not select field::structured_seq and either of field::seq and field::structure "
                       "at the same time.");
 
         assert(!format.valueless_by_exception());

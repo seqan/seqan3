@@ -10,7 +10,7 @@ int main()
     std::vector<std::vector<dna4>> seqs = {"ACGATCGACTAGCTACGATCAGCTAGCAG"_dna4, "AGAAAGAGCGAGGCTATTTTAGCGAGTTA"_dna4};
 
     auto tmp_dir = std::filesystem::temp_directory_path();
-    alignment_file_output fout{tmp_dir/"my.sam", fields<field::ID, field::SEQ>{}};
+    alignment_file_output fout{tmp_dir/"my.sam", fields<field::id, field::seq>{}};
 
     for (size_t i = 0; i < ids.size(); ++i)
     {

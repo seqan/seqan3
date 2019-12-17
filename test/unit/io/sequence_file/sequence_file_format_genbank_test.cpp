@@ -123,8 +123,8 @@ struct read : public sequence_file_read<format_genbank>
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
-            EXPECT_EQ(get<field::ID>(*it), ids[i]);
-            EXPECT_EQ(get<field::SEQ>(*it), seqs[i]);
+            EXPECT_EQ(get<field::id>(*it), ids[i]);
+            EXPECT_EQ(get<field::seq>(*it), seqs[i]);
         }
     }
 };
@@ -173,7 +173,7 @@ struct write : public sequence_file_data
 
     void do_write_test()
     {
-        sequence_file_output fout{ostream, format_genbank{}, fields<field::SEQ, field::ID>{}};
+        sequence_file_output fout{ostream, format_genbank{}, fields<field::seq, field::id>{}};
         fout.options = options;
 
         for (unsigned i = 0; i < 3; ++i)

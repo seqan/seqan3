@@ -113,14 +113,14 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
     {
         std::stringstream istream{input};
 
-        sequence_file_input fin{istream, format_embl{}, fields<field::ID, field::SEQ>{}};
+        sequence_file_input fin{istream, format_embl{}, fields<field::id, field::seq>{}};
         fin.options = options;
 
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
-            EXPECT_EQ(get<field::ID>(*it), ids[i]);
-            EXPECT_EQ(get<field::SEQ>(*it), seqs[i]);
+            EXPECT_EQ(get<field::id>(*it), ids[i]);
+            EXPECT_EQ(get<field::seq>(*it), seqs[i]);
         }
     }
 };
@@ -223,7 +223,7 @@ GGAGTATAAT ATATATATAT ATAT                                        24
 
     void do_write_test()
     {
-        sequence_file_output fout{ostream, format_embl{}, fields<field::SEQ, field::ID>{}};
+        sequence_file_output fout{ostream, format_embl{}, fields<field::seq, field::id>{}};
         fout.options = options;
 
         for (unsigned i = 0; i < 3; ++i)

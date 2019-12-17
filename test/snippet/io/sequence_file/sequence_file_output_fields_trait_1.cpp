@@ -15,7 +15,7 @@ int main()
 
     seqan3::sequence_file_output fout{std::ostringstream{},
                                       seqan3::format_fasta{},
-                                      seqan3::fields<seqan3::field::ID, seqan3::field::SEQ_QUAL>{}};
+                                      seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>{}};
 
     for (int i = 0; i < 5; i++)
     {

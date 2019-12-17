@@ -38,12 +38,12 @@ int main()
 {
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
-    alignment_file_input fin{tmp_dir/"my.sam", fields<field::MAPQ>{}};
+    alignment_file_input fin{tmp_dir/"my.sam", fields<field::mapq>{}};
 
     double sum{};
     size_t c{};
 
-    std::ranges::for_each(fin.begin(), fin.end(), [&sum, &c] (auto & rec) { sum += get<field::MAPQ>(rec); ++c; });
+    std::ranges::for_each(fin.begin(), fin.end(), [&sum, &c] (auto & rec) { sum += get<field::mapq>(rec); ++c; });
 
     debug_stream << "Average: " << (sum/c) << std::endl;
 }

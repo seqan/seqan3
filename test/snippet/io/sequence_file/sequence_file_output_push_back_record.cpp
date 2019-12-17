@@ -13,7 +13,7 @@ int main()
     for(int i = 0; i < 5; ++i) // some criteria
     {
         seqan3::record<seqan3::type_list<seqan3::dna5_vector, std::string>,
-                       seqan3::fields<seqan3::field::SEQ, seqan3::field::ID>> r{"ACGT"_dna5, "ID1"};
+                       seqan3::fields<seqan3::field::seq, seqan3::field::id>> r{"ACGT"_dna5, "ID1"};
 
         // ...
 

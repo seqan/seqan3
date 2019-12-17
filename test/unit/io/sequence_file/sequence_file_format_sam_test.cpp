@@ -75,9 +75,9 @@ struct read_sam : sequence_file_read<format_sam>
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, it++)
         {
-            EXPECT_EQ(get<field::SEQ>(*it), seqs[i]);
-            EXPECT_EQ(get<field::ID>(*it), ids[i]);
-            EXPECT_EQ(get<field::QUAL>(*it), quals[i]);
+            EXPECT_EQ(get<field::seq>(*it), seqs[i]);
+            EXPECT_EQ(get<field::id>(*it), ids[i]);
+            EXPECT_EQ(get<field::qual>(*it), quals[i]);
         }
     }
 };

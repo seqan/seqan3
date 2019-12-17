@@ -113,7 +113,7 @@ public:
      *    access to them. When reading the records, their reference id information will be checked against the header
      *    information.
      * 3) No reference information is provided on construction an no \@SQ tags are present in the header.
-     *    In this case, the reference information is parsed from the records field::REF_ID and stored in the header.
+     *    In this case, the reference information is parsed from the records field::ref_id and stored in the header.
      *    This member function then provides access to the unique list of reference ids encountered in the records.
      */
     ref_ids_type & ref_ids()

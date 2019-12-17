@@ -113,31 +113,31 @@ SEQAN3_CONCEPT structure_file_output_format = requires(detail::structure_file_ou
  *                                 offset_type && offset)
  * \brief Write the given fields to the specified stream.
  * \tparam stream_type      Output stream, must satisfy seqan3::output_stream_over with `char`.
- * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::output_range
+ * \tparam seq_type         Type of the seqan3::field::seq output; must satisfy std::ranges::output_range
  * over a seqan3::alphabet.
- * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::output_range
+ * \tparam id_type          Type of the seqan3::field::id output; must satisfy std::ranges::output_range
  * over a seqan3::alphabet.
- * \tparam bpp_type         Type of the seqan3::field::BPP output; must satisfy std::ranges::output_range
+ * \tparam bpp_type         Type of the seqan3::field::bpp output; must satisfy std::ranges::output_range
  * over a set of pair of types satisfying std::is_floating_point and std::numeric_limits::is_integer, respectively.
- * \tparam structure_type   Type of the seqan3::field::STRUCTURE output; must satisfy std::ranges::output_range
+ * \tparam structure_type   Type of the seqan3::field::structure output; must satisfy std::ranges::output_range
  * over a seqan3::rna_structure_alphabet.
- * \tparam energy_type      Type of the seqan3::field::ENERGY output; must satisfy std::is_floating_point.
- * \tparam react_type       Type of the seqan3::field::REACT and seqan3::field::REACT_ERR output;
+ * \tparam energy_type      Type of the seqan3::field::energy output; must satisfy std::is_floating_point.
+ * \tparam react_type       Type of the seqan3::field::react and seqan3::field::react_err output;
  * must satisfy std::is_floating_point.
- * \tparam comment_type     Type of the seqan3::field::COMMENT output; must satisfy std::ranges::output_range
+ * \tparam comment_type     Type of the seqan3::field::comment output; must satisfy std::ranges::output_range
  * over a seqan3::alphabet.
- * \tparam offset_type      Type of the seqan3::field::OFFSET output; must satisfy std::numeric_limits::is_integer.
+ * \tparam offset_type      Type of the seqan3::field::offset output; must satisfy std::numeric_limits::is_integer.
  * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.
- * \param[in]     seq       The data for seqan3::field::SEQ output, i.e. the "sequence".
- * \param[in]     id        The data for seqan3::field::ID output, e.g. the header line.
- * \param[in]     bpp       The data for seqan3::field::BPP output.
- * \param[in]     structure The data for seqan3::field::STRUCTURE output.
- * \param[in]     energy    The data for seqan3::field::ENERGY output.
- * \param[in]     react     The data for seqan3::field::REACT output.
- * \param[in]     react_err The data for seqan3::field::REACT_ERR output.
- * \param[in]     comment   The data for seqan3::field::COMMENT output.
- * \param[in]     offset    The data for seqan3::field::OFFSET output.
+ * \param[in]     seq       The data for seqan3::field::seq output, i.e. the "sequence".
+ * \param[in]     id        The data for seqan3::field::id output, e.g. the header line.
+ * \param[in]     bpp       The data for seqan3::field::bpp output.
+ * \param[in]     structure The data for seqan3::field::structure output.
+ * \param[in]     energy    The data for seqan3::field::energy output.
+ * \param[in]     react     The data for seqan3::field::react output.
+ * \param[in]     react_err The data for seqan3::field::react_err output.
+ * \param[in]     comment   The data for seqan3::field::comment output.
+ * \param[in]     offset    The data for seqan3::field::offset output.
  *
  * \details
  *
@@ -145,7 +145,7 @@ SEQAN3_CONCEPT structure_file_output_format = requires(detail::structure_file_ou
  *
  *   * The format must also accept std::ignore as parameter for any of the fields, however it shall throw an exception
  * if one of the fields required for writing the format is marked as such. [this shall be checked inside the function]
- *   * The format does not handle seqan3::field::STRUCTURED_SEQ, instead seqan3::structure_file_output splits it into
+ *   * The format does not handle seqan3::field::structured_seq, instead seqan3::structure_file_output splits it into
  * two views and passes it to the format as if they were separate.
  */
 /*!\var static inline std::vector<std::string> seqan3::structure_file_output_format::file_extensions

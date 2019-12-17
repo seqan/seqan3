@@ -57,9 +57,9 @@ int main()
 
     for (auto & rec : fin)
     {
-        debug_stream << "ID:  "  << get<field::ID>(rec) << '\n';
-        debug_stream << "SEQ: "  << get<field::SEQ>(rec) << '\n';
-        debug_stream << "QUAL: " << get<field::QUAL>(rec) << '\n';
+        debug_stream << "ID:  "  << get<field::id>(rec) << '\n';
+        debug_stream << "SEQ: "  << get<field::seq>(rec) << '\n';
+        debug_stream << "QUAL: " << get<field::qual>(rec) << '\n';
     }
 }
 //![solution]

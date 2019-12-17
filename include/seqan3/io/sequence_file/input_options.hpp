@@ -26,7 +26,7 @@ struct sequence_file_input_options
 {
     //!\brief Read the ID string only up until the first whitespace character.
     bool truncate_ids = false;
-    //!\brief Read the complete_header into the seqan3::field::ID for embl or genbank format.
+    //!\brief Read the complete_header into the seqan3::field::id for embl or genbank format.
     bool embl_genbank_complete_header = false;
 };
 
