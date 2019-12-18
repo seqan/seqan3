@@ -12,11 +12,38 @@ include (../seqan3-test.cmake) # for SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS, SEQAN3_
 include (ExternalProject)
 
 set (SEQAN3_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../")
-include (install-seqan3.cmake)
+
+if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to install seqan3.
+    include (install-seqan3.cmake)
+endif ()
 
 option (SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE
         "Enable this option if you want to get a detailed list which paths were considered for find_package(...)"
         false)
+
+if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to install cmake 3.4.
+    set (SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND "${CMAKE_COMMAND}")
+    include (use-cmake3.4.cmake) # ensure that seqan3 can be used with cmake 3.4
+else ()
+    set (SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND "${CMAKE_COMMAND}")
+endif ()
+
+# Here is an explanation of what happens:
+#
+# If your current CMake version is < 3.14, we
+#  * test test/external_project/seqan3_submodule_add_subdirectory/CMakeLists.txt with your current CMake version
+#  * test test/external_project/seqan3_submodule_find_package/CMakeLists.txt with your current CMake version
+#  * DO NOT test test/external_project/seqan3_installed/CMakeLists.txt, because we need 3.14 to be able to
+#    package seqan3 to execute the test.
+#  * DO NOT test test/external_project/seqan3_fetch_content_zip/CMakeLists.txt, because we need 3.14 in order to use
+#    fetch_content
+#
+# If your current CMake version is >= 3.14, we
+#  * download CMake  3.4
+#  * test test/external_project/seqan3_submodule_add_subdirectory/CMakeLists.txt with CMake 3.4
+#  * test test/external_project/seqan3_submodule_find_package/CMakeLists.txt with CMake 3.4
+#  * test test/external_project/seqan3_installed/CMakeLists.txt with CMake 3.4
+#  * test test/external_project/seqan3_fetch_content_zip/CMakeLists.txt with your current CMake version
 
 # 1) This tests test/external_project/seqan3_submodule_add_subdirectory/CMakeLists.txt
 #    That means we use add_subdirectory directly on seqan3's top level CMakeLists.txt.
@@ -27,6 +54,7 @@ ExternalProject_Add (
     seqan3_submodule_add_subdirectory
     PREFIX seqan3_submodule_add_subdirectory
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_submodule_add_subdirectory"
+    CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
     CMAKE_ARGS
         ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
         "-DSEQAN3_ROOT=${SEQAN3_ROOT}"
@@ -42,6 +70,7 @@ ExternalProject_Add (
     seqan3_submodule_find_package
     PREFIX seqan3_submodule_find_package
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_submodule_find_package"
+    CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
     CMAKE_ARGS
         ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
         "-DCMAKE_PREFIX_PATH=${SEQAN3_ROOT}/build_system"
@@ -64,6 +93,7 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to in
         seqan3_installed
         PREFIX seqan3_installed
         SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_installed"
+        CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
         CMAKE_ARGS
             ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
             "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}"
@@ -79,7 +109,7 @@ endif ()
 #    Note that FetchContent is a CMake >= 3.14 feature.
 #    This is expected to work with CMake >= 3.14.
 # (ExternalProject_Add simulates a fresh and separate invocation of cmake ../)
-if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14)
+if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to use fetch_content.
     ExternalProject_Add (
         seqan3_fetch_content_zip
         PREFIX seqan3_fetch_content_zip
