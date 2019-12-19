@@ -14,29 +14,27 @@
 #include "fixture/global_affine_unbanded.hpp"
 #include "pairwise_alignment_collection_test_template.hpp"
 
-using namespace seqan3;
-using namespace seqan3::detail;
-using namespace seqan3::test::alignment;
-
 namespace seqan3::test::alignment::collection::simd::global::affine::unbanded
 {
 
 static auto dna4_01 = []()
 {
-    using fixture_t = decltype(fixture::global::affine::unbanded::dna4_01);
+    using namespace seqan3::test::alignment::fixture;
+
+    auto base_fixture = fixture::global::affine::unbanded::dna4_match_4_mismatch_5_gap_1_open_10_part_01;
+    using fixture_t = decltype(base_fixture);
 
     std::vector<fixture_t> data;
     for (size_t i = 0; i < 100; ++i)
-        data.push_back(fixture::global::affine::unbanded::dna4_01);
+        data.push_back(base_fixture);
 
-    auto config = fixture::global::affine::unbanded::dna4_01.config | align_cfg::vectorise;
-    return alignment_fixture_collection{config, data};
+    return alignment_fixture_collection{base_fixture.config | align_cfg::vectorise, data};
 }();
 
 } // namespace seqan3::test::alignment::collection::simd::global::affine::unbanded
 
 using pairwise_collection_simd_global_affine_unbanded_testing_types = ::testing::Types<
-        pairwise_alignment_fixture<&collection::simd::global::affine::unbanded::dna4_01>
+        pairwise_alignment_fixture<&seqan3::test::alignment::collection::simd::global::affine::unbanded::dna4_01>
     >;
 
 INSTANTIATE_TYPED_TEST_CASE_P(pairwise_collection_simd_global_affine_unbanded,
