@@ -126,7 +126,7 @@ SEQAN3_CONCEPT fm_index_specialisation = std::semiregular<t> && requires (t inde
  * \typedef typename t::text_type text_type
  * \brief Type of the indexed text.
  *
- * \typedef typename t::alphabet_type char_type
+ * \typedef typename t::alphabet_type alphabet_type
  * \brief Type of the underlying character of text_type.
  *
  * \typedef typename t::size_type size_type
