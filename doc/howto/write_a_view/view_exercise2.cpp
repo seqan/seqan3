@@ -3,22 +3,22 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
+using seqan3::operator""_dna5;
 
 //![start]
 auto my_reverse_complement = std::views::reverse | std::views::transform([] (auto const d)
 {
-    return complement(d);
+    return seqan3::complement(d);
 });
 
 //![end]
 int main()
 {
-    std::vector<dna5> vec{"ACCAGATTA"_dna5};
-    debug_stream << vec << '\n';                    // will print "ACCAGATTA"
+    std::vector<seqan3::dna5> vec{"ACCAGATTA"_dna5};
+    seqan3::debug_stream << vec << '\n';            // will print "ACCAGATTA"
 
     auto v = vec | my_reverse_complement;
 
-    debug_stream << v << '\n';                      // prints "TAATCTGGT"
+    seqan3::debug_stream << v << '\n';              // prints "TAATCTGGT"
 }
 //![end]

@@ -4,14 +4,14 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
+using seqan3::operator""_dna5;
 
 template <std::ranges::forward_range urng_t> // the underlying range type
 struct my_iterator : std::ranges::iterator_t<urng_t>
 {
 //![start]
     //![static_assert]
-    static_assert(nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>,
+    static_assert(seqan3::nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>,
                   "You can only iterate over ranges of nucleotides!");
     //![static_assert]
 
@@ -67,7 +67,7 @@ struct my_iterator : std::ranges::iterator_t<urng_t>
     // through the seqan3::complement() function before returning it.
     reference operator*() const
     {
-        return complement(base_t::operator*());
+        return seqan3::complement(base_t::operator*());
     }
     //![dereference]
 
@@ -75,21 +75,21 @@ struct my_iterator : std::ranges::iterator_t<urng_t>
 };
 
 // verify that your type models the concept
-static_assert(std::forward_iterator<my_iterator<std::vector<dna5>>>);
+static_assert(std::forward_iterator<my_iterator<std::vector<seqan3::dna5>>>);
 
 int main()
 {
-    std::vector<dna5> vec{"GATTACA"_dna5};
+    std::vector<seqan3::dna5> vec{"GATTACA"_dna5};
 
     // instantiate the template over the underlying vector's iterator and sentinel
     // (for all standard containers the sentinel type is the same as the iterator type)
-    using my_it_concrete = my_iterator<std::vector<dna5>>;
+    using my_it_concrete = my_iterator<std::vector<seqan3::dna5>>;
 
     // create an iterator that is constructed with vec.begin() as the underlying iterator
     my_it_concrete it{vec.begin()};
 
     // iterate over vec, but with your custom iterator
     while (it != vec.end())
-        std::cout << to_char(*it++) << ' ';
+        std::cout << seqan3::to_char(*it++) << ' ';
 }
 //![end]
