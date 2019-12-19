@@ -1,10 +1,11 @@
 #include <sstream>
 #include <string>
-#include <tuple>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
+#include <seqan3/range/views/zip.hpp>
 
 using seqan3::operator""_dna4;
 
@@ -22,5 +23,5 @@ int main()
 
     seqan3::sequence_file_output fout{std::ostringstream{}, seqan3::format_fasta{}};
 
-    fout = std::tie(data_storage.sequences, data_storage.ids);
+    fout = seqan3::views::zip(data_storage.sequences, data_storage.ids);
 }

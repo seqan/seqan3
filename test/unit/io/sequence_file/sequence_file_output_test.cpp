@@ -390,20 +390,20 @@ TEST(rows, assign_range_of_tuples)
 // columns
 // ----------------------------------------------------------------------------
 
-TEST(columns, assign_record_of_columns)
-{
-    record<type_list<std::vector<dna5_vector>, std::vector<std::string>>, fields<field::seq, field::id> > columns
-    {
-        seqs,
-        ids
-    };
-
-    assign_impl(columns);
-}
-
 TEST(columns, assign_tuple_of_columns)
 {
-    assign_impl(std::tie(seqs, ids));
+    assign_impl(seqan3::views::zip(seqs, ids));
+}
+
+TEST(columns, writing_id_seq_qual)
+{
+    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::id, field::seq, field::qual>()};
+    fout.options.fasta_letters_per_line = 0;
+
+    fout = seqan3::views::zip(ids, seqs, quals);
+
+    fout.get_stream().flush();
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
 }
 
 TEST(columns, writing_seq_qual)
@@ -419,7 +419,7 @@ TEST(columns, writing_seq_qual)
         std::copy(quals[i].begin(), quals[i].end(), seq_quals[i].begin());
     }
 
-    fout = std::tie(ids, seq_quals);
+    fout = seqan3::views::zip(ids, seq_quals);
 
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
