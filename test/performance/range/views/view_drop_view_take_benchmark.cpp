@@ -23,7 +23,7 @@ using namespace seqan3;
 // THIS FILE IMPLICITLY TESTS seqan3::views::slice, because that is just drop piped into take
 
 template <typename container_t, typename drop_t, typename take_t, bool single_pass = false>
-void sequential_read(benchmark::State& state)
+void sequential_read(benchmark::State & state)
 {
     container_t c;
     c.resize(1'003'000);

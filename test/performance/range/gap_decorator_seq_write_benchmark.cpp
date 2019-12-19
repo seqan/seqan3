@@ -27,7 +27,7 @@ using namespace seqan3;
 //  insert left to right
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-void insert_left2right(benchmark::State& state)
+void insert_left2right(benchmark::State & state)
 {
     unsigned int seq_len = state.range(0);
     using size_type = typename gap_decorator_t::size_type;
