@@ -12,7 +12,10 @@
 
 #pragma once
 
+#include <variant>
+
 #include <seqan3/core/type_traits/pre.hpp>
+#include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_traits.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
@@ -112,7 +115,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         if (!internal_hits.empty())
         {
             internal_hits.clear(); // TODO: don't clear when using Optimum Search Schemes with lower error bounds
-            uint8_t const s = get<search_cfg::mode>(cfg).value;
+            uint8_t const s = get<internal_search_mode>(cfg).value;
             max_error2.total += s - 1;
             detail::search_algo<false>(index, query, max_error2, internal_delegate);
         }
@@ -178,6 +181,9 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
  * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
 template <typename index_t, typename queries_t, typename configuration_t>
+//!\cond
+    requires configuration_t::template exists<internal_search_mode>()
+//!\endcond
 inline auto search_all(index_t const & index, queries_t && queries, configuration_t const & cfg)
 {
     using cfg_t = remove_cvref_t<configuration_t>;
@@ -207,6 +213,32 @@ inline auto search_all(index_t const & index, queries_t && queries, configuratio
     {
         // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
         return search_single(index, queries, cfg);
+    }
+}
+
+//!\overload
+template <typename index_t, typename queries_t, typename configuration_t>
+//!\cond
+    requires !configuration_t::template exists<internal_search_mode>()
+//!\endcond
+inline auto search_all(index_t const & index, queries_t && queries, configuration_t const & cfg)
+{
+    using seqan3::get;
+    auto mode_config = get<search_cfg::mode>(cfg);
+
+    if constexpr (decltype(mode_config)::has_dynamic_state)
+    {
+        return std::visit(multi_invocable
+        {
+            [&] (search_mode_all_best) { return search_all(index, queries, cfg | internal_search_mode{search_cfg::all_best}); },
+            [&] (search_mode_best) { return search_all(index, queries, cfg | internal_search_mode{search_cfg::best}); },
+            [&] (search_cfg::strata const & strata) { return search_all(index, queries, cfg | internal_search_mode{strata}); },
+            [&] (auto) { return search_all(index, queries, cfg | internal_search_mode{search_cfg::all}); }
+        }, mode_config.search_modes());
+    }
+    else
+    {
+        return search_all(index, std::forward<queries_t>(queries), cfg | internal_search_mode{mode_config.value});
     }
 }
 

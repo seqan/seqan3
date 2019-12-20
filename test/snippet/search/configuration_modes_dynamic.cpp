@@ -4,10 +4,10 @@ int main()
 {
     seqan3::search_cfg::mode my_mode{}; // Enables the dynamic configuration, defaults to seqan3::search_cfg::all.
 
-    my_mode = seqan3::search_cfg::best; // Now the best mode is selected.
-
-    my_mode = seqan3::search_cfg::strata{2}; // Now the strata mode is selected.
-
+    if (true)
+        my_mode = seqan3::search_cfg::best; // The best mode is selected.
+    else
+        my_mode = seqan3::search_cfg::strata{2}; // The strata mode is selected.
 
     // Combine the dynamically configured mode with other search configurations.
     seqan3::configuration const cfg = my_mode |

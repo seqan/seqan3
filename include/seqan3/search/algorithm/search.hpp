@@ -167,7 +167,7 @@ namespace seqan3
  *
  * \include test/snippet/search/algorithm/search.cpp
  */
-template <fm_index_specialisation index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <typename queries_t, fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(queries_t && queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)

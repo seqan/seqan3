@@ -40,21 +40,24 @@ struct search_traits
 
     //!\brief A flag indicating whether search should find all hits.
     static constexpr bool search_all_hits =
-        search_configuration_t::template exists<search_cfg::mode<detail::search_mode_all>>();
+        search_configuration_t::template exists<search_cfg::mode<detail::search_mode_all>>() |
+        search_configuration_t::template exists<detail::internal_search_mode<detail::search_mode_all>>();
     //!\brief A flag indicating whether search should find best hits.
     static constexpr bool search_best_hits =
-        search_configuration_t::template exists<search_cfg::mode<detail::search_mode_best>>();
+        search_configuration_t::template exists<search_cfg::mode<detail::search_mode_best>>() |
+        search_configuration_t::template exists<detail::internal_search_mode<detail::search_mode_best>>();
     //!\brief A flag indicating whether search should find all best hits.
     static constexpr bool search_all_best_hits =
-        search_configuration_t::template exists<search_cfg::mode<detail::search_mode_all_best>>();
+        search_configuration_t::template exists<search_cfg::mode<detail::search_mode_all_best>>() |
+        search_configuration_t::template exists<detail::internal_search_mode<detail::search_mode_all_best>>();
     //!\brief A flag indicating whether search should find strata hits.
     static constexpr bool search_strata_hits =
-        search_configuration_t::template exists<search_cfg::mode<search_cfg::strata>>();
+        search_configuration_t::template exists<search_cfg::mode<search_cfg::strata>>() |
+        search_configuration_t::template exists<detail::internal_search_mode<search_cfg::strata>>();
     //!\brief A flag indicating whether mode configuration was set in the search configuration.
-    static constexpr bool has_mode_configuration = search_all_hits |
-                                                   search_best_hits |
-                                                   search_all_best_hits |
-                                                   search_strata_hits;
+    static constexpr bool has_mode_configuration =
+        search_configuration_t::template exists<search_cfg::mode>() |
+        search_configuration_t::template exists<detail::internal_search_mode>();
 
     //!\brief A flag indicating whether search should return the index cursor.
     static constexpr bool search_return_index_cursor =

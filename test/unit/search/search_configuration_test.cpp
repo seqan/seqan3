@@ -7,7 +7,7 @@
 
 #include <type_traits>
 
-#include <seqan3/search/algorithm/all.hpp>
+#include <seqan3/search/configuration/all.hpp>
 
 #include <gtest/gtest.h>
 
@@ -57,7 +57,7 @@ TYPED_TEST(search_configuration_test, configuration_exists)
 // See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93034
 TYPED_TEST(search_configuration_test, configuration_exists_constexpr)
 {
-    constexpr configuration cfg{TypeParam{}};
+    constexpr seqan3::configuration cfg{TypeParam{}};
     constexpr bool cfg_exists = decltype(cfg)::template exists<TypeParam>();
     EXPECT_TRUE(cfg_exists);
 }

@@ -34,7 +34,6 @@ struct search_mode_all_best {};
 //!\brief Type for the "best" value for the configuration element "mode".
 //!\ingroup search_configuration
 struct search_mode_best {};
-
 } // namespace seqan3::detail
 
 namespace seqan3::search_cfg
@@ -61,8 +60,20 @@ struct strata : detail::strong_type<uint8_t, strata, detail::strong_type_skill::
     using detail::strong_type<uint8_t, strata, detail::strong_type_skill::convert>::strong_type;
 };
 
+//!\brief A helper variable template to check if the given mode type is a valid search mode.
+//!\ingroup search_configuration
+//!\hideinitializer
+template <typename search_mode_t>
+inline constexpr bool is_valid_search_mode_v = std::same_as<search_mode_t, detail::search_mode_all> ||
+                                               std::same_as<search_mode_t, detail::search_mode_all_best> ||
+                                               std::same_as<search_mode_t, detail::search_mode_best> ||
+                                               std::same_as<search_mode_t, strata>;
+
 /*!\brief Configuration element to determine the search mode.
  * \ingroup search_configuration
+ *
+ * \tparam search_mode_t The type of the search mode to use; seqan3::search_cfg::is_valid_mode_type must evaluate to
+ *                       `true` or must be of type seqan3::dynamic_state.
  *
  * \details
  *
@@ -92,11 +103,7 @@ struct strata : detail::strong_type<uint8_t, strata, detail::strong_type_skill::
  */
 template <typename search_mode_t>
 //!\cond
-    requires std::same_as<search_mode_t, detail::search_mode_all> ||
-             std::same_as<search_mode_t, detail::search_mode_all_best> ||
-             std::same_as<search_mode_t, detail::search_mode_best> ||
-             std::same_as<search_mode_t, strata> ||
-             std::same_as<search_mode_t, dynamic_state>
+    requires is_valid_search_mode_v<search_mode_t> || std::same_as<search_mode_t, dynamic_state>
 //!\endcond
 class mode : public pipeable_config_element<mode<search_mode_t>, search_mode_t>
 {
@@ -122,6 +129,8 @@ public:
 
     /*!\brief Construction of a fixed search mode with the given mode option.
      *
+     * \tparam new_search_mode_t The type of the search mode to set.
+     *
      * \param[in] new_search_mode The instance of the search mode option to use.
      *
      * \details
@@ -131,30 +140,25 @@ public:
      */
     template <typename new_search_mode_t>
     //!\cond
-        requires !std::same_as<new_search_mode_t, mode> &&
-                 (std::same_as<new_search_mode_t, detail::search_mode_all> ||
-                  std::same_as<new_search_mode_t, detail::search_mode_all_best> ||
-                  std::same_as<new_search_mode_t, detail::search_mode_best> ||
-                  std::same_as<new_search_mode_t, strata>)
+        requires !std::same_as<new_search_mode_t, mode> && is_valid_search_mode_v<new_search_mode_t>
     //!\endcond
     explicit constexpr mode(new_search_mode_t new_search_mode) : base_t{std::move(new_search_mode)}
     {}
 
     /*!\brief Assigns a new mode option to the search mode.
      *
+     * \tparam new_search_mode_t The type of the search mode to set.
+     *
      * \param[in] new_search_mode The instance of the search mode option to use.
      *
      * \details
      *
-     * Note this assignment operator is only available if the search mode was default constructed.
+     * Note this assignment operator is only available if the search mode was default constructed, i.e. `search_mode_t`
+     * is deduced as seqan3::dynamic_state.
      */
     template <typename new_search_mode_t>
     //!\cond
-        requires !std::same_as<new_search_mode_t, mode> &&
-                 (std::same_as<new_search_mode_t, detail::search_mode_all> ||
-                  std::same_as<new_search_mode_t, detail::search_mode_all_best> ||
-                  std::same_as<new_search_mode_t, detail::search_mode_best> ||
-                  std::same_as<new_search_mode_t, strata>)
+        requires !std::same_as<new_search_mode_t, mode> && is_valid_search_mode_v<new_search_mode_t>
     //!\endcond
     constexpr mode & operator=(new_search_mode_t new_search_mode)
     {
@@ -165,6 +169,9 @@ public:
         return *this;
     }
     //!\}
+
+    //!\brief Evaluates to `true` if the search mode can be configured at runtime, otherwise `false`.
+    static constexpr bool has_dynamic_state = std::same_as<search_mode_t, dynamic_state>;
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
@@ -178,9 +185,6 @@ public:
     {
         return search_mode_variant;
     }
-
-    //!\brief Evaluates to `true` if the search mode can be configured at runtime, otherwise `false`.
-    static constexpr bool has_dynamic_state = std::same_as<search_mode_t, dynamic_state>;
 
 private:
     //!\brief Stores the dynamically selected search mode option.
@@ -205,9 +209,8 @@ namespace seqan3::detail
 /*!\brief An internal representation of the associated seqan3::search_cfg::mode.
  * \ingroup search_configuration
  *
- * \tparam search_mode_t The type of the search mode option; must be one of seqan3::detail::search_mode_all,
- *                       seqan3::detail::search_mode_best, seqan3::detail::search_mode_all_best, or
- *                       seqan3::detail::search_mode_strata.
+ * \tparam search_mode_t The type of the search mode option; seqan3::search_cfg::is_valid_search_mode_v must evaluate to
+ *                       `true`;
  *
  * \details
  *
@@ -220,10 +223,7 @@ namespace seqan3::detail
  */
 template <typename search_mode_t>
 //!\cond
-    requires std::same_as<search_mode_t, search_mode_all> ||
-             std::same_as<search_mode_t, search_mode_all_best> ||
-             std::same_as<search_mode_t, search_mode_best> ||
-             std::same_as<search_mode_t, search_cfg::strata>
+    requires search_cfg::is_valid_search_mode_v<search_mode_t>
 //!\endcond
 struct internal_search_mode : public pipeable_config_element<internal_search_mode<search_mode_t>, search_mode_t>
 {
