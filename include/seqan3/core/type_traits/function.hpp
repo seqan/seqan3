@@ -31,8 +31,8 @@
 namespace seqan3::detail
 {
 
-/*!\brief A type that can conveniently inherit multiple invocables and acts as a union over them.
- * \tparam invocable_ts The types to inherit from.
+/*!\brief A type that can conveniently inherit multiple invocable types and acts as a union over them.
+ * \tparam invocable_ts A template parameter pack with the types to inherit from.
  * \ingroup type_traits
  */
 template <typename ...invocable_ts>
