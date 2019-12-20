@@ -71,9 +71,10 @@
  *
  * \include test/snippet/core/algorithm/configuration_value_or.cpp
  */
- #include <seqan3/core/algorithm/bound.hpp>
+#include <seqan3/core/algorithm/bound.hpp>
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/algorithm/configuration_utility.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/algorithm/dynamic_state.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
