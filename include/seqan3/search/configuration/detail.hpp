@@ -39,10 +39,12 @@ namespace seqan3::detail
  */
 enum struct search_config_id : uint8_t
 {
-    max_error, //!< Identifier for the max_errors configuration.
-    max_error_rate, //!< Identifier for the max_error_rate configuration.
-    output, //!< Identifier for the output configuration.
+    //!\brief Identifier for max_errors configuration.
+    max_error, //!< Identifier for the max error configuration of the search.
+    max_error_rate, //!< Identifier for the max error rate configuration of the search.
+    output, //!< Identifier for the search output configuration.
     mode, //!< Identifier for the search mode configuration.
+    internal_search_mode, //!< Identifier for the internal search mode used to encode the mode statically.
     parallel, //!< Identifier for the parallel execution configuration.
     //!\cond
     // ATTENTION: Must always be the last item; will be used to determine the number of ids.
@@ -69,12 +71,13 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(search_config_
                             static_cast<uint8_t>(search_config_id::SIZE)> compatibility_table<search_config_id> =
 {
     {
-        // max_error, max_error_rate, output, mode, parallel
-        { 0, 0, 1, 1, 1},
-        { 0, 0, 1, 1, 1},
-        { 1, 1, 0, 1, 1},
-        { 1, 1, 1, 0, 1},
-        { 1, 1, 1, 1, 0}
+        // max_error, max_error_rate, output, mode, internal_search_mode, parallel
+        { 0, 0, 1, 1, 1, 1},
+        { 0, 0, 1, 1, 1, 1},
+        { 1, 1, 0, 1, 1, 1},
+        { 1, 1, 1, 0, 1, 1},
+        { 1, 1, 1, 1, 0, 1},
+        { 1, 1, 1, 1, 1, 0}
     }
 };
 

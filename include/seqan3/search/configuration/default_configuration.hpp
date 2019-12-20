@@ -25,8 +25,16 @@ namespace seqan3::search_cfg
 /*!\brief The default configuration.
  * \ingroup search_configuration
  */
+#if defined(__GNUC__) && __GNUC__ >= 8
 inline constexpr configuration default_configuration = max_error{total{0}, substitution{0}, insertion{0}, deletion{0}} |
                                                        output{text_position} |
                                                        mode{all};
+#else // vvv workaround / no workaround ^^^
+// On gcc 7 std::variant's copy/move constructor is not declared constexpr.
+// See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93034
+inline configuration const  default_configuration = max_error{total{0}, substitution{0}, insertion{0}, deletion{0}} |
+                                                    output{text_position} |
+                                                    mode{all};
+#endif // defined(__GNUC__) && __GNUC__ >= 8
 
 } // namespace seqan3::search_cfg

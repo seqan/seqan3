@@ -52,6 +52,33 @@ TYPED_TEST(search_configuration_test, configuration_exists)
     EXPECT_TRUE(decltype(cfg)::template exists<TypeParam>());
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 8
+// Cannot test this for gcc7 since the variant cannot be moved in an constexpr context
+// See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93034
+TYPED_TEST(search_configuration_test, configuration_exists_constexpr)
+{
+    constexpr configuration cfg{TypeParam{}};
+    constexpr bool cfg_exists = decltype(cfg)::template exists<TypeParam>();
+    EXPECT_TRUE(cfg_exists);
+}
+#endif // defined(__GNUC__) && __GNUC__ >= 8
+
+TEST(search_configuration_mode_test, select_at_runtime)
+{
+    {
+        seqan3::search_cfg::mode m{seqan3::search_cfg::all};
+        EXPECT_FALSE(m.has_dynamic_state);
+    }
+
+    {
+        seqan3::search_cfg::mode m{};
+        EXPECT_TRUE(m.has_dynamic_state);
+
+        m = seqan3::search_cfg::all_best;
+        EXPECT_TRUE(std::holds_alternative<seqan3::detail::search_mode_all_best>(m.search_modes()));
+    }
+}
+
 // TEST(search_configuration_test, illegal_runtime_configurations)
 // {
 //     seqan3::dna4_vector text{"ACGT"_dna4}, query{"ACG"_dna4};
