@@ -93,6 +93,12 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   Use the constructor `seqan3::fm_index::fm_index(text_t && text)` or `seqan3::bi_fm_index::bi_fm_index(text_t && text)`
   instead.
 
+* **The `seqan3::fm_index::char_type` member was renamed to `seqan3::fm_index::alphabet_type`**
+  The same applies for the `seqan3::bi_fm_index`.
+
+* **The `seqan3::fm_index_cursor::index_char_type` member was renamed to `seqan3::fm_index_cursor::index_alphabet_type`**
+  The same applies for the `seqan3::bi_fm_index_cursor`.
+
 ## Notable Bug-fixes
 
 * Copying and moving the `seqan3::fm_index` and `seqan3::bi_fm_index` now work properly.

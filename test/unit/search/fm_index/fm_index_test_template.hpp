@@ -92,7 +92,7 @@ TYPED_TEST_P(fm_index_test, concept_check)
 {
     using index_t = typename TypeParam::first_type;
     EXPECT_TRUE(fm_index_specialisation<index_t>);
-    if constexpr (std::same_as<index_t, bi_fm_index<typename index_t::char_type, text_layout::single>>)
+    if constexpr (std::same_as<index_t, bi_fm_index<typename index_t::alphabet_type, text_layout::single>>)
     {
         EXPECT_TRUE(bi_fm_index_specialisation<index_t>);
     }
