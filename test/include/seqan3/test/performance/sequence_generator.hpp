@@ -78,15 +78,21 @@ auto generate_sequence_seqan2(size_t const len = 500,
                               size_t const variance = 0,
                               size_t const seed = 0)
 {
+    size_t max_val;
+    if constexpr (std::unsigned_integral<alphabet_t>)
+        max_val = std::numeric_limits<size_t>::max();
+    else
+        max_val = seqan::ValueSize<alphabet_t>::VALUE - 1;
+
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<uint8_t> dis_alpha(0, seqan::ValueSize<alphabet_t>::VALUE - 1);
+    std::uniform_int_distribution<uint8_t> dis_alpha(0, max_val);
     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
 
     seqan::String<alphabet_t> sequence;
     size_t length = dis_length(gen);
 
     for (size_t l = 0; l < length; ++l)
-        appendValue(sequence, alphabet_t{dis_alpha(gen)});
+        appendValue(sequence, alphabet_t(dis_alpha(gen)));
 
     return sequence;
 }
