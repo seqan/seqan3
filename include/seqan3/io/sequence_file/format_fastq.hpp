@@ -21,6 +21,7 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
@@ -109,7 +110,7 @@ protected:
                               qual_type                                                                 & qualities)
     {
         auto stream_view = views::istreambuf(stream);
-        auto stream_it = begin(stream_view);
+        auto stream_it = std::ranges::begin(stream_view);
 
         // cache the begin position so we write quals to the same position as seq in seq_qual case
         size_t sequence_size_before = 0;
@@ -118,27 +119,211 @@ protected:
             sequence_size_before = size(sequence);
 
         /* ID */
-        if (*stream_it != '@') // [[unlikely]]
+        if (*stream_it != '@')
         {
             throw parse_error{std::string{"Expected '@' on beginning of ID line, got: "} +
                               detail::make_printable(*stream_it)};
         }
         ++stream_it; // skip '@'
 
+#if SEQAN3_WORKAROUND_VIEW_PERFORMANCE // can't have nice things :'(
+
+        auto e = std::ranges::end(stream_view);
         if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
             if (options.truncate_ids)
             {
-                std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank)
+                for (; (stream_it != e) && (!(is_cntrl || is_blank))(*stream_it); ++stream_it)
+                {
+                    if constexpr (builtin_character<value_type_t<id_type>>)
+                        id.push_back(*stream_it);
+                    else
+                        id.push_back(assign_char_to(*stream_it, value_type_t<id_type>{}));
+
+                }
+                for (; (stream_it != e) && (!is_char<'\n'>)(*stream_it); ++stream_it)
+                {}
+            }
+            else
+            {
+                for (; (stream_it != e) && (!is_char<'\n'>)(*stream_it); ++stream_it)
+                {
+                    if constexpr (builtin_character<value_type_t<id_type>>)
+                        id.push_back(*stream_it);
+                    else
+                        id.push_back(assign_char_to(*stream_it, value_type_t<id_type>{}));
+                }
+            }
+        }
+        else
+        {
+            for (; (stream_it != e) && (!is_char<'\n'>)(*stream_it); ++stream_it)
+            {}
+        }
+
+        if (stream_it == e)
+        {
+            throw unexpected_end_of_input{"Expected end of ID-line, got end-of-file."};
+        }
+        ++stream_it; // skip newline
+
+        /* Sequence */
+        if constexpr (!detail::decays_to_ignore_v<seq_type>)
+        {
+            for (; (stream_it != e) && (!is_char<'+'>)(*stream_it); ++stream_it)
+            {
+                if ((!is_space)(*stream_it))
+                {
+                    if constexpr (builtin_character<value_type_t<seq_type>>)
+                    {
+                        sequence.push_back(*stream_it);
+                    }
+                    else
+                    {
+                        if (!char_is_valid_for<seq_legal_alph_type>(*stream_it))
+                        {
+                            throw parse_error{std::string{"Encountered bad letter for seq: "} +
+                                              detail::make_printable(*stream_it)};
+                        }
+                        sequence.push_back(assign_char_to(*stream_it, value_type_t<seq_type>{}));
+                    }
+                }
+            }
+            sequence_size_after = size(sequence);
+        }
+        else // consume, but count
+        {
+            for (; (stream_it != e) && (!is_char<'+'>)(*stream_it); ++stream_it)
+                if ((!is_space)(*stream_it))
+                    ++sequence_size_after;
+        }
+
+        /* 2nd ID line */
+        if (stream_it == e)
+            throw unexpected_end_of_input{"Expected second ID-line, got end-of-file."};
+
+        if (*stream_it != '+')
+        {
+            throw parse_error{std::string{"Expected '+' on beginning of 2nd ID line, got: "} +
+                              detail::make_printable(*stream_it)};
+        }
+
+        for (; (stream_it != e) && (!is_char<'\n'>)(*stream_it); ++stream_it)
+        {}
+
+        if (stream_it == e)
+            throw unexpected_end_of_input{"Expected end of second ID-line, got end-of-file."};
+
+        ++stream_it;
+
+        /* Qualities */
+        if constexpr (seq_qual_combined)
+        {
+            auto oit = std::ranges::begin(qualities);
+            using real_qual_t = typename value_type_t<qual_type>::quality_alphabet_type;
+
+            while (sequence_size_after > sequence_size_before)
+            {
+                if (stream_it == e)
+                    throw unexpected_end_of_input{"Expected qualities, got end-of-file."};
+
+                if ((!is_space)(*stream_it))
+                {
+                    --sequence_size_after;
+
+                    if (!char_is_valid_for<real_qual_t>(*stream_it))
+                    {
+                        throw parse_error{std::string{"Encountered bad letter for qual: "} +
+                                          detail::make_printable(*stream_it)};
+                    }
+
+                    assign_char_to(*stream_it, get<real_qual_t>(*oit));
+
+                    ++oit;
+                }
+                ++stream_it;
+            }
+        }
+        else if constexpr (!detail::decays_to_ignore_v<qual_type>)
+        {
+            while (sequence_size_after > sequence_size_before)
+            {
+                if (stream_it == e)
+                    throw unexpected_end_of_input{"Expected qualities, got end-of-file."};
+
+                if ((!is_space)(*stream_it))
+                {
+                    --sequence_size_after;
+                    if constexpr (builtin_character<value_type_t<qual_type>>)
+                    {
+                        qualities.push_back(*stream_it);
+                    }
+                    else
+                    {
+                        if (!char_is_valid_for<value_type_t<qual_type>>(*stream_it))
+                        {
+                            throw parse_error{std::string{"Encountered bad letter for qual: "} +
+                                              detail::make_printable(*stream_it)};
+                        }
+                        qualities.push_back(assign_char_to(*stream_it, value_type_t<qual_type>{}));
+                    }
+                }
+                ++stream_it;
+            }
+        }
+        else // consume
+        {
+            while (sequence_size_after > sequence_size_before)
+            {
+                if (stream_it == e)
+                    throw unexpected_end_of_input{"File ended before expected number of qualities could be read."};
+
+                if ((!is_space)(*stream_it))
+                    --sequence_size_after;
+                ++stream_it;
+            }
+        }
+
+        if (stream_it != e)
+        {
+            if ((!is_char<'\n'>)(*stream_it))
+                throw parse_error{"Qualitites longer than sequence."};
+            else
+                ++stream_it;
+        }
+
+#else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
+
+        if constexpr (!detail::decays_to_ignore_v<id_type>)
+        {
+            if (options.truncate_ids)
+            {
+                if constexpr (builtin_character<value_type_t<seq_type>>)
+                {
+                    std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank),
+                                      std::ranges::back_inserter(id));
+                }
+                else
+                {
+                    std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank)
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::cpp20::back_inserter(id));
+                }
                 detail::consume(stream_view | views::take_line_or_throw);
             }
             else
             {
-                std::ranges::copy(stream_view | views::take_line_or_throw
+                if constexpr (builtin_character<value_type_t<seq_type>>)
+                {
+                    std::ranges::copy(stream_view | views::take_line_or_throw,
+                                      std::ranges::back_inserter(id));
+                }
+                else
+                {
+                    std::ranges::copy(stream_view | views::take_line_or_throw
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::cpp20::back_inserter(id));
+                }
             }
         }
         else
@@ -151,20 +336,25 @@ protected:
                                     | std::views::filter(!is_space);           // ignore whitespace
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-            std::ranges::copy(seq_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
-                                    {
-                                        if (!is_legal_alph(c))
-                                        {
-                                            throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                is_legal_alph.msg +
-                                                                " evaluated to false on " +
-                                                                detail::make_printable(c)};
-                                        }
-                                        return c;
-                                    })
+            if constexpr (builtin_character<seq_legal_alph_type> && builtin_character<value_type_t<seq_type>>)
+            {
+                std::ranges::copy(seq_view, std::ranges::back_inserter(sequence));
+            }
+            else
+            {
+                std::ranges::copy(seq_view | std::views::transform([] (char const c) // enforce legal alphabet
+                                             {
+                                                 if (!char_is_valid_for<value_type_t<seq_type>>(c))
+                                                 {
+                                                     throw parse_error{std::string{"Encountered an unexpected letter: "}
+                                                        + detail::make_printable(c) + "not in alphabet "
+                                                        + detail::type_name_as_string<value_type_t<seq_type>> + "."};
+                                                 }
+                                                 return c;
+                                              })
                                         | views::char_to<std::ranges::range_value_t<seq_type>>,         // convert to actual target alphabet
                               std::cpp20::back_inserter(sequence));
+            }
             sequence_size_after = size(sequence);
         }
         else // consume, but count
@@ -178,6 +368,12 @@ protected:
             }
         }
 
+        /* 2nd ID line */
+        if (*stream_it != '+')
+        {
+            throw parse_error{std::string{"Expected '+' on beginning of 2nd ID line, got: "} +
+                              detail::make_printable(*stream_it)};
+        }
         detail::consume(stream_view | views::take_line_or_throw);
 
         /* Qualities */
@@ -188,7 +384,7 @@ protected:
             // seq_qual field implies that they are the same variable
             assert(std::addressof(sequence) == std::addressof(qualities));
             std::ranges::copy(qview | views::char_to<typename std::ranges::range_value_t<qual_type>::quality_alphabet_type>,
-                              begin(qualities) + sequence_size_before);
+                              std::ranges::begin(qualities) + sequence_size_before);
         }
         else if constexpr (!detail::decays_to_ignore_v<qual_type>)
         {
@@ -199,6 +395,7 @@ protected:
         {
             detail::consume(qview);
         }
+#endif
     }
 
     //!\copydoc sequence_file_output_format::write_sequence_record
