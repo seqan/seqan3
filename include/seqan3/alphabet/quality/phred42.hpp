@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/quality/phred63.hpp>
 #include <seqan3/alphabet/quality/quality_base.hpp>
 
 // ------------------------------------------------------------------
@@ -79,6 +81,29 @@ public:
     //!\brief The projection offset between char and rank score representation.
     static constexpr char_type offset_char{'!'};
     //!\}
+
+    /*!\brief Validate whether a character is in the valid set.
+     *
+     * \details
+     *
+     * This member function overrides the default behaviour by declaring that letters valid for
+     * seqan3::phred63 are also valid for seqan3::phred42.
+     *
+     * The reason is that higher values are properly mapped to the maximum and that this type
+     * should indeed be usable for the entire range of values.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    static constexpr bool char_is_valid(char_type const c) noexcept
+    {
+        return seqan3::char_is_valid_for<phred63>(c);
+    }
 };
 
 /*!\name Literals
