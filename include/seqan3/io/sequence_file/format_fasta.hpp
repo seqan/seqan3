@@ -41,6 +41,10 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
+#if !SEQAN3_WORKAROUND_VIEW_PERFORMANCE
+#include <range/v3/view/chunk.hpp>
+#endif
+
 namespace seqan3
 {
 
@@ -245,7 +249,7 @@ private:
             #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
 
                 std::ranges::copy(stream_view | views::take_line_or_throw                    // read line
-                                              | std::views::drop_while(is_id || is_blank)    // skip leading >
+                                              | std::views::drop_while(is_id || is_blank)    // skip leading "> "
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::cpp20::back_inserter(id));
             #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
@@ -333,30 +337,78 @@ private:
     //!\brief Implementation of writing the sequence.
     template <typename stream_it_t, typename seq_type>
     void write_seq(stream_it_t & stream_it, sequence_file_output_options const & options, seq_type && seq)
+                   seq_type & seq)
     {
         auto char_sequence = seq | views::to_char;
 
-        if (options.fasta_letters_per_line > 0)
+#if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
+        if constexpr (std::ranges::sized_range<seq_type>)
         {
-            /* Using `views::interleave` is probably the way to go but that needs performance-tuning.*/
-            auto it = std::ranges::begin(char_sequence);
-            auto end = std::ranges::end(char_sequence);
+            ptrdiff_t line_length = options.fasta_letters_per_line
+                                  ? options.fasta_letters_per_line
+                                  : std::numeric_limits<ptrdiff_t>::max();
 
-            while (it != end)
+            ptrdiff_t chars_left = std::ranges::size(seq);
+            auto source_it = std::ranges::begin(seq);
+
+            while (chars_left > 0)
             {
-                /* Note: This solution is slightly suboptimal for sized but non-random-access ranges.*/
-                auto current_end = it;
-                size_t steps = std::ranges::advance(current_end, options.fasta_letters_per_line, end);
+                ptrdiff_t chars_this_time = std::min<ptrdiff_t>(chars_left, line_length);
+                for (ptrdiff_t i = 0; i < chars_this_time; ++i, ++source_it)
+                    stream_it = to_char(*source_it);
+
+                chars_left -= chars_this_time;
+
+                detail::write_eol(stream_it, options.add_carriage_return);
+            }
+        }
+        else // have to iterate character by character
+        {
+            if (options.fasta_letters_per_line == 0)
+            {
+                for (auto c : seq)
+                    stream_it = to_char(c);
+                detail::write_eol(stream_it, options.add_carriage_return);
+            }
+            else
+            {
+                // This may not be the most efficient implementation
+                size_t count = 0;
+                for (auto c : seq)
+                {
+                    stream_it = to_char(c);
+                    if (++count % options.fasta_letters_per_line == 0)
+                        detail::write_eol(stream_it, options.add_carriage_return);
                 using subrange_t = std::ranges::subrange<decltype(it), decltype(it), std::ranges::subrange_kind::sized>;
                 it = stream_it.write_range(subrange_t{it, current_end, (options.fasta_letters_per_line - steps)});
                 stream_it.write_end_of_line(options.add_carriage_return);
+                }
+                if (count % options.fasta_letters_per_line != 0)
+                    detail::write_eol(stream_it, options.add_carriage_return);
             }
+        }
+
+#else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
+        if (options.fasta_letters_per_line > 0)
+        {
+            //TODO: combining chunk and join is substantially faster than views::interleave (2.5x), why?
+            std::ranges::copy(seq | views::to_char
+                                  | ranges::view::chunk(options.fasta_letters_per_line)
+                                  | views::join(options.add_carriage_return
+                                                    ? std::string_view{"\r\n"}
+                                                    : std::string_view{"\n"}),
+                              stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
         else
         {
             stream_it.write_range(char_sequence);
             stream_it.write_end_of_line(options.add_carriage_return);
+            // No performance workaround here, because transform views alone are fast
+            std::ranges::copy(seq | views::to_char, stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
+#endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
     }
 };
 
