@@ -501,17 +501,6 @@ struct take_until_fn
      * \param[in] fun    The callable that will be evaluated on every element.
      * \returns An instance of seqan3::detail::view_take_until.
      */
-    template <std::ranges::view urng_t, typename fun_t>
-    constexpr auto operator()(urng_t urange, fun_t && fun) const
-    {
-        return view_take_until<urng_t, fun_t, or_throw, and_consume>
-        {
-            std::move(urange),
-            std::forward<fun_t>(fun)
-        };
-    }
-
-    //!\overload
     template <std::ranges::viewable_range urng_t, typename fun_t>
     constexpr auto operator()(urng_t && urange, fun_t && fun) const
     {
