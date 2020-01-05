@@ -126,6 +126,12 @@ using testing_types = ::testing::Types<test_matrix_t<int, matrix_major_order::ro
                                        test_matrix_t<simd_type_t<int>, matrix_major_order::column>>;
 TYPED_TEST_CASE(two_dimensional_matrix_test, testing_types);
 
+TEST(two_dimensional_matrix_test, initializer_list)
+{
+    [[maybe_unused]] two_dimensional_matrix<int> matrix1{number_rows{0}, number_cols{0}, {}};
+    [[maybe_unused]] two_dimensional_matrix<int> matrix2{number_rows{1}, number_cols{1}, {0}};
+}
+
 TYPED_TEST(two_dimensional_matrix_test, concepts)
 {
     using matrix_type = typename TestFixture::matrix_type;

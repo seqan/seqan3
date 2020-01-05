@@ -117,7 +117,7 @@ public:
      */
     template <std::ranges::forward_range entries_t>
     //!\cond
-        requires (!std::same_as<entries_t, storage_type>) && (std::convertible_to<value_type_t<entries_t>, value_type>)
+        requires (std::convertible_to<value_type_t<entries_t>, value_type>)
     //!\endcond
     two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, entries_t entries) :
         row_dim{row_dim.get()},
@@ -131,11 +131,7 @@ public:
     }
 
     //!\overload
-    template <std::ranges::forward_range entries_t>
-    //!\cond
-        requires (std::same_as<entries_t, storage_type>)
-    //!\endcond
-    two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, entries_t entries) :
+    two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, storage_type entries) :
         row_dim{row_dim.get()},
         col_dim{col_dim.get()}
     {
