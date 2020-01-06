@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::algorithm_debugging.
- * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \brief Provides seqan3::detail::parallel_mode.
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
@@ -16,17 +16,16 @@
 
 namespace seqan3::detail
 {
-/*!\brief A global configuration type used to enabled debugging of algorithms.
- * \ingroup alignment_configuration
+/*!\brief A global configuration type used to enable parallel execution of algorithms.
+ * \ingroup algorithm
  * \tparam wrapped_config_id_t The algorithm specific configuration id wrapped in a std::integral_constant.
  *
  * \details
  *
- * This type is used to enable specific debugging behaviour of the algorithms, e.g. to output the score and the
- * trace matrix of the alignment algorithm.
+ * This type is used to enable the parallel mode of the algorithms.
  */
 template <typename wrapped_config_id_t>
-struct algorithm_debugging : public pipeable_config_element<algorithm_debugging<wrapped_config_id_t>, bool>
+struct parallel_mode : public pipeable_config_element<parallel_mode<wrapped_config_id_t>, uint32_t>
 {
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr typename wrapped_config_id_t::value_type id{wrapped_config_id_t::value};

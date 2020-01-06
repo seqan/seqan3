@@ -20,7 +20,8 @@ class search_configuration_test : public ::testing::Test
 using test_types = ::testing::Types<search_cfg::max_error_rate<>,
                                     search_cfg::max_error<>,
                                     search_cfg::mode<detail::search_mode_best>,
-                                    search_cfg::output<detail::search_output_text_position>>;
+                                    search_cfg::output<detail::search_output_text_position>,
+                                    search_cfg::parallel>;
 
 TYPED_TEST_CASE(search_configuration_test, test_types);
 
