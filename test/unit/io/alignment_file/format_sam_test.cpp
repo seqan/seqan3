@@ -170,6 +170,15 @@ TEST_F(sam_format, header_errors)
     }
 }
 
+TEST_F(sam_format, no_hd_line_in_header)
+{
+    // the header line (@HD) is optional
+    std::istringstream istream{std::string{"@SQ\tSN:ref\tLN:34\nread1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\n"}};
+    alignment_file_input fin{istream, format_sam{}, fields<field::id>{}};
+
+    EXPECT_EQ(get<field::id>(*fin.begin()), std::string{"read1"});
+}
+
 TEST_F(sam_format, windows_file)
 {
     std::istringstream istream(std::string("read1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\r\n"));
@@ -214,7 +223,6 @@ TEST_F(sam_format, format_error_invalid_arithmetic_value)
         EXPECT_THROW(fin.begin(), format_error);
     }
 }
-
 
 TEST_F(sam_format, format_error_invalid_cigar)
 {

@@ -453,45 +453,43 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         read_field(stream_view | views::take_until_or_throw(is_char<'\t'> || is_char<'\n'>), value);
     };
 
-    // @HQ line
-    // -------------------------------------------------------------------------------------------------------------
-    parse_tag_value(hdr.format_version); // parse required VN (version) tag
-
-    // The SO, SS and GO tag are optional and can appear in any order
-    while (is_char<'\t'>(*std::ranges::begin(stream_view)))
-    {
-        std::ranges::next(std::ranges::begin(stream_view));              // skip tab
-        std::string * who = std::addressof(hdr.grouping);
-
-        if (is_char<'S'>(*std::ranges::begin(stream_view)))
-        {
-            std::ranges::next(std::ranges::begin(stream_view));          // skip S
-
-            if (is_char<'O'>(*std::ranges::begin(stream_view)))          // SO (sorting) tag
-                who = std::addressof(hdr.sorting);
-            else if (is_char<'S'>(*std::ranges::begin(stream_view)))     // SS (sub-order) tag
-                who = std::addressof(hdr.subsorting);
-            else
-                throw format_error{std::string{"Illegal SAM header tag: S"} +
-                                   std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
-        }
-        else if (!is_char<'G'>(*std::ranges::begin(stream_view)))        // GO (grouping) tag
-        {
-            throw format_error{std::string{"Illegal SAM header tag in @HG starting with:"} +
-                               std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
-        }
-
-        parse_tag_value(*who);
-    }
-    std::ranges::next(std::ranges::begin(stream_view));                  // skip newline
-
-    // The rest of the header lines
-    // -------------------------------------------------------------------------------------------------------------
     while (is_char<'@'>(*std::ranges::begin(stream_view)))
     {
-        std::ranges::next(std::ranges::begin(stream_view));              // skip @
+        std::ranges::next(std::ranges::begin(stream_view)); // skip @
 
-        if (is_char<'S'>(*std::ranges::begin(stream_view)))              // SQ (sequence dictionary) tag
+        if (is_char<'H'>(*std::ranges::begin(stream_view))) // HD (header) tag
+        {
+            parse_tag_value(hdr.format_version); // parse required VN (version) tag
+
+            // The SO, SS and GO tag are optional and can appear in any order
+            while (is_char<'\t'>(*std::ranges::begin(stream_view)))
+            {
+                std::ranges::next(std::ranges::begin(stream_view)); // skip tab
+                std::string * who = std::addressof(hdr.grouping);
+
+                if (is_char<'S'>(*std::ranges::begin(stream_view)))
+                {
+                    std::ranges::next(std::ranges::begin(stream_view)); // skip S
+
+                    if (is_char<'O'>(*std::ranges::begin(stream_view))) // SO (sorting) tag
+                        who = std::addressof(hdr.sorting);
+                    else if (is_char<'S'>(*std::ranges::begin(stream_view))) // SS (sub-order) tag
+                        who = std::addressof(hdr.subsorting);
+                    else
+                        throw format_error{std::string{"Illegal SAM header tag: S"} +
+                                           std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
+                }
+                else if (!is_char<'G'>(*std::ranges::begin(stream_view))) // GO (grouping) tag
+                {
+                    throw format_error{std::string{"Illegal SAM header tag in @HG starting with:"} +
+                                       std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
+                }
+
+                parse_tag_value(*who);
+            }
+            std::ranges::next(std::ranges::begin(stream_view));                  // skip newline
+        }
+        else if (is_char<'S'>(*std::ranges::begin(stream_view)))              // SQ (sequence dictionary) tag
         {
             ref_info_present_in_header = true;
             value_type_t<decltype(hdr.ref_ids())> id;
