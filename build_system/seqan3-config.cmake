@@ -136,45 +136,36 @@ macro (seqan3_config_error text)
 endmacro ()
 
 # ----------------------------------------------------------------------------
-# Detect if we are a clone of repository and if yes auto-add submodules
-# ----------------------------------------------------------------------------
-# Note that seqan3-config.cmake can be standalone and thus SEQAN3_CLONE_DIR might be empty.
-find_path (SEQAN3_CLONE_DIR NAMES build_system/seqan3-config.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/..")
-
-if (SEQAN3_CLONE_DIR)
-    seqan3_config_print ("  Detected as running from a repository checkout…")
-
-    if (NOT SEQAN3_INCLUDE_DIR AND IS_DIRECTORY "${SEQAN3_CLONE_DIR}/include")
-        seqan3_config_print ("  …adding SeqAn3 include:     ${SEQAN3_CLONE_DIR}/include")
-        set (SEQAN3_INCLUDE_DIR "${SEQAN3_CLONE_DIR}/include")
-    endif ()
-
-    if (EXISTS "${SEQAN3_CLONE_DIR}/submodules")
-        file (GLOB submodules ${SEQAN3_CLONE_DIR}/submodules/*/include)
-        foreach (submodule ${submodules})
-            if (IS_DIRECTORY ${submodule})
-                seqan3_config_print ("  …adding submodule include:  ${submodule}")
-                set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${submodule} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-            endif ()
-        endforeach ()
-    endif ()
-endif ()
-
-# ----------------------------------------------------------------------------
 # Find SeqAn3 include path
 # ----------------------------------------------------------------------------
 
-if (NOT SEQAN3_INCLUDE_DIR)
-    find_path (SEQAN3_INCLUDE_DIR "seqan3/version.hpp" HINTS ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-endif ()
+# Note that seqan3-config.cmake can be standalone and thus SEQAN3_CLONE_DIR might be empty.
+find_path (SEQAN3_CLONE_DIR NAMES build_system/seqan3-config.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/..")
+find_path (SEQAN3_INCLUDE_DIR NAMES seqan3/version.hpp HINTS "${SEQAN3_CLONE_DIR}/include")
+find_path (SEQAN3_SUBMODULES_DIR NAMES submodules/sdsl-lite HINTS "${SEQAN3_CLONE_DIR}" "${SEQAN3_INCLUDE_DIR}/seqan3")
 
-mark_as_advanced (SEQAN3_INCLUDE_DIR)
-
-# find include directory
 if (SEQAN3_INCLUDE_DIR)
     seqan3_config_print ("SeqAn3 include dir found:   ${SEQAN3_INCLUDE_DIR}")
 else ()
-    seqan3_config_error ("SeqAn3 include directory could not be found.")
+    seqan3_config_error ("SeqAn3 include directory could not be found (SEQAN3_INCLUDE_DIR: '${SEQAN3_INCLUDE_DIR}')")
+endif ()
+
+# ----------------------------------------------------------------------------
+# Detect if we are a clone of repository and if yes auto-add submodules
+# ----------------------------------------------------------------------------
+
+if (SEQAN3_CLONE_DIR)
+    seqan3_config_print ("Detected as running from a repository checkout…")
+endif ()
+
+if (SEQAN3_SUBMODULES_DIR)
+    file (GLOB submodules ${SEQAN3_SUBMODULES_DIR}/submodules/*/include)
+    foreach (submodule ${submodules})
+        if (IS_DIRECTORY ${submodule})
+            seqan3_config_print ("  …adding submodule include:  ${submodule}")
+            set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${submodule} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+        endif ()
+    endforeach ()
 endif ()
 
 # ----------------------------------------------------------------------------
