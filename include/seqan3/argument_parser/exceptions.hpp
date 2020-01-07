@@ -19,6 +19,17 @@
 namespace seqan3
 {
 
+//!\brief This class is deprecated.
+//!\deprecated Use seqan3::argument_parser_error instead.
+class SEQAN3_DEPRECATED_310 parser_invalid_argument : public std::invalid_argument
+{
+public:
+    /*!\brief The constructor.
+     * \param[in] s The error message.
+     */
+    parser_invalid_argument(std::string const & s) : std::invalid_argument(s) {}
+};
+
 /*!\brief Argument parser exception that is thrown whenever there is an error
  * while parsing the command line arguments.
  *
@@ -34,67 +45,68 @@ namespace seqan3
  * - Type conversion failed
  * - Validation failed (as defined by the developer)
  */
-class parser_invalid_argument : public std::invalid_argument
+class argument_parser_error : public std::runtime_error
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    parser_invalid_argument(std::string const & s) : std::invalid_argument(s) {}
+    argument_parser_error(std::string const & s) : std::runtime_error(s) {}
 };
 
 //!\brief Argument parser exception thrown when encountering unknown option.
-class unknown_option : public parser_invalid_argument
+class unknown_option : public argument_parser_error
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    unknown_option(std::string const & s) : parser_invalid_argument(s) {}
+    unknown_option(std::string const & s) : argument_parser_error(s) {}
 };
 
 //!\brief Argument parser exception thrown when too many arguments are provided.
-class too_many_arguments : public parser_invalid_argument
+class too_many_arguments : public argument_parser_error
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    too_many_arguments(std::string const & s) : parser_invalid_argument(s) {}
+    too_many_arguments(std::string const & s) : argument_parser_error(s) {}
 };
 
 //!\brief Argument parser exception thrown when too few arguments are provided.
-class too_few_arguments : public parser_invalid_argument
+class too_few_arguments : public argument_parser_error
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    too_few_arguments(std::string const & s) : parser_invalid_argument(s) {}
+    too_few_arguments(std::string const & s) : argument_parser_error(s) {}
 };
 
 //!\brief Argument parser exception thrown when a required option is missing.
-class required_option_missing : public parser_invalid_argument
+class required_option_missing : public argument_parser_error
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    required_option_missing(std::string const & s) : parser_invalid_argument(s) {}
+    required_option_missing(std::string const & s) : argument_parser_error(s) {}
 };
 
 //!\brief Argument parser exception thrown when a non-list option is declared multiple times.
-class option_declared_multiple_times : public parser_invalid_argument
+class option_declared_multiple_times : public argument_parser_error
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    option_declared_multiple_times(std::string const & s) : parser_invalid_argument(s) {}
+    option_declared_multiple_times(std::string const & s) : argument_parser_error(s) {}
 };
 
-//!\brief Argument parser exception thrown when an argument could not be casted to the according type.
-class type_conversion_failed : public parser_invalid_argument
+//!\brief This class is deprecated.
+//!\deprecated Use seqan3::user_input_error instead.
+class SEQAN3_DEPRECATED_310 type_conversion_failed : public parser_invalid_argument
 {
 public:
     /*!\brief The constructor.
@@ -103,8 +115,9 @@ public:
     type_conversion_failed(std::string const & s) : parser_invalid_argument(s) {}
 };
 
-//!\brief Argument parser exception thrown when an argument could not be casted to the according type.
-class overflow_error_on_conversion : public parser_invalid_argument
+//!\brief This class is deprecated.
+//!\deprecated Use seqan3::user_input_error instead.
+class SEQAN3_DEPRECATED_310 overflow_error_on_conversion : public parser_invalid_argument
 {
 public:
     /*!\brief The constructor.
@@ -113,14 +126,35 @@ public:
     overflow_error_on_conversion(std::string const & s) : parser_invalid_argument(s) {}
 };
 
-//!\brief Argument parser exception thrown when an argument could not be casted to the according type.
-class validation_failed : public parser_invalid_argument
+//!\brief Argument parser exception thrown when an incorrect argument is given as (positional) option value.
+class user_input_error : public argument_parser_error
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    validation_failed(std::string const & s) : parser_invalid_argument(s) {}
+    user_input_error(std::string const & s) : argument_parser_error(s) {}
+};
+
+//!\brief Argument parser exception thrown when an argument could not be casted to the according type.
+class validation_error : public argument_parser_error
+{
+public:
+    /*!\brief The constructor.
+     * \param[in] s The error message.
+     */
+    validation_error(std::string const & s) : argument_parser_error(s) {}
+};
+
+//!\brief This class is deprecated.
+//!\deprecated Use seqan3::validation_error instead.
+class SEQAN3_DEPRECATED_310 validation_failed : public argument_parser_error
+{
+public:
+    /*!\brief The constructor.
+     * \param[in] s The error message.
+     */
+    validation_failed(std::string const & s) : argument_parser_error(s) {}
 };
 
 /*!\brief Argument parser exception that is thrown whenever there is an design
@@ -133,7 +167,18 @@ public:
  * - Reuse of a short or long identifier (must be unique)
  * - Both identifiers must not be empty (one is ok)
  */
-class parser_design_error : public std::logic_error
+class design_error : public argument_parser_error
+{
+public:
+    /*!\brief The constructor.
+     * \param[in] s The error message.
+     */
+    design_error(std::string const & s) : argument_parser_error(s) {}
+};
+
+//!\brief This class is deprecated.
+//!\deprecated Use seqan3::design_error instead.
+class SEQAN3_DEPRECATED_310 parser_design_error : std::logic_error
 {
 public:
     /*!\brief The constructor.

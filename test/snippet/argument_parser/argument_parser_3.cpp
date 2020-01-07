@@ -27,7 +27,7 @@ int main(int argc, char ** argv)
     {
         myparser.parse();
     }
-    catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
+    catch (seqan3::argument_parser_error const & ext) // the user did something wrong
     {
         std::cerr << ext.what() << "\n";
         return -1;

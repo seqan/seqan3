@@ -107,7 +107,7 @@ int main(int argc, char ** argv)
     {
          myparser.parse();                                                  // trigger command line parsing
     }
-    catch (seqan3::parser_invalid_argument const & ext)                     // catch user errors
+    catch (seqan3::argument_parser_error const & ext)                     // catch user errors
     {
         seqan3::debug_stream << "[Winter has come] " << ext.what() << "\n"; // customise your error message
         return -1;

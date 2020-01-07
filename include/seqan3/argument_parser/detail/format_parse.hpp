@@ -81,7 +81,7 @@ public:
      * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      */
     template <typename option_type, typename validator_type>
     void add_option(option_type & value,
@@ -103,7 +103,7 @@ public:
      * \param[in]  short_id The short identifier for the flag (e.g. 'i').
      * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      *
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      */
     void add_flag(bool & value,
                   char const short_id,
@@ -125,7 +125,7 @@ public:
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      */
     template <typename option_type, typename validator_type>
     void add_positional_option(option_type & value,
@@ -170,7 +170,7 @@ public:
     void add_list_item(std::string const &, std::string const &) {}
     //!\endcond
 
-    //!\brief Checks whether \p id is empty.
+    //!\brief Checks whether `id` is empty.
     template <typename id_type>
     static bool is_empty_id(id_type const & id)
     {
@@ -354,7 +354,7 @@ private:
     //!\cond
     option_parse_result parse_option_value(container_option_t & value, std::string const & in)
     {
-        typename container_option_t::value_type tmp;
+        typename container_option_t::value_type tmp{};
 
         auto res = parse_option_value(tmp, in);
 
@@ -399,7 +399,8 @@ private:
      *
      * \details
      *
-     * This function delegates to std::from_chars.
+     * This function accepts the strings "0" or "false" which sets sets `value` to `false` or "1" or "true" which
+     * sets `value` to `true`.
      */
     option_parse_result parse_option_value(bool & value, std::string const & in)
     {
@@ -433,17 +434,17 @@ private:
 
         if (res == option_parse_result::error)
         {
-            throw parser_invalid_argument{msg + "Argument " + input_value + " could not be parsed as type " +
-                                          get_type_name_as_string(input_value) + "."};
+            throw user_input_error{msg + "Argument " + input_value + " could not be parsed as type " +
+                                   get_type_name_as_string(input_value) + "."};
         }
 
         if constexpr (arithmetic<option_type>)
         {
             if (res == option_parse_result::overflow_error)
             {
-                throw parser_invalid_argument{msg + "Numeric argument " + input_value + " is not in the valid range [" +
-                                              std::to_string(std::numeric_limits<option_type>::min()) + "," +
-                                              std::to_string(std::numeric_limits<option_type>::max()) + "]."};
+                throw user_input_error{msg + "Numeric argument " + input_value + " is not in the valid range [" +
+                                       std::to_string(std::numeric_limits<option_type>::min()) + "," +
+                                       std::to_string(std::numeric_limits<option_type>::max()) + "]."};
             }
         }
 
@@ -456,7 +457,8 @@ private:
      * \param[in]  option_it The iterator where the option identifier was found.
      * \param[in]  id        The option identifier supplied on the command line.
      *
-     * \throws seqan3::parser_invalid_argument
+     * \throws seqan3::too_few_arguments if the option was not followed by a value.
+     * \throws seqan3::user_input_error if the given option value was invalid.
      *
      * \details
      *
@@ -481,9 +483,7 @@ private:
                 if ((*option_it)[id_size] == '=') // -key=value
                 {
                     if ((*option_it).size() == id_size + 1) // malformed because no value follows '-i='
-                        throw parser_invalid_argument("Value parsing failed for option " +
-                                                      prepend_dash(id) +
-                                                      ": No value was provided.");
+                        throw too_few_arguments("Missing value for option " + prepend_dash(id));
                     input_value = (*option_it).substr(id_size + 1);
                 }
                 else // -kevValue
@@ -498,9 +498,7 @@ private:
                 *option_it = ""; // remove used identifier
                 ++option_it;
                 if (option_it == end_of_options_it) // should not happen
-                    throw parser_invalid_argument("Value parsing failed for option " +
-                                                  prepend_dash(id) +
-                                                  ": No value was provided.");
+                    throw too_few_arguments("Missing value for option " + prepend_dash(id));
                 input_value = *option_it;
                 *option_it = ""; // remove value
             }
@@ -642,7 +640,7 @@ private:
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
      * \throws seqan3::option_declared_multiple_times
-     * \throws seqan3::validation_failed
+     * \throws seqan3::validation_error
      * \throws seqan3::required_option_missing
      *
      * \details
@@ -677,7 +675,7 @@ private:
             }
             catch (std::exception & ex)
             {
-                throw validation_failed(std::string("Validation failed for option ") +
+                throw validation_error(std::string("Validation failed for option ") +
                                         combine_option_names(short_id, long_id) + ": " + ex.what());
             }
         }
@@ -709,10 +707,10 @@ private:
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
-     * \throws seqan3::parser_invalid_argument
+     * \throws seqan3::argument_parser_error
      * \throws seqan3::too_few_arguments
-     * \throws seqan3::validation_failed
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::validation_error
+     * \throws seqan3::design_error
      *
      * \details
      *
@@ -735,7 +733,8 @@ private:
 
         if (it == argv.end())
             throw too_few_arguments("Not enough positional arguments provided (Need at least " +
-                                    std::to_string(positional_option_calls.size()) + "). See -h/--help for more information.");
+                                    std::to_string(positional_option_calls.size()) +
+                                    "). See -h/--help for more information.");
 
         if (sequence_container<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
         {
@@ -767,7 +766,7 @@ private:
         }
         catch (std::exception & ex)
         {
-            throw validation_failed("Validation failed for positional option " +
+            throw validation_error("Validation failed for positional option " +
                                     std::to_string(positional_option_count) + ": " + ex.what());
         }
     }

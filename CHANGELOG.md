@@ -152,6 +152,13 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The member type that denotes which arguments a `validator` can validate has been renamed from `value_type` to
   `option_value_type`
   ([\#1394](https://github.com/seqan/seqan3/pull/1394)).
+* Some exception names were altered and some removed ([\#1394](https://github.com/seqan/seqan3/pull/1467)):
+  * The exception seqan3::parser_invalid_argument was renamed to seqan3::argument_parser_error.
+  * The exception seqan3::validation_failed was renamed to seqan3::validation_error.
+  * The exception seqan3::parser_design_error was renamed to seqan3::design_error and also inherits from
+    seqan3::argument_parser_error.
+  * The exception seqan3::type_conversion_failed was deprecated, you can catch seqan3::user_input_error instead.
+  * The exception seqan3::overflow_error_on_conversion was deprecated, you can catch seqan3::user_input_error instead.
 
 #### Build system
 

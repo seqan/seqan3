@@ -304,7 +304,7 @@ It should print "Yeah!" for the arguments `-i 0`, `-i 4`, or `-i 144`; and/or `-
 It should fail for the arguments `-i 3`; and/or `-j 144` or `-j 3`.
 
 \assignment{Exercise: Custom validator II}
-Implement your validator fully, i.e. make it throw seqan3::parser_invalid_argument if the number provided is not a
+Implement your validator fully, i.e. make it throw seqan3::validation_error if the number provided is not a
 square.
 Also give a nice description for the help page.
 
