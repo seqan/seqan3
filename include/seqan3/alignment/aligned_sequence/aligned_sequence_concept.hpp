@@ -396,7 +396,7 @@ inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_typ
  * \param[in,out] rng    The range to modify.
  * \param[in]     pos_it The iterator pointing to the position where to start inserting gaps.
  * \param[in]     size   The number of gaps to insert as an optional argument, default is 1.
- * \returns       std::ranges::iterator_t<rng> An iterator pointing to the first inserted gap or `pos_it` if
+ * \returns       std::ranges::iterator_t<range_type> An iterator pointing to the first inserted gap or `pos_it` if
  *                `size == 0`.
  *
  * \details
@@ -426,7 +426,7 @@ std::ranges::iterator_t<range_type> insert_gap(range_type & rng,
  * \tparam range_type   Type of the range to modify; must have an erase_gap(it) member function.
  * \param[in,out] rng   The range to modify.
  * \param[in] pos_it    The iterator pointing to the position where to erase one gap.
- * \returns       std::ranges::iterator_t<rng> An Iterator following the removed element. If the iterator
+ * \returns       std::ranges::iterator_t<range_type> An Iterator following the removed element. If the iterator
  *                `pos_it` refers to the last element, the std::ranges::end() iterator is returned.
  *
  * \details
@@ -453,7 +453,7 @@ std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
  * \param[in,out] rng   The range to modify.
  * \param[in] first     The iterator pointing to the position where to start erasing gaps.
  * \param[in] last      The iterator pointing to the position where to stop erasing gaps.
- * \returns       std::ranges::iterator_t<rng> An Iterator following the last removed element. If the iterator
+ * \returns       std::ranges::iterator_t<range_type> An Iterator following the last removed element. If the iterator
  *                `last` refers to the last element, the std::ranges::end() iterator is returned.
  *
  * \throws seqan3::gap_erase_failure if one of the characters in [\p first, \p last) is no seqan3::gap.
