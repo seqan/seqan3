@@ -108,40 +108,40 @@ enum class field
     user_defined_9, //!< Identifier for user defined file formats and specialisations.
 
     // deprecated uppercase:
-    SEQ SEQAN3_DEPRECATED_310,            //!< Please use the field name in lower case.
-    ID SEQAN3_DEPRECATED_310,             //!< Please use the field name in lower case.
-    QUAL SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
-    SEQ_QUAL SEQAN3_DEPRECATED_310,       //!< Please use the field name in lower case.
-    OFFSET SEQAN3_DEPRECATED_310,         //!< Please use the field name in lower case.
-    BPP SEQAN3_DEPRECATED_310,            //!< Please use the field name in lower case.
-    STRUCTURE SEQAN3_DEPRECATED_310,      //!< Please use the field name in lower case.
-    STRUCTURED_SEQ SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    ENERGY SEQAN3_DEPRECATED_310,         //!< Please use the field name in lower case.
-    REACT SEQAN3_DEPRECATED_310,          //!< Please use the field name in lower case.
-    REACT_ERR SEQAN3_DEPRECATED_310,      //!< Please use the field name in lower case.
-    COMMENT SEQAN3_DEPRECATED_310,        //!< Please use the field name in lower case.
-    ALIGNMENT SEQAN3_DEPRECATED_310,      //!< Please use the field name in lower case.
-    REF_ID SEQAN3_DEPRECATED_310,         //!< Please use the field name in lower case.
-    REF_SEQ SEQAN3_DEPRECATED_310,        //!< Please use the field name in lower case.
-    REF_OFFSET SEQAN3_DEPRECATED_310,     //!< Please use the field name in lower case.
-    HEADER_PTR SEQAN3_DEPRECATED_310,     //!< Please use the field name in lower case.
-    FLAG SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
-    MATE SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
-    MAPQ SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
-    CIGAR SEQAN3_DEPRECATED_310,          //!< Please use the field name in lower case.
-    TAGS SEQAN3_DEPRECATED_310,           //!< Please use the field name in lower case.
-    BIT_SCORE SEQAN3_DEPRECATED_310,      //!< Please use the field name in lower case.
-    EVALUE SEQAN3_DEPRECATED_310,         //!< Please use the field name in lower case.
-    USER_DEFINED_0 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    USER_DEFINED_1 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    USER_DEFINED_2 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    USER_DEFINED_3 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    USER_DEFINED_4 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    USER_DEFINED_5 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    USER_DEFINED_6 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    USER_DEFINED_7 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    USER_DEFINED_8 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
-    USER_DEFINED_9 SEQAN3_DEPRECATED_310, //!< Please use the field name in lower case.
+    SEQ SEQAN3_DEPRECATED_310 = seq, //!< Please use the field name in lower case.
+    ID SEQAN3_DEPRECATED_310 = id, //!< Please use the field name in lower case.
+    QUAL SEQAN3_DEPRECATED_310 = qual, //!< Please use the field name in lower case.
+    SEQ_QUAL SEQAN3_DEPRECATED_310 = seq_qual, //!< Please use the field name in lower case.
+    OFFSET SEQAN3_DEPRECATED_310 = offset, //!< Please use the field name in lower case.
+    BPP SEQAN3_DEPRECATED_310 = bpp, //!< Please use the field name in lower case.
+    STRUCTURE SEQAN3_DEPRECATED_310 = structure, //!< Please use the field name in lower case.
+    STRUCTURED_SEQ SEQAN3_DEPRECATED_310 = structured_seq, //!< Please use the field name in lower case.
+    ENERGY SEQAN3_DEPRECATED_310 = energy, //!< Please use the field name in lower case.
+    REACT SEQAN3_DEPRECATED_310 = react, //!< Please use the field name in lower case.
+    REACT_ERR SEQAN3_DEPRECATED_310 = react_err, //!< Please use the field name in lower case.
+    COMMENT SEQAN3_DEPRECATED_310 = comment, //!< Please use the field name in lower case.
+    ALIGNMENT SEQAN3_DEPRECATED_310 = alignment, //!< Please use the field name in lower case.
+    REF_ID SEQAN3_DEPRECATED_310 = ref_id, //!< Please use the field name in lower case.
+    REF_SEQ SEQAN3_DEPRECATED_310 = ref_seq, //!< Please use the field name in lower case.
+    REF_OFFSET SEQAN3_DEPRECATED_310 = ref_offset, //!< Please use the field name in lower case.
+    HEADER_PTR SEQAN3_DEPRECATED_310 = header_ptr, //!< Please use the field name in lower case.
+    FLAG SEQAN3_DEPRECATED_310 = flag, //!< Please use the field name in lower case.
+    MATE SEQAN3_DEPRECATED_310 = mate, //!< Please use the field name in lower case.
+    MAPQ SEQAN3_DEPRECATED_310 = mapq, //!< Please use the field name in lower case.
+    CIGAR SEQAN3_DEPRECATED_310 = cigar, //!< Please use the field name in lower case.
+    TAGS SEQAN3_DEPRECATED_310 = tags, //!< Please use the field name in lower case.
+    BIT_SCORE SEQAN3_DEPRECATED_310 = bit_score, //!< Please use the field name in lower case.
+    EVALUE SEQAN3_DEPRECATED_310 = evalue, //!< Please use the field name in lower case.
+    USER_DEFINED_0 SEQAN3_DEPRECATED_310 = user_defined_0, //!< Please use the field name in lower case.
+    USER_DEFINED_1 SEQAN3_DEPRECATED_310 = user_defined_1, //!< Please use the field name in lower case.
+    USER_DEFINED_2 SEQAN3_DEPRECATED_310 = user_defined_2, //!< Please use the field name in lower case.
+    USER_DEFINED_3 SEQAN3_DEPRECATED_310 = user_defined_3, //!< Please use the field name in lower case.
+    USER_DEFINED_4 SEQAN3_DEPRECATED_310 = user_defined_4, //!< Please use the field name in lower case.
+    USER_DEFINED_5 SEQAN3_DEPRECATED_310 = user_defined_5, //!< Please use the field name in lower case.
+    USER_DEFINED_6 SEQAN3_DEPRECATED_310 = user_defined_6, //!< Please use the field name in lower case.
+    USER_DEFINED_7 SEQAN3_DEPRECATED_310 = user_defined_7, //!< Please use the field name in lower case.
+    USER_DEFINED_8 SEQAN3_DEPRECATED_310 = user_defined_8, //!< Please use the field name in lower case.
+    USER_DEFINED_9 SEQAN3_DEPRECATED_310 = user_defined_9, //!< Please use the field name in lower case.
 };
 
 // ----------------------------------------------------------------------------
