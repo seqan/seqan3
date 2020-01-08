@@ -113,7 +113,8 @@ namespace seqan3
  * \relates seqan3::aligned_sequence
  * \{
  */
-/*!\fn      inline std::ranges::iterator_t<aligned_seq_t> insert_gap(aligned_seq_t & aligned_seq, typename aligned_seq_t::const_iterator pos_it)
+/*!\fn      inline std::ranges::iterator_t<aligned_seq_t> insert_gap(aligned_seq_t & aligned_seq,
+ *          typename aligned_seq_t::const_iterator pos_it)
  * \brief   Insert a seqan3::gap into an aligned sequence.
  *
  * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::aligned_sequence.
@@ -127,8 +128,8 @@ namespace seqan3
  * \attention This is a concept requirement, not an actual function (however types
  *            modelling this concept will provide an implementation).
  */
-/*!\fn      inline std::ranges::iterator_t<aligned_seq_t> insert_gap(aligned_seq_t & aligned_seq, typename aligned_seq_t::const_iterator
- *          pos_it, typename aligned_seq_t::size_type size)
+/*!\fn      inline std::ranges::iterator_t<aligned_seq_t> insert_gap(aligned_seq_t & aligned_seq,
+ *          typename aligned_seq_t::const_iterator pos_it, typename aligned_seq_t::size_type size)
  * \brief   Insert multiple seqan3::gap into an aligned sequence.
  *
  * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::aligned_sequence.
@@ -144,8 +145,8 @@ namespace seqan3
  * \attention This is a concept requirement, not an actual function (however types
  *            modelling this concept will provide an implementation).
  */
-/*!\fn      inline std::ranges::iterator_t<aligned_seq_t> erase_gap(aligned_seq_t & aligned_seq, typename aligned_seq_t::const_iterator
- *          pos_it)
+/*!\fn      inline std::ranges::iterator_t<aligned_seq_t> erase_gap(aligned_seq_t & aligned_seq,
+ *          typename aligned_seq_t::const_iterator pos_it)
  * \brief   Erase a seqan3::gap from an aligned sequence.
  *
  * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::aligned_sequence.
@@ -162,8 +163,8 @@ namespace seqan3
  * \attention This is a concept requirement, not an actual function (however types
  *            modelling this concept will provide an implementation).
  */
-/*!\fn      inline std::ranges::iterator_t<aligned_seq_t> erase_gap(aligned_seq_t & aligned_seq, typename aligned_seq_t::const_iterator
- *          first, typename aligned_seq_t::const_iterator last)
+/*!\fn      inline std::ranges::iterator_t<aligned_seq_t> erase_gap(aligned_seq_t & aligned_seq,
+ *          typename aligned_seq_t::const_iterator first, typename aligned_seq_t::const_iterator last)
  * \brief   Erase multiple seqan3::gap from an aligned sequence.
  *
  * \tparam        aligned_seq_t   Type of the range to modify; must model seqan3::aligned_sequence.
