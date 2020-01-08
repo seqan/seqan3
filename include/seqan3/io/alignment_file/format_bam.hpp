@@ -888,7 +888,11 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
         }
         else
         {
-            assert(static_cast<int32_t>(std::ranges::distance(qual)) == core.l_seq);
+            if (std::ranges::distance(qual) != core.l_seq)
+                throw format_error{detail::to_string("Expected quality of same length as sequence with size ",
+                                                     core.l_seq, ". Got quality with size ",
+                                                     std::ranges::distance(qual), " instead.")};
+
             auto v = qual | std::views::transform([] (auto chr) { return static_cast<char>(to_rank(chr)); });
             std::ranges::copy_n(v.begin(), core.l_seq, stream_it);
         }
