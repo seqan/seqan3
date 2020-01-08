@@ -334,10 +334,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         read_field(stream_view, tmp32);
 
         if (tmp32 > 0) // header text is present
-            read_header(stream_view | views::take_exactly_or_throw(tmp32)
-                                    | views::take_until_and_consume(is_char<'\0'>),
-                        header,
-                        ref_seqs);
+            read_header(stream_view | views::take_exactly_or_throw(tmp32), header, ref_seqs);
 
         int32_t n_ref;
         read_field(stream_view, n_ref);
