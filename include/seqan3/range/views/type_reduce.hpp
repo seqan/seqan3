@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::views::all.
+ * \brief Provides seqan3::views::type_reduce.
  */
 
 #pragma once
@@ -25,16 +25,16 @@ namespace seqan3::detail
 {
 
 // ============================================================================
-//  all_fn (adaptor definition)
+//  type_reduce_fn (adaptor definition)
 // ============================================================================
 
-/*!\brief View adaptor definition for views::all.
+/*!\brief View adaptor definition for views::type_reduce.
  */
-class all_fn : public adaptor_base<all_fn>
+class type_reduce_fn : public adaptor_base<type_reduce_fn>
 {
 private:
     //!\brief Type of the CRTP-base.
-    using base_t = adaptor_base<all_fn>;
+    using base_t = adaptor_base<type_reduce_fn>;
 
 public:
     //!\brief Inherit the base class's Constructors.
@@ -51,7 +51,7 @@ private:
     static constexpr auto impl(urng_t && urange)
     {
         static_assert(std::ranges::viewable_range<urng_t>,
-                      "The views::all adaptor can only be passed viewable_ranges, i.e. Views or &-to-non-View.");
+                      "The views::type_reduce adaptor can only be passed viewable_ranges, i.e. Views or &-to-non-View.");
 
         // views are always passed as-is
         if constexpr (std::ranges::view<remove_cvref_t<urng_t>>)
@@ -94,7 +94,7 @@ private:
 } // namespace seqan3::detail
 
 // ============================================================================
-//  views::all (adaptor instance definition)
+//  views::type_reduce (adaptor instance definition)
 // ============================================================================
 
 namespace seqan3::views
@@ -104,16 +104,16 @@ namespace seqan3::views
  * \{
  */
 
-/*!\brief               A view adaptor that behaves like std::views::all, but type erases contiguous ranges.
+/*!\brief               A view adaptor that behaves like std::views::all, but type erases certain ranges.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
- * \returns             Either `std::basic_string_view{urange}`, or `std::span{urange}`, or `std::views::all(urange)`.
+ * \returns             The range turned into a view.
  * \ingroup views
  *
  * \details
  *
- * \header_file{seqan3/range/views/view_all.hpp}
+ * \header_file{seqan3/range/views/view_type_reduce.hpp}
  *
  * ### View properties
  *
@@ -124,37 +124,38 @@ namespace seqan3::views
  * | std::ranges::bidirectional_range |                                   | *preserved*                     |
  * | std::ranges::random_access_range |                                   | *preserved*                     |
  * | std::ranges::contiguous_range    |                                   | *preserved*                     |
- * |                                  |                                   |                                  |
+ * |                                  |                                   |                                 |
  * | std::ranges::viewable_range      | *required*                        | *guaranteed*                    |
  * | std::ranges::view                |                                   | *guaranteed*                    |
  * | std::ranges::sized_range         |                                   | *preserved*                     |
  * | std::ranges::common_range        |                                   | *preserved*                     |
  * | std::ranges::output_range        |                                   | *preserved*                     |
  * | seqan3::const_iterable_range     |                                   | *preserved*                     |
- * |                                  |                                   |                                  |
+ * |                                  |                                   |                                 |
  * | std::ranges::range_reference_t   |                                   | seqan3::reference_t<urng_t>     |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Return type
  *
- * | `urng_t` (underlying range type)                                                       | `rrng_t` (returned range type)  |
- * |:--------------------------------------------------------------------------------------:|:-------------------------------:|
- * | `std::basic_string const &` *or* `std::basic_string_view`                              | `std::basic_string_view`        |
- * | `seqan3::forwarding_range && std::ranges::sized_range && std::ranges::contiguous_range`   | `std::span`                     |
- * | `seqan3::forwarding_range && std::ranges::sized_range && std::ranges::random_access_range` | `std::ranges::subrange`         |
- * | *else*                                                                                 | *implementation defined type*   |
+ * | `urng_t` (underlying range type)                                                               | `rrng_t` (returned range type)  |
+ * |:----------------------------------------------------------------------------------------------:|:-------------------------------:|
+ * | `std::ranges::view`                                                                            | `urng_t`                        |
+ * | `std::basic_string const &` *or* `std::basic_string_view`                                      | `std::basic_string_view`        |
+ * | `seqan3::forwarding_range && std::ranges::sized_range && std::ranges::contiguous_range`        | `std::span`                     |
+ * | `seqan3::forwarding_range && std::ranges::sized_range && std::ranges::random_access_range`     | `std::ranges::subrange`         |
+ * | *else*                                                                                         | `std::ranges::ref_view<urng_t>` |
  *
- * This adaptor is different from std::views::take in that it performs type erasure for some underlying ranges.
- * It returns exactly the type specified above.
+ * This adaptor is different from std::views::all in that it performs type erasure for some underlying ranges;
+ * std::views::all always returns `std::ranges::ref_view<urng_t>` or the type itself if it already is a view.
  *
  * ### Example
  *
-* \include test/snippet/range/views/view_all.cpp
+* \include test/snippet/range/views/type_reduce.cpp
  *
  * \hideinitializer
  */
-inline constexpr auto all = detail::all_fn{};
+inline constexpr auto type_reduce = detail::type_reduce_fn{};
 
 //!\}
 
@@ -162,7 +163,7 @@ inline constexpr auto all = detail::all_fn{};
 
 namespace seqan3
 {
-//!\brief Deduces the return value of seqan3::views::all.
+//!\brief Deduces the return value of seqan3::views::type_reduce.
 template <typename t>
-using all_view = decltype(views::all(std::declval<t>()));
+using type_reduce_view = decltype(views::type_reduce(std::declval<t>()));
 }

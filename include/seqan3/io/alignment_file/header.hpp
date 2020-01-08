@@ -20,7 +20,7 @@
 #include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
 #include <seqan3/range/hash.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -93,7 +93,7 @@ private:
     //!\brief The key's type of ref_dict.
     using key_type = std::conditional_t<std::ranges::contiguous_range<reference_t<ref_ids_type>>,
                         std::span<innermost_value_type_t<ref_ids_type> const>,
-                        all_view<reference_t<ref_ids_type>>>;
+                        type_reduce_view<reference_t<ref_ids_type>>>;
     //!\brief The pointer to reference ids information (non-owning if reference information is given).
     ref_ids_ptr_t ref_ids_ptr{new ref_ids_type{}, ref_ids_deleter_default};
 

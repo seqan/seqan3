@@ -20,7 +20,7 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 
 using namespace seqan3;
 
@@ -74,7 +74,7 @@ TEST(alignment_selector, align_result_selector_with_vector)
     auto cfg = align_cfg::edit | align_cfg::result{with_alignment};
     using _t = alignment_result<typename detail::align_result_selector<seq_t, seq_t, decltype(cfg)>::type>;
 
-    using gapped_seq_t = gap_decorator<all_view<std::vector<dna4> &>>;
+    using gapped_seq_t = gap_decorator<type_reduce_view<std::vector<dna4> &>>;
 
     EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().id()), uint32_t>));
     EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), int32_t>));

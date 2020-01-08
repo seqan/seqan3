@@ -22,7 +22,7 @@
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -100,7 +100,7 @@ public:
         urange{_urange}, step_size{_step_size}, inserted_range{_inserted_range}
     {}
 
-    /*!\brief Construct from a viewable_range urange and inserted_range by wrapping in a views::all.
+    /*!\brief Construct from a viewable_range urange and inserted_range by wrapping in a views::type_reduce.
      * \tparam    orng_t          A type that is the same as `urng_t` once wrapped in a view
      *                            (e.g. reference to container).
      * \tparam    oirng_t         A type that is the same as `inserted_rng_t` once wrapped in a view
@@ -111,11 +111,11 @@ public:
      */
     template <typename orng_t, typename oirng_t>
         //!\cond
-        requires std::constructible_from<urng_t, decltype(views::all(std::declval<orng_t>()))> &&
+        requires std::constructible_from<urng_t, decltype(views::type_reduce(std::declval<orng_t>()))> &&
                  std::constructible_from<inserted_rng_t, decltype(views::persist(std::declval<oirng_t>()))>
         //!\endcond
     view_interleave(orng_t && _urange, size_t const _step_size, oirng_t && _inserted_range) :
-        view_interleave{views::all(std::forward<orng_t>(_urange)), _step_size, views::persist(std::forward<oirng_t>(_inserted_range))}
+        view_interleave{views::type_reduce(std::forward<orng_t>(_urange)), _step_size, views::persist(std::forward<oirng_t>(_inserted_range))}
     {}
     //!\}
 
@@ -254,7 +254,7 @@ template <std::ranges::random_access_range urng_t, std::ranges::random_access_ra
              std::common_reference_with<reference_t<urng_t>, reference_t<inserted_rng_t>>
     //!\endcond
 view_interleave(urng_t &&, size_t, inserted_rng_t &&)
-    -> view_interleave<decltype(views::all(std::declval<urng_t>())), decltype(views::persist(std::declval<inserted_rng_t>()))>;
+    -> view_interleave<decltype(views::type_reduce(std::declval<urng_t>())), decltype(views::persist(std::declval<inserted_rng_t>()))>;
 
 // ============================================================================
 //  interleave_fn (adaptor definition)

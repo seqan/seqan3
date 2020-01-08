@@ -23,3 +23,27 @@
  * \returns true or false.
  */
 #define SEQAN3_IS_CONSTEXPR(...) std::integral_constant<bool, __builtin_constant_p((__VA_ARGS__, 0))>::value
+
+// ----------------------------------------------------------------------------
+// multi_invocable
+// ----------------------------------------------------------------------------
+
+namespace seqan3::detail
+{
+
+/*!\brief A type that can conveniently inherit multiple invocables and acts as a union over them.
+ * \tparam invocable_ts The types to inherit from.
+ * \ingroup type_traits
+ */
+template <typename ...invocable_ts>
+struct multi_invocable : invocable_ts...
+{
+    //!\brief Inherit the function call operators.
+    using invocable_ts::operator()...;
+};
+
+//!\brief Deduction guides for seqan3::detail::multi_invocable.
+template <typename ...invocable_ts>
+multi_invocable(invocable_ts...) -> multi_invocable<invocable_ts...>;
+
+} // namespace seqan3::detail

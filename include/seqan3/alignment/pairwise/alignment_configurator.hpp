@@ -36,7 +36,7 @@
 #include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/zip.hpp>
 
 namespace seqan3::detail
@@ -223,8 +223,8 @@ public:
             using first_seq_t = std::tuple_element_t<0, value_type_t<sequences_t>>;
             using second_seq_t = std::tuple_element_t<1, value_type_t<sequences_t>>;
 
-            using wrapped_first_t  = all_view<first_seq_t &>;
-            using wrapped_second_t = all_view<second_seq_t &>;
+            using wrapped_first_t  = type_reduce_view<first_seq_t &>;
+            using wrapped_second_t = type_reduce_view<second_seq_t &>;
 
             // The alignment executor passes a chunk over an indexed sequence pair range to the alignment algorithm.
             using indexed_sequence_pair_range_t = typename chunked_indexed_sequence_pairs<sequences_t>::type;

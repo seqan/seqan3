@@ -11,7 +11,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/std/iterator>

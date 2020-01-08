@@ -11,7 +11,7 @@
 
 #include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>

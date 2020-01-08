@@ -17,7 +17,7 @@
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/simd/view_to_simd.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
-#include <seqan3/range/views/view_all.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
@@ -87,7 +87,7 @@ public:
     std::vector<simd_t, allocator_t> transformed_simd_vec{};
     std::vector<simd_t, allocator_t> transformed_simd_vec_padded{};
 
-    using view_to_simd_type = detail::view_to_simd<all_view<std::vector<container_t> &>, simd_t>;
+    using view_to_simd_type = detail::view_to_simd<type_reduce_view<std::vector<container_t> &>, simd_t>;
 };
 
 using test_types = ::testing::Types<std::tuple<std::vector<dna4>, simd_type_t<int8_t>>,
@@ -113,7 +113,7 @@ TYPED_TEST_CASE(view_to_simd_test, test_types);
 TEST(view_to_simd, concept_check)
 {
     using cmp_type = std::vector<dna4_vector>;
-    using test_type = detail::view_to_simd<all_view<cmp_type &>, simd_type_t<int8_t>>;
+    using test_type = detail::view_to_simd<type_reduce_view<cmp_type &>, simd_type_t<int8_t>>;
 
     using iter_t = decltype(std::ranges::begin(std::declval<test_type &>()));
     EXPECT_TRUE(std::input_iterator<iter_t>);
@@ -135,7 +135,7 @@ TEST(view_to_simd, concept_check)
 TEST(view_to_simd, iter_concept)
 {
     using cmp_type = std::vector<dna4_vector>;
-    using test_type = detail::view_to_simd<all_view<cmp_type &>, simd_type_t<int8_t>>;
+    using test_type = detail::view_to_simd<type_reduce_view<cmp_type &>, simd_type_t<int8_t>>;
     using iter_t = std::ranges::iterator_t<test_type>;
     using sent_t = std::ranges::sentinel_t<test_type>;
 
