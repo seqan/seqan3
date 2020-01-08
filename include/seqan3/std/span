@@ -54,6 +54,25 @@ struct is_std_array_impl<array<span_tp, span_sz>> : public true_type {};
 template <class span_tp>
 struct is_std_array : public is_std_array_impl<remove_cv_t<span_tp>> {};
 
+} // namespace std
+
+#if RANGE_V3_VERSION >= 901
+namespace ranges
+{
+// forward declare in case we deal with an old version (between >= 0.9.1 and < 0.10.0) of ranges v3
+#if RANGE_V3_VERSION < 1000
+template<class span_tp>
+inline constexpr bool enable_safe_range;
+#endif // RANGE_V3_VERSION < 1000
+
+template<class span_tp>
+    requires std::is_span<span_tp>::value
+inline constexpr bool enable_safe_range<span_tp> = true;
+} // namespace ranges
+#endif // RANGE_V3_VERSION >= 901
+
+namespace std
+{
 template <typename span_tp, ptrdiff_t span_extent>
 class span {
 public:
