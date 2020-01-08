@@ -111,9 +111,10 @@ public:
     }
 
     /*!\brief Constructs the matrix by the given dimensions and initialises it with the given range.
-     * \param row_dim The row dimension (number of rows).
-     * \param col_dim The column dimension (number of columns).
-     * \param entries A range used to fill the underlying matrix.
+     * \tparam entries_t Range of values that are convertible to value_type; must model std::ranges::forward_range
+     * \param[in] row_dim The row dimension (number of rows).
+     * \param[in] col_dim The column dimension (number of columns).
+     * \param[in] entries A range used to fill the underlying matrix.
      */
     template <std::ranges::forward_range entries_t>
     //!\cond
