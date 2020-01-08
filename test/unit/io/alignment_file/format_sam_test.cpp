@@ -66,7 +66,7 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     // formatted output
     // -----------------------------------------------------------------------------------------------------------------
 
-    std::string simple_three_reads_output{ // mate ref id is not '=' for write comparison, no hard clipping and no hard clipping
+    std::string simple_three_reads_output{ // compared to simple_three_reads_input this has no hard clipping
 R"(@HD	VN:1.6
 @SQ	SN:ref	LN:34
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7

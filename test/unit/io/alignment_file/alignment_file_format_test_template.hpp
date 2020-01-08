@@ -547,6 +547,7 @@ TYPED_TEST_P(alignment_file_write, cigar_vector)
     }
 
     this->ostream.flush();
+    // compare to original input because hard clipping is preserved when writing the cigar vector directly
     EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
 }
 
