@@ -23,8 +23,53 @@
 
 using namespace seqan3;
 
-struct sequence_file_data : public ::testing::Test
+// Regular stream handler that offers regular ostring stream.
+template <typename format_t>
+struct stream_handler
 {
+    std::string validation_string()
+    {
+        ostream.flush();
+        return ostream.str();
+    }
+
+    std::ostringstream ostream{};
+};
+
+// Special stream handler using bgzf stream to deal with the correct compression format.
+template <>
+struct stream_handler<format_bam>
+{
+    std::string validation_string()
+    {
+        // Add the footer to the bgzf ostream
+        ostream.rdbuf()->addFooter();
+        ostream.rdbuf()->flush(true);
+        // Make sure that everything is written to the buffer stream.
+        ostream.flush();
+        // Return buffered values.
+        buffer_stream.flush();
+        return buffer_stream.str();
+    }
+
+    std::ostringstream buffer_stream{};
+    contrib::bgzf_ostream ostream{buffer_stream};
+};
+
+template <typename format_t>
+struct sequence_file_data : public ::testing::Test,
+                            public stream_handler<format_t>
+{
+    // Check if sam format is tested.
+    static constexpr bool is_sam_format = std::same_as<format_t, format_sam>;
+    // Check if bam format is tested.
+    static constexpr bool is_bam_format = std::same_as<format_t, format_bam>;
+    // Check if sam or bam format is tested.
+    static constexpr bool is_sam_or_bam = is_sam_format || is_bam_format;
+
+    // The underlying stream type to use for the tests.
+    using ostream_t = std::conditional_t<is_bam_format, contrib::bgzf_ostream, std::ostringstream>;
+
     std::vector<std::string> ids
     {
         { "ID1" },
@@ -45,12 +90,10 @@ struct sequence_file_data : public ::testing::Test
         { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE"_phred42 },
         { "!!!!!!!"_phred42 },
     };
-
-    std::ostringstream ostream{};
 };
 
 template <typename format_t>
-struct sequence_file_read : public sequence_file_data
+struct sequence_file_read : public sequence_file_data<format_t>
 {};
 
 TYPED_TEST_CASE_P(sequence_file_read);
@@ -133,8 +176,12 @@ TYPED_TEST_P(sequence_file_read, options_truncate_ids)
 TYPED_TEST_P(sequence_file_read, illegal_alphabet_character)
 {
     std::stringstream istream{this->illegal_alphabet_character_input};
-    sequence_file_input fin{istream, TypeParam{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+
+    if constexpr (!std::same_as<TypeParam, seqan3::format_bam>)
+    {
+        sequence_file_input fin{istream, TypeParam{}};
+        EXPECT_THROW(fin.begin(), parse_error);
+    }
 }
 
 TYPED_TEST_P(sequence_file_read, no_or_ill_formatted_id)
@@ -162,12 +209,10 @@ TYPED_TEST_P(sequence_file_write, concept_check)
 TYPED_TEST_P(sequence_file_write, standard)
 {
     sequence_file_output fout{this->ostream, TypeParam{}};
-
     for (unsigned i = 0; i < 3; ++i)
         EXPECT_NO_THROW((fout.emplace_back(this->seqs[i], this->ids[i], this->quals[i])));
 
-    this->ostream.flush();
-    EXPECT_EQ(this->ostream.str(), this->standard_output);
+    EXPECT_EQ(this->validation_string(), this->standard_output);
 }
 
 TYPED_TEST_P(sequence_file_write, seq_qual)
@@ -184,15 +229,12 @@ TYPED_TEST_P(sequence_file_write, seq_qual)
         EXPECT_NO_THROW((fout.emplace_back(this->ids[i],
                                            views::zip(this->seqs[i], this->quals[i]) | convert_to_qualified)));
     }
-
-    this->ostream.flush();
-
-    EXPECT_EQ(this->ostream.str(), this->standard_output);
+    EXPECT_EQ(this->validation_string(), this->standard_output);
 }
 
 TYPED_TEST_P(sequence_file_write, arg_handling_id_missing)
 {
-    if constexpr (!std::same_as<TypeParam, format_sam>)
+    if constexpr (!TestFixture::is_sam_or_bam)
     {
         sequence_file_output fout{this->ostream, TypeParam{}, fields<field::seq>{}};
         EXPECT_THROW((fout.emplace_back(this->seqs[0])), std::logic_error);
@@ -201,7 +243,7 @@ TYPED_TEST_P(sequence_file_write, arg_handling_id_missing)
 
 TYPED_TEST_P(sequence_file_write, arg_handling_id_empty)
 {
-    if constexpr (!std::same_as<TypeParam, format_sam>)
+    if constexpr (!TestFixture::is_sam_or_bam)
     {
         sequence_file_output fout{this->ostream, TypeParam{}, fields<field::seq, field::id>{}};
         EXPECT_THROW((fout.emplace_back(this->seqs[0], std::string_view{""}, std::ignore)), std::runtime_error);
@@ -210,7 +252,7 @@ TYPED_TEST_P(sequence_file_write, arg_handling_id_empty)
 
 TYPED_TEST_P(sequence_file_write, arg_handling_seq_missing)
 {
-    if constexpr (!std::same_as<TypeParam, format_sam>)
+    if constexpr (!TestFixture::is_sam_or_bam)
     {
         sequence_file_output fout{this->ostream, TypeParam{}, fields<field::id>{}};
         EXPECT_THROW((fout.emplace_back(this->ids[0])), std::logic_error);
@@ -219,7 +261,7 @@ TYPED_TEST_P(sequence_file_write, arg_handling_seq_missing)
 
 TYPED_TEST_P(sequence_file_write, arg_handling_seq_empty)
 {
-    if constexpr (!std::same_as<TypeParam, format_sam>)
+    if constexpr (!TestFixture::is_sam_or_bam)
     {
         sequence_file_output fout{this->ostream, TypeParam{}, fields<field::seq, field::id>{}};
         EXPECT_THROW((fout.emplace_back(std::string_view{""}, this->ids[0], std::ignore)), std::runtime_error);

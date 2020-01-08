@@ -22,7 +22,7 @@
 using namespace seqan3;
 
 template <>
-struct sequence_file_read<format_sam> : public sequence_file_data
+struct sequence_file_read<format_sam> : public sequence_file_data<format_sam>
 {
     std::string standard_input
     {
@@ -38,13 +38,7 @@ R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTT?TTTTTTT	!##$%&'()*+,-./++-
 )"
     };
 
-    std::string standard_output
-    {
-R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
-ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
-ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
-)"
-    };
+    std::string standard_output{standard_input};
 
     std::string no_or_ill_formatted_id_input
     {

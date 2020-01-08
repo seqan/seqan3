@@ -19,7 +19,7 @@
 using namespace seqan3;
 
 template <>
-struct sequence_file_read<format_genbank> : public sequence_file_data
+struct sequence_file_read<format_genbank> : public sequence_file_data<format_genbank>
 {
     std::string standard_input
     {
@@ -165,7 +165,7 @@ ACCESSION   ID3
 // writing
 // ----------------------------------------------------------------------------
 
-struct write : public sequence_file_data
+struct write : public sequence_file_data<format_genbank>
 {
     sequence_file_output_options options{};
 

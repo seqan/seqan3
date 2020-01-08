@@ -23,7 +23,7 @@
 using namespace seqan3;
 
 template <>
-struct sequence_file_read<format_fastq> : public sequence_file_data
+struct sequence_file_read<format_fastq> : public sequence_file_data<format_fastq>
 {
     std::string standard_input
     {
@@ -85,7 +85,7 @@ INSTANTIATE_TYPED_TEST_CASE_P(fastq, sequence_file_write, format_fastq);
 // reading
 // ----------------------------------------------------------------------------
 
-struct read : public sequence_file_data
+struct read : public sequence_file_data<void>
 {
     std::string input
     {
