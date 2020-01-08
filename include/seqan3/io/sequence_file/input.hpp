@@ -41,6 +41,7 @@
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/format_genbank.hpp>
+#include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
@@ -316,7 +317,8 @@ template <
                                                                                 format_fasta,
                                                                                 format_fastq,
                                                                                 format_genbank,
-                                                                                format_sam>>
+                                                                                format_sam,
+                                                                                format_bam>>
 class sequence_file_input
 {
 public:

@@ -122,7 +122,7 @@ TEST(general, construct_from_stream)
 TEST(general, default_template_args_and_deduction_guides)
 {
     using comp1 = fields<field::seq, field::id, field::qual>;
-    using comp2 = type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>;
+    using comp2 = type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam, format_bam>;
     using comp3 = char;
 
     /* default template args */

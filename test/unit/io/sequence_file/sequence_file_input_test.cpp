@@ -127,7 +127,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 {
     using comp0 = sequence_file_input_default_traits_dna;
     using comp1 = fields<field::seq, field::id, field::qual>;
-    using comp2 = type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>;
+    using comp2 = type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam, format_bam>;
     using comp3 = char;
 
     /* default template args */

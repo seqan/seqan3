@@ -26,6 +26,7 @@
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
+#include <seqan3/io/alignment_file/format_sam_as_sequence_file_base.hpp>
 #include <seqan3/io/alignment_file/format_sam_base.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
@@ -40,6 +41,7 @@
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -56,18 +58,21 @@ namespace seqan3
  *
  * \copydetails seqan3::format_sam
  */
-class format_bam : private detail::format_sam_base
+class format_bam : protected format_sam_as_sequence_file_base<format_bam>,
+                   private detail::format_sam_base
 {
+    //!\brief Befriend the base class to grant access to the read and write alignment record interface.
+    friend class format_sam_as_sequence_file_base<format_bam>;
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    format_bam() noexcept = default; //!< Defaulted.
-    format_bam(format_bam const &) noexcept = default; //!< Defaulted.
-    format_bam & operator=(format_bam const &) noexcept = default; //!< Defaulted.
-    format_bam(format_bam &&) noexcept = default; //!< Defaulted.
-    format_bam & operator=(format_bam &&) noexcept = default; //!< Defaulted.
-    ~format_bam() noexcept = default; //!< Defaulted.
+    format_bam() = default; //!< Defaulted.
+    format_bam(format_bam const &) = default; //!< Defaulted.
+    format_bam & operator=(format_bam const &) = default; //!< Defaulted.
+    format_bam(format_bam &&) = default; //!< Defaulted.
+    format_bam & operator=(format_bam &&) = default; //!< Defaulted.
+    ~format_bam() = default; //!< Defaulted.
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
@@ -77,6 +82,10 @@ public:
     };
 
 protected:
+
+    using format_sam_as_sequence_file_base<format_bam>::read_sequence_record;
+    using format_sam_as_sequence_file_base<format_bam>::write_sequence_record;
+
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
               typename ref_seqs_type,
@@ -343,9 +352,12 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         {
             read_field(stream_view, tmp32); // l_name (length of reference name including \0 character)
 
-            string_buffer.resize(tmp32 - 1);
-            std::ranges::copy_n(std::ranges::begin(stream_view), tmp32 - 1, string_buffer.data()); // copy without \0 character
-            std::ranges::next(std::ranges::begin(stream_view)); // skip \0 character
+            if (tmp32 > 0)
+            {
+                string_buffer.resize(tmp32 - 1);
+                std::ranges::copy_n(std::ranges::begin(stream_view), tmp32 - 1, string_buffer.data()); // copy without \0 character
+                std::ranges::next(std::ranges::begin(stream_view)); // skip \0 character
+            }
 
             read_field(stream_view, tmp32); // l_ref (length of reference sequence)
 
@@ -700,15 +712,16 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
             stream << "BAM\1";
             std::ostringstream os;
             write_header(os, options, header); // write SAM header to temporary stream to query the size.
-            int32_t l_text{static_cast<int32_t>(os.str().size())};
-            std::ranges::copy_n(reinterpret_cast<char *>(&l_text), 4, stream_it); // write read id
+            std::string && tmp_header = os.str();
+            int32_t header_byte_size{static_cast<int32_t>(tmp_header.size())};
+            std::ranges::copy_n(reinterpret_cast<char *>(&header_byte_size), 4, stream_it); // write byte size of header.
 
-            stream  << os.str();
+            stream << tmp_header;
 
-            int32_t n_ref{static_cast<int32_t>(header.ref_ids().size())};
-            std::ranges::copy_n(reinterpret_cast<char *>(&n_ref), 4, stream_it); // write read id
+            int32_t number_of_references{static_cast<int32_t>(header.ref_ids().size())};
+            std::ranges::copy_n(reinterpret_cast<char *>(&number_of_references), 4, stream_it); // write count of reference sequences.
 
-            for (int32_t ridx = 0; ridx < n_ref; ++ridx)
+            for (int32_t ridx = 0; ridx < number_of_references; ++ridx)
             {
                 int32_t l_name{static_cast<int32_t>(header.ref_ids()[ridx].size()) + 1}; // plus null character
                 std::ranges::copy_n(reinterpret_cast<char *>(&l_name), 4, stream_it);    // write l_name
