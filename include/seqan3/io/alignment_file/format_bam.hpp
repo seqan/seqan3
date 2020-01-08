@@ -763,12 +763,19 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
 
         std::string tag_dict_binary_str = get_tag_dict_str(tag_dict);
 
+        // Compute the value for the l_read_name field for the bam record.
+        // This value is stored including a trailing `0`, so at most 254 characters of the id can be stored, since
+        // the data type to store the value is uint8_t and the biggest value that can be represented is 255.
+        // If the id is empty a '*' is written instead, i.e. the written id is never an empty string.
+        size_t read_name_size = std::min<size_t>(std::ranges::distance(id), 254) + 1;
+        read_name_size += static_cast<size_t>(read_name_size == 1); // need size two since empty id is stored as '*'.
+
         alignment_record_core core
         {
             /* block_size  */ 0,  // will be initialised right after
             /* refID       */ -1, // will be initialised right after
             /* pos         */ ref_offset.value_or(-1),
-            /* l_read_name */ std::max<uint8_t>(std::min<size_t>(std::ranges::distance(id) + 1, 255), 2),
+            /* l_read_name */ static_cast<uint8_t>(read_name_size),
             /* mapq        */ mapq,
             /* bin         */ reg2bin(ref_offset.value_or(-1), ref_length),
             /* n_cigar_op  */ static_cast<uint16_t>(cigar_vector.size()),
@@ -847,7 +854,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
 
         std::ranges::copy_n(reinterpret_cast<char *>(&core), sizeof(core), stream_it);  // write core
 
-        if (std::ranges::distance(id) == 0) // empty id is represented as * for backward compatibility
+        if (std::ranges::empty(id)) // empty id is represented as * for backwards compatibility
             stream_it = '*';
         else
             std::ranges::copy_n(std::ranges::begin(id), core.l_read_name - 1, stream_it); // write read id
