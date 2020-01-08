@@ -33,8 +33,8 @@ R"(@HD	VN:1.6	SO:coordinate	SS:coordinate:queryname	GO:none
 R"(@HD	VN:1.6
 @SQ	SN:ref	LN:34
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
-read2	42	ref	2	62	1H7M1D1M1S	=	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
-read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	=	10	300	GGAGTATA	!!*+,-./
+read2	42	ref	2	62	1H7M1D1M1S2H	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
+read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )"};
 
     std::string verbose_reads_input{
