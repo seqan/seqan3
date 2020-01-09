@@ -1,7 +1,5 @@
 #include <seqan3/argument_parser/all.hpp>
 
-using namespace seqan3;
-
 // =====================================================================================================================
 // pull
 // =====================================================================================================================
@@ -13,7 +11,7 @@ struct pull_arguments
     bool progress{false};
 };
 
-int run_git_pull(argument_parser & parser)
+int run_git_pull(seqan3::argument_parser & parser)
 {
     pull_arguments args{};
 
@@ -24,13 +22,13 @@ int run_git_pull(argument_parser & parser)
     {
         parser.parse();
     }
-    catch (parser_invalid_argument const & ext)
+    catch (seqan3::parser_invalid_argument const & ext)
     {
-        debug_stream << "[Error git pull] " << ext.what() << "\n";
+        seqan3::debug_stream << "[Error git pull] " << ext.what() << "\n";
         return -1;
     }
 
-    debug_stream << "Git pull with repository " << args.repository << " and branch " << args.branch << std::endl;
+    seqan3::debug_stream << "Git pull with repository " << args.repository << " and branch " << args.branch << '\n';
 
     return 0;
 }
@@ -46,7 +44,7 @@ struct push_arguments
     bool push_all{false};
 };
 
-int run_git_push(argument_parser & parser)
+int run_git_push(seqan3::argument_parser & parser)
 {
     push_arguments args{};
 
@@ -57,13 +55,13 @@ int run_git_push(argument_parser & parser)
     {
         parser.parse();
     }
-    catch (parser_invalid_argument const & ext)
+    catch (seqan3::parser_invalid_argument const & ext)
     {
-        debug_stream << "[Error git push] " << ext.what() << "\n";
+        seqan3::debug_stream << "[Error git push] " << ext.what() << "\n";
         return -1;
     }
 
-    debug_stream << "Git push with repository " << args.repository << " and branches " << args.branches << std::endl;
+    seqan3::debug_stream << "Git push with repository " << args.repository << " and branches " << args.branches << '\n';
 
     return 0;
 }
@@ -75,7 +73,7 @@ int run_git_push(argument_parser & parser)
 int main(int argc, char const ** argv)
 {
     //![construction]
-    argument_parser top_level_parser{"mygit", argc, argv, true, {"push", "pull"}};
+    seqan3::argument_parser top_level_parser{"mygit", argc, argv, true, {"push", "pull"}};
     //![construction]
 
     // Add information and flags to your top-level parser just as you would do with a normal one.
@@ -89,17 +87,17 @@ int main(int argc, char const ** argv)
     {
         top_level_parser.parse(); // trigger command line parsing
     }
-    catch (parser_invalid_argument const & ext) // catch user errors
+    catch (seqan3::parser_invalid_argument const & ext) // catch user errors
     {
-        debug_stream << "[Error] " << ext.what() << "\n"; // customise your error message
+        seqan3::debug_stream << "[Error] " << ext.what() << "\n"; // customise your error message
         return -1;
     }
 
     //![get_sub_parser]
-    argument_parser & sub_parser = top_level_parser.get_sub_parser(); // hold a reference to the sub_parser
+    seqan3::argument_parser & sub_parser = top_level_parser.get_sub_parser(); // hold a reference to the sub_parser
     //![get_sub_parser]
 
-    std::cout << "Proceed to sub parser." << std::endl;
+    std::cout << "Proceed to sub parser.\n";
 
     if (sub_parser.info.app_name == std::string_view{"mygit-pull"})
         run_git_pull(sub_parser);
