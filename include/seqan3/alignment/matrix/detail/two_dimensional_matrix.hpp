@@ -111,13 +111,14 @@ public:
     }
 
     /*!\brief Constructs the matrix by the given dimensions and initialises it with the given range.
-     * \param row_dim The row dimension (number of rows).
-     * \param col_dim The column dimension (number of columns).
-     * \param entries A range used to fill the underlying matrix.
+     * \tparam entries_t Range of values that are convertible to value_type; must model std::ranges::forward_range
+     * \param[in] row_dim The row dimension (number of rows).
+     * \param[in] col_dim The column dimension (number of columns).
+     * \param[in] entries A range used to fill the underlying matrix.
      */
     template <std::ranges::forward_range entries_t>
     //!\cond
-        requires (!std::same_as<entries_t, storage_type>) && (std::convertible_to<value_type_t<entries_t>, value_type>)
+        requires (std::convertible_to<value_type_t<entries_t>, value_type>)
     //!\endcond
     two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, entries_t entries) :
         row_dim{row_dim.get()},
@@ -131,11 +132,7 @@ public:
     }
 
     //!\overload
-    template <std::ranges::forward_range entries_t>
-    //!\cond
-        requires (std::same_as<entries_t, storage_type>)
-    //!\endcond
-    two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, entries_t entries) :
+    two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, storage_type entries) :
         row_dim{row_dim.get()},
         col_dim{col_dim.get()}
     {
