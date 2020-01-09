@@ -162,18 +162,42 @@ private:
     template <typename traits_t>
     struct select_gap_policy
     {
-
     private:
         //!\brief The score type for the alignment computation.
         using score_t = typename traits_t::score_t;
         //!\brief The is_local constant converted to a type.
         using is_local_t = std::bool_constant<traits_t::is_local>;
-    public:
 
+    public:
         //!\brief The matrix policy based on the configurations given by `config_type`.
         using type = std::conditional_t<traits_t::is_vectorised,
                                         deferred_crtp_base<simd_affine_gap_policy, score_t, is_local_t>,
                                         deferred_crtp_base<affine_gap_policy, score_t, is_local_t>>;
+    };
+
+    /*!\brief Transformation trait that chooses the correct find optimum policy.
+     * \implements seqan3::transformation_trait
+     *
+     * \tparam tarits_t The alignment algorithm traits.
+     * \tparam policy_traits_t The configured traits for the policy.
+     */
+    template <typename traits_t, typename policy_traits_t>
+    struct select_find_optimum_policy
+    {
+    private:
+        //!\brief The score type for the alignment computation.
+        using score_t = typename traits_t::score_t;
+        //!\brief A bool constant to disambiguate true global alignments.
+        static constexpr bool is_global_alignment = traits_t::is_global && !traits_t::is_aligned_ends;
+
+    public:
+        //!\brief The find optimum policy for either scalar or vectorised alignment.
+        using type = std::conditional_t<traits_t::is_vectorised,
+                                        deferred_crtp_base<simd_find_optimum_policy,
+                                                           score_t,
+                                                           std::bool_constant<is_global_alignment>,
+                                                           policy_traits_t>,
+                                        deferred_crtp_base<find_optimum_policy, policy_traits_t>>;
     };
 
 public:
@@ -569,7 +593,8 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_optimum
             using find_in_last_column_type [[maybe_unused]] = decltype(second_seq);
         };
 
-        using find_optimum_t = deferred_crtp_base<find_optimum_policy, policy_trait_type>;
+        // We need to select the correct policy based on the configuration traits.
+        using find_optimum_t = typename select_find_optimum_policy<traits_t, policy_trait_type>::type;
         return make_algorithm<function_wrapper_t, policies_t..., find_optimum_t>(cfg);
     };
 

@@ -209,20 +209,26 @@ public:
         auto sequence1_range = indexed_sequence_pairs | views::get<0> | views::get<0>;
         auto sequence2_range = indexed_sequence_pairs | views::get<0> | views::get<1>;
 
+        // Initialise the find_optimum policy in the simd case.
+        this->initialise_find_optimum_policy(sequence1_range,
+                                             sequence2_range,
+                                             this->scoring_scheme.padding_match_score());
+
         // Convert batch of sequences to sequence of simd vectors.
         auto simd_sequences1 = convert_batch_of_sequences_to_simd_vector(sequence1_range);
         auto simd_sequences2 = convert_batch_of_sequences_to_simd_vector(sequence2_range);
 
+        max_size_in_collection = std::pair{simd_sequences1.size(), simd_sequences2.size()};
         // Reset the alignment state's optimum between executions of the alignment algorithm.
         this->alignment_state.reset_optimum();
 
         compute_matrix(simd_sequences1, simd_sequences2);
 
-        return make_alignment_result(indexed_sequence_pairs | views::get<1>, sequence1_range, sequence2_range);
+        return make_alignment_result(indexed_sequence_pairs);
     }
     //!\}
-private:
 
+private:
     /*!\brief Converts a batch of sequences to a sequence of simd vectors.
      * \tparam sequence_range_t The type of the range over sequences; must model std::ranges::forward_range.
      *
@@ -245,7 +251,7 @@ private:
 
         std::vector<simd_score_t, aligned_allocator<simd_score_t, alignof(simd_score_t)>> simd_sequence{};
 
-        for (auto && simd_vector_chunk : sequences | views::to_simd<simd_score_t>)
+        for (auto && simd_vector_chunk : sequences | views::to_simd<simd_score_t>(traits_t::padding_symbol))
             for (auto && simd_vector : simd_vector_chunk)
                 simd_sequence.push_back(std::move(simd_vector));
 
@@ -564,8 +570,7 @@ private:
      * \param[in] sequence1 The first range to get the alignment for if requested.
      * \param[in] sequence2 The second range to get the alignment for if requested.
      *
-     * \returns A seqan3::alignment_result with the requested alignment outcomes. A std::vector over
-     *          seqan3::alignment_result objects if the alignment is run in vectorisation mode.
+     * \returns A seqan3::alignment_result with the requested alignment outcomes.
      *
      * \details
      *
@@ -579,12 +584,6 @@ private:
      *
      * If the alignment is run in debug mode (see seqan3::align_cfg::debug) the debug score and optionally trace matrix
      * are stored in the alignment result as well.
-     *
-     * ### Vectorisation
-     *
-     * In vectorisation mode this interface takes as input argument ranges over the indices and the corresponding
-     * sequences. Then it extracts the alignment result for every element in the range from the vectorised scores and
-     * coordinates as well as the trace matrix if applicable.
      */
     template <typename index_t, typename sequence1_t, typename sequence2_t>
     //!\cond
@@ -644,40 +643,62 @@ private:
         return res;
     }
 
-    //!\overload
-    template <typename index_range_t, typename sequence1_range_t, typename sequence2_range_t>
+    /*!\brief Creates a new alignment result from the current alignment optimum and for the given indexed sequence
+     *        range.
+     * \tparam indexed_sequence_pair_range_t The type of the indexed sequence pair range.
+     *
+     * \param[in] index_sequence_pairs The range over indexed sequence pairs.
+     *
+     * \returns A std::vector over seqan3::alignment_result with the requested alignment outcomes.
+     *
+     * \details
+     *
+     * This function is called for the vectorised algorithm. In this case the alignment state stores the results for
+     * the entire chunk of sequence pairs processed within this alignment computation. Accordingly, the chunk of
+     * sequence pairs is processed iteratively and the alignment results are added to the returned vector.
+     * Depending on the selected configuration the following is extracted and/or computed:
+     *
+     * 1. The alignment score.
+     * 2. The end positions of the aligned range for the first and second sequence.
+     * 3. The begin positions of the aligned range for the first and second sequence.
+     * 4. The alignment between both sequences in the respective aligned region.
+     *
+     * If the alignment is run in debug mode (see seqan3::align_cfg::debug) the debug score and optionally trace matrix
+     * are stored in the alignment result as well.
+     */
+    template <typename indexed_sequence_pair_range_t>
     //!\cond
         requires traits_t::is_vectorised
     //!\endcond
-    constexpr auto make_alignment_result(index_range_t && index_range,
-                                         sequence1_range_t && sequence1_range,
-                                         [[maybe_unused]] sequence2_range_t && sequence2_range)
+    constexpr auto make_alignment_result(indexed_sequence_pair_range_t && index_sequence_pairs)
     {
-        using sequence1_t = std::ranges::range_value_t<sequence1_range_t>;
-        using sequence2_t = std::ranges::range_value_t<sequence2_range_t>;
+        using indexed_sequence_pair_t = std::ranges::range_value_t<indexed_sequence_pair_range_t>;
+        using sequence_pair_t = std::tuple_element_t<0, indexed_sequence_pair_t>;
+        using sequence1_t = std::tuple_element_t<0, sequence_pair_t>;
+        using sequence2_t = std::tuple_element_t<1, sequence_pair_t>;
 
         using result_value_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
 
-        size_t number_of_computed_alignments = std::ranges::distance(sequence1_range);
-        auto index_it = std::ranges::begin(index_range);
-        std::vector<alignment_result<result_value_t>> results{number_of_computed_alignments};
-        // Note we are not using the index range as it might be an infinity range.
-        for (size_t i = 0; i < number_of_computed_alignments; ++i, ++index_it)
-        {
-            result_value_t res{};
-            res.id = *index_it;
+        std::vector<alignment_result<result_value_t>> results{};
+        results.reserve(std::ranges::distance(index_sequence_pairs));
 
-            // Choose what needs to be computed.
-            if constexpr (traits_t::result_type_rank >= 0)  // compute score
-                res.score = this->alignment_state.optimum.score[i];
+        size_t simd_index = 0;
+        for (auto && [sequence_pairs, alignment_index] : index_sequence_pairs)
+        {
+            (void) sequence_pairs;
+            result_value_t res{};
+            res.id = alignment_index;
+
+            res.score = this->alignment_state.optimum.score[simd_index];  // Just take this
 
             if constexpr (traits_t::result_type_rank >= 1)  // compute back coordinate
             {
-                res.back_coordinate.first = this->alignment_state.optimum.column_index[i];
-                res.back_coordinate.second = this->alignment_state.optimum.row_index[i];
+                res.back_coordinate.first = this->alignment_state.optimum.column_index[simd_index] ;
+                res.back_coordinate.second = this->alignment_state.optimum.row_index[simd_index];
             }
 
-            results[i] = std::move(res);
+            results.emplace_back(std::move(res));
+            ++simd_index;
         }
 
         return results;
@@ -732,6 +753,8 @@ private:
     score_debug_matrix_t score_debug_matrix{};
     //!\brief The debug matrix for the traces.
     trace_debug_matrix_t trace_debug_matrix{};
+    //!\brief The maximal size within the first and the second sequence collection.
+    std::pair<size_t, size_t> max_size_in_collection{};
 };
 
 } // namespace seqan3::detail

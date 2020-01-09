@@ -117,6 +117,12 @@ public:
     }
     //!\}
 
+    //!\brief Returns the match score used for padded symbols.
+    constexpr typename scoring_scheme_t::score_type padding_match_score() noexcept
+    {
+        return 1;
+    }
+
 private:
     //!\brief Internally stores the given scalar scoring scheme matrix.
     scoring_scheme_t internal_scoring_scheme;

@@ -16,6 +16,7 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
@@ -64,6 +65,10 @@ struct alignment_configuration_traits
     static constexpr bool is_vectorised = config_t::template exists<remove_cvref_t<decltype(align_cfg::vectorise)>>();
     //!\brief Flag indicating whether parallel alignment mode is enabled.
     static constexpr bool is_parallel = config_t::template exists<align_cfg::parallel>();
+    //!\brief Flag indicating whether global alignment mode is enabled.
+    static constexpr bool is_global = config_t::template exists<align_cfg::mode<detail::global_alignment_type>>();
+    //!\brief Flag indicating whether global alignment mode with free ends is enabled.
+    static constexpr bool is_aligned_ends = config_t::template exists<align_cfg::aligned_ends>();
     //!\brief Flag indicating whether local alignment mode is enabled.
     static constexpr bool is_local = config_t::template exists<align_cfg::mode<detail::local_alignment_type>>();
     //!\brief Flag indicating whether banded alignment mode is enabled.
@@ -96,6 +101,9 @@ struct alignment_configuration_traits
                                                     }();
     //!\brief The rank of the selected result type.
     static constexpr int8_t result_type_rank = static_cast<int8_t>(decltype(std::declval<result_t>().value)::rank);
+    //!\brief The padding symbol to use for the computation of the alignment.
+    static constexpr original_score_t padding_symbol =
+        static_cast<original_score_t>(1u << (sizeof_bits<original_score_t> - 1));
 };
 
 }  // namespace seqan3::detail
