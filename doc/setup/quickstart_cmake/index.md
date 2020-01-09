@@ -81,6 +81,7 @@ tutorial
 ├── source
 ├── build
 └── seqan3
+    ├── CMakeLists.txt
     ├── LICENSE
     ├── README.md
     ├── build_system
@@ -104,8 +105,7 @@ To compile it we first create a `CMakeLists.txt` file in the `source` directory:
 cmake_minimum_required (VERSION 3.4)
 project (seqan3_tutorial CXX)
 
-set(SeqAn3_DIR "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
-find_package (SeqAn3 REQUIRED)
+find_package (SeqAn3 3.0.0 REQUIRED HINTS "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
 
 add_executable (hello_world hello_world.cpp)
 
@@ -121,6 +121,7 @@ tutorial
     └── hello_world.cpp
 ├── build
 └── seqan3
+    ├── CMakeLists.txt
     ├── LICENSE
     ...
 ```
@@ -157,8 +158,7 @@ For example, after adding `another_program.cpp` your `CMakeLists.txt` may look l
 cmake_minimum_required (VERSION 3.4)
 project (seqan3_tutorial CXX)
 
-set(SeqAn3_DIR "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
-find_package (SeqAn3 REQUIRED)
+find_package (SeqAn3 3.0.0 REQUIRED HINTS "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
 
 add_executable (hello_world hello_world.cpp)
 add_executable (another_program another_program.cpp)
