@@ -43,8 +43,6 @@
 # Once the search has been performed, the following variables will be set.
 #
 #   SEQAN3_FOUND            -- Indicate whether SeqAn was found and requirements met.
-#   SeqAn3_FOUND            -- the same as SEQAN3_FOUND
-#   seqan3_FOUND            -- the same as SEQAN3_FOUND
 #
 #   SEQAN3_VERSION          -- The version as string, e.g. "3.0.0"
 #   SEQAN3_VERSION_MAJOR    -- e.g. 3
@@ -77,23 +75,6 @@ cmake_minimum_required (VERSION 3.4...3.12)
 # Set initial variables
 # ----------------------------------------------------------------------------
 
-set (SEQAN3_FOUND FALSE)
-set (seqan3_FOUND FALSE)
-set (SeqAn3_FOUND FALSE)
-
-# work around obscure case sensitivity problems in CMake (https://cmake.org/pipermail/cmake/2009-March/027414.html)
-if (DEFINED seqan3_DIR)
-    set (FIND_NAME "seqan3")
-elseif (DEFINED SeqAn3_DIR)
-    set (FIND_NAME "SeqAn3")
-elseif (DEFINED SEQAN3_DIR)
-    set (FIND_NAME "SEQAN3")
-else ()
-    message (FATAL_ERROR "You must give \"SEQAN3\", \"SeqAn3\" or \"seqan3\" as the package name to find_package ();\n \
-                         other case/combinations are not supported.")
-    return ()
-endif ()
-
 # ----------------------------------------------------------------------------
 # Greeter
 # ----------------------------------------------------------------------------
@@ -102,7 +83,7 @@ string (ASCII 27 Esc)
 set (ColourBold "${Esc}[1m")
 set (ColourReset "${Esc}[m")
 
-if (NOT ${FIND_NAME}_FIND_QUIETLY)
+if (NOT ${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY)
     message (STATUS "${ColourBold}Finding SeqAn3 and checking requirements:${ColourReset}")
 endif ()
 
@@ -113,22 +94,23 @@ endif ()
 include (FindPackageMessage)
 include (CheckIncludeFileCXX)
 include (CheckCXXSourceCompiles)
+include (FindPackageHandleStandardArgs)
 
 # ----------------------------------------------------------------------------
 # Pretty printing and error handling
 # ----------------------------------------------------------------------------
 
 macro (seqan3_config_print text)
-    if (NOT ${FIND_NAME}_FIND_QUIETLY)
+    if (NOT ${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY)
         message (STATUS "  ${text}")
     endif ()
 endmacro ()
 
 macro (seqan3_config_error text)
-    if (${FIND_NAME}_FIND_REQUIRED)
+    if (${CMAKE_FIND_PACKAGE_NAME}_FIND_REQUIRED)
         message (FATAL_ERROR ${text})
     else ()
-        if (NOT ${FIND_NAME}_FIND_QUIETLY)
+        if (NOT ${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY)
             message (WARNING ${text})
         endif ()
         return ()
@@ -528,20 +510,8 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# We made it!
+# Export targets
 # ----------------------------------------------------------------------------
-
-set (SEQAN3_FOUND TRUE)
-set (seqan3_FOUND TRUE)
-set (SeqAn3_FOUND TRUE)
-
-# ----------------------------------------------------------------------------
-# Print Variables
-# ----------------------------------------------------------------------------
-
-if (NOT ${FIND_NAME}_FIND_QUIETLY)
-    message (STATUS "${ColourBold}Found SeqAn3:${ColourReset} ${SEQAN3_INCLUDE_DIR}/seqan3 (found version \"${SEQAN3_VERSION_STRING}\")")
-endif ()
 
 separate_arguments (SEQAN3_CXX_FLAGS_LIST UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
 
@@ -559,6 +529,19 @@ add_library (seqan3::seqan3 ALIAS seqan3_seqan3)
 # propagate SEQAN3_INCLUDE_DIR into SEQAN3_INCLUDE_DIRS
 set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
 
+# ----------------------------------------------------------------------------
+# Finish find_package call
+# ----------------------------------------------------------------------------
+
+find_package_handle_standard_args (${CMAKE_FIND_PACKAGE_NAME} REQUIRED_VARS SEQAN3_INCLUDE_DIR)
+
+# Set SEQAN3_* variables with the content of ${CMAKE_FIND_PACKAGE_NAME}_(FOUND|...|VERSION)
+# This needs to be done, because `find_package(SeqAn3)` might be called in any case-sensitive way and we want to
+# guarantee that SEQAN3_* are always set.
+foreach (package_var FOUND DIR ROOT CONFIG VERSION VERSION_MAJOR VERSION_MINOR VERSION_PATCH VERSION_TWEAK VERSION_COUNT)
+    set (SEQAN3_${package_var} "${${CMAKE_FIND_PACKAGE_NAME}_${package_var}}")
+endforeach ()
+
 if (SEQAN3_FIND_DEBUG)
   message ("Result for ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
   message ("")
@@ -567,7 +550,7 @@ if (SEQAN3_FIND_DEBUG)
   message ("  CMAKE_INCLUDE_PATH          ${CMAKE_INCLUDE_PATH}")
   message ("  SEQAN3_INCLUDE_DIR          ${SEQAN3_INCLUDE_DIR}")
   message ("")
-  message ("  ${FIND_NAME}_FOUND                ${${FIND_NAME}_FOUND}")
+  message ("  ${CMAKE_FIND_PACKAGE_NAME}_FOUND                ${${CMAKE_FIND_PACKAGE_NAME}_FOUND}")
   message ("  SEQAN3_HAS_ZLIB             ${ZLIB_FOUND}")
   message ("  SEQAN3_HAS_BZIP2            ${BZIP2_FOUND}")
   message ("")
