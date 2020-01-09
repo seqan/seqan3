@@ -46,7 +46,7 @@
 #   SeqAn3_FOUND            -- the same as SEQAN3_FOUND
 #   seqan3_FOUND            -- the same as SEQAN3_FOUND
 #
-#   SEQAN3_VERSION_STRING   -- The version as string, e.g. "3.0.0"
+#   SEQAN3_VERSION          -- The version as string, e.g. "3.0.0"
 #   SEQAN3_VERSION_MAJOR    -- e.g. 3
 #   SEQAN3_VERSION_MINOR    -- e.g. 0
 #   SEQAN3_VERSION_PATCH    -- e.g. 0
@@ -140,8 +140,8 @@ endmacro ()
 # ----------------------------------------------------------------------------
 
 # Note that seqan3-config.cmake can be standalone and thus SEQAN3_CLONE_DIR might be empty.
-find_path (SEQAN3_CLONE_DIR NAMES build_system/seqan3-config.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/..")
-find_path (SEQAN3_INCLUDE_DIR NAMES seqan3/version.hpp HINTS "${SEQAN3_CLONE_DIR}/include")
+# * `SEQAN3_CLONE_DIR` was already found in seqan3-config-version.cmake
+# * `SEQAN3_INCLUDE_DIR` was already found in seqan3-config-version.cmake
 find_path (SEQAN3_SUBMODULES_DIR NAMES submodules/sdsl-lite HINTS "${SEQAN3_CLONE_DIR}" "${SEQAN3_INCLUDE_DIR}/seqan3")
 
 if (SEQAN3_INCLUDE_DIR)
@@ -501,46 +501,6 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Find SeqAn3 version.hpp and extract version
-# ----------------------------------------------------------------------------
-
-set (_SEQAN3_VERSION_HPP "${SEQAN3_INCLUDE_DIR}/seqan3/version.hpp")
-set (_SEQAN3_VERSION_IDS MAJOR MINOR PATCH)
-
-# set to 0.0.0 ny default
-foreach (_ID ${_SEQAN3_VERSION_IDS})
-    set (_SEQAN3_VERSION_${_ID} "0")
-endforeach ()
-
-# Exit if version.hpp is not found
-if (EXISTS "${_SEQAN3_VERSION_HPP}")
-    seqan3_config_print ("SeqAn3 version.hpp found:   ${_SEQAN3_VERSION_HPP}")
-
-    foreach (_ID ${_SEQAN3_VERSION_IDS})
-        file (STRINGS ${_SEQAN3_VERSION_HPP} _VERSION_${_ID} REGEX ".*SEQAN3_VERSION_${_ID}.*")
-        string (REGEX REPLACE ".*SEQAN3_VERSION_${_ID}[ |\t]+([0-9a-zA-Z]+).*" "\\1" _SEQAN3_VERSION_${_ID} ${_VERSION_${_ID}})
-    endforeach ()
-else ()
-    seqan3_config_error ("seqan3/version.hpp not found. Broken or missing install of SeqAn3.")
-endif ()
-
-set (_SEQAN3_VERSION_STRING "${_SEQAN3_VERSION_MAJOR}.${_SEQAN3_VERSION_MINOR}.${_SEQAN3_VERSION_PATCH}")
-
-# Cache results.
-set (SEQAN3_VERSION_MAJOR "${_SEQAN3_VERSION_MAJOR}" CACHE INTERNAL "SeqAn major version.")
-set (SEQAN3_VERSION_MINOR "${_SEQAN3_VERSION_MINOR}" CACHE INTERNAL "SeqAn minor version.")
-set (SEQAN3_VERSION_PATCH "${_SEQAN3_VERSION_PATCH}" CACHE INTERNAL "SeqAn patch version.")
-set (SEQAN3_VERSION_STRING "${_SEQAN3_VERSION_STRING}" CACHE INTERNAL "SeqAn version string.")
-
-if (SEQAN3_VERSION_STRING EQUAL 0.0.0)
-    seqan3_config_error ("SeqAn version could not be detected from file. Aborting.")
-elseif ((SEQAN3_VERSION_STRING VERSION_LESS 3.0.0) OR (NOT SEQAN3_VERSION_STRING VERSION_LESS 4.0.0))
-    seqan3_config_error ("SeqAn version detected is ${SEQAN3_VERSION_STRING}; this is not SeqAn3!")
-else ()
-    seqan3_config_print ("SeqAn3 version detected:    ${SEQAN3_VERSION_STRING}")
-endif ()
-
-# ----------------------------------------------------------------------------
 # Perform compilability test of platform.hpp (tests some requirements)
 # ----------------------------------------------------------------------------
 
@@ -616,7 +576,7 @@ if (SEQAN3_FIND_DEBUG)
   message ("  SEQAN3_DEFINITIONS          ${SEQAN3_DEFINITIONS}")
   message ("  SEQAN3_CXX_FLAGS            ${SEQAN3_CXX_FLAGS}")
   message ("")
-  message ("  SEQAN3_VERSION_STRING       ${SEQAN3_VERSION_STRING}")
+  message ("  SEQAN3_VERSION              ${SEQAN3_VERSION}")
   message ("  SEQAN3_VERSION_MAJOR        ${SEQAN3_VERSION_MAJOR}")
   message ("  SEQAN3_VERSION_MINORG       ${SEQAN3_VERSION_MINOR}")
   message ("  SEQAN3_VERSION_PATCH        ${SEQAN3_VERSION_PATCH}")
