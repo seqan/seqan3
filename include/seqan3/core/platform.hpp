@@ -186,18 +186,6 @@
 #endif
 
 // ============================================================================
-//  Architectures
-// ============================================================================
-
-// Warn if NO_WARN_X86_INTRINSICS is not set on PowerPC. See https://github.com/seqan/seqan3/pull/1157.
-#if defined(__powerpc64__)
-#   ifndef NO_WARN_X86_INTRINSICS
-#      pragma GCC warning "To use SeqAn3 on PowerPC, you may need to set -DNO_WARN_X86_INTRINSICS. \
-                           Please note that SeqAn3 is not yet optimised for PowerPC."
-#   endif
-#endif
-
-// ============================================================================
 //  Workarounds
 // ============================================================================
 

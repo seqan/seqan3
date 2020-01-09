@@ -12,26 +12,75 @@
 
 #pragma once
 
-#include <array>
-#include <immintrin.h>
-
 #include <seqan3/core/simd/concept.hpp>
-#include <seqan3/core/simd/detail/builtin_simd.hpp>
+#include <seqan3/core/simd/detail/builtin_simd_intrinsics.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
+
+//-----------------------------------------------------------------------------
+// forward declare sse4 simd algorithms that use sse4 intrinsics
+//-----------------------------------------------------------------------------
+
+namespace seqan3::detail
+{
+/*!\copydoc seqan3::simd::load
+ * \attention This is the implementation for SSE4 intrinsics.
+ */
+template <simd::simd_concept simd_t>
+constexpr simd_t load_sse4(void const * mem_addr);
+
+/*!\copydoc seqan3::simd::transpose
+ * \attention This is the implementation for SSE4 intrinsics.
+ */
+template <simd::simd_concept simd_t>
+inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length> & matrix);
+
+/*!\copydoc seqan3::detail::upcast_signed
+ * \attention This is the implementation for SSE4 intrinsics.
+ */
+template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
+constexpr target_simd_t upcast_signed_sse4(source_simd_t const & src);
+
+/*!\copydoc seqan3::detail::upcast_unsigned
+ * \attention This is the implementation for SSE4 intrinsics.
+ */
+template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
+constexpr target_simd_t upcast_unsigned_sse4(source_simd_t const & src);
+
+/*!\copydoc seqan3::detail::extract_halve
+ * \attention This is the implementation for SSE4 intrinsics.
+ */
+template <uint8_t index, simd::simd_concept simd_t>
+constexpr simd_t extract_halve_sse4(simd_t const & src);
+
+/*!\copydoc seqan3::detail::extract_quarter
+ * \attention This is the implementation for SSE4 intrinsics.
+ */
+template <uint8_t index, simd::simd_concept simd_t>
+constexpr simd_t extract_quarter_sse4(simd_t const & src);
+
+/*!\copydoc seqan3::detail::extract_eighth
+ * \attention This is the implementation for SSE4 intrinsics.
+ */
+template <uint8_t index, simd::simd_concept simd_t>
+constexpr simd_t extract_eighth_sse4(simd_t const & src);
+
+}
+
+//-----------------------------------------------------------------------------
+// implementation
+//-----------------------------------------------------------------------------
+
+#ifdef __SSE4_2__
 
 namespace seqan3::detail
 {
 
-/*!\brief Transposes the given simd vector matrix using SSE4 intrinsics.
- * \ingroup simd
- * \tparam simd_t The simd vector type; must model seqan3::simd::simd_concept and must be a simd built-in and native
- *                type.
- * \param[in,out] matrix The matrix that is transposed in place.
- *
- * \details
- *
- * Does inplace transformation using SSE4 intrinsics.
- */
+template <simd::simd_concept simd_t>
+constexpr simd_t load_sse4(void const * mem_addr)
+{
+    return reinterpret_cast<simd_t>(_mm_loadu_si128(reinterpret_cast<__m128i const *>(mem_addr)));
+}
+
 template <simd::simd_concept simd_t>
 inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
 {
@@ -100,4 +149,76 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
     }
 }
 
+template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
+constexpr target_simd_t upcast_signed_sse4(source_simd_t const & src)
+{
+    if constexpr (simd_traits<source_simd_t>::length == 16) // cast from epi8 ...
+    {
+        if constexpr (simd_traits<target_simd_t>::length == 8) // to epi16
+            return reinterpret_cast<target_simd_t>(_mm_cvtepi8_epi16(reinterpret_cast<__m128i const &>(src)));
+        if constexpr (simd_traits<target_simd_t>::length == 4) // to epi32
+            return reinterpret_cast<target_simd_t>(_mm_cvtepi8_epi32(reinterpret_cast<__m128i const &>(src)));
+        if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
+            return reinterpret_cast<target_simd_t>(_mm_cvtepi8_epi64(reinterpret_cast<__m128i const &>(src)));
+    }
+    else if constexpr (simd_traits<source_simd_t>::length == 8) // cast from epi16 ...
+    {
+        if constexpr (simd_traits<target_simd_t>::length == 4) // to epi32
+            return reinterpret_cast<target_simd_t>(_mm_cvtepi16_epi32(reinterpret_cast<__m128i const &>(src)));
+        if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
+            return reinterpret_cast<target_simd_t>(_mm_cvtepi16_epi64(reinterpret_cast<__m128i const &>(src)));
+    }
+    else  // cast from epi32 to epi64
+    {
+        static_assert(simd_traits<source_simd_t>::length == 4, "Expected 32 bit scalar type.");
+        return reinterpret_cast<target_simd_t>(_mm_cvtepi32_epi64(reinterpret_cast<__m128i const &>(src)));
+    }
+}
+
+template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
+constexpr target_simd_t upcast_unsigned_sse4(source_simd_t const & src)
+{
+    if constexpr (simd_traits<source_simd_t>::length == 16) // cast from epi8 ...
+    {
+        if constexpr (simd_traits<target_simd_t>::length == 8) // to epi16
+            return reinterpret_cast<target_simd_t>(_mm_cvtepu8_epi16(reinterpret_cast<__m128i const &>(src)));
+        if constexpr (simd_traits<target_simd_t>::length == 4) // to epi32
+            return reinterpret_cast<target_simd_t>(_mm_cvtepu8_epi32(reinterpret_cast<__m128i const &>(src)));
+        if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
+            return reinterpret_cast<target_simd_t>(_mm_cvtepu8_epi64(reinterpret_cast<__m128i const &>(src)));
+    }
+    else if constexpr (simd_traits<source_simd_t>::length == 8) // cast from epi16 ...
+    {
+        if constexpr (simd_traits<target_simd_t>::length == 4) // to epi32
+            return reinterpret_cast<target_simd_t>(_mm_cvtepu16_epi32(reinterpret_cast<__m128i const &>(src)));
+        if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
+            return reinterpret_cast<target_simd_t>(_mm_cvtepu16_epi64(reinterpret_cast<__m128i const &>(src)));
+    }
+    else  // cast from epi32 to epi64
+    {
+        static_assert(simd_traits<source_simd_t>::length == 4, "Expected 32 bit scalar type.");
+        return reinterpret_cast<target_simd_t>(_mm_cvtepu32_epi64(reinterpret_cast<__m128i const &>(src)));
+    }
+}
+
+template <uint8_t index, simd::simd_concept simd_t>
+constexpr simd_t extract_halve_sse4(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), (index) << 3));
+}
+
+template <uint8_t index, simd::simd_concept simd_t>
+constexpr simd_t extract_quarter_sse4(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), index << 2));
+}
+
+template <uint8_t index, simd::simd_concept simd_t>
+constexpr simd_t extract_eighth_sse4(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), index << 1));
+}
+
 } // namespace seqan3::detail
+
+#endif // __SSE4_2__
