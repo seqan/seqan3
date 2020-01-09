@@ -231,11 +231,7 @@ public:
 
         path tmp_path;
 
-#if defined(_WIN32)
-        tmp_path = std::string{getenv("UserProfile")};
-#else
-        tmp_path = std::string{getenv("HOME")};
-#endif
+        tmp_path = std::string{getenv(home_env_name)};
         tmp_path /= ".config";
 
         // First, create .config if it does not already exist.
@@ -428,6 +424,16 @@ public:
         "[APP INFO] :: A new version of this application is now available.\n"
         "[APP INFO] :: If you don't wish to receive further notifications, set --version-check OFF.\n\n";
         /*Might be extended if a url is given on construction.*/
+
+    //!\brief The environment name of the home environment used by getenv()
+    static constexpr char const * home_env_name
+    {
+#if defined(_WIN32)
+        "UserProfile"
+#else
+        "HOME"
+#endif
+    };
 
     //!\brief The application name.
     std::string name;
