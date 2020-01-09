@@ -11,8 +11,4 @@
 
 #include <string>
 
-// Define global app name component to disambiguate from release test
-// when tests are run in parallel.
-static const std::string app_name_component{"release"};
-
 #include "version_check_test.hpp"

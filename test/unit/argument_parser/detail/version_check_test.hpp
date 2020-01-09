@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 #include <seqan3/argument_parser/all.hpp>
+#include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
 
@@ -46,8 +47,40 @@ struct version_check : public ::testing::Test
     char const * const OPTION_OFF = "0";
     char const * const OPTION_ON = "1";
 
-    std::string const app_name = std::string{"test_version_check_"} + app_name_component + "_" +
-                                 std::to_string(current_unix_timestamp()); // avoid name conflicts.
+    std::string const app_name = std::string{"test_version_check"};
+
+    // This tmp_filename will create the file "version_checker.tmpfile" in a unique folder.
+    seqan3::test::tmp_filename tmp_file{"version_checker.tmpfile"};
+
+    void randomise_home_folder()
+    {
+        using namespace std::string_literals;
+        auto tmp_directory = tmp_file.get_path().parent_path();
+
+        int result = setenv(detail::version_checker::home_env_name, tmp_directory.c_str(), 1);
+        if (result != 0)
+            throw std::runtime_error{"Couldn't set environment variable 'home_env_name' (="s +
+                                     detail::version_checker::home_env_name + ")"s};
+
+        auto is_prefix_path = [](std::string const & base_path, std::string const & path)
+        {
+            auto && it_pair = std::mismatch(base_path.begin(), base_path.end(), path.begin(), path.end());
+            return it_pair.first + 1 == base_path.end();
+        };
+
+        if (is_prefix_path(tmp_directory, app_tmp_path()))
+            throw std::runtime_error{"Setting the environment variable 'home_env_name' didn't have the correct effect"
+                                     " ("s + std::string{tmp_directory} + " is not a prefix of "s +
+                                     std::string{app_tmp_path()} + ")"s};
+    }
+
+    void SetUp() override
+    {
+        ::testing::Test::SetUp();
+
+        // set HOME environment to a random home folder before starting each test case
+        randomise_home_folder();
+    }
 
     std::filesystem::path app_tmp_path()
     {
