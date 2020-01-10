@@ -123,7 +123,7 @@ namespace seqan3
  * \returns       An iterator pointing to the inserted gap.
  *
  * \details
- * \note      This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note      This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  *
  * \attention This is a concept requirement, not an actual function (however types
  *            modelling this concept will provide an implementation).
@@ -139,7 +139,7 @@ namespace seqan3
  * \returns       An iterator pointing to the first inserted gap or `pos_it` if `size == 0`.
  *
  * \details
- * \note      This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note      This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  *
  * \attention This is a concept requirement, not an actual function (however types
  *            modelling this concept will provide an implementation).
@@ -157,7 +157,7 @@ namespace seqan3
  * \throws seqan3::gap_erase_failure if there is no seqan3::gap at \p pos_it.
  *
  * \details
- * \note      This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note      This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  *
  * \attention This is a concept requirement, not an actual function (however types
  *            modelling this concept will provide an implementation).
@@ -176,7 +176,7 @@ namespace seqan3
  * \throws seqan3::gap_erase_failure if one of the characters in [\p first, \p last) no seqan3::gap.
  *
  * \details
- * \note      This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note      This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  *
  * \attention This is a concept requirement, not an actual function (however types
  *            modelling this concept will provide an implementation).
@@ -239,7 +239,7 @@ SEQAN3_CONCEPT aligned_sequence =
  * This function delegates to the member function `insert(iterator, value)` of
  * the container.
  *
- * \note This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <sequence_container aligned_seq_t>
 //!\cond
@@ -265,7 +265,7 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
  * This function delegates to the member function `insert(iterator, `size`, `value`)`
  * of the container.
  *
- * \note This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <sequence_container aligned_seq_t>
 //!\cond
@@ -295,7 +295,7 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
  * container. Before delegating, the function checks if the position pointed to
  * by \p pos_it is an actual seqan3::gap and throws an exception if not.
  *
- * \note This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <sequence_container aligned_seq_t>
 //!\cond
@@ -328,7 +328,7 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  * the container. Before delegating, the function checks if the range
  * [\p first, \p last) contains only seqan3::gap symbols.
  *
- * \note This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <sequence_container aligned_seq_t>
 //!\cond
@@ -400,7 +400,7 @@ inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_typ
  *
  * This function delegates to the member function `insert(iterator, size)` of the range.
  *
- * \note This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <typename range_type>
 //!\cond
@@ -431,7 +431,7 @@ std::ranges::iterator_t<range_type> insert_gap(range_type & rng,
  * This function delegates to the member function `erase(it)` of
  * the range.
  *
- * \note This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <typename range_type>
 //!\cond
@@ -459,7 +459,7 @@ std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
  *
  * This function delegates to the member function `erase(first, last)` of the range.
  *
- * \note This may cause reallocations and thus invalidate all iterators and references. Use the returned iterator.
+ * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <typename range_type>
 //!\cond
