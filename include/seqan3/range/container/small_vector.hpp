@@ -869,9 +869,6 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap2>
-    //!\cond
-        requires cap2 <= capacity_ /* resolves ambiguousness when comparing two small_vectors of unequal capacity */
-    //!\endcond
     friend constexpr bool operator==(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return std::ranges::equal(lhs, rhs);
@@ -879,9 +876,6 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap2>
-    //!\cond
-        requires cap2 <= capacity_
-    //!\endcond
     friend constexpr bool operator!=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs == rhs);
@@ -889,9 +883,6 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap2>
-    //!\cond
-        requires cap2 <= capacity_
-    //!\endcond
     friend constexpr bool operator<(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         for (size_t i = 0; i < std::min(lhs.size(), rhs.size()); ++i)
@@ -904,9 +895,6 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap2>
-    //!\cond
-        requires cap2 <= capacity_
-    //!\endcond
     friend constexpr bool operator>(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         for (size_t i = 0; i < std::min(lhs.size(), rhs.size()); ++i)
@@ -919,9 +907,6 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap2>
-    //!\cond
-        requires cap2 <= capacity_
-    //!\endcond
     friend constexpr bool operator<=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs > rhs);
@@ -929,9 +914,6 @@ public:
 
     //!\brief Performs element-wise comparison.
     template <size_t cap2>
-    //!\cond
-        requires cap2 <= capacity_
-    //!\endcond
     friend constexpr bool operator>=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs < rhs);
