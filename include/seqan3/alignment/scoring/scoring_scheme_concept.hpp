@@ -57,11 +57,14 @@ namespace seqan3
 //!\}
 
 //!\cond
-template <typename t, alphabet alphabet_t, alphabet alphabet2_t = alphabet_t>
+template <typename t, typename alphabet_t, typename alphabet2_t = alphabet_t>
 SEQAN3_CONCEPT scoring_scheme = requires (t scheme,
                                                 alphabet_t const alph1,
                                                 alphabet2_t const alph2)
 {
+    requires alphabet<alphabet_t>;
+    requires alphabet<alphabet2_t>;
+
     { scheme.score(alph1, alph2) };
     requires std::common_reference_with<decltype(scheme.score(alph1, alph2)),
                                         typename std::remove_reference_t<t>::score_type>;
