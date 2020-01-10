@@ -32,9 +32,12 @@ namespace seqan3::detail
 {
 //!\brief Whether a type is `char`, `char16_t`, `char32_t` or `wchar_t` (type trait).
 //!\ingroup adaptation
+//!\hideinitializer
 template <typename type>
-constexpr bool is_char_adaptation_v = std::same_as<type, char> || std::same_as<type, char16_t> ||
-    std::same_as<type, char32_t> || std::same_as<type, wchar_t>;
+constexpr bool is_char_adaptation_v = std::same_as<type, char>     ||
+                                      std::same_as<type, char16_t> ||
+                                      std::same_as<type, char32_t> ||
+                                      std::same_as<type, wchar_t>;
 } // namespace seqan3::detail
 
 namespace seqan3::custom
