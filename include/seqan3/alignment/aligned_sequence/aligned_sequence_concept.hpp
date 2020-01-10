@@ -450,8 +450,8 @@ std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
  * \param[in,out] rng   The range to modify.
  * \param[in] first     The iterator pointing to the position where to start erasing gaps.
  * \param[in] last      The iterator pointing to the position where to stop erasing gaps.
- * \returns       An iterator following the last removed element. If the iterator `last` refers to the last element, the
- *                std::ranges::end() iterator is returned.
+ * \returns An iterator following the last removed element. If the iterator `last` refers to the last element, the
+ *          std::ranges::end() iterator is returned.
  *
  * \throws seqan3::gap_erase_failure if one of the characters in [\p first, \p last) is no seqan3::gap.
  *
