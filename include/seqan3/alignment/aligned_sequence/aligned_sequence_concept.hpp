@@ -423,8 +423,8 @@ std::ranges::iterator_t<range_type> insert_gap(range_type & rng,
  * \tparam range_type   Type of the range to modify; must have an erase_gap(it) member function.
  * \param[in,out] rng   The range to modify.
  * \param[in] pos_it    The iterator pointing to the position where to erase one gap.
- * \returns       An iterator following the removed element. If the iterator `pos_it` refers to the last element, the
- *                std::ranges::end() iterator is returned.
+ * \returns An iterator following the removed element. If the iterator `pos_it` refers to the last element, the
+ *          std::ranges::end() iterator is returned.
  *
  * \details
  *
