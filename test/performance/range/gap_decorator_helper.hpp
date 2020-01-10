@@ -19,8 +19,6 @@
 #include <seqan3/range/decorator/all.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
-
 #define SEQAN3_LEN_LONG 1<<18
 #define SEQAN3_LEN_SHORT 1<<12
 

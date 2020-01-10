@@ -21,7 +21,7 @@
 
 #include "gap_decorator_helper.hpp"
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 // ============================================================================
 //  insert left to right
@@ -31,7 +31,7 @@ void insert_left2right(benchmark::State & state)
 {
     unsigned int seq_len = state.range(0);
     using size_type = typename gap_decorator_t::size_type;
-    using sequence_type = remove_cvref_t<detail::unaligned_seq_t<gap_decorator_t>>;
+    using sequence_type = seqan3::remove_cvref_t<seqan3::detail::unaligned_seq_t<gap_decorator_t>>;
     sequence_type seq(seq_len, 'A'_dna4);
 
     // vector of sampled gap lengths for each position
@@ -62,12 +62,16 @@ void insert_left2right(benchmark::State & state)
 }
 
 // Insert gaps of length 1 from left to right into UNGAPPED sequence
-BENCHMARK_TEMPLATE(insert_left2right, gap_decorator<const std::vector<dna4> &>, false)->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_left2right, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, false)
+    ->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_left2right, std::vector<seqan3::gapped<seqan3::dna4>>, false)
+    ->Apply(custom_arguments);
 
 // Insert gaps of length 1 from left to right into GAPPED sequence
-BENCHMARK_TEMPLATE(insert_left2right, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_left2right, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, true)
+    ->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_left2right, std::vector<seqan3::gapped<seqan3::dna4>>, true)
+    ->Apply(custom_arguments);
 
 // ============================================================================
 //  insert right to left
@@ -78,7 +82,7 @@ void insert_right2left(benchmark::State & state)
     unsigned int seq_len = state.range(0);
     assert(seq_len > 0);
     using size_type = typename gap_decorator_t::size_type;
-    using sequence_type = remove_cvref_t<detail::unaligned_seq_t<gap_decorator_t>>;
+    using sequence_type = seqan3::remove_cvref_t<seqan3::detail::unaligned_seq_t<gap_decorator_t>>;
     sequence_type seq(seq_len, 'A'_dna4);
     // vector of sample<size_type>d gap lengths for each position
     std::vector<size_type> gaps(seq_len, 0);
@@ -110,10 +114,14 @@ void insert_right2left(benchmark::State & state)
 }
 
 // Insert gaps of length 1 from left to right into UNGAPPED sequence
-BENCHMARK_TEMPLATE(insert_right2left, gap_decorator<const std::vector<dna4> &>, false)->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_right2left, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, false)
+    ->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_right2left, std::vector<seqan3::gapped<seqan3::dna4>>, false)
+    ->Apply(custom_arguments);
 // Insert gaps of length 1 from left to right into GAPPED sequence
-BENCHMARK_TEMPLATE(insert_right2left, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_right2left, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, true)
+    ->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_right2left, std::vector<seqan3::gapped<seqan3::dna4>>, true)
+    ->Apply(custom_arguments);
 
 BENCHMARK_MAIN();

@@ -21,18 +21,18 @@
 
 #include "gap_decorator_helper.hpp"
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 // ============================================================================
 //  insert at random position
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-    requires aligned_sequence<gap_decorator_t>
+    requires seqan3::aligned_sequence<gap_decorator_t>
 void insert_random(benchmark::State & state)
 {
     unsigned int seq_len = state.range(0);
     using size_type = typename gap_decorator_t::size_type;
-    using sequence_type = remove_cvref_t<detail::unaligned_seq_t<gap_decorator_t>>;
+    using sequence_type = seqan3::remove_cvref_t<seqan3::detail::unaligned_seq_t<gap_decorator_t>>;
     sequence_type seq(seq_len, 'A'_dna4);
     // vector of sampled gap lengths for each position
     std::vector<size_type> gaps(seq_len, 0);
@@ -73,23 +73,23 @@ void insert_random(benchmark::State & state)
 }
 
 // Insert gaps of length 1 at random position into UNGAPPED sequence
-BENCHMARK_TEMPLATE(insert_random, gap_decorator<const std::vector<dna4> &>, false)->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, std::vector<seqan3::gapped<seqan3::dna4>>, false)->Apply(custom_arguments);
 // Insert gaps of length 1 at random position into GAPPED sequence
-BENCHMARK_TEMPLATE(insert_random, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, std::vector<seqan3::gapped<seqan3::dna4>>, true)->Apply(custom_arguments);
 
 // ============================================================================
 //  delete at random position
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-    requires aligned_sequence<gap_decorator_t>
+    requires seqan3::aligned_sequence<gap_decorator_t>
 void delete_random(benchmark::State & state)
 {
     unsigned int seq_len = state.range(0);
     using iterator_type = std::ranges::iterator_t<gap_decorator_t>;
     using size_type = typename gap_decorator_t::size_type;
-    using sequence_type = remove_cvref_t<detail::unaligned_seq_t<gap_decorator_t>>;
+    using sequence_type = seqan3::remove_cvref_t<seqan3::detail::unaligned_seq_t<gap_decorator_t>>;
     sequence_type seq(seq_len, 'A'_dna4);
 
     // vector of sampled gap lengths for each position
@@ -135,7 +135,9 @@ void delete_random(benchmark::State & state)
 }
 
 // Erase gaps at random position from initially GAPPED sequence
-BENCHMARK_TEMPLATE(delete_random, gap_decorator<const std::vector<dna4> &>, true)->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(delete_random, std::vector<gapped<dna4>>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(delete_random, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, true)
+    ->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(delete_random, std::vector<seqan3::gapped<seqan3::dna4>>, true)
+    ->Apply(custom_arguments);
 
 BENCHMARK_MAIN();

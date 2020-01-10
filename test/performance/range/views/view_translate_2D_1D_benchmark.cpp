@@ -24,13 +24,12 @@
 #include <seqan/translation.h>
 #endif
 
-using namespace seqan3;
 using namespace seqan3::test;
 
 // Tags used to define the benchmark type
 struct baseline_tag{}; // Baseline where view is applied and only iterating the output range is benchmarked
-struct translate_tag{}; // Benchmark view_translate followed by views::join
-struct translate_join_tag{}; // Benchmark views::translate_join
+struct translate_tag{}; // Benchmark view_translate followed by seqan3::views::join
+struct translate_join_tag{}; // Benchmark seqan3::views::translate_join
 
 // ============================================================================
 //  sequential_read
@@ -41,34 +40,34 @@ void sequential_read_impl(benchmark::State & state, rng_t && rng)
 {
     for (auto _ : state)
         for (auto && outer : rng)
-            for (aa27 inner : outer)
+            for (seqan3::aa27 inner : outer)
                 benchmark::DoNotOptimize(inner.to_rank());
 }
 
 template <typename tag_t>
 void sequential_read(benchmark::State & state)
 {
-    std::vector<std::vector<dna4>> dna_sequence_collection;
+    std::vector<std::vector<seqan3::dna4>> dna_sequence_collection;
     dna_sequence_collection.resize(1000);
 
     for (size_t i = 0; i < dna_sequence_collection.size(); ++i)
-        dna_sequence_collection[i] = test::generate_sequence<seqan3::dna4>(100, 0, 0);
+        dna_sequence_collection[i] = seqan3::test::generate_sequence<seqan3::dna4>(100, 0, 0);
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        std::vector<std::vector<aa27>> translated_aa_sequences = dna_sequence_collection
-                                                               | views::translate_join
-                                                               | views::to<std::vector<std::vector<aa27>>>;
+        std::vector<std::vector<seqan3::aa27>> translated_aa_sequences = dna_sequence_collection
+                                                            | seqan3::views::translate_join
+                                                            | seqan3::views::to<std::vector<std::vector<seqan3::aa27>>>;
         sequential_read_impl(state, translated_aa_sequences);
     }
     else if constexpr (std::is_same_v<tag_t, translate_tag>)
     {
-        auto translated_aa_view = dna_sequence_collection | views::translate | views::join;
+        auto translated_aa_view = dna_sequence_collection | seqan3::views::translate | seqan3::views::join;
         sequential_read_impl(state, translated_aa_view);
     }
     else
     {
-        auto translated_aa_view = dna_sequence_collection | views::translate_join;
+        auto translated_aa_view = dna_sequence_collection | seqan3::views::translate_join;
         sequential_read_impl(state, translated_aa_view);
     }
 }
@@ -95,11 +94,11 @@ void random_access_impl(benchmark::State & state, rng_t && rng,
 template <typename tag_t>
 void random_access(benchmark::State & state)
 {
-    std::vector<std::vector<dna4>> dna_sequence_collection;
+    std::vector<std::vector<seqan3::dna4>> dna_sequence_collection;
     dna_sequence_collection.resize(1000);
 
     for (size_t i = 0; i < dna_sequence_collection.size(); ++i)
-        dna_sequence_collection[i] = test::generate_sequence<seqan3::dna4>(200, 0, 0);
+        dna_sequence_collection[i] = seqan3::test::generate_sequence<seqan3::dna4>(200, 0, 0);
 
     std::vector<size_t> access_positions_outer{};
     access_positions_outer.resize(200);
@@ -120,14 +119,14 @@ void random_access(benchmark::State & state)
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        std::vector<std::vector<aa27>> translated_aa_sequences = dna_sequence_collection
-                                                               | views::translate_join
-                                                               | views::to<std::vector<std::vector<aa27>>>;
+        std::vector<std::vector<seqan3::aa27>> translated_aa_sequences = dna_sequence_collection
+                                                            | seqan3::views::translate_join
+                                                            | seqan3::views::to<std::vector<std::vector<seqan3::aa27>>>;
         random_access_impl(state, translated_aa_sequences, access_positions_outer, access_positions_inner);
     }
     else
     {
-        auto translated_aa_view = dna_sequence_collection | views::translate_join;
+        auto translated_aa_view = dna_sequence_collection | seqan3::views::translate_join;
         random_access_impl(state, translated_aa_view, access_positions_outer, access_positions_inner);
     }
 }
@@ -140,14 +139,16 @@ BENCHMARK_TEMPLATE(random_access, translate_join_tag);
 // ============================================================================
 
 template <typename adaptor_t>
-void copy_impl(benchmark::State & state, std::vector<std::vector<dna4>> const & dna_sequence_collection, adaptor_t & adaptor)
+void copy_impl(benchmark::State & state,
+               std::vector<std::vector<seqan3::dna4>> const & dna_sequence_collection,
+               adaptor_t & adaptor)
 {
     for (auto _ : state)
     {
-        std::vector<std::vector<aa27>> translated_aa_sequences{};
+        std::vector<std::vector<seqan3::aa27>> translated_aa_sequences{};
         benchmark::DoNotOptimize(translated_aa_sequences = dna_sequence_collection
                                                          | adaptor
-                                                         | views::to<std::vector<std::vector<aa27>>>);
+                                                         | seqan3::views::to<std::vector<std::vector<seqan3::aa27>>>);
     }
 }
 
@@ -166,20 +167,20 @@ void copy_impl_seqan2(benchmark::State & state, seqan::StringSet<seqan::DnaStrin
 template <typename tag_t>
 void copy(benchmark::State & state)
 {
-    std::vector<std::vector<dna4>> dna_sequence_collection{};
+    std::vector<std::vector<seqan3::dna4>> dna_sequence_collection{};
     dna_sequence_collection.resize(500);
 
     for (size_t i = 0; i < dna_sequence_collection.size(); ++i)
-        dna_sequence_collection[i] = test::generate_sequence<seqan3::dna4>(100, 0, 0);
+        dna_sequence_collection[i] = seqan3::test::generate_sequence<seqan3::dna4>(100, 0, 0);
 
     if constexpr (std::is_same_v<tag_t, translate_tag>)
     {
-        auto adaptor = views::translate | views::join;
+        auto adaptor = seqan3::views::translate | seqan3::views::join;
         copy_impl(state, dna_sequence_collection, adaptor);
     }
     else if constexpr (std::is_same_v<tag_t, translate_join_tag>)
     {
-        auto adaptor = views::translate_join;
+        auto adaptor = seqan3::views::translate_join;
         copy_impl(state, dna_sequence_collection, adaptor);
     }
 }

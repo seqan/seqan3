@@ -17,8 +17,6 @@
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 
-using namespace seqan3;
-
 // ============================================================================
 //  sequential_read
 // ============================================================================
@@ -34,8 +32,8 @@ void sequential_read(benchmark::State & state)
 
     uint8_t dummy = 0;
 
-    // if single_pass, add views::single_pass_input, otherwise just &
-    using single_t = std::conditional_t<single_pass, decltype(c | views::single_pass_input), container_t &>;
+    // if single_pass, add seqan3::views::single_pass_input, otherwise just &
+    using single_t = std::conditional_t<single_pass, decltype(c | seqan3::views::single_pass_input), container_t &>;
 
     if constexpr (std::same_as<adaptor_t, void>)
     {
