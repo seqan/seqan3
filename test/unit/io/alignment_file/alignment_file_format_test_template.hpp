@@ -337,7 +337,8 @@ TYPED_TEST_P(alignment_file_read, cigar_vector)
     std::vector<std::vector<cigar>> expected
     {
         {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op}},
-        {{1, 'H'_cigar_op}, {7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}},
+        {{1, 'H'_cigar_op}, {7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op},
+         {2, 'H'_cigar_op}},
         {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'P'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op},
          {1, 'M'_cigar_op}, {1, 'I'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}}
     };
@@ -512,7 +513,8 @@ TYPED_TEST_P(alignment_file_write, cigar_vector)
     std::vector<std::vector<cigar>> cigar_v
     {
         {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op}},
-        {{7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}},
+        {{1, 'H'_cigar_op}, {7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op},
+         {2, 'H'_cigar_op}},
         {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'P'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op},
          {1, 'M'_cigar_op}, {1, 'I'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}}
     };
@@ -545,7 +547,8 @@ TYPED_TEST_P(alignment_file_write, cigar_vector)
     }
 
     this->ostream.flush();
-    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_output);
+    // compare to original input because hard clipping is preserved when writing the cigar vector directly
+    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
 }
 
 TYPED_TEST_P(alignment_file_write, special_cases)
