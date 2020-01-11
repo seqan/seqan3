@@ -569,6 +569,8 @@ private:
      * \param[in] idx The internal index used for this pair of sequences.
      * \param[in] sequence1 The first range to get the alignment for if requested.
      * \param[in] sequence2 The second range to get the alignment for if requested.
+     * \param[in] simd_index Optionally, the index of the simd vector to get the result for. This value is ignored
+     *                       if the alignment is executed in scalar mode.
      *
      * \returns A seqan3::alignment_result with the requested alignment outcomes.
      *
@@ -586,12 +588,10 @@ private:
      * are stored in the alignment result as well.
      */
     template <typename index_t, typename sequence1_t, typename sequence2_t>
-    //!\cond
-        requires !traits_t::is_vectorised
-    //!\endcond
     constexpr auto make_alignment_result(index_t const idx,
                                          sequence1_t & sequence1,
-                                         sequence2_t & sequence2)
+                                         sequence2_t & sequence2,
+                                         size_t const simd_index = 0)
     {
         // ----------------------------------------------------------------------------
         // Build the alignment result
@@ -607,12 +607,13 @@ private:
 
         // Choose what needs to be computed.
         if constexpr (traits_t::result_type_rank >= 0)  // compute score
-            res.score = this->alignment_state.optimum.score;
+            res.score = computed_result(this->alignment_state.optimum.score, simd_index);
 
         if constexpr (traits_t::result_type_rank >= 1)  // compute back coordinate
         {
-            res.back_coordinate = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
-                                                       row_index_type{this->alignment_state.optimum.row_index}};
+            res.back_coordinate.first = computed_result(this->alignment_state.optimum.column_index, simd_index);
+            res.back_coordinate.second = computed_result(this->alignment_state.optimum.row_index, simd_index);
+
             // At some point this needs to be refactored so that it is not necessary to adapt the coordinate.
             if constexpr (traits_t::is_banded)
                 res.back_coordinate.second += res.back_coordinate.first - this->trace_matrix.band_col_index;
@@ -622,9 +623,11 @@ private:
         {
             // Get a aligned sequence builder for banded or un-banded case.
             aligned_sequence_builder builder{sequence1, sequence2};
-            auto optimum_coordinate = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
-                                                           row_index_type{this->alignment_state.optimum.row_index}};
-            auto trace_res = builder(this->trace_matrix.trace_path(optimum_coordinate));
+            size_t final_column_index = computed_result(this->alignment_state.optimum.column_index, simd_index);
+            size_t final_row_index = computed_result(this->alignment_state.optimum.row_index, simd_index);
+            auto optimum_coordinate = alignment_coordinate{column_index_type{final_column_index},
+                                                           row_index_type{final_row_index}};
+            auto trace_res = builder(this->trace_matrix.trace_path(optimum_coordinate, simd_index));
             res.front_coordinate.first = trace_res.first_sequence_slice_positions.first;
             res.front_coordinate.second = trace_res.second_sequence_slice_positions.first;
 
@@ -682,26 +685,39 @@ private:
         std::vector<alignment_result<result_value_t>> results{};
         results.reserve(std::ranges::distance(index_sequence_pairs));
 
+        using std::get;
         size_t simd_index = 0;
         for (auto && [sequence_pairs, alignment_index] : index_sequence_pairs)
-        {
-            (void) sequence_pairs;
-            result_value_t res{};
-            res.id = alignment_index;
-
-            res.score = this->alignment_state.optimum.score[simd_index];  // Just take this
-
-            if constexpr (traits_t::result_type_rank >= 1)  // compute back coordinate
-            {
-                res.back_coordinate.first = this->alignment_state.optimum.column_index[simd_index] ;
-                res.back_coordinate.second = this->alignment_state.optimum.row_index[simd_index];
-            }
-
-            results.emplace_back(std::move(res));
-            ++simd_index;
-        }
+            results.emplace_back(make_alignment_result(alignment_index,
+                                                       get<0>(sequence_pairs),
+                                                       get<1>(sequence_pairs),
+                                                       simd_index++));
 
         return results;
+    }
+
+    /*!\brief Returns the computed result at the specified index of the simd vector, or the scalar if not computed in
+     *        simd mode.
+     *
+     * \tparam requested_result_t The type of the requested value.
+     * \param[in] requested_result The requested value to get the scalar value from.
+     * \param[in] simd_index The index used to access the correct value inside of the corresponding simd vector.
+     *
+     * \returns The requested value.
+     *
+     * \details
+     *
+     * This function simply returns the `requested_result` in the scalar mode. In this case the given index is ignored.
+     * Otherwise returns the value at the given index within the stored simd vector.
+     */
+    template <typename requested_result_t>
+    auto computed_result(requested_result_t const & requested_result,
+                         [[maybe_unused]] size_t const simd_index) const noexcept
+    {
+        if constexpr (traits_t::is_vectorised)
+            return requested_result[simd_index];
+        else
+            return requested_result;
     }
 
     /*!\brief Dumps the current alignment matrix in the debug score matrix and if requested debug trace matrix.
