@@ -15,6 +15,8 @@
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_base.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/core/detail/to_string.hpp>
+#include <seqan3/core/simd/concept.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -62,8 +64,14 @@ template <typename derived_t, two_dimensional_matrix_iterator matrix_iter_t>
 class trace_iterator_base
 {
 private:
-    static_assert(std::same_as<value_type_t<matrix_iter_t>, trace_directions>,
-                  "Value type of the underlying iterator must be seqan3::detail::trace_directions.");
+    static_assert(std::same_as<std::iter_value_t<matrix_iter_t>, trace_directions> ||
+                  simd::simd_concept<std::iter_value_t<matrix_iter_t>>,
+                  "Value type of the underlying iterator must be seqan3::detail::trace_directions or a simd vector.");
+
+    //!\brief The actual trace direction type of the underlying matrix.
+    using trace_directions_t = std::iter_value_t<matrix_iter_t>;
+    //!\brief Checks whether the underlying trace direction is stored as a simd vector.
+    static constexpr bool is_simd_trace_directions = simd::simd_concept<trace_directions_t>;
 
     //!\brief Befriend with corresponding const_iterator.
     template <typename other_derived_t, typename other_matrix_iter_t>
@@ -88,10 +96,19 @@ private:
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
      * \param[in] matrix_iter The underlying matrix iterator.
+     * \param[in] simd_index \copydoc seqan3::detail::trace_iterator_base::simd_index
      */
-    constexpr trace_iterator_base(matrix_iter_t const matrix_iter) noexcept : matrix_iter{matrix_iter}
+    constexpr trace_iterator_base(matrix_iter_t const matrix_iter, size_t const simd_index = 0) :
+        matrix_iter{matrix_iter},
+        simd_index{simd_index}
     {
-        set_trace_direction(*matrix_iter);
+        if constexpr (is_simd_trace_directions)
+            if (simd_index >= simd_traits<trace_directions_t>::length)
+                throw std::out_of_range{to_string("The given index ", simd_index ,
+                                                  " exceeds the length of the simd vector of size ",
+                                                  simd_traits<trace_directions_t>::length, "!")};
+
+        set_trace_direction();
     }
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
@@ -152,7 +169,7 @@ public:
     //!\brief Advances the iterator by one.
     constexpr derived_t & operator++() noexcept
     {
-        trace_directions old_dir = *matrix_iter;
+        trace_directions old_dir = retrieve_trace_direction();
 
         assert(old_dir != trace_directions::none);
 
@@ -161,21 +178,21 @@ public:
             derived().go_up(matrix_iter);
             // Set new trace direction if last position was up_open.
             if (static_cast<bool>(old_dir & trace_directions::up_open))
-                set_trace_direction(*matrix_iter);
+                set_trace_direction();
         }
         else if (current_direction == trace_directions::left)
         {
             derived().go_left(matrix_iter);
             // Set new trace direction if last position was left_open.
             if (static_cast<bool>(old_dir & trace_directions::left_open))
-                set_trace_direction(*matrix_iter);
+                set_trace_direction();
         }
         else
         {
             assert(current_direction == trace_directions::diagonal);
 
             derived().go_diagonal(matrix_iter);
-            set_trace_direction(*matrix_iter);
+            set_trace_direction();
         }
         return derived();
     }
@@ -201,7 +218,7 @@ public:
     //!\brief Returns `true` if the pointed-to-element is seqan3::detail::trace_directions::none.
     constexpr friend bool operator==(derived_t const & lhs, std::ranges::default_sentinel_t const &) noexcept
     {
-        return *lhs.matrix_iter == trace_directions::none;
+        return lhs.retrieve_trace_direction() == trace_directions::none;
     }
 
     //!\brief copydoc operator==()
@@ -253,20 +270,22 @@ private:
     }
     //!\}
 
-    //!\brief Updates the current trace direction.
-    void set_trace_direction(trace_directions const dir) noexcept
+    //!\brief Sets the current trace direction.
+    void set_trace_direction() noexcept
     {
-        if (static_cast<bool>(dir & trace_directions::diagonal))
+        trace_directions direction = retrieve_trace_direction();
+
+        if (static_cast<bool>(direction & trace_directions::diagonal))
         {
             current_direction = trace_directions::diagonal;
         }
-        else if (static_cast<bool>(dir & trace_directions::up) ||
-                 static_cast<bool>(dir & trace_directions::up_open))
+        else if (static_cast<bool>(direction & trace_directions::up) ||
+                 static_cast<bool>(direction & trace_directions::up_open))
         {
             current_direction = trace_directions::up;
         }
-        else if (static_cast<bool>(dir & trace_directions::left) ||
-                 static_cast<bool>(dir & trace_directions::left_open))
+        else if (static_cast<bool>(direction & trace_directions::left) ||
+                 static_cast<bool>(direction & trace_directions::left_open))
         {
             current_direction = trace_directions::left;
         }
@@ -274,6 +293,15 @@ private:
         {
             current_direction = trace_directions::none;
         }
+    }
+
+    //!\brief Returns the current trace direction pointed to by the underlying matrix iterator.
+    trace_directions retrieve_trace_direction() const noexcept
+    {
+        if constexpr (is_simd_trace_directions)
+            return static_cast<trace_directions>((*matrix_iter)[simd_index]);
+        else
+            return *matrix_iter;
     }
 
     //!\brief Cast this object to its derived type.
@@ -290,6 +318,7 @@ private:
 
     matrix_iter_t matrix_iter{}; //!< The underlying matrix iterator.
     trace_directions current_direction{}; //!< The current trace direction.
+    size_t simd_index{}; //!< The index of the simd trace directions vector to follow.
 };
 
 } // namespace seqan3::detail

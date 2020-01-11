@@ -56,11 +56,13 @@ public:
      * \param[in] matrix_iter The underlying matrix iterator.
      * \param[in] pivot_column The last column index which is still inside of the band in the first row of the
      *                         banded matrix.
+     * \param[in] simd_index \copydoc seqan3::detail::trace_iterator_base::simd_index
      */
     template <typename index_t>
-    constexpr trace_iterator_banded(matrix_iter_t const matrix_iter, column_index_type<index_t> const & pivot_column)
-        noexcept :
-        base_t{matrix_iter},
+    constexpr trace_iterator_banded(matrix_iter_t const matrix_iter,
+                                    column_index_type<index_t> const & pivot_column,
+                                    size_t const simd_index = 0) :
+        base_t{matrix_iter, simd_index},
         pivot_column{static_cast<size_t>(pivot_column.get())}
     {}
 

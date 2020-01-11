@@ -32,8 +32,9 @@ template <two_dimensional_matrix_iterator matrix_iter_t>
 class trace_iterator : public trace_iterator_base<trace_iterator<matrix_iter_t>, matrix_iter_t>
 {
 private:
-    static_assert(std::same_as<value_type_t<matrix_iter_t>, trace_directions>,
-                  "Value type of the underlying iterator must be trace_directions.");
+    static_assert(std::same_as<std::iter_value_t<matrix_iter_t>, trace_directions> ||
+                  simd::simd_concept<std::iter_value_t<matrix_iter_t>>,
+                  "Value type of the underlying iterator must be seqan3::detail::trace_directions or a simd vector.");
 
     //!\brief The type of the base class.
     using base_t = trace_iterator_base<trace_iterator<matrix_iter_t>, matrix_iter_t>;
@@ -51,8 +52,10 @@ public:
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
      * \param[in] matrix_iter The underlying matrix iterator.
+     * \param[in] simd_index \copydoc seqan3::detail::trace_iterator_base::simd_index
      */
-    explicit constexpr trace_iterator(matrix_iter_t const matrix_iter) noexcept : base_t{matrix_iter}
+    constexpr trace_iterator(matrix_iter_t const matrix_iter, size_t const simd_index = 0) :
+        base_t{matrix_iter, simd_index}
     {}
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
