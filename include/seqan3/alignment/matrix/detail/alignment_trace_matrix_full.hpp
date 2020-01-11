@@ -134,10 +134,17 @@ public:
     /*!\brief Returns a trace path starting from the given coordinate and ending in the cell with
      *        seqan3::detail::trace_directions::none.
      * \param[in] trace_begin A seqan3::matrix_coordinate pointing to the begin of the trace to follow.
+     * \param[in] simd_index The index used to follow the simd trace matrix.
      * \returns A std::ranges::subrange over the corresponding trace path.
      * \throws std::invalid_argument if the specified coordinate is out of range.
+     *
+     * \details
+     *
+     * The optional argument `simd_index` is only used when the underlying trace matrix stores simd vectors
+     * instead of scalar seqan3::detail::trace_directions. It selects the matrix to follow, which cannot be done
+     * in parallel, since different trace matrices will lead to different trace paths.
      */
-    auto trace_path(matrix_coordinate const & trace_begin)
+    auto trace_path(matrix_coordinate const & trace_begin, size_t simd_index = 0)
     {
         static_assert(!coordinate_only, "Requested trace but storing the trace was disabled!");
 
@@ -148,7 +155,7 @@ public:
         if (trace_begin.row >= matrix_base_t::num_rows || trace_begin.col >= matrix_base_t::num_cols)
             throw std::invalid_argument{"The given coordinate exceeds the matrix in vertical or horizontal direction."};
 
-        return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin}},
+        return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin}, simd_index},
                       std::ranges::default_sentinel};
     }
 

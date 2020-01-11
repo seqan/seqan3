@@ -148,7 +148,7 @@ public:
     //!\}
 
     //!\copydoc seqan3::detail::alignment_trace_matrix_full::trace_path
-    auto trace_path(matrix_coordinate const & trace_begin)
+    auto trace_path(matrix_coordinate const & trace_begin, size_t const simd_index = 0)
     {
         static_assert(!coordinate_only, "Requested trace but storing the trace was disabled!");
 
@@ -160,7 +160,8 @@ public:
             throw std::invalid_argument{"The given coordinate exceeds the trace matrix size."};
 
         return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin},
-                                       column_index_type{band_col_index}},
+                                       column_index_type{band_col_index},
+                                       simd_index},
                       std::ranges::default_sentinel};
     }
 
