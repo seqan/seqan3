@@ -219,7 +219,7 @@ protected:
                                id_type                        && id,
                                qual_type                      && qualities)
     {
-        seqan3::ostreambuf_iterator stream_it{stream};
+        seqan3::detail::fast_ostreambuf_iterator stream_it{*stream.rdbuf()};
 
         // ID
         if constexpr (detail::decays_to_ignore_v<id_type>)
@@ -228,13 +228,12 @@ protected:
         }
         else
         {
-            if (empty(id)) //[[unlikely]]
+            if (std::ranges::empty(id)) //[[unlikely]]
                 throw std::runtime_error{"The ID field may not be empty when writing FASTQ files."};
 
             stream_it = '@';
-            std::ranges::copy(id, stream_it);
-
-            detail::write_eol(stream_it, options.add_carriage_return);
+            stream_it.write_range(id);
+            stream_it.write_end_of_line(options.add_carriage_return);
         }
 
         // Sequence
@@ -244,12 +243,11 @@ protected:
         }
         else
         {
-            if (empty(sequence)) //[[unlikely]]
+            if (std::ranges::empty(sequence)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing FASTQ files."};
 
-            std::ranges::copy(sequence | views::to_char, stream_it);
-
-            detail::write_eol(stream_it, options.add_carriage_return);
+            stream_it.write_range(sequence | views::to_char);
+            stream_it.write_end_of_line(options.add_carriage_return);
         }
 
         // 2nd ID-line
@@ -258,9 +256,9 @@ protected:
             stream_it = '+';
 
             if (options.fastq_double_id)
-                std::ranges::copy(id, stream_it);
+                stream_it.write_range(id);
 
-            detail::write_eol(stream_it, options.add_carriage_return);
+            stream_it.write_end_of_line(options.add_carriage_return);
         }
 
         // Quality line
@@ -270,17 +268,16 @@ protected:
         }
         else
         {
-            if (empty(qualities)) //[[unlikely]]
+            if (std::ranges::empty(qualities)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing FASTQ files."};
 
             if constexpr (std::ranges::sized_range<seq_type> && std::ranges::sized_range<qual_type>)
             {
-                assert(size(sequence) == size(qualities));
+                assert(std::ranges::size(sequence) == std::ranges::size(qualities));
             }
 
-            std::ranges::copy(qualities | views::to_char, stream_it);
-
-            detail::write_eol(stream_it, options.add_carriage_return);
+            stream_it.write_range(qualities | views::to_char);
+            stream_it.write_end_of_line(options.add_carriage_return);
         }
     }
 };
