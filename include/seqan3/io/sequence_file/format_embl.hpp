@@ -17,8 +17,6 @@
 #include <string_view>
 #include <vector>
 
-#include <range/v3/view/chunk.hpp>
-
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/type_traits/range.hpp>
@@ -31,15 +29,11 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
-#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/algorithm>
-#include <seqan3/std/charconv>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -206,9 +200,10 @@ protected:
                                id_type                              && id,
                                qual_type                            && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        seqan3::ostreambuf_iterator stream_it{stream};
+        seqan3::detail::fast_ostreambuf_iterator stream_it{*stream.rdbuf()};
+
         [[maybe_unused]] size_t sequence_size = 0;
-        [[maybe_unused]] char buffer[50];
+
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
             sequence_size = std::ranges::distance(sequence);
 
@@ -224,18 +219,16 @@ protected:
 
             if (options.embl_genbank_complete_header)
             {
-                std::ranges::copy(id, stream_it);
+                stream_it.write_range(id);
             }
             else
             {
-                std::ranges::copy(std::string_view{"ID "}, stream_it);
-                std::ranges::copy(id, stream_it);
-                std::ranges::copy(std::string_view{"; "}, stream_it);
-                auto res = std::to_chars(&buffer[0], &buffer[0] + sizeof(buffer), sequence_size);
-                std::copy(&buffer[0], res.ptr, stream_it);
-                std::ranges::copy(std::string_view{" BP.\n"}, stream_it);
+                stream_it.write_range(std::string_view{"ID "});
+                stream_it.write_range(id);
+                stream_it.write_range(std::string_view{"; "});
+                stream_it.write_number(sequence_size);
+                stream_it.write_range(std::string_view{" BP.\n"});
             }
-
         }
 
         // Sequence
@@ -245,32 +238,47 @@ protected:
         }
         else
         {
-            if (ranges::empty(sequence)) //[[unlikely]]
+            if (std::ranges::empty(sequence)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing embl files."};
 
-            std::ranges::copy(std::string_view{"SQ Sequence "}, stream_it);
-            auto res = std::to_chars(&buffer[0], &buffer[0] + sizeof(buffer), sequence_size);
-            std::copy(&buffer[0], res.ptr, stream_it);
-            std::ranges::copy(std::string_view{" BP;\n"}, stream_it);
-            auto seqChunk = sequence | ranges::view::chunk(60);
-            unsigned int i = 0;
-            size_t bp = 0;
-            for (auto chunk : seqChunk)
+            // write beginning of sequence record
+            stream_it.write_range(std::string_view{"SQ Sequence "});
+            stream_it.write_number(sequence_size);
+            stream_it.write_range(std::string_view{" BP;\n"});
+
+            // write sequence in chunks of 60 bp's with a space after 10 bp's
+            auto char_sequence = sequence | views::to_char;
+            auto it = std::ranges::begin(char_sequence);
+            size_t written_chars{0};
+            uint8_t chunk_size{10u};
+
+            while (it != std::ranges::end(char_sequence))
             {
-                std::ranges::copy(chunk | views::to_char
-                                        | ranges::view::chunk(10)
-                                        | views::join(' '), stream_it);
-                ++i;
+                auto current_end = it;
+                size_t steps = std::ranges::advance(current_end, chunk_size, std::ranges::end(char_sequence));
+
+                using subrange_t = std::ranges::subrange<decltype(it), decltype(it), std::ranges::subrange_kind::sized>;
+                it = stream_it.write_range(subrange_t{it, current_end, chunk_size - steps});
                 stream_it = ' ';
-                bp = std::min(sequence_size, bp + 60);
-                uint8_t num_blanks = 60 * i - bp;  // for sequence characters
-                num_blanks += num_blanks / 10;     // additional chunk separators
-                std::ranges::copy(views::repeat_n(' ', num_blanks), stream_it);
-                std::ranges::copy(std::to_string(bp), stream_it);
-                stream_it = '\n';
+                written_chars += chunk_size;
+
+                if (written_chars % 60 == 0)
+                {
+                    stream_it.write_number(written_chars);
+                    stream_it.write_end_of_line(options.add_carriage_return);
+                }
             }
-            std::ranges::copy(std::string_view{"//"}, stream_it);
-            stream_it = '\n';
+
+            // fill last line
+            auto characters_in_last_line = sequence_size % 60;
+            auto number_of_padding_needed = 65 - characters_in_last_line - characters_in_last_line / chunk_size;
+            stream_it.write_range(views::repeat_n(' ', number_of_padding_needed));
+            stream_it.write_number(sequence_size);
+            stream_it.write_end_of_line(options.add_carriage_return);
+
+            // write end-of-record-symbol
+            stream_it.write_range(std::string_view{"//"});
+            stream_it.write_end_of_line(options.add_carriage_return);
         }
     }
 };
