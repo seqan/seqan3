@@ -27,6 +27,7 @@ Please see the [online documentation](https://docs.seqan.de/seqan/3-master-user/
   * liberal open source license: allows integration with any app or library, requires only attribution
   * very high code quality standards: >97% unit test coverage, performance regression tests, ...
   * extensive API documentation & tutorials: more lines of documentation than lines of code
+  * aims to support any 64-bit architecture running Linux/POSIX
 
 ## Dependencies
 
