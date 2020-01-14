@@ -65,9 +65,7 @@ struct iterator_fixture<alignment_range_iterator> : ::testing::Test
     std::vector<size_t> expected_range{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(alignment_range_iterator,
-                              iterator_fixture,
-                              alignment_range_iterator);
+INSTANTIATE_TYPED_TEST_SUITE_P(alignment_range_iterator, iterator_fixture, alignment_range_iterator, );
 
 // ----------------------------------------------------------------------------
 // Testing alignment range concepts and interfaces.
