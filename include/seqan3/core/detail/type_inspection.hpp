@@ -43,7 +43,7 @@ namespace seqan3::detail
 template <typename type>
 inline std::string const type_name_as_string = [] ()
 {
-    std::string demangled_name;
+    std::string demangled_name{};
 #if defined(__GNUC__) || defined(__clang__) // clang and gcc only return a mangled name.
     using safe_ptr_t = std::unique_ptr<char, std::function<void(char *)>>;
 
