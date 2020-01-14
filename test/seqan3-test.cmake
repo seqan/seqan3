@@ -19,6 +19,8 @@ include (CheckCXXSourceCompiles)
 include (FindPackageHandleStandardArgs)
 include (FindPackageMessage)
 
+option (SEQAN3_TEST_BUILD_OFFLINE "Skip the update step of external projects." OFF)
+
 # ----------------------------------------------------------------------------
 # Paths to folders.
 # ----------------------------------------------------------------------------
@@ -183,7 +185,7 @@ macro (seqan3_require_benchmark)
         SOURCE_DIR "${SEQAN3_BENCHMARK_CLONE_DIR}"
         CMAKE_ARGS "${gbenchmark_project_args}"
         BUILD_BYPRODUCTS "${gbenchmark_path}"
-        UPDATE_DISCONNECTED yes
+        UPDATE_DISCONNECTED ${SEQAN3_TEST_BUILD_OFFLINE}
     )
     unset (gbenchmark_project_args)
 
@@ -227,7 +229,7 @@ macro (seqan3_require_test)
         SOURCE_DIR "${SEQAN3_TEST_CLONE_DIR}"
         CMAKE_ARGS "${gtest_project_args}"
         BUILD_BYPRODUCTS "${gtest_main_path}" "${gtest_path}"
-        UPDATE_DISCONNECTED yes
+        UPDATE_DISCONNECTED ${SEQAN3_TEST_BUILD_OFFLINE}
     )
     unset (gtest_project_args)
 
