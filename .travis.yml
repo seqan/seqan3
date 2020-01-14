@@ -53,6 +53,21 @@ matrix:
       - BUILD_TYPE=Release
       - CXXFLAGS="-std=c++2a"
       - CMAKE_VERSION=3.7.2
+  - os: linux
+    compiler: 'g++-9'
+    dist: bionic
+    addons:
+      apt:
+        sources:
+          - sourceline: ppa:ubuntu-toolchain-r/test
+        packages: ['g++-9', 'cmake']
+    before_install:
+      - export CC="gcc-9" CXX="g++-9"
+    env:
+      - BUILD=unit
+      - BUILD_TYPE=Release
+      - CXXFLAGS="-std=c++2a"
+    arch: arm64
   - << : *linux-gcc-8
     env:
       - BUILD=unit
@@ -112,10 +127,12 @@ install:
     mkdir -p ${HOME_BIN_PATH}
   - |
     # install cmake
-    mkdir -p /tmp/cmake-download
-    wget --no-clobber --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-    tar -C /tmp/ -zxvf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-    export PATH="/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin:${PATH}"
+    if [[ "${TRAVIS_CPU_ARCH}" != "amd64" ]]; then
+      mkdir -p /tmp/cmake-download
+      wget --no-clobber --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+      tar -C /tmp/ -zxvf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+      export PATH="/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin:${PATH}"
+    fi
   - ccache --version
   - $CXX -v
   - cmake --version
