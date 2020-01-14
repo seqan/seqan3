@@ -10,20 +10,18 @@
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/std/iterator>
 
-using namespace seqan3;
-
 TEST(fast_istreambuf_iterator, concept)
 {
-    EXPECT_TRUE(std::input_iterator<detail::fast_istreambuf_iterator<char>>);
-    EXPECT_FALSE(std::forward_iterator<detail::fast_istreambuf_iterator<char>>);
-    EXPECT_FALSE(std::bidirectional_iterator<detail::fast_istreambuf_iterator<char>>);
-    EXPECT_FALSE(std::random_access_iterator<detail::fast_istreambuf_iterator<char>>);
-    EXPECT_FALSE((std::output_iterator<detail::fast_istreambuf_iterator<char>, char>));
+    EXPECT_TRUE(std::input_iterator<seqan3::detail::fast_istreambuf_iterator<char>>);
+    EXPECT_FALSE(std::forward_iterator<seqan3::detail::fast_istreambuf_iterator<char>>);
+    EXPECT_FALSE(std::bidirectional_iterator<seqan3::detail::fast_istreambuf_iterator<char>>);
+    EXPECT_FALSE(std::random_access_iterator<seqan3::detail::fast_istreambuf_iterator<char>>);
+    EXPECT_FALSE((std::output_iterator<seqan3::detail::fast_istreambuf_iterator<char>, char>));
 }
 
 TEST(fast_istreambuf_iterator, construction)
 {
-    using type = detail::fast_istreambuf_iterator<char>;
+    using type = seqan3::detail::fast_istreambuf_iterator<char>;
     EXPECT_TRUE(std::is_nothrow_default_constructible_v<type>);
     EXPECT_TRUE(std::is_nothrow_copy_constructible_v<type>);
     EXPECT_TRUE(std::is_nothrow_move_constructible_v<type>);
@@ -36,7 +34,7 @@ TEST(fast_istreambuf_iterator, construction)
 TEST(fast_istreambuf_iterator, basic)
 {
     std::istringstream str{"test"};
-    detail::fast_istreambuf_iterator<char> it{*str.rdbuf()};
+    seqan3::detail::fast_istreambuf_iterator<char> it{*str.rdbuf()};
 
     EXPECT_EQ(*it, 't');
     ++it;
@@ -48,7 +46,7 @@ TEST(fast_istreambuf_iterator, basic)
 TEST(fast_istreambuf_iterator, comparison)
 {
     std::istringstream str{"test\n"};
-    detail::fast_istreambuf_iterator<char> it{*str.rdbuf()};
+    seqan3::detail::fast_istreambuf_iterator<char> it{*str.rdbuf()};
 
     EXPECT_FALSE(it == std::ranges::default_sentinel);
     EXPECT_FALSE(std::ranges::default_sentinel == it);
