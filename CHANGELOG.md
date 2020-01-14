@@ -114,6 +114,7 @@ versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 with a vers
 * Copying and moving the `seqan3::fm_index` and `seqan3::bi_fm_index` now work properly.
 * Searching in the `seqan3::fm_index` and `seqan3::bi_fm_index` constructed from a text collection containing a single
   text now return correct result.
+* Translation table for nucleotide to amino acid translation now corrected.
 
 # 3.0.0 ("Escala")
 

@@ -130,7 +130,6 @@ struct translation_table<dna15, seqan3::genetic_code::CANONICAL, void_type>
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dv?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dw?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // dy?
-
         }, { // g??
             // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
             { 'E'_aa27, 'X'_aa27, 'D'_aa27, 'X'_aa27, 'E'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'E'_aa27, 'X'_aa27, 'D'_aa27, 'X'_aa27, 'X'_aa27, 'D'_aa27 }, // ga?
@@ -165,7 +164,6 @@ struct translation_table<dna15, seqan3::genetic_code::CANONICAL, void_type>
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hv?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hw?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // hy?
-
         }, { // k??
             // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ka?
@@ -183,7 +181,6 @@ struct translation_table<dna15, seqan3::genetic_code::CANONICAL, void_type>
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kv?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kw?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // ky?
-
         }, { // m??
             // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ma?
@@ -201,10 +198,9 @@ struct translation_table<dna15, seqan3::genetic_code::CANONICAL, void_type>
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mv?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mw?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // my?
-
-
         }, { // n??
             // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // na?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nb?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nc?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nd?
@@ -221,6 +217,7 @@ struct translation_table<dna15, seqan3::genetic_code::CANONICAL, void_type>
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // ny?
         }, { // r??
             // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ra?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rb?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rc?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rd?
@@ -237,6 +234,7 @@ struct translation_table<dna15, seqan3::genetic_code::CANONICAL, void_type>
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // ry?
         }, { // s??
             // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sa?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sb?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sc?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sd?
@@ -257,14 +255,14 @@ struct translation_table<dna15, seqan3::genetic_code::CANONICAL, void_type>
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tb?
             { 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27 }, // tc?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // td?
-            { '*'_aa27, 'X'_aa27, 'C'_aa27, 'X'_aa27, 'W'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'C'_aa27, 'X'_aa27, 'C'_aa27 }, // tg?
+            { '*'_aa27, 'X'_aa27, 'C'_aa27, 'X'_aa27, 'W'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'C'_aa27, 'X'_aa27, 'X'_aa27, 'C'_aa27 }, // tg?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // th?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tk?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tm?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tn?
             { '*'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tr?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ts?
-            { 'L'_aa27, 'X'_aa27, 'F'_aa27, 'X'_aa27, 'X'_aa27, 'L'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'L'_aa27, 'X'_aa27, 'F'_aa27, 'X'_aa27, 'X'_aa27, 'F'_aa27 }, // tt?
+            { 'L'_aa27, 'X'_aa27, 'F'_aa27, 'X'_aa27, 'L'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'L'_aa27, 'X'_aa27, 'F'_aa27, 'X'_aa27, 'X'_aa27, 'F'_aa27 }, // tt?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tv?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tw?
             { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // ty?
