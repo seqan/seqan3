@@ -32,7 +32,7 @@ namespace seqan3::detail
  *
  * \tparam type The type to get the human-readable name for.
  *
- * \detail
+ * \details
  *
  * On gcc and clang std::type_info only returns a mangled name.
  * The mangled name can be converted to human-readable form using implementation-specific API such as
@@ -41,18 +41,28 @@ namespace seqan3::detail
  * \note The returned name is implementation defined and might change between different tool chains.
  */
 template <typename type>
-inline static const std::string type_name_as_string = [] ()
+inline std::string const type_name_as_string = [] ()
 {
+    std::string demangled_name{};
 #if defined(__GNUC__) || defined(__clang__) // clang and gcc only return a mangled name.
     using safe_ptr_t = std::unique_ptr<char, std::function<void(char *)>>;
 
     int status{};
     safe_ptr_t demangled_name_ptr{abi::__cxa_demangle(typeid(type).name(), 0, 0, &status),
                                   [] (char * name_ptr) { free(name_ptr); }};
-    return std::string{std::addressof(*demangled_name_ptr)};
+    demangled_name = std::string{std::addressof(*demangled_name_ptr)};
 #else // e.g. MSVC
-    return typeid(type).name();
+    demangled_name = typeid(type).name();
 #endif // defined(__GNUC__) || defined(__clang__)
+
+    if constexpr (std::is_const_v<std::remove_reference_t<type>>)
+        demangled_name += " const";
+    if constexpr (std::is_lvalue_reference_v<type>)
+        demangled_name += " &";
+    if constexpr (std::is_rvalue_reference_v<type>)
+        demangled_name += " &&";
+
+    return demangled_name;
 }();
 
 }  // namespace seqan3::detail
