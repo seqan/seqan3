@@ -66,7 +66,7 @@ private:
                   "Value type of the underlying iterator must be seqan3::detail::trace_directions.");
 
     //!\brief Befriend with corresponding const_iterator.
-    template <typename other_derived_t, typename other_matrix_iter_t>
+    template <typename other_derived_t, two_dimensional_matrix_iterator other_matrix_iter_t>
     //!\cond
         requires std::constructible_from<derived_t, other_derived_t> &&
                  std::constructible_from<matrix_iter_t, other_matrix_iter_t>
