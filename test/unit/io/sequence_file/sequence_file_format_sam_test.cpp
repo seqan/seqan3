@@ -57,8 +57,8 @@ R"(*	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(sam, sequence_file_read, format_sam);
-INSTANTIATE_TYPED_TEST_CASE_P(sam, sequence_file_write, format_sam);
+INSTANTIATE_TYPED_TEST_SUITE_P(sam, sequence_file_read, format_sam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam, sequence_file_write, format_sam, );
 
 // ----------------------------------------------------------------------------
 // reading

@@ -42,15 +42,15 @@ struct alignment_score_matrix_one_column_banded_test
     size_t last_init_column = 2;
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(one_column_banded,
-                              simulated_alignment_test,
-                              alignment_score_matrix_one_column_banded_test<int32_t>);
+INSTANTIATE_TYPED_TEST_SUITE_P(one_column_banded,
+                               simulated_alignment_test,
+                               alignment_score_matrix_one_column_banded_test<int32_t>, );
 
 using test_type = std::pair<detail::alignment_score_matrix_one_column_banded<int32_t>, std::true_type>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(one_column_banded,
-                              alignment_matrix_base_test,
-                              test_type);
+INSTANTIATE_TYPED_TEST_SUITE_P(one_column_banded,
+                               alignment_matrix_base_test,
+                               test_type, );
 
 //-----------------------------------------------------------------------------
 // Test outer iterator
@@ -76,9 +76,9 @@ struct iterator_fixture<outer_iterator> : alignment_matrix_base_test<test_type>
     }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(banded_score_matrix_outer_iterator,
-                              iterator_fixture,
-                              outer_iterator);
+INSTANTIATE_TYPED_TEST_SUITE_P(banded_score_matrix_outer_iterator,
+                               iterator_fixture,
+                               outer_iterator, );
 
 //-----------------------------------------------------------------------------
 // Test inner iterator
@@ -104,6 +104,6 @@ struct iterator_fixture<inner_iterator> : alignment_matrix_base_test<test_type>
     }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(banded_score_matrix_inner_iterator,
-                              iterator_fixture,
-                              inner_iterator);
+INSTANTIATE_TYPED_TEST_SUITE_P(banded_score_matrix_inner_iterator,
+                               iterator_fixture,
+                               inner_iterator, );

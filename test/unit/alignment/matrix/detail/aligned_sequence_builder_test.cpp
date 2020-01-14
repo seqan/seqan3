@@ -79,7 +79,7 @@ using test_types = ::testing::Types<std::pair<dna4_vector &, dna4_vector &>,
                                     std::pair<dna4_vector &, std::list<dna4> &>,
                                     std::pair<std::list<dna4> &, std::list<dna4> &>>;
 
-TYPED_TEST_CASE(aligned_sequence_builder_fixture, test_types);
+TYPED_TEST_SUITE(aligned_sequence_builder_fixture, test_types, );
 
 TYPED_TEST(aligned_sequence_builder_fixture, construction)
 {

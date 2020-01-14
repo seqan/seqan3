@@ -28,7 +28,7 @@ template <typename fixture_t>
 class pairwise_alignment_test : public fixture_t
 {};
 
-TYPED_TEST_CASE_P(pairwise_alignment_test);
+TYPED_TEST_SUITE_P(pairwise_alignment_test);
 
 TYPED_TEST_P(pairwise_alignment_test, score)
 {
@@ -109,8 +109,8 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
     EXPECT_TRUE(std::ranges::equal(static_cast<trace_matrix_t>(res.trace_matrix()), fixture.trace_vector));
 }
 
-REGISTER_TYPED_TEST_CASE_P(pairwise_alignment_test,
-                           score,
-                           back_coordinate,
-                           front_coordinate,
-                           alignment);
+REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_test,
+                            score,
+                            back_coordinate,
+                            front_coordinate,
+                            alignment);

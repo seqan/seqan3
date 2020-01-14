@@ -23,6 +23,6 @@ using pairwise_local_affine_banded_testing_types = ::testing::Types<
         pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::banded::aa27_01>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(pairwise_local_affine_banded,
-                              pairwise_alignment_test,
-                              pairwise_local_affine_banded_testing_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_local_affine_banded,
+                               pairwise_alignment_test,
+                               pairwise_local_affine_banded_testing_types, );

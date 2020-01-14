@@ -30,7 +30,7 @@ using test_types = ::testing::Types<align_cfg::aligned_ends<std::remove_const_t<
                                     align_cfg::scoring<nucleotide_scoring_scheme<int8_t>>,
                                     detail::vectorise_tag>;
 
-TYPED_TEST_CASE(alignment_configuration_test, test_types);
+TYPED_TEST_SUITE(alignment_configuration_test, test_types, );
 
 // TODO: this should go to a typed configuration test that also checks the alignment configuration
 TEST(alignment_configuration_test, symmetric_configuration)

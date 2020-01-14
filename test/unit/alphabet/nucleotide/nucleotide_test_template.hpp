@@ -20,7 +20,7 @@ using namespace seqan3;
 template <typename T>
 using nucleotide = ::testing::Test;
 
-TYPED_TEST_CASE_P(nucleotide);
+TYPED_TEST_SUITE_P(nucleotide);
 
 TYPED_TEST_P(nucleotide, concept_check)
 {
@@ -47,4 +47,4 @@ TYPED_TEST_P(nucleotide, global_complement)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(nucleotide, concept_check, global_complement);
+REGISTER_TYPED_TEST_SUITE_P(nucleotide, concept_check, global_complement);

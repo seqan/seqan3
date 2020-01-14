@@ -19,7 +19,7 @@ struct align_cfg_mode_test : public ::testing::Test
 {};
 
 using test_types = ::testing::Types<detail::global_alignment_type, detail::local_alignment_type>;
-TYPED_TEST_CASE(align_cfg_mode_test, test_types);
+TYPED_TEST_SUITE(align_cfg_mode_test, test_types, );
 
 TYPED_TEST(align_cfg_mode_test, config_element)
 {

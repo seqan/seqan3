@@ -40,7 +40,7 @@ struct align_pairwise_test : ::testing::Test
 using testing_types = ::testing::Types<void,
                                        align_cfg::parallel>;
 
-TYPED_TEST_CASE(align_pairwise_test, testing_types);
+TYPED_TEST_SUITE(align_pairwise_test, testing_types, );
 
 template <typename type_param_t, typename seq_t, typename cfg_t>
 auto call_alignment(seq_t && seq, cfg_t && cfg)

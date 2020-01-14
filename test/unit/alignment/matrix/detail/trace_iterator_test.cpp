@@ -218,4 +218,4 @@ struct iterator_fixture<trace_iterator_fixture> : public trace_iterator_fixture
     std::vector<trace_directions> expected_range{L, L, L, U, U};
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(trace_iterator, iterator_fixture, trace_iterator_fixture);
+INSTANTIATE_TYPED_TEST_SUITE_P(trace_iterator, iterator_fixture, trace_iterator_fixture, );

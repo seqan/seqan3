@@ -124,7 +124,7 @@ using testing_types = ::testing::Types<test_matrix_t<int, matrix_major_order::ro
                                        test_matrix_t<int, matrix_major_order::column>,
                                        test_matrix_t<simd_type_t<int>, matrix_major_order::row>,
                                        test_matrix_t<simd_type_t<int>, matrix_major_order::column>>;
-TYPED_TEST_CASE(two_dimensional_matrix_test, testing_types);
+TYPED_TEST_SUITE(two_dimensional_matrix_test, testing_types, );
 
 TEST(two_dimensional_matrix_test, initializer_list)
 {
@@ -281,7 +281,7 @@ struct iterator_fixture<test_matrix_t<score_t, order>> : two_dimensional_matrix_
     matrix_type test_range{number_rows{3}, number_cols{4}, expected_range};
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(two_dimensional_iterator, iterator_fixture, testing_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(two_dimensional_iterator, iterator_fixture, testing_types, );
 
 template <typename matrix_t>
 struct two_dimensional_matrix_iterator_test : two_dimensional_matrix_test<matrix_t>
@@ -293,7 +293,7 @@ struct two_dimensional_matrix_iterator_test : two_dimensional_matrix_test<matrix
     matrix_type test_range{number_rows{3}, number_cols{4}, base_t::expected_matrix_content};
 };
 
-TYPED_TEST_CASE(two_dimensional_matrix_iterator_test, testing_types);
+TYPED_TEST_SUITE(two_dimensional_matrix_iterator_test, testing_types, );
 
 TYPED_TEST(two_dimensional_matrix_iterator_test, two_dimensional_concept)
 {

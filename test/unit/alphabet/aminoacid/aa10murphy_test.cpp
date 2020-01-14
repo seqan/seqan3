@@ -16,11 +16,11 @@
 #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, alphabet_, aa10murphy);
-INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, semi_alphabet_test, aa10murphy);
-INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, alphabet_constexpr, aa10murphy);
-INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, semi_alphabet_constexpr, aa10murphy);
-INSTANTIATE_TYPED_TEST_CASE_P(aa10murphy, aminoacid, aa10murphy);
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, alphabet_, aa10murphy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, semi_alphabet_test, aa10murphy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, alphabet_constexpr, aa10murphy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, semi_alphabet_constexpr, aa10murphy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, aminoacid, aa10murphy, );
 
 TEST(aa10murphy, assign_char)
 {

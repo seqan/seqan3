@@ -20,7 +20,7 @@ using debug_stream_test = ::testing::Test;
 
 using alphabet_types = ::testing::Types<dna4, qualified<dna4, phred42>, gapped<dna4>>;
 
-TYPED_TEST_CASE(debug_stream_test, alphabet_types);
+TYPED_TEST_SUITE(debug_stream_test, alphabet_types, );
 
 TYPED_TEST(debug_stream_test, alphabet)
 {

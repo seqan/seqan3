@@ -12,7 +12,7 @@
 template <typename T>
 using semi_alphabet_constexpr = ::testing::Test;
 
-TYPED_TEST_CASE_P(semi_alphabet_constexpr);
+TYPED_TEST_SUITE_P(semi_alphabet_constexpr);
 
 TYPED_TEST_P(semi_alphabet_constexpr, concept_check)
 {
@@ -145,13 +145,13 @@ TYPED_TEST_P(semi_alphabet_constexpr, comparison_operators)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(semi_alphabet_constexpr,
-                           concept_check,
-                           default_value_constructor,
-                           global_assign_rank,
-                           global_to_rank,
-                           copy_constructor,
-                           move_constructor,
-                           copy_assignment,
-                           move_assignment,
-                           comparison_operators);
+REGISTER_TYPED_TEST_SUITE_P(semi_alphabet_constexpr,
+                            concept_check,
+                            default_value_constructor,
+                            global_assign_rank,
+                            global_to_rank,
+                            copy_constructor,
+                            move_constructor,
+                            copy_assignment,
+                            move_assignment,
+                            comparison_operators);

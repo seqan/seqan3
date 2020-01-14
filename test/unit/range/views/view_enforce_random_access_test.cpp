@@ -142,7 +142,7 @@ using testing_types = ::testing::Types<std::vector<int>,
                                        common_pseudo_random_access_range,
                                        sentinel_pseudo_random_access_range>;
 
-TYPED_TEST_CASE(enforce_random_access_test, testing_types);
+TYPED_TEST_SUITE(enforce_random_access_test, testing_types, );
 
 TYPED_TEST(enforce_random_access_test, concepts)
 {
@@ -202,4 +202,4 @@ struct iterator_fixture<std::type_identity<rng_t>> : public ::testing::Test
 using test_type = ::testing::Types<std::type_identity<common_pseudo_random_access_range>,
                                    std::type_identity<sentinel_pseudo_random_access_range>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(pseudo_random_access_view_iterator, iterator_fixture, test_type);
+INSTANTIATE_TYPED_TEST_SUITE_P(pseudo_random_access_view_iterator, iterator_fixture, test_type, );

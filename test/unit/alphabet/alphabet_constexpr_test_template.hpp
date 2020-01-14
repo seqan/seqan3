@@ -12,7 +12,7 @@
 template <typename T>
 using alphabet_constexpr = ::testing::Test;
 
-TYPED_TEST_CASE_P(alphabet_constexpr);
+TYPED_TEST_SUITE_P(alphabet_constexpr);
 
 TYPED_TEST_P(alphabet_constexpr, concept_check)
 {
@@ -40,7 +40,7 @@ TYPED_TEST_P(alphabet_constexpr, global_to_char)
     [[maybe_unused]] constexpr seqan3::alphabet_char_t<TypeParam> c = seqan3::to_char(t0);
 }
 
-REGISTER_TYPED_TEST_CASE_P(alphabet_constexpr,
-                           concept_check,
-                           global_assign_char,
-                           global_to_char);
+REGISTER_TYPED_TEST_SUITE_P(alphabet_constexpr,
+                            concept_check,
+                            global_assign_char,
+                            global_to_char);

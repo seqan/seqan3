@@ -63,7 +63,7 @@ struct alignment_executor_two_way_test : public ::testing::Test
 
 using testing_types = testing::Types<seqan3::detail::execution_handler_sequential,
                                      seqan3::detail::execution_handler_parallel>;
-TYPED_TEST_CASE(alignment_executor_two_way_test, testing_types);
+TYPED_TEST_SUITE(alignment_executor_two_way_test, testing_types, );
 
 TYPED_TEST(alignment_executor_two_way_test, construction)
 {

@@ -27,15 +27,15 @@ using namespace seqan3;
 
 using gapped_types = ::testing::Types<gapped<dna4>, gapped<dna15>, gapped<qualified<dna4, phred42>>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(gapped, alphabet_, gapped_types);
-INSTANTIATE_TYPED_TEST_CASE_P(gapped, semi_alphabet_test, gapped_types);
-INSTANTIATE_TYPED_TEST_CASE_P(gapped, alphabet_constexpr, gapped_types);
-INSTANTIATE_TYPED_TEST_CASE_P(gapped, semi_alphabet_constexpr, gapped_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(gapped, alphabet_, gapped_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gapped, semi_alphabet_test, gapped_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gapped, alphabet_constexpr, gapped_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gapped, semi_alphabet_constexpr, gapped_types, );
 
 template <typename t>
 using gapped_test = ::testing::Test;
 
-TYPED_TEST_CASE(gapped_test, gapped_types);
+TYPED_TEST_SUITE(gapped_test, gapped_types, );
 
 TYPED_TEST(gapped_test, concept_check)
 {

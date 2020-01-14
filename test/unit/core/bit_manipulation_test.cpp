@@ -79,7 +79,7 @@ template <typename type>
 class unsigned_operations : public ::testing::Test
 {};
 
-TYPED_TEST_CASE(unsigned_operations, unsigned_types);
+TYPED_TEST_SUITE(unsigned_operations, unsigned_types, );
 
 TYPED_TEST(unsigned_operations, most_significant_bit_set)
 {

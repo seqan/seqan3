@@ -23,7 +23,7 @@ class seqan2_container : public ::testing::Test
 {};
 
 using seqan2_container_types = ::testing::Types<seqan::String<int>, seqan::StringSet<int>>;
-TYPED_TEST_CASE(seqan2_container, seqan2_container_types);
+TYPED_TEST_SUITE(seqan2_container, seqan2_container_types, );
 
 template <typename container_t>
 container_t construct_iota(int n)

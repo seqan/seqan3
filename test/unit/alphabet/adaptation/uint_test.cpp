@@ -21,17 +21,17 @@ using namespace seqan3;
 // uint32_t, too slow
 using fast_uint_types = ::testing::Types<uint8_t, uint16_t/*, uint32_t*/>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, alphabet_, fast_uint_types);
-INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, semi_alphabet_test, fast_uint_types);
-INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, alphabet_constexpr, fast_uint_types);
-INSTANTIATE_TYPED_TEST_CASE_P(uint_adaptation, semi_alphabet_constexpr, fast_uint_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(uint_adaptation, alphabet_, fast_uint_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(uint_adaptation, semi_alphabet_test, fast_uint_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(uint_adaptation, alphabet_constexpr, fast_uint_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(uint_adaptation, semi_alphabet_constexpr, fast_uint_types, );
 
 template <typename T>
 using uint_adaptation = ::testing::Test;
 
 using uint_types = ::testing::Types<uint8_t, uint16_t, uint32_t>;
 
-TYPED_TEST_CASE(uint_adaptation, uint_types);
+TYPED_TEST_SUITE(uint_adaptation, uint_types, );
 
 TYPED_TEST(uint_adaptation, type_properties)
 {

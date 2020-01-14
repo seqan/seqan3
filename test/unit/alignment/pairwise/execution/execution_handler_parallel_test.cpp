@@ -13,4 +13,4 @@
 
 using namespace seqan3;
 
-INSTANTIATE_TYPED_TEST_CASE_P(execution_handler_parallel, execution_handler, detail::execution_handler_parallel);
+INSTANTIATE_TYPED_TEST_SUITE_P(execution_handler_parallel, execution_handler, detail::execution_handler_parallel, );

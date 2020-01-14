@@ -83,6 +83,6 @@ using pairwise_collection_simd_global_affine_unbanded_testing_types = ::testing:
         pairwise_alignment_fixture<&seqan3::test::alignment::collection::simd::global::affine::unbanded::dna4_with_empty_sequences>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(pairwise_collection_simd_global_affine_unbanded,
-                              pairwise_alignment_collection_test,
-                              pairwise_collection_simd_global_affine_unbanded_testing_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_collection_simd_global_affine_unbanded,
+                               pairwise_alignment_collection_test,
+                               pairwise_collection_simd_global_affine_unbanded_testing_types, );

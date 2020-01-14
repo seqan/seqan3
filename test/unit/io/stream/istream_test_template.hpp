@@ -23,7 +23,7 @@ class istream : public ::testing::Test
 
 inline std::string const uncompressed{"The quick brown fox jumps over the lazy dog"};
 
-TYPED_TEST_CASE_P(istream);
+TYPED_TEST_SUITE_P(istream);
 
 TYPED_TEST_P(istream, concept_check)
 {
@@ -64,4 +64,4 @@ TYPED_TEST_P(istream, input_type_erased)
     EXPECT_EQ(buffer, uncompressed);
 }
 
-REGISTER_TYPED_TEST_CASE_P(istream, concept_check, input, input_type_erased);
+REGISTER_TYPED_TEST_SUITE_P(istream, concept_check, input, input_type_erased);

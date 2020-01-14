@@ -37,7 +37,7 @@ using scoring_scheme_types = ::testing::Types<nucleotide_scoring_scheme<>,
                                               aminoacid_scoring_scheme<>,
                                               aminoacid_scoring_scheme<int>>;
 
-TYPED_TEST_CASE(generic, scoring_scheme_types);
+TYPED_TEST_SUITE(generic, scoring_scheme_types, );
 
 
 TEST(nucleotide_scoring_scheme, template_argument_deduction)
@@ -305,7 +305,7 @@ class aminoacid : public ::testing::Test {};
 using aa_scheme_types = ::testing::Types<aminoacid_scoring_scheme<>,
                                          aminoacid_scoring_scheme<int>>;
 
-TYPED_TEST_CASE(aminoacid, aa_scheme_types);
+TYPED_TEST_SUITE(aminoacid, aa_scheme_types, );
 
 TYPED_TEST(aminoacid, similarity_matrix)
 {

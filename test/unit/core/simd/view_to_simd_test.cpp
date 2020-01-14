@@ -108,7 +108,7 @@ using test_types = ::testing::Types<std::tuple<std::vector<dna4>, simd_type_t<in
                                     std::tuple<std::deque<dna4>, simd_type_t<uint64_t>>
                                    >;
 
-TYPED_TEST_CASE(view_to_simd_test, test_types);
+TYPED_TEST_SUITE(view_to_simd_test, test_types, );
 
 TEST(view_to_simd, concept_check)
 {

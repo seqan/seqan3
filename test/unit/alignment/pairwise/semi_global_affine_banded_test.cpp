@@ -19,6 +19,6 @@ using pairwise_semiglobal_affine_banded_testing_types = ::testing::Types<
         pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::banded::dna4_04_semi_second>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(pairwise_semiglobal_affine_banded,
-                              pairwise_alignment_test,
-                              pairwise_semiglobal_affine_banded_testing_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_semiglobal_affine_banded,
+                               pairwise_alignment_test,
+                               pairwise_semiglobal_affine_banded_testing_types, );

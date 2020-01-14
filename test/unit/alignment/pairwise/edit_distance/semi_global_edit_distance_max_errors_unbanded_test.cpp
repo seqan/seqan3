@@ -107,6 +107,6 @@ using semi_global_edit_distance_max_errors_unbanded_types3
         semi_global_fixture<&semi_global::edit_distance::max_errors::unbanded::aa27_01T_e255, uint64_t>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(semi_global_max_errors1, edit_distance_unbanded_test, semi_global_edit_distance_max_errors_unbanded_types1);
-INSTANTIATE_TYPED_TEST_CASE_P(semi_global_max_errors2, edit_distance_unbanded_test, semi_global_edit_distance_max_errors_unbanded_types2);
-INSTANTIATE_TYPED_TEST_CASE_P(semi_global_max_errors3, edit_distance_unbanded_test, semi_global_edit_distance_max_errors_unbanded_types3);
+INSTANTIATE_TYPED_TEST_SUITE_P(semi_global_max_errors1, edit_distance_unbanded_test, semi_global_edit_distance_max_errors_unbanded_types1, );
+INSTANTIATE_TYPED_TEST_SUITE_P(semi_global_max_errors2, edit_distance_unbanded_test, semi_global_edit_distance_max_errors_unbanded_types2, );
+INSTANTIATE_TYPED_TEST_SUITE_P(semi_global_max_errors3, edit_distance_unbanded_test, semi_global_edit_distance_max_errors_unbanded_types3, );

@@ -18,7 +18,7 @@ struct bound_test : ::testing::Test
 {};
 
 using testing_types = ::testing::Types<int8_t, int16_t, uint32_t, float>;
-TYPED_TEST_CASE(bound_test, testing_types);
+TYPED_TEST_SUITE(bound_test, testing_types, );
 
 TYPED_TEST(bound_test, lower_bound)
 {

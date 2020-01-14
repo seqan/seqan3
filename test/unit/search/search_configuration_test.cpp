@@ -23,7 +23,7 @@ using test_types = ::testing::Types<search_cfg::max_error_rate<>,
                                     search_cfg::output<detail::search_output_text_position>,
                                     search_cfg::parallel>;
 
-TYPED_TEST_CASE(search_configuration_test, test_types);
+TYPED_TEST_SUITE(search_configuration_test, test_types, );
 
 // TODO: this should go to a typed configuration test that also checks the alignment configuration
 TEST(search_configuration_test, symmetric_configuration)

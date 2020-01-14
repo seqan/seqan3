@@ -59,7 +59,7 @@ void expext_eq(A && a, B && b)
         EXPECT_EQ(a, b);
 }
 
-TYPED_TEST_CASE_P(iterator_fixture);
+TYPED_TEST_SUITE_P(iterator_fixture);
 
 TYPED_TEST_P(iterator_fixture, concept_check)
 {
@@ -494,19 +494,19 @@ TYPED_TEST_P(iterator_fixture, compare_geq)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(iterator_fixture,
-                           concept_check,
-                           const_non_const_compatibility,
-                           dereference,
-                           compare,
-                           move_forward_pre,
-                           move_forward_post,
-                           move_backward,
-                           jump_forward,
-                           jump_backward,
-                           jump_random,
-                           difference,
-                           compare_less,
-                           compare_greater,
-                           compare_leq,
-                           compare_geq);
+REGISTER_TYPED_TEST_SUITE_P(iterator_fixture,
+                            concept_check,
+                            const_non_const_compatibility,
+                            dereference,
+                            compare,
+                            move_forward_pre,
+                            move_forward_post,
+                            move_backward,
+                            jump_forward,
+                            jump_backward,
+                            jump_random,
+                            difference,
+                            compare_less,
+                            compare_greater,
+                            compare_leq,
+                            compare_geq);

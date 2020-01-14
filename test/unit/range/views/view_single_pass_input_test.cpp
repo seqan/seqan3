@@ -61,7 +61,7 @@ using underlying_range_types = ::testing::Types<std::vector<char>,
                                                 std::ranges::basic_istream_view<char>,
                                                 std::ranges::basic_istream_view<int>>;
 
-TYPED_TEST_CASE(single_pass_input, underlying_range_types);
+TYPED_TEST_SUITE(single_pass_input, underlying_range_types, );
 
 using namespace seqan3;
 

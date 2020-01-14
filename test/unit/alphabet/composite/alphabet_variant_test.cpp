@@ -25,15 +25,15 @@ using alphabet_variant_types = ::testing::Types<alphabet_variant<dna4, gap>,
                                                  alphabet_variant<dna4, dna5, gap>,
                                                  alphabet_variant<char, gap>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet_, alphabet_variant_types);
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, semi_alphabet_test, alphabet_variant_types);
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet_constexpr, alphabet_variant_types);
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, semi_alphabet_constexpr, alphabet_variant_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_variant, alphabet_, alphabet_variant_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_variant, semi_alphabet_test, alphabet_variant_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_variant, alphabet_constexpr, alphabet_variant_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_variant, semi_alphabet_constexpr, alphabet_variant_types, );
 
 template <typename T>
 using alphabet_variant_test = ::testing::Test;
 
-TYPED_TEST_CASE(alphabet_variant_test, alphabet_variant_types);
+TYPED_TEST_SUITE(alphabet_variant_test, alphabet_variant_types, );
 
 TEST(alphabet_variant_test, initialise_from_component_alphabet)
 {

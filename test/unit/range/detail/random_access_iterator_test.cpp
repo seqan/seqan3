@@ -43,7 +43,7 @@ struct iterator_fixture<seqan3::detail::random_access_iterator<std::vector<int>>
 
 using test_type = ::testing::Types<seqan3::detail::random_access_iterator<std::vector<int>>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(iterator_fixture, iterator_fixture, test_type);
+INSTANTIATE_TYPED_TEST_SUITE_P(iterator_fixture, iterator_fixture, test_type, );
 
 // -----------------------------------------------------------------------------
 // individual tests

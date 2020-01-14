@@ -23,7 +23,7 @@ using test_types = ::testing::Types<detail::with_score_type,
                                     detail::with_front_coordinate_type,
                                     detail::with_alignment_type>;
 
-TYPED_TEST_CASE(align_cfg_result_test, test_types);
+TYPED_TEST_SUITE(align_cfg_result_test, test_types, );
 
 TEST(align_config_max_error, config_element)
 {

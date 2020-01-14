@@ -48,7 +48,7 @@ using static_end_gap_types = ::testing::Types<front_end_first<std::true_type>,
                                               back_end_second<std::true_type>,
                                               back_end_second<std::false_type>>;
 
-TYPED_TEST_CASE(static_end_gap_test, static_end_gap_types);
+TYPED_TEST_SUITE(static_end_gap_test, static_end_gap_types, );
 
 template <typename type>
 class dynamic_end_gap_test : public ::testing::Test
@@ -59,7 +59,7 @@ using dynamic_end_gap_types = ::testing::Types<front_end_first<bool>,
                                                front_end_second<bool>,
                                                back_end_second<bool>>;
 
-TYPED_TEST_CASE(dynamic_end_gap_test, dynamic_end_gap_types);
+TYPED_TEST_SUITE(dynamic_end_gap_test, dynamic_end_gap_types, );
 
 TEST(sequence_end_gap_specifier_base, aggregate)
 {

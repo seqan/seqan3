@@ -61,4 +61,4 @@ using global_edit_distance_unbanded_types
         global_fixture<&global::edit_distance::unbanded::aa27_01T, uint64_t>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(global, edit_distance_unbanded_test, global_edit_distance_unbanded_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(global, edit_distance_unbanded_test, global_edit_distance_unbanded_types, );

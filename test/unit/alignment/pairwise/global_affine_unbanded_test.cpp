@@ -23,6 +23,6 @@ using pairwise_global_affine_unbanded_testing_types = ::testing::Types<
         pairwise_alignment_fixture<&seqan3::test::alignment::fixture::global::affine::unbanded::dna4_match_4_mismatch_5_gap_1_open_10_both_empty>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(pairwise_global_affine_unbanded,
-                              pairwise_alignment_test,
-                              pairwise_global_affine_unbanded_testing_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_global_affine_unbanded,
+                               pairwise_alignment_test,
+                               pairwise_global_affine_unbanded_testing_types, );

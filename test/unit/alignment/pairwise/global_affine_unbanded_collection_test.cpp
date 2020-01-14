@@ -37,6 +37,6 @@ using pairwise_global_affine_collection_unbanded_testing_types = ::testing::Type
         pairwise_alignment_fixture<&seqan3::test::alignment::collection::global::affine::unbanded::dna4_01>
     >;
 
-INSTANTIATE_TYPED_TEST_CASE_P(pairwise_global_affine_collection_unbanded,
-                              pairwise_alignment_collection_test,
-                              pairwise_global_affine_collection_unbanded_testing_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_global_affine_collection_unbanded,
+                               pairwise_alignment_collection_test,
+                               pairwise_global_affine_collection_unbanded_testing_types, );

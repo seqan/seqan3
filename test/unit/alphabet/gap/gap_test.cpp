@@ -19,10 +19,10 @@
 
 using namespace seqan3;
 
-INSTANTIATE_TYPED_TEST_CASE_P(gap, alphabet_, gap);
-INSTANTIATE_TYPED_TEST_CASE_P(gap, semi_alphabet_test, gap);
-INSTANTIATE_TYPED_TEST_CASE_P(gap, alphabet_constexpr, gap);
-INSTANTIATE_TYPED_TEST_CASE_P(gap, semi_alphabet_constexpr, gap);
+INSTANTIATE_TYPED_TEST_SUITE_P(gap, alphabet_, gap, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gap, semi_alphabet_test, gap, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gap, alphabet_constexpr, gap, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gap, semi_alphabet_constexpr, gap, );
 
 TEST(gap_test, default_initialization)
 {

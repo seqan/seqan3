@@ -14,10 +14,10 @@
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, alphabet_, seqan3::dna3bs);
-INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, semi_alphabet_test, seqan3::dna3bs);
-INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, alphabet_constexpr, seqan3::dna3bs);
-INSTANTIATE_TYPED_TEST_CASE_P(dna3bs, semi_alphabet_constexpr, seqan3::dna3bs);
+INSTANTIATE_TYPED_TEST_SUITE_P(dna3bs, alphabet_, seqan3::dna3bs, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna3bs, semi_alphabet_test, seqan3::dna3bs, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna3bs, alphabet_constexpr, seqan3::dna3bs, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna3bs, semi_alphabet_constexpr, seqan3::dna3bs, );
 
 using seqan3::operator""_dna3bs;
 

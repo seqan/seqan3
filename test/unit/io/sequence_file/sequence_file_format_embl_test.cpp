@@ -81,8 +81,8 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(embl, sequence_file_read, format_embl);
-INSTANTIATE_TYPED_TEST_CASE_P(embl, sequence_file_write, format_embl);
+INSTANTIATE_TYPED_TEST_SUITE_P(embl, sequence_file_read, format_embl, );
+INSTANTIATE_TYPED_TEST_SUITE_P(embl, sequence_file_write, format_embl, );
 
 // ----------------------------------------------------------------------------
 // reading

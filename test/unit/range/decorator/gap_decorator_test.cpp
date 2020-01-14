@@ -56,7 +56,7 @@ public:
     }
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator, aligned_sequence_, test_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(gap_decorator, aligned_sequence_, test_types, );
 
 template <>
 struct iterator_fixture<std::ranges::iterator_t<decorator_t>> : public ::testing::Test
@@ -106,8 +106,8 @@ struct iterator_fixture<random_access_iterator_test> : iterator_fixture<std::ran
                                                                           | views::enforce_random_access;
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator, iterator_fixture, std::ranges::iterator_t<decorator_t>);
-INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator_random_access, iterator_fixture, random_access_iterator_test);
+INSTANTIATE_TYPED_TEST_SUITE_P(gap_decorator_iterator, iterator_fixture, std::ranges::iterator_t<decorator_t>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gap_decorator_iterator_random_access, iterator_fixture, random_access_iterator_test, );
 
 // ---------------------------------------------------------------------------------------------------------------------
 // typed test
@@ -116,7 +116,7 @@ INSTANTIATE_TYPED_TEST_CASE_P(gap_decorator_iterator_random_access, iterator_fix
 template <typename t>
 class gap_decorator_f : public ::testing::Test {};
 
-TYPED_TEST_CASE(gap_decorator_f, test_types);
+TYPED_TEST_SUITE(gap_decorator_f, test_types, );
 
 // concept checks
 TYPED_TEST(gap_decorator_f, concept_checks)

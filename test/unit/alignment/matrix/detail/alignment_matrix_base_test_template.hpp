@@ -32,7 +32,7 @@ struct alignment_matrix_base_test : public ::testing::Test
     matrix_t test_range{};
 };
 
-TYPED_TEST_CASE_P(alignment_matrix_base_test);
+TYPED_TEST_SUITE_P(alignment_matrix_base_test);
 
 TYPED_TEST_P(alignment_matrix_base_test, range_concepts)
 {
@@ -132,5 +132,5 @@ TYPED_TEST_P(alignment_matrix_base_test, empty_col_row)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(alignment_matrix_base_test, range_concepts, begin_end, basic_construction, empty_row,
-                           empty_col, empty_col_row);
+REGISTER_TYPED_TEST_SUITE_P(alignment_matrix_base_test, range_concepts, begin_end, basic_construction, empty_row,
+                            empty_col, empty_col_row);

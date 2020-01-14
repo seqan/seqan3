@@ -39,10 +39,10 @@ public:
     using base_t::operator=;
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, alphabet_, alphabet_proxy_example);
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, semi_alphabet_test, alphabet_proxy_example);
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, alphabet_constexpr, alphabet_proxy_example);
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy, semi_alphabet_constexpr, alphabet_proxy_example);
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_proxy, alphabet_, alphabet_proxy_example, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_proxy, semi_alphabet_test, alphabet_proxy_example, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_proxy, alphabet_constexpr, alphabet_proxy_example, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_proxy, semi_alphabet_constexpr, alphabet_proxy_example, );
 
 // -----------------------------------------------------------------------------------------------------
 // check handling of external types that do not provide members
@@ -132,5 +132,5 @@ public:
     {};
 };
 
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy2, alphabet_, alphabet_proxy_example2);
-INSTANTIATE_TYPED_TEST_CASE_P(alphabet_proxy2, alphabet_constexpr, alphabet_proxy_example2);
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_proxy2, alphabet_, alphabet_proxy_example2, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_proxy2, alphabet_constexpr, alphabet_proxy_example2, );

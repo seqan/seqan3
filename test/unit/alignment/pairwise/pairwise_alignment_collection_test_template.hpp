@@ -35,7 +35,7 @@ template <typename fixture_t>
 class pairwise_alignment_collection_test : public fixture_t
 {};
 
-TYPED_TEST_CASE_P(pairwise_alignment_collection_test);
+TYPED_TEST_SUITE_P(pairwise_alignment_collection_test);
 
 TYPED_TEST_P(pairwise_alignment_collection_test, score)
 {
@@ -119,8 +119,8 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(pairwise_alignment_collection_test,
-                           score,
-                           back_coordinate,
-                           front_coordinate,
-                           alignment);
+REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_collection_test,
+                            score,
+                            back_coordinate,
+                            front_coordinate,
+                            alignment);

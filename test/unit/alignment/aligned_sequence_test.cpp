@@ -36,4 +36,4 @@ public:
 using test_types = ::testing::Types<std::vector<gapped<dna4>>,
                                     std::vector<gapped<qualified<dna4, phred42>>>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(container_of_gapped_alphabets, aligned_sequence_, test_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(container_of_gapped_alphabets, aligned_sequence_, test_types, );

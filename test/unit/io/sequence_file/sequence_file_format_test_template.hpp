@@ -53,7 +53,7 @@ template <typename format_t>
 struct sequence_file_read : public sequence_file_data
 {};
 
-TYPED_TEST_CASE_P(sequence_file_read);
+TYPED_TEST_SUITE_P(sequence_file_read);
 
 // ----------------------------------------------------------------------------
 // general
@@ -152,7 +152,7 @@ template <typename format_type>
 struct sequence_file_write : public sequence_file_read<format_type>
 {};
 
-TYPED_TEST_CASE_P(sequence_file_write);
+TYPED_TEST_SUITE_P(sequence_file_write);
 
 TYPED_TEST_P(sequence_file_write, concept_check)
 {
@@ -226,21 +226,21 @@ TYPED_TEST_P(sequence_file_write, arg_handling_seq_empty)
     }
 }
 
-REGISTER_TYPED_TEST_CASE_P(sequence_file_read,
-                           concept_check,
-                           standard,
-                           only_seq,
-                           only_id,
-                           seq_qual,
-                           illegal_alphabet_character,
-                           options_truncate_ids,
-                           no_or_ill_formatted_id);
+REGISTER_TYPED_TEST_SUITE_P(sequence_file_read,
+                            concept_check,
+                            standard,
+                            only_seq,
+                            only_id,
+                            seq_qual,
+                            illegal_alphabet_character,
+                            options_truncate_ids,
+                            no_or_ill_formatted_id);
 
-REGISTER_TYPED_TEST_CASE_P(sequence_file_write,
-                           concept_check,
-                           standard,
-                           seq_qual,
-                           arg_handling_id_missing,
-                           arg_handling_id_empty,
-                           arg_handling_seq_missing,
-                           arg_handling_seq_empty);
+REGISTER_TYPED_TEST_SUITE_P(sequence_file_write,
+                            concept_check,
+                            standard,
+                            seq_qual,
+                            arg_handling_id_missing,
+                            arg_handling_id_empty,
+                            arg_handling_seq_missing,
+                            arg_handling_seq_empty);

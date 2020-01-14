@@ -22,9 +22,9 @@ using trace_matrix_t = std::pair<detail::alignment_trace_matrix_full_banded<trac
 using coo_matrix_t = std::pair<detail::alignment_trace_matrix_full_banded<trace_directions, true>, std::true_type>;
 
 using testing_types = ::testing::Types<trace_matrix_t, coo_matrix_t>;
-INSTANTIATE_TYPED_TEST_CASE_P(full_matrix_banded,
-                              alignment_matrix_base_test,
-                              testing_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(full_matrix_banded,
+                               alignment_matrix_base_test,
+                               testing_types, );
 
 //-----------------------------------------------------------------------------
 // Test outer iterator
@@ -71,9 +71,9 @@ struct iterator_fixture<outer_iterator<test_type>> : alignment_matrix_base_test<
 
 using testing_types_outer = ::testing::Types<outer_iterator<trace_matrix_t>, outer_iterator<coo_matrix_t>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(banded_trace_matrix_outer_iterator,
-                              iterator_fixture,
-                              testing_types_outer);
+INSTANTIATE_TYPED_TEST_SUITE_P(banded_trace_matrix_outer_iterator,
+                               iterator_fixture,
+                               testing_types_outer, );
 
 //-----------------------------------------------------------------------------
 // Test inner iterator
@@ -106,9 +106,9 @@ struct iterator_fixture<inner_iterator<test_type>> : iterator_fixture<outer_iter
 
 using testing_types_inner = ::testing::Types<inner_iterator<trace_matrix_t>, inner_iterator<coo_matrix_t>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(banded_trace_matrix_inner_iterator,
-                              iterator_fixture,
-                              testing_types_inner);
+INSTANTIATE_TYPED_TEST_SUITE_P(banded_trace_matrix_inner_iterator,
+                               iterator_fixture,
+                               testing_types_inner, );
 
 TEST(trace_matrix, trace_path)
 {

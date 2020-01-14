@@ -48,7 +48,7 @@ struct alignment_optimum_test : public ::testing::Test
 
 using score_types = ::testing::Types<int32_t, simd_type_t<int32_t>>;
 
-TYPED_TEST_CASE(alignment_optimum_test, score_types);
+TYPED_TEST_SUITE(alignment_optimum_test, score_types, );
 
 TYPED_TEST(alignment_optimum_test, construction)
 {

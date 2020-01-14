@@ -62,8 +62,8 @@ public:
 
 using structured_rna_types = ::testing::Types<structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, alphabet_, structured_rna_types);
-INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, semi_alphabet_test, structured_rna_types);
-INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, alphabet_constexpr, structured_rna_types);
-INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, semi_alphabet_constexpr, structured_rna_types);
-INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, alphabet_tuple_base_test, structured_rna_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, alphabet_, structured_rna_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, semi_alphabet_test, structured_rna_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, alphabet_constexpr, structured_rna_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, semi_alphabet_constexpr, structured_rna_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, alphabet_tuple_base_test, structured_rna_types, );

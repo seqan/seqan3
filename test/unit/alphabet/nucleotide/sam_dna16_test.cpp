@@ -20,10 +20,10 @@ using namespace seqan3;
 // sam_dna16 alphabet
 // ------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, alphabet_, sam_dna16);
-INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, semi_alphabet_test, sam_dna16);
-INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, alphabet_constexpr, sam_dna16);
-INSTANTIATE_TYPED_TEST_CASE_P(sam_dna16, semi_alphabet_constexpr, sam_dna16);
+INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, alphabet_, sam_dna16, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, semi_alphabet_test, sam_dna16, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, alphabet_constexpr, sam_dna16, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, semi_alphabet_constexpr, sam_dna16, );
 
 // nucleotide test: (because the complement is not bijective for sam_dna16 we need to test it manually)
 TEST(sam_dna16, nucleotide)

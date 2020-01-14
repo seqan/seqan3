@@ -20,15 +20,15 @@ using namespace seqan3;
 
 using char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet_, char_types);
-INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, semi_alphabet_test, char_types);
-INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, alphabet_constexpr, char_types);
-INSTANTIATE_TYPED_TEST_CASE_P(char_adaptation, semi_alphabet_constexpr, char_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(char_adaptation, alphabet_, char_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(char_adaptation, semi_alphabet_test, char_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(char_adaptation, alphabet_constexpr, char_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(char_adaptation, semi_alphabet_constexpr, char_types, );
 
 template <typename T>
 using char_adaptation = ::testing::Test;
 
-TYPED_TEST_CASE(char_adaptation, char_types);
+TYPED_TEST_SUITE(char_adaptation, char_types, );
 
 TYPED_TEST(char_adaptation, type_properties)
 {

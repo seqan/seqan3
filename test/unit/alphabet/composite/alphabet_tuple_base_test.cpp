@@ -62,5 +62,5 @@ public:
 
 using test_composite_types = ::testing::Types<test_composite<dna4, dna5>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(test_composite, semi_alphabet_test, test_composite_types);
-INSTANTIATE_TYPED_TEST_CASE_P(test_composite, alphabet_tuple_base_test, test_composite_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(test_composite, semi_alphabet_test, test_composite_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(test_composite, alphabet_tuple_base_test, test_composite_types, );
