@@ -86,9 +86,7 @@ TEST_F(search_result_range_test, construction)
 TEST_F(search_result_range_test, type_deduction)
 {
     seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
-    EXPECT_TRUE((std::is_same_v<decltype(rng),
-                                seqan3::search_result_range<dummy_search_algorithm,
-                                                            seqan3::type_reduce_view<std::vector<std::string>&>>>));
+    EXPECT_TRUE((std::is_same_v<decltype(rng), search_result_range_t>));
 }
 
 TEST_F(search_result_range_test, empty_query_range)

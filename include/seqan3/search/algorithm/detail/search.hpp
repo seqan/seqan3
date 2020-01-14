@@ -194,11 +194,11 @@ inline auto search_all(index_t const & index, queries_t && queries, configuratio
         //                  duplicates. more efficient to call delegate once with one vector instead of calling
         //                  delegate for each hit separately at once.
         using text_pos_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
-                                            std::pair<typename index_t::size_type, typename index_t::size_type>,
-                                            typename index_t::size_type>;
+                                              std::pair<typename index_t::size_type, typename index_t::size_type>,
+                                              typename index_t::size_type>;
         using hit_t = std::conditional_t<search_traits_t::search_return_index_cursor,
-                                        typename index_t::cursor_type,
-                                        text_pos_t>;
+                                         typename index_t::cursor_type,
+                                         text_pos_t>;
         using query_t = std::ranges::range_value_t<queries_t>;
         using search_fn_t = std::function<std::vector<hit_t>(query_t &)>;
 
