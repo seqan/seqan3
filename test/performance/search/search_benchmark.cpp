@@ -13,7 +13,6 @@
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to.hpp>
 
-using namespace seqan3;
 using namespace seqan3::test;
 
 struct options
@@ -31,28 +30,28 @@ struct options
     uint32_t repeats{20};
 };
 
-template <alphabet alphabet_t>
+template <seqan3::alphabet alphabet_t>
 void mutate_substitution(std::vector<alphabet_t> & seq, size_t const pos, uint8_t alphabet_rank)
 {
     alphabet_t & cbase = seq[pos];
-    if (alphabet_rank >= to_rank(cbase))
+    if (alphabet_rank >= seqan3::to_rank(cbase))
         ++alphabet_rank;
     cbase.assign_rank(alphabet_rank);
 }
 
-template <alphabet alphabet_t>
+template <seqan3::alphabet alphabet_t>
 void mutate_insertion(std::vector<alphabet_t> & seq, size_t const pos, uint8_t const alphabet_rank)
 {
     seq.insert(std::ranges::begin(seq) + pos, alphabet_t{}.assign_rank(alphabet_rank));
 }
 
-template <alphabet alphabet_t>
+template <seqan3::alphabet alphabet_t>
 void mutate_deletion(std::vector<alphabet_t> & seq, size_t const pos)
 {
     seq.erase(std::ranges::begin(seq) + pos);
 }
 
-template <alphabet alphabet_t>
+template <seqan3::alphabet alphabet_t>
 std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> const & ref,
                                                     size_t const number_of_reads,
                                                     size_t const read_length,
@@ -72,9 +71,9 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
     // position
     std::uniform_int_distribution<size_t> random_mutation_pos{0, read_length - 1};
     // substitution
-    std::uniform_int_distribution<uint8_t> dis_alpha_short{0, alphabet_size<alphabet_t> - 2};
+    std::uniform_int_distribution<uint8_t> dis_alpha_short{0, seqan3::alphabet_size<alphabet_t> - 2};
     // insertion
-    std::uniform_int_distribution<uint8_t> dis_alpha{0, alphabet_size<alphabet_t> - 1};
+    std::uniform_int_distribution<uint8_t> dis_alpha{0, seqan3::alphabet_size<alphabet_t> - 1};
 
     for (size_t i = 0; i < number_of_reads; ++i)
     {
@@ -82,7 +81,8 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
         uint8_t simulated_errors = (stddev == 0) ? simulated_errors_ :
                                                    std::abs(std::round(dis_error_count(gen)));
 
-        std::uniform_int_distribution<size_t> random_read_pos{0, std::ranges::size(ref) - read_length - simulated_errors};
+        std::uniform_int_distribution<size_t> random_read_pos{0,
+                                                              std::ranges::size(ref) - read_length - simulated_errors};
         size_t rpos = random_read_pos(gen);
         std::vector<alphabet_t> read_tmp{std::ranges::begin(ref) + rpos,
                                          std::ranges::begin(ref) + rpos + read_length + simulated_errors};
@@ -99,7 +99,9 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
                 mutation_positions.insert(i);
         }
 
-        for (std::set<size_t>::iterator pos_it = mutation_positions.begin(); pos_it != mutation_positions.end(); ++pos_it)
+        for (std::set<size_t>::iterator pos_it = mutation_positions.begin();
+             pos_it != mutation_positions.end();
+             ++pos_it)
         {
             size_t ppos = *pos_it;
             double prob = mutation_type_prob(gen);
@@ -135,9 +137,9 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
     len = (len + simulated_errors  > template_length) ? template_length - simulated_errors : len;
 
     return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15)
-         | views::persist
-         | views::join
-         | views::to<std::vector>;
+         | seqan3::views::persist
+         | seqan3::views::join
+         | seqan3::views::to<std::vector>;
 }
 
 //============================================================================
@@ -159,8 +161,8 @@ void unidirectional_search_all_collection(benchmark::State & state, options && o
         std::ranges::move(seq_reads, std::ranges::back_inserter(reads));
     }
 
-    fm_index index{collection};
-    configuration cfg = search_cfg::max_error{search_cfg::total{o.searched_errors}};
+    seqan3::fm_index index{collection};
+    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
@@ -177,11 +179,11 @@ void unidirectional_search_all(benchmark::State & state, options && o)
                                                                               o.repeats, 0.5, 0) :
                                     generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
-    fm_index index{ref};
+    seqan3::fm_index index{ref};
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
-    configuration cfg = search_cfg::max_error{search_cfg::total{o.searched_errors}};
+    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
@@ -198,11 +200,11 @@ void bidirectional_search_all(benchmark::State & state, options && o)
                                                                               o.repeats, 0.5, 0) :
                                     generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
-    bi_fm_index index{ref};
+    seqan3::bi_fm_index index{ref};
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
-    configuration cfg = search_cfg::max_error{search_cfg::total{o.searched_errors}};
+    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
@@ -219,12 +221,12 @@ void unidirectional_search_stratified(benchmark::State & state, options && o)
                                                                               o.repeats, 0.5, 0) :
                                     generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
-    fm_index index{ref};
+    seqan3::fm_index index{ref};
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
-    configuration cfg = search_cfg::max_error{search_cfg::total{o.searched_errors}} |
-                        search_cfg::mode{search_cfg::strata{o.strata}};
+    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}} |
+                        seqan3::search_cfg::mode{seqan3::search_cfg::strata{o.strata}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
@@ -241,12 +243,12 @@ void bidirectional_search_stratified(benchmark::State & state, options && o)
                                                                               o.repeats, 0.5, 0) :
                                     generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
-    bi_fm_index index{ref};
+    seqan3::bi_fm_index index{ref};
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
-    configuration cfg = search_cfg::max_error{search_cfg::total{o.searched_errors}} |
-                        search_cfg::mode{search_cfg::strata{o.strata}};
+    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}} |
+                        seqan3::search_cfg::mode{seqan3::search_cfg::strata{o.strata}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
