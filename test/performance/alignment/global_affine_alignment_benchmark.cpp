@@ -26,12 +26,13 @@
     #include <seqan/align.h>
 #endif
 
-using namespace seqan3;
 using namespace seqan3::test;
 
-constexpr auto affine_cfg = align_cfg::mode{global_alignment} |
-                            align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
-                            align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}};
+constexpr auto affine_cfg = seqan3::align_cfg::mode{seqan3::global_alignment} |
+                            seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
+                                                                      seqan3::gap_open_score{-10}}} |
+                            seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                         seqan3::mismatch_score{-5}}};
 
 // ============================================================================
 //  affine; score; dna4; single
@@ -45,7 +46,7 @@ void seqan3_affine_dna4(benchmark::State & state)
 
     for (auto _ : state)
     {
-        auto rng = align_pairwise(std::tie(seq1, seq2), affine_cfg | align_cfg::result{with_score});
+        auto rng = align_pairwise(std::tie(seq1, seq2), affine_cfg | seqan3::align_cfg::result{seqan3::with_score});
         *seqan3::begin(rng);
     }
 
@@ -88,7 +89,7 @@ void seqan3_affine_dna4_trace(benchmark::State & state)
 
     for (auto _ : state)
     {
-        auto rng = align_pairwise(std::tie(seq1, seq2), affine_cfg | align_cfg::result{with_alignment});
+        auto rng = align_pairwise(std::tie(seq1, seq2), affine_cfg | seqan3::align_cfg::result{seqan3::with_alignment});
         *seqan3::begin(rng);
     }
 
@@ -141,7 +142,7 @@ void seqan3_affine_dna4_collection(benchmark::State & state)
 
     for (auto _ : state)
     {
-        for (auto && rng : align_pairwise(vec, affine_cfg | align_cfg::result{with_score}))
+        for (auto && rng : align_pairwise(vec, affine_cfg | seqan3::align_cfg::result{seqan3::with_score}))
             rng.score();
     }
 
@@ -175,7 +176,7 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
         seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(seqan3::viewszip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -202,7 +203,7 @@ void seqan3_affine_dna4_trace_collection(benchmark::State & state)
 
     for (auto _ : state)
     {
-        for (auto && rng : align_pairwise(vec, affine_cfg | align_cfg::result{with_alignment}))
+        for (auto && rng : align_pairwise(vec, affine_cfg | seqan3::align_cfg::result{seqan3::with_alignment}))
             rng.score();
     }
 
@@ -245,7 +246,7 @@ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
         seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
