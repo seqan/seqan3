@@ -35,8 +35,6 @@
     #include <seqan/stream.h>
 #endif
 
-using namespace seqan3;
-
 // ============================================================================
 //  plain benchmark of ostringstream
 // ============================================================================
@@ -72,11 +70,11 @@ void compressed(benchmark::State & state)
 }
 
 #ifdef SEQAN3_HAS_ZLIB
-BENCHMARK_TEMPLATE(compressed, contrib::gz_ostream);
-BENCHMARK_TEMPLATE(compressed, contrib::bgzf_ostream);
+BENCHMARK_TEMPLATE(compressed, seqan3::contrib::gz_ostream);
+BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bgzf_ostream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
-BENCHMARK_TEMPLATE(compressed, contrib::bz2_ostream);
+BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bz2_ostream);
 #endif
 
 // ============================================================================
@@ -98,11 +96,11 @@ void compressed_type_erased(benchmark::State & state)
 }
 
 #ifdef SEQAN3_HAS_ZLIB
-BENCHMARK_TEMPLATE(compressed_type_erased, contrib::gz_ostream);
-BENCHMARK_TEMPLATE(compressed_type_erased, contrib::bgzf_ostream);
+BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::gz_ostream);
+BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bgzf_ostream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
-BENCHMARK_TEMPLATE(compressed_type_erased, contrib::bz2_ostream);
+BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bz2_ostream);
 #endif
 
 // ============================================================================
@@ -124,11 +122,11 @@ void compressed_type_erased2(benchmark::State & state)
 }
 
 #ifdef SEQAN3_HAS_ZLIB
-BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::gz_ostream);
-BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::bgzf_ostream);
+BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::gz_ostream);
+BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bgzf_ostream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
-BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::bz2_ostream);
+BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bz2_ostream);
 #endif
 
 // ============================================================================

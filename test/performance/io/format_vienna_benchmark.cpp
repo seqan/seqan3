@@ -24,13 +24,15 @@
     #include <seqan/rna_io.h>
 #endif
 
-using namespace seqan3;
 using namespace seqan3::test;
 
 inline constexpr size_t iterations_per_run = 1024;
 
 inline std::string const header{"seq foobar blobber"};
-auto const sequence = generate_sequence<rna4>(474, 0, 0) | views::persist | views::to_char | views::to<std::string>;
+auto const sequence = generate_sequence<seqan3::rna4>(474, 0, 0) |
+                                        seqan3::views::persist |
+                                        seqan3::views::to_char |
+                                        seqan3::views::to<std::string>;
 
 inline std::string const structure
 {
@@ -53,7 +55,7 @@ inline std::string const vienna_file = []()
 void write_seqan3(benchmark::State & state)
 {
     std::ostringstream ostream;
-    structure_file_output fout{ostream, format_vienna{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}};
 
     for (auto _ : state)
     {
@@ -98,7 +100,7 @@ BENCHMARK(write_seqan2);
 void read_seqan3(benchmark::State & state)
 {
     std::istringstream istream{vienna_file};
-    structure_file_input fin{istream, format_vienna{}};
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
 
     for (auto _ : state)
     {

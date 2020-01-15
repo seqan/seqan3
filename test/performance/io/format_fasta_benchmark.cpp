@@ -29,7 +29,6 @@
 
 #include <sstream>
 
-using namespace seqan3;
 using namespace seqan3::test;
 
 inline constexpr size_t iterations_per_run = 1024;
@@ -55,7 +54,8 @@ static std::string fasta_file = []()
 void write3(benchmark::State & state)
 {
     std::ostringstream ostream;
-    sequence_file_output fout{ostream, format_fasta{}, fields<field::id, field::seq>{}};
+    seqan3::sequence_file_output fout{ostream, seqan3::format_fasta{}, seqan3::fields<seqan3::field::id,
+                                                                                      seqan3::field::seq>{}};
 
     for (auto _ : state)
     {
@@ -101,7 +101,7 @@ BENCHMARK(write2);
 void read3(benchmark::State & state)
 {
     std::istringstream istream{fasta_file};
-    sequence_file_input fin{istream, format_fasta{}};
+    seqan3::sequence_file_input fin{istream, seqan3::format_fasta{}};
 
     for (auto _ : state)
     {
