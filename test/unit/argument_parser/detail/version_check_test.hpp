@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 #include <seqan3/argument_parser/all.hpp>
+#include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
 
@@ -46,24 +47,61 @@ struct version_check : public ::testing::Test
     char const * const OPTION_OFF = "0";
     char const * const OPTION_ON = "1";
 
-    std::chrono::duration<long int>::rep const TIME_NOW =
-        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::string const app_name = std::string{"test_version_check"};
 
-    std::string const APP_NAME = "test_version_check_" + app_name_component + "_" + std::to_string(TIME_NOW); // avoid name conflicts.
+    // This tmp_filename will create the file "version_checker.tmpfile" in a unique folder.
+    seqan3::test::tmp_filename tmp_file{"version_checker.tmpfile"};
 
-    std::filesystem::path const PATH = detail::version_checker::get_path();
+    void randomise_home_folder()
+    {
+        using namespace std::string_literals;
+        auto tmp_directory = tmp_file.get_path().parent_path();
 
-    std::filesystem::path const APP_VERSION_FILENAME = PATH / (APP_NAME + ".version");
+        int result = setenv(detail::version_checker::home_env_name, tmp_directory.c_str(), 1);
+        if (result != 0)
+            throw std::runtime_error{"Couldn't set environment variable 'home_env_name' (="s +
+                                     detail::version_checker::home_env_name + ")"s};
 
-#if defined(NDEBUG)
-    std::filesystem::path const APP_TIMESTAMP_FILENAME = PATH / (APP_NAME + "_usr.timestamp");
-#else
-    std::filesystem::path const APP_TIMESTAMP_FILENAME = PATH / (APP_NAME + "_dev.timestamp");
-#endif // defined(NDEBUG)
+        auto is_prefix_path = [](std::string const & base_path, std::string const & path)
+        {
+            auto && it_pair = std::mismatch(base_path.begin(), base_path.end(), path.begin(), path.end());
+            return it_pair.first + 1 == base_path.end();
+        };
 
-    std::string const SEQAN_VERSION = std::to_string(SEQAN3_VERSION_MAJOR) + "." +
-                                      std::to_string(SEQAN3_VERSION_MINOR) + "." +
-                                      std::to_string(SEQAN3_VERSION_PATCH);
+        if (is_prefix_path(tmp_directory, app_tmp_path()))
+            throw std::runtime_error{"Setting the environment variable 'home_env_name' didn't have the correct effect"
+                                     " ("s + std::string{tmp_directory} + " is not a prefix of "s +
+                                     std::string{app_tmp_path()} + ")"s};
+    }
+
+    void SetUp() override
+    {
+        ::testing::Test::SetUp();
+
+        // set HOME environment to a random home folder before starting each test case
+        randomise_home_folder();
+    }
+
+    std::filesystem::path app_tmp_path()
+    {
+        return detail::version_checker::get_path();
+    }
+
+    std::filesystem::path app_version_filename()
+    {
+        return app_tmp_path() / (app_name + ".version");
+    }
+
+    std::filesystem::path app_timestamp_filename()
+    {
+        return seqan3::detail::version_checker{app_name, std::string{}}.timestamp_filename;
+    }
+
+    std::chrono::duration<long int>::rep current_unix_timestamp()
+    {
+        return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
+               .count();
+    }
 
     std::regex timestamp_regex{"^[[:digit:]]+$"}; // only digits
 
@@ -76,7 +114,7 @@ struct version_check : public ::testing::Test
 
         bool app_call_succeeded{false};
 
-        argument_parser parser{APP_NAME, argc, argv};
+        argument_parser parser{app_name, argc, argv};
         parser.info.version = "2.3.4";
 
         // In case we don't want to specify --version-check but avoid that short help format will be set (no arguments)
@@ -101,10 +139,10 @@ struct version_check : public ::testing::Test
 
     bool remove_files_from_path()
     {
-        return (!std::filesystem::exists(APP_VERSION_FILENAME)   ||
-                 std::filesystem::remove(APP_VERSION_FILENAME))  &&
-               (!std::filesystem::exists(APP_TIMESTAMP_FILENAME) ||
-                 std::filesystem::remove(APP_TIMESTAMP_FILENAME));
+        return (!std::filesystem::exists(app_version_filename())   ||
+                 std::filesystem::remove(app_version_filename()))  &&
+               (!std::filesystem::exists(app_timestamp_filename()) ||
+                 std::filesystem::remove(app_timestamp_filename()));
     }
 
     template <typename message_type>
@@ -146,20 +184,20 @@ struct sanity_checks : public version_check
 // even if the homedir might not be writable at least the tmp dir should be
 TEST_F(sanity_checks, path_availability)
 {
-    EXPECT_FALSE(PATH.empty()) << "No writable directory found. All other tests cannot be trusted!";
+    EXPECT_FALSE(app_tmp_path().empty()) << "No writable directory found. All other tests cannot be trusted!";
 }
 
 TEST_F(sanity_checks, create_and_delete_files)
 {
-    EXPECT_TRUE(create_file(APP_VERSION_FILENAME, "20.5.9"));
-    EXPECT_TRUE(create_file(APP_TIMESTAMP_FILENAME, TIME_NOW));
+    EXPECT_TRUE(create_file(app_version_filename(), "20.5.9"));
+    EXPECT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp()));
 
-    EXPECT_TRUE(std::filesystem::exists(APP_VERSION_FILENAME));
-    EXPECT_TRUE(std::filesystem::exists(APP_TIMESTAMP_FILENAME));
+    EXPECT_TRUE(std::filesystem::exists(app_version_filename()));
+    EXPECT_TRUE(std::filesystem::exists(app_timestamp_filename()));
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
-    EXPECT_FALSE(std::filesystem::exists(APP_VERSION_FILENAME));
-    EXPECT_FALSE(std::filesystem::exists(APP_TIMESTAMP_FILENAME));
+    EXPECT_FALSE(std::filesystem::exists(app_version_filename()));
+    EXPECT_FALSE(std::filesystem::exists(app_timestamp_filename()));
 }
 
 //------------------------------------------------------------------------------
@@ -168,7 +206,7 @@ TEST_F(sanity_checks, create_and_delete_files)
 
 TEST_F(version_check, option_on)
 {
-    const char * argv[3] = {APP_NAME.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+    const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(3, argv);
 
@@ -178,7 +216,7 @@ TEST_F(version_check, option_on)
     // no timestamp is written since the decision was made explicitly
     if (app_call_succeeded)
     {
-        EXPECT_TRUE(std::filesystem::exists(APP_VERSION_FILENAME));
+        EXPECT_TRUE(std::filesystem::exists(app_version_filename()));
     }
     else
     {
@@ -192,7 +230,7 @@ TEST_F(version_check, option_on)
 // seqan3::detail::is_terminal() is always false
 TEST_F(version_check, option_implicitely_on)
 {
-    const char * argv[2] = {APP_NAME.c_str(), "-f"};
+    const char * argv[2] = {app_name.c_str(), "-f"};
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(2, argv);
 
@@ -205,12 +243,12 @@ TEST_F(version_check, option_implicitely_on)
                    "#######################################################################\n\n");
 
     // make sure that all files now exist
-    EXPECT_TRUE(std::filesystem::exists(APP_TIMESTAMP_FILENAME)) << APP_TIMESTAMP_FILENAME;
-    EXPECT_TRUE(std::regex_match(read_file(APP_TIMESTAMP_FILENAME), timestamp_regex));
+    EXPECT_TRUE(std::filesystem::exists(app_timestamp_filename())) << app_timestamp_filename();
+    EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
     if (app_call_succeeded)
     {
-        EXPECT_TRUE(std::filesystem::exists(APP_VERSION_FILENAME));
+        EXPECT_TRUE(std::filesystem::exists(app_version_filename()));
     }
     else
     {
@@ -222,10 +260,10 @@ TEST_F(version_check, option_implicitely_on)
 
 TEST_F(version_check, time_out) // while implicitly on
 {
-     const char * argv[2] = {APP_NAME.c_str(), "-f"};
+     const char * argv[2] = {app_name.c_str(), "-f"};
 
     // create timestamp files
-    ASSERT_TRUE(create_file(APP_TIMESTAMP_FILENAME, TIME_NOW));
+    ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp()));
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(2, argv);
     (void) app_call_succeeded;
@@ -233,7 +271,7 @@ TEST_F(version_check, time_out) // while implicitly on
     EXPECT_EQ(out, "");
     EXPECT_EQ(err, "");
 
-    EXPECT_FALSE(std::filesystem::exists(APP_VERSION_FILENAME));
+    EXPECT_FALSE(std::filesystem::exists(app_version_filename()));
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 }
@@ -244,9 +282,9 @@ TEST_F(version_check, environment_variable_set)
     char * env{std::getenv("SEQAN3_NO_VERSION_CHECK")};
     setenv("SEQAN3_NO_VERSION_CHECK", "foo", 1);
 
-    const char * argv[2] = {APP_NAME.c_str(), "-f"};
+    const char * argv[2] = {app_name.c_str(), "-f"};
 
-    argument_parser parser{APP_NAME, 2, argv};
+    argument_parser parser{app_name, 2, argv};
     parser.info.version = "2.3.4";
     bool dummy{};
     parser.add_flag(dummy, 'f', "dummy-flag", "A dummy flag.");
@@ -265,8 +303,8 @@ TEST_F(version_check, environment_variable_set)
     EXPECT_EQ(err, "");
 
     // if environment variable is set, no cookies are written
-    EXPECT_FALSE(std::filesystem::exists(APP_TIMESTAMP_FILENAME)) << APP_TIMESTAMP_FILENAME;
-    EXPECT_FALSE(std::filesystem::exists(APP_VERSION_FILENAME));
+    EXPECT_FALSE(std::filesystem::exists(app_timestamp_filename())) << app_timestamp_filename();
+    EXPECT_FALSE(std::filesystem::exists(app_version_filename()));
 
     if (env == nullptr)
         unsetenv("SEQAN3_NO_VERSION_CHECK");
@@ -278,7 +316,7 @@ TEST_F(version_check, environment_variable_set)
 
 TEST_F(version_check, option_off)
 {
-    const char * argv[3] = {APP_NAME.c_str(), OPTION_VERSION_CHECK, OPTION_OFF};
+    const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_OFF};
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(3, argv);
     (void) app_call_succeeded;
@@ -287,18 +325,18 @@ TEST_F(version_check, option_off)
     EXPECT_EQ(err, "");
 
     // no timestamp is written since the decision was made explicitly
-    EXPECT_FALSE(std::filesystem::exists(APP_VERSION_FILENAME)) << APP_VERSION_FILENAME;
+    EXPECT_FALSE(std::filesystem::exists(app_version_filename())) << app_version_filename();
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 
     // Version check option always needs to be parsed, even if special formats get selected
-    const char * argv2[4] = {APP_NAME.c_str(), "-h", OPTION_VERSION_CHECK, OPTION_OFF};
+    const char * argv2[4] = {app_name.c_str(), "-h", OPTION_VERSION_CHECK, OPTION_OFF};
 
     char * env{std::getenv("SEQAN3_NO_VERSION_CHECK")};
     if (env != nullptr)
         unsetenv("SEQAN3_NO_VERSION_CHECK");
 
-    argument_parser parser{APP_NAME, 4, argv2};
+    argument_parser parser{app_name, 4, argv2};
     parser.info.version = "2.3.4";
 
     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -311,22 +349,22 @@ TEST_F(version_check, option_off)
         setenv("SEQAN3_NO_VERSION_CHECK", env, 1);
 
     // no timestamp is written since the decision was made explicitly
-    EXPECT_FALSE(std::filesystem::exists(APP_VERSION_FILENAME)) << APP_VERSION_FILENAME;
+    EXPECT_FALSE(std::filesystem::exists(app_version_filename())) << app_version_filename();
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 }
 
 // case: the current argument parser has a smaller seqan version than is present in the version file
 #if !defined(NDEBUG)
-TEST_F(version_check, smaller_SEQAN_VERSION)
+TEST_F(version_check, smaller_seqan3_version)
 {
-    const char * argv[3] = {APP_NAME.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+    const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     // create version file with euqal app version and a greater seqan version than the current
-    create_file(APP_VERSION_FILENAME, std::string{"2.3.4\n20.5.9"});
+    create_file(app_version_filename(), std::string{"2.3.4\n20.5.9"});
 
     // create timestamp file that dates one day before current to trigger a message (one day = 86400 seconds)
-    ASSERT_TRUE(create_file(APP_TIMESTAMP_FILENAME, TIME_NOW - 100401));
+    ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401));
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(3, argv);
     (void) app_call_succeeded;
@@ -334,7 +372,7 @@ TEST_F(version_check, smaller_SEQAN_VERSION)
     EXPECT_EQ(out, "");
     EXPECT_EQ(err, detail::version_checker::message_seqan3_update);
 
-    EXPECT_TRUE(std::regex_match(read_file(APP_TIMESTAMP_FILENAME), timestamp_regex));
+    EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 }
@@ -342,13 +380,13 @@ TEST_F(version_check, smaller_SEQAN_VERSION)
 // case: the current argument parser has a greater app version than is present in the version file
 TEST_F(version_check, greater_app_version)
 {
-    const char * argv[3] = {APP_NAME.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+    const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     // create version file with equal seqan version and a smaller app version than the current
-    ASSERT_TRUE(create_file(APP_VERSION_FILENAME, std::string{"1.5.9\n" + SEQAN_VERSION}));
+    ASSERT_TRUE(create_file(app_version_filename(), std::string{"1.5.9\n" + seqan3::seqan3_version}));
 
     // create timestamp file that dates one day before current to trigger a message
-    ASSERT_TRUE(create_file(APP_TIMESTAMP_FILENAME, TIME_NOW - 100401)); // one day = 86400 seconds
+    ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401)); // one day = 86400 seconds
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(3, argv);
     (void) app_call_succeeded;
@@ -356,20 +394,20 @@ TEST_F(version_check, greater_app_version)
     EXPECT_EQ(out, "");
     EXPECT_EQ(err, detail::version_checker::message_registered_app_update);
 
-    EXPECT_TRUE(std::regex_match(read_file(APP_TIMESTAMP_FILENAME), timestamp_regex));
+    EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 }
 
 TEST_F(version_check, unregistered_app)
 {
-    const char * argv[3] = {APP_NAME.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+    const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     // create version file with equal seqan version and a smaller app version than the current
-    ASSERT_TRUE(create_file(APP_VERSION_FILENAME, std::string{ "UNREGISTERED_APP\n" + SEQAN_VERSION}));
+    ASSERT_TRUE(create_file(app_version_filename(), std::string{ "UNREGISTERED_APP\n" + seqan3::seqan3_version}));
 
     // create timestamp file that dates one day before current to trigger a message
-    ASSERT_TRUE(create_file(APP_TIMESTAMP_FILENAME, TIME_NOW - 100401)); // one day = 86400 seconds
+    ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401)); // one day = 86400 seconds
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(3, argv);
     (void) app_call_succeeded;
@@ -377,7 +415,7 @@ TEST_F(version_check, unregistered_app)
     EXPECT_EQ(out, "");
     EXPECT_EQ(err, detail::version_checker::message_unregistered_app);
 
-    EXPECT_TRUE(std::regex_match(read_file(APP_TIMESTAMP_FILENAME), timestamp_regex));
+    EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 }
@@ -387,21 +425,21 @@ TEST_F(version_check, unregistered_app)
 #if defined(NDEBUG)
 TEST_F(version_check, smaller_app_version)
 {
-    const char * argv[3] = {APP_NAME.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+    const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     // create version file with equal seqan version and a greater app version than the current
-    ASSERT_TRUE(create_file(APP_VERSION_FILENAME, std::string{"20.5.9\n" + SEQAN_VERSION}));
+    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n" + seqan3::seqan3_version}));
 
     // create timestamp file that dates one day before current to trigger a message (one day = 86400 seconds)
-    ASSERT_TRUE(create_file(APP_TIMESTAMP_FILENAME, TIME_NOW - 100401));
+    ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401));
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(3, argv);
     (void) app_call_succeeded;
 
     EXPECT_EQ(out, "");
-    EXPECT_EQ(err, (detail::version_checker{APP_NAME, "2.3.4"}.message_app_update));
+    EXPECT_EQ(err, (detail::version_checker{app_name, "2.3.4"}.message_app_update));
 
-    EXPECT_TRUE(std::regex_match(read_file(APP_TIMESTAMP_FILENAME), timestamp_regex));
+    EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 }
@@ -412,15 +450,15 @@ TEST_F(version_check, smaller_app_version_custom_url)
     if (env != nullptr)
         unsetenv("SEQAN3_NO_VERSION_CHECK");
 
-    const char * argv[3] = {APP_NAME.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+    const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     // create version file with equal seqan version and a greater app version than the current
-    ASSERT_TRUE(create_file(APP_VERSION_FILENAME, std::string{"20.5.9\n" + SEQAN_VERSION}));
+    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n" + seqan3::seqan3_version}));
 
     // create timestamp file that dates one day before current to trigger a message (one day = 86400 seconds)
-    ASSERT_TRUE(create_file(APP_TIMESTAMP_FILENAME, TIME_NOW - 100401));
+    ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401));
 
-    argument_parser parser{APP_NAME, 3, argv};
+    argument_parser parser{app_name, 3, argv};
     parser.info.version = "2.3.4";
     parser.info.url = "https//foo.de";
 
@@ -435,9 +473,9 @@ TEST_F(version_check, smaller_app_version_custom_url)
     wait_for(parser);
 
     EXPECT_EQ(out, "");
-    EXPECT_EQ(err, (detail::version_checker{APP_NAME, parser.info.version, parser.info.url}.message_app_update));
+    EXPECT_EQ(err, (detail::version_checker{app_name, parser.info.version, parser.info.url}.message_app_update));
 
-    EXPECT_TRUE(std::regex_match(read_file(APP_TIMESTAMP_FILENAME), timestamp_regex));
+    EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
     if (env != nullptr)
         setenv("SEQAN3_NO_VERSION_CHECK", env, 1);
@@ -448,10 +486,10 @@ TEST_F(version_check, smaller_app_version_custom_url)
 
 TEST_F(version_check, user_specified_never)
 {
-    const char * argv[2] = {APP_NAME.c_str(), "-f"}; // no explicit version check option
+    const char * argv[2] = {app_name.c_str(), "-f"}; // no explicit version check option
 
     // create timestamp files
-    ASSERT_TRUE(create_file(APP_TIMESTAMP_FILENAME, "NEVER"));
+    ASSERT_TRUE(create_file(app_timestamp_filename(), "NEVER"));
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(2, argv);
     (void) app_call_succeeded;
@@ -459,18 +497,18 @@ TEST_F(version_check, user_specified_never)
     EXPECT_EQ(out, "");
     EXPECT_EQ(err, "");
 
-    EXPECT_FALSE(std::filesystem::exists(APP_VERSION_FILENAME));
-    EXPECT_EQ(read_file(APP_TIMESTAMP_FILENAME), "NEVER"); // should not be modified
+    EXPECT_FALSE(std::filesystem::exists(app_version_filename()));
+    EXPECT_EQ(read_file(app_timestamp_filename()), "NEVER"); // should not be modified
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 }
 
 TEST_F(version_check, user_specified_always)
 {
-    const char * argv[2] = {APP_NAME.c_str(), "-f"}; // no explicit version check option
+    const char * argv[2] = {app_name.c_str(), "-f"}; // no explicit version check option
 
     // create timestamp files
-    ASSERT_TRUE(create_file(APP_TIMESTAMP_FILENAME, "ALWAYS"));
+    ASSERT_TRUE(create_file(app_timestamp_filename(), "ALWAYS"));
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(2, argv);
 
@@ -479,14 +517,14 @@ TEST_F(version_check, user_specified_always)
 
     if (app_call_succeeded)
     {
-        EXPECT_TRUE(std::filesystem::exists(APP_VERSION_FILENAME));
+        EXPECT_TRUE(std::filesystem::exists(app_version_filename()));
     }
     else
     {
         std::cout << "App call did not succeed (server offline?) and could thus not be tested." << std::endl;
     }
 
-    EXPECT_EQ(read_file(APP_TIMESTAMP_FILENAME), "ALWAYS"); // should not be modified
+    EXPECT_EQ(read_file(app_timestamp_filename()), "ALWAYS"); // should not be modified
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
@@ -494,11 +532,11 @@ TEST_F(version_check, user_specified_always)
 
 TEST_F(version_check, wrong_version_string)
 {
-    const char * argv[2] = {APP_NAME.c_str(), "-f"}; // no explicit version check option
+    const char * argv[2] = {app_name.c_str(), "-f"}; // no explicit version check option
 
     // create a corrupted version file. Nothing should be printed, it is just ignored
-    ASSERT_TRUE(create_file(APP_VERSION_FILENAME, std::string{"20.wrong.9\nalso.wrong.4"}));
-    ASSERT_TRUE(create_file(APP_TIMESTAMP_FILENAME, "ALWAYS"));
+    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.wrong.9\nalso.wrong.4"}));
+    ASSERT_TRUE(create_file(app_timestamp_filename(), "ALWAYS"));
 
     auto [out, err, app_call_succeeded] = simulate_argument_parser(2, argv);
     (void) app_call_succeeded;
