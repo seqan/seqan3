@@ -14,6 +14,7 @@
 
 #include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
+#include <seqan3/search/algorithm/detail/search_traits.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
 #include <seqan3/search/configuration/all.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
@@ -45,17 +46,17 @@ namespace seqan3::detail
 template <typename index_t, typename query_t, typename configuration_t>
 inline auto search_single(index_t const & index, query_t & query, configuration_t const & cfg)
 {
-    using cfg_t = remove_cvref_t<configuration_t>;
+    using search_traits_t = search_traits<configuration_t>;
 
     // retrieve error numbers / rates
     detail::search_param max_error{0, 0, 0, 0};
-    if constexpr (cfg.template exists<search_cfg::max_error>())
+    if constexpr (search_traits_t::search_with_max_error)
     {
         auto & [total, subs, ins, del] = max_error;
         std::tie(total, subs, ins, del) = std::apply([](auto ...args){ return std::tuple{args...}; },
                                                      get<search_cfg::max_error>(cfg).value);
     }
-    else if constexpr (cfg.template exists<search_cfg::max_error_rate>())
+    else if constexpr (search_traits_t::search_with_max_error_rate)
     {
         // NOTE: Casting doubles rounds towards zero (i.e. floor for positive numbers). Thus, given a rate of
         // 10% and a read length of 101 the max number of errors is correctly casted from 10.1 errors to 10
@@ -79,7 +80,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     };
 
     // choose mode
-    if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_best>>())
+    if constexpr (search_traits_t::search_best_hits)
     {
         detail::search_param max_error2{max_error};
         max_error2.total = 0;
@@ -89,7 +90,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
             max_error2.total++;
         }
     }
-    else if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_all_best>>())
+    else if constexpr (search_traits_t::search_all_best_hits)
     {
         detail::search_param max_error2{max_error};
         max_error2.total = 0;
@@ -99,7 +100,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
             max_error2.total++;
         }
     }
-    else if constexpr (cfg_t::template exists<search_cfg::mode<search_cfg::strata>>())
+    else if constexpr (search_traits_t::search_strata_hits)
     {
         detail::search_param max_error2{max_error};
         max_error2.total = 0;
@@ -124,7 +125,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     // TODO: filter hits and only do it when necessary (depending on error types)
 
     // output cursors or text_positions
-    if constexpr (cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>())
+    if constexpr (search_traits_t::search_return_index_cursor)
     {
         return internal_hits;
     }
@@ -135,7 +136,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
                                          typename index_t::size_type>;
         std::vector<hit_t> hits;
 
-        if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_best>>())
+        if constexpr (search_traits_t::search_best_hits)
         {
             // only one cursor is reported but it might contain more than one text position
             if (!internal_hits.empty())
@@ -177,7 +178,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
  * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
 template <typename index_t, typename queries_t, typename configuration_t>
-inline auto search_all(index_t const & index, queries_t & queries, configuration_t const & cfg)
+inline auto search_all(index_t const & index, queries_t && queries, configuration_t const & cfg)
 {
     using cfg_t = remove_cvref_t<configuration_t>;
     // return type: for each query: a vector of text_positions (or cursors)
