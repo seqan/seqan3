@@ -23,12 +23,12 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Alphabet
 
-* We now provide the seqan3::dna3bs alphabet that models bisulfite-treated dna4 sequence (#1191).
+* Added the seqan3::dna3bs alphabet that models bisulfite-treated dna4 sequence (#1191).
 
 #### Alignment
 
-* The function seqan3::align_pairwise can now be parallised using the seqan3::align_cfg::parallel configuration.
-* The score type used in the alignment score matrix and the result type is now configurable through a template
+* The function seqan3::align_pairwise can be parallelised using the seqan3::align_cfg::parallel configuration.
+* The score type used in the alignment score matrix and the result type is configurable through a template
   argument of the seqan3::align_cfg::result configuration.
 
 #### Argument parser
@@ -37,7 +37,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   seqan3::output_file_validator (#863).
 * The seqan3::value_list_validator is now constructible from a range or a parameter pack.
 * Enable subcommand argument parsing ([How-to](https://docs.seqan.de/seqan/3-master-user/subcommand_arg_parse.html)).
-* The seqan3::argument_parser::add_option (and add_positional_option) calls do now allow enum types when using the
+* The seqan3::argument_parser::add_option (and add_positional_option) calls allow enum types when using the
   seqan3::enumeration_names customisation point (#1196).
 
 #### Build system
@@ -46,13 +46,13 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Core
 
-* We now provide seqan3::lzcnt, seqan3::tzcnt, and seqan3::popcount for bit manipulation (#1141).
+* Added seqan3::lzcnt, seqan3::tzcnt, and seqan3::popcount for bit manipulation (#1141).
 * Added traits for "metaprogramming" with `seqan3::type_list` and type packs.
-* We now provide the SIMD functions seqan3::upcast and seqan3::upcast_signed (#1190).
+* Added the SIMD functions seqan3::upcast and seqan3::upcast_signed (#1190).
 
 #### I/O
 
-* We now support padded alignments in the SAM/BAM format (#1173).
+* Support of padded alignments in the SAM/BAM format (#1173) was added.
 * We increased our input performance using a faster iterator on the stream buffer.
 * Asynchronous input (background file reading) supported via seqan3::view::async_input_buffer.
 * Reading field::cigar into a vector over seqan3::cigar is supported via seqan3::alignment_file_input.
@@ -60,10 +60,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ### Range
 
-* We now provide the seqan3::dynamic_bitset (#1153).
-* We now provide the seqan3::views::translate_join (#1171).
-* We now provide the seqan3::views::to_simd (#1190).
-* We now provide the seqan3::views::kmer_hash (#946).
+* Added the seqan3::dynamic_bitset (#1153).
+* Added the seqan3::views::translate_join (#1171).
+* Added the seqan3::views::to_simd (#1190).
+* Added the seqan3::views::kmer_hash (#946).
 
 #### Search
 
@@ -80,7 +80,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * **Customising for third party types has changes slightly:**
   You are only affected if you added types to `seqan3::custom::`.
   Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html).
-* All our concept are named in the `snake_case` style now!
+* All our concepts are named in the `snake_case` style (e.g. `seqan3::WritableAlphabet` -> `seqan3::writable_alphabet`)!
 
 #### Alphabet
 
@@ -148,18 +148,17 @@ versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 with a vers
 
 ## Notable Bug-fixes
 
-* All our headers are self contained now (#1085).
-* The alignment algorithm with edit distance returns the correct back coordinate now (#1093)
-* Inserting and deleting gaps in an empty seqan3::gap_decorator doesn't assert anymore (#1109).
+* All our headers are self contained (#1085).
+* The alignment algorithm with edit distance returns the correct back coordinate (#1093).
+* Inserting or deleting gaps into an empty seqan3::gap_decorator does not cause assert anymore (#1109).
 * Some fixes to edge cases in BAM file writing (#1110)
 * The application name of the seqan3::argument_parser is restricted to alpha-numeric characters and `_` and `-` (#1133).
 * Copying and moving the `seqan3::fm_index` and `seqan3::bi_fm_index` now work properly.
 * Searching in the `seqan3::fm_index` and `seqan3::bi_fm_index` constructed from a text collection containing a single
   text now return correct result.
-* The view seqan3::views::take is now sized if the underlying range is sized (#1146).
-* The detection of the pthread library now works correctly on linux based systems (#1200).
-
-* Translation table for nucleotide to amino acid translation now corrected.
+* The view seqan3::views::take is sized if the underlying range is sized (#1146).
+* The detection of the pthread library works correctly on linux based systems (#1200).
+* The translation table for nucleotide to amino acid translation was corrected.
 
 # 3.0.0 ("Escala")
 
