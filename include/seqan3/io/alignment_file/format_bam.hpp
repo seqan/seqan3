@@ -379,7 +379,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     // read alignment record into buffer
     // -------------------------------------------------------------------------------------------------------------
     alignment_record_core core;
-    std::ranges::copy_n(stream_view.begin(), sizeof(core), reinterpret_cast<char *>(&core));
+    std::ranges::copy(stream_view | views::take_exactly_or_throw(sizeof(core)), reinterpret_cast<char *>(&core));
 
     if (core.refID >= static_cast<int32_t>(header.ref_ids().size()) || core.refID < -1) // [[unlikely]]
     {
