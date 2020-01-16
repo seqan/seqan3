@@ -21,27 +21,57 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## New features
 
+#### Alphabet
+
+* We now provide the seqan3::dna3bs alphabet that models bisulfite-treated dna4 sequence (#1191).
+
 #### Alignment
+
+* The function seqan3::align_pairwise can now be parallised using the seqan3::align_cfg::parallel configuration.
 * The score type used in the alignment score matrix and the result type is now configurable through a template
   argument of the seqan3::align_cfg::result configuration.
 
 #### Argument parser
-* Simplified reading file extensions from formatted files in the input/output file validators.
+
+* Simplified reading file extensions from formatted files with the seqan3::input_file_validator and
+  seqan3::output_file_validator (#863).
 * The seqan3::value_list_validator is now constructible from a range or a parameter pack.
 * Enable subcommand argument parsing ([How-to](https://docs.seqan.de/seqan/3-master-user/subcommand_arg_parse.html)).
+* The seqan3::argument_parser::add_option (and add_positional_option) calls do now allow enum types when using the
+  seqan3::enumeration_names customisation point (#1196).
 
 #### Build system
 
 * `find_package(SeqAn3)` is now case-insensitive and always populates `SEQAN3_*` variables in all upper-case.
 
 #### Core
+
+* We now provide seqan3::lzcnt, seqan3::tzcnt, and seqan3::popcount for bit manipulation (#1141).
 * Added traits for "metaprogramming" with `seqan3::type_list` and type packs.
+* We now provide the SIMD functions seqan3::upcast and seqan3::upcast_signed (#1190).
 
 #### I/O
 
+* We now support padded alignments in the SAM/BAM format (#1173).
+* We increased our input performance using a faster iterator on the stream buffer.
 * Asynchronous input (background file reading) supported via seqan3::view::async_input_buffer.
 * Reading field::cigar into a vector over seqan3::cigar is supported via seqan3::alignment_file_input.
 * Writing field::cigar into a vector over seqan3::cigar is supported via seqan3::alignment_file_output.
+
+### Range
+
+* We now provide the seqan3::dynamic_bitset (#1153).
+* We now provide the seqan3::views::translate_join (#1171).
+* We now provide the seqan3::views::to_simd (#1190).
+* We now provide the seqan3::views::kmer_hash (#946).
+
+#### Search
+
+* The memory footprint of FM-indices over text collections was reduced (#1363).
+
+### Std
+
+* We provide a `std::to_chars` overload for floating point data types in our `seqan3/std/from_chars` header (#1160).
 
 ## API changes
 
@@ -50,6 +80,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * **Customising for third party types has changes slightly:**
   You are only affected if you added types to `seqan3::custom::`.
   Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html).
+* All our concept are named in the `snake_case` style now!
+
+#### Alphabet
+
+* The seqan3::cigar alphabet is not an seqan3::alphabet anymore but only a seqan3::semialphabet (#1285).
 
 #### Argument parser
 
@@ -113,9 +148,17 @@ versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 with a vers
 
 ## Notable Bug-fixes
 
+* All our headers are self contained now (#1085).
+* The alignment algorithm with edit distance returns the correct back coordinate now (#1093)
+* Inserting and deleting gaps in an empty seqan3::gap_decorator doesn't assert anymore (#1109).
+* Some fixes to edge cases in BAM file writing (#1110)
+* The application name of the seqan3::argument_parser is restricted to alpha-numeric characters and `_` and `-` (#1133).
 * Copying and moving the `seqan3::fm_index` and `seqan3::bi_fm_index` now work properly.
 * Searching in the `seqan3::fm_index` and `seqan3::bi_fm_index` constructed from a text collection containing a single
   text now return correct result.
+* The view seqan3::views::take is now sized if the underlying range is sized (#1146).
+* The detection of the pthread library now works correctly on linux based systems (#1200).
+
 * Translation table for nucleotide to amino acid translation now corrected.
 
 # 3.0.0 ("Escala")
