@@ -90,7 +90,7 @@ private:
          * \{
          */
         //!\brief Type for distances between iterators.
-        using difference_type = typename it_t::difference_type;
+        using difference_type = typename std::iter_difference_t<it_t>;
         //!\brief Value type of this iterator.
         using value_type = size_t;
         //!\brief The pointer type.
