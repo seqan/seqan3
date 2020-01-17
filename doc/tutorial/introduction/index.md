@@ -31,12 +31,10 @@ Most good tutorials start with an easy *Hello World!* program. So have a look:
 This is a code snippet. You will see many code snippets in our documentation.
 Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
-other statements implied by the text. 
-[//]: # This information is no longer necessary, because all code snippets will be completed (regarding to agreement 
-[//]: # with eseiler). But I leave it here, until whole tutorial is done.
+other statements implied by the text.
 
-You can copy'n'paste freely from the code snippets, this implies no copyright-obligations (however distributing 
-SeqAn or an application using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) 
+You can copy'n'paste freely from the code snippets, this implies no copyright-obligations (however distributing
+SeqAn or an application using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html)
 and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html)).
 
 You may ask, why we do not use std::cout or std::cerr for console output.
@@ -107,10 +105,7 @@ you can enter it in the search bar (top-right).
 Let's look at some functions of the IO module: SeqAn provides fast and easy access to biological file formats.
 The following code example demonstrates the interface of seqan3::sequence_file_input.
 
-\snippet introduction_file_input.cpp fileinput_1
-\snippet introduction_file_input.cpp fileinput_2
-\snippet introduction_file_input.cpp fileinput_3
-\snippet introduction_file_input.cpp fileinput_4
+\snippet introduction_file_input.cpp fileinput
 
 Can you imagine anything easier? After you have initialised the instance with a filename,
 you can simply step through the file in a for loop and retrieve the fields via
@@ -157,12 +152,11 @@ algorithm which then executes all alignments in parallel and stores the results 
 objects. The second argument to seqan3::align_pairwise is the *configuration* which allows you to specify
 a lot of parameters for the alignment computation, for instance score functions, banded alignment and whether
 you wish to compute a traceback or not. The configurations have their own namespace seqan3::align_cfg and can
-be combined via the logical OR operator (`|`) for building combinations. Check out the alignment tutorial if you want 
+be combined via the logical OR operator (`|`) for building combinations. Check out the alignment tutorial if you want
 to learn more.
 
 \note
-In general, we omit `using namespace seqan3;`, to show which parts are from SeqAn3 and which aren't. But 
-for better readability we use a `using` declaration for the namespace member `_dna5`. You can skip it, if you 
+In general, we omit `using namespace seqan3;`, to show which parts are from SeqAn3 and which aren't. However, for comprehensibility we declare string literals like _dna5 beforehand with a using directive. You can skip it, if you
 work with the overall namespace or declare it in lines 20 and 21 directly.
 
 \note
