@@ -45,6 +45,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## API changes
 
+* **The required version of the ranges-v3 library has increased:** We now support the versions >= 0.10.0 and < 0.11.0,
+  increasing the previous requirement of >= 0.5.0 and < 0.6.0.
 * **Customising for third party types has changes slightly:**
   You are only affected if you added types to `seqan3::custom::`.
   Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html).
