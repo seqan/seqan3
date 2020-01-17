@@ -44,16 +44,27 @@ struct stream_buffer_exposer : public std::basic_streambuf<char_t, traits_t>
     using base_t = std::basic_streambuf<char_t, traits_t>;
 
     // Expose protected members:
+    //!\brief Beginning of the buffered part of the input sequence.
     using base_t::eback;
+    //!\brief Current position in the input sequence ("get pointer").
     using base_t::gptr;
+    //!\brief End of the buffered part of the input sequence.
     using base_t::egptr;
+    //!\brief Skips count characters in the get area. This is done by advancing the get pointer by count characters.
+    //        No checks are done for underflow.
     using base_t::gbump;
+    //!\brief Fetch the next available input characters from the sequences and transform them into simd vectors.
     using base_t::underflow;
 
+    //!\brief Beginning of the buffered part of the output sequence.
     using base_t::pbase;
+    //!\brief Current position in the output sequence ("put pointer").
     using base_t::pptr;
+    //!\brief End of the buffered part of the output sequence.
     using base_t::epptr;
+    //!\brief Increase put pointer.
     using base_t::pbump;
+    //!\brief Checks for capacity in the given buffer.
     using base_t::overflow;
 };
 

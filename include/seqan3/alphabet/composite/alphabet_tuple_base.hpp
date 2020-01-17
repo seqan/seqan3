@@ -762,4 +762,3 @@ struct tuple_size<tuple_t> :
 {};
 
 } // namespace std
-
