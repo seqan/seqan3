@@ -552,14 +552,17 @@ inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_se
  * \param alignment The alignment that shall be formatted. All sequences must be equally long.
  * \return          The given stream to which the alignment representation is appended.
  */
-template <tuple_like tuple_t, typename char_t>
+template <typename tuple_t, typename char_t>
 //!\cond
-    requires detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<tuple_t>>
+    requires !std::ranges::input_range<tuple_t> &&
+             !alphabet<tuple_t> && // exclude alphabet_tuple_base
+             tuple_like<remove_cvref_t<tuple_t>> &&
+             detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<remove_cvref_t<tuple_t>>>
 //!\endcond
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, tuple_t const & alignment)
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, tuple_t && alignment)
 {
-    static_assert(std::tuple_size_v<tuple_t> >= 2, "An alignment requires at least two sequences.");
-    detail::stream_alignment(stream, alignment, std::make_index_sequence<std::tuple_size_v<tuple_t> - 1> {});
+    static_assert(std::tuple_size_v<remove_cvref_t<tuple_t>> >= 2, "An alignment requires at least two sequences.");
+    detail::stream_alignment(stream, alignment, std::make_index_sequence<std::tuple_size_v<remove_cvref_t<tuple_t>> - 1> {});
     return stream;
 }
 
