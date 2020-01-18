@@ -75,6 +75,10 @@ cmake_minimum_required (VERSION 3.4...3.12)
 # Set initial variables
 # ----------------------------------------------------------------------------
 
+# make output globally quiet if required by find_package, this effects cmake functions like `check_*`
+set(CMAKE_REQUIRED_QUIET_SAVE ${CMAKE_REQUIRED_QUIET})
+set(CMAKE_REQUIRED_QUIET ${${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY})
+
 # ----------------------------------------------------------------------------
 # Greeter
 # ----------------------------------------------------------------------------
@@ -91,7 +95,6 @@ endif ()
 # Includes
 # ----------------------------------------------------------------------------
 
-include (FindPackageMessage)
 include (CheckIncludeFileCXX)
 include (CheckCXXSourceCompiles)
 include (FindPackageHandleStandardArgs)
@@ -211,7 +214,7 @@ option (SEQAN3_NO_BZIP2 "Don't use BZip2, even if present." OFF)
 # Require C++17
 # ----------------------------------------------------------------------------
 
-set (CMAKE_REQUIRED_FLAGS_ORIGINAL ${CMAKE_REQUIRED_FLAGS})
+set (CMAKE_REQUIRED_FLAGS_SAVE ${CMAKE_REQUIRED_FLAGS})
 
 set (CXXSTD_TEST_SOURCE
     "#if !defined (__cplusplus) || (__cplusplus < 201703L)
@@ -224,7 +227,7 @@ check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CXX17_BUILTIN)
 if (CXX17_BUILTIN)
     seqan3_config_print ("C++ Standard-17 support:    builtin")
 else ()
-    set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_ORIGINAL} -std=c++17")
+    set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_SAVE} -std=c++17")
 
     check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CXX17_FLAG)
 
@@ -241,7 +244,7 @@ endif ()
 # Require C++ Concepts
 # ----------------------------------------------------------------------------
 
-set (CMAKE_REQUIRED_FLAGS_ORIGINAL ${CMAKE_REQUIRED_FLAGS})
+set (CMAKE_REQUIRED_FLAGS_SAVE ${CMAKE_REQUIRED_FLAGS})
 
 set (CXXSTD_TEST_SOURCE
     "static_assert (__cpp_concepts >= 201507);
@@ -255,7 +258,7 @@ else ()
     set (CONCEPTS_FLAG "")
 
     foreach (_FLAG -std=c++20 -std=c++2a -fconcepts)
-        set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_ORIGINAL} ${_FLAG}")
+        set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_SAVE} ${_FLAG}")
 
         check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CONCEPTS_FLAG${_FLAG})
 
@@ -306,7 +309,7 @@ else ()
 endif ()
 
 # check if library is required
-set (CMAKE_REQUIRED_LIBRARIES_ORIGINAL ${CMAKE_REQUIRED_LIBRARIES})
+set (CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
 
 check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" C++17FS_BUILTIN)
 
@@ -316,7 +319,7 @@ else ()
     set (C++17FS_LIB "")
 
     foreach (_LIB stdc++fs)
-        set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_ORIGINAL} ${_LIB})
+        set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE} ${_LIB})
 
         check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" C++17FS_LIB-l${_LIB})
 
@@ -325,7 +328,7 @@ else ()
             set (C++17FS_LIB ${_LIB})
             break ()
         endif ()
-        set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_ORIGINAL})
+        set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
     endforeach ()
 
     if (C++17FS_LIB)
@@ -541,6 +544,8 @@ find_package_handle_standard_args (${CMAKE_FIND_PACKAGE_NAME} REQUIRED_VARS SEQA
 foreach (package_var FOUND DIR ROOT CONFIG VERSION VERSION_MAJOR VERSION_MINOR VERSION_PATCH VERSION_TWEAK VERSION_COUNT)
     set (SEQAN3_${package_var} "${${CMAKE_FIND_PACKAGE_NAME}_${package_var}}")
 endforeach ()
+
+set (CMAKE_REQUIRED_QUIET ${CMAKE_REQUIRED_QUIET_SAVE})
 
 if (SEQAN3_FIND_DEBUG)
   message ("Result for ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
