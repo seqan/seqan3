@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
     // Find all hits using search schemes.
     detail::search_ss<false>(it, query, start_pos, start_pos + 1, 0, 0, true, search, blocks_length, error_left,
                              delegate_ss);
-    
+
     // Find all hits using trivial backtracking.
     detail::search_trivial<false>(index, query, error_left, delegate_trivial);
 
