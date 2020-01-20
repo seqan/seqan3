@@ -38,10 +38,10 @@ description2
 .SH POSITIONAL ARGUMENTS
 .TP
 \fBARGUMENT-1\fP (\fIsigned 8 bit integer\fP)
-this is a positional option.
+this is a positional option. 
 .TP
 \fBARGUMENT-2\fP (\fIList\fP of \fIstd::string\fP's)
-this is a positional option. Default: [].
+this is a positional option. Default: []. 
 .SH OPTIONS
 .SS Basic options:
 .TP
@@ -62,13 +62,13 @@ Export the help page information. Value must be one of [html, man].
 .TP
 \fB--version-check\fP (bool)
 Whether to to check for the newest app version. Default: 1.
-.SS
+.SS 
 .TP
 \fB-i\fP, \fB--int\fP (\fIsigned 32 bit integer\fP)
-this is a int option. Default: 5.
+this is a int option. Default: 5. 
 .TP
 \fB-j\fP, \fB--jint\fP (\fIsigned 32 bit integer\fP)
-this is a required int option.
+this is a required int option. 
 .SH FLAGS
 .SS SubFlags
 here come all the flags
@@ -141,7 +141,7 @@ Export the help page information. Value must be one of [html, man].
 .TP
 \fB--version-check\fP (bool)
 Whether to to check for the newest app version. Default: 1.
-.SS
+.SS 
 )";
 
     // Test the dummy parser with minimal information.

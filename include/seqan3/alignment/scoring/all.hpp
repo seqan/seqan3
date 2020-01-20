@@ -15,7 +15,7 @@
 /*!\defgroup scoring Scoring
  * \brief Provides the data structures used for scoring alphabets and sequences.
  * \ingroup alignment
- * \see alignment
+ * \see alignment 
  */
 
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
