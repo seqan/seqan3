@@ -84,9 +84,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## API changes
 
-* [#1471] **The required version of the ranges-v3 library has increased:**
+* [#1471] The required version of the ranges-v3 library has increased:
   We now support the versions >= 0.10.0 and < 0.11.0, increasing the previous requirement of >= 0.5.0 and < 0.6.0.
-* [#1225] **Customising for third party types has changes slightly:**
+* [#1225] Customising for third party types has changes slightly:
   You are only affected if you added types to `seqan3::custom::`.
   Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html).
 * [#1235] All our concepts are named in the `snake_case` style
@@ -100,8 +100,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### Argument parser
 
 * [#1298] The `seqan3::value_list_validator` is not constructible from a std::initialiser_list any more
-  (e.g. `seqan3::value_list_validator{{1,2,3}}` does **not** work, use `seqan3::value_list_validator{1,2,3}` instead).
-* [#863] **Changed class signature of input/output file validators:**
+  (e.g. `seqan3::value_list_validator{{1,2,3}}` does not work, use `seqan3::value_list_validator{1,2,3}` instead).
+* [#863] Changed class signature of input/output file validators:
   Most user code will be unaffected; to fix possible compiler errors you need to add an empty template parameter list to
   the respective instances (e.g. change `input_file_validator` to `input_file_validator<>`).
 * [#1394] The member type that denotes which arguments a `validator` can validate has been renamed from `value_type` to
@@ -115,20 +115,20 @@ minimum versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 wit
 
 #### Core
 
-* [#1204] **The `type_list` header has moved:**
+* [#1204] The `type_list` header has moved:
   If you included `<seqan3/core/type_list.hpp>` you need to change the path to `<seqan3/core/type_list/type_list.hpp>`.
 
 #### I/O
 
-* [#1398,#1412] **Removed the field-based in- and output interface for sequence and structure files through std::get
-  and std::tie:**
+* [#1398,#1412] Removed the field-based in- and output interface for sequence and structure files through std::get
+  and std::tie:
   Output can instead be achieved with `seqan3::views:zip()`, for input we will implement `unzip()` in the future.
-* [#1390] The `field::flag` of SAM/BAM input and output is now an **enum** instead of an integer (see
+* [#1390] The `field::flag` of SAM/BAM input and output is now an enum instead of an integer (see
   `seqan3::sam_flag`).
 * [#1421] Uppercase `seqan3::field` names are deprecated. Use the lower case field names instead. You can easily find
   and replace all occurrences by the following regex: find `field::([A-Z_]+)` replace `field::\L$1`.
 
-* [#1400] **Removed the char type from the input and output files:**
+* [#1400] Removed the char type from the input and output files:
   Most user code will be unaffected; however, if you have fully specified all templates of any of the input or output
   files in your code, you need to remove the template parameter to select the char type of the stream
   (e.g. change `seqan3::sequence_file_input<traits_t, fields_t, formats_t, char>` to
@@ -137,7 +137,7 @@ minimum versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 wit
 
 #### Range
 
-* [#1208] **The `seqan3::concatenated_sequences::data()` function has been deprecated:**
+* [#1208] The `seqan3::concatenated_sequences::data()` function has been deprecated:
   Use `seqan3::concatenated_sequences::raw_data()` instead.
 * [#1285] `seqan3::to_char` must always return a built-in character type.
 * [#1251] `seqan3/range/view` has be renamed to `seqan3/range/views`.
@@ -145,22 +145,22 @@ minimum versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 wit
 
 #### Search
 
-* [#1222] **Changed class signature of (bi_)fm_index:**
+* [#1222] Changed class signature of (bi_)fm_index:
   All code that relies on automatic template deduction will be unaffected. In case you specified the template parameters
   of a `seqan3::fm_index` or `seqan3::bi_fm_index` you will need to add the alphabet type as first parameter and pass a
   `seqan3::text_layout` instead of a `bool` to indicate the text layout (single, collection).
   For example, `fm_index<false> index{text}` where `text` is of type `dna4_vector` needs to be changed to
   `fm_index<dna4, text_layout::single> index{text}`.
 
-* [#1222] **The `construct()` method of the (bi_)fm_index is now private:**
+* [#1222] The `construct()` method of the (bi_)fm_index is now private:
   Use the constructor `seqan3::fm_index::fm_index(text_t && text)` or `seqan3::bi_fm_index::bi_fm_index(text_t && text)`
   instead.
 
-* [#1433] **The `seqan3::fm_index::char_type` member was renamed to `seqan3::fm_index::alphabet_type`**
+* [#1433] The `seqan3::fm_index::char_type` member was renamed to `seqan3::fm_index::alphabet_type`
   The same applies for the `seqan3::bi_fm_index`.
 
-* [#1433] **The `seqan3::fm_index_cursor::index_char_type` member was renamed to
-  `seqan3::fm_index_cursor::index_alphabet_type`**
+* [#1433] The `seqan3::fm_index_cursor::index_char_type` member was renamed to
+  `seqan3::fm_index_cursor::index_alphabet_type`
   The same applies for the `seqan3::bi_fm_index_cursor`.
 
 ## Notable Bug-fixes
