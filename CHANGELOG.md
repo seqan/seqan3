@@ -44,7 +44,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ([\#863](https://github.com/seqan/seqan3/pull/863)).
 * The `seqan3::value_list_validator` is now constructible from a range or a parameter pack
   ([\#1298](https://github.com/seqan/seqan3/pull/1298)).
-* Enable subcommand argument parsing, see [How-to](https://docs.seqan.de/seqan/3-master-user/subcommand_arg_parse.html)
+* Enable subcommand argument parsing, see [How-to](https://docs.seqan.de/seqan/3.0.1/subcommand_arg_parse.html)
   for an example
   ([\#1185](https://github.com/seqan/seqan3/pull/1185)).
 * The `seqan3::argument_parser::add_option` (and add_positional_option) calls allow enum types when using the
@@ -119,7 +119,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ([\#1471](https://github.com/seqan/seqan3/pull/1471)).
 * Customising for third party types has changes slightly:
   You are only affected if you added types to `seqan3::custom::`.
-  Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html)
+  Please see [About Customisation](http://docs.seqan.de/seqan/3.0.1/about_customisation.html)
   ([\#1225](https://github.com/seqan/seqan3/pull/1225)).
 * All our concepts are named in the `snake_case` style
   (e.g. `seqan3::WritableAlphabet` -> `seqan3::writable_alphabet`)! This change was motivated by the decision of the
