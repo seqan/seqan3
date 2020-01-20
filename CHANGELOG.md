@@ -71,7 +71,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * [#1190] Added `seqan3::views::to_simd`, a view that.
 * [#1410] Added `seqan3::views::as_const`, a view that provides only const & to elements of the underlying range.
 * [#1410] Added `seqan3::views::move`, a view that turns lvalue-references into rvalue-references.
-* [#1410] Renamed `seqan3::views::all` to `seqan3::views::simplify_type`.
+* [#1410] Renamed `seqan3::views::all` to `seqan3::views::type_reduce`.
 
 #### Search
 
