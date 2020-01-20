@@ -34,7 +34,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   argument of the `seqan3::align_cfg::result` configuration
   ([\#1340](https://github.com/seqan/seqan3/pull/1340)).
 * The function`seqan3::align_pairwise` can be parallelised using the`seqan3::align_cfg::parallel` configuration
-  ([\#1379](https://github.com/seqan/seqan3/pull/1379),[\#1444](https://github.com/seqan/seqan3/pull/1444)).
+  ([\#1379](https://github.com/seqan/seqan3/pull/1379),
+   [\#1444](https://github.com/seqan/seqan3/pull/1444)).
 
 #### Argument parser
 
@@ -60,7 +61,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * Added `seqan3::lzcnt`, `seqan3::tzcnt`, and `seqan3::popcount` for bit manipulation
   ([\#1141](https://github.com/seqan/seqan3/pull/1141)).
 * Added traits for "metaprogramming" with `seqan3::type_list` and type packs
-  ([\#1204,#1214,#1273](https://github.com/seqan/seqan3/pull/1204,#1214,#1273)).
+  ([\#1204](https://github.com/seqan/seqan3/pull/1204),
+   [\#1214](https://github.com/seqan/seqan3/pull/1214),
+   [\#1273](https://github.com/seqan/seqan3/pull/1273)).
 * Added SIMD functions `seqan3::upcast` and `seqan3::upcast_signed`
   ([\#1190](https://github.com/seqan/seqan3/pull/1190)).
 
