@@ -88,7 +88,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * [#1225] **Customising for third party types has changes slightly:**
   You are only affected if you added types to `seqan3::custom::`.
   Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html).
-* [#1235] All our concepts are named in the `snake_case` style (e.g. `seqan3::WritableAlphabet` -> `seqan3::writable_alphabet`)!
+* [#1235] All our concepts are named in the `snake_case` style
+  (e.g. `seqan3::WritableAlphabet` -> `seqan3::writable_alphabet`)! This change was motivated by the decision of the
+  ISO C++ committee to also use snake case everywhere.
 
 #### Alphabet
 
