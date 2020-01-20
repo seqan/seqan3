@@ -64,12 +64,12 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ### Range
 
-* [#946] Added `seqan3::views::kmer_hash` , a view that computes hash values of an alphabet sequence given a `seqan3::shape`.
-* [#1033] Added `seqan3::views::to` , a view that returns a container created from a range by copying all elements.
-* [#1153] Added `seqan3::dynamic_bitset` , a container that stores single bits and has a dynamic size.
-* [#1171] Added `seqan3::views::translate_join` , analogue to `seqan3::views::translate` but returns a flattened range.
-* [#1190] Added `seqan3::views::to_simd` , a view that.
-* [#1410] Added `seqan3::views::as_const` , a view that provides only const & to elements of the underlying range.
+* [#946] Added `seqan3::views::kmer_hash`, a view that computes hash values of an alphabet sequence given a `seqan3::shape`.
+* [#1033] Added `seqan3::views::to`, a view that returns a container created from a range by copying all elements.
+* [#1153] Added `seqan3::dynamic_bitset`, a container that stores single bits and has a dynamic size.
+* [#1171] Added `seqan3::views::translate_join`, analogue to `seqan3::views::translate` but returns a flattened range.
+* [#1190] Added `seqan3::views::to_simd`, a view that.
+* [#1410] Added `seqan3::views::as_const`, a view that provides only const & to elements of the underlying range.
 * [#1410] Added `seqan3::views::move`, a view that turns lvalue-references into rvalue-references.
 * [#1410] Renamed `seqan3::views::all` to `seqan3::views::simplify_type`.
 
