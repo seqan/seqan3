@@ -118,9 +118,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   We now support the versions >= 0.10.0 and < 0.11.0, increasing the previous requirement of >= 0.5.0 and < 0.6.0
   ([\#1471](https://github.com/seqan/seqan3/pull/1471)).
 * Customising for third party types has changes slightly:
-  You are only affected if you added types to `seqan3::custom::`
+  You are only affected if you added types to `seqan3::custom::`.
+  Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html)
   ([\#1225](https://github.com/seqan/seqan3/pull/1225)).
-  Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html).
 * All our concepts are named in the `snake_case` style
   (e.g. `seqan3::WritableAlphabet` -> `seqan3::writable_alphabet`)! This change was motivated by the decision of the
   ISO C++ committee to also use snake case everywhere
