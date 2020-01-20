@@ -272,7 +272,7 @@ public:
 
     /*!\brief Adds a positional option to the seqan3::argument_parser.
      *
-     * \tparam option_type Must have a formateted input function (stream >> value).
+     * \tparam option_type Must have a formatted input function (stream >> value).
      *                     If option_type is a container, its value type must have the
      *                     formateted input function (exception: std::string is not
      *                     regarded as a container).
