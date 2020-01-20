@@ -17,6 +17,8 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
+See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-user/about_api.html).
+
 # 3.0.1
 
 ## New features
@@ -242,4 +244,13 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 # 3.0.0 ("Escala")
 
-Initial release of SeqAn3.
+This is the initial release of SeqAn3.
+It is an entirely new library so there is no changelog that covers the differences to SeqAn2.
+
+Please see the release announcement:
+https://www.seqan.de/announcing-seqan3/
+
+See the porting guide for some help on porting:
+http://docs.seqan.de/seqan/3-master-user/howto_porting.html
+
+Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
