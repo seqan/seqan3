@@ -23,160 +23,219 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Alphabet
 
-* [#981] Added `seqan3::semialphabet_any`, a semi-alphabet that type erases all other semi-alphabets of the same size.
-* [#1191] Added `seqan3::dna3bs`, an alphabet that mimics a bisulfite-treated dna4 sequence.
+* Added `seqan3::semialphabet_any`, a semi-alphabet that type erases all other semi-alphabets of the same size
+  ([\#981](https://github.com/seqan/seqan3/pull/981)).
+* Added `seqan3::dna3bs`, an alphabet that mimics a bisulfite-treated dna4 sequence
+  ([\#1191](https://github.com/seqan/seqan3/pull/1191)).
 
 #### Alignment
 
-* [#1340] The score type used in the alignment score matrix and the result type is configurable through a template
-  argument of the `seqan3::align_cfg::result` configuration.
-* [#1379,#1444] The function`seqan3::align_pairwise` can be parallelised using the`seqan3::align_cfg::parallel` configuration.
+* The score type used in the alignment score matrix and the result type is configurable through a template
+  argument of the `seqan3::align_cfg::result` configuration
+  ([\#1340](https://github.com/seqan/seqan3/pull/1340)).
+* The function`seqan3::align_pairwise` can be parallelised using the`seqan3::align_cfg::parallel` configuration
+  ([\#1379](https://github.com/seqan/seqan3/pull/1379),[\#1444](https://github.com/seqan/seqan3/pull/1444)).
 
 #### Argument parser
 
-* [#863] Simplified reading file extensions from formatted files with the`seqan3::input_file_validator` and
- `seqan3::output_file_validator`.
-* [#1298] The `seqan3::value_list_validator` is now constructible from a range or a parameter pack.
-* [#1185] Enable subcommand argument parsing (see
-  [How-to](https://docs.seqan.de/seqan/3-master-user/subcommand_arg_parse.html) for an example).
-* [#1196] The `seqan3::argument_parser::add_option` (and add_positional_option) calls allow enum types when using the
-  `seqan3::enumeration_names` customisation point.
+* Simplified reading file extensions from formatted files with the`seqan3::input_file_validator` and
+  `seqan3::output_file_validator`
+  ([\#863](https://github.com/seqan/seqan3/pull/863)).
+* The `seqan3::value_list_validator` is now constructible from a range or a parameter pack
+  ([\#1298](https://github.com/seqan/seqan3/pull/1298)).
+* Enable subcommand argument parsing, see [How-to](https://docs.seqan.de/seqan/3-master-user/subcommand_arg_parse.html)
+  for an example
+  ([\#1185](https://github.com/seqan/seqan3/pull/1185)).
+* The `seqan3::argument_parser::add_option` (and add_positional_option) calls allow enum types when using the
+  `seqan3::enumeration_names` customisation point
+  ([\#1196](https://github.com/seqan/seqan3/pull/1196)).
 
 #### Build system
 
-* [#1427] `find_package(SeqAn3)` is now case-insensitive and always populates `SEQAN3_*` variables in all upper-case.
+* `find_package(SeqAn3)` is now case-insensitive and always populates `SEQAN3_*` variables in all upper-case
+  ([\#1427](https://github.com/seqan/seqan3/pull/1427)).
 
 #### Core
 
-* [#1141] Added `seqan3::lzcnt`, `seqan3::tzcnt`, and `seqan3::popcount` for bit manipulation.
-* [#1204,#1214,#1273] Added traits for "metaprogramming" with `seqan3::type_list` and type packs.
-* [#1190] Added SIMD functions `seqan3::upcast` and `seqan3::upcast_signed`.
+* Added `seqan3::lzcnt`, `seqan3::tzcnt`, and `seqan3::popcount` for bit manipulation
+  ([\#1141](https://github.com/seqan/seqan3/pull/1141)).
+* Added traits for "metaprogramming" with `seqan3::type_list` and type packs
+  ([\#1204,#1214,#1273](https://github.com/seqan/seqan3/pull/1204,#1214,#1273)).
+* Added SIMD functions `seqan3::upcast` and `seqan3::upcast_signed`
+  ([\#1190](https://github.com/seqan/seqan3/pull/1190)).
 
 #### I/O
 
-* [#1030] We increased our input performance using a faster iterator on the stream buffer.
-* [#1173] Support of padded alignments in the SAM/BAM format was added.
-* [#1192] Reading `seqan3::field::cigar` into a vector over `seqan3::cigar` is supported via
-  `seqan3::alignment_file_input.`
-* [#1192] Writing `seqan3::field::cigar` into a vector over `seqan3::cigar` is supported via
-  `seqan3::alignment_file_output.`
-* [#1205] Asynchronous input (background file reading) supported via `seqan3::view::async_input_buffer`.
+* We increased our input performance using a faster iterator on the stream buffer
+  ([\#1030](https://github.com/seqan/seqan3/pull/1030)).
+* Support of padded alignments in the SAM/BAM format was added
+  ([\#1173](https://github.com/seqan/seqan3/pull/1173)).
+* Reading `seqan3::field::cigar` into a vector over `seqan3::cigar` is supported via
+  `seqan3::alignment_file_input`
+  ([\#1192](https://github.com/seqan/seqan3/pull/1192)).
+* Writing `seqan3::field::cigar` into a vector over `seqan3::cigar` is supported via
+  `seqan3::alignment_file_output`
+  ([\#1192](https://github.com/seqan/seqan3/pull/1192)).
+* Asynchronous input (background file reading) supported via `seqan3::view::async_input_buffer`
+  ([\#1205](https://github.com/seqan/seqan3/pull/1205)).
 
 ### Range
 
-* [#946] Added `seqan3::views::kmer_hash`, a view that computes hash values of an alphabet sequence given a
-  `seqan3::shape`.
-* [#1033] Added `seqan3::views::to`, a view that returns a container created from a range by copying all elements.
-* [#1153] Added `seqan3::dynamic_bitset`, a container that stores single bits and has a dynamic size.
-* [#1171] Added `seqan3::views::translate_join`, analogue to `seqan3::views::translate` but returns a flattened range.
-* [#1190] Added `seqan3::views::to_simd`, a view that transforms a range of ranges into chunks of seqan3::simd vectors.
-* [#1410] Added `seqan3::views::as_const`, a view that provides only `const &` to elements of the underlying range.
-* [#1410] Added `seqan3::views::move`, a view that turns lvalue-references into rvalue-references.
-* [#1410] Renamed `seqan3::views::all` to `seqan3::views::type_reduce`.
+* Added `seqan3::views::kmer_hash`, a view that computes hash values of an alphabet sequence given a
+  `seqan3::shape`
+  ([\#946](https://github.com/seqan/seqan3/pull/946)).
+* Added `seqan3::views::to`, a view that returns a container created from a range by copying all elements
+  ([\#1033](https://github.com/seqan/seqan3/pull/1033)).
+* Added `seqan3::dynamic_bitset`, a container that stores single bits and has a dynamic size
+  ([\#1153](https://github.com/seqan/seqan3/pull/1153)).
+* Added `seqan3::views::translate_join`, analogue to `seqan3::views::translate` but returns a flattened range
+  ([\#1171](https://github.com/seqan/seqan3/pull/1171)).
+* Added `seqan3::views::to_simd`, a view that transforms a range of ranges into chunks of seqan3::simd vectors
+  ([\#1190](https://github.com/seqan/seqan3/pull/1190)).
+* Added `seqan3::views::as_const`, a view that provides only `const &` to elements of the underlying range
+  ([\#1410](https://github.com/seqan/seqan3/pull/1410)).
+* Added `seqan3::views::move`, a view that turns lvalue-references into rvalue-references
+  ([\#1410](https://github.com/seqan/seqan3/pull/1410)).
+* Renamed `seqan3::views::all` to `seqan3::views::type_reduce`
+  ([\#1410](https://github.com/seqan/seqan3/pull/1410)).
 
 #### Search
 
-* [#1363] The memory footprint of FM-indices over text collections was reduced.
+* The memory footprint of FM-indices over text collections was reduced
+  ([\#1363](https://github.com/seqan/seqan3/pull/1363)).
 
 ### Std
 
-* [#1160] We provide a `std::to_chars` overload for floating point data types in our `seqan3/std/from_chars` header.
+* We provide a `std::to_chars` overload for floating point data types in our `seqan3/std/from_chars` header
+  ([\#1160](https://github.com/seqan/seqan3/pull/1160)).
 
 ## API changes
 
-* [#1471] The required version of the ranges-v3 library has increased:
-  We now support the versions >= 0.10.0 and < 0.11.0, increasing the previous requirement of >= 0.5.0 and < 0.6.0.
-* [#1225] Customising for third party types has changes slightly:
-  You are only affected if you added types to `seqan3::custom::`.
+* The required version of the ranges-v3 library has increased:
+  We now support the versions >= 0.10.0 and < 0.11.0, increasing the previous requirement of >= 0.5.0 and < 0.6.0
+  ([\#1471](https://github.com/seqan/seqan3/pull/1471)).
+* Customising for third party types has changes slightly:
+  You are only affected if you added types to `seqan3::custom::`
+  ([\#1225](https://github.com/seqan/seqan3/pull/1225)).
   Please see [About Customisation](http://docs.seqan.de/seqan/3-master-user/about_customisation.html).
-* [#1235] All our concepts are named in the `snake_case` style
+* All our concepts are named in the `snake_case` style
   (e.g. `seqan3::WritableAlphabet` -> `seqan3::writable_alphabet`)! This change was motivated by the decision of the
-  ISO C++ committee to also use snake case everywhere.
+  ISO C++ committee to also use snake case everywhere
+  ([\#1235](https://github.com/seqan/seqan3/pull/1235)).
 
 #### Alphabet
 
-* [#1285] The `seqan3::cigar` alphabet is not an `seqan3::alphabet` anymore but only a `seqan3::semialphabet`.
+* The `seqan3::cigar` alphabet is not an `seqan3::alphabet` anymore but only a `seqan3::semialphabet`
+  ([\#1285](https://github.com/seqan/seqan3/pull/1285)).
 
 #### Argument parser
 
-* [#1298] The `seqan3::value_list_validator` is not constructible from a std::initialiser_list any more
-  (e.g. `seqan3::value_list_validator{{1,2,3}}` does not work, use `seqan3::value_list_validator{1,2,3}` instead).
-* [#863] Changed class signature of input/output file validators:
+* The `seqan3::value_list_validator` is not constructible from a std::initialiser_list any more
+  (e.g. `seqan3::value_list_validator{{1,2,3}}` does not work, use `seqan3::value_list_validator{1,2,3}` instead)
+  ([\#1298](https://github.com/seqan/seqan3/pull/1298)).
+* Changed class signature of input/output file validators:
   Most user code will be unaffected; to fix possible compiler errors you need to add an empty template parameter list to
-  the respective instances (e.g. change `input_file_validator` to `input_file_validator<>`).
-* [#1394] The member type that denotes which arguments a `validator` can validate has been renamed from `value_type` to
-  `option_value_type`.
+  the respective instances (e.g. change `input_file_validator` to `input_file_validator<>`)
+  ([\#863](https://github.com/seqan/seqan3/pull/863)).
+* The member type that denotes which arguments a `validator` can validate has been renamed from `value_type` to
+  `option_value_type`
+  ([\#1394](https://github.com/seqan/seqan3/pull/1394)).
 
 #### Build system
 
-* [#1425] [find_package](https://cmake.org/cmake/help/latest/command/find_package.html#version-selection) accepts
-minimum versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 with a version of `>= 3.0.1` and `< 4.0.0`).
-* [#1425] The variable `SEQAN3_VERSION_STRING` defined by `find_package(SEQAN3)` was renamed to `SEQAN3_VERSION`.
+* [find_package](https://cmake.org/cmake/help/latest/command/find_package.html#version-selection) accepts minimum
+  versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 with a version of `>= 3.0.1` and `< 4.0.0`)
+  ([\#1425](https://github.com/seqan/seqan3/pull/1425)).
+* The variable `SEQAN3_VERSION_STRING` defined by `find_package(SEQAN3)` was renamed to `SEQAN3_VERSION`
+  ([\#1425](https://github.com/seqan/seqan3/pull/1425)).
 
 #### Core
 
-* [#1204] The `type_list` header has moved:
-  If you included `<seqan3/core/type_list.hpp>` you need to change the path to `<seqan3/core/type_list/type_list.hpp>`.
+* The `type_list` header has moved:
+  If you included `<seqan3/core/type_list.hpp>` you need to change the path to `<seqan3/core/type_list/type_list.hpp>`
+  ([\#1204](https://github.com/seqan/seqan3/pull/1204)).
 
 #### I/O
 
-* [#1398,#1412] Removed the field-based in- and output interface for sequence and structure files through std::get
-  and std::tie:
-  Output can instead be achieved with `seqan3::views:zip()`, for input we will implement `unzip()` in the future.
-* [#1390] The `field::flag` of SAM/BAM input and output is now an enum instead of an integer (see
-  `seqan3::sam_flag`).
-* [#1421] Uppercase `seqan3::field` names are deprecated. Use the lower case field names instead. You can easily find
-  and replace all occurrences by the following regex: find `field::([A-Z_]+)` replace `field::\L$1`.
+* Removed the field-based in- and output interface for sequence and structure files through std::get and std::tie:
+  Output can instead be achieved with `seqan3::views:zip()`, for input we will implement `unzip()` in the future
+  ([\#1398,#1412](https://github.com/seqan/seqan3/pull/1398,#1412)).
+* The `field::flag` of SAM/BAM input and output is now an enum instead of an integer (see
+  `seqan3::sam_flag`)
+  ([\#1390](https://github.com/seqan/seqan3/pull/1390)).
+* Uppercase `seqan3::field` names are deprecated. Use the lower case field names instead. You can easily find
+  and replace all occurrences by the following regex: find `field::([A-Z_]+)` replace `field::\L$1`
+  ([\#1421](https://github.com/seqan/seqan3/pull/1421)).
 
-* [#1400] Removed the char type from the input and output files:
+* Removed the char type from the input and output files:
   Most user code will be unaffected; however, if you have fully specified all templates of any of the input or output
   files in your code, you need to remove the template parameter to select the char type of the stream
   (e.g. change `seqan3::sequence_file_input<traits_t, fields_t, formats_t, char>` to
   `seqan3::sequence_file_input<traits_t, fields_t, formats_t>`). Before this change, setting the char type gave the
-  impression that also streams over wide characters are supported which is not the case yet.
+  impression that also streams over wide characters are supported which is not the case yet
+  ([\#1400](https://github.com/seqan/seqan3/pull/1400)).
 
 #### Range
 
-* [#1208] The `seqan3::concatenated_sequences::data()` function has been deprecated:
-  Use `seqan3::concatenated_sequences::raw_data()` instead.
-* [#1285] `seqan3::to_char` must always return a built-in character type.
-* [#1251] `seqan3/range/view` has be renamed to `seqan3/range/views`.
-* [#1251] namespace `seqan3::view` has been renamed to `seqan3::views`
+* The `seqan3::concatenated_sequences::data()` function has been deprecated:
+  Use `seqan3::concatenated_sequences::raw_data()` instead
+  ([\#1208](https://github.com/seqan/seqan3/pull/1208)).
+* `seqan3::to_char` must always return a built-in character type
+  ([\#1285](https://github.com/seqan/seqan3/pull/1285)).
+* `seqan3/range/view` has be renamed to `seqan3/range/views`
+  ([\#1251](https://github.com/seqan/seqan3/pull/1251)).
+* namespace `seqan3::view` has been renamed to `seqan3::views`
+  ([\#1251](https://github.com/seqan/seqan3/pull/1251)).
 
 #### Search
 
-* [#1222] Changed class signature of (bi_)fm_index:
+* Changed class signature of (bi_)fm_index:
   All code that relies on automatic template deduction will be unaffected. In case you specified the template parameters
   of a `seqan3::fm_index` or `seqan3::bi_fm_index` you will need to add the alphabet type as first parameter and pass a
   `seqan3::text_layout` instead of a `bool` to indicate the text layout (single, collection).
   For example, `fm_index<false> index{text}` where `text` is of type `dna4_vector` needs to be changed to
-  `fm_index<dna4, text_layout::single> index{text}`.
+  `fm_index<dna4, text_layout::single> index{text}`
+  ([\#1222](https://github.com/seqan/seqan3/pull/1222)).
 
-* [#1222] The `construct()` method of the (bi_)fm_index is now private:
+* The `construct()` method of the (bi_)fm_index is now private:
   Use the constructor `seqan3::fm_index::fm_index(text_t && text)` or `seqan3::bi_fm_index::bi_fm_index(text_t && text)`
-  instead.
+  instead
+  ([\#1222](https://github.com/seqan/seqan3/pull/1222)).
 
-* [#1433] The `seqan3::fm_index::char_type` member was renamed to `seqan3::fm_index::alphabet_type`
-  The same applies for the `seqan3::bi_fm_index`.
+* The `seqan3::fm_index::char_type` member was renamed to `seqan3::fm_index::alphabet_type`
+  The same applies for the `seqan3::bi_fm_index`
+  ([\#1433](https://github.com/seqan/seqan3/pull/1433)).
 
-* [#1433] The `seqan3::fm_index_cursor::index_char_type` member was renamed to
+* The `seqan3::fm_index_cursor::index_char_type` member was renamed to
   `seqan3::fm_index_cursor::index_alphabet_type`
-  The same applies for the `seqan3::bi_fm_index_cursor`.
+  The same applies for the `seqan3::bi_fm_index_cursor`
+  ([\#1433](https://github.com/seqan/seqan3/pull/1433)).
 
 ## Notable Bug-fixes
 
-* [#1085] All our headers are self contained.
-* [#1093] The alignment algorithm with edit distance returns the correct back coordinate.
-* [#1109] Inserting or deleting gaps into an empty `seqan3::gap_decorator` does not cause assert anymore.
-* [#1110] Some fixes to edge cases in BAM file writing.
-* [#1133] The application name of the `seqan3::argument_parser` is restricted to alpha-numeric characters and `_` and `-`.
-* [#1144] Copying and moving the `seqan3::fm_index` and `seqan3::bi_fm_index` now work properly.
-* [#1316] Searching in the `seqan3::fm_index` and `seqan3::bi_fm_index` constructed from a text collection containing a
-  single text now return correct result.
-* [#1146] The view `seqan3::views::take` is sized if the underlying range is sized.
-* [#1200] The detection of the pthread library works correctly on linux based systems.
-* [#1485] The translation table for nucleotide to amino acid translation was corrected.
-* [#1455] The amino acid score matrices were corrected.
+* All our headers are self contained
+  ([\#1085](https://github.com/seqan/seqan3/pull/1085)).
+* The alignment algorithm with edit distance returns the correct back coordinate
+  ([\#1093](https://github.com/seqan/seqan3/pull/1093)).
+* Inserting or deleting gaps into an empty `seqan3::gap_decorator` does not cause assert anymore
+  ([\#1109](https://github.com/seqan/seqan3/pull/1109)).
+* Some fixes to edge cases in BAM file writing
+  ([\#1110](https://github.com/seqan/seqan3/pull/1110)).
+* The application name of the `seqan3::argument_parser` is restricted to alpha-numeric characters and `_` and `-`
+  ([\#1133](https://github.com/seqan/seqan3/pull/1133)).
+* Copying and moving the `seqan3::fm_index` and `seqan3::bi_fm_index` now work properly
+  ([\#1144](https://github.com/seqan/seqan3/pull/1144)).
+* Searching in the `seqan3::fm_index` and `seqan3::bi_fm_index` constructed from a text collection containing a
+  single text now return correct result
+  ([\#1316](https://github.com/seqan/seqan3/pull/1316)).
+* The view `seqan3::views::take` is sized if the underlying range is sized
+  ([\#1146](https://github.com/seqan/seqan3/pull/1146)).
+* The detection of the pthread library works correctly on linux based systems
+  ([\#1200](https://github.com/seqan/seqan3/pull/1200)).
+* The translation table for nucleotide to amino acid translation was corrected
+  ([\#1485](https://github.com/seqan/seqan3/pull/1485)).
+* The amino acid score matrices were corrected
+  ([\#1455](https://github.com/seqan/seqan3/pull/1455)).
 
 # 3.0.0 ("Escala")
 
