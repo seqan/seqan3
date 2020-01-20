@@ -247,6 +247,8 @@ See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-us
 This is the initial release of SeqAn3.
 It is an entirely new library so there is no changelog that covers the differences to SeqAn2.
 
+Get to know SeqAn3 with our [tutorials](http://docs.seqan.de/seqan/3-master-user/usergroup1.html).
+
 Please see the release announcement:
 https://www.seqan.de/announcing-seqan3/
 
