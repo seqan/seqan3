@@ -93,7 +93,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ([\#1153](https://github.com/seqan/seqan3/pull/1153)).
 * Added `seqan3::views::translate_join`, analogue to `seqan3::views::translate` but returns a flattened range
   ([\#1171](https://github.com/seqan/seqan3/pull/1171)).
-* Added `seqan3::views::to_simd`, a view that transforms a range of ranges into chunks of seqan3::simd vectors
+* Added `seqan3::views::to_simd`, a view that transforms a range of ranges into chunks of `seqan3::simd` vectors
   ([\#1190](https://github.com/seqan/seqan3/pull/1190)).
 * Added `seqan3::views::as_const`, a view that provides only `const &` to elements of the underlying range
   ([\#1410](https://github.com/seqan/seqan3/pull/1410)).
