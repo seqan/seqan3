@@ -55,7 +55,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### I/O
 
 * [#1030] We increased our input performance using a faster iterator on the stream buffer.
-* [#1173] Support of padded alignments in the SAM/BAM format  was added.
+* [#1173] Support of padded alignments in the SAM/BAM format was added.
 * [#1192] Reading `seqan3::field::cigar` into a vector over `seqan3::cigar` is supported via
   `seqan3::alignment_file_input.`
 * [#1192] Writing `seqan3::field::cigar` into a vector over `seqan3::cigar` is supported via
