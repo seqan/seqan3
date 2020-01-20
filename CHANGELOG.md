@@ -23,7 +23,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Alphabet
 
-* Added the seqan3::dna3bs alphabet that models bisulfite-treated dna4 sequence (#1191).
+* Added seqan3::dna3bs alphabet that mimics a bisulfite-treated dna4 sequence (#1191).
+* Added `seqan3::semialphabet_any`, a semi-alphabet that type erases all other semi-alphabets of the same size.
 
 #### Alignment
 
@@ -48,7 +49,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 * Added seqan3::lzcnt, seqan3::tzcnt, and seqan3::popcount for bit manipulation (#1141).
 * Added traits for "metaprogramming" with `seqan3::type_list` and type packs.
-* Added the SIMD functions seqan3::upcast and seqan3::upcast_signed (#1190).
+* Added SIMD functions seqan3::upcast and seqan3::upcast_signed (#1190).
 
 #### I/O
 
@@ -60,10 +61,14 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ### Range
 
-* Added the seqan3::dynamic_bitset (#1153).
-* Added the seqan3::views::translate_join (#1171).
-* Added the seqan3::views::to_simd (#1190).
-* Added the seqan3::views::kmer_hash (#946).
+* Added seqan3::dynamic_bitset (#1153), a container that stores single bits and has a dynamic size.
+* Added seqan3::views::translate_join (#1171), analogue to seqan3::views::translate but returns a flattened range.
+* Added seqan3::views::to_simd (#1190), a view that.
+* Added seqan3::views::kmer_hash (#946), a view that computes hash values of an alphabet sequence given a seqan3::shape.
+* Added `seqan3::views::as_const` (#1410), a view that provides only const & to elements of the underlying range.
+* Added `seqan3::views::move`(#1410), a view that turns lvalue-references into rvalue-references.
+* Renamed `seqan3::views::all` to `seqan3::views::simplify_type` (#1410).
+* Added `seqan3::views::to` (#1033), a view that returns a container created from a range by copying all elements.
 
 #### Search
 
@@ -126,6 +131,9 @@ versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 with a vers
 
 * **The `seqan3::concatenated_sequences::data()` function has been deprecated:**
   Use `seqan3::concatenated_sequences::raw_data()` instead.
+* `seqan3::to_char` must always return a built-in character type.
+* `seqan3/range/view` has be renamed to `seqan3/range/views`.
+* namespace `seqan3::view` has been renamed to `seqan3::views`
 
 #### Search
 
@@ -159,6 +167,7 @@ versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 with a vers
 * The view seqan3::views::take is sized if the underlying range is sized (#1146).
 * The detection of the pthread library works correctly on linux based systems (#1200).
 * The translation table for nucleotide to amino acid translation was corrected.
+* The amino acid score matrices were corrected (#1455).
 
 # 3.0.0 ("Escala")
 
