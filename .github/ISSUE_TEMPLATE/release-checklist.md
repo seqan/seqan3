@@ -15,7 +15,7 @@ assignees: ''
 
 - [ ] **Tag release on Github and attach `seqan-[VERSION]-with-submodules.tar.gz` to the release.**
 
-- [ ] Bump succeeding version number.
+- [ ] Bump succeeding version number. ([include/seqan3/version.hpp](https://github.com/seqan/seqan3/blob/6391aaa014db4d04b8220a2041014295c4134f33/include/seqan3/version.hpp#L19-L24))
 - [ ] Announce release on twitter.
 - [ ] Announce release on www.seqan.de.
 - [ ] Announce release on mailing list `seqan-dev@lists.fu-berlin.de`.
