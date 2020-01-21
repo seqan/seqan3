@@ -4,6 +4,13 @@
 
 This changelog contains a top-level entry for each release with sections on new features, API changes and notable
 bug-fixes (not all bug-fixes will be listed).
+
+Get to know SeqAn3 with our [tutorials](http://docs.seqan.de/seqan/3-master-user/usergroup1.html).
+
+Please see the release announcement: https://www.seqan.de/announcing-seqan3/
+
+See the porting guide for some help on porting: http://docs.seqan.de/seqan/3-master-user/howto_porting.html
+
 See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-user/about_api.html) to learn about
 when API changes are allowed.
 
@@ -17,9 +24,9 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
-See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-user/about_api.html).
-
 # 3.0.1
+
+Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
 
 ## New features
 
@@ -149,7 +156,7 @@ See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-us
 #### Build system
 
 * [find_package](https://cmake.org/cmake/help/latest/command/find_package.html#version-selection) accepts minimum
-  versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least seqan3 with a version of `>= 3.0.1` and `< 4.0.0`)
+  versions (e.g. `find_package(SEQAN3 3.0.1)` requires at least SeqAn3 with a version of `>= 3.0.1` and `< 4.0.0`)
   ([\#1425](https://github.com/seqan/seqan3/pull/1425)).
 * The variable `SEQAN3_VERSION_STRING` defined by `find_package(SEQAN3)` was renamed to `SEQAN3_VERSION`
   ([\#1425](https://github.com/seqan/seqan3/pull/1425)).
@@ -231,7 +238,7 @@ See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-us
 * Copying and moving the `seqan3::fm_index` and `seqan3::bi_fm_index` now work properly
   ([\#1144](https://github.com/seqan/seqan3/pull/1144)).
 * Searching in the `seqan3::fm_index` and `seqan3::bi_fm_index` constructed from a text collection containing a
-  single text now return correct result
+  single text now returns the correct result
   ([\#1316](https://github.com/seqan/seqan3/pull/1316)).
 * The view `seqan3::views::take` is sized if the underlying range is sized
   ([\#1146](https://github.com/seqan/seqan3/pull/1146)).
@@ -246,13 +253,5 @@ See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-us
 
 This is the initial release of SeqAn3.
 It is an entirely new library so there is no changelog that covers the differences to SeqAn2.
-
-Get to know SeqAn3 with our [tutorials](http://docs.seqan.de/seqan/3-master-user/usergroup1.html).
-
-Please see the release announcement:
-https://www.seqan.de/announcing-seqan3/
-
-See the porting guide for some help on porting:
-http://docs.seqan.de/seqan/3-master-user/howto_porting.html
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
