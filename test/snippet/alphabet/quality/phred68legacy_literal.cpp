@@ -13,5 +13,5 @@ int main()
     std::vector<seqan3::phred68legacy> qual_vec2 = {'#'_phred68legacy, '#'_phred68legacy,
                                                     '#'_phred68legacy, '!'_phred68legacy};
 
-    seqan3::debug_stream << std::ranges::equal(qual_vec, qual_vec2) << std::endl; // prints 1 (true)
+    seqan3::debug_stream << std::ranges::equal(qual_vec, qual_vec2) << '\n'; // prints 1 (true)
 }

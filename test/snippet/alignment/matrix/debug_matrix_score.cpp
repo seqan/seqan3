@@ -26,16 +26,16 @@ int main()
         }
     };
 
-    seqan3::debug_stream << "database:\t" << database << std::endl;
-    seqan3::debug_stream << "query:\t\t" << query << std::endl;
-    seqan3::debug_stream << std::endl;
+    seqan3::debug_stream << "database:\t" << database << '\n';
+    seqan3::debug_stream << "query:\t\t" << query << '\n';
+    seqan3::debug_stream << '\n';
 
     seqan3::debug_stream << "score_matrix: " << score_matrix.cols() << " columns and "
-              << score_matrix.rows() << " rows" << std::endl;
+              << score_matrix.rows() << " rows\n";
 
     // Prints out the matrix in a convenient way
-    seqan3::debug_stream << score_matrix << std::endl; // without sequences
-    seqan3::debug_stream << debug_matrix{score_matrix, database, query} << std::endl; // with sequences
+    seqan3::debug_stream << score_matrix << '\n'; // without sequences
+    seqan3::debug_stream << debug_matrix{score_matrix, database, query} << '\n'; // with sequences
     seqan3::debug_stream << seqan3::fmtflags2::utf8 << debug_matrix{score_matrix, database, query}; // as utf8
 
     return 0;
