@@ -77,19 +77,27 @@ public:
 
     using base_type::base_type; // Inherit non-default constructors
 
-
+#if SEQAN3_DOXYGEN_ONLY(1)0
     //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa(component_type const alph) {} ))
-    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa(indirect_component_type const alph) {} ))
-    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa & operator=(component_type const alph) {} ))
-    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa & operator=(indirect_component_type const alph) {} ))
-    //!\}
+    template <typename component_type>
+    constexpr structured_aa(component_type const alph) {}
 
-    // Inherit operators from base
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
+    template <typename indirect_component_type>
+    constexpr structured_aa(indirect_component_type const alph) {}
+
+    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
+    template <typename component_type>
+    constexpr structured_aa & operator=(component_type const alph) {}
+
+    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
+    template <typename indirect_component_type>
+    constexpr structured_aa & operator=(indirect_component_type const alph) {}
+#endif
+
+    //!\brief Inherit operators from base
     using base_type::operator=;
+    //!\}
 
     /*!\name Write functions
      * \{
