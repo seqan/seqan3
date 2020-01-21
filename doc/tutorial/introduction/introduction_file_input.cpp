@@ -1,4 +1,4 @@
-#include <seqan3/std/filesystem>                // to create temp directory
+#include <seqan3/std/filesystem>                // to create tmp directory
 #include <seqan3/alphabet/nucleotide/dna4.hpp>  // to create right datastructure in tmp file
 #include <seqan3/io/sequence_file/output.hpp>   // to create tmp file
 
@@ -46,16 +46,16 @@ write_file_dummy_struct go{};
 int main ()
 {
     // Initialise a file input object with a FastA file.
-    std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
+    std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the tmp directory
 
     seqan3::sequence_file_input file_in{tmp_dir/"seq.fasta"};
 
     // Retrieve the sequences and ids.
-    for (auto &[seq, id, qual] : file_in)
+    for (auto & [seq, id, qual] : file_in)
     {
         seqan3::debug_stream << "ID:     " << id << '\n';
         seqan3::debug_stream << "SEQ:    " << seq << '\n';
-        seqan3::debug_stream << "Empty Qual." << qual << '\n';  // qual es empty for FastAfiles
+        seqan3::debug_stream << "Empty Qual." << qual << '\n';  // qual is empty for FastAfiles
     }
 
     return 0;
