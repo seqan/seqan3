@@ -1,6 +1,7 @@
 PROJECT_NAME           = "SeqAn3"
 PROJECT_BRIEF          = "The Modern C++ library for sequence analysis."
 PROJECT_LOGO           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan_logo.png
+PROJECT_NUMBER         = ${SEQAN3_VERSION}
 LAYOUT_FILE            = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/DoxygenLayout.xml
 
 ## PATHS
