@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <stdexcept>
+
 #include <seqan3/core/algorithm/bound.hpp>
 #include <seqan3/std/concepts>
 

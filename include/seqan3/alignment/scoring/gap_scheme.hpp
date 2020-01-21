@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <stdexcept>
+
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
