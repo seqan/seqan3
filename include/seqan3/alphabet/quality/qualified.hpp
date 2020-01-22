@@ -14,6 +14,7 @@
 
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/alphabet/quality/concept.hpp>
 
 namespace seqan3
 {
