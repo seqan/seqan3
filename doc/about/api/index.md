@@ -74,7 +74,9 @@ a different (updated) on-disk format.
 # Platform stability
 
 The main requirement for being able to use SeqAn is a supported compiler and in general all operating systems that
-provide a supported compiler should be supported. We currently support the following compilers:
+provide a supported compiler should be supported. We currently support the
+following compilers on 64-bit operating systems with little-endian CPU
+architectures only:
   * GCC7, GCC8, GCC9
 
 We promise to support all of the above compilers until the last release of SeqAn3, or until all of the following
