@@ -12,7 +12,7 @@
 #include <chrono>
 #include <stdlib.h>
 
-#include <seqan3/argument_parser/all.hpp>
+#include <seqan3/argument_parser/argument_parser.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 //------------------------------------------------------------------------------
