@@ -45,8 +45,6 @@
     #include <seqan/stream.h>
 #endif
 
-using namespace seqan3;
-
 std::string input
 {
     [] ()
@@ -69,13 +67,13 @@ std::string const & input_comp<seqan::Nothing> = input;
 
 #ifdef SEQAN3_HAS_ZLIB
 template <>
-std::string const input_comp<contrib::gz_istream>
+std::string const input_comp<seqan3::contrib::gz_istream>
 {
     [] ()
     {
         std::ostringstream ret;
         { // In scope to force flush of ostream on destruction.
-            contrib::gz_ostream os{ret};
+            seqan3::contrib::gz_ostream os{ret};
             std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
         }
         return ret.str();
@@ -83,13 +81,13 @@ std::string const input_comp<contrib::gz_istream>
 };
 
 template <>
-std::string const input_comp<contrib::bgzf_istream>
+std::string const input_comp<seqan3::contrib::bgzf_istream>
 {
     [] ()
     {
         std::ostringstream ret;
         { // In scope to force flush of ostream on destruction.
-            contrib::bgzf_ostream os{ret};
+            seqan3::contrib::bgzf_ostream os{ret};
             std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
         }
         return ret.str();
@@ -97,22 +95,22 @@ std::string const input_comp<contrib::bgzf_istream>
 };
 #ifdef SEQAN3_HAS_SEQAN2
 template <>
-std::string const & input_comp<seqan::GZFile> = input_comp<contrib::gz_istream>;
+std::string const & input_comp<seqan::GZFile> = input_comp<seqan3::contrib::gz_istream>;
 
 template <>
-std::string const & input_comp<seqan::BgzfFile> = input_comp<contrib::bgzf_istream>;
+std::string const & input_comp<seqan::BgzfFile> = input_comp<seqan3::contrib::bgzf_istream>;
 #endif
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
 template <>
-std::string const input_comp<contrib::bz2_istream>
+std::string const input_comp<seqan3::contrib::bz2_istream>
 {
     [] ()
     {
         std::ostringstream ret;
         { // In scope to force flush of ostream on destruction.
-            contrib::bz2_ostream os{ret};
+            seqan3::contrib::bz2_ostream os{ret};
             std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
         }
         return ret.str();
@@ -120,7 +118,7 @@ std::string const input_comp<contrib::bz2_istream>
 };
 #ifdef SEQAN3_HAS_SEQAN2
 template <>
-std::string const & input_comp<seqan::BZ2File> = input_comp<contrib::bz2_istream>;
+std::string const & input_comp<seqan::BZ2File> = input_comp<seqan3::contrib::bz2_istream>;
 #endif
 #endif
 
@@ -175,12 +173,12 @@ void compressed(benchmark::State & state)
 }
 
 #ifdef SEQAN3_HAS_ZLIB
-BENCHMARK_TEMPLATE(compressed, contrib::gz_istream);
-BENCHMARK_TEMPLATE(compressed, contrib::bgzf_istream);
+BENCHMARK_TEMPLATE(compressed, seqan3::contrib::gz_istream);
+BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bgzf_istream);
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
-BENCHMARK_TEMPLATE(compressed, contrib::bz2_istream);
+BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bz2_istream);
 #endif
 
 // ============================================================================
@@ -210,11 +208,11 @@ void compressed_type_erased(benchmark::State & state)
 }
 
 #ifdef SEQAN3_HAS_ZLIB
-BENCHMARK_TEMPLATE(compressed_type_erased, contrib::gz_istream);
-BENCHMARK_TEMPLATE(compressed_type_erased, contrib::bgzf_istream);
+BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::gz_istream);
+BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bgzf_istream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
-BENCHMARK_TEMPLATE(compressed_type_erased, contrib::bz2_istream);
+BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bz2_istream);
 #endif
 
 // ============================================================================
@@ -244,11 +242,11 @@ void compressed_type_erased2(benchmark::State & state)
 }
 
 #ifdef SEQAN3_HAS_ZLIB
-BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::gz_istream);
-BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::bgzf_istream);
+BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::gz_istream);
+BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bgzf_istream);
 #endif
 #ifdef SEQAN3_HAS_BZIP2
-BENCHMARK_TEMPLATE(compressed_type_erased2, contrib::bz2_istream);
+BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bz2_istream);
 #endif
 
 // ============================================================================

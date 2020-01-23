@@ -31,16 +31,17 @@
     #include <seqan/align_parallel.h>
 #endif
 
-using namespace seqan3;
 using namespace seqan3::test;
 
-constexpr auto affine_cfg = align_cfg::mode{global_alignment} |
-                            align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
-                            align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}};
+constexpr auto affine_cfg = seqan3::align_cfg::mode{seqan3::global_alignment} |
+                            seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
+                                                                      seqan3::gap_open_score{-10}}} |
+                            seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                         seqan3::mismatch_score{-5}}};
 
 // Aliases to beautify the benchmark output
-using score = detail::with_score_type;
-using trace = detail::with_alignment_type;
+using score = seqan3::detail::with_score_type;
+using trace = seqan3::detail::with_alignment_type;
 
 // Globally defined constants to ensure same test data.
 inline constexpr size_t sequence_length = 100;
@@ -88,20 +89,20 @@ void seqan3_affine_dna4_parallel(benchmark::State & state)
 {
     auto [vec1, vec2] = generate_data_seqan3<seqan3::dna4>();
 
-    auto data = views::zip(vec1, vec2) | views::to<std::vector>;
+    auto data = seqan3::views::zip(vec1, vec2) | seqan3::views::to<std::vector>;
 
     int64_t total = 0;
     for (auto _ : state)
     {
         for (auto && res : align_pairwise(data, affine_cfg |
-                                          align_cfg::result{result_t{}} |
-                                          align_cfg::parallel{std::thread::hardware_concurrency()}))
+                                          seqan3::align_cfg::result{result_t{}} |
+                                          seqan3::align_cfg::parallel{std::thread::hardware_concurrency()}))
         {
             total += res.score();
         }
     }
 
-    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
@@ -114,20 +115,20 @@ template <typename result_t>
 void seqan3_affine_dna4_omp_for(benchmark::State & state)
 {
     auto [vec1, vec2] = generate_data_seqan3<seqan3::dna4>();
-    auto zip = views::zip(vec1, vec2);
+    auto zip = seqan3::views::zip(vec1, vec2);
     int64_t total = 0;
     for (auto _ : state)
     {
         #pragma omp parallel for num_threads(std::thread::hardware_concurrency()) schedule(guided)
         for (size_t i = 0; i < zip.size(); ++i)
         {
-            auto rng = align_pairwise(zip[i], affine_cfg | align_cfg::result{result_t{}});
+            auto rng = align_pairwise(zip[i], affine_cfg | seqan3::align_cfg::result{result_t{}});
             auto res = *rng.begin();
             total += res.score();
         }
     }
 
-    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
@@ -155,7 +156,7 @@ void seqan2_affine_dna4_parallel(benchmark::State & state)
         total = std::accumulate(seqan::begin(res), seqan::end(res), total);
     }
 
-    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
@@ -167,7 +168,7 @@ BENCHMARK_TEMPLATE(seqan2_affine_dna4_parallel, score)->UseRealTime();
 template <typename result_t>
 void seqan2_affine_dna4_omp_for(benchmark::State & state)
 {
-    constexpr bool score_only = std::is_same_v<result_t, seqan3::detail::with_score_type>;
+    constexpr bool score_only = std::is_same_v<result_t, seqan3::seqan3::detail::with_score_type>;
 
     auto [vec1, vec2] = generate_data_seqan2<seqan::Dna>();
 
@@ -197,7 +198,7 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
         }
     }
 
-    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }

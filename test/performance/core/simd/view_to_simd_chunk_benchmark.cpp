@@ -25,8 +25,6 @@
 #include <seqan3/std/ranges>
 #include <seqan3/test/performance/sequence_generator.hpp>
 
-using namespace seqan3;
-
 // ============================================================================
 //  naive implementation without condition inside of hot loop
 // ============================================================================
@@ -34,30 +32,31 @@ using namespace seqan3;
 template <typename container_t, typename simd_t>
 void to_simd_naive_wo_condition(benchmark::State& state)
 {
-    constexpr size_t simd_length = simd_traits<simd_t>::length;
+    constexpr size_t simd_length = seqan3::simd::simd_traits<simd_t>::length;
     // Preparing the sequences
     std::vector<container_t> sequences;
     sequences.resize(simd_length);
 
     for (size_t i = 0; i < simd_length; ++i)
-        std::ranges::copy(test::generate_sequence<dna4>(500, 10), std::ranges::back_inserter(sequences[i]));
+        std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10),
+                          std::ranges::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)
     {
         // First sort the sequences by their lengths, but only use a proxy.
         auto sorted_sequences =
-            std::views::transform(views::zip(sequences, std::views::iota(0u, simd_length)), [] (auto && tpl)
+            std::views::transform(seqan3::views::zip(sequences, std::views::iota(0u, simd_length)), [] (auto && tpl)
             {
                 return std::pair{std::ranges::size(std::get<0>(tpl)), std::get<1>(tpl)};
             })
-            | views::to<std::vector<std::pair<size_t, size_t>>>;
+            | seqan3::views::to<std::vector<std::pair<size_t, size_t>>>;
 
         std::ranges::sort(sorted_sequences);
 
         // Prepare the simd representation and transform the set.
-        std::vector<simd_t, aligned_allocator<simd_t, sizeof(simd_t)>> v;
-        v.resize(sorted_sequences.back().first, fill<simd_t>(alphabet_size<dna4>));
+        std::vector<simd_t, seqan3::aligned_allocator<simd_t, sizeof(simd_t)>> v;
+        v.resize(sorted_sequences.back().first, seqan3::fill<simd_t>(seqan3::alphabet_size<seqan3::dna4>));
 
         size_t start_offset = 0;
         for (size_t k = 0; k < sorted_sequences.size(); ++k)
@@ -77,15 +76,15 @@ void to_simd_naive_wo_condition(benchmark::State& state)
 }
 
 // runs with contiguous_range
-BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<dna4>, simd_type_t<int8_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<dna4>, simd_type_t<int16_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<dna4>, simd_type_t<int32_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<dna4>, simd_type_t<int64_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int8_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int16_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int32_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int64_t>);
 
-BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<dna4>, simd_type_t<int8_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<dna4>, simd_type_t<int16_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<dna4>, simd_type_t<int32_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<dna4>, simd_type_t<int64_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int8_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int16_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int32_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int64_t>);
 
 // ============================================================================
 //  naive implementation with condition inside of hot loop
@@ -94,24 +93,26 @@ BENCHMARK_TEMPLATE(to_simd_naive_wo_condition, std::deque<dna4>, simd_type_t<int
 template <typename container_t, typename simd_t>
 void to_simd_naive_w_condition(benchmark::State& state)
 {
-    constexpr size_t simd_length = simd_traits<simd_t>::length;
+    constexpr size_t simd_length = seqan3::simd::simd_traits<simd_t>::length;
     // Preparing the sequences
     std::vector<container_t> sequences;
     sequences.resize(simd_length);
 
     for (size_t i = 0; i < simd_length; ++i)
-        std::ranges::copy(test::generate_sequence<dna4>(500, 10), std::ranges::back_inserter(sequences[i]));
+        std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10),
+                          std::ranges::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)
     {
-        size_t max_size = std::ranges::size(*(std::ranges::max_element(sequences, [] (auto const & lhs, auto const & rhs)
+        size_t max_size = std::ranges::size(*(std::ranges::max_element(sequences, [] (auto const & lhs,
+                                                                                      auto const & rhs)
         {
             return std::ranges::size(lhs) < std::ranges::size(rhs);
         })));
 
-        std::vector<simd_t, aligned_allocator<simd_t, sizeof(simd_t)>> v;
-        v.resize(max_size, fill<simd_t>(alphabet_size<dna4>));
+        std::vector<simd_t, seqan3::aligned_allocator<simd_t, sizeof(simd_t)>> v;
+        v.resize(max_size, seqan3::fill<simd_t>(seqan3::alphabet_size<seqan3::dna4>));
 
         for (size_t i = 0; i < max_size; ++i)
             for (size_t j = 0; j < simd_length; ++j)
@@ -125,15 +126,15 @@ void to_simd_naive_w_condition(benchmark::State& state)
 }
 
 // runs with contiguous_range
-BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<dna4>, simd_type_t<int8_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<dna4>, simd_type_t<int16_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<dna4>, simd_type_t<int32_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<dna4>, simd_type_t<int64_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int8_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int16_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int32_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int64_t>);
 
-BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::deque<dna4>, simd_type_t<int8_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::deque<dna4>, simd_type_t<int16_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::deque<dna4>, simd_type_t<int32_t>);
-BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::deque<dna4>, simd_type_t<int64_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int8_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int16_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int32_t>);
+BENCHMARK_TEMPLATE(to_simd_naive_w_condition, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int64_t>);
 
 // ============================================================================
 //  view implementation
@@ -144,15 +145,16 @@ void to_simd(benchmark::State& state)
 {
     // Preparing the sequences
     std::vector<container_t> sequences;
-    sequences.resize(simd_traits<simd_t>::length);
+    sequences.resize(seqan3::simd::simd_traits<simd_t>::length);
 
-    for (size_t i = 0; i < simd_traits<simd_t>::length; ++i)
-        std::ranges::copy(test::generate_sequence<dna4>(500, 10), std::ranges::back_inserter(sequences[i]));
+    for (size_t i = 0; i < seqan3::simd::simd_traits<simd_t>::length; ++i)
+        std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10),
+                          std::ranges::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)
     {
-        for (auto && chunk : sequences | views::to_simd<simd_t>)
+        for (auto && chunk : sequences | seqan3::views::to_simd<simd_t>)
             for (simd_t const & vec : chunk)
                 value += vec[0];
     }
@@ -161,21 +163,21 @@ void to_simd(benchmark::State& state)
 }
 
 // runs with contiguous_range
-BENCHMARK_TEMPLATE(to_simd, std::vector<dna4>, simd_type_t<int8_t>);
-BENCHMARK_TEMPLATE(to_simd, std::vector<dna4>, simd_type_t<int16_t>);
-BENCHMARK_TEMPLATE(to_simd, std::vector<dna4>, simd_type_t<int32_t>);
-BENCHMARK_TEMPLATE(to_simd, std::vector<dna4>, simd_type_t<int64_t>);
+BENCHMARK_TEMPLATE(to_simd, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int8_t>);
+BENCHMARK_TEMPLATE(to_simd, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int16_t>);
+BENCHMARK_TEMPLATE(to_simd, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int32_t>);
+BENCHMARK_TEMPLATE(to_simd, std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int64_t>);
 
-BENCHMARK_TEMPLATE(to_simd, std::deque<dna4>, simd_type_t<int8_t>);
-BENCHMARK_TEMPLATE(to_simd, std::deque<dna4>, simd_type_t<int16_t>);
-BENCHMARK_TEMPLATE(to_simd, std::deque<dna4>, simd_type_t<int32_t>);
-BENCHMARK_TEMPLATE(to_simd, std::deque<dna4>, simd_type_t<int64_t>);
+BENCHMARK_TEMPLATE(to_simd, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int8_t>);
+BENCHMARK_TEMPLATE(to_simd, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int16_t>);
+BENCHMARK_TEMPLATE(to_simd, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int32_t>);
+BENCHMARK_TEMPLATE(to_simd, std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int64_t>);
 
 // runs without contiguous_range
-BENCHMARK_TEMPLATE(to_simd, std::list<dna4>, simd_type_t<int8_t>);
-BENCHMARK_TEMPLATE(to_simd, std::list<dna4>, simd_type_t<int16_t>);
-BENCHMARK_TEMPLATE(to_simd, std::list<dna4>, simd_type_t<int32_t>);
-BENCHMARK_TEMPLATE(to_simd, std::list<dna4>, simd_type_t<int64_t>);
+BENCHMARK_TEMPLATE(to_simd, std::list<seqan3::dna4>, seqan3::simd::simd_type_t<int8_t>);
+BENCHMARK_TEMPLATE(to_simd, std::list<seqan3::dna4>, seqan3::simd::simd_type_t<int16_t>);
+BENCHMARK_TEMPLATE(to_simd, std::list<seqan3::dna4>, seqan3::simd::simd_type_t<int32_t>);
+BENCHMARK_TEMPLATE(to_simd, std::list<seqan3::dna4>, seqan3::simd::simd_type_t<int64_t>);
 
 // ============================================================================
 //  run

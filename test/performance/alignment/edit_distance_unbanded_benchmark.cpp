@@ -27,11 +27,10 @@
 #include <seqan/sequence.h>
 #endif
 
-using namespace seqan3;
 using namespace seqan3::test;
 
-constexpr auto edit_distance_cfg = align_cfg::edit |
-                                   align_cfg::result{with_score};
+constexpr auto edit_distance_cfg = seqan3::align_cfg::edit |
+                                   seqan3::align_cfg::result{seqan3::with_score};
 
 #ifdef SEQAN3_HAS_SEQAN2
 template <typename alphabet_t>
@@ -64,7 +63,7 @@ void seqan3_edit_distance_dna4(benchmark::State & state)
 
     for (auto _ : state)
     {
-        detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
+        seqan3::detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
         edit_distance(0u);
         score += edit_distance.score().value_or(0u);
     }
@@ -140,7 +139,7 @@ void seqan3_edit_distance_dna4_collection(benchmark::State & state)
     {
         for (auto && [seq1, seq2] : vec)
         {
-            detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
+            seqan3::detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
             edit_distance(0u);
             score += edit_distance.score().value_or(0u);
         }
@@ -186,7 +185,7 @@ void seqan2_edit_distance_dna4_collection(benchmark::State & state)
     }
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
@@ -205,7 +204,7 @@ void seqan2_edit_distance_dna4_generic_collection(benchmark::State & state)
     }
 
     state.counters["score"] = score;
-    state.counters["cells"] = pairwise_cell_updates(views::zip(vec1, vec2), edit_distance_cfg);
+    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), edit_distance_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 #endif // SEQAN3_HAS_SEQAN2
