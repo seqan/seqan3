@@ -60,15 +60,14 @@ void read_left2right(benchmark::State & state)
     }
 }
 
+using gap_sequence_gap_decorator = seqan3::gap_decorator<const std::vector<seqan3::dna4> &>;
+using gap_sequence_vector = std::vector<seqan3::gapped<seqan3::dna4>>;
+
 // Read from left to right in UNGAPPED sequence
-BENCHMARK_TEMPLATE(read_left2right, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, false)
-    ->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(read_left2right, std::vector<seqan3::gapped<seqan3::dna4>>, false)
-    ->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_left2right, gap_sequence_gap_decorator, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_left2right, gap_sequence_vector, false)->Apply(custom_arguments);
 // Read from left to right in GAPPED sequence
-BENCHMARK_TEMPLATE(read_left2right, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, true)
-    ->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(read_left2right, std::vector<seqan3::gapped<seqan3::dna4>>, true)
-    ->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_left2right, gap_sequence_gap_decorator, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(read_left2right, gap_sequence_vector, true)->Apply(custom_arguments);
 
 BENCHMARK_MAIN();

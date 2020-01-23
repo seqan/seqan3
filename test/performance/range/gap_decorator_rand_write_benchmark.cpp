@@ -23,6 +23,9 @@
 
 using seqan3::operator""_dna4;
 
+using gap_sequence_gap_decorator = seqan3::gap_decorator<const std::vector<seqan3::dna4> &>;
+using gap_sequence_vector = std::vector<seqan3::gapped<seqan3::dna4>>;
+
 // ============================================================================
 //  insert at random position
 // ============================================================================
@@ -73,11 +76,11 @@ void insert_random(benchmark::State & state)
 }
 
 // Insert gaps of length 1 at random position into UNGAPPED sequence
-BENCHMARK_TEMPLATE(insert_random, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, false)->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(insert_random, std::vector<seqan3::gapped<seqan3::dna4>>, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, gap_sequence_gap_decorator, false)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, gap_sequence_vector, false)->Apply(custom_arguments);
 // Insert gaps of length 1 at random position into GAPPED sequence
-BENCHMARK_TEMPLATE(insert_random, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, true)->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(insert_random, std::vector<seqan3::gapped<seqan3::dna4>>, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, gap_sequence_gap_decorator, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(insert_random, gap_sequence_vector, true)->Apply(custom_arguments);
 
 // ============================================================================
 //  delete at random position
@@ -135,9 +138,7 @@ void delete_random(benchmark::State & state)
 }
 
 // Erase gaps at random position from initially GAPPED sequence
-BENCHMARK_TEMPLATE(delete_random, seqan3::gap_decorator<const std::vector<seqan3::dna4> &>, true)
-    ->Apply(custom_arguments);
-BENCHMARK_TEMPLATE(delete_random, std::vector<seqan3::gapped<seqan3::dna4>>, true)
-    ->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(delete_random, gap_sequence_gap_decorator, true)->Apply(custom_arguments);
+BENCHMARK_TEMPLATE(delete_random, gap_sequence_vector, true)->Apply(custom_arguments);
 
 BENCHMARK_MAIN();

@@ -47,9 +47,8 @@ void sequential_read(benchmark::State & state)
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        std::vector<seqan3::aa27> translated_aa_sequence = dna_sequence
-                                                         | seqan3::views::translate_single
-                                                         | seqan3::views::to<std::vector<seqan3::aa27>>;
+        std::vector<seqan3::aa27> translated_aa_sequence = dna_sequence | seqan3::views::translate_single
+                                                                        | seqan3::views::to<std::vector<seqan3::aa27>>;
         sequential_read_impl(state, translated_aa_sequence);
     }
     else if constexpr (std::is_same_v<tag_t, translate_tag>)
@@ -89,9 +88,8 @@ void random_access(benchmark::State & state)
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        std::vector<seqan3::aa27> translated_aa_sequence = dna_sequence
-                                                         | seqan3::views::translate_single
-                                                         | seqan3::views::to<std::vector<seqan3::aa27>>;
+        std::vector<seqan3::aa27> translated_aa_sequence = dna_sequence | seqan3::views::translate_single
+                                                                        | seqan3::views::to<std::vector<seqan3::aa27>>;
         random_access_impl(state, translated_aa_sequence, access_positions);
     }
     else
@@ -114,9 +112,8 @@ void copy_impl(benchmark::State & state, std::vector<seqan3::dna4> const & dna_s
     for (auto _ : state)
     {
         std::vector<seqan3::aa27> translated_aa_sequence{};
-        benchmark::DoNotOptimize(translated_aa_sequence = dna_sequence
-                                                        | adaptor
-                                                        | seqan3::views::to<std::vector<seqan3::aa27>>);
+        benchmark::DoNotOptimize(translated_aa_sequence = dna_sequence | adaptor
+                                                                       | seqan3::views::to<std::vector<seqan3::aa27>>);
     }
 }
 
