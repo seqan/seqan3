@@ -81,8 +81,7 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
         uint8_t simulated_errors = (stddev == 0) ? simulated_errors_ :
                                                    std::abs(std::round(dis_error_count(gen)));
 
-        std::uniform_int_distribution<size_t> random_read_pos{0,
-                                                              std::ranges::size(ref) - read_length - simulated_errors};
+        std::uniform_int_distribution<size_t> random_read_pos{0, std::ranges::size(ref) - read_length - simulated_errors};
         size_t rpos = random_read_pos(gen);
         std::vector<alphabet_t> read_tmp{std::ranges::begin(ref) + rpos,
                                          std::ranges::begin(ref) + rpos + read_length + simulated_errors};
@@ -226,7 +225,7 @@ void unidirectional_search_stratified(benchmark::State & state, options && o)
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
     seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}} |
-                        seqan3::search_cfg::mode{seqan3::search_cfg::strata{o.strata}};
+                                seqan3::search_cfg::mode{seqan3::search_cfg::strata{o.strata}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
@@ -248,7 +247,7 @@ void bidirectional_search_stratified(benchmark::State & state, options && o)
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
     seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}} |
-                        seqan3::search_cfg::mode{seqan3::search_cfg::strata{o.strata}};
+                                seqan3::search_cfg::mode{seqan3::search_cfg::strata{o.strata}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);

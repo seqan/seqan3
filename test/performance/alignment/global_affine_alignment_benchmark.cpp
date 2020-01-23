@@ -176,7 +176,7 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
         seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(seqan3::viewszip(vec1, vec2), affine_cfg);
+    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
 }
 
