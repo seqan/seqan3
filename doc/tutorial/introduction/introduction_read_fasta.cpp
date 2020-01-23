@@ -1,6 +1,7 @@
 //! [read]
 #include <string>                               // for std::string
 #include <vector>                               // for std::vector
+
 #include <seqan3/alphabet/nucleotide/dna5.hpp>  // for dna5 datastrucutre
 #include <seqan3/argument_parser/all.hpp>       // for argument_parser
 #include <seqan3/core/debug_stream.hpp>         // for debug_stream

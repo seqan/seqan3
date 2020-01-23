@@ -31,11 +31,9 @@ Most good tutorials start with an easy *Hello World!* program. So have a look:
 This is a code snippet. You will see many code snippets in our documentation.
 Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
-other statements implied by the text.
-
-You can copy'n'paste freely from the code snippets, this implies no copyright-obligations (however distributing
-SeqAn or an application using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html)
-and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html)).
+other statements implied by the text. You can **copy'n'paste** freely from these examples,
+this implies no copyright-obligations (however distributing SeqAn or an application
+using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html)).
 
 You may ask, why we do not use std::cout or std::cerr for console output.
 Actually, for the given text it does not make a difference since seqan3::debug_stream prints to std::cerr as well.
@@ -156,8 +154,9 @@ be combined via the logical OR operator (`|`) for building combinations. Check o
 to learn more.
 
 \note
-In general, we omit `using namespace seqan3;`, to show which parts are from SeqAn3 and which aren't. However, for comprehensibility we declare string literals like _dna5 beforehand with a using directive. You can skip it, if you
-work with the overall namespace or declare it in lines 20 and 21 directly.
+We encourage you to avoid declaring `using namespace seqan3;`. This has the additional benefit of easily distinguishing
+between library features and standard C++. The only exception are string literals, where we often use
+`using seqan3::operator""_dna4;` for convenience.
 
 \note
 We use a lot of Modern C++ in SeqAn so some things might look alien at first,
