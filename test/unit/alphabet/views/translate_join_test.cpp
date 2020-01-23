@@ -190,6 +190,17 @@ TYPED_TEST(nucleotide, view_translate)
     EXPECT_RANGE_EQ(v11[1], "MHAC"_aa27);
     EXPECT_RANGE_EQ(v11[2], "SSRN"_aa27);
     EXPECT_RANGE_EQ(v11[3], "RFRE"_aa27);
+
+    // combinability
+    auto v12 = vec
+             | seqan3::views::complement
+             | seqan3::views::translate_join(seqan3::translation_frames::forward_reverse0)
+             | seqan3::views::deep{std::views::reverse};
+    EXPECT_EQ(v12.size(), 4u);
+    EXPECT_RANGE_EQ(v12[0], "AHMC"_aa27);
+    EXPECT_RANGE_EQ(v12[1], "CAHM"_aa27);
+    EXPECT_RANGE_EQ(v12[2], "NRSS"_aa27);
+    EXPECT_RANGE_EQ(v12[3], "ERFR"_aa27);
 }
 
 TYPED_TEST(nucleotide, view_translate_concepts)
