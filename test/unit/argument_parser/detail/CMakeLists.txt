@@ -1,4 +1,3 @@
-# seqan3_test_unit_BINARY_DIR is needed for debian builds
 find_path (SEQAN3_TEST_LICENSE_DIR NAMES LICENSE.md HINTS "${SEQAN3_CLONE_DIR}" "${seqan3_test_unit_BINARY_DIR}/..")
 
 add_definitions(-DSEQAN3_TEST_LICENSE_DIR="${SEQAN3_TEST_LICENSE_DIR}")
