@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -931,10 +931,7 @@ public:
         assert(index != nullptr);
 
         std::vector<size_type> occ(count());
-        for (size_type i = 0; i < occ.size(); ++i)
-        {
-            occ[i] = offset() - index->fwd_fm.index[fwd_lb + i];
-        }
+        locate(occ);
         return occ;
     }
 
@@ -948,15 +945,44 @@ public:
 
         std::vector<std::pair<size_type, size_type>> occ;
         occ.reserve(count());
-        for (size_type i = 0; i < count(); ++i)
+        locate(occ);
+        return occ;
+    }
+
+    //!\overload
+    void locate(std::vector<size_type> & occ) const
+    //!\cond
+        requires index_t::text_layout_mode == text_layout::single
+    //!\endcond
+    {
+        assert(index != nullptr);
+
+        auto const s = occ.size();
+        auto const c = count();
+        occ.resize(s + c);
+        for (size_type i = 0; i < c; ++i)
+            occ[s + i] = offset() - index->fwd_fm.index[fwd_lb + i];
+    }
+
+    //!\overload
+    void locate(std::vector<std::pair<size_type, size_type>> & occ) const
+    //!\cond
+        requires index_t::text_layout_mode == text_layout::collection
+    //!\endcond
+    {
+        assert(index != nullptr);
+
+        auto const c = count();
+        occ.reserve(occ.size() + c);
+        for (size_type i = 0; i < c; ++i)
         {
             size_type loc = offset() - index->fwd_fm.index[fwd_lb + i];
             size_type sequence_rank = index->fwd_fm.text_begin_rs.rank(loc + 1);
             size_type sequence_position = loc - index->fwd_fm.text_begin_ss.select(sequence_rank);
             occ.emplace_back(sequence_rank - 1, sequence_position);
         }
-        return occ;
     }
+
 
     /*!\brief Locates the occurrences of the searched query in the text on demand, i.e. a ranges::view is returned
      *        and every position is located once it is accessed.

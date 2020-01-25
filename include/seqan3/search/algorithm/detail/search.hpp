@@ -43,8 +43,9 @@ namespace seqan3::detail
  * Strong exception guarantee if iterating the query does not change its state and if invoking a possible delegate
  * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
-template <typename index_t, typename query_t, typename configuration_t>
-inline auto search_single(index_t const & index, query_t & query, configuration_t const & cfg)
+template <typename index_t, typename query_t, typename configuration_t, typename hits_t>
+// TODO add another separate argument for cursors
+inline auto search_single(index_t const & index, query_t & query, configuration_t const & cfg, hits_t & hits)
 {
     using search_traits_t = search_traits<configuration_t>;
 
@@ -73,6 +74,8 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     //                             " of errors for a specific error type.");
 
     // construct internal delegate for collecting hits for later filtering (if necessary)
+
+    //TODO this needs to be externalised as well, but logic in here needs to change a little (never clear in here!)
     std::vector<typename index_t::cursor_type> internal_hits;
     auto internal_delegate = [&internal_hits, &max_error] (auto const & it)
     {
@@ -127,17 +130,13 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     // output cursors or text_positions
     if constexpr (search_traits_t::search_return_index_cursor)
     {
-        return internal_hits;
+        hits = std::move(internal_hits);
     }
     else
     {
-        using hit_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
-                                         std::pair<typename index_t::size_type, typename index_t::size_type>,
-                                         typename index_t::size_type>;
-        std::vector<hit_t> hits;
-
         if constexpr (search_traits_t::search_best_hits)
         {
+
             // only one cursor is reported but it might contain more than one text position
             if (!internal_hits.empty())
             {
@@ -147,15 +146,17 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         }
         else
         {
+            hits.reserve(internal_hits.size());
             for (auto const & cur : internal_hits)
+                cur.locate(hits);
+
+            //TODO when are hits not unique?
+            if (max_error.insertion || max_error.deletion)
             {
-                for (auto const & text_pos : cur.locate())
-                    hits.push_back(text_pos);
-                std::sort(hits.begin(), hits.end());
+                std::ranges::sort(hits);
                 hits.erase(std::unique(hits.begin(), hits.end()), hits.end());
             }
         }
-        return hits;
     }
 }
 
@@ -178,7 +179,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
  * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
 template <typename index_t, typename queries_t, typename configuration_t>
-inline auto search_all(index_t const & index, queries_t && queries, configuration_t const & cfg)
+inline auto search_all(index_t const & index, queries_t & queries, configuration_t const & cfg)
 {
     using cfg_t = remove_cvref_t<configuration_t>;
     // return type: for each query: a vector of text_positions (or cursors)
@@ -192,21 +193,28 @@ inline auto search_all(index_t const & index, queries_t && queries, configuratio
                                      typename index_t::cursor_type,
                                      text_pos_t>;
 
-    if constexpr (std::ranges::forward_range<queries_t> && std::ranges::random_access_range<value_type_t<queries_t>>)
+    //TODO have separate object here for cursors and for hits
+    // make these externalisable via a config object; config object should hold thread_local variables to be thread-safe
+    if constexpr (std::ranges::forward_range<queries_t> &&
+                  std::ranges::random_access_range<std::ranges::range_reference_t<queries_t>>)
     {
         // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
         std::vector<std::vector<hit_t>> hits;
-        hits.reserve(std::distance(queries.begin(), queries.end()));
-        for (auto const query : queries)
+        hits.resize(std::ranges::distance(queries));
+        size_t count = 0;
+        for (auto && query : queries)
         {
-            hits.push_back(search_single(index, query, cfg));
+            search_single(index, query, cfg, hits[count]);
+            ++count;
         }
         return hits;
     }
     else // std::ranges::random_access_range<queries_t>
     {
+        std::vector<hit_t> hits;
         // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
-        return search_single(index, queries, cfg);
+        search_single(index, queries, cfg, hits);
+        return hits;
     }
 }
 
