@@ -275,7 +275,7 @@ TEST(help_page_printing, copyright)
     const char * argvCopyright[] = {"./copyright", "--copyright"};
     argument_parser copyright("myApp", 2, argvCopyright);
 
-    std::ifstream license_file{std::string{{SEQAN_INCLUDE_DIR}} + "/../LICENSE.md"};
+    std::ifstream license_file{std::string{{SEQAN3_TEST_LICENSE_DIR}} + "/LICENSE.md"};
     std::ranges::subrange<std::istreambuf_iterator<char>, std::istreambuf_iterator<char>> sub
     {
         std::istreambuf_iterator<char>(license_file),

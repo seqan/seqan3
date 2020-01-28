@@ -25,6 +25,8 @@ option (SEQAN3_TEST_BUILD_OFFLINE "Skip the update step of external projects." O
 # Paths to folders.
 # ----------------------------------------------------------------------------
 
+find_path (SEQAN3_TEST_INCLUDE_DIR NAMES seqan3/test/tmp_filename.hpp HINTS "${CMAKE_CURRENT_LIST_DIR}/include/")
+
 set (SEQAN3_BENCHMARK_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
 set (SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
 
@@ -42,7 +44,7 @@ file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
 add_library (seqan3_test INTERFACE)
 target_compile_options (seqan3_test INTERFACE "-pedantic"  "-Wall" "-Wextra" "-Werror")
 target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
-target_include_directories (seqan3_test INTERFACE "${SEQAN3_CLONE_DIR}/test/include/")
+target_include_directories (seqan3_test INTERFACE "${SEQAN3_TEST_INCLUDE_DIR}")
 add_library (seqan3::test ALIAS seqan3_test)
 
 # seqan3::test::performance specifies required flags, includes and libraries
