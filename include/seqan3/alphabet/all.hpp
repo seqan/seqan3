@@ -123,20 +123,20 @@
  * seqan3::writable_alphabet whenever the values might be changed.
  * Semi-alphabets are less useful in application code.
  *
- * |                                  | seqan3::semialphabet | seqan3::writable_semialphabet | seqan3::alphabet | seqan3::writable_alphabet | Aux |
- * |----------------------------------|:--------------------:|:----------------------------:|:----------------:|:------------------------:|:---:|
- * | seqan3::alphabet_size            | ✅                    | ✅                            | ✅                | ✅                        |     |
- * | seqan3::to_rank                  | ✅                    | ✅                            | ✅                | ✅                        |     |
- * | seqan3::alphabet_rank_t          | ✅                    | ✅                            | ✅                | ✅                        |  🔗 |
- * | seqan3::assign_rank_to           |                      | ✅                            |                  | ✅                        |     |
- * | seqan3::to_char                  |                      |                              | ✅                | ✅                        |     |
- * | seqan3::alphabet_char_t          |                      |                              | ✅                | ✅                        |  🔗 |
- * | seqan3::assign_char_to           |                      |                              |                  | ✅                        |     |
- * | seqan3::char_is_valid_for        |                      |                              |                  | ✅                        |     |
- * | seqan3::assign_char_strictly_to  |                      |                              |                  | ✅                        |  🔗 |
+ * |                                                            | [semialphabet](seqan3::semialphabet) | [writable_semialphabet](seqan3::writable_semialphabet) | [alphabet](seqan3::alphabet) | [writable_alphabet](seqan3::writable_alphabet) | Aux |
+ * |------------------------------------------------------------|:------------------------------------:|:------------------------------------------------------:|:----------------------------:|:----------------------------------------------:|:---:|
+ * | [alphabet_size](seqan3::alphabet_size)                     | ✅                                    | ✅                                                      | ✅                            | ✅                                               |     |
+ * | [to_rank](seqan3::to_rank)                                 | ✅                                    | ✅                                                      | ✅                            | ✅                                               |     |
+ * | [alphabet_rank_t](seqan3::alphabet_rank_t)                 | ✅                                    | ✅                                                      | ✅                            | ✅                                               |  🔗  |
+ * | [assign_rank_to](seqan3::assign_rank_to)                   |                                      | ✅                                                      |                              | ✅                                               |     |
+ * | [to_char](seqan3::to_char)                                 |                                      |                                                        | ✅                            | ✅                                               |     |
+ * | [alphabet_char_t](seqan3::alphabet_char_t)                 |                                      |                                                        | ✅                            | ✅                                               |  🔗  |
+ * | [assign_char_to](seqan3::assign_char_to)                   |                                      |                                                        |                              | ✅                                               |     |
+ * | [char_is_valid_for](seqan3::char_is_valid_for)             |                                      |                                                        |                              | ✅                                               |     |
+ * | [assign_char_strictly_to](seqan3::assign_char_strictly_to) |                                      |                                                        |                              | ✅                                               |  🔗  |
  *
  * The above table shows all alphabet concepts and related functions and type traits.
- * The entities marked as "auxiliary" provide shortcuts to the other "essential" entitities.
+ * The entities marked as "auxiliary" provide shortcuts to the other "essential" entities.
  * This difference is only relevant if you want to create your own alphabet (you do not need to provide an
  * implementation for the "auxiliary" entities, they are provided automatically).
  *

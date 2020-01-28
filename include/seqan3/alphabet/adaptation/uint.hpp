@@ -32,6 +32,7 @@ namespace seqan3::detail
 {
 //!\brief Whether a type is `uint8_t`, `uint16_t` or `uint32_t`.
 //!\ingroup adaptation
+//!\hideinitializer
 template <typename type>
 constexpr bool is_uint_adaptation_v = std::same_as<type, uint8_t>  ||
                                       std::same_as<type, uint16_t> ||

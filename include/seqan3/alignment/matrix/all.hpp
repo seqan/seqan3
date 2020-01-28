@@ -12,7 +12,7 @@
 
 #pragma once
 
-/*!\defgroup alignment_matrix matrix
+/*!\defgroup alignment_matrix Matrix
  * \brief Provides data structures for representing alignment coordinates and alignments as a matrix.
  * \ingroup alignment
  * \see alignment
