@@ -1,8 +1,11 @@
-/* Jongkyu Kim (j.kim@fu-berlin.de), 2016.01.12 */
+/* Jongkyu Kim (j.kim@fu-berlin.de), 2016.01.12
+   Adaptations by Enrico Seiler (enrico.seiler@fu-berlin.de), 2020 */
 
+// Get the current script path https://stackoverflow.com/a/710996
 var scripts = document.getElementsByTagName('script');
 var lastScript = scripts[scripts.length-1];
 var scriptName = lastScript.src;
+// Remove the script name (version.js) from the path
 var split = scriptName.split("/");
 DOCUMENT_URL = split.slice(0, split.length - 2).join("/") + "/";
 
