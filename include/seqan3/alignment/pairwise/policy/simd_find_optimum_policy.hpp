@@ -120,7 +120,7 @@ protected:
     }
 
     //!\brief Befriend the seqan3::detail::simd_affine_gap_policy to grant access to the check_score_of_cell function.
-    template <typename other_alignment_algorithm_t, typename score_t, typename is_local_t>
+    template <typename other_alignment_algorithm_t, simd_concept score_t, typename is_local_t>
     friend class simd_affine_gap_policy;
 
     //!\brief Allow seqan3::detail::affine_gap_init_policy to access check_score.
