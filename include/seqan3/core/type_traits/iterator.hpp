@@ -38,7 +38,7 @@ template <std::input_iterator it_t>
 struct value_type<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = typename std::iterator_traits<std::remove_reference_t<it_t>>::value_type;
+    using type = std::iter_value_t<it_t>;
 };
 
 // see specialisation for ranges in core/type_traits/range.hpp
@@ -55,7 +55,7 @@ template <std::input_iterator it_t>
 struct reference<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = typename std::iterator_traits<std::remove_reference_t<it_t>>::reference;
+    using type = std::iter_reference_t<it_t>;
 };
 
 // see specialisation for ranges in core/type_traits/range.hpp
@@ -72,7 +72,7 @@ template <std::input_iterator it_t>
 struct rvalue_reference<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = decltype(std::ranges::iter_move(std::declval<it_t &>()));
+    using type = std::iter_rvalue_reference_t<it_t>;
 };
 
 // see specialisation for ranges in core/type_traits/range.hpp
@@ -95,7 +95,7 @@ template <std::weakly_incrementable it_t>
 struct difference_type<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = typename std::iterator_traits<std::remove_reference_t<it_t>>::difference_type;
+    using type = std::iter_difference_t<it_t>;
 };
 
 // see specialisation for ranges in core/type_traits/range.hpp

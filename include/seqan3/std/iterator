@@ -30,7 +30,6 @@
 #include <range/v3/iterator/traits.hpp>
 
 #include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
 
 // ============================================================================
 //  namespace aliasing
