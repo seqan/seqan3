@@ -30,30 +30,26 @@ using test_matrix_t = seqan3::detail::two_dimensional_matrix<score_t, allocator_
 template <typename score_type, matrix_major_order order = matrix_major_order::row>
 std::vector<score_type, std::allocator<score_type>> create_matrix_storage()
 {
-    // this is a small hack to allow simd types in an initialiser list on gcc 7;
-#if defined(__GNUC__) && (__GNUC__ == 7)
+    // this is a small hack to allow simd types in an initialiser list on gcc 7 and gcc 10;
     using storage_t = std::array<score_type, 12>;
-#else
-    using storage_t = std::vector<score_type>;
-#endif
 
     // note: we represent the same matrix in one case with a row-wise data layout and in the other case with a
     // column-wise data layout. Also note that the score_type can be a builtin integer or a simd vector of a builtin
     // integer.
     storage_t row_wise
-    {
+    {{
         score_type{0}, score_type{1}, score_type{ 2}, score_type{ 3},
         score_type{4}, score_type{5}, score_type{ 6}, score_type{ 7},
         score_type{8}, score_type{9}, score_type{10}, score_type{11}
-    };
+    }};
 
     storage_t column_wise
-    {
+    {{
         score_type{0}, score_type{4}, score_type{8},
         score_type{1}, score_type{5}, score_type{9},
         score_type{2}, score_type{6}, score_type{10},
         score_type{3}, score_type{7}, score_type{11}
-    };
+    }};
 
     // for a simd vector we make sure that some simd values are completely set, i.e. each scalar value in that simd
     // vector has some value.
