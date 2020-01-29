@@ -155,7 +155,7 @@ SEQAN3_CONCEPT fm_index_cursor_specialisation = std::semiregular<t> && requires 
 
     requires fm_index_specialisation<typename t::index_type>;
 
-    requires requires (typename t::index_type const index) { { t(index) } };
+    requires requires (typename t::index_type const index) { { t(index) }; };
 
     requires requires (t cur,
                        typename t::index_type::alphabet_type const c,
@@ -248,7 +248,7 @@ SEQAN3_CONCEPT bi_fm_index_cursor_specialisation = fm_index_cursor_specialisatio
 {
     requires bi_fm_index_specialisation<typename t::index_type>;
 
-    requires requires (typename t::index_type const index) { { t(index) } };
+    requires requires (typename t::index_type const index) { { t(index) }; };
 
     requires requires (t cur,
                        typename t::index_type::alphabet_type const c,
