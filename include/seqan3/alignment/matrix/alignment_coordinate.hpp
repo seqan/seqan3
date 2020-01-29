@@ -89,7 +89,7 @@ public:
     //!\brief Copy-constructs from another advanceable_alignment_coordinate with a different policy.
     template <advanceable_alignment_coordinate_state other_state>
     //!\cond
-        requires !std::same_as<other_state, state>
+        requires other_state != state
     //!\endcond
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> const & other) :
         first{other.first},
@@ -99,7 +99,7 @@ public:
     //!\brief Move-constructs from another advanceable_alignment_coordinate with a different policy.
     template <advanceable_alignment_coordinate_state other_state>
     //!\cond
-        requires !std::same_as<other_state, state>
+        requires other_state != state
     //!\endcond
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> && other) :
         first{std::move(other.first)},
