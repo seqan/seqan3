@@ -264,14 +264,24 @@ private:
  */
 //!\brief Deduction guide for a parameter pack over an arithmetic type.
 template <arithmetic ...option_types>
+//!\cond
+    requires !(std::same_as<char, option_types> || ...)
+//!\endcond
 value_list_validator(option_types...) -> value_list_validator<double>;
 
 //!\brief Deduction guide for ranges over an arithmetic type.
 template <std::ranges::forward_range range_type>
 //!\cond
-    requires arithmetic<std::ranges::range_value_t<range_type>>
+    requires arithmetic<std::ranges::range_value_t<range_type>> &&
+             !std::same_as<std::ranges::range_value_t<range_type>, char>
 //!\endcond
 value_list_validator(range_type && rng) -> value_list_validator<double>;
+
+//!\brief C-style string deduces to std::string.
+value_list_validator(char const *) -> value_list_validator<std::string>;
+
+//!\brief C-style string deduces to std::string.
+value_list_validator(char *) -> value_list_validator<std::string>;
 
 //!\brief Given a parameter pack of types that are convertible to std::string, delegate to value type std::string.
 template <typename ...option_types>

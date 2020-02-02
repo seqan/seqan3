@@ -708,20 +708,31 @@ TEST(validator_test, value_list_validator_success)
     // all arithmetic types are deduced to double in order to easily allow chaining of arithmetic validators
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
                  decltype(seqan3::value_list_validator{1})>));
+    // except char
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<char>,
+                 decltype(seqan3::value_list_validator{'c'})>));
     // The same holds for a range of arithmetic types
     std::vector v{1, 2, 3};
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
                  decltype(seqan3::value_list_validator{v})>));
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
                  decltype(seqan3::value_list_validator{v | seqan3::views::take(2)})>));
+    std::vector v2{'1', '2', '3'};
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<char>,
+                 decltype(seqan3::value_list_validator{v2})>));
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<char>,
+                 decltype(seqan3::value_list_validator{v2 | views::take(2)})>));
     // const char * is deduced to std::string
     std::vector v2{"ha", "ba", "ma"};
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
+                 decltype(seqan3::value_list_validator{"ha"})>));
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
                  decltype(seqan3::value_list_validator{"ha", "ba", "ma"})>));
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
                  decltype(seqan3::value_list_validator{v2})>));
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
                  decltype(seqan3::value_list_validator{v2 | seqan3::views::take(2)})>));
+
     // custom types are used as is
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<foo>,
                  decltype(seqan3::value_list_validator{foo::one, foo::two})>));
