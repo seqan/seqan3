@@ -27,12 +27,13 @@ Most good tutorials start with an easy *Hello World!* program. So have a look:
 \snippet introduction_hello_world.cpp hello
 
 \note
+
 This is a code snippet. You will see many code snippets in our documentation.
 Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
-other statements implied by the text. You can copy'n'paste freely from these examples,
+other statements implied by the text. You can **copy'n'paste** freely from these examples,
 this implies no copyright-obligations (however distributing SeqAn or an application
-using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html).
+using it does, see [Copyright](https://docs.seqan.de/seqan/3-master-user/about_copyright.html) and [Citing](https://docs.seqan.de/seqan/3-master-user/about_citing.html)).
 
 You may ask, why we do not use std::cout or std::cerr for console output.
 Actually, for the given text it does not make a difference since seqan3::debug_stream prints to std::cerr as well.
@@ -102,8 +103,7 @@ you can enter it in the search bar (top-right).
 Let's look at some functions of the IO module: SeqAn provides fast and easy access to biological file formats.
 The following code example demonstrates the interface of seqan3::sequence_file_input.
 
-\snippet introduction_align.cpp sequence_input_include
-\snippet introduction_align.cpp sequence_input
+\snippet introduction_file_input.cpp fileinput
 
 Can you imagine anything easier? After you have initialised the instance with a filename,
 you can simply step through the file in a for loop and retrieve the fields via
@@ -142,7 +142,6 @@ The pairwise sequence alignment is one of the core algorithms in SeqAn and used 
 and apps. It is strongly optimised for speed and parallel execution while providing exact results and a
 generic interface.
 
-\snippet introduction_align.cpp alignment_include
 \snippet introduction_align.cpp alignment
 
 The algorithm returns a range of result objects – which is the reason for the loop here (in this case the range
@@ -151,7 +150,13 @@ algorithm which then executes all alignments in parallel and stores the results 
 objects. The second argument to seqan3::align_pairwise is the *configuration* which allows you to specify
 a lot of parameters for the alignment computation, for instance score functions, banded alignment and whether
 you wish to compute a traceback or not. The configurations have their own namespace seqan3::align_cfg and can
-be combined via the logical OR operator (`|`) for building combinations. Check out the alignment tutorial if you want to learn more.
+be combined via the logical OR operator (`|`) for building combinations. Check out the alignment tutorial if you want
+to learn more.
+
+\note
+We encourage you to avoid declaring `using namespace seqan3;`. This has the additional benefit of easily distinguishing
+between library features and standard C++. The only exception are string literals, where we often use
+`using seqan3::operator""_dna4;` for convenience.
 
 \note
 We use a lot of Modern C++ in SeqAn so some things might look alien at first,

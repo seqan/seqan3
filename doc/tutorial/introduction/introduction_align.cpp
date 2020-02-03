@@ -1,17 +1,14 @@
-#include <seqan3/io/sequence_file/output.hpp>
+//! [alignment]
+#include <vector>                                                           // for std::vector
 
-//! [sequence_input_include]
-#include <seqan3/core/debug_stream.hpp>      // for debug_stream
-#include <seqan3/io/sequence_file/input.hpp> // for sequence_file_input
-//! [sequence_input_include]
-
-//! [alignment_include]
-#include <tuple>                                                          // for std::make_pair
-#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp> // for alignment stream operator
-#include <seqan3/alignment/pairwise/align_pairwise.hpp>                   // for align_pairwise
-//! [alignment_include]
-
-using seqan3::operator""_dna4;
+#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>   // for alignment stream operator
+#include <seqan3/alignment/pairwise/align_pairwise.hpp>                     // for align_pairwise
+#include <seqan3/alphabet/nucleotide/dna5.hpp>                              // for dna5 datastrucutre
+#include <seqan3/argument_parser/all.hpp>                                   // for argument_parser
+#include <seqan3/core/debug_stream.hpp>                                     // for debug_stream
+#include <seqan3/io/sequence_file/input.hpp>                                // for sequence_file_input
+#include <seqan3/io/sequence_file/output.hpp>                               // for sequence_file_output
+#include <seqan3/std/filesystem>                                            // for tmp_dir
 
 int main()
 {
@@ -20,26 +17,22 @@ int main()
     {
         // Create a /tmp/my.fasta file.
         seqan3::sequence_file_output file_out{filename};
-        file_out.emplace_back("ACGTGATG"_dna4, std::string{"seq1"});
-        file_out.emplace_back("AGTGATACT"_dna4, std::string{"seq2"});
+
+        using seqan3::operator""_dna5;
+
+        file_out.emplace_back("ACGTGATG"_dna5, std::string{"seq1"});
+        file_out.emplace_back("AGTGATACT"_dna5, std::string{"seq2"});
     }
 
-//! [sequence_input]
-    // Initialise a file input object with a FastA file.
-    seqan3::sequence_file_input file_in{filename}; // filename: "seq.fasta"
+    // Initialise a file input object and a vector
+    seqan3::sequence_file_input file_in{filename};
+    std::vector<seqan3::dna5_vector> sequences;
 
-    // Retrieve the sequences and ids.
-    for (auto &[seq, id, qual] : file_in)
+    for (auto & [ seq, id, qual ] : file_in)
     {
-        seqan3::debug_stream << "ID:  " << id << '\n';
-        seqan3::debug_stream << "SEQ: " << seq << '\n';
-        seqan3::debug_stream << "EMPTY QUAL." << qual << '\n'; // qual is empty for FastA files
+        sequences.push_back(seq);
     }
-//! [sequence_input]
 
-    using seqan3::operator""_dna5;
-    std::vector<seqan3::dna5_vector> sequences{"ACGTGATG"_dna5, "AGTGATACT"_dna5};
-//! [alignment]
     // Call a pairwise alignment with edit distance and traceback.
     for (auto && res : align_pairwise(std::tie(sequences[0], sequences[1]),
                                       seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment}))
@@ -51,7 +44,7 @@ int main()
                                                           //            | |||||
                                                           //            A-GTGATACT
     }
-//! [alignment]
     std::filesystem::remove(filename);
     return 0;
 }
+//! [alignment]
