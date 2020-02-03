@@ -18,8 +18,6 @@
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take.hpp>
 
-using namespace seqan3;
-
 // THIS FILE IMPLICITLY TESTS seqan3::views::slice, because that is just drop piped into take
 
 template <typename container_t, typename drop_t, typename take_t, bool single_pass = false>
@@ -33,8 +31,8 @@ void sequential_read(benchmark::State & state)
 
     uint8_t dummy = 0;
 
-    // if single_pass, add views::single_pass_input, otherwise just &
-    using single_t = std::conditional_t<single_pass, decltype(c | views::single_pass_input), container_t &>;
+    // if single_pass, add seqan3::views::single_pass_input, otherwise just &
+    using single_t = std::conditional_t<single_pass, decltype(c | seqan3::views::single_pass_input), container_t &>;
 
     if constexpr (std::same_as<drop_t, void>)
     {

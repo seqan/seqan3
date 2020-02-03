@@ -15,8 +15,6 @@
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 
-using namespace seqan3;
-
 template <typename t>
 using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;
 
@@ -30,7 +28,7 @@ using small_vec = seqan3::small_vector<t, 10'000>;
 template <template <typename> typename container_t, typename alphabet_t>
 void sequential_write(benchmark::State & state)
 {
-    auto cont_rando = test::generate_sequence<alphabet_t>(10000, 0, 0);
+    auto cont_rando = seqan3::test::generate_sequence<alphabet_t>(10000, 0, 0);
     container_t<alphabet_t> source(cont_rando.begin(), cont_rando.end());
 
     alphabet_t a{};
@@ -41,7 +39,7 @@ void sequential_write(benchmark::State & state)
     }
 
     state.counters["sizeof"] = sizeof(alphabet_t);
-    if constexpr (alphabet<alphabet_t>)
+    if constexpr (seqan3::alphabet<alphabet_t>)
         state.counters["alph_size"] = seqan3::alphabet_size<alphabet_t>;
 }
 
