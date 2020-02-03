@@ -55,9 +55,9 @@ void sequential_read(benchmark::State & state)
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        std::vector<std::vector<seqan3::aa27>> translated_aa_sequences = dna_sequence_collection
-                                                            | seqan3::views::translate_join
-                                                            | seqan3::views::to<std::vector<std::vector<seqan3::aa27>>>;
+        std::vector<seqan3::aa27_vector> translated_aa_sequences = dna_sequence_collection
+                                                                 | seqan3::views::translate_join
+                                                                 | seqan3::views::to<std::vector<seqan3::aa27_vector>>;
         sequential_read_impl(state, translated_aa_sequences);
     }
     else if constexpr (std::is_same_v<tag_t, translate_tag>)
@@ -119,9 +119,9 @@ void random_access(benchmark::State & state)
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        std::vector<std::vector<seqan3::aa27>> translated_aa_sequences = dna_sequence_collection
-                                                            | seqan3::views::translate_join
-                                                            | seqan3::views::to<std::vector<std::vector<seqan3::aa27>>>;
+        std::vector<seqan3::aa27_vector> translated_aa_sequences = dna_sequence_collection
+                                                                 | seqan3::views::translate_join
+                                                                 | seqan3::views::to<std::vector<seqan3::aa27_vector>>;
         random_access_impl(state, translated_aa_sequences, access_positions_outer, access_positions_inner);
     }
     else
@@ -145,10 +145,10 @@ void copy_impl(benchmark::State & state,
 {
     for (auto _ : state)
     {
-        std::vector<std::vector<seqan3::aa27>> translated_aa_sequences{};
+        std::vector<seqan3::aa27_vector> translated_aa_sequences{};
         benchmark::DoNotOptimize(translated_aa_sequences = dna_sequence_collection
                                                          | adaptor
-                                                         | seqan3::views::to<std::vector<std::vector<seqan3::aa27>>>);
+                                                         | seqan3::views::to<std::vector<seqan3::aa27_vector>>);
     }
 }
 
