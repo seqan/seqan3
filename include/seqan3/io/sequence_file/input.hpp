@@ -440,8 +440,12 @@ public:
      */
     sequence_file_input(std::filesystem::path filename,
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary}, stream_deleter_default}
+        primary_stream{new std::ifstream{}, stream_deleter_default}
     {
+        primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
+        static_cast<std::basic_ifstream<char> *>(primary_stream.get())->open(filename,
+                                                                             std::ios_base::in | std::ios::binary);
+
         if (!primary_stream->good())
             throw file_open_error{"Could not open file " + filename.string() + " for reading."};
 
@@ -598,6 +602,8 @@ protected:
      */
     //!\brief Buffer for a single record.
     record_type record_buffer;
+    //!\brief A larger (compared to stl default) stream buffer to use when reading from a file.
+    std::vector<char> stream_buffer{std::vector<char>(1'000'000)};
     //!\}
 
     /*!\name Stream / file access
