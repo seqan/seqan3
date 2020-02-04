@@ -45,7 +45,7 @@ std::vector<std::vector<std::pair<T1, T2>>> uniquify(std::vector<std::vector<std
     return v;
 }
 
-void random_text(std::vector<dna4> & text, uint64_t const length)
+void random_text(seqan3::dna4_vector & text, uint64_t const length)
 {
     uint8_t alphabet_size{4};
 

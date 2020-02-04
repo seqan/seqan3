@@ -15,7 +15,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 using sdsl_byte_index_type = sdsl::csa_wt<
         sdsl::wt_blcd<
@@ -39,7 +39,7 @@ TYPED_TEST_SUITE_P(fm_index_cursor_collection_test);
 
 TYPED_TEST_P(fm_index_cursor_collection_test, ctr)
 {
-    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "ACGACG"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGACG"_dna4, "ACGACG"_dna4};
     typename TypeParam::index_type fm{text};
 
     // custom constructor
@@ -69,28 +69,29 @@ TYPED_TEST_P(fm_index_cursor_collection_test, ctr)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, begin)
 {
-    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "ACGACG"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGACG"_dna4, "ACGACG"_dna4};
     typename TypeParam::index_type fm{text};
 
     // begin
     TypeParam it(fm);
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,1}, {0,2}, {0,3}, {0,4},
-                                                                                 {0,5}, {0,6}, {1,0},{1,1}, {1,2},
-                                                                                 {1,3}, {1,4}, {1,5}, {1,6}}));
-                                                                                 // one sentinel position included
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,1}, {0,2}, {0,3},
+                                                                                         {0,4}, {0,5}, {0,6},
+                                                                                         {1,0},{1,1}, {1,2}, {1,3},
+                                                                                         {1,4}, {1,5}, {1,6}}));
+                                                                                       // one sentinel position included
     EXPECT_EQ(it.query_length(), 0u);
     EXPECT_EQ(it.count(), 14u);
 }
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range)
 {
-    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right(range)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("CG"_dna4));
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {1,2}, {1,6}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {1,2}, {1,6}}));
     EXPECT_EQ(it.query_length(), 2u);
     EXPECT_EQ(it.count(), 4u);
 
@@ -112,13 +113,13 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_empty_text)
 {
-    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, ""_dna4, ""_dna4, "TGCGATCGA"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGACG"_dna4, ""_dna4, ""_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right(range)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("CG"_dna4));
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {3,2}, {3,6}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {3,2}, {3,6}}));
     EXPECT_EQ(it.query_length(), 2u);
     EXPECT_EQ(it.count(), 4u);
 
@@ -141,7 +142,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_empty_text)
 // TODO: doesn't work with the current structure of typed tests
 // TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_convertible_range)
 // {
-//     std::vector<std::vector<dna4>> text{"ANGACGNN"_dna5};
+//     std::vector<seqan3::dna4_vector> text{"ANGACGNN"_dna5};
 //     typename TypeParam::index_type fm{text};
 //
 //     // successful extend_right(range) using a different alphabet
@@ -153,17 +154,17 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_empty_text)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char)
 {
-    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right(char)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("A"_dna4));
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}, {1,4}, {1,8}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}, {1,4}, {1,8}}));
     EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.extend_right("C"_dna4));
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}}));
     EXPECT_EQ(it.query_length(), 2u);
 
     // unsuccessful extend_right(char), it remains untouched
@@ -175,19 +176,19 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char)
 // TODO: doesn't work with the current structure of typed tests
 // TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_convertible_char)
 // {
-//     std::vector<std::vector<dna4>> text{"ANGACGNN"_dna5};
+//     std::vector<seqan3::dna4_vector> text{"ANGACGNN"_dna5};
 //     typename TypeParam::index_type fm{text};
 //
 //     // successful extend_right(char) using a different alphabet
 //     TypeParam it(fm);
 //     EXPECT_TRUE(it.extend_right("A"_dna4));
-//     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
+//     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
 //     EXPECT_EQ(it.query_length(), 1);
 // }
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_and_cycle)
 {
-    std::vector<std::vector<dna4>> text{"ACGAACGC"_dna4, "TACGATCGA"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGAACGC"_dna4, "TACGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right() and cycle_back()
@@ -203,37 +204,39 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_range_and_cycle)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_char_and_cycle)
 {
-    std::vector<std::vector<dna4>> text{"ACGAACGC"_dna4, "TGCGATCGA"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGAACGC"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("A"_dna4));
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}, {0,4}, {1,4}, {1,8}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}, {0,4},
+                                                                                         {1,4}, {1,8}}));
     EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,5}, {0,7}, {1,2}, {1,6}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,5}, {0,7},
+                                                                                         {1,2}, {1,6}}));
     EXPECT_EQ(it.query_length(), 1u);
 }
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_and_cycle)
 {
-    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right());
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}, {1,4}, {1,8}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,0}, {0,3}, {1,4}, {1,8}}));
     EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {1,2}, {1,6}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {1,2}, {1,6}}));
     EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.extend_right());
-    EXPECT_EQ(uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {1,2}, {1,6}}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0,1}, {0,4}, {1,2}, {1,6}}));
     EXPECT_EQ(it.query_length(), 2u);
 
     // unsuccessful cycle_back(), it remains untouched
@@ -258,7 +261,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_right_and_cycle)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, query)
 {
-    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // query()
@@ -269,13 +272,13 @@ TYPED_TEST_P(fm_index_cursor_collection_test, query)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, last_rank)
 {
-    std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGACG"_dna4, "TGCGATCGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     // last_rank()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("ACG"_dna4));
-    bool a = it.last_rank() == to_rank('G'_dna4);
+    bool a = it.last_rank() == seqan3::to_rank('G'_dna4);
     EXPECT_TRUE(a);
 }
 
@@ -283,7 +286,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
 {
     // search a char that does not occur in the text (higher rank than largest char occurring in text)
     {
-        std::vector<std::vector<dna4>> text{"ACGACG"_dna4, "ACGACG"_dna4};
+        std::vector<seqan3::dna4_vector> text{"ACGACG"_dna4, "ACGACG"_dna4};
         typename TypeParam::index_type fm{text};
         TypeParam it = TypeParam(fm);
         EXPECT_FALSE(it.extend_right("T"_dna4));
@@ -292,7 +295,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
 
     // search a char that does not occur in the text (smaller rank than smallest char occurring in text)
     {
-        std::vector<std::vector<dna4>> text{"CGTCGT"_dna4, "CGTCGT"_dna4};
+        std::vector<seqan3::dna4_vector> text{"CGTCGT"_dna4, "CGTCGT"_dna4};
         typename TypeParam::index_type fm{text};
         TypeParam it = TypeParam(fm);
         EXPECT_FALSE(it.extend_right("A"_dna4));
@@ -302,7 +305,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
     // search a char that does not occur in the text
     // (some rank that is neither the smallest nor the highest occurring in text)
     {
-        std::vector<std::vector<dna4>> text{"ATATAT"_dna4, "ATATAT"_dna4};
+        std::vector<seqan3::dna4_vector> text{"ATATAT"_dna4, "ATATAT"_dna4};
         typename TypeParam::index_type fm{text};
         TypeParam it = TypeParam(fm);
         EXPECT_FALSE(it.extend_right("C"_dna4));
@@ -319,7 +322,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
 {
-    std::vector<std::vector<dna4>> text{"ACGTACGT"_dna4, "TGCGATACGA"_dna4};
+    std::vector<seqan3::dna4_vector> text{"ACGTACGT"_dna4, "TGCGATACGA"_dna4};
     typename TypeParam::index_type fm{text};
 
     TypeParam it = TypeParam(fm);
@@ -330,7 +333,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
 {
-    EXPECT_TRUE(fm_index_cursor_specialisation<TypeParam>);
+    EXPECT_TRUE(seqan3::fm_index_cursor_specialisation<TypeParam>);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_collection_test, ctr, begin, extend_right_range,
