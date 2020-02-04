@@ -134,7 +134,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
     // Find all hits using search schemes.
     detail::search_ss<false>(it, query, start_pos, start_pos + 1, 0, 0, true, search, blocks_length, error_left,
                              delegate_ss);
-    
+
     // Find all hits using trivial backtracking.
     detail::search_trivial<false>(index, query, error_left, delegate_trivial);
 

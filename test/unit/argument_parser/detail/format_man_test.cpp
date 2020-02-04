@@ -24,65 +24,65 @@ struct format_man_test : public ::testing::Test
     std::vector<std::string> list_pos_opt_value{};
     std::string my_stdout{};
     const char * argv[4] = {"./format_man_test --version-check 0", "--export-help", "man"};
-    std::string expected = R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title"
-.SH NAME
-default \- A short description here.
-.SH SYNOPSIS
-\fB./format_man_test\fP synopsis
-.br
-\fB./format_man_test\fP synopsis2
-.SH DESCRIPTION
-description
-.sp
-description2
-.SH POSITIONAL ARGUMENTS
-.TP
-\fBARGUMENT-1\fP (\fIsigned 8 bit integer\fP)
-this is a positional option. 
-.TP
-\fBARGUMENT-2\fP (\fIList\fP of \fIstd::string\fP's)
-this is a positional option. Default: []. 
-.SH OPTIONS
-.SS Basic options:
-.TP
-\fB-h\fP, \fB--help\fP
-Prints the help page.
-.TP
-\fB-hh\fP, \fB--advanced-help\fP
-Prints the help page including advanced options.
-.TP
-\fB--version\fP
-Prints the version information.
-.TP
-\fB--copyright\fP
-Prints the copyright/license information.
-.TP
-\fB--export-help\fP (std::string)
-Export the help page information. Value must be one of [html, man].
-.TP
-\fB--version-check\fP (bool)
-Whether to to check for the newest app version. Default: 1.
-.SS 
-.TP
-\fB-i\fP, \fB--int\fP (\fIsigned 32 bit integer\fP)
-this is a int option. Default: 5. 
-.TP
-\fB-j\fP, \fB--jint\fP (\fIsigned 32 bit integer\fP)
-this is a required int option. 
-.SH FLAGS
-.SS SubFlags
-here come all the flags
-.TP
-\fB-f\fP, \fB--flag\fP
-this is a flag.
-.TP
-\fB-k\fP, \fB--kflag\fP
-this is a flag.
-.SH EXAMPLES
-example
-.sp
-example2
-)";
+    std::string expected =
+    R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title")" "\n"
+    R"(.SH NAME)" "\n"
+    R"(default \- A short description here.)" "\n"
+    R"(.SH SYNOPSIS)" "\n"
+    R"(\fB./format_man_test\fP synopsis)" "\n"
+    R"(.br)" "\n"
+    R"(\fB./format_man_test\fP synopsis2)" "\n"
+    R"(.SH DESCRIPTION)" "\n"
+    R"(description)" "\n"
+    R"(.sp)" "\n"
+    R"(description2)" "\n"
+    R"(.SH POSITIONAL ARGUMENTS)" "\n"
+    R"(.TP)" "\n"
+    R"(\fBARGUMENT-1\fP (\fIsigned 8 bit integer\fP))" "\n"
+    R"(this is a positional option. )" "\n"
+    R"(.TP)" "\n"
+    R"(\fBARGUMENT-2\fP (\fIList\fP of \fIstd::string\fP's))" "\n"
+    R"(this is a positional option. Default: []. )" "\n"
+    R"(.SH OPTIONS)" "\n"
+    R"(.SS Basic options:)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB-h\fP, \fB--help\fP)" "\n"
+    R"(Prints the help page.)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB-hh\fP, \fB--advanced-help\fP)" "\n"
+    R"(Prints the help page including advanced options.)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB--version\fP)" "\n"
+    R"(Prints the version information.)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB--copyright\fP)" "\n"
+    R"(Prints the copyright/license information.)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB--export-help\fP (std::string))" "\n"
+    R"(Export the help page information. Value must be one of [html, man].)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB--version-check\fP (bool))" "\n"
+    R"(Whether to to check for the newest app version. Default: 1.)" "\n"
+    R"(.SS )" "\n"
+    R"(.TP)" "\n"
+    R"(\fB-i\fP, \fB--int\fP (\fIsigned 32 bit integer\fP))" "\n"
+    R"(this is a int option. Default: 5. )" "\n"
+    R"(.TP)" "\n"
+    R"(\fB-j\fP, \fB--jint\fP (\fIsigned 32 bit integer\fP))" "\n"
+    R"(this is a required int option. )" "\n"
+    R"(.SH FLAGS)" "\n"
+    R"(.SS SubFlags)" "\n"
+    R"(here come all the flags)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB-f\fP, \fB--flag\fP)" "\n"
+    R"(this is a flag.)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB-k\fP, \fB--kflag\fP)" "\n"
+    R"(this is a flag.)" "\n"
+    R"(.SH EXAMPLES)" "\n"
+    R"(example)" "\n"
+    R"(.sp)" "\n"
+    R"(example2)" "\n";
 
     // Full info parser initialisation
     void dummy_init(argument_parser & parser)
@@ -118,31 +118,31 @@ TEST_F(format_man_test, empty_information)
     parser.info.man_page_title = "default_man_page_title";
     parser.info.short_description = "A short description here.";
 
-    std::string expected_short = R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title"
-.SH NAME
-default \- A short description here.
-.SH OPTIONS
-.SS Basic options:
-.TP
-\fB-h\fP, \fB--help\fP
-Prints the help page.
-.TP
-\fB-hh\fP, \fB--advanced-help\fP
-Prints the help page including advanced options.
-.TP
-\fB--version\fP
-Prints the version information.
-.TP
-\fB--copyright\fP
-Prints the copyright/license information.
-.TP
-\fB--export-help\fP (std::string)
-Export the help page information. Value must be one of [html, man].
-.TP
-\fB--version-check\fP (bool)
-Whether to to check for the newest app version. Default: 1.
-.SS 
-)";
+    std::string expected_short =
+    R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title")" "\n"
+    R"(.SH NAME)" "\n"
+    R"(default \- A short description here.)" "\n"
+    R"(.SH OPTIONS)" "\n"
+    R"(.SS Basic options:)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB-h\fP, \fB--help\fP)" "\n"
+    R"(Prints the help page.)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB-hh\fP, \fB--advanced-help\fP)" "\n"
+    R"(Prints the help page including advanced options.)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB--version\fP)" "\n"
+    R"(Prints the version information.)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB--copyright\fP)" "\n"
+    R"(Prints the copyright/license information.)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB--export-help\fP (std::string))" "\n"
+    R"(Export the help page information. Value must be one of [html, man].)" "\n"
+    R"(.TP)" "\n"
+    R"(\fB--version-check\fP (bool))" "\n"
+    R"(Whether to to check for the newest app version. Default: 1.)" "\n"
+    R"(.SS )" "\n";
 
     // Test the dummy parser with minimal information.
     testing::internal::CaptureStdout();
