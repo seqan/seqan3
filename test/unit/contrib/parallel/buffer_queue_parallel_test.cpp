@@ -15,7 +15,6 @@
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
 
-using namespace seqan3;
 using namespace seqan3::contrib;
 using namespace seqan3::detail;
 
@@ -35,8 +34,8 @@ void test_buffer_queue_wait_status()
     if constexpr (sequential_pop_t::value)
         thread_count = writer_count + 1;
 
-    // std::cout << "threads: " << thread_count << std::endl;
-    // std::cout << "writers: " << writer_count << std::endl;
+    // std::cout << "threads: " << thread_count << ‘\n‘;
+    // std::cout << "writers: " << writer_count << ‘\n‘;
 
     constexpr size_t size_v = 10000;
     dynamic_buffer_queue<uint32_t> queue{100};
@@ -149,8 +148,8 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
     if constexpr (sequential_pop_t::value)
         thread_count = writer_count + 1;
 
-    // std::cout << "threads: " << thread_count << std::endl;
-    // std::cout << "writers: " << writer_count << std::endl;
+    // std::cout << "threads: " << thread_count << ‘\n‘;
+    // std::cout << "writers: " << writer_count << ‘\n‘;
 
     ASSERT_GE(thread_count, 2u);
 
@@ -244,7 +243,7 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
 
     // std::chrono::steady_clock::time_point stop = std::chrono::steady_clock::now();
     // double time_span = std::chrono::duration_cast<std::chrono::duration<double> >(stop - start).count();
-    // std::cout << "throughput: " << static_cast<size_t>(random.size() / time_span) << " values/s" << std::endl;
+    // std::cout << "throughput: " << static_cast<size_t>(random.size() / time_span) << " values/s\n";
 
     EXPECT_EQ(chk_sum, chk_sum2);
     EXPECT_TRUE(push_status == queue_op_status::success);

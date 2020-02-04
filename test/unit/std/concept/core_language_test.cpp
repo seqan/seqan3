@@ -14,8 +14,6 @@
 
 #include "auxiliary.hpp"
 
-using namespace seqan3;
-
 TEST(core_language_concepts, same_as)
 {
     EXPECT_TRUE((std::same_as<int, int>));
@@ -30,16 +28,16 @@ TEST(core_language_concepts, derived_from)
 
 TEST(implicitly_convertible_to, basic)
 {
-    EXPECT_TRUE((implicitly_convertible_to<type_b, type_c>));
-    EXPECT_TRUE((!implicitly_convertible_to<type_c, type_b>));
-    EXPECT_TRUE((!implicitly_convertible_to<type_a, type_c>));
+    EXPECT_TRUE((seqan3::implicitly_convertible_to<type_b, type_c>));
+    EXPECT_TRUE((!seqan3::implicitly_convertible_to<type_c, type_b>));
+    EXPECT_TRUE((!seqan3::implicitly_convertible_to<type_a, type_c>));
 }
 
 TEST(explicitly_convertible_to, basic)
 {
-    EXPECT_TRUE((explicitly_convertible_to<type_b, type_c>));
-    EXPECT_TRUE((!explicitly_convertible_to<type_c, type_b>));
-    EXPECT_TRUE((explicitly_convertible_to<type_a, type_c>));
+    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_b, type_c>));
+    EXPECT_TRUE((!seqan3::explicitly_convertible_to<type_c, type_b>));
+    EXPECT_TRUE((seqan3::explicitly_convertible_to<type_a, type_c>));
 }
 
 TEST(core_language_concepts, convertible_to)

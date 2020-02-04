@@ -11,8 +11,6 @@
 
 #include "../../io/stream/ostream_test_template.hpp"
 
-using namespace seqan3;
-
 template <>
 class ostream<contrib::bz2_ostream> : public ::testing::Test
 {

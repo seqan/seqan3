@@ -14,8 +14,6 @@
 
 #include "auxiliary.hpp"
 
-using namespace seqan3;
-
 TEST(object_concepts, destructible)
 {
     EXPECT_TRUE((std::destructible<type_a>));
