@@ -10,5 +10,5 @@ int main()
     my_letter.assign_char('=');
 
     my_letter.assign_char('F'); // unknown characters are implicitly converted to N.
-    seqan3::debug_stream << my_letter << std::endl; // "N";
+    seqan3::debug_stream << my_letter << '\n'; // "N";
 }

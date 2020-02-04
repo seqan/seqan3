@@ -3,8 +3,6 @@
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using namespace seqan3;
-
 int main()
 {
     using seqan3::operator""_rna4;
