@@ -18,7 +18,7 @@ int main(int argc, char * argv[])
     {
         parser.parse();
     }
-    catch (seqan3::parser_invalid_argument const & ext)
+    catch (seqan3::argument_parser_error const & ext)
     {
         seqan3::debug_stream << "[PARSER ERROR] " << ext.what() << '\n';
         return 0;

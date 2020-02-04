@@ -11,7 +11,7 @@ struct custom_validator
         if ((std::round(val)                         != val) ||  // not an integer
             (std::pow(std::round(std::sqrt(val)), 2) != val))    // not a square
         {
-            throw seqan3::parser_invalid_argument{"The provided number is not an arithmetic square."};
+            throw seqan3::validation_error{"The provided number is not an arithmetic square."};
         }
     }
 
@@ -42,7 +42,7 @@ int main(int argc, char ** argv)
     {
          myparser.parse(); // trigger command line parsing
     }
-    catch (seqan3::parser_invalid_argument const & ext)
+    catch (seqan3::argument_parser_error const & ext)
     {
         seqan3::debug_stream << ext.what() << '\n';
         return -1;

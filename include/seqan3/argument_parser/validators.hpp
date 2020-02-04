@@ -60,11 +60,11 @@ namespace seqan3
  * will provide an implementation).
  */
 /*!\fn              void operator()(option_value_type const & cmp) const
- * \brief           Validates the value 'cmp' and throws a seqan3::validation_failed on failure.
+ * \brief           Validates the value 'cmp' and throws a seqan3::validation_error on failure.
  * \tparam          option_value_type The type of the value to be validated.
  * \param[in,out]   cmp The value to be validated.
  * \relates         seqan3::validator
- * \throws          seqan3::validation_failed if value 'cmp' does not pass validation.
+ * \throws          seqan3::validation_error if value 'cmp' does not pass validation.
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
@@ -100,7 +100,7 @@ SEQAN3_CONCEPT validator = std::copyable<remove_cvref_t<validator_type>> &&
  * \details
  *
  * On construction, the validator must receive a maximum and a minimum number.
- * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
+ * The class than acts as a functor, that throws a seqan3::validation_error
  * exception whenever a given value does not lie inside the given min/max range.
  *
  * \include test/snippet/argument_parser/validators_1.cpp
@@ -121,19 +121,19 @@ public:
 
     /*!\brief Tests whether cmp lies inside [`min`, `max`].
      * \param cmp The input value to check.
-     * \throws parser_invalid_argument
+     * \throws seqan3::validation_error
      */
     void operator()(option_value_type const & cmp) const
     {
         if (!((cmp <= max) && (cmp >= min)))
-            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not in range [", min, ",", max, "]."));
+            throw validation_error{detail::to_string("Value ", cmp, " is not in range [", min, ",", max, "].")};
     }
 
     /*!\brief Tests whether every element in \p range lies inside [`min`, `max`].
      * \tparam range_type The type of range to check; must model std::ranges::forward_range. The value type must model
      *                    seqan3::arithmetic.
      * \param  range      The input range to iterate over and check every element.
-     * \throws parser_invalid_argument
+     * \throws seqan3::validation_error
      */
     template <std::ranges::forward_range range_type>
     //!\cond
@@ -166,7 +166,7 @@ private:
  * \details
  *
  * On construction, the validator must receive a range or parameter pack of valid values.
- * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
+ * The class than acts as a functor, that throws a seqan3::validation_error
  * exception whenever a given value is not in the given list.
  *
  * \note In order to simplify the chaining of validators, the option value type is deduced to `double` for ranges whose
@@ -224,18 +224,18 @@ public:
 
     /*!\brief Tests whether cmp lies inside values.
      * \param cmp The input value to check.
-     * \throws parser_invalid_argument
+     * \throws seqan3::validation_error
      */
     void operator()(option_value_type const & cmp) const
     {
         if (!(std::find(values.begin(), values.end(), cmp) != values.end()))
-            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", std::views::all(values), "."));
+            throw validation_error{detail::to_string("Value ", cmp, " is not one of ", std::views::all(values), ".")};
     }
 
     /*!\brief Tests whether every element in \p range lies inside values.
      * \tparam range_type The type of range to check; must model std::ranges::forward_range.
      * \param  range      The input range to iterate over and check every element.
-     * \throws parser_invalid_argument
+     * \throws seqan3::validation_error
      */
     template <std::ranges::forward_range range_type>
     //!\cond
@@ -340,7 +340,7 @@ public:
      * \tparam range_type The type of range to check; must model std::ranges::forward_range and the value type must
      *                    be convertible to std::filesystem::path.
      * \param  v          The input range to iterate over and check every element.
-     * \throws parser_invalid_argument
+     * \throws seqan3::validation_error
      */
     template <std::ranges::forward_range range_type>
     //!\cond
@@ -355,7 +355,7 @@ protected:
 
     /*!\brief Validates the given filename path based on the specified extensions.
      * \param path The filename path.
-     * \throws parser_invalid_argument if the specified extensions don't match the given path, or
+     * \throws seqan3::validation_error if the specified extensions don't match the given path, or
      *         std::filesystem::filesystem_error on underlying OS API errors.
      */
     void validate_filename(std::filesystem::path const & path) const
@@ -366,7 +366,7 @@ protected:
 
         // Check if extension is available.
         if (!path.has_extension())
-            throw parser_invalid_argument{detail::to_string("The given filename ", path.string(),
+            throw validation_error{detail::to_string("The given filename ", path.string(),
                                                             " has no extension. Expected one of the following valid"
                                                             " extensions:", extensions, "!")};
 
@@ -383,7 +383,7 @@ protected:
         // Check if requested extension is present.
         if (std::ranges::find_if(extensions, cmp_lambda) == extensions.end())
         {
-            throw parser_invalid_argument{detail::to_string("Expected one of the following valid extensions: ",
+            throw validation_error{detail::to_string("Expected one of the following valid extensions: ",
                                                              extensions, "! Got ", drop_less_ext, " instead!")};
         }
     }
@@ -391,7 +391,7 @@ protected:
     /*!\brief Checks if the given path is readable.
      * \param path The path to check.
      * \returns `true` if readable, otherwise `false`.
-     * \throws seqan3::parser_invalid_argument if the path is not readable, or
+     * \throws seqan3::validation_error if the path is not readable, or
      *         std::filesystem::filesystem_error on underlying OS API errors.
      */
     void validate_readability(std::filesystem::path const & path) const
@@ -402,24 +402,24 @@ protected:
             std::error_code ec{};
             std::filesystem::directory_iterator{path, ec};  // if directory iterator cannot be created, ec will be set.
             if (static_cast<bool>(ec))
-                throw parser_invalid_argument{detail::to_string("Cannot read the directory ", path ,"!")};
+                throw validation_error{detail::to_string("Cannot read the directory ", path ,"!")};
         }
         else
         {
             // Must be a regular file.
             if (!std::filesystem::is_regular_file(path))
-                throw parser_invalid_argument{detail::to_string("Expected a regular file ", path, "!")};
+                throw validation_error{detail::to_string("Expected a regular file ", path, "!")};
 
             std::ifstream file{path};
             if (!file.is_open() || !file.good())
-                throw parser_invalid_argument{detail::to_string("Cannot read the file ", path, "!")};
+                throw validation_error{detail::to_string("Cannot read the file ", path, "!")};
         }
     }
 
     /*!\brief Checks if the given path is writable.
      * \param path The path to check.
      * \returns `true` if writable, otherwise `false`.
-     * \throws seqan3::parser_invalid_argument if the file could not be opened for writing, or
+     * \throws seqan3::validation_error if the file could not be opened for writing, or
      *         std::filesystem::filesystem_error on underlying OS API errors.
      */
     void validate_writeability(std::filesystem::path const & path) const
@@ -432,7 +432,7 @@ protected:
         file.close();
 
         if (!is_good || !is_open)
-            throw parser_invalid_argument(detail::to_string("Cannot write ", path, "!"));
+            throw validation_error{detail::to_string("Cannot write ", path, "!")};
 
         file_guard.remove();
     }
@@ -449,7 +449,7 @@ protected:
  * \details
  *
  * On construction, the validator can receive a list (std::vector over std::string) of valid file extensions.
- * The struct acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given filename's
+ * The class acts as a functor that throws a seqan3::validation_error exception whenever a given filename's
  * extension (std::filesystem::path) is not in the given list of valid file extensions, if the file does not exist, or
  * if the file does not have the proper read permissions.
  *
@@ -524,7 +524,7 @@ public:
 
     /*!\brief Tests whether path is an existing regular file and is readable.
      * \param file The input value to check.
-     * \throws parser_invalid_argument if the validation process failed. Might be nested with
+     * \throws seqan3::validation_error if the validation process failed. Might be nested with
      *         std::filesystem::filesystem_error on unhandled OS API errors.
      */
     virtual void operator()(std::filesystem::path const & file) const override
@@ -532,7 +532,7 @@ public:
         try
         {
             if (!std::filesystem::exists(file))
-                throw parser_invalid_argument(detail::to_string("The file ", file, " does not exist!"));
+                throw validation_error{detail::to_string("The file ", file, " does not exist!")};
 
             // Check if file is regular and can be opened for reading.
             validate_readability(file);
@@ -542,7 +542,7 @@ public:
         }
         catch (std::filesystem::filesystem_error & ex)
         {
-            std::throw_with_nested(parser_invalid_argument("Unhandled filesystem error!"));
+            std::throw_with_nested(validation_error{"Unhandled filesystem error!"});
         }
         catch (...)
         {
@@ -567,7 +567,7 @@ public:
  * \details
  *
  * On construction, the validator can receive a list (std::vector over std::string) of valid file extensions.
- * The struct acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given filename's
+ * The class acts as a functor that throws a seqan3::validation_error exception whenever a given filename's
  * extension (sts::string) is not in the given list of valid file extensions, if the file already exist, or if the
  * parent path does not have the proper writer permissions.
  *
@@ -628,7 +628,7 @@ public:
 
     /*!\brief Tests whether path is does not already exists and is writable.
      * \param file The input value to check.
-     * \throws parser_invalid_argument if the validation process failed. Might be nested with
+     * \throws seqan3::validation_error if the validation process failed. Might be nested with
      *         std::filesystem::filesystem_error on unhandled OS API errors.
      */
     virtual void operator()(std::filesystem::path const & file) const override
@@ -636,7 +636,7 @@ public:
         try
         {
             if (std::filesystem::exists(file))
-                throw parser_invalid_argument(detail::to_string("The file ", file, " already exists!"));
+                throw validation_error{detail::to_string("The file ", file, " already exists!")};
 
             // Check if file has any write permissions.
             validate_writeability(file);
@@ -645,7 +645,7 @@ public:
         }
         catch (std::filesystem::filesystem_error & ex)
         {
-            std::throw_with_nested(parser_invalid_argument("Unhandled filesystem error!"));
+            std::throw_with_nested(validation_error{"Unhandled filesystem error!"});
         }
         catch (...)
         {
@@ -668,7 +668,7 @@ public:
  *
  * \details
  *
- * The struct acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given directory
+ * The class acts as a functor that throws a seqan3::validation_error exception whenever a given directory
  * (std::filesystem::path) does not exist, the specified path is not a directory, or if the directory is not
  * readable.
  *
@@ -701,7 +701,7 @@ public:
 
     /*!\brief Tests whether path is an existing directory and is readable.
      * \param dir The input value to check.
-     * \throws seqan3::parser_invalid_argument if the validation process failed. Might be nested with
+     * \throws seqan3::validation_error if the validation process failed. Might be nested with
      *         std::filesystem::filesystem_error on unhandled OS API errors.
      */
     virtual void operator()(std::filesystem::path const & dir) const override
@@ -709,17 +709,17 @@ public:
         try
         {
             if (!std::filesystem::exists(dir))
-                throw parser_invalid_argument(detail::to_string("The directory ", dir, " does not exists!"));
+                throw validation_error{detail::to_string("The directory ", dir, " does not exists!")};
 
             if (!std::filesystem::is_directory(dir))
-                throw parser_invalid_argument(detail::to_string("The path ", dir, " is not a directory!"));
+                throw validation_error{detail::to_string("The path ", dir, " is not a directory!")};
 
             // Check if directory has any read permissions.
             validate_readability(dir);
         }
         catch (std::filesystem::filesystem_error & ex)
         {
-            std::throw_with_nested(parser_invalid_argument("Unhandled filesystem error!"));
+            std::throw_with_nested(validation_error{"Unhandled filesystem error!"});
         }
         catch (...)
         {
@@ -740,7 +740,7 @@ public:
  *
  * \details
  *
- * The struct acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given path
+ * The class acts as a functor that throws a seqan3::validation_error exception whenever a given path
  * (std::filesystem::path) is not writable. This can happen if either the parent path does not exists, or the
  * path doesn't have the proper write permissions.
  *
@@ -773,7 +773,7 @@ public:
 
     /*!\brief Tests whether path is writable.
      * \param dir The input value to check.
-     * \throws parser_invalid_argument if the validation process failed. Might be nested with
+     * \throws seqan3::validation_error if the validation process failed. Might be nested with
      *         std::filesystem::filesystem_error on unhandled OS API errors.
      */
     virtual void operator()(std::filesystem::path const & dir) const override
@@ -784,7 +784,7 @@ public:
         std::filesystem::create_directory(dir, ec); // does nothing and is not treated as error if path already exists.
         // if error code was set or if dummy.txt could not be created within the output dir, throw an error.
         if (static_cast<bool>(ec))
-            throw parser_invalid_argument(detail::to_string("Cannot create directory: ", dir, "!"));
+            throw validation_error{detail::to_string("Cannot create directory: ", dir, "!")};
 
         try
         {
@@ -801,7 +801,7 @@ public:
         }
         catch (std::filesystem::filesystem_error & ex)
         {
-            std::throw_with_nested(parser_invalid_argument("Unhandled filesystem error!"));
+            std::throw_with_nested(validation_error{"Unhandled filesystem error!"});
         }
         catch (...)
         {
@@ -828,7 +828,7 @@ public:
  * Note: A regex_match will only return true if the strings matches the pattern
  * completely (in contrast to regex_search which also matches substrings).
  *
- * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
+ * The class than acts as a functor, that throws a seqan3::validation_error
  * exception whenever string does not match the pattern.
  *
  * \include test/snippet/argument_parser/validators_4.cpp
@@ -848,20 +848,20 @@ public:
 
     /*!\brief Tests whether cmp lies inside values.
      * \param[in] cmp The value to validate.
-     * \throws parser_invalid_argument
+     * \throws seqan3::validation_error
      */
     void operator()(option_value_type const & cmp) const
     {
         std::regex rgx(pattern);
         if (!std::regex_match(cmp, rgx))
-            throw parser_invalid_argument(detail::to_string("Value ", cmp, " did not match the pattern ", pattern, "."));
+            throw validation_error{detail::to_string("Value ", cmp, " did not match the pattern ", pattern, ".")};
     }
 
     /*!\brief Tests whether every filename in list v matches the pattern.
      * \tparam range_type The type of range to check; must model std::ranges::forward_range and the value type must
      *                    be convertible to std::string.
      * \param  v          The input range to iterate over and check every element.
-     * \throws parser_invalid_argument
+     * \throws seqan3::validation_error
      */
     template <std::ranges::forward_range range_type>
     //!\cond

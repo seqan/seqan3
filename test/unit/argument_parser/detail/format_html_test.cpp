@@ -189,11 +189,11 @@ TEST(export_help, parse_error)
     const char * argv3[] = {"./help_add_test --version-check 0", "--export-help", "atml"};
 
     // no value after --export-help
-    EXPECT_THROW((argument_parser{"test_parser", 2, argv}), parser_invalid_argument);
+    EXPECT_THROW((argument_parser{"test_parser", 2, argv}), argument_parser_error);
 
     // wrong value after --export-help
-    EXPECT_THROW((argument_parser{"test_parser", 2, argv2}), validation_failed);
+    EXPECT_THROW((argument_parser{"test_parser", 2, argv2}), validation_error);
 
     // wrong value after --export-help
-    EXPECT_THROW((argument_parser{"test_parser", 3, argv3}), validation_failed);
+    EXPECT_THROW((argument_parser{"test_parser", 3, argv3}), validation_error);
 }

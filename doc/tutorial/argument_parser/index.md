@@ -49,11 +49,11 @@ Before we add any of the options, flags, and positional options, we will take a 
 
 \include doc/tutorial/argument_parser/basic_parser_setup.cpp
 
-There are two types of exceptions: The seqan3::parser_design_error which indicates that the parser setup was wrong (directed to the developer of the program, not the user!) and the seqan3::parser_invalid_argument, which detects corrupted user input. Additionally, there are special user requests that are handled by the argument parser by exiting the program via std::exit, e.g. calling `--help` that prints a help page screen.
+There are two types of exceptions: The seqan3::design_error which indicates that the parser setup was wrong (directed to the developer of the program, not the user!) and any other exception derived from seqan3::argument_parser_error, which detects corrupted user input. Additionally, there are special user requests that are handled by the argument parser by exiting the program via std::exit, e.g. calling `--help` that prints a help page screen.
 
-## Design restrictions (seqan3::parser_design_error)
+## Design restrictions (seqan3::design_error)
 
-The argument parser checks the following restrictions and throws a seqan3::parser_design_error if they are not satisfied:
+The argument parser checks the following restrictions and throws a seqan3::design_error if they are not satisfied:
 
 * **Long identifiers**: must be unique, more than one character long, may only contain alphanumeric characters, as well as `_`, `-`, or `@`, but never start with `-`.
 * **Short identifiers**: must be unique and consist of only a single letter that is alphanumeric characters, `_` or `@`.
@@ -62,7 +62,7 @@ The argument parser checks the following restrictions and throws a seqan3::parse
 * The flag identifiers `-h`, `--help`, `--advanced-help`, `--advanced-help`, `--export-help`, `--version`, `--copyright` are predefined and cannot be specified manually or used otherwise.
 * The seqan3::argument_parser::parse function may only be called once (per parser).
 
-## Input restrictions (seqan3::parser_invalid_argument)
+## Input restrictions
 
 When calling the seqan3::argument_parser::parse function, the following potential user errors are caught (and handled by throwing a corresponding exception):
 
@@ -71,8 +71,8 @@ When calling the seqan3::argument_parser::parse function, the following potentia
 <tr> <td> seqan3::too_many_arguments </td> <td> More command line arguments than expected are given. </td> </tr>
 <tr> <td> seqan3::too_few_arguments </td> <td> Less command line arguments than expected are given. </td> </tr>
 <tr> <td> seqan3::required_option_missing </td> <td> A required option is not given (see [Required options](#section_required_option))</td> </tr>
-<tr> <td> seqan3::type_conversion_failed </td> <td> The given value cannot be cast to the expected type </td> </tr>
-<tr> <td> seqan3::validation_failed </td> <td> (Positional-)Option validation failed (see [Validators](#section_validation)) </td> </tr>
+<tr> <td> seqan3::user_input_error </td> <td> The given (positional) option value was invalid. </td> </tr>
+<tr> <td> seqan3::validation_error </td> <td> (Positional-)Option validation failed (see [Validators](#section_validation)) </td> </tr>
 </table>
 
 ## Special Requests (std::exit)
@@ -142,7 +142,7 @@ Now that we're done with the meta information, we will learn how to add the actu
 
 Each of the functions above take a variable by reference as the first parameter, which will directly store the corresponding parsed value from the command line. This has two advantages compared to other command line parsers: (1) There is no need for a getter function after parsing and (2) the type is automatically deduced (e.g. with boost::program_options you would need to access `parser["file_path"].as<std::filesystem::path>()` afterwards).
 
-The seqan3::argument_parser::add_flag only allows boolean variables while seqan3::argument_parser::add_option and seqan3::argument_parser::add_positional_option allow **any type that is convertible from a std::string via std::from_chars** or a container of the former (see \ref tutorial_argument_parser_list_options). Besides accepting generic types, the parser will **automatically check if the given command line argument can be converted into the desired type** and otherwise throw a seqan3::type_conversion_failed exception.
+The seqan3::argument_parser::add_flag only allows boolean variables while seqan3::argument_parser::add_option and seqan3::argument_parser::add_positional_option allow **any type that is convertible from a std::string via std::from_chars** or a container of the former (see \ref tutorial_argument_parser_list_options). Besides accepting generic types, the parser will **automatically check if the given command line argument can be converted into the desired type** and otherwise throw a seqan3::type_conversion_error exception.
 
 So how does this look like? The following code snippet adds a positional option to `parser`.
 
@@ -229,7 +229,7 @@ The vector `list_variable` will then contain all three names `["Jon", "Arya", "N
 
 ## List positional options? {#section_list_positional_options}
 
-An arbitrary positional option cannot be a list because of the ambiguity of which value belongs to which positional option. We do allow the very last option to be a list for convenience though. Note that if you try to add a positional list option which is not the last positional option, a seqan3::parser_design_error will be thrown.
+An arbitrary positional option cannot be a list because of the ambiguity of which value belongs to which positional option. We do allow the very last option to be a list for convenience though. Note that if you try to add a positional list option which is not the last positional option, a seqan3::design_error will be thrown.
 
 Example:
 
@@ -355,7 +355,7 @@ All the validators below work on single values or a container of values. In case
 ### The seqan3::arithmetic_range_validator
 
 On construction, this validator receives a maximum and a minimum number.
-The validator throws a seqan3::parser_invalid_argument exception whenever a given value does not lie inside the given min/max range.
+The validator throws a seqan3::validation_error exception whenever a given value does not lie inside the given min/max range.
 
 \snippet test/snippet/argument_parser/validators_1.cpp validator_call
 
@@ -371,7 +371,7 @@ Add a seqan3::arithmetic_range_validator to the `-s/--season` option that sets t
 ### The seqan3::value_list_validator
 
 On construction, the validator receives a list (vector) of valid values.
-The validator throws a seqan3::parser_invalid_argument exception whenever a given value is not in the given list.
+The validator throws a seqan3::validation_error exception whenever a given value is not in the given list.
 
 \snippet test/snippet/argument_parser/validators_2.cpp validator_call
 
@@ -387,7 +387,7 @@ Add a seqan3::value_list_validator to the `-a/--aggregate-by` option that sets t
 SeqAn offers two file validator types: the seqan3::input_file_validator and the seqan3::output_file_validator.
 On construction, the validator receives a list (vector) of valid file extensions that are tested against the extension
 of the parsed option value.
-The validator throws a seqan3::parser_invalid_argument exception whenever a given filename's extension is not in the
+The validator throws a seqan3::validation_error exception whenever a given filename's extension is not in the
 given list of valid extensions. In addition, the seqan3::input_file_validator checks if the file exists, is a regular
 file and is readable.
 The seqan3::output_file_validator on the other hand ensures that the output does not already exist (in order to prevent
@@ -411,7 +411,7 @@ to provide an input directory (using the seqan3::input_directory_validator) or o
 The seqan3::input_directory_validator checks whether the specified path is a directory and is readable.
 Similarly, the seqan3::output_directory_validator checks whether the specified directory is writable and can be created,
 if it does not already exists.
-If the tests fail, a seqan3::parser_invalid_argument exception will be thrown. Also, if something unexpected with the
+If the tests fail, a seqan3::validation_error exception will be thrown. Also, if something unexpected with the
 filesystem happens, a std::filesystem_error will be thrown.
 
 Using the seqan3::input_directory_validator:
@@ -435,7 +435,7 @@ Store the result in `file_path`.
 On construction, the validator receives a pattern for a regular expression.
 The pattern variable will be used for constructing an std::regex and the validator will call std::regex_match on the command line argument.
 
-Note that a regex_match will only return true if the string matches the pattern completely (in contrast to regex_search which also matches substrings). The validator throws a seqan3::parser_invalid_argument exception whenever a given parameter does not match the given regular expression.
+Note that a regex_match will only return true if the string matches the pattern completely (in contrast to regex_search which also matches substrings). The validator throws a seqan3::validation_error exception whenever a given parameter does not match the given regular expression.
 
 \snippet test/snippet/argument_parser/validators_4.cpp validator_call
 

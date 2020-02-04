@@ -91,19 +91,19 @@ TEST(validator_test, input_file)
             std::filesystem::path does_not_exist{tmp_name.get_path()};
             does_not_exist.replace_extension(".bam");
             input_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exist), parser_invalid_argument);
+            EXPECT_THROW(my_validator(does_not_exist), validation_error);
         }
 
         { // file has wrong format.
             input_file_validator my_validator{std::vector{std::string{"sam"}}};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
+            EXPECT_THROW(my_validator(tmp_name.get_path()), validation_error);
         }
 
         { // file has no extension.
             std::filesystem::path does_not_exist{tmp_name.get_path()};
             does_not_exist.replace_extension();
             input_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exist), parser_invalid_argument);
+            EXPECT_THROW(my_validator(does_not_exist), validation_error);
         }
 
         {  // read from file
@@ -188,19 +188,19 @@ TEST(validator_test, output_file)
             std::ofstream tmp_file_2(tmp_name_2.get_path());
             std::filesystem::path does_not_exist{tmp_name_2.get_path()};
             output_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exist), parser_invalid_argument);
+            EXPECT_THROW(my_validator(does_not_exist), validation_error);
         }
 
         { // file has wrong format.
             output_file_validator my_validator{std::vector{std::string{"sam"}}};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
+            EXPECT_THROW(my_validator(tmp_name.get_path()), validation_error);
         }
 
         { // file has no extension.
             std::filesystem::path no_extension{tmp_name.get_path()};
             no_extension.replace_extension();
             output_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(no_extension), parser_invalid_argument);
+            EXPECT_THROW(my_validator(no_extension), validation_error);
         }
 
         {  // read from file
@@ -276,7 +276,7 @@ TEST(validator_test, input_directory)
         { // has filename
             std::ofstream tmp_dir(tmp_name.get_path());
             input_directory_validator my_validator{};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
+            EXPECT_THROW(my_validator(tmp_name.get_path()), validation_error);
         }
 
         { // read directory
@@ -416,7 +416,7 @@ TEST(validator_test, inputfile_not_readable)
 
     if (!read_access(tmp_file))
     {
-        EXPECT_THROW(input_file_validator{}(tmp_file), parser_invalid_argument);
+        EXPECT_THROW(input_file_validator{}(tmp_file), validation_error);
     }
 
     std::filesystem::permissions(tmp_file,
@@ -441,7 +441,7 @@ TEST(validator_test, inputdir_not_readable)
 
     if (!read_access(tmp_dir))
     {
-        EXPECT_THROW(input_directory_validator{}(tmp_dir), parser_invalid_argument);
+        EXPECT_THROW(input_directory_validator{}(tmp_dir), validation_error);
     }
 
     std::filesystem::permissions(tmp_dir,
@@ -465,7 +465,7 @@ TEST(validator_test, outputfile_not_writable)
 
     if (!write_access(tmp_file))
     {
-        EXPECT_THROW(output_file_validator{}(tmp_file), parser_invalid_argument);
+        EXPECT_THROW(output_file_validator{}(tmp_file), validation_error);
     }
 
     // make sure we can remove the directory.
@@ -491,7 +491,7 @@ TEST(validator_test, outputdir_not_writable)
 
         if (!write_access(tmp_dir))
         {
-            EXPECT_THROW(output_directory_validator{}(tmp_dir), parser_invalid_argument);
+            EXPECT_THROW(output_directory_validator{}(tmp_dir), validation_error);
         }
 
         // make sure we can remove the directory.
@@ -516,7 +516,7 @@ TEST(validator_test, outputdir_not_writable)
 
         if (!write_access(tmp_dir))
         {
-            EXPECT_THROW(output_directory_validator{}(tmp_dir), parser_invalid_argument);
+            EXPECT_THROW(output_directory_validator{}(tmp_dir), validation_error);
         }
 
         // make sure we can remove the directory.
@@ -642,7 +642,7 @@ TEST(validator_test, arithmetic_range_validator_error)
     parser.add_option(option_value, 'i', "int-option", "desc",
                       option_spec::DEFAULT, arithmetic_range_validator{1, 20});
 
-    EXPECT_THROW(parser.parse(), validation_failed);
+    EXPECT_THROW(parser.parse(), validation_error);
 
     // option - below min
     const char * argv2[] = {"./argument_parser_test", "-i", "-21"};
@@ -650,21 +650,21 @@ TEST(validator_test, arithmetic_range_validator_error)
     parser2.add_option(option_value, 'i', "int-option", "desc",
                        option_spec::DEFAULT, arithmetic_range_validator{-20, 20});
 
-    EXPECT_THROW(parser2.parse(), validation_failed);
+    EXPECT_THROW(parser2.parse(), validation_error);
 
     // positional option - above max
     const char * argv3[] = {"./argument_parser_test", "30"};
     argument_parser parser3{"test_parser", 2, argv3, false};
     parser3.add_positional_option(option_value, "desc", arithmetic_range_validator{1, 20});
 
-    EXPECT_THROW(parser3.parse(), validation_failed);
+    EXPECT_THROW(parser3.parse(), validation_error);
 
     // positional option - below min
     const char * argv4[] = {"./argument_parser_test", "--", "-21"};
     argument_parser parser4{"test_parser", 3, argv4, false};
     parser4.add_positional_option(option_value, "desc", arithmetic_range_validator{-20, 20});
 
-    EXPECT_THROW(parser4.parse(), validation_failed);
+    EXPECT_THROW(parser4.parse(), validation_error);
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-100"};
@@ -672,7 +672,7 @@ TEST(validator_test, arithmetic_range_validator_error)
     parser5.add_option(option_vector, 'i', "int-option", "desc",
                        option_spec::DEFAULT, arithmetic_range_validator{-50, 50});
 
-    EXPECT_THROW(parser5.parse(), validation_failed);
+    EXPECT_THROW(parser5.parse(), validation_error);
 
     // positional option - vector
     option_vector.clear();
@@ -680,7 +680,7 @@ TEST(validator_test, arithmetic_range_validator_error)
     argument_parser parser6{"test_parser", 4, argv6, false};
     parser6.add_positional_option(option_vector, "desc", arithmetic_range_validator{-20, 20});
 
-    EXPECT_THROW(parser6.parse(), validation_failed);
+    EXPECT_THROW(parser6.parse(), validation_error);
 
     // option - double value
     double double_option_value;
@@ -689,7 +689,7 @@ TEST(validator_test, arithmetic_range_validator_error)
     parser7.add_option(double_option_value, 'i', "double-option", "desc",
                        option_spec::DEFAULT, arithmetic_range_validator{1, 20});
 
-    EXPECT_THROW(parser7.parse(), validation_failed);
+    EXPECT_THROW(parser7.parse(), validation_error);
 }
 
 enum class foo
@@ -814,14 +814,14 @@ TEST(validator_test, value_list_validator_error)
     parser.add_option(option_value, 's', "string-option", "desc",
                       option_spec::DEFAULT, value_list_validator{"ha", "ba", "ma"});
 
-    EXPECT_THROW(parser.parse(), validation_failed);
+    EXPECT_THROW(parser.parse(), validation_error);
 
     // positional option
     const char * argv3[] = {"./argument_parser_test", "30"};
     argument_parser parser3{"test_parser", 2, argv3, false};
     parser3.add_positional_option(option_value_int, "desc", value_list_validator{0, 5, 10});
 
-    EXPECT_THROW(parser3.parse(), validation_failed);
+    EXPECT_THROW(parser3.parse(), validation_error);
 
     // positional option - vector
     const char * argv4[] = {"./argument_parser_test", "fo", "ma"};
@@ -829,7 +829,7 @@ TEST(validator_test, value_list_validator_error)
     parser4.add_positional_option(option_vector, "desc",
                                   value_list_validator{"ha", "ba", "ma"});
 
-    EXPECT_THROW(parser4.parse(), validation_failed);
+    EXPECT_THROW(parser4.parse(), validation_error);
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "488"};
@@ -837,7 +837,7 @@ TEST(validator_test, value_list_validator_error)
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
                        option_spec::DEFAULT, value_list_validator<int>{-10, 48, 50});
 
-    EXPECT_THROW(parser5.parse(), validation_failed);
+    EXPECT_THROW(parser5.parse(), validation_error);
 }
 
 TEST(validator_test, regex_validator_success)
@@ -927,7 +927,7 @@ TEST(validator_test, regex_validator_error)
     parser.add_option(option_value, '\0', "string-option", "desc",
                       option_spec::DEFAULT, regex_validator{"tt"});
 
-    EXPECT_THROW(parser.parse(), validation_failed);
+    EXPECT_THROW(parser.parse(), validation_error);
 
     // positional option
     const char * argv2[] = {"./argument_parser_test", "jessy"};
@@ -935,7 +935,7 @@ TEST(validator_test, regex_validator_error)
     parser2.add_positional_option(option_value, "desc",
                                   regex_validator{"[0-9]"});
 
-    EXPECT_THROW(parser2.parse(), validation_failed);
+    EXPECT_THROW(parser2.parse(), validation_error);
 
     // positional option - vector
     const char * argv3[] = {"./argument_parser_test", "rollo", "bttllo", "lollo"};
@@ -943,7 +943,7 @@ TEST(validator_test, regex_validator_error)
     parser3.add_positional_option(option_vector, "desc",
                                   regex_validator{".*oll.*"});
 
-    EXPECT_THROW(parser3.parse(), validation_failed);
+    EXPECT_THROW(parser3.parse(), validation_error);
 
     // option - vector
     option_vector.clear();
@@ -952,7 +952,7 @@ TEST(validator_test, regex_validator_error)
     parser4.add_option(option_vector, 's', "", "desc",
                        option_spec::DEFAULT, regex_validator{"tt"});
 
-    EXPECT_THROW(parser4.parse(), validation_failed);
+    EXPECT_THROW(parser4.parse(), validation_error);
 }
 
 TEST(validator_test, chaining_validators)
@@ -987,7 +987,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
-        EXPECT_THROW(parser.parse(), validation_failed);
+        EXPECT_THROW(parser.parse(), validation_error);
     }
 
     {
@@ -997,7 +997,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
-        EXPECT_THROW(parser.parse(), validation_failed);
+        EXPECT_THROW(parser.parse(), validation_error);
     }
 
     // with temporary validators

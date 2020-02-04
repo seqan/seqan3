@@ -22,7 +22,7 @@ int run_git_pull(seqan3::argument_parser & parser)
     {
         parser.parse();
     }
-    catch (seqan3::parser_invalid_argument const & ext)
+    catch (seqan3::argument_parser_error const & ext)
     {
         seqan3::debug_stream << "[Error git pull] " << ext.what() << "\n";
         return -1;
@@ -55,7 +55,7 @@ int run_git_push(seqan3::argument_parser & parser)
     {
         parser.parse();
     }
-    catch (seqan3::parser_invalid_argument const & ext)
+    catch (seqan3::argument_parser_error const & ext)
     {
         seqan3::debug_stream << "[Error git push] " << ext.what() << "\n";
         return -1;
@@ -87,7 +87,7 @@ int main(int argc, char const ** argv)
     {
         top_level_parser.parse(); // trigger command line parsing
     }
-    catch (seqan3::parser_invalid_argument const & ext) // catch user errors
+    catch (seqan3::argument_parser_error const & ext) // catch user errors
     {
         seqan3::debug_stream << "[Error] " << ext.what() << "\n"; // customise your error message
         return -1;
