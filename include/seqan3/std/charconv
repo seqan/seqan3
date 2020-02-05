@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
+#include <sstream>
 #include <type_traits>
 
 #include <seqan3/core/char_operations/predicate.hpp>
