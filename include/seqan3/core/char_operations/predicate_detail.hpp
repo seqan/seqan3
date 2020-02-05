@@ -91,7 +91,7 @@ inline const std::string condition_message_v
 
 //!\cond
 template <typename condition_t>
-class char_predicate_base;
+struct char_predicate_base;
 //!\endcond
 
 /*!\interface seqan3::detail::char_predicate <>
