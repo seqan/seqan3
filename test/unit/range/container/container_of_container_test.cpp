@@ -27,10 +27,6 @@ using container_of_container_types = ::testing::Types<std::vector<std::vector<dn
 
 TYPED_TEST_SUITE(container_of_container, container_of_container_types, );
 
-using In = std::ranges::iterator_t<seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna4> > >;
-
-static_assert(std::readable<In>);
-
 TYPED_TEST(container_of_container, concepts)
 {
     EXPECT_TRUE(container<TypeParam>);
