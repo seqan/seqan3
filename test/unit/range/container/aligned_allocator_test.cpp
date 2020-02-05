@@ -157,12 +157,10 @@ TEST(aligned_allocator, in_vector)
 
     auto begin_it = container.begin();
     auto it       = begin_it;
-    auto end_it   = container.end();
 
     EXPECT_EQ(sizeof(int), 4u);
 
     EXPECT_EQ(memory_alignment(&*begin_it, alignment), 0u);
-    EXPECT_EQ(memory_alignment(&*end_it,   alignment), 8u);
 
     EXPECT_EQ(memory_alignment(&*(++it), alignment), 4u);
     EXPECT_EQ(memory_alignment(&*(++it), alignment), 8u);
@@ -184,12 +182,10 @@ TEST(aligned_allocator, in_deque)
 
     auto begin_it = container.begin();
     auto it       = begin_it;
-    auto end_it   = container.end();
 
     EXPECT_EQ(sizeof(int), 4u);
 
     EXPECT_EQ(memory_alignment(&*begin_it, alignment), 0u);
-    EXPECT_EQ(memory_alignment(&*end_it,   alignment), 8u);
 
     EXPECT_EQ(memory_alignment(&*(++it), alignment), 4u);
     EXPECT_EQ(memory_alignment(&*(++it), alignment), 8u);
@@ -211,14 +207,11 @@ TEST(aligned_allocator, in_list)
 
     auto begin_it = container.begin();
     auto it       = begin_it;
-    auto end_it   = container.end();
 
     EXPECT_EQ(sizeof(int), 4u);
 
     EXPECT_EQ(memory_alignment(&*begin_it, alignment), 0u);
-    EXPECT_EQ(memory_alignment(&*end_it,   alignment), 0u);
 
-    EXPECT_EQ(memory_alignment(&*(++it), alignment), 0u);
     EXPECT_EQ(memory_alignment(&*(++it), alignment), 0u);
     EXPECT_EQ(memory_alignment(&*(++it), alignment), 0u);
     EXPECT_EQ(memory_alignment(&*(++it), alignment), 0u);
