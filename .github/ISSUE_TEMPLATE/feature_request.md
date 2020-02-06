@@ -19,3 +19,15 @@ One of the following will happen to feature requests:
     see the [contributor guide](https://github.com/seqan/seqan3/pull/CONTRIBUTING.md).
   * The feature request is invalid and will be closed.
 -->
+
+### Done
+
+- [ ] Implementation and design approved
+- [ ] Unit tests pass
+- [ ] Test coverage > 97%
+- [ ] Micro benchmarks implemented
+- [ ] API documentation added
+- [ ] Tutorial/teaching material added
+- [ ] Macro benchmark with <= 10 % performance difference to SeqAn2 (if applicable)
+- [ ] Tests compile in less than 30 seconds
+- [ ] Changelog entry added
