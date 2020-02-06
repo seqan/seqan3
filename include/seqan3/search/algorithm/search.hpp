@@ -162,6 +162,10 @@ namespace seqan3
  *
  * Strong exception guarantee if iterating the query does not change its state and if invoking a possible delegate
  * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
+ *
+ * ### Example
+ *
+ * \include test/snippet/search/algorithm/search.cpp
  */
 template <fm_index_specialisation index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(queries_t && queries,
