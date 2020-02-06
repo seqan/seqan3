@@ -11,25 +11,23 @@
 
 #include <seqan3/core/pod_tuple.hpp>
 
-using namespace seqan3;
-
 // default/zero construction
 TEST(pod_tuple_ctr, ctr)
 {
-    [[maybe_unused]] pod_tuple<int, long, float> t1;
+    [[maybe_unused]] seqan3::pod_tuple<int, long, float> t1;
 }
 
 // aggregate initialization
 TEST(pod_tuple_aggr, aggr)
 {
-    [[maybe_unused]] pod_tuple<int, long, float> t1{4, 7l, 3.0f};
+    [[maybe_unused]] seqan3::pod_tuple<int, long, float> t1{4, 7l, 3.0f};
 }
 
 // zero initialization
 TEST(pod_tuple_zro, zro)
 {
-    pod_tuple<int, long, float> t1{0, 0, 0};
-    pod_tuple<int, long, float> t2{};
+    seqan3::pod_tuple<int, long, float> t1{0, 0, 0};
+    seqan3::pod_tuple<int, long, float> t2{};
 
     EXPECT_EQ(t1, t2);
 }
@@ -37,9 +35,9 @@ TEST(pod_tuple_zro, zro)
 // copy construction
 TEST(pod_tuple_cp_ctr, cp_ctr)
 {
-    pod_tuple<int, long, float> t1{4, 7l, 3.0f};
-    pod_tuple<int, long, float> t2{t1};
-    pod_tuple<int, long, float> t3(t1);
+    seqan3::pod_tuple<int, long, float> t1{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t2{t1};
+    seqan3::pod_tuple<int, long, float> t3(t1);
     EXPECT_EQ(t1, t2);
     EXPECT_EQ(t2, t3);
 }
@@ -47,20 +45,20 @@ TEST(pod_tuple_cp_ctr, cp_ctr)
 // move construction
 TEST(pod_tuple_mv_ctr, mv_ctr)
 {
-    pod_tuple<int, long, float> t0{4, 7l, 3.0f};
-    pod_tuple<int, long, float> t1{4, 7l, 3.0f};
-    pod_tuple<int, long, float> t2{std::move(t1)};
+    seqan3::pod_tuple<int, long, float> t0{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t1{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t2{std::move(t1)};
     EXPECT_EQ(t2, t0);
-    pod_tuple<int, long, float> t3(std::move(t2));
+    seqan3::pod_tuple<int, long, float> t3(std::move(t2));
     EXPECT_EQ(t3, t0);
 }
 
 // copy assignment
 TEST(pod_tuple_cp_assgn, cp_assgn)
 {
-    pod_tuple<int, long, float> t1{4, 7l, 3.0f};
-    pod_tuple<int, long, float> t2;
-    pod_tuple<int, long, float> t3;
+    seqan3::pod_tuple<int, long, float> t1{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t2;
+    seqan3::pod_tuple<int, long, float> t3;
 
     t2 = t1;
     t3 = t1;
@@ -71,10 +69,10 @@ TEST(pod_tuple_cp_assgn, cp_assgn)
 // move assignment
 TEST(pod_tuple_mv_assgn, mv_assgn)
 {
-    pod_tuple<int, long, float> t0{4, 7l, 3.0f};
-    pod_tuple<int, long, float> t1{4, 7l, 3.0f};
-    pod_tuple<int, long, float> t2;
-    pod_tuple<int, long, float> t3;
+    seqan3::pod_tuple<int, long, float> t0{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t1{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t2;
+    seqan3::pod_tuple<int, long, float> t3;
     t2 = std::move(t1);
     EXPECT_EQ(t2, t0);
     t3 = std::move(t2);
@@ -84,10 +82,10 @@ TEST(pod_tuple_mv_assgn, mv_assgn)
 // swap
 TEST(pod_tuple_swap, swap)
 {
-    pod_tuple<int, long, float> t0{4, 7l, 3.0f};
-    pod_tuple<int, long, float> t1{4, 7l, 3.0f};
-    pod_tuple<int, long, float> t2{};
-    pod_tuple<int, long, float> t3{};
+    seqan3::pod_tuple<int, long, float> t0{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t1{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t2{};
+    seqan3::pod_tuple<int, long, float> t3{};
 
     std::swap(t1, t2);
     EXPECT_EQ(t2, t0);
@@ -97,7 +95,7 @@ TEST(pod_tuple_swap, swap)
 // get<1>
 TEST(pod_tuple_get_i, get_i)
 {
-    pod_tuple<int, long, float> t0{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t0{4, 7l, 3.0f};
 
     static_assert(std::is_same_v<decltype(seqan3::get<0>(t0)), int &>);
     static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), long &>);
@@ -110,7 +108,7 @@ TEST(pod_tuple_get_i, get_i)
 // std::get<1>
 TEST(pod_tuple, stdget_i)
 {
-    pod_tuple<int, long, float> t0{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t0{4, 7l, 3.0f};
 
     static_assert(std::is_same_v<decltype(std::get<0>(t0)), int &>);
     static_assert(std::is_same_v<decltype(std::get<1>(t0)), long &>);
@@ -123,7 +121,7 @@ TEST(pod_tuple, stdget_i)
 // structured bindings
 TEST(pod_tuple_struct_binding, struct_binding)
 {
-    pod_tuple<int, long, float> t0{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t0{4, 7l, 3.0f};
     auto [ i, l, f ] = t0;
 
     EXPECT_EQ(i, 4);
@@ -134,7 +132,7 @@ TEST(pod_tuple_struct_binding, struct_binding)
 // get<type>
 TEST(pod_tuple_get_type, get_type)
 {
-    using pt = pod_tuple<int, long, float>;
+    using pt = seqan3::pod_tuple<int, long, float>;
     using ptc = pt const;
     pt t0{4, 7l, 3.0f};
     ptc t1{4, 7l, 3.0f};
@@ -175,7 +173,7 @@ TEST(pod_tuple_get_type, get_type)
 // std::get<type>
 TEST(pod_tuple_get_type, stdget_type)
 {
-    using pt = pod_tuple<int, long, float>;
+    using pt = seqan3::pod_tuple<int, long, float>;
     using ptc = pt const;
     pt t0{4, 7l, 3.0f};
     ptc t1{4, 7l, 3.0f};
@@ -216,7 +214,7 @@ TEST(pod_tuple_get_type, stdget_type)
 // std::tuple_element
 TEST(pod_tuple_tuple_element, tuple_element)
 {
-    using pt = pod_tuple<int, long, float>;
+    using pt = seqan3::pod_tuple<int, long, float>;
 
     static_assert(std::is_same_v<std::tuple_element_t<0, pt>, int>);
     static_assert(std::is_same_v<std::tuple_element_t<1, pt>, long>);
@@ -227,7 +225,7 @@ TEST(pod_tuple_tuple_element, tuple_element)
 // type deduction
 TEST(pod_tuple_type_deduce, type_deduce)
 {
-    pod_tuple t0{4, 7l, 3.0f};
+    seqan3::pod_tuple t0{4, 7l, 3.0f};
     using pt = decltype(t0);
 
     static_assert(std::is_same_v<std::tuple_element_t<0, pt>, int>);
@@ -238,9 +236,9 @@ TEST(pod_tuple_type_deduce, type_deduce)
 // comparison operators
 TEST(pod_tuple_cmp, cmp)
 {
-    pod_tuple<int, long, float> t0{4, 6l, 4.0f};
-    pod_tuple<int, long, float> t1{4, 7l, 3.0f};
-    pod_tuple<int, long, float> t2{4, 7l, 4.0f};
+    seqan3::pod_tuple<int, long, float> t0{4, 6l, 4.0f};
+    seqan3::pod_tuple<int, long, float> t1{4, 7l, 3.0f};
+    seqan3::pod_tuple<int, long, float> t2{4, 7l, 4.0f};
 
     EXPECT_LT(t0, t1);
     EXPECT_LE(t0, t1);

@@ -13,68 +13,80 @@
 #include <seqan3/core/detail/strong_type.hpp>
 
 using namespace std::literals;
-using namespace seqan3;
+using seqan3::operator|;
 
-struct pure_type : detail::strong_type<int, pure_type>
+struct pure_type : seqan3::detail::strong_type<int, pure_type>
 {
-    using detail::strong_type<int, pure_type>::strong_type;
+    using seqan3::detail::strong_type<int, pure_type>::strong_type;
 };
-struct additive_type : detail::strong_type<int, additive_type, detail::strong_type_skill::additive>
+struct additive_type : seqan3::detail::strong_type<int, additive_type, seqan3::detail::strong_type_skill::additive>
 {
-    using detail::strong_type<int, additive_type, detail::strong_type_skill::additive>::strong_type;
-};
-
-struct multiplicative_type : detail::strong_type<int, multiplicative_type, detail::strong_type_skill::multiplicative>
-{
-    using detail::strong_type<int, multiplicative_type, detail::strong_type_skill::multiplicative>::strong_type;
+    using seqan3::detail::strong_type<int, additive_type, seqan3::detail::strong_type_skill::additive>::strong_type;
 };
 
-struct bitwise_type : detail::strong_type<unsigned, bitwise_type, detail::strong_type_skill::bitwise_logic>
+struct multiplicative_type : seqan3::detail::strong_type<int,
+                                                         multiplicative_type,
+                                                         seqan3::detail::strong_type_skill::multiplicative>
 {
-    using detail::strong_type<unsigned, bitwise_type, detail::strong_type_skill::bitwise_logic>::strong_type;
+    using seqan3::detail::strong_type<int,
+                                      multiplicative_type,
+                                      seqan3::detail::strong_type_skill::multiplicative>::strong_type;
 };
 
-struct bitwise_shift_type : detail::strong_type<unsigned, bitwise_shift_type, detail::strong_type_skill::bitwise_shift>
+struct bitwise_type : seqan3::detail::strong_type<unsigned,
+                                                  bitwise_type,
+                                                  seqan3::detail::strong_type_skill::bitwise_logic>
 {
-    using detail::strong_type<unsigned, bitwise_shift_type, detail::strong_type_skill::bitwise_shift>::strong_type;
+    using seqan3::detail::strong_type<unsigned,
+                                      bitwise_type,
+                                      seqan3::detail::strong_type_skill::bitwise_logic>::strong_type;
 };
 
-struct logic_type : detail::strong_type<bool, logic_type, detail::strong_type_skill::logic>
+struct bitwise_shift_type : seqan3::detail::strong_type<unsigned,
+                                                        bitwise_shift_type,
+                                                        seqan3::detail::strong_type_skill::bitwise_shift>
 {
-    using detail::strong_type<bool, logic_type, detail::strong_type_skill::logic>::strong_type;
+    using seqan3::detail::strong_type<unsigned,
+                                      bitwise_shift_type,
+                                      seqan3::detail::strong_type_skill::bitwise_shift>::strong_type;
 };
 
-struct inc_type : detail::strong_type<int, inc_type, detail::strong_type_skill::increment>
+struct logic_type : seqan3::detail::strong_type<bool, logic_type, seqan3::detail::strong_type_skill::logic>
 {
-    using detail::strong_type<int, inc_type, detail::strong_type_skill::increment>::strong_type;
+    using seqan3::detail::strong_type<bool, logic_type, seqan3::detail::strong_type_skill::logic>::strong_type;
 };
 
-struct dec_type : detail::strong_type<int, dec_type, detail::strong_type_skill::decrement>
+struct inc_type : seqan3::detail::strong_type<int, inc_type, seqan3::detail::strong_type_skill::increment>
 {
-    using detail::strong_type<int, dec_type, detail::strong_type_skill::decrement>::strong_type;
+    using seqan3::detail::strong_type<int, inc_type, seqan3::detail::strong_type_skill::increment>::strong_type;
 };
 
-struct lval_type : detail::strong_type<std::reference_wrapper<std::string>, lval_type>
+struct dec_type : seqan3::detail::strong_type<int, dec_type, seqan3::detail::strong_type_skill::decrement>
 {
-    using detail::strong_type<std::reference_wrapper<std::string>, lval_type>::strong_type;
+    using seqan3::detail::strong_type<int, dec_type, seqan3::detail::strong_type_skill::decrement>::strong_type;
 };
 
-struct convertible_type : detail::strong_type<int, convertible_type, detail::strong_type_skill::convert>
+struct lval_type : seqan3::detail::strong_type<std::reference_wrapper<std::string>, lval_type>
 {
-    using detail::strong_type<int, convertible_type, detail::strong_type_skill::convert>::strong_type;
+    using seqan3::detail::strong_type<std::reference_wrapper<std::string>, lval_type>::strong_type;
 };
 
-struct multi_skill_type : detail::strong_type<int,
-                                              multi_skill_type,
-                                              detail::strong_type_skill::additive  |
-                                              detail::strong_type_skill::increment |
-                                              detail::strong_type_skill::decrement |
-                                              detail::strong_type_skill::convert>
+struct convertible_type : seqan3::detail::strong_type<int, convertible_type, seqan3::detail::strong_type_skill::convert>
 {
-    using detail::strong_type<int, multi_skill_type, detail::strong_type_skill::additive  |
-                                                     detail::strong_type_skill::increment |
-                                                     detail::strong_type_skill::decrement |
-                                                     detail::strong_type_skill::convert>::strong_type;
+    using seqan3::detail::strong_type<int, convertible_type, seqan3::detail::strong_type_skill::convert>::strong_type;
+};
+
+struct multi_skill_type : seqan3::detail::strong_type<int,
+                                                      multi_skill_type,
+                                                      seqan3::detail::strong_type_skill::additive  |
+                                                      seqan3::detail::strong_type_skill::increment |
+                                                      seqan3::detail::strong_type_skill::decrement |
+                                                      seqan3::detail::strong_type_skill::convert>
+{
+    using seqan3::detail::strong_type<int, multi_skill_type, seqan3::detail::strong_type_skill::additive  |
+                                                             seqan3::detail::strong_type_skill::increment |
+                                                             seqan3::detail::strong_type_skill::decrement |
+                                                             seqan3::detail::strong_type_skill::convert>::strong_type;
 };
 
 TEST(strong_type, pure_type)

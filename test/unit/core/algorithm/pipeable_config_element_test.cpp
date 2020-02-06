@@ -12,8 +12,6 @@
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
-using namespace seqan3;
-
 TEST(pipeable_config_element, two_elements)
 {
     // lvalue | lvalue
@@ -21,108 +19,108 @@ TEST(pipeable_config_element, two_elements)
     bax b2{};
     {
         auto cfg = b1 | b2;
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 
     // rvalue | lvalue
     {
         auto cfg = bar{} | b2;
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 
     // lvalue | rvalue
     {
         auto cfg = b1 | bax{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 
     // rvalue | rvalue
     {
         auto cfg = bar{} | bax{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 }
 
 TEST(pipeable_config_element, configuration_with_element)
 {
-    configuration<bar> tmp{};
+    seqan3::configuration<bar> tmp{};
     bax b2{};
 
     // lvalue | lvalue
     {
         auto cfg = tmp | b2;
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 
     // rvalue | lvalue
     {
-        auto cfg = configuration<bar>{} | b2;
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        auto cfg = seqan3::configuration<bar>{} | b2;
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 
     // lvalue | rvalue
     {
         auto cfg = tmp | bax{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 
     // rvalue | rvalue
     {
-        auto cfg = configuration<bar>{} | bax{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        auto cfg = seqan3::configuration<bar>{} | bax{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 }
 
 TEST(pipeable_config_element, configuration_with_configuration)
 {
-    configuration<bar> tmp{};
-    configuration<bax> b2{};
+    seqan3::configuration<bar> tmp{};
+    seqan3::configuration<bax> b2{};
     // lvalue | lvalue
     {
         auto cfg = tmp | b2;
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 
     // rvalue | lvalue
     {
-        auto cfg = configuration<bar>{} | b2;
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        auto cfg = seqan3::configuration<bar>{} | b2;
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 
     // lvalue | rvalue
     {
-        auto cfg = tmp | configuration<bax>{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        auto cfg = tmp | seqan3::configuration<bax>{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 
     // rvalue | rvalue
     {
-        auto cfg = configuration<bar>{} | configuration<bax>{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+        auto cfg = seqan3::configuration<bar>{} | seqan3::configuration<bax>{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
     }
 }
 
 TEST(pipeable_config_element, multiple_elements)
 {
-    configuration<bar> tmp{};
+    seqan3::configuration<bar> tmp{};
     bax b2{};
     {
         auto cfg = foo{} | bar{} | bax{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<foo, bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<foo, bar, bax>>));
     }
 
     {
-        auto cfg = configuration<bar>{} | b2 | foo{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax, foo>>));
+        auto cfg = seqan3::configuration<bar>{} | b2 | foo{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax, foo>>));
     }
 }
 
 TEST(pipeable_config_element, const_config)
 {
-    configuration<foobar<>> const tmp{};
+    seqan3::configuration<foobar<>> const tmp{};
 
     {
         auto cfg = tmp | foo{} | bar{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<foobar<>, foo, bar>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<foobar<>, foo, bar>>));
     }
 }

@@ -14,9 +14,8 @@
 #include <iostream>
 #include <type_traits>
 
-using namespace seqan3;
-
 TEST(default_simd_backend, test)
 {
-    EXPECT_TRUE((std::is_same_v<detail::default_simd_backend<int16_t, 8>, detail::builtin_simd<int16_t, 8>>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::default_simd_backend<int16_t, 8>,
+                                seqan3::detail::builtin_simd<int16_t, 8>>));
 }

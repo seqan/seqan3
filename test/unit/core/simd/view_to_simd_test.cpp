@@ -27,37 +27,35 @@
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/test/simd_utility.hpp>
 
-using namespace seqan3;
-
 template <typename t>
 class view_to_simd_test : public ::testing::Test
 {
 public:
     using container_t = std::tuple_element_t<0, t>;
     using simd_t      = std::tuple_element_t<1, t>;
-    using allocator_t = std::conditional_t<simd_traits<simd_t>::length == 1,
+    using allocator_t = std::conditional_t<seqan3::simd::simd_traits<simd_t>::length == 1,
                                            std::allocator<simd_t>,
-                                           aligned_allocator<simd_t, sizeof(simd_t)>>;
+                                           seqan3::aligned_allocator<simd_t, sizeof(simd_t)>>;
 
-    static constexpr size_t padding_value_dna4 = alphabet_size<value_type_t<container_t>>;
+    static constexpr size_t padding_value_dna4 = seqan3::alphabet_size<seqan3::value_type_t<container_t>>;
     static constexpr size_t padding_value_custom = 8;
-    static constexpr size_t max_sequence_length = simd_traits<simd_t>::length * 64;
+    static constexpr size_t max_sequence_length = seqan3::simd::simd_traits<simd_t>::length * 64;
 
     void SetUp()
     {
-        sequences.resize(simd_traits<simd_t>::length);
-        for (size_t i = 0; i < simd_traits<simd_t>::length; ++i)
+        sequences.resize(seqan3::simd::simd_traits<simd_t>::length);
+        for (size_t i = 0; i < seqan3::simd::simd_traits<simd_t>::length; ++i)
         {
             // Generate sequences that end on different boundaries
-            size_t l = max_sequence_length - (i * simd_traits<simd_t>::length) - i;
-            std::ranges::copy(test::generate_sequence<value_type_t<container_t>>(l),
+            size_t l = max_sequence_length - (i * seqan3::simd::simd_traits<simd_t>::length) - i;
+            std::ranges::copy(seqan3::test::generate_sequence<seqan3::value_type_t<container_t>>(l),
                               std::ranges::back_inserter(sequences[i]));
         }
 
-        transformed_simd_vec.resize(max_sequence_length, simd::fill<simd_t>(padding_value_dna4));
-        transformed_simd_vec_padded.resize(max_sequence_length, simd::fill<simd_t>(padding_value_custom));
+        transformed_simd_vec.resize(max_sequence_length, seqan3::simd::fill<simd_t>(padding_value_dna4));
+        transformed_simd_vec_padded.resize(max_sequence_length, seqan3::simd::fill<simd_t>(padding_value_custom));
 
-        for (size_t i = 0; i < simd_traits<simd_t>::length; ++i)
+        for (size_t i = 0; i < seqan3::simd::simd_traits<simd_t>::length; ++i)
         {
             for (size_t j = 0; j < sequences[i].size(); ++j)
             {
@@ -87,33 +85,35 @@ public:
     std::vector<simd_t, allocator_t> transformed_simd_vec{};
     std::vector<simd_t, allocator_t> transformed_simd_vec_padded{};
 
-    using view_to_simd_type = detail::view_to_simd<type_reduce_view<std::vector<container_t> &>, simd_t>;
+    using view_to_simd_type = seqan3::detail::view_to_simd<seqan3::type_reduce_view<std::vector<container_t> &>,
+                                                           simd_t>;
 };
 
-using test_types = ::testing::Types<std::tuple<std::vector<dna4>, simd_type_t<int8_t>>,
-                                    std::tuple<std::vector<dna4>, simd_type_t<int16_t>>,
-                                    std::tuple<std::vector<dna4>, simd_type_t<int32_t>>,
-                                    std::tuple<std::vector<dna4>, simd_type_t<int64_t>>,
-                                    std::tuple<std::vector<dna4>, simd_type_t<uint8_t>>,
-                                    std::tuple<std::vector<dna4>, simd_type_t<uint16_t>>,
-                                    std::tuple<std::vector<dna4>, simd_type_t<uint32_t>>,
-                                    std::tuple<std::vector<dna4>, simd_type_t<uint64_t>>,
-                                    std::tuple<std::deque<dna4>, simd_type_t<int8_t>>,
-                                    std::tuple<std::deque<dna4>, simd_type_t<int16_t>>,
-                                    std::tuple<std::deque<dna4>, simd_type_t<int32_t>>,
-                                    std::tuple<std::deque<dna4>, simd_type_t<int64_t>>,
-                                    std::tuple<std::deque<dna4>, simd_type_t<uint8_t>>,
-                                    std::tuple<std::deque<dna4>, simd_type_t<uint16_t>>,
-                                    std::tuple<std::deque<dna4>, simd_type_t<uint32_t>>,
-                                    std::tuple<std::deque<dna4>, simd_type_t<uint64_t>>
+using test_types = ::testing::Types<std::tuple<std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int8_t>>,
+                                    std::tuple<std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int16_t>>,
+                                    std::tuple<std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int32_t>>,
+                                    std::tuple<std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<int64_t>>,
+                                    std::tuple<std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<uint8_t>>,
+                                    std::tuple<std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<uint16_t>>,
+                                    std::tuple<std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<uint32_t>>,
+                                    std::tuple<std::vector<seqan3::dna4>, seqan3::simd::simd_type_t<uint64_t>>,
+                                    std::tuple<std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int8_t>>,
+                                    std::tuple<std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int16_t>>,
+                                    std::tuple<std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int32_t>>,
+                                    std::tuple<std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<int64_t>>,
+                                    std::tuple<std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<uint8_t>>,
+                                    std::tuple<std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<uint16_t>>,
+                                    std::tuple<std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<uint32_t>>,
+                                    std::tuple<std::deque<seqan3::dna4>, seqan3::simd::simd_type_t<uint64_t>>
                                    >;
 
 TYPED_TEST_SUITE(view_to_simd_test, test_types, );
 
 TEST(view_to_simd, concept_check)
 {
-    using cmp_type = std::vector<dna4_vector>;
-    using test_type = detail::view_to_simd<type_reduce_view<cmp_type &>, simd_type_t<int8_t>>;
+    using cmp_type = std::vector<seqan3::dna4_vector>;
+    using test_type = seqan3::detail::view_to_simd<seqan3::type_reduce_view<cmp_type &>,
+                                                   seqan3::simd::simd_type_t<int8_t>>;
 
     using iter_t = decltype(std::ranges::begin(std::declval<test_type &>()));
     EXPECT_TRUE(std::input_iterator<iter_t>);
@@ -128,14 +128,16 @@ TEST(view_to_simd, concept_check)
     EXPECT_NE(std::ranges::view<cmp_type>, std::ranges::view<test_type>);
     EXPECT_EQ(std::ranges::sized_range<cmp_type>, std::ranges::sized_range<test_type>);
     EXPECT_NE(std::ranges::common_range<cmp_type>, std::ranges::common_range<test_type>);
-    EXPECT_NE(const_iterable_range<cmp_type>, const_iterable_range<test_type>);
-    EXPECT_NE((std::ranges::output_range<cmp_type, dna4_vector>), (std::ranges::output_range<test_type, dna4_vector>));
+    EXPECT_NE(seqan3::const_iterable_range<cmp_type>, seqan3::const_iterable_range<test_type>);
+    EXPECT_NE((std::ranges::output_range<cmp_type, seqan3::dna4_vector>), (std::ranges::output_range<test_type,
+                                                                           seqan3::dna4_vector>));
 }
 
 TEST(view_to_simd, iter_concept)
 {
-    using cmp_type = std::vector<dna4_vector>;
-    using test_type = detail::view_to_simd<type_reduce_view<cmp_type &>, simd_type_t<int8_t>>;
+    using cmp_type = std::vector<seqan3::dna4_vector>;
+    using test_type = seqan3::detail::view_to_simd<seqan3::type_reduce_view<cmp_type &>,
+                                                   seqan3::simd::simd_type_t<int8_t>>;
     using iter_t = std::ranges::iterator_t<test_type>;
     using sent_t = std::ranges::sentinel_t<test_type>;
 
@@ -177,17 +179,21 @@ TYPED_TEST(view_to_simd_test, iterate_with_padding)
 TYPED_TEST(view_to_simd_test, adaptor_pipe)
 {
     { // without padding
-        auto v = this->sequences | views::to_simd<typename TestFixture::simd_t>;
+        auto v = this->sequences | seqan3::views::to_simd<typename TestFixture::simd_t>;
         this->compare(v, this->transformed_simd_vec);
     }
 
     { // w padding
-        auto v = this->sequences | views::to_simd<typename TestFixture::simd_t>(TestFixture::padding_value_custom);
+        auto v = this->sequences |
+                 seqan3::views::to_simd<typename TestFixture::simd_t>(TestFixture::padding_value_custom);
         this->compare(v, this->transformed_simd_vec_padded);
     }
 
     { // w padding and calling range
-        auto v = views::to_simd<typename TestFixture::simd_t>(TestFixture::padding_value_custom)(this->sequences);
+        auto v = seqan3::views::to_simd<typename TestFixture::simd_t>
+        (
+            TestFixture::padding_value_custom
+        )(this->sequences);
         this->compare(v, this->transformed_simd_vec_padded);
     }
 }
@@ -195,12 +201,13 @@ TYPED_TEST(view_to_simd_test, adaptor_pipe)
 TYPED_TEST(view_to_simd_test, adaptor_function)
 {
     { // without padding
-        auto v = views::to_simd<typename TestFixture::simd_t>(this->sequences);
+        auto v = seqan3::views::to_simd<typename TestFixture::simd_t>(this->sequences);
         this->compare(v, this->transformed_simd_vec);
     }
 
     { // w padding
-        auto v = views::to_simd<typename TestFixture::simd_t>(this->sequences, TestFixture::padding_value_custom);
+        auto v = seqan3::views::to_simd<typename TestFixture::simd_t>(this->sequences,
+                                                                            TestFixture::padding_value_custom);
         this->compare(v, this->transformed_simd_vec_padded);
     }
 }
@@ -209,9 +216,9 @@ TYPED_TEST(view_to_simd_test, empty_sequences)
 {
     using simd_t = typename TestFixture::simd_t;
     std::vector<typename TestFixture::container_t> sequences;
-    sequences.resize(simd_traits<simd_t>::length);
+    sequences.resize(seqan3::simd::simd_traits<simd_t>::length);
 
-    auto v = sequences | views::to_simd<simd_t>;
+    auto v = sequences | seqan3::views::to_simd<simd_t>;
     this->compare(v, std::vector<simd_t, typename TestFixture::allocator_t>{});
 
     EXPECT_EQ(v.empty(), true);
@@ -225,16 +232,16 @@ TYPED_TEST(view_to_simd_test, fewer_sequences)
 
     // delete the last sequence in the set.
     for (simd_t & vec : this->transformed_simd_vec)
-        vec[simd_traits<simd_t>::length - 1] = TestFixture::padding_value_dna4;
+        vec[seqan3::simd::simd_traits<simd_t>::length - 1] = TestFixture::padding_value_dna4;
 
     // If simd size is only 1, the compare range needs to be cleared.
     if (this->sequences.empty())
         this->transformed_simd_vec.clear();
 
-    auto v = this->sequences | views::to_simd<simd_t>;
+    auto v = this->sequences | seqan3::views::to_simd<simd_t>;
     this->compare(v, this->transformed_simd_vec);
 
-    if constexpr (simd_traits<simd_t>::length > 1)
+    if constexpr (seqan3::simd::simd_traits<simd_t>::length > 1)
     {
         EXPECT_EQ(v.empty(), false);
         EXPECT_EQ(v.size(), 64u);
@@ -247,16 +254,16 @@ TYPED_TEST(view_to_simd_test, fewer_sequences_w_padding)
     this->sequences.pop_back();
 
     for (simd_t & vec : this->transformed_simd_vec_padded)
-        vec[simd_traits<simd_t>::length - 1] = TestFixture::padding_value_custom;
+        vec[seqan3::simd::simd_traits<simd_t>::length - 1] = TestFixture::padding_value_custom;
 
     // If simd size is only 1, the compare range needs to be cleared.
     if (this->sequences.empty())
         this->transformed_simd_vec_padded.clear();
 
-    auto v = this->sequences | views::to_simd<simd_t>(TestFixture::padding_value_custom);
+    auto v = this->sequences | seqan3::views::to_simd<simd_t>(TestFixture::padding_value_custom);
     this->compare(v, this->transformed_simd_vec_padded);
 
-    if constexpr (simd_traits<simd_t>::length > 1)
+    if constexpr (seqan3::simd::simd_traits<simd_t>::length > 1)
     {
         EXPECT_EQ(v.empty(), false);
         EXPECT_EQ(v.size(), 64u);
@@ -268,7 +275,7 @@ TYPED_TEST(view_to_simd_test, empty_underlying_range)
     using simd_t = typename TestFixture::simd_t;
     std::vector<typename TestFixture::container_t> sequences{};
 
-    auto v = sequences | views::to_simd<simd_t>;
+    auto v = sequences | seqan3::views::to_simd<simd_t>;
     this->compare(v, std::vector<simd_t, typename TestFixture::allocator_t>{});
 
     EXPECT_EQ(v.empty(), true);
@@ -277,6 +284,7 @@ TYPED_TEST(view_to_simd_test, empty_underlying_range)
 
 TYPED_TEST(view_to_simd_test, too_many_sequences)
 {
+    using seqan3::operator""_dna4;
     typename TestFixture::container_t cont;
     std::ranges::copy("ACGTACGACT"_dna4, std::ranges::back_inserter(cont));
     this->sequences.push_back(cont);
@@ -293,7 +301,7 @@ TYPED_TEST(view_to_simd_test, ends_not_on_chunk_boundary)
     this->sequences[0].resize(seq1_size);
 
     // Second longest sequence in the set now.
-    size_t new_max_length = TestFixture::max_sequence_length - simd_traits<simd_t>::length - 1;
+    size_t new_max_length = TestFixture::max_sequence_length - seqan3::simd::simd_traits<simd_t>::length - 1;
 
     // If simd size is only 1, the compare range only holds one sequence which must have the same size.
     if (this->sequences.size() == 1)
@@ -307,6 +315,6 @@ TYPED_TEST(view_to_simd_test, ends_not_on_chunk_boundary)
     this->transformed_simd_vec.resize(new_max_length);
 
     // Now test against the test vector.
-    auto simd_view = this->sequences | views::to_simd<simd_t>;
+    auto simd_view = this->sequences | seqan3::views::to_simd<simd_t>;
     this->compare(simd_view, this->transformed_simd_vec);
 }

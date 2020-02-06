@@ -10,7 +10,6 @@
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
 #include <seqan3/core/parallel/detail/reader_writer_manager.hpp>
 
-using namespace seqan3;
 using namespace seqan3::detail;
 using namespace seqan3::contrib;
 

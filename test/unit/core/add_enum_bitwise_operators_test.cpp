@@ -11,8 +11,6 @@
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 
-using namespace seqan3;
-
 enum class my_enum
 {
     ZERO = 0,
@@ -26,6 +24,8 @@ constexpr bool seqan3::add_enum_bitwise_operators<my_enum> = true;
 
 TEST(add_enum_bitwise_operators, AND)
 {
+    using seqan3::operator&;
+
     my_enum e = my_enum::VAL1;
     my_enum e2 = e & my_enum::VAL2;
     EXPECT_EQ(e2, my_enum::ZERO);
@@ -33,6 +33,8 @@ TEST(add_enum_bitwise_operators, AND)
 
 TEST(add_enum_bitwise_operators, OR)
 {
+    using seqan3::operator|;
+
     my_enum e = my_enum::VAL1;
     my_enum e2 = e | my_enum::VAL2;
     EXPECT_EQ(e2, my_enum::COMB);
@@ -40,6 +42,8 @@ TEST(add_enum_bitwise_operators, OR)
 
 TEST(add_enum_bitwise_operators, XOR)
 {
+    using seqan3::operator^;
+
     my_enum e = my_enum::VAL1;
     my_enum e2 = e ^ my_enum::VAL2;
     EXPECT_EQ(e2, my_enum::COMB);
@@ -47,6 +51,8 @@ TEST(add_enum_bitwise_operators, XOR)
 
 TEST(add_enum_bitwise_operators, NOT)
 {
+    using seqan3::operator~;
+
     my_enum e = my_enum::VAL1;
     my_enum e2 = ~e;
     EXPECT_NE(e, e2);
@@ -56,6 +62,8 @@ TEST(add_enum_bitwise_operators, NOT)
 
 TEST(add_enum_bitwise_operators, AND_ASSIGN)
 {
+    using seqan3::operator&=;
+
     my_enum e = my_enum::VAL1;
     e &= my_enum::VAL2;
     EXPECT_EQ(e, my_enum::ZERO);
@@ -63,6 +71,8 @@ TEST(add_enum_bitwise_operators, AND_ASSIGN)
 
 TEST(add_enum_bitwise_operators, OR_ASSIGN)
 {
+    using seqan3::operator|=;
+
     my_enum e = my_enum::VAL1;
     e |= my_enum::VAL2;
     EXPECT_EQ(e, my_enum::COMB);
@@ -70,6 +80,8 @@ TEST(add_enum_bitwise_operators, OR_ASSIGN)
 
 TEST(add_enum_bitwise_operators, XOR_ASSIGN)
 {
+    using seqan3::operator^=;
+
     my_enum e = my_enum::VAL1;
     e ^= my_enum::VAL2;
     EXPECT_EQ(e, my_enum::COMB);
