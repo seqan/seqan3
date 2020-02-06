@@ -38,7 +38,7 @@
  *
  * Index Cursors are lightweight objects, i.e. they are cheap to copy.
  *
- * Note that although the SeqAn index cursor, although having similar behaviour, don't model any of the standard library
+ * Note that the SeqAn index cursor, although having similar behaviour, doesn't model any of the standard library
  * iterator concepts, not even std::input_or_output_iterator.
  *
  */

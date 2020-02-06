@@ -48,7 +48,7 @@ class bi_fm_index_cursor;
  *
  * ### Running time / Space consumption
  *
- * \f$SAMPLING\_RATE = 16\f$
+ * \f$SAMPLING\_RATE = 16\f$ \n
  * \f$\Sigma\f$: alphabet_size<alphabet_type> where alphabet_type is the seqan3 alphabet type (e.g. seqan3::dna4 has an
  *               alphabet size of 4).
  *

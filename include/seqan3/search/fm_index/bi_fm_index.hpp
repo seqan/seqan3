@@ -33,13 +33,13 @@ namespace seqan3
  * \tparam alphabet_t        The alphabet type; must model seqan3::semialphabet.
  * \tparam text_layout_mode_ Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.
- * \tparam sdsl_index_type_  The type of the underlying SDSL index, must model seqan3::sdsl_index.
+ * \tparam sdsl_index_type_  The type of the underlying SDSL index, must model seqan3::detail::sdsl_index.
  * \details
  *
  * The seqan3::bi_fm_index is a fast and space-efficient bidirectional string index to search strings and
  * collections of strings.
- * In general, we recommend to favour the seqan3::bi_fm_index over the seqan3::fm_index if you want to allow multiple errors when
- * searching.
+ * In general, we recommend to favour the seqan3::bi_fm_index over the unidirectional seqan3::fm_index if you want to
+ * allow multiple errors when searching.
  *
  * ### General information
  *

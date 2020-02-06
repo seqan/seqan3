@@ -27,13 +27,13 @@ namespace seqan3::detail
  * \details
  *
  * The seqan3::detail::search_config_id used to identify a specific search configuration element independent of
- * it's concrete type and position within the seqan3::search_cfg::search_configuration object.
+ * its concrete type and position within the \ref seqan3::search_cfg "search configuration object".
  * Thus one can access the value of the corresponding configuration element via the special get interface.
  *
  * ### Example
  *
  * ```cpp
- * search_cfg::search_configuration cfg = search_cfg::max_total_errors(3);
+ * search_cfg cfg = search_cfg::max_total_errors(3);
  * auto max_total_errors = get<search_cfg::id::max_total_errors>(cfg);  // max_total_errors = 3;
  * ```
  */

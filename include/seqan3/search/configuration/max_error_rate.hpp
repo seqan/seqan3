@@ -30,7 +30,8 @@ namespace seqan3::search_cfg
  *        (mismatches, insertions, deletions). This is an upper bound of errors independent from error rates of
  *        specific error types.
  * \ingroup search_configuration
- * \details An insertion corresponds to a base inserted into the query that does not occur in the text at the position,
+ * \details A mismatch corresponds to diverging bases between text and query for a certain position.
+ *          An insertion corresponds to a base inserted into the query that does not occur in the text at the position,
  *          a deletion corresponds to a base deleted from the query sequence that does occur in the indexed text.
  *          Deletions at the beginning and at the end of the sequence are not considered during a search.
  */
