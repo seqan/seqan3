@@ -61,7 +61,7 @@ auto at()
         return std::type_identity<head_t>{};
     else if constexpr (idx > 0)
 #ifdef __clang__
-        return std::type_identity<__type_pack_element<idx - 1, tail_t...>>;
+        return std::type_identity<__type_pack_element<idx - 1, tail_t...>>{};
 #else
         return at<idx - 1, tail_t...>();
 #endif // __clang__
