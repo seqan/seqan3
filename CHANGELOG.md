@@ -24,6 +24,21 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
+# 3.0.2
+
+Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
+
+## New features
+
+#### Build system
+
+* Add top-level `CMakeLists.txt`
+  ([\#1475](https://github.com/seqan/seqan3/pull/1475)).
+
+## API changes
+
+## Notable Bug-fixes
+
 # 3.0.1
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
