@@ -182,11 +182,11 @@ SEQAN3_CONCEPT tuple_like = detail::tuple_size<std::remove_reference_t<t>> && re
     //              empty. Furthermore, the std::totally_ordered can only be checked if all elements in the
     //              tuple are strict_totally_ordered. This is done, by the fold expression in the second part.
     requires (std::tuple_size<std::remove_reference_t<t>>::value == 0) ||
-                detail::tuple_get<remove_cvref_t<t>> &&
+                (detail::tuple_get<remove_cvref_t<t>> &&
                 (!meta::fold<detail::tuple_type_list_t<remove_cvref_t<t>>,
                              std::true_type,
                              meta::quote_trait<detail::models_strict_totally_ordered>>::value ||
-                std::totally_ordered<remove_cvref_t<t>>);
+                std::totally_ordered<remove_cvref_t<t>>));
 };
 //!\endcond
 
