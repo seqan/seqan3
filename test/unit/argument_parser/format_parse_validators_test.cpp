@@ -17,8 +17,6 @@
 #include <seqan3/std/filesystem>
 #include <seqan3/test/tmp_filename.hpp>
 
-using namespace seqan3;
-
 struct dummy_file
 {
 
@@ -32,7 +30,7 @@ struct dummy_file
         static inline std::vector<std::string> file_extensions{ {"sam"}, {"bam"}};
     };
 
-    using valid_formats = type_list<format1, format2>;
+    using valid_formats = seqan3::type_list<format1, format2>;
 };
 
 std::string const basic_options_str = "OPTIONS"
@@ -47,33 +45,33 @@ std::string const basic_options_str = "OPTIONS"
 std::string const basic_version_str = "VERSION"
                                       "Last update:"
                                       "test_parser version:"
-                                      "SeqAn version: " + seqan3_version;
+                                      "SeqAn version: " + seqan3::seqan3_version;
 
 TEST(validator_test, fullfill_concept)
 {
-    EXPECT_FALSE(validator<int>);
+    EXPECT_FALSE(seqan3::validator<int>);
 
-    EXPECT_TRUE(validator<detail::default_validator<int>>);
-    EXPECT_TRUE(validator<detail::default_validator<int> const>);
-    EXPECT_TRUE(validator<detail::default_validator<int> &>);
+    EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<int>>);
+    EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<int> const>);
+    EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<int> &>);
 
-    EXPECT_TRUE(validator<detail::default_validator<std::vector<int>>>);
-    EXPECT_TRUE(validator<arithmetic_range_validator>);
-    EXPECT_TRUE(validator<value_list_validator<double>>);
-    EXPECT_TRUE(validator<value_list_validator<std::string>>);
-    EXPECT_TRUE(validator<input_file_validator<>>);
-    EXPECT_TRUE(validator<output_file_validator<>>);
-    EXPECT_TRUE(validator<input_directory_validator>);
-    EXPECT_TRUE(validator<output_directory_validator>);
-    EXPECT_TRUE(validator<regex_validator>);
+    EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<std::vector<int>>>);
+    EXPECT_TRUE(seqan3::validator<seqan3::arithmetic_range_validator>);
+    EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<double>>);
+    EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<std::string>>);
+    EXPECT_TRUE(seqan3::validator<seqan3::input_file_validator<>>);
+    EXPECT_TRUE(seqan3::validator<seqan3::output_file_validator<>>);
+    EXPECT_TRUE(seqan3::validator<seqan3::input_directory_validator>);
+    EXPECT_TRUE(seqan3::validator<seqan3::output_directory_validator>);
+    EXPECT_TRUE(seqan3::validator<seqan3::regex_validator>);
 
-    EXPECT_TRUE(validator<decltype(input_file_validator{{"t"}} | regex_validator{".*"})>);
+    EXPECT_TRUE(seqan3::validator<decltype(seqan3::input_file_validator{{"t"}} | seqan3::regex_validator{".*"})>);
 }
 
 TEST(validator_test, input_file)
 {
-    test::tmp_filename tmp_name{"testbox.fasta"};
-    test::tmp_filename tmp_name_2{"testbox_2.fasta"};
+    seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
+    seqan3::test::tmp_filename tmp_name_2{"testbox_2.fasta"};
 
     std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}};
 
@@ -83,31 +81,31 @@ TEST(validator_test, input_file)
     { // single file
 
         { // empty list of file.
-            input_file_validator my_validator{};
+            seqan3::input_file_validator my_validator{};
             EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
         }
 
         { // file already exists.
             std::filesystem::path does_not_exist{tmp_name.get_path()};
             does_not_exist.replace_extension(".bam");
-            input_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exist), validation_error);
+            seqan3::input_file_validator my_validator{formats};
+            EXPECT_THROW(my_validator(does_not_exist), seqan3::validation_error);
         }
 
         { // file has wrong format.
-            input_file_validator my_validator{std::vector{std::string{"sam"}}};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), validation_error);
+            seqan3::input_file_validator my_validator{std::vector{std::string{"sam"}}};
+            EXPECT_THROW(my_validator(tmp_name.get_path()), seqan3::validation_error);
         }
 
         { // file has no extension.
             std::filesystem::path does_not_exist{tmp_name.get_path()};
             does_not_exist.replace_extension();
-            input_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exist), validation_error);
+            seqan3::input_file_validator my_validator{formats};
+            EXPECT_THROW(my_validator(does_not_exist), seqan3::validation_error);
         }
 
         {  // read from file
-            input_file_validator<dummy_file> my_validator{};
+            seqan3::input_file_validator<dummy_file> my_validator{};
             EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
         }
 
@@ -116,9 +114,9 @@ TEST(validator_test, input_file)
         // option
         std::string const & path = tmp_name.get_path().string();
         const char * argv[] = {"./argument_parser_test", "-i", path.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(file_in_path, 'i', "int-option", "desc",
-                          option_spec::DEFAULT, input_file_validator{formats});
+                          seqan3::option_spec::DEFAULT, seqan3::input_file_validator{formats});
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(file_in_path.string(), path);
@@ -132,8 +130,8 @@ TEST(validator_test, input_file)
         std::string const & path_2 = tmp_name_2.get_path().string();
 
         const char * argv[] = {"./argument_parser_test", path.c_str(), path_2.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
-        parser.add_positional_option(input_files, "desc", input_file_validator{formats});
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
+        parser.add_positional_option(input_files, "desc", seqan3::input_file_validator{formats});
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(input_files.size(), 2u);
@@ -144,8 +142,8 @@ TEST(validator_test, input_file)
     { // get help page message
         std::filesystem::path path;
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser{"test_parser", 2, argv, false};
-        parser.add_positional_option(path, "desc", input_file_validator{formats});
+        seqan3::argument_parser parser{"test_parser", 2, argv, false};
+        parser.add_positional_option(path, "desc", seqan3::input_file_validator{formats});
 
         testing::internal::CaptureStdout();
         EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -157,54 +155,55 @@ TEST(validator_test, input_file)
                                "          desc Valid input file formats: [fa, sam, fasta]"} +
                                basic_options_str +
                                basic_version_str;
-        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!seqan3::is_space)), expected
+                                             | std::views::filter(!seqan3::is_space)));
     }
 }
 
 TEST(validator_test, input_file_ext_from_file)
 {
     // Give as a template argument the seqan3 file type to get all valid extensions for this file.
-    input_file_validator<dummy_file> validator{};
+    seqan3::input_file_validator<dummy_file> validator{};
 
     EXPECT_EQ(validator.get_help_page_message(), "Valid input file formats: [fa, fasta, sam, bam]");
 }
 
 TEST(validator_test, output_file)
 {
-    test::tmp_filename tmp_name{"testbox.fasta"};
-    test::tmp_filename tmp_name_2{"testbox_2.fasta"};
-    test::tmp_filename tmp_name_3{"testbox_3.fa"};
+    seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
+    seqan3::test::tmp_filename tmp_name_2{"testbox_2.fasta"};
+    seqan3::test::tmp_filename tmp_name_3{"testbox_3.fa"};
 
     std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}};
 
     { // single file
 
         { // empty list of file.
-            output_file_validator my_validator{};
+            seqan3::output_file_validator my_validator{};
             EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
         }
 
         { // file does not exist.
             std::ofstream tmp_file_2(tmp_name_2.get_path());
             std::filesystem::path does_not_exist{tmp_name_2.get_path()};
-            output_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exist), validation_error);
+            seqan3::output_file_validator my_validator{formats};
+            EXPECT_THROW(my_validator(does_not_exist), seqan3::validation_error);
         }
 
         { // file has wrong format.
-            output_file_validator my_validator{std::vector{std::string{"sam"}}};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), validation_error);
+            seqan3::output_file_validator my_validator{std::vector{std::string{"sam"}}};
+            EXPECT_THROW(my_validator(tmp_name.get_path()), seqan3::validation_error);
         }
 
         { // file has no extension.
             std::filesystem::path no_extension{tmp_name.get_path()};
             no_extension.replace_extension();
-            output_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(no_extension), validation_error);
+            seqan3::output_file_validator my_validator{formats};
+            EXPECT_THROW(my_validator(no_extension), seqan3::validation_error);
         }
 
         {  // read from file
-            output_file_validator<dummy_file> my_validator{};
+            seqan3::output_file_validator<dummy_file> my_validator{};
             EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
         }
 
@@ -213,9 +212,9 @@ TEST(validator_test, output_file)
         // option
         std::string const & path = tmp_name.get_path().string();
         const char * argv[] = {"./argument_parser_test", "-o", path.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(file_out_path, 'o', "out-option", "desc",
-                          option_spec::DEFAULT, output_file_validator{formats});
+                          seqan3::option_spec::DEFAULT, seqan3::output_file_validator{formats});
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(file_out_path.string(), path);
@@ -229,8 +228,8 @@ TEST(validator_test, output_file)
         std::string const & path_3 = tmp_name_3.get_path().string();
 
         const char * argv[] = {"./argument_parser_test", path.c_str(), path_3.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
-        parser.add_positional_option(output_files, "desc", output_file_validator{formats});
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
+        parser.add_positional_option(output_files, "desc", seqan3::output_file_validator{formats});
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(output_files.size(), 2u);
@@ -242,8 +241,8 @@ TEST(validator_test, output_file)
     {
         std::filesystem::path path;
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser{"test_parser", 2, argv, false};
-        parser.add_positional_option(path, "desc", output_file_validator{formats});
+        seqan3::argument_parser parser{"test_parser", 2, argv, false};
+        parser.add_positional_option(path, "desc", seqan3::output_file_validator{formats});
 
         testing::internal::CaptureStdout();
         EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -255,35 +254,36 @@ TEST(validator_test, output_file)
                                "          desc Valid output file formats: [fa, sam, fasta]"} +
                                basic_options_str +
                                basic_version_str;
-        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!seqan3::is_space)), expected
+                                             | std::views::filter(!seqan3::is_space)));
     }
 }
 
 TEST(validator_test, output_file_ext_from_file)
 {
     // Give as a template argument the seqan3 file type to get all valid extensions for this file.
-    output_file_validator<dummy_file> validator{};
+    seqan3::output_file_validator<dummy_file> validator{};
 
     EXPECT_EQ(validator.get_help_page_message(), "Valid output file formats: [fa, fasta, sam, bam]");
 }
 
 TEST(validator_test, input_directory)
 {
-    test::tmp_filename tmp_name{"testbox.fasta"};
+    seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
 
     { // directory
 
         { // has filename
             std::ofstream tmp_dir(tmp_name.get_path());
-            input_directory_validator my_validator{};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), validation_error);
+            seqan3::input_directory_validator my_validator{};
+            EXPECT_THROW(my_validator(tmp_name.get_path()), seqan3::validation_error);
         }
 
         { // read directory
             std::filesystem::path p = tmp_name.get_path();
             p.remove_filename();
             std::ofstream tmp_dir(p);
-            input_directory_validator my_validator{};
+            seqan3::input_directory_validator my_validator{};
             my_validator(p);
             EXPECT_NO_THROW(my_validator(p));
 
@@ -292,9 +292,9 @@ TEST(validator_test, input_directory)
             // option
             std::string const & path = p.string();
             const char * argv[] = {"./argument_parser_test", "-i", path.c_str()};
-            argument_parser parser{"test_parser", 3, argv, false};
+            seqan3::argument_parser parser{"test_parser", 3, argv, false};
             parser.add_option(dir_in_path, 'i', "input-option", "desc",
-                              option_spec::DEFAULT, input_directory_validator{});
+                              seqan3::option_spec::DEFAULT, seqan3::input_directory_validator{});
 
             EXPECT_NO_THROW(parser.parse());
             EXPECT_EQ(path, dir_in_path.string());
@@ -305,8 +305,8 @@ TEST(validator_test, input_directory)
         // get help page message
         std::filesystem::path path;
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser{"test_parser", 2, argv, false};
-        parser.add_positional_option(path, "desc", input_directory_validator{});
+        seqan3::argument_parser parser{"test_parser", 2, argv, false};
+        parser.add_positional_option(path, "desc", seqan3::input_directory_validator{});
 
         testing::internal::CaptureStdout();
         EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -319,18 +319,19 @@ TEST(validator_test, input_directory)
                                basic_options_str +
                                basic_version_str;
 
-        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!seqan3::is_space)), expected
+                                             | std::views::filter(!seqan3::is_space)));
     }
 }
 
 TEST(validator_test, output_directory)
 {
-    test::tmp_filename tmp_name{"testbox.fasta"};
+    seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
 
     { // read directory
         std::filesystem::path p = tmp_name.get_path();
         p.remove_filename();
-        output_directory_validator my_validator{};
+        seqan3::output_directory_validator my_validator{};
         my_validator(p);
         EXPECT_NO_THROW();
 
@@ -339,9 +340,9 @@ TEST(validator_test, output_directory)
         // option
         std::string const & path = p.string();
         const char * argv[] = {"./argument_parser_test", "-o", path.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(dir_out_path, 'o', "output-option", "desc",
-                          option_spec::DEFAULT, output_directory_validator{});
+                          seqan3::option_spec::DEFAULT, seqan3::output_directory_validator{});
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(path, dir_out_path.string());
@@ -351,8 +352,8 @@ TEST(validator_test, output_directory)
         // get help page message
         std::filesystem::path path;
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser{"test_parser", 2, argv, false};
-        parser.add_positional_option(path, "desc", output_directory_validator{});
+        seqan3::argument_parser parser{"test_parser", 2, argv, false};
+        parser.add_positional_option(path, "desc", seqan3::output_directory_validator{});
 
         testing::internal::CaptureStdout();
         EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -365,7 +366,8 @@ TEST(validator_test, output_directory)
                                basic_options_str +
                                basic_version_str;
 
-        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+        EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!seqan3::is_space)), expected
+                                             | std::views::filter(!seqan3::is_space)));
     }
 }
 
@@ -403,11 +405,11 @@ inline bool write_access(std::filesystem::path const & file)
 
 TEST(validator_test, inputfile_not_readable)
 {
-    test::tmp_filename tmp_name{"my_file.test"};
+    seqan3::test::tmp_filename tmp_name{"my_file.test"};
     std::filesystem::path tmp_file{tmp_name.get_path()};
     std::ofstream str{tmp_name.get_path()};
 
-    EXPECT_NO_THROW(input_file_validator{}(tmp_file));
+    EXPECT_NO_THROW(seqan3::input_file_validator{}(tmp_file));
 
     std::filesystem::permissions(tmp_file,
                                  std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
@@ -416,7 +418,7 @@ TEST(validator_test, inputfile_not_readable)
 
     if (!read_access(tmp_file))
     {
-        EXPECT_THROW(input_file_validator{}(tmp_file), validation_error);
+        EXPECT_THROW(seqan3::input_file_validator{}(tmp_file), seqan3::validation_error);
     }
 
     std::filesystem::permissions(tmp_file,
@@ -427,12 +429,12 @@ TEST(validator_test, inputfile_not_readable)
 
 TEST(validator_test, inputdir_not_readable)
 {
-    test::tmp_filename tmp_name{"dir"};
+    seqan3::test::tmp_filename tmp_name{"dir"};
     std::filesystem::path tmp_dir{tmp_name.get_path()};
 
     std::filesystem::create_directory(tmp_dir);
 
-    EXPECT_NO_THROW(input_directory_validator{}(tmp_dir));
+    EXPECT_NO_THROW(seqan3::input_directory_validator{}(tmp_dir));
 
     std::filesystem::permissions(tmp_dir,
                                  std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
@@ -441,7 +443,7 @@ TEST(validator_test, inputdir_not_readable)
 
     if (!read_access(tmp_dir))
     {
-        EXPECT_THROW(input_directory_validator{}(tmp_dir), validation_error);
+        EXPECT_THROW(seqan3::input_directory_validator{}(tmp_dir), seqan3::validation_error);
     }
 
     std::filesystem::permissions(tmp_dir,
@@ -452,10 +454,10 @@ TEST(validator_test, inputdir_not_readable)
 
 TEST(validator_test, outputfile_not_writable)
 {
-    test::tmp_filename tmp_name{"my_file.test"};
+    seqan3::test::tmp_filename tmp_name{"my_file.test"};
     std::filesystem::path tmp_file{tmp_name.get_path()};
 
-    EXPECT_NO_THROW(output_file_validator{}(tmp_file));
+    EXPECT_NO_THROW(seqan3::output_file_validator{}(tmp_file));
 
     // Parent path is not writable.
     std::filesystem::permissions(tmp_file.parent_path(),
@@ -465,7 +467,7 @@ TEST(validator_test, outputfile_not_writable)
 
     if (!write_access(tmp_file))
     {
-        EXPECT_THROW(output_file_validator{}(tmp_file), validation_error);
+        EXPECT_THROW(seqan3::output_file_validator{}(tmp_file), seqan3::validation_error);
     }
 
     // make sure we can remove the directory.
@@ -478,10 +480,10 @@ TEST(validator_test, outputfile_not_writable)
 TEST(validator_test, outputdir_not_writable)
 {
     { // parent dir is not writable.
-        test::tmp_filename tmp_name{"dir"};
+        seqan3::test::tmp_filename tmp_name{"dir"};
         std::filesystem::path tmp_dir{tmp_name.get_path()};
 
-        EXPECT_NO_THROW(output_directory_validator{}(tmp_dir));
+        EXPECT_NO_THROW(seqan3::output_directory_validator{}(tmp_dir));
         EXPECT_FALSE(std::filesystem::exists(tmp_dir));
         // Parent path is not writable.
         std::filesystem::permissions(tmp_dir.parent_path(),
@@ -491,7 +493,7 @@ TEST(validator_test, outputdir_not_writable)
 
         if (!write_access(tmp_dir))
         {
-            EXPECT_THROW(output_directory_validator{}(tmp_dir), validation_error);
+            EXPECT_THROW(seqan3::output_directory_validator{}(tmp_dir), seqan3::validation_error);
         }
 
         // make sure we can remove the directory.
@@ -502,11 +504,11 @@ TEST(validator_test, outputdir_not_writable)
     }
 
     {  // this dir is not writable
-        test::tmp_filename tmp_name{"dir"};
+        seqan3::test::tmp_filename tmp_name{"dir"};
         std::filesystem::path tmp_dir{tmp_name.get_path()};
 
         std::filesystem::create_directory(tmp_dir);
-        EXPECT_NO_THROW(output_directory_validator{}(tmp_dir));
+        EXPECT_NO_THROW(seqan3::output_directory_validator{}(tmp_dir));
 
         // This path exists but is not writable.
         std::filesystem::permissions(tmp_dir,
@@ -516,7 +518,7 @@ TEST(validator_test, outputdir_not_writable)
 
         if (!write_access(tmp_dir))
         {
-            EXPECT_THROW(output_directory_validator{}(tmp_dir), validation_error);
+            EXPECT_THROW(seqan3::output_directory_validator{}(tmp_dir), seqan3::validation_error);
         }
 
         // make sure we can remove the directory.
@@ -535,9 +537,9 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // option
     const char * argv[] = {"./argument_parser_test", "-i", "10"};
-    argument_parser parser{"test_parser", 3, argv, false};
+    seqan3::argument_parser parser{"test_parser", 3, argv, false};
     parser.add_option(option_value, 'i', "int-option", "desc",
-                      option_spec::DEFAULT, arithmetic_range_validator{1, 20});
+                      seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{1, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
@@ -546,9 +548,9 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // option - negative values
     const char * argv2[] = {"./argument_parser_test", "-i", "-10"};
-    argument_parser parser2{"test_parser", 3, argv2, false};
+    seqan3::argument_parser parser2{"test_parser", 3, argv2, false};
     parser2.add_option(option_value, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator{-20, 20});
+                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{-20, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser2.parse());
@@ -557,8 +559,8 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // positional option
     const char * argv3[] = {"./argument_parser_test", "10"};
-    argument_parser parser3{"test_parser", 2, argv3, false};
-    parser3.add_positional_option(option_value, "desc", arithmetic_range_validator{1, 20});
+    seqan3::argument_parser parser3{"test_parser", 2, argv3, false};
+    parser3.add_positional_option(option_value, "desc", seqan3::arithmetic_range_validator{1, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser3.parse());
@@ -567,8 +569,8 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // positional option - negative values
     const char * argv4[] = {"./argument_parser_test", "--", "-10"};
-    argument_parser parser4{"test_parser", 3, argv4, false};
-    parser4.add_positional_option(option_value, "desc", arithmetic_range_validator{-20, 20});
+    seqan3::argument_parser parser4{"test_parser", 3, argv4, false};
+    parser4.add_positional_option(option_value, "desc", seqan3::arithmetic_range_validator{-20, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser4.parse());
@@ -577,9 +579,9 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "48"};
-    argument_parser parser5{"test_parser", 5, argv5, false};
+    seqan3::argument_parser parser5{"test_parser", 5, argv5, false};
     parser5.add_option(option_vector, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator{-50,50});
+                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{-50,50});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser5.parse());
@@ -590,8 +592,8 @@ TEST(validator_test, arithmetic_range_validator_success)
     // positional option - vector
     option_vector.clear();
     const char * argv6[] = {"./argument_parser_test", "--", "-10", "1"};
-    argument_parser parser6{"test_parser", 4, argv6, false};
-    parser6.add_positional_option(option_vector, "desc", arithmetic_range_validator{-20,20});
+    seqan3::argument_parser parser6{"test_parser", 4, argv6, false};
+    parser6.add_positional_option(option_vector, "desc", seqan3::arithmetic_range_validator{-20,20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser6.parse());
@@ -602,8 +604,8 @@ TEST(validator_test, arithmetic_range_validator_success)
     // get help page message
     option_vector.clear();
     const char * argv7[] = {"./argument_parser_test", "-h"};
-    argument_parser parser7{"test_parser", 2, argv7, false};
-    parser7.add_positional_option(option_vector, "desc", arithmetic_range_validator{-20,20});
+    seqan3::argument_parser parser7{"test_parser", 2, argv7, false};
+    parser7.add_positional_option(option_vector, "desc", seqan3::arithmetic_range_validator{-20,20});
 
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -615,15 +617,15 @@ TEST(validator_test, arithmetic_range_validator_success)
                            "          desc Default: []. Value must be in range [-20,20]." +
                            basic_options_str +
                            basic_version_str);
-    EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)),
-                               expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!seqan3::is_space)),
+                               expected | std::views::filter(!seqan3::is_space)));
 
     // option - double value
     double double_option_value;
     const char * argv8[] = {"./argument_parser_test", "-i", "10.9"};
-    argument_parser parser8{"test_parser", 3, argv8, false};
+    seqan3::argument_parser parser8{"test_parser", 3, argv8, false};
     parser8.add_option(double_option_value, 'i', "double-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator{1, 20});
+                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{1, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser8.parse());
@@ -638,58 +640,58 @@ TEST(validator_test, arithmetic_range_validator_error)
 
     // option - above max
     const char * argv[] = {"./argument_parser_test", "-i", "30"};
-    argument_parser parser{"test_parser", 3, argv, false};
+    seqan3::argument_parser parser{"test_parser", 3, argv, false};
     parser.add_option(option_value, 'i', "int-option", "desc",
-                      option_spec::DEFAULT, arithmetic_range_validator{1, 20});
+                      seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{1, 20});
 
-    EXPECT_THROW(parser.parse(), validation_error);
+    EXPECT_THROW(parser.parse(), seqan3::validation_error);
 
     // option - below min
     const char * argv2[] = {"./argument_parser_test", "-i", "-21"};
-    argument_parser parser2{"test_parser", 3, argv2, false};
+    seqan3::argument_parser parser2{"test_parser", 3, argv2, false};
     parser2.add_option(option_value, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator{-20, 20});
+                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{-20, 20});
 
-    EXPECT_THROW(parser2.parse(), validation_error);
+    EXPECT_THROW(parser2.parse(), seqan3::validation_error);
 
     // positional option - above max
     const char * argv3[] = {"./argument_parser_test", "30"};
-    argument_parser parser3{"test_parser", 2, argv3, false};
-    parser3.add_positional_option(option_value, "desc", arithmetic_range_validator{1, 20});
+    seqan3::argument_parser parser3{"test_parser", 2, argv3, false};
+    parser3.add_positional_option(option_value, "desc", seqan3::arithmetic_range_validator{1, 20});
 
-    EXPECT_THROW(parser3.parse(), validation_error);
+    EXPECT_THROW(parser3.parse(), seqan3::validation_error);
 
     // positional option - below min
     const char * argv4[] = {"./argument_parser_test", "--", "-21"};
-    argument_parser parser4{"test_parser", 3, argv4, false};
-    parser4.add_positional_option(option_value, "desc", arithmetic_range_validator{-20, 20});
+    seqan3::argument_parser parser4{"test_parser", 3, argv4, false};
+    parser4.add_positional_option(option_value, "desc", seqan3::arithmetic_range_validator{-20, 20});
 
-    EXPECT_THROW(parser4.parse(), validation_error);
+    EXPECT_THROW(parser4.parse(), seqan3::validation_error);
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-100"};
-    argument_parser parser5{"test_parser", 3, argv5, false};
+    seqan3::argument_parser parser5{"test_parser", 3, argv5, false};
     parser5.add_option(option_vector, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator{-50, 50});
+                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{-50, 50});
 
-    EXPECT_THROW(parser5.parse(), validation_error);
+    EXPECT_THROW(parser5.parse(), seqan3::validation_error);
 
     // positional option - vector
     option_vector.clear();
     const char * argv6[] = {"./argument_parser_test", "--", "-10", "100"};
-    argument_parser parser6{"test_parser", 4, argv6, false};
-    parser6.add_positional_option(option_vector, "desc", arithmetic_range_validator{-20, 20});
+    seqan3::argument_parser parser6{"test_parser", 4, argv6, false};
+    parser6.add_positional_option(option_vector, "desc", seqan3::arithmetic_range_validator{-20, 20});
 
-    EXPECT_THROW(parser6.parse(), validation_error);
+    EXPECT_THROW(parser6.parse(), seqan3::validation_error);
 
     // option - double value
     double double_option_value;
     const char * argv7[] = {"./argument_parser_test", "-i", "0.9"};
-    argument_parser parser7{"test_parser", 3, argv7, false};
+    seqan3::argument_parser parser7{"test_parser", 3, argv7, false};
     parser7.add_option(double_option_value, 'i', "double-option", "desc",
-                       option_spec::DEFAULT, arithmetic_range_validator{1, 20});
+                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{1, 20});
 
-    EXPECT_THROW(parser7.parse(), validation_error);
+    EXPECT_THROW(parser7.parse(), seqan3::validation_error);
 }
 
 enum class foo
@@ -704,18 +706,25 @@ TEST(validator_test, value_list_validator_success)
     // type deduction
     // --------------
     // all arithmetic types are deduced to double in order to easily allow chaining of arithmetic validators
-    EXPECT_TRUE((std::same_as<value_list_validator<double>, decltype(value_list_validator{1})>));
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
+                 decltype(seqan3::value_list_validator{1})>));
     // The same holds for a range of arithmetic types
     std::vector v{1, 2, 3};
-    EXPECT_TRUE((std::same_as<value_list_validator<double>, decltype(value_list_validator{v})>));
-    EXPECT_TRUE((std::same_as<value_list_validator<double>, decltype(value_list_validator{v | views::take(2)})>));
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
+                 decltype(seqan3::value_list_validator{v})>));
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
+                 decltype(seqan3::value_list_validator{v | seqan3::views::take(2)})>));
     // const char * is deduced to std::string
     std::vector v2{"ha", "ba", "ma"};
-    EXPECT_TRUE((std::same_as<value_list_validator<std::string>, decltype(value_list_validator{"ha", "ba", "ma"})>));
-    EXPECT_TRUE((std::same_as<value_list_validator<std::string>, decltype(value_list_validator{v2})>));
-    EXPECT_TRUE((std::same_as<value_list_validator<std::string>, decltype(value_list_validator{v2 | views::take(2)})>));
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
+                 decltype(seqan3::value_list_validator{"ha", "ba", "ma"})>));
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
+                 decltype(seqan3::value_list_validator{v2})>));
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
+                 decltype(seqan3::value_list_validator{v2 | seqan3::views::take(2)})>));
     // custom types are used as is
-    EXPECT_TRUE((std::same_as<value_list_validator<foo>, decltype(value_list_validator{foo::one, foo::two})>));
+    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<foo>,
+                 decltype(seqan3::value_list_validator{foo::one, foo::two})>));
 
     // usage
     // -----
@@ -727,9 +736,10 @@ TEST(validator_test, value_list_validator_success)
     // option
     std::vector<std::string> valid_str_values{"ha", "ba", "ma"};
     const char * argv[] = {"./argument_parser_test", "-s", "ba"};
-    argument_parser parser{"test_parser", 3, argv, false};
+    seqan3::argument_parser parser{"test_parser", 3, argv, false};
     parser.add_option(option_value, 's', "string-option", "desc",
-                      option_spec::DEFAULT, value_list_validator{valid_str_values | views::take(2)});
+                      seqan3::option_spec::DEFAULT,
+                      seqan3::value_list_validator{valid_str_values | seqan3::views::take(2)});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
@@ -738,9 +748,9 @@ TEST(validator_test, value_list_validator_success)
 
     // option with integers
     const char * argv2[] = {"./argument_parser_test", "-i", "-21"};
-    argument_parser parser2{"test_parser", 3, argv2, false};
+    seqan3::argument_parser parser2{"test_parser", 3, argv2, false};
     parser2.add_option(option_value_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>{0, -21, 10});
+                       seqan3::option_spec::DEFAULT, seqan3::value_list_validator<int>{0, -21, 10});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser2.parse());
@@ -749,8 +759,8 @@ TEST(validator_test, value_list_validator_success)
 
     // positional option
     const char * argv3[] = {"./argument_parser_test", "ma"};
-    argument_parser parser3{"test_parser", 2, argv3, false};
-    parser3.add_positional_option(option_value, "desc", value_list_validator{valid_str_values});
+    seqan3::argument_parser parser3{"test_parser", 2, argv3, false};
+    parser3.add_positional_option(option_value, "desc", seqan3::value_list_validator{valid_str_values});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser3.parse());
@@ -759,8 +769,8 @@ TEST(validator_test, value_list_validator_success)
 
     // positional option - vector
     const char * argv4[] = {"./argument_parser_test", "ha", "ma"};
-    argument_parser parser4{"test_parser", 3, argv4, false};
-    parser4.add_positional_option(option_vector, "desc", value_list_validator{"ha", "ba", "ma"});
+    seqan3::argument_parser parser4{"test_parser", 3, argv4, false};
+    parser4.add_positional_option(option_vector, "desc", seqan3::value_list_validator{"ha", "ba", "ma"});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser4.parse());
@@ -770,9 +780,9 @@ TEST(validator_test, value_list_validator_success)
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "48"};
-    argument_parser parser5{"test_parser", 5, argv5, false};
+    seqan3::argument_parser parser5{"test_parser", 5, argv5, false};
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>{-10, 48, 50});
+                       seqan3::option_spec::DEFAULT, seqan3::value_list_validator<int>{-10, 48, 50});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser5.parse());
@@ -783,9 +793,9 @@ TEST(validator_test, value_list_validator_success)
     // get help page message
     option_vector_int.clear();
     const char * argv7[] = {"./argument_parser_test", "-h"};
-    argument_parser parser7{"test_parser", 2, argv7, false};
+    seqan3::argument_parser parser7{"test_parser", 2, argv7, false};
     parser7.add_option(option_vector_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>{-10, 48, 50});
+                       seqan3::option_spec::DEFAULT, seqan3::value_list_validator<int>{-10, 48, 50});
 
     option_vector_int.clear();
     testing::internal::CaptureStdout();
@@ -797,8 +807,8 @@ TEST(validator_test, value_list_validator_success)
                            "    -i, --int-option (List of signed 32 bit integer's)"
                            "          desc Default: []. Value must be one of [-10, 48, 50]." +
                            basic_version_str);
-    EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!is_space)),
-                               expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((my_stdout | std::views::filter(!seqan3::is_space)),
+                               expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(validator_test, value_list_validator_error)
@@ -810,48 +820,48 @@ TEST(validator_test, value_list_validator_error)
 
     // option
     const char * argv[] = {"./argument_parser_test", "-s", "sa"};
-    argument_parser parser{"test_parser", 3, argv, false};
+    seqan3::argument_parser parser{"test_parser", 3, argv, false};
     parser.add_option(option_value, 's', "string-option", "desc",
-                      option_spec::DEFAULT, value_list_validator{"ha", "ba", "ma"});
+                      seqan3::option_spec::DEFAULT, seqan3::value_list_validator{"ha", "ba", "ma"});
 
-    EXPECT_THROW(parser.parse(), validation_error);
+    EXPECT_THROW(parser.parse(), seqan3::validation_error);
 
     // positional option
     const char * argv3[] = {"./argument_parser_test", "30"};
-    argument_parser parser3{"test_parser", 2, argv3, false};
-    parser3.add_positional_option(option_value_int, "desc", value_list_validator{0, 5, 10});
+    seqan3::argument_parser parser3{"test_parser", 2, argv3, false};
+    parser3.add_positional_option(option_value_int, "desc", seqan3::value_list_validator{0, 5, 10});
 
-    EXPECT_THROW(parser3.parse(), validation_error);
+    EXPECT_THROW(parser3.parse(), seqan3::validation_error);
 
     // positional option - vector
     const char * argv4[] = {"./argument_parser_test", "fo", "ma"};
-    argument_parser parser4{"test_parser", 3, argv4, false};
+    seqan3::argument_parser parser4{"test_parser", 3, argv4, false};
     parser4.add_positional_option(option_vector, "desc",
-                                  value_list_validator{"ha", "ba", "ma"});
+                                  seqan3::value_list_validator{"ha", "ba", "ma"});
 
-    EXPECT_THROW(parser4.parse(), validation_error);
+    EXPECT_THROW(parser4.parse(), seqan3::validation_error);
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "488"};
-    argument_parser parser5{"test_parser", 5, argv5, false};
+    seqan3::argument_parser parser5{"test_parser", 5, argv5, false};
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, value_list_validator<int>{-10, 48, 50});
+                       seqan3::option_spec::DEFAULT, seqan3::value_list_validator<int>{-10, 48, 50});
 
-    EXPECT_THROW(parser5.parse(), validation_error);
+    EXPECT_THROW(parser5.parse(), seqan3::validation_error);
 }
 
 TEST(validator_test, regex_validator_success)
 {
     std::string option_value;
     std::vector<std::string> option_vector;
-    regex_validator email_validator("[a-zA-Z]+@[a-zA-Z]+\\.com");
-    regex_validator email_vector_validator("[a-zA-Z]+@[a-zA-Z]+\\.com");
+    seqan3::regex_validator email_validator("[a-zA-Z]+@[a-zA-Z]+\\.com");
+    seqan3::regex_validator email_vector_validator("[a-zA-Z]+@[a-zA-Z]+\\.com");
 
     // option
     const char * argv[] = {"./argument_parser_test", "-s", "ballo@rollo.com"};
-    argument_parser parser{"test_parser", 3, argv, false};
+    seqan3::argument_parser parser{"test_parser", 3, argv, false};
     parser.add_option(option_value, 's', "string-option", "desc",
-                      option_spec::DEFAULT, email_validator);
+                      seqan3::option_spec::DEFAULT, email_validator);
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
@@ -860,9 +870,9 @@ TEST(validator_test, regex_validator_success)
 
     // positional option
     const char * argv2[] = {"./argument_parser_test", "chr1"};
-    argument_parser parser2{"test_parser", 2, argv2, false};
+    seqan3::argument_parser parser2{"test_parser", 2, argv2, false};
     parser2.add_positional_option(option_value, "desc",
-                                  regex_validator{"^chr[0-9]+"});
+                                  seqan3::regex_validator{"^chr[0-9]+"});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser2.parse());
@@ -871,9 +881,9 @@ TEST(validator_test, regex_validator_success)
 
     // positional option - vector
     const char * argv3[] = {"./argument_parser_test", "rollo", "bollo", "lollo"};
-    argument_parser parser3{"test_parser", 4, argv3, false};
+    seqan3::argument_parser parser3{"test_parser", 4, argv3, false};
     parser3.add_positional_option(option_vector, "desc",
-                                  regex_validator{".*oll.*"});
+                                  seqan3::regex_validator{".*oll.*"});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser3.parse());
@@ -885,9 +895,9 @@ TEST(validator_test, regex_validator_success)
     // option - vector
     option_vector.clear();
     const char * argv4[] = {"./argument_parser_test", "-s", "rita@rambo.com", "-s", "tina@rambo.com"};
-    argument_parser parser4{"test_parser", 5, argv4, false};
+    seqan3::argument_parser parser4{"test_parser", 5, argv4, false};
     parser4.add_option(option_vector, 's', "string-option", "desc",
-                       option_spec::DEFAULT, email_vector_validator);
+                       seqan3::option_spec::DEFAULT, email_vector_validator);
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser4.parse());
@@ -898,9 +908,9 @@ TEST(validator_test, regex_validator_success)
     // get help page message
     option_vector.clear();
     const char * argv7[] = {"./argument_parser_test", "-h"};
-    argument_parser parser7{"test_parser", 2, argv7, false};
+    seqan3::argument_parser parser7{"test_parser", 2, argv7, false};
     parser7.add_option(option_vector, 's', "string-option", "desc",
-                       option_spec::DEFAULT, email_vector_validator);
+                       seqan3::option_spec::DEFAULT, email_vector_validator);
 
     option_vector.clear();
     testing::internal::CaptureStdout();
@@ -912,8 +922,8 @@ TEST(validator_test, regex_validator_success)
                            "    -s, --string-option (List of std::string's)"
                            "          desc Default: []. Value must match the pattern '[a-zA-Z]+@[a-zA-Z]+\\.com'." +
                            basic_version_str);
-    EXPECT_TRUE(std::ranges::equal((my_stdout | std::views::filter(!is_space)),
-                                    expected  | std::views::filter(!is_space)));
+    EXPECT_TRUE(std::ranges::equal((my_stdout | std::views::filter(!seqan3::is_space)),
+                                    expected  | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(validator_test, regex_validator_error)
@@ -923,46 +933,46 @@ TEST(validator_test, regex_validator_error)
 
     // option
     const char * argv[] = {"./argument_parser_test", "--string-option", "sally"};
-    argument_parser parser{"test_parser", 3, argv, false};
+    seqan3::argument_parser parser{"test_parser", 3, argv, false};
     parser.add_option(option_value, '\0', "string-option", "desc",
-                      option_spec::DEFAULT, regex_validator{"tt"});
+                      seqan3::option_spec::DEFAULT, seqan3::regex_validator{"tt"});
 
-    EXPECT_THROW(parser.parse(), validation_error);
+    EXPECT_THROW(parser.parse(), seqan3::validation_error);
 
     // positional option
     const char * argv2[] = {"./argument_parser_test", "jessy"};
-    argument_parser parser2{"test_parser", 2, argv2, false};
+    seqan3::argument_parser parser2{"test_parser", 2, argv2, false};
     parser2.add_positional_option(option_value, "desc",
-                                  regex_validator{"[0-9]"});
+                                  seqan3::regex_validator{"[0-9]"});
 
-    EXPECT_THROW(parser2.parse(), validation_error);
+    EXPECT_THROW(parser2.parse(), seqan3::validation_error);
 
     // positional option - vector
     const char * argv3[] = {"./argument_parser_test", "rollo", "bttllo", "lollo"};
-    argument_parser parser3{"test_parser", 4, argv3, false};
+    seqan3::argument_parser parser3{"test_parser", 4, argv3, false};
     parser3.add_positional_option(option_vector, "desc",
-                                  regex_validator{".*oll.*"});
+                                  seqan3::regex_validator{".*oll.*"});
 
-    EXPECT_THROW(parser3.parse(), validation_error);
+    EXPECT_THROW(parser3.parse(), seqan3::validation_error);
 
     // option - vector
     option_vector.clear();
     const char * argv4[] = {"./argument_parser_test", "-s", "gh", "-s", "tt"};
-    argument_parser parser4{"test_parser", 5, argv4, false};
+    seqan3::argument_parser parser4{"test_parser", 5, argv4, false};
     parser4.add_option(option_vector, 's', "", "desc",
-                       option_spec::DEFAULT, regex_validator{"tt"});
+                       seqan3::option_spec::DEFAULT, seqan3::regex_validator{"tt"});
 
-    EXPECT_THROW(parser4.parse(), validation_error);
+    EXPECT_THROW(parser4.parse(), seqan3::validation_error);
 }
 
 TEST(validator_test, chaining_validators)
 {
     std::string option_value{};
     std::vector<std::string> option_vector{};
-    regex_validator absolute_path_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"};
-    output_file_validator my_file_ext_validator{{"sa", "so"}};
+    seqan3::regex_validator absolute_path_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"};
+    seqan3::output_file_validator my_file_ext_validator{{"sa", "so"}};
 
-    test::tmp_filename tmp_name{"file.sa"};
+    seqan3::test::tmp_filename tmp_name{"file.sa"};
     std::filesystem::path invalid_extension{tmp_name.get_path()};
     invalid_extension.replace_extension(".invalid");
 
@@ -970,9 +980,9 @@ TEST(validator_test, chaining_validators)
     {
         std::string const & path = tmp_name.get_path().string();
         const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+                          seqan3::option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -983,32 +993,32 @@ TEST(validator_test, chaining_validators)
     {
         auto rel_path = tmp_name.get_path().relative_path().string();
         const char * argv[] = {"./argument_parser_test", "-s", rel_path.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+                          seqan3::option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
-        EXPECT_THROW(parser.parse(), validation_error);
+        EXPECT_THROW(parser.parse(), seqan3::validation_error);
     }
 
     {
         std::string const & path = invalid_extension.string();
         const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+                          seqan3::option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
-        EXPECT_THROW(parser.parse(), validation_error);
+        EXPECT_THROW(parser.parse(), seqan3::validation_error);
     }
 
     // with temporary validators
     {
         std::string const & path = tmp_name.get_path().string();
         const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT,
-                          regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          output_file_validator{{"sa", "so"}});
+                          seqan3::option_spec::DEFAULT,
+                          seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
+                          seqan3::output_file_validator{{"sa", "so"}});
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -1020,12 +1030,12 @@ TEST(validator_test, chaining_validators)
     {
         std::string const & path = tmp_name.get_path().string();
         const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT,
-                          regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          output_file_validator{{"sa", "so"}} |
-                          regex_validator{".*"});
+                          seqan3::option_spec::DEFAULT,
+                          seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
+                          seqan3::output_file_validator{{"sa", "so"}} |
+                          seqan3::regex_validator{".*"});
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -1036,12 +1046,12 @@ TEST(validator_test, chaining_validators)
     // help page message
     {
         const char * argv[] = {"./argument_parser_test", "-h"};
-        argument_parser parser{"test_parser", 2, argv, false};
+        seqan3::argument_parser parser{"test_parser", 2, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT,
-                          regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          output_file_validator{{"sa", "so"}} |
-                          regex_validator{".*"});
+                          seqan3::option_spec::DEFAULT,
+                          seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
+                          seqan3::output_file_validator{{"sa", "so"}} |
+                          seqan3::regex_validator{".*"});
 
         testing::internal::CaptureStdout();
         option_value.clear();
@@ -1055,8 +1065,8 @@ TEST(validator_test, chaining_validators)
                                "          Valid output file formats:  [sa, so]"
                                "          Value must match the pattern '.*'."} +
                                basic_version_str;
-        EXPECT_TRUE(std::ranges::equal((my_stdout | std::views::filter(!is_space)),
-                                        expected  | std::views::filter(!is_space)));
+        EXPECT_TRUE(std::ranges::equal((my_stdout | std::views::filter(!seqan3::is_space)),
+                                        expected  | std::views::filter(!seqan3::is_space)));
     }
 
     // chaining with a container option value type
@@ -1064,10 +1074,11 @@ TEST(validator_test, chaining_validators)
         std::vector<std::string> option_list_value{};
         std::string const & path = tmp_name.get_path().string();
         const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
-        argument_parser parser{"test_parser", 3, argv, false};
+        seqan3::argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_list_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT,
-                          regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} | output_file_validator{{"sa", "so"}});
+                          seqan3::option_spec::DEFAULT,
+                          seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} | seqan3::output_file_validator{{"sa",
+                                                                                                               "so"}});
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());

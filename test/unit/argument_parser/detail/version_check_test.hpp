@@ -15,8 +15,6 @@
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
-using namespace seqan3;
-
 //------------------------------------------------------------------------------
 // test fixtures
 //------------------------------------------------------------------------------
@@ -25,16 +23,16 @@ namespace seqan3::detail
 {
 struct test_accessor
 {
-    static auto & version_check_future(argument_parser & parser)
+    static auto & version_check_future(seqan3::argument_parser & parser)
     {
         return parser.version_check_future;
     }
 };
 } // seqan3::detail
 
-bool wait_for(argument_parser & parser)
+bool wait_for(seqan3::argument_parser & parser)
 {
-    auto & future = detail::test_accessor::version_check_future(parser);
+    auto & future = seqan3::detail::test_accessor::version_check_future(parser);
 
     if (future.valid())
         return future.get();
@@ -57,10 +55,10 @@ struct version_check : public ::testing::Test
         using namespace std::string_literals;
         auto tmp_directory = tmp_file.get_path().parent_path();
 
-        int result = setenv(detail::version_checker::home_env_name, tmp_directory.c_str(), 1);
+        int result = setenv(seqan3::detail::version_checker::home_env_name, tmp_directory.c_str(), 1);
         if (result != 0)
             throw std::runtime_error{"Couldn't set environment variable 'home_env_name' (="s +
-                                     detail::version_checker::home_env_name + ")"s};
+                                     seqan3::detail::version_checker::home_env_name + ")"s};
 
         auto is_prefix_path = [](std::string const & base_path, std::string const & path)
         {
@@ -84,7 +82,7 @@ struct version_check : public ::testing::Test
 
     std::filesystem::path app_tmp_path()
     {
-        return detail::version_checker::get_path();
+        return seqan3::detail::version_checker::get_path();
     }
 
     std::filesystem::path app_version_filename()
@@ -114,7 +112,7 @@ struct version_check : public ::testing::Test
 
         bool app_call_succeeded{false};
 
-        argument_parser parser{app_name, argc, argv};
+        seqan3::argument_parser parser{app_name, argc, argv};
         parser.info.version = "2.3.4";
 
         // In case we don't want to specify --version-check but avoid that short help format will be set (no arguments)
@@ -220,7 +218,7 @@ TEST_F(version_check, option_on)
     }
     else
     {
-        std::cout << "App call did not succeed (server offline?) and could thus not be tested." << std::endl;
+        std::cout << "App call did not succeed (server offline?) and could thus not be tested.\n";
     }
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
@@ -252,7 +250,7 @@ TEST_F(version_check, option_implicitely_on)
     }
     else
     {
-        std::cout << "App call did not succeed (server offline?) and could thus not be tested." << std::endl;
+        std::cout << "App call did not succeed (server offline?) and could thus not be tested.\n";
     }
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
@@ -284,7 +282,7 @@ TEST_F(version_check, environment_variable_set)
 
     const char * argv[2] = {app_name.c_str(), "-f"};
 
-    argument_parser parser{app_name, 2, argv};
+    seqan3::argument_parser parser{app_name, 2, argv};
     parser.info.version = "2.3.4";
     bool dummy{};
     parser.add_flag(dummy, 'f', "dummy-flag", "A dummy flag.");
@@ -336,7 +334,7 @@ TEST_F(version_check, option_off)
     if (env != nullptr)
         unsetenv("SEQAN3_NO_VERSION_CHECK");
 
-    argument_parser parser{app_name, 4, argv2};
+    seqan3::argument_parser parser{app_name, 4, argv2};
     parser.info.version = "2.3.4";
 
     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -370,7 +368,7 @@ TEST_F(version_check, smaller_seqan3_version)
     (void) app_call_succeeded;
 
     EXPECT_EQ(out, "");
-    EXPECT_EQ(err, detail::version_checker::message_seqan3_update);
+    EXPECT_EQ(err, seqan3::detail::version_checker::message_seqan3_update);
 
     EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
@@ -392,7 +390,7 @@ TEST_F(version_check, greater_app_version)
     (void) app_call_succeeded;
 
     EXPECT_EQ(out, "");
-    EXPECT_EQ(err, detail::version_checker::message_registered_app_update);
+    EXPECT_EQ(err, seqan3::detail::version_checker::message_registered_app_update);
 
     EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
@@ -413,7 +411,7 @@ TEST_F(version_check, unregistered_app)
     (void) app_call_succeeded;
 
     EXPECT_EQ(out, "");
-    EXPECT_EQ(err, detail::version_checker::message_unregistered_app);
+    EXPECT_EQ(err, seqan3::detail::version_checker::message_unregistered_app);
 
     EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
@@ -437,7 +435,7 @@ TEST_F(version_check, smaller_app_version)
     (void) app_call_succeeded;
 
     EXPECT_EQ(out, "");
-    EXPECT_EQ(err, (detail::version_checker{app_name, "2.3.4"}.message_app_update));
+    EXPECT_EQ(err, (seqan3::detail::version_checker{app_name, "2.3.4"}.message_app_update));
 
     EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
@@ -458,7 +456,7 @@ TEST_F(version_check, smaller_app_version_custom_url)
     // create timestamp file that dates one day before current to trigger a message (one day = 86400 seconds)
     ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401));
 
-    argument_parser parser{app_name, 3, argv};
+    seqan3::argument_parser parser{app_name, 3, argv};
     parser.info.version = "2.3.4";
     parser.info.url = "https//foo.de";
 
@@ -473,7 +471,8 @@ TEST_F(version_check, smaller_app_version_custom_url)
     wait_for(parser);
 
     EXPECT_EQ(out, "");
-    EXPECT_EQ(err, (detail::version_checker{app_name, parser.info.version, parser.info.url}.message_app_update));
+    EXPECT_EQ(err,
+              (seqan3::detail::version_checker{app_name, parser.info.version, parser.info.url}.message_app_update));
 
     EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
@@ -521,7 +520,7 @@ TEST_F(version_check, user_specified_always)
     }
     else
     {
-        std::cout << "App call did not succeed (server offline?) and could thus not be tested." << std::endl;
+        std::cout << "App call did not succeed (server offline?) and could thus not be tested.\n";
     }
 
     EXPECT_EQ(read_file(app_timestamp_filename()), "ALWAYS"); // should not be modified

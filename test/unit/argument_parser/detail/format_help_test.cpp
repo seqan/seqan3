@@ -21,8 +21,6 @@
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/to.hpp>
 
-using namespace seqan3;
-
 // reused global variables
 std::string std_cout;
 std::string expected;
@@ -56,8 +54,8 @@ std::string const basic_version_str = "VERSION"
 
 TEST(help_page_printing, short_help)
 {
-    // Empty call with no options given. For detail::format_short_help
-    argument_parser parser0{"empty_options", 1, argv0};
+    // Empty call with no options given. For seqan3::detail::format_short_help
+    seqan3::argument_parser parser0{"empty_options", 1, argv0};
     parser0.info.synopsis.push_back("./some_binary_name synopsis");
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -66,13 +64,14 @@ TEST(help_page_printing, short_help)
                "============="
                "./some_binary_name synopsis"
                "Try -h or --help for more information.";
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(help_page_printing, no_information)
 {
     // Empty help call with -h
-    argument_parser parser1{"test_parser", 2, argv1};
+    seqan3::argument_parser parser1{"test_parser", 2, argv1};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -80,13 +79,14 @@ TEST(help_page_printing, no_information)
                "===========" +
                basic_options_str +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(help_page_printing, with_short_copyright)
 {
     // Again, but with short copyright, long copyright, and citation.
-    argument_parser short_copy("test_parser", 2, argv1);
+    seqan3::argument_parser short_copy("test_parser", 2, argv1);
     short_copy.info.short_copyright = "short";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(short_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -98,12 +98,13 @@ TEST(help_page_printing, with_short_copyright)
                "LEGAL"
                "test_parser Copyright: short"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.";
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(help_page_printing, with_long_copyright)
 {
-    argument_parser long_copy("test_parser", 2, argv1);
+    seqan3::argument_parser long_copy("test_parser", 2, argv1);
     long_copy.info.long_copyright = "long";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(long_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -115,12 +116,13 @@ TEST(help_page_printing, with_long_copyright)
                "LEGAL"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                "For full copyright and/or warranty information see --copyright.";
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(help_page_printing, with_citation)
 {
-    argument_parser citation("test_parser", 2, argv1);
+    seqan3::argument_parser citation("test_parser", 2, argv1);
     citation.info.citation = "citation";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(citation.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -132,13 +134,14 @@ TEST(help_page_printing, with_citation)
                "LEGAL"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                "In your academic works please cite: citation";
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(help_page_printing, empty_advanced_help)
 {
     // Empty help call with -hh
-    argument_parser parser2{"test_parser", 2, argv2};
+    seqan3::argument_parser parser2{"test_parser", 2, argv2};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser2.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -146,26 +149,28 @@ TEST(help_page_printing, empty_advanced_help)
                "===========" +
                basic_options_str +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(help_page_printing, empty_version_call)
 {
     // Empty version call
-    argument_parser parser3{"test_parser", 2, argv3};
+    seqan3::argument_parser parser3{"test_parser", 2, argv3};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser3.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser"
                "===========" +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(help_page_printing, version_call)
 {
     // Version call with url and options.
-    argument_parser parser4{"test_parser", 2, argv3};
+    seqan3::argument_parser parser4{"test_parser", 2, argv3};
     parser4.info.url = "www.seqan.de";
     parser4.add_option(option_value, 'i', "int", "this is a int option.");
     parser4.add_flag(flag_value, 'f', "flag", "this is a flag.");
@@ -178,15 +183,16 @@ TEST(help_page_printing, version_call)
                basic_version_str +
                "URL"
                "www.seqan.de";
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(help_page_printing, do_not_print_hidden_options)
 {
     // Add an option and request help.
-    argument_parser parser5{"test_parser", 2, argv1};
-    parser5.add_option(option_value, 'i', "int", "this is a int option.", option_spec::HIDDEN);
-    parser5.add_flag(flag_value, 'f', "flag", "this is a flag.", option_spec::HIDDEN);
+    seqan3::argument_parser parser5{"test_parser", 2, argv1};
+    parser5.add_option(option_value, 'i', "int", "this is a int option.", seqan3::option_spec::HIDDEN);
+    parser5.add_flag(flag_value, 'f', "flag", "this is a flag.", seqan3::option_spec::HIDDEN);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser5.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -194,7 +200,8 @@ TEST(help_page_printing, do_not_print_hidden_options)
                "===========" +
                basic_options_str +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 enum class foo
@@ -216,16 +223,17 @@ TEST(help_page_printing, full_information)
     foo enum_option_value{};
 
     // Add synopsis, description, short description, positional option, option, flag, and example.
-    argument_parser parser6{"test_parser", 2, argv1};
+    seqan3::argument_parser parser6{"test_parser", 2, argv1};
     parser6.info.synopsis.push_back("./some_binary_name synopsis");
     parser6.info.synopsis.push_back("./some_binary_name synopsis2");
     parser6.info.description.push_back("description");
     parser6.info.description.push_back("description2");
     parser6.info.short_description = "so short";
     parser6.add_option(option_value, 'i', "int", "this is a int option.");
-    parser6.add_option(enum_option_value, 'e', "enum", "this is an enum option.", option_spec::DEFAULT,
-                       value_list_validator{seqan3::enumeration_names<foo> | views::get<1>});
-    parser6.add_option(required_option, 'r', "required-int", "this is another int option.", option_spec::REQUIRED);
+    parser6.add_option(enum_option_value, 'e', "enum", "this is an enum option.", seqan3::option_spec::DEFAULT,
+                       seqan3::value_list_validator{seqan3::enumeration_names<foo> | seqan3::views::get<1>});
+    parser6.add_option(required_option, 'r', "required-int", "this is another int option.",
+                       seqan3::option_spec::REQUIRED);
     parser6.add_section("Flags");
     parser6.add_subsection("SubFlags");
     parser6.add_line("here come all the flags");
@@ -266,14 +274,15 @@ TEST(help_page_printing, full_information)
                "example\n"
                "example2" +
                basic_version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }
 
 TEST(help_page_printing, copyright)
 {
     // Tests the --copyright call.
     const char * argvCopyright[] = {"./copyright", "--copyright"};
-    argument_parser copyright("myApp", 2, argvCopyright);
+    seqan3::argument_parser copyright("myApp", 2, argvCopyright);
 
     std::ifstream license_file{std::string{{SEQAN3_TEST_LICENSE_DIR}} + "/LICENSE.md"};
     std::ranges::subrange<std::istreambuf_iterator<char>, std::istreambuf_iterator<char>> sub
@@ -282,8 +291,10 @@ TEST(help_page_printing, copyright)
         std::istreambuf_iterator<char>()
     };
 
-    detail::consume(sub | views::take_until_and_consume(is_char<'`'>));
-    std::string license_string{sub | views::drop(1) | views::take_until(is_char<'`'>)  | views::to<std::string>};
+    seqan3::detail::consume(sub | seqan3::views::take_until_and_consume(seqan3::is_char<'`'>));
+    std::string license_string{sub | seqan3::views::drop(1)
+                                   | seqan3::views::take_until(seqan3::is_char<'`'>)
+                                   | seqan3::views::to<std::string>};
 
     // Test --copyright with empty short and long copyright info.
     {
@@ -351,7 +362,7 @@ TEST(parse_test, subcommand_argument_parser)
     std::string option_value2{};
 
     const char * argv[]{"./test_parser", "-h"};
-    argument_parser top_level_parser{"test_parser", 2, argv, true, {"sub1", "sub2"}};
+    seqan3::argument_parser top_level_parser{"test_parser", 2, argv, true, {"sub1", "sub2"}};
     top_level_parser.info.description.push_back("description");
     top_level_parser.add_option(option_value, 'f', "foo", "foo bar.");
 
@@ -376,5 +387,6 @@ TEST(parse_test, subcommand_argument_parser)
                            "    foo bar. Default: 0.\n" +
                            basic_version_str;
 
-    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!is_space)), expected | std::views::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                              expected | std::views::filter(!seqan3::is_space)));
 }

@@ -13,8 +13,6 @@
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/argument_parser/detail/format_man.hpp>
 
-using namespace seqan3;
-
 // Reused global variables
 struct format_man_test : public ::testing::Test
 {
@@ -85,7 +83,7 @@ struct format_man_test : public ::testing::Test
     R"(example2)" "\n";
 
     // Full info parser initialisation
-    void dummy_init(argument_parser & parser)
+    void dummy_init(seqan3::argument_parser & parser)
     {
         parser.info.date = "December 01, 1994";
         parser.info.version = "01.01.01";
@@ -96,7 +94,7 @@ struct format_man_test : public ::testing::Test
         parser.info.description.push_back("description");
         parser.info.description.push_back("description2");
         parser.add_option(option_value, 'i', "int", "this is a int option.");
-        parser.add_option(option_value, 'j', "jint", "this is a required int option.", option_spec::REQUIRED);
+        parser.add_option(option_value, 'j', "jint", "this is a required int option.", seqan3::option_spec::REQUIRED);
         parser.add_section("Flags");
         parser.add_subsection("SubFlags");
         parser.add_line("here come all the flags");
@@ -112,7 +110,7 @@ struct format_man_test : public ::testing::Test
 TEST_F(format_man_test, empty_information)
 {
     // Create the dummy parser.
-    argument_parser parser{"default", 3, argv};
+    seqan3::argument_parser parser{"default", 3, argv};
     parser.info.date = "December 01, 1994";
     parser.info.version = "01.01.01";
     parser.info.man_page_title = "default_man_page_title";
@@ -155,7 +153,7 @@ TEST_F(format_man_test, empty_information)
 TEST_F(format_man_test, full_information)
 {
     // Create the dummy parser.
-    argument_parser parser{"default", 3, argv};
+    seqan3::argument_parser parser{"default", 3, argv};
 
     // Fill out the dummy parser with options and flags and sections and subsections.
     dummy_init(parser);
@@ -170,7 +168,7 @@ TEST_F(format_man_test, full_information)
 TEST_F(format_man_test, full_info_short_copyright)
 {
     // Create the dummy parser.
-    argument_parser parser{"default", 3, argv};
+    seqan3::argument_parser parser{"default", 3, argv};
 
     // Fill out the dummy parser with options and flags and sections and subsections.
     dummy_init(parser);
@@ -192,7 +190,7 @@ TEST_F(format_man_test, full_info_short_copyright)
 TEST_F(format_man_test, full_info_short_and_citation)
 {
     // Create the dummy parser.
-    argument_parser parser{"default", 3, argv};
+    seqan3::argument_parser parser{"default", 3, argv};
 
     // Fill out the dummy parser with options and flags and sections and subsections.
     dummy_init(parser);
@@ -217,7 +215,7 @@ TEST_F(format_man_test, full_info_short_and_citation)
 TEST_F(format_man_test, full_info_short_long_and_citation)
 {
     // Create the dummy parser.
-    argument_parser parser{"default", 3, argv};
+    seqan3::argument_parser parser{"default", 3, argv};
 
     // Fill out the dummy parser with options and flags and sections and subsections.
     dummy_init(parser);
