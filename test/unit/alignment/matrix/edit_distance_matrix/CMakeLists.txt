@@ -1,0 +1,10 @@
+seqan3_test(score_matrix_unbanded_global_max_errors_test.cpp)
+seqan3_test(score_matrix_unbanded_global_test.cpp)
+seqan3_test(score_matrix_unbanded_semi_global_max_errors_test.cpp)
+seqan3_test(score_matrix_unbanded_semi_global_test.cpp)
+seqan3_test(score_matrix_vertical_score_mask_test.cpp)
+
+seqan3_test(trace_matrix_unbanded_global_max_errors_test.cpp)
+seqan3_test(trace_matrix_unbanded_global_test.cpp)
+seqan3_test(trace_matrix_unbanded_semi_global_max_errors_test.cpp)
+seqan3_test(trace_matrix_unbanded_semi_global_test.cpp)
