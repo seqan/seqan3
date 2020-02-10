@@ -43,6 +43,7 @@ struct stream_buffer_exposer : public std::basic_streambuf<char_t, traits_t>
     //!\brief The actual stream type.
     using base_t = std::basic_streambuf<char_t, traits_t>;
 
+    //!\cond
     // Expose protected members:
     using base_t::eback;
     using base_t::gptr;
@@ -55,6 +56,7 @@ struct stream_buffer_exposer : public std::basic_streambuf<char_t, traits_t>
     using base_t::epptr;
     using base_t::pbump;
     using base_t::overflow;
+    //!\endcond
 };
 
 /*!\brief Functionally the same as std::istreambuf_iterator, but faster.
