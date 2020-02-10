@@ -129,8 +129,8 @@ TEST(view_to_simd, concept_check)
     EXPECT_EQ(std::ranges::sized_range<cmp_type>, std::ranges::sized_range<test_type>);
     EXPECT_NE(std::ranges::common_range<cmp_type>, std::ranges::common_range<test_type>);
     EXPECT_NE(seqan3::const_iterable_range<cmp_type>, seqan3::const_iterable_range<test_type>);
-    EXPECT_NE((std::ranges::output_range<cmp_type, seqan3::dna4_vector>), (std::ranges::output_range<test_type,
-                                                                           seqan3::dna4_vector>));
+    EXPECT_NE((std::ranges::output_range<cmp_type, seqan3::dna4_vector>),
+              (std::ranges::output_range<test_type, seqan3::dna4_vector>));
 }
 
 TEST(view_to_simd, iter_concept)

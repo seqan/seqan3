@@ -91,10 +91,8 @@ struct bar2
 
 TEST(template_inspect, transfer_template_vargs_onto_enum)
 {
-    EXPECT_TRUE((std::is_same_v<seqan3::detail::transformation_trait_or_t<
-                                    seqan3::detail::transfer_template_vargs_onto<bar<e2::bar>, foo>,
-                                    void>,
-                                void>));
+    using foo_e2_bar = seqan3::detail::transfer_template_vargs_onto<bar<e2::bar>, foo>;
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::transformation_trait_or_t<foo_e2_bar, void>, void>));
 
     using ta2 = seqan3::detail::transfer_template_vargs_onto<bar<e2::bar>, bar>::type;
     EXPECT_TRUE((std::is_same_v<ta2, bar<e2::bar>>));

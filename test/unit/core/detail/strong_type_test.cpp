@@ -13,7 +13,12 @@
 #include <seqan3/core/detail/strong_type.hpp>
 
 using namespace std::literals;
+
+namespace seqan3::detail
+{
+// Make operator| accessible by ADL for seqan3 namespace
 using seqan3::operator|;
+} // seqan3::detail
 
 struct pure_type : seqan3::detail::strong_type<int, pure_type>
 {

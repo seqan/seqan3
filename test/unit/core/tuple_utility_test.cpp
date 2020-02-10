@@ -325,10 +325,11 @@ TYPED_TEST(tuple_utility, tuple_split_and_pop)
         EXPECT_EQ(std::tuple_size_v<std::remove_reference_t<decltype(left)>>, 0u);
         EXPECT_EQ(std::tuple_size_v<std::remove_reference_t<decltype(right)>>, 1u);
 
-        using left_t = seqan3::detail::transfer_template_args_onto_t<
-                            seqan3::remove_cvref_t<decltype(left)>, seqan3::type_list>;
-        using right_t = seqan3::detail::transfer_template_args_onto_t<
-                            seqan3::remove_cvref_t<decltype(seqan3::tuple_pop_front(right))>, seqan3::type_list>;
+        using left_tuple_t = std::remove_reference_t<decltype(left)>;
+        using right_tuple_t = std::remove_reference_t<decltype(seqan3::tuple_pop_front(right))>;
+
+        using left_t = seqan3::detail::transfer_template_args_onto_t<left_tuple_t, seqan3::type_list>;
+        using right_t = seqan3::detail::transfer_template_args_onto_t<right_tuple_t, seqan3::type_list>;
 
         EXPECT_TRUE((std::is_same_v<left_t, seqan3::type_list<>>));
         EXPECT_TRUE((std::is_same_v<right_t, seqan3::type_list<>>));
