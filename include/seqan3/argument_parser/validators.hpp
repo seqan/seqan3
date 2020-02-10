@@ -265,7 +265,7 @@ private:
 //!\brief Deduction guide for a parameter pack over an arithmetic type.
 template <arithmetic ...option_types>
 //!\cond
-    requires !(std::same_as<char, option_types> || ...)
+    requires !(detail::is_char_adaptation_v<option_types> || ...)
 //!\endcond
 value_list_validator(option_types...) -> value_list_validator<double>;
 
@@ -273,7 +273,7 @@ value_list_validator(option_types...) -> value_list_validator<double>;
 template <std::ranges::forward_range range_type>
 //!\cond
     requires arithmetic<std::ranges::range_value_t<range_type>> &&
-             !std::same_as<std::ranges::range_value_t<range_type>, char>
+             !detail::is_char_adaptation_v<std::ranges::range_value_t<range_type>>
 //!\endcond
 value_list_validator(range_type && rng) -> value_list_validator<double>;
 
