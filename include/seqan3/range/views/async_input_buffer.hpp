@@ -46,7 +46,8 @@ private:
         "The range parameter to async_input_buffer_view must model std::ranges::View.");
     static_assert(std::movable<std::ranges::range_value_t<urng_t>>,
         "The range parameter to async_input_buffer_view must have a value_type that is std::Movable.");
-    static_assert(std::constructible_from<std::ranges::range_value_t<urng_t>, std::remove_reference_t<reference_t<urng_t>> &&>,
+    static_assert(std::constructible_from<std::ranges::range_value_t<urng_t>,
+                                          std::remove_reference_t<std::ranges::range_reference_t<urng_t>> &&>,
         "The range parameter to async_input_buffer_view must have a value_type that is constructible by a moved "
         "value of its reference type.");
 
@@ -331,7 +332,8 @@ struct async_input_buffer_fn
             "The range parameter to views::async_input_buffer cannot be a temporary of a non-view range.");
         static_assert(std::movable<std::ranges::range_value_t<urng_t>>,
             "The range parameter to views::async_input_buffer must have a value_type that is std::Movable.");
-        static_assert(std::constructible_from<std::ranges::range_value_t<urng_t>, std::remove_reference_t<reference_t<urng_t>> &&>,
+        static_assert(std::constructible_from<std::ranges::range_value_t<urng_t>,
+                                              std::remove_reference_t<std::ranges::range_reference_t<urng_t>> &&>,
             "The range parameter to views::async_input_buffer must have a value_type that is constructible by a moved "
             "value of its reference type.");
 

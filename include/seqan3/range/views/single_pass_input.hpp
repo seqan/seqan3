@@ -201,7 +201,7 @@ public:
     //!\brief Pointer type.
     using pointer           = typename std::iterator_traits<base_iterator_type>::pointer;
     //!\brief Reference type.
-    using reference         = reference_t<base_iterator_type>;
+    using reference         = std::iter_reference_t<base_iterator_type>;
     //!\brief Iterator category.
     using iterator_category = std::input_iterator_tag;
     //!\}
@@ -360,7 +360,7 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                       | *preserved*                                        |
  * | seqan3::const_iterable_range     |                                       | *lost*                                             |
  * |                                  |                                       |                                                    |
- * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
+ * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>                        |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *

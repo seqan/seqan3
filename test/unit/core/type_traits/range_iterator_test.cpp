@@ -94,16 +94,14 @@ TEST(range_and_iterator, reference_)
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
     auto v = std::views::iota(1);
-    using type_list_example = seqan3::type_list<seqan3::reference_t<std::vector<int>>, // short
-                                                typename seqan3::reference<std::vector<int>>::type, // long
+    using type_list_example = seqan3::type_list<std::ranges::range_reference_t<std::vector<int>>, // short
                                                 typename std::vector<int>::reference, // member type
-                                                seqan3::reference_t<std::vector<int> const>, // const container
-                                                seqan3::reference_t<iterator_of_int_vector>, // iterator
-                                                seqan3::reference_t<foreign_iterator>, // iterator2
-                                                seqan3::reference_t<decltype(v)>>; // range, no member
+                                                std::ranges::range_reference_t<std::vector<int> const>, // const container
+                                                std::iter_reference_t<iterator_of_int_vector>, // iterator
+                                                std::iter_reference_t<foreign_iterator>, // iterator2
+                                                std::ranges::range_reference_t<decltype(v)>>; // range, no member
 
     using comp_list = seqan3::type_list<int &,
-                                        int &,
                                         int &,
                                         int const &, // container is const
                                         int &,

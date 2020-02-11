@@ -48,7 +48,7 @@ template <std::ranges::random_access_range urng_t, std::ranges::random_access_ra
     //!\cond
     requires std::ranges::view<urng_t> && std::ranges::sized_range<urng_t> &&
              std::ranges::view<inserted_rng_t> && std::ranges::sized_range<inserted_rng_t> &&
-             std::common_reference_with<reference_t<urng_t>, reference_t<inserted_rng_t>>
+             std::common_reference_with<std::ranges::range_reference_t<urng_t>, std::ranges::range_reference_t<inserted_rng_t>>
     //!\endcond
 class view_interleave : public std::ranges::view_interface<view_interleave<urng_t, inserted_rng_t>>
 {
@@ -65,10 +65,10 @@ public:
      * \{
      */
     //!\brief The reference_type.
-    using reference         = ranges::common_reference_t<reference_t<urng_t>, reference_t<inserted_rng_t>>;
+    using reference         = ranges::common_reference_t<std::ranges::range_reference_t<urng_t>, std::ranges::range_reference_t<inserted_rng_t>>;
     //!\brief The const_reference type is equal to the reference type.
     using const_reference   = detail::transformation_trait_or_t<
-                                ranges::common_reference<reference_t<urng_t const>, reference_t<inserted_rng_t const>>, void>;
+                                ranges::common_reference<std::ranges::range_reference_t<urng_t const>, std::ranges::range_reference_t<inserted_rng_t const>>, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = std::ranges::range_value_t<urng_t>;
     //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be Sized.
@@ -251,7 +251,7 @@ template <std::ranges::random_access_range urng_t, std::ranges::random_access_ra
     //!\cond
     requires std::ranges::viewable_range<urng_t> && std::ranges::sized_range<urng_t> &&
              std::ranges::sized_range<inserted_rng_t> &&
-             std::common_reference_with<reference_t<urng_t>, reference_t<inserted_rng_t>>
+             std::common_reference_with<std::ranges::range_reference_t<urng_t>, std::ranges::range_reference_t<inserted_rng_t>>
     //!\endcond
 view_interleave(urng_t &&, size_t, inserted_rng_t &&)
     -> view_interleave<decltype(views::type_reduce(std::declval<urng_t>())), decltype(views::persist(std::declval<inserted_rng_t>()))>;
@@ -349,7 +349,7 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                       | *preserved*                     |
  * | seqan3::const_iterable_range     |                                       | *preserved*                     |
  * |                                  |                                       |                                  |
- * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>     |
+ * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>     |
  *
  *
  * If above requirements are not met, this adaptor forwards to

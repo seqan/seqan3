@@ -492,7 +492,7 @@ public:
      */
     template <std::ranges::input_range rng_t>
     structure_file_output & operator=(rng_t && range)
-        requires tuple_like<reference_t<rng_t>>
+        requires tuple_like<std::ranges::range_reference_t<rng_t>>
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -528,7 +528,7 @@ public:
      */
     template <std::ranges::input_range rng_t>
     friend structure_file_output & operator|(rng_t && range, structure_file_output & f)
-        requires tuple_like<reference_t<rng_t>>
+        requires tuple_like<std::ranges::range_reference_t<rng_t>>
     {
         f = range;
         return f;
@@ -537,7 +537,7 @@ public:
     //!\overload
     template <std::ranges::input_range rng_t>
     friend structure_file_output operator|(rng_t && range, structure_file_output && f)
-        requires tuple_like<reference_t<rng_t>>
+        requires tuple_like<std::ranges::range_reference_t<rng_t>>
     {
         f = range;
         return std::move(f);

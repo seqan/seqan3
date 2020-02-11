@@ -143,7 +143,7 @@ private:
     void construct(text_t && text)
     {
         static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
-        static_assert(std::ranges::bidirectional_range<reference_t<text_t>>,
+        static_assert(std::ranges::bidirectional_range<std::ranges::range_reference_t<text_t>>,
                       "The elements of the text collection must model bidirectional_range.");
         static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
         static_assert(std::convertible_to<innermost_value_type_t<text_t>, alphabet_t>,

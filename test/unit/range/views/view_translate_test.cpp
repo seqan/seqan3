@@ -222,7 +222,7 @@ TYPED_TEST(nucleotide, view_translate_single_concepts)
     EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_TRUE((std::is_same_v<seqan3::aa27, std::ranges::range_value_t<decltype(v1)>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::aa27, seqan3::reference_t<decltype(v1)>>));
+    EXPECT_TRUE((std::is_same_v<seqan3::aa27, std::ranges::range_reference_t<decltype(v1)>>));
 }
 
 TYPED_TEST(nucleotide, view_translate_concepts)
@@ -242,9 +242,9 @@ TYPED_TEST(nucleotide, view_translate_concepts)
     EXPECT_TRUE(std::ranges::random_access_range<std::ranges::range_value_t<decltype(v1)>>);
     EXPECT_TRUE(std::ranges::sized_range<std::ranges::range_value_t<decltype(v1)>>);
     EXPECT_TRUE(std::ranges::view<std::ranges::range_value_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::random_access_range<seqan3::reference_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::sized_range<seqan3::reference_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::view<seqan3::reference_t<decltype(v1)>>);
+    EXPECT_TRUE(std::ranges::random_access_range<std::ranges::range_reference_t<decltype(v1)>>);
+    EXPECT_TRUE(std::ranges::sized_range<std::ranges::range_reference_t<decltype(v1)>>);
+    EXPECT_TRUE(std::ranges::view<std::ranges::range_reference_t<decltype(v1)>>);
 }
 
 TYPED_TEST(nucleotide, issue1339)

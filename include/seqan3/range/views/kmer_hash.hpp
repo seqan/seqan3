@@ -40,7 +40,7 @@ class kmer_hash_view : public std::ranges::view_interface<kmer_hash_view<urng_t>
 {
 private:
     static_assert(std::ranges::forward_range<urng_t const>, "The kmer_hash_view only works on forward_ranges");
-    static_assert(semialphabet<reference_t<urng_t>>, "The reference type of the underlying range must model "
+    static_assert(semialphabet<std::ranges::range_reference_t<urng_t>>, "The reference type of the underlying range must model "
                   "seqan3::semialphabet.");
 
     //!\brief The underlying range.
@@ -69,7 +69,7 @@ public:
      */
     kmer_hash_view(urng_t urange_, shape const & s_) : urange{std::move(urange_)}, shape_{s_}
     {
-        if (shape_.count() > (64 / std::log2(alphabet_size<reference_t<urng_t>>)))
+        if (shape_.count() > (64 / std::log2(alphabet_size<std::ranges::range_reference_t<urng_t>>)))
         {
             throw std::invalid_argument{"The chosen shape/alphabet combination is not valid. "
                                         "The alphabet or shape size must be reduced."};
@@ -89,7 +89,7 @@ public:
     kmer_hash_view(rng_t && urange_, shape const & s_) :
         urange{std::views::all(std::forward<rng_t>(urange_))}, shape_{s_}
     {
-        if (shape_.count() > (64 / std::log2(alphabet_size<reference_t<urng_t>>)))
+        if (shape_.count() > (64 / std::log2(alphabet_size<std::ranges::range_reference_t<urng_t>>)))
         {
             throw std::invalid_argument{"The chosen shape/alphabet combination is not valid. "
                                         "The alphabet or shape size must be reduced."};
@@ -647,7 +647,7 @@ struct kmer_hash_fn
             "The range parameter to views::kmer_hash cannot be a temporary of a non-view range.");
         static_assert(std::ranges::forward_range<urng_t>,
             "The range parameter to views::kmer_hash must model std::ranges::forward_range.");
-        static_assert(semialphabet<reference_t<urng_t>>,
+        static_assert(semialphabet<std::ranges::range_reference_t<urng_t>>,
             "The range parameter to views::kmer_hash must be over elements of seqan3::semialphabet.");
 
         return kmer_hash_view{std::forward<urng_t>(urange), shape_};

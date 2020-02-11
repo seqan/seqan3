@@ -151,7 +151,7 @@ public:
      */
     template <std::ranges::input_range urng_t>
     //!\cond
-        requires std::ranges::input_range<reference_t<urng_t>>
+        requires std::ranges::input_range<std::ranges::range_reference_t<urng_t>>
     //!\endcond
     constexpr auto operator()(urng_t && urange) const &
     {
@@ -164,7 +164,7 @@ public:
     //!\overload
     template <std::ranges::input_range urng_t>
     //!\cond
-        requires std::ranges::input_range<reference_t<urng_t>>
+        requires std::ranges::input_range<std::ranges::range_reference_t<urng_t>>
     //!\endcond
     constexpr auto operator()(urng_t && urange) &&
     {

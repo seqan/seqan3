@@ -72,8 +72,8 @@ TYPED_TEST(single_pass_input, view_concept)
     EXPECT_TRUE(std::ranges::range<view_t>);
     EXPECT_TRUE(std::ranges::view<view_t>);
     EXPECT_TRUE(std::ranges::input_range<view_t>);
-    EXPECT_EQ((std::ranges::output_range<view_t, seqan3::reference_t<view_t>>),
-              (std::ranges::output_range<rng_t, seqan3::reference_t<rng_t>>));
+    EXPECT_EQ((std::ranges::output_range<view_t, std::ranges::range_reference_t<view_t>>),
+              (std::ranges::output_range<rng_t, std::ranges::range_reference_t<rng_t>>));
     EXPECT_FALSE(std::ranges::common_range<view_t>);
     EXPECT_FALSE(std::ranges::forward_range<view_t>);
     EXPECT_FALSE(std::ranges::bidirectional_range<view_t>);

@@ -134,10 +134,10 @@ SEQAN3_CONCEPT alignment_file_input_traits = requires (t v)
     };
 
     // field::ref_id
-    requires alphabet<reference_t<reference_t<typename t::ref_ids>>> &&
+    requires alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>> &&
              (!std::same_as<typename t::ref_sequences, ref_info_not_given> ||
-              writable_alphabet<reference_t<reference_t<typename t::ref_ids>>>);
-    requires std::ranges::forward_range<reference_t<typename t::ref_ids>>;
+              writable_alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>>);
+    requires std::ranges::forward_range<std::ranges::range_reference_t<typename t::ref_ids>>;
     requires std::ranges::forward_range<typename t::ref_ids>;
 
     // field::offset is fixed to int32_t
@@ -936,9 +936,10 @@ protected:
         {
             header_ptr->ref_id_info.emplace_back(std::ranges::distance(ref_sequences[idx]), "");
 
-            if constexpr (std::ranges::contiguous_range<reference_t<typename traits_type::ref_ids>> &&
-                          std::ranges::sized_range<reference_t<typename traits_type::ref_ids>> &&
-                          forwarding_range<reference_t<typename traits_type::ref_ids>>)
+            if constexpr (std::ranges::contiguous_range<std::ranges::range_reference_t<
+                                                            typename traits_type::ref_ids>> &&
+                          std::ranges::sized_range<std::ranges::range_reference_t<typename traits_type::ref_ids>> &&
+                          forwarding_range<std::ranges::range_reference_t<typename traits_type::ref_ids>>)
             {
                 auto && id = header_ptr->ref_ids()[idx];
                 header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;

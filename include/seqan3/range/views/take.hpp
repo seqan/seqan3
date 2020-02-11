@@ -284,7 +284,7 @@ private:
      * \{
      */
     //!\brief The reference_type.
-    using reference         = reference_t<urng_t>;
+    using reference         = std::ranges::range_reference_t<urng_t>;
     //!\brief The const_reference type is equal to the reference type if the underlying range is const-iterable.
     using const_reference   = detail::transformation_trait_or_t<seqan3::reference<urng_t const>, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
@@ -596,7 +596,7 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                    | *preserved*                      |
  * | seqan3::const_iterable_range     |                                    | *preserved*                      |
  * |                                  |                                    |                                  |
- * | std::ranges::range_reference_t   |                                    | seqan3::reference_t<urng_t>      |
+ * | std::ranges::range_reference_t   |                                    | std::ranges::range_reference_t<urng_t>      |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *

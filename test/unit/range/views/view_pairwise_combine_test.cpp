@@ -405,7 +405,7 @@ TYPED_TEST(pairwise_combine_test, end)
 TYPED_TEST(pairwise_combine_test, iterate)
 {
     auto v = this->create_view();
-    using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
+    using ref_t = std::iter_reference_t<std::ranges::iterator_t<decltype(v)>>;
     std::vector<ref_t> cmp;
 
     for (auto r : v)
@@ -419,7 +419,7 @@ TYPED_TEST(pairwise_combine_test, iterate_reverse)
     if constexpr (std::ranges::bidirectional_range<TypeParam>)
     {
         auto v = this->create_view();
-        using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
+        using ref_t = std::iter_reference_t<std::ranges::iterator_t<decltype(v)>>;
         std::vector<ref_t> cmp;
 
         for (auto r : v | std::views::reverse)
@@ -446,7 +446,7 @@ TEST(pairwise_combine_fn_test, filter_output)
 
     auto v = orig | seqan3::views::pairwise_combine;
 
-    using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
+    using ref_t = std::iter_reference_t<std::ranges::iterator_t<decltype(v)>>;
     std::vector<ref_t> cmp;
 
     auto v_filter = v | std::views::filter([](auto tpl)
@@ -473,7 +473,7 @@ TEST(pairwise_combine_fn_test, filter_input)
 
     auto v = v_filter | seqan3::views::pairwise_combine;
 
-    using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
+    using ref_t = std::iter_reference_t<std::ranges::iterator_t<decltype(v)>>;
     std::vector<ref_t> cmp;
 
     for (auto r : v)

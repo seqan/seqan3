@@ -14,7 +14,7 @@ class my_iterator : public seqan3::detail::inherited_iterator_base<my_iterator<u
                                                                    std::ranges::iterator_t<urng_t>>
 {
 private:
-    static_assert(seqan3::nucleotide_alphabet<seqan3::reference_t<urng_t>>,
+    static_assert(seqan3::nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>,
                   "You can only iterate over ranges of nucleotides!");
 
     // the immediate base type is the CRTP-layer

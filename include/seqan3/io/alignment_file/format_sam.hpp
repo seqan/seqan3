@@ -676,12 +676,12 @@ inline void format_sam::write_alignment_record(stream_type & stream,
     // Type Requirements (as static asserts for user friendliness)
     // ---------------------------------------------------------------------
     static_assert((std::ranges::forward_range<seq_type>        &&
-                  alphabet<reference_t<seq_type>>),
+                  alphabet<std::ranges::range_reference_t<seq_type>>),
                   "The seq object must be a std::ranges::forward_range over "
                   "letters that model seqan3::alphabet.");
 
     static_assert((std::ranges::forward_range<id_type>         &&
-                  alphabet<reference_t<id_type>>),
+                  alphabet<std::ranges::range_reference_t<id_type>>),
                   "The id object must be a std::ranges::forward_range over "
                   "letters that model seqan3::alphabet.");
 
@@ -704,13 +704,13 @@ inline void format_sam::write_alignment_record(stream_type & stream,
                   "value_type is comparable to seqan3::gap");
 
     static_assert((std::tuple_size_v<remove_cvref_t<align_type>> == 2 &&
-                   std::equality_comparable_with<gap, reference_t<decltype(std::get<0>(align))>> &&
-                   std::equality_comparable_with<gap, reference_t<decltype(std::get<1>(align))>>),
+                   std::equality_comparable_with<gap, std::ranges::range_reference_t<decltype(std::get<0>(align))>> &&
+                   std::equality_comparable_with<gap, std::ranges::range_reference_t<decltype(std::get<1>(align))>>),
                   "The align object must be a std::pair of two ranges whose "
                   "value_type is comparable to seqan3::gap");
 
     static_assert((std::ranges::forward_range<qual_type>       &&
-                   alphabet<reference_t<qual_type>>),
+                   alphabet<std::ranges::range_reference_t<qual_type>>),
                   "The qual object must be a std::ranges::forward_range "
                   "over letters that model seqan3::alphabet.");
 
