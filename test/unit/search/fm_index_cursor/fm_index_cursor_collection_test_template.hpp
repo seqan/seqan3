@@ -321,6 +321,30 @@ TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
     EXPECT_TRUE(std::ranges::equal(it.locate(), it.lazy_locate()));
 }
 
+TYPED_TEST_P(fm_index_cursor_collection_test, locate_char_string)
+{
+    std::string text = "How much wood would a woodchuck chuck?";
+    std::string wood = "wood";
+
+    fm_index index{text};
+    auto it1 = index.begin();
+    auto it2 = index.begin();
+
+    it1.extend_right("wood");
+    it2.extend_right(wood);
+
+    EXPECT_TRUE(std::ranges::equal(it1.locate(), it2.locate())); // [22,9] == [22,9]
+
+    bi_fm_index b_index{text};
+    auto it3 = b_index.begin();
+    auto it4 = b_index.begin();
+
+    it3.extend_right("wood");
+    it4.extend_right(wood);
+
+    EXPECT_TRUE(std::ranges::equal(it3.locate(), it4.locate())); // [22,9] == [22,9]
+}
+
 TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
 {
     EXPECT_TRUE(seqan3::fm_index_cursor_specialisation<TypeParam>);
@@ -329,4 +353,4 @@ TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
 REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_collection_test, ctr, begin, extend_right_range,
                             extend_right_range_empty_text, extend_right_char, extend_right_range_and_cycle,
                             extend_right_char_and_cycle, extend_right_and_cycle, query, last_rank, incomplete_alphabet,
-                            lazy_locate, concept_check);
+                            lazy_locate, locate_char_string, concept_check);
