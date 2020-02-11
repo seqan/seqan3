@@ -11,6 +11,8 @@ foreach( $files as $file  )
         continue;
     if( $file == "master") // Skip SeqAn2 "master" documentation
         continue;
+    if( $file == "index.html") // Skip seqan/index.html
+        continue;
     if( strpos($file, "develop") !== FALSE )  // Skip SeqAn2 "develop" and "develop_" documentation
         continue;
     if( $file[0] == "1") // Skip SeqAn1 versioned documentation
