@@ -357,7 +357,7 @@ public:
     //!\brief The size_type is void, because this range is never sized.
     using size_type         = void;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = difference_type_t<urng_t>;
+    using difference_type   = std::ranges::range_difference_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = std::conditional_t<and_consume && !std::ranges::forward_range<urng_t>,
                                                 iterator_type_consume_input<urng_t>,

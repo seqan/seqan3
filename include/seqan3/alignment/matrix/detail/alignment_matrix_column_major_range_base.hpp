@@ -108,7 +108,7 @@ private:
             //!\brief Pointer type.
             using pointer = void;
             //!\brief Difference type.
-            using difference_type = difference_type_t<view_type>;
+            using difference_type = std::ranges::range_difference_t<view_type>;
             //!\brief Iterator category.
             using iterator_category = std::forward_iterator_tag;
             //!\}
@@ -311,7 +311,7 @@ private:
         //!\brief Pointer type.
         using pointer = void;
         //!\brief Difference type.
-        using difference_type = difference_type_t<alignment_column_type>;
+        using difference_type = std::ranges::range_difference_t<alignment_column_type>;
         //!\brief Iterator category.
         using iterator_category = std::input_iterator_tag;
         //!\}

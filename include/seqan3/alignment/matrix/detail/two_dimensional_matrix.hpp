@@ -351,7 +351,7 @@ public:
     //!\brief The pointer type.
     using pointer = typename storage_iterator::pointer;
     //!\brief Type for distances between iterators.
-    using difference_type = difference_type_t<storage_iterator>;
+    using difference_type = std::iter_difference_t<storage_iterator>;
     //!\brief The iterator tag.
     using iterator_category = std::random_access_iterator_tag;
     //!\}

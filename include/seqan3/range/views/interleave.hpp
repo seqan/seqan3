@@ -74,7 +74,7 @@ public:
     //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be Sized.
     using size_type         = size_type_t<urng_t>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = difference_type_t<urng_t>;
+    using difference_type   = std::ranges::range_difference_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = detail::random_access_iterator<view_interleave>;
     //!\brief The const_iterator type is equal to the iterator type.

@@ -112,7 +112,7 @@ template <std::weakly_incrementable it_t>
 struct size_type<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = std::make_unsigned_t<difference_type_t<it_t>>;
+    using type = std::make_unsigned_t<std::iter_difference_t<it_t>>;
 };
 
 // see specialisation for ranges in core/type_traits/range.hpp

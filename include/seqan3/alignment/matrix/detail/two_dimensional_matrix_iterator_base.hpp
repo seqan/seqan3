@@ -127,7 +127,7 @@ public:
 
     //!\brief Returns a reference to the pointed-to-element after advancing the iterator by the given offset.
     template <typename dummy_t = derived_t>
-    constexpr reference<dummy_t> operator[](difference_type<dummy_t> const offset) const noexcept
+    constexpr reference<dummy_t> operator[](std::iter_difference_t<dummy_t> const offset) const noexcept
     {
         return *(as_derived() + offset);
     }
@@ -198,7 +198,7 @@ public:
 
     //!\brief Advances the iterator by `offset` following the given matrix major order.
     template <typename dummy_t = derived_t>
-    constexpr derived_t & operator+=(difference_type<dummy_t> const offset) noexcept
+    constexpr derived_t & operator+=(std::iter_difference_t<dummy_t> const offset) noexcept
     {
         if constexpr (order == matrix_major_order::column)
             return as_derived() += matrix_offset{row_index_type{offset}, column_index_type{0}};
@@ -208,7 +208,7 @@ public:
 
     //!\brief Returns an iterator advanced by `offset` following the given matrix major order.
     template <typename dummy_t = derived_t>
-    constexpr derived_t operator+(difference_type<dummy_t> const offset) const noexcept
+    constexpr derived_t operator+(std::iter_difference_t<dummy_t> const offset) const noexcept
     {
         derived_t next{as_derived()};
         next += offset;
@@ -217,7 +217,7 @@ public:
 
     //!\brief Returns an iterator advanced by `offset` following the given matrix major order.
     template <typename dummy_t = derived_t>
-    constexpr friend derived_t operator+(difference_type<dummy_t> const offset, derived_t const iter)
+    constexpr friend derived_t operator+(std::iter_difference_t<dummy_t> const offset, derived_t const iter)
     {
         return iter + offset;
     }
@@ -255,14 +255,14 @@ public:
 
     //!\brief Advances the iterator by `offset` following the given matrix major order.
     template <typename dummy_t = derived_t>
-    constexpr derived_t & operator-=(difference_type<dummy_t> const offset) noexcept
+    constexpr derived_t & operator-=(std::iter_difference_t<dummy_t> const offset) noexcept
     {
         return *this += -offset;
     }
 
     //!\brief Returns an iterator advanced by `offset` following the given matrix major order.
     template <typename dummy_t = derived_t>
-    constexpr derived_t operator-(difference_type<dummy_t> const offset) const noexcept
+    constexpr derived_t operator-(std::iter_difference_t<dummy_t> const offset) const noexcept
     {
         derived_t next{as_derived()};
         next -= offset;
@@ -285,7 +285,7 @@ public:
 
     //!\brief Returns the distance between two iterators.
     template <typename dummy_t = derived_t>
-    constexpr difference_type<dummy_t> operator-(derived_t const rhs) const noexcept
+    constexpr std::iter_difference_t<dummy_t> operator-(derived_t const rhs) const noexcept
     {
         return as_derived().host_iter - rhs.host_iter;
     }

@@ -65,7 +65,7 @@ protected:
     //!\brief The size_type.
     using size_type         = size_type_t<reference_t<urng_t>>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = difference_type_t<reference_t<urng_t>>;
+    using difference_type   = std::ranges::range_difference_t<reference_t<urng_t>>;
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = detail::random_access_iterator<view_translate_join>;
     //!\brief The const iterator type of this view (same as iterator, because it's a view).
