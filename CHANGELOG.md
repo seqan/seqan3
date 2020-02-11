@@ -277,6 +277,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   The same applies for the `seqan3::bi_fm_index_cursor`
   ([\#1433](https://github.com/seqan/seqan3/pull/1433)).
 
+*  The `extend_right()` function can now also handle `char const *`.
+
 ## Notable Bug-fixes
 
 * All our headers are self contained
