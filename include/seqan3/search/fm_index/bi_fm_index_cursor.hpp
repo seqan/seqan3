@@ -441,6 +441,41 @@ public:
         return false;
     }
 
+    //!\overload
+    template <typename char_t>
+    bool extend_right(char_t* const c) noexcept
+    {
+    #ifndef NDEBUG
+        fwd_cursor_last_used = true;
+    #endif
+
+        static_assert(std::convertible_to<char_t, index_alphabet_type>,
+                     "The character must be convertible to the alphabet of the index.");
+
+        assert(index != nullptr);
+
+        size_type new_parent_lb = fwd_lb, new_parent_rb = fwd_rb;
+
+        bool all_chars_true = true;
+
+        for(int i = 0; c[i]; i++) {
+            auto c_char = to_rank(static_cast<index_alphabet_type>(c[i])) + 1;
+            if (bidirectional_search(index->fwd_fm.index, c_char, fwd_lb, fwd_rb, rev_lb, rev_rb))
+            {
+                parent_lb = new_parent_lb;
+                parent_rb = new_parent_rb;
+
+                _last_char = c_char;
+                ++depth;
+            }
+            else
+            {
+                all_chars_true = all_chars_true && false;
+            }
+        }
+        return all_chars_true;
+    }
+
     /*!\brief Tries to extend the query by the character `c` to the left.
      * \tparam char_t Type of the character needs to be convertible to the character type `char_type` of the index.
      * \param[in] c Character to extend the query with to the left.

@@ -290,6 +290,38 @@ public:
         return false;
     }
 
+    //!\overload
+    template <typename char_t>
+    bool extend_right(char_t* const c) noexcept
+    {
+        static_assert(std::convertible_to<char_t, index_alphabet_type>,
+                     "The character must be convertible to the alphabet of the index.");
+
+        assert(index != nullptr);
+
+        size_type _lb = node.lb, _rb = node.rb;
+
+        bool all_chars_true = true;
+
+    //     for (auto it = std::ranges::begin(seq); it != std::ranges::end(seq); ++len, ++it)
+        for(int i = 0; c[i]; i++) {
+            sdsl_char_type c_char = to_rank(static_cast<index_alphabet_type>(c[i])) + 1;
+
+            if (backward_search(index->index, c_char, _lb, _rb))
+            {
+                parent_lb = node.lb;
+                parent_rb = node.rb;
+                node = {_lb, _rb, node.depth + 1, c_char};
+            }
+            else
+            {
+                all_chars_true = all_chars_true && false;
+            }
+
+        }
+        return all_chars_true;
+    }
+
     /*!\brief Tries to extend the query by `seq` to the right.
      * \tparam seq_t The type of range of the sequence to search; must model std::ranges::forward_range.
      * \param[in] seq Sequence to extend the query with to the right.
