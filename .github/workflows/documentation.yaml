@@ -6,14 +6,14 @@ on:
       - master
 
 jobs:
-  my_job:
+  deploy_documentation:
     name: Deploy Documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Print Current Brach
+      - name: Print Current Branch
         shell: bash
         run: echo The target branch name is ${GITHUB_REF#refs/heads/}
 
