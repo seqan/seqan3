@@ -19,10 +19,8 @@
 
 #include "sequence_file_format_test_template.hpp"
 
-using namespace seqan3;
-
 template <>
-struct sequence_file_read<format_sam> : public sequence_file_data
+struct sequence_file_read<seqan3::format_sam> : public sequence_file_data
 {
     std::string standard_input
     {
@@ -57,27 +55,27 @@ R"(*	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_SUITE_P(sam, sequence_file_read, format_sam, );
-INSTANTIATE_TYPED_TEST_SUITE_P(sam, sequence_file_write, format_sam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam, sequence_file_read, seqan3::format_sam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam, sequence_file_write, seqan3::format_sam, );
 
 // ----------------------------------------------------------------------------
 // reading
 // ----------------------------------------------------------------------------
-struct read_sam : sequence_file_read<format_sam>
+struct read_sam : sequence_file_read<seqan3::format_sam>
 {
-    sequence_file_input_options<dna5, false> options{};
+    seqan3::sequence_file_input_options<seqan3::dna5, false> options{};
 
     void do_read_test(std::string const & input)
     {
         std::stringstream istream{input};
-        sequence_file_input fin{istream, format_sam{}};
+        seqan3::sequence_file_input fin{istream, seqan3::format_sam{}};
 
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, it++)
         {
-            EXPECT_EQ(get<field::seq>(*it), seqs[i]);
-            EXPECT_EQ(get<field::id>(*it), ids[i]);
-            EXPECT_EQ(get<field::qual>(*it), quals[i]);
+            EXPECT_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
+            EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
+            EXPECT_EQ(seqan3::get<seqan3::field::qual>(*it), quals[i]);
         }
     }
 };
@@ -126,8 +124,8 @@ TEST_F(read_sam, qual_too_short)
 R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()-./++-
 )"}};
 
-    sequence_file_input fin{istream, format_sam{}};
-    EXPECT_THROW(fin.begin(), format_error);
+    seqan3::sequence_file_input fin{istream, seqan3::format_sam{}};
+    EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
 TEST_F(read_sam, qual_too_long)
@@ -136,8 +134,8 @@ TEST_F(read_sam, qual_too_long)
 R"(ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-+
 )"}};
 
-    sequence_file_input fin{istream, format_sam{}};
-    EXPECT_THROW(fin.begin(), format_error);
+    seqan3::sequence_file_input fin{istream, seqan3::format_sam{}};
+    EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
 TEST_F(read_sam, no_seq)
@@ -146,8 +144,8 @@ TEST_F(read_sam, no_seq)
 R"(ID 1	0	*	0	0	*	*	0	0	*	!##$%&'()*+,-./++-
 )"}};
 
-    sequence_file_input fin{istream, format_sam{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::sequence_file_input fin{istream, seqan3::format_sam{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 // ----------------------------------------------------------------------------
@@ -155,7 +153,7 @@ R"(ID 1	0	*	0	0	*	*	0	0	*	!##$%&'()*+,-./++-
 // ----------------------------------------------------------------------------
 struct write : public ::testing::Test
 {
-    std::vector<dna5_vector> seqs
+    std::vector<seqan3::dna5_vector> seqs
     {
         "ACGT"_dna5,
         "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN"_dna5,
@@ -169,19 +167,19 @@ struct write : public ::testing::Test
         "Test3"
     };
 
-    std::vector<std::vector<phred42>> quals
+    std::vector<std::vector<seqan3::phred42>> quals
     {
         { "!##$"_phred42 },
         { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE"_phred42 },
         { "!!*+,-./+*+,-./+!!FF!!"_phred42 },
     };
 
-    sequence_file_output_options options{};
+    seqan3::sequence_file_output_options options{};
     std::ostringstream ostream;
 
     void do_write_test()
     {
-    	sequence_file_output fout{ostream, format_sam{}};
+    	seqan3::sequence_file_output fout{ostream, seqan3::format_sam{}};
         for (unsigned i = 0; i < 3; ++i)
             EXPECT_NO_THROW(( fout.emplace_back(seqs[i], ids[i], quals[i]) ));
         ostream.flush();
@@ -189,7 +187,7 @@ struct write : public ::testing::Test
 
     void do_write_test_no_qual()
     {
-        sequence_file_output fout{ostream, format_sam{}};
+        seqan3::sequence_file_output fout{ostream, seqan3::format_sam{}};
         for (unsigned i = 0; i < 3; ++i)
             EXPECT_NO_THROW(( fout.emplace_back(seqs[i], ids[i], ""_phred42) ));
         ostream.flush();

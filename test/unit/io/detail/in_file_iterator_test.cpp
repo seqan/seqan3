@@ -13,8 +13,6 @@
 
 #include <seqan3/io/detail/in_file_iterator.hpp>
 
-using namespace seqan3;
-
 //NOTE(h-2): This class is extensively tested via *_file_input. This is just a minimal test.
 
 struct fake_file_t : std::vector<int>
@@ -23,7 +21,7 @@ struct fake_file_t : std::vector<int>
 
     using base::base;
 
-    using iterator = detail::in_file_iterator<fake_file_t>;
+    using iterator = seqan3::detail::in_file_iterator<fake_file_t>;
 
     size_t current_position = 0;
     bool at_end = false;
@@ -52,14 +50,14 @@ struct fake_file_t : std::vector<int>
 
 TEST(in_file_iterator, concepts)
 {
-    using it_t = detail::in_file_iterator<fake_file_t>;
+    using it_t = seqan3::detail::in_file_iterator<fake_file_t>;
 
     EXPECT_TRUE((std::input_iterator<it_t>));
 }
 
 TEST(in_file_iterator, member_types)
 {
-    using it_t = detail::in_file_iterator<fake_file_t>;
+    using it_t = seqan3::detail::in_file_iterator<fake_file_t>;
     EXPECT_TRUE((std::is_same_v<typename it_t::value_type,
                                 int>));
     EXPECT_TRUE((std::is_same_v<typename it_t::reference,
@@ -76,7 +74,7 @@ TEST(in_file_iterator, member_types)
 
 TEST(in_file_iterator, operations)
 {
-    using it_t = detail::in_file_iterator<fake_file_t>;
+    using it_t = seqan3::detail::in_file_iterator<fake_file_t>;
 
     fake_file_t f{1, 2, 3, 4, 5, 6, 8};
 
@@ -98,7 +96,7 @@ TEST(in_file_iterator, operations)
 
 TEST(in_file_iterator, comparison)
 {
-    using it_t = detail::in_file_iterator<fake_file_t>;
+    using it_t = seqan3::detail::in_file_iterator<fake_file_t>;
 
     fake_file_t f{1, 2, 3, 4, 5, 6, 8};
     it_t it = f.begin();

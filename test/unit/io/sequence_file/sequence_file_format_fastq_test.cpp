@@ -20,10 +20,11 @@
 
 #include "sequence_file_format_test_template.hpp"
 
-using namespace seqan3;
+using seqan3::operator""_dna5;
+using seqan3::operator""_phred42;
 
 template <>
-struct sequence_file_read<format_fastq> : public sequence_file_data
+struct sequence_file_read<seqan3::format_fastq> : public sequence_file_data
 {
     std::string standard_input
     {
@@ -78,8 +79,8 @@ struct sequence_file_read<format_fastq> : public sequence_file_data
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_SUITE_P(fastq, sequence_file_read, format_fastq, );
-INSTANTIATE_TYPED_TEST_SUITE_P(fastq, sequence_file_write, format_fastq, );
+INSTANTIATE_TYPED_TEST_SUITE_P(fastq, sequence_file_read, seqan3::format_fastq, );
+INSTANTIATE_TYPED_TEST_SUITE_P(fastq, sequence_file_write, seqan3::format_fastq, );
 
 // ----------------------------------------------------------------------------
 // reading
@@ -103,20 +104,20 @@ struct read : public sequence_file_data
         "!!!!!!!\n"
     };
 
-    sequence_file_input_options<dna15, false> options{};
+    seqan3::sequence_file_input_options<seqan3::dna15, false> options{};
 
     void do_read_test(std::string const & input)
     {
         std::stringstream istream{input};
-        sequence_file_input fin{istream, format_fastq{}};
+        seqan3::sequence_file_input fin{istream, seqan3::format_fastq{}};
         fin.options = options;
 
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
-            EXPECT_TRUE((std::ranges::equal(get<field::seq>(*it), seqs[i])));
-            EXPECT_TRUE((std::ranges::equal(get<field::id>(*it), ids[i])));
-            EXPECT_TRUE((std::ranges::equal(get<field::qual>(*it), quals[i])));
+            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(*it), seqs[i])));
+            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(*it), ids[i])));
+            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::qual>(*it), quals[i])));
         }
     }
 };
@@ -204,11 +205,11 @@ TEST_F(read, mixed_issues)
 TEST_F(read, only_qual)
 {
     std::stringstream istream{input};
-    sequence_file_input fin{istream, format_fastq{}, fields<field::qual>{}};
+    seqan3::sequence_file_input fin{istream, seqan3::format_fastq{}, seqan3::fields<seqan3::field::qual>{}};
 
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
-        EXPECT_TRUE((std::ranges::equal(get<0>(*it), quals[i])));
+        EXPECT_TRUE((std::ranges::equal(std::get<0>(*it), quals[i])));
 }
 
 //TODO fail_no_2nd_id
@@ -220,8 +221,8 @@ TEST_F(read, fail_no_seq_after_id)
         "ACGTTTTTTTTTTTTTTT"
     }};
 
-    sequence_file_input fin{istream, format_fastq{}};
-    EXPECT_THROW(fin.begin(), unexpected_end_of_input);
+    seqan3::sequence_file_input fin{istream, seqan3::format_fastq{}};
+    EXPECT_THROW(fin.begin(), seqan3::unexpected_end_of_input);
 }
 
 //TODO fail_no_quals
@@ -233,7 +234,7 @@ TEST_F(read, fail_no_seq_after_id)
 
 struct write : public ::testing::Test
 {
-    std::vector<dna5_vector> seqs
+    std::vector<seqan3::dna5_vector> seqs
     {
         "ACGT"_dna5,
         "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN"_dna5,
@@ -247,20 +248,20 @@ struct write : public ::testing::Test
         "Test3"
     };
 
-    std::vector<std::vector<phred42>> quals
+    std::vector<std::vector<seqan3::phred42>> quals
     {
         { "!##$"_phred42 },
         { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE"_phred42 },
         { "!!*+,-./+*+,-./+!!FF!!"_phred42 },
     };
 
-    sequence_file_output_options options{};
+    seqan3::sequence_file_output_options options{};
 
     std::ostringstream ostream;
 
     void do_write_test()
     {
-        sequence_file_output fout{ostream, format_fastq{}};
+        seqan3::sequence_file_output fout{ostream, seqan3::format_fastq{}};
         fout.options = options;
 
         for (unsigned i = 0; i < 3; ++i)
@@ -272,13 +273,14 @@ struct write : public ::testing::Test
 
 TEST_F(write, arg_handling_qual_missing)
 {
-    sequence_file_output fout{ostream, format_fastq{}, fields<field::id, field::seq>{}};
+    seqan3::sequence_file_output fout{ostream, seqan3::format_fastq{}, seqan3::fields<seqan3::field::id,
+                                                                                      seqan3::field::seq>{}};
     EXPECT_THROW((fout.emplace_back(ids[0], seqs[0])), std::logic_error);
 }
 
 TEST_F(write, arg_handling_qual_empty)
 {
-    sequence_file_output fout{ostream, format_fastq{}};
+    seqan3::sequence_file_output fout{ostream, seqan3::format_fastq{}};
     EXPECT_THROW((fout.emplace_back(seqs[0], ids[0], std::string_view{""})), std::runtime_error);
 }
 

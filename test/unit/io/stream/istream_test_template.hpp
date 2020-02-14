@@ -15,8 +15,6 @@
 
 #include <seqan3/test/tmp_filename.hpp>
 
-using namespace seqan3;
-
 template <typename T>
 class istream : public ::testing::Test
 {};
@@ -27,12 +25,12 @@ TYPED_TEST_SUITE_P(istream);
 
 TYPED_TEST_P(istream, concept_check)
 {
-    EXPECT_TRUE((input_stream_over<TypeParam, char>));
+    EXPECT_TRUE((seqan3::input_stream_over<TypeParam, char>));
 }
 
 TYPED_TEST_P(istream, input)
 {
-    test::tmp_filename filename{"istream_test"};
+    seqan3::test::tmp_filename filename{"istream_test"};
 
     {
         std::ofstream fi{filename.get_path()};
@@ -49,7 +47,7 @@ TYPED_TEST_P(istream, input)
 
 TYPED_TEST_P(istream, input_type_erased)
 {
-    test::tmp_filename filename{"istream_test"};
+    seqan3::test::tmp_filename filename{"istream_test"};
 
     {
         std::ofstream fi{filename.get_path()};

@@ -15,8 +15,6 @@
 #include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>
 
-using namespace seqan3;
-
 struct dummy_file
 {
 
@@ -30,13 +28,13 @@ struct dummy_file
         static inline std::vector<std::string> file_extensions{ {"sam"}, {"bam"}};
     };
 
-    using valid_formats = type_list<format1, format2>;
+    using valid_formats = seqan3::type_list<format1, format2>;
 };
 
 TEST(misc, valid_file_extensions)
 {
     // get all extensions.
-    auto all_extensions = detail::valid_file_extensions<dummy_file::valid_formats>();
+    auto all_extensions = seqan3::detail::valid_file_extensions<dummy_file::valid_formats>();
 
     // define testing lambda
     auto cmp_lambda = [&all_extensions] (auto & source)
@@ -55,7 +53,8 @@ TEST(misc, valid_file_extensions)
 
 TEST(misc, valid_compression_extensions)
 {
-    std::vector<std::string> valid_compression = detail::valid_file_extensions<detail::compression_formats>();
+    using string_vector = std::vector<std::string>;
+    string_vector valid_compression = seqan3::detail::valid_file_extensions<seqan3::detail::compression_formats>();
 
     #if defined(SEQAN3_HAS_ZLIB)
     // expect gz and bgzf

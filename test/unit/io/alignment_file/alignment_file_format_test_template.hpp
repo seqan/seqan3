@@ -17,37 +17,40 @@
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
-using namespace seqan3;
+using seqan3::operator""_cigar_op;
+using seqan3::operator""_dna5;
+using seqan3::operator""_phred42;
+using seqan3::operator""_tag;
 
-using sam_fields = fields<field::header_ptr,
-                          field::id,
-                          field::flag,
-                          field::ref_id,
-                          field::ref_offset,
-                          field::mapq,
-                          field::alignment,
-                          field::offset,
-                          field::mate,
-                          field::seq,
-                          field::qual,
-                          field::tags>;
+using sam_fields = seqan3::fields<seqan3::field::header_ptr,
+                                  seqan3::field::id,
+                                  seqan3::field::flag,
+                                  seqan3::field::ref_id,
+                                  seqan3::field::ref_offset,
+                                  seqan3::field::mapq,
+                                  seqan3::field::alignment,
+                                  seqan3::field::offset,
+                                  seqan3::field::mate,
+                                  seqan3::field::seq,
+                                  seqan3::field::qual,
+                                  seqan3::field::tags>;
 
 // global variables for reuse
-alignment_file_input_options<dna5> input_options;
-alignment_file_output_options output_options;
+seqan3::alignment_file_input_options<seqan3::dna5> input_options;
+seqan3::alignment_file_output_options output_options;
 
 struct alignment_file_data : public ::testing::Test
 {
     alignment_file_data()
     {
-        ref_sequences = std::vector<dna5_vector>{ref_seq};
+        ref_sequences = std::vector<seqan3::dna5_vector>{ref_seq};
         ref_ids = std::vector<std::string>{ref_id};
-        header = alignment_file_header{ref_ids};
+        header = seqan3::alignment_file_header{ref_ids};
         header.ref_id_info.emplace_back(ref_seq.size(), "");
         header.ref_dict[header.ref_ids()[0]] = 0; // set up header which is otherwise done on file level
     }
 
-    std::vector<dna5_vector> seqs
+    std::vector<seqan3::dna5_vector> seqs
     {
         "ACGT"_dna5,
         "AGGCTGNAG"_dna5,
@@ -61,7 +64,7 @@ struct alignment_file_data : public ::testing::Test
         "read3"
     };
 
-    std::vector<std::vector<phred42>> quals
+    std::vector<std::vector<seqan3::phred42>> quals
     {
         { "!##$"_phred42 },
         { "!##$&'()*"_phred42 },
@@ -75,13 +78,13 @@ struct alignment_file_data : public ::testing::Test
         1
     };
 
-    dna5_vector ref_seq = "ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna5;
+    seqan3::dna5_vector ref_seq = "ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna5;
 
-    std::vector<gapped<dna5>> ref_seq_gapped1 = {'A'_dna5, 'C'_dna5, 'T'_dna5, gap{}};
-    std::vector<gapped<dna5>> ref_seq_gapped2 = {'C'_dna5, 'T'_dna5, 'G'_dna5, 'A'_dna5,
-                                                 'T'_dna5, 'C'_dna5, 'G'_dna5, 'A'_dna5, 'G'_dna5};
-    std::vector<gapped<dna5>> ref_seq_gapped3 = {'T'_dna5, gap{}, 'G'_dna5, gap{}, 'A'_dna5,
-                                                 gap{}, 'T'_dna5, 'C'_dna5};
+    std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped1 = {'A'_dna5, 'C'_dna5, 'T'_dna5, seqan3::gap{}};
+    std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped2 = {'C'_dna5, 'T'_dna5, 'G'_dna5, 'A'_dna5,
+                                                                 'T'_dna5, 'C'_dna5, 'G'_dna5, 'A'_dna5, 'G'_dna5};
+    std::vector<seqan3::gapped<seqan3::dna5>> ref_seq_gapped3 = {'T'_dna5, seqan3::gap{}, 'G'_dna5, seqan3::gap{},
+                                                                 'A'_dna5, seqan3::gap{}, 'T'_dna5, 'C'_dna5};
 
     std::string ref_id = "ref";
 
@@ -92,20 +95,21 @@ struct alignment_file_data : public ::testing::Test
         2
     };
 
-    std::vector<std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>> alignments
+    std::vector<std::pair<std::vector<seqan3::gapped<seqan3::dna5>>,
+                          std::vector<seqan3::gapped<seqan3::dna5>>>> alignments
     {
-        {ref_seq_gapped1, std::vector<gapped<dna5>>{'C'_dna5, gap{}, 'G'_dna5, 'T'_dna5}},
-        {ref_seq_gapped2, std::vector<gapped<dna5>>{'A'_dna5, 'G'_dna5, 'G'_dna5, 'C'_dna5, 'T'_dna5,
-                                                    'G'_dna5, 'N'_dna5, gap{}, 'A'_dna5}},
-        {ref_seq_gapped3, std::vector<gapped<dna5>>{'G'_dna5, gap{}, 'A'_dna5, 'G'_dna5,
-                                                    'T'_dna5, 'A'_dna5, gap{}, 'T'_dna5}}
+        {ref_seq_gapped1, std::vector<seqan3::gapped<seqan3::dna5>>{'C'_dna5, seqan3::gap{}, 'G'_dna5, 'T'_dna5}},
+        {ref_seq_gapped2, std::vector<seqan3::gapped<seqan3::dna5>>{'A'_dna5, 'G'_dna5, 'G'_dna5, 'C'_dna5, 'T'_dna5,
+                                                                    'G'_dna5, 'N'_dna5, seqan3::gap{}, 'A'_dna5}},
+        {ref_seq_gapped3, std::vector<seqan3::gapped<seqan3::dna5>>{'G'_dna5, seqan3::gap{}, 'A'_dna5, 'G'_dna5,
+                                                                    'T'_dna5, 'A'_dna5, seqan3::gap{}, 'T'_dna5}}
     };
 
-    std::vector<sam_flag> flags
+    std::vector<seqan3::sam_flag> flags
     {
-        sam_flag{41u},
-        sam_flag{42u},
-        sam_flag{43u}
+        seqan3::sam_flag{41u},
+        seqan3::sam_flag{42u},
+        seqan3::sam_flag{43u}
     };
 
     std::vector<uint8_t> mapqs
@@ -122,16 +126,16 @@ struct alignment_file_data : public ::testing::Test
         {0, 9, 300}
     };
 
-    std::vector<sam_tag_dictionary> tag_dicts
+    std::vector<seqan3::sam_tag_dictionary> tag_dicts
     {
-        sam_tag_dictionary{},
-        sam_tag_dictionary{},
-        sam_tag_dictionary{}
+        seqan3::sam_tag_dictionary{},
+        seqan3::sam_tag_dictionary{},
+        seqan3::sam_tag_dictionary{}
     };
 
-    std::vector<dna5_vector> ref_sequences{};
+    std::vector<seqan3::dna5_vector> ref_sequences{};
     std::vector<std::string> ref_ids{};
-    alignment_file_header<std::vector<std::string>> header{};
+    seqan3::alignment_file_header<std::vector<std::string>> header{};
 };
 
 template <typename format_t>
@@ -146,7 +150,7 @@ TYPED_TEST_SUITE_P(alignment_file_read);
 
 TYPED_TEST_P(alignment_file_read, input_concept)
 {
-    EXPECT_TRUE((alignment_file_input_format<TypeParam>));
+    EXPECT_TRUE((seqan3::alignment_file_input_format<TypeParam>));
 }
 
 // ----------------------------------------------------------------------------
@@ -157,7 +161,7 @@ TYPED_TEST_P(alignment_file_read, header_sucess)
 {
     typename TestFixture::stream_type istream{this->big_header_input};
 
-    alignment_file_input fin{istream, TypeParam{}};
+    seqan3::alignment_file_input fin{istream, TypeParam{}};
     auto & header = fin.header();
 
     EXPECT_EQ(header.format_version, "1.6");
@@ -195,7 +199,7 @@ TYPED_TEST_P(alignment_file_read, header_sucess)
 TYPED_TEST_P(alignment_file_read, read_in_all_data)
 {
     typename TestFixture::stream_type istream{this->verbose_reads_input};
-    alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
+    seqan3::alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
 
     this->tag_dicts[0]["NM"_tag] = -7;
     this->tag_dicts[0]["AS"_tag] = 2;
@@ -215,18 +219,20 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
     size_t i{0};
     for (auto & rec : fin)
     {
-        EXPECT_EQ(get<field::seq>(rec), this->seqs[i]);
-        EXPECT_EQ(get<field::id>(rec), this->ids[i]);
-        EXPECT_EQ(get<field::qual>(rec), this->quals[i]);
-        EXPECT_EQ(get<field::offset>(rec), this->offsets[i]);
-        EXPECT_EQ(get<field::ref_id>(rec), 0);
-        EXPECT_EQ(*get<field::ref_offset>(rec), this->ref_offsets[i]);
-        EXPECT_TRUE(std::ranges::equal(get<0>(get<field::alignment>(rec)), get<0>(this->alignments[i])));
-        EXPECT_TRUE(std::ranges::equal(get<1>(get<field::alignment>(rec)), get<1>(this->alignments[i])));
-        EXPECT_EQ(get<field::flag>(rec), this->flags[i]);
-        EXPECT_EQ(get<field::mapq>(rec), this->mapqs[i]);
-        EXPECT_EQ(get<field::mate>(rec), this->mates[i]);
-        EXPECT_EQ(get<field::tags>(rec), this->tag_dicts[i]);
+        EXPECT_EQ(seqan3::get<seqan3::field::seq>(rec), this->seqs[i]);
+        EXPECT_EQ(seqan3::get<seqan3::field::id>(rec), this->ids[i]);
+        EXPECT_EQ(seqan3::get<seqan3::field::qual>(rec), this->quals[i]);
+        EXPECT_EQ(seqan3::get<seqan3::field::offset>(rec), this->offsets[i]);
+        EXPECT_EQ(seqan3::get<seqan3::field::ref_id>(rec), 0);
+        EXPECT_EQ(*seqan3::get<seqan3::field::ref_offset>(rec), this->ref_offsets[i]);
+        EXPECT_TRUE(std::ranges::equal(std::get<0>(seqan3::get<seqan3::field::alignment>(rec)),
+                                       std::get<0>(this->alignments[i])));
+        EXPECT_TRUE(std::ranges::equal(std::get<1>(seqan3::get<seqan3::field::alignment>(rec)),
+                                       std::get<1>(this->alignments[i])));
+        EXPECT_EQ(seqan3::get<seqan3::field::flag>(rec), this->flags[i]);
+        EXPECT_EQ(seqan3::get<seqan3::field::mapq>(rec), this->mapqs[i]);
+        EXPECT_EQ(seqan3::get<seqan3::field::mate>(rec), this->mates[i]);
+        EXPECT_EQ(seqan3::get<seqan3::field::tags>(rec), this->tag_dicts[i]);
         ++i;
     }
 }
@@ -234,28 +240,28 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
 TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
 {
     typename TestFixture::stream_type istream{this->empty_input};
-    alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
+    seqan3::alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
 
-    EXPECT_TRUE(get<field::seq>(*fin.begin()).empty());
-    EXPECT_TRUE(get<field::id>(*fin.begin()).empty());
-    EXPECT_TRUE(get<field::qual>(*fin.begin()).empty());
-    EXPECT_EQ(get<field::offset>(*fin.begin()), 0);
-    EXPECT_TRUE(!get<field::ref_id>(*fin.begin()).has_value());
-    EXPECT_TRUE(!get<field::ref_offset>(*fin.begin()).has_value());
-    EXPECT_TRUE(std::ranges::empty(get<0>(get<field::alignment>(*fin.begin()))));
-    EXPECT_TRUE(std::ranges::empty(get<1>(get<field::alignment>(*fin.begin()))));
-    EXPECT_EQ(get<field::flag>(*fin.begin()), sam_flag{0u});
-    EXPECT_EQ(get<field::mapq>(*fin.begin()), 0u);
-    EXPECT_TRUE(!get<0>(get<field::mate>(*fin.begin())).has_value());
-    EXPECT_TRUE(!get<1>(get<field::mate>(*fin.begin())).has_value());
-    EXPECT_EQ(get<2>(get<field::mate>(*fin.begin())), int32_t{});
-    EXPECT_TRUE(get<field::tags>(*fin.begin()).empty());
+    EXPECT_TRUE(seqan3::get<seqan3::field::seq>(*fin.begin()).empty());
+    EXPECT_TRUE(seqan3::get<seqan3::field::id>(*fin.begin()).empty());
+    EXPECT_TRUE(seqan3::get<seqan3::field::qual>(*fin.begin()).empty());
+    EXPECT_EQ(seqan3::get<seqan3::field::offset>(*fin.begin()), 0);
+    EXPECT_TRUE(!seqan3::get<seqan3::field::ref_id>(*fin.begin()).has_value());
+    EXPECT_TRUE(!seqan3::get<seqan3::field::ref_offset>(*fin.begin()).has_value());
+    EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
+    EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
+    EXPECT_EQ(seqan3::get<seqan3::field::flag>(*fin.begin()), seqan3::sam_flag{0u});
+    EXPECT_EQ(seqan3::get<seqan3::field::mapq>(*fin.begin()), 0u);
+    EXPECT_TRUE(!std::get<0>(seqan3::get<seqan3::field::mate>(*fin.begin())).has_value());
+    EXPECT_TRUE(!std::get<1>(seqan3::get<seqan3::field::mate>(*fin.begin())).has_value());
+    EXPECT_EQ(std::get<2>(seqan3::get<seqan3::field::mate>(*fin.begin())), int32_t{});
+    EXPECT_TRUE(seqan3::get<seqan3::field::tags>(*fin.begin()).empty());
 }
 
 TYPED_TEST_P(alignment_file_read, read_in_almost_nothing)
 {
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
-    alignment_file_input fin{istream, TypeParam{}, fields<field::mapq>{}};
+    seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::mapq>{}};
 
     size_t i{0};
     for (auto & [mapq] : fin)
@@ -266,23 +272,31 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 {
     {
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}, fields<field::alignment>{}};
+        seqan3::alignment_file_input fin{istream,
+                                         this->ref_ids,
+                                         this->ref_sequences,
+                                         TypeParam{},
+                                         seqan3::fields<seqan3::field::alignment>{}};
 
         size_t i{0};
         for (auto & [alignment] : fin)
         {
-            EXPECT_TRUE(std::ranges::equal(get<0>(alignment), get<0>(this->alignments[i])));
-            EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(this->alignments[i])));
+            EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(this->alignments[i])));
+            EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(this->alignments[i])));
             ++i;
         }
     }
 
     {   // empty cigar
         typename TestFixture::stream_type istream{this->empty_cigar};
-        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}, fields<field::alignment>{}};
+        seqan3::alignment_file_input fin{istream,
+                                         this->ref_ids,
+                                         this->ref_sequences,
+                                         TypeParam{},
+                                         seqan3::fields<seqan3::field::alignment>{}};
 
-        EXPECT_TRUE(std::ranges::empty(get<0>(get<field::alignment>(*fin.begin()))));
-        EXPECT_TRUE(std::ranges::empty(get<1>(get<field::alignment>(*fin.begin()))));
+        EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
+        EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
     }
 }
 
@@ -290,19 +304,19 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
 {
     {
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        alignment_file_input fin{istream, TypeParam{}, fields<field::alignment>{}};
+        seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
 
         size_t i{0};
         for (auto & [alignment] : fin)
-            EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(this->alignments[i++])));
+            EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(this->alignments[i++])));
     }
 
     {   // empty cigar
         typename TestFixture::stream_type istream{this->empty_cigar};
-        alignment_file_input fin{istream, TypeParam{}, fields<field::alignment>{}};
+        seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
 
-        EXPECT_TRUE(std::ranges::empty(get<0>(get<field::alignment>(*fin.begin()))));
-        EXPECT_TRUE(std::ranges::empty(get<1>(get<field::alignment>(*fin.begin()))));
+        EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
+        EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
     }
 }
 
@@ -310,7 +324,11 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_with_ref)
 {
     {   /*with reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}, fields<field::mate>{}};
+        seqan3::alignment_file_input fin{istream,
+                                         this->ref_ids,
+                                         this->ref_sequences,
+                                         TypeParam{},
+                                         seqan3::fields<seqan3::field::mate>{}};
 
         size_t i{0};
         for (auto & [mate] : fin)
@@ -324,7 +342,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
 
     {   /*no reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        alignment_file_input fin{istream, TypeParam{}, fields<field::mate>{}};
+        seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::mate>{}};
 
         size_t i{0};
         for (auto & [mate] : fin)
@@ -334,7 +352,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
 
 TYPED_TEST_P(alignment_file_read, cigar_vector)
 {
-    std::vector<std::vector<cigar>> expected
+    std::vector<std::vector<seqan3::cigar>> expected
     {
         {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op}},
         {{1, 'H'_cigar_op}, {7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op},
@@ -344,7 +362,7 @@ TYPED_TEST_P(alignment_file_read, cigar_vector)
     };
 
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
-    alignment_file_input fin{istream, TypeParam{}, fields<field::cigar>{}};
+    seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::cigar>{}};
 
     size_t i{0};
     for (auto & [cigar_v] : fin)
@@ -355,14 +373,14 @@ TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_informati
 {
     {   // with reference information given
         typename TestFixture::stream_type istream{this->unknown_ref};
-        alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
-        EXPECT_THROW((fin.begin()), format_error);
+        seqan3::alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
+        EXPECT_THROW((fin.begin()), seqan3::format_error);
     }
 
     {   // with reference information in the header
         typename TestFixture::stream_type istream{this->unknown_ref_header};
-        alignment_file_input fin{istream, TypeParam{}};
-        EXPECT_THROW((fin.begin()), format_error);
+        seqan3::alignment_file_input fin{istream, TypeParam{}};
+        EXPECT_THROW((fin.begin()), seqan3::format_error);
     }
 }
 
@@ -380,20 +398,20 @@ TYPED_TEST_SUITE_P(alignment_file_write);
 
 TYPED_TEST_P(alignment_file_write, output_concept)
 {
-    EXPECT_TRUE((alignment_file_output_format<TypeParam>));
+    EXPECT_TRUE((seqan3::alignment_file_output_format<TypeParam>));
 }
 
 TYPED_TEST_P(alignment_file_write, write_empty_members)
 {
     {
-        alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
-        using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
+        using default_align_t = std::pair<std::span<seqan3::gapped<char>>, std::span<seqan3::gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         fout.emplace_back(&(this->header),
                           std::string_view{},
-                          sam_flag::none,
+                          seqan3::sam_flag::none,
                           std::string_view{},
                           -1,
                           0,
@@ -402,7 +420,7 @@ TYPED_TEST_P(alignment_file_write, write_empty_members)
                           default_mate_t{},
                           std::string_view{},
                           std::string_view{},
-                          sam_tag_dictionary{});
+                          seqan3::sam_tag_dictionary{});
     }
 
     this->ostream.flush();
@@ -416,7 +434,7 @@ TYPED_TEST_P(alignment_file_write, default_options_all_members_specified)
     this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
 
     {
-        alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         for (size_t i = 0; i < 3; ++i)
         {
@@ -439,7 +457,7 @@ TYPED_TEST_P(alignment_file_write, write_ref_id_with_different_types)
 
     {
         // header ref_id_type is std::string
-        alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         // std::string
         ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0],
@@ -455,7 +473,7 @@ TYPED_TEST_P(alignment_file_write, write_ref_id_with_different_types)
 
         // view on string
         ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[2], this->flags[2],
-        /*----------------------->*/      this->ref_id | views::take(20),
+        /*----------------------->*/      this->ref_id | seqan3::views::take(20),
                                           this->ref_offsets[2], this->mapqs[2], this->alignments[2], this->offsets[2],
                                           this->mates[2], this->seqs[2], this->quals[2], this->tag_dicts[2]));
     }
@@ -467,7 +485,7 @@ TYPED_TEST_P(alignment_file_write, write_ref_id_with_different_types)
 
 TYPED_TEST_P(alignment_file_write, with_header)
 {
-    alignment_file_header header{std::vector<std::string>{this->ref_id}};
+    seqan3::alignment_file_header header{std::vector<std::string>{this->ref_id}};
     header.sorting = "unknown";
     header.grouping = "none";
     header.ref_id_info.push_back({this->ref_seq.size(), "AN:other_name"});
@@ -492,7 +510,7 @@ TYPED_TEST_P(alignment_file_write, with_header)
     this->tag_dicts[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
 
     {
-        alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         for (size_t i = 0; i < 3; ++i)
         {
@@ -510,7 +528,7 @@ TYPED_TEST_P(alignment_file_write, with_header)
 
 TYPED_TEST_P(alignment_file_write, cigar_vector)
 {
-    std::vector<std::vector<cigar>> cigar_v
+    std::vector<std::vector<seqan3::cigar>> cigar_v
     {
         {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op}},
         {{1, 'H'_cigar_op}, {7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op},
@@ -524,18 +542,19 @@ TYPED_TEST_P(alignment_file_write, cigar_vector)
         this->tag_dicts[0]["AS"_tag] = 2;
         this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
 
-        alignment_file_output fout{this->ostream, TypeParam{}, fields<field::header_ptr,
-                                                                      field::id,
-                                                                      field::flag,
-                                                                      field::ref_id,
-                                                                      field::ref_offset,
-                                                                      field::mapq,
-                                                                      field::cigar, // cigar instead of alignment
-                                                                      field::offset,
-                                                                      field::mate,
-                                                                      field::seq,
-                                                                      field::qual,
-                                                                      field::tags>{}};
+        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, seqan3::fields<seqan3::field::header_ptr,
+                                                                                      seqan3::field::id,
+                                                                                      seqan3::field::flag,
+                                                                                      seqan3::field::ref_id,
+                                                                                      seqan3::field::ref_offset,
+                                                                                      seqan3::field::mapq,
+                                                                                      seqan3::field::cigar,
+                                                                                           // cigar instead of alignment
+                                                                                      seqan3::field::offset,
+                                                                                      seqan3::field::mate,
+                                                                                      seqan3::field::seq,
+                                                                                      seqan3::field::qual,
+                                                                                      seqan3::field::tags>{}};
 
         for (size_t i = 0ul; i < 3ul; ++i)
         {
@@ -559,7 +578,7 @@ TYPED_TEST_P(alignment_file_write, special_cases)
     {
         std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate{rid, rid, 0};
 
-        alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         // std::string
         ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0], rid,
@@ -577,7 +596,7 @@ TYPED_TEST_P(alignment_file_write, special_cases)
         // write the ref id and mate ref as string
         std::tuple<std::string, std::optional<int32_t>, int32_t> mate_str{"", rid, 0};
 
-        alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         // std::string
         ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0], std::string(""),
@@ -592,7 +611,7 @@ TYPED_TEST_P(alignment_file_write, special_cases)
 
 TYPED_TEST_P(alignment_file_write, format_errors)
 {
-    alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+    seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
     // ensure that only a ref_id that is listed in the header is allowed
     EXPECT_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0],
@@ -600,14 +619,14 @@ TYPED_TEST_P(alignment_file_write, format_errors)
                                    this->ref_offsets[0], this->mapqs[0], this->alignments[0],
                                    this->offsets[0], this->mates[0], this->seqs[0], this->quals[0],
                                    this->tag_dicts[0]),
-                 format_error);
+                 seqan3::format_error);
 
     // no negative values except -1 are allowed fot the ref offset
     EXPECT_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0], this->ref_id,
                                    -3, this->mapqs[0], this->alignments[0],
                                    this->offsets[0], this->mates[0], this->seqs[0], this->quals[0],
                                    this->tag_dicts[0]),
-                 format_error);
+                 seqan3::format_error);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(alignment_file_read,

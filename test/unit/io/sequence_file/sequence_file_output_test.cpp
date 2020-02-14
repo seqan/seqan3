@@ -18,18 +18,19 @@
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/std/iterator>
 
-using namespace seqan3;
+using seqan3::operator""_dna5;
+using seqan3::operator""_phred42;
 
 TEST(sequence_file_output_iterator, concepts)
 {
-    using it_t = typename sequence_file_output<>::iterator;
-    using sen_t = typename sequence_file_output<>::sentinel;
+    using it_t = typename seqan3::sequence_file_output<>::iterator;
+    using sen_t = typename seqan3::sequence_file_output<>::sentinel;
 
     EXPECT_TRUE((std::output_iterator<it_t, std::tuple<std::string, std::string>>));
     EXPECT_TRUE((std::sentinel_for<sen_t, it_t>));
 }
 
-std::vector<dna5_vector> seqs
+std::vector<seqan3::dna5_vector> seqs
 {
     "ACGT"_dna5,
     "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN"_dna5,
@@ -53,7 +54,7 @@ std::string const output_comp
     "GGAGTATAATATATATATATATAT\n"
 };
 
-std::vector<std::vector<phred42>> quals
+std::vector<std::vector<seqan3::phred42>> quals
 {
     "!!!!"_phred42,
     "!#@$!#@$!#@#!$@#!$@#!$!#@$!#@#!$@#!$!#$@!!$$$$$$$$$$$$!!!!!!!!!!!!!!!!!!!!$$$$$$$$$$!!!!!$!"_phred42,
@@ -66,10 +67,10 @@ std::vector<std::vector<phred42>> quals
 
 TEST(general, concepts)
 {
-    using t = sequence_file_output<>;
+    using t = seqan3::sequence_file_output<>;
     EXPECT_TRUE((std::ranges::output_range<t, std::tuple<std::string, std::string>>));
 
-    using ct = sequence_file_output<> const;
+    using ct = seqan3::sequence_file_output<> const;
     // not const-iterable
     EXPECT_FALSE((std::ranges::output_range<ct, std::tuple<std::string, std::string>>));
 }
@@ -78,56 +79,64 @@ TEST(general, construct_by_filename)
 {
     /* just the filename */
     {
-        test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
-        EXPECT_NO_THROW( sequence_file_output<>{filename.get_path()} );
+        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
+        EXPECT_NO_THROW( seqan3::sequence_file_output<>{filename.get_path()} );
     }
 
     /* wrong extension */
     {
-        test::tmp_filename filename{"sequence_file_output_constructor.xyz"};
+        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.xyz"};
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW( sequence_file_output<>{filename.get_path()} ,
-                      unhandled_extension_error );
+        EXPECT_THROW( seqan3::sequence_file_output<>{filename.get_path()} ,
+                      seqan3::unhandled_extension_error );
     }
 
     /* unknown file */
     {
-        test::tmp_filename filename{"I/do/not/exist.fasta"};
-        EXPECT_THROW( sequence_file_output<>{filename.get_path()}, file_open_error );
+        seqan3::test::tmp_filename filename{"I/do/not/exist.fasta"};
+        EXPECT_THROW( seqan3::sequence_file_output<>{filename.get_path()}, seqan3::file_open_error );
     }
 
     /* filename + fields */
+    using fields_seq = seqan3::fields<seqan3::field::seq>;
     {
-        test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
-        EXPECT_NO_THROW(( sequence_file_output<fields<field::seq>,
-                                               type_list<format_fasta>>{filename.get_path(), fields<field::seq>{}} ));
+        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
+        EXPECT_NO_THROW(( seqan3::sequence_file_output<fields_seq,
+                                                       seqan3::type_list<seqan3::format_fasta>>{filename.get_path(),
+                                                                                                fields_seq{}}));
     }
 }
 
 TEST(general, construct_from_stream)
 {
+    using fields_seq_id_qual = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
+
     /* stream + format_tag */
-    EXPECT_NO_THROW(( sequence_file_output<fields<field::seq, field::id, field::qual>,
-                                           type_list<format_fasta>>{std::ostringstream{},
-                                                            format_fasta{}} ));
+    EXPECT_NO_THROW(( seqan3::sequence_file_output<fields_seq_id_qual,
+                                                   seqan3::type_list<seqan3::format_fasta>>{std::ostringstream{},
+                                                                                            seqan3::format_fasta{}} ));
 
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW(( sequence_file_output<fields<field::seq, field::id, field::qual>,
-                                           type_list<format_fasta>>{std::ostringstream{},
-                                                                    format_fasta{},
-                                                                    fields<field::seq, field::id, field::qual>{}} ));
+    EXPECT_NO_THROW(( seqan3::sequence_file_output<fields_seq_id_qual,
+                                                   seqan3::type_list<seqan3::format_fasta>>{std::ostringstream{},
+                                                                                            seqan3::format_fasta{},
+                                                                                            fields_seq_id_qual{}} ));
 }
 
 TEST(general, default_template_args_and_deduction_guides)
 {
-    using comp1 = fields<field::seq, field::id, field::qual>;
-    using comp2 = type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>;
+    using comp1 = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
+    using comp2 = seqan3::type_list<seqan3::format_embl,
+                                    seqan3::format_fasta,
+                                    seqan3::format_fastq,
+                                    seqan3::format_genbank,
+                                    seqan3::format_sam>;
     using comp3 = char;
 
     /* default template args */
     {
-        using t = sequence_file_output<>;
+        using t = seqan3::sequence_file_output<>;
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
@@ -135,9 +144,9 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
+        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
 
-        sequence_file_output fout{filename.get_path()};
+        seqan3::sequence_file_output fout{filename.get_path()};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
@@ -147,12 +156,12 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided filename constructor + custom fields */
     {
-        test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
+        seqan3::test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
 
-        sequence_file_output fout{filename.get_path(), fields<field::seq>{}};
+        seqan3::sequence_file_output fout{filename.get_path(), seqan3::fields<seqan3::field::seq>{}};
 
         using t = decltype(fout);
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::seq>>));                   // changed
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::seq>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -160,21 +169,21 @@ TEST(general, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::ostringstream ext{};
-        sequence_file_output fout{ext, format_fasta{}};
+        seqan3::sequence_file_output fout{ext, seqan3::format_fasta{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      seqan3::type_list<seqan3::format_fasta>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream temporary constructor */
     {
-        sequence_file_output fout{std::ostringstream{}, format_fasta{}};
+        seqan3::sequence_file_output fout{std::ostringstream{}, seqan3::format_fasta{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      seqan3::type_list<seqan3::format_fasta>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 }
@@ -186,7 +195,7 @@ TEST(general, default_template_args_and_deduction_guides)
 template <typename fn_t>
 void row_wise_impl(fn_t fn)
 {
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}};
+    seqan3::sequence_file_output fout{std::ostringstream{}, seqan3::format_fasta{}};
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)
@@ -199,7 +208,7 @@ void row_wise_impl(fn_t fn)
 template <typename source_t>
 void assign_impl(source_t && source)
 {
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}};
+    seqan3::sequence_file_output fout{std::ostringstream{}, seqan3::format_fasta{}};
     fout.options.fasta_letters_per_line = 0;
 
     fout = source;
@@ -214,19 +223,23 @@ void assign_impl(source_t && source)
 
 TEST(row, assign_to_iterator)
 {
+    using fields_seq_id = seqan3::fields<seqan3::field::seq, seqan3::field::id>;
+
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
+        seqan3::record<seqan3::type_list<seqan3::dna5_vector, std::string>, fields_seq_id> r{seqs[i], ids[i]};
 
-        begin(file) = r;
+        std::ranges::begin(file) = r;
     });
 }
 
 TEST(row, push_back_record)
 {
+    using fields_seq_id = seqan3::fields<seqan3::field::seq, seqan3::field::id>;
+
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
+        seqan3::record<seqan3::type_list<seqan3::dna5_vector, std::string>, fields_seq_id> r{seqs[i], ids[i]};
 
         file.push_back(r);
     });
@@ -234,9 +247,11 @@ TEST(row, push_back_record)
 
 TEST(row, push_back_record_rvalue)
 {
+    using fields_seq_id = seqan3::fields<seqan3::field::seq, seqan3::field::id>;
+
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
+        seqan3::record<seqan3::type_list<seqan3::dna5_vector, std::string>, fields_seq_id> r{seqs[i], ids[i]};
 
         file.push_back(std::move(r));
     });
@@ -244,9 +259,11 @@ TEST(row, push_back_record_rvalue)
 
 TEST(row, push_back_record_const)
 {
+    using fields_seq_id = seqan3::fields<seqan3::field::seq, seqan3::field::id>;
+
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> const r{seqs[i], ids[i]};
+        seqan3::record<seqan3::type_list<seqan3::dna5_vector, std::string>, fields_seq_id> const r{seqs[i], ids[i]};
 
         file.push_back(r);
     });
@@ -254,9 +271,12 @@ TEST(row, push_back_record_const)
 
 TEST(row, push_back_record_const_element)
 {
+    using fields_seq_id = seqan3::fields<seqan3::field::seq, seqan3::field::id>;
+
     row_wise_impl([&] (auto & file, size_t i)
     {
-        record<type_list<dna5_vector const, std::string const>, fields<field::seq, field::id>> const r{seqs[i], ids[i]};
+        seqan3::record<seqan3::type_list<seqan3::dna5_vector const, std::string const>, fields_seq_id> const r{seqs[i],
+                                                                                                               ids[i]};
 
         file.push_back(r);
     });
@@ -266,7 +286,7 @@ TEST(row, push_back_tuple)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        std::tuple<dna5_vector, std::string> t{seqs[i], ids[i]};
+        std::tuple<seqan3::dna5_vector, std::string> t{seqs[i], ids[i]};
 
         file.push_back(t);
     });
@@ -276,7 +296,7 @@ TEST(row, push_back_tuple_rvalue)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        std::tuple<dna5_vector, std::string> t{seqs[i], ids[i]};
+        std::tuple<seqan3::dna5_vector, std::string> t{seqs[i], ids[i]};
 
         file.push_back(std::move(t));
     });
@@ -286,7 +306,7 @@ TEST(row, push_back_tuple_const)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        std::tuple<dna5_vector, std::string> const t{seqs[i], ids[i]};
+        std::tuple<seqan3::dna5_vector, std::string> const t{seqs[i], ids[i]};
 
         file.push_back(t);
     });
@@ -296,7 +316,7 @@ TEST(row, push_back_tuple_const_element)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
-        std::tuple<dna5_vector const, std::string const> t{seqs[i], ids[i]};
+        std::tuple<seqan3::dna5_vector const, std::string const> t{seqs[i], ids[i]};
 
         file.push_back(t);
     });
@@ -315,13 +335,19 @@ TEST(row, emplace_back)
  */
 TEST(row, different_fields_in_record_and_file)
 {
-    std::vector<phred42> qual;
+    std::vector<seqan3::phred42> qual;
     qual.resize(seqs[1].size());
 
-    record<type_list<std::vector<phred42>, std::string, dna5_vector>,
-           fields<field::qual, field::id, field::seq>> rec{qual, ids[1], seqs[1]};
+    seqan3::record<seqan3::type_list<std::vector<seqan3::phred42>,
+                                     std::string,
+                                     seqan3::dna5_vector>,
+                                     seqan3::fields<seqan3::field::qual,
+                                                    seqan3::field::id,
+                                                    seqan3::field::seq>> rec{qual, ids[1], seqs[1]};
 
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::seq, field::id>{}};
+    seqan3::sequence_file_output fout{std::ostringstream{},
+                                      seqan3::format_fasta{},
+                                      seqan3::fields<seqan3::field::seq, seqan3::field::id>{}};
     fout.push_back(rec);
     fout.get_stream().flush();
 
@@ -336,12 +362,14 @@ TEST(row, different_fields_in_record_and_file)
 
 TEST(row, writing_seq_qual)
 {
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::id, field::seq_qual>()};
+    seqan3::sequence_file_output fout{std::ostringstream{},
+                                      seqan3::format_fasta{},
+                                      seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>()};
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)
     {
-        std::vector<qualified<dna5, phred42>> seq_qual;
+        std::vector<seqan3::qualified<seqan3::dna5, seqan3::phred42>> seq_qual;
         seq_qual.resize(quals[i].size());
         std::copy(seqs[i].begin(), seqs[i].end(), seq_qual.begin());
         std::copy(quals[i].begin(), quals[i].end(), seq_qual.begin());
@@ -358,7 +386,9 @@ TEST(row, writing_seq_qual)
 
 TEST(rows, assign_range_of_records)
 {
-    std::vector<record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>>> range;
+    std::vector<seqan3::record<seqan3::type_list<seqan3::dna5_vector,
+                                                 std::string>,
+                                                 seqan3::fields<seqan3::field::seq, seqan3::field::id>>> range;
 
     for (size_t i = 0; i < 3; ++i)
         range.emplace_back(seqs[i], ids[i]);
@@ -368,7 +398,9 @@ TEST(rows, assign_range_of_records)
 
 TEST(rows, assign_range_of_records_const)
 {
-    std::vector<record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>>> range;
+    std::vector<seqan3::record<seqan3::type_list<seqan3::dna5_vector,
+                                                 std::string>,
+                                                 seqan3::fields<seqan3::field::seq, seqan3::field::id>>> range;
 
     for (size_t i = 0; i < 3; ++i)
         range.emplace_back(seqs[i], ids[i]);
@@ -378,7 +410,7 @@ TEST(rows, assign_range_of_records_const)
 
 TEST(rows, assign_range_of_tuples)
 {
-    std::vector<std::tuple<dna5_vector, std::string>> range;
+    std::vector<std::tuple<seqan3::dna5_vector, std::string>> range;
 
     for (size_t i = 0; i < 3; ++i)
         range.emplace_back(seqs[i], ids[i]);
@@ -397,7 +429,9 @@ TEST(columns, assign_tuple_of_columns)
 
 TEST(columns, writing_id_seq_qual)
 {
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::id, field::seq, field::qual>()};
+    seqan3::sequence_file_output fout{std::ostringstream{},
+                                      seqan3::format_fasta{},
+                                      seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::qual>()};
     fout.options.fasta_letters_per_line = 0;
 
     fout = seqan3::views::zip(ids, seqs, quals);
@@ -408,10 +442,12 @@ TEST(columns, writing_id_seq_qual)
 
 TEST(columns, writing_seq_qual)
 {
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}, fields<field::id, field::seq_qual>()};
+    seqan3::sequence_file_output fout{std::ostringstream{},
+                                      seqan3::format_fasta{},
+                                      seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>()};
     fout.options.fasta_letters_per_line = 0;
 
-    std::vector<std::vector<qualified<dna5, phred42>>> seq_quals{3};
+    std::vector<std::vector<seqan3::qualified<seqan3::dna5, seqan3::phred42>>> seq_quals{3};
     for (size_t i = 0; i < 3; ++i)
     {
         seq_quals[i].resize(quals[i].size());
@@ -429,15 +465,17 @@ TEST(columns, writing_seq_qual)
 // compression
 // ----------------------------------------------------------------------------
 
-std::string compression_by_filename_impl([[maybe_unused]]test::tmp_filename & filename)
+std::string compression_by_filename_impl([[maybe_unused]]seqan3::test::tmp_filename & filename)
 {
     {
-        sequence_file_output fout{filename.get_path()};
+        seqan3::sequence_file_output fout{filename.get_path()};
         fout.options.fasta_letters_per_line = 0;
 
         for (size_t i = 0; i < 3; ++i)
         {
-            record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
+            seqan3::record<seqan3::type_list<seqan3::dna5_vector,
+                                             std::string>,
+                                             seqan3::fields<seqan3::field::seq, seqan3::field::id>> r{seqs[i], ids[i]};
 
             fout.push_back(r);
         }
@@ -457,12 +495,14 @@ std::string compression_by_filename_impl([[maybe_unused]]test::tmp_filename & fi
 template <typename comp_stream_t>
 void compression_by_stream_impl(comp_stream_t & stream)
 {
-    sequence_file_output fout{stream, format_fasta{}};
+    seqan3::sequence_file_output fout{stream, seqan3::format_fasta{}};
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)
     {
-        record<type_list<dna5_vector, std::string>, fields<field::seq, field::id>> r{seqs[i], ids[i]};
+        seqan3::record<seqan3::type_list<seqan3::dna5_vector,
+                                         std::string>,
+                                         seqan3::fields<seqan3::field::seq, seqan3::field::id>> r{seqs[i], ids[i]};
 
         fout.push_back(r);
     }
@@ -492,7 +532,7 @@ std::string expected_bgzf
 
 TEST(compression, by_filename_gz)
 {
-    test::tmp_filename filename{"sequence_file_output_test.fasta.gz"};
+    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.gz"};
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
@@ -504,7 +544,7 @@ TEST(compression, by_stream_gz)
     std::ostringstream out;
 
     {
-        contrib::gz_ostream compout{out};
+        seqan3::contrib::gz_ostream compout{out};
         compression_by_stream_impl(compout);
     }
 
@@ -515,7 +555,7 @@ TEST(compression, by_stream_gz)
 
 TEST(compression, by_filename_bgzf)
 {
-    test::tmp_filename filename{"sequence_file_output_test.fasta.bgzf"};
+    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.bgzf"};
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
@@ -527,7 +567,7 @@ TEST(compression, by_stream_bgzf)
     std::ostringstream out;
 
     {
-        contrib::bgzf_ostream compout{out};
+        seqan3::contrib::bgzf_ostream compout{out};
         compression_by_stream_impl(compout);
     }
 
@@ -551,7 +591,7 @@ std::string expected_bz2
 
 TEST(compression, by_filename_bz2)
 {
-    test::tmp_filename filename{"sequence_file_output_test.fasta.bz2"};
+    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.bz2"};
 
     std::string buffer = compression_by_filename_impl(filename);
     EXPECT_EQ(buffer, expected_bz2);
@@ -562,7 +602,7 @@ TEST(compression, by_stream_bz2)
     std::ostringstream out;
 
     {
-        contrib::bz2_ostream compout{out};
+        seqan3::contrib::bz2_ostream compout{out};
         compression_by_stream_impl(compout);
     }
 
