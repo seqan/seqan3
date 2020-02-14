@@ -178,36 +178,35 @@ TYPED_TEST(view_to_simd_test, iterate_with_padding)
 
 TYPED_TEST(view_to_simd_test, adaptor_pipe)
 {
+    using simd_t = typename TestFixture::simd_t;
+
     { // without padding
-        auto v = this->sequences | seqan3::views::to_simd<typename TestFixture::simd_t>;
+        auto v = this->sequences | seqan3::views::to_simd<simd_t>;
         this->compare(v, this->transformed_simd_vec);
     }
 
     { // w padding
-        auto v = this->sequences |
-                 seqan3::views::to_simd<typename TestFixture::simd_t>(TestFixture::padding_value_custom);
+        auto v = this->sequences | seqan3::views::to_simd<simd_t>(TestFixture::padding_value_custom);
         this->compare(v, this->transformed_simd_vec_padded);
     }
 
     { // w padding and calling range
-        auto v = seqan3::views::to_simd<typename TestFixture::simd_t>
-        (
-            TestFixture::padding_value_custom
-        )(this->sequences);
+        auto v = seqan3::views::to_simd<simd_t>(TestFixture::padding_value_custom)(this->sequences);
         this->compare(v, this->transformed_simd_vec_padded);
     }
 }
 
 TYPED_TEST(view_to_simd_test, adaptor_function)
 {
+    using simd_t = typename TestFixture::simd_t;
+
     { // without padding
-        auto v = seqan3::views::to_simd<typename TestFixture::simd_t>(this->sequences);
+        auto v = seqan3::views::to_simd<simd_t>(this->sequences);
         this->compare(v, this->transformed_simd_vec);
     }
 
     { // w padding
-        auto v = seqan3::views::to_simd<typename TestFixture::simd_t>(this->sequences,
-                                                                            TestFixture::padding_value_custom);
+        auto v = seqan3::views::to_simd<simd_t>(this->sequences, TestFixture::padding_value_custom);
         this->compare(v, this->transformed_simd_vec_padded);
     }
 }
