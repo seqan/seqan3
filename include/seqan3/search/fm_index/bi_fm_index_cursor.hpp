@@ -492,6 +492,11 @@ public:
         return false;
     }
 
+    //!\overload
+    bool extend_left(char const * c) noexcept
+    {
+        return extend_left(std::string_view{c});
+    }
     /*!\brief Tries to extend the query by `seq` to the right.
      * \tparam seq_t The type of range of the sequence to search; must model std::ranges::forward_range.
      * \param[in] seq Sequence to extend the query with to the right.

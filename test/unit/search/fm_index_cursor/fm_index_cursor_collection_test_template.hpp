@@ -323,26 +323,41 @@ TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, locate_char_string)
 {
+    // test case for https://github.com/seqan/seqan3/issues/1473
     std::string text = "How much wood would a woodchuck chuck?";
-    std::string wood = "wood";
+    char const * wood = "wood";
 
-    fm_index index{text};
-    auto it1 = index.begin();
-    auto it2 = index.begin();
+    // extend_right()
+    {
+        fm_index index{text};
+        auto it1 = index.begin();
+        auto it2 = index.begin();
 
-    it1.extend_right("wood");
-    it2.extend_right(wood);
+        it1.extend_right("wood");
+        it2.extend_right(wood);
 
-    EXPECT_TRUE(std::ranges::equal(it1.locate(), it2.locate())); // [22,9] == [22,9]
+        EXPECT_TRUE(std::ranges::equal(it1.locate(), it2.locate())); // [22,9] == [22,9]
 
-    bi_fm_index b_index{text};
-    auto it3 = b_index.begin();
-    auto it4 = b_index.begin();
+        bi_fm_index b_index{text};
+        auto it3 = b_index.begin();
+        auto it4 = b_index.begin();
 
-    it3.extend_right("wood");
-    it4.extend_right(wood);
+        it3.extend_right("wood");
+        it4.extend_right(wood);
 
-    EXPECT_TRUE(std::ranges::equal(it3.locate(), it4.locate())); // [22,9] == [22,9]
+        EXPECT_TRUE(std::ranges::equal(it3.locate(), it4.locate())); // [22,9] == [22,9]
+    }
+    // extend_left()
+    {
+        bi_fm_index b_index{text};
+        auto it3 = b_index.begin();
+        auto it4 = b_index.begin();
+
+        it3.extend_left("wood");
+        it4.extend_left(wood);
+
+        EXPECT_TRUE(std::ranges::equal(it3.locate(), it4.locate())); // [22,9] == [22,9]
+    }
 }
 
 TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
