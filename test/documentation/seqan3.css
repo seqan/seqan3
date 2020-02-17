@@ -56,6 +56,7 @@ div.contents {
 
 #projectlogo {
     padding: 10px;
+    width: 150px;
 }
 
 hr.footer {
@@ -120,30 +121,30 @@ hr {
 }
 
 /* markdown tables */
-table.doxtable {
+table.markdownTable {
     empty-cells: show;
     border: 1px solid #CBCBCB;
 }
 
-table.doxtable caption {
+table.markdownTable caption {
     color: #000;
     font: italic 85%/1 arial,sans-serif;
     padding: 1em 0;
     text-align: center;
 }
 
-table.doxtable td:first-child, table.doxtable th:first-child {
+table.markdownTable td:first-child, table.markdownTable th:first-child {
     border-left-width: 0;
 }
 
-table.doxtable thead {
+table.markdownTable thead {
     background-color: #E0E0E0;
     color: #000;
     text-align: left;
     vertical-align: bottom;
 }
 
-table.doxtable td {
+table.markdownTable td {
     background-color: transparent;
     border: 0;
     border-bottom: 2px solid #CBCBCB;
@@ -154,7 +155,7 @@ table.doxtable td {
     padding: .5em 1em;
 }
 
-table.doxtable th {
+table.markdownTable th {
     border: 0;
     border-width: 0 1 0 0px;
     font-size: inherit;
