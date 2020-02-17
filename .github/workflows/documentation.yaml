@@ -57,7 +57,7 @@ jobs:
           TARGET: ${{ secrets.REMOTE_TARGET }}
         with:
           flags: '-avzr --delete'
-          src: 'doc-build/doc_usr/html'
+          src: 'doc-build/doc_usr/html/'
           dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-user'
 
       - name: Deploy Developer Documentation
@@ -69,5 +69,5 @@ jobs:
           TARGET: ${{ secrets.REMOTE_TARGET }}
         with:
           flags: '-avzr --delete'
-          src: 'doc-build/doc_dev/html'
+          src: 'doc-build/doc_dev/html/'
           dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-dev'
