@@ -54,13 +54,10 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 #### Search
 
-<<<<<<< HEAD
 * Added `seqan3::interleaved_bloom_filter`, a data structure that efficiently answers set-membership queries for
   multiple bins ([\#920](https://github.com/seqan/seqan3/pull/920)).
-=======
 *  The `extend_right()` function can now also handle `char const *`.
   ([\#1588](https://github.com/seqan/seqan3/pull/1588)).
->>>>>>> de9a3880... [FIX] shorten the function with a redirect; move log to the correct release
 
 ## API changes
 
@@ -75,6 +72,12 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * Moved `seqan3::search` from `search/algorithm/` to `search/` ([\#1696](https://github.com/seqan/seqan3/pull/1696)).
 
 ## Notable Bug-fixes
+
+#### Search
+
+* The `seqan3::fm_index_cursor::extend_right()`, `seqan3::bi_fm_index_cursor::extend_right()` and
+  `seqan3::bi_fm_index_cursor::extend_left()` functions handle c-style strings without including the null character
+  ([\#1588](https://github.com/seqan/seqan3/pull/1588)).
 
 # 3.0.1
 

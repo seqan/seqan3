@@ -19,6 +19,7 @@
 
 #include <range/v3/view/slice.hpp>
 
+#include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/views/slice.hpp>
@@ -291,9 +292,13 @@ public:
     }
 
     //!\overload
-    bool extend_right(char const * c) noexcept
+    template <typename char_type>
+    //!\cond
+        requires detail::is_char_adaptation_v<char_type>
+    //!\endcond
+    bool extend_right(char_type const * cstring) noexcept
     {
-        return extend_right(std::string_view{c});
+        return extend_right(std::basic_string_view<char_type>{cstring});
     }
 
     /*!\brief Tries to extend the query by `seq` to the right.

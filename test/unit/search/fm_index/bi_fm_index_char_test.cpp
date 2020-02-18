@@ -8,6 +8,8 @@
 #include "fm_index_collection_test_template.hpp"
 #include "fm_index_test_template.hpp"
 
+#include <seqan3/alphabet/adaptation/uint.hpp>
+
 using t1 = std::pair<seqan3::bi_fm_index<unsigned char, seqan3::text_layout::single>,
                      std::vector<unsigned char>>;
 INSTANTIATE_TYPED_TEST_SUITE_P(char, fm_index_test, t1, );

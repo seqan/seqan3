@@ -18,6 +18,7 @@
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
@@ -442,9 +443,13 @@ public:
     }
 
     //!\overload
-    bool extend_right(char const * c) noexcept
+    template <typename char_type>
+    //!\cond
+        requires seqan3::detail::is_char_adaptation_v<char_type>
+    //!\endcond
+    bool extend_right(char_type const * cstring) noexcept
     {
-        return extend_right(std::string_view{c});
+        return extend_right(std::basic_string_view<char_type>{cstring});
     }
 
     /*!\brief Tries to extend the query by the character `c` to the left.
@@ -493,10 +498,15 @@ public:
     }
 
     //!\overload
-    bool extend_left(char const * c) noexcept
+    template <typename char_type>
+    //!\cond
+        requires seqan3::detail::is_char_adaptation_v<char_type>
+    //!\endcond
+    bool extend_left(char_type const * cstring) noexcept
     {
-        return extend_left(std::string_view{c});
+        return extend_left(std::basic_string_view<char_type>{cstring});
     }
+
     /*!\brief Tries to extend the query by `seq` to the right.
      * \tparam seq_t The type of range of the sequence to search; must model std::ranges::forward_range.
      * \param[in] seq Sequence to extend the query with to the right.
