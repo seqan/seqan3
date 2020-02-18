@@ -14,8 +14,6 @@
 
 #include "auxiliary.hpp"
 
-using namespace seqan3;
-
 TEST(comparison_concepts, weakly_equality_comparable_with)
 {
     EXPECT_TRUE((seqan3::detail::weakly_equality_comparable_with<type_a, type_b>));

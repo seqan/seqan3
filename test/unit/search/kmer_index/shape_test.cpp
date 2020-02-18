@@ -12,29 +12,29 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
+using seqan3::operator""_shape;
 
 constexpr bool construction_test()
 {
     bool res{true};
 
-    shape s1{bin_literal{0b1011}};
+    seqan3::shape s1{seqan3::bin_literal{0b1011}};
     res &= std::ranges::size(s1) == 4;
     res &= s1.all() == false;
 
-    shape s2{0b1011_shape};
+    seqan3::shape s2{0b1011_shape};
     res &= std::ranges::size(s2) == 4;
     res &= s2.all() == false;
 
-    shape s3{ungapped{3}};
+    seqan3::shape s3{seqan3::ungapped{3}};
     res &= std::ranges::size(s3) == 3;
     res &= s3.all() == true;
 
-    shape s4{bin_literal{0b1111}};
+    seqan3::shape s4{seqan3::bin_literal{0b1111}};
     res &= std::ranges::size(s4) == 4;
     res &= s4.all() == true;
 
-    shape s5{0b1111_shape};
+    seqan3::shape s5{0b1111_shape};
     res &= std::ranges::size(s5) == 4;
     res &= s5.all() == true;
 
@@ -43,20 +43,20 @@ constexpr bool construction_test()
 
 TEST(shape, ctr)
 {
-    EXPECT_TRUE((std::is_default_constructible_v<shape>));
-    EXPECT_TRUE((std::is_nothrow_default_constructible_v<shape>));
-    EXPECT_TRUE((std::is_copy_constructible_v<shape>));
-    EXPECT_TRUE((std::is_trivially_copy_constructible_v<shape>));
-    EXPECT_TRUE((std::is_nothrow_copy_constructible_v<shape>));
-    EXPECT_TRUE((std::is_move_constructible_v<shape>));
-    EXPECT_TRUE((std::is_trivially_move_constructible_v<shape>));
-    EXPECT_TRUE((std::is_nothrow_move_constructible_v<shape>));
-    EXPECT_TRUE((std::is_copy_assignable_v<shape>));
-    EXPECT_TRUE((std::is_trivially_copy_assignable_v<shape>));
-    EXPECT_TRUE((std::is_nothrow_copy_assignable_v<shape>));
-    EXPECT_TRUE((std::is_move_assignable_v<shape>));
-    EXPECT_TRUE((std::is_trivially_move_assignable_v<shape>));
-    EXPECT_TRUE((std::is_nothrow_move_assignable_v<shape>));
+    EXPECT_TRUE((std::is_default_constructible_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_nothrow_default_constructible_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_copy_constructible_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_trivially_copy_constructible_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_nothrow_copy_constructible_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_move_constructible_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_trivially_move_constructible_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_nothrow_move_constructible_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_copy_assignable_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_trivially_copy_assignable_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_nothrow_copy_assignable_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_move_assignable_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_trivially_move_assignable_v<seqan3::shape>));
+    EXPECT_TRUE((std::is_nothrow_move_assignable_v<seqan3::shape>));
 
     constexpr bool constexpr_ctr = construction_test();
     EXPECT_TRUE(constexpr_ctr);
@@ -67,8 +67,8 @@ TEST(shape, ctr)
 constexpr bool size_test()
 {
     bool res{true};
-    res = res && (std::ranges::size(shape{ungapped{1}}) == 1u);
-    res = res && (std::ranges::size(shape{ungapped{30}}) == 30u);
+    res = res && (std::ranges::size(seqan3::shape{seqan3::ungapped{1}}) == 1u);
+    res = res && (std::ranges::size(seqan3::shape{seqan3::ungapped{30}}) == 30u);
     res = res && (std::ranges::size(0b11_shape) == 2u);
     res = res && (std::ranges::size(0b10101_shape) == 5u);
 

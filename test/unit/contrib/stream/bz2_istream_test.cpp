@@ -11,8 +11,6 @@
 
 #include "../../io/stream/istream_test_template.hpp"
 
-using namespace seqan3;
-
 template <>
 class istream<contrib::bz2_istream> : public ::testing::Test
 {

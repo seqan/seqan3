@@ -12,8 +12,6 @@
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/cereal.hpp>
 
-using namespace seqan3;
-
 template <typename T>
 class fm_index_collection_test : public ::testing::Test
 {};
@@ -24,7 +22,7 @@ TYPED_TEST_P(fm_index_collection_test, ctr)
 {
     using index_t = typename TypeParam::first_type;
     using text_t = typename TypeParam::second_type;
-    using inner_text_type = value_type_t<text_t>;
+    using inner_text_type = seqan3::value_type_t<text_t>;
 
     text_t text{inner_text_type(10), inner_text_type(10)}; // initialized with smallest char
 
@@ -74,7 +72,7 @@ TYPED_TEST_P(fm_index_collection_test, swap)
 {
     using index_t = typename TypeParam::first_type;
     using text_t = typename TypeParam::second_type;
-    using inner_text_type = value_type_t<text_t>;
+    using inner_text_type = seqan3::value_type_t<text_t>;
 
     text_t textA{inner_text_type(10), inner_text_type(10)};
     text_t textB{inner_text_type(20), inner_text_type(20)};
@@ -107,7 +105,7 @@ TYPED_TEST_P(fm_index_collection_test, size)
 {
     using index_t = typename TypeParam::first_type;
     using text_t = typename TypeParam::second_type;
-    using inner_text_type = value_type_t<text_t>;
+    using inner_text_type = seqan3::value_type_t<text_t>;
 
     index_t fm;
     EXPECT_TRUE(fm.empty());
@@ -121,10 +119,11 @@ TYPED_TEST_P(fm_index_collection_test, concept_check)
 {
     using index_t = typename TypeParam::first_type;
 
-    EXPECT_TRUE((fm_index_specialisation<index_t>));
-    if constexpr (std::same_as<index_t, bi_fm_index<typename index_t::alphabet_type, text_layout::collection>>)
+    EXPECT_TRUE((seqan3::fm_index_specialisation<index_t>));
+    if constexpr (std::same_as<index_t, seqan3::bi_fm_index<typename index_t::alphabet_type,
+                                                            seqan3::text_layout::collection>>)
     {
-        EXPECT_TRUE(bi_fm_index_specialisation<index_t>);
+        EXPECT_TRUE(seqan3::bi_fm_index_specialisation<index_t>);
     }
 }
 
@@ -147,12 +146,12 @@ TYPED_TEST_P(fm_index_collection_test, serialisation)
 {
     using index_t = typename TypeParam::first_type;
     using text_t = typename TypeParam::second_type;
-    using inner_text_type = value_type_t<text_t>;
+    using inner_text_type = seqan3::value_type_t<text_t>;
 
     text_t text{inner_text_type(4), inner_text_type(12)};
 
     index_t fm{text};
-    test::do_serialisation(fm);
+    seqan3::test::do_serialisation(fm);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(fm_index_collection_test, ctr, swap, size, serialisation, concept_check, empty_text);
