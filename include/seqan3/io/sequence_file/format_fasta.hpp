@@ -100,6 +100,7 @@ public:
         { "ffn"   },
         { "faa"   },
         { "frn"   },
+        { "fas"   },
     };
 
 protected:
