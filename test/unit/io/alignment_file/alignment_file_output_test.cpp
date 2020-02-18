@@ -77,7 +77,7 @@ TEST(general, construct_by_filename)
     {
         seqan3::test::tmp_filename filename{"alignment_file_output_constructor.xyz"};
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW( seqan3::alignment_file_output<>{filename.get_path()} ,
+        EXPECT_THROW( seqan3::alignment_file_output<>{filename.get_path()},
                       seqan3::unhandled_extension_error );
     }
 

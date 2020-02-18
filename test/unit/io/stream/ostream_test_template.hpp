@@ -44,9 +44,8 @@ TYPED_TEST_P(ostream, output)
     std::ifstream fi{filename.get_path(), std::ios::binary};
     std::string buffer{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
 
-    if constexpr (std::same_as<TypeParam,
-                               seqan3::contrib::gz_ostream> || std::same_as<TypeParam,
-                               seqan3::contrib::bgzf_ostream>)
+    if constexpr (std::same_as<TypeParam, seqan3::contrib::gz_ostream> || std::same_as<TypeParam,
+                  seqan3::contrib::bgzf_ostream>)
         buffer[9] = '\x00'; // zero-out the OS byte.
 
     EXPECT_EQ(buffer, TestFixture::compressed);
@@ -67,9 +66,8 @@ TYPED_TEST_P(ostream, output_type_erased)
     std::ifstream fi{filename.get_path(), std::ios::binary};
     std::string buffer{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
 
-    if constexpr (std::same_as<TypeParam,
-                               seqan3::contrib::gz_ostream> || std::same_as<TypeParam,
-                               seqan3::contrib::bgzf_ostream>)
+    if constexpr (std::same_as<TypeParam, seqan3::contrib::gz_ostream> || std::same_as<TypeParam,
+                  seqan3::contrib::bgzf_ostream>)
         buffer[9] = '\x00'; // zero-out the OS byte.
 
     EXPECT_EQ(buffer, TestFixture::compressed);

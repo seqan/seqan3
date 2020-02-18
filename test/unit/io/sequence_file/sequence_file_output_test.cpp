@@ -338,12 +338,10 @@ TEST(row, different_fields_in_record_and_file)
     std::vector<seqan3::phred42> qual;
     qual.resize(seqs[1].size());
 
-    seqan3::record<seqan3::type_list<std::vector<seqan3::phred42>,
-                                     std::string,
-                                     seqan3::dna5_vector>,
-                                     seqan3::fields<seqan3::field::qual,
-                                                    seqan3::field::id,
-                                                    seqan3::field::seq>> rec{qual, ids[1], seqs[1]};
+    seqan3::record<seqan3::type_list<std::vector<seqan3::phred42>, std::string, seqan3::dna5_vector>,
+                   seqan3::fields<seqan3::field::qual,
+                                  seqan3::field::id,
+                                  seqan3::field::seq>> rec{qual, ids[1], seqs[1]};
 
     seqan3::sequence_file_output fout{std::ostringstream{},
                                       seqan3::format_fasta{},
@@ -386,9 +384,8 @@ TEST(row, writing_seq_qual)
 
 TEST(rows, assign_range_of_records)
 {
-    std::vector<seqan3::record<seqan3::type_list<seqan3::dna5_vector,
-                                                 std::string>,
-                                                 seqan3::fields<seqan3::field::seq, seqan3::field::id>>> range;
+    std::vector<seqan3::record<seqan3::type_list<seqan3::dna5_vector,std::string>,
+                               seqan3::fields<seqan3::field::seq, seqan3::field::id>>> range;
 
     for (size_t i = 0; i < 3; ++i)
         range.emplace_back(seqs[i], ids[i]);
@@ -398,9 +395,8 @@ TEST(rows, assign_range_of_records)
 
 TEST(rows, assign_range_of_records_const)
 {
-    std::vector<seqan3::record<seqan3::type_list<seqan3::dna5_vector,
-                                                 std::string>,
-                                                 seqan3::fields<seqan3::field::seq, seqan3::field::id>>> range;
+    std::vector<seqan3::record<seqan3::type_list<seqan3::dna5_vector, std::string>,
+                               seqan3::fields<seqan3::field::seq, seqan3::field::id>>> range;
 
     for (size_t i = 0; i < 3; ++i)
         range.emplace_back(seqs[i], ids[i]);
@@ -473,9 +469,8 @@ std::string compression_by_filename_impl([[maybe_unused]]seqan3::test::tmp_filen
 
         for (size_t i = 0; i < 3; ++i)
         {
-            seqan3::record<seqan3::type_list<seqan3::dna5_vector,
-                                             std::string>,
-                                             seqan3::fields<seqan3::field::seq, seqan3::field::id>> r{seqs[i], ids[i]};
+            seqan3::record<seqan3::type_list<seqan3::dna5_vector, std::string>,
+                           seqan3::fields<seqan3::field::seq, seqan3::field::id>> r{seqs[i], ids[i]};
 
             fout.push_back(r);
         }

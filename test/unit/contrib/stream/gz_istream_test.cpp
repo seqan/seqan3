@@ -12,7 +12,7 @@
 #include "../../io/stream/istream_test_template.hpp"
 
 template <>
-class istream<contrib::gz_istream> : public ::testing::Test
+class istream<seqan3::contrib::gz_istream> : public ::testing::Test
 {
 public:
     static inline std::string compressed
@@ -24,6 +24,6 @@ public:
     };
 };
 
-using test_types = ::testing::Types<contrib::gz_istream>;
+using test_types = ::testing::Types<seqan3::contrib::gz_istream>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, istream, test_types, );

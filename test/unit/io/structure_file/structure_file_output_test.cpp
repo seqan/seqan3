@@ -76,7 +76,7 @@ TEST(structure_file_output_class, construct_by_filename)
         seqan3::test::tmp_filename filename{"structure_file_output_constructor.dbn"};
         EXPECT_NO_THROW((seqan3::structure_file_output<seqan3::fields<seqan3::field::seq>,
                                                        seqan3::type_list<seqan3::format_vienna>>
-                                                       {filename.get_path(), seqan3::fields<seqan3::field::seq>{}}));
+                         {filename.get_path(), seqan3::fields<seqan3::field::seq>{}}));
     }
 }
 
@@ -86,13 +86,11 @@ TEST(structure_file_output_class, construct_from_stream)
 
     /* stream + format_tag */
     EXPECT_NO_THROW((seqan3::structure_file_output<fields_seq_id_structure, seqan3::type_list<seqan3::format_vienna>>
-                                                   {std::ostringstream{}, seqan3::format_vienna{}}));
+                     {std::ostringstream{}, seqan3::format_vienna{}}));
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW((seqan3::structure_file_output<fields_seq_id_structure, seqan3::type_list<seqan3::format_vienna>>
-                                                   {std::ostringstream{},
-                                                    seqan3::format_vienna{},
-                                                    fields_seq_id_structure{}}));
+                     {std::ostringstream{}, seqan3::format_vienna{}, fields_seq_id_structure{}}));
 }
 
 TEST(structure_file_output_class, default_template_args_and_deduction_guides)
