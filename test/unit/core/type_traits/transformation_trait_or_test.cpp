@@ -9,8 +9,6 @@
 
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
 
-using namespace seqan3;
-
 struct A
 {
     using type = int;
@@ -28,10 +26,10 @@ struct D
 
 TEST(transformation_trait_or, transformation_trait_or)
 {
-    using a_type = detail::transformation_trait_or_t<A, void>;
-    using b_transformation_trait_or = detail::transformation_trait_or_t<B, void>;
-    using c_transformation_trait_or = detail::transformation_trait_or_t<C, double>;
-    using d_transformation_trait_or = detail::transformation_trait_or<D, B>::type;
+    using a_type = seqan3::detail::transformation_trait_or_t<A, void>;
+    using b_transformation_trait_or = seqan3::detail::transformation_trait_or_t<B, void>;
+    using c_transformation_trait_or = seqan3::detail::transformation_trait_or_t<C, double>;
+    using d_transformation_trait_or = seqan3::detail::transformation_trait_or<D, B>::type;
 
     EXPECT_TRUE((std::is_same_v<a_type, int>));
     EXPECT_TRUE((std::is_same_v<b_transformation_trait_or, void>));

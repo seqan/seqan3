@@ -11,8 +11,6 @@
 
 #include <seqan3/core/algorithm/bound.hpp>
 
-using namespace seqan3;
-
 template <typename t>
 struct bound_test : ::testing::Test
 {};
@@ -22,14 +20,14 @@ TYPED_TEST_SUITE(bound_test, testing_types, );
 
 TYPED_TEST(bound_test, lower_bound)
 {
-    lower_bound lb{static_cast<TypeParam>(-5)};
-    EXPECT_TRUE((std::is_same_v<decltype(lb), lower_bound<TypeParam>>));
+    seqan3::lower_bound lb{static_cast<TypeParam>(-5)};
+    EXPECT_TRUE((std::is_same_v<decltype(lb), seqan3::lower_bound<TypeParam>>));
     EXPECT_NEAR(lb.get(), static_cast<TypeParam>(-5), 0.1);
 }
 
 TYPED_TEST(bound_test, upper_bound)
 {
-    upper_bound lb{static_cast<TypeParam>(5)};
-    EXPECT_TRUE((std::is_same_v<decltype(lb), upper_bound<TypeParam>>));
+    seqan3::upper_bound lb{static_cast<TypeParam>(5)};
+    EXPECT_TRUE((std::is_same_v<decltype(lb), seqan3::upper_bound<TypeParam>>));
     EXPECT_NEAR(lb.get(), static_cast<TypeParam>(5), 0.1);
 }

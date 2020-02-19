@@ -10,10 +10,6 @@
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
 #include <seqan3/core/parallel/detail/reader_writer_manager.hpp>
 
-using namespace seqan3;
-using namespace seqan3::detail;
-using namespace seqan3::contrib;
-
 TEST(reader_writer_manager, parallel)
 {
     size_t threads = std::thread::hardware_concurrency();
@@ -28,11 +24,15 @@ TEST(reader_writer_manager, parallel)
 
     uint64_t job_size = threads * 1000000;
 
-    fixed_buffer_queue<uint32_t> source_queue{job_size};
-    fixed_buffer_queue<uint32_t> target_queue{job_size};
+    seqan3::contrib::fixed_buffer_queue<uint32_t> source_queue{job_size};
+    seqan3::contrib::fixed_buffer_queue<uint32_t> target_queue{job_size};
 
-    reader_writer_manager source_manager{reader_count{threads}, writer_count{1}, source_queue};
-    reader_writer_manager target_manager{reader_count{1}, writer_count{threads}, target_queue};
+    seqan3::detail::reader_writer_manager source_manager{seqan3::detail::reader_count{threads},
+                                                         seqan3::detail::writer_count{1},
+                                                         source_queue};
+    seqan3::detail::reader_writer_manager target_manager{seqan3::detail::reader_count{1},
+                                                         seqan3::detail::writer_count{threads},
+                                                         target_queue};
 
     auto work = [&] () mutable
     {
@@ -43,11 +43,11 @@ TEST(reader_writer_manager, parallel)
             for (;;)
             {
                 uint32_t val = 0;
-                if (source_queue.wait_pop(val) == queue_op_status::closed)
+                if (source_queue.wait_pop(val) == seqan3::contrib::queue_op_status::closed)
                     return;
 
-                queue_op_status status = target_queue.try_push(val);
-                EXPECT_TRUE(status == queue_op_status::success);
+                seqan3::contrib::queue_op_status status = target_queue.try_push(val);
+                EXPECT_TRUE(status == seqan3::contrib::queue_op_status::success);
             }
         }
     };
@@ -63,8 +63,8 @@ TEST(reader_writer_manager, parallel)
             // Initialise source_queue.
             for (size_t i = 0; i < job_size; ++i)
             {
-                queue_op_status status = source_queue.try_push(i + 1);
-                EXPECT_TRUE(status == queue_op_status::success);
+                seqan3::contrib::queue_op_status status = source_queue.try_push(i + 1);
+                EXPECT_TRUE(status == seqan3::contrib::queue_op_status::success);
             }
             EXPECT_FALSE(source_queue.is_closed());
         }
@@ -74,7 +74,7 @@ TEST(reader_writer_manager, parallel)
         for (;;)
         {
             uint32_t val = 0;
-            if (target_queue.wait_pop(val) == queue_op_status::closed)
+            if (target_queue.wait_pop(val) == seqan3::contrib::queue_op_status::closed)
                 return;
 
             counter += val;

@@ -13,41 +13,39 @@
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 
-using namespace seqan3;
-
 TEST(template_inspect, concept_check)
 {
-    using tl = type_list<int, char, double>;
+    using tl = seqan3::type_list<int, char, double>;
 
-    EXPECT_FALSE((transformation_trait<detail::transfer_template_args_onto<int, std::tuple>>));
-    EXPECT_TRUE((transformation_trait<detail::transfer_template_args_onto<tl, std::tuple>>));
+    EXPECT_FALSE((seqan3::transformation_trait<seqan3::detail::transfer_template_args_onto<int, std::tuple>>));
+    EXPECT_TRUE((seqan3::transformation_trait<seqan3::detail::transfer_template_args_onto<tl, std::tuple>>));
 
-    EXPECT_TRUE((unary_type_trait<detail::is_type_specialisation_of<int, type_list>>));
+    EXPECT_TRUE((seqan3::unary_type_trait<seqan3::detail::is_type_specialisation_of<int, seqan3::type_list>>));
 }
 
 TEST(template_inspect, transfer_template_args_onto_t)
 {
-    using tl = type_list<int, char, double>;
-    using t = detail::transfer_template_args_onto<tl, std::tuple>::type;
+    using tl = seqan3::type_list<int, char, double>;
+    using t = seqan3::detail::transfer_template_args_onto<tl, std::tuple>::type;
     EXPECT_TRUE((std::is_same_v<t, std::tuple<int, char, double>>));
 
     // shortcut
-    using t = detail::transfer_template_args_onto_t<tl, std::tuple>;
+    using t = seqan3::detail::transfer_template_args_onto_t<tl, std::tuple>;
     EXPECT_TRUE((std::is_same_v<t, std::tuple<int, char, double>>));
 }
 
 TEST(template_inspect, is_type_specialisation_of)
 {
-    using tl = type_list<int, char, double>;
-    EXPECT_TRUE((detail::is_type_specialisation_of<tl, type_list>::value));
-    EXPECT_FALSE((detail::is_type_specialisation_of<int, type_list>::value));
+    using tl = seqan3::type_list<int, char, double>;
+    EXPECT_TRUE((seqan3::detail::is_type_specialisation_of<tl, seqan3::type_list>::value));
+    EXPECT_FALSE((seqan3::detail::is_type_specialisation_of<int, seqan3::type_list>::value));
 }
 
 TEST(template_inspect, is_type_specialisation_of_v)
 {
-    using tl = type_list<int, char, double>;
-    EXPECT_TRUE((detail::is_type_specialisation_of_v<tl, type_list>));
-    EXPECT_FALSE((detail::is_type_specialisation_of_v<int, type_list>));
+    using tl = seqan3::type_list<int, char, double>;
+    EXPECT_TRUE((seqan3::detail::is_type_specialisation_of_v<tl, seqan3::type_list>));
+    EXPECT_FALSE((seqan3::detail::is_type_specialisation_of_v<int, seqan3::type_list>));
 }
 
 template <std::integral t>
@@ -56,7 +54,7 @@ struct constraint_bar
 
 TEST(template_inspect, is_type_specialisation_of_with_ill_formed_type)
 {
-    EXPECT_FALSE((detail::is_type_specialisation_of<std::tuple<float>, constraint_bar>::value));
+    EXPECT_FALSE((seqan3::detail::is_type_specialisation_of<std::tuple<float>, constraint_bar>::value));
 }
 
 template <int i, char c>
@@ -93,27 +91,25 @@ struct bar2
 
 TEST(template_inspect, transfer_template_vargs_onto_enum)
 {
-    EXPECT_TRUE((std::is_same_v<detail::transformation_trait_or_t<
-                                    detail::transfer_template_vargs_onto<bar<e2::bar>, foo>,
-                                    void>,
-                                void>));
+    using foo_e2_bar = seqan3::detail::transfer_template_vargs_onto<bar<e2::bar>, foo>;
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::transformation_trait_or_t<foo_e2_bar, void>, void>));
 
-    using ta2 = detail::transfer_template_vargs_onto<bar<e2::bar>, bar>::type;
+    using ta2 = seqan3::detail::transfer_template_vargs_onto<bar<e2::bar>, bar>::type;
     EXPECT_TRUE((std::is_same_v<ta2, bar<e2::bar>>));
 
-    using ta3 = detail::transfer_template_vargs_onto<bar<e2::bar>, bar2>::type;
+    using ta3 = seqan3::detail::transfer_template_vargs_onto<bar<e2::bar>, bar2>::type;
     EXPECT_TRUE((std::is_same_v<ta3, bar2<e2::bar>>));
 }
 
 TEST(template_inspect, transfer_template_vargs_onto_t)
 {
     using tl = t1<1, 'a'>;
-    using ta = detail::transfer_template_vargs_onto<tl, t2>::type;
+    using ta = seqan3::detail::transfer_template_vargs_onto<tl, t2>::type;
     EXPECT_EQ(1,   ta::i);
     EXPECT_EQ('a', ta::c);
 
     // shortcut
-    using ta2 = detail::transfer_template_vargs_onto_t<tl, t2>;
+    using ta2 = seqan3::detail::transfer_template_vargs_onto_t<tl, t2>;
     EXPECT_EQ(1,   ta2::i);
     EXPECT_EQ('a', ta2::c);
 }
@@ -122,16 +118,16 @@ TEST(template_inspect, is_value_specialisation_of)
 {
     using tl = t1<1, 'a'>;
 
-    EXPECT_TRUE((detail::is_value_specialisation_of<tl, t1>::value));
-    EXPECT_FALSE((detail::is_value_specialisation_of<int, t1>::value));
+    EXPECT_TRUE((seqan3::detail::is_value_specialisation_of<tl, t1>::value));
+    EXPECT_FALSE((seqan3::detail::is_value_specialisation_of<int, t1>::value));
 }
 
 TEST(template_inspect, is_value_specialisation_of_v)
 {
     using tl = t1<1, 'a'>;
 
-    EXPECT_TRUE((detail::is_value_specialisation_of_v<tl, t1>));
-    EXPECT_FALSE((detail::is_value_specialisation_of_v<int, t1>));
+    EXPECT_TRUE((seqan3::detail::is_value_specialisation_of_v<tl, t1>));
+    EXPECT_FALSE((seqan3::detail::is_value_specialisation_of_v<int, t1>));
 }
 
 template <int varg>
@@ -145,5 +141,5 @@ struct vargs_foo
 
 TEST(template_inspect, is_type_specialisation_of_with_ill_formed_non_type_template)
 {
-    EXPECT_FALSE((detail::is_value_specialisation_of_v<vargs_foo<5>, constraint_vbar>));
+    EXPECT_FALSE((seqan3::detail::is_value_specialisation_of_v<vargs_foo<5>, constraint_vbar>));
 }

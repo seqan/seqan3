@@ -13,8 +13,6 @@
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 
-using namespace seqan3;
-
 //-----------------------------------------------------------------------------
 // all_of
 //-----------------------------------------------------------------------------
@@ -35,16 +33,16 @@ auto is_value_type_integral = [] (auto value)
 
 TEST(pack_algorithm, all_of_in_type_list)
 {
-    EXPECT_TRUE(detail::all_of<type_list<>>(is_integral_fn{}));
-    EXPECT_TRUE((detail::all_of<type_list<int8_t, int16_t, uint32_t>>(is_integral_fn{})));
-    EXPECT_FALSE((detail::all_of<type_list<int8_t, int16_t, uint32_t, float>>(is_integral_fn{})));
+    EXPECT_TRUE(seqan3::detail::all_of<seqan3::type_list<>>(is_integral_fn{}));
+    EXPECT_TRUE((seqan3::detail::all_of<seqan3::type_list<int8_t, int16_t, uint32_t>>(is_integral_fn{})));
+    EXPECT_FALSE((seqan3::detail::all_of<seqan3::type_list<int8_t, int16_t, uint32_t, float>>(is_integral_fn{})));
 }
 
 TEST(pack_algorithm, all_of_values)
 {
-    EXPECT_TRUE(detail::all_of(is_value_type_integral));
-    EXPECT_TRUE((detail::all_of(is_value_type_integral, int8_t{}, int16_t{}, uint32_t{})));
-    EXPECT_FALSE((detail::all_of(is_value_type_integral, int8_t{}, int16_t{}, uint32_t{}, float{})));
+    EXPECT_TRUE(seqan3::detail::all_of(is_value_type_integral));
+    EXPECT_TRUE((seqan3::detail::all_of(is_value_type_integral, int8_t{}, int16_t{}, uint32_t{})));
+    EXPECT_FALSE((seqan3::detail::all_of(is_value_type_integral, int8_t{}, int16_t{}, uint32_t{}, float{})));
 }
 
 //-----------------------------------------------------------------------------
@@ -60,32 +58,34 @@ TEST(pack_algorithm, for_each_value)
         ++i;
     };
 
-    detail::for_each(fn);
+    seqan3::detail::for_each(fn);
     EXPECT_EQ(i, 0);
-    detail::for_each(fn, 0);
+    seqan3::detail::for_each(fn, 0);
     EXPECT_EQ(i, 1);
-    detail::for_each(fn, 1, 2);
+    seqan3::detail::for_each(fn, 1, 2);
     EXPECT_EQ(i, 3);
-    detail::for_each(fn, 3, 4, 5);
+    seqan3::detail::for_each(fn, 3, 4, 5);
     EXPECT_EQ(i, 6);
 }
 
 TEST(pack_algorithm, for_each_value2)
 {
+    using seqan3::operator""_dna4;
+
     std::stringstream stream{};
 
     auto fn = [&stream](auto const & arg)
     {
-        if constexpr(alphabet<decltype(arg)>)
-            stream << to_char(arg) << ";";
+        if constexpr(seqan3::alphabet<decltype(arg)>)
+            stream << seqan3::to_char(arg) << ";";
         else
             stream << arg << ";";
     };
 
-    detail::for_each(fn);
-    detail::for_each(fn, 0);
-    detail::for_each(fn, 1.0, '2');
-    detail::for_each(fn, "3;4", -5, 'C'_dna4);
+    seqan3::detail::for_each(fn);
+    seqan3::detail::for_each(fn, 0);
+    seqan3::detail::for_each(fn, 1.0, '2');
+    seqan3::detail::for_each(fn, "3;4", -5, 'C'_dna4);
 
     EXPECT_EQ(stream.str(), "0;1;2;3;4;-5;C;");
 }
@@ -122,14 +122,13 @@ TEST(pack_algorithm, for_each_type_in_type_list)
         print_to_stream(stream, id);
     };
 
-    using types = type_list<bool, uint8_t, int8_t, uint16_t, int16_t,
-                            uint32_t, int32_t, uint64_t, int64_t>;
-    detail::for_each<types>(fn);
+    using types = seqan3::type_list<bool, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t>;
+    seqan3::detail::for_each<types>(fn);
 
     EXPECT_EQ(stream.str(), "0;1;-1;2;-2;3;-3;4;-4;");
 
     stream.str("");
-    detail::for_each<types>(fn);
+    seqan3::detail::for_each<types>(fn);
 
     EXPECT_EQ(stream.str(), "0;1;-1;2;-2;3;-3;4;-4;");
 }
