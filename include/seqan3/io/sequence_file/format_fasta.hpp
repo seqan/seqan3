@@ -135,7 +135,7 @@ protected:
                                id_type && id,
                                qual_type && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        seqan3::ostreambuf_iterator stream_it{stream};
+        seqan3::detail::fast_ostreambuf_iterator stream_it{*stream.rdbuf()};
 
         // ID
         if constexpr (detail::decays_to_ignore_v<id_type>)
@@ -315,11 +315,8 @@ private:
     }
 
     //!\brief Implementation of writing the ID.
-    template <typename stream_it_t,
-              typename id_type>
-    void write_id(stream_it_t & stream_it,
-                   sequence_file_output_options const & options,
-                   id_type && id)
+    template <typename stream_it_t, typename id_type>
+    void write_id(stream_it_t & stream_it, sequence_file_output_options const & options, id_type && id)
     {
         if (options.fasta_legacy_id_marker)
             stream_it = ';';
@@ -329,48 +326,36 @@ private:
         if (options.fasta_blank_before_id)
             stream_it = ' ';
 
-        std::ranges::copy(id, stream_it);
-
-        detail::write_eol(stream_it, options.add_carriage_return);
+        stream_it.write_range(id);
+        stream_it.write_end_of_line(options.add_carriage_return);
     }
 
     //!\brief Implementation of writing the sequence.
-    template <typename stream_it_t,
-              typename seq_type>
-    void write_seq(stream_it_t & stream_it,
-                   sequence_file_output_options const & options,
-                   seq_type && seq)
+    template <typename stream_it_t, typename seq_type>
+    void write_seq(stream_it_t & stream_it, sequence_file_output_options const & options, seq_type && seq)
     {
+        auto char_sequence = seq | views::to_char;
+
         if (options.fasta_letters_per_line > 0)
         {
-        #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
-            size_t count = 0;
-            for (auto c : seq)
+            /* Using `views::interleave` is probably the way to go but that needs performance-tuning.*/
+            auto it = std::ranges::begin(char_sequence);
+            auto end = std::ranges::end(char_sequence);
+
+            while (it != end)
             {
-                stream_it = to_char(c);
-                if (++count % options.fasta_letters_per_line == 0)
-                    detail::write_eol(stream_it, options.add_carriage_return);
+                /* Note: This solution is slightly suboptimal for sized but non-random-access ranges.*/
+                auto current_end = it;
+                size_t steps = std::ranges::advance(current_end, options.fasta_letters_per_line, end);
+                using subrange_t = std::ranges::subrange<decltype(it), decltype(it), std::ranges::subrange_kind::sized>;
+                it = stream_it.write_range(subrange_t{it, current_end, (options.fasta_letters_per_line - steps)});
+                stream_it.write_end_of_line(options.add_carriage_return);
             }
-            if (count % options.fasta_letters_per_line != 0)
-                detail::write_eol(stream_it, options.add_carriage_return);
-
-        #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
-
-            //TODO: combining chunk and join is substantially faster than views::interleave (2.5x), why?
-            std::ranges::copy(seq | views::to_char
-                                  | ranges::view::chunk(options.fasta_letters_per_line)
-                                  | views::join(options.add_carriage_return
-                                                    ? std::string_view{"\r\n"}
-                                                    : std::string_view{"\n"}),
-                              stream_it);
-            detail::write_eol(stream_it, options.add_carriage_return);
-        #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
         }
         else
         {
-            // No performance workaround here, because transform views alone are fast
-            std::ranges::copy(seq | views::to_char, stream_it);
-            detail::write_eol(stream_it, options.add_carriage_return);
+            stream_it.write_range(char_sequence);
+            stream_it.write_end_of_line(options.add_carriage_return);
         }
     }
 };
