@@ -139,7 +139,7 @@ protected:
                 {
                     std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
                                                   | views::take_until_or_throw(is_cntrl || is_blank)
-                                                  | views::char_to<value_type_t<id_type>>,
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
                                       std::ranges::back_inserter(id));
                     detail::consume(stream_view | views::take_line_or_throw);
                 }
@@ -147,7 +147,7 @@ protected:
                 {
                     std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
                                                   | views::take_line_or_throw
-                                                  | views::char_to<value_type_t<id_type>>,
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
                                       std::ranges::back_inserter(id));
                 }
             }
@@ -184,7 +184,7 @@ protected:
                                                 }
                                               return c;
                                             })
-                                          | views::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
+                                          | views::char_to<std::ranges::range_value_t<seq_type>>, // convert to actual target alphabet
                               std::ranges::back_inserter(seq));
         }
         else
@@ -199,7 +199,7 @@ protected:
             if constexpr (structured_seq_combined)
             {
                 assert(std::addressof(seq) == std::addressof(structure));
-                using alph_type = typename value_type_t<structure_type>::structure_alphabet_type;
+                using alph_type = typename std::ranges::range_value_t<structure_type>::structure_alphabet_type;
                 // We need the structure_length parameter to count the length of the structure while reading
                 // because we cannot infer it from the (already resized) structure_seq object.
                 auto res = std::ranges::copy(read_structure<alph_type>(stream_view), std::ranges::begin(structure));
@@ -210,7 +210,7 @@ protected:
             }
             else
             {
-                using alph_type = value_type_t<structure_type>;
+                using alph_type = std::ranges::range_value_t<structure_type>;
                 std::ranges::copy(read_structure<alph_type>(stream_view), std::ranges::back_inserter(structure));
                 structure_length = std::ranges::distance(structure);
 

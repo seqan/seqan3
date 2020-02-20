@@ -70,7 +70,7 @@ public:
     using const_reference   = detail::transformation_trait_or_t<
                                 ranges::common_reference<reference_t<urng_t const>, reference_t<inserted_rng_t const>>, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
-    using value_type        = value_type_t<urng_t>;
+    using value_type        = std::ranges::range_value_t<urng_t>;
     //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be Sized.
     using size_type         = size_type_t<urng_t>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
@@ -356,22 +356,22 @@ namespace seqan3::views
  * `| ranges::view::chunk(step_size) | views::join(inserted_range)`
  * which returns a view with the following properties:
  *
- * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
- * |----------------------------------|:-------------------------------------:|:-------------------------------:|
- * | std::ranges::input_range         | *required*                            | *preserved*                     |
- * | std::ranges::forward_range       | *required*                            | *lost*                          |
- * | std::ranges::bidirectional_range |                                       | *lost*                          |
- * | std::ranges::random_access_range |                                       | *lost*                          |
- * | std::ranges::contiguous_range    |                                       | *lost*                          |
- * |                                  |                                       |                                  |
- * | std::ranges::viewable_range      | *required*                            | *guaranteed*                    |
- * | std::ranges::view                |                                       | *guaranteed*                    |
- * | std::ranges::sized_range         |                                       | *lost*                          |
- * | std::ranges::common_range        |                                       | *lost*                          |
- * | std::ranges::output_range        |                                       | *lost*                          |
- * | seqan3::const_iterable_range     |                                       | *lost*                          |
- * |                                  |                                       |                                  |
- * | std::ranges::range_reference_t   |                                       | seqan3::value_type_t<urng_t>    |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)       |
+ * |----------------------------------|:-------------------------------------:|:------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                          |
+ * | std::ranges::forward_range       | *required*                            | *lost*                               |
+ * | std::ranges::bidirectional_range |                                       | *lost*                               |
+ * | std::ranges::random_access_range |                                       | *lost*                               |
+ * | std::ranges::contiguous_range    |                                       | *lost*                               |
+ * |                                  |                                       |                                      |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                         |
+ * | std::ranges::view                |                                       | *guaranteed*                         |
+ * | std::ranges::sized_range         |                                       | *lost*                               |
+ * | std::ranges::common_range        |                                       | *lost*                               |
+ * | std::ranges::output_range        |                                       | *lost*                               |
+ * | seqan3::const_iterable_range     |                                       | *lost*                               |
+ * |                                  |                                       |                                      |
+ * | std::ranges::range_reference_t   |                                       | std::ranges::range_value_t<urng_t>   |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.

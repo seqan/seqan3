@@ -153,7 +153,7 @@ public:
 
     /*!\brief Builds the aligned sequences from the given trace path.
      * \tparam trace_path_t The type of the trace path; must model std::ranges::input_range and
-     *                      std::same_as<value_type_t<trace_path_t>, seqan::detail::trace_directions> must evaluate to
+     *                      std::same_as<std::ranges::range_value_t<trace_path_t>, seqan::detail::trace_directions> must evaluate to
      *                      `true`.
      * \param[in] trace_path The trace path.
      * \returns seqan3::detail::aligned_sequence_builder::result_type with the built alignment.
@@ -168,7 +168,7 @@ public:
     template <std::ranges::input_range trace_path_t>
     result_type operator()(trace_path_t && trace_path)
     {
-        static_assert(std::same_as<value_type_t<trace_path_t>, trace_directions>,
+        static_assert(std::same_as<std::ranges::range_value_t<trace_path_t>, trace_directions>,
                       "The value type of the trace path must be seqan3::detail::trace_directions");
 
         result_type res{};

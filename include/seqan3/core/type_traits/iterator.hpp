@@ -157,7 +157,7 @@ struct iterator_tag<it_t>
 };
 
 template <typename it_t>
-    requires !std::input_iterator<it_t> && std::output_iterator<it_t, value_type_t<it_t>> &&
+    requires !std::input_iterator<it_t> && std::output_iterator<it_t, std::iter_value_t<it_t>> &&
              !requires { typename std::iterator_traits<it_t>::iterator_category; }
 struct iterator_tag<it_t>
 {

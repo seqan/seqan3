@@ -72,16 +72,14 @@ TEST(range_and_iterator, value_type_)
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
     auto v = std::views::iota(1);
 
-    using type_list_example = seqan3::type_list<seqan3::value_type_t<std::vector<int>>, // short
-                                                typename seqan3::value_type<std::vector<int>>::type, // long
+    using type_list_example = seqan3::type_list<std::ranges::range_value_t<std::vector<int>>, // short
                                                 typename std::vector<int>::value_type, // member type
-                                                seqan3::value_type_t<std::vector<int> const>, // const container
-                                                seqan3::value_type_t<iterator_of_int_vector>, // iterator
-                                                seqan3::value_type_t<foreign_iterator>, // iterator2
-                                                seqan3::value_type_t<decltype(v)>>; // range, no member
+                                                std::ranges::range_value_t<std::vector<int> const>, // const container
+                                                std::iter_value_t<iterator_of_int_vector>, // iterator
+                                                std::iter_value_t<foreign_iterator>, // iterator2
+                                                std::ranges::range_value_t<decltype(v)>>; // range, no member
 
     using comp_list = seqan3::type_list<int,
-                                        int,
                                         int,
                                         int,
                                         int,

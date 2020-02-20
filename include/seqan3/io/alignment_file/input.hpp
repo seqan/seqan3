@@ -152,11 +152,11 @@ SEQAN3_CONCEPT alignment_file_input_traits = requires (t v)
     // field::alignment
     // the alignment type cannot be configured.
     // Type of tuple entry 1 (reference) is set to
-    // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
+    // 1) a std::ranges::subrange over std::ranges::range_value_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
     // views::repeat_n(sequence_alphabet{}, size_t{}) | std::views::transform(detail::access_restrictor_fn{})
     // Type of tuple entry 2 (query) is set to
-    // 1) a std::ranges::subrange over value_type_t<typename t::ref_sequences> if reference information was given
+    // 1) a std::ranges::subrange over std::ranges::range_value_t<typename t::ref_sequences> if reference information was given
     // or 2) a "dummy" sequence type:
 };
 //!\endcond

@@ -585,7 +585,7 @@ protected:
                       "You may not select field::seq_qual and either of field::seq and field::qual at the same time.");
 
         if constexpr (!detail::decays_to_ignore_v<seq_qual_t>)
-            static_assert(detail::is_type_specialisation_of_v<value_type_t<seq_qual_t>, qualified>,
+            static_assert(detail::is_type_specialisation_of_v<std::ranges::range_value_t<seq_qual_t>, qualified>,
                           "The SEQ_QUAL field must contain a range over the seqan3::qualified alphabet.");
 
         assert(!format.valueless_by_exception());

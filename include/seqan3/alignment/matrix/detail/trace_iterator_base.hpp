@@ -28,7 +28,7 @@ namespace seqan3::detail
  * \tparam derived_t The derived iterator type.
  * \tparam matrix_iter_t The wrapped matrix iterator; must model seqan3::detail::two_dimensional_matrix_iterator and
  *                       the iterator's value type must be the same as seqan3::detail::trace_directions, i.e.
- *                       `std::same_as<value_type_t<matrix_iter_t>, trace_directions>` must evaluate to `true`.
+ *                       `std::same_as<std::iter_value_t<matrix_iter_t>, trace_directions>` must evaluate to `true`.
  *
  * \details
  *
@@ -62,7 +62,7 @@ template <typename derived_t, two_dimensional_matrix_iterator matrix_iter_t>
 class trace_iterator_base
 {
 private:
-    static_assert(std::same_as<value_type_t<matrix_iter_t>, trace_directions>,
+    static_assert(std::same_as<std::iter_value_t<matrix_iter_t>, trace_directions>,
                   "Value type of the underlying iterator must be seqan3::detail::trace_directions.");
 
     //!\brief Befriend with corresponding const_iterator.

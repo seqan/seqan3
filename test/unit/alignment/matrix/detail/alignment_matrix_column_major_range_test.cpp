@@ -96,7 +96,7 @@ protected:
 TEST(alignment_matrix_column_major_range_base, concepts)
 {
     using outer_it = std::ranges::iterator_t<test_matrix>;
-    using column_t = seqan3::value_type_t<outer_it>;
+    using column_t = std::iter_value_t<outer_it>;
     using inner_it = std::ranges::iterator_t<column_t>;
 
     EXPECT_TRUE(std::ranges::input_range<test_matrix>);

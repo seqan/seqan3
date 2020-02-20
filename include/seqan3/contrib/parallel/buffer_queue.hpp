@@ -114,7 +114,7 @@ public:
     }
 
     template <std::ranges::input_range range_type>
-        requires std::convertible_to<value_type_t<range_type>, value_type>
+        requires std::convertible_to<std::ranges::range_value_t<range_type>, value_type>
     buffer_queue(size_type const init_capacity, range_type && r) : buffer_queue{init_capacity}
     {
         std::ranges::copy(r, std::ranges::begin(buffer));

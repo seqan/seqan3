@@ -88,12 +88,12 @@ private:
     /*!\brief Auxiliary member types
      * \{
      */
-     //!\brief Range type with removed references.
-     using unref_range_type = std::remove_reference_t<range_type>;
-     //!\brief The type of the first sequence.
-    using first_seq_t  = std::tuple_element_t<0, value_type_t<std::ranges::iterator_t<unref_range_type>>>;
+    //!\brief Range type with removed references.
+    using unref_range_type = std::remove_reference_t<range_type>;
+    //!\brief The type of the first sequence.
+    using first_seq_t  = std::tuple_element_t<0, std::ranges::range_value_t<unref_range_type>>;
     //!\brief The type of the second sequence.
-    using second_seq_t = std::tuple_element_t<1, value_type_t<std::ranges::iterator_t<unref_range_type>>>;
+    using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<unref_range_type>>;
     //!\}
 
 public:
@@ -101,7 +101,7 @@ public:
     constexpr static bool expects_tuple_like_value_type()
     {
         return tuple_like<alignment_config_type> &&
-               std::tuple_size_v<value_type_t<std::ranges::iterator_t<unref_range_type>>> == 2;
+               std::tuple_size_v<std::ranges::range_value_t<unref_range_type>> == 2;
     }
 
     //!\brief Tests whether the scoring scheme is set and can be invoked with the sequences passed.
@@ -113,8 +113,8 @@ public:
                                     decltype(get<align_cfg::scoring>(std::declval<alignment_config_type>()).value)
                                  >;
             return static_cast<bool>(scoring_scheme<scoring_type,
-                                                   value_type_t<first_seq_t>,
-                                                   value_type_t<second_seq_t>>);
+                                                   std::ranges::range_value_t<first_seq_t>,
+                                                   std::ranges::range_value_t<second_seq_t>>);
         }
         else
         {
@@ -251,8 +251,8 @@ public:
             // Configure the type-erased alignment function.
             // ----------------------------------------------------------------------------
 
-            using first_seq_t = std::tuple_element_t<0, value_type_t<sequences_t>>;
-            using second_seq_t = std::tuple_element_t<1, value_type_t<sequences_t>>;
+            using first_seq_t = std::tuple_element_t<0, std::ranges::range_value_t<sequences_t>>;
+            using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<sequences_t>>;
 
             using wrapped_first_t  = type_reduce_view<first_seq_t &>;
             using wrapped_second_t = type_reduce_view<second_seq_t &>;

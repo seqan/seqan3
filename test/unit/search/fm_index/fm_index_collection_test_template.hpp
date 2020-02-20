@@ -22,7 +22,7 @@ TYPED_TEST_P(fm_index_collection_test, ctr)
 {
     using index_t = typename TypeParam::first_type;
     using text_t = typename TypeParam::second_type;
-    using inner_text_type = seqan3::value_type_t<text_t>;
+    using inner_text_type = std::ranges::range_value_t<text_t>;
 
     text_t text{inner_text_type(10), inner_text_type(10)}; // initialized with smallest char
 
@@ -72,7 +72,7 @@ TYPED_TEST_P(fm_index_collection_test, swap)
 {
     using index_t = typename TypeParam::first_type;
     using text_t = typename TypeParam::second_type;
-    using inner_text_type = seqan3::value_type_t<text_t>;
+    using inner_text_type = std::ranges::range_value_t<text_t>;
 
     text_t textA{inner_text_type(10), inner_text_type(10)};
     text_t textB{inner_text_type(20), inner_text_type(20)};
@@ -105,7 +105,7 @@ TYPED_TEST_P(fm_index_collection_test, size)
 {
     using index_t = typename TypeParam::first_type;
     using text_t = typename TypeParam::second_type;
-    using inner_text_type = seqan3::value_type_t<text_t>;
+    using inner_text_type = std::ranges::range_value_t<text_t>;
 
     index_t fm;
     EXPECT_TRUE(fm.empty());
@@ -146,7 +146,7 @@ TYPED_TEST_P(fm_index_collection_test, serialisation)
 {
     using index_t = typename TypeParam::first_type;
     using text_t = typename TypeParam::second_type;
-    using inner_text_type = seqan3::value_type_t<text_t>;
+    using inner_text_type = std::ranges::range_value_t<text_t>;
 
     text_t text{inner_text_type(4), inner_text_type(12)};
 

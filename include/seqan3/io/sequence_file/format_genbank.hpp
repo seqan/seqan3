@@ -120,7 +120,7 @@ protected:
                 while (!is_char<'O'>(*std::ranges::begin(stream_view)))
                 {
                         std::ranges::copy(stream_view | views::take_line_or_throw
-                                                      | views::char_to<value_type_t<id_type>>,
+                                                      | views::char_to<std::ranges::range_value_t<id_type>>,
                                                         std::ranges::back_inserter(id));
                         id.push_back('\n');
                 }
@@ -132,7 +132,7 @@ protected:
                 auto read_id_until = [&stream_view, &id] (auto predicate)
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(predicate)
-                                                  | views::char_to<value_type_t<id_type>>,
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
                                       std::ranges::back_inserter(id));
                 };
 
@@ -168,7 +168,7 @@ protected:
                                                 }
                                                 return c;
                                             })
-                                          | views::char_to<value_type_t<seq_type>>,    // convert to actual target alphabet
+                                          | views::char_to<std::ranges::range_value_t<seq_type>>,    // convert to actual target alphabet
                                             std::ranges::back_inserter(sequence));
         }
         else

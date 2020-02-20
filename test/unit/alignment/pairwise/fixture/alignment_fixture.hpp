@@ -75,7 +75,7 @@ struct alignment_fixture
 
     auto score_matrix() const requires !seqan3::detail::matrix<score_vector_or_matrix_t>
     {
-        seqan3::detail::row_wise_matrix<value_type_t<score_vector_or_matrix_t>>
+        seqan3::detail::row_wise_matrix<std::ranges::range_value_t<score_vector_or_matrix_t>>
             score_matrix{seqan3::detail::number_rows{sequence2.size() + 1},
                          seqan3::detail::number_cols{sequence1.size() + 1},
                          score_vector};
@@ -89,7 +89,7 @@ struct alignment_fixture
 
     auto trace_matrix() const requires !seqan3::detail::matrix<trace_vector_or_matrix_t>
     {
-        seqan3::detail::row_wise_matrix<value_type_t<trace_vector_or_matrix_t>>
+        seqan3::detail::row_wise_matrix<std::ranges::range_value_t<trace_vector_or_matrix_t>>
             trace_matrix{seqan3::detail::number_rows{sequence2.size() + 1},
                          seqan3::detail::number_cols{sequence1.size() + 1},
                          trace_vector};

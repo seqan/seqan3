@@ -54,7 +54,7 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                       | *lost*                                             |
  * | seqan3::const_iterable_range     |                                       | *preserved*                                        |
  * |                                  |                                       |                                                    |
- * | std::ranges::range_reference_t   | seqan3::alphabet                      | seqan3::alphabet_rank_t<seqan3::value_type_t<urng_t>>   |
+ * | std::ranges::range_reference_t   | seqan3::alphabet                      | seqan3::alphabet_rank_t<std::ranges::range_value_t<urng_t>>   |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *

@@ -130,14 +130,14 @@ protected:
             if (options.truncate_ids)
             {
                 std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank)
-                                              | views::char_to<value_type_t<id_type>>,
+                                              | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::ranges::back_inserter(id));
                 detail::consume(stream_view | views::take_line_or_throw);
             }
             else
             {
                 std::ranges::copy(stream_view | views::take_line_or_throw
-                                              | views::char_to<value_type_t<id_type>>,
+                                              | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::ranges::back_inserter(id));
             }
         }
@@ -163,7 +163,7 @@ protected:
                                         }
                                         return c;
                                     })
-                                        | views::char_to<value_type_t<seq_type>>,         // convert to actual target alphabet
+                                        | views::char_to<std::ranges::range_value_t<seq_type>>,         // convert to actual target alphabet
                               std::ranges::back_inserter(sequence));
             sequence_size_after = size(sequence);
         }
@@ -193,12 +193,12 @@ protected:
         {
             // seq_qual field implies that they are the same variable
             assert(std::addressof(sequence) == std::addressof(qualities));
-            std::ranges::copy(qview | views::char_to<typename value_type_t<qual_type>::quality_alphabet_type>,
+            std::ranges::copy(qview | views::char_to<typename std::ranges::range_value_t<qual_type>::quality_alphabet_type>,
                               begin(qualities) + sequence_size_before);
         }
         else if constexpr (!detail::decays_to_ignore_v<qual_type>)
         {
-            std::ranges::copy(qview | views::char_to<value_type_t<qual_type>>,
+            std::ranges::copy(qview | views::char_to<std::ranges::range_value_t<qual_type>>,
                               std::ranges::back_inserter(qualities));
         }
         else
