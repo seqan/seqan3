@@ -495,9 +495,8 @@ void compression_by_stream_impl(comp_stream_t & stream)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        seqan3::record<seqan3::type_list<seqan3::dna5_vector,
-                                         std::string>,
-                                         seqan3::fields<seqan3::field::seq, seqan3::field::id>> r{seqs[i], ids[i]};
+        seqan3::record<seqan3::type_list<seqan3::dna5_vector,std::string>,
+                       seqan3::fields<seqan3::field::seq, seqan3::field::id>> r{seqs[i], ids[i]};
 
         fout.push_back(r);
     }
