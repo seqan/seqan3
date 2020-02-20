@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <iostream>
+
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/debug_stream_optional.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
