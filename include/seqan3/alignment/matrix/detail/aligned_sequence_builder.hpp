@@ -53,16 +53,43 @@ namespace seqan3::detail
 template <std::ranges::viewable_range range_t>
 struct make_aligned_sequence_type
 {
+private:
     // The following expressions are used to check if the sequence types can be used as template arguments for the
     // seqan3::gap_decorator. Ranges that do not model std::random_access_range for instance cannot be augmented with
     // the gap_decorator and need to be copied instead.
 
+    //!\brief The unaligned sequence type that will be used to assign a sequence to seqan3::assign_unaligned.
+    using unaligned_sequence_type = decltype(std::declval<range_t>() | views::type_reduce | views::slice(0, 1));
+
+public:
     //!\brief The resulting aligned sequence type.
-    using type = lazy_conditional_t<is_class_template_declarable_with_v<gap_decorator,
-                                                                        decltype(std::declval<range_t>()
-                                                                               | views::slice(0, 1))>,
-                                    lazy<gap_decorator, decltype(std::declval<range_t>() | views::slice(0, 1))>,
-                                    lazy<std::vector, gapped<std::ranges::range_value_t<range_t>>>>;
+    using type = lazy_conditional_t<is_class_template_declarable_with_v<gap_decorator, unaligned_sequence_type>,
+                                    lazy<gap_decorator, unaligned_sequence_type>,
+                                    lazy<std::vector, gapped<std::ranges::range_value_t<unaligned_sequence_type>>>>;
+};
+
+/*!\brief A transformation trait that returns the correct pairwise alignment type for two given sequence types.
+ * \ingroup alignment_matrix
+ * \implements seqan3::transformation_trait
+ *
+ * \tparam first_sequence_t The first sequence of the pairwise alignment; must model std::ranges::viewable_range.
+ * \tparam second_sequence_t The second sequence of the pairwise alignment; must model std::ranges::viewable_range.
+ */
+template <std::ranges::viewable_range first_sequence_t, std::ranges::viewable_range second_sequence_t>
+struct make_pairwise_alignment_type
+{
+    //!\brief The aligned sequence type for the first sequence.
+    using first_aligned_t = typename make_aligned_sequence_type<first_sequence_t>::type;
+    //!\brief The aligned sequence type for the second sequence.
+    using second_aligned_t = typename make_aligned_sequence_type<second_sequence_t>::type;
+
+    static_assert(seqan3::aligned_sequence<first_aligned_t>,
+                  "first_aligned_t is required to model seqan3::aligned_sequence!");
+    static_assert(seqan3::aligned_sequence<second_aligned_t>,
+                  "second_aligned_t is required to model seqan3::aligned_sequence!");
+
+    //!\brief The resulting pairwise alignment type.
+    using type = std::tuple<first_aligned_t, second_aligned_t>;
 };
 
 /*!\brief Builds the alignment for a given pair of sequences and the respective trace.
@@ -88,20 +115,9 @@ struct make_aligned_sequence_type
 template <std::ranges::viewable_range fst_sequence_t, std::ranges::viewable_range sec_sequence_t>
 class aligned_sequence_builder
 {
-private:
-    //!\brief The aligned sequence type for the first sequence.
-    using fst_aligned_t = typename make_aligned_sequence_type<fst_sequence_t>::type;
-    //!\brief The aligned sequence type for the second sequence.
-    using sec_aligned_t = typename make_aligned_sequence_type<sec_sequence_t>::type;
-
-    static_assert(seqan3::aligned_sequence<fst_aligned_t>,
-                  "fst_aligned_t is required to model seqan3::aligned_sequence!");
-    static_assert(seqan3::aligned_sequence<sec_aligned_t>,
-                  "sec_aligned_t is required to model seqan3::aligned_sequence!");
-
 public:
     //!\brief The pairwise alignment type of the two sequences.
-    using alignment_type = std::tuple<fst_aligned_t, sec_aligned_t>;
+    using alignment_type = typename make_pairwise_alignment_type<fst_sequence_t, sec_sequence_t>::type;
 
     //!\brief The result type when building the aligned sequences.
     struct [[nodiscard]] result_type
