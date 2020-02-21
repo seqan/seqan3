@@ -68,7 +68,7 @@ struct make_aligned_sequence_type
 /*!\brief Builds the alignment for a given pair of sequences and the respective trace.
  * \ingroup alignment_matrix
  * \tparam fst_sequence_t The first sequence of the pairwise alignment; must model std::ranges::viewable_range.
- * \tparam sec_sequence_t The first sequence of the pairwise alignment; must model std::ranges::viewable_range.
+ * \tparam sec_sequence_t The second sequence of the pairwise alignment; must model std::ranges::viewable_range.
  *
  * \details
  *
@@ -100,6 +100,8 @@ private:
                   "sec_aligned_t is required to model seqan3::aligned_sequence!");
 
 public:
+    //!\brief The pairwise alignment type of the two sequences.
+    using alignment_type = std::tuple<fst_aligned_t, sec_aligned_t>;
 
     //!\brief The result type when building the aligned sequences.
     struct [[nodiscard]] result_type
@@ -110,7 +112,7 @@ public:
         std::pair<size_t, size_t> second_sequence_slice_positions{};
         //!\brief The alignment over the slices of the first and second sequence, which corresponds to the given
         //!\      trace path.
-        std::pair<fst_aligned_t, sec_aligned_t> alignment{};
+        alignment_type alignment{};
     };
 
     /*!\name Constructors, destructor and assignment
@@ -173,13 +175,17 @@ public:
         std::tie(res.first_sequence_slice_positions.first, res.second_sequence_slice_positions.first) =
             std::pair<size_t, size_t>{trace_it.coordinate()};
 
-        assign_unaligned(res.alignment.first, fst_rng  | views::slice(res.first_sequence_slice_positions.first,
-                                                                      res.first_sequence_slice_positions.second));
-        assign_unaligned(res.alignment.second, sec_rng | views::slice(res.second_sequence_slice_positions.first,
-                                                                      res.second_sequence_slice_positions.second));
+        assign_unaligned(std::get<0>(res.alignment),
+                         fst_rng | views::slice(res.first_sequence_slice_positions.first,
+                                                res.first_sequence_slice_positions.second));
+        assign_unaligned(std::get<1>(res.alignment),
+                         sec_rng | views::slice(res.second_sequence_slice_positions.first,
+                                                res.second_sequence_slice_positions.second));
 
         // Now we need to insert the values.
-        fill_aligned_sequence(trace_segments | std::views::reverse, res.alignment.first, res.alignment.second);
+        fill_aligned_sequence(trace_segments | std::views::reverse,
+                              std::get<0>(res.alignment),
+                              std::get<1>(res.alignment));
 
         return res;
     }
