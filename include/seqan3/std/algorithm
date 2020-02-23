@@ -33,6 +33,7 @@
 #include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/algorithm/find.hpp>
 #include <range/v3/algorithm/for_each.hpp>
+#include <range/v3/algorithm/generate.hpp>
 #include <range/v3/algorithm/max_element.hpp>
 #include <range/v3/algorithm/move_backward.hpp>
 #include <range/v3/algorithm/move.hpp>

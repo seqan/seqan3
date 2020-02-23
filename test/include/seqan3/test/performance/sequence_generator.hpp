@@ -15,6 +15,7 @@
 #include <random>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/test/seqan2.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
@@ -54,6 +55,23 @@ auto generate_sequence(size_t const len = 500,
 
     return sequence;
 }
+
+template <arithmetic number_type>
+auto generate_numeric_sequence(size_t const len = 500,
+                               number_type const min = std::numeric_limits<number_type>::lowest(),
+                               number_type const max = std::numeric_limits<number_type>::max(),
+                               size_t const seed = 0)
+{
+    std::mt19937_64 engine(seed);
+    std::uniform_int_distribution<size_t> dist{min, max};
+
+    auto gen = [&dist, &engine]() { return dist(engine); };
+    std::vector<number_type> sequence(len);
+    std::ranges::generate(sequence, gen);
+
+    return sequence;
+}
+
 
 template <typename alphabet_t>
 auto generate_sequence_pairs(size_t const sequence_length, size_t const set_size)
