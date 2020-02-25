@@ -81,7 +81,6 @@ tutorial
 ├── source
 ├── build
 └── seqan3
-    ├── CMakeLists.txt
     ├── LICENSE
     ├── README.md
     ├── build_system
@@ -89,6 +88,10 @@ tutorial
     ├── include
     ├── submodules
     └── test
+LICENSE.md
+CODE_OF_CONDUCT.md
+CHANGELOG.md
+CONTRIBUTING.md
 ```
 
 # Compiling and Running
