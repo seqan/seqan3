@@ -164,15 +164,15 @@ private:
     size_t technical_bins{};
     //!\brief The size of each bin in bits.
     size_t bin_size_{};
-    //!\brief How many bits do we need to represent `bin_size_`?
-    size_t bin_size_in_bits{};
+    //!\brief The number of bits to shift the hash value before doing multiplicative hashing.
+    size_t hash_shift{};
     //!\brief The number of 64-bit integers needed to store `bins` many bits (e.g. `bins = 50` -> `bin_words = 1`).
     size_t bin_words{};
     //!\brief The number of hash functions.
     size_t hash_funs{};
     //!\brief The bitvector.
     data_type data{};
-    //!\brief Precalculated seeds for hashing.
+    //!\brief Precalculated seeds for multiplicative hashing. We use large irrational numbers for a uniform hashing.
     static constexpr std::array<size_t, 5> hash_seeds{13572355802537770549ULL, // 2**64 / (e/2)
                                                       13043817825332782213ULL, // 2**64 / sqrt(2)
                                                       10650232656628343401ULL, // 2**64 / sqrt(3)
@@ -183,13 +183,15 @@ private:
 
     /*!\brief Perturbs a value and fits it into the vector.
      * \param h The value to process.
+     * \param i The seed to use.
      * \sa https://probablydance.com/2018/06/16/
      * \sa https://lemire.me/blog/2016/06/27
      */
-    constexpr void hash_and_fit(size_t & h) const
+    inline constexpr size_t hash_and_fit(size_t h, size_t const seed) const
     {
-        assert(bin_size_in_bits != 64);
-        h ^= h >> (64 - bin_size_in_bits); // Shift higher bits into lower bits
+        h *= seed;
+        assert(hash_shift > 0);
+        h ^= h >> hash_shift; // Shift higher bits into lower bits
         h *= 11400714819323198485ULL; // = 2^64 / golden_ration, to expand h to 64 bit range
         // Use fastrange (integer modulo without division) if possible.
 #ifdef __SIZEOF_INT128__
@@ -198,6 +200,7 @@ private:
         h %= bin_size_;
 #endif
         h *= technical_bins;
+        return h;
     }
 
 public:
@@ -245,7 +248,7 @@ public:
         if (bin_size_ == 0)
             throw std::logic_error{"The size of a bin must be > 0."};
 
-        bin_size_in_bits = 64 - detail::count_leading_zeros(bin_size_);
+        hash_shift = detail::count_leading_zeros(bin_size_);
         bin_words = (bins + 63) >> 6; // = ceil(bins/64)
         technical_bins  = bin_words << 6; // = bin_words * 64
         data = sdsl::bit_vector(technical_bins * bin_size_);
@@ -300,8 +303,7 @@ public:
         assert(bin.get() < bins);
         for (size_t i = 0; i < hash_funs; ++i)
         {
-            size_t idx = hash_seeds[i] * value;
-            hash_and_fit(idx);
+            size_t idx = hash_and_fit(value, hash_seeds[i]);
             idx += bin.get();
             assert(idx < data.size());
             data[idx] = 1;
@@ -391,29 +393,23 @@ public:
     {
         assert(result_buffer.size() == bin_count());
 
-        std::array<size_t, 5> idx;
-        std::memcpy(&idx, &hash_seeds, sizeof(size_t) * hash_funs);
+        std::array<size_t, 5> bloom_filter_indices;
+        std::memcpy(&bloom_filter_indices, &hash_seeds, sizeof(size_t) * hash_funs);
 
         for (size_t i = 0; i < hash_funs; ++i)
-        {
-            idx[i] *= value;
-            hash_and_fit(idx[i]);
-        }
+            bloom_filter_indices[i] = hash_and_fit(value, bloom_filter_indices[i]);
 
         for (size_t batch = 0; batch < bin_words; ++batch)
         {
-           assert(idx[0] < data.size());
-           size_t tmp = data.get_int(idx[0]);
-           idx[0] += 64;
-
-           for (size_t i = 1; i < hash_funs; ++i)
+           size_t tmp{-1ULL};
+           for (size_t i = 0; i < hash_funs; ++i)
            {
-               assert(idx[i] < data.size());
-               tmp &= data.get_int(idx[i]);
-               idx[i] += 64;
+               assert(bloom_filter_indices[i] < data.size());
+               tmp &= data.get_int(bloom_filter_indices[i]);
+               bloom_filter_indices[i] += 64;
            }
 
-           result_buffer.set_int(batch<<6, tmp);
+           result_buffer.set_int(batch << 6, tmp);
         }
 
         return result_buffer;
