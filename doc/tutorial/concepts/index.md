@@ -195,9 +195,8 @@ Try calling `print` with a different type, e.g. `int` to make sure that it does.
 \include doc/tutorial/concepts/overloading_solution1.cpp
 \endsolution
 
-\assignment{Assignment 2: Static polymorphism with alphabets II}
-Adapt your previous solution to handle nucleotides different from the rest. For nucleotides it should print,
-both, the value and its complement.
+\assignment{Assignment 2:: Static polymorphism with alphabets II}
+Adapt your previous solution to handle nucleotides differently from the rest. For nucleotides, it should print both the value and its complement.
 \endassignment
 \solution
 \include doc/tutorial/concepts/overloading_solution2.cpp
