@@ -184,6 +184,7 @@ private:
     /*!\brief Perturbs a value and fits it into the vector.
      * \param h The value to process.
      * \param i The seed to use.
+     * \returns A hashed value representing a position within the bounds of `data`.
      * \sa https://probablydance.com/2018/06/16/
      * \sa https://lemire.me/blog/2016/06/27
      */
