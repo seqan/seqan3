@@ -21,6 +21,8 @@ using seqan3::operator""_dna4;
 using seqan3::operator""_dna5;
 using seqan3::operator""_phred42;
 
+using default_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
+
 TEST(alignment_file_input_iterator, concepts)
 {
     using it_t = typename seqan3::alignment_file_input<>::iterator;
@@ -128,19 +130,18 @@ TEST_F(alignment_file_input_f, construct_by_filename)
 
 TEST_F(alignment_file_input_f, construct_from_stream)
 {
-    using fields_seq_id_qual = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
     /* stream + format_tag */
     EXPECT_NO_THROW(( seqan3::alignment_file_input<seqan3::alignment_file_input_default_traits<>,
-                                                   fields_seq_id_qual,
+                                                   default_fields,
                                                    seqan3::type_list<seqan3::format_sam>>{std::istringstream{input},
                                                                                           seqan3::format_sam{}} ));
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( seqan3::alignment_file_input<seqan3::alignment_file_input_default_traits<>,
-                                                   fields_seq_id_qual,
+                                                   default_fields,
                                                    seqan3::type_list<seqan3::format_sam>>{std::istringstream{input},
                                                                                           seqan3::format_sam{},
-                                                                                          fields_seq_id_qual{}} ));
+                                                                                          default_fields{}} ));
 }
 
 TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)

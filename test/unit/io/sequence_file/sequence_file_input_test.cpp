@@ -18,6 +18,8 @@
 
 using seqan3::operator""_dna5;
 
+using default_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
+
 TEST(sequence_file_input_iterator, concepts)
 {
     using it_t = typename seqan3::sequence_file_input<>::iterator;
@@ -112,26 +114,23 @@ TEST_F(sequence_file_input_f, construct_by_filename)
 
 TEST_F(sequence_file_input_f, construct_from_stream)
 {
-    using fields_seq_id_qual = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
-
     /* stream + format_tag */
     EXPECT_NO_THROW(( seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_dna,
-                                                  fields_seq_id_qual,
+                                                  default_fields,
                                                   seqan3::type_list<seqan3::format_fasta>>{std::istringstream{input},
                                                                                            seqan3::format_fasta{}} ));
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW(( seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_dna,
-                                                  fields_seq_id_qual,
+                                                  default_fields,
                                                   seqan3::type_list<seqan3::format_fasta>>{std::istringstream{input},
                                                                                            seqan3::format_fasta{},
-                                                                                           fields_seq_id_qual{}} ));
+                                                                                           default_fields{}} ));
 }
 
 TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 {
     using comp0 = seqan3::sequence_file_input_default_traits_dna;
-    using comp1 = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
     using comp2 = seqan3::type_list<seqan3::format_embl,
                                     seqan3::format_fasta,
                                     seqan3::format_fastq,
@@ -143,7 +142,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
     {
         using t = seqan3::sequence_file_input<>;
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, default_fields>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -160,7 +159,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, default_fields>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -189,7 +188,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, default_fields>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      seqan3::type_list<seqan3::format_fasta>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -200,7 +199,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, default_fields>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      seqan3::type_list<seqan3::format_fasta>>)); // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }

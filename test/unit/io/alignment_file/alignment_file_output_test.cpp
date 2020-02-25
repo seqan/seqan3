@@ -21,6 +21,8 @@
 using seqan3::operator""_dna4;
 using seqan3::operator""_dna5;
 
+using default_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
+
 std::vector<seqan3::dna5_vector> seqs
 {
     "ACGT"_dna5,
@@ -92,27 +94,24 @@ TEST(general, construct_by_filename)
     {
         seqan3::test::tmp_filename filename{"alignment_file_output_constructor.sam"};
         EXPECT_NO_THROW(( seqan3::alignment_file_output<fields_seq,
-                                                        seqan3::type_list<seqan3::format_sam>>{ filename.get_path(),
+                                                        seqan3::type_list<seqan3::format_sam>>{filename.get_path(),
                                                                                                 fields_seq{}} ));
     }
 }
 
 TEST(general, construct_from_stream)
 {
-    using fields_seq_id_qual = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
     /* stream + format_tag */
-    EXPECT_NO_THROW(( seqan3::alignment_file_output<fields_seq_id_qual,
+    EXPECT_NO_THROW(( seqan3::alignment_file_output<default_fields,
                                                     seqan3::type_list<seqan3::format_sam>>{std::ostringstream{},
                                                                                            seqan3::format_sam{}} ));
 
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW(( seqan3::alignment_file_output<seqan3::fields<seqan3::field::seq,
-                                                                   seqan3::field::id,
-                                                                   seqan3::field::qual>,
+    EXPECT_NO_THROW(( seqan3::alignment_file_output<default_fields,
                                                     seqan3::type_list<seqan3::format_sam>>{std::ostringstream{},
                                                                                            seqan3::format_sam{},
-                                                                                           fields_seq_id_qual{}} ));
+                                                                                           default_fields{}} ));
 }
 
 TEST(general, default_template_args_and_deduction_guides)

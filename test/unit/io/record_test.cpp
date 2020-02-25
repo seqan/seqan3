@@ -18,23 +18,24 @@
 
 using seqan3::operator""_dna4;
 
+using default_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
+
 // ----------------------------------------------------------------------------
 // fields
 // ----------------------------------------------------------------------------
 
 TEST(fields, usage)
 {
-    using fields_t = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
     std::array comp{seqan3::field::seq, seqan3::field::id, seqan3::field::qual};
 
-    EXPECT_TRUE(std::ranges::equal(fields_t::as_array, comp));
-    EXPECT_TRUE(fields_t::contains(seqan3::field::seq));
-    EXPECT_TRUE(fields_t::contains(seqan3::field::id));
-    EXPECT_TRUE(fields_t::contains(seqan3::field::qual));
-    EXPECT_FALSE(fields_t::contains(seqan3::field::seq_qual));
-    EXPECT_EQ(fields_t::index_of(seqan3::field::seq), 0ul);
-    EXPECT_EQ(fields_t::index_of(seqan3::field::id),  1ul);
-    EXPECT_EQ(fields_t::index_of(seqan3::field::qual), 2ul);
+    EXPECT_TRUE(std::ranges::equal(default_fields::as_array, comp));
+    EXPECT_TRUE(default_fields::contains(seqan3::field::seq));
+    EXPECT_TRUE(default_fields::contains(seqan3::field::id));
+    EXPECT_TRUE(default_fields::contains(seqan3::field::qual));
+    EXPECT_FALSE(default_fields::contains(seqan3::field::seq_qual));
+    EXPECT_EQ(default_fields::index_of(seqan3::field::seq), 0ul);
+    EXPECT_EQ(default_fields::index_of(seqan3::field::id),  1ul);
+    EXPECT_EQ(default_fields::index_of(seqan3::field::qual), 2ul);
 }
 
 // ----------------------------------------------------------------------------
