@@ -15,7 +15,6 @@
 #include <array>
 #include <type_traits>
 
-#include <sdsl/csa_alphabet_strategy.hpp>
 #include <sdsl/suffix_trees.hpp>
 
 #include <range/v3/view/slice.hpp>

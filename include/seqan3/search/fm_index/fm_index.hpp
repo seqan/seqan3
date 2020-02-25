@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <sdsl/csa_alphabet_strategy.hpp>
 #include <sdsl/suffix_trees.hpp>
 
 #include <seqan3/core/type_traits/range.hpp>
