@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <sdsl/csa_alphabet_strategy.hpp>
 #include <sdsl/suffix_trees.hpp>
 
 #include <seqan3/core/type_traits/range.hpp>
@@ -21,7 +22,6 @@
 #include <seqan3/range/views/to_rank.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
-#include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/std/algorithm>
