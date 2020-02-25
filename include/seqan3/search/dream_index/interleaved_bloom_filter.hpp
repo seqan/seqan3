@@ -183,7 +183,7 @@ private:
 
     /*!\brief Perturbs a value and fits it into the vector.
      * \param h The value to process.
-     * \param i The seed to use.
+     * \param seed The seed to use.
      * \returns A hashed value representing a position within the bounds of `data`.
      * \sa https://probablydance.com/2018/06/16/
      * \sa https://lemire.me/blog/2016/06/27
@@ -191,8 +191,8 @@ private:
     inline constexpr size_t hash_and_fit(size_t h, size_t const seed) const
     {
         h *= seed;
-        assert(hash_shift > 0);
-        h ^= h >> hash_shift; // Shift higher bits into lower bits
+        assert(hash_shift < 64);
+        h ^= h >> hash_shift; // XOR and shift higher bits into lower bits
         h *= 11400714819323198485ULL; // = 2^64 / golden_ration, to expand h to 64 bit range
         // Use fastrange (integer modulo without division) if possible.
 #ifdef __SIZEOF_INT128__
@@ -273,8 +273,8 @@ public:
         requires data_layout_mode == data_layout::compressed
     //!\endcond
     {
-        std::tie(bins, technical_bins, bin_size_, bin_words, hash_funs) =
-            std::tie(ibf.bins, ibf.technical_bins, ibf.bin_size_, ibf.bin_words, ibf.hash_funs);
+        std::tie(bins, technical_bins, bin_size_, hash_shift, bin_words, hash_funs) =
+            std::tie(ibf.bins, ibf.technical_bins, ibf.bin_size_, ibf.hash_shift, ibf.bin_words, ibf.hash_funs);
 
         data = sdsl::sd_vector<>{ibf.data};
         result_buffer.resize(bins);
