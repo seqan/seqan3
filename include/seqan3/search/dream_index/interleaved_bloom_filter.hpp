@@ -14,10 +14,10 @@
 
 #include <sdsl/bit_vectors.hpp>
 
+#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -164,6 +164,8 @@ private:
     size_t technical_bins{};
     //!\brief The size of each bin in bits.
     size_t bin_size_{};
+    //!\brief How many bits do we need to represent `bin_size_`?
+    size_t bin_size_in_bits{};
     //!\brief The number of 64-bit integers needed to store `bins` many bits (e.g. `bins = 50` -> `bin_words = 1`).
     size_t bin_words{};
     //!\brief The number of hash functions.
@@ -171,7 +173,11 @@ private:
     //!\brief The bitvector.
     data_type data{};
     //!\brief Precalculated seeds for hashing.
-    std::vector<size_t> hash_seeds{};
+    static constexpr std::array<size_t, 5> hash_seeds{13572355802537770549ULL, // 2**64 / (e/2)
+                                                      13043817825332782213ULL, // 2**64 / sqrt(2)
+                                                      10650232656628343401ULL, // 2**64 / sqrt(3)
+                                                      16499269484942379435ULL, // 2**64 / (sqrt(5)/2)
+                                                      4893150838803335377ULL}; // 2**64 / (3*pi/5)
     //!\brief The result buffer for a `bulk_contains()` query.
     mutable binning_bitvector result_buffer{};
 
@@ -182,6 +188,8 @@ private:
      */
     constexpr void hash_and_fit(size_t & h) const
     {
+        assert(bin_size_in_bits != 64);
+        h ^= h >> (64 - bin_size_in_bits); // Shift higher bits into lower bits
         h *= 11400714819323198485ULL; // = 2^64 / golden_ration, to expand h to 64 bit range
         // Use fastrange (integer modulo without division) if possible.
 #ifdef __SIZEOF_INT128__
@@ -209,7 +217,7 @@ public:
     /*!\brief Construct an uncompressed Interleaved Bloom Filter.
      * \param bins_ The number of bins.
      * \param size The bitvector size.
-     * \param funs The number of hash functions. Default 2.
+     * \param funs The number of hash functions. Default 2. At least 1, at most 5.
      *
      * \attention This constructor can only be used to construct **uncompressed** Interleaved Bloom Filters.
      *
@@ -232,20 +240,17 @@ public:
 
         if (bins == 0)
             throw std::logic_error{"The number of bins must be > 0."};
-        if (hash_funs == 0)
-            throw std::logic_error{"The number of hash functions must be > 0."};
+        if (hash_funs == 0 || hash_funs > 5)
+            throw std::logic_error{"The number of hash functions must be > 0 and <= 5."};
         if (bin_size_ == 0)
             throw std::logic_error{"The size of a bin must be > 0."};
 
+        bin_size_in_bits = 64 - detail::count_leading_zeros(bin_size_);
         bin_words = (bins + 63) >> 6; // = ceil(bins/64)
         technical_bins  = bin_words << 6; // = bin_words * 64
         data = sdsl::bit_vector(technical_bins * bin_size_);
 
         result_buffer.resize(bins);
-        hash_seeds.resize(hash_funs);
-
-        for (size_t i = 0; i < hash_funs; ++i)
-            hash_seeds[i] = i ^ 0x90b45d39fb6da1fa;
     }
 
     /*!\brief Construct a compressed Interleaved Bloom Filter.
@@ -264,8 +269,8 @@ public:
         requires data_layout_mode == data_layout::compressed
     //!\endcond
     {
-        std::tie(bins, technical_bins, bin_size_, bin_words, hash_funs, hash_seeds) =
-            std::tie(ibf.bins, ibf.technical_bins, ibf.bin_size_, ibf.bin_words, ibf.hash_funs, ibf.hash_seeds);
+        std::tie(bins, technical_bins, bin_size_, bin_words, hash_funs) =
+            std::tie(ibf.bins, ibf.technical_bins, ibf.bin_size_, ibf.bin_words, ibf.hash_funs);
 
         data = sdsl::sd_vector<>{ibf.data};
         result_buffer.resize(bins);
@@ -293,12 +298,12 @@ public:
     //!\endcond
     {
         assert(bin.get() < bins);
-        for (auto const & seed : hash_seeds)
+        for (size_t i = 0; i < hash_funs; ++i)
         {
-            size_t idx = seed * value;
+            size_t idx = hash_seeds[i] * value;
             hash_and_fit(idx);
             idx += bin.get();
-            assert (idx < data.size());
+            assert(idx < data.size());
             data[idx] = 1;
         };
     }
@@ -386,9 +391,14 @@ public:
     {
         assert(result_buffer.size() == bin_count());
 
-        std::vector<size_t> idx = hash_seeds;
+        std::array<size_t, 5> idx;
+        std::memcpy(&idx, &hash_seeds, sizeof(size_t) * hash_funs);
 
-        std::ranges::for_each(idx, [this, value] (size_t & i) { i *= value; hash_and_fit(i); });
+        for (size_t i = 0; i < hash_funs; ++i)
+        {
+            idx[i] *= value;
+            hash_and_fit(idx[i]);
+        }
 
         for (size_t batch = 0; batch < bin_words; ++batch)
         {
@@ -491,7 +501,6 @@ public:
         archive(bin_words);
         archive(hash_funs);
         archive(data);
-        archive(hash_seeds);
     }
     //!\endcond
 };

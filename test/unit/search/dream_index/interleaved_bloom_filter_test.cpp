@@ -54,6 +54,11 @@ TYPED_TEST(interleaved_bloom_filter_test, construction)
                                         seqan3::bin_size{32u},
                                         seqan3::hash_function_count{0u})),
                  std::logic_error);
+    // too many hash functions
+    EXPECT_THROW((TestFixture::make_ibf(seqan3::bin_count{64u},
+                                        seqan3::bin_size{32u},
+                                        seqan3::hash_function_count{6u})),
+                 std::logic_error);
 }
 
 TYPED_TEST(interleaved_bloom_filter_test, member_getter)
