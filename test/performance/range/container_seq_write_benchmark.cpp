@@ -33,10 +33,20 @@ void sequential_write(benchmark::State & state)
     container_t<alphabet_t> source(cont_rando.begin(), cont_rando.end());
 
     alphabet_t a{};
+
     for (auto _ : state)
     {
         for (auto && c : source)
-            c = a;
+        {
+            if constexpr (std::is_same_v<container_t<seqan3::dna4>, seqan3::bitcompressed_vector<seqan3::dna4>>)
+                benchmark::DoNotOptimize(std::forward<decltype(c)>(c) = a);
+//             if constexpr (!std::is_lvalue_reference_v<std::ranges::range_reference_t<container_t<alphabet_t>>>)
+//                 c = a;
+            else
+                benchmark::DoNotOptimize(c = a);
+//             auto & r = (c = a);
+//             benchmark::DoNotOptimize(r);
+        }
     }
 
     state.counters["sizeof"] = sizeof(alphabet_t);
@@ -121,7 +131,7 @@ void sequential_write2(benchmark::State & state)
     for (auto _ : state)
     {
         for (auto && c : source)
-            c = a;
+            benchmark::DoNotOptimize(c = a);
     }
 
     state.counters["sizeof"] = sizeof(alphabet_t);

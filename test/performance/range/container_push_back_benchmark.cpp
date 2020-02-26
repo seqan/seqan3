@@ -13,6 +13,7 @@
 
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/range/container/all.hpp>
+#include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
 
 template <typename t>
@@ -28,14 +29,19 @@ using small_vec = seqan3::small_vector<t, 10'000>;
 template <template <typename> typename container_t, typename alphabet_t>
 void push_back(benchmark::State & state)
 {
-    alphabet_t a{};
+    auto random_input = seqan3::test::generate_sequence<alphabet_t>(10'000, 0, 0);
+    alphabet_t no_opt{};
 
     for (auto _ : state)
     {
         container_t<alphabet_t> c;
-        for (size_t i = 0; i < 10'000; ++i)
+        for (alphabet_t a : random_input)
+        {
             c.push_back(a);
-        benchmark::DoNotOptimize(a = c.back());
+            benchmark::DoNotOptimize(c.size());
+        }
+
+        benchmark::DoNotOptimize(no_opt = c.back());
     }
 
     state.counters["sizeof"] = sizeof(alphabet_t);
@@ -113,25 +119,30 @@ BENCHMARK_TEMPLATE(push_back, small_vec, seqan3::alphabet_variant<char, seqan3::
 template <template <typename...> typename container_t, typename spec_t, typename alphabet_t>
 void push_back2(benchmark::State & state)
 {
-    alphabet_t a{};
+    auto random_input = seqan3::test::generate_sequence_seqan2<alphabet_t>(10'000, 0, 0);
+    alphabet_t no_opt{};
 
     for (auto _ : state)
     {
         container_t<alphabet_t, spec_t> c;
-        for (size_t i = 0; i < 10'000; ++i)
+        for (auto a : random_input)
+        {
             seqan::appendValue(c, a);
-        a = seqan::back(c);
+            benchmark::DoNotOptimize(seqan::length(c));
+        }
+        benchmark::DoNotOptimize(no_opt = seqan::back(c));
     }
 
+    [[maybe_unused]] volatile size_t no_opt2 = static_cast<size_t>(no_opt);
     state.counters["sizeof"] = sizeof(alphabet_t);
     state.counters["alph_size"] = seqan::ValueSize<alphabet_t>::VALUE;
 }
 
-BENCHMARK_TEMPLATE(push_back, std::vector, seqan::Dna);
-BENCHMARK_TEMPLATE(push_back, std::vector, seqan::Dna5);
-BENCHMARK_TEMPLATE(push_back, std::vector, seqan::Iupac);
-BENCHMARK_TEMPLATE(push_back, std::vector, seqan::AminoAcid);
-BENCHMARK_TEMPLATE(push_back, std::vector, seqan::Dna5Q);
+// BENCHMARK_TEMPLATE(push_back, std::vector, seqan::Dna);
+// BENCHMARK_TEMPLATE(push_back, std::vector, seqan::Dna5);
+// BENCHMARK_TEMPLATE(push_back, std::vector, seqan::Iupac);
+// BENCHMARK_TEMPLATE(push_back, std::vector, seqan::AminoAcid);
+// BENCHMARK_TEMPLATE(push_back, std::vector, seqan::Dna5Q);
 
 BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, char);
 BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, uint8_t);
@@ -139,12 +150,12 @@ BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, uint16_t);
 BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, uint32_t);
 BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, uint64_t);
 
-BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::gap);
-BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::dna4);
-BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::gapped<seqan3::dna4>);
-BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::dna15);
-BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::aa27);
-BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::alphabet_variant<char, seqan3::dna4>);
+// BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::gap);
+// BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::dna4);
+// BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::gapped<seqan3::dna4>);
+// BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::dna15);
+// BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::aa27);
+// BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan3::alphabet_variant<char, seqan3::dna4>);
 
 BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan::Dna);
 BENCHMARK_TEMPLATE(push_back2, seqan::String, seqan::Alloc<>, seqan::Dna5);
