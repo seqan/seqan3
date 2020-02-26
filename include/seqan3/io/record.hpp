@@ -224,6 +224,27 @@ struct fields
 template <typename field_types, typename field_ids>
 struct record : detail::transfer_template_args_onto_t<field_types, std::tuple>
 {
+private:
+    //!\brief Auxiliary functions for clear().
+    template <typename t>
+    //!\cond
+        requires requires (t & v) { v.clear(); }
+    //!\endcond
+    static constexpr void clear_element(t & v) noexcept(noexcept(v.clear()))
+    {
+        v.clear();
+    }
+
+    //!\overload
+    template <typename t>
+    static constexpr void clear_element(t & v) noexcept(noexcept(std::declval<t &>() = t{}))
+    {
+        v = {};
+    }
+
+    //!\brief A lambda function that expands a pack and calls `clear_element` on every argument in the pack.
+    static constexpr auto expander = [] (auto & ...args) { (clear_element(args), ...); };
+
 public:
     //!\brief A specialisation of std::tuple.
     using base_type = detail::transfer_template_args_onto_t<field_types, std::tuple>;
@@ -231,12 +252,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    record() = default;                           //!< Defaulted
-    record(record const &) = default;             //!< Defaulted
-    record & operator=(record const &) = default; //!< Defaulted
-    record(record &&) = default;                  //!< Defaulted
-    record & operator=(record &&) = default;      //!< Defaulted
-    ~record() = default;                          //!< Defaulted
+    record() = default;                           //!< Defaulted.
+    record(record const &) = default;             //!< Defaulted.
+    record & operator=(record const &) = default; //!< Defaulted.
+    record(record &&) = default;                  //!< Defaulted.
+    record & operator=(record &&) = default;      //!< Defaulted.
+    ~record() = default;                          //!< Defaulted.
 
     //!\brief Inherit std::tuple's constructors.
     using base_type::base_type;
@@ -245,17 +266,10 @@ public:
     static_assert(field_types::size() == field_ids::as_array.size(),
                   "You must give as many IDs as types to seqan3::record.");
 
-    //!\brief (Re-)Initialise all tuple elements with `{}`.
-    void clear()
+    //!\brief Clears containers that provide `.clear()` and (re-)initialises all other elements with `= {}`.
+    void clear() noexcept(noexcept(std::apply(expander, std::declval<record &>())))
     {
-        clear_impl(*this, std::make_integer_sequence<size_t, field_types::size()>{});
-    }
-private:
-    //!\brief Auxiliary function for clear().
-    template <size_t ...Is>
-    constexpr void clear_impl(base_type & tup, std::integer_sequence<size_t, Is...> const &)
-    {
-        ((std::get<Is>(tup) = {}), ...);
+        std::apply(expander, *this);
     }
 };
 
