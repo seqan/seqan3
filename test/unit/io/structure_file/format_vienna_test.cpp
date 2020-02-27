@@ -21,7 +21,8 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 
-using namespace seqan3;
+using seqan3::operator""_rna5;
+using seqan3::operator""_wuss51;
 
 // ----------------------------------------------------------------------------
 // general
@@ -29,8 +30,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((structure_file_input_format<format_vienna>));
-    EXPECT_TRUE((structure_file_output_format<format_vienna>));
+    EXPECT_TRUE((seqan3::structure_file_input_format<seqan3::format_vienna>));
+    EXPECT_TRUE((seqan3::structure_file_output_format<seqan3::format_vienna>));
 }
 
 // ----------------------------------------------------------------------------
@@ -55,13 +56,13 @@ struct read : public ::testing::Test
         { "example 2" }
     };
 
-    std::vector<rna5_vector> const expected_seq
+    std::vector<seqan3::rna5_vector> const expected_seq
     {
         { "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5 },
         { "UUGGAGUACACAACCUGUACACUCUUUC"_rna5 }
     };
 
-    std::vector<std::vector<wuss<51>>> const expected_structure
+    std::vector<std::vector<seqan3::wuss<51>>> const expected_structure
     {
         { "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51 },
         { "..(((((..(((...)))..)))))..."_wuss51 }
@@ -83,7 +84,7 @@ struct read : public ::testing::Test
         }
     };
 
-    structure_file_input_options<rna15, false> options;
+    seqan3::structure_file_input_options<seqan3::rna15, false> options;
 
     bool check_seq = true;
     bool check_id = true;
@@ -107,20 +108,29 @@ struct read : public ::testing::Test
     {
         std::stringstream istream{input};
 
-        auto field_set = fields<field::id, field::seq, field::bpp, field::structure, field::energy>{};
-        structure_file_input fin{istream, format_vienna{}, field_set};
+        auto field_set = seqan3::fields<seqan3::field::id,
+                                        seqan3::field::seq,
+                                        seqan3::field::bpp,
+                                        seqan3::field::structure,
+                                        seqan3::field::energy>{};
+        seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, field_set};
         fin.options = options;
 
         auto it = fin.begin();
         for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
         {
-            EXPECT_EQ(check_energy, get<field::energy>(*it).has_value());
-            if (check_seq)       { EXPECT_TRUE((std::ranges::equal(get<field::seq>(*it), expected_seq[idx]))); }
-            if (check_id)        { EXPECT_TRUE((std::ranges::equal(get<field::id>(*it), expected_id[idx]))); }
-            if (check_structure) { bpp_test(get<field::bpp>(*it), expected_interactions[idx]); }
-            if (check_energy)    { EXPECT_DOUBLE_EQ(*get<field::energy>(*it), expected_energy[idx]); }
+            EXPECT_EQ(check_energy, seqan3::get<seqan3::field::energy>(*it).has_value());
+            if (check_seq)
+                {EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx])));}
+            if (check_id)
+                {EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(*it), expected_id[idx])));}
             if (check_structure)
-                { EXPECT_TRUE(( std::ranges::equal(get<field::structure>(*it), expected_structure[idx]) )); }
+                {bpp_test(                       seqan3::get<seqan3::field::bpp>(*it), expected_interactions[idx]);}
+            if (check_energy)
+                {EXPECT_DOUBLE_EQ(               *seqan3::get<seqan3::field::energy>(*it), expected_energy[idx]);}
+            if (check_structure)
+                {EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::structure>(*it),
+                                                 expected_structure[idx])));}
         }
     }
 };
@@ -223,57 +233,60 @@ struct read_fields : public read {};
 TEST_F(read_fields, only_seq)
 {
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}, fields<field::seq>{}};
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq>{}};
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_TRUE(std::ranges::equal(get<field::seq>(*it), expected_seq[idx]));
+        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx]));
     }
 }
 
 TEST_F(read_fields, only_id)
 {
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}, fields<field::id>{}};
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::id>{}};
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_TRUE(std::ranges::equal(get<field::id>(*it), expected_id[idx]));
+        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::id>(*it), expected_id[idx]));
     }
 }
 
 TEST_F(read_fields, only_structure)
 {
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}, fields<field::structure>{}};
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::structure>{}};
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_TRUE(std::ranges::equal(get<field::structure>(*it), expected_structure[idx]));
+        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::structure>(*it), expected_structure[idx]));
     }
 }
 
 TEST_F(read_fields, only_energy)
 {
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}, fields<field::energy>{}};
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::energy>{}};
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_TRUE(get<field::energy>(*it));
-        EXPECT_DOUBLE_EQ(*get<field::energy>(*it), expected_energy[idx]);
+        EXPECT_TRUE(seqan3::get<seqan3::field::energy>(*it));
+        EXPECT_DOUBLE_EQ(*seqan3::get<seqan3::field::energy>(*it), expected_energy[idx]);
     }
 }
 
 TEST_F(read_fields, structured_seq)
 {
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}, fields<field::structured_seq>{}};
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::structured_seq>{}};
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_TRUE(std::ranges::equal(get<field::structured_seq>(*it) | views::convert<rna5>, expected_seq[idx]));
-        EXPECT_TRUE(std::ranges::equal(get<field::structured_seq>(*it) | views::convert<wuss<51>>,
+        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::structured_seq>(*it)
+                                       | seqan3::views::convert<seqan3::rna5>,
+                                       expected_seq[idx]));
+        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::structured_seq>(*it)
+                                       | seqan3::views::convert<seqan3::wuss<51>>,
                                        expected_structure[idx]));
     }
 }
@@ -281,11 +294,11 @@ TEST_F(read_fields, structured_seq)
 TEST_F(read_fields, only_bpp)
 {
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}, fields<field::bpp>{}};
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::bpp>{}};
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        bpp_test(get<field::bpp>(*it), expected_interactions[idx]);
+        bpp_test(seqan3::get<seqan3::field::bpp>(*it), expected_interactions[idx]);
     }
 }
 
@@ -295,8 +308,8 @@ TEST_F(read_fail, wrong_id)
 {
     input[0] = '#'; // invalid character for ID line
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 TEST_F(read_fail, missing_seq)
@@ -307,8 +320,8 @@ TEST_F(read_fail, missing_seq)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
     };
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 TEST_F(read_fail, missing_structure)
@@ -321,8 +334,8 @@ TEST_F(read_fail, missing_structure)
         "UUGGAGUACACAACCUGUACACUCUUUC\n"
     };
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 TEST_F(read_fail, missing_structure_and_id)
@@ -333,8 +346,8 @@ TEST_F(read_fail, missing_structure_and_id)
         "UUGGAGUACACAACCUGUACACUCUUUC\n"
     };
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 TEST_F(read_fail, structure_too_long)
@@ -346,8 +359,8 @@ TEST_F(read_fail, structure_too_long)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).. (-17.50)\n"
     };
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 TEST_F(read_fail, structure_too_short)
@@ -359,8 +372,8 @@ TEST_F(read_fail, structure_too_short)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))) (-17.50)\n"
     };
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 TEST_F(read_fail, structure_too_long_structured_seq)
@@ -372,8 +385,8 @@ TEST_F(read_fail, structure_too_long_structured_seq)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).. (-17.50)\n"
     };
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}, fields<field::structured_seq>{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::structured_seq>{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 TEST_F(read_fail, structure_too_short_structured_seq)
@@ -385,8 +398,8 @@ TEST_F(read_fail, structure_too_short_structured_seq)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))) (-17.50)\n"
     };
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}, fields<field::structured_seq>{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::structured_seq>{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 TEST_F(read_fail, wrong_char)
@@ -398,8 +411,8 @@ TEST_F(read_fail, wrong_char)
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
     };
     std::stringstream istream{input};
-    structure_file_input fin{istream, format_vienna{}};
-    EXPECT_THROW(fin.begin(), parse_error);
+    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}};
+    EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
 // ----------------------------------------------------------------------------
@@ -414,13 +427,13 @@ struct write : public ::testing::Test
         { "example 2" }
     };
 
-    std::vector<rna5_vector> const seq
+    std::vector<seqan3::rna5_vector> const seq
     {
         { "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5 },
         { "UUGGAGUACACAACCUGUACACUCUUUC"_rna5 }
     };
 
-    std::vector<std::vector<wuss<51>>> const structure
+    std::vector<std::vector<seqan3::wuss<51>>> const structure
     {
         { "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51 },
         { "..(((((..(((...)))..)))))..."_wuss51 }
@@ -436,7 +449,10 @@ struct write : public ::testing::Test
 
 TEST_F(write, standard)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::seq, field::id, field::structure, field::energy>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq,
+                                                                                        seqan3::field::id,
+                                                                                        seqan3::field::structure,
+                                                                                        seqan3::field::energy>{}};
     for (size_t i = 0ul; i < seq.size(); ++i)
         fout.emplace_back(seq[i], id[i], structure[i], energy[i]);
         //EXPECT_NO_THROW(format.write(ostream, options, seq[i], id[i], ig, structure[i], energy[i], ig, ig, ig, ig));
@@ -456,7 +472,10 @@ TEST_F(write, standard)
 
 TEST_F(write, option_precision)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::seq, field::id, field::structure, field::energy>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq,
+                                                                                        seqan3::field::id,
+                                                                                        seqan3::field::structure,
+                                                                                        seqan3::field::energy>{}};
     fout.options.precision = 2; // we want 2 digits for energy
     for (size_t i = 0ul; i < seq.size(); ++i)
         fout.emplace_back(seq[i], id[i], structure[i], energy[i]);
@@ -476,7 +495,10 @@ TEST_F(write, option_precision)
 
 TEST_F(write, option_add_carriage_return)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::seq, field::id, field::structure, field::energy>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq,
+                                                                                        seqan3::field::id,
+                                                                                        seqan3::field::structure,
+                                                                                        seqan3::field::energy>{}};
     fout.options.add_carriage_return = true;
     for (size_t i = 0ul; i < seq.size(); ++i)
         fout.emplace_back(seq[i], id[i], structure[i], energy[i]);
@@ -498,7 +520,9 @@ struct write_fields : public write {};
 
 TEST_F(write_fields, id_missing)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::seq, field::structure, field::energy>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq,
+                                                                                        seqan3::field::structure,
+                                                                                        seqan3::field::energy>{}};
     fout.options.precision = 2; // we want 2 digits for energy
     for (size_t i = 0ul; i < seq.size(); ++i)
         fout.emplace_back(seq[i], structure[i], energy[i]);
@@ -516,7 +540,9 @@ TEST_F(write_fields, id_missing)
 
 TEST_F(write_fields, energy_missing)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::seq, field::id, field::structure>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq,
+                                                                                        seqan3::field::id,
+                                                                                        seqan3::field::structure>{}};
     for (size_t i = 0ul; i < seq.size(); ++i)
         fout.emplace_back(seq[i], id[i], structure[i]);
 
@@ -535,13 +561,16 @@ TEST_F(write_fields, energy_missing)
 
 TEST_F(write_fields, structure_missing)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::seq, field::id, field::energy>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq,
+                                                                                        seqan3::field::id,
+                                                                                        seqan3::field::energy>{}};
     EXPECT_THROW(fout.emplace_back(seq[0], id[0], energy[0]), std::logic_error);
 }
 
 TEST_F(write_fields, structure_and_energy_missing)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::seq, field::id>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq,
+                                                                                        seqan3::field::id>{}};
     for (size_t i = 0ul; i < seq.size(); ++i)
         fout.emplace_back(seq[i], id[i]);
 
@@ -558,19 +587,24 @@ TEST_F(write_fields, structure_and_energy_missing)
 
 TEST_F(write_fields, seq_missing)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::id, field::structure, field::energy>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::id,
+                                                                                        seqan3::field::structure,
+                                                                                        seqan3::field::energy>{}};
     EXPECT_THROW(fout.emplace_back(id[0], structure[0], energy[0]), std::logic_error);
 }
 
 TEST_F(write_fields, seq_empty)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::seq, field::id, field::structure, field::energy>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq,
+                                                                                        seqan3::field::id,
+                                                                                        seqan3::field::structure,
+                                                                                        seqan3::field::energy>{}};
     EXPECT_THROW(fout.emplace_back(""_rna5, id[0], structure[0], energy[0]), std::runtime_error);
 }
 
 TEST_F(write_fields, only_seq)
 {
-    structure_file_output fout{ostream, format_vienna{}, fields<field::seq>{}};
+    seqan3::structure_file_output fout{ostream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::seq>{}};
     for (size_t i = 0ul; i < seq.size(); ++i)
         fout.emplace_back(seq[i]);
 
@@ -585,7 +619,7 @@ TEST_F(write_fields, only_seq)
 
 TEST_F(write_fields, structured_seq)
 {
-    std::vector<std::vector<structured_rna<rna5, wuss<51>>>> structured_seq;
+    std::vector<std::vector<seqan3::structured_rna<seqan3::rna5, seqan3::wuss<51>>>> structured_seq;
     structured_seq.resize(seq.size());
 
     for (unsigned i = 0; i < seq.size(); ++i)
@@ -598,7 +632,9 @@ TEST_F(write_fields, structured_seq)
         }
     }
 
-    structure_file_output fout{ostream, format_vienna{}, fields<field::structured_seq>{}};
+    seqan3::structure_file_output fout{ostream,
+                                       seqan3::format_vienna{},
+                                       seqan3::fields<seqan3::field::structured_seq>{}};
 
     for (size_t i = 0ul; i < seq.size(); ++i)
         fout.emplace_back(structured_seq[i]);

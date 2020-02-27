@@ -12,7 +12,7 @@
 #include "../../io/stream/ostream_test_template.hpp"
 
 template <>
-class ostream<contrib::bgzf_ostream> : public ::testing::Test
+class ostream<seqan3::contrib::bgzf_ostream> : public ::testing::Test
 {
 public:
     static inline std::string compressed
@@ -27,6 +27,6 @@ public:
     };  // Note we zeroed the 10th byte which indicates the OS on which the file was compressed.
 };
 
-using test_types = ::testing::Types<contrib::bgzf_ostream>;
+using test_types = ::testing::Types<seqan3::contrib::bgzf_ostream>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, ostream, test_types, );

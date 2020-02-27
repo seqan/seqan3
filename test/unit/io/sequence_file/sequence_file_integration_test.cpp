@@ -16,8 +16,6 @@
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/std/iterator>
 
-using namespace seqan3;
-
 TEST(rows, assign_sequence_files)
 {
     std::string const input
@@ -40,8 +38,8 @@ TEST(rows, assign_sequence_files)
         "GGAGTATAATATATATATATATAT\n"
     };
 
-    sequence_file_input fin{std::istringstream{input}, format_fasta{}};
-    sequence_file_output fout{std::ostringstream{}, format_fasta{}};
+    seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
+    seqan3::sequence_file_output fout{std::ostringstream{}, seqan3::format_fasta{}};
     fout.options.fasta_letters_per_line = 0;
 
     fout = fin;
@@ -63,12 +61,12 @@ TEST(integration, assign_sequence_file_pipes)
     };
 
     // valid without assignment?
-    sequence_file_input{std::istringstream{input}, format_fasta{}} |
-        sequence_file_output{std::ostringstream{}, format_fasta{}};
+    seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} |
+        seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
 
     // valid with assignment and check contents
-    auto fout = sequence_file_input{std::istringstream{input}, format_fasta{}} |
-                sequence_file_output{std::ostringstream{}, format_fasta{}};
+    auto fout = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}} |
+                seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
 
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), input);
@@ -95,14 +93,17 @@ TEST(integration, view)
     };
 
     // valid without assignment?
-    sequence_file_input{std::istringstream{input}, format_fasta{}} | views::persist | views::take(2) |
-        sequence_file_output{std::ostringstream{}, format_fasta{}};
+    seqan3::sequence_file_input{std::istringstream{input},
+                                seqan3::format_fasta{}} | seqan3::views::persist
+                                                        | seqan3::views::take(2)
+                                                        | seqan3::sequence_file_output{std::ostringstream{},
+                                                                                       seqan3::format_fasta{}};
 
     // valid with assignment and check contents
-    auto fout = sequence_file_input{std::istringstream{input}, format_fasta{}}
-              | views::persist
-              | views::take(2)
-              | sequence_file_output{std::ostringstream{}, format_fasta{}};
+    auto fout = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}}
+              | seqan3::views::persist
+              | seqan3::views::take(2)
+              | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
 
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output);
@@ -130,8 +131,8 @@ TEST(integration, convert_fastq_to_fasta)
         "TATTA\n"
     };
 
-    auto fout = sequence_file_input{std::istringstream{fastq_in}, format_fastq{}} |
-                sequence_file_output{std::ostringstream{}, format_fasta{}};
+    auto fout = seqan3::sequence_file_input{std::istringstream{fastq_in}, seqan3::format_fastq{}} |
+                seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), fasta_out);
 }

@@ -13,20 +13,18 @@
 
 #include <seqan3/io/detail/out_file_iterator.hpp>
 
-using namespace seqan3;
-
 //NOTE(h-2): This class is extensively tested via *_file_output. This is just a minimal test.
 
 TEST(out_file_iterator, concepts)
 {
-    using it_t = detail::out_file_iterator<std::vector<int>>;
+    using it_t = seqan3::detail::out_file_iterator<std::vector<int>>;
 
     EXPECT_TRUE((std::output_iterator<it_t, int>));
 }
 
 TEST(out_file_iterator, member_types)
 {
-    using it_t = detail::out_file_iterator<std::vector<int>>;
+    using it_t = seqan3::detail::out_file_iterator<std::vector<int>>;
     EXPECT_TRUE((std::is_same_v<typename it_t::value_type,
                                 void>));
     EXPECT_TRUE((std::is_same_v<typename it_t::reference,
@@ -43,7 +41,7 @@ TEST(out_file_iterator, member_types)
 
 TEST(out_file_iterator, operations)
 {
-    using it_t = detail::out_file_iterator<std::vector<int>>;
+    using it_t = seqan3::detail::out_file_iterator<std::vector<int>>;
 
     std::vector<int> fake_file;
 
@@ -77,7 +75,7 @@ TEST(out_file_iterator, operations)
 
 TEST(out_file_iterator, comparison)
 {
-    using it_t = detail::out_file_iterator<std::vector<int>>;
+    using it_t = seqan3::detail::out_file_iterator<std::vector<int>>;
 
     std::vector<int> fake_file;
     it_t it{fake_file};

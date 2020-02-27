@@ -17,12 +17,16 @@
 #include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
+using seqan3::operator""_dna5;
+using seqan3::operator""_phred42;
+
+using default_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
 
 TEST(alignment_file_input_iterator, concepts)
 {
-    using it_t = typename alignment_file_input<>::iterator;
-    using sen_t = typename alignment_file_input<>::sentinel;
+    using it_t = typename seqan3::alignment_file_input<>::iterator;
+    using sen_t = typename seqan3::alignment_file_input<>::sentinel;
 
     EXPECT_TRUE((std::input_iterator<it_t>));
     EXPECT_TRUE((std::sentinel_for<sen_t, it_t>));
@@ -40,7 +44,7 @@ read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
 read3	43	ref	3	63	1S1M1D4M1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )";
 
-    std::vector<dna5_vector> seq_comp
+    std::vector<seqan3::dna5_vector> seq_comp
     {
         "ACGT"_dna5,
         "AGGCTGNAG"_dna5,
@@ -54,7 +58,7 @@ read3	43	ref	3	63	1S1M1D4M1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
         "read3"
     };
 
-    std::vector<std::vector<phred42>> qual_comp
+    std::vector<std::vector<seqan3::phred42>> qual_comp
     {
         { "!##$"_phred42 },
         { "!##$&'()*"_phred42 },
@@ -64,10 +68,10 @@ read3	43	ref	3	63	1S1M1D4M1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 
 TEST_F(alignment_file_input_f, concepts)
 {
-    using t = alignment_file_input<>;
+    using t = seqan3::alignment_file_input<>;
     EXPECT_TRUE((std::ranges::input_range<t>));
 
-    using ct = alignment_file_input<> const;
+    using ct = seqan3::alignment_file_input<> const;
     // not const-iterable
     EXPECT_FALSE((std::ranges::input_range<ct>));
 }
@@ -76,79 +80,84 @@ TEST_F(alignment_file_input_f, construct_by_filename)
 {
     /* just the filename */
     {
-        test::tmp_filename filename{"alignment_file_input_constructor.sam"};
+        seqan3::test::tmp_filename filename{"alignment_file_input_constructor.sam"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         }
 
-        EXPECT_NO_THROW(alignment_file_input<>{filename.get_path()} );
+        EXPECT_NO_THROW(seqan3::alignment_file_input<>{filename.get_path()} );
     }
 
     // correct format check is done by tests of that format
 
     /* wrong extension */
     {
-        test::tmp_filename filename{"alignment_file_input_constructor.xyz"};
+        seqan3::test::tmp_filename filename{"alignment_file_input_constructor.xyz"};
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW(alignment_file_input<>{filename.get_path()} ,
-                     unhandled_extension_error );
+        EXPECT_THROW(seqan3::alignment_file_input<>{filename.get_path()},
+                     seqan3::unhandled_extension_error );
     }
 
     /* non-existent file*/
     {
-        EXPECT_THROW(alignment_file_input<>{"/dev/nonexistent/foobarOOO"}, file_open_error);
+        EXPECT_THROW(seqan3::alignment_file_input<>{"/dev/nonexistent/foobarOOO"}, seqan3::file_open_error);
     }
     /* non-existent file with reference information*/
     {
         std::vector<std::string> ref_ids{"ref1", "ref2"};
-        std::vector<dna4_vector> ref_seqs{"ACTG"_dna4, "ACTG"_dna4};
-        EXPECT_THROW((alignment_file_input{"/dev/nonexistent/foobarOOO", ref_ids, ref_seqs}), file_open_error);
+        std::vector<seqan3::dna4_vector> ref_seqs{"ACTG"_dna4, "ACTG"_dna4};
+        EXPECT_THROW((seqan3::alignment_file_input{"/dev/nonexistent/foobarOOO", ref_ids, ref_seqs}),
+                     seqan3::file_open_error);
     }
 
     /* filename + fields */
     {
-        test::tmp_filename filename{"alignment_file_input_constructor.sam"};
+        seqan3::test::tmp_filename filename{"alignment_file_input_constructor.sam"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         }
 
-        EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
-                                               fields<field::seq>,
-                                               type_list<format_sam>>{filename.get_path(), fields<field::seq>{}} ));
+        using fields_seq = seqan3::fields<seqan3::field::seq>;
+
+        EXPECT_NO_THROW(( seqan3::alignment_file_input<seqan3::alignment_file_input_default_traits<>,
+                                                       fields_seq,
+                                                       seqan3::type_list<seqan3::format_sam>>{filename.get_path(),
+                                                                                              fields_seq{}} ));
     }
 }
 
 TEST_F(alignment_file_input_f, construct_from_stream)
 {
     /* stream + format_tag */
-    EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
-                                           fields<field::seq, field::id, field::qual>,
-                                           type_list<format_sam>>{std::istringstream{input},
-                                                                  format_sam{}} ));
+    EXPECT_NO_THROW(( seqan3::alignment_file_input<seqan3::alignment_file_input_default_traits<>,
+                                                   default_fields,
+                                                   seqan3::type_list<seqan3::format_sam>>{std::istringstream{input},
+                                                                                          seqan3::format_sam{}} ));
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW(( alignment_file_input<alignment_file_input_default_traits<>,
-                                           fields<field::seq, field::id, field::qual>,
-                                           type_list<format_sam>>{std::istringstream{input},
-                                                                  format_sam{},
-                                                                  fields<field::seq, field::id, field::qual>{}} ));
+    EXPECT_NO_THROW(( seqan3::alignment_file_input<seqan3::alignment_file_input_default_traits<>,
+                                                   default_fields,
+                                                   seqan3::type_list<seqan3::format_sam>>{std::istringstream{input},
+                                                                                          seqan3::format_sam{},
+                                                                                          default_fields{}} ));
 }
 
 TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
 {
-    using comp0 = alignment_file_input_default_traits<>;
-    using comp1 = fields<field::seq, field::id, field::offset, field::ref_seq,
-                         field::ref_id, field::ref_offset, field::alignment,
-                         field::mapq, field::qual, field::flag, field::mate,
-                         field::tags, field::evalue, field::bit_score, field::header_ptr>;
-    using comp2 = type_list<format_sam, format_bam>;
+    using comp0 = seqan3::alignment_file_input_default_traits<>;
+    using comp1 = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::offset, seqan3::field::ref_seq,
+                                 seqan3::field::ref_id, seqan3::field::ref_offset, seqan3::field::alignment,
+                                 seqan3::field::mapq, seqan3::field::qual, seqan3::field::flag, seqan3::field::mate,
+                                 seqan3::field::tags, seqan3::field::evalue, seqan3::field::bit_score,
+                                 seqan3::field::header_ptr>;
+    using comp2 = seqan3::type_list<seqan3::format_sam, seqan3::format_bam>;
     using comp3 = char;
 
     /* default template args */
     {
-        using t = alignment_file_input<>;
+        using t = seqan3::alignment_file_input<>;
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
@@ -157,13 +166,13 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        test::tmp_filename filename{"alignment_file_input_constructor.sam"};
+        seqan3::test::tmp_filename filename{"alignment_file_input_constructor.sam"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         }
 
-        alignment_file_input fin{filename.get_path()};
+        seqan3::alignment_file_input fin{filename.get_path()};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -174,17 +183,17 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided filename constructor + custom fields */
     {
-        test::tmp_filename filename{"alignment_file_input_constructor.sam"};
+        seqan3::test::tmp_filename filename{"alignment_file_input_constructor.sam"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         }
 
-        alignment_file_input fin{filename.get_path(), fields<field::seq>{}};
+        seqan3::alignment_file_input fin{filename.get_path(), seqan3::fields<seqan3::field::seq>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::seq>>));
+        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::seq>>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
@@ -192,40 +201,40 @@ TEST_F(alignment_file_input_f, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::istringstream ext{input};
-        alignment_file_input fin{ext, format_sam{}};
+        seqan3::alignment_file_input fin{ext, seqan3::format_sam{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      seqan3::type_list<seqan3::format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
     /* guided stream temporary constructor */
     {
-        alignment_file_input fin{std::istringstream{input}, format_sam{}};
+        seqan3::alignment_file_input fin{std::istringstream{input}, seqan3::format_sam{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_sam>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      seqan3::type_list<seqan3::format_sam>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 }
 
 TEST_F(alignment_file_input_f, empty_file)
 {
-    test::tmp_filename filename{"empty.sam"};
+    seqan3::test::tmp_filename filename{"empty.sam"};
     std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
 
-    alignment_file_input fin{filename.get_path()};
+    seqan3::alignment_file_input fin{filename.get_path()};
 
     EXPECT_EQ(fin.begin(), fin.end());
 }
 
 TEST_F(alignment_file_input_f, empty_stream)
 {
-    alignment_file_input fin{std::istringstream{std::string{}}, format_sam{}};
+    seqan3::alignment_file_input fin{std::istringstream{std::string{}}, seqan3::format_sam{}};
 
     EXPECT_EQ(fin.begin(), fin.end());
 }
@@ -233,14 +242,14 @@ TEST_F(alignment_file_input_f, empty_stream)
 TEST_F(alignment_file_input_f, record_reading)
 {
     /* record based reading */
-    alignment_file_input fin{std::istringstream{input}, format_sam{}};
+    seqan3::alignment_file_input fin{std::istringstream{input}, seqan3::format_sam{}};
 
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec), id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::qual>(rec), qual_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec), id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::qual>(rec), qual_comp[counter])));
 
         counter++;
     }
@@ -251,9 +260,9 @@ TEST_F(alignment_file_input_f, record_reading)
 TEST_F(alignment_file_input_f, record_reading_custom_fields)
 {
     /* record based reading */
-    alignment_file_input fin{std::istringstream{input},
-                             format_sam{},
-                             fields<field::id, field::seq>{}};
+    seqan3::alignment_file_input fin{std::istringstream{input},
+                                     seqan3::format_sam{},
+                                     seqan3::fields<seqan3::field::id, seqan3::field::seq>{}};
 
     size_t counter = 0;
     for (auto & [ id, seq ] : fin)
@@ -269,19 +278,19 @@ TEST_F(alignment_file_input_f, record_reading_custom_fields)
 
 TEST_F(alignment_file_input_f, file_view)
 {
-    alignment_file_input fin{std::istringstream{input}, format_sam{}};
+    seqan3::alignment_file_input fin{std::istringstream{input}, seqan3::format_sam{}};
 
     auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
-        return size(get<field::seq>(rec)) >= 5;
+        return size(seqan3::get<seqan3::field::seq>(rec)) >= 5;
     });
 
     size_t counter = 1; // the first record will be filtered out
     for (auto & rec : fin | minimum_length_filter)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec), id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::qual>(rec), qual_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec), id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::qual>(rec), qual_comp[counter])));
 
         counter++;
     }
@@ -299,9 +308,9 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(get<field::seq>(rec), fix.seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::id>(rec),  fix.id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(get<field::qual>(rec), fix.qual_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), fix.seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec),  fix.id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::qual>(rec), fix.qual_comp[counter])));
 
         counter++;
     }
@@ -328,7 +337,7 @@ std::string input_gz
 
 TEST_F(alignment_file_input_f, decompression_by_filename_gz)
 {
-    test::tmp_filename filename{"alignment_file_output_test.sam.gz"};
+    seqan3::test::tmp_filename filename{"alignment_file_output_test.sam.gz"};
 
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
@@ -336,14 +345,14 @@ TEST_F(alignment_file_input_f, decompression_by_filename_gz)
         std::copy(input_gz.begin(), input_gz.end(), std::ostreambuf_iterator<char>{of});
     }
 
-    alignment_file_input fin{filename.get_path()};
+    seqan3::alignment_file_input fin{filename.get_path()};
 
     decompression_impl(*this, fin);
 }
 
 TEST_F(alignment_file_input_f, decompression_by_stream_gz)
 {
-    alignment_file_input fin{std::istringstream{input_gz}, format_sam{}};
+    seqan3::alignment_file_input fin{std::istringstream{input_gz}, seqan3::format_sam{}};
 
     decompression_impl(*this, fin);
 }
@@ -356,7 +365,7 @@ TEST_F(alignment_file_input_f, read_empty_gz_file)
         '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
     };
-    alignment_file_input fin{std::istringstream{empty_zipped_file}, format_sam{}};
+    seqan3::alignment_file_input fin{std::istringstream{empty_zipped_file}, seqan3::format_sam{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -387,7 +396,7 @@ std::string input_bgzf
 
 TEST_F(alignment_file_input_f, decompression_by_filename_bgzf)
 {
-    test::tmp_filename filename{"alignment_file_output_test.sam.bgzf"};
+    seqan3::test::tmp_filename filename{"alignment_file_output_test.sam.bgzf"};
 
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
@@ -395,14 +404,14 @@ TEST_F(alignment_file_input_f, decompression_by_filename_bgzf)
         std::copy(input_bgzf.begin(), input_bgzf.end(), std::ostreambuf_iterator<char>{of});
     }
 
-    alignment_file_input fin{filename.get_path()};
+    seqan3::alignment_file_input fin{filename.get_path()};
 
     decompression_impl(*this, fin);
 }
 
 TEST_F(alignment_file_input_f, decompression_by_stream_bgzf)
 {
-    alignment_file_input fin{std::istringstream{input_bgzf}, format_sam{}};
+    seqan3::alignment_file_input fin{std::istringstream{input_bgzf}, seqan3::format_sam{}};
 
     decompression_impl(*this, fin);
 }
@@ -415,7 +424,7 @@ TEST_F(alignment_file_input_f, read_empty_bgzf_file)
         '\x06', '\x00', '\x42', '\x43', '\x02', '\x00', '\x1B', '\x00', '\x03', '\x00',
         '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
     };
-    alignment_file_input fin{std::istringstream{empty_bgzf_file}, format_sam{}};
+    seqan3::alignment_file_input fin{std::istringstream{empty_bgzf_file}, seqan3::format_sam{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -440,7 +449,7 @@ std::string input_bz2
 
 TEST_F(alignment_file_input_f, decompression_by_filename_bz2)
 {
-    test::tmp_filename filename{"alignment_file_output_test.sam.bz2"};
+    seqan3::test::tmp_filename filename{"alignment_file_output_test.sam.bz2"};
 
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
@@ -448,14 +457,14 @@ TEST_F(alignment_file_input_f, decompression_by_filename_bz2)
         std::copy(input_bz2.begin(), input_bz2.end(), std::ostreambuf_iterator<char>{of});
     }
 
-    alignment_file_input fin{filename.get_path()};
+    seqan3::alignment_file_input fin{filename.get_path()};
 
     decompression_impl(*this, fin);
 }
 
 TEST_F(alignment_file_input_f, decompression_by_stream_bz2)
 {
-    alignment_file_input fin{std::istringstream{input_bz2}, format_sam{}};
+    seqan3::alignment_file_input fin{std::istringstream{input_bz2}, seqan3::format_sam{}};
 
     decompression_impl(*this, fin);
 }
@@ -466,7 +475,7 @@ TEST_F(alignment_file_input_f, read_empty_bz2_file)
     {
         '\x42', '\x5a', '\x68', '\x39', '\x17', '\x72', '\x45', '\x38', '\x50', '\x90', '\x00', '\x00', '\x00', '\x00'
     };
-    alignment_file_input fin{std::istringstream{empty_zipped_file}, format_sam{}};
+    seqan3::alignment_file_input fin{std::istringstream{empty_zipped_file}, seqan3::format_sam{}};
 
     EXPECT_TRUE(fin.begin() == fin.end());
 }
@@ -478,43 +487,44 @@ TEST_F(alignment_file_input_f, read_empty_bz2_file)
 
 struct alignment_file_input_sam_format_f : public alignment_file_input_f
 {
-    std::vector<dna4_vector> const ref_seqs = {"ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna4};
+    std::vector<seqan3::dna4_vector> const ref_seqs = {"ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna4};
     std::vector<std::string> const ref_ids = {"ref"};
 
-    std::vector<gapped<dna4>> ref_seq_gapped1 = {'A'_dna4, 'C'_dna4, 'T'_dna4, 'G'_dna4};
-    std::vector<gapped<dna4>> ref_seq_gapped2 = {'C'_dna4, 'T'_dna4, 'G'_dna4, 'A'_dna4,
-                                                 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4,
-                                                 'G'_dna4};
-    std::vector<gapped<dna4>> ref_seq_gapped3 = {'T'_dna4, 'G'_dna4, 'A'_dna4, 'T'_dna4,
-                                                 'C'_dna4, 'G'_dna4, 'A'_dna4, 'G'_dna4,};
+    std::vector<seqan3::gapped<seqan3::dna4>> ref_seq_gapped1 = {'A'_dna4, 'C'_dna4, 'T'_dna4, 'G'_dna4};
+    std::vector<seqan3::gapped<seqan3::dna4>> ref_seq_gapped2 = {'C'_dna4, 'T'_dna4, 'G'_dna4, 'A'_dna4,
+                                                                 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4,
+                                                                 'G'_dna4};
+    std::vector<seqan3::gapped<seqan3::dna4>> ref_seq_gapped3 = {'T'_dna4, 'G'_dna4, 'A'_dna4, 'T'_dna4,
+                                                                 'C'_dna4, 'G'_dna4, 'A'_dna4, 'G'_dna4,};
 
-    std::vector<std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna5>>>> alignments_expected
+    std::vector<std::pair<std::vector<seqan3::gapped<seqan3::dna4>>,
+                          std::vector<seqan3::gapped<seqan3::dna5>>>> alignments_expected
     {
-        {ref_seq_gapped1, std::vector<gapped<dna5>>{'C'_dna5, gap{}, 'G'_dna5, 'T'_dna5}},
-        {ref_seq_gapped2, std::vector<gapped<dna5>>{'A'_dna5, 'G'_dna5, 'G'_dna5, 'C'_dna5, 'T'_dna5,
-                                                    'G'_dna5, 'N'_dna5, gap{}, 'A'_dna5}},
-        {ref_seq_gapped3, std::vector<gapped<dna5>>{'G'_dna5, gap{}, 'A'_dna5, 'G'_dna5,
-                                                    'T'_dna5, 'A'_dna5, gap{}, 'T'_dna5}}
+        {ref_seq_gapped1, std::vector<seqan3::gapped<seqan3::dna5>>{'C'_dna5, seqan3::gap{}, 'G'_dna5, 'T'_dna5}},
+        {ref_seq_gapped2, std::vector<seqan3::gapped<seqan3::dna5>>{'A'_dna5, 'G'_dna5, 'G'_dna5, 'C'_dna5, 'T'_dna5,
+                                                                    'G'_dna5, 'N'_dna5, seqan3::gap{}, 'A'_dna5}},
+        {ref_seq_gapped3, std::vector<seqan3::gapped<seqan3::dna5>>{'G'_dna5, seqan3::gap{}, 'A'_dna5, 'G'_dna5,
+                                                                    'T'_dna5, 'A'_dna5, seqan3::gap{}, 'T'_dna5}}
     };
 };
 
 TEST_F(alignment_file_input_sam_format_f, construct_by_filename_and_read_alignments)
 {
-    test::tmp_filename filename{"alignment_file_input_constructor.sam"};
+    seqan3::test::tmp_filename filename{"alignment_file_input_constructor.sam"};
     {
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         filecreator << input;
     }
 
-    alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, fields<field::alignment>{}};
+    seqan3::alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, seqan3::fields<seqan3::field::alignment>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
 
     size_t counter = 0;
     for (auto & [ alignment ] : fin)
     {
-        EXPECT_TRUE(std::ranges::equal(get<0>(alignment), get<0>(alignments_expected[counter])));
-        EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(alignments_expected[counter])));
 
         counter++;
     }
@@ -524,15 +534,19 @@ TEST_F(alignment_file_input_sam_format_f, construct_by_filename_and_read_alignme
 
 TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignments)
 {
-    alignment_file_input fin{std::istringstream{input}, ref_ids, ref_seqs, format_sam{}, fields<field::alignment>{}};
+    seqan3::alignment_file_input fin{std::istringstream{input},
+                                     ref_ids,
+                                     ref_seqs,
+                                     seqan3::format_sam{},
+                                     seqan3::fields<seqan3::field::alignment>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
 
     size_t counter = 0;
     for (auto & [ alignment ] : fin)
     {
-        EXPECT_TRUE(std::ranges::equal(get<0>(alignment), get<0>(alignments_expected[counter])));
-        EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(alignments_expected[counter])));
 
         counter++;
     }
@@ -542,12 +556,14 @@ TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignme
 
 TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignment_with_dummy)
 {
-    alignment_file_input fin{std::istringstream{input}, format_sam{}, fields<field::alignment>{}};
+    seqan3::alignment_file_input fin{std::istringstream{input},
+                                     seqan3::format_sam{},
+                                     seqan3::fields<seqan3::field::alignment>{}};
 
     size_t counter = 0;
     for (auto & [ alignment ] : fin)
     {
-        EXPECT_EQ(get<1>(alignment), get<1>(alignments_expected[counter]));
+        EXPECT_EQ(std::get<1>(alignment), std::get<1>(alignments_expected[counter]));
 
         counter++;
     }
@@ -594,16 +610,16 @@ struct alignment_file_input_bam_format_f : public alignment_file_input_sam_forma
 #if SEQAN3_HAS_ZLIB
 TEST_F(alignment_file_input_bam_format_f, construct_by_filename)
 {
-    test::tmp_filename filename{"alignment_file_input_constructor.bam"};
+    seqan3::test::tmp_filename filename{"alignment_file_input_constructor.bam"};
     {
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         filecreator << binary_input;
     }
 
-    alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, fields<field::id,
-                                                                            field::seq,
-                                                                            field::qual,
-                                                                            field::alignment>{}};
+    seqan3::alignment_file_input fin{filename.get_path(), ref_ids, ref_seqs, seqan3::fields<seqan3::field::id,
+                                                                                            seqan3::field::seq,
+                                                                                            seqan3::field::qual,
+                                                                                            seqan3::field::alignment>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
     EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});
@@ -615,8 +631,8 @@ TEST_F(alignment_file_input_bam_format_f, construct_by_filename)
         EXPECT_EQ(seq, seq_comp[counter]);
         EXPECT_EQ(qual, qual_comp[counter]);
 
-        EXPECT_TRUE(std::ranges::equal(get<0>(alignment), get<0>(alignments_expected[counter])));
-        EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(alignments_expected[counter])));
 
         counter++;
     }
@@ -628,10 +644,14 @@ TEST_F(alignment_file_input_bam_format_f, construct_by_stream)
 {
     std::istringstream stream{binary_input};
 
-    alignment_file_input fin{stream, ref_ids, ref_seqs, format_bam{}, fields<field::id,
-                                                                             field::seq,
-                                                                             field::qual,
-                                                                             field::alignment>{}};
+    seqan3::alignment_file_input fin{stream,
+                                     ref_ids,
+                                     ref_seqs,
+                                     seqan3::format_bam{},
+                                     seqan3::fields<seqan3::field::id,
+                                                    seqan3::field::seq,
+                                                    seqan3::field::qual,
+                                                    seqan3::field::alignment>{}};
 
     EXPECT_EQ(fin.header().ref_ids(), ref_ids);
     EXPECT_EQ(fin.header().comments[0], std::string{"This is a comment."});
@@ -643,8 +663,8 @@ TEST_F(alignment_file_input_bam_format_f, construct_by_stream)
         EXPECT_EQ(seq, seq_comp[counter]);
         EXPECT_EQ(qual, qual_comp[counter]);
 
-        EXPECT_TRUE(std::ranges::equal(get<0>(alignment), get<0>(alignments_expected[counter])));
-        EXPECT_TRUE(std::ranges::equal(get<1>(alignment), get<1>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(alignments_expected[counter])));
+        EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(alignments_expected[counter])));
 
         counter++;
     }

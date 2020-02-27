@@ -12,7 +12,7 @@
 #include "../../io/stream/ostream_test_template.hpp"
 
 template <>
-class ostream<contrib::bz2_ostream> : public ::testing::Test
+class ostream<seqan3::contrib::bz2_ostream> : public ::testing::Test
 {
 public:
     static inline std::string compressed
@@ -25,6 +25,6 @@ public:
     };
 };
 
-using test_types = ::testing::Types<contrib::bz2_ostream>;
+using test_types = ::testing::Types<seqan3::contrib::bz2_ostream>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(contrib_streams, ostream, test_types, );

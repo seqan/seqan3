@@ -16,7 +16,7 @@
 #include "alignment_file_format_test_template.hpp"
 
 template <>
-struct alignment_file_read<format_bam> : public alignment_file_data
+struct alignment_file_read<seqan3::format_bam> : public alignment_file_data
 {
     // -----------------------------------------------------------------------------------------------------------------
     // formatted input
@@ -238,8 +238,8 @@ struct alignment_file_read<format_bam> : public alignment_file_data
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_SUITE_P(bam, alignment_file_read, format_bam, );
-INSTANTIATE_TYPED_TEST_SUITE_P(bam, alignment_file_write, format_bam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(bam, alignment_file_read, seqan3::format_bam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(bam, alignment_file_write, seqan3::format_bam, );
 
 // ---------------------------------------------------------------------------------------------------------------------
 // BAM specifics
@@ -251,8 +251,8 @@ struct bam_format : public alignment_file_data
 TEST_F(bam_format, wrong_magic_bytes)
 {
     std::istringstream stream{std::string{'\x43', '\x41', '\x4D', '\x01' /*CAM\1*/}};
-    alignment_file_input fin{stream, format_bam{}};
-    EXPECT_THROW(fin.begin(), format_error);
+    seqan3::alignment_file_input fin{stream, seqan3::format_bam{}};
+    EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
 TEST_F(bam_format, unknown_ref_in_header)
@@ -267,8 +267,8 @@ TEST_F(bam_format, unknown_ref_in_header)
     };
 
     std::istringstream stream{unknown_ref};
-    alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
-    EXPECT_THROW(fin.begin(), format_error);
+    seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+    EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
 TEST_F(bam_format, wrong_ref_length_in_header)
@@ -283,14 +283,15 @@ TEST_F(bam_format, wrong_ref_length_in_header)
     };
 
     std::istringstream stream{wrong_ref_length};
-    alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
-    EXPECT_THROW(fin.begin(), format_error);
+    seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+    EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
 TEST_F(bam_format, wrong_order_in_header)
 {
     std::vector<std::string> rids = {"ref", "raf"};
-    std::vector<dna5_vector> rseqs = {"ATCGAGATCGATCGATCGAGAGCTAGCGATCGAG"_dna5, "ATCGAGATCGATCGATCGAGAGCTAGCGAT"_dna5};
+    std::vector<seqan3::dna5_vector> rseqs = {"ATCGAGATCGATCGATCGAGAGCTAGCGATCGAG"_dna5,
+                                              "ATCGAGATCGATCGATCGAGAGCTAGCGAT"_dna5};
 
     std::string wrong_order{ // raf is first in file but second in hdr
         // @HD     VN:1.6
@@ -306,8 +307,8 @@ TEST_F(bam_format, wrong_order_in_header)
     };
 
     std::istringstream stream{wrong_order};
-    alignment_file_input fin{stream, rids, rseqs, format_bam{}};
-    EXPECT_THROW(fin.begin(), format_error);
+    seqan3::alignment_file_input fin{stream, rids, rseqs, seqan3::format_bam{}};
+    EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
 TEST_F(bam_format, wrong_char_as_tag_identifier)
@@ -330,8 +331,8 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
-        EXPECT_THROW(fin.begin(), format_error);
+        seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     {
         std::string wrong_char_in_tag{ // Y in CG:B array tag
@@ -351,8 +352,8 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
-        EXPECT_THROW(fin.begin(), format_error);
+        seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 }
 
@@ -376,8 +377,8 @@ TEST_F(bam_format, invalid_cigar_op)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
-        EXPECT_THROW(fin.begin(), format_error);
+        seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 }
 
@@ -402,25 +403,28 @@ TEST_F(bam_format, too_long_cigar_string_read)
     {   // successful reading
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, format_bam{}};
+        seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
 
-        EXPECT_TRUE(std::ranges::equal(get<0>(get<field::alignment>(*fin.begin())), get<0>(this->alignments[0])));
-        EXPECT_TRUE(std::ranges::equal(get<1>(get<field::alignment>(*fin.begin())), get<1>(this->alignments[0])));
-        EXPECT_EQ(get<field::tags>(*fin.begin()).size(), 0u); // redundant CG tag is removed
+        EXPECT_TRUE(std::ranges::equal(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin())),
+                                       std::get<0>(this->alignments[0])));
+        EXPECT_TRUE(std::ranges::equal(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin())),
+                                       std::get<1>(this->alignments[0])));
+        EXPECT_EQ(seqan3::get<seqan3::field::tags>(*fin.begin()).size(), 0u); // redundant CG tag is removed
     }
 
     {   // error: sam_tag_dictionary is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        alignment_file_input fin{stream, format_bam{}, fields<field::alignment>{}};
-        ASSERT_THROW(fin.begin(), format_error);
+        seqan3::alignment_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::alignment>{}};
+        ASSERT_THROW(fin.begin(), seqan3::format_error);
     }
 
     {   // error: sequence is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        alignment_file_input fin{stream, format_bam{}, fields<field::alignment, field::tags>{}};
-        ASSERT_THROW(fin.begin(), format_error);
+        seqan3::alignment_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::alignment,
+                                                                                      seqan3::field::tags>{}};
+        ASSERT_THROW(fin.begin(), seqan3::format_error);
     }
 
     {   // error no CG tag
@@ -439,8 +443,8 @@ TEST_F(bam_format, too_long_cigar_string_read)
             '\x00', '\x02', '\x02', '\x03'
         }};
 
-        alignment_file_input fin{stream, format_bam{}};
-        ASSERT_THROW(fin.begin(), format_error);
+        seqan3::alignment_file_input fin{stream, seqan3::format_bam{}};
+        ASSERT_THROW(fin.begin(), seqan3::format_error);
     }
 }
 
@@ -448,18 +452,18 @@ TEST_F(bam_format, too_long_cigar_string_write)
 {
     // create an alignment resulting more than 65535 cigar elements
     // -------------------------------------------------------------------------
-    auto read = views::repeat_n('T'_dna5,  70'000);
-    auto ref  = views::repeat_n('A'_dna5, 2 * read.size() - 1);
+    auto read = seqan3::views::repeat_n('T'_dna5,  70'000);
+    auto ref  = seqan3::views::repeat_n('A'_dna5, 2 * read.size() - 1);
 
-    auto gapped_ref  = gap_decorator{ref};
+    auto gapped_ref  = seqan3::gap_decorator{ref};
 
     // a gap_decorator on a repeat_n view also works but is slow when inserting gaps.
-    std::vector<gapped<dna5>> gapped_read;
+    std::vector<seqan3::gapped<seqan3::dna5>> gapped_read;
     gapped_read.reserve(2 * read.size());
     // create gap of length one every second character => T-T-T-T-T-T...
     for (auto chr : read)
-        gapped_read.push_back(chr), gapped_read.push_back(gap{});
-    gapped_read.pop_back(); // remove last gap
+        gapped_read.push_back(chr), gapped_read.push_back(seqan3::gap{});
+    gapped_read.pop_back(); // remove last seqan3::gap
 
     auto alignment = std::tie(gapped_ref, gapped_read);
 
@@ -478,8 +482,8 @@ TEST_F(bam_format, too_long_cigar_string_write)
             '\x00', '\x6C', '\x6F', '\x6E', '\x67', '\x5F', '\x72', '\x65', '\x61', '\x64', '\x00', '\x04', '\x17',
             '\x11', '\x00', '\xF3', '\x2D', '\x22', '\x00'
         } +
-        (views::repeat_n('\x88', (read.size() + 1) / 2) | views::to<std::string> /*seq */) +
-        (views::repeat_n('\xFF',  read.size())          | views::to<std::string> /*qual*/) +
+        (seqan3::views::repeat_n('\x88', (read.size() + 1) / 2) | seqan3::views::to<std::string> /*seq */) +
+        (seqan3::views::repeat_n('\xFF',  read.size())          | seqan3::views::to<std::string> /*qual*/) +
         std::string /*the beginning*/
         {
             '\x43', '\x47', '\x5A' /*tag info: CGZ*/
@@ -492,18 +496,18 @@ TEST_F(bam_format, too_long_cigar_string_write)
 
     std::ostringstream os{};
 
-    alignment_file_header header{std::vector<std::string>{this->ref_id}};
+    seqan3::alignment_file_header header{std::vector<std::string>{this->ref_id}};
     header.ref_id_info.push_back({ref.size(), ""});
     header.ref_dict[this->ref_id] = 0;
 
     {
-        alignment_file_output fout{os, format_bam{}, fields<field::header_ptr,
-                                                            field::id,
-                                                            field::seq,
-                                                            field::ref_id,
-                                                            field::ref_offset,
-                                                            field::alignment,
-                                                            field::mapq>{}};
+        seqan3::alignment_file_output fout{os, seqan3::format_bam{}, seqan3::fields<seqan3::field::header_ptr,
+                                                                                    seqan3::field::id,
+                                                                                    seqan3::field::seq,
+                                                                                    seqan3::field::ref_id,
+                                                                                    seqan3::field::ref_offset,
+                                                                                    seqan3::field::alignment,
+                                                                                    seqan3::field::mapq>{}};
 
         fout.emplace_back(&header, std::string{"long_read"}, read, 0, 0, alignment, 255);
     }
