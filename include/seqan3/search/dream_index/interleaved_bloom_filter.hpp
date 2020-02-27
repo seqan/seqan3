@@ -142,6 +142,27 @@ public:
         using sdsl::bit_vector::operator[];
         using sdsl::bit_vector::size;
 
+#if SEQAN3_DOXYGEN_ONLY(1)0
+        //!\brief The iterator type of the `binning_bitvector`;
+        using iterator_t = IMPLEMENTATION_DEFINED;
+        //!\brief The reference type of the `binning_bitvector`;
+        using reference_t = IMPLEMENTATION_DEFINED;
+        //!\brief The const_reference type of the `binning_bitvector`;
+        using const_reference_t = IMPLEMENTATION_DEFINED;
+        //!\brief Returns an iterator to the begin of the bitvector.
+        iterator_t begin() noexcept;
+        //!\brief Returns an iterator to the end of the bitvector.
+        iterator_t end() noexcept;
+        //!\brief Compares two bitvectors.
+        bool operator==(bit_vector const & other) const noexcept;
+        //!\brief Returns a reference to position `idx` of the bitvector.
+        reference_t operator[](size_t const & idx) noexcept;
+        //!\brief Returns a const_reference to position `idx` of the bitvector.
+        const_reference_t operator[](size_t const & idx) const noexcept;
+        //!\brief Returns the size of the bitvector.
+        size_t size() noexcept;
+#endif
+
     private:
         friend class interleaved_bloom_filter;
         using sdsl::bit_vector::resize;
