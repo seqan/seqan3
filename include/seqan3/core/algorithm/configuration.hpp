@@ -433,7 +433,7 @@ private:
     template <typename tuple_t>
     //!\cond
         requires detail::is_type_specialisation_of_v<tuple_t, std::tuple> &&
-                 std::tuple_size_v<remove_cvref_t<tuple_t>> > 0
+                 (std::tuple_size_v<remove_cvref_t<tuple_t>> > 0)
     //!\endcond
     static constexpr auto make_configuration(tuple_t && tpl)
     {

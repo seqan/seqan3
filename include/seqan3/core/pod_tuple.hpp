@@ -178,7 +178,7 @@ pod_tuple(types && ...) -> pod_tuple<types...>;
 template <std::size_t i, typename ...types>
 constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
 //!\cond
-    requires i < sizeof...(types)
+    requires (i < sizeof...(types))
 //!\endcond
 {
     if constexpr (i == 0)
@@ -192,7 +192,7 @@ constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
 template <std::size_t i, typename ...types>
 constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
 //!\cond
-    requires i < sizeof...(types)
+    requires (i < sizeof...(types))
 //!\endcond
 {
     if constexpr (i == 0)
@@ -207,7 +207,7 @@ constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
 template <std::size_t i, typename ...types>
 constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
 //!\cond
-    requires i < sizeof...(types)
+    requires (i < sizeof...(types))
 //!\endcond
 {
     if constexpr (i == 0)
@@ -221,7 +221,7 @@ constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
 template <std::size_t i, typename ...types>
 constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 //!\cond
-    requires i < sizeof...(types)
+    requires (i < sizeof...(types))
 //!\endcond
 {
     if constexpr (i == 0)
@@ -292,28 +292,28 @@ namespace std
 //!\cond
 template <std::size_t i, typename ...types>
 constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
-    requires i < sizeof...(types)
+    requires (i < sizeof...(types))
 {
     return seqan3::get<i>(t);
 }
 
 template <std::size_t i, typename ...types>
 constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
-    requires i < sizeof...(types)
+    requires (i < sizeof...(types))
 {
     return seqan3::get<i>(t);
 }
 
 template <std::size_t i, typename ...types>
 constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
-    requires i < sizeof...(types)
+    requires (i < sizeof...(types))
 {
     return seqan3::get<i>(std::move(t));
 }
 
 template <std::size_t i, typename ...types>
 constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
-    requires i < sizeof...(types)
+    requires (i < sizeof...(types))
 {
     return seqan3::get<i>(std::move(t));
 }
@@ -353,10 +353,13 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
 template <std::size_t i, template <typename ...> typename t, typename ...types>
-    requires i < sizeof...(types) &&
+//!\cond
+    requires (i < sizeof...(types)) &&
             std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
+//!\endcond
 struct tuple_element<i, t<types...>>
 {
+    //!\brief Element type.
     using type = seqan3::pack_traits::at<i, types...>;
 };
 

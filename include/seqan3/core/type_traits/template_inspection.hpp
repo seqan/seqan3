@@ -147,8 +147,8 @@ struct is_type_specialisation_of : public std::false_type
 //!\overload
 template <typename source_t, template <typename ...> typename target_template>
 //!\cond
-    requires !std::same_as<transformation_trait_or_t<transfer_template_args_onto<source_t, target_template>, void>,
-                        void>
+    requires (!std::same_as<transformation_trait_or_t<transfer_template_args_onto<source_t, target_template>, void>,
+                            void>)
 //!\endcond
 struct is_type_specialisation_of<source_t, target_template> :
         std::is_same<source_t, transfer_template_args_onto_t<source_t, target_template>>
@@ -183,8 +183,8 @@ struct is_value_specialisation_of : std::false_type
  */
 template <typename source_t, template <auto ...> typename target_template>
 //!\cond
-    requires !std::same_as<transformation_trait_or_t<transfer_template_vargs_onto<source_t, target_template>, void>,
-                        void>
+    requires (!std::same_as<transformation_trait_or_t<transfer_template_vargs_onto<source_t, target_template>, void>,
+                            void>)
 //!\endcond
 struct is_value_specialisation_of<source_t, target_template> :
     std::is_same<source_t, transfer_template_vargs_onto_t<source_t, target_template>>
