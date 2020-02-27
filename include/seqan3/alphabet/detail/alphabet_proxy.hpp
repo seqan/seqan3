@@ -103,7 +103,7 @@ private:
     //!\brief Construction from the emulated type.
     constexpr alphabet_proxy(alphabet_type const a) noexcept
     //!\cond
-        requires !std::is_class_v<alphabet_type>
+        requires (!std::is_class_v<alphabet_type>)
     //!\endcond
         : base_t{}
     {

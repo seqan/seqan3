@@ -196,7 +196,7 @@ public:
                  (!std::is_base_of_v<alphabet_variant, alternative_t>) &&
                  (!list_traits::contains<alphabet_variant,
                   detail::transformation_trait_or_t<detail::recursive_required_types<alternative_t>, type_list<>>>) &&
-                 holds_alternative<alternative_t>()
+                 (holds_alternative<alternative_t>())
     //!\endcond
     constexpr alphabet_variant(alternative_t const alternative) noexcept
     {
@@ -327,7 +327,7 @@ public:
     template <typename alternative_t>
     constexpr bool is_alternative() const noexcept
     //!\cond
-        requires holds_alternative<alternative_t>()
+        requires (holds_alternative<alternative_t>())
     //!\endcond
     {
         constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
@@ -341,7 +341,7 @@ public:
     template <typename alternative_t>
     constexpr alternative_t convert_to() const
     //!\cond
-        requires holds_alternative<alternative_t>()
+        requires (holds_alternative<alternative_t>())
     //!\endcond
     {
         constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
@@ -354,7 +354,7 @@ public:
     template <typename alternative_t>
     constexpr alternative_t convert_unsafely_to() const noexcept
     //!\cond
-        requires holds_alternative<alternative_t>()
+        requires (holds_alternative<alternative_t>())
     //!\endcond
     {
         constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
@@ -517,7 +517,7 @@ protected:
     //!\param alternative The value of a alternative.
     template <size_t index, typename alternative_t>
     //!\cond
-        requires holds_alternative<alternative_t>()
+        requires (holds_alternative<alternative_t>())
     //!\endcond
     static constexpr rank_type rank_by_index_(alternative_t const & alternative) noexcept
     {
@@ -530,7 +530,7 @@ protected:
     //!\param alternative The value of a alternative.
     template <typename alternative_t>
     //!\cond
-        requires holds_alternative<alternative_t>()
+        requires (holds_alternative<alternative_t>())
     //!\endcond
     static constexpr rank_type rank_by_type_(alternative_t const & alternative) noexcept
     {

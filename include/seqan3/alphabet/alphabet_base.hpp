@@ -93,7 +93,7 @@ public:
      */
     constexpr char_type to_char() const noexcept
     //!\cond
-        requires !std::same_as<char_t, void>
+        requires (!std::same_as<char_t, void>)
     //!\endcond
     {
         return derived_type::rank_to_char[rank];
@@ -139,7 +139,7 @@ public:
      */
     constexpr derived_type & assign_char(char_type const c) noexcept
     //!\cond
-        requires !std::same_as<char_t, void>
+        requires (!std::same_as<char_t, void>)
     //!\endcond
     {
         using index_t = std::make_unsigned_t<char_type>;
@@ -260,7 +260,7 @@ public:
     //!\copybrief seqan3::alphabet_base::to_char
     constexpr char_type to_char() const noexcept
     //!\cond
-        requires !std::same_as<char_t, void>
+        requires (!std::same_as<char_t, void>)
     //!\endcond
     {
         return derived_type::char_value;
@@ -279,7 +279,7 @@ public:
     //!\copybrief seqan3::alphabet_base::assign_char
     constexpr derived_type & assign_char(char_type const) noexcept
     //!\cond
-        requires !std::same_as<char_t, void>
+        requires (!std::same_as<char_t, void>)
     //!\endcond
     {
         return static_cast<derived_type &>(*this);
