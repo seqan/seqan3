@@ -88,6 +88,29 @@ TYPED_TEST(interleaved_bloom_filter_test, bulk_contains)
         auto & res = ibf.bulk_contains(hash);
         EXPECT_EQ(res, expected);
     }
+
+    // Test iterator interface
+    for (size_t hash : std::views::iota(0, 64)) // test correct resize for each bin individually
+    {
+        auto & res = ibf.bulk_contains(hash);
+        size_t i = 0;
+        for (auto it = res.begin(); it < res.end(); ++it, ++i)
+        {
+            EXPECT_EQ(*it, expected[i]);
+        }
+        EXPECT_EQ(i, expected.size());
+    }
+
+    // Test operator[] interface
+    for (size_t hash : std::views::iota(0, 64)) // test correct resize for each bin individually
+    {
+        auto & res = ibf.bulk_contains(hash);
+        EXPECT_EQ(expected.size(), res.size());
+        for (size_t i = 0; i < res.size(); ++i)
+        {
+            EXPECT_EQ(res[i], expected[i]);
+        }
+    }
 }
 
 TYPED_TEST(interleaved_bloom_filter_test, set_and_get)

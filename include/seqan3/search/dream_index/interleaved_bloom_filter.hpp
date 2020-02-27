@@ -140,6 +140,7 @@ public:
         using sdsl::bit_vector::end;
         using sdsl::bit_vector::operator==;
         using sdsl::bit_vector::operator[];
+        using sdsl::bit_vector::size;
 
     private:
         friend class interleaved_bloom_filter;
@@ -467,8 +468,11 @@ public:
      */
     friend bool operator==(interleaved_bloom_filter const & lhs, interleaved_bloom_filter const & rhs) noexcept
     {
-        return std::tie(lhs.bins, lhs.technical_bins, lhs.bin_size_, lhs.bin_words, lhs.hash_funs, lhs.data) ==
-               std::tie(rhs.bins, rhs.technical_bins, rhs.bin_size_, rhs.bin_words, rhs.hash_funs, rhs.data);
+        return std::tie(lhs.bins, lhs.technical_bins, lhs.bin_size_, lhs.hash_shift, lhs.bin_words, lhs.hash_funs,
+                        lhs.data) ==
+               std::tie(rhs.bins, rhs.technical_bins, rhs.bin_size_, rhs.hash_shift, rhs.bin_words, rhs.hash_funs,
+                        rhs.data) &&
+               lhs.result_buffer.size() == rhs.result_buffer.size() ;
     }
 
     /*!\brief Test for inequality.
@@ -495,9 +499,11 @@ public:
         archive(bins);
         archive(technical_bins);
         archive(bin_size_);
+        archive(hash_shift);
         archive(bin_words);
         archive(hash_funs);
         archive(data);
+        result_buffer.resize(bins);
     }
     //!\endcond
 };
