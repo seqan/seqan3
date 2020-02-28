@@ -140,6 +140,28 @@ public:
         using sdsl::bit_vector::end;
         using sdsl::bit_vector::operator==;
         using sdsl::bit_vector::operator[];
+        using sdsl::bit_vector::size;
+
+#if SEQAN3_DOXYGEN_ONLY(1)0
+        //!\brief The iterator type of the `binning_bitvector`;
+        using iterator_t = IMPLEMENTATION_DEFINED;
+        //!\brief The reference type of the `binning_bitvector`;
+        using reference_t = IMPLEMENTATION_DEFINED;
+        //!\brief The const_reference type of the `binning_bitvector`;
+        using const_reference_t = IMPLEMENTATION_DEFINED;
+        //!\brief Returns an iterator to the begin of the bitvector.
+        iterator_t begin() noexcept;
+        //!\brief Returns an iterator to the end of the bitvector.
+        iterator_t end() noexcept;
+        //!\brief Compares two bitvectors.
+        bool operator==(bit_vector const & other) const noexcept;
+        //!\brief Returns a reference to position `idx` of the bitvector.
+        reference_t operator[](size_t const & idx) noexcept;
+        //!\brief Returns a const_reference to position `idx` of the bitvector.
+        const_reference_t operator[](size_t const & idx) const noexcept;
+        //!\brief Returns the size of the bitvector.
+        size_t size() noexcept;
+#endif
 
     private:
         friend class interleaved_bloom_filter;
@@ -467,8 +489,11 @@ public:
      */
     friend bool operator==(interleaved_bloom_filter const & lhs, interleaved_bloom_filter const & rhs) noexcept
     {
-        return std::tie(lhs.bins, lhs.technical_bins, lhs.bin_size_, lhs.bin_words, lhs.hash_funs, lhs.data) ==
-               std::tie(rhs.bins, rhs.technical_bins, rhs.bin_size_, rhs.bin_words, rhs.hash_funs, rhs.data);
+        return std::tie(lhs.bins, lhs.technical_bins, lhs.bin_size_, lhs.hash_shift, lhs.bin_words, lhs.hash_funs,
+                        lhs.data) ==
+               std::tie(rhs.bins, rhs.technical_bins, rhs.bin_size_, rhs.hash_shift, rhs.bin_words, rhs.hash_funs,
+                        rhs.data) &&
+               lhs.result_buffer.size() == rhs.result_buffer.size() ;
     }
 
     /*!\brief Test for inequality.
@@ -495,9 +520,11 @@ public:
         archive(bins);
         archive(technical_bins);
         archive(bin_size_);
+        archive(hash_shift);
         archive(bin_words);
         archive(hash_funs);
         archive(data);
+        result_buffer.resize(bins);
     }
     //!\endcond
 };
