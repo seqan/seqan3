@@ -21,6 +21,25 @@
 namespace seqan3::detail
 {
 
+//!\cond
+// Wait on decision where this should go.
+inline size_t ipow(size_t base, size_t exp) noexcept
+{
+    size_t result{1ULL};
+#ifndef NDEBUG
+    for (size_t i = 0; i < exp; ++i)
+    {
+        assert(std::numeric_limits<size_t>::max() / base >= result); // overflow in ipow
+        result *= base;
+    }
+#else
+    for (; exp; exp >>=1, base *= base)
+        result *= (exp & 1) ? base : 1;
+#endif
+    return result;
+}
+//!\endcond
+
 // ---------------------------------------------------------------------------------------------------------------------
 // kmer_hash_view class
 // ---------------------------------------------------------------------------------------------------------------------
@@ -130,7 +149,7 @@ private:
         {
             assert(std::ranges::size(shape_) > 0);
 
-            roll_factor = std::pow(sigma, std::ranges::size(shape_) - 1);
+            roll_factor = ipow(sigma, std::ranges::size(shape_) - 1);
 
             hash_full();
         }
@@ -629,8 +648,8 @@ struct kmer_hash_fn
     }
 
     /*!\brief            Call the view's constructor with the underlying view and a seqan3::shape as argument.
-     * \param[in] urange The input range to process. Must model std::ranges::viewable_range and the reference type of the
-     *                   range of the range must model seqan3::semialphabet.
+     * \param[in] urange The input range to process. Must model std::ranges::viewable_range and the reference type
+     *                   of the range must model seqan3::semialphabet.
      * \param[in] shape_ The seqan3::shape to use for hashing.
      * \throws std::invalid_argument if resulting hash values would be too big for a 64 bit integer.
      * \returns          A range of converted elements.
@@ -670,6 +689,11 @@ namespace seqan3::views
  *
  * \details
  *
+ * \attention
+ * For the alphabet size \f$\sigma\f$ of the alphabet of `urange` and the number of 1s \f$s\f$ of `shape` it must hold
+ * that \f$s>\frac{64}{\log_2\sigma}\f$, i.e. hashes resulting from the shape/alphabet combination can be represented
+ * in an `uint64_t`.
+ *
  * ### View properties
  *
  * | Concepts and traits              | `urng_t` (underlying range type)   | `rrng_t` (returned range type)   |
@@ -690,11 +714,6 @@ namespace seqan3::views
  * | std::ranges::range_reference_t   | seqan3::semialphabet               | std::size_t                      |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
- *
- * \attention
- * For the alphabet size \f$\sigma\f$ of the alphabet of `urange` and the shape size \f$s\f$ of `shape` it must hold
- * that \f$s>\frac{64}{\log_2\sigma}\f$, i.e. hashes resulting from the shape/alphabet combination can be represented
- * in an `uint64_t`.
  *
  * ### Example
  *

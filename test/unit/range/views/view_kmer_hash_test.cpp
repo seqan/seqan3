@@ -10,8 +10,10 @@
 #include <type_traits>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
+#include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to.hpp>
 
@@ -157,6 +159,18 @@ TEST_F(kmer_hash_test, combinability)
 
 TEST_F(kmer_hash_test, invalid_sizes)
 {
+    EXPECT_NO_THROW(text1 | views::kmer_hash(ungapped{32}));
     EXPECT_THROW(text1 | views::kmer_hash(ungapped{33}), std::invalid_argument);
-    EXPECT_THROW(text1 | std::views::reverse | views::kmer_hash(ungapped{33}), std::invalid_argument);
+
+    std::vector<dna5> dna5_text{};
+    EXPECT_NO_THROW(dna5_text | views::kmer_hash(ungapped{27}));
+    EXPECT_THROW(dna5_text | views::kmer_hash(ungapped{28}), std::invalid_argument);
+}
+
+// https://github.com/seqan/seqan3/issues/1614
+TEST_F(kmer_hash_test, issue1614)
+{
+    dna5_vector sequence{"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5};
+    EXPECT_EQ(sequence | views::kmer_hash(ungapped{25}) | views::to<std::vector<size_t>>,
+              views::repeat_n(298023223876953124, 26) | views::to<std::vector<size_t>>);
 }
