@@ -522,7 +522,7 @@ public:
      */
     kmer_hash_view(urng_t urange_, shape const & s_) : urange{std::move(urange_)}, shape_{s_}
     {
-        if (shape_.size() > (64 / std::log2(alphabet_size<reference_t<urng_t>>)))
+        if (shape_.count() > (64 / std::log2(alphabet_size<reference_t<urng_t>>)))
         {
             throw std::invalid_argument{"The chosen shape/alphabet combination is not valid. "
                                         "The alphabet or shape size must be reduced."};
@@ -542,7 +542,7 @@ public:
     kmer_hash_view(rng_t && urange_, shape const & s_) :
         urange{std::views::all(std::forward<rng_t>(urange_))}, shape_{s_}
     {
-        if (shape_.size() > (64 / std::log2(alphabet_size<reference_t<urng_t>>)))
+        if (shape_.count() > (64 / std::log2(alphabet_size<reference_t<urng_t>>)))
         {
             throw std::invalid_argument{"The chosen shape/alphabet combination is not valid. "
                                         "The alphabet or shape size must be reduced."};
