@@ -25,7 +25,6 @@
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail

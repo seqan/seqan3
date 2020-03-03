@@ -16,7 +16,6 @@
 
 #include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>

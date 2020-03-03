@@ -16,7 +16,6 @@
 #include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/core/detail/type_inspection.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/std/ranges>

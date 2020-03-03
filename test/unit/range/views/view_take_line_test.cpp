@@ -12,7 +12,6 @@
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/view/unique.hpp>
 
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/to.hpp>

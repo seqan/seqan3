@@ -14,7 +14,6 @@
 
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/std/iterator>
 

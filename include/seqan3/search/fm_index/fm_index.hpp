@@ -16,7 +16,6 @@
 
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/std/filesystem>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to_rank.hpp>
 #include <seqan3/range/views/to.hpp>

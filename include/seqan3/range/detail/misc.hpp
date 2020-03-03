@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail

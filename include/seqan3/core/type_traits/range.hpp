@@ -18,7 +18,6 @@
 #include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/iterator.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/iterator>
 
