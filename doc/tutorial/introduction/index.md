@@ -27,7 +27,6 @@ Most good tutorials start with an easy *Hello World!* program. So have a look:
 \snippet introduction_hello_world.cpp hello
 
 \note
-
 This is a code snippet. You will see many code snippets in our documentation.
 Most of them are compilable as-is, but some are only valid in their context,
 e.g. they depend on other code snippets given before/after the current one or
