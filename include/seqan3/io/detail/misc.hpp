@@ -16,7 +16,6 @@
 
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/std/algorithm>
