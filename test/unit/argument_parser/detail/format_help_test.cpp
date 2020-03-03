@@ -42,14 +42,10 @@ std::string const basic_options_str = "OPTIONS\n"
                                       "\n"
                                       "  \n";
 
-std::string const version_str = std::to_string(SEQAN3_VERSION_MAJOR) + "."
-                                + std::to_string(SEQAN3_VERSION_MINOR) + "."
-                                + std::to_string(SEQAN3_VERSION_PATCH);
-
 std::string const basic_version_str = "VERSION\n"
                                       "    Last update: \n"
                                       "    test_parser version: \n"
-                                      "    SeqAn version: " + version_str + "\n";
+                                      "    SeqAn version: " + seqan3::seqan3_version + "\n";
 
 std::string license_text()
 {
