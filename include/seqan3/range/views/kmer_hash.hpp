@@ -12,34 +12,13 @@
 
 #pragma once
 
-#include <cmath>
-
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/math.hpp>
 #include <seqan3/range/hash.hpp>
 #include <seqan3/search/kmer_index/shape.hpp>
 
 namespace seqan3::detail
 {
-
-//!\cond
-// Wait on decision where this should go.
-inline size_t ipow(size_t base, size_t exp) noexcept
-{
-    size_t result{1ULL};
-#ifndef NDEBUG
-    for (size_t i = 0; i < exp; ++i)
-    {
-        assert(std::numeric_limits<size_t>::max() / base >= result); // overflow in ipow
-        result *= base;
-    }
-#else
-    for (; exp; exp >>=1, base *= base)
-        result *= (exp & 1) ? base : 1;
-#endif
-    return result;
-}
-//!\endcond
-
 // ---------------------------------------------------------------------------------------------------------------------
 // kmer_hash_view class
 // ---------------------------------------------------------------------------------------------------------------------
@@ -277,7 +256,7 @@ public:
     {
         assert(std::ranges::size(shape_) > 0);
 
-        roll_factor = ipow(sigma, std::ranges::size(shape_) - 1);
+        roll_factor = pow(sigma, static_cast<size_t>(std::ranges::size(shape_) - 1));
 
         hash_full();
     }
