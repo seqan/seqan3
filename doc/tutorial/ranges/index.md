@@ -140,7 +140,7 @@ the drop adaptor and a combined view object is returned.
 Note that accessing the 0th element of the view is still lazy, determining which element it maps to happens at the time
 of access.
 
-\assignment{Exercise: Fun with views I}
+\assignment{Assignment 1: Fun with views I}
 Look up the documentation of std::views::transform and std::views::filter.
 Both take a invocable object as parameter, e.g. a lambda function.
 std::views::transform applies the lambda on each element in the underlying range and std::views::filter
@@ -184,8 +184,8 @@ are not read-only**:
 
 \snippet doc/tutorial/ranges/range_snippets.cpp assign_through
 
-\assignment{Exercise: Fun with views II}
-Have a look at the solution to the previous exercise (filter+transform).
+\assignment{Assignment 2: Fun with views II}
+Have a look at the solution to the previous assignment (filter+transform).
 Which of the following concepts do you think `v` models?
 
 | Concept                          | yes/no? |
@@ -237,7 +237,7 @@ But SeqAn3 also provides some general purpose views.
 Have a look at the \link views views-submodule \endlink to get an overview of SeqAn's views and also read through the
 detailed description on that page now that you had a more gentle introduction.
 
-\assignment{Exercise: Fun with views III}
+\assignment{Assignment 3: Fun with views III}
 Create a small program that
   1. reads a string from the command line (first argument to the program)
   2. "converts" the string to a range of seqan3::dna5 (Bonus: throw an exception if loss of information occurs)
@@ -270,7 +270,7 @@ To store sequences of small alphabets more space-efficiently, we have developed 
 Open the API documentation of seqan3::bitcompressed_vector, display the inheritance diagram and read through the
 interface overview and the detailed description.
 
-\assignment{Exercise: The bitcompressed vector}
+\assignment{Assignment 4: The bitcompressed vector}
 Create a small program that asks the user for a size and then creates a vector of seqan3::dna4 of that size.
 Add an argument parser flag that allows the user to decide whether std::vector or seqan3::bitcompressed_vector is used.
 After creating the vector, print its size.
