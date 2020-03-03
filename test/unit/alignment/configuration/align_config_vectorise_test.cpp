@@ -13,10 +13,8 @@
 #include <seqan3/alignment/configuration/align_config_vectorise.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
-using namespace seqan3;
-
 TEST(align_config_vectorise, config_element)
 {
-    configuration cfg{seqan3::align_cfg::vectorise};
+    seqan3::configuration cfg{seqan3::align_cfg::vectorise};
     EXPECT_TRUE(decltype(cfg)::template exists<seqan3::detail::vectorise_tag>());
 }

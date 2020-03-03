@@ -12,23 +12,21 @@
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/std/concepts>
 
-using namespace seqan3;
-
 TEST(align_config_gap, config_element)
 {
-    EXPECT_TRUE((detail::config_element<align_cfg::gap<gap_scheme<>>>));
+    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::gap<seqan3::gap_scheme<>>>));
 }
 
 TEST(align_config_gap, configuration)
 {
     {
-        align_cfg::gap elem{gap_scheme<>{}};
-        configuration cfg{elem};
-        EXPECT_EQ((get<align_cfg::gap>(cfg).value.get_gap_score()), -1);
+        seqan3::align_cfg::gap elem{seqan3::gap_scheme<>{}};
+        seqan3::configuration cfg{elem};
+        EXPECT_EQ((seqan3::get<seqan3::align_cfg::gap>(cfg).value.get_gap_score()), -1);
     }
 
     {
-        configuration cfg{align_cfg::gap{gap_scheme<>{}}};
-        EXPECT_EQ((get<align_cfg::gap>(cfg).value.get_gap_open_score()), 0);
+        seqan3::configuration cfg{seqan3::align_cfg::gap{seqan3::gap_scheme<>{}}};
+        EXPECT_EQ((seqan3::get<seqan3::align_cfg::gap>(cfg).value.get_gap_open_score()), 0);
     }
 }

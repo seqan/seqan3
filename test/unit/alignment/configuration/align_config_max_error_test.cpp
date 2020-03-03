@@ -13,29 +13,27 @@
 #include <seqan3/alignment/configuration/align_config_max_error.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
-using namespace seqan3;
-
 TEST(align_config_max_error, config_element)
 {
-    EXPECT_TRUE((detail::config_element<align_cfg::max_error>));
+    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::max_error>));
 }
 
 TEST(align_config_max_error, configuration)
 {
     {
-        align_cfg::max_error elem{10};
-        configuration cfg{elem};
-        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::max_error>(cfg).value)>,
+        seqan3::align_cfg::max_error elem{10};
+        seqan3::configuration cfg{elem};
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(std::get<seqan3::align_cfg::max_error>(cfg).value)>,
                                   uint32_t>), true);
 
-        EXPECT_EQ(get<align_cfg::max_error>(cfg).value, 10u);
+        EXPECT_EQ(std::get<seqan3::align_cfg::max_error>(cfg).value, 10u);
     }
 
     {
-        configuration cfg{align_cfg::max_error{10}};
-        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::max_error>(cfg).value)>,
+        seqan3::configuration cfg{seqan3::align_cfg::max_error{10}};
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(std::get<seqan3::align_cfg::max_error>(cfg).value)>,
                                   uint32_t>), true);
 
-        EXPECT_EQ(get<align_cfg::max_error>(cfg).value, 10u);
+        EXPECT_EQ(std::get<seqan3::align_cfg::max_error>(cfg).value, 10u);
     }
 }
