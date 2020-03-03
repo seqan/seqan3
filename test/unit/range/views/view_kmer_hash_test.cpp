@@ -163,6 +163,9 @@ TEST_F(kmer_hash_test, invalid_sizes)
 {
     EXPECT_NO_THROW(text1 | seqan3::views::kmer_hash(seqan3::ungapped{32}));
     EXPECT_THROW(text1 | seqan3::views::kmer_hash(seqan3::ungapped{33}), std::invalid_argument);
+    EXPECT_NO_THROW(text1 | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{32}));
+    EXPECT_THROW(text1 | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{33}), std::invalid_argument);
+
     EXPECT_NO_THROW(text1 | seqan3::views::kmer_hash(0xFFFFFFFE001_shape)); // size=44, count=32
     EXPECT_THROW(text1 | seqan3::views::kmer_hash(0xFFFFFFFFE009_shape), std::invalid_argument); // size=44, count=33
 
