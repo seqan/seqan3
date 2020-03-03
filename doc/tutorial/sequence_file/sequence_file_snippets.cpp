@@ -1,6 +1,5 @@
 #include <fstream>
-
-#include <range/v3/numeric/accumulate.hpp>   // ranges::accumulate
+#include <numeric> // std::accumulate 
 //![include_ranges_chunk]
 #include <range/v3/view/chunk.hpp>
 //![include_ranges_chunk]
@@ -155,7 +154,7 @@ seqan3::sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq
 auto minimum_quality_filter = std::views::filter([] (auto const & rec)
 {
     auto qual = seqan3::get<seqan3::field::qual>(rec) | std::views::transform([] (auto q) { return q.to_phred(); });
-    double sum = ranges::accumulate(qual.begin(), qual.end(), 0);
+    double sum = std::accumulate(qual.begin(), qual.end(), 0);
     return sum / std::ranges::size(qual) >= 40; // minimum average quality >= 40
 });
 
