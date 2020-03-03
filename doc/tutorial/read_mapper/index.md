@@ -46,7 +46,7 @@ As a first step, we want to parse command line arguments for our indexer. If you
 you can take a peek at the \ref tutorial_argument_parser "Argument Parser Tutorial" or the API documentation of
 the seqan3::argument_parser for help.
 
-\assignment{Parsing arguments}
+\assignment{Assignment 1: Parsing arguments}
 Let's start our application by setting up the argument parser with the following options:
 * The path to the reference file
 * An output path for the index
@@ -73,7 +73,7 @@ As a next step, we want to use the parsed file name to read in our reference dat
 using seqan3::sequence_file_input class. As a guide, you can take a look at the
 \ref tutorial_sequence_file "Sequence I/O Tutorial".
 
-\assignment{Reading the input}
+\assignment{Assignment 2: Reading the input}
 Extend your program to store the sequence information contained in the reference file into a struct.
 
 To do this, you should create:
@@ -108,7 +108,7 @@ Here is the complete program:
 Now that we have the necessary sequence information, we can create an index and store it. Read up on the
 \ref tutorial_index_search "Index Tutorial" if you have any questions.
 
-\assignment{Index}
+\assignment{Assignment 3: Index}
 We want to create a new function `create_index`:
 * It takes `index_path` and `storage` as parameters
 * Creates a bi_fm_index
@@ -138,7 +138,7 @@ Again, we want to parse command line arguments for our read mapper as a first st
 you can take a peek at the [Argumet Parser Tutorial](#tutorial_argument_parser) or the API documentation of
 the seqan3::argument_parser for help.
 
-\assignment{Parsing arguments}
+\assignment{Assignment 4: Parsing arguments}
 Let's start our application by setting up the argument parser with the following options:
 * The path to the reference file
 * The path to the query file
@@ -168,7 +168,7 @@ We also want to read the reference in the read mapper. This is done the same way
 We can now load the index and conduct a search. Read up on the \ref tutorial_index_search "Search Tutorial"
 if you have any questions.
 
-\assignment{Reading the input}
+\assignment{Assignment 5: Reading the input}
 Extend your program to read the reference file the same way the indexer does.
 After this you can load the index and print results of a search.
 
@@ -199,7 +199,7 @@ Here is the complete program:
 We can now use the obtained positions to align each query against the reference. Refer to the
 \ref tutorial_pairwise_alignment "Alignment Tutorial" if you have any questions.
 
-\assignment{Alignment}
+\assignment{Assignment 6: Alignment}
 We want to extend `map_reads` to:
 * Use the output of the search to align the query against the reference
 * Print the query ID, alignment score, subrange of the reference sequence and the query (for the first 20 queries)
@@ -220,7 +220,7 @@ Here is the complete program:
 ## Step 4 - Alignment output
 Finally, we can write our results into a SAM file.
 
-\assignment{SAM out}
+\assignment{Assignment 7: SAM out}
 We further need to extend `map_reads` to write the alignment results into a SAM file.
 Additionally, there should be no more debug output.
 
