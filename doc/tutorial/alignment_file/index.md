@@ -144,7 +144,7 @@ so the seqan3::record object has three tuple elements that are decomposed using 
 
 Note that this is possible for all SeqAn file objects.
 
-\assignment{Exercise: Accumulating mapping qualities}
+\assignment{Assignment 1: Accumulating mapping qualities}
 
 Let's assume we want to compute the average mapping quality of a SAM file.
 
@@ -229,7 +229,7 @@ You can pass reference ids and reference sequences as additional constructor par
 \snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp alignments_with_ref
 \snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main_end
 
-\assignment{Exercise: Combining sequence and alignment files}
+\assignment{Assignment 2: Combining sequence and alignment files}
 
 Read in the following reference sequence FASTA file (see the sequence file tutorial if you need a remainder):
 
@@ -291,7 +291,7 @@ For this purpose, you can also select specific fields by giving an additional se
 Note that this only works because in the SAM format **all fields are optional**.
 So if we provide less fields when writing, default values are printed.
 
-\assignment{Exercise: Writing id and sequence information}
+\assignment{Assignment 3: Writing id and sequence information}
 
 Write a small program that writes the following read ids + sequences:
 
