@@ -12,20 +12,19 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using namespace seqan3;
-using namespace seqan3::detail;
+using seqan3::operator|;
 
-static constexpr trace_directions N = trace_directions::none;
-static constexpr trace_directions D = trace_directions::diagonal;
-static constexpr trace_directions u = trace_directions::up;
-static constexpr trace_directions l = trace_directions::left;
-static constexpr trace_directions U = trace_directions::up_open;
-static constexpr trace_directions L = trace_directions::left_open;
+static constexpr seqan3::detail::trace_directions N = seqan3::detail::trace_directions::none;
+static constexpr seqan3::detail::trace_directions D = seqan3::detail::trace_directions::diagonal;
+static constexpr seqan3::detail::trace_directions u = seqan3::detail::trace_directions::up;
+static constexpr seqan3::detail::trace_directions l = seqan3::detail::trace_directions::left;
+static constexpr seqan3::detail::trace_directions U = seqan3::detail::trace_directions::up_open;
+static constexpr seqan3::detail::trace_directions L = seqan3::detail::trace_directions::left_open;
 
 TEST(debug_stream_test, ascii)
 {
     std::stringstream s{};
-    debug_stream_type stream{s};
+    seqan3::debug_stream_type stream{s};
     stream << N << ";" << D << ";" << U << ";" << L << ";" << (D|U) << ";" << (D|L) << ";" << (U|L) << ";" << (D|U|L);
     stream << ";" << u << ";" << l << ";" << (D|u) << ";" << (D|u|l) << ";" << (D|U|u|L|l);
 
@@ -35,8 +34,8 @@ TEST(debug_stream_test, ascii)
 TEST(debug_stream_test, unicode)
 {
     std::stringstream s{};
-    debug_stream_type stream{s};
-    stream << fmtflags2::utf8;
+    seqan3::debug_stream_type stream{s};
+    stream << seqan3::fmtflags2::utf8;
     stream << N << ";" << D << ";" << U << ";" << L << ";" << (D|U) << ";" << (D|L) << ";" << (U|L) << ";" << (D|U|L);
     stream << ";" << u << ";" << l << ";" << (D|u) << ";" << (D|u|l) << ";" << (D|U|u|L|l);
 

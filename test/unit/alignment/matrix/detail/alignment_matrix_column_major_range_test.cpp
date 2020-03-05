@@ -11,14 +11,11 @@
 
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>
 
-using namespace seqan3;
-using namespace seqan3::detail;
-
-class test_matrix : public alignment_matrix_column_major_range_base<test_matrix>
+class test_matrix : public seqan3::detail::alignment_matrix_column_major_range_base<test_matrix>
 {
 public:
 
-    using base_t = alignment_matrix_column_major_range_base<test_matrix>;
+    using base_t = seqan3::detail::alignment_matrix_column_major_range_base<test_matrix>;
 
     using element_type = int;
     using alignment_column_type = typename base_t::alignment_column_type;
@@ -99,7 +96,7 @@ protected:
 TEST(alignment_matrix_column_major_range_base, concepts)
 {
     using outer_it = std::ranges::iterator_t<test_matrix>;
-    using column_t = value_type_t<outer_it>;
+    using column_t = seqan3::value_type_t<outer_it>;
     using inner_it = std::ranges::iterator_t<column_t>;
 
     EXPECT_TRUE(std::ranges::input_range<test_matrix>);

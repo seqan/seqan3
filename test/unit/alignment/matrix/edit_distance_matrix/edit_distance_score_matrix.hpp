@@ -8,8 +8,6 @@
 #include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/row_wise_matrix.hpp>
 
-using namespace seqan3;
-
 using score_type = int;
 using word_type = uint8_t;
 
@@ -29,7 +27,7 @@ public:
     using base_t::reserve;
 };
 
-static constexpr score_type INF = detail::matrix_inf<score_type>;
+static constexpr score_type INF = seqan3::detail::matrix_inf<score_type>;
 
 std::vector<std::vector<int>> as_row_wise_vector(auto matrix)
 {
@@ -39,7 +37,8 @@ std::vector<std::vector<int>> as_row_wise_vector(auto matrix)
         result.push_back({});
         for (unsigned col = 0; col < matrix.cols(); ++col)
         {
-            std::optional<int> entry = matrix.at({detail::row_index_type{row}, detail::column_index_type{col}});
+            std::optional<int> entry = matrix.at({seqan3::detail::row_index_type{row},
+                                                  seqan3::detail::column_index_type{col}});
             result.back().push_back(entry.value_or(INF));
         }
     }

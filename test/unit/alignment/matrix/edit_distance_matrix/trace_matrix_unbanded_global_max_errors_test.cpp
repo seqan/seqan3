@@ -17,8 +17,8 @@ TEST(global_max_errors, empty)
     matrix_type<false, true> matrix{1u};
 
     // row-wise matrix
-    std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{}};
+    std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect{{}};
 
     EXPECT_EQ(result, expect);
 }
@@ -30,8 +30,8 @@ TEST(global_max_errors, epsilon)
     matrix.add_column({}, {}, {}, 1u);
 
     // row-wise matrix
-    std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{N}};
+    std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect{{N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -47,8 +47,8 @@ TEST(global_max_errors, epsilon_row)
     matrix.add_column({}, {}, {}, 0u);
 
     // row-wise matrix
-    std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect{{N, l, l, N, N}};
+    std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect{{N, l, l, N, N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -70,8 +70,8 @@ TEST(global_max_errors, single_word_1)
     matrix.add_column({0b1000'1111u}, {0b1111'0001u}, {0b1110'0000u}, 7u);
 
     // row-wise matrix
-    std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect
+    std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect
     {
         {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
         {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl },
@@ -104,8 +104,8 @@ TEST(global_max_errors, single_word_2)
     matrix.add_column({0b1000'1111u}, {0b1111'0001u}, {0b1110'0000u}, 6u);
 
     // row-wise matrix
-    std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect
+    std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect
     {
         {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
         {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl },
@@ -138,8 +138,8 @@ TEST(global_max_errors, single_word_3)
     matrix.add_column({0b1000'1111u}, {0b1111'0001u}, {0b1110'0000u}, 0u);
 
     // row-wise matrix
-    std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect
+    std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect
     {
         {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,N  ,N  },
         {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,N  ,N  },
@@ -172,8 +172,8 @@ TEST(global_max_errors, multiple_words_1)
     matrix.add_column({0b1000'1111u, 0b0u}, {0b1111'0001u, 0b1u}, {0b1110'0000u, 0b0u}, 7u);
 
     // row-wise matrix
-    std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect
+    std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect
     {
         {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
         {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl },
@@ -227,8 +227,8 @@ TEST(global_max_errors, multiple_words_2)
                       {0b0000'0000u, 0b0000'0110u, 0b0u}, 18u);
 
     // row-wise matrix
-    std::vector<std::vector<detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<detail::trace_directions>> expect
+    std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect
     {
         {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
         {u  ,D  ,l  ,l  ,l  ,Dl ,l  ,l  ,l  ,Dl },

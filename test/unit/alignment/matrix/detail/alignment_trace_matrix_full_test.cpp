@@ -16,10 +16,10 @@
 #include "alignment_matrix_base_test_template.hpp"
 #include "../../../range/iterator_test_template.hpp"
 
-using namespace seqan3;
-
-using trace_matrix_t = std::pair<detail::alignment_trace_matrix_full<trace_directions>, std::false_type>;
-using coo_matrix_t = std::pair<detail::alignment_trace_matrix_full<trace_directions, true>, std::false_type>;
+using trace_matrix_t = std::pair<seqan3::detail::alignment_trace_matrix_full<seqan3::detail::trace_directions>,
+                                                                             std::false_type>;
+using coo_matrix_t = std::pair<seqan3::detail::alignment_trace_matrix_full<seqan3::detail::trace_directions, true>,
+                                                                           std::false_type>;
 
 using testing_types = ::testing::Types<trace_matrix_t, coo_matrix_t>;
 
@@ -37,18 +37,18 @@ struct outer_iterator
 template <typename test_type>
 struct iterator_fixture<outer_iterator<test_type>> : alignment_matrix_base_test<test_type>
 {
-    static constexpr trace_directions N = trace_directions::none;
+    static constexpr seqan3::detail::trace_directions N = seqan3::detail::trace_directions::none;
 
     using base_t = alignment_matrix_base_test<test_type>;
     using iterator_tag = std::input_iterator_tag;
     static constexpr bool const_iterable = false;
 
     using base_t::test_range;
-    std::vector<std::pair<std::pair<size_t, size_t>, trace_directions>> expected_range{{{0, 0}, N},
-                                                                                       {{0, 1}, N},
-                                                                                       {{0, 2}, N},
-                                                                                       {{0, 3}, N},
-                                                                                       {{0, 4}, N}};
+    std::vector<std::pair<std::pair<size_t, size_t>, seqan3::detail::trace_directions>> expected_range{{{0, 0}, N},
+                                                                                                       {{0, 1}, N},
+                                                                                                       {{0, 2}, N},
+                                                                                                       {{0, 3}, N},
+                                                                                                       {{0, 4}, N}};
 
     template <typename lhs_t, typename rhs_t>
     static void test(lhs_t lhs, rhs_t rhs)
@@ -57,7 +57,7 @@ struct iterator_fixture<outer_iterator<test_type>> : alignment_matrix_base_test<
         EXPECT_EQ(lhs.coordinate.first, std::get<1>(std::get<0>(rhs)));
 
         if constexpr (std::is_same_v<std::tuple_element_t<0, test_type>,
-                                     detail::alignment_trace_matrix_full<trace_directions>>)
+                                     seqan3::detail::alignment_trace_matrix_full<seqan3::detail::trace_directions>>)
         {
             EXPECT_EQ(lhs.current, std::get<1>(rhs));
         }
@@ -92,11 +92,12 @@ struct iterator_fixture<inner_iterator<test_type>> : iterator_fixture<outer_iter
     static constexpr bool const_iterable = false;
 
     decltype(*base_t::test_range.begin()) test_range = *base_t::test_range.begin();
-    std::vector<std::pair<std::pair<size_t, size_t>, trace_directions>> expected_range{{{0, 0}, base_t::N},
-                                                                                       {{1, 0}, base_t::N},
-                                                                                       {{2, 0}, base_t::N},
-                                                                                       {{3, 0}, base_t::N},
-                                                                                       {{4, 0}, base_t::N}};
+    std::vector<std::pair<std::pair<size_t, size_t>,
+                          seqan3::detail::trace_directions>> expected_range{{{0, 0}, base_t::N},
+                                                                            {{1, 0}, base_t::N},
+                                                                            {{2, 0}, base_t::N},
+                                                                            {{3, 0}, base_t::N},
+                                                                            {{4, 0}, base_t::N}};
 
     template <typename lhs_t, typename rhs_t>
     static void expect_eq(lhs_t lhs, rhs_t rhs)
@@ -114,15 +115,18 @@ INSTANTIATE_TYPED_TEST_SUITE_P(trace_matrix_inner_iterator,
 
 TEST(trace_matrix, trace_path)
 {
-    detail::alignment_trace_matrix_full<trace_directions> matrix{"acgt", "acgt"};
+    seqan3::detail::alignment_trace_matrix_full<seqan3::detail::trace_directions> matrix{"acgt", "acgt"};
 
-    EXPECT_THROW((matrix.trace_path(matrix_coordinate{row_index_type{6u}, column_index_type{4u}})),
+    EXPECT_THROW((matrix.trace_path(seqan3::detail::matrix_coordinate{seqan3::detail::row_index_type{6u},
+                                                                      seqan3::detail::column_index_type{4u}})),
                  std::invalid_argument);
 
-    EXPECT_THROW((matrix.trace_path(matrix_coordinate{row_index_type{4u}, column_index_type{6u}})),
+    EXPECT_THROW((matrix.trace_path(seqan3::detail::matrix_coordinate{seqan3::detail::row_index_type{4u},
+                                                                      seqan3::detail::column_index_type{6u}})),
                  std::invalid_argument);
 
-    auto path = matrix.trace_path(matrix_coordinate{row_index_type{4u}, column_index_type{4u}});
+    auto path = matrix.trace_path(seqan3::detail::matrix_coordinate{seqan3::detail::row_index_type{4u},
+                                                                    seqan3::detail::column_index_type{4u}});
 
     EXPECT_TRUE(path.empty());
 }

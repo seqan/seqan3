@@ -16,12 +16,10 @@
 #include "simulated_alignment_test_template.hpp"
 #include "../../../range/iterator_test_template.hpp"
 
-using namespace seqan3;
-
 template <typename t>
 struct alignment_score_matrix_one_column_test
 {
-    using matrix_t = detail::alignment_score_matrix_one_column<t>;
+    using matrix_t = seqan3::detail::alignment_score_matrix_one_column<t>;
     using score_type = t;
 
     alignment_score_matrix_one_column_test() = default;
