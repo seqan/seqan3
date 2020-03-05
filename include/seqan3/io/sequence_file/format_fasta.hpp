@@ -276,10 +276,11 @@ private:
             auto e = stream_view.end();
             for (; (it != e) && ((!is_id)(*it)); ++it)
             {
-                if ((is_space || is_digit)(*it))
-                    continue;
-                else if (not_in_alph(*it))
+                if (not_in_alph(*it))
                 {
+                    if ((is_space || is_digit)(*it))
+                        continue;
+
                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
                                         not_in_alph.msg +
                                         " evaluated to true on " +
