@@ -26,11 +26,11 @@ TEST(align_config_score, constructor)
 TEST(align_config_score, on_align_config)
 {
     using config_score_type = seqan3::detail::align_config_score<seqan3::aminoacid_scoring_scheme<>>;
-    using typename_of_algin_config = typename seqan3::detail::on_align_config<seqan3::align_cfg::id::score;
+    using typename_of_align_config = typename seqan3::detail::on_align_config<seqan3::align_cfg::id::score;
 
-    EXPECT_TRUE((std::is_same_v<typename_of_algin_config>::invoke<config_score_type>,
+    EXPECT_TRUE((std::is_same_v<typename_of_align_config>::invoke<config_score_type>,
                  std::true_type>));
-    EXPECT_TRUE((std::is_same_v<typename_of_algin_config>::invoke<bar>,
+    EXPECT_TRUE((std::is_same_v<typename_of_align_config>::invoke<bar>,
                  std::false_type>));
 }
 
