@@ -78,6 +78,8 @@ private:
     using node_type = detail::fm_index_cursor_node<index_t>;
     //!\brief Type of the representation of characters in the underlying SDSL index.
     using sdsl_char_type = typename index_type::sdsl_char_type;
+    //!\brief Type of the SDSL index.
+    using sdsl_index_type = typename index_t::sdsl_index_type;
     //!\brief Type of the alphabet size in the underlying SDSL index.
     using sdsl_sigma_type = typename index_type::sdsl_sigma_type;
     //!\brief Alphabet type of the index.
@@ -106,15 +108,17 @@ private:
     }
 
     //!\brief Optimized backward search without alphabet mapping
-    template <detail::sdsl_index csa_t>
-    bool backward_search(csa_t const & csa, sdsl_char_type const c, size_type & l, size_type & r) const noexcept
+    bool backward_search(sdsl_index_type const & csa,
+                         sdsl_char_type const c,
+                         size_type & l,
+                         size_type & r) const noexcept
     {
         assert(l <= r && r < csa.size());
 
         size_type _l, _r;
 
         size_type cc = c;
-        if constexpr(!std::same_as<typename csa_t::alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr(!std::same_as<index_alphabet_type, sdsl::plain_byte_alphabet>)
         {
             cc = csa.char2comp[c];
             if (cc == 0 && c > 0) // [[unlikely]]
