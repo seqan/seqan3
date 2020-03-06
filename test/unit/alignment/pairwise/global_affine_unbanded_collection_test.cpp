@@ -28,7 +28,7 @@ static auto dna4_01 = []()
     for (size_t i = 0; i < 100; ++i)
         data.push_back(base_fixture);
 
-    return alignment_fixture_collection{base_fixture.config | align_cfg::parallel{4}, data};
+    return alignment_fixture_collection{base_fixture.config | seqan3::align_cfg::parallel{4}, data};
 }();
 
 } // namespace seqan3::test::alignment::fixture::collection::global::affine::unbanded

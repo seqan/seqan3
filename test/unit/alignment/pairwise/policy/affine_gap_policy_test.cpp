@@ -19,7 +19,9 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
+using seqan3::operator|;
+
 using namespace seqan3::detail;
 
 template <typename score_t>
@@ -62,8 +64,10 @@ struct affine_gap_fixture : public ::testing::Test
     {
         if constexpr (std::tuple_element_t<2, test_types>::value)
         {
-            score_matrix = score_matrix_t{"ACGT"_dna4, "ACGT"_dna4, static_band{lower_bound{-2}, upper_bound{2}}};
-            trace_matrix = trace_matrix_t{"ACGT"_dna4, "ACGT"_dna4, static_band{lower_bound{-2}, upper_bound{2}}};
+            score_matrix = score_matrix_t{"ACGT"_dna4, "ACGT"_dna4, seqan3::static_band{seqan3::lower_bound{-2},
+                                                                                        seqan3::upper_bound{2}}};
+            trace_matrix = trace_matrix_t{"ACGT"_dna4, "ACGT"_dna4, seqan3::static_band{seqan3::lower_bound{-2},
+                                                                                        seqan3::upper_bound{2}}};
         }
         else
         {
@@ -78,7 +82,7 @@ struct affine_gap_fixture : public ::testing::Test
 
     auto column()
     {
-        return views::zip(*score_matrix_iter, *trace_matrix_iter);
+        return seqan3::views::zip(*score_matrix_iter, *trace_matrix_iter);
     }
 
     affine_gap_policy_mock<int> mock{};
@@ -132,9 +136,8 @@ TYPED_TEST(affine_gap_fixture, compute_cell)
 
     if constexpr (this->with_trace)
     {
-        EXPECT_EQ(trace_cell.current, trace_directions::diagonal |
-                                      trace_directions::up_open |
-                                      trace_directions::left_open);
+        EXPECT_EQ(trace_cell.current, trace_directions::diagonal | trace_directions::up_open
+                                                                 | trace_directions::left_open);
         EXPECT_EQ(trace_cell.up, trace_directions::up_open);
         EXPECT_EQ(trace_cell.w_left, trace_directions::left_open);
     }

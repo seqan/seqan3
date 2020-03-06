@@ -16,12 +16,12 @@ namespace seqan3::test::alignment::fixture
 
 static constexpr auto INF = std::nullopt;
 
-static constexpr auto N     = detail::trace_directions::none;
-static constexpr auto D     = detail::trace_directions::diagonal;
-static constexpr auto u     = detail::trace_directions::up;
-static constexpr auto l     = detail::trace_directions::left;
-static constexpr auto U     = detail::trace_directions::up_open;
-static constexpr auto L     = detail::trace_directions::left_open;
+static constexpr auto N     = seqan3::detail::trace_directions::none;
+static constexpr auto D     = seqan3::detail::trace_directions::diagonal;
+static constexpr auto u     = seqan3::detail::trace_directions::up;
+static constexpr auto l     = seqan3::detail::trace_directions::left;
+static constexpr auto U     = seqan3::detail::trace_directions::up_open;
+static constexpr auto L     = seqan3::detail::trace_directions::left_open;
 static constexpr auto DU    = D | U;
 static constexpr auto UL    = U | L;
 static constexpr auto DL    = D | L;
@@ -62,38 +62,38 @@ struct alignment_fixture
     std::string aligned_sequence1;
     std::string aligned_sequence2;
 
-    alignment_coordinate front_coordinate;
-    alignment_coordinate back_coordinate;
+    seqan3::alignment_coordinate front_coordinate;
+    seqan3::alignment_coordinate back_coordinate;
 
     score_vector_or_matrix_t score_vector{};
     trace_vector_or_matrix_t trace_vector{};
 
     auto score_matrix() const requires seqan3::detail::matrix<score_vector_or_matrix_t>
     {
-        return detail::debug_matrix{score_vector};
+        return seqan3::detail::debug_matrix{score_vector};
     };
 
     auto score_matrix() const requires !seqan3::detail::matrix<score_vector_or_matrix_t>
     {
-        detail::row_wise_matrix<value_type_t<score_vector_or_matrix_t>>
-            score_matrix{detail::number_rows{sequence2.size() + 1},
-                         detail::number_cols{sequence1.size() + 1},
+        seqan3::detail::row_wise_matrix<value_type_t<score_vector_or_matrix_t>>
+            score_matrix{seqan3::detail::number_rows{sequence2.size() + 1},
+                         seqan3::detail::number_cols{sequence1.size() + 1},
                          score_vector};
-        return detail::debug_matrix{std::move(score_matrix)};
+        return seqan3::detail::debug_matrix{std::move(score_matrix)};
     };
 
     auto trace_matrix() const requires seqan3::detail::matrix<trace_vector_or_matrix_t>
     {
-        return detail::debug_matrix{trace_vector};
+        return seqan3::detail::debug_matrix{trace_vector};
     };
 
     auto trace_matrix() const requires !seqan3::detail::matrix<trace_vector_or_matrix_t>
     {
-        detail::row_wise_matrix<value_type_t<trace_vector_or_matrix_t>>
-            trace_matrix{detail::number_rows{sequence2.size() + 1},
-                         detail::number_cols{sequence1.size() + 1},
+        seqan3::detail::row_wise_matrix<value_type_t<trace_vector_or_matrix_t>>
+            trace_matrix{seqan3::detail::number_rows{sequence2.size() + 1},
+                         seqan3::detail::number_cols{sequence1.size() + 1},
                          trace_vector};
-        return detail::debug_matrix{std::move(trace_matrix)};
+        return seqan3::detail::debug_matrix{std::move(trace_matrix)};
     };
 };
 
@@ -106,8 +106,8 @@ alignment_fixture(
     score_t score,
     std::string aligned_sequence1,
     std::string aligned_sequence2,
-    alignment_coordinate front_coordinate,
-    alignment_coordinate back_coordinate,
+    seqan3::alignment_coordinate front_coordinate,
+    seqan3::alignment_coordinate back_coordinate,
     score_vector_or_matrix_t score_vector,
     trace_vector_or_matrix_t trace_vector
 )
@@ -121,11 +121,11 @@ alignment_fixture(
     score_t score,
     std::string aligned_sequence1,
     std::string aligned_sequence2,
-    alignment_coordinate front_coordinate,
-    alignment_coordinate back_coordinate
+    seqan3::alignment_coordinate front_coordinate,
+    seqan3::alignment_coordinate back_coordinate
 )
 -> alignment_fixture<sequence1_t, sequence2_t, config_t, score_t,
-                     std::vector<score_t>, std::vector<detail::trace_directions>>;
+                     std::vector<score_t>, std::vector<seqan3::detail::trace_directions>>;
 
 template <typename config_t, typename alignment_fixture_t>
 struct alignment_fixture_collection

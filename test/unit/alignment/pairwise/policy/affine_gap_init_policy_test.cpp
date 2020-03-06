@@ -19,7 +19,8 @@
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
+
 using namespace seqan3::detail;
 
 class affine_gap_init_policy_mock :
@@ -58,8 +59,10 @@ public:
     {
         if constexpr (std::tuple_element_t<2, test_types>::value)
         {
-            score_matrix = score_matrix_t{"ACGT"_dna4, "ACGT"_dna4, static_band{lower_bound{-2}, upper_bound{2}}};
-            trace_matrix = trace_matrix_t{"ACGT"_dna4, "ACGT"_dna4, static_band{lower_bound{-2}, upper_bound{2}}};
+            score_matrix = score_matrix_t{"ACGT"_dna4, "ACGT"_dna4, seqan3::static_band{seqan3::lower_bound{-2},
+                                                                                        seqan3::upper_bound{2}}};
+            trace_matrix = trace_matrix_t{"ACGT"_dna4, "ACGT"_dna4, seqan3::static_band{seqan3::lower_bound{-2},
+                                                                                        seqan3::upper_bound{2}}};
         }
         else
         {
@@ -74,7 +77,7 @@ public:
 
     auto column()
     {
-        return views::zip(*score_matrix_iter, *trace_matrix_iter);
+        return seqan3::views::zip(*score_matrix_iter, *trace_matrix_iter);
     }
 
     affine_gap_init_policy_mock mock{};

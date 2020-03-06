@@ -21,6 +21,8 @@
 
 #include "alignment_fixture.hpp"
 
+using seqan3::operator""_dna4;
+
 namespace seqan3::test::alignment::fixture::global::affine::unbanded
 {
 
