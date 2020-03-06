@@ -12,32 +12,30 @@
 #include <seqan3/alignment/configuration/align_config_mode.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
-using namespace seqan3;
-
 template <typename type>
 struct align_cfg_mode_test : public ::testing::Test
 {};
 
-using test_types = ::testing::Types<detail::global_alignment_type, detail::local_alignment_type>;
+using test_types = ::testing::Types<seqan3::detail::global_alignment_type, seqan3::detail::local_alignment_type>;
 TYPED_TEST_SUITE(align_cfg_mode_test, test_types, );
 
 TYPED_TEST(align_cfg_mode_test, config_element)
 {
-    EXPECT_EQ(detail::config_element<align_cfg::mode<TypeParam>>, true);
+    EXPECT_EQ(seqan3::detail::config_element<seqan3::align_cfg::mode<TypeParam>>, true);
 }
 
 TYPED_TEST(align_cfg_mode_test, configuration)
 {
     {
-        align_cfg::mode elem{TypeParam{}};
-        configuration cfg(elem);
-        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::mode>(cfg).value)>,
+        seqan3::align_cfg::mode elem{TypeParam{}};
+        seqan3::configuration cfg(elem);
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(seqan3::get<seqan3::align_cfg::mode>(cfg).value)>,
                                   TypeParam>), true);
     }
 
     {
-        configuration cfg{align_cfg::mode{TypeParam{}}};
-        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::mode>(cfg).value)>,
+        seqan3::configuration cfg{seqan3::align_cfg::mode{TypeParam{}}};
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(seqan3::get<seqan3::align_cfg::mode>(cfg).value)>,
                                   TypeParam>), true);
     }
 }
@@ -45,13 +43,13 @@ TYPED_TEST(align_cfg_mode_test, configuration)
 template <typename type>
 constexpr auto get_inline_variable()
 {
-    if constexpr (std::is_same_v<type, detail::global_alignment_type>)
+    if constexpr (std::is_same_v<type, seqan3::detail::global_alignment_type>)
     {
-        return global_alignment;
+        return seqan3::global_alignment;
     }
-    else if constexpr (std::is_same_v<type, detail::local_alignment_type>)
+    else if constexpr (std::is_same_v<type, seqan3::detail::local_alignment_type>)
     {
-        return local_alignment;
+        return seqan3::local_alignment;
     }
     else
     {
@@ -61,7 +59,7 @@ constexpr auto get_inline_variable()
 
 TYPED_TEST(align_cfg_mode_test, construction_from_variable)
 {
-    configuration cfg{align_cfg::mode{get_inline_variable<TypeParam>()}};
-    EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::mode>(cfg).value)>,
+    seqan3::configuration cfg{seqan3::align_cfg::mode{get_inline_variable<TypeParam>()}};
+    EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(seqan3::get<seqan3::align_cfg::mode>(cfg).value)>,
                               TypeParam>), true);
 }

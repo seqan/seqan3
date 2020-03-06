@@ -13,38 +13,36 @@
 #include <seqan3/alignment/band/static_band.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 
-using namespace seqan3;
-
 template <typename T>
 class alignment_configuration_test : public ::testing::Test
 {};
 
-using test_types = ::testing::Types<align_cfg::aligned_ends<std::remove_const_t<decltype(free_ends_all)>>,
-                                    align_cfg::band<static_band>,
-                                    align_cfg::gap<gap_scheme<>>,
-                                    align_cfg::max_error,
-                                    align_cfg::mode<detail::global_alignment_type>,
-                                    align_cfg::mode<detail::local_alignment_type>,
-                                    align_cfg::parallel,
-                                    align_cfg::result<>,
-                                    align_cfg::scoring<nucleotide_scoring_scheme<int8_t>>,
-                                    detail::vectorise_tag>;
+using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_const_t<decltype(seqan3::free_ends_all)>>,
+                                    seqan3::align_cfg::band<seqan3::static_band>,
+                                    seqan3::align_cfg::gap<seqan3::gap_scheme<>>,
+                                    seqan3::align_cfg::max_error,
+                                    seqan3::align_cfg::mode<seqan3::detail::global_alignment_type>,
+                                    seqan3::align_cfg::mode<seqan3::detail::local_alignment_type>,
+                                    seqan3::align_cfg::parallel,
+                                    seqan3::align_cfg::result<>,
+                                    seqan3::align_cfg::scoring<seqan3::nucleotide_scoring_scheme<int8_t>>,
+                                    seqan3::detail::vectorise_tag>;
 
 TYPED_TEST_SUITE(alignment_configuration_test, test_types, );
 
 // TODO: this should go to a typed configuration test that also checks the alignment configuration
 TEST(alignment_configuration_test, symmetric_configuration)
 {
-    for (uint8_t i = 0; i < static_cast<uint8_t>(detail::align_config_id::SIZE); ++i)
+    for (uint8_t i = 0; i < static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE); ++i)
     {
         // no element can occur twice in a configuration
-        EXPECT_FALSE(detail::compatibility_table<detail::align_config_id>[i][i])
+        EXPECT_FALSE(seqan3::detail::compatibility_table<seqan3::detail::align_config_id>[i][i])
             << "There is a TRUE value on the diagonal of the search configuration matrix.";
         for (uint8_t j = 0; j < i; ++j)
         {
             // symmetric matrix
-            EXPECT_EQ(detail::compatibility_table<detail::align_config_id>[i][j],
-                      detail::compatibility_table<detail::align_config_id>[j][i])
+            EXPECT_EQ(seqan3::detail::compatibility_table<seqan3::detail::align_config_id>[i][j],
+                      seqan3::detail::compatibility_table<seqan3::detail::align_config_id>[j][i])
                 << "Search configuration matrix is not symmetric.";
         }
     }
@@ -52,18 +50,18 @@ TEST(alignment_configuration_test, symmetric_configuration)
 
 TEST(alignment_configuration_test, number_of_configs)
 {
-    // NOTE(rrahn): You must update this test if you add a new value to align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(detail::align_config_id::SIZE), 11);
+    // NOTE(rrahn): You must update this test if you add a new value to seqan3::align_cfg::id
+    EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 11);
 }
 
 TYPED_TEST(alignment_configuration_test, config_element)
 {
-    EXPECT_TRUE((detail::config_element<TypeParam>));
+    EXPECT_TRUE((seqan3::detail::config_element<TypeParam>));
 }
 
 TYPED_TEST(alignment_configuration_test, configuration_exists)
 {
-    configuration cfg{TypeParam{}};
+    seqan3::configuration cfg{TypeParam{}};
     EXPECT_TRUE(decltype(cfg)::template exists<TypeParam>());
 }
 
@@ -81,6 +79,6 @@ void helper_exists()
 
 TYPED_TEST(alignment_configuration_test, configuration_exists_template)
 {
-    configuration cfg{TypeParam{}};
+    seqan3::configuration cfg{TypeParam{}};
     helper_exists<TypeParam, decltype(cfg)>();
 }

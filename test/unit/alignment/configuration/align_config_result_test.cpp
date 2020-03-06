@@ -12,74 +12,70 @@
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
-using namespace seqan3;
-
 template <typename test_t>
 struct align_cfg_result_test : public ::testing::Test
 {};
 
-using test_types = ::testing::Types<detail::with_score_type,
-                                    detail::with_back_coordinate_type,
-                                    detail::with_front_coordinate_type,
-                                    detail::with_alignment_type>;
+using test_types = ::testing::Types<seqan3::detail::with_score_type,
+                                    seqan3::detail::with_back_coordinate_type,
+                                    seqan3::detail::with_front_coordinate_type,
+                                    seqan3::detail::with_alignment_type>;
 
 TYPED_TEST_SUITE(align_cfg_result_test, test_types, );
 
 TEST(align_config_max_error, config_element)
 {
-    EXPECT_TRUE((detail::config_element<align_cfg::result<detail::with_score_type>>));
+    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::result<seqan3::detail::with_score_type>>));
 }
 
 template <typename type>
 auto type_to_variable()
 {
-    using namespace seqan3::align_cfg;
-
-    if constexpr (std::is_same_v<type, detail::with_score_type>)
+    if constexpr (std::is_same_v<type, seqan3::detail::with_score_type>)
     {
-        return with_score;
+        return seqan3::with_score;
     }
-    else if constexpr (std::is_same_v<type, detail::with_back_coordinate_type>)
+    else if constexpr (std::is_same_v<type, seqan3::detail::with_back_coordinate_type>)
     {
-        return with_back_coordinate;
+        return seqan3::with_back_coordinate;
     }
-    else if constexpr (std::is_same_v<type, detail::with_front_coordinate_type>)
+    else if constexpr (std::is_same_v<type, seqan3::detail::with_front_coordinate_type>)
     {
-        return with_front_coordinate;
+        return seqan3::with_front_coordinate;
     }
     else
     {
-        return with_alignment;
+        return seqan3::with_alignment;
     }
 }
 
 TYPED_TEST(align_cfg_result_test, configuration)
 {
     {
-        align_cfg::result elem{TypeParam{}};
-        configuration cfg{elem};
-        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::result>(cfg).value)>,
+        seqan3::align_cfg::result elem{TypeParam{}};
+        seqan3::configuration cfg{elem};
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(seqan3::get<seqan3::align_cfg::result>(cfg).value)>,
                                     TypeParam>));
     }
 
     {
-        configuration cfg{align_cfg::result{type_to_variable<TypeParam>()}};
-        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::result>(cfg).value)>,
+        seqan3::configuration cfg{seqan3::align_cfg::result{type_to_variable<TypeParam>()}};
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(seqan3::get<seqan3::align_cfg::result>(cfg).value)>,
                                     TypeParam>));
     }
 }
 
 TYPED_TEST(align_cfg_result_test, score_type)
 {
+    using type_of_score = decltype(seqan3::align_cfg::result{TypeParam{}, seqan3::using_score_type<double>});
+
     // second template argument defaulted
-    EXPECT_TRUE((std::is_same_v<decltype(align_cfg::result{TypeParam{}}),
-                                align_cfg::result<TypeParam, int32_t>>));
+    EXPECT_TRUE((std::is_same_v<decltype(seqan3::align_cfg::result{TypeParam{}}),
+                 seqan3::align_cfg::result<TypeParam, int32_t>>));
 
     // second template argument deduced in construction
-    EXPECT_TRUE((std::is_same_v<decltype(align_cfg::result{TypeParam{}, using_score_type<double>}),
-                                align_cfg::result<TypeParam, double>>));
+    EXPECT_TRUE((std::is_same_v<type_of_score, seqan3::align_cfg::result<TypeParam, double>>));
 
     // member type variable `score_type`
-    EXPECT_TRUE((std::is_same_v<typename decltype(align_cfg::result{TypeParam{}, using_score_type<double>})::score_type,
-                                double>));
+    EXPECT_TRUE((std::is_same_v<typename type_of_score::score_type, double>));
 }
