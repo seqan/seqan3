@@ -41,7 +41,7 @@ However, the debug stream provides convenient output for SeqAn's types as well a
 (e.g. std::vector), which is especially helpful when you debug or develop your program
 (that's where the name originates).
 
-\assignment{Exercise: Debug stream}
+\assignment{Assignment 1: Debug stream}
 Write a program that creates a std::vector of type `int` and initialise the vector with a few values.
 Then print the vector with seqan3::debug_stream. Does your program also work with std::cerr?
 \endassignment
@@ -50,9 +50,9 @@ Then print the vector with seqan3::debug_stream. Does your program also work wit
 \endsolution
 
 \note
-This is an exercise with solution. You will find exercises in the tutorials to practise the discussed contents.
+This is an assignment with solution. You will find assignments in the tutorials to practise the discussed contents.
 We believe that programming them will help you to memorise better and makes the tutorials more interesting and
-interactive. The solutions provide the intended use; but often there are multiple ways to solve an exercise,
+interactive. The solutions provide the intended use; but often there are multiple ways to solve an assignment,
 so don't worry too much if your solution is different from ours.
 
 # Parse command line arguments
@@ -121,7 +121,7 @@ ACGTGATG
 AGTGATACT
 ~~~
 
-\assignment{Exercise: Read a FastA file}
+\assignment{Assignment 2: Read a FastA file}
 Combine the code from above to read a FastA file and store its sequences in a std::vector of type seqan3::dna5_vector
 (which is a common DNA sequence type in SeqAn). Use the argument parser for obtaining the filename as command line
 argument to your program (e.g. call `./myprogram seq.fasta`).

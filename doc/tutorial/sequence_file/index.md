@@ -227,7 +227,7 @@ In this case you immediately get the two elements of the tuple:
 You can read up more on the different ways to stream over the file object in the detailed documentation
 of seqan3::sequence_file_input.
 
-\assignment{Exercise: Reading a FASTQ file}
+\assignment{Assignment 1: Reading a FASTQ file}
 Copy and paste the following FASTQ file to some location, e.g. the tmp directory:
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp fastq_file
@@ -271,7 +271,7 @@ You can move the record out of the file if you want to store it somewhere withou
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp record_type2
 
-\assignment{Exercise: Storing records in a std::vector}
+\assignment{Assignment 2: Storing records in a std::vector}
 
 Create a small program that reads in a FASTA file and stores all the records in a std::vector.
 
@@ -332,7 +332,7 @@ If you want to handle one pair of reads at a time, you can do so easily with a v
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp paired_reads
 
-\assignment{Exercise: Fun with file ranges}
+\assignment{Assignment 3: Fun with file ranges}
 
 Implement a small program that reads in a FASTQ file and prints the first 2 sequences
 that have a length of at least 5.
@@ -382,9 +382,9 @@ second seqan3::field::id and the third one seqan3::field::qual.
 You may give less fields than are selected if the actual format you are writing to can cope with less
 (e.g. for FastA it is sufficient to give sequence and name information).
 
-\assignment{Exercise: Writing a FASTQ file}
+\assignment{Assignment 4: Writing a FASTQ file}
 
-Use your code (or the solution) from the previous exercise.
+Use your code (or the solution) from the previous assignment.
 Iterate over the records with a for loop and instead of just printing the ids,
 write out **all** the records that satisfy the filter to a new file called `output.fastq`.
 
@@ -419,9 +419,9 @@ a seqan3::sequence_file_input object. In the same way you can pipe the output fi
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp piping_in_out
 
-\assignment{Exercise: Fun with file ranges 2}
+\assignment{Assignment 5: Fun with file ranges 2}
 
-Working on your solution from the previous exercise, try to remove the for loop in favour of a pipe notation.
+Working on your solution from the previous assignment, try to remove the for loop in favour of a pipe notation.
 
 The result should be the same.
 

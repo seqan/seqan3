@@ -165,7 +165,7 @@ But as soon as we introduce another overload, the compiler will pick the "best" 
 
 \include doc/tutorial/concepts/overloading2.cpp
 
-\assignment{Exercise: Static polymorphism with alphabets I}
+\assignment{Assignment 1: Static polymorphism with alphabets I}
 Write a small program, similar to the one above with the following "skeleton":
 ```cpp
 // which includes?
@@ -195,7 +195,7 @@ Try calling `print` with a different type, e.g. `int` to make sure that it does.
 \include doc/tutorial/concepts/overloading_solution1.cpp
 \endsolution
 
-\assignment{Exercise: Static polymorphism with alphabets II}
+\assignment{Assignment 2: Static polymorphism with alphabets II}
 Adapt your previous solution to handle nucleotides different from the rest. For nucleotides it should print,
 both, the value and its complement.
 \endassignment
@@ -282,7 +282,7 @@ static_assert(seqan3::validator<custom_validator>);
 To formally satisfy the requirements, your functions don't need the correct behaviour, yet.
 Only the signatures need to be fully specified.
 
-\assignment{Exercise: Custom validator I}
+\assignment{Assignment 3: Custom validator I}
 Implement enough of the above mentioned `struct custom_validator` for it to model seqan3::validator and pass
 the check. You can use an empty `main()`-function for now.
 \endassignment
@@ -303,7 +303,7 @@ It should print "Yeah!" for the arguments `-i 0`, `-i 4`, or `-i 144`; and/or `-
 
 It should fail for the arguments `-i 3`; and/or `-j 144` or `-j 3`.
 
-\assignment{Exercise: Custom validator II}
+\assignment{Assignment 4: Custom validator II}
 Implement your validator fully, i.e. make it throw seqan3::validation_error if the number provided is not a
 square.
 Also give a nice description for the help page.

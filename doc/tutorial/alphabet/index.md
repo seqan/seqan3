@@ -9,7 +9,7 @@ After completion, you will be able to use the alphabets inside of STL containers
 \tutorial_head{Easy, 45 min, \ref setup, None}
 
 The links on this page mostly point straight into the API documentation which you should use as a reference.
-The code examples and exercises are designed to provide some practical experience with our interface
+The code examples and assignments are designed to provide some practical experience with our interface
 as well as a code basis for your own program development.
 
 [TOC]
@@ -112,13 +112,13 @@ equality and inequality of two values can be tested with `==` and `!=`.
 
 ## Example
 
-To wrap up this section on the nucleotide alphabet, the following exercise lets you
+To wrap up this section on the nucleotide alphabet, the following assignment lets you
 practise the use of a SeqAn alphabet and its related functions.
 It will also show you a handy advantage of using a vector over an alphabet instead
 of using `std::string`: The rank representation can be used straight as an array
 index (opposed to using a map with logarithmic access times, for example).
 
-\assignment{Excercise: GC content of a sequence}
+\assignment{Assignment 1: GC content of a sequence}
 An important property of DNA and RNA sequences is the *GC content*,
 which is the percentage of nucleobases that are either Guanine or Cytosine.
 Given the nucleotide counts \f$n_A\f$, \f$n_T\f$, \f$n_G\f$, \f$n_C\f$ the GC content \f$c\f$ is calculated as
