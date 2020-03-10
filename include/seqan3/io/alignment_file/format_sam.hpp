@@ -34,6 +34,7 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/iterator.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/char_to.hpp>
