@@ -1342,6 +1342,10 @@ public:
      * \param archive The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
+     *
+     * ### Example
+     *
+     * \include test/snippet/core/cereal_example.cpp
      */
     template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
