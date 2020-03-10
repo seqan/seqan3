@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/search/configuration/default_configuration.hpp>
+#include <seqan3/search/configuration/default.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/max_error_rate.hpp>
