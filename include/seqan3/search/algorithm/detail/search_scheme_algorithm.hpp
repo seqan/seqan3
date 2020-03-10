@@ -435,7 +435,9 @@ inline bool search_ss(cursor_t cur, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
- * \tparam index_t          Must model seqan3::bi_fm_index_specialisation.
+ * \tparam alphabet_t       The alphabet type of the seqan3::bi_fm_index.
+ * \tparam text_layout_mode The text layout of the seqan3::bi_fm_index.
+ * \tparam sdsl_index_type  The sdsl index type of the seqan3::bi_fm_index.
  * \tparam query_t          Must model std::ranges::random_access_range over the index's alphabet.
  * \tparam search_scheme_t  Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
  * \tparam delegate_t       Takes `typename index_t::cursor_type` as argument.
@@ -454,9 +456,16 @@ inline bool search_ss(cursor_t cur, query_t & query,
  * Strong exception guarantee if iterating the query does not change its state and if invoking the delegate also has a
  * strong exception guarantee; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit, typename index_t, typename query_t, typename search_scheme_t, typename delegate_t>
-inline void search_ss(index_t const & index, query_t & query, search_param const error_left,
-                      search_scheme_t const & search_scheme, delegate_t && delegate)
+template <bool abort_on_hit,
+          typename alphabet_t, text_layout text_layout_mode, typename sdsl_index_type,
+          typename query_t,
+          typename search_scheme_t,
+          typename delegate_t>
+inline void search_ss(bi_fm_index<alphabet_t, text_layout_mode, sdsl_index_type> const & index,
+                      query_t & query,
+                      search_param const error_left,
+                      search_scheme_t const & search_scheme,
+                      delegate_t && delegate)
 {
     // retrieve cumulative block lengths and starting position
     auto const block_info = search_scheme_block_info(search_scheme, std::ranges::size(query));
@@ -486,7 +495,9 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
 
 /*!\brief Searches a query sequence in a bidirectional index.
  * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
- * \tparam index_t         Must model seqan3::bi_fm_index_specialisation.
+ * \tparam alphabet_t       The alphabet type of the seqan3::bi_fm_index.
+ * \tparam text_layout_mode The text layout of the seqan3::bi_fm_index.
+ * \tparam sdsl_index_type  The sdsl index type of the seqan3::bi_fm_index.
  * \tparam query_t         Must model std::ranges::random_access_range over the index's alphabet.
  * \tparam delegate_t      Takes `typename index_t::cursor_type` as argument.
  * \param[in] index        String index built on the text that will be searched.
@@ -503,8 +514,14 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
  * Strong exception guarantee if iterating the query does not change its state and if invoking the delegate also has a
  * strong exception guarantee; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
-inline void search_algo_bi(index_t const & index, query_t & query, search_param const error_left,
+
+template <bool abort_on_hit,
+          typename alphabet_t, text_layout text_layout_mode, typename sdsl_index_type,
+          typename query_t,
+          typename delegate_t>
+inline void search_algo_bi(bi_fm_index<alphabet_t, text_layout_mode, sdsl_index_type> const & index,
+                           query_t & query,
+                           search_param const error_left,
                            delegate_t && delegate)
 {
     switch (error_left.total)

@@ -86,56 +86,11 @@ enum text_layout : bool
     collection
 };
 
-// ============================================================================
-//  fm_index_specialisation
-// ============================================================================
+template <semialphabet alphabet_type, text_layout text_layout_mode, detail::sdsl_index sdsl_index_type>
+class fm_index; // forward declaration
 
-/*!\interface seqan3::fm_index_specialisation <>
- * \brief Concept for unidirectional FM indices.
- *
- * This concept defines the interface for unidirectional FM indices.
- */
-//!\cond
-template <typename t>
-SEQAN3_CONCEPT fm_index_specialisation = std::semiregular<t> && requires (t index)
-{
-    typename t::alphabet_type;
-    typename t::size_type;
-    typename t::cursor_type;
-
-    // NOTE: circular dependency
-    // requires fm_index_cursor_specialisation<typename t::cursor_type>;
-    requires requires (t index, std::conditional_t<t::text_layout_mode == text_layout::collection,
-                                                   std::vector<std::vector<typename t::alphabet_type>>,
-                                                   std::vector<typename t::alphabet_type>> const text)
-    {
-        { t(text) };
-    };
-
-    { index.begin() } -> typename t::cursor_type;
-
-    { index.size()  } -> typename t::size_type;
-    { index.empty() } -> bool;
-};
-//!\endcond
-/*!\name Requirements for seqan3::fm_index_specialisation
- * \relates seqan3::fm_index_specialisation
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::fm_index_specialisation.
- * \{
- *
- * \typedef typename t::text_type text_type
- * \brief Type of the indexed text.
- *
- * \typedef typename t::alphabet_type alphabet_type
- * \brief Type of the underlying character of text_type.
- *
- * \typedef typename t::size_type size_type
- * \brief Type for representing the size of the indexed text.
- *
- * \typedef typename t::cursor_type cursor_type
- * \brief Type of the unidirectional FM index cursor.
- * \}
- */
+template <semialphabet alphabet_type, text_layout text_layout_mode, detail::sdsl_index sdsl_index_type>
+class bi_fm_index;
 
 // ============================================================================
 //  fm_index_cursor_specialisation
@@ -153,7 +108,7 @@ SEQAN3_CONCEPT fm_index_cursor_specialisation = std::semiregular<t> && requires 
     typename t::index_type;
     typename t::size_type;
 
-    requires fm_index_specialisation<typename t::index_type>;
+    requires std::same_as<typename t::index_type, fm_index>;
 
     requires requires (typename t::index_type const index) { { t(index) }; };
 
@@ -194,46 +149,6 @@ SEQAN3_CONCEPT fm_index_cursor_specialisation = std::semiregular<t> && requires 
  */
 
 // ============================================================================
-//  bi_fm_index_specialisation
-// ============================================================================
-
-/*!\interface seqan3::bi_fm_index_specialisation <>
- * \brief Concept for bidirectional FM indices.
- *
- * This concept defines the interface for bidirectional FM indices.
- */
-//!\cond
-template <typename t>
-SEQAN3_CONCEPT bi_fm_index_specialisation = fm_index_specialisation<t> && requires (t index)
-{
-    typename t::cursor_type; // already required by fm_index_specialisation but has a different documentation
-    typename t::fwd_cursor_type;
-    typename t::rev_cursor_type;
-
-    // NOTE: circular dependency
-    // requires bi_fm_index_cursor_specialisation<typename t::cursor_type>;
-
-    { index.fwd_begin() } -> typename t::fwd_cursor_type;
-    { index.rev_begin() } -> typename t::rev_cursor_type;
-};
-//!\endcond
-/*!\name Requirements for seqan3::bi_fm_index_specialisation
- * \relates seqan3::bi_fm_index_specialisation
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::bi_fm_index_specialisation.
- * \{
- *
- * \typedef typename t::cursor_type cursor_type
- * \brief Type of the bidirectional FM index cursor.
- *
- * \typedef typename t::fwd_cursor_type fwd_cursor_type
- * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the original text.
- *
- * \typedef typename t::rev_cursor_type rev_cursor_type
- * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the reversed text.
- * \}
- */
-
-// ============================================================================
 //  bi_fm_index_cursor_specialisation
 // ============================================================================
 
@@ -246,7 +161,7 @@ SEQAN3_CONCEPT bi_fm_index_specialisation = fm_index_specialisation<t> && requir
 template <typename t>
 SEQAN3_CONCEPT bi_fm_index_cursor_specialisation = fm_index_cursor_specialisation<t> && requires (t cur)
 {
-    requires bi_fm_index_specialisation<typename t::index_type>;
+    requires std::same_as<typename t::index_type, bi_fm_index>;
 
     requires requires (typename t::index_type const index) { { t(index) }; };
 

@@ -17,7 +17,7 @@
 #include <seqan3/search/algorithm/detail/search_traits.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
 #include <seqan3/search/configuration/all.hpp>
-#include <seqan3/search/fm_index/concept.hpp>
+#include <seqan3/search/fm_index/all.hpp>
 
 namespace seqan3::detail
 {
@@ -33,7 +33,10 @@ namespace seqan3::detail
 template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
 inline void search_algo(index_t const & index, query_t & query, search_param const error_left, delegate_t && delegate)
 {
-    if constexpr (bi_fm_index_specialisation<index_t>)
+    using bi_fm_index_spec = seqan3::bi_fm_index<typename index_t::alphabet_type,
+                                                 index_t::text_layout_mode,
+                                                 typename index_t::sdsl_index_type>;
+    if constexpr (std::same_as<index_t, bi_fm_index_spec>)
         search_algo_bi<abort_on_hit>(index, query, error_left, delegate);
     else
         search_trivial<abort_on_hit>(index, query, error_left, delegate);

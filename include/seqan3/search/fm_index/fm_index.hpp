@@ -132,15 +132,16 @@ template <semialphabet alphabet_t,
           detail::sdsl_index sdsl_index_type_ = default_sdsl_index_type>
 class fm_index
 {
-private:
     /*!\name Member types
      * \{
      */
+public:
     //!\brief The type of the underlying SDSL index.
     using sdsl_index_type = sdsl_index_type_;
     /*!\brief The type of the reduced alphabet type. (The reduced alphabet might be smaller than the original alphabet
      *        in case not all possible characters occur in the indexed text.)
      */
+private:
     using sdsl_char_type = typename sdsl_index_type::alphabet_type::char_type;
     //!\brief The type of the alphabet size of the underlying SDSL index.
     using sdsl_sigma_type = typename sdsl_index_type::alphabet_type::sigma_type;

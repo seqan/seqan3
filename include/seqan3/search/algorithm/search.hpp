@@ -108,7 +108,7 @@ namespace seqan3
  */
 
 /*!\brief Search a query or a range of queries in an index.
- * \tparam index_t    Must model seqan3::fm_index_specialisation.
+ * \tparam index_t    Must be a seqan3::fm_index or a seqan3::bi_fm_index.
  * \tparam queries_t  Must model std::ranges::random_access_range over the index's alphabet and std::ranges::sized_range.
  *                    A range of queries must additionally model std::ranges::forward_range and std::ranges::sized_range.
  * \param[in] queries A single query or a range of queries.
@@ -167,7 +167,10 @@ namespace seqan3
  *
  * \include test/snippet/search/algorithm/search.cpp
  */
-template <fm_index_specialisation index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <typename index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+//!cond
+    // TODO
+//!\endcond
 inline auto search(queries_t && queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
@@ -197,7 +200,10 @@ inline auto search(queries_t && queries,
 
 //!\cond DEV
 //! \overload
-template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <typename index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+//!cond
+    // TODO
+//!\endcond
 inline auto search(char const * const queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
@@ -206,7 +212,10 @@ inline auto search(char const * const queries,
 }
 
 //! \overload
-template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <typename index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+//!cond
+    // TODO
+//!\endcond
 inline auto search(std::initializer_list<char const * const> const & queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)

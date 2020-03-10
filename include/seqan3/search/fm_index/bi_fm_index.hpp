@@ -63,13 +63,14 @@ template <semialphabet alphabet_t,
           detail::sdsl_index sdsl_index_type_ = default_sdsl_index_type>
 class bi_fm_index
 {
-private:
     /*!\name Index types
      * \{
      */
+public:
     //!\brief The type of the underlying SDSL index for the original text.
     using sdsl_index_type = sdsl_index_type_;
 
+private:
     //!\brief The type of the underlying SDSL index for the reversed text.
     using rev_sdsl_index_type = sdsl_index_type_;
 

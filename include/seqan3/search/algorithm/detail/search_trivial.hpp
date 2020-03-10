@@ -199,7 +199,7 @@ inline bool search_trivial(cursor_t cur,
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
  * \tparam abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
- * \tparam index_t       Must model seqan3::fm_index_specialisation.
+ * \tparam index_t       Must be a seqan3::fm_index or seqan3::bi_fm_index.
  * \tparam query_t       Must model std::ranges::input_range over the index's alphabet.
  * \tparam delegate_t    Takes `index::cursor_type` as argument.
  * \param[in] index      String index built on the text that will be searched.
