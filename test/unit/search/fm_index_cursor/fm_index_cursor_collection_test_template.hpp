@@ -297,7 +297,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
 
         TypeParam it = TypeParam(fm);
         // get rank which is neither the smallest nor the highest:
-        uint8_t middle_rank = std::round((seqan3::to_rank(this->text4[1]) + seqan3::to_rank(this->text4[0]))/2);
+        uint8_t middle_rank = std::round((seqan3::to_rank(this->text4[1]) +                     // 'T' and
+                                          seqan3::to_rank(this->text4[0]))/2);                  // 'A'
         EXPECT_FALSE(it.extend_right(seqan3::assign_rank_to(middle_rank, alphabet_type{})));    // 'C'
         EXPECT_FALSE(it.extend_right(this->text1[2]));                                          // 'G'
         EXPECT_FALSE(it.extend_right(seqan3::views::slice(this->text7, 0, 4)));                 // "ACGT"
