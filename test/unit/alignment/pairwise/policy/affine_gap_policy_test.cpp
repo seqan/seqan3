@@ -22,8 +22,6 @@
 using seqan3::operator""_dna4;
 using seqan3::operator|;
 
-using namespace seqan3::detail;
-
 template <typename score_t>
 class affine_gap_policy_mock :
     public seqan3::detail::affine_gap_policy<affine_gap_policy_mock<score_t>, score_t>,
@@ -57,7 +55,7 @@ struct affine_gap_fixture : public ::testing::Test
     using trace_matrix_iter_t = typename trace_matrix_t::iterator;
 
     static constexpr bool with_trace =
-        !decays_to_ignore_v<
+        !seqan3::detail::decays_to_ignore_v<
             std::remove_reference_t<decltype(std::declval<typename trace_matrix_t::value_type>().current)>>;
 
     void SetUp()
@@ -86,7 +84,7 @@ struct affine_gap_fixture : public ::testing::Test
     }
 
     affine_gap_policy_mock<int> mock{};
-    alignment_algorithm_state<int> state{};
+    seqan3::detail::alignment_algorithm_state<int> state{};
 
     score_matrix_t score_matrix{};
     trace_matrix_t trace_matrix{};
@@ -96,17 +94,17 @@ struct affine_gap_fixture : public ::testing::Test
 };
 
 using testing_types = ::testing::Types<
-    std::tuple<alignment_score_matrix_one_column<int>,
-               alignment_trace_matrix_full<trace_directions>,
+    std::tuple<seqan3::detail::alignment_score_matrix_one_column<int>,
+               seqan3::detail::alignment_trace_matrix_full<seqan3::detail::trace_directions>,
                std::false_type>,
-    std::tuple<alignment_score_matrix_one_column<int>,
-               alignment_trace_matrix_full<trace_directions, true>,
+    std::tuple<seqan3::detail::alignment_score_matrix_one_column<int>,
+               seqan3::detail::alignment_trace_matrix_full<seqan3::detail::trace_directions, true>,
                std::false_type>,
-    std::tuple<alignment_score_matrix_one_column_banded<int>,
-               alignment_trace_matrix_full_banded<trace_directions>,
+    std::tuple<seqan3::detail::alignment_score_matrix_one_column_banded<int>,
+               seqan3::detail::alignment_trace_matrix_full_banded<seqan3::detail::trace_directions>,
                std::true_type>,
-    std::tuple<alignment_score_matrix_one_column_banded<int>,
-               alignment_trace_matrix_full_banded<trace_directions, true>,
+    std::tuple<seqan3::detail::alignment_score_matrix_one_column_banded<int>,
+               seqan3::detail::alignment_trace_matrix_full_banded<seqan3::detail::trace_directions, true>,
                std::true_type>
     >;
 
@@ -136,9 +134,10 @@ TYPED_TEST(affine_gap_fixture, compute_cell)
 
     if constexpr (this->with_trace)
     {
-        EXPECT_EQ(trace_cell.current, trace_directions::diagonal | trace_directions::up_open
-                                                                 | trace_directions::left_open);
-        EXPECT_EQ(trace_cell.up, trace_directions::up_open);
-        EXPECT_EQ(trace_cell.w_left, trace_directions::left_open);
+        EXPECT_EQ(trace_cell.current,
+                  seqan3::detail::trace_directions::diagonal | seqan3::detail::trace_directions::up_open
+                                                             | seqan3::detail::trace_directions::left_open);
+        EXPECT_EQ(trace_cell.up, seqan3::detail::trace_directions::up_open);
+        EXPECT_EQ(trace_cell.w_left, seqan3::detail::trace_directions::left_open);
     }
 }

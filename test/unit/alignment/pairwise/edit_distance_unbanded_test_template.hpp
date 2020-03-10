@@ -18,7 +18,6 @@
 
 #include <seqan3/test/pretty_printing.hpp>
 
-using namespace seqan3::detail;
 using namespace seqan3::test::alignment::fixture;
 
 template <bool compute_score_matrix_,
@@ -27,11 +26,11 @@ template <bool compute_score_matrix_,
           typename align_cfg_t,
           typename word_t,
           typename is_semi_global_t,
-          typename traits_t = default_edit_distance_trait_type<database_t,
-                                                               query_t,
-                                                               align_cfg_t,
-                                                               is_semi_global_t,
-                                                               word_t>>
+          typename traits_t = seqan3::detail::default_edit_distance_trait_type<database_t,
+                                                                               query_t,
+                                                                               align_cfg_t,
+                                                                               is_semi_global_t,
+                                                                               word_t>>
 struct edit_traits_type : traits_t
 {
     static constexpr bool compute_score_matrix = compute_score_matrix_;
@@ -80,7 +79,7 @@ template <template <bool, typename...> typename edit_traits_type,
 auto edit_distance(database_t && database, query_t && query, align_cfg_t && align_cfg)
 {
     using edit_traits = edit_traits_type<compute_score_matrix, database_t, query_t, align_cfg_t>;
-    using algorithm_t = edit_distance_unbanded<database_t, query_t, align_cfg_t, edit_traits>;
+    using algorithm_t = seqan3::detail::edit_distance_unbanded<database_t, query_t, align_cfg_t, edit_traits>;
     auto alignment = algorithm_t{database, query, align_cfg};
 
     // compute alignment

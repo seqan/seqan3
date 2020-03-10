@@ -27,8 +27,6 @@ using seqan3::operator""_dna4;
 namespace seqan3::test::alignment::fixture::global::affine::banded
 {
 
-using namespace seqan3::detail;
-
 inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::global_alignment} |
                                      seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                                seqan3::gap_open_score{-10}}} |
@@ -73,7 +71,7 @@ static auto dna4_01 = []()
         /*T*/INF,INF,INF,INF,INF,-11,-13,-5 ,-15,-17,-18,-19,-19,-19,-13,-13,-16,
         /*A*/INF,INF,INF,INF,INF,INF,-16,-16,-10,-11,-13,-23,-24,-20,-24,-18,-18
         },
-        std::vector<std::optional<trace_directions>>
+        std::vector<std::optional<seqan3::detail::trace_directions>>
         {
         //       A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,
              N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,INF,INF,INF,INF,INF,INF,INF,INF,

@@ -18,7 +18,6 @@
 
 #include "fixture/alignment_fixture.hpp"
 
-using namespace seqan3::detail;
 using namespace seqan3::test::alignment::fixture;
 
 template <auto _fixture>
@@ -67,7 +66,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_front_coordinate};
 
-    using traits_t = alignment_configuration_traits<decltype(align_cfg)>;
+    using traits_t = seqan3::detail::alignment_configuration_traits<decltype(align_cfg)>;
 
     if constexpr (!traits_t::is_vectorised)
     {
@@ -89,7 +88,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_alignment};
 
-    using traits_t = alignment_configuration_traits<decltype(align_cfg)>;
+    using traits_t = seqan3::detail::alignment_configuration_traits<decltype(align_cfg)>;
 
     if constexpr (!traits_t::is_vectorised)
     {
