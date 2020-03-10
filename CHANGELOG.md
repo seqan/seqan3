@@ -46,6 +46,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 * Added `seqan3::interleaved_bloom_filter`, a data structure that efficiently answers set-membership queries for
   multiple bins ([\#920](https://github.com/seqan/seqan3/pull/920)).
+* Rename `seqan3::search_cfg::default_configuration` to `seqan3::search_cfg::default`
+  ([\#1635](https://github.com/seqan/seqan3/pull/1635)).
 
 ## API changes
 
