@@ -15,6 +15,28 @@
 
 #include <type_traits>
 
+namespace seqan3
+{
+inline namespace cpp20
+{
+
+/*!\brief Return the input type with `const`, `volatile` and references removed.
+ * \tparam t The type to operate on.
+ */
+template <typename t>
+struct remove_cvref
+{
+    using type = std::remove_cv_t<std::remove_reference_t<t>>;
+};
+
+/*!\brief Return the input type with `const`, `volatile` and references removed (transformation_trait shortcut).
+ * \tparam t The type to operate on.
+ */
+template <typename t>
+using remove_cvref_t = typename remove_cvref<t>::type;
+} // namespace seqan3::cpp20
+} // namespace seqan3
+
 namespace std
 {
 

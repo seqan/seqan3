@@ -25,7 +25,7 @@
 #include <concepts/concepts.hpp>
 #include <range/v3/functional/concepts.hpp>
 
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/std/type_traits>
 
 /*!\defgroup std std
  * \brief A subset of the C++20 standard library made available in pre-C++20 contexts.
@@ -368,7 +368,7 @@ SEQAN3_CONCEPT movable = std::is_object_v<T> && move_constructible<T> && assigna
 //!\cond
 template <class B>
 SEQAN3_CONCEPT boolean =
-    movable<seqan3::remove_cvref_t<B>> &&
+    movable<seqan3::cpp20::remove_cvref_t<B>> &&
     requires(std::remove_reference_t<B> const & b1,
              std::remove_reference_t<B> const & b2, bool const a)
     {
