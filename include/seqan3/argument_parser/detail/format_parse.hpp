@@ -17,6 +17,7 @@
 #include <vector>
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/charconv>
