@@ -527,31 +527,6 @@ inline void search_algo_bi(index_t const & index, query_t & query, search_param 
             break;
     }
 }
-
-/*!\brief Searches a query sequence in a unidirectional index.
- *
- * \copydetails search_algo_bi
- */
-template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
-inline void search_algo_uni(index_t const & index, query_t & query, search_param const error_left,
-                            delegate_t && delegate)
-{
-    search_trivial<abort_on_hit>(index, query, error_left, delegate);
-}
-
-/*!\brief Searches a query sequence in an index.
- *
- * \copydetails search_algo_bi
- */
-template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
-inline void search_algo(index_t const & index, query_t & query, search_param const error_left, delegate_t && delegate)
-{
-    if constexpr (bi_fm_index_specialisation<index_t>)
-        search_algo_bi<abort_on_hit>(index, query, error_left, delegate);
-    else
-        search_algo_uni<abort_on_hit>(index, query, error_left, delegate);
-}
-
 //!\}
 
 } // namespace seqan3::detail

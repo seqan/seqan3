@@ -26,6 +26,19 @@ namespace seqan3::detail
  * \{
  */
 
+/*!\brief Searches a query sequence in an index.
+ *
+ * \copydetails search_algo_bi
+ */
+template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
+inline void search_algo(index_t const & index, query_t & query, search_param const error_left, delegate_t && delegate)
+{
+    if constexpr (bi_fm_index_specialisation<index_t>)
+        search_algo_bi<abort_on_hit>(index, query, error_left, delegate);
+    else
+        search_trivial<abort_on_hit>(index, query, error_left, delegate);
+}
+
 /*!\brief Search a single query in an index.
  * \tparam index_t   Must model seqan3::fm_index_specialisation.
  * \tparam queries_t Must model std::ranges::random_access_range over the index's alphabet.
