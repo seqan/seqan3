@@ -289,7 +289,7 @@ value_list_validator(option_types...) -> value_list_validator<std::string>;
 template <typename range_type>
 //!\cond
     requires (std::ranges::forward_range<std::decay_t<range_type>> &&
-                 std::constructible_from<std::string, std::ranges::range_value_t<range_type>>)
+              std::constructible_from<std::string, std::ranges::range_value_t<range_type>>)
 //!\endcond
 value_list_validator(range_type && rng) -> value_list_validator<std::string>;
 
