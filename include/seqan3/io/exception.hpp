@@ -90,4 +90,4 @@ struct format_error : std::invalid_argument
 
 //!\}
 
-}
+} // namespace seqan3
