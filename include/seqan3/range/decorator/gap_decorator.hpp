@@ -877,15 +877,3 @@ public:
 };
 
 } // namespace seqan
-
-namespace seqan3::detail
-{
-
-//!\brief Type trait that declares any seqan3::gap_decorator to be **NOT a view**.
-template <typename type>
-constexpr int enable_view<seqan3::gap_decorator<type>> = 0;
-
-template <typename type>
-constexpr int enable_view<seqan3::gap_decorator<type> const> = 0;
-
-} // namespace seqan3::detail
