@@ -30,6 +30,11 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## New features
 
+#### I/O
+
+* The `seqan3::format_fasta` accepts the file extenstion `.fas` as a valid extension for the FASTA format
+  ([\#1599](https://github.com/seqan/seqan3/pull/1599)).
+
 #### Build system
 
 * Add top-level `CMakeLists.txt`
