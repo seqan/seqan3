@@ -25,8 +25,8 @@ namespace seqan3::search_cfg
 /*!\brief The default configuration.
  * \ingroup search_configuration
  */
-inline constexpr configuration default_configuration = max_error{total{0}, substitution{0}, insertion{0}, deletion{0}} |
-                                                       output{text_position} |
-                                                       mode{all};
+inline constexpr configuration default_ = max_error{total{0}, substitution{0}, insertion{0}, deletion{0}}
+                                        | output{text_position}
+                                        | mode{all};
 
 } // namespace seqan3::search_cfg

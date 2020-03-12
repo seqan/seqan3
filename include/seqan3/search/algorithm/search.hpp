@@ -167,10 +167,10 @@ namespace seqan3
  *
  * \include test/snippet/search/algorithm/search.cpp
  */
-template <fm_index_specialisation index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <fm_index_specialisation index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_)>
 inline auto search(queries_t && queries,
                    index_t const & index,
-                   configuration_t const & cfg = search_cfg::default_configuration)
+                   configuration_t const & cfg = search_cfg::default_)
 {
     using search_traits_t = detail::search_traits<configuration_t>;
 
@@ -197,19 +197,19 @@ inline auto search(queries_t && queries,
 
 //!\cond DEV
 //! \overload
-template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_)>
 inline auto search(char const * const queries,
                    index_t const & index,
-                   configuration_t const & cfg = search_cfg::default_configuration)
+                   configuration_t const & cfg = search_cfg::default_)
 {
     return search(std::string_view{queries}, index, cfg);
 }
 
 //! \overload
-template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_)>
 inline auto search(std::initializer_list<char const * const> const & queries,
                    index_t const & index,
-                   configuration_t const & cfg = search_cfg::default_configuration)
+                   configuration_t const & cfg = search_cfg::default_)
 {
     std::vector<std::string_view> query;
     query.reserve(std::ranges::size(queries));
