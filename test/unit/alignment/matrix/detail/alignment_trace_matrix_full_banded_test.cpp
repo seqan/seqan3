@@ -58,10 +58,9 @@ struct iterator_fixture<outer_iterator<test_type>> : alignment_matrix_base_test<
         EXPECT_EQ(lhs.coordinate.second, std::get<0>(std::get<0>(rhs)));
         EXPECT_EQ(lhs.coordinate.first, std::get<1>(std::get<0>(rhs)));
 
-        using full_banded_matrix_with_trace_directions =
-            seqan3::detail::alignment_trace_matrix_full_banded<seqan3::detail::trace_directions>;
-
-        if constexpr (std::is_same_v<std::tuple_element_t<0, test_type>, full_banded_matrix_with_trace_directions>)
+        if constexpr (std::is_same_v<std::tuple_element_t<0, test_type>,
+                                     seqan3::detail::alignment_trace_matrix_full_banded<seqan3::detail::trace_directions
+                                     >>)
         {
             EXPECT_EQ(lhs.current, std::get<1>(rhs));
         }

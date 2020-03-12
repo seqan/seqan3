@@ -196,63 +196,63 @@ TYPED_TEST(two_dimensional_matrix_test, subscript)
 {
     // Note: Even if the internal storage has a different data layout, accessing the data via a matrix coordinate
     // yields the same cell and thus the same data.
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{0u},
-                                  seqan3::detail::column_index_type{0u}}], this->expected_matrix_content[0]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{0u},
-                                  seqan3::detail::column_index_type{1u}}], this->expected_matrix_content[1]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{0u},
-                                  seqan3::detail::column_index_type{2u}}], this->expected_matrix_content[2]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{0u},
-                                  seqan3::detail::column_index_type{3u}}], this->expected_matrix_content[3]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{1u},
-                                  seqan3::detail::column_index_type{0u}}], this->expected_matrix_content[4]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{1u},
-                                  seqan3::detail::column_index_type{1u}}], this->expected_matrix_content[5]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{1u},
-                                  seqan3::detail::column_index_type{2u}}], this->expected_matrix_content[6]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{1u},
-                                  seqan3::detail::column_index_type{3u}}], this->expected_matrix_content[7]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u},
-                                  seqan3::detail::column_index_type{0u}}], this->expected_matrix_content[8]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u},
-                                  seqan3::detail::column_index_type{1u}}], this->expected_matrix_content[9]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u},
-                                  seqan3::detail::column_index_type{2u}}], this->expected_matrix_content[10]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u},
-                                  seqan3::detail::column_index_type{3u}}], this->expected_matrix_content[11]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{0u}, seqan3::detail::column_index_type{0u}}],
+                    this->expected_matrix_content[0]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{0u}, seqan3::detail::column_index_type{1u}}],
+                    this->expected_matrix_content[1]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{0u}, seqan3::detail::column_index_type{2u}}],
+                    this->expected_matrix_content[2]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{0u}, seqan3::detail::column_index_type{3u}}],
+                    this->expected_matrix_content[3]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{1u}, seqan3::detail::column_index_type{0u}}],
+                    this->expected_matrix_content[4]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{1u}, seqan3::detail::column_index_type{1u}}],
+                    this->expected_matrix_content[5]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{1u}, seqan3::detail::column_index_type{2u}}],
+                    this->expected_matrix_content[6]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{1u}, seqan3::detail::column_index_type{3u}}],
+                    this->expected_matrix_content[7]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u},  seqan3::detail::column_index_type{0u}}],
+                    this->expected_matrix_content[8]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{1u}}],
+                    this->expected_matrix_content[9]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{2u}}],
+                    this->expected_matrix_content[10]);
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{3u}}],
+                    this->expected_matrix_content[11]);
 }
 
 TYPED_TEST(two_dimensional_matrix_test, at)
 {
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{0u},
-                                     seqan3::detail::column_index_type{0u}}), this->expected_matrix_content[0]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{0u},
-                                     seqan3::detail::column_index_type{1u}}), this->expected_matrix_content[1]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{0u},
-                                     seqan3::detail::column_index_type{2u}}), this->expected_matrix_content[2]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{0u},
-                                     seqan3::detail::column_index_type{3u}}), this->expected_matrix_content[3]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{1u},
-                                     seqan3::detail::column_index_type{0u}}), this->expected_matrix_content[4]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{1u},
-                                     seqan3::detail::column_index_type{1u}}), this->expected_matrix_content[5]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{1u},
-                                     seqan3::detail::column_index_type{2u}}), this->expected_matrix_content[6]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{1u},
-                                     seqan3::detail::column_index_type{3u}}), this->expected_matrix_content[7]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{2u},
-                                     seqan3::detail::column_index_type{0u}}), this->expected_matrix_content[8]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{2u},
-                                     seqan3::detail::column_index_type{1u}}), this->expected_matrix_content[9]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{2u},
-                                     seqan3::detail::column_index_type{2u}}), this->expected_matrix_content[10]);
-    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{2u},
-                                     seqan3::detail::column_index_type{3u}}), this->expected_matrix_content[11]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{0u}, seqan3::detail::column_index_type{0u}}),
+                    this->expected_matrix_content[0]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{0u}, seqan3::detail::column_index_type{1u}}),
+                    this->expected_matrix_content[1]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{0u}, seqan3::detail::column_index_type{2u}}),
+                    this->expected_matrix_content[2]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{0u}, seqan3::detail::column_index_type{3u}}),
+                    this->expected_matrix_content[3]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{1u}, seqan3::detail::column_index_type{0u}}),
+                    this->expected_matrix_content[4]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{1u}, seqan3::detail::column_index_type{1u}}),
+                    this->expected_matrix_content[5]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{1u}, seqan3::detail::column_index_type{2u}}),
+                    this->expected_matrix_content[6]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{1u}, seqan3::detail::column_index_type{3u}}),
+                    this->expected_matrix_content[7]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{0u}}),
+                    this->expected_matrix_content[8]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{1u}}),
+                    this->expected_matrix_content[9]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{2u}}),
+                    this->expected_matrix_content[10]);
+    this->expect_eq(this->matrix.at({seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{3u}}),
+                    this->expected_matrix_content[11]);
 
-    EXPECT_THROW((this->matrix.at({seqan3::detail::row_index_type{3u},
-                                   seqan3::detail::column_index_type{3u}})), std::invalid_argument);
-    EXPECT_THROW((this->matrix.at({seqan3::detail::row_index_type{2u},
-                                   seqan3::detail::column_index_type{4u}})), std::invalid_argument);
+    EXPECT_THROW((this->matrix.at({seqan3::detail::row_index_type{3u}, seqan3::detail::column_index_type{3u}})),
+                 std::invalid_argument);
+    EXPECT_THROW((this->matrix.at({seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{4u}})),
+                 std::invalid_argument);
 }
 
 TYPED_TEST(two_dimensional_matrix_test, construction_other_order)

@@ -25,11 +25,11 @@ TEST(debug_stream_test, advanceable_alignment_coordinate)
     row_incrementable co_row{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{5u}};
 
     EXPECT_TRUE((seqan3::detail::is_value_specialisation_of_v<not_incrementable,
-                 seqan3::detail::advanceable_alignment_coordinate>));
+                                                              seqan3::detail::advanceable_alignment_coordinate>));
     EXPECT_TRUE((seqan3::detail::is_value_specialisation_of_v<col_incrementable,
-                 seqan3::detail::advanceable_alignment_coordinate>));
+                                                              seqan3::detail::advanceable_alignment_coordinate>));
     EXPECT_TRUE((seqan3::detail::is_value_specialisation_of_v<row_incrementable,
-                 seqan3::detail::advanceable_alignment_coordinate>));
+                                                              seqan3::detail::advanceable_alignment_coordinate>));
 
     std::stringstream sstream{};
     seqan3::debug_stream_type dstream{sstream};
@@ -48,7 +48,7 @@ TEST(debug_stream_test, alignment_coordinate)
     seqan3::alignment_coordinate co_align{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{5u}};
 
     EXPECT_FALSE((seqan3::detail::is_value_specialisation_of_v<decltype(co_align),
-                  seqan3::detail::advanceable_alignment_coordinate>));
+                                                               seqan3::detail::advanceable_alignment_coordinate>));
 
     std::stringstream sstream{};
     seqan3::debug_stream_type dstream{sstream};

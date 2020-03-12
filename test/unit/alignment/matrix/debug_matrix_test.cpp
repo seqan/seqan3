@@ -309,8 +309,8 @@ struct debug_matrix_test : public ::testing::Test
 
         for (size_t row = 0; row < matrix.rows(); row++)
             for (size_t col = 0; col < matrix.cols(); col++)
-                EXPECT_EQ((matrix.at({seqan3::detail::row_index_type{row},
-                                      seqan3::detail::column_index_type{col}})), scores[row * matrix.cols() + col]);
+                EXPECT_EQ((matrix.at({seqan3::detail::row_index_type{row}, seqan3::detail::column_index_type{col}})),
+                          scores[row * matrix.cols() + col]);
     }
 
     template <typename trace_matrix_t>
@@ -330,8 +330,8 @@ struct debug_matrix_test : public ::testing::Test
 
         for (size_t row = 0; row < matrix.rows(); row++)
             for (size_t col = 0; col < matrix.cols(); col++)
-                EXPECT_EQ(matrix.at({seqan3::detail::row_index_type{row},
-                                     seqan3::detail::column_index_type{col}}), traces[row * matrix.cols() + col]);
+                EXPECT_EQ(matrix.at({seqan3::detail::row_index_type{row}, seqan3::detail::column_index_type{col}}),
+                          traces[row * matrix.cols() + col]);
     }
 };
 
