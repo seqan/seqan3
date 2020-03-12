@@ -274,11 +274,12 @@ private:
  * \{
  */
 //!\brief Deduction guide for a parameter pack over an arithmetic type.
-template <arithmetic ...option_types>
+template <typename option_type, typename ...option_types>
 //!\cond
-    requires (!(detail::is_char_adaptation_v<option_types> || ...))
+    requires ((arithmetic<option_types> && ... && arithmetic<option_type>) &&
+              !(detail::is_char_adaptation_v<option_types> || ... || detail::is_char_adaptation_v<option_type>))
 //!\endcond
-value_list_validator(option_types...) -> value_list_validator<double>;
+value_list_validator(option_type, option_types...) -> value_list_validator<double>;
 
 //!\brief Deduction guide for ranges over an arithmetic type.
 template <typename range_type>
@@ -290,11 +291,12 @@ template <typename range_type>
 value_list_validator(range_type && rng) -> value_list_validator<double>;
 
 //!\brief Given a parameter pack of types that are convertible to std::string, delegate to value type std::string.
-template <typename ...option_types>
+template <typename option_type, typename ...option_types>
 //!\cond
-    requires (std::constructible_from<std::string, std::decay_t<option_types>> && ...)
+    requires (std::constructible_from<std::string, std::decay_t<option_types>> && ... &&
+              std::constructible_from<std::string, std::decay_t<option_type>>)
 //!\endcond
-value_list_validator(option_types...) -> value_list_validator<std::string>;
+value_list_validator(option_type, option_types...) -> value_list_validator<std::string>;
 
 //!\brief Deduction guide for ranges over a value type convertible to std::string.
 template <typename range_type>
@@ -305,8 +307,8 @@ template <typename range_type>
 value_list_validator(range_type && rng) -> value_list_validator<std::string>;
 
 //!\brief Deduction guide for a parameter pack.
-template <typename ...option_types>
-value_list_validator(option_types...) -> value_list_validator<seqan3::pack_traits::front<option_types...>>;
+template <typename option_type, typename ...option_types>
+value_list_validator(option_type, option_types ...) -> value_list_validator<option_type>;
 
 //!\brief Deduction guide for ranges.
 template <typename range_type>
