@@ -11,7 +11,7 @@ int main()
     std::vector<seqan3::dna4> genome{"AATAATAAC"_dna4};
     seqan3::fm_index index{genome};                                 // build the index
 
-    auto cur = index.begin();                                       // create a cursor
+    auto cur = index.cursor();                                      // create a cursor
     // cur.cycle_back();                                            // cycle_back on begin() is undefined behaviour!
     cur.extend_right("AAC"_dna4);                                   // search the sequence "AAC"
     seqan3::debug_stream << cur.path_label(genome) << '\n';         // outputs "AAC"

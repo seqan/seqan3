@@ -24,7 +24,7 @@ class bi_fm_index_cursor_collection_test : public ::testing::Test
 
 TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test);
 
-TYPED_TEST_P(bi_fm_index_cursor_collection_test, begin)
+TYPED_TEST_P(bi_fm_index_cursor_collection_test, cursor)
 {
     std::vector<seqan3::dna4_vector> text{"AACGATCGGA"_dna4, "AACGATCGGA"_dna4};
     auto rev_text = text | seqan3::views::deep{std::views::reverse} | seqan3::views::deep{seqan3::views::persist};
@@ -33,7 +33,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, begin)
     seqan3::bi_fm_index fm_fwd{text};
     seqan3::bi_fm_index fm_rev{rev_text};
 
-    TypeParam bi_it = bi_fm.begin();
+    TypeParam bi_it = bi_fm.cursor();
     EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.fwd_begin().locate()));
     EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.rev_begin().locate()));
 }
@@ -43,7 +43,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend)
     std::vector<seqan3::dna4_vector> text{"ACGGTAGGACG"_dna4, "TGCTACGATCC"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_TRUE(it.extend_right()); // "A"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 0}, {0, 5}, {0, 8},
                                                                                          {1, 4}, {1, 7}}));
@@ -64,7 +64,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend_char)
     std::vector<seqan3::dna4_vector> text{"ACGGTAGGACG"_dna4, "TGCTACGATCC"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_TRUE(it.extend_left('G'_dna4)); // "G"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 2}, {0, 3}, {0, 6},
                                                                                          {0, 7}, {0, 10},
@@ -94,7 +94,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend_range)
     std::vector<seqan3::dna4_vector> text{"ACGGTAGGACG"_dna4, "TGCTACGATCC"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_FALSE(it.extend_left("CAG"_dna4)); // ""
     // sentinel and delimiter position included
     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 0}, {0, 1}, {0, 2}, {0, 3},
@@ -120,7 +120,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend_and_cycle)
     std::vector<seqan3::dna4_vector> text{"ACGGTAGGACG"_dna4, "TGCTACGATCC"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_TRUE(it.extend_right()); // "A"
 #ifndef NDEBUG
     EXPECT_DEATH(it.cycle_front(), "");
@@ -141,7 +141,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend_range_and_cycle)
     std::vector<seqan3::dna4_vector> text{"ACGGTAGGACGTAG"_dna4, "TGCTACGATCC"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_TRUE(it.extend_right("AC"_dna4)); // "AC"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 0}, {0, 8}, {1, 4}}));
 #ifndef NDEBUG
@@ -168,7 +168,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_fwd_cursor)
     typename TypeParam::index_type bi_fm{text};
 
     {
-        auto it = bi_fm.begin();
+        auto it = bi_fm.cursor();
         EXPECT_TRUE(it.extend_right("GTAGC"_dna4)); // "GTAGC"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 10}}));
 
@@ -180,7 +180,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_fwd_cursor)
     }
 
     {
-        auto it = bi_fm.begin();
+        auto it = bi_fm.cursor();
         EXPECT_TRUE(it.extend_left("GTAG"_dna4)); // "GTAG"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 3}, {0, 10}}));
 
@@ -206,7 +206,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_rev_cursor)
     typename TypeParam::index_type bi_fm{text};
 
     {
-        auto it = bi_fm.begin();
+        auto it = bi_fm.cursor();
         EXPECT_TRUE(it.extend_left("CGTAG"_dna4)); // "CGTAG"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 9}}));
 
@@ -220,7 +220,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_rev_cursor)
     }
 
     {
-        auto it = bi_fm.begin();
+        auto it = bi_fm.cursor();
         EXPECT_TRUE(it.extend_right("GTAG"_dna4)); // "GTAG"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 3}, {0, 10}}));
 
@@ -237,5 +237,5 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_rev_cursor)
     }
 }
 
-REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test, begin, extend, extend_char, extend_range,
+REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test, cursor, extend, extend_char, extend_range,
                             extend_and_cycle, extend_range_and_cycle, to_fwd_cursor, to_rev_cursor);

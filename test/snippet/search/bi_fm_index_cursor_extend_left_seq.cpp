@@ -13,7 +13,7 @@ int main()
     std::vector<seqan3::dna4> genome{"GAATTAATGAAC"_dna4};
     seqan3::bi_fm_index index{genome};                      // build the bidirectional index
 
-    auto cur = index.begin();                               // create a cursor
+    auto cur = index.cursor();                              // create a cursor
     cur.extend_right("AAC"_dna4);                           // search the sequence "AAC"
     seqan3::debug_stream << cur.path_label(genome) << '\n'; // outputs "AAC"
     cur.extend_left("ATG"_dna4);                            // extend the query to "ATGAAC"

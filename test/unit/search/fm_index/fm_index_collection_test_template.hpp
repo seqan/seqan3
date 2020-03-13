@@ -33,9 +33,9 @@ TYPED_TEST_P(fm_index_collection_test, ctr)
     index_t fm1{fm0};
     EXPECT_EQ(fm0, fm1);
     // Make sure rank and select support pointer are correct by using them.
-    auto it0 = fm0.begin();
+    auto it0 = fm0.cursor();
     it0.extend_right(inner_text_type(5));
-    auto it1 = fm1.begin();
+    auto it1 = fm1.cursor();
     it1.extend_right(inner_text_type(5));
     EXPECT_EQ(it0.locate(), it1.locate());
 
@@ -43,7 +43,7 @@ TYPED_TEST_P(fm_index_collection_test, ctr)
     fm2 = fm0;
     EXPECT_EQ(fm0, fm2);
     // Make sure rank and select support pointer are correct by using them.
-    auto it2 = fm2.begin();
+    auto it2 = fm2.cursor();
     it2.extend_right(inner_text_type(5));
     EXPECT_EQ(it0.locate(), it2.locate());
 
@@ -51,7 +51,7 @@ TYPED_TEST_P(fm_index_collection_test, ctr)
     index_t fm3{std::move(fm1)};
     EXPECT_EQ(fm0, fm3);
     // Make sure rank and select support pointer are correct by using them.
-    auto it3 = fm3.begin();
+    auto it3 = fm3.cursor();
     it3.extend_right(inner_text_type(5));
     EXPECT_EQ(it0.locate(), it3.locate());
 
@@ -59,7 +59,7 @@ TYPED_TEST_P(fm_index_collection_test, ctr)
     fm4 = std::move(fm2);
     EXPECT_EQ(fm0, fm4);
     // Make sure rank and select support pointer are correct by using them.
-    auto it4 = fm4.begin();
+    auto it4 = fm4.cursor();
     it4.extend_right(inner_text_type(5));
     EXPECT_EQ(it0.locate(), it4.locate());
 
@@ -94,9 +94,9 @@ TYPED_TEST_P(fm_index_collection_test, swap)
 
     std::swap(fm0, fm1);
     // Make sure rank and select support pointer are correct by using them.
-    auto it0 = fm0.begin();
+    auto it0 = fm0.cursor();
     it0.extend_right(inner_text_type(5));
-    auto it1 = fm1.begin();
+    auto it1 = fm1.cursor();
     it1.extend_right(inner_text_type(5));
     EXPECT_EQ(it0.locate(), it1.locate());
 }

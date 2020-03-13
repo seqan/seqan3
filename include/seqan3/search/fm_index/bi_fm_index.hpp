@@ -290,7 +290,7 @@ public:
      *
      * No-throw guarantee.
      */
-    cursor_type begin() const noexcept
+    cursor_type cursor() const noexcept
     {
         return {*this};
     }

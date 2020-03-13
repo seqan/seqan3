@@ -15,7 +15,7 @@ int main()
 
     seqan3::bi_fm_index index{genomes};                                // build the index
 
-    auto cur = index.begin();                                          // create a cursor
+    auto cur = index.cursor();                                         // create a cursor
     cur.extend_right("GA"_dna4);                                       // search the pattern "GA"
     cur.extend_left("CT"_dna4);                                        // search the pattern "CTGA"
     seqan3::debug_stream << "Number of hits: " << cur.count() << '\n'; // outputs: 5
