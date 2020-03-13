@@ -264,26 +264,32 @@ private:
  */
 //!\brief Deduction guide for a parameter pack over an arithmetic type.
 template <arithmetic ...option_types>
+//!\cond
+    requires !(detail::is_char_adaptation_v<option_types> || ...)
+//!\endcond
 value_list_validator(option_types...) -> value_list_validator<double>;
 
 //!\brief Deduction guide for ranges over an arithmetic type.
-template <std::ranges::forward_range range_type>
+template <typename range_type>
 //!\cond
-    requires arithmetic<std::ranges::range_value_t<range_type>>
+    requires std::ranges::forward_range<std::decay_t<range_type>> &&
+             arithmetic<std::ranges::range_value_t<range_type>> &&
+             (!seqan3::detail::is_char_adaptation_v<std::ranges::range_value_t<range_type>>)
 //!\endcond
 value_list_validator(range_type && rng) -> value_list_validator<double>;
 
 //!\brief Given a parameter pack of types that are convertible to std::string, delegate to value type std::string.
 template <typename ...option_types>
 //!\cond
-    requires (std::constructible_from<std::string, option_types> && ...)
+    requires (std::constructible_from<std::string, std::decay_t<option_types>> && ...)
 //!\endcond
 value_list_validator(option_types...) -> value_list_validator<std::string>;
 
 //!\brief Deduction guide for ranges over a value type convertible to std::string.
-template <std::ranges::forward_range range_type>
+template <typename range_type>
 //!\cond
-    requires std::constructible_from<std::string, std::ranges::range_value_t<range_type>>
+    requires (std::ranges::forward_range<std::decay_t<range_type>> &&
+              std::constructible_from<std::string, std::ranges::range_value_t<range_type>>)
 //!\endcond
 value_list_validator(range_type && rng) -> value_list_validator<std::string>;
 
@@ -292,7 +298,10 @@ template <typename ...option_types>
 value_list_validator(option_types...) -> value_list_validator<seqan3::pack_traits::front<option_types...>>;
 
 //!\brief Deduction guide for ranges.
-template <std::ranges::forward_range range_type>
+template <typename range_type>
+//!\cond
+    requires (std::ranges::forward_range<std::decay_t<range_type>>)
+//!\endcond
 value_list_validator(range_type && rng) -> value_list_validator<std::ranges::range_value_t<range_type>>;
 //!\}
 
