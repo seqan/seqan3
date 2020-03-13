@@ -137,7 +137,7 @@ public:
     //!\brief Returns a sentinel.
     sentinel end()
     {
-        return {seqan3::end(state_ptr->urng)};
+        return {std::ranges::end(state_ptr->urng)};
     }
 
     //!\brief Const version of end is deleted, since the underlying view_state must be mutable.

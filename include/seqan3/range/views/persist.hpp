@@ -107,7 +107,7 @@ public:
      */
     const_iterator begin() const noexcept
     {
-        return seqan3::begin(*urange);
+        return std::ranges::begin(*urange);
     }
 
     //!\copydoc begin()
@@ -131,7 +131,7 @@ public:
      */
     auto end() const noexcept
     {
-        return seqan3::end(*urange);
+        return std::ranges::end(*urange);
     }
 
     //!\copydoc end()

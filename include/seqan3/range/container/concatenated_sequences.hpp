@@ -247,7 +247,7 @@ public:
     //!\endcond
     {
         if constexpr (std::ranges::sized_range<rng_of_rng_type>)
-            data_delimiters.reserve(seqan3::size(rng_of_rng) + 1);
+            data_delimiters.reserve(std::ranges::size(rng_of_rng) + 1);
 
         for (auto && val : rng_of_rng)
         {
@@ -962,17 +962,17 @@ public:
 
         size_type value_len = 0;
         if constexpr (std::ranges::sized_range<rng_type>)
-            value_len = seqan3::size(value);
+            value_len = std::ranges::size(value);
         else
-            value_len = std::distance(seqan3::begin(value), seqan3::end(value));
+            value_len = std::distance(std::ranges::begin(value), std::ranges::end(value));
 
         data_values.reserve(data_values.size() + count * value_len);
         auto placeholder = views::repeat_n(value_type_t<rng_type>{}, count * value_len)
                          | std::views::common;
         // insert placeholder so the tail is moved once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
-                           seqan3::begin(placeholder),
-                           seqan3::end(placeholder));
+                           std::ranges::begin(placeholder),
+                           std::ranges::end(placeholder));
 
         // assign the actual values to the placeholder:
         size_t i = data_delimiters[pos_as_num];
@@ -1057,8 +1057,8 @@ public:
                          | std::views::common;
         // insert placeholder so the tail is moved only once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
-                           seqan3::begin(placeholder),
-                           seqan3::end(placeholder));
+                           std::ranges::begin(placeholder),
+                           std::ranges::end(placeholder));
 
         // assign the actual values to the placeholder:
         size_t i = data_delimiters[pos_as_num];
@@ -1132,7 +1132,7 @@ public:
         // we need to scan once over the input
         size_type sum_size{0};
         for (; first != last; ++first)
-            sum_size += seqan3::size(*first);
+            sum_size += std::ranges::size(*first);
 
         data_values.erase(data_values.begin() + data_delimiters[distf],
                           data_values.begin() + data_delimiters[dist]);
@@ -1191,8 +1191,8 @@ public:
     void push_back(rng_type && value)
         requires is_compatible_value<rng_type>
     {
-        data_values.insert(data_values.end(), seqan3::begin(value), seqan3::end(value));
-        data_delimiters.push_back(data_delimiters.back() + seqan3::size(value));
+        data_values.insert(data_values.end(), std::ranges::begin(value), std::ranges::end(value));
+        data_delimiters.push_back(data_delimiters.back() + std::ranges::size(value));
     }
 
     /*!\brief Removes the last element of the container.
@@ -1262,7 +1262,7 @@ public:
         requires is_compatible_value<rng_type>
     {
         assert(count < max_size());
-        assert(concat_size() + count * seqan3::size(value) < data_values.max_size());
+        assert(concat_size() + count * std::ranges::size(value) < data_values.max_size());
 
         if (count < size())
             resize(count);

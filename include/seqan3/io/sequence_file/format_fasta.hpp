@@ -145,7 +145,7 @@ protected:
         }
         else
         {
-            if (empty(id)) //[[unlikely]]
+            if (std::ranges::empty(id)) //[[unlikely]]
                 throw std::runtime_error{"The ID field may not be empty when writing FASTA files."};
 
             write_id(stream_it, options, id);
@@ -158,7 +158,7 @@ protected:
         }
         else
         {
-            if (empty(sequence)) //[[unlikely]]
+            if (std::ranges::empty(sequence)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing FASTA files."};
 
             write_seq(stream_it, options, sequence);

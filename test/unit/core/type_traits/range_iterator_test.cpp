@@ -30,9 +30,9 @@ TEST(range_and_iterator, iterator_)
 
     auto v = std::views::iota(1);
     EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
-                                decltype(seqan3::begin(v))>));
+                                decltype(std::ranges::begin(v))>));
     EXPECT_FALSE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
-                                 decltype(seqan3::end(v))>));
+                                 decltype(std::ranges::end(v))>));
 }
 
 TEST(range_and_iterator, sentinel_)
@@ -46,9 +46,9 @@ TEST(range_and_iterator, sentinel_)
 
     auto v = std::views::iota(1);
     EXPECT_FALSE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
-                                 decltype(seqan3::begin(v))>));
+                                 decltype(std::ranges::begin(v))>));
     EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
-                                decltype(seqan3::end(v))>));
+                                decltype(std::ranges::end(v))>));
 }
 
 template <typename list1, typename list2, size_t pos = 0>

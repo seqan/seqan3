@@ -30,8 +30,8 @@ struct dummy_executor
 
     std::optional<size_t> bump()
     {
-        auto it = begin(generator);
-        if (it == end(generator))
+        auto it = std::ranges::begin(generator);
+        if (it == std::ranges::end(generator))
         {
             return {};
         }

@@ -149,7 +149,7 @@ template <std::ranges::sized_range rng_t>
 struct size_type<rng_t>
 {
     //!\brief Return the size_type as returned by the size function.
-    using type = decltype(size(std::declval<rng_t &>()));
+    using type = decltype(std::ranges::size(std::declval<rng_t &>()));
 };
 
 // ----------------------------------------------------------------------------

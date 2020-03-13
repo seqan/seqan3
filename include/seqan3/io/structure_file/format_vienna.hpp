@@ -286,7 +286,7 @@ protected:
         // WRITE ID (optional)
         if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            if (!empty(id))
+            if (!std::ranges::empty(id))
             {
                 stream_it = '>';
                 stream_it = ' ';
@@ -298,7 +298,7 @@ protected:
         // WRITE SEQUENCE
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            if (empty(seq)) //[[unlikely]]
+            if (std::ranges::empty(seq)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing Vienna files."};
 
             std::ranges::copy(seq | views::to_char, stream_it);
@@ -313,7 +313,7 @@ protected:
         // WRITE STRUCTURE (optional)
         if constexpr (!detail::decays_to_ignore_v<structure_type>)
         {
-            if (!empty(structure))
+            if (!std::ranges::empty(structure))
                 std::ranges::copy(structure | views::to_char, stream_it);
 
             // WRITE ENERGY (optional)

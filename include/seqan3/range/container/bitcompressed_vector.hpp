@@ -181,7 +181,7 @@ public:
         requires has_same_value_type_v<other_range_t>
     //!\endcond
     explicit bitcompressed_vector(other_range_t && range) :
-        bitcompressed_vector{seqan3::begin(range), seqan3::end(range)}
+        bitcompressed_vector{std::ranges::begin(range), std::ranges::end(range)}
     {}
 
     /*!\brief Construct with `count` times `value`.
@@ -766,7 +766,7 @@ public:
         auto v = std::ranges::subrange<begin_iterator_type, end_iterator_type>{begin_it, end_it}
                | views::convert<value_type>
                | views::to_rank;
-        data.insert(data.begin() + pos_as_num, seqan3::begin(v), seqan3::end(v));
+        data.insert(data.begin() + pos_as_num, std::ranges::begin(v), std::ranges::end(v));
 
         return begin() + pos_as_num;
     }
