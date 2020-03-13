@@ -10,18 +10,50 @@
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  */
 
+#pragma once
+
+#include <seqan3/core/platform.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
 {
 
-using std::ranges::begin;
-using std::ranges::end;
+//!\cond
+template <typename t>
+SEQAN3_DEPRECATED_310 auto begin(t && v)
+{
+    return std::ranges::begin(std::forward<t>(v));
+}
 
-using std::ranges::cbegin;
-using std::ranges::cend;
+template <typename t>
+SEQAN3_DEPRECATED_310 auto end(t && v)
+{
+    return std::ranges::end(std::forward<t>(v));
+}
 
-using std::ranges::size;
-using std::ranges::empty;
+template <typename t>
+SEQAN3_DEPRECATED_310 auto cbegin(t && v)
+{
+    return std::ranges::cbegin(std::forward<t>(v));
+}
+
+template <typename t>
+SEQAN3_DEPRECATED_310 auto cend(t && v)
+{
+    return std::ranges::cend(std::forward<t>(v));
+}
+
+template <typename t>
+SEQAN3_DEPRECATED_310 auto size(t && v)
+{
+    return std::ranges::size(std::forward<t>(v));
+}
+
+template <typename t>
+SEQAN3_DEPRECATED_310 auto empty(t && v)
+{
+    return std::ranges::empty(std::forward<t>(v));
+}
+//!\endcond
 
 } // namespace seqan3
