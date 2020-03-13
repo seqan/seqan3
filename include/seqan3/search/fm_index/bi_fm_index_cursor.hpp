@@ -81,6 +81,8 @@ public:
 private:
     //!\brief Type of the representation of characters in the underlying SDSL index.
     using sdsl_char_type = typename index_type::sdsl_char_type;
+    //!\brief Type of the SDSL index.
+    using sdsl_index_type = typename index_t::sdsl_index_type;
     //!\brief Type of the alphabet size in the underlying SDSL index.
     using sdsl_sigma_type = typename index_type::sdsl_sigma_type;
     //!\brief Alphabet type of the index.
@@ -142,8 +144,7 @@ private:
     }
 
     //!\brief Optimized bidirectional search without alphabet mapping
-    template <detail::sdsl_index csa_t>
-    bool bidirectional_search(csa_t const & csa, sdsl_char_type const c,
+    bool bidirectional_search(sdsl_index_type const & csa, sdsl_char_type const c,
                               size_type & l_fwd, size_type & r_fwd,
                               size_type & l_bwd, size_type & r_bwd) const noexcept
     {
@@ -154,7 +155,7 @@ private:
         size_type _l_fwd, _r_fwd, _l_bwd, _r_bwd;
 
         size_type cc = c;
-        if constexpr(!std::same_as<typename csa_t::alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr(!std::same_as<index_alphabet_type, sdsl::plain_byte_alphabet>)
         {
             cc = csa.char2comp[c];
             if (cc == 0 && c > 0) // [[unlikely]]
@@ -196,8 +197,7 @@ private:
     }
 
     //!\brief Optimized bidirectional search for cycle_back() and cycle_front() without alphabet mapping
-    template <detail::sdsl_index csa_t>
-    bool bidirectional_search_cycle(csa_t const & csa, sdsl_char_type const c,
+    bool bidirectional_search_cycle(sdsl_index_type const & csa, sdsl_char_type const c,
                                     size_type const l_parent, size_type const r_parent,
                                     size_type & l_fwd, size_type & r_fwd,
                                     size_type & l_bwd, size_type & r_bwd) const noexcept
@@ -205,7 +205,7 @@ private:
         assert((l_parent <= r_parent) && (r_parent < csa.size()));
 
         size_type c_begin;
-        if constexpr(std::same_as<typename csa_t::alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr(std::same_as<index_alphabet_type, sdsl::plain_byte_alphabet>)
             c_begin = csa.C[c]; // TODO: check whether this can be removed
         else
             c_begin = csa.C[csa.char2comp[c]];
