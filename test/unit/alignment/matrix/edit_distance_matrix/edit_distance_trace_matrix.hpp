@@ -10,8 +10,7 @@
 
 #include "../../pairwise/fixture/alignment_fixture.hpp"
 
-using namespace seqan3;
-using namespace seqan3::test::alignment::fixture;
+using namespace seqan3::test::alignment::fixture;   // for N, D, u, l and combinations
 
 using word_type = uint8_t;
 
@@ -29,14 +28,15 @@ public:
     using base_t::reserve;
 };
 
-std::vector<std::vector<detail::trace_directions>> as_row_wise_vector(auto matrix)
+std::vector<std::vector<seqan3::detail::trace_directions>> as_row_wise_vector(auto matrix)
 {
-    std::vector<std::vector<detail::trace_directions>> result{};
+    std::vector<std::vector<seqan3::detail::trace_directions>> result{};
     for (unsigned row = 0; row < matrix.rows(); ++row)
     {
         result.push_back({});
         for (unsigned col = 0; col < matrix.cols(); ++col)
-            result.back().push_back(matrix.at({detail::row_index_type{row}, detail::column_index_type{col}}));
+            result.back().push_back(matrix.at({seqan3::detail::row_index_type{row},
+                                               seqan3::detail::column_index_type{col}}));
     }
     return result;
 }

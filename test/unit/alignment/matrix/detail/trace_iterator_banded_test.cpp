@@ -18,19 +18,18 @@
 
 #include "../../../range/iterator_test_template.hpp"
 
-using namespace seqan3;
-using namespace seqan3::detail;
-
 struct trace_iterator_banded_test : public ::testing::Test
 {
-    static constexpr trace_directions N = trace_directions::none;
-    static constexpr trace_directions D = trace_directions::diagonal;
-    static constexpr trace_directions U = trace_directions::up;
-    static constexpr trace_directions UO = trace_directions::up_open;
-    static constexpr trace_directions L = trace_directions::left;
-    static constexpr trace_directions LO = trace_directions::left_open;
+    static constexpr seqan3::detail::trace_directions N = seqan3::detail::trace_directions::none;
+    static constexpr seqan3::detail::trace_directions D = seqan3::detail::trace_directions::diagonal;
+    static constexpr seqan3::detail::trace_directions U = seqan3::detail::trace_directions::up;
+    static constexpr seqan3::detail::trace_directions UO = seqan3::detail::trace_directions::up_open;
+    static constexpr seqan3::detail::trace_directions L = seqan3::detail::trace_directions::left;
+    static constexpr seqan3::detail::trace_directions LO = seqan3::detail::trace_directions::left_open;
 
-    two_dimensional_matrix<trace_directions> matrix{number_rows{5}, number_cols{6}, std::vector
+    seqan3::detail::two_dimensional_matrix<seqan3::detail::trace_directions> matrix{seqan3::detail::number_rows{5},
+                                                                                    seqan3::detail::number_cols{6},
+                                                                                    std::vector
     {  // emulating band {row:2, col:2}
          N,  N,  L,  D,  D,  L,
          N, LO,  D,  D, UO, UO,
@@ -47,12 +46,13 @@ struct trace_iterator_banded_test : public ::testing::Test
         //4        D  D  D UO
         //5           D  D  U
 
-    using trace_iterator_type = decltype(trace_iterator_banded{matrix.begin(), column_index_type{0}});
+    using trace_iterator_type = decltype(seqan3::detail::trace_iterator_banded{matrix.begin(),
+                                                                               seqan3::detail::column_index_type{0}});
     using path_type = std::ranges::subrange<trace_iterator_type, std::ranges::default_sentinel_t>;
 
-    path_type path(matrix_offset const & offset)
+    path_type path(seqan3::detail::matrix_offset const & offset)
     {
-        return path_type{trace_iterator_type{matrix.begin() + offset, column_index_type{2}},
+        return path_type{trace_iterator_type{matrix.begin() + offset, seqan3::detail::column_index_type{2}},
                          std::ranges::default_sentinel};
     }
 };
@@ -67,13 +67,15 @@ TEST_F(trace_iterator_banded_test, concepts)
 
 TEST_F(trace_iterator_banded_test, type_deduction)
 {
-    trace_iterator_banded it{matrix.begin(), column_index_type{0u}};
+    seqan3::detail::trace_iterator_banded it{matrix.begin(), seqan3::detail::column_index_type{0u}};
     EXPECT_TRUE((std::is_same_v<decltype(it), seqan3::detail::trace_iterator_banded<decltype(matrix.begin())>>));
 }
 
 TEST_F(trace_iterator_banded_test, trace_path_2_5)
 {
-    std::vector vec = path(matrix_offset{row_index_type{2}, column_index_type{5}}) | views::to<std::vector>;
+    std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
+                                                         seqan3::detail::column_index_type{5}})
+                    | views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 8u);
     EXPECT_EQ(vec, (std::vector{U, U, L, L, L, D, D, U}));
@@ -81,7 +83,8 @@ TEST_F(trace_iterator_banded_test, trace_path_2_5)
 
 TEST_F(trace_iterator_banded_test, coordinate)
 {
-    auto p = path(matrix_offset{row_index_type{2}, column_index_type{5}});
+    auto p = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
+                                                seqan3::detail::column_index_type{5}});
     auto it = p.begin();
 
     EXPECT_EQ(it.coordinate().row, 5u);
@@ -122,7 +125,8 @@ struct iterator_fixture<trace_iterator_banded_test> : public trace_iterator_band
     using base_t = trace_iterator_banded_test;
 
     using iterator_type = typename base_t::trace_iterator_type;
-    using const_iterator_type = decltype(trace_iterator_banded{base_t::matrix.cbegin(), column_index_type{0}});
+    using const_iterator_type = decltype(seqan3::detail::trace_iterator_banded{base_t::matrix.cbegin(),
+                                                                               seqan3::detail::column_index_type{0}});
 
     // Test forward iterator concept.
     using iterator_tag = std::forward_iterator_tag;
@@ -132,14 +136,17 @@ struct iterator_fixture<trace_iterator_banded_test> : public trace_iterator_band
     {
         auto begin()
         {
-            return iterator_type{matrix.begin() + matrix_offset{row_index_type{2}, column_index_type{5}},
-                                 column_index_type{2}};
+            return iterator_type{matrix.begin() + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
+                                                                                seqan3::detail::column_index_type{5}},
+                                 seqan3::detail::column_index_type{2}};
         }
 
         auto begin() const
         {
-            return const_iterator_type{matrix.cbegin() + matrix_offset{row_index_type{2}, column_index_type{5}},
-                                       column_index_type{2}};
+            return const_iterator_type{matrix.cbegin() +
+                                       seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
+                                                                     seqan3::detail::column_index_type{5}},
+                                       seqan3::detail::column_index_type{2}};
         }
 
         auto end() { return std::ranges::default_sentinel; }
@@ -149,7 +156,7 @@ struct iterator_fixture<trace_iterator_banded_test> : public trace_iterator_band
     };
 
     test_range_type test_range{base_t::matrix};
-    std::vector<trace_directions> expected_range{U, U, L, L, L, D, D, U};
+    std::vector<seqan3::detail::trace_directions> expected_range{U, U, L, L, L, D, D, U};
 };
 
 INSTANTIATE_TYPED_TEST_SUITE_P(trace_iterator_banded, iterator_fixture, trace_iterator_banded_test, );

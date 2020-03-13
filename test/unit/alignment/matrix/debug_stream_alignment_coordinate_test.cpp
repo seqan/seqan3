@@ -11,27 +11,28 @@
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 
-using namespace seqan3;
-
 TEST(debug_stream_test, advanceable_alignment_coordinate)
 {
     using not_incrementable =
-        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>;
+        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::none>;
     using row_incrementable =
-        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::row>;
+        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::row>;
     using col_incrementable =
-        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
+        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::column>;
 
-    not_incrementable co_not{detail::column_index_type{10u}, detail::row_index_type{5u}};
-    col_incrementable co_col{detail::column_index_type{10u}, detail::row_index_type{5u}};
-    row_incrementable co_row{detail::column_index_type{10u}, detail::row_index_type{5u}};
+    not_incrementable co_not{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{5u}};
+    col_incrementable co_col{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{5u}};
+    row_incrementable co_row{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{5u}};
 
-    EXPECT_TRUE((detail::is_value_specialisation_of_v<not_incrementable, detail::advanceable_alignment_coordinate>));
-    EXPECT_TRUE((detail::is_value_specialisation_of_v<col_incrementable, detail::advanceable_alignment_coordinate>));
-    EXPECT_TRUE((detail::is_value_specialisation_of_v<row_incrementable, detail::advanceable_alignment_coordinate>));
+    EXPECT_TRUE((seqan3::detail::is_value_specialisation_of_v<not_incrementable,
+                                                              seqan3::detail::advanceable_alignment_coordinate>));
+    EXPECT_TRUE((seqan3::detail::is_value_specialisation_of_v<col_incrementable,
+                                                              seqan3::detail::advanceable_alignment_coordinate>));
+    EXPECT_TRUE((seqan3::detail::is_value_specialisation_of_v<row_incrementable,
+                                                              seqan3::detail::advanceable_alignment_coordinate>));
 
     std::stringstream sstream{};
-    debug_stream_type dstream{sstream};
+    seqan3::debug_stream_type dstream{sstream};
     dstream << co_not;
     dstream << co_col;
     dstream << co_row;
@@ -44,12 +45,13 @@ TEST(debug_stream_test, advanceable_alignment_coordinate)
 
 TEST(debug_stream_test, alignment_coordinate)
 {
-    alignment_coordinate co_align{detail::column_index_type{10u}, detail::row_index_type{5u}};
+    seqan3::alignment_coordinate co_align{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{5u}};
 
-    EXPECT_FALSE((detail::is_value_specialisation_of_v<decltype(co_align), detail::advanceable_alignment_coordinate>));
+    EXPECT_FALSE((seqan3::detail::is_value_specialisation_of_v<decltype(co_align),
+                                                               seqan3::detail::advanceable_alignment_coordinate>));
 
     std::stringstream sstream{};
-    debug_stream_type dstream{sstream};
+    seqan3::debug_stream_type dstream{sstream};
     dstream << co_align;
     EXPECT_EQ(sstream.str(), "(10,5)");
 

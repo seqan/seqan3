@@ -10,19 +10,19 @@
 #include <seqan3/alignment/matrix/debug_matrix.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 namespace seqan3::detail
 {
 struct debug_matrix_stream_test : public ::testing::Test
 {
     static constexpr auto inf = std::nullopt;
-    std::vector<dna4> sequence1 = "AACACGTTAACCGGTT"_dna4;
-    std::vector<dna4> sequence2 = "ACGTACGT"_dna4;
+    std::vector<seqan3::dna4> sequence1 = "AACACGTTAACCGGTT"_dna4;
+    std::vector<seqan3::dna4> sequence2 = "ACGTACGT"_dna4;
 
-    detail::row_wise_matrix<std::optional<int>> score_matrix
+    seqan3::detail::row_wise_matrix<std::optional<int>> score_matrix
     {
-        number_rows{9u}, number_cols{17u}, std::vector<std::optional<int>>
+        seqan3::detail::number_rows{9u}, seqan3::detail::number_cols{17u}, std::vector<std::optional<int>>
         {
             0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
             1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
@@ -36,15 +36,15 @@ struct debug_matrix_stream_test : public ::testing::Test
         }
     };
 
-    detail::trace_directions N{},
-        D{detail::trace_directions::diagonal},
-        L{detail::trace_directions::left},
-        U{detail::trace_directions::up},
+    seqan3::detail::trace_directions N{},
+        D{seqan3::detail::trace_directions::diagonal},
+        L{seqan3::detail::trace_directions::left},
+        U{seqan3::detail::trace_directions::up},
         DL{D|L}, DU{D|U}, UL{U|L}, DUL{D|U|L};
 
-    detail::row_wise_matrix<detail::trace_directions> trace_matrix
+    seqan3::detail::row_wise_matrix<detail::trace_directions> trace_matrix
     {
-        number_rows{9u}, number_cols{17u}, std::vector
+        seqan3::detail::number_rows{9u}, seqan3::detail::number_cols{17u}, std::vector
         {
             N,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,  L,
             U,  D,  DL, L,  DL, L,  L,  L,  L,  DL, DL, L,  L,  L,  L,  L,  L,
@@ -274,9 +274,9 @@ TEST_F(debug_matrix_stream_test, unicode_str_length)
 
 TEST_F(debug_matrix_stream_test, score_matrix_ascii)
 {
-    detail::debug_matrix matrix{score_matrix};
+    seqan3::detail::debug_matrix matrix{score_matrix};
 
-    fmtflags2 flags = fmtflags2::default_;
+    seqan3::fmtflags2 flags = seqan3::fmtflags2::default_;
 
     std::stringstream stream;
     matrix.stream_matrix(stream, flags);
@@ -285,9 +285,9 @@ TEST_F(debug_matrix_stream_test, score_matrix_ascii)
 
 TEST_F(debug_matrix_stream_test, score_matrix_ascii_with_sequences)
 {
-    detail::debug_matrix matrix{score_matrix, sequence1, sequence2};
+    seqan3::detail::debug_matrix matrix{score_matrix, sequence1, sequence2};
 
-    fmtflags2 flags = fmtflags2::default_;
+    seqan3::fmtflags2 flags = seqan3::fmtflags2::default_;
     EXPECT_EQ(matrix.auto_column_width(flags), 2u);
 
     std::stringstream stream;
@@ -297,9 +297,9 @@ TEST_F(debug_matrix_stream_test, score_matrix_ascii_with_sequences)
 
 TEST_F(debug_matrix_stream_test, score_matrix_unicode)
 {
-    detail::debug_matrix matrix{score_matrix};
+    seqan3::detail::debug_matrix matrix{score_matrix};
 
-    fmtflags2 flags = fmtflags2::default_ | fmtflags2::utf8;
+    seqan3::fmtflags2 flags = seqan3::fmtflags2::default_ | seqan3::fmtflags2::utf8;
     EXPECT_EQ(matrix.auto_column_width(flags), 2u);
 
     std::stringstream stream;
@@ -309,10 +309,10 @@ TEST_F(debug_matrix_stream_test, score_matrix_unicode)
 
 TEST_F(debug_matrix_stream_test, score_matrix_unicode_with_sequences)
 {
-    detail::debug_matrix matrix{score_matrix, sequence1, sequence2};
+    seqan3::detail::debug_matrix matrix{score_matrix, sequence1, sequence2};
     matrix.column_width = 4u;
 
-    fmtflags2 flags = fmtflags2::default_ | fmtflags2::utf8;
+    seqan3::fmtflags2 flags = seqan3::fmtflags2::default_ | seqan3::fmtflags2::utf8;
     EXPECT_EQ(matrix.auto_column_width(flags), 2u);
 
     std::stringstream stream;
@@ -322,10 +322,10 @@ TEST_F(debug_matrix_stream_test, score_matrix_unicode_with_sequences)
 
 TEST_F(debug_matrix_stream_test, trace_matrix_ascii)
 {
-    detail::debug_matrix matrix{trace_matrix};
+    seqan3::detail::debug_matrix matrix{trace_matrix};
     matrix.column_width = 4u;
 
-    fmtflags2 flags = fmtflags2::default_;
+    seqan3::fmtflags2 flags = seqan3::fmtflags2::default_;
 
     EXPECT_EQ(matrix.auto_column_width(flags), 3u);
 
@@ -336,10 +336,10 @@ TEST_F(debug_matrix_stream_test, trace_matrix_ascii)
 
 TEST_F(debug_matrix_stream_test, trace_matrix_ascii_with_sequences)
 {
-    detail::debug_matrix matrix{trace_matrix, sequence1, sequence2};
+    seqan3::detail::debug_matrix matrix{trace_matrix, sequence1, sequence2};
     matrix.column_width = 4u;
 
-    fmtflags2 flags = fmtflags2::default_;
+    seqan3::fmtflags2 flags = seqan3::fmtflags2::default_;
 
     EXPECT_EQ(matrix.auto_column_width(flags), 3u);
 
@@ -350,9 +350,9 @@ TEST_F(debug_matrix_stream_test, trace_matrix_ascii_with_sequences)
 
 TEST_F(debug_matrix_stream_test, trace_matrix_unicode)
 {
-    detail::debug_matrix matrix{trace_matrix};
+    seqan3::detail::debug_matrix matrix{trace_matrix};
 
-    fmtflags2 flags = fmtflags2::default_ | fmtflags2::utf8;
+    seqan3::fmtflags2 flags = seqan3::fmtflags2::default_ | seqan3::fmtflags2::utf8;
     EXPECT_EQ(matrix.auto_column_width(flags), 3u);
 
     std::stringstream stream;
@@ -362,10 +362,10 @@ TEST_F(debug_matrix_stream_test, trace_matrix_unicode)
 
 TEST_F(debug_matrix_stream_test, trace_matrix_unicode_with_sequences)
 {
-    detail::debug_matrix matrix{trace_matrix, sequence1, sequence2};
+    seqan3::detail::debug_matrix matrix{trace_matrix, sequence1, sequence2};
     matrix.column_width = 4u;
 
-    fmtflags2 flags = fmtflags2::default_ | fmtflags2::utf8;
+    seqan3::fmtflags2 flags = seqan3::fmtflags2::default_ | seqan3::fmtflags2::utf8;
     EXPECT_EQ(matrix.auto_column_width(flags), 3u);
 
     std::stringstream stream;
@@ -375,10 +375,10 @@ TEST_F(debug_matrix_stream_test, trace_matrix_unicode_with_sequences)
 
 TEST_F(debug_stream_test, score_matrix_ascii)
 {
-    detail::debug_matrix matrix{score_matrix};
+    seqan3::detail::debug_matrix matrix{score_matrix};
 
     std::stringstream stream;
-    debug_stream_type debug_stream{stream};
+    seqan3::debug_stream_type debug_stream{stream};
     debug_stream << matrix;
 
     EXPECT_EQ(stream.str(), score_matrix_ascii);
@@ -386,10 +386,10 @@ TEST_F(debug_stream_test, score_matrix_ascii)
 
 TEST_F(debug_stream_test, score_matrix_ascii_with_sequences)
 {
-    detail::debug_matrix matrix{detail::debug_matrix{score_matrix}, sequence1, sequence2};
+    seqan3::detail::debug_matrix matrix{seqan3::detail::debug_matrix{score_matrix}, sequence1, sequence2};
 
     std::stringstream stream;
-    debug_stream_type debug_stream{stream};
+    seqan3::debug_stream_type debug_stream{stream};
     debug_stream << matrix;
 
     EXPECT_EQ(stream.str(), score_matrix_ascii_with_sequences);
@@ -397,34 +397,34 @@ TEST_F(debug_stream_test, score_matrix_ascii_with_sequences)
 
 TEST_F(debug_stream_test, score_matrix_unicode)
 {
-    detail::debug_matrix matrix{score_matrix};
+    seqan3::detail::debug_matrix matrix{score_matrix};
 
     std::stringstream stream;
-    debug_stream_type debug_stream{stream};
-    debug_stream << fmtflags2::utf8 << matrix;
+    seqan3::debug_stream_type debug_stream{stream};
+    debug_stream << seqan3::fmtflags2::utf8 << matrix;
 
     EXPECT_EQ(stream.str(), score_matrix_unicode);
 }
 
 TEST_F(debug_stream_test, score_matrix_unicode_with_sequences)
 {
-    detail::debug_matrix matrix{detail::debug_matrix{score_matrix}, sequence1, sequence2};
+    seqan3::detail::debug_matrix matrix{seqan3::detail::debug_matrix{score_matrix}, sequence1, sequence2};
     matrix.column_width = 4u;
 
     std::stringstream stream;
-    debug_stream_type debug_stream{stream};
-    debug_stream << fmtflags2::utf8 << matrix;
+    seqan3::debug_stream_type debug_stream{stream};
+    debug_stream << seqan3::fmtflags2::utf8 << matrix;
 
     EXPECT_EQ(stream.str(), score_matrix_unicode_with_sequences);
 }
 
 TEST_F(debug_stream_test, trace_matrix_ascii)
 {
-    detail::debug_matrix matrix{trace_matrix};
+    seqan3::detail::debug_matrix matrix{trace_matrix};
     matrix.column_width = 4u;
 
     std::stringstream stream;
-    debug_stream_type debug_stream{stream};
+    seqan3::debug_stream_type debug_stream{stream};
     debug_stream << matrix;
 
     EXPECT_EQ(stream.str(), trace_matrix_ascii);
@@ -432,11 +432,11 @@ TEST_F(debug_stream_test, trace_matrix_ascii)
 
 TEST_F(debug_stream_test, trace_matrix_ascii_with_sequences)
 {
-    detail::debug_matrix matrix{detail::debug_matrix{trace_matrix}, sequence1, sequence2};
+    seqan3::detail::debug_matrix matrix{seqan3::detail::debug_matrix{trace_matrix}, sequence1, sequence2};
     matrix.column_width = 4u;
 
     std::stringstream stream;
-    debug_stream_type debug_stream{stream};
+    seqan3::debug_stream_type debug_stream{stream};
     debug_stream << matrix;
 
     EXPECT_EQ(stream.str(), trace_matrix_ascii_with_sequences);
@@ -444,23 +444,23 @@ TEST_F(debug_stream_test, trace_matrix_ascii_with_sequences)
 
 TEST_F(debug_stream_test, trace_matrix_unicode)
 {
-    detail::debug_matrix matrix{trace_matrix};
+    seqan3::detail::debug_matrix matrix{trace_matrix};
 
     std::stringstream stream;
-    debug_stream_type debug_stream{stream};
-    debug_stream << fmtflags2::utf8 << matrix;
+    seqan3::debug_stream_type debug_stream{stream};
+    debug_stream << seqan3::fmtflags2::utf8 << matrix;
 
     EXPECT_EQ(stream.str(), trace_matrix_unicode);
 }
 
 TEST_F(debug_stream_test, trace_matrix_unicode_with_sequences)
 {
-    detail::debug_matrix matrix{detail::debug_matrix{trace_matrix}, sequence1, sequence2};
+    seqan3::detail::debug_matrix matrix{seqan3::detail::debug_matrix{trace_matrix}, sequence1, sequence2};
     matrix.column_width = 4u;
 
     std::stringstream stream;
-    debug_stream_type debug_stream{stream};
-    debug_stream << fmtflags2::utf8 << matrix;
+    seqan3::debug_stream_type debug_stream{stream};
+    debug_stream << seqan3::fmtflags2::utf8 << matrix;
 
     EXPECT_EQ(stream.str(), trace_matrix_unicode_with_sequences);
 }

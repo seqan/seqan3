@@ -10,9 +10,6 @@
 #include <seqan3/alignment/band/static_band.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
-using namespace seqan3::detail;
-
 template <typename t>
 struct alignment_matrix_base_test : public ::testing::Test
 {
@@ -22,7 +19,7 @@ struct alignment_matrix_base_test : public ::testing::Test
     alignment_matrix_base_test()
     {
         if constexpr (is_banded)
-            test_range = matrix_t{first, second, static_band{lower_bound{-2}, upper_bound{2}}};
+            test_range = matrix_t{first, second, seqan3::static_band{seqan3::lower_bound{-2}, seqan3::upper_bound{2}}};
         else
             test_range = matrix_t{first, second};
     }
@@ -37,7 +34,7 @@ TYPED_TEST_SUITE_P(alignment_matrix_base_test);
 TYPED_TEST_P(alignment_matrix_base_test, range_concepts)
 {
     using outer_it = std::ranges::iterator_t<typename TestFixture::matrix_t>;
-    using column_t = value_type_t<outer_it>;
+    using column_t = seqan3::value_type_t<outer_it>;
     using inner_it = std::ranges::iterator_t<column_t>;
 
     EXPECT_TRUE(std::ranges::input_range<typename TestFixture::matrix_t>);
@@ -93,7 +90,7 @@ TYPED_TEST_P(alignment_matrix_base_test, empty_row)
 
     if constexpr (TestFixture::is_banded)
     {
-        static_band band{lower_bound{-2}, upper_bound{4}};
+        seqan3::static_band band{seqan3::lower_bound{-2}, seqan3::upper_bound{4}};
         test_matrix_iteration(matrix_type{this->first, std::string{""}, band}, 5, 5);
     }
     else
@@ -108,7 +105,7 @@ TYPED_TEST_P(alignment_matrix_base_test, empty_col)
 
     if constexpr (TestFixture::is_banded)
     {
-        static_band band{lower_bound{-2}, upper_bound{2}};
+        seqan3::static_band band{seqan3::lower_bound{-2}, seqan3::upper_bound{2}};
         test_matrix_iteration(matrix_type{std::string{""}, this->second, band}, 1, 3);
     }
     else
@@ -123,7 +120,7 @@ TYPED_TEST_P(alignment_matrix_base_test, empty_col_row)
 
     if constexpr (TestFixture::is_banded)
     {
-        static_band band{lower_bound{0}, upper_bound{2}};
+        seqan3::static_band band{seqan3::lower_bound{0}, seqan3::upper_bound{2}};
         test_matrix_iteration(matrix_type{std::string{""}, std::string{""}, band}, 1, 1);
     }
     else

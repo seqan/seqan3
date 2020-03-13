@@ -41,9 +41,6 @@ struct simulated_alignment_test : public ::testing::Test
 
 TYPED_TEST_SUITE_P(simulated_alignment_test);
 
-using namespace seqan3;
-using namespace seqan3::detail;
-
 TYPED_TEST_P(simulated_alignment_test, linear_alignment)
 {
     std::vector<typename TypeParam::score_type> cmp_matrix{};
