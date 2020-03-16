@@ -39,7 +39,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
 
     // Modify query s.t. it has errors matching error_distribution.
     auto query = orig_query;
-    auto it = index.begin();
+    auto it = index.cursor();
     uint64_t current_blocks_length = 0;
     for (uint8_t block = 0; block < search.blocks(); ++block)
     {

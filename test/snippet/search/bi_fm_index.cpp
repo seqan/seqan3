@@ -10,7 +10,7 @@ int main()
     std::vector<seqan3::dna4> genome{"ATCGATCGAAGGCTAGCTAGCTAAGGGA"_dna4};
     seqan3::bi_fm_index index{genome};                                  // build the index
 
-    auto cur = index.begin();                                           // create a cursor
+    auto cur = index.cursor();                                          // create a cursor
     cur.extend_right("GG"_dna4);                                        // search the pattern "GG"
     cur.extend_left("AA"_dna4);                                         // search the pattern "AAGG"
     seqan3::debug_stream << "Number of hits: " << cur.count() << '\n';  // outputs: 2

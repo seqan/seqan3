@@ -467,7 +467,7 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
         auto const & [blocks_length, start_pos] = block_info[search_id];
 
         bool const hit = search_ss<abort_on_hit>(
-                             index.begin(),            // cursor on the index
+                             index.cursor(),           // cursor on the index
                              query,                    // query to be searched
                              start_pos, start_pos + 1, // infix range already searched (open interval)
                                                        // the first character of `query` has the index 1 (not 0)

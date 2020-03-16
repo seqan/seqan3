@@ -24,7 +24,7 @@ class bi_fm_index_cursor_test : public ::testing::Test
 
 TYPED_TEST_SUITE_P(bi_fm_index_cursor_test);
 
-TYPED_TEST_P(bi_fm_index_cursor_test, begin)
+TYPED_TEST_P(bi_fm_index_cursor_test, cursor)
 {
     seqan3::dna4_vector text{"AACGATCGGA"_dna4};
     auto rev_text = std::views::reverse(text);
@@ -34,7 +34,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, begin)
     seqan3::fm_index fm_fwd{text};
     seqan3::fm_index fm_rev{rev_text};
 
-    TypeParam bi_it = bi_fm.begin();
+    TypeParam bi_it = bi_fm.cursor();
     EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.fwd_begin().locate()));
     EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.rev_begin().locate()));
 }
@@ -44,7 +44,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend)
     seqan3::dna4_vector text{"ACGGTAGGACG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_TRUE(it.extend_right()); // "A"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 5, 8}));
     EXPECT_TRUE(it.extend_left()); // "GA"
@@ -64,7 +64,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_char)
     seqan3::dna4_vector text{"ACGGTAGGACG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_TRUE(it.extend_left('G'_dna4)); // "G"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{2, 3, 6, 7, 10}));
     EXPECT_TRUE(it.extend_left('C'_dna4)); // "CG"
@@ -92,7 +92,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_range)
     seqan3::dna4_vector text{"ACGGTAGGACG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_FALSE(it.extend_left("CAG"_dna4)); // ""
     // sentinel position included
     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}));
@@ -111,7 +111,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_and_cycle)
     seqan3::dna4_vector text{"ACGGTAGGACG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_TRUE(it.extend_right()); // "A"
 #ifndef NDEBUG
     EXPECT_DEATH(it.cycle_front(), "");
@@ -132,7 +132,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, extend_range_and_cycle)
     seqan3::dna4_vector text{"ACGGTAGGACGTAG"_dna4};
     typename TypeParam::index_type bi_fm{text};
 
-    auto it = bi_fm.begin();
+    auto it = bi_fm.cursor();
     EXPECT_TRUE(it.extend_right("AC"_dna4)); // "AC"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 8}));
 #ifndef NDEBUG
@@ -159,7 +159,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
     typename TypeParam::index_type bi_fm{text};
 
     {
-        auto it = bi_fm.begin();
+        auto it = bi_fm.cursor();
         EXPECT_TRUE(it.extend_right("GTAGC"_dna4)); // "GTAGC"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{10}));
 
@@ -171,7 +171,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
     }
 
     {
-        auto it = bi_fm.begin();
+        auto it = bi_fm.cursor();
         EXPECT_TRUE(it.extend_left("GTAG"_dna4)); // "GTAG"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{3, 10}));
 
@@ -195,7 +195,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
     typename TypeParam::index_type bi_fm{text};
 
     {
-        auto it = bi_fm.begin();
+        auto it = bi_fm.cursor();
         EXPECT_TRUE(it.extend_left("CGTAG"_dna4)); // "CGTAG"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{9}));
 
@@ -209,7 +209,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
     }
 
     {
-        auto it = bi_fm.begin();
+        auto it = bi_fm.cursor();
         EXPECT_TRUE(it.extend_right("GTAG"_dna4)); // "GTAG"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{3, 10}));
 
@@ -226,5 +226,5 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
     }
 }
 
-REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_test, begin, extend, extend_char, extend_range, extend_and_cycle,
+REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_test, cursor, extend, extend_char, extend_range, extend_and_cycle,
                             extend_range_and_cycle, to_fwd_cursor, to_rev_cursor);

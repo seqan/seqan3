@@ -221,7 +221,7 @@ inline void search_trivial(index_t const & index,
                            search_param const error_left,
                            delegate_t && delegate) noexcept(noexcept(delegate))
 {
-    search_trivial<abort_on_hit>(index.begin(), query, 0, error_left, error_type::none, delegate);
+    search_trivial<abort_on_hit>(index.cursor(), query, 0, error_left, error_type::none, delegate);
 }
 
 //!\}

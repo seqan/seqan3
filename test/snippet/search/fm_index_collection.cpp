@@ -16,7 +16,7 @@ int main()
 
     seqan3::fm_index index{genomes};                                   // build the index
 
-    auto cur = index.begin();                                          // create a cursor
+    auto cur = index.cursor();                                         // create a cursor
     cur.extend_right("CTGA"_dna4);                                     // search the pattern "CTGA"
     seqan3::debug_stream << "Number of hits: " << cur.count() << '\n'; // outputs: 5
     seqan3::debug_stream << "Positions in the genomes: ";
