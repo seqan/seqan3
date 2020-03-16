@@ -39,7 +39,7 @@ TYPED_TEST_P(phred, conversion_char)
 
         if (i < TypeParam::offset_char)                                     // too small, map to valid smallest
             EXPECT_EQ(v.to_char(), TypeParam::offset_char);
-        else if (i >= TypeParam::offset_char + TypeParam::alphabet_size)       // too big, map to valid biggest
+        else if (i >= TypeParam::offset_char + TypeParam::alphabet_size)    // too big, map to valid biggest
             EXPECT_EQ(v.to_char(), TypeParam::offset_char + TypeParam::alphabet_size - 1);
         else                                                                // valid range, map to identity
             EXPECT_EQ(v.to_char(), i);
@@ -55,9 +55,9 @@ TYPED_TEST_P(phred, conversion_phred)
         TypeParam v;
         v.assign_phred(i);
 
-        if (i < TypeParam::offset_phred)                                     // too small, map to valid smallest
+        if (i < TypeParam::offset_phred)                                    // too small, map to valid smallest
             EXPECT_EQ(v.to_phred(), TypeParam::offset_phred);
-        else if (i >= TypeParam::offset_phred + TypeParam::alphabet_size)       // too big, map to valid biggest
+        else if (i >= TypeParam::offset_phred + TypeParam::alphabet_size)   // too big, map to valid biggest
             EXPECT_EQ(v.to_phred(), TypeParam::offset_phred + TypeParam::alphabet_size - 1);
         else                                                                // valid range, map to identity
             EXPECT_EQ(v.to_phred(), i);

@@ -102,6 +102,6 @@ TEST(phred68legacy, string_literal)
     EXPECT_EQ(v, "#####"_phred68legacy);
 
     std::vector<seqan3::phred68legacy> w{'#'_phred68legacy, '#'_phred68legacy, '!'_phred68legacy, '!'_phred68legacy,
-                                 '!'_phred68legacy, '#'_phred68legacy};
+                                         '!'_phred68legacy, '#'_phred68legacy};
     EXPECT_EQ(w, "##!!!#"_phred68legacy);
 }
