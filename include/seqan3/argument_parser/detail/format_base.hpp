@@ -223,16 +223,7 @@ private:
 
 public:
     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \tparam option_type    The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
-     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
-     * \param[in]  desc      The description of the option.
-     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
+     * \copydetails seqan3::argument_parser::add_option
      */
     template <typename option_type, typename validator_type>
     void add_option(option_type & value,
@@ -258,13 +249,9 @@ public:
     }
 
     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
-     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
-     * \param[in]  desc     The description of the flag.
-     * \param[in]  spec     Advanced flag specification, see seqan3::option_spec.
+     * \copydetails seqan3::argument_parser::add_flag
      */
-    void add_flag(bool & /*value*/,
+    void add_flag(bool & SEQAN3_DOXYGEN_ONLY(value),
                   char const short_id,
                   std::string const & long_id,
                   std::string const & desc,
@@ -278,13 +265,7 @@ public:
     }
 
     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \tparam option_type    The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  desc      The description of the positional option.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
+     * \copydetails seqan3::argument_parser::add_positional_option
      */
     template <typename option_type, typename validator_type>
     void add_positional_option(option_type & value,
@@ -371,7 +352,7 @@ public:
     }
 
     /*!\brief Adds a print_section call to parser_set_up_calls.
-     * \param[in] title The title of the section of the help page.
+     * \copydetails seqan3::argument_parser::add_section
      */
     void add_section(std::string const & title)
     {
@@ -382,7 +363,7 @@ public:
     }
 
     /*!\brief Adds a print_subsection call to parser_set_up_calls.
-     * \param[in] title The title of the subsection of the help page.
+     * \copydetails seqan3::argument_parser::add_subsection
      */
     void add_subsection(std::string const & title)
     {
@@ -393,8 +374,7 @@ public:
     }
 
     /*!\brief Adds a print_line call to parser_set_up_calls.
-     * \param[in] text The line text to be printed to the help page.
-     * \param[in] line_is_paragraph True if you want a new line at the end.
+     * \copydetails seqan3::argument_parser::add_line
      */
     void add_line(std::string const & text, bool line_is_paragraph)
     {
@@ -405,8 +385,7 @@ public:
     }
 
     /*!\brief Adds a seqan3::print_list_item call to parser_set_up_calls.
-     * \param[in] key The key of the key-value pair list item.
-     * \param[in] desc The key of the key-value pair list item.
+     * \copydetails seqan3::argument_parser::add_list_item
      */
     void add_list_item(std::string const & key, std::string const & desc)
     {

@@ -71,23 +71,13 @@ public:
     //!\}
 
     /*!\brief Adds an seqan3::detail::get_option call to be evaluated later on.
-     *
-     * \tparam option_type    The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
-     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
-     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
-     *
-     * \throws seqan3::design_error
+     * \copydetails seqan3::argument_parser::add_option
      */
     template <typename option_type, typename validator_type>
     void add_option(option_type & value,
                     char const short_id,
                     std::string const & long_id,
-                    std::string const & /*desc*/,
+                    std::string const & SEQAN3_DOXYGEN_ONLY(desc),
                     option_spec const & spec,
                     validator_type && validator)
     {
@@ -98,18 +88,13 @@ public:
     }
 
     /*!\brief Adds a get_flag call to be evaluated later on.
-     *
-     * \param[out] value    The variable in which to store the given command line argument.
-     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
-     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
-     *
-     * \throws seqan3::design_error
+     * \copydetails seqan3::argument_parser::add_flag
      */
     void add_flag(bool & value,
                   char const short_id,
                   std::string const & long_id,
-                  std::string const & /*desc*/,
-                  option_spec const & /*spec*/)
+                  std::string const & SEQAN3_DOXYGEN_ONLY(desc),
+                  option_spec const & SEQAN3_DOXYGEN_ONLY(spec))
     {
         flag_calls.push_back([this, &value, short_id, long_id]()
         {
@@ -118,18 +103,11 @@ public:
     }
 
     /*!\brief Adds a get_positional_option call to be evaluated later on.
-     *
-     * \tparam option_type    The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
-     *
-     * \throws seqan3::design_error
+     * \copydetails seqan3::argument_parser::add_positional_option
      */
     template <typename option_type, typename validator_type>
     void add_positional_option(option_type & value,
-                               std::string const & /*desc*/,
+                               std::string const & SEQAN3_DOXYGEN_ONLY(desc),
                                validator_type && validator)
     {
         positional_option_calls.push_back([this, &value, validator]()
