@@ -15,22 +15,23 @@
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 template <typename T>
 class container_of_container : public ::testing::Test
 {};
 
-using container_of_container_types = ::testing::Types<std::vector<std::vector<dna4>>,
-                                                      concatenated_sequences<std::vector<dna4>>,
-                                                      concatenated_sequences<bitcompressed_vector<dna4>>>;
+using container_of_container_types =
+    ::testing::Types<std::vector<std::vector<seqan3::dna4>>,
+                     seqan3::concatenated_sequences<std::vector<seqan3::dna4>>,
+                     seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna4>>>;
 
 TYPED_TEST_SUITE(container_of_container, container_of_container_types, );
 
 TYPED_TEST(container_of_container, concepts)
 {
-    EXPECT_TRUE(container<TypeParam>);
-    EXPECT_TRUE(container<value_type_t<TypeParam>>);
+    EXPECT_TRUE(seqan3::container<TypeParam>);
+    EXPECT_TRUE(seqan3::container<seqan3::value_type_t<TypeParam>>);
 }
 
 TYPED_TEST(container_of_container, construction)
@@ -50,7 +51,7 @@ TYPED_TEST(container_of_container, construction)
     TypeParam t6{t3.begin(), t3.begin() + 2};
     EXPECT_EQ(t5, t6);
 
-    std::vector<std::vector<dna4>> other_vector{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
+    std::vector<std::vector<seqan3::dna4>> other_vector{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
     // direct from another container-of-container
     TypeParam t7{other_vector};
     // from another container-of-container's sub-range
@@ -63,7 +64,7 @@ TYPED_TEST(container_of_container, assign)
 {
     TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
     TypeParam t2{"ACGT"_dna4, "ACGT"_dna4};
-    std::vector<std::vector<dna4>> other_vector{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
+    std::vector<std::vector<seqan3::dna4>> other_vector{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     // n * value
     TypeParam t3;
@@ -83,7 +84,7 @@ TYPED_TEST(container_of_container, assign)
     EXPECT_EQ(t6, t1);
 
     // direct from another container-of-container
-    if constexpr (std::is_same_v<TypeParam, concatenated_sequences<std::vector<dna4>>>)
+    if constexpr (std::is_same_v<TypeParam, seqan3::concatenated_sequences<std::vector<seqan3::dna4>>>)
     {
         TypeParam t7, t8;
         t7.assign(other_vector);
@@ -140,7 +141,7 @@ TYPED_TEST(container_of_container, element_access)
     EXPECT_TRUE(std::ranges::equal(t1.back(), "GAGGA"_dna4));
     EXPECT_TRUE(std::ranges::equal(t2.back(), "GAGGA"_dna4));
 
-    if constexpr (std::is_same_v<TypeParam, concatenated_sequences<std::vector<dna4>>>)
+    if constexpr (std::is_same_v<TypeParam, seqan3::concatenated_sequences<std::vector<seqan3::dna4>>>)
     {
         using size_type = typename TypeParam::size_type;
         // concat
@@ -193,7 +194,7 @@ TYPED_TEST(container_of_container, capacity)
     t1.shrink_to_fit();
     EXPECT_LE(t1.capacity(), t1.size()*2);
 
-    if constexpr (std::is_same_v<TypeParam, concatenated_sequences<std::vector<dna4>>>)
+    if constexpr (std::is_same_v<TypeParam, seqan3::concatenated_sequences<std::vector<seqan3::dna4>>>)
     {
         // size
         EXPECT_EQ(t0.concat_size(), 0u);
@@ -326,5 +327,5 @@ TYPED_TEST(container_of_container, swap)
 TYPED_TEST(container_of_container, serialisation)
 {
     TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
-    test::do_serialisation(t1);
+    seqan3::test::do_serialisation(t1);
 }
