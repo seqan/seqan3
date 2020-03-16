@@ -204,6 +204,92 @@ TEST(help_page_printing, do_not_print_hidden_options)
                               expected | std::views::filter(!seqan3::is_space)));
 }
 
+TEST(help_page_printing, advanced_options)
+{
+    int32_t option_value{5};
+    bool flag_value{};
+
+    auto set_up = [&option_value, &flag_value] (seqan3::argument_parser & parser)
+    {
+        // default or required information are always displayed
+        parser.add_section("default section", seqan3::option_spec::REQUIRED);
+        parser.add_subsection("default subsection", seqan3::option_spec::REQUIRED); // same as DEFAULT
+        parser.add_option(option_value, 'i', "int", "this is a int option.", seqan3::option_spec::REQUIRED);
+        parser.add_flag(flag_value, 'g', "goo", "this is a flag.", seqan3::option_spec::REQUIRED); // same as DEFAULT
+        parser.add_list_item("-s, --some", "list item.", seqan3::option_spec::REQUIRED); // same as DEFAULT
+        parser.add_line("some line.", true, seqan3::option_spec::REQUIRED); // same as DEFAULT
+
+        // advanced information
+        parser.add_section("advanced section", seqan3::option_spec::ADVANCED);
+        parser.add_subsection("advanced subsection", seqan3::option_spec::ADVANCED);
+        parser.add_option(option_value, 'j', "jnt", "this is a int option.", seqan3::option_spec::ADVANCED);
+        parser.add_flag(flag_value, 'f', "flag", "this is a flag.", seqan3::option_spec::ADVANCED);
+        parser.add_list_item("-s, --some", "list item.", seqan3::option_spec::ADVANCED);
+        parser.add_line("some line.", true, seqan3::option_spec::ADVANCED);
+
+        // hidden information (never displayed, normally used for options not section information)
+        parser.add_section("hidden section", seqan3::option_spec::HIDDEN);
+        parser.add_subsection("hidden subsection", seqan3::option_spec::HIDDEN);
+        parser.add_option(option_value, 'd', "dnt", "hidden option.", seqan3::option_spec::HIDDEN);
+        parser.add_flag(flag_value, 'l', "lflag", "hidden a flag.", seqan3::option_spec::HIDDEN);
+        parser.add_list_item("-s, --some", "hidden list item.", seqan3::option_spec::HIDDEN);
+        parser.add_line("hidden line.", true, seqan3::option_spec::HIDDEN);
+    };
+
+    // without -hh, only the non/advanced information are shown
+    seqan3::argument_parser parser_normal_help{"test_parser", 2, argv1};
+    set_up(parser_normal_help);
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(parser_normal_help.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+    std_cout = testing::internal::GetCapturedStdout();
+    expected = "test_parser"
+               "===========" +
+               basic_options_str +
+               "DEFAULT SECTION\n"
+               "  default subsection\n"
+               "-i, --int (signed 32 bit integer)\n"
+               "      this is a int option.\n"
+               "-g, --goo\n"
+               "       this is a flag.\n"
+               "-s, --some\n"
+               "       list item.\n"
+               "some line.\n" +
+               basic_version_str;
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                               expected | std::views::filter(!seqan3::is_space))) << std_cout;
+
+    // with -hh everything is shown
+    seqan3::argument_parser parser_advanced_help{"test_parser", 2, argv2};
+    set_up(parser_advanced_help);
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(parser_advanced_help.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+    std_cout = testing::internal::GetCapturedStdout();
+    expected =  "test_parser"
+               "===========" +
+               basic_options_str +
+               "DEFAULT SECTION\n"
+               "  default subsection\n"
+               "-i, --int (signed 32 bit integer)\n"
+               "      this is a int option.\n"
+               "-g, --goo\n"
+               "       this is a flag.\n"
+               "-s, --some\n"
+               "       list item.\n"
+               "some line.\n"
+               "ADVANCED SECTION"
+               "  advanced subsection"
+               "-j, --jnt (signed 32 bit integer)\n"
+               "       this is a int option. Default: 5.\n"
+               "-f, --flag\n"
+               "       this is a flag.\n"
+               "-s, --some\n"
+               "       list item.\n"
+               "some line.\n"+
+               basic_version_str;
+    EXPECT_TRUE(ranges::equal((std_cout | std::views::filter(!seqan3::is_space)),
+                               expected | std::views::filter(!seqan3::is_space))) << std_cout;
+}
+
 enum class foo
 {
     one,

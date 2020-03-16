@@ -420,38 +420,45 @@ public:
 
     /*!\brief Adds an help page section to the seqan3::argument_parser.
      * \param[in] title The title of the section.
+     * \param[in] spec Whether to always display this section title (seqan3::option_spec::DEFAULT), only when showing
+     *                 the advanced help page (seqan3::option_spec::ADVANCED) or never (seqan3::option_spec::HIDDEN).
      * \details This only affects the help page and other output formats.
      */
-    void add_section(std::string const & title)
+    void add_section(std::string const & title, option_spec const spec = option_spec::DEFAULT)
     {
-        std::visit([&] (auto & f) { f.add_section(title); }, format);
+        std::visit([&] (auto & f) { f.add_section(title, spec); }, format);
     }
 
     /*!\brief Adds an help page subsection to the seqan3::argument_parser.
      * \param[in] title The title of the subsection.
+     * \param[in] spec Whether to always display this subsection title (seqan3::option_spec::DEFAULT), only when showing
+     *                 the advanced help page (seqan3::option_spec::ADVANCED) or never (seqan3::option_spec::HIDDEN).
      * \details This only affects the help page and other output formats.
      */
-    void add_subsection(std::string const & title)
+    void add_subsection(std::string const & title, option_spec const spec = option_spec::DEFAULT)
     {
-        std::visit([&] (auto & f) { f.add_subsection(title); }, format);
+        std::visit([&] (auto & f) { f.add_subsection(title, spec); }, format);
     }
 
     /*!\brief Adds an help page text line to the seqan3::argument_parser.
      * \param[in] text The text to print.
-     * \param[in] line_is_paragraph Whether to insert as paragraph
-     *            or just a line (Default: false).
+     * \param[in] is_paragraph Whether to insert as paragraph or just a line (Default: false).
+     * \param[in] spec Whether to always display this line (seqan3::option_spec::DEFAULT), only when showing
+     *                 the advanced help page (seqan3::option_spec::ADVANCED) or never (seqan3::option_spec::HIDDEN).
      * \details
      * If the line is not a paragraph (false), only one line break is appended, otherwise two line breaks are appended.
      * This only affects the help page and other output formats.
      */
-    void add_line(std::string const & text, bool line_is_paragraph = false)
+    void add_line(std::string const & text, bool is_paragraph = false, option_spec const spec = option_spec::DEFAULT)
     {
-        std::visit([&] (auto & f) { f.add_line(text, line_is_paragraph); }, format);
+        std::visit([&] (auto & f) { f.add_line(text, is_paragraph, spec); }, format);
     }
 
     /*!\brief Adds an help page list item (key-value) to the seqan3::argument_parser.
      * \param[in] key  The key of the key-value pair of the list item.
      * \param[in] desc The value of the key-value pair of the list item.
+     * \param[in] spec Whether to always display this list item (seqan3::option_spec::DEFAULT), only when showing
+     *                 the advanced help page (seqan3::option_spec::ADVANCED) or never (seqan3::option_spec::HIDDEN).
      *
      * \details
      *
@@ -465,9 +472,9 @@ public:
      *            Super important integer for age.
      *```
      */
-    void add_list_item(std::string const & key, std::string const & desc)
+    void add_list_item(std::string const & key, std::string const & desc, option_spec const spec = option_spec::DEFAULT)
     {
-        std::visit([&] (auto & f) { f.add_list_item(key, desc); }, format);
+        std::visit([&] (auto & f) { f.add_list_item(key, desc, spec); }, format);
     }
     //!\}
 

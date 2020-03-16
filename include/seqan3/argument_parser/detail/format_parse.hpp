@@ -142,10 +142,10 @@ public:
 
     // functions are not needed for command line parsing but are part of the format interface.
     //!\cond
-    void add_section(std::string const &) {}
-    void add_subsection(std::string const &) {}
-    void add_line(std::string const &, bool) {}
-    void add_list_item(std::string const &, std::string const &) {}
+    void add_section(std::string const &, option_spec const) {}
+    void add_subsection(std::string const &, option_spec const) {}
+    void add_line(std::string const &, bool, option_spec const) {}
+    void add_list_item(std::string const &, std::string const &, option_spec const) {}
     //!\endcond
 
     //!\brief Checks whether `id` is empty.
