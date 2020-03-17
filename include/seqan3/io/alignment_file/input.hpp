@@ -584,7 +584,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new std::ifstream{}, stream_deleter_default}
     {
-        init(filename);
+        init_by_filename(std::move(filename));
     }
 
     /*!\brief Construct from an existing stream and with specified format.
@@ -615,7 +615,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop}
     {
-        init(file_format{});
+        init_by_format<file_format>();
     }
 
     //!\overload
@@ -628,7 +628,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default}
     {
-        init(file_format{});
+        init_by_format<file_format>();
     }
 
     /*!\brief Construct from filename and given additional reference information.
@@ -663,7 +663,7 @@ public:
         // initialize reference information
         set_references(ref_ids, ref_sequences);
 
-        init(filename);
+        init_by_filename(std::move(filename));
     }
 
     /*!\brief Construct from an existing stream and with specified format.
@@ -702,7 +702,7 @@ public:
         // initialize reference information
         set_references(ref_ids, ref_sequences);
 
-        init(file_format{});
+        init_by_format<file_format>();
     }
 
     //!\overload
@@ -717,7 +717,7 @@ public:
         // initialize reference information
         set_references(ref_ids, ref_sequences);
 
-        init(file_format{});
+        init_by_format<file_format>();
     }
 
     //!\cond
@@ -846,7 +846,7 @@ protected:
     //!\privatesection
 
     //!/brief Initialisation based on a filename.
-    void init(std::filesystem::path & filename)
+    void init_by_filename(std::filesystem::path filename)
     {
         primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
         static_cast<std::basic_ifstream<char> *>(primary_stream.get())->open(filename,
@@ -861,7 +861,7 @@ protected:
 
     //!/brief Initialisation based on a format (construction via stream).
     template <typename format_type>
-    void init(format_type const &)
+    void init_by_format()
     {
         static_assert(list_traits::contains<format_type, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
