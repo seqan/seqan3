@@ -93,8 +93,8 @@ public:
      */
     constexpr search_result_range_iterator begin()
     {
-        search_result_range_iterator tmp_it{*this, first_invocation_of_begin};
-        first_invocation_of_begin = true;
+        search_result_range_iterator tmp_it{*this, first_call_of_begin};
+        first_call_of_begin = false;
         return tmp_it;
     }
 
@@ -156,7 +156,7 @@ private:
     //!\brief Stores the current search results.
     result_buffer_t result_buffer{};
     //!\brief A flag that indicates whether begin was already called.
-    bool first_invocation_of_begin{false};
+    bool first_call_of_begin{true};
 };
 
 /*!\brief The iterator of seqan3::detail::search_result_range.
@@ -200,18 +200,18 @@ public:
 
     /*!\brief Construct from the associated search result range.
      * \param[in] range The associated search result range.
-     * \param[in] first_invocation_of_begin A flag indicating whether this is the first call of begin.
+     * \param[in] first_call_of_begin A flag indicating whether this is the first call of begin.
      *
      * \details
      *
-     * Initialises the iterator with the associated search result range. If `first_invocation_of_begin` is `true`,
+     * Initialises the iterator with the associated search result range. If `first_call_of_begin` is `true`,
      * the search algorithm is invoked on the first query.
      */
-    constexpr search_result_range_iterator(search_result_range & range, bool const & first_invocation_of_begin) :
+    constexpr search_result_range_iterator(search_result_range & range, bool const first_call_of_begin) :
         range_ptr{& range},
         at_end(range.at_end())
     {
-        if (!first_invocation_of_begin)
+        if (first_call_of_begin)
             fetch_next_query_results();
     }
     //!\}
