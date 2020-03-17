@@ -70,48 +70,48 @@ TYPED_TEST(search_test, error_free)
 
     {
         // successful and unsuccesful exact search using empty max_total_error
-        seqan3::configuration const cfg =seqan3::search_cfg::max_error{};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error{};
         EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), expected_hits);
         EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), hits_result_t{});
     }
 
     {
         // successful and unsuccesful exact search using short version of max_total_error
-        seqan3::configuration const cfg =seqan3::search_cfg::max_error{seqan3::search_cfg::total{0}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{0}};
         EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), expected_hits);
         EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), hits_result_t{});
     }
 
     {
         // successful and unsuccesful exact search using max_total_error
-        seqan3::configuration const cfg =seqan3::search_cfg::max_error{seqan3::search_cfg::total{0},
-                                                                       seqan3::search_cfg::substitution{0},
-                                                                       seqan3::search_cfg::insertion{0},
-                                                                       seqan3::search_cfg::deletion{0}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{0},
+                                                                        seqan3::search_cfg::substitution{0},
+                                                                        seqan3::search_cfg::insertion{0},
+                                                                        seqan3::search_cfg::deletion{0}};
         EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), expected_hits);
         EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), hits_result_t{});
     }
 
     {
         // successful and unsuccesful exact search using empty max_total_error_rate
-        seqan3::configuration const cfg =seqan3::search_cfg::max_error_rate{};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{};
         EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), expected_hits);
         EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), hits_result_t{});
     }
 
     {
         // successful and unsuccesful exact search using short version of max_total_error_rate
-        seqan3::configuration const cfg =seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0}};
         EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), expected_hits);
         EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), hits_result_t{});
     }
 
     {
         // successful and unsuccesful exact search using max_total_error_rate
-        seqan3::configuration const cfg =seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0},
-                                                                            seqan3::search_cfg::substitution{.0},
-                                                                            seqan3::search_cfg::insertion{.0},
-                                                                            seqan3::search_cfg::deletion{.0}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0},
+                                                                             seqan3::search_cfg::substitution{.0},
+                                                                             seqan3::search_cfg::insertion{.0},
+                                                                             seqan3::search_cfg::deletion{.0}};
         EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), expected_hits);
         EXPECT_EQ(uniquify(search("ACGG"_dna4, this->index, cfg)), hits_result_t{});
     }
@@ -138,10 +138,10 @@ TYPED_TEST(search_test, single_element_collection)
     std::vector<seqan3::dna4_vector> text{"ACGATACG"_dna4};
     TypeParam index{text};
 
-    seqan3::configuration const cfg =seqan3::search_cfg::max_error{seqan3::search_cfg::total{1},
-                                                                   seqan3::search_cfg::substitution{1},
-                                                                   seqan3::search_cfg::insertion{0},
-                                                                   seqan3::search_cfg::deletion{0}};
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1},
+                                                                    seqan3::search_cfg::substitution{1},
+                                                                    seqan3::search_cfg::insertion{0},
+                                                                    seqan3::search_cfg::deletion{0}};
     EXPECT_EQ(uniquify(search("ACGACACG"_dna4, index, cfg)), (hits_result_t{{0, {0, 0}}}));
 }
 
@@ -153,10 +153,10 @@ TYPED_TEST(search_test, multiple_queries)
 
     hits_result_t expected_hits{{1, {0, 0}}, {1, {1, 0}},
                                 {2, {0, 0}}, {2, {0, 4}}, {2, {1, 0}}, {2, {1, 4}}};
-    seqan3::configuration const cfg =seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0},
-                                                                        seqan3::search_cfg::substitution{.0},
-                                                                        seqan3::search_cfg::insertion{.0},
-                                                                        seqan3::search_cfg::deletion{.0}};
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0},
+                                                                         seqan3::search_cfg::substitution{.0},
+                                                                         seqan3::search_cfg::insertion{.0},
+                                                                         seqan3::search_cfg::deletion{.0}};
     EXPECT_EQ(uniquify(search(queries, this->index, cfg)), expected_hits);
 }
 

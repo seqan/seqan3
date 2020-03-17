@@ -106,7 +106,7 @@ public:
      *
      * \details
      *
-     * The search result range is an input range and the end is reached when all results have been processed.
+     * The search result range is an input range and the end is reached when all queries have been processed.
      */
     constexpr std::ranges::default_sentinel_t end() noexcept
     {
