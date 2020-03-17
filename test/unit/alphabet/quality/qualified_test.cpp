@@ -22,8 +22,6 @@
 #include "../semi_alphabet_test_template.hpp"
 #include "../composite/alphabet_tuple_base_test_template.hpp"
 
-using namespace seqan3;
-
 template <typename alphabet_type, typename phred_type>
 class alphabet_tuple_base_test<qualified<alphabet_type, phred_type>> : public ::testing::Test
 {

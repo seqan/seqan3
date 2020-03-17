@@ -15,20 +15,19 @@
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
 
-using namespace seqan3;
-
 template <typename T>
 using quality_conversion = ::testing::Test;
 
 // add all alphabets from the quality sub module here
-using quality_conversion_types = type_list<phred42, phred63, phred68legacy>;
-using quality_conversion_gtest_types = detail::transfer_template_args_onto_t<quality_conversion_types, ::testing::Types>;
+using quality_conversion_types = seqan3::type_list<seqan3::phred42, seqan3::phred63, seqan3::phred68legacy>;
+using quality_conversion_gtest_types = seqan3::detail::transfer_template_args_onto_t<quality_conversion_types,
+                                                                                     ::testing::Types>;
 
 TYPED_TEST_SUITE(quality_conversion, quality_conversion_gtest_types, );
 
 TYPED_TEST(quality_conversion, explicit_conversion)
 {
-    detail::for_each<quality_conversion_types>([&] (auto qual) constexpr
+    seqan3::detail::for_each<quality_conversion_types>([&] (auto qual) constexpr
     {
         using out_type = std::decay_t<typename decltype(qual)::type>;
         EXPECT_EQ(static_cast<out_type>(TypeParam{ 0}), out_type{ 0});
