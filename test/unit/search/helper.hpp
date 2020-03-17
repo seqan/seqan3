@@ -11,38 +11,19 @@
 #include <vector>
 
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/range/views/to.hpp>
+#include <seqan3/std/iterator>
 
 namespace seqan3
 {
 
-template <typename T>
-std::vector<T> uniquify(std::vector<T> v)
+template <typename search_result_range_t>
+std::vector<std::ranges::range_value_t<search_result_range_t>> uniquify(search_result_range_t && search_result_range)
 {
-    std::sort(v.begin(), v.end());
-    v.erase(std::unique(v.begin(), v.end()), v.end());
-    return v;
-}
-
-template <typename T>
-std::vector<std::vector<T>> uniquify(std::vector<std::vector<T>> v)
-{
-    std::for_each(v.begin(), v.end(), [] (auto & hits) { uniquify(hits); } );
-    return v;
-}
-
-template <typename T1, typename T2>
-std::vector<std::pair<T1, T2>> uniquify(std::vector<std::pair<T1, T2>> v)
-{
-    std::sort(v.begin(), v.end());
-    v.erase(std::unique(v.begin(), v.end()), v.end());
-    return v;
-}
-
-template <typename T1, typename T2>
-std::vector<std::vector<std::pair<T1, T2>>> uniquify(std::vector<std::vector<std::pair<T1, T2>>> v)
-{
-    std::for_each(v.begin(), v.end(), [] (auto & hits) { uniquify(hits); } );
-    return v;
+    auto unique_res = search_result_range | views::to<std::vector>;
+    std::sort(unique_res.begin(), unique_res.end());
+    unique_res.erase(std::unique(unique_res.begin(), unique_res.end()), unique_res.end());
+    return unique_res;
 }
 
 void random_text(seqan3::dna4_vector & text, uint64_t const length)

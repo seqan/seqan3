@@ -9,11 +9,8 @@ void run_text_single()
                 text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     seqan3::fm_index index{text};
 
-    auto results = search("GCT"_dna4, index);
-    std::ranges::sort(results);
     seqan3::debug_stream << "=====   Running on a single text   =====\n";
-    seqan3::debug_stream << "There are " << results.size() << " hits.\n";
-    seqan3::debug_stream << "The positions are " << results << '\n';
+    seqan3::debug_stream << "The positions are " << search("GCT"_dna4, index) << '\n';
 }
 
 void run_text_collection()
@@ -23,11 +20,8 @@ void run_text_collection()
                                           "GGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     seqan3::fm_index index{text};
 
-    auto results = search("GCT"_dna4, index);
-    std::ranges::sort(results);
     seqan3::debug_stream << "===== Running on a text collection =====\n";
-    seqan3::debug_stream << "There are " << results.size() << " hits.\n";
-    seqan3::debug_stream << "The positions are " << results << '\n';
+    seqan3::debug_stream << "The positions are " << search("GCT"_dna4, index) << '\n';
 }
 
 int main()

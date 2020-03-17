@@ -23,12 +23,11 @@ void run_text_single()
 
     auto results = search(query, index, search_config);
 
-    seqan3::debug_stream << "There are " << results.size() << " hits.\n";
     seqan3::debug_stream << "-----------------\n";
 
     for (auto && pos : results)
     {
-        size_t start = pos ? pos - 1 : 0;
+        size_t start = pos.second ? pos.second - 1 : 0;
         std::span text_view{std::data(text) + start, query.size() + 1};
 
         for (auto && res : align_pairwise(std::tie(text_view, query), align_config))
@@ -58,15 +57,12 @@ void run_text_collection()
                                                seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                                                seqan3::align_cfg::result{seqan3::with_alignment};
 
-    auto results = search(query, index, search_config);
-
-    seqan3::debug_stream << "There are " << results.size() << " hits.\n";
     seqan3::debug_stream << "-----------------\n";
 
-    for (auto [idx, pos] : results)
+    for (auto [query_idx, text_pos] : search(query, index, search_config))
     {
-        size_t start = pos ? pos - 1 : 0;
-        std::span text_view{std::data(text[idx]) + start, query.size() + 1};
+        size_t start = text_pos.second ? text_pos.second - 1 : 0;
+        std::span text_view{std::data(text[text_pos.first]) + start, query.size() + 1};
 
         for (auto && res : align_pairwise(std::tie(text_view, query), align_config))
         {

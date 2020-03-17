@@ -66,11 +66,10 @@ void map_reads(std::filesystem::path const & query_path,
 
     for (auto & [query, id, qual] : query_in)
     {
-        auto positions = search(query, index, search_config);
-        for (auto & [idx, pos] : positions)
+        for (auto & [query_idx, text_pos] : search(query, index, search_config))
         {
-            size_t start = pos ? pos - 1 : 0;
-            std::span text_view{std::data(storage.seqs[idx]) + start, query.size() + 1};
+            size_t start = text_pos.second ? text_pos.second - 1 : 0;
+            std::span text_view{std::data(storage.seqs[text_pos.first]) + start, query.size() + 1};
 
             for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
             {
@@ -78,7 +77,7 @@ void map_reads(std::filesystem::path const & query_path,
                 size_t ref_offset = alignment.front_coordinate().first + 2 + start;
                 size_t map_qual = 60u + alignment.score();
 
-                sam_out.emplace_back(query, id, storage.ids[idx], ref_offset, aligned_seq, qual, map_qual);
+                sam_out.emplace_back(query, id, storage.ids[text_pos.first], ref_offset, aligned_seq, qual, map_qual);
             }
         }
     }
