@@ -16,11 +16,13 @@
 #include <seqan3/alphabet/aminoacid/aa10li.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, alphabet_, aa10li, );
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, semi_alphabet_test, aa10li, );
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, alphabet_constexpr, aa10li, );
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, semi_alphabet_constexpr, aa10li, );
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, aminoacid, aa10li, );
+using seqan3::operator""_aa10li;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, alphabet_, seqan3::aa10li, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, semi_alphabet_test, seqan3::aa10li, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, alphabet_constexpr, seqan3::aa10li, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, semi_alphabet_constexpr, seqan3::aa10li, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10li, aminoacid, seqan3::aa10li, );
 
 TEST(aa10li, assign_char)
 {
@@ -33,7 +35,7 @@ TEST(aa10li, assign_char)
         '*', '!'
     };
 
-    std::vector<aa10li> alphabets
+    std::vector<seqan3::aa10li> alphabets
     {
         'A'_aa10li, 'B'_aa10li, 'C'_aa10li, 'B'_aa10li, 'B'_aa10li, 'F'_aa10li, 'G'_aa10li,
         'H'_aa10li, 'I'_aa10li, 'J'_aa10li, 'K'_aa10li, 'J'_aa10li, 'J'_aa10li,
@@ -46,8 +48,8 @@ TEST(aa10li, assign_char)
         'F'_aa10li, 'A'_aa10li
     };
 
-    for (auto [ chr, alp ] : views::zip(chars, alphabets))
-        EXPECT_EQ((assign_char_to(chr, aa10li{})), alp);
+    for (auto [ chr, alp ] : seqan3::views::zip(chars, alphabets))
+        EXPECT_EQ((seqan3::assign_char_to(chr, seqan3::aa10li{})), alp);
 }
 
 TEST(aa10li, to_char)
@@ -58,7 +60,7 @@ TEST(aa10li, to_char)
         'B', 'K', 'A', 'A', 'I', 'F', 'F', 'B', 'J', 'K', 'C', 'A', 'B'
     };
 
-    std::vector<aa10li> alphabets
+    std::vector<seqan3::aa10li> alphabets
     {
         'A'_aa10li, 'C'_aa10li, 'D'_aa10li, 'E'_aa10li, 'F'_aa10li, 'G'_aa10li, 'H'_aa10li,
         'I'_aa10li, 'K'_aa10li, 'L'_aa10li, 'M'_aa10li, 'N'_aa10li, 'P'_aa10li,
@@ -66,8 +68,8 @@ TEST(aa10li, to_char)
         'B'_aa10li, 'J'_aa10li, 'O'_aa10li, 'U'_aa10li, 'X'_aa10li, 'Z'_aa10li
     };
 
-    for (auto [ chr, alp ] : views::zip(chars, alphabets))
-        EXPECT_EQ(to_char(alp), chr);
+    for (auto [ chr, alp ] : seqan3::views::zip(chars, alphabets))
+        EXPECT_EQ(seqan3::to_char(alp), chr);
 }
 
 // ------------------------------------------------------------------
@@ -76,35 +78,35 @@ TEST(aa10li, to_char)
 
 TEST(literals, char_literal)
 {
-    EXPECT_EQ(to_char('A'_aa10li), 'A');
-    EXPECT_EQ(to_char('B'_aa10li), 'B');
-    EXPECT_EQ(to_char('C'_aa10li), 'C');
-    EXPECT_EQ(to_char('F'_aa10li), 'F');
-    EXPECT_EQ(to_char('G'_aa10li), 'G');
-    EXPECT_EQ(to_char('H'_aa10li), 'H');
-    EXPECT_EQ(to_char('I'_aa10li), 'I');
-    EXPECT_EQ(to_char('J'_aa10li), 'J');
-    EXPECT_EQ(to_char('K'_aa10li), 'K');
-    EXPECT_EQ(to_char('P'_aa10li), 'P');
+    EXPECT_EQ(seqan3::to_char('A'_aa10li), 'A');
+    EXPECT_EQ(seqan3::to_char('B'_aa10li), 'B');
+    EXPECT_EQ(seqan3::to_char('C'_aa10li), 'C');
+    EXPECT_EQ(seqan3::to_char('F'_aa10li), 'F');
+    EXPECT_EQ(seqan3::to_char('G'_aa10li), 'G');
+    EXPECT_EQ(seqan3::to_char('H'_aa10li), 'H');
+    EXPECT_EQ(seqan3::to_char('I'_aa10li), 'I');
+    EXPECT_EQ(seqan3::to_char('J'_aa10li), 'J');
+    EXPECT_EQ(seqan3::to_char('K'_aa10li), 'K');
+    EXPECT_EQ(seqan3::to_char('P'_aa10li), 'P');
 
-    EXPECT_EQ(to_char('*'_aa10li), 'F');
-    EXPECT_EQ(to_char('!'_aa10li), 'A');
+    EXPECT_EQ(seqan3::to_char('*'_aa10li), 'F');
+    EXPECT_EQ(seqan3::to_char('!'_aa10li), 'A');
 }
 
 TEST(literals, vector)
 {
-    aa10li_vector v20;
+    seqan3::aa10li_vector v20;
     v20.resize(5, 'D'_aa10li);
     EXPECT_EQ(v20, "BBBBB"_aa10li);
 
-    std::vector<aa10li> w20{'A'_aa10li, 'D'_aa10li, 'N'_aa10li, 'O'_aa10li, 'U'_aa10li, 'X'_aa10li, 'R'_aa10li, '!'_aa10li,
-                          '*'_aa10li, '*'_aa10li};
+    std::vector<seqan3::aa10li> w20{'A'_aa10li, 'D'_aa10li, 'N'_aa10li, 'O'_aa10li, 'U'_aa10li, 'X'_aa10li, 'R'_aa10li,
+                                    '!'_aa10li, '*'_aa10li, '*'_aa10li};
     EXPECT_EQ(w20, "ABHKCAKAF*"_aa10li);
 }
 
 TEST(aa10li, char_is_valid)
 {
-    constexpr auto aa27_validator = (is_alpha || is_char<'*'>);
+    constexpr auto aa27_validator = (seqan3::is_alpha || seqan3::is_char<'*'>);
 
     for (char c : std::views::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
     {
@@ -124,6 +126,6 @@ TEST(aa10li, char_is_valid)
                 break;
         }
 
-        EXPECT_EQ(aa10li::char_is_valid(c), expect);
+        EXPECT_EQ(seqan3::aa10li::char_is_valid(c), expect);
     }
 }

@@ -13,12 +13,12 @@
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/test/cereal.hpp>
 
-using namespace seqan3;
-
 template <typename T>
 using alphabet_cereal = ::testing::Test;
 
-using test_types = ::testing::Types<dna4, qualified<dna4, phred42>, gapped<dna4>>;
+using test_types = ::testing::Types<seqan3::dna4,
+                                    seqan3::qualified<seqan3::dna4, seqan3::phred42>,
+                                    seqan3::gapped<seqan3::dna4>>;
 
 TYPED_TEST_SUITE(alphabet_cereal, test_types, );
 
@@ -26,12 +26,12 @@ TYPED_TEST(alphabet_cereal, serialisation)
 {
     TypeParam letter;
 
-    assign_rank_to(1 % alphabet_size<TypeParam>, letter);
-    test::do_serialisation(letter);
+    seqan3::assign_rank_to(1 % seqan3::alphabet_size<TypeParam>, letter);
+    seqan3::test::do_serialisation(letter);
 
     std::vector<TypeParam> vec;
     vec.resize(10);
     for (unsigned i = 0; i < 10; ++i)
-        assign_rank_to(i % alphabet_size<TypeParam>, vec[i]);
-    test::do_serialisation(vec);
+        seqan3::assign_rank_to(i % seqan3::alphabet_size<TypeParam>, vec[i]);
+    seqan3::test::do_serialisation(vec);
 }
