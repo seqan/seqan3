@@ -17,21 +17,21 @@
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 template <typename T>
 class container_ : public ::testing::Test
 {};
 
-using container_types = ::testing::Types<std::vector<dna4>,
-                                         bitcompressed_vector<dna4>,
-                                         small_vector<dna4, 1000>>;
+using container_types = ::testing::Types<std::vector<seqan3::dna4>,
+                                         seqan3::bitcompressed_vector<seqan3::dna4>,
+                                         seqan3::small_vector<seqan3::dna4, 1000>>;
 
 TYPED_TEST_SUITE(container_, container_types, );
 
 TYPED_TEST(container_, concepts)
 {
-    EXPECT_TRUE(reservible_container<TypeParam>);
+    EXPECT_TRUE(seqan3::reservible_container<TypeParam>);
 }
 
 TYPED_TEST(container_, construction)
@@ -94,7 +94,7 @@ TYPED_TEST(container_, assign)
     EXPECT_EQ(t6, t1);
 
     // direct from another container
-    if constexpr (!std::is_same_v<TypeParam, std::vector<dna4>>)
+    if constexpr (!std::is_same_v<TypeParam, std::vector<seqan3::dna4>>)
     {
         TypeParam t7;
         t7.assign("ACCGT"_dna4);
@@ -182,7 +182,7 @@ TYPED_TEST(container_, capacity)
     EXPECT_GE(t1.capacity(), t1.size());
     EXPECT_GE(t2.capacity(), t2.size());
 
-    if constexpr (!std::same_as<TypeParam, small_vector<dna4, 1000>>)
+    if constexpr (!std::same_as<TypeParam, seqan3::small_vector<seqan3::dna4, 1000>>)
     {
         // max_size
         EXPECT_GT(t0.max_size(), 1'000'000'000'000u);
@@ -318,5 +318,5 @@ TYPED_TEST(container_, resize)
 TYPED_TEST(container_, serialisation)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
-    test::do_serialisation(t1);
+    seqan3::test::do_serialisation(t1);
 }
