@@ -172,10 +172,12 @@ TYPED_TEST(alignment_result_test, alignment)
         seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(std::get<0>(tmp.alignment()) | seqan3::views::persist
                                                | seqan3::views::to_char
-                                               | seqan3::views::to<std::string>, std::string{"AT-C--A"});
+                                               | seqan3::views::to<std::string>,
+                  std::string{"AT-C--A"});
         EXPECT_EQ(std::get<1>(tmp.alignment()) | seqan3::views::persist
                                                | seqan3::views::to_char
-                                               | seqan3::views::to<std::string>, std::string{"AT-C--A"});
+                                               | seqan3::views::to<std::string>,
+                  std::string{"AT-C--A"});
     }
     else
     {
