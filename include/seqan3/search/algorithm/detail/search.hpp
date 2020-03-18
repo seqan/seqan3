@@ -12,10 +12,11 @@
 
 #pragma once
 
-#include <seqan3/core/type_traits/pre.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_traits.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
+#include <seqan3/search/algorithm/search_result_range.hpp>
 #include <seqan3/search/configuration/all.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 
@@ -180,36 +181,32 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 template <typename index_t, typename queries_t, typename configuration_t>
 inline auto search_all(index_t const & index, queries_t && queries, configuration_t const & cfg)
 {
-    using cfg_t = remove_cvref_t<configuration_t>;
-    // return type: for each query: a vector of text_positions (or cursors)
-    // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
-    //                  duplicates. more efficient to call delegate once with one vector instead of calling
-    //                  delegate for each hit separately at once.
-    using text_pos_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
-                                          std::pair<typename index_t::size_type, typename index_t::size_type>,
-                                          typename index_t::size_type>;
-    using hit_t = std::conditional_t<cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>(),
-                                     typename index_t::cursor_type,
-                                     text_pos_t>;
-
-    if constexpr (std::ranges::forward_range<queries_t> && std::ranges::random_access_range<value_type_t<queries_t>>)
+    if constexpr (!std::ranges::forward_range<std::ranges::range_value_t<queries_t>>)
     {
-        // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
-        std::vector<std::vector<hit_t>> hits;
-        hits.reserve(std::distance(queries.begin(), queries.end()));
-        for (auto const query : queries)
-        {
-            hits.push_back(search_single(index, query, cfg));
-        }
-        return hits;
+        return search_all(index, std::views::single(std::forward<queries_t>(queries)), cfg);
     }
-    else // std::ranges::random_access_range<queries_t>
+    else
     {
-        // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
-        return search_single(index, queries, cfg);
+        using search_traits_t = search_traits<configuration_t>;
+
+        // return type: for each query: a vector of text_positions (or cursors)
+        // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
+        //                  duplicates. more efficient to call delegate once with one vector instead of calling
+        //                  delegate for each hit separately at once.
+        using text_pos_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
+                                              std::pair<typename index_t::size_type, typename index_t::size_type>,
+                                              typename index_t::size_type>;
+        using hit_t = std::conditional_t<search_traits_t::search_return_index_cursor,
+                                         typename index_t::cursor_type,
+                                         text_pos_t>;
+        using query_t = std::ranges::range_value_t<queries_t>;
+        using search_fn_t = std::function<std::vector<hit_t>(query_t &)>;
+
+        search_fn_t search_fn = [&, cfg] (query_t & query) { return search_single(index, query, cfg); };
+
+        return search_result_range{std::move(search_fn), std::forward<queries_t>(queries) | views::type_reduce};
     }
 }
-
 //!\}
 
 } // namespace seqan3::detail
