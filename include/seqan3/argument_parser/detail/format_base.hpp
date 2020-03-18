@@ -230,7 +230,7 @@ public:
                     char const short_id,
                     std::string const & long_id,
                     std::string const & desc,
-                    option_spec const & spec,
+                    option_spec const spec,
                     validator_type && validator)
     {
         std::string id = prep_id_for_help(short_id, long_id) + " " + option_type_and_list_info(value);
@@ -247,7 +247,7 @@ public:
                   char const short_id,
                   std::string const & long_id,
                   std::string const & desc,
-                  option_spec const & spec)
+                  option_spec const spec)
     {
         std::string id = prep_id_for_help(short_id, long_id);
         store_help_page_element([this, id, desc] () { derived_t().print_list_item(id, desc); }, spec);

@@ -238,7 +238,7 @@ public:
                     char const short_id,
                     std::string const & long_id,
                     std::string const & desc,
-                    option_spec const & spec = option_spec::DEFAULT,
+                    option_spec const spec = option_spec::DEFAULT,
                     validator_type validator = validator_type{}) // copy to bind rvalues
     {
         if (sub_parser != nullptr)
@@ -262,7 +262,7 @@ public:
                   char const short_id,
                   std::string const & long_id,
                   std::string const & desc,
-                  option_spec const & spec = option_spec::DEFAULT)
+                  option_spec const spec = option_spec::DEFAULT)
     {
         verify_identifiers(short_id, long_id);
         // copy variables into the lambda because the calls are pushed to a stack

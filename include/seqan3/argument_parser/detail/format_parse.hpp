@@ -78,7 +78,7 @@ public:
                     char const short_id,
                     std::string const & long_id,
                     std::string const & SEQAN3_DOXYGEN_ONLY(desc),
-                    option_spec const & spec,
+                    option_spec const spec,
                     validator_type && validator)
     {
         option_calls.push_back([this, &value, short_id, long_id, spec, validator]()
@@ -633,7 +633,7 @@ private:
     void get_option(option_type & value,
                      char const short_id,
                      std::string const & long_id,
-                     option_spec const & spec,
+                     option_spec const spec,
                      validator_type && validator)
     {
         bool short_id_is_set{get_option_by_id(value, short_id)};
