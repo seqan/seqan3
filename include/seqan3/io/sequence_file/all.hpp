@@ -19,13 +19,8 @@
  * \see \ref tutorial_sequence_file
  */
 
-#pragma GCC diagnostic push // buggy deprecation warning is triggered in the ranges library
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
-
-#pragma GCC diagnostic pop

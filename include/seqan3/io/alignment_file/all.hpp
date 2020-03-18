@@ -17,9 +17,6 @@
  * \brief Provides files and formats for handling alignment data.
  */
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 #include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
@@ -30,5 +27,3 @@
 #include <seqan3/io/alignment_file/output_format_concept.hpp>
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
-
-#pragma GCC diagnostic pop
