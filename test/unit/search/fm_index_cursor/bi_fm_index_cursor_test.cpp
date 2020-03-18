@@ -7,65 +7,31 @@
 
 #include "bi_fm_index_cursor_test_template.hpp"
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/to.hpp>
 
-using seqan3::operator""_dna4;
-using seqan3::operator""_dna5;
+#include <string_view>
 
-// dna4 - bi_fm_index
-template <typename sdsl_type>
-struct bi_fm_index_cursor_test<seqan3::bi_fm_index_cursor<seqan3::bi_fm_index<seqan3::dna4,
-                                                                              seqan3::text_layout::single,
-                                                                              sdsl_type>>> : public ::testing::Test
+// generic type
+template <typename index_cursor_t>
+struct bi_fm_index_cursor_test : public ::testing::Test
 {
-    const seqan3::dna4_vector text{"ACGGTAGGACGTAGC"_dna4};
-    const seqan3::dna4_vector text1{"AACGATCGGA"_dna4};
+    using index_type = typename index_cursor_t::index_type;
+    using alphabet_type = typename index_type::alphabet_type;
+    using text_type = std::vector<alphabet_type>;
 
-    std::vector<seqan3::dna4> rev_text1 = text | std::views::reverse | seqan3::views::to<seqan3::dna4_vector>;
-    std::vector<seqan3::dna4> rev_text2 = std::views::reverse(text1) | seqan3::views::to<seqan3::dna4_vector>;
+    static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::views::to<text_type>;
 
-    const seqan3::dna4_vector pattern1{"CAG"_dna4};
-    const seqan3::dna4_vector pattern2{"TT"_dna4};
-    const seqan3::dna4_vector pattern3{"GATGC"_dna4};
-    const seqan3::dna4_vector pattern4{"GATGG"_dna4};
-};
+    text_type text{convert(std::string_view{"ACGGTAGGACGTAGC"})};
+    text_type text1{convert(std::string_view{"AACGATCGGA"})};
 
-// dna5 - bi_fm_index
-template <typename sdsl_type>
-struct bi_fm_index_cursor_test<seqan3::bi_fm_index_cursor<seqan3::bi_fm_index<seqan3::dna5,
-                                                                              seqan3::text_layout::single,
-                                                                              sdsl_type>>> : public ::testing::Test
-{
-    const seqan3::dna5_vector text{"ACGGTAGGACGTAGC"_dna5};
-    const seqan3::dna5_vector text1{"AACGATCGGA"_dna5};
+    text_type rev_text1 = text | std::views::reverse | seqan3::views::to<text_type>;
+    text_type rev_text2 = text1 | std::views::reverse | seqan3::views::to<text_type>;
 
-    std::vector<seqan3::dna5> rev_text1 = text | std::views::reverse | seqan3::views::to<seqan3::dna5_vector>;
-    std::vector<seqan3::dna5> rev_text2 = std::views::reverse(text1) | seqan3::views::to<seqan3::dna5_vector>;
-
-    const seqan3::dna5_vector pattern1{"CAG"_dna5};
-    const seqan3::dna5_vector pattern2{"TT"_dna5};
-    const seqan3::dna5_vector pattern3{"GATGC"_dna5};
-    const seqan3::dna5_vector pattern4{"GATGG"_dna5};
-};
-
-// char - bi_fm_index
-template <typename sdsl_type>
-struct bi_fm_index_cursor_test<seqan3::bi_fm_index_cursor<seqan3::bi_fm_index<char,
-                                                                              seqan3::text_layout::single,
-                                                                              sdsl_type>>> : public ::testing::Test
-{
-    const std::string text{"ACGGTAGGACGTAGC"};
-    const std::string text1{"AACGATCGGA"};
-
-    std::string rev_text1 = text | std::views::reverse | seqan3::views::to<std::string>;
-    std::string rev_text2 = std::views::reverse(text1) | seqan3::views::to<std::string>;
-
-    const std::string pattern1{"CAG"};
-    const std::string pattern2{"TT"};
-    const std::string pattern3{"GATGC"};
-    const std::string pattern4{"GATGG"};
+    text_type pattern1{convert(std::string_view{"CAG"})};
+    text_type pattern2{convert(std::string_view{"TT"})};
+    text_type pattern3{convert(std::string_view{"GATGC"})};
+    text_type pattern4{convert(std::string_view{"GATGG"})};
 };
 
 // dna4

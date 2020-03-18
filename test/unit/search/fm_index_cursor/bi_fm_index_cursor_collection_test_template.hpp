@@ -15,8 +15,7 @@
 #include <gtest/gtest.h>
 
 template <typename T>
-struct bi_fm_index_cursor_collection_test : public ::testing::Test
-{};
+struct bi_fm_index_cursor_collection_test;
 
 TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test);
 

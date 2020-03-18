@@ -30,8 +30,7 @@ using sdsl_byte_index_type = sdsl::csa_wt<
     >;
 
 template <typename T>
-struct fm_index_cursor_test : public ::testing::Test
-{};
+struct fm_index_cursor_test;
 
 TYPED_TEST_SUITE_P(fm_index_cursor_test);
 
@@ -245,7 +244,7 @@ TYPED_TEST_P(fm_index_cursor_test, incomplete_alphabet)
         typename TypeParam::index_type fm{this->text1}; // "ACGACG"
 
         TypeParam it = TypeParam(fm);
-        EXPECT_FALSE(it.extend_right(seqan3::assign_rank_to(this->max_rank, alphabet_type{}))); // 'T'
+        EXPECT_FALSE(it.extend_right(seqan3::assign_char_to('T', alphabet_type{}))); // 'T'
         EXPECT_EQ(it, TypeParam(fm));
     }
 

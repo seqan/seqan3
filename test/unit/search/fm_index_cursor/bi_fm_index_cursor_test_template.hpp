@@ -15,8 +15,7 @@
 #include <gtest/gtest.h>
 
 template <typename T>
-struct bi_fm_index_cursor_test : public ::testing::Test
-{};
+struct bi_fm_index_cursor_test;
 
 TYPED_TEST_SUITE_P(bi_fm_index_cursor_test);
 
@@ -188,7 +187,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
         EXPECT_TRUE(it.extend_left(seqan3::views::slice(this->text, 9, 14))); // "CGTAG"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{9}));
 
-        auto rev_it = it.to_rev_cursor(); // this->text "CGATGCAGGATGGCA"
+        auto rev_it = it.to_rev_cursor(); // text "CGATGCAGGATGGCA"
         EXPECT_EQ(seqan3::uniquify(rev_it.locate()), (std::vector<uint64_t>{1}));
         EXPECT_TRUE(std::ranges::equal(rev_it.path_label(this->rev_text1), this->pattern3));    // "GATGC"
         EXPECT_TRUE(rev_it.cycle_back()); // "GATGG"
@@ -202,7 +201,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
         EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text, 3, 7))); // "GTAG"
         EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{3, 10}));
 
-        auto rev_it = it.to_rev_cursor(); // this->text "CGATGCAGGATGGCA"
+        auto rev_it = it.to_rev_cursor(); // text "CGATGCAGGATGGCA"
     #ifndef NDEBUG
         EXPECT_DEATH(rev_it.cycle_back(), "");
     #endif
