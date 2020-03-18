@@ -79,7 +79,7 @@ using sdsl_wt_index_type =
                                sdsl::select_support_scan<>,
                                sdsl::select_support_scan<0>>,
                  16,
-                 10000000,
+                 10'000'000,
                  sdsl::sa_order_sa_sampling<>,
                  sdsl::isa_sampling<>,
                  sdsl::plain_byte_alphabet>;
@@ -188,7 +188,7 @@ private:
         static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
 
         // text must not be empty
-        if (std::ranges::begin(text) == std::ranges::end(text))
+        if (std::ranges::empty(text))
             throw std::invalid_argument("The text that is indexed cannot be empty.");
 
         constexpr auto sigma = alphabet_size<alphabet_t>;
@@ -384,8 +384,8 @@ public:
      *
      * \if DEV \todo \endif At least linear.
      */
-    template <std::ranges::range text_t>
-    fm_index(text_t && text)
+    template <std::ranges::bidirectional_range text_t>
+    explicit fm_index(text_t && text)
     {
         construct(std::forward<text_t>(text));
     }
