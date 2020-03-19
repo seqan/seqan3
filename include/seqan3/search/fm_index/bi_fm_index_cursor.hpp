@@ -908,9 +908,14 @@ public:
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 
-        size_type const loc = offset() - index->fwd_fm.index[fwd_lb];
-        size_type const query_begin = loc - index->fwd_fm.text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return text | views::join | views::slice(query_begin, query_begin + query_length());
+        size_type const loc = offset() - index->fwd_fm.index[fwd_lb];   // Position of query in concatenated texts.
+        size_type const text_idx = index->fwd_fm.text_begin_rs.rank(loc + 1) - 1; // Position of subtext in text vector,
+                                                                        // where the query was found
+                                                                        // = rank of Bitvector of the concatenated texts
+        size_type const query_begin = loc - index->fwd_fm.text_begin_ss.select(text_idx + 1);
+                                                                        // Substract lengths of previous sequences
+        return text[text_idx] | views::slice(query_begin, query_begin + query_length());
+                                                                        // Take subtext, slice query out of it    }
     }
 
     /*!\brief Counts the number of occurrences of the searched query in the text.
