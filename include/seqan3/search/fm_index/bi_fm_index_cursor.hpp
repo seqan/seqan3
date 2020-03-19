@@ -420,10 +420,14 @@ public:
                      "The character must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
+        // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
+        // for the indexed text.
+        assert(seqan3::to_rank(static_cast<index_alphabet_type>(c)) <
+               ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
 
         size_type new_parent_lb = fwd_lb, new_parent_rb = fwd_rb;
 
-        auto c_char = to_rank(static_cast<index_alphabet_type>(c)) + 1;
+        auto c_char = seqan3::to_rank(static_cast<index_alphabet_type>(c)) + 1;
         if (bidirectional_search(index->fwd_fm.index, c_char, fwd_lb, fwd_rb, rev_lb, rev_rb))
         {
             parent_lb = new_parent_lb;
@@ -461,10 +465,14 @@ public:
                       "The character must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
+        // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
+        // for the indexed text.
+        assert(seqan3::to_rank(static_cast<index_alphabet_type>(c)) <
+               ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
 
         size_type new_parent_lb = rev_lb, new_parent_rb = rev_rb;
 
-        auto c_char = to_rank(static_cast<index_alphabet_type>(c)) + 1;
+        auto c_char = seqan3::to_rank(static_cast<index_alphabet_type>(c)) + 1;
         if (bidirectional_search(index->rev_fm.index, c_char, rev_lb, rev_rb, fwd_lb, fwd_rb))
         {
             parent_lb = new_parent_lb;
@@ -517,7 +525,12 @@ public:
 
         for (auto it = first; it != last; ++len, ++it)
         {
-            c = to_rank(static_cast<index_alphabet_type>(*it)) + 1;
+            // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
+            // for the indexed text.
+            assert(seqan3::to_rank(static_cast<index_alphabet_type>(*it)) <
+                   ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
+
+            c = seqan3::to_rank(static_cast<index_alphabet_type>(*it)) + 1;
 
             new_parent_lb = _fwd_lb;
             new_parent_rb = _fwd_rb;
@@ -584,7 +597,12 @@ public:
 
         for (auto it = first; it != last; ++len, ++it)
         {
-            c = to_rank(static_cast<index_alphabet_type>(*it)) + 1;
+            // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
+            // for the indexed text.
+            assert(seqan3::to_rank(static_cast<index_alphabet_type>(*it)) <
+                   ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
+
+            c = seqan3::to_rank(static_cast<index_alphabet_type>(*it)) + 1;
 
             new_parent_lb = _rev_lb;
             new_parent_rb = _rev_rb;

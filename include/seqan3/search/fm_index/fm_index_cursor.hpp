@@ -164,8 +164,10 @@ public:
     ~fm_index_cursor() = default;                                            //!< Defaulted.
 
     //! \brief Construct from given index.
-    fm_index_cursor(index_t const & _index) noexcept : index(&_index), node({0, _index.index.size() - 1, 0, 0}),
-                                                       sigma(_index.index.sigma - index_t::text_layout_mode)
+    fm_index_cursor(index_t const & _index) noexcept :
+        index(&_index),
+        node({0, _index.index.size() - 1, 0, 0}),
+        sigma(_index.index.sigma - index_t::text_layout_mode)
     {}
     //\}
 
@@ -270,10 +272,14 @@ public:
                      "The character must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
+        // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
+        // for the indexed text.
+        assert(seqan3::to_rank(static_cast<index_alphabet_type>(c)) <
+               ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
 
         size_type _lb = node.lb, _rb = node.rb;
 
-        sdsl_char_type c_char = to_rank(static_cast<index_alphabet_type>(c)) + 1;
+        sdsl_char_type c_char = seqan3::to_rank(static_cast<index_alphabet_type>(c)) + 1;
 
         if (backward_search(index->index, c_char, _lb, _rb))
         {
@@ -318,7 +324,12 @@ public:
 
         for (auto it = std::ranges::begin(seq); it != std::ranges::end(seq); ++len, ++it)
         {
-            c = to_rank(static_cast<index_alphabet_type>(*it)) + 1;
+            // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
+            // for the indexed text.
+            assert(seqan3::to_rank(static_cast<index_alphabet_type>(*it)) <
+                   ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
+
+            c = seqan3::to_rank(static_cast<index_alphabet_type>(*it)) + 1;
 
             new_parent_lb = _lb;
             new_parent_rb = _rb;
