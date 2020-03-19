@@ -27,7 +27,8 @@ enum class tag
     std_streambuf_it,
     seqan3_streambuf_it,
     seqan3_streambuf_it_write_range,
-    seqan2_stream_it
+    seqan2_stream_it,
+    seqan2_stream_it_write_range
 };
 
 template <tag id>
@@ -40,6 +41,9 @@ void write_all(benchmark::State & state)
     // sequence to write:
     std::vector<char> cont_rando = seqan3::test::generate_sequence<char>(10'000, 0, 0);
 
+#ifdef SEQAN3_HAS_SEQAN2
+    auto cont_rando2 = seqan3::test::generate_sequence_seqan2<char>(10'000, 0, 0);
+#endif
     /* start benchmark */
     for (auto _ : state)
     {
@@ -60,7 +64,7 @@ void write_all(benchmark::State & state)
                 return seqan3::detail::fast_ostreambuf_iterator<char>{*os.rdbuf()};
             }
         #ifdef SEQAN3_HAS_SEQAN2
-            else if constexpr (id == tag::seqan2_stream_it)
+            else if constexpr (id == tag::seqan2_stream_it || id == tag::seqan2_stream_it_write_range)
             {
                 return seqan::Iter<std::ofstream, seqan::StreamIterator<seqan::Output>>{os};
             }
@@ -70,6 +74,10 @@ void write_all(benchmark::State & state)
         if constexpr (id == tag::seqan3_streambuf_it_write_range)
         {
             it.write_range(cont_rando);
+        }
+        else if constexpr (id == tag::seqan2_stream_it_write_range)
+        {
+            seqan::write(it, cont_rando2);
         }
         else
         {
@@ -85,6 +93,7 @@ BENCHMARK_TEMPLATE(write_all, tag::seqan3_streambuf_it);
 BENCHMARK_TEMPLATE(write_all, tag::seqan3_streambuf_it_write_range);
 #ifdef SEQAN3_HAS_SEQAN2
 BENCHMARK_TEMPLATE(write_all, tag::seqan2_stream_it);
+BENCHMARK_TEMPLATE(write_all, tag::seqan2_stream_it_write_range);
 #endif
 
 BENCHMARK_MAIN();

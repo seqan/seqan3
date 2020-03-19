@@ -98,14 +98,14 @@ auto generate_sequence_seqan2(size_t const len = 500,
                               size_t const seed = 0)
 {
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<uint8_t> dis_alpha(0, seqan::ValueSize<alphabet_t>::VALUE - 1);
+    std::uniform_int_distribution<size_t> dis_alpha(0, seqan::ValueSize<alphabet_t>::VALUE - 1);
     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
 
     seqan::String<alphabet_t> sequence;
     size_t length = dis_length(gen);
 
     for (size_t l = 0; l < length; ++l)
-        appendValue(sequence, alphabet_t{dis_alpha(gen)});
+        appendValue(sequence, static_cast<alphabet_t>(dis_alpha(gen)));
 
     return sequence;
 }
