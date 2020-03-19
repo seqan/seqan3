@@ -50,8 +50,8 @@ static auto dna4_01 = []()
     {
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-                                                                                    mismatch_score{-5}}},
+        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
         -18,
         "A---ACCGGTTAACCGGTT",
         "ACGTAC----------GTA",

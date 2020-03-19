@@ -109,8 +109,8 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
         }
 
         {  // the alignment
-            seqan3::configuration cfg = seqan3::align_cfg::edit
-                                      | seqan3::align_cfg::result{seqan3::with_alignment,
+            seqan3::configuration cfg = seqan3::align_cfg::edit |
+                                        seqan3::align_cfg::result{seqan3::with_alignment,
                                                                   seqan3::using_score_type<double>};
             unsigned idx = 0;
             for (auto && res : call_alignment<TypeParam>(p, cfg))
@@ -182,8 +182,8 @@ TYPED_TEST(align_pairwise_test, collection_with_double_score_type)
         auto p = std::tie(seq1, seq2);
         std::vector<decltype(p)> vec{10, p};
 
-        seqan3::configuration cfg = seqan3::align_cfg::edit
-                                  | seqan3::align_cfg::result{seqan3::with_alignment, seqan3::using_score_type<double>};
+        seqan3::configuration cfg = seqan3::align_cfg::edit |
+                                    seqan3::align_cfg::result{seqan3::with_alignment, seqan3::using_score_type<double>};
         for (auto && res : call_alignment<TypeParam>(vec, cfg))
         {
             EXPECT_EQ(res.score(), -4);

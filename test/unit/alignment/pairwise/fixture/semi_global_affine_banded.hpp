@@ -27,14 +27,14 @@ using seqan3::operator""_dna4;
 namespace seqan3::test::alignment::fixture::semi_global::affine::banded
 {
 
-inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::global_alignment}
-                                   | seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
-                                                                               seqan3::gap_open_score{-10}}}
-                                   | seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-4},
+inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::global_alignment} |
+                                     seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
+                                                                               seqan3::gap_open_score{-10}}} |
+                                     seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-4},
                                                                                  seqan3::upper_bound{8}}};
 
 inline constexpr auto align_config_semi_seq1 = align_config | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
-inline constexpr auto align_config_semi_seq2 = align_config | seqan3::align_cfg::aligned_ends{free_ends_second};
+inline constexpr auto align_config_semi_seq2 = align_config | seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};
 
 static auto dna4_01_semi_first = []()
 {
@@ -42,8 +42,9 @@ static auto dna4_01_semi_first = []()
     {
         "TTTTTACGTATGTCCCCC"_dna4,
         "ACGTAAAACGT"_dna4,
-        align_config_semi_seq1 | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-                                                                                              mismatch_score{-5}}},
+        align_config_semi_seq1
+            | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                           seqan3::mismatch_score{-5}}},
         10,
         "ACGT---ATGT",
         "ACGTAAAACGT",
@@ -93,8 +94,9 @@ static auto dna4_01_semi_first = []()
 //     {
 //         "ACGTAAAACGT"_dna4,
 //         "TTTTTACGTATGTCCCCC"_dna4,
-//         align_config_semi_seq1 | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-//                                                                                               mismatch_score{-5}}},
+//         align_config_semi_seq1
+//             | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+//                                                                            seqan3::mismatch_score{-5}}},
 //         -13,
 //         "-----ACGTA--------AAACGT",
 //         "TTTTTACGTATGTCCCCC------",
@@ -109,8 +111,9 @@ static auto dna4_03_semi_second = []()
     {
         "TTTTTACGTATGTCCCCC"_dna4,
         "ACGTAAAACGT"_dna4,
-        align_config_semi_seq2 | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-                                                                                              mismatch_score{-5}}},
+        align_config_semi_seq2
+            | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                           seqan3::mismatch_score{-5}}},
         -19,
         "TTTTTACGTATGTCCCCC",
         "GTAAAACGT---------",
@@ -157,8 +160,9 @@ static auto dna4_04_semi_second = []()
     {
         "ACGTAAAACGT"_dna4,
         "TTTTTACGTATGTCCCCC"_dna4,
-        align_config_semi_seq2 | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-                                                                                              mismatch_score{-5}}},
+        align_config_semi_seq2
+            | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                           seqan3::mismatch_score{-5}}},
         -5,
         "ACGTAAAACGT",
         "------TACGT",

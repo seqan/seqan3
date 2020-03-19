@@ -45,8 +45,8 @@ static auto dna4_01 = []()
         // GTCTA
         "AACCGGTTTAACCGGTT"_dna4,
         "ACGTCTACGTA"_dna4,
-        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-                                                                                    mismatch_score{-5}}},
+        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
         11,
         "GTTTA",
         "GTCTA",
@@ -97,8 +97,8 @@ static auto dna4_02 = []()
     {
         "ACGTCTACGTA"_dna4,
         "AACCGGTTTAACCGGTT"_dna4,
-        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-                                                                                    mismatch_score{-5}}},
+        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
         11,
         "GTCTA",
         "GTTTA",
@@ -163,7 +163,8 @@ static auto dna4_03 = []()
         "tcatagagttgc"_dna4,
         seqan3::align_cfg::mode{seqan3::local_alignment}
             | seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-1}}}
-            | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{2}, mismatch_score{-1}}},
+            | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{2},
+                                                                           seqan3::mismatch_score{-1}}},
         9,
         "ATAAGCGT",
         "AT-AGAGT",
@@ -216,8 +217,8 @@ static auto dna4_04 = []()
     {
         "AAAAAA"_dna4,
         "CCCCCC"_dna4,
-        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-                                                                                    mismatch_score{-5}}},
+        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
         0,
         "",
         "",
@@ -258,8 +259,8 @@ static auto dna4_05 = []()
     {
         "AAAAAATCCCCCC"_dna4,
         "CCCCCCTAAAAAA"_dna4,
-        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-                                                                                    mismatch_score{-5}}},
+        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
         24,
         "AAAAAA",
         "AAAAAA",
@@ -314,8 +315,8 @@ static auto rna5_01 = []()
     {
         "AAAAAAUUUUNNUUUUCCCCCC"_rna5,
         "AAAAAACCCCCC"_rna5,
-        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{match_score{4},
-                                                                                    mismatch_score{-5}}},
+        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
         28,
         "AAAAAAUUUUNNUUUUCCCCCC",
         "AAAAAA----------CCCCCC",
