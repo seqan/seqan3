@@ -10,6 +10,7 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
