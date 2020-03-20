@@ -50,7 +50,7 @@ inline detail::search_mode_best constexpr best;
 
 /*!\brief Configuration element to receive all hits with the best number of errors plus the strata value.
  *        A strong type of underlying type `uint8_t` that represents the number or errors for strata.
- *        All hits are found with the fewest numbererrors plus 'value'.
+ *        All hits are found with the fewest number of errors plus 'value'.
  * \ingroup search_configuration
  * \tparam value_t The underlying type.
  */
