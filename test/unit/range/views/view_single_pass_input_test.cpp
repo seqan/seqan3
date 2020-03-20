@@ -63,19 +63,17 @@ using underlying_range_types = ::testing::Types<std::vector<char>,
 
 TYPED_TEST_SUITE(single_pass_input, underlying_range_types, );
 
-using namespace seqan3;
-
 TYPED_TEST(single_pass_input, view_concept)
 {
     using rng_t = decltype(std::declval<TypeParam &>() | std::views::all);
-    using view_t = detail::single_pass_input_view<rng_t>;
+    using view_t = seqan3::detail::single_pass_input_view<rng_t>;
     EXPECT_TRUE((std::is_base_of_v<ranges::view_base, view_t>));
     EXPECT_TRUE((std::sentinel_for<std::ranges::sentinel_t<view_t>, std::ranges::iterator_t<view_t>>));
     EXPECT_TRUE(std::ranges::range<view_t>);
     EXPECT_TRUE(std::ranges::view<view_t>);
     EXPECT_TRUE(std::ranges::input_range<view_t>);
-    EXPECT_EQ((std::ranges::output_range<view_t, reference_t<view_t>>),
-              (std::ranges::output_range<rng_t, reference_t<rng_t>>));
+    EXPECT_EQ((std::ranges::output_range<view_t, seqan3::reference_t<view_t>>),
+              (std::ranges::output_range<rng_t, seqan3::reference_t<rng_t>>));
     EXPECT_FALSE(std::ranges::common_range<view_t>);
     EXPECT_FALSE(std::ranges::forward_range<view_t>);
     EXPECT_FALSE(std::ranges::bidirectional_range<view_t>);
@@ -84,8 +82,8 @@ TYPED_TEST(single_pass_input, view_concept)
 
 TYPED_TEST(single_pass_input, view_construction)
 {
-    using rng_t = decltype(std::declval<TypeParam>() | views::persist);
-    using view_t = detail::single_pass_input_view<rng_t>;
+    using rng_t = decltype(std::declval<TypeParam>() | seqan3::views::persist);
+    using view_t = seqan3::detail::single_pass_input_view<rng_t>;
     EXPECT_TRUE(std::is_default_constructible_v<view_t>);
     EXPECT_TRUE(std::is_copy_constructible_v<view_t>);
     EXPECT_TRUE(std::is_move_constructible_v<view_t>);
@@ -95,11 +93,11 @@ TYPED_TEST(single_pass_input, view_construction)
 
     {  // from lvalue container
         TypeParam p{this->data};
-        [[maybe_unused]] detail::single_pass_input_view v{p};
+        [[maybe_unused]] seqan3::detail::single_pass_input_view v{p};
     }
 
     {  // from view
-        [[maybe_unused]] detail::single_pass_input_view v{TypeParam{this->data} | views::persist};
+        [[maybe_unused]] seqan3::detail::single_pass_input_view v{TypeParam{this->data} | seqan3::views::persist};
     }
 }
 
@@ -107,7 +105,7 @@ TYPED_TEST(single_pass_input, view_begin)
 {
     TypeParam p{this->data};
 
-    detail::single_pass_input_view view{p};
+    seqan3::detail::single_pass_input_view view{p};
 
     using iterator_type = std::ranges::iterator_t<decltype(view)>;
 
@@ -119,7 +117,7 @@ TYPED_TEST(single_pass_input, view_end)
 {
     TypeParam p{this->data};
 
-    detail::single_pass_input_view view{p};
+    seqan3::detail::single_pass_input_view view{p};
 
     using sentinel_type = std::ranges::sentinel_t<decltype(view)>;
 
@@ -133,7 +131,7 @@ TYPED_TEST(single_pass_input, view_iterate)
     if constexpr (std::is_base_of_v<std::ios_base, decltype(this->data)>)
     {
         // Single pass input is only movable.
-        detail::single_pass_input_view view{std::move(p)};
+        seqan3::detail::single_pass_input_view view{std::move(p)};
 
         TypeParam tmp{this->cmp_data};
         auto tmp_it = tmp.begin();
@@ -145,9 +143,9 @@ TYPED_TEST(single_pass_input, view_iterate)
     }
     else
     {
-        detail::single_pass_input_view view{p};
+        seqan3::detail::single_pass_input_view view{p};
         TypeParam tmp{this->cmp_data};
-        auto zipper = views::zip(tmp, std::move(view));
+        auto zipper = seqan3::views::zip(tmp, std::move(view));
         for (auto it = zipper.begin(); it != zipper.end(); ++it)
         {
             EXPECT_EQ(std::get<0>(*it), std::get<1>(*it));
@@ -157,14 +155,16 @@ TYPED_TEST(single_pass_input, view_iterate)
 
 TYPED_TEST(single_pass_input, iterator_concepts)
 {
-    using view_type = detail::single_pass_input_view<decltype(std::declval<TypeParam>() | views::persist)>;
+    using view_type = seqan3::detail::single_pass_input_view<decltype(std::declval<TypeParam>()
+                                                                      | seqan3::views::persist)>;
     EXPECT_TRUE((std::input_iterator<std::ranges::iterator_t<view_type>>));
     EXPECT_FALSE((std::forward_iterator<std::ranges::iterator_t<view_type>>));
 }
 
 TYPED_TEST(single_pass_input, iterator_construction)
 {
-    using view_type = detail::single_pass_input_view<decltype(std::declval<TypeParam>() | views::persist)>;
+    using view_type = seqan3::detail::single_pass_input_view<decltype(std::declval<TypeParam>()
+                                                                      | seqan3::views::persist)>;
     using iterator_type = std::ranges::iterator_t<view_type>;
     EXPECT_TRUE(std::is_default_constructible_v<iterator_type>);
     EXPECT_TRUE(std::is_copy_constructible_v<iterator_type>);
@@ -178,10 +178,10 @@ TYPED_TEST(single_pass_input, iterator_pre_increment)
 {
     TypeParam p{this->data};
 
-    detail::single_pass_input_view view{p};
+    seqan3::detail::single_pass_input_view view{p};
 
     auto it = view.begin();
-    if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
+    if constexpr (std::is_same_v<seqan3::value_type_t<TypeParam>, char>)
     {
         EXPECT_EQ(*it,   '1');
         EXPECT_EQ(*++it, '2');
@@ -203,11 +203,11 @@ TYPED_TEST(single_pass_input, iterator_post_increment)
 {
     TypeParam p{this->data};
 
-    detail::single_pass_input_view view{p};
+    seqan3::detail::single_pass_input_view view{p};
 
     auto it = view.begin();
 
-    if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
+    if constexpr (std::is_same_v<seqan3::value_type_t<TypeParam>, char>)
     {
         EXPECT_EQ(*it, '1');
         it++;
@@ -237,7 +237,7 @@ TYPED_TEST(single_pass_input, iterator_eq_comparison)
 {
     TypeParam p{this->data};
 
-    detail::single_pass_input_view view{p};
+    seqan3::detail::single_pass_input_view view{p};
     EXPECT_FALSE(view.begin() == view.end());
 
     auto it = view.begin();
@@ -254,7 +254,7 @@ TYPED_TEST(single_pass_input, iterator_neq_comparison)
 {
     TypeParam p{this->data};
 
-    detail::single_pass_input_view view{p};
+    seqan3::detail::single_pass_input_view view{p};
     EXPECT_TRUE(view.begin() != view.end());
 
     auto it = view.begin();
@@ -269,7 +269,8 @@ TYPED_TEST(single_pass_input, iterator_neq_comparison)
 
 TYPED_TEST(single_pass_input, sentinel_concepts)
 {
-    using view_type     = detail::single_pass_input_view<decltype(std::declval<TypeParam>() | views::persist)>;
+    using view_type     = seqan3::detail::single_pass_input_view<decltype(std::declval<TypeParam>()
+                                                                          | seqan3::views::persist)>;
     using iterator_type = std::ranges::iterator_t<view_type>;
     using sentinel_type = std::ranges::sentinel_t<view_type>;
 
@@ -281,7 +282,7 @@ TYPED_TEST(single_pass_input, sentinel_eq_comparison)
 {
     TypeParam p{this->data};
 
-    detail::single_pass_input_view view{p};
+    seqan3::detail::single_pass_input_view view{p};
     EXPECT_FALSE(view.end() == view.begin());
 
     auto it = view.begin();
@@ -298,7 +299,7 @@ TYPED_TEST(single_pass_input, sentinel_neq_comparison)
 {
     TypeParam p{this->data};
 
-    detail::single_pass_input_view view{p};
+    seqan3::detail::single_pass_input_view view{p};
     EXPECT_TRUE(view.end() != view.begin());
 
     auto it = view.begin();
@@ -316,10 +317,10 @@ TYPED_TEST(single_pass_input, fn_functional)
     // use case 1: functional;
     TypeParam p{this->data};
 
-    auto view = p | views::single_pass_input | views::take(3);
+    auto view = p | seqan3::views::single_pass_input | seqan3::views::take(3);
     auto it = view.begin();
 
-    if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
+    if constexpr (std::is_same_v<seqan3::value_type_t<TypeParam>, char>)
     {
         EXPECT_EQ(*it,   '1');
         EXPECT_EQ(*++it, '2');
@@ -339,9 +340,9 @@ TYPED_TEST(single_pass_input, fn_pipeable)
 {
     TypeParam p{this->data};
 
-    auto view = p | views::single_pass_input | std::views::take(3);
+    auto view = p | seqan3::views::single_pass_input | std::views::take(3);
     auto it = view.begin();
-    if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
+    if constexpr (std::is_same_v<seqan3::value_type_t<TypeParam>, char>)
     {
         EXPECT_EQ(*it,   '1');
         EXPECT_EQ(*++it, '2');

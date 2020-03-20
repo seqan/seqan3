@@ -24,8 +24,6 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
-
 // ============================================================================
 //  test templates
 // ============================================================================
@@ -35,32 +33,32 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
     // pipe notation
     auto v = vec | adaptor(1, 4);
-    EXPECT_EQ("oob", v | views::to<std::string>);
+    EXPECT_EQ("oob", v | seqan3::views::to<std::string>);
 
     // function notation
-    std::string v2{adaptor(vec, 1, 4) | views::to<std::string>};
+    std::string v2{adaptor(vec, 1, 4) | seqan3::views::to<std::string>};
     EXPECT_EQ("oob", v2);
 
     // combinability
     auto v3 = vec | adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
-    EXPECT_EQ("o", v3 | views::to<std::string>);
-    std::string v3b = vec | std::views::reverse | adaptor(1, 4) | ranges::view::unique | views::to<std::string>;
+    EXPECT_EQ("o", v3 | seqan3::views::to<std::string>);
+    std::string v3b = vec | std::views::reverse | adaptor(1, 4) | ranges::view::unique | seqan3::views::to<std::string>;
     EXPECT_EQ("abo", v3b);
 
     // store arg
     auto a0 = adaptor(1, 4);
     auto v4 = vec | a0;
-    EXPECT_EQ("oob", v4 | views::to<std::string>);
+    EXPECT_EQ("oob", v4 | seqan3::views::to<std::string>);
 
     // store combined
     auto a1 = adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
     auto v5 = vec | a1;
-    EXPECT_EQ("o", v5 | views::to<std::string>);
+    EXPECT_EQ("o", v5 | seqan3::views::to<std::string>);
 
     // store combined in middle
     auto a2 = std::views::reverse | adaptor(1, 4) | ranges::view::unique;
     auto v6 = vec | a2;
-    EXPECT_EQ("abo", v6 | views::to<std::string>);
+    EXPECT_EQ("abo", v6 | seqan3::views::to<std::string>);
 }
 
 template <typename adaptor_t>
@@ -74,7 +72,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_FALSE(std::ranges::view<decltype(vec)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_range<decltype(vec)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(vec)>);
     EXPECT_TRUE((std::ranges::output_range<decltype(vec), int>));
 
     auto v1 = vec | adaptor;
@@ -86,10 +84,10 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
     EXPECT_TRUE((std::ranges::output_range<decltype(v1), int>));
 
-    auto v2 = vec | views::single_pass_input | adaptor;
+    auto v2 = vec | seqan3::views::single_pass_input | adaptor;
 
     EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
     EXPECT_FALSE(std::ranges::forward_range<decltype(v2)>);
@@ -98,7 +96,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::view<decltype(v2)>);
     EXPECT_EQ(std::ranges::sized_range<decltype(v2)>, exactly);
     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
-    EXPECT_FALSE(const_iterable_range<decltype(v2)>);
+    EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2)>);
     EXPECT_TRUE((std::ranges::output_range<decltype(v2), int>));
 }
 
@@ -108,22 +106,25 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
 
 TEST(view_slice, regular)
 {
-    do_test(views::slice, "foobar");
+    do_test(seqan3::views::slice, "foobar");
 }
 
 TEST(view_slice, concepts)
 {
-    do_concepts(views::slice(1, 4), false);
+    do_concepts(seqan3::views::slice(1, 4), false);
 }
 
 TEST(view_slice, underlying_is_shorter)
 {
     std::string vec{"foobar"};
-    EXPECT_NO_THROW(( views::slice(vec, 1, 4) )); // no parsing
+    EXPECT_NO_THROW(( seqan3::views::slice(vec, 1, 4) )); // no parsing
 
     std::string v;
     // full parsing on conversion
-    EXPECT_NO_THROW(( v = vec | views::single_pass_input | views::slice(1, 4) | views::to<std::string> ));
+    EXPECT_NO_THROW(( v = vec
+                        | seqan3::views::single_pass_input
+                        | seqan3::views::slice(1, 4)
+                        | seqan3::views::to<std::string> ));
     EXPECT_EQ("oob", v);
 }
 
@@ -132,7 +133,7 @@ TEST(view_slice, type_erasure)
     {   // string overload
         std::string const urange{"foobar"};
 
-        auto v = views::slice(urange, 1, 4);
+        auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
         EXPECT_TRUE((std::ranges::equal(v, urange.substr(1,3))));
@@ -141,7 +142,7 @@ TEST(view_slice, type_erasure)
     {   // stringview overload
         std::string_view urange{"foobar"};
 
-        auto v = views::slice(urange, 1, 4);
+        auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
         EXPECT_TRUE((std::ranges::equal(v, urange.substr(1,3))));
@@ -150,7 +151,7 @@ TEST(view_slice, type_erasure)
     {   // contiguous overload
         std::vector<int> urange{1, 2, 3, 4, 5, 6};
 
-        auto v = views::slice(urange, 1, 4);
+        auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
         EXPECT_TRUE((std::ranges::equal(v, std::vector{2, 3, 4})));
@@ -159,7 +160,7 @@ TEST(view_slice, type_erasure)
     {   // contiguous overload
         std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
 
-        auto v = views::slice(urange, 1, 4);
+        auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
         EXPECT_TRUE((std::ranges::equal(v, std::vector{2, 3, 4})));
@@ -168,10 +169,10 @@ TEST(view_slice, type_erasure)
     {   // random-access overload
         std::deque<int> urange{1, 2, 3, 4, 5, 6};
 
-        auto v = views::slice(urange, 1, 4);
+        auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
-                                                                  typename std::deque<int>::iterator>>));
+                                                                     typename std::deque<int>::iterator>>));
         EXPECT_TRUE((std::ranges::equal(v, std::vector{2, 3, 4})));
     }
 }

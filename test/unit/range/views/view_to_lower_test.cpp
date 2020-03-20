@@ -16,7 +16,7 @@
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
+using seqan3::operator""_dna5;
 
 TEST(view_to_lower, basic)
 {
@@ -24,11 +24,11 @@ TEST(view_to_lower, basic)
     std::string cmp {"iamadnastring"};
 
     // pipe notation string
-    std::string s(input_string | views::to_lower | views::to<std::string>);
+    std::string s(input_string | seqan3::views::to_lower | seqan3::views::to<std::string>);
     EXPECT_EQ(cmp, s);
 
     // custom conversion operator
-    std::string s2(views::to_lower(input_string) | views::to<std::string>);
+    std::string s2(seqan3::views::to_lower(input_string) | seqan3::views::to<std::string>);
     EXPECT_EQ(cmp, s2);
 }
 
@@ -37,15 +37,15 @@ TEST(view_to_lower, combinability)
     std::string input_string {"IAmADnaString"};
     std::string cmp{"gnirtsandamai"};
 
-    std::vector<dna5> dna_vec {"AGGCGT"_dna5};
+    std::vector<seqan3::dna5> dna_vec {"AGGCGT"_dna5};
     std::string cmp2{"aggcgt"};
 
    // output combinability
-    std::string s(input_string | views::to_lower | std::views::reverse | views::to<std::string>);
+    std::string s(input_string | seqan3::views::to_lower | std::views::reverse | seqan3::views::to<std::string>);
     EXPECT_EQ(cmp, s);
 
     // input combinability
-    std::string s2(dna_vec | views::to_char | views::to_lower | views::to<std::string>);
+    std::string s2(dna_vec | seqan3::views::to_char | seqan3::views::to_lower | seqan3::views::to<std::string>);
     EXPECT_EQ(cmp2, s2);
 }
 
@@ -54,7 +54,7 @@ TEST(view_to_lower, deep)
     std::vector<std::string> input_vec{"IAmADnaString", "IAmAProteinString"};
     std::vector<std::string> cmp{"iamadnastring", "iamaproteinstring"};
 
-    std::vector<std::string> s(input_vec | views::to_lower | views::to<std::vector<std::string>>);
+    std::vector<std::string> s(input_vec | seqan3::views::to_lower | seqan3::views::to<std::vector<std::string>>);
     EXPECT_EQ(cmp, s);
 }
 
@@ -62,7 +62,7 @@ TEST(view_to_lower, concepts)
 {
     std::string input_string{"AEIOU"};
     std::string & input_string_ref = input_string;
-    auto lower_view = input_string | views::to_lower;
+    auto lower_view = input_string | seqan3::views::to_lower;
 
     // Required
     EXPECT_TRUE(std::ranges::input_range<decltype(input_string)>);
@@ -85,10 +85,10 @@ TEST(view_to_lower, concepts)
               std::ranges::sized_range<decltype(lower_view)>);
     EXPECT_EQ(std::ranges::common_range<decltype(input_string)>,
               std::ranges::common_range<decltype(lower_view)>);
-    EXPECT_EQ(const_iterable_range<decltype(input_string)>,
-              const_iterable_range<decltype(lower_view)>);
-    EXPECT_TRUE((std::same_as<std::remove_reference_t<reference_t<decltype(input_string)>>,
-                           std::remove_reference_t<reference_t<decltype(lower_view)>>>));
+    EXPECT_EQ(seqan3::const_iterable_range<decltype(input_string)>,
+              seqan3::const_iterable_range<decltype(lower_view)>);
+    EXPECT_TRUE((std::same_as<std::remove_reference_t<seqan3::reference_t<decltype(input_string)>>,
+                              std::remove_reference_t<seqan3::reference_t<decltype(lower_view)>>>));
 
     // Guaranteed
     EXPECT_TRUE(std::ranges::viewable_range<decltype(lower_view)>);
