@@ -185,6 +185,16 @@ public:
     constexpr index_type size_bytes() const noexcept { return span_extent * sizeof(element_type); }
     constexpr bool empty()            const noexcept { return span_extent == 0; }
 
+    constexpr reference front() const noexcept
+    {
+        return *begin();
+    }
+
+    constexpr reference back() const noexcept
+    {
+        return *(end() - 1);
+    }
+
     constexpr reference operator[](index_type idx) const noexcept
     {
         assert(idx >= 0 && idx < size()); // "span<T,N>[] index out of bounds"
@@ -347,6 +357,16 @@ public:
     constexpr index_type size()       const noexcept { return size_; }
     constexpr index_type size_bytes() const noexcept { return size_ * sizeof(element_type); }
     constexpr bool empty()            const noexcept { return size_ == 0; }
+
+    constexpr reference front() const noexcept
+    {
+        return *begin();
+    }
+
+    constexpr reference back() const noexcept
+    {
+        return *(end() - 1);
+    }
 
     constexpr reference operator[](index_type idx) const noexcept
     {
