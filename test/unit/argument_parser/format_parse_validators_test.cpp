@@ -1134,6 +1134,84 @@ TEST(validator_test, regex_validator_error)
     EXPECT_THROW(parser4.parse(), seqan3::validation_error);
 }
 
+TEST(validator_test, chaining_validators_common_type)
+{
+    // chaining integral options stay integral
+    {
+        int max_int = std::numeric_limits<int>::max();
+        std::vector v_int{1, 2, 3, max_int};
+        std::vector v_unsigned{4u, static_cast<unsigned>(max_int)};
+
+        EXPECT_TRUE((std::same_as<std::vector<int>, decltype(v_int)>));
+        EXPECT_TRUE((std::same_as<std::vector<unsigned>, decltype(v_unsigned)>));
+
+        seqan3::value_list_validator validator_int{v_int};
+        seqan3::value_list_validator validator_unsigned{v_unsigned};
+
+        EXPECT_TRUE((std::same_as<seqan3::value_list_validator<int>, decltype(validator_int)>));
+        EXPECT_TRUE((std::same_as<int, decltype(validator_int)::option_value_type>));
+
+        EXPECT_TRUE((std::same_as<seqan3::value_list_validator<unsigned>, decltype(validator_unsigned)>));
+        EXPECT_TRUE((std::same_as<unsigned, decltype(validator_unsigned)::option_value_type>));
+
+        auto validator = validator_int | validator_unsigned;
+
+        EXPECT_TRUE((std::same_as<unsigned, std::common_type_t<int, unsigned>>));
+        EXPECT_TRUE((std::same_as<unsigned, decltype(validator)::option_value_type>));
+
+        // max_int is part of both validators
+        EXPECT_NO_THROW(validator_int(max_int));
+        EXPECT_NO_THROW(validator_unsigned(max_int));
+        EXPECT_NO_THROW(validator(max_int));
+    }
+
+    // chaining mixed arithmetic options will be highest common arithmetic type
+    {
+        // note: this number is not representable by double and multiple integer values represent the same double value
+        int64_t max_int64 = std::numeric_limits<int64_t>::max();
+        EXPECT_EQ(static_cast<double>(max_int64), static_cast<double>(max_int64 - 1));
+
+        std::vector<int64_t> v_int64{1, 2, 3, max_int64};
+        std::vector<uint64_t> v_uint64{4u, static_cast<uint64_t>(max_int64)};
+        std::vector<double> v_double{4.0, static_cast<double>(max_int64)};
+
+        seqan3::value_list_validator validator_int64{v_int64};
+        seqan3::value_list_validator validator_uint64{v_uint64};
+        seqan3::value_list_validator validator_double{v_double};
+
+        EXPECT_TRUE((std::same_as<seqan3::value_list_validator<int64_t>, decltype(validator_int64)>));
+        EXPECT_TRUE((std::same_as<int64_t, decltype(validator_int64)::option_value_type>));
+
+        EXPECT_TRUE((std::same_as<seqan3::value_list_validator<uint64_t>, decltype(validator_uint64)>));
+        EXPECT_TRUE((std::same_as<uint64_t, decltype(validator_uint64)::option_value_type>));
+
+        EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>, decltype(validator_double)>));
+        EXPECT_TRUE((std::same_as<double, decltype(validator_double)::option_value_type>));
+
+        auto validator = validator_int64 | validator_uint64 | validator_double;
+
+        EXPECT_TRUE((std::same_as<double, std::common_type_t<int64_t, uint64_t, double>>));
+        EXPECT_TRUE((std::same_as<double, decltype(validator)::option_value_type>));
+
+        // max_int64 is an exact match for the two integral validators
+        // note: double will decay the integer to a smaller double value,
+        //       but this is consistent, because it is the same given value
+        // note: chained validator passes the value as it is through,
+        //       so validator_[u]int64 will be called with the integer value
+        EXPECT_NO_THROW(validator_int64(max_int64));
+        EXPECT_NO_THROW(validator_uint64(max_int64));
+        EXPECT_NO_THROW(validator_double(max_int64));
+        EXPECT_NO_THROW(validator(max_int64));
+
+        // integers have exact match
+        // note: double accepts that value, even though it is not within that list.
+        EXPECT_THROW(validator_int64(max_int64 - 1), seqan3::validation_error);
+        EXPECT_THROW(validator_uint64(max_int64 - 1), seqan3::validation_error);
+        EXPECT_NO_THROW(validator_double(max_int64 - 1));
+        EXPECT_THROW(validator(max_int64 - 1), seqan3::validation_error);
+    }
+}
+
 TEST(validator_test, chaining_validators)
 {
     std::string option_value{};

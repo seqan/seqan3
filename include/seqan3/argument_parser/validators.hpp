@@ -973,13 +973,14 @@ struct default_validator
  */
 template <validator validator1_type, validator validator2_type>
 //!\cond
-    requires std::same_as<typename validator1_type::option_value_type, typename validator2_type::option_value_type>
+    requires std::common_with<typename validator1_type::option_value_type, typename validator2_type::option_value_type>
 //!\endcond
 class validator_chain_adaptor
 {
 public:
     //!\brief The underlying type in both validators.
-    using option_value_type = typename validator1_type::option_value_type;
+    using option_value_type = std::common_type_t<typename validator1_type::option_value_type,
+                                                 typename validator2_type::option_value_type>;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -1064,8 +1065,8 @@ private:
  */
 template <validator validator1_type, validator validator2_type>
 //!\cond
-    requires std::same_as<typename std::remove_reference_t<validator1_type>::option_value_type,
-                       typename std::remove_reference_t<validator2_type>::option_value_type>
+    requires std::common_with<typename std::remove_reference_t<validator1_type>::option_value_type,
+                              typename std::remove_reference_t<validator2_type>::option_value_type>
 //!\endcond
 auto operator|(validator1_type && vali1, validator2_type && vali2)
 {
