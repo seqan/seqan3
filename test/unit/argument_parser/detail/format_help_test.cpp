@@ -58,10 +58,28 @@ std::string license_text()
     return str.substr(license_start, license_end - license_start);
 }
 
+namespace seqan3::detail
+{
+struct test_accessor
+{
+    static void set_terminal_width(seqan3::argument_parser & parser, unsigned terminal_width)
+    {
+        std::visit([terminal_width](auto & f)
+        {
+            if constexpr(std::is_same_v<decltype(f), seqan3::detail::format_help &>)
+                f.layout = seqan3::detail::format_help::console_layout_struct{terminal_width};
+        }, parser.format);
+    }
+};
+} // seqan3::detail
+
+using seqan3::detail::test_accessor;
+
 TEST(help_page_printing, short_help)
 {
     // Empty call with no options given. For seqan3::detail::format_short_help
     seqan3::argument_parser parser0{"empty_options", 1, argv0};
+    test_accessor::set_terminal_width(parser0, 80);
     parser0.info.synopsis.push_back("./some_binary_name synopsis");
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -78,6 +96,7 @@ TEST(help_page_printing, no_information)
 {
     // Empty help call with -h
     seqan3::argument_parser parser1{"test_parser", 2, argv1};
+    test_accessor::set_terminal_width(parser1, 80);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -148,6 +167,7 @@ TEST(help_page_printing, empty_advanced_help)
 {
     // Empty help call with -hh
     seqan3::argument_parser parser2{"test_parser", 2, argv2};
+    test_accessor::set_terminal_width(parser2, 80);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser2.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -163,6 +183,7 @@ TEST(help_page_printing, empty_version_call)
 {
     // Empty version call
     seqan3::argument_parser parser3{"test_parser", 2, argv3};
+    test_accessor::set_terminal_width(parser3, 80);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser3.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -177,6 +198,7 @@ TEST(help_page_printing, version_call)
 {
     // Version call with url and options.
     seqan3::argument_parser parser4{"test_parser", 2, argv3};
+    test_accessor::set_terminal_width(parser4, 80);
     parser4.info.url = "www.seqan.de";
     parser4.add_option(option_value, 'i', "int", "this is a int option.");
     parser4.add_flag(flag_value, 'f', "flag", "this is a flag.");
@@ -197,6 +219,7 @@ TEST(help_page_printing, do_not_print_hidden_options)
 {
     // Add an option and request help.
     seqan3::argument_parser parser5{"test_parser", 2, argv1};
+    test_accessor::set_terminal_width(parser5, 80);
     parser5.add_option(option_value, 'i', "int", "this is a int option.", seqan3::option_spec::HIDDEN);
     parser5.add_flag(flag_value, 'f', "flag", "this is a flag.", seqan3::option_spec::HIDDEN);
     testing::internal::CaptureStdout();
@@ -316,6 +339,7 @@ TEST(help_page_printing, full_information)
 
     // Add synopsis, description, short description, positional option, option, flag, and example.
     seqan3::argument_parser parser6{"test_parser", 2, argv1};
+    test_accessor::set_terminal_width(parser6, 80);
     parser6.info.synopsis.push_back("./some_binary_name synopsis");
     parser6.info.synopsis.push_back("./some_binary_name synopsis2");
     parser6.info.description.push_back("description");
@@ -445,6 +469,7 @@ TEST(parse_test, subcommand_argument_parser)
 
     const char * argv[]{"./test_parser", "-h"};
     seqan3::argument_parser top_level_parser{"test_parser", 2, argv, true, {"sub1", "sub2"}};
+    test_accessor::set_terminal_width(top_level_parser, 80);
     top_level_parser.info.description.push_back("description");
     top_level_parser.add_option(option_value, 'f', "foo", "foo bar.");
 
