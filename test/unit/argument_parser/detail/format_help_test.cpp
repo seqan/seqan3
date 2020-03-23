@@ -18,8 +18,8 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/drop.hpp>
-#include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/to.hpp>
+#include <seqan3/std/ranges>
 
 // reused global variables
 std::string std_cout;
@@ -231,7 +231,7 @@ TEST(help_page_printing, full_information)
     parser6.info.short_description = "so short";
     parser6.add_option(option_value, 'i', "int", "this is a int option.");
     parser6.add_option(enum_option_value, 'e', "enum", "this is an enum option.", seqan3::option_spec::DEFAULT,
-                       seqan3::value_list_validator{seqan3::enumeration_names<foo> | seqan3::views::get<1>});
+                       seqan3::value_list_validator{seqan3::enumeration_names<foo> | std::views::values});
     parser6.add_option(required_option, 'r', "required-int", "this is another int option.",
                        seqan3::option_spec::REQUIRED);
     parser6.add_section("Flags");
