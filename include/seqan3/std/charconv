@@ -34,7 +34,6 @@
 #include <type_traits>
 
 #include <seqan3/core/char_operations/predicate.hpp>
-#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/std/concepts>
 
 /*!\defgroup charconv charconv
@@ -693,7 +692,7 @@ inline std::from_chars_result from_chars_integral(char const * first, char const
 //!\endcond
 
 //!\brief Delegates to functions strto[d/f/ld] for floating point value extraction.
-template <seqan3::floating_point value_type>
+template <std::floating_point value_type>
 inline std::from_chars_result from_chars_floating_point(char const * first,
                                                         char const * last,
                                                         value_type & value,
@@ -867,7 +866,7 @@ inline std::to_chars_result to_chars(char * first, char * last, value_type value
 
 //!\brief std::to_chars overload for floating point via a std::stringstream for default base = 10.
 //!\ingroup charconv
-template <seqan3::floating_point floating_point_type>
+template <std::floating_point floating_point_type>
 inline std::to_chars_result to_chars(char * first, char * last, floating_point_type value) noexcept
 {
     assert(first != nullptr);
@@ -1006,7 +1005,7 @@ inline std::from_chars_result from_chars(char const * first, char const * last, 
  *
  * \sa https://en.cppreference.com/w/cpp/utility/from_chars
  */
-template <seqan3::floating_point floating_point_type>
+template <std::floating_point floating_point_type>
 inline std::from_chars_result from_chars(char const * first,
                                          char const * last,
                                          floating_point_type & value,

@@ -214,6 +214,15 @@ template <class T>
 SEQAN3_CONCEPT unsigned_integral = integral<T> && !signed_integral<T>;
 //!\endcond
 
+/*!\interface std::floating_point <>
+ * \brief The concept std::floating_point<T> is satisfied if and only if T is a floating-point type.
+ * \sa https://en.cppreference.com/w/cpp/types/is_floating_point
+ */
+//!\cond
+template <typename t>
+SEQAN3_CONCEPT floating_point = std::is_floating_point_v<t>;
+//!\endcond
+
 /*!\interface std::assignable_from <>
  * \brief The concept `std::assignable_from<LHS, RHS>` specifies that an expression of the type and value category specified
  *        by RHS can be assigned to an lvalue expression whose type is specified by LHS.
