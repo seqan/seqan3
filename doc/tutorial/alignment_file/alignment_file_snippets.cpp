@@ -3,10 +3,6 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/std/filesystem>
 
-//![include_aligned_sequence]
-#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
-//![include_aligned_sequence]
-
 struct write_file_dummy_struct
 {
     std::filesystem::path const file_path = std::filesystem::temp_directory_path()/"example.sam";
