@@ -582,9 +582,9 @@ public:
      */
     alignment_file_input(std::filesystem::path filename,
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary}, stream_deleter_default}
+        primary_stream{new std::ifstream{}, stream_deleter_default}
     {
-        init(filename);
+        init_by_filename(std::move(filename));
     }
 
     /*!\brief Construct from an existing stream and with specified format.
@@ -615,7 +615,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop}
     {
-        init(file_format{});
+        init_by_format<file_format>();
     }
 
     //!\overload
@@ -628,7 +628,7 @@ public:
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default}
     {
-        init(file_format{});
+        init_by_format<file_format>();
     }
 
     /*!\brief Construct from filename and given additional reference information.
@@ -658,12 +658,12 @@ public:
                          typename traits_type::ref_ids & ref_ids,
                          typename traits_type::ref_sequences & ref_sequences,
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary}, stream_deleter_default}
+        primary_stream{new std::ifstream{}, stream_deleter_default}
     {
         // initialize reference information
         set_references(ref_ids, ref_sequences);
 
-        init(filename);
+        init_by_filename(std::move(filename));
     }
 
     /*!\brief Construct from an existing stream and with specified format.
@@ -702,7 +702,7 @@ public:
         // initialize reference information
         set_references(ref_ids, ref_sequences);
 
-        init(file_format{});
+        init_by_format<file_format>();
     }
 
     //!\overload
@@ -717,7 +717,7 @@ public:
         // initialize reference information
         set_references(ref_ids, ref_sequences);
 
-        init(file_format{});
+        init_by_format<file_format>();
     }
 
     //!\cond
@@ -846,8 +846,11 @@ protected:
     //!\privatesection
 
     //!/brief Initialisation based on a filename.
-    void init(std::filesystem::path & filename)
+    void init_by_filename(std::filesystem::path filename)
     {
+        primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
+        static_cast<std::basic_ifstream<char> *>(primary_stream.get())->open(filename,
+                                                                             std::ios_base::in | std::ios::binary);
         // open stream
         if (!primary_stream->good())
             throw file_open_error{"Could not open file " + filename.string() + " for reading."};
@@ -858,7 +861,7 @@ protected:
 
     //!/brief Initialisation based on a format (construction via stream).
     template <typename format_type>
-    void init(format_type const &)
+    void init_by_format()
     {
         static_assert(list_traits::contains<format_type, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -875,6 +878,8 @@ protected:
      */
     //!\brief Buffer for a single record.
     record_type record_buffer;
+    //!\brief A larger (compared to stl default) stream buffer to use when reading from a file.
+    std::vector<char> stream_buffer{std::vector<char>(1'000'000)};
     //!\}
 
     /*!\name Stream / file access

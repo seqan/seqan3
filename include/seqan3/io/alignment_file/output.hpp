@@ -300,8 +300,12 @@ public:
      */
     alignment_file_output(std::filesystem::path filename,
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new std::ofstream{filename, std::ios_base::out | std::ios::binary}, stream_deleter_default}
+        primary_stream{new std::ofstream{}, stream_deleter_default}
     {
+        primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
+        static_cast<std::basic_ofstream<char> *>(primary_stream.get())->open(filename,
+                                                                             std::ios_base::out | std::ios::binary);
+
         // open stream
         if (!primary_stream->good())
             throw file_open_error{"Could not open file " + filename.string() + " for writing."};
@@ -727,6 +731,8 @@ public:
 
 protected:
     //!\privatesection
+    //!\brief A larger (compared to stl default) stream buffer to use when reading from a file.
+    std::vector<char> stream_buffer{std::vector<char>(1'000'000)};
 
     /*!\name Stream / file access
      * \{
