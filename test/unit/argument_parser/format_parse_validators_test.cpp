@@ -13,7 +13,7 @@
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/range/views/take.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/std/filesystem>
 #include <seqan3/test/tmp_filename.hpp>
 
@@ -716,12 +716,12 @@ TEST(validator_test, value_list_validator_success)
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
                  decltype(seqan3::value_list_validator{v})>));
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
-                 decltype(seqan3::value_list_validator{v | seqan3::views::take(2)})>));
+                 decltype(seqan3::value_list_validator{v | std::views::take(2)})>));
     std::vector v_char{'1', '2', '3'};
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<char>,
                  decltype(seqan3::value_list_validator{v_char})>));
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<char>,
-                 decltype(seqan3::value_list_validator{v_char | seqan3::views::take(2)})>));
+                 decltype(seqan3::value_list_validator{v_char | std::views::take(2)})>));
     // const char * is deduced to std::string
     std::vector v2{"ha", "ba", "ma"};
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
@@ -731,10 +731,10 @@ TEST(validator_test, value_list_validator_success)
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
                  decltype(seqan3::value_list_validator{v2})>));
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<std::string>,
-                 decltype(seqan3::value_list_validator{v2 | seqan3::views::take(2)})>));
+                 decltype(seqan3::value_list_validator{v2 | std::views::take(2)})>));
     // custom types are used as is
     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<foo>,
-                 decltype(seqan3::value_list_validator{foo::one, foo::two})>));
+                              decltype(seqan3::value_list_validator{foo::one, foo::two})>));
 
     // usage
     // -----
@@ -749,7 +749,7 @@ TEST(validator_test, value_list_validator_success)
     seqan3::argument_parser parser{"test_parser", 3, argv, false};
     parser.add_option(option_value, 's', "string-option", "desc",
                       seqan3::option_spec::DEFAULT,
-                      seqan3::value_list_validator{valid_str_values | seqan3::views::take(2)});
+                      seqan3::value_list_validator{valid_str_values | std::views::take(2)});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
