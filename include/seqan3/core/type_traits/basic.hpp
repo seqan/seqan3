@@ -124,7 +124,7 @@ template <typename t, typename ...dependent_ts>
 using deferred_type_t = typename deferred_type<t, dependent_ts...>::type;
 
 // ----------------------------------------------------------------------------
-// remove_cvref_t
+// ignore_t
 // ----------------------------------------------------------------------------
 
 //!\brief Return the type of std::ignore with `const`, `volatile` and references removed (type trait).
