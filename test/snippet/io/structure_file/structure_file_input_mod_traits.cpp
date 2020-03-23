@@ -1,5 +1,6 @@
 #include <sstream>
 
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 

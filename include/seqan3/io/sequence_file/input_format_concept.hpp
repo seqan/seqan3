@@ -18,8 +18,8 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 
@@ -68,14 +68,13 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-
 SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_input_format_exposer<t> & v,
                                                       std::ifstream                                 & f,
                                                       sequence_file_input_options<dna5, false>      & options,
-                                                      dna5_vector                                   & seq,
+                                                      std::vector<dna5>                             & seq,
                                                       std::string                                   & id,
                                                       std::vector<phred42>                          & qual,
-                                                      std::vector<dna5q>                            & seq_qual)
+                                                      std::vector<qualified<dna5, phred42>>         & seq_qual)
 {
     t::file_extensions;
 
