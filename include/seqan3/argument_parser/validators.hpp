@@ -376,7 +376,7 @@ protected:
         // Compares the extensions in lower case.
         auto case_insensitive_equal_to = [&] (std::string const & ext)
         {
-            return std::ranges::equal(ext, drop_less_ext, [](char const chr1, char const chr2)
+            return std::ranges::equal(ext, drop_less_ext, [] (char const chr1, char const chr2)
                    {
                        return std::tolower(chr1) == std::tolower(chr2);
                    });
