@@ -374,16 +374,16 @@ protected:
         auto drop_less_ext = tmp_str | views::drop(1);
 
         // Compares the extensions in lower case.
-        auto case_insensitive_cmp = [&] (std::string const & ext)
+        auto case_insensitive_equal_to = [&] (std::string const & ext)
         {
-            return std::ranges::equal(ext, drop_less_ext, [](auto && chr1, auto && chr2)
+            return std::ranges::equal(ext, drop_less_ext, [](char const chr1, char const chr2)
                    {
                        return std::tolower(chr1) == std::tolower(chr2);
                    });
         };
 
         // Check if requested extension is present.
-        if (std::ranges::find_if(extensions, case_insensitive_cmp) == extensions.end())
+        if (std::ranges::find_if(extensions, case_insensitive_equal_to) == extensions.end())
         {
             throw validation_error{detail::to_string("Expected one of the following valid extensions: ",
                                                              extensions, "! Got ", drop_less_ext, " instead!")};
