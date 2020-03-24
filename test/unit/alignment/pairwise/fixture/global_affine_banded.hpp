@@ -22,15 +22,16 @@
 
 #include "alignment_fixture.hpp"
 
+using seqan3::operator""_dna4;
+
 namespace seqan3::test::alignment::fixture::global::affine::banded
 {
 
-using namespace seqan3;
-using namespace seqan3::detail;
-
-inline constexpr auto align_config = align_cfg::mode{global_alignment} |
-                                     align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
-                                     align_cfg::band{static_band{lower_bound{-3}, upper_bound{8}}};
+inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::global_alignment} |
+                                     seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
+                                                                               seqan3::gap_open_score{-10}}} |
+                                     seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-3},
+                                                                                 seqan3::upper_bound{8}}};
 
 static auto dna4_01 = []()
 {   //    AACCGGTTAACCGGTT
@@ -49,12 +50,13 @@ static auto dna4_01 = []()
     {
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
+        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
         -18,
         "A---ACCGGTTAACCGGTT",
         "ACGTAC----------GTA",
-        alignment_coordinate{detail::column_index_type{0u}, detail::row_index_type{0u}},
-        alignment_coordinate{detail::column_index_type{16u}, detail::row_index_type{9u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{16u}, seqan3::detail::row_index_type{9u}},
         std::vector<std::optional<int32_t>>
         {
         //       A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,
@@ -69,7 +71,7 @@ static auto dna4_01 = []()
         /*T*/INF,INF,INF,INF,INF,-11,-13,-5 ,-15,-17,-18,-19,-19,-19,-13,-13,-16,
         /*A*/INF,INF,INF,INF,INF,INF,-16,-16,-10,-11,-13,-23,-24,-20,-24,-18,-18
         },
-        std::vector<std::optional<trace_directions>>
+        std::vector<std::optional<seqan3::detail::trace_directions>>
         {
         //       A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,
              N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,INF,INF,INF,INF,INF,INF,INF,INF,

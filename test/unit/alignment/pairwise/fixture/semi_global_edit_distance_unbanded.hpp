@@ -16,11 +16,13 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
+using seqan3::operator""_dna4;
+
 namespace seqan3::test::alignment::fixture::semi_global::edit_distance::unbanded
 {
 
-using detail::column_index_type;
-using detail::row_index_type;
+using seqan3::detail::column_index_type;
+using seqan3::detail::row_index_type;
 
 static auto dna4_01 = []()
 {
@@ -33,12 +35,12 @@ static auto dna4_01 = []()
         // ---------ACGTACG-TA
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -5,
         "AC---CGGTT",
         "ACGTACG-TA",
-        alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
+        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -81,12 +83,12 @@ static auto dna4_01T = []()
         // AACCGGTTAACCGGTT
         "ACGTACGTA"_dna4,
         "AACCGGTTAACCGGTT"_dna4,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
+        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
         std::vector
         {
         //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
@@ -143,12 +145,12 @@ static auto dna4_02 = []()
         // -ACGTACG-TA-----------
         "AACCGGTAAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
-        alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{8u}, row_index_type{9u}},
+        seqan3::alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{8u}, row_index_type{9u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  A,  A,  A,  C,  C,  G,  G,  T,  T,
@@ -191,12 +193,12 @@ static auto dna4_02_s10u_15u = []()
         // -ACGTACG-TA-----------
         "AACCGGTAAACCGG"_dna4,
         "ACGTACGTA"_dna4,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
-        alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{8u}, row_index_type{9u}},
+        seqan3::alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{8u}, row_index_type{9u}},
         dna4_02.score_matrix().sub_matrix(10u, 15u),
         dna4_02.trace_matrix().sub_matrix(10u, 15u)
     };
@@ -213,12 +215,12 @@ static auto dna4_02_s3u_15u = []()
         // ---------AC-----
         "AACCGGTAAACCGG"_dna4,
         "AC"_dna4,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -0,
         "AC",
         "AC",
-        alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{11u}, row_index_type{2u}},
+        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{11u}, row_index_type{2u}},
         dna4_02.score_matrix().sub_matrix(3u, 15u),
         dna4_02.trace_matrix().sub_matrix(3u, 15u)
     };
@@ -231,12 +233,12 @@ static auto dna4_02_s1u_15u = []()
         // score: 0 - empty alignment
         "AACCGGTAAACCGG"_dna4,
         ""_dna4,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -0,
         "",
         "",
-        alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
         dna4_02.score_matrix().sub_matrix(1u, 15u),
         dna4_02.trace_matrix().sub_matrix(1u, 15u)
     };
@@ -253,12 +255,12 @@ static auto dna4_01T_s17u_1u = []()
         // AACCGGTTAACCGGTT
         ""_dna4,
         "AACCGGTTAACCGGTT"_dna4,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -16,
         "----------------",
         "AACCGGTTAACCGGTT",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{0u}, row_index_type{16u}},
+        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{16u}},
         dna4_01T.score_matrix().sub_matrix(17u, 1u),
         dna4_01T.trace_matrix().sub_matrix(17u, 1u)
     };
@@ -271,14 +273,14 @@ static auto dna4_03 = []()
         // score: 0
         ""_dna4,
         ""_dna4,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -0,
         "",
         "",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
         std::vector<int>{0},
-        std::vector<detail::trace_directions>{N}
+        std::vector<seqan3::detail::trace_directions>{N}
     };
 }();
 
@@ -293,12 +295,12 @@ static auto aa27_01 = []()
         // ---------UWRIUWR-IU
         "UUWWRRIIUUWWRRII"_aa27,
         "UWRIUWRIU"_aa27,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -5,
         "UW---WRRII",
         "UWRIUWR-IU",
-        alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
+        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
         //     e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
@@ -341,12 +343,12 @@ static auto aa27_01T = []()
         // UUWWRRIIUUWWRRII
         "UWRIUWRIU"_aa27,
         "UUWWRRIIUUWWRRII"_aa27,
-        align_cfg::edit | align_cfg::aligned_ends{free_ends_first},
+        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
+        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
         std::vector
         {
         //     e,  U,  W,  R,  I,  U,  W,  R,  I,  U

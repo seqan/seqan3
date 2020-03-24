@@ -19,8 +19,8 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
-using namespace seqan3::detail;
+using seqan3::operator""_dna4;
+using seqan3::operator|;
 
 template <typename score_t>
 class affine_gap_policy_mock :
@@ -55,15 +55,17 @@ struct affine_gap_fixture : public ::testing::Test
     using trace_matrix_iter_t = typename trace_matrix_t::iterator;
 
     static constexpr bool with_trace =
-        !decays_to_ignore_v<
+        !seqan3::detail::decays_to_ignore_v<
             std::remove_reference_t<decltype(std::declval<typename trace_matrix_t::value_type>().current)>>;
 
     void SetUp()
     {
         if constexpr (std::tuple_element_t<2, test_types>::value)
         {
-            score_matrix = score_matrix_t{"ACGT"_dna4, "ACGT"_dna4, static_band{lower_bound{-2}, upper_bound{2}}};
-            trace_matrix = trace_matrix_t{"ACGT"_dna4, "ACGT"_dna4, static_band{lower_bound{-2}, upper_bound{2}}};
+            score_matrix = score_matrix_t{"ACGT"_dna4, "ACGT"_dna4, seqan3::static_band{seqan3::lower_bound{-2},
+                                                                                        seqan3::upper_bound{2}}};
+            trace_matrix = trace_matrix_t{"ACGT"_dna4, "ACGT"_dna4, seqan3::static_band{seqan3::lower_bound{-2},
+                                                                                        seqan3::upper_bound{2}}};
         }
         else
         {
@@ -78,11 +80,11 @@ struct affine_gap_fixture : public ::testing::Test
 
     auto column()
     {
-        return views::zip(*score_matrix_iter, *trace_matrix_iter);
+        return seqan3::views::zip(*score_matrix_iter, *trace_matrix_iter);
     }
 
     affine_gap_policy_mock<int> mock{};
-    alignment_algorithm_state<int> state{};
+    seqan3::detail::alignment_algorithm_state<int> state{};
 
     score_matrix_t score_matrix{};
     trace_matrix_t trace_matrix{};
@@ -92,17 +94,17 @@ struct affine_gap_fixture : public ::testing::Test
 };
 
 using testing_types = ::testing::Types<
-    std::tuple<alignment_score_matrix_one_column<int>,
-               alignment_trace_matrix_full<trace_directions>,
+    std::tuple<seqan3::detail::alignment_score_matrix_one_column<int>,
+               seqan3::detail::alignment_trace_matrix_full<seqan3::detail::trace_directions>,
                std::false_type>,
-    std::tuple<alignment_score_matrix_one_column<int>,
-               alignment_trace_matrix_full<trace_directions, true>,
+    std::tuple<seqan3::detail::alignment_score_matrix_one_column<int>,
+               seqan3::detail::alignment_trace_matrix_full<seqan3::detail::trace_directions, true>,
                std::false_type>,
-    std::tuple<alignment_score_matrix_one_column_banded<int>,
-               alignment_trace_matrix_full_banded<trace_directions>,
+    std::tuple<seqan3::detail::alignment_score_matrix_one_column_banded<int>,
+               seqan3::detail::alignment_trace_matrix_full_banded<seqan3::detail::trace_directions>,
                std::true_type>,
-    std::tuple<alignment_score_matrix_one_column_banded<int>,
-               alignment_trace_matrix_full_banded<trace_directions, true>,
+    std::tuple<seqan3::detail::alignment_score_matrix_one_column_banded<int>,
+               seqan3::detail::alignment_trace_matrix_full_banded<seqan3::detail::trace_directions, true>,
                std::true_type>
     >;
 
@@ -132,10 +134,10 @@ TYPED_TEST(affine_gap_fixture, compute_cell)
 
     if constexpr (this->with_trace)
     {
-        EXPECT_EQ(trace_cell.current, trace_directions::diagonal |
-                                      trace_directions::up_open |
-                                      trace_directions::left_open);
-        EXPECT_EQ(trace_cell.up, trace_directions::up_open);
-        EXPECT_EQ(trace_cell.w_left, trace_directions::left_open);
+        EXPECT_EQ(trace_cell.current,
+                  seqan3::detail::trace_directions::diagonal | seqan3::detail::trace_directions::up_open
+                                                             | seqan3::detail::trace_directions::left_open);
+        EXPECT_EQ(trace_cell.up, seqan3::detail::trace_directions::up_open);
+        EXPECT_EQ(trace_cell.w_left, seqan3::detail::trace_directions::left_open);
     }
 }

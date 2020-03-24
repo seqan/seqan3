@@ -21,30 +21,35 @@
 
 #include "alignment_fixture.hpp"
 
+using seqan3::operator""_dna4;
+
 namespace seqan3::test::alignment::fixture::semi_global::affine::unbanded
 {
 
-inline constexpr auto align_config = align_cfg::mode{global_alignment} |
-                                     align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}};
+inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::global_alignment} |
+                                     seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
+                                                                               seqan3::gap_open_score{-10}}};
 
-inline constexpr auto align_config_semi_seq1 = align_config | align_cfg::aligned_ends{free_ends_first};
-inline constexpr auto align_config_semi_seq2 = align_config | align_cfg::aligned_ends{free_ends_second};
+inline constexpr auto align_config_semi_seq1 = align_config | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
+inline constexpr auto align_config_semi_seq2 = align_config | seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};
 
 static auto dna4_01_semi_first = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
+    using seqan3::detail::column_index_type;
+    using seqan3::detail::row_index_type;
 
     return alignment_fixture
     {
         "TTTTTACGTATGTCCCCC"_dna4,
         "ACGTAAAACGT"_dna4,
-        align_config_semi_seq1 | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
+        align_config_semi_seq1
+            | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                           seqan3::mismatch_score{-5}}},
         10,
         "ACGT---ATGT",
         "ACGTAAAACGT",
-        alignment_coordinate{column_index_type{5u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{13u}, row_index_type{11u}},
+        seqan3::alignment_coordinate{column_index_type{5u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{13u}, row_index_type{11u}},
         std::vector
         {
         //      e,  T,  T,  T,  T,  T,  A,  C,  G,  T,  A,  T,  G,  T,  C,  C,  C,  C,  C
@@ -82,19 +87,21 @@ static auto dna4_01_semi_first = []()
 
 static auto dna4_02_semi_first = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
+    using seqan3::detail::column_index_type;
+    using seqan3::detail::row_index_type;
 
     return alignment_fixture
     {
         "ACGTAAAACGT"_dna4,
         "TTTTTACGTATGTCCCCC"_dna4,
-        align_config_semi_seq1 | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
+        align_config_semi_seq1
+            | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                           seqan3::mismatch_score{-5}}},
         -13,
         "-----ACGTA--------",
         "TTTTTACGTATGTCCCCC",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{5u}, row_index_type{18u}},
+        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{5u}, row_index_type{18u}},
         std::vector
         {
         //      e,  A,  C,  G,  T,  A,  A,  A,  A,  C,  G,  T
@@ -146,19 +153,21 @@ static auto dna4_02_semi_first = []()
 
 static auto dna4_03_semi_second = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
+    using seqan3::detail::column_index_type;
+    using seqan3::detail::row_index_type;
 
     return alignment_fixture
     {
         "TTTTTACGTATGTCCCCC"_dna4,
         "ACGTAAAACGT"_dna4,
-        align_config_semi_seq2 | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
+        align_config_semi_seq2
+            | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                           seqan3::mismatch_score{-5}}},
         -13,
         "TTTTTACGTATGTCCCCC",
         "-----ACGTA--------",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{18u}, row_index_type{5u}},
+        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        seqan3::alignment_coordinate{column_index_type{18u}, row_index_type{5u}},
         std::vector
         {
         //      e,  T,  T,  T,  T,  T,  A,  C,  G,  T,  A,  T,  G,  T,  C,  C,  C,  C,  C
@@ -196,19 +205,21 @@ static auto dna4_03_semi_second = []()
 
 static auto dna4_04_semi_second = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
+    using seqan3::detail::column_index_type;
+    using seqan3::detail::row_index_type;
 
     return alignment_fixture
     {
         "ACGTAAAACGT"_dna4,
         "TTTTTACGTATGTCCCCC"_dna4,
-        align_config_semi_seq2 | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
+        align_config_semi_seq2
+            | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                           seqan3::mismatch_score{-5}}},
         10,
         "ACGTAAAACGT",
         "ACGT---ATGT",
-        alignment_coordinate{column_index_type{0u}, row_index_type{5u}},
-        alignment_coordinate{column_index_type{11u}, row_index_type{13u}},
+        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{5u}},
+        seqan3::alignment_coordinate{column_index_type{11u}, row_index_type{13u}},
         std::vector
         {
         //      e,  A,  C,  G,  T,  A,  A,  A,  A,  C,  G,  T

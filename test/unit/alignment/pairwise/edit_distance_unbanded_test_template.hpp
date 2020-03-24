@@ -18,8 +18,6 @@
 
 #include <seqan3/test/pretty_printing.hpp>
 
-using namespace seqan3;
-using namespace seqan3::detail;
 using namespace seqan3::test::alignment::fixture;
 
 template <bool compute_score_matrix_,
@@ -28,11 +26,11 @@ template <bool compute_score_matrix_,
           typename align_cfg_t,
           typename word_t,
           typename is_semi_global_t,
-          typename traits_t = default_edit_distance_trait_type<database_t,
-                                                               query_t,
-                                                               align_cfg_t,
-                                                               is_semi_global_t,
-                                                               word_t>>
+          typename traits_t = seqan3::detail::default_edit_distance_trait_type<database_t,
+                                                                               query_t,
+                                                                               align_cfg_t,
+                                                                               is_semi_global_t,
+                                                                               word_t>>
 struct edit_traits_type : traits_t
 {
     static constexpr bool compute_score_matrix = compute_score_matrix_;
@@ -81,7 +79,7 @@ template <template <bool, typename...> typename edit_traits_type,
 auto edit_distance(database_t && database, query_t && query, align_cfg_t && align_cfg)
 {
     using edit_traits = edit_traits_type<compute_score_matrix, database_t, query_t, align_cfg_t>;
-    using algorithm_t = edit_distance_unbanded<database_t, query_t, align_cfg_t, edit_traits>;
+    using algorithm_t = seqan3::detail::edit_distance_unbanded<database_t, query_t, align_cfg_t, edit_traits>;
     auto alignment = algorithm_t{database, query, align_cfg};
 
     // compute alignment
@@ -92,7 +90,7 @@ auto edit_distance(database_t && database, query_t && query, align_cfg_t && alig
 TYPED_TEST_P(edit_distance_unbanded_test, score)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_score};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_score};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -104,7 +102,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, score)
 TYPED_TEST_P(edit_distance_unbanded_test, score_matrix)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_alignment};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -121,7 +119,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, score_matrix)
 TYPED_TEST_P(edit_distance_unbanded_test, trace_matrix)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_alignment};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -137,7 +135,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, trace_matrix)
 TYPED_TEST_P(edit_distance_unbanded_test, back_coordinate)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_back_coordinate};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_back_coordinate};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -151,7 +149,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, back_coordinate)
 TYPED_TEST_P(edit_distance_unbanded_test, front_coordinate)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_front_coordinate};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_front_coordinate};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -165,7 +163,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, front_coordinate)
 TYPED_TEST_P(edit_distance_unbanded_test, alignment)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_alignment};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -173,8 +171,8 @@ TYPED_TEST_P(edit_distance_unbanded_test, alignment)
     auto alignment = edit_distance<TypeParam::template edit_traits_type>(database, query, align_cfg);
 
     auto && [gapped_database, gapped_query] = alignment.alignment();
-    EXPECT_EQ(gapped_database | views::to_char | views::to<std::string>, fixture.aligned_sequence1);
-    EXPECT_EQ(gapped_query    | views::to_char | views::to<std::string>, fixture.aligned_sequence2);
+    EXPECT_EQ(gapped_database | seqan3::views::to_char | seqan3::views::to<std::string>, fixture.aligned_sequence1);
+    EXPECT_EQ(gapped_query    | seqan3::views::to_char | seqan3::views::to<std::string>, fixture.aligned_sequence2);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(edit_distance_unbanded_test,

@@ -18,8 +18,6 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
-
 template <typename T>
 struct execution_handler : public ::testing::Test
 {
@@ -29,8 +27,8 @@ struct execution_handler : public ::testing::Test
     {
         for (unsigned i = 0; i < total_size; ++i)
         {
-            sequence_collection1.push_back(test::generate_sequence<dna4>(100, 20, i));
-            sequence_collection2.push_back(test::generate_sequence<dna4>(100, 20, i + total_size));
+            sequence_collection1.push_back(seqan3::test::generate_sequence<seqan3::dna4>(100, 20, i));
+            sequence_collection2.push_back(seqan3::test::generate_sequence<seqan3::dna4>(100, 20, i + total_size));
         }
     }
 
@@ -45,8 +43,8 @@ struct execution_handler : public ::testing::Test
         }
     }
 
-    std::vector<dna4_vector> sequence_collection1{};
-    std::vector<dna4_vector> sequence_collection2{};
+    std::vector<seqan3::dna4_vector> sequence_collection1{};
+    std::vector<seqan3::dna4_vector> sequence_collection2{};
 };
 
 auto simulate_alignment = [](size_t const idx, auto && rng1, auto && rng2)
@@ -77,8 +75,9 @@ TYPED_TEST_P(execution_handler, execute_as_indexed_sequence_pairs)
     size_t pos = 0;
     size_t chunk_size = 4; // total_size is a multiple of chunk size.
 
-    auto indexed_sequence_pairs = views::zip(views::zip(this->sequence_collection1, this->sequence_collection2),
-                                             std::views::iota(0));
+    auto indexed_sequence_pairs = seqan3::views::zip(seqan3::views::zip(this->sequence_collection1,
+                                                                        this->sequence_collection2),
+                                                     std::views::iota(0));
     using range_iterator_t = std::ranges::iterator_t<decltype(indexed_sequence_pairs)>;
 
     for (range_iterator_t it = indexed_sequence_pairs.begin();

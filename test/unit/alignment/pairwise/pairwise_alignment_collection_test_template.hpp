@@ -18,8 +18,6 @@
 
 #include "fixture/alignment_fixture.hpp"
 
-using namespace seqan3;
-using namespace seqan3::detail;
 using namespace seqan3::test::alignment::fixture;
 
 template <auto _fixture>
@@ -40,9 +38,9 @@ TYPED_TEST_SUITE_P(pairwise_alignment_collection_test);
 TYPED_TEST_P(pairwise_alignment_collection_test, score)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_score};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_score};
     auto [database, query] = fixture.get_sequences();
-    auto alignment_rng = align_pairwise(views::zip(database, query), align_cfg);
+    auto alignment_rng = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg);
 
     auto scores = fixture.get_scores();
     EXPECT_TRUE((std::ranges::equal(alignment_rng | std::views::transform([] (auto res) { return res.score(); } ),
@@ -52,10 +50,10 @@ TYPED_TEST_P(pairwise_alignment_collection_test, score)
 TYPED_TEST_P(pairwise_alignment_collection_test, back_coordinate)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_back_coordinate};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_back_coordinate};
     auto [database, query] = fixture.get_sequences();
-    auto res_vec = align_pairwise(views::zip(database, query), align_cfg)
-                 | views::to<std::vector>;
+    auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
+                 | seqan3::views::to<std::vector>;
 
     EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                     fixture.get_scores())));
@@ -66,15 +64,15 @@ TYPED_TEST_P(pairwise_alignment_collection_test, back_coordinate)
 TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_front_coordinate};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_front_coordinate};
 
-    using traits_t = alignment_configuration_traits<decltype(align_cfg)>;
+    using traits_t = seqan3::detail::alignment_configuration_traits<decltype(align_cfg)>;
 
     if constexpr (!traits_t::is_vectorised)
     {
         auto [database, query] = fixture.get_sequences();
-        auto res_vec = align_pairwise(views::zip(database, query), align_cfg)
-                     | views::to<std::vector>;
+        auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
+                     | seqan3::views::to<std::vector>;
 
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                         fixture.get_scores())));
@@ -88,15 +86,15 @@ TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
 TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
 {
     auto const & fixture = this->fixture();
-    configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_alignment};
 
-    using traits_t = alignment_configuration_traits<decltype(align_cfg)>;
+    using traits_t = seqan3::detail::alignment_configuration_traits<decltype(align_cfg)>;
 
     if constexpr (!traits_t::is_vectorised)
     {
         auto [database, query] = fixture.get_sequences();
-        auto res_vec = align_pairwise(views::zip(database, query), align_cfg)
-                     | views::to<std::vector>;
+        auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
+                     | seqan3::views::to<std::vector>;
 
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                         fixture.get_scores())));
@@ -106,21 +104,17 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
                                         fixture.get_front_coordinates())));
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res)
                                                 {
-                                                        return std::get<0>(res.alignment()) | views::to_char
-                                                                                            | views::to<std::string>;
+                                                    return std::get<0>(res.alignment()) | seqan3::views::to_char
+                                                                                        | seqan3::views::to<std::string>;
                                                 }),
                                         fixture.get_aligned_sequences1())));
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res)
                                                 {
-                                                        return std::get<1>(res.alignment()) | views::to_char
-                                                                                            | views::to<std::string>;
+                                                    return std::get<1>(res.alignment()) | seqan3::views::to_char
+                                                                                        | seqan3::views::to<std::string>;
                                                 }),
                                         fixture.get_aligned_sequences2())));
     }
 }
 
-REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_collection_test,
-                            score,
-                            back_coordinate,
-                            front_coordinate,
-                            alignment);
+REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_collection_test, score, back_coordinate, front_coordinate, alignment);

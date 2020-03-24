@@ -26,7 +26,7 @@ static auto dna4_all_same = []()
     for (size_t i = 0; i < 100; ++i)
         data.push_back(base_fixture);
 
-    return alignment_fixture_collection{base_fixture.config | align_cfg::vectorise, data};
+    return alignment_fixture_collection{base_fixture.config | seqan3::align_cfg::vectorise, data};
 }();
 
 static auto dna4_different_length = []()
@@ -47,7 +47,7 @@ static auto dna4_different_length = []()
         data.push_back(base_fixture_04);
     }
 
-    return alignment_fixture_collection{base_fixture_01.config | align_cfg::vectorise, data};
+    return alignment_fixture_collection{base_fixture_01.config | seqan3::align_cfg::vectorise, data};
 }();
 
 static auto dna4_with_empty_sequences = []()
@@ -72,7 +72,7 @@ static auto dna4_with_empty_sequences = []()
         data.push_back(base_fixture_06);
     }
 
-    return alignment_fixture_collection{base_fixture_01.config | align_cfg::vectorise, data};
+    return alignment_fixture_collection{base_fixture_01.config | seqan3::align_cfg::vectorise, data};
 }();
 
 } // namespace seqan3::test::alignment::collection::simd::global::affine::unbanded
