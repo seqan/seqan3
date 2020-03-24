@@ -25,7 +25,6 @@
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
@@ -379,8 +378,7 @@ protected:
                                                             " extensions:", extensions, "!")};
 
         // Drop the dot.
-        std::string tmp_str = path.extension().string();
-        auto drop_less_ext = tmp_str | views::drop(1);
+        std::string drop_less_ext = path.extension().string().substr(1);
 
         // Compares the extensions in lower case.
         auto case_insensitive_equal_to = [&] (std::string const & ext)
