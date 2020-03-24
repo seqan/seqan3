@@ -7,7 +7,10 @@
 
 #include <gtest/gtest.h>
 
+#include <string>
+
 #include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/function.hpp>
 
 constexpr
 int    constexpr_nonvoid_free_fun(int i) { return i; }
@@ -73,4 +76,29 @@ TEST(type_trait, is_constexpr_invocable)
     EXPECT_TRUE((SEQAN3_IS_CONSTEXPR(constexpr_void_member_t{}.get_i(3))));
     EXPECT_TRUE((!SEQAN3_IS_CONSTEXPR(nonconstexpr_nonvoid_member_t{}.get_i(3))));
     EXPECT_TRUE((!SEQAN3_IS_CONSTEXPR(nonconstexpr_void_member_t{}.get_i(3))));
+}
+
+std::function test_function_object = [] (size_t arg1, std::string & arg2)
+{
+    assert(arg1 < arg2.size());
+    return arg2[arg1];
+};
+
+TEST(function_traits, argument_count)
+{
+    using function_t = decltype(test_function_object);
+    EXPECT_EQ(seqan3::function_traits<function_t>::argument_count, 2u);
+}
+
+TEST(function_traits, result_type)
+{
+    using function_t = decltype(test_function_object);
+    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_t>::result_type, char>));
+}
+
+TEST(function_traits, argument_type_at)
+{
+    using function_t = decltype(test_function_object);
+    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_t>::argument_type_at<0>, size_t>));
+    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_t>::argument_type_at<1>, std::string &>));
 }

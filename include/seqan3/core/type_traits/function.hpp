@@ -12,7 +12,51 @@
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
+#include <functional>
+
+#include <seqan3/core/type_list/traits.hpp>
+
+namespace seqan3
+{
+// ----------------------------------------------------------------------------
+// function_traits
+// ----------------------------------------------------------------------------
+
+//!\cond
+template <typename function_t>
+struct function_traits;
+//!\endcond
+
+/*!\brief A traits class to provide a uniform interface to the properties of a std::function type.
+ * \ingroup type_traits
+ *
+ * seqan3::function_traits is the type trait class that provides a uniform interface to the properties of
+ * a std::function type.
+ * This makes it possible to access the return type and the argument types of the stored target function.
+ *
+ * ### Example
+ *
+ * \include snippet/core/type_traits/function_traits.cpp
+ */
+template <typename return_t, typename ...args_t>
+struct function_traits<std::function<return_t(args_t...)>>
+{
+    //!\brief The number of arguments passed to the std::function target.
+    static constexpr size_t argument_count = sizeof...(args_t);
+
+    //!\brief The return type of the function target.
+    using result_type = return_t;
+
+    /*!\brief The argument type at the given `index`.
+     * \tparam index The position of the argument to get the type for; must be smaller than `argument_count`.
+     */
+    template <size_t index>
+    //!\cond
+        requires index < argument_count
+    //!\endcond
+    using argument_type_at = pack_traits::at<index, args_t...>;
+};
+} // namespace seqan3
 
 namespace seqan3::detail
 {
