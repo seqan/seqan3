@@ -27,7 +27,6 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/join.hpp>
-#include <seqan3/range/views/to_lower.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
@@ -384,13 +383,16 @@ protected:
         auto drop_less_ext = tmp_str | views::drop(1);
 
         // Compares the extensions in lower case.
-        auto cmp_lambda = [&] (std::string const & cmp)
+        auto case_insensitive_equal_to = [&] (std::string const & ext)
         {
-            return std::ranges::equal(cmp | views::to_lower, drop_less_ext | views::to_lower);
+            return std::ranges::equal(ext, drop_less_ext, [] (char const chr1, char const chr2)
+                   {
+                       return std::tolower(chr1) == std::tolower(chr2);
+                   });
         };
 
         // Check if requested extension is present.
-        if (std::ranges::find_if(extensions, cmp_lambda) == extensions.end())
+        if (std::ranges::find_if(extensions, case_insensitive_equal_to) == extensions.end())
         {
             throw validation_error{detail::to_string("Expected one of the following valid extensions: ",
                                                              extensions, "! Got ", drop_less_ext, " instead!")};
