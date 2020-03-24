@@ -539,15 +539,39 @@ public:
     {
         assert(index != nullptr);
 
-        std::vector<std::pair<size_type, size_type>> occ;
+        std::vector<std::pair<size_type, size_type>> occ{};
         occ.reserve(count());
+
+        if (!count())
+            return occ; // empty result vector
+
+        // fill occ with locations in order to not allocate another vector
         for (size_type i = 0; i < count(); ++i)
+            occ.emplace_back(offset() - index->index[node.lb + i], 0);
+        std::sort(occ.begin(), occ.end());
+
+        size_type seq_idx = index->text_begin_rs.rank(occ[0].first + 1);
+        size_type seq_offset = index->text_begin_ss.select(seq_idx);
+
+        // replace first occurrence value with correct entries
+        occ[0].second = occ[0].first - seq_offset; // position in seq i
+        occ[0].first  = seq_idx - 1; // position in seq i
+
+        for (size_type i = 1; i < count(); ++i)
         {
-            size_type loc = offset() - index->index[node.lb + i];
-            size_type sequence_rank = index->text_begin_rs.rank(loc + 1);
-            size_type sequence_position = loc - index->text_begin_ss.select(sequence_rank);
-            occ.emplace_back(sequence_rank - 1, sequence_position);
+            size_type next_seq_idx = index->text_begin_rs.rank(occ[i].first + 1);
+
+            if (next_seq_idx != seq_idx)
+            {
+                seq_idx = next_seq_idx;
+                seq_offset = index->text_begin_ss.select(seq_idx);
+            }
+
+            // replace occurrence values with correct entries
+            occ[i].second = occ[i].first - seq_offset; // position in seq i
+            occ[i].first  = seq_idx - 1; // position in seq i
         }
+
         return occ;
     }
 
