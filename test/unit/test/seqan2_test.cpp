@@ -7,11 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/type_traits/iterator.hpp>
-#include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/test/seqan2.hpp>
 #include <seqan3/std/ranges>
+#include <seqan3/test/seqan2.hpp>
 
 // Note: this file will only test regressions encountered with seqan2 compatibility and has no claim to be complete
 
@@ -115,7 +112,7 @@ TYPED_TEST(seqan2_container, std_ranges_range)
 TYPED_TEST(seqan2_container, seqan3_value_type)
 {
     using container_t = TypeParam;
-    using value_type = seqan3::value_type_t<container_t>;
+    using value_type = std::ranges::range_value_t<container_t>;
     EXPECT_TRUE((std::same_as<value_type, int>));
 }
 

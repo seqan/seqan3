@@ -18,7 +18,6 @@
 #include <iostream>
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
-#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/terminal.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/version.hpp>

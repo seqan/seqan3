@@ -14,7 +14,6 @@
 
 #include <utility>
 
-#include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/type_traits>

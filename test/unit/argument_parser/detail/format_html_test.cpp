@@ -7,9 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/remove_if.hpp>
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/argument_parser/detail/format_html.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
