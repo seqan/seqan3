@@ -238,9 +238,7 @@ public:
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
      *
-     * ### Example
-     *
-     * \include test/snippet/core/cereal_example.cpp
+     * \implements cerealisable
      */
     template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)

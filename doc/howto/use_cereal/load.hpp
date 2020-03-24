@@ -1,8 +1,9 @@
-#if SEQAN3_WITH_CEREAL
 #include <fstream>
 #include <vector>
 
+//! [binary_include]
 #include <cereal/archives/binary.hpp> // includes the cereal::BinaryInputArchive and cereal::BinaryOutputArchive
+//! [binary_include]
 #include <cereal/types/vector.hpp>    // includes cerealisation support for std::vector
 
 #include <seqan3/core/concept/cereal.hpp>
@@ -42,4 +43,3 @@ int main()
 
     return 0;
 }
-#endif
