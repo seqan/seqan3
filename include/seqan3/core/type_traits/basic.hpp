@@ -15,7 +15,17 @@
 #include <tuple>
 #include <type_traits>
 
-#include <seqan3/core/type_traits/function.hpp>
+#include <seqan3/core/platform.hpp>
+
+// ----------------------------------------------------------------------------
+// is_constexpr
+// ----------------------------------------------------------------------------
+
+/*!\brief Returns true if the expression passed to this macro can be evaluated at compile time, false otherwise.
+ * \ingroup type_traits
+ * \returns true or false.
+ */
+#define SEQAN3_IS_CONSTEXPR(...) std::integral_constant<bool, __builtin_constant_p((__VA_ARGS__, 0))>::value
 
 namespace seqan3
 {
