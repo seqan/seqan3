@@ -328,7 +328,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
     TypeParam it = TypeParam(fm);
     it.extend_right("ACG"_dna4);
 
-    EXPECT_TRUE(std::ranges::equal(it.locate(), it.lazy_locate()));
+    EXPECT_TRUE(std::ranges::equal(seqan3::uniquify(it.locate()), seqan3::uniquify(it.lazy_locate())));
 }
 
 TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
