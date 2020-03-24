@@ -552,6 +552,9 @@ public:
 
         size_type seq_idx = index->text_begin_rs.rank(occ[0].first + 1);
         size_type seq_offset = index->text_begin_ss.select(seq_idx);
+        size_type next_seq_offset = (seq_idx == index->text_begin_rs.rank(index->size() - 1))
+                                        ? index->size() - 1
+                                        : index->text_begin_ss.select(seq_idx + 1);
 
         // replace first occurrence value with correct entries
         occ[0].second = occ[0].first - seq_offset; // position in seq i
@@ -559,11 +562,9 @@ public:
 
         for (size_type i = 1; i < count(); ++i)
         {
-            size_type next_seq_idx = index->text_begin_rs.rank(occ[i].first + 1);
-
-            if (next_seq_idx != seq_idx)
+            if (occ[i].first >= next_seq_offset)
             {
-                seq_idx = next_seq_idx;
+                seq_idx = index->text_begin_rs.rank(occ[i].first + 1);
                 seq_offset = index->text_begin_ss.select(seq_idx);
             }
 
