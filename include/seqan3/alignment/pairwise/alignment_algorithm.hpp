@@ -606,10 +606,10 @@ private:
         res.id = idx;
 
         // Choose what needs to be computed.
-        if constexpr (traits_t::result_type_rank >= 0)  // compute score
+        if constexpr (traits_t::compute_score)
             res.score = this->alignment_state.optimum.score;
 
-        if constexpr (traits_t::result_type_rank >= 1)  // compute back coordinate
+        if constexpr (traits_t::compute_back_coordinate)
         {
             res.back_coordinate = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
                                                        row_index_type{this->alignment_state.optimum.row_index}};
@@ -618,7 +618,7 @@ private:
                 res.back_coordinate.second += res.back_coordinate.first - this->trace_matrix.band_col_index;
         }
 
-        if constexpr (traits_t::result_type_rank >= 2) // compute front coordinate
+        if constexpr (traits_t::compute_front_coordinate)
         {
             // Get a aligned sequence builder for banded or un-banded case.
             aligned_sequence_builder builder{sequence1, sequence2};
@@ -628,7 +628,7 @@ private:
             res.front_coordinate.first = trace_res.first_sequence_slice_positions.first;
             res.front_coordinate.second = trace_res.second_sequence_slice_positions.first;
 
-            if constexpr (traits_t::result_type_rank == 3) // compute alignment
+            if constexpr (traits_t::compute_sequence_alignment)
                 res.alignment = std::move(trace_res.alignment);
         }
 
@@ -689,9 +689,10 @@ private:
             result_value_t res{};
             res.id = alignment_index;
 
-            res.score = this->alignment_state.optimum.score[simd_index];  // Just take this
+            if constexpr (traits_t::compute_score)
+                res.score = this->alignment_state.optimum.score[simd_index];  // Just take this
 
-            if constexpr (traits_t::result_type_rank >= 1)  // compute back coordinate
+            if constexpr (traits_t::compute_back_coordinate)
             {
                 res.back_coordinate.first = this->alignment_state.optimum.column_index[simd_index] ;
                 res.back_coordinate.second = this->alignment_state.optimum.row_index[simd_index];
