@@ -34,9 +34,9 @@ int main()
 {
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
-    seqan3::alignment_file_input fin{tmp_dir/"my.sam", seqan3::fields<seqan3::field::cigar>{}};
+    seqan3::alignment_file_input fin{tmp_dir/"my.sam"}; // default fields
 
-    for (auto & [cigar_vector] : fin)
-        seqan3::debug_stream << cigar_vector << '\n';
+    for (auto & rec : fin)
+        seqan3::debug_stream << seqan3::get<seqan3::field::cigar>(rec) << '\n'; // access cigar vector
 }
 //![code]

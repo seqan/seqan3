@@ -71,6 +71,18 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## Notable Bug-fixes
 
+### I/O
+
+* The `seqan3::field::cigar` was added to the default fields for reading and writing alignment files
+  ([\#1642](https://github.com/seqan/seqan3/pull/1642)).
+  This has the following impact:
+   1. Reading and writing in one line is now possible without additional reference information:
+      `seqan3::alignment_file_output{"foo.sam"} = seqan3::alignment_file_input{"bar.sam"};`
+   2. The `seqan3::alignment_file_output` now accepts `seqan3::field::cigar` and `seqan3::field::alignment`
+      although they store redundant information. For the SAM/BAM format this ambiguity is handled by favoring the CIGAR
+      information at all times if present.
+  Note that this breaks your code if you have not selected custom fields and used structural bindings!
+
 #### Search
 
 * The `seqan3::fm_index_cursor::extend_right()`, `seqan3::bi_fm_index_cursor::extend_right()` and

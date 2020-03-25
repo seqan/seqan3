@@ -22,19 +22,6 @@ using seqan3::operator""_dna5;
 using seqan3::operator""_phred42;
 using seqan3::operator""_tag;
 
-using sam_fields = seqan3::fields<seqan3::field::header_ptr,
-                                  seqan3::field::id,
-                                  seqan3::field::flag,
-                                  seqan3::field::ref_id,
-                                  seqan3::field::ref_offset,
-                                  seqan3::field::mapq,
-                                  seqan3::field::alignment,
-                                  seqan3::field::offset,
-                                  seqan3::field::mate,
-                                  seqan3::field::seq,
-                                  seqan3::field::qual,
-                                  seqan3::field::tags>;
-
 // global variables for reuse
 seqan3::alignment_file_input_options<seqan3::dna5> input_options;
 seqan3::alignment_file_output_options output_options;
@@ -392,6 +379,23 @@ TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_informati
 // alignment_file_write
 // ----------------------------------------------------------------------------
 
+// Note that these differ from the alignment_file_output default fields:
+// 1. They don't contain field::bit_score and field::evalue since these belong to the BLAST format.
+// 2. field::alignment and field::cigar are redundant. Since field::alignment is the more complex one it is chosen here.
+//    The behaviour if both are given is tested in a separate test.
+using sam_fields = seqan3::fields<seqan3::field::header_ptr,
+                                  seqan3::field::id,
+                                  seqan3::field::flag,
+                                  seqan3::field::ref_id,
+                                  seqan3::field::ref_offset,
+                                  seqan3::field::mapq,
+                                  seqan3::field::alignment,
+                                  seqan3::field::offset,
+                                  seqan3::field::mate,
+                                  seqan3::field::seq,
+                                  seqan3::field::qual,
+                                  seqan3::field::tags>;
+
 template <typename format_type>
 struct alignment_file_write : public alignment_file_read<format_type>
 {
@@ -541,11 +545,41 @@ TYPED_TEST_P(alignment_file_write, cigar_vector)
          {1, 'M'_cigar_op}, {1, 'I'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}}
     };
 
-    {
-        this->tag_dicts[0]["NM"_tag] = 7;
-        this->tag_dicts[0]["AS"_tag] = 2;
-        this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
+    this->tag_dicts[0]["NM"_tag] = 7;
+    this->tag_dicts[0]["AS"_tag] = 2;
+    this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
 
+    {
+        seqan3::alignment_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
+        for (size_t i = 0ul; i < 3ul; ++i)
+        {
+            ASSERT_NO_THROW(fout.emplace_back(this->seqs[i],
+                                              this->ids[i],
+                                              this->offsets[i],
+                                              this->ref_seq,
+                                              0/*ref_id*/,
+                                              this->ref_offsets[i],
+                                              this->alignments[i],
+                                              cigar_v[i],
+                                              this->mapqs[i],
+                                              this->quals[i],
+                                              this->flags[i],
+                                              this->mates[i],
+                                              this->tag_dicts[i],
+                                              0/*evalue*/,
+                                              0/*bitscore*/,
+                                              &(this->header)));
+        }
+    }
+
+    this->ostream.flush();
+    // compare to original input because hard clipping is preserved when writing the cigar vector directly
+    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
+
+    this->ostream = std::ostringstream{}; // clear
+
+    // 2. Write only the cigar, not the alignment
+    {
         seqan3::alignment_file_output fout{this->ostream, TypeParam{}, seqan3::fields<seqan3::field::header_ptr,
                                                                                       seqan3::field::id,
                                                                                       seqan3::field::flag,

@@ -188,10 +188,16 @@ If you want to read up more about cigar strings,
 take a look at the [SAM specifications](https://samtools.github.io/hts-specs/SAMv1.pdf)
 or the [SAMtools paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2723002/).
 
-## Completing reference information
+## Reading the CIGAR string
 
-In SeqAn the conversion from a CIGAR string to an alignment (two *aligned_sequences*) is done automatically for you.
-You can just pass the alignment object to the alignment file:
+By default, the `seqan3::alignment_file_input` will always read the `seqan3::field::cigar` and store it
+into a `std::vector<seqan3::cigar>`:
+
+\snippet doc/tutorial/alignment_file/alignment_file_read_cigar.cpp code
+
+## Reading the CIGAR information into an actual alignment
+
+In SeqAn, the conversion from a CIGAR string to an alignment (two *aligned_sequences*) is done automatically for you. You can access it by querying `seqan3::field::alignment` from the record:
 
 \snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main
 \snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp alignments_without_ref
@@ -245,13 +251,6 @@ r004 mapped against 1 with 14 gaps in the read sequence and 0 gaps in the refere
 \snippet doc/tutorial/alignment_file/alignment_file_solution2.cpp solution
 
 \endsolution
-
-## Reading the CIGAR string
-
-If you are accustomed to the raw CIGAR information, we also provide reading the cigar information into a
-`std::vector<seqan3::cigar>` if you specify the `seqan3::field::cigar`.
-
-\snippet doc/tutorial/alignment_file/alignment_file_read_cigar.cpp code
 
 # Writing alignment files
 

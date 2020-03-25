@@ -122,6 +122,7 @@ TEST(general, default_template_args_and_deduction_guides)
                                  seqan3::field::ref_id,
                                  seqan3::field::ref_offset,
                                  seqan3::field::alignment,
+                                 seqan3::field::cigar,
                                  seqan3::field::mapq,
                                  seqan3::field::qual,
                                  seqan3::field::flag,
@@ -486,14 +487,29 @@ read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
 read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )";
 
-    seqan3::alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
-    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+    // with reference information
+    {
+        seqan3::alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
+        seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
-    fout = fin;
+        fout = fin;
 
-    fout.get_stream().flush();
+        fout.get_stream().flush();
 
-    EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), comp);
+        EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), comp);
+    }
+
+    // without reference information
+    {
+        seqan3::alignment_file_input fin{std::istringstream{comp}, seqan3::format_sam{}};
+        seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+
+        fout = fin;
+
+        fout.get_stream().flush();
+
+        EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), comp);
+    }
 }
 
 TEST(rows, assign_alignment_file_pipes)
