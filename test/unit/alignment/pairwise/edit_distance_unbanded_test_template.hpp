@@ -80,7 +80,7 @@ auto edit_distance(database_t && database, query_t && query, align_cfg_t && alig
 {
     using edit_traits = edit_traits_type<compute_score_matrix, database_t, query_t, align_cfg_t>;
     using algorithm_t = seqan3::detail::edit_distance_unbanded<database_t, query_t, align_cfg_t, edit_traits>;
-    auto alignment = algorithm_t{database, query, align_cfg};
+    auto alignment = algorithm_t{database, query, align_cfg, edit_traits{}};
 
     // compute alignment
     alignment(0u);
