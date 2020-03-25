@@ -1,6 +1,7 @@
 #include <sstream>
 
 #include <seqan3/io/sequence_file/input.hpp>
+#include <seqan3/std/ranges>
 
 auto input = R"(> TEST1
 ACGT
@@ -12,7 +13,7 @@ GGAGTATAATATATATATATATAT)";
 int main()
 {
     seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
-    auto it = seqan3::begin(fin);
+    auto it = std::ranges::begin(fin);
 
     // the following are equivalent:
     auto & rec0 = *it;

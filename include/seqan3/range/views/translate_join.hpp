@@ -218,14 +218,14 @@ public:
      */
     size_type size() noexcept
     {
-        return (size_type) seqan3::size(urange) * selected_frames.size();
+        return (size_type) std::ranges::size(urange) * selected_frames.size();
     }
 
     //!\overload
     size_type size() const noexcept
         requires const_iterable_range<urng_t>
     {
-        return (size_type) seqan3::size(urange) * selected_frames.size();
+        return (size_type) std::ranges::size(urange) * selected_frames.size();
     }
 
     /*!\name Element access

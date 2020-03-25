@@ -14,7 +14,6 @@
 
 #include <seqan3/alignment/pairwise/alignment_range.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
-#include <seqan3/range/shortcuts.hpp>
 
 #include "../../range/iterator_test_template.hpp"
 
@@ -30,8 +29,8 @@ struct dummy_executor
 
     std::optional<size_t> bump()
     {
-        auto it = begin(generator);
-        if (it == end(generator))
+        auto it = std::ranges::begin(generator);
+        if (it == std::ranges::end(generator))
         {
             return {};
         }

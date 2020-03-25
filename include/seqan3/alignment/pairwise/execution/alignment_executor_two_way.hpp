@@ -22,7 +22,6 @@
 #include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/zip.hpp>

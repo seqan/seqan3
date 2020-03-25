@@ -102,8 +102,8 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng
     else
     {
         s << '[';
-        auto b = begin(r);
-        auto e = end(r);
+        auto b = std::ranges::begin(r);
+        auto e = std::ranges::end(r);
         if (b != e)
         {
             s << *b;

@@ -29,7 +29,6 @@
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/iterator.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
@@ -145,7 +144,7 @@ protected:
         }
         else
         {
-            if (empty(id)) //[[unlikely]]
+            if (std::ranges::empty(id)) //[[unlikely]]
                 throw std::runtime_error{"The ID field may not be empty when writing FASTA files."};
 
             write_id(stream_it, options, id);
@@ -158,7 +157,7 @@ protected:
         }
         else
         {
-            if (empty(sequence)) //[[unlikely]]
+            if (std::ranges::empty(sequence)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing FASTA files."};
 
             write_seq(stream_it, options, sequence);

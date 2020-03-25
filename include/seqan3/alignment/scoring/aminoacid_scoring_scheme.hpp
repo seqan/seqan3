@@ -17,7 +17,6 @@
 
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/algorithm>
 
 namespace seqan3

@@ -13,7 +13,6 @@
 #pragma once
 
 #include <seqan3/core/type_traits/all.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
@@ -137,7 +136,7 @@ public:
     //!\brief Returns a sentinel.
     sentinel end()
     {
-        return {seqan3::end(state_ptr->urng)};
+        return {std::ranges::end(state_ptr->urng)};
     }
 
     //!\brief Const version of end is deleted, since the underlying view_state must be mutable.

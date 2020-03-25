@@ -132,13 +132,13 @@ template <genetic_code gc = genetic_code::CANONICAL, std::ranges::input_range ra
 //!\endcond
 constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_range)
 {
-    auto n1 = begin(input_range);
+    auto n1 = std::ranges::begin(input_range);
     auto n2 = ++n1;
     auto n3 = ++n2;
 
-    assert(n1 != end(input_range));
-    assert(n2 != end(input_range));
-    assert(n3 != end(input_range));
+    assert(n1 != std::ranges::end(input_range));
+    assert(n2 != std::ranges::end(input_range));
+    assert(n3 != std::ranges::end(input_range));
 
     return translate_triplet(*n1, *n2, *n3);
 }
@@ -168,9 +168,9 @@ template <genetic_code gc = genetic_code::CANONICAL, std::ranges::random_access_
 //!\endcond
 constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (rng_t && input_range)
 {
-    assert(input_range.begin() != end(input_range));
-    assert(input_range.begin() + 1 != end(input_range));
-    assert(input_range.begin() + 2 != end(input_range));
+    assert(std::ranges::begin(input_range) != std::ranges::end(input_range));
+    assert(std::ranges::begin(input_range) + 1 != std::ranges::end(input_range));
+    assert(std::ranges::begin(input_range) + 2 != std::ranges::end(input_range));
 
     return translate_triplet(input_range[0], input_range[1], input_range[2]);
 }

@@ -16,7 +16,6 @@
 #include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/core/detail/type_inspection.hpp>
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/std/ranges>
@@ -30,9 +29,9 @@ TEST(range_and_iterator, iterator_)
 
     auto v = std::views::iota(1);
     EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
-                                decltype(seqan3::begin(v))>));
+                                decltype(std::ranges::begin(v))>));
     EXPECT_FALSE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
-                                 decltype(seqan3::end(v))>));
+                                 decltype(std::ranges::end(v))>));
 }
 
 TEST(range_and_iterator, sentinel_)
@@ -46,9 +45,9 @@ TEST(range_and_iterator, sentinel_)
 
     auto v = std::views::iota(1);
     EXPECT_FALSE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
-                                 decltype(seqan3::begin(v))>));
+                                 decltype(std::ranges::begin(v))>));
     EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
-                                decltype(seqan3::end(v))>));
+                                decltype(std::ranges::end(v))>));
 }
 
 template <typename list1, typename list2, size_t pos = 0>
