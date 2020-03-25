@@ -1052,6 +1052,7 @@ TEST(validator_test, chaining_validators)
 
     // help page message
     {
+        option_value.clear();
         const char * argv[] = {"./argument_parser_test", "-h"};
         seqan3::argument_parser parser{"test_parser", 2, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
@@ -1061,7 +1062,6 @@ TEST(validator_test, chaining_validators)
                           seqan3::regex_validator{".*"});
 
         testing::internal::CaptureStdout();
-        option_value.clear();
         EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
         std::string my_stdout = testing::internal::GetCapturedStdout();
         std::string expected = std::string{"test_parser"
@@ -1073,7 +1073,7 @@ TEST(validator_test, chaining_validators)
                                "          Value must match the pattern '.*'."} +
                                basic_version_str;
         EXPECT_TRUE(std::ranges::equal((my_stdout | std::views::filter(!seqan3::is_space)),
-                                        expected  | std::views::filter(!seqan3::is_space)));
+                                        expected  | std::views::filter(!seqan3::is_space))) << my_stdout;
     }
 
     // chaining with a container option value type

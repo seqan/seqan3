@@ -30,6 +30,16 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## New features
 
+#### Argument Parser
+
+* The following functions accept a `seqan3::argument_parser::option_spec::ADVANCED` to control what is
+  displayed on the (advanced) help page:
+  * `seqan3::argument_parser::add_section`
+  * `seqan3::argument_parser::add_subsection`
+  * `seqan3::argument_parser::add_line`
+  * `seqan3::argument_parser::add_list_item`
+  Note that other `seqan3::argument_parser::option_spec`s like `REQUIRED` are ignored.
+
 #### I/O
 
 * The `seqan3::format_fasta` accepts the file extenstion `.fas` as a valid extension for the FASTA format

@@ -223,68 +223,38 @@ private:
 
 public:
     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \tparam option_type    The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
-     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
-     * \param[in]  desc      The description of the option.
-     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
+     * \copydetails seqan3::argument_parser::add_option
      */
     template <typename option_type, typename validator_type>
     void add_option(option_type & value,
                     char const short_id,
                     std::string const & long_id,
                     std::string const & desc,
-                    option_spec const & spec,
+                    option_spec const spec,
                     validator_type && validator)
     {
-        std::string msg = validator.get_help_page_message();
-
-        parser_set_up_calls.push_back([this, &value, short_id, long_id, desc, spec, msg] ()
-        {
-            if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
-                  derived_t().print_list_item(prep_id_for_help(short_id, long_id) +
-                                              " " + option_type_and_list_info(value),
-                                              desc +
-                                              ((spec & option_spec::REQUIRED)
-                                                  ? std::string{" "}
-                                                  : detail::to_string(" Default: ", value, ". ")) +
-                                              msg);
-        });
+        std::string id = prep_id_for_help(short_id, long_id) + " " + option_type_and_list_info(value);
+        std::string info{desc};
+        info += ((spec & option_spec::REQUIRED) ? std::string{" "} : detail::to_string(" Default: ", value, ". "));
+        info += validator.get_help_page_message();
+        store_help_page_element([this, id, info] () { derived_t().print_list_item(id, info); }, spec);
     }
 
     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
-     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
-     * \param[in]  desc     The description of the flag.
-     * \param[in]  spec     Advanced flag specification, see seqan3::option_spec.
+     * \copydetails seqan3::argument_parser::add_flag
      */
-    void add_flag(bool & /*value*/,
+    void add_flag(bool & SEQAN3_DOXYGEN_ONLY(value),
                   char const short_id,
                   std::string const & long_id,
                   std::string const & desc,
-                  option_spec const & spec)
+                  option_spec const spec)
     {
-        parser_set_up_calls.push_back([this, short_id, long_id, desc, spec] ()
-        {
-            if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
-                derived_t().print_list_item(prep_id_for_help(short_id, long_id), desc);
-        });
+        std::string id = prep_id_for_help(short_id, long_id);
+        store_help_page_element([this, id, desc] () { derived_t().print_list_item(id, desc); }, spec);
     }
 
     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \tparam option_type    The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  desc      The description of the positional option.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
+     * \copydetails seqan3::argument_parser::add_positional_option
      */
     template <typename option_type, typename validator_type>
     void add_positional_option(option_type & value,
@@ -371,49 +341,35 @@ public:
     }
 
     /*!\brief Adds a print_section call to parser_set_up_calls.
-     * \param[in] title The title of the section of the help page.
+     * \copydetails seqan3::argument_parser::add_section
      */
-    void add_section(std::string const & title)
+    void add_section(std::string const & title, option_spec const spec)
     {
-        parser_set_up_calls.push_back([this, title] ()
-        {
-            derived_t().print_section(title);
-        });
+        store_help_page_element([this, title] () { derived_t().print_section(title); }, spec);
     }
 
     /*!\brief Adds a print_subsection call to parser_set_up_calls.
-     * \param[in] title The title of the subsection of the help page.
+     * \copydetails seqan3::argument_parser::add_subsection
      */
-    void add_subsection(std::string const & title)
+    void add_subsection(std::string const & title, option_spec const spec)
     {
-        parser_set_up_calls.push_back([this, title] ()
-        {
-            derived_t().print_subsection(title);
-        });
+        store_help_page_element([this, title] () { derived_t().print_subsection(title); }, spec);
     }
 
     /*!\brief Adds a print_line call to parser_set_up_calls.
-     * \param[in] text The line text to be printed to the help page.
-     * \param[in] line_is_paragraph True if you want a new line at the end.
+     * \copydetails seqan3::argument_parser::add_line
      */
-    void add_line(std::string const & text, bool line_is_paragraph)
+    void add_line(std::string const & text, bool is_paragraph, option_spec const spec)
     {
-        parser_set_up_calls.push_back([this, text, line_is_paragraph] ()
-        {
-            derived_t().print_line(text, line_is_paragraph);
-        });
+        store_help_page_element([this, text, is_paragraph] () { derived_t().print_line(text, is_paragraph); }, spec);
     }
 
     /*!\brief Adds a seqan3::print_list_item call to parser_set_up_calls.
-     * \param[in] key The key of the key-value pair list item.
-     * \param[in] desc The key of the key-value pair list item.
+     * \copydetails seqan3::argument_parser::add_list_item
      */
-    void add_list_item(std::string const & key, std::string const & desc)
+    void add_list_item(std::string const & key, std::string const & desc, option_spec const spec)
     {
-        parser_set_up_calls.push_back([this, key, desc] ()
-        {
-            derived_t().print_list_item(key, desc);
-        });
+        store_help_page_element([this, key, desc] () { derived_t().print_list_item(key, desc); }, spec);
     }
 
     /*!\brief Stores all meta information about the application
@@ -473,6 +429,23 @@ protected:
     std::vector<std::string> command_names{};
     //!\brief Whether to show advanced options or not.
     bool show_advanced_options{true};
+
+private:
+    /*!\brief Adds a function object to parser_set_up_calls **if** the annotation in `spec` does not prevent it.
+     * \param[in] printer The invokable that, if added to `parser_set_up_calls`, prints information to the help page.
+     * \param[in] spec The option specification deciding whether to add the information to the help page.
+     *
+     * \details
+     *
+     * If `spec` equals `seqan3::option_spec::HIDDEN`, the information is never added to the help page.
+     * If `spec` equals `seqan3::option_spec::ADVANCED`, the information is only added to the help page if
+     * the advanced help page has been queried on the command line (`show_advanced_options == true`).
+     */
+    void store_help_page_element(std::function<void()> printer, option_spec const spec)
+    {
+        if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
+            parser_set_up_calls.push_back(std::move(printer));
+    }
 };
 
 } // namespace seqan3::detail
