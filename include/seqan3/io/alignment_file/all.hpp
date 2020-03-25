@@ -15,6 +15,20 @@
 /*!\defgroup alignment_file Alignment File
  * \ingroup io
  * \brief Provides files and formats for handling alignment data.
+ *
+ * ### Introduction
+ *
+ * Alignment files are primarily used to store pairwise alignments of two biological sequences and often come with
+ * many additional information. Well-known formats include the SAM/BAM format used to store read mapping data or the
+ * BLAST format that stores the results of a query search against a data base.
+ *
+ * \note Take a look at our tutorial \ref tutorial_alignment_file for a walk through of how to read alignment files.
+ *
+ * \copydetails seqan3::alignment_file_input::field_ids
+ *
+ * All of these fields are retrieved by default (and in that order).
+ * Note that some of the fields are specific to the SAM format (e.g. seqan3::field::flag) while others are specific to
+ * BLAST format (e.g. seqan3::field::bit_score). Please see the corresponding formats for more details.
  */
 
 #pragma GCC diagnostic push
