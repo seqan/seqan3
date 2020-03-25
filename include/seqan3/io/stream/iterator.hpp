@@ -21,6 +21,7 @@
 #endif // __cpp_lib_ranges
 
 #include <seqan3/core/platform.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/std/algorithm>

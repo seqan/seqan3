@@ -33,7 +33,6 @@
 #include <sstream>
 #include <type_traits>
 
-#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/std/concepts>
 
 /*!\defgroup charconv charconv
@@ -717,7 +716,7 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
         bool exponent_is_present{false};
         for (auto it = first; it != last; ++it)
         {
-            if (seqan3::is_char<'e'>(*it) || seqan3::is_char<'E'>(*it))
+            if (*it == 'e' || *it == 'E')
             {
                 exponent_is_present = true;
                 break;
