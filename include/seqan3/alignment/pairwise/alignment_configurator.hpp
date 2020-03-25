@@ -142,13 +142,13 @@ private:
 
         //!\brief The selected score matrix for either banded or unbanded alignments.
         using score_matrix_t = std::conditional_t<traits_t::is_banded,
-                                                  alignment_score_matrix_one_column_banded<typename traits_t::score_t>,
-                                                  alignment_score_matrix_one_column<typename traits_t::score_t>>;
+                                                  alignment_score_matrix_one_column_banded<typename traits_t::score_type>,
+                                                  alignment_score_matrix_one_column<typename traits_t::score_type>>;
         //!\brief The selected trace matrix for either banded or unbanded alignments.
         using trace_matrix_t = std::conditional_t<traits_t::is_banded,
-                                                  alignment_trace_matrix_full_banded<typename traits_t::trace_t,
+                                                  alignment_trace_matrix_full_banded<typename traits_t::trace_type,
                                                                                      only_coordinates>,
-                                                  alignment_trace_matrix_full<typename traits_t::trace_t,
+                                                  alignment_trace_matrix_full<typename traits_t::trace_type,
                                                                               only_coordinates>>;
 
     public:
@@ -164,7 +164,7 @@ private:
     {
     private:
         //!\brief The score type for the alignment computation.
-        using score_t = typename traits_t::score_t;
+        using score_t = typename traits_t::score_type;
         //!\brief The is_local constant converted to a type.
         using is_local_t = std::bool_constant<traits_t::is_local>;
 
@@ -186,7 +186,7 @@ private:
     {
     private:
         //!\brief The score type for the alignment computation.
-        using score_t = typename traits_t::score_t;
+        using score_t = typename traits_t::score_type;
         //!\brief A bool constant to disambiguate true global alignments.
         static constexpr bool is_global_alignment = traits_t::is_global && !traits_t::is_aligned_ends;
 
@@ -491,10 +491,10 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
     using alignment_scoring_scheme_t =
         lazy_conditional_t<traits_t::is_vectorised,
                            lazy<simd_match_mismatch_scoring_scheme,
-                                typename traits_t::score_t,
-                                typename traits_t::scoring_scheme_alphabet_t,
-                                typename traits_t::alignment_mode_t>,
-                           typename traits_t::scoring_scheme_t>;
+                                typename traits_t::score_type,
+                                typename traits_t::scoring_scheme_alphabet_type,
+                                typename traits_t::alignment_mode_type>,
+                                typename traits_t::scoring_scheme_type>;
 
     using scoring_scheme_policy_t = deferred_crtp_base<scoring_scheme_policy, alignment_scoring_scheme_t>;
     return configure_free_ends_initialisation<function_wrapper_t, scoring_scheme_policy_t>(cfg);

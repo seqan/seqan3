@@ -91,8 +91,8 @@ private:
     //!\brief The type of the score debug matrix.
     using score_debug_matrix_t =
         std::conditional_t<traits_t::is_debug,
-                           two_dimensional_matrix<std::optional<typename traits_t::original_score_t>,
-                                                  std::allocator<std::optional<typename traits_t::original_score_t>>,
+                           two_dimensional_matrix<std::optional<typename traits_t::original_score_type>,
+                                                  std::allocator<std::optional<typename traits_t::original_score_type>>,
                                                   matrix_major_order::column>,
                            empty_type>;
     //!\brief The type of the trace debug matrix.
@@ -202,8 +202,8 @@ public:
     {
         assert(cfg_ptr != nullptr);
 
-        static_assert(simd_concept<typename traits_t::score_t>, "Expected simd score type.");
-        static_assert(simd_concept<typename traits_t::trace_t>, "Expected simd trace type.");
+        static_assert(simd_concept<typename traits_t::score_type>, "Expected simd score type.");
+        static_assert(simd_concept<typename traits_t::trace_type>, "Expected simd trace type.");
 
         // Extract the batch of sequences for the first and the second sequence.
         auto sequence1_range = indexed_sequence_pairs | views::get<0> | views::get<0>;
@@ -247,7 +247,7 @@ private:
     {
         assert(static_cast<size_t>(std::ranges::distance(sequences)) <= traits_t::alignments_per_vector);
 
-        using simd_score_t = typename traits_t::score_t;
+        using simd_score_t = typename traits_t::score_type;
 
         std::vector<simd_score_t, aligned_allocator<simd_score_t, alignof(simd_score_t)>> simd_sequence{};
 
