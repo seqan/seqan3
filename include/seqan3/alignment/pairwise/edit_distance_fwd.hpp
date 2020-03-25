@@ -14,6 +14,7 @@
 
 #include <seqan3/alignment/configuration/align_config_max_error.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
+#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/platform.hpp>
@@ -63,13 +64,14 @@ struct default_edit_distance_trait_type
 {
     //!\brief The type of the alignment config.
     using align_config_type = std::remove_reference_t<align_config_t>;
+    //!\brief The alignment algorithm traits over the alignment configuration type.
+    using alignment_traits_type = alignment_configuration_traits<align_config_type>;
     //!\brief The type of one machine word.
     using word_type = word_t;
     static_assert(std::is_unsigned_v<word_type>, "the word type of edit_distance_unbanded must be unsigned.");
     //!\brief The type of the score.
     static_assert(align_config_type::template exists<align_cfg::result>(), "We assume the result type was configured.");
-    using score_type = typename std::remove_reference_t<
-                           decltype(get<align_cfg::result>(align_config_type{}))>::score_type;
+    using score_type = typename alignment_traits_type::original_score_type;
     //!\brief The type of the database sequence.
     using database_type = std::remove_reference_t<database_t>;
     //!\brief The type of the query sequence.
@@ -96,14 +98,11 @@ struct default_edit_distance_trait_type
     //!\brief Whether the alignment configuration indicates to compute and/or store the score.
     static constexpr bool compute_score = true;
     //!\brief Whether the alignment configuration indicates to compute and/or store the back coordinate.
-    static constexpr bool compute_back_coordinate = !std::same_as<decltype(result_value_type{}.back_coordinate),
-                                                               std::nullopt_t *>;
+    static constexpr bool compute_back_coordinate = alignment_traits_type::compute_back_coordinate;
     //!\brief Whether the alignment configuration indicates to compute and/or store the front coordinate.
-    static constexpr bool compute_front_coordinate = !std::same_as<decltype(result_value_type{}.front_coordinate),
-                                                                std::nullopt_t *>;
+    static constexpr bool compute_front_coordinate = alignment_traits_type::compute_front_coordinate;
     //!\brief Whether the alignment configuration indicates to compute and/or store the alignment of the sequences.
-    static constexpr bool compute_sequence_alignment = !std::same_as<decltype(result_value_type{}.alignment),
-                                                                  std::nullopt_t *>;
+    static constexpr bool compute_sequence_alignment = alignment_traits_type::compute_sequence_alignment;
     //!\brief Whether the alignment configuration indicates to compute and/or store the score matrix.
     static constexpr bool compute_score_matrix = false;
     //!\brief Whether the alignment configuration indicates to compute and/or store the trace matrix.
