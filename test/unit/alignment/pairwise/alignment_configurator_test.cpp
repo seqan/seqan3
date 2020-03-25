@@ -10,6 +10,7 @@
 #include <range/v3/view/single.hpp>
 
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
+#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/zip.hpp>
@@ -31,7 +32,17 @@ auto run_test(config_t const & cfg)
     auto algorithm = configuration_result.first;
 
     auto indexed_sequence_pairs = seqan3::views::zip(r, std::views::iota(0)) | seqan3::views::chunk(1);
-    return algorithm(*indexed_sequence_pairs.begin())[0];
+
+    using function_traits_t = typename seqan3::detail::alignment_function_traits<decltype(algorithm)>;
+    using alignment_result_t = typename function_traits_t::alignment_result_type;
+
+    alignment_result_t align_result{};
+    algorithm(*indexed_sequence_pairs.begin(), [&] (auto && res) mutable
+    {
+        align_result = std::forward<decltype(res)>(res);
+    });
+
+    return align_result;
 }
 
 TEST(alignment_configurator, configure_edit)

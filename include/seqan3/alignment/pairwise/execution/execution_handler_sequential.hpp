@@ -45,7 +45,8 @@ public:
                  indexed_sequence_pairs_t && indexed_sequence_pairs,
                  delegate_type && delegate)
     {
-        delegate(algorithm(std::forward<indexed_sequence_pairs_t>(indexed_sequence_pairs)));
+        algorithm(std::forward<indexed_sequence_pairs_t>(indexed_sequence_pairs),
+                  std::forward<delegate_type>(delegate));
     }
 
     //!\brief Waits for the submitted alignments jobs to finish. (Noop).

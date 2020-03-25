@@ -521,7 +521,7 @@ protected:
 
     using typename edit_traits::word_type;
     using typename edit_traits::trace_matrix_type;
-    using typename edit_traits::result_value_type;
+    using typename edit_traits::alignment_result_type;
 
     /*!\name Trace matrix Policy: Protected Attributes
      * \copydoc edit_distance_unbanded_trace_matrix_policy
@@ -591,7 +591,7 @@ public:
     //!       Only available if default_edit_distance_trait_type::compute_sequence_alignment is true.
     auto alignment() const noexcept
     {
-        using alignment_t = decltype(result_value_type{}.alignment);
+        using alignment_t = remove_cvref_t<decltype(std::declval<alignment_result_type &>().alignment())>;
 
         derived_t const * self = static_cast<derived_t const *>(this);
         static_assert(edit_traits::compute_sequence_alignment, "alignment() can only be computed if you specify the "
@@ -735,7 +735,7 @@ private:
 
     using typename edit_traits::database_iterator;
     using typename edit_traits::query_alphabet_type;
-    using typename edit_traits::result_value_type;
+    using typename edit_traits::alignment_result_type;
     using edit_traits::use_max_errors;
     using edit_traits::is_semi_global;
     using edit_traits::is_global;
@@ -1035,11 +1035,14 @@ private:
 
 public:
     /*!\brief Generic invocable interface.
-     * \param[in]     idx The index of the currently processed sequence pair.
-     * \returns A reference to the filled alignment result.
+     * \param[in] idx The index of the currently processed sequence pair.
+     * \param[in] callback The callback function to be invoked with the alignment result.
      */
-    alignment_result<result_value_type> operator()(size_t const idx)
+    template <typename callback_t>
+    void operator()(size_t const idx, callback_t && callback)
     {
+        using result_value_type = typename alignment_result_value_type_accessor<alignment_result_type>::type;
+
         compute();
         result_value_type res_vt{};
         res_vt.id = idx;
@@ -1073,7 +1076,7 @@ public:
                                                                 res_vt.front_coordinate);
             }
         }
-        return alignment_result<result_value_type>{std::move(res_vt)};
+        callback(std::move(res_vt));
     }
 };
 

@@ -117,7 +117,7 @@ public:
         // Asynchronously pushes the alignment job as a task to the queue.
         task_type task = [=, indexed_sequence_pairs = std::move(indexed_sequence_pairs)] ()
         {
-            delegate(algorithm(std::move(indexed_sequence_pairs)));
+            algorithm(std::move(indexed_sequence_pairs), delegate);
         };
 
         [[maybe_unused]] contrib::queue_op_status status = state->queue.wait_push(std::move(task));
