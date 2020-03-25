@@ -9,16 +9,8 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/ranges>
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>
-#include <seqan3/core/char_operations/predicate.hpp>
-#include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/views/take_until.hpp>
-#include <seqan3/range/views/drop.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/std/ranges>
 
 // reused global variables
@@ -51,6 +43,20 @@ std::string const basic_version_str = "VERSION"
                                       "Last update:"
                                       "test_parser version:"
                                       "SeqAn version: " + version_str;
+
+std::string license_text()
+{
+    std::ifstream license_file{std::string{{SEQAN3_TEST_LICENSE_DIR}} + "/LICENSE.md"};
+    EXPECT_TRUE(license_file) << "Could not open file '" SEQAN3_TEST_LICENSE_DIR "/LICENSE.md'";
+    std::stringstream buffer;
+    buffer << license_file.rdbuf();
+
+    std::string str = buffer.str();
+    size_t license_start = str.find("```\n") + 4;
+    size_t license_end = str.find("```", license_start);
+
+    return str.substr(license_start, license_end - license_start);
+}
 
 TEST(help_page_printing, short_help)
 {
@@ -370,17 +376,7 @@ TEST(help_page_printing, copyright)
     const char * argvCopyright[] = {"./copyright", "--copyright"};
     seqan3::argument_parser copyright("myApp", 2, argvCopyright);
 
-    std::ifstream license_file{std::string{{SEQAN3_TEST_LICENSE_DIR}} + "/LICENSE.md"};
-    std::ranges::subrange<std::istreambuf_iterator<char>, std::istreambuf_iterator<char>> sub
-    {
-        std::istreambuf_iterator<char>(license_file),
-        std::istreambuf_iterator<char>()
-    };
-
-    seqan3::detail::consume(sub | seqan3::views::take_until_and_consume(seqan3::is_char<'`'>));
-    std::string license_string{sub | seqan3::views::drop(1)
-                                   | seqan3::views::take_until(seqan3::is_char<'`'>)
-                                   | seqan3::views::to<std::string>};
+    std::string license_string = license_text();
 
     // Test --copyright with empty short and long copyright info.
     {
