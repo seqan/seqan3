@@ -733,7 +733,13 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
 
         // if alignment is non-empty, replace cigar_vector.
         // else, compute the ref_length from given cigar_vector which is needed to fill field `bin`.
-        if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
+        if (!std::ranges::empty(cigar_vector))
+        {
+            int32_t dummy_seq_length{};
+            for (auto & [count, operation] : cigar_vector)
+                update_alignment_lengths(ref_length, dummy_seq_length, operation.to_char(), count);
+        }
+        else if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
         {
             ref_length = std::ranges::distance(get<1>(align));
 
@@ -749,12 +755,6 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
 
             off_end -= ref_length;
             cigar_vector = detail::get_cigar_vector(align, offset, off_end);
-        }
-        else
-        {
-            int32_t dummy_seq_length{};
-            for (auto & [count, operation] : cigar_vector)
-                update_alignment_lengths(ref_length, dummy_seq_length, operation.to_char(), count);
         }
 
         if (cigar_vector.size() >= (1 << 16)) // must be written into the sam tag CG
