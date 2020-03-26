@@ -19,11 +19,6 @@
 #include <type_traits>
 #include <variant>
 #include <vector>
-
-// remove the following after range-v3 is updated to 1.0
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 #include <seqan3/alphabet/structure/all.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/concept/tuple.hpp>
@@ -676,4 +671,3 @@ structure_file_output(stream_t &, file_format const &, selected_field_ids const 
 //!\}
 
 } // namespace seqan3
-#pragma GCC diagnostic pop

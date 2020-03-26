@@ -21,11 +21,6 @@
 #include <utility>
 #include <variant>
 #include <vector>
-
-// remove the following after range-v3 is updated to 1.0
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
@@ -879,5 +874,3 @@ structure_file_input(stream_type & stream, file_format const &, selected_field_i
 //!\}
 
 } // namespace seqan3
-
-#pragma GCC diagnostic pop

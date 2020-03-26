@@ -17,11 +17,6 @@
 #include <string>
 #include <variant>
 #include <vector>
-
-// remove the following after range-v3 is updated to 1.0
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/concept/tuple.hpp>
@@ -661,5 +656,3 @@ sequence_file_output(stream_t &,
                             type_list<file_format>>;
 //!\}
 } // namespace seqan3
-
-#pragma GCC diagnostic pop
