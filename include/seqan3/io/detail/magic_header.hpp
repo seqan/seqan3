@@ -18,9 +18,11 @@
 
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/range/container/small_vector.hpp>
 #include <seqan3/std/type_traits>
 #include <seqan3/std/span>
 
@@ -32,7 +34,7 @@ namespace seqan3::detail
 struct gz_compression
 {
     //!\brief The valid file extension for gz compression.
-    static inline std::vector<std::string> file_extensions
+    static constexpr small_vector<std::string_view, 1> file_extensions
     {
         {"gz"}
     };
@@ -46,7 +48,7 @@ struct gz_compression
 struct bz2_compression
 {
     //!\brief The valid file extension for bz2 compression.
-    static inline std::vector<std::string> file_extensions
+    static constexpr small_vector<std::string_view, 1> file_extensions
     {
         {"bz2"}
     };
@@ -60,7 +62,7 @@ struct bz2_compression
 struct zstd_compression
 {
     //!\brief The valid file extension for zstd compression.
-    static inline std::vector<std::string> file_extensions
+    static constexpr small_vector<std::string_view, 1> file_extensions
     {
         {"zst"}
     };
@@ -74,7 +76,7 @@ struct zstd_compression
 struct bgzf_compression
 {
     //!\brief The valid file extension for bgzf compression.
-    static inline std::vector<std::string> file_extensions
+    static constexpr small_vector<std::string_view, 1> file_extensions
     {
         {"bgzf"}
     };
@@ -126,5 +128,33 @@ using compression_formats = pack_traits::drop_front<void
                                                     , zstd_compression
                                                     #endif // SEQAN3_HAS_ZSTD
                                                     >;
+
+/*!\brief A seqan3::small_vector<std::strng_view> containing the available compression extensions.
+ * \ingroup io
+ */
+constexpr auto compression_extensions = [] () constexpr
+        {
+            constexpr auto number_of_extensions = [] () constexpr
+            {
+                size_t num{};
+                detail::for_each<compression_formats>([&] (auto fmt)
+                {
+                    using fm_type = typename decltype(fmt)::type; // remove type_identity wrapper
+                    num += fm_type::file_extensions.size();
+                });
+                return num;
+            }();
+
+            small_vector<std::string_view, number_of_extensions> r{};
+
+            detail::for_each<compression_formats>([&r] (auto fmt)
+            {
+                using fm_type = typename decltype(fmt)::type; // remove type_identity wrapper
+                for (auto const & ext : fm_type::file_extensions)
+                    r.push_back(ext);
+            });
+
+            return r;
+        }();
 
 } // namespace seqan3::detail
