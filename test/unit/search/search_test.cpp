@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <seqan3/search/algorithm/all.hpp>
+#include <seqan3/search/all.hpp>
 #include "helper.hpp"
 
 using seqan3::operator""_dna4;

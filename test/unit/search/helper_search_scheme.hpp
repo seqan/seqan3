@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <vector>
 
-#include <seqan3/search/algorithm/detail/search_scheme_precomputed.hpp>
+#include <seqan3/search/detail/search_scheme_precomputed.hpp>
 
 namespace seqan3
 {

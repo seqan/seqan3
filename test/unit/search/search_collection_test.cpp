@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <type_traits>
 
-#include <seqan3/search/algorithm/all.hpp>
+#include <seqan3/search/all.hpp>
 
 #include <gtest/gtest.h>
 

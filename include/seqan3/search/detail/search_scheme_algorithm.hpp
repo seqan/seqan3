@@ -16,9 +16,9 @@
 
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/range/views/slice.hpp>
-#include <seqan3/search/algorithm/detail/search_common.hpp>
-#include <seqan3/search/algorithm/detail/search_scheme_precomputed.hpp>
-#include <seqan3/search/algorithm/detail/search_trivial.hpp>
+#include <seqan3/search/detail/search_common.hpp>
+#include <seqan3/search/detail/search_scheme_precomputed.hpp>
+#include <seqan3/search/detail/search_trivial.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 
 namespace seqan3::detail

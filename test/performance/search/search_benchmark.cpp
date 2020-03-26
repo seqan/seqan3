@@ -8,7 +8,7 @@
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/search/algorithm/all.hpp>
+#include <seqan3/search/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to.hpp>

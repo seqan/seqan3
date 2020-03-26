@@ -14,8 +14,8 @@
 
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/search/algorithm/detail/search.hpp>
-#include <seqan3/search/algorithm/detail/search_traits.hpp>
+#include <seqan3/search/detail/search.hpp>
+#include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
@@ -152,7 +152,7 @@ namespace seqan3
  *
  * \details
  *
- * \header_file{seqan3/search/algorithm/search.hpp}
+ * \header_file{seqan3/search/search.hpp}
  *
  * ### Complexity
  *
@@ -165,7 +165,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \include test/snippet/search/algorithm/search.cpp
+ * \include test/snippet/search/search.cpp
  */
 template <fm_index_specialisation index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(queries_t && queries,

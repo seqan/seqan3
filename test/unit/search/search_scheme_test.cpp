@@ -10,7 +10,7 @@
 
 #include "helper_search_scheme.hpp"
 
-#include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
+#include <seqan3/search/detail/search_scheme_algorithm.hpp>
 
 #include <gtest/gtest.h>
 

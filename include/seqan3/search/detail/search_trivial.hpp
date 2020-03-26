@@ -18,7 +18,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/drop.hpp>
-#include <seqan3/search/algorithm/detail/search_common.hpp>
+#include <seqan3/search/detail/search_common.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
