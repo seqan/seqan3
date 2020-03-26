@@ -192,8 +192,8 @@ inline auto search_all(index_t const & index, queries_t && queries, configuratio
         //                  duplicates. more efficient to call delegate once with one vector instead of calling
         //                  delegate for each hit separately at once.
         using query_t = std::ranges::range_value_t<queries_t>;
-        using single_querry_result_t = decltype(search_single(index, std::declval<query_t &>(), cfg));
-        using search_fn_t = std::function<single_querry_result_t(query_t &)>;
+        using single_query_result_t = decltype(search_single(index, std::declval<query_t &>(), cfg));
+        using search_fn_t = std::function<single_query_result_t(query_t &)>;
 
         search_fn_t search_fn = [&, cfg] (query_t & query) { return search_single(index, query, cfg); };
 
