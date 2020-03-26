@@ -80,6 +80,7 @@ gap_open_score(score_type) -> gap_open_score<score_type>;
 
 /*!\brief A scheme for representing and computing scores against gap characters.
  * \tparam score_type Type of the score values saved internally.
+ * \implements seqan3::cerealisable
  * \ingroup scoring
  */
 template <arithmetic score_t = int8_t>
@@ -237,8 +238,6 @@ public:
      * \param  archive   The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
-     *
-     * \implements cerealisable
      */
     template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)

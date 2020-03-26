@@ -58,6 +58,7 @@ struct bin_index : public detail::strong_type<size_t, bin_index, detail::strong_
 
 /*!\brief The IBF binning directory. A data structure that efficiently answers set-membership queries for multiple bins.
  * \tparam data_layout_mode_ Indicates whether the underlying data type is compressed. See seqan3::data_layout.
+ * \implements seqan3::cerealisable
  *
  * \details
  *
@@ -513,8 +514,6 @@ public:
      * \param[in] archive The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
-     *
-     * \implements cerealisable
      */
     template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)

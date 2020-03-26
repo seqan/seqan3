@@ -5,9 +5,7 @@
 #include <cereal/archives/binary.hpp> // includes the cereal::BinaryInputArchive and cereal::BinaryOutputArchive
 #include <cereal/types/vector.hpp>    // includes cerealisation support for std::vector
 
-#include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/std/filesystem>
 #include <seqan3/test/tmp_filename.hpp>
 
 // Written for std::vector, other types also work.

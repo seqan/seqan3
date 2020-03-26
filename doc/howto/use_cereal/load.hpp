@@ -6,9 +6,7 @@
 //! [binary_include]
 #include <cereal/types/vector.hpp>    // includes cerealisation support for std::vector
 
-#include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/std/filesystem>
 #include <seqan3/test/tmp_filename.hpp>
 
 // Written for std::vector, other types also work.
@@ -30,7 +28,7 @@ void store(std::vector<int16_t> const & data, seqan3::test::tmp_filename & tmp_f
 int main()
 {
     // The following example is for an std::vector but any seqan3 data structure that is documented as serialisable
-    // could be used, e.g. fm_index.
+    // could be used, e.g. seqan3::fm_index.
     seqan3::test::tmp_filename tmp_file{"data.out"}; // This is a temporary file, use any other filename.
 
     std::vector<int16_t> vec{1,2,3,4};
@@ -39,7 +37,7 @@ int main()
     std::vector<int16_t> vec2;
     load(vec2, tmp_file);                            // Calls load on a std::vector.
 
-    seqan3::debug_stream << vec << '\n';             // Prints [1,2,3,4].
+    seqan3::debug_stream << vec2 << '\n';             // Prints [1,2,3,4].
 
     return 0;
 }

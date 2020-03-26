@@ -22,7 +22,8 @@ In order to use it, you need to include
 \snippet doc/howto/use_cereal/store.hpp binary_include
 
 Note that stl data types, like `std::vector`, are not automatically usable with cereal. You need to include the
-respective header, e.g. \snippet doc/howto/use_cereal/store.hpp vector_include
+respective header, e.g.
+\snippet doc/howto/use_cereal/store.hpp vector_include
 
 In SeqAn, our data structures have integrated cereal support so there is no need to include an extra header.
 

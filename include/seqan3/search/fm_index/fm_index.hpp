@@ -96,6 +96,7 @@ using default_sdsl_index_type = sdsl_wt_index_type;
  * \tparam text_layout_mode_ Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.
  * \tparam sdsl_index_type_  The type of the underlying SDSL index, must model seqan3::sdsl_index.
+ * \implements seqan3::cerealisable
  * \details
  *
  * The seqan3::fm_index is a fast and space-efficient string index to search strings and collections of strings.
@@ -481,8 +482,6 @@ public:
      * \param archive The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
-     *
-     * \implements cerealisable
      */
     template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)

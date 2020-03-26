@@ -87,6 +87,7 @@ mismatch_score(score_type) -> mismatch_score<score_type>;
  * \tparam derived_t  The derived type.
  * \tparam alphabet_t Type of the largest target alphabet.
  * \tparam score_type Type of the score values in the internal matrix.
+ * \implements seqan3::cerealisable
  * \ingroup scoring
  *
  * \details
@@ -255,8 +256,6 @@ public:
      * \param  archive   The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
-     *
-     * \implements cerealisable
      */
     template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
