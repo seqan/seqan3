@@ -516,34 +516,41 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    std::vector<size_type> locate() const
+    void locate(std::vector<size_type> & occ) const
     //!\cond
         requires index_t::text_layout_mode == text_layout::single
     //!\endcond
     {
         assert(index != nullptr);
-
-        std::vector<size_type> occ(count());
-        for (size_type i = 0; i < occ.size(); ++i)
+        occ.reserve(occ.size() + count());
+        for (size_type i = 0; i < count(); ++i)
         {
-            occ[i] = offset() - index->index[node.lb + i];
+            occ.push_back(offset() - index->index[node.lb + i]);
         }
-        return occ;
     }
 
     //!\overload
-    std::vector<std::pair<size_type, size_type>> locate() const
+    auto locate() const
+    {
+        using hit_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
+                                         std::pair<size_type, size_type>,
+                                         size_type>;
+        std::vector<hit_t> occ{};
+        locate(occ);
+        return occ;
+    }
+
+    void locate(std::vector<std::pair<size_type, size_type>> & occ) const
     //!\cond
         requires index_t::text_layout_mode == text_layout::collection
     //!\endcond
     {
         assert(index != nullptr);
-
-        std::vector<std::pair<size_type, size_type>> occ{};
-        occ.reserve(count());
+        auto const start = occ.size();
+        occ.reserve(start + count());
 
         if (!count())
-            return occ; // empty result vector
+            return; // empty result vector
 
         // fill occ with locations in order to not allocate another vector
         for (size_type i = 0; i < count(); ++i)
@@ -557,23 +564,21 @@ public:
                                         : index->text_begin_ss.select(seq_idx + 1);
 
         // replace first occurrence value with correct entries
-        occ[0].second = occ[0].first - seq_offset; // position in seq i
-        occ[0].first  = seq_idx - 1; // position in seq i
+        occ[start].second = occ[start].first - seq_offset; // position in seq i
+        occ[start].first  = seq_idx - 1; // position in seq i
 
         for (size_type i = 1; i < count(); ++i)
         {
-            if (occ[i].first >= next_seq_offset)
+            if (occ[start + i].first >= next_seq_offset)
             {
-                seq_idx = index->text_begin_rs.rank(occ[i].first + 1);
+                seq_idx = index->text_begin_rs.rank(occ[start + i].first + 1);
                 seq_offset = index->text_begin_ss.select(seq_idx);
             }
 
             // replace occurrence values with correct entries
-            occ[i].second = occ[i].first - seq_offset; // position in seq i
-            occ[i].first  = seq_idx - 1; // position in seq i
+            occ[start + i].second = occ[start + i].first - seq_offset; // position in seq i
+            occ[start + i].first  = seq_idx - 1; // position in seq i
         }
-
-        return occ;
     }
 
     /*!\brief Locates the occurrences of the searched query in the text on demand, i.e. a ranges::view is returned and
