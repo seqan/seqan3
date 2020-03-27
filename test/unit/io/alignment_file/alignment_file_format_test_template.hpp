@@ -308,7 +308,11 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
 
         size_t i{0};
         for (auto & [alignment] : fin)
+        {
             EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(this->alignments[i++])));
+            auto & ref_aln = std::get<0>(alignment);
+            EXPECT_THROW((ref_aln[0]), std::logic_error); // access on a dummy seq is not allowed
+        }
     }
 
     {   // empty cigar
