@@ -11,7 +11,7 @@
  *        that are needed in all formats.
  */
 
- #pragma once
+#pragma once
 
 #include <iostream>
 #include <limits>
