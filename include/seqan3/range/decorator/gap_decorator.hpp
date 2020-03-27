@@ -93,6 +93,9 @@ private:
     //!        sequence cannot be modified through the iterator there is no need for const.
     using const_iterator = iterator;
 
+    //!\brief The type of the underlying view wrapped in seqan3::views::type_reduce.
+    using ungapped_view_type = decltype(views::type_reduce(std::declval<inner_type &&>()));
+
 public:
     /*!\name Range-associated member types
      * \{
@@ -557,7 +560,7 @@ private:
     }
 
     //!\brief Stores a (copy of a) view to the ungapped, underlying sequence.
-    decltype(views::type_reduce(std::declval<inner_type &&>())) ungapped_view{};
+    ungapped_view_type ungapped_view{};
 
     //!\brief Set storing the anchor gaps.
     anchor_set_type anchors{};
