@@ -152,9 +152,9 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
             {
                 for (auto const & text_pos : cur.locate())
                     hits.push_back(text_pos);
-                std::sort(hits.begin(), hits.end());
-                hits.erase(std::unique(hits.begin(), hits.end()), hits.end());
             }
+            std::sort(hits.begin(), hits.end());
+            hits.erase(std::unique(hits.begin(), hits.end()), hits.end());
         }
         return hits;
     }
