@@ -35,12 +35,12 @@
  * SeqAn currently supports very fast FM indices. For more details visit the \ref submodule_fm_index
  * "FM Index submodule".
  *
- * ## Search Algorithms
+ * ## Search algorithm
  *
  * The Search module offers a simple unified interface that allows searching FM indices and choosing the best
  * algorithm based on the index at hand.
  *
- * ## FM Indices
+ * ## FM indices
  *
  * The search algorithms for FM indices implement either a trivial backtracking approach or an optimum search scheme.
  * Latter are currently only available for searches with up to and including three errors using bidirectional indices.
@@ -52,19 +52,19 @@
  *
  * A search scheme is a collection of searches, where each search `s` specifies the order in which the blocks are
  * searched (`s.pi`), the lower error bounds (`s.l`) and the upper error bounds (`s.u`). If the number of blocks that
- * the query sequences are split into are known at compile time, the data structure `search` is recommended, otherwise
- * one has to use seqan3::detail::search_dyn. The first one implements its member variables as an an `std::array` of
- * integers, the latter as an `std::vector` of integers.
- * Similarily search schemes are defined. They are either implemented as an `std::array` of searches if the number of
- * searches is known at compile time, or as an `std::vector` if not.
+ * the query sequences are split into are known at compile time, the data structure seqan3::detail::search is
+ * recommended, otherwise one has to use seqan3::detail::search_dyn. The first one implements its member variables as an
+ * an `std::array` of integers, the latter as an `std::vector` of integers.
+ * Search search schemes are defined similiar. They are either implemented as an `std::array` of searches if the number
+ * of searches is known at compile time, or as an `std::vector` if not.
  *
  * Precomputed optimum search schemes are represented as an `std::array` of seqan3::detail::search since both the
  * number of searches and the number of blocks are known at compile time. Search schemes computed at run time are
  * represented as `std::vector` of seqan3::detail::search_dyn.
  *
  * All optimum search schemes are disjoint, i.e. no error configuration is covered by more than one search. Thus there
- * is no need for a filtration phase after searching to remove duplicate hits. Allowing insertions and deletions will
- * lead to redundant reports of hits regardless of search schemes.
+ * is no need for a filtration phase after searching to remove duplicate hits when searching with hamming distance.
+ * Allowing insertions and deletions will, however, lead to redundant reports of hits regardless of search schemes.
  *
  * \endif
  *
