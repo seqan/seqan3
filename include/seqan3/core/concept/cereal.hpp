@@ -130,6 +130,10 @@ SEQAN3_CONCEPT cereal_text_archive = false;
  * static_assert(cerealisable<dna4>);
  * ```
  *
+ * ### Example
+ *
+ * \include test/snippet/core/cereal_example.cpp
+ *
  * \attention
  * The cereal library is an optional dependency of SeqAn, if it is not found **no types** satisfy this concept.
  */

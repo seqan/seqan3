@@ -58,6 +58,7 @@ struct bin_index : public detail::strong_type<size_t, bin_index, detail::strong_
 
 /*!\brief The IBF binning directory. A data structure that efficiently answers set-membership queries for multiple bins.
  * \tparam data_layout_mode_ Indicates whether the underlying data type is compressed. See seqan3::data_layout.
+ * \implements seqan3::cerealisable
  *
  * \details
  *

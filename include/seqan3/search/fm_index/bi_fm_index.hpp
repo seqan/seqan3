@@ -34,6 +34,7 @@ namespace seqan3
  * \tparam text_layout_mode_ Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.
  * \tparam sdsl_index_type_  The type of the underlying SDSL index, must model seqan3::detail::sdsl_index.
+ * \implements seqan3::cerealisable
  * \details
  *
  * The seqan3::bi_fm_index is a fast and space-efficient bidirectional string index to search strings and

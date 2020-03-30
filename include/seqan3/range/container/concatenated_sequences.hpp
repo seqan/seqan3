@@ -82,6 +82,7 @@ namespace seqan3
  * \tparam inner_type The type of sequences that will be stored. Must satisfy seqan3::reservible_container.
  * \tparam data_delimiters_type A container that stores the begin/end positions in the inner_type. Must be
  * seqan3::reservible_container and have inner_type's size_type as value_type.
+ * \implements seqan3::cerealisable
  * \implements seqan3::reservible_container
  * \ingroup container
  *
