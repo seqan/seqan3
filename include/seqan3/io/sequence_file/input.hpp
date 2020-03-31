@@ -19,7 +19,8 @@
 #include <vector>
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>

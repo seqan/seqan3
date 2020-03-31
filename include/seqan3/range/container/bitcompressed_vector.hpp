@@ -18,7 +18,6 @@
 
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to_rank.hpp>

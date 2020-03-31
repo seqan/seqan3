@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>

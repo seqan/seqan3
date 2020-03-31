@@ -9,6 +9,8 @@
 #include <type_traits>
 
 #include <seqan3/search/all.hpp>
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
+#include <seqan3/search/fm_index/fm_index.hpp>
 
 #include <gtest/gtest.h>
 

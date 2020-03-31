@@ -13,7 +13,10 @@
 #pragma once
 
 #include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/search/configuration/all.hpp>
+#include <seqan3/search/configuration/max_error.hpp>
+#include <seqan3/search/configuration/max_error_rate.hpp>
+#include <seqan3/search/configuration/mode.hpp>
+#include <seqan3/search/configuration/output.hpp>
 
 namespace seqan3::detail
 {
