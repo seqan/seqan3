@@ -9,6 +9,8 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/search/all.hpp>
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
+#include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to.hpp>
