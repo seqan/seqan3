@@ -37,8 +37,8 @@ TYPED_TEST(char_adaptation, type_properties)
 
 TYPED_TEST(char_adaptation, alphabet_char_t)
 {
-    EXPECT_TRUE((std::is_same_v<seqan3::alphabet_char_t<TypeParam   >, TypeParam>));
-    EXPECT_TRUE((std::is_same_v<seqan3::alphabet_char_t<TypeParam & >, TypeParam>));
+    EXPECT_TRUE((std::is_same_v<seqan3::alphabet_char_t<TypeParam>, TypeParam>));
+    EXPECT_TRUE((std::is_same_v<seqan3::alphabet_char_t<TypeParam &>, TypeParam>));
     EXPECT_TRUE((std::is_same_v<seqan3::alphabet_char_t<TypeParam &&>, TypeParam>));
 }
 
@@ -55,23 +55,23 @@ TYPED_TEST(char_adaptation, to_char)
 TYPED_TEST(char_adaptation, assign_char_to)
 {
     TypeParam l{'A'};
-    EXPECT_TRUE((std::is_same_v<decltype(seqan3::assign_char_to('A', l             )),
+    EXPECT_TRUE((std::is_same_v<decltype(seqan3::assign_char_to('A', l)),
                                 seqan3::alphabet_char_t<TypeParam> &>));
     EXPECT_TRUE((std::is_same_v<decltype(seqan3::assign_char_to('A', TypeParam{'A'})),
-                                seqan3::alphabet_char_t<TypeParam>  >));
+                                seqan3::alphabet_char_t<TypeParam>>));
     EXPECT_EQ((seqan3::assign_char_to('A', TypeParam{'C'})), l);
-    EXPECT_EQ((seqan3::assign_char_to('C', l             )), TypeParam{'C'});
+    EXPECT_EQ((seqan3::assign_char_to('C', l)), TypeParam{'C'});
 }
 
 TYPED_TEST(char_adaptation, assign_char_strictly_to)
 {
     TypeParam l{'A'};
-    EXPECT_TRUE((std::is_same_v<decltype(seqan3::assign_char_strictly_to('A', l             )),
+    EXPECT_TRUE((std::is_same_v<decltype(seqan3::assign_char_strictly_to('A', l)),
                                 seqan3::alphabet_char_t<TypeParam> &>));
     EXPECT_TRUE((std::is_same_v<decltype(seqan3::assign_char_strictly_to('A', TypeParam{'A'})),
-                                seqan3::alphabet_char_t<TypeParam>  >));
+                                seqan3::alphabet_char_t<TypeParam>>));
     EXPECT_EQ((seqan3::assign_char_strictly_to('A', TypeParam{'C'})), l);
-    EXPECT_EQ((seqan3::assign_char_strictly_to('C', l             )), TypeParam{'C'});
+    EXPECT_EQ((seqan3::assign_char_strictly_to('C', l)), TypeParam{'C'});
 }
 
 TYPED_TEST(char_adaptation, alphabet_rank_t)
@@ -99,7 +99,7 @@ TYPED_TEST(char_adaptation, assign_rank_to)
     EXPECT_TRUE((std::is_same_v<decltype(seqan3::assign_rank_to(65, l)),
                                 seqan3::alphabet_char_t<TypeParam> &>));
     EXPECT_TRUE((std::is_same_v<decltype(seqan3::assign_rank_to(65, TypeParam{'A'})),
-                                seqan3::alphabet_char_t<TypeParam>  >));
+                                seqan3::alphabet_char_t<TypeParam>>));
     EXPECT_EQ((seqan3::assign_rank_to(65, TypeParam{'C'})), l);
     EXPECT_EQ((seqan3::assign_rank_to(67, l)), TypeParam{'C'});
 }

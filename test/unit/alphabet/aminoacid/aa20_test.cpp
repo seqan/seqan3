@@ -52,7 +52,7 @@ TEST(aa20, assign_char)
         EXPECT_EQ((seqan3::assign_char_to(chr, seqan3::aa20{})), alp);
 }
 
-TEST(aa20,to_char)
+TEST(aa20, to_char)
 {
     std::vector<char> chars
     {
