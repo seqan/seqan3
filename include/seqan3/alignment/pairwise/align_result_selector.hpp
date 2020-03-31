@@ -18,6 +18,7 @@
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
@@ -35,31 +36,9 @@
 
 namespace seqan3::detail
 {
-
-/*!\brief A helper class to define the alignment return type.
- * \tparam first_t  Type of the first sequence.
- * \tparam second_t Type of the second sequence.
- * \details
- * The type uses the gap decorator if random_access_range and sized_range are met for both input sequences.
- */
-template <typename first_t, typename second_t>
-struct alignment_type;
-
-//!\overload
-template <typename first_t, typename second_t>
-    requires std::ranges::random_access_range<first_t> &&
-             std::ranges::sized_range<first_t> &&
-             std::ranges::random_access_range<second_t> &&
-             std::ranges::sized_range<second_t>
-struct alignment_type<first_t, second_t>
-{
-    //!\brief The alignment type with gap decorator.
-    using type = std::tuple<gap_decorator<type_reduce_view<first_t &>>, gap_decorator<type_reduce_view<second_t &>>>;
-};
-
 /*!\brief Helper metafunction to select the alignment result type based on the configuration.
  * \ingroup pairwise_alignment
- * \tparam first_bach_t    The type of the first sequence.
+ * \tparam first_range_t   The type of the first sequence.
  * \tparam second_range_t  The type of the second sequence.
  * \tparam configuration_t The configuration type. Must be of type seqan3::detail::configuration
  */
@@ -95,21 +74,15 @@ private:
         }
         else if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type, score_type>>())
         {
-            // Due to an error with gcc8 we define these types beforehand.
-            using first_gapped_seq_type = gapped<value_type_t<first_range_t>>;
-            using second_gapped_seq_type = gapped<value_type_t<second_range_t>>;
-
-            // We use vectors of gapped sequence if the gap decorator cannot be used.
-            using fallback_t = std::tuple<std::vector<first_gapped_seq_type>, std::vector<second_gapped_seq_type>>;
-
-            // If the ranges are RandomAccess and Sized we can use the Gap Decorator, otherwise fallback_t.
-            using decorator_t = alignment_type<first_range_t, second_range_t>;
+            // TODO: type `(first|second)_range_t &` is a hack to make the sequences viewable_ranges
+            // https://github.com/seqan/seqan3/projects/10#card-33400557
+            using alignment_type = typename make_pairwise_alignment_type<first_range_t &, second_range_t &>::type;
 
             return alignment_result_value_type<uint32_t,
                                                score_type,
                                                alignment_coordinate,
                                                alignment_coordinate,
-                                               detail::transformation_trait_or_t<decorator_t, fallback_t>>{};
+                                               alignment_type>{};
         }
         else
         {

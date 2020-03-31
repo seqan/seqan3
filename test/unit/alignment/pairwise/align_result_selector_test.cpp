@@ -43,7 +43,7 @@ TEST(alignment_selector, align_result_selector_with_list)
                                                                                            seq2_t,
                                                                                            decltype(cfg)>::type>;
 
-        using gapped_seq1_t = std::vector<seqan3::gapped<seqan3::dna4>>;
+        using gapped_seq1_t = seqan3::gap_decorator<seqan3::type_reduce_view<std::vector<seqan3::dna4> &>>;
         using gapped_seq2_t = std::vector<seqan3::gapped<seqan3::dna4>>;
 
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().id()), uint32_t>));

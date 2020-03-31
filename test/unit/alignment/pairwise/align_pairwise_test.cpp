@@ -193,3 +193,20 @@ TYPED_TEST(align_pairwise_test, collection_with_double_score_type)
         }
     }
 }
+
+TYPED_TEST(align_pairwise_test, bug_1598)
+{
+    // https://github.com/seqan/seqan3/issues/1598
+    using seqan3::operator""_dna4;
+    auto s1 = "TTACGTACGGACTAGCTACAACATTACGGACTAC"_dna4;
+    auto g  = "GGACGACATGACGTACGACTTTACGTACGACTAGC"_dna4;
+    auto s2 = g | std::views::drop(2);
+
+    // Configure the alignment kernel.
+    seqan3::configuration cfg = seqan3::align_cfg::mode{seqan3::global_alignment} |
+                                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
+                                seqan3::align_cfg::result{seqan3::with_alignment};
+
+    // Invoke the pairwise alignment which returns a lazy range over alignment results.
+    auto results = seqan3::align_pairwise(std::tie(s1, s2), cfg);
+}
