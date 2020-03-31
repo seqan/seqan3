@@ -231,38 +231,7 @@ struct alignment_file_input_default_traits
  *
  * \details
  *
- * ### Introduction
- *
- * Alignment files are primarily used to store pairwise alignments of two biological sequences and often come with
- * many additional information. Well-known formats include the SAM/BAM format used to store read mapping data or the
- * BLAST format that stores the results of a query search against a data base.
- *
- * The Alignment file abstraction supports reading 14 different fields:
- *
- *   1. seqan3::field::seq
- *   2. seqan3::field::id
- *   3. seqan3::field::offset
- *   4. seqan3::field::ref_seq
- *   5. seqan3::field::ref_id
- *   6. seqan3::field::ref_offset
- *   7. seqan3::field::alignment
- *   8. seqan3::field::mapq
- *   9. seqan3::field::qual
- *   10. seqan3::field::flag
- *   11. seqan3::field::mate
- *   12. seqan3::field::tags
- *   13. seqan3::field::evalue
- *   14. seqan3::field::bit_score
- *   15. seqan3::field::cigar
- *
- * There exists one more field for alignment files, the seqan3::field::header_ptr, but this field is mostly used
- * internally. Please see the seqan3::alignment_file_output::header member function for details on how to access the
- * seqan3::alignment_file_header of the file.)
- *
- * All of these fields are retrieved by default (and in that order) except the field::cigar.
- * Note that some of the fields are specific to the SAM format (e.g. seqan3::field::flag) while others are specific to
- * BLAST format (e.g. seqan3::field::bit_score). Please see the corresponding formats for more details
- * (seqan3::format_sam).
+ * \copydetails alignment_file
  *
  * ### Construction and specialisation
  *
@@ -490,8 +459,29 @@ public:
                                   bitscore_type,
                                   header_type *>;
 
-    /*!\brief The subset of seqan3::field tags that are valid for this file; order corresponds to the types in
-     * \ref field_types.
+    /*!\brief The subset of seqan3::field tags valid for this file; order corresponds to the types in \ref field_types.
+     *
+     * The Alignment file abstraction supports reading 15 different fields:
+     *
+     *   1. seqan3::field::seq
+     *   2. seqan3::field::id
+     *   3. seqan3::field::offset
+     *   4. seqan3::field::ref_seq
+     *   5. seqan3::field::ref_id
+     *   6. seqan3::field::ref_offset
+     *   7. seqan3::field::alignment
+     *   8. seqan3::field::cigar
+     *   9. seqan3::field::mapq
+     *   10. seqan3::field::qual
+     *   11. seqan3::field::flag
+     *   12. seqan3::field::mate
+     *   13. seqan3::field::tags
+     *   14. seqan3::field::evalue
+     *   15. seqan3::field::bit_score
+     *
+     * There exists one more field for alignment files, the seqan3::field::header_ptr, but this field is mostly used
+     * internally. Please see the seqan3::alignment_file_output::header member function for details on how to access
+     * the seqan3::alignment_file_header of the file.)
      */
     using field_ids = fields<field::seq,
                              field::id,

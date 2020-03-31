@@ -52,32 +52,7 @@ namespace seqan3
  *
  * \details
  *
- * ### Introduction
- *
- * Alignment files provide a way to store pairwise alignment information.
- * Well-known formats include SAM and BAM or BLAST.
- *
- * The Alignment file abstraction supports writing following fields:
- *
- *   1. field::seq
- *   2. field::id
- *   3. field::offset
- *   4. field::ref_seq
- *   5. field::ref_id
- *   6. field::ref_offset
- *   7. field::alignment
- *   8. field::mapq
- *   9. field::flag
- *   10. field::qual
- *   11. field::mate
- *   12. field::tags
- *   13. field::evalue
- *   14. field::bit_score
- *   15. field::cigar
- *
- * There is an additional field called seqan3::field::header_ptr. It is used to transfer
- * header information from seqan3::alignment_file_input to seqan3::alignment_file_output,
- * but you needn't deal with this field manually.
+ * \copydetails alignment_file
  *
  * The member functions take any and either of these fields.
  *
