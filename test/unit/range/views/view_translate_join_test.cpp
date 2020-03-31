@@ -24,8 +24,8 @@
 
 using seqan3::operator""_dna4;
 
-using iterator_type
-        = decltype(seqan3::views::translate_join(std::declval<std::vector<seqan3::dna4_vector > &>()).begin());
+using iterator_type =
+        decltype(seqan3::views::translate_join(std::declval<std::vector<seqan3::dna4_vector > &>()).begin());
 
 template <>
 struct iterator_fixture<iterator_type> : public ::testing::Test
