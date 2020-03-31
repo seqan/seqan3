@@ -96,7 +96,7 @@ using reference_t = typename reference<t>::type;
  * There is a shortcut for this transformation trait: seqan3::rvalue_reference_t
  */
 template <typename t>
-struct rvalue_reference;
+struct SEQAN3_DEPRECATED_310 rvalue_reference;
 
 /*!\brief Shortcut for seqan3::rvalue_reference (transformation_trait shortcut).
  * \tparam t The type you wish to query.

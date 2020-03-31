@@ -91,7 +91,7 @@ template <std::ranges::input_range rng_t>
 //!\cond
     requires !std::input_or_output_iterator<rng_t>
 //!\endcond
-struct rvalue_reference<rng_t>
+struct SEQAN3_DEPRECATED_310 rvalue_reference<rng_t>
 {
     //!\brief Return the rvalue_reference member definition from the queried type's iterator.
     using type = rvalue_reference_t<std::ranges::iterator_t<rng_t>>;

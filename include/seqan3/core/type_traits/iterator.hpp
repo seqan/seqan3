@@ -69,7 +69,7 @@ struct reference<it_t>
  * \tparam it_t The type you wish to query; must model std::input_iterator.
  */
 template <std::input_iterator it_t>
-struct rvalue_reference<it_t>
+struct SEQAN3_DEPRECATED_310 rvalue_reference<it_t>
 {
     //!\brief Return the member type as return type.
     using type = std::iter_rvalue_reference_t<it_t>;
