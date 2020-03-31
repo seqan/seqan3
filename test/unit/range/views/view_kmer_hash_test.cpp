@@ -30,6 +30,8 @@ protected:
 
     static constexpr auto ungapped_view = seqan3::views::kmer_hash(seqan3::ungapped{3});
     static constexpr auto gapped_view = seqan3::views::kmer_hash(0b101_shape);
+    static constexpr auto ungapped_view2 = seqan3::views::kmer_hash(seqan3::ungapped{4});
+    static constexpr auto gapped_view2 = seqan3::views::kmer_hash(0b1001_shape);
 
     std::vector<seqan3::dna4> text1{"AAAAA"_dna4};
     std::vector<seqan3::dna4> const ctext1{"AAAAA"_dna4};
@@ -60,6 +62,11 @@ protected:
     std::forward_list<seqan3::dna4> const ctext6{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4};
     result_t ungapped6{ungapped2};
     result_t gapped6{gapped2};
+
+    std::vector<seqan3::dna4> text7{"ACG"_dna4};
+    std::vector<seqan3::dna4> const ctext7{"ACG"_dna4};
+    result_t ungapped7{6};
+    result_t gapped7{2};
 };
 
 
@@ -107,6 +114,7 @@ TEST_F(kmer_hash_test, ungapped)
     EXPECT_EQ(ungapped4, text4 | ungapped_view | seqan3::views::to<result_t>);
     EXPECT_EQ(ungapped5, text5 | ungapped_view | seqan3::views::to<result_t>);
     EXPECT_EQ(ungapped6, text6 | ungapped_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(ungapped7, text7 | ungapped_view | seqan3::views::to<result_t>);
 }
 
 TEST_F(kmer_hash_test, gapped)
@@ -117,6 +125,7 @@ TEST_F(kmer_hash_test, gapped)
     EXPECT_EQ(gapped4, text4 | gapped_view | seqan3::views::to<result_t>);
     EXPECT_EQ(gapped5, text5 | gapped_view | seqan3::views::to<result_t>);
     EXPECT_EQ(gapped6, text6 | gapped_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(gapped7, text7 | gapped_view | seqan3::views::to<result_t>);
 }
 
 TEST_F(kmer_hash_test, const_ungapped)
@@ -127,6 +136,7 @@ TEST_F(kmer_hash_test, const_ungapped)
     EXPECT_EQ(ungapped4, ctext4 | ungapped_view | seqan3::views::to<result_t>);
     EXPECT_EQ(ungapped5, ctext5 | ungapped_view | seqan3::views::to<result_t>);
     EXPECT_EQ(ungapped6, ctext6 | ungapped_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(ungapped7, ctext7 | ungapped_view | seqan3::views::to<result_t>);
 }
 
 TEST_F(kmer_hash_test, const_gapped)
@@ -137,6 +147,7 @@ TEST_F(kmer_hash_test, const_gapped)
     EXPECT_EQ(gapped4, ctext4 | gapped_view | seqan3::views::to<result_t>);
     EXPECT_EQ(gapped5, ctext5 | gapped_view | seqan3::views::to<result_t>);
     EXPECT_EQ(gapped6, ctext6 | gapped_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(gapped7, ctext7 | gapped_view | seqan3::views::to<result_t>);
 }
 
 TEST_F(kmer_hash_test, combinability)
@@ -180,4 +191,13 @@ TEST_F(kmer_hash_test, issue1614)
     std::vector<seqan3::dna5> sequence{"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5};
     EXPECT_EQ(sequence | seqan3::views::kmer_hash(seqan3::ungapped{25}) | seqan3::views::to<std::vector<size_t>>,
               seqan3::views::repeat_n(298023223876953124, 26) | seqan3::views::to<std::vector<size_t>>);
+}
+
+// https://github.com/seqan/seqan3/issues/1643
+TEST_F(kmer_hash_test, issue1643)
+{
+    EXPECT_EQ(ungapped3, text3 | ungapped_view2 | seqan3::views::to<result_t>);
+    EXPECT_EQ(gapped3, text3 | gapped_view2 | seqan3::views::to<result_t>);
+    EXPECT_EQ(ungapped3, ctext3 | ungapped_view2 | seqan3::views::to<result_t>);
+    EXPECT_EQ(gapped3, ctext3 | gapped_view2 | seqan3::views::to<result_t>);
 }

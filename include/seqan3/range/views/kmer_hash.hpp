@@ -115,7 +115,7 @@ public:
      */
     auto begin() noexcept
     {
-        return shape_iterator<urng_t>{std::ranges::begin(urange), shape_};
+        return shape_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), shape_};
     }
 
     //!\copydoc begin()
@@ -124,7 +124,7 @@ public:
         requires const_iterable_range<urng_t>
     //!\endcond
     {
-        return shape_iterator<urng_t const>{std::ranges::begin(urange), shape_};
+        return shape_iterator<urng_t const>{std::ranges::begin(urange), std::ranges::end(urange), shape_};
     }
 
     //!\copydoc begin()
@@ -251,14 +251,17 @@ public:
     *
     * Linear in size of shape.
     */
-    shape_iterator(it_t it_start, shape s_) :
-        shape_{s_}, text_left{it_start}, text_right{it_start}
+    shape_iterator(it_t it_start, sentinel_t it_end, shape s_) :
+        shape_{s_}, text_left{it_start}, text_right{std::ranges::next(it_start, s_.size(), it_end)}
     {
         assert(std::ranges::size(shape_) > 0);
 
-        roll_factor = pow(sigma, static_cast<size_t>(std::ranges::size(shape_) - 1));
+        if (shape_.size() <= std::ranges::distance(text_left, text_right))
+        {
+            roll_factor = pow(sigma, static_cast<size_t>(std::ranges::size(shape_) - 1));
 
-        hash_full();
+            hash_full();
+        }
     }
     //!\}
 
