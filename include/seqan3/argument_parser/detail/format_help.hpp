@@ -19,7 +19,6 @@
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
 #include <seqan3/core/detail/terminal.hpp>
-#include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/version.hpp>
 
 namespace seqan3::detail
@@ -526,8 +525,8 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.)"};
 
-        stream << views::repeat_n('=', 80) << to_text("\n\\fB") << "Copyright information for "
-              << meta.app_name << ":\n" << to_text("\\fP") << views::repeat_n('-', 80) << '\n';
+        stream << std::string(80, '=') << to_text("\n\\fB") << "Copyright information for "
+               << meta.app_name << ":\n" << to_text("\\fP") << std::string(80, '-') << '\n';
 
         if (!empty(meta.long_copyright))
         {
@@ -543,9 +542,9 @@ DAMAGE.)"};
             stream << to_text("\\fP") << meta.app_name << " copyright information not available.\n";
         }
 
-        stream << views::repeat_n('=', 80) << to_text("\n\\fB")
+        stream << std::string(80, '=') << to_text("\n\\fB")
               << "This program contains SeqAn code licensed under the following terms:\n" << to_text("\\fP")
-              << views::repeat_n('-', 80) << '\n' << seqan_license << '\n';
+              << std::string(80, '-') << '\n' << seqan_license << '\n';
 
         std::exit(EXIT_SUCCESS);
     }
