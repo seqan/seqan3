@@ -252,12 +252,12 @@ public:
 
     //!\brief Inherit the base type's constructors.
     using base_type::base_type;
-    //!\}
 
     //!\brief Store both arguments in the adaptor.
-    combined_adaptor(left_adaptor_t l, right_adaptor_t r) :
+    constexpr combined_adaptor(left_adaptor_t l, right_adaptor_t r) :
         base_type{std::forward<left_adaptor_t>(l), std::forward<right_adaptor_t>(r)}
     {}
+    //!\}
 };
 
 // ============================================================================
