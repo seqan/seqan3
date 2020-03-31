@@ -14,6 +14,7 @@
 
 #include <tuple>
 
+#include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 

@@ -17,7 +17,6 @@
 #include <utility>
 #include <vector>
 
-#include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
@@ -37,6 +36,7 @@
 #include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
 #include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
 #include <seqan3/alignment/scoring/detail/simd_match_mismatch_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
