@@ -1,5 +1,6 @@
 #include <seqan3/core/debug_stream.hpp>       // pretty printing
-#include <seqan3/search/search.hpp> // this already includes (bi)_fm_index
+#include <seqan3/search/search.hpp>
+#include <seqan3/search/fm_index/fm_index.hpp>
 
 using namespace std::string_literals; // for using the ""s string literal
 

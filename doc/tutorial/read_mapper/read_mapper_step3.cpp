@@ -8,9 +8,10 @@
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/argument_parser/all.hpp>
-#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/core/debug_stream.hpp>
+#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/search/all.hpp>
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/std/span>
 
 struct reference_storage_t
