@@ -45,7 +45,7 @@ protected:
     std::vector<seqan3::dna4> ctext2{"ACGTCGACGTTTAG"_dna4};
     seqan3::bitcompressed_vector<seqan3::dna4> bit_text2{"ACGTCGACGTTTAG"_dna4};
     seqan3::bitcompressed_vector<seqan3::dna4> const bit_ctext2{"ACGTCGACGTTTAG"_dna4};
-    std::list<seqan3::dna4>  list_text2{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4, 'C'_dna4,
+    std::list<seqan3::dna4> list_text2{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4, 'C'_dna4,
                                         'G'_dna4, 'T'_dna4, 'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4};
     std::list<seqan3::dna4> const list_ctext2{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4,
                                               'C'_dna4, 'G'_dna4, 'T'_dna4, 'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4};
@@ -68,16 +68,60 @@ protected:
     result_t gapped_no_rev4_stop{2, 5};
 };
 
+//template<std::ranges::view urng_t>
+void foo(std::ranges::forward_range a)
+{
+    //static_assert(std::ranges::forward_range<urng_t const>, "The minimiser only works on forward_ranges");
+}
+
+template<std::ranges::forward_iterator it_t>
+void foo2()
+{}
+
+TEST_F(minimiser_test, concepts)
+{
+    auto v1 = text1 | kmer_view | minimiser_view;
+    //EXPECT_FALSE((std::ranges::input_range<decltype(v1)>, size_t>));
+    //seqan3::debug_stream << seqan3::views::minimiser(v1, 1);//seqan3::detail::minimiser<decltype(v1)>();
+    //seqan3::debug_stream << seqan3::detail::minimiser<decltype(v1)>();
+    //std::cout << *(std::ranges::begin(v1));
+    //std::count << decltype(v1);
+    //foo(v1);
+    foo2<decltype(v1.begin())>();
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v1), size_t>));
+
+/*    auto v2 = list_text2 | ungapped_view | minimiser_view;
+    EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v2)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v2), size_t>));
+
+    auto v3 = flist_text2 | ungapped_view | minimiser_view;
+    EXPECT_TRUE(std::ranges::input_range<decltype(v3)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v3)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v3)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v3)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v3)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v3), size_t>));*/
+}
+
 TEST_F(minimiser_test, different_inputs_kmer_hash)
 {
     EXPECT_EQ(ungapped_no_rev2, text2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_EQ(ungapped_no_rev2, ctext2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_EQ(ungapped_no_rev2, bit_text2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
-//    EXPECT_EQ(ungapped_no_rev2, bit_ctext2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
-//    EXPECT_EQ(ungapped_no_rev2, list_text2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
-//    EXPECT_EQ(ungapped_no_rev2, list_ctext2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
-//    EXPECT_EQ(ungapped_no_rev2, flist_text2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
-//    EXPECT_EQ(ungapped_no_rev2, flist_ctext2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(ungapped_no_rev2, bit_ctext2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(ungapped_no_rev2, list_text2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(ungapped_no_rev2, list_ctext2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(ungapped_no_rev2, flist_text2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(ungapped_no_rev2, flist_ctext2 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
 }
 
 TEST_F(minimiser_test, ungapped_kmer_hash)
@@ -94,7 +138,7 @@ TEST_F(minimiser_test, gapped_kmer_hash)
     EXPECT_EQ(result1, text1 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_EQ(result1, text1_short | gapped_kmer_view | minimiser_view2 | seqan3::views::to<result_t>);
     EXPECT_EQ(gapped_no_rev2, text2 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
-    //EXPECT_EQ(result3, text3 | seqan3::views::kmer_hash(0b101_shape) | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(result3, text3 | seqan3::views::kmer_hash(0b101_shape) | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_EQ(gapped_no_rev4, text4 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
 }
 
@@ -104,18 +148,3 @@ TEST_F(minimiser_test, combinability)
     EXPECT_EQ(ungapped_no_rev4_stop, text4 | stop_at_t | kmer_view | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_EQ(gapped_no_rev4_stop, text4 | stop_at_t | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
 }
-/*
-TEST_F(minimiser_test, invalid_sizes)
-{
-    EXPECT_NO_THROW(text1 | seqan3::views::minimiser(seqan3::ungapped{32}));
-    EXPECT_THROW(text1 | seqan3::views::minimiser(seqan3::ungapped{33}), std::invalid_argument);
-    EXPECT_NO_THROW(text1 | std::views::reverse | seqan3::views::minimiser(seqan3::ungapped{32}));
-    EXPECT_THROW(text1 | std::views::reverse | seqan3::views::minimiser(seqan3::ungapped{33}), std::invalid_argument);
-
-    EXPECT_NO_THROW(text1 | seqan3::views::minimiser(0xFFFFFFFE001_shape)); // size=44, count=32
-    EXPECT_THROW(text1 | seqan3::views::minimiser(0xFFFFFFFFE009_shape), std::invalid_argument); // size=44, count=33
-
-    std::vector<seqan3::dna5> dna5_text{};
-    EXPECT_NO_THROW(dna5_text | seqan3::views::minimiser(seqan3::ungapped{27}));
-    EXPECT_THROW(dna5_text | seqan3::views::minimiser(seqan3::ungapped{28}), std::invalid_argument);
-}*/

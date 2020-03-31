@@ -93,8 +93,7 @@ public:
      */
     auto begin() noexcept
     {
-        return window_iterator<urng_t>{std::ranges::begin(urange), std::ranges::begin(urange) +
-                                      (std::ranges::size(urange) - 1), w_elems};
+        return window_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), w_elems};
     }
 
     //!\copydoc begin()
@@ -103,8 +102,7 @@ public:
         requires seqan3::const_iterable_range<urng_t>
     //!\endcond
     {
-        return window_iterator<urng_t const>{std::ranges::begin(urange), std::ranges::begin(urange) +
-                                            (std::ranges::size(urange) - 1), w_elems};
+        return window_iterator<urng_t const>{std::ranges::begin(urange), std::ranges::end(urange), w_elems};
     }
 
     //!\copydoc begin()
@@ -204,10 +202,11 @@ public:
     * \details
     *
     */
-    window_iterator(it_t it_start, it_t it_end, uint32_t w) :
-                    last_elem{it_end}, window_left{it_start}, window_right{it_start}, w_elems{w}
+    window_iterator(it_t it_start, sentinel_t it_end, uint32_t w) :
+                    last_elem{std::ranges::next(it_start, it_end)}, window_left{it_start}, window_right{it_start},
+                    w_elems{w}
     {
-        if (w_elems <= std::distance(window_left, last_elem))
+        if (w_elems <= std::ranges::distance(window_left, last_elem))
             get_minimiser();
     }
     //!\}
@@ -376,7 +375,7 @@ private:
         else
         {
             // Call next_minimiser until minimiser value changed or end of the underlying range is reached.
-            while((!minimiser_changed) && (window_right < last_elem))
+            while((!minimiser_changed) && (w_elems < std::ranges::distance(window_left, last_elem)))
             {
                 next_minimiser();
             }
@@ -514,6 +513,9 @@ namespace seqan3::views
  *
  * \details
  *
+ * A minimiser is the smallest value in a window. For example for the following list of hash values
+ * [28, 100, 9, 23, 4, 1, 72, 37, 8] and 4 elements per window, the minimiser values are [9,4,1,].
+ *
  *
  * ### View properties
  *
@@ -521,13 +523,13 @@ namespace seqan3::views
  * |----------------------------------|:----------------------------------:|:--------------------------------:|
  * | std::ranges::input_range         | *required*                         | *preserved*                      |
  * | std::ranges::forward_range       | *required*                         | *preserved*                      |
- * | std::ranges::bidirectional_range |                                    | *preserved*                      |
- * | std::ranges::random_access_range |                                    | *preserved*                      |
+ * | std::ranges::bidirectional_range |                                    | *lost*                           |
+ * | std::ranges::random_access_range |                                    | *lost*                      |
  * | std::ranges::contiguous_range    |                                    | *lost*                           |
  * |                                  |                                    |                                  |
  * | std::ranges::viewable_range      | *required*                         | *guaranteed*                     |
  * | std::ranges::view                |                                    | *guaranteed*                     |
- * | std::ranges::sized_range         |                                    | *preserved*                      |
+ * | std::ranges::sized_range         |                                    | *lost*                      |
  * | std::ranges::common_range        |                                    | *lost*                           |
  * | std::ranges::output_range        |                                    | *lost*                           |
  * | seqan3::const_iterable_range     |                                    | *preserved*                      |
