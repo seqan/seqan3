@@ -61,9 +61,13 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 #### Range
 
-* The `seqan3::begin()`, `seqan3::end()`, `seqan3::cbegin()`, `seqan3::cend()`, `seqan3::size()`, `seqan3::empty()` functions have been deprecated:
-  Use `std::ranges::{begin|end|cbegin|cend|size|empty}()` instead
-  ([\#1663](https://github.com/seqan/seqan3/pull/1663)).
+* The `seqan3::begin()`, `seqan3::end()`, `seqan3::cbegin()`, `seqan3::cend()`, `seqan3::size()`, `seqan3::empty()`
+  functions have been deprecated:
+  Use `std::ranges::{begin|end|cbegin|cend|size|empty}()` instead ([\#1663](https://github.com/seqan/seqan3/pull/1663)).
+
+#### Search
+
+* Moved `seqan3::search` from `search/algorithm/` to `search/` ([\#1696](https://github.com/seqan/seqan3/pull/1696)).
 
 ## Notable Bug-fixes
 

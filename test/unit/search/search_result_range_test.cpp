@@ -12,7 +12,7 @@
 #include <vector>
 
 #include <seqan3/range/views/type_reduce.hpp>
-#include <seqan3/search/algorithm/search_result_range.hpp>
+#include <seqan3/search/search_result_range.hpp>
 
 #include "../range/iterator_test_template.hpp"
 

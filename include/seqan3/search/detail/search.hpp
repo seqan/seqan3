@@ -13,10 +13,10 @@
 #pragma once
 
 #include <seqan3/range/views/type_reduce.hpp>
-#include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
-#include <seqan3/search/algorithm/detail/search_traits.hpp>
-#include <seqan3/search/algorithm/detail/search_trivial.hpp>
-#include <seqan3/search/algorithm/search_result_range.hpp>
+#include <seqan3/search/detail/search_scheme_algorithm.hpp>
+#include <seqan3/search/detail/search_traits.hpp>
+#include <seqan3/search/detail/search_trivial.hpp>
+#include <seqan3/search/search_result_range.hpp>
 #include <seqan3/search/configuration/all.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 

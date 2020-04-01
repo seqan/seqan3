@@ -1,5 +1,5 @@
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/search/algorithm/search.hpp>
+#include <seqan3/search/search.hpp>
 
 using seqan3::operator""_dna4;
 
