@@ -72,9 +72,10 @@ auto generate_numeric_sequence(size_t const len = 500,
     return sequence;
 }
 
-
 template <typename alphabet_t>
-auto generate_sequence_pairs(size_t const sequence_length, size_t const set_size)
+auto generate_sequence_pairs(size_t const sequence_length,
+                             size_t const set_size,
+                             size_t const sequence_variance = 0)
 {
     using sequence_t = decltype(generate_sequence<alphabet_t>());
 
@@ -82,8 +83,8 @@ auto generate_sequence_pairs(size_t const sequence_length, size_t const set_size
 
     for (unsigned i = 0; i < set_size; ++i)
     {
-        sequence_t seq1 = generate_sequence<alphabet_t>(sequence_length, 0, i);
-        sequence_t seq2 = generate_sequence<alphabet_t>(sequence_length, 0, i + set_size);
+        sequence_t seq1 = generate_sequence<alphabet_t>(sequence_length, sequence_variance, i);
+        sequence_t seq2 = generate_sequence<alphabet_t>(sequence_length, sequence_variance, i + set_size);
         vec.push_back(std::pair{seq1, seq2});
     }
 
@@ -110,7 +111,9 @@ auto generate_sequence_seqan2(size_t const len = 500,
 }
 
 template <typename alphabet_t>
-auto generate_sequence_pairs_seqan2(size_t const sequence_length, size_t const set_size)
+auto generate_sequence_pairs_seqan2(size_t const sequence_length,
+                                    size_t const set_size,
+                                    size_t const sequence_variance = 0)
 {
     using sequence_t = decltype(generate_sequence_seqan2<alphabet_t>());
 
@@ -119,8 +122,8 @@ auto generate_sequence_pairs_seqan2(size_t const sequence_length, size_t const s
 
     for (unsigned i = 0; i < set_size; ++i)
     {
-        sequence_t seq1 = generate_sequence_seqan2<alphabet_t>(sequence_length, 0, i);
-        sequence_t seq2 = generate_sequence_seqan2<alphabet_t>(sequence_length, 0, i + set_size);
+        sequence_t seq1 = generate_sequence_seqan2<alphabet_t>(sequence_length, sequence_variance, i);
+        sequence_t seq2 = generate_sequence_seqan2<alphabet_t>(sequence_length, sequence_variance, i + set_size);
         appendValue(vec1, seq1);
         appendValue(vec2, seq2);
     }

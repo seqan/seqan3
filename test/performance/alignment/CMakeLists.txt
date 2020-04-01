@@ -1,4 +1,5 @@
 seqan3_benchmark(global_affine_alignment_benchmark.cpp)
 seqan3_benchmark(global_affine_alignment_parallel_benchmark.cpp)
+seqan3_benchmark(global_affine_alignment_simd_benchmark.cpp)
 seqan3_benchmark(local_affine_alignment_benchmark.cpp)
 seqan3_benchmark(edit_distance_unbanded_benchmark.cpp)
