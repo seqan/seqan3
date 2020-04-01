@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/type_traits/function.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 
 constexpr
 int    constexpr_nonvoid_free_fun(int i) { return i; }
