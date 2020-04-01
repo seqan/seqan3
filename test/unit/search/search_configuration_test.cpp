@@ -52,6 +52,114 @@ TYPED_TEST(search_configuration_test, configuration_exists)
     EXPECT_TRUE(decltype(cfg)::template exists<TypeParam>());
 }
 
+TEST(search_configuration_test, max_error_defaults)
+{
+    // empty config defaults to 0 for every error
+    EXPECT_EQ((seqan3::search_cfg::max_error{}.value),
+              (seqan3::search_cfg::max_error{seqan3::search_cfg::total{0},
+                                             seqan3::search_cfg::substitution{0},
+                                             seqan3::search_cfg::insertion{0},
+                                             seqan3::search_cfg::deletion{0}}.value));
+
+    // if only total is given, all others default to total
+    EXPECT_EQ((seqan3::search_cfg::max_error{seqan3::search_cfg::total{0}}.value),
+              (seqan3::search_cfg::max_error{seqan3::search_cfg::total{0},
+                                             seqan3::search_cfg::substitution{0},
+                                             seqan3::search_cfg::insertion{0},
+                                             seqan3::search_cfg::deletion{0}}.value));
+
+    EXPECT_EQ((seqan3::search_cfg::max_error{seqan3::search_cfg::total{12}}.value),
+              (seqan3::search_cfg::max_error{seqan3::search_cfg::total{12},
+                                             seqan3::search_cfg::substitution{12},
+                                             seqan3::search_cfg::insertion{12},
+                                             seqan3::search_cfg::deletion{12}}.value));
+
+    // if total and another error type is given, the others default to 0
+    EXPECT_EQ((seqan3::search_cfg::max_error{seqan3::search_cfg::total{12},
+                                             seqan3::search_cfg::substitution{12}}.value),
+              (seqan3::search_cfg::max_error{seqan3::search_cfg::total{12},
+                                             seqan3::search_cfg::substitution{12},
+                                             seqan3::search_cfg::insertion{0},
+                                             seqan3::search_cfg::deletion{0}}.value));
+
+    EXPECT_EQ((seqan3::search_cfg::max_error{seqan3::search_cfg::total{12},
+                                             seqan3::search_cfg::insertion{12}}.value),
+              (seqan3::search_cfg::max_error{seqan3::search_cfg::total{12},
+                                             seqan3::search_cfg::substitution{0},
+                                             seqan3::search_cfg::insertion{12},
+                                             seqan3::search_cfg::deletion{0}}.value));
+
+    EXPECT_EQ((seqan3::search_cfg::max_error{seqan3::search_cfg::total{12},
+                                             seqan3::search_cfg::deletion{12}}.value),
+              (seqan3::search_cfg::max_error{seqan3::search_cfg::total{12},
+                                             seqan3::search_cfg::substitution{0},
+                                             seqan3::search_cfg::insertion{0},
+                                             seqan3::search_cfg::deletion{12}}.value));
+
+    // if total is not set, it will be computed by the sum of the others
+    EXPECT_EQ((seqan3::search_cfg::max_error{seqan3::search_cfg::substitution{1},
+                                             seqan3::search_cfg::insertion{2},
+                                             seqan3::search_cfg::deletion{3}}.value),
+              (seqan3::search_cfg::max_error{seqan3::search_cfg::total{6},
+                                             seqan3::search_cfg::substitution{1},
+                                             seqan3::search_cfg::insertion{2},
+                                             seqan3::search_cfg::deletion{3}}.value));
+}
+
+TEST(search_configuration_test, max_error_rate_defaults)
+{
+    // empty config defaults to 0 for every error
+    EXPECT_EQ((seqan3::search_cfg::max_error_rate{}.value),
+              (seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.0},
+                                                  seqan3::search_cfg::substitution{0.0},
+                                                  seqan3::search_cfg::insertion{0.0},
+                                                  seqan3::search_cfg::deletion{0.0}}.value));
+
+    // if total is given, all others default to total
+    EXPECT_EQ((seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.0}}.value),
+              (seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.0},
+                                                  seqan3::search_cfg::substitution{0.0},
+                                                  seqan3::search_cfg::insertion{0.0},
+                                                  seqan3::search_cfg::deletion{0.0}}.value));
+
+    EXPECT_EQ((seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.34}}.value),
+              (seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.34},
+                                                  seqan3::search_cfg::substitution{0.34},
+                                                  seqan3::search_cfg::insertion{0.34},
+                                                  seqan3::search_cfg::deletion{0.34}}.value));
+
+    // if total and another error type is given, the others default to 0
+    EXPECT_EQ((seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.34},
+                                                  seqan3::search_cfg::substitution{0.34}}.value),
+              (seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.34},
+                                                  seqan3::search_cfg::substitution{0.34},
+                                                  seqan3::search_cfg::insertion{0},
+                                                  seqan3::search_cfg::deletion{0}}.value));
+
+    EXPECT_EQ((seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.34},
+                                                  seqan3::search_cfg::insertion{0.34}}.value),
+              (seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.34},
+                                                  seqan3::search_cfg::substitution{0},
+                                                  seqan3::search_cfg::insertion{0.34},
+                                                  seqan3::search_cfg::deletion{0}}.value));
+
+    EXPECT_EQ((seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.34},
+                                                  seqan3::search_cfg::deletion{0.34}}.value),
+              (seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{0.34},
+                                                  seqan3::search_cfg::substitution{0},
+                                                  seqan3::search_cfg::insertion{0},
+                                                  seqan3::search_cfg::deletion{0.34}}.value));
+
+    // if total is not set, it will be computed by the sum of the others
+    EXPECT_EQ((seqan3::search_cfg::max_error{seqan3::search_cfg::substitution{0.1},
+                                             seqan3::search_cfg::insertion{0.2},
+                                             seqan3::search_cfg::deletion{0.3}}.value),
+              (seqan3::search_cfg::max_error{seqan3::search_cfg::total{0.6},
+                                             seqan3::search_cfg::substitution{0.1},
+                                             seqan3::search_cfg::insertion{0.2},
+                                             seqan3::search_cfg::deletion{0.3}}.value));
+}
+
 // TEST(search_configuration_test, illegal_runtime_configurations)
 // {
 //     seqan3::dna4_vector text{"ACGT"_dna4}, query{"ACG"_dna4};
