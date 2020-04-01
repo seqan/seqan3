@@ -19,6 +19,8 @@ namespace seqan3::detail
 {
 
 /*!\brief A struct that contains the actual alignment result data.
+ * \ingroup pairwise_alignment
+ *
  * \tparam id_t                  The type for the alignment identifier.
  * \tparam score_t               The type for the resulting score.
  * \tparam back_coord_t          The type for the back coordinate, can be omitted.
@@ -93,8 +95,7 @@ namespace seqan3
 
 /*!\brief Stores the alignment results and gives access to score, alignment and the front and back coordinates.
  * \ingroup pairwise_alignment
- * \tparam alignment_result_value_t The underlying value type containing the filled information from the alignment
- *                                  computation.
+ * \tparam alignment_result_value_t The underlying value type containing the information from the alignment computation.
  *
  * \details
  *
@@ -103,6 +104,15 @@ namespace seqan3
  * Optionally – if the user requests – also the begin and end positions within
  * the sequences and the alignment can be calculated. When accessing a field that
  * has not been calculated, an assertion will fail during compilation.
+ *
+ * \remark The template type argument is set internally by a result factory and depends on the configuration of the
+ * alignment result. For the general use of this class the concrete type information is not relevant and it
+ * suffices to know that this is a template class with one template type argument.
+ *
+ * \if DEV
+ * To access the type of the passed alignment result value use the seqan3::detail::alignment_result_value_type_accessor
+ * transformation trait.
+ * \endif
  */
 template <typename alignment_result_value_t>
 //!\cond
@@ -111,7 +121,7 @@ template <typename alignment_result_value_t>
 class alignment_result
 {
 private:
-    //! \brief Traits object that contains the actual alignment result data.
+    //! \brief Object that stores the computed alignment results.
     alignment_result_value_t data{};
 
     /*!\name Member types
@@ -135,18 +145,20 @@ public:
      * \{
      */
 
+    //!\privatesection
     /*!\brief Constructs a seqan3::alignment_result from an `value_type` object.
      * \param[in] value The alignment results.
      */
     alignment_result(alignment_result_value_t value) : data(std::move(value))
     {}
 
-    alignment_result() = default;                                     //!< Defaulted
-    alignment_result(alignment_result const &) = default;             //!< Defaulted
-    alignment_result(alignment_result &&) = default;                  //!< Defaulted
-    alignment_result & operator=(alignment_result const &) = default; //!< Defaulted
-    alignment_result & operator=(alignment_result &&) = default;      //!< Defaulted
-    ~alignment_result() = default;                                    //!< Defaulted
+    //!\publicsection
+    alignment_result() = default;                                     //!< Defaulted.
+    alignment_result(alignment_result const &) = default;             //!< Defaulted.
+    alignment_result(alignment_result &&) = default;                  //!< Defaulted.
+    alignment_result & operator=(alignment_result const &) = default; //!< Defaulted.
+    alignment_result & operator=(alignment_result &&) = default;      //!< Defaulted.
+    ~alignment_result() = default;                                    //!< Defaulted.
     //!\}
 
     /*!\name Access functions
