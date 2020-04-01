@@ -10,7 +10,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/type_traits/function.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/range/views/detail.hpp>
 
 using namespace seqan3;
