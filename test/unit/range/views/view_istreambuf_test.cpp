@@ -23,9 +23,8 @@
 
 #include "../iterator_test_template.hpp"
 
-using namespace seqan3;
 
-using iterator_type = decltype(views::istreambuf(std::declval<std::istringstream &>()).begin());
+using iterator_type = decltype(seqan3::views::istreambuf(std::declval<std::istringstream &>()).begin());
 
 template <>
 struct iterator_fixture<iterator_type> : public ::testing::Test
@@ -36,7 +35,7 @@ struct iterator_fixture<iterator_type> : public ::testing::Test
     std::string expected_range{"ACGTATATATAT ATATAT TTA \n AUAUAA"};
     std::istringstream is{expected_range};
 
-    decltype(views::istreambuf(is)) test_range = views::istreambuf(is);
+    decltype(seqan3::views::istreambuf(is)) test_range = seqan3::views::istreambuf(is);
 };
 
 using test_type = ::testing::Types<iterator_type>;
@@ -49,7 +48,7 @@ TEST(view_istreambuf, basic)
     std::istringstream is{data};
 
     // construct from istream:
-    auto v1 = views::istreambuf(is);
+    auto v1 = seqan3::views::istreambuf(is);
     size_t i = 0;
     for (auto c : v1)
         EXPECT_EQ(c, data[i++]);
@@ -58,7 +57,7 @@ TEST(view_istreambuf, basic)
     // construct from streambuf
     is.clear();
     is.seekg(0, std::ios::beg);
-    auto v2 = views::istreambuf(*is.rdbuf());
+    auto v2 = seqan3::views::istreambuf(*is.rdbuf());
     i = 0;
     for (auto c : v2)
         EXPECT_EQ(c, data[i++]);
@@ -67,15 +66,15 @@ TEST(view_istreambuf, basic)
     // combinability
     is.clear();
     is.seekg(0, std::ios::beg);
-    auto v3 = views::istreambuf(is) | views::char_to<dna5> | views::complement;
-    std::vector<dna5> comp{"TGCATATATATANTATATANAATNNNTATATT"_dna5};
+    auto v3 = seqan3::views::istreambuf(is) | seqan3::views::char_to<seqan3::dna5> | seqan3::views::complement;
+    std::vector<seqan3::dna5> comp{"TGCATATATATANTATATANAATNNNTATATT"_dna5};
     EXPECT_TRUE(std::ranges::equal(v3, comp));
 
     // combinability 2
     is.clear();
     is.seekg(0, std::ios::beg);
-    auto v4 = views::istreambuf(is) | views::take_until(is_space);
-    std::string out2 = v4 | views::to<std::string>;
+    auto v4 = seqan3::views::istreambuf(is) | seqan3::views::take_until(is_space);
+    std::string out2 = v4 | seqan3::views::to<std::string>;
     std::string comp2 = "ACGTATATATAT";
     EXPECT_TRUE(std::ranges::equal(out2, comp2));
 }
@@ -84,7 +83,7 @@ TEST(view_istreambuf, concepts)
 {
     std::string data{""};
     std::istringstream is{data};
-    auto v1 = views::istreambuf(is);
+    auto v1 = seqan3::views::istreambuf(is);
 
     EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
     EXPECT_FALSE(std::ranges::forward_range<decltype(v1)>);
@@ -93,7 +92,7 @@ TEST(view_istreambuf, concepts)
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_FALSE(std::ranges::sized_range<decltype(v1)>);
     EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v1), char>));
 }
 
@@ -108,10 +107,10 @@ TEST(view_istreambuf, big_file_stram)
     }
 
     std::ifstream istream{file_name.get_path()};
-    auto v = views::istreambuf(istream);
+    auto v = seqan3::views::istreambuf(istream);
     while (v.begin() != v.end())
     {
-        EXPECT_TRUE(std::ranges::equal(v | views::take_until_or_throw_and_consume(is_char<'\n'>),
+        EXPECT_TRUE(std::ranges::equal(v | seqan3::views::take_until_or_throw_and_consume(seqan3::is_char<'\n'>),
                                        std::string_view{"halloballo"}));
     }
 

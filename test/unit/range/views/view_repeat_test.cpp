@@ -16,13 +16,11 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
-
 TEST(general, construction)
 {
     // char
     char chr{'A'};
-    auto v = views::repeat(chr);
+    auto v = seqan3::views::repeat(chr);
 
     EXPECT_TRUE((std::is_default_constructible_v<decltype(v)>));
     EXPECT_TRUE((std::is_copy_constructible_v<decltype(v)>));
@@ -32,7 +30,7 @@ TEST(general, construction)
 
     // char const
     char const chr_const{'A'};
-    auto v_const = views::repeat(chr_const);
+    auto v_const = seqan3::views::repeat(chr_const);
 
     EXPECT_TRUE((std::is_default_constructible_v<decltype(v_const)>));
     EXPECT_TRUE((std::is_copy_constructible_v<decltype(v_const)>));
@@ -44,7 +42,7 @@ TEST(general, construction)
 TEST(general, concept)
 {
     char chr{'A'};
-    auto v = views::repeat(chr);
+    auto v = seqan3::views::repeat(chr);
 
     EXPECT_TRUE((std::ranges::range<decltype(v)>));
     EXPECT_TRUE((std::ranges::input_range<decltype(v)>));
@@ -60,7 +58,7 @@ TEST(general, concept)
 
 TEST(general, iterator)
 {
-    auto v = views::repeat('A');
+    auto v = seqan3::views::repeat('A');
 
     EXPECT_TRUE(v.begin() == v.begin());
 
@@ -111,7 +109,7 @@ TEST(general, iterator)
 
 TEST(general, subscript_operator)
 {
-    auto v = views::repeat('A');
+    auto v = seqan3::views::repeat('A');
 
     EXPECT_EQ(v[0], 'A');
     EXPECT_EQ(v[126], 'A');
@@ -129,29 +127,29 @@ TEST(view, factory)
     // const char
     {
         char const chr{'X'};
-        auto v = views::repeat(chr);
+        auto v = seqan3::views::repeat(chr);
         EXPECT_EQ(*v.begin(), chr);
     }
 
     // string
     {
         std::string str{"foobar"};
-        auto v = views::repeat(str);
+        auto v = seqan3::views::repeat(str);
         EXPECT_EQ(*v.begin(), str);
         EXPECT_EQ(v[2345], str);
     }
 
     // view
     {
-        auto view = std::string{"foobar"} | views::persist | std::views::take(3);
-        auto v = views::repeat(view);
+        auto view = std::string{"foobar"} | seqan3::views::persist | std::views::take(3);
+        auto v = seqan3::views::repeat(view);
         EXPECT_TRUE(std::ranges::equal(*v.begin(), view));
     }
 
     // combinability
     {
         std::string str{"foobar"};
-        auto v = views::repeat(str) | views::take_exactly(3);
+        auto v = seqan3::views::repeat(str) | seqan3::views::take_exactly(3);
         EXPECT_EQ(*v.begin(), str);
         EXPECT_EQ(std::ranges::size(v), 3u);
     }
@@ -159,7 +157,7 @@ TEST(view, factory)
 
 constexpr char constexpr_class_and_iterator()
 {
-    auto v = views::repeat('A');
+    auto v = seqan3::views::repeat('A');
 
     auto it = v.begin();
     ++it;
@@ -171,7 +169,7 @@ constexpr char constexpr_class_and_iterator()
 constexpr char constexpr_view()
 {
     char chr{'A'};
-    auto v = views::repeat(chr);
+    auto v = seqan3::views::repeat(chr);
     v[1324] = 'X';
 
     return *v.begin();

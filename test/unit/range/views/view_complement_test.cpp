@@ -16,52 +16,52 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
+using seqan3::operator""_dna5;
 
 TEST(view_complement, basic)
 {
-    dna5_vector foo{"ACGTA"_dna5};
+    seqan3::dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation
-    dna5_vector v = foo | views::complement | views::to<std::vector>;
+    seqan3::dna5_vector v = foo | seqan3::views::complement | seqan3::views::to<std::vector>;
     EXPECT_EQ(v, "TGCAT"_dna5);
 
     // function notation
-    dna5_vector v2(views::complement(foo) | views::to<std::vector>);
+    seqan3::dna5_vector v2(seqan3::views::complement(foo) | seqan3::views::to<std::vector>);
     EXPECT_EQ(v2, "TGCAT"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | views::complement | std::views::reverse | views::to<std::vector>;
+    seqan3::dna5_vector v3 = foo | seqan3::views::complement | std::views::reverse | seqan3::views::to<std::vector>;
     EXPECT_EQ(v3, "TACGT"_dna5);
 
-    dna5_vector const bar{"ACGTA"_dna5};
+    seqan3::dna5_vector const bar{"ACGTA"_dna5};
 
     // const pipe notation
-    dna5_vector v4 = bar | views::complement | views::to<std::vector>;
+    seqan3::dna5_vector v4 = bar | seqan3::views::complement | seqan3::views::to<std::vector>;
     EXPECT_EQ(v4, "TGCAT"_dna5);
 
     // const function notation
-    dna5_vector v5(views::complement(bar) | views::to<std::vector>);
+    seqan3::dna5_vector v5(seqan3::views::complement(bar) | seqan3::views::to<std::vector>);
     EXPECT_EQ(v5, "TGCAT"_dna5);
 
     // const combinability
-    dna5_vector v6 = bar | views::complement | std::views::reverse | views::to<std::vector>;
+    seqan3::dna5_vector v6 = bar | seqan3::views::complement | std::views::reverse | seqan3::views::to<std::vector>;
     EXPECT_EQ(v6, "TACGT"_dna5);
 }
 
 TEST(view_complement, deep_view)
 {
-    std::vector<dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5};
+    std::vector<seqan3::dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5};
 
-    auto v = foo | views::complement;
+    auto v = foo | seqan3::views::complement;
 
     ASSERT_EQ(size(v), 2u);
     EXPECT_TRUE((std::ranges::equal(v[0], "TGCAT"_dna5)));
     EXPECT_TRUE((std::ranges::equal(v[1], "ACGTA"_dna5)));
 
-    std::vector<dna5_vector> const bar{"ACGTA"_dna5, "TGCAT"_dna5};
+    std::vector<seqan3::dna5_vector> const bar{"ACGTA"_dna5, "TGCAT"_dna5};
 
-    auto v2 = bar | views::complement;
+    auto v2 = bar | seqan3::views::complement;
 
     ASSERT_EQ(size(v2), 2u);
     EXPECT_TRUE((std::ranges::equal(v2[0], "TGCAT"_dna5)));
@@ -70,7 +70,7 @@ TEST(view_complement, deep_view)
 
 TEST(view_complement, concepts)
 {
-    dna5_vector vec{"ACGTA"_dna5};
+    seqan3::dna5_vector vec{"ACGTA"_dna5};
     EXPECT_TRUE(std::ranges::input_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(vec)>);
@@ -78,10 +78,10 @@ TEST(view_complement, concepts)
     EXPECT_FALSE(std::ranges::view<decltype(vec)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_range<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::output_range<decltype(vec), dna5>));
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(vec)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(vec), seqan3::dna5>));
 
-    auto v1 = vec | views::complement;
+    auto v1 = vec | seqan3::views::complement;
     EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
@@ -89,11 +89,11 @@ TEST(view_complement, concepts)
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(v1), dna5>));
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v1), seqan3::dna5>));
     EXPECT_FALSE((std::ranges::output_range<decltype(v1), char>));
 
-    dna5_vector const vec2{"ACGTA"_dna5};
+    seqan3::dna5_vector const vec2{"ACGTA"_dna5};
     EXPECT_TRUE(std::ranges::input_range<decltype(vec2)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(vec2)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(vec2)>);
@@ -101,10 +101,10 @@ TEST(view_complement, concepts)
     EXPECT_FALSE(std::ranges::view<decltype(vec2)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(vec2)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(vec2)>);
-    EXPECT_TRUE(const_iterable_range<decltype(vec2)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(vec2), dna5>));
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(vec2)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(vec2), seqan3::dna5>));
 
-    auto v2 = vec2 | views::complement;
+    auto v2 = vec2 | seqan3::views::complement;
     EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v2)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v2)>);
@@ -112,7 +112,7 @@ TEST(view_complement, concepts)
     EXPECT_TRUE(std::ranges::view<decltype(v2)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(v2)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v2)>);
-    EXPECT_TRUE(const_iterable_range<decltype(v2)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(v2), dna5>));
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v2)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v2), seqan3::dna5>));
     EXPECT_FALSE((std::ranges::output_range<decltype(v2), char>));
 }

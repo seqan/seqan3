@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 TEST(view_interleave, basic)
 {
@@ -29,28 +29,31 @@ TEST(view_interleave, basic)
     size_t cmpsize = 18;
 
     // pipe notation
-    // explicitly call views::type_reduce
-    auto v0 = views::type_reduce(u) | views::interleave(s, views::type_reduce(i));
+    // explicitly call seqan3::views::type_reduce
+    auto v0 = seqan3::views::type_reduce(u) | seqan3::views::interleave(s, seqan3::views::type_reduce(i));
     EXPECT_TRUE(ranges::equal(cmp, v0));
     EXPECT_EQ(cmpsize, v0.size());
-    // don't call views::type_reduce
-    auto v1 = u | views::interleave(s, i);
+    // don't call seqan3::views::type_reduce
+    auto v1 = u | seqan3::views::interleave(s, i);
     EXPECT_TRUE(ranges::equal(cmp, v1));
 
     // function notation
-    // explicitly call views::type_reduce
-    auto v2{views::interleave(views::type_reduce(u), s, views::type_reduce(i))};
+    // explicitly call seqan3::views::type_reduce
+    auto v2{seqan3::views::interleave(seqan3::views::type_reduce(u), s, seqan3::views::type_reduce(i))};
     EXPECT_TRUE(ranges::equal(cmp, v2));
-    // don't call views::type_reduce
-    auto v3{views::interleave(u, s, i)};
+    // don't call seqan3::views::type_reduce
+    auto v3{seqan3::views::interleave(u, s, i)};
     EXPECT_TRUE(ranges::equal(cmp, v3));
 
     //combinability
-    // explicitly call views::type_reduce
-    auto v4 = views::type_reduce(u) | views::interleave(s, views::type_reduce(i)) | std::views::reverse | views::take(5);
+    // explicitly call seqan3::views::type_reduce
+    auto v4 = seqan3::views::type_reduce(u)
+            | seqan3::views::interleave(s, seqan3::views::type_reduce(i))
+            | std::views::reverse
+            | seqan3::views::take(5);
     EXPECT_TRUE(ranges::equal(cmp_rev, v4));
-    // don't call views::type_reduce
-    auto v5 = u | views::interleave(s, i) | std::views::reverse | views::take(5);
+    // don't call seqan3::views::type_reduce
+    auto v5 = u | seqan3::views::interleave(s, i) | std::views::reverse | seqan3::views::take(5);
     EXPECT_TRUE(ranges::equal(cmp_rev, v5));
 }
 
@@ -60,7 +63,7 @@ TEST(view_interleave, concepts)
     std::string u{"FOOBARBAXBAT"};
     std::string i{"in"};
     size_t s = 3;
-    auto v1 = detail::view_interleave(views::type_reduce(u), s, views::type_reduce(i));
+    auto v1 = seqan3::detail::view_interleave(seqan3::views::type_reduce(u), s, seqan3::views::type_reduce(i));
 
     EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
@@ -74,9 +77,9 @@ TEST(view_interleave, concepts)
     EXPECT_FALSE(std::ranges::contiguous_range<decltype(v1)>);
 
     // forward_range, viewable_range
-    std::forward_list<dna4> u2{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4};
-    dna4_vector i2{'G'_dna4};
-    auto v2 = views::interleave(u2, s, i2);
+    std::forward_list<seqan3::dna4> u2{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4};
+    seqan3::dna4_vector i2{'G'_dna4};
+    auto v2 = seqan3::views::interleave(u2, s, i2);
     EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
     EXPECT_TRUE(std::ranges::view<decltype(v2)>);
 
@@ -86,19 +89,19 @@ TEST(view_interleave, concepts)
     EXPECT_FALSE(std::ranges::contiguous_range<decltype(v2)>);
     EXPECT_FALSE(std::ranges::sized_range<decltype(v2)>);
     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(v2), dna4>));
+    EXPECT_FALSE((std::ranges::output_range<decltype(v2), seqan3::dna4>));
 }
 
 #if 0 // blocked by https://github.com/ericniebler/range-v3/issues/1320
 TEST(view_interleave, chunk_join)
 {
-    std::forward_list<dna4> u{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4};
-    dna4_vector i{'G'_dna4};
+    std::forward_list<seqan3::dna4> u{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4};
+    seqan3::dna4_vector i{'G'_dna4};
     size_t s = 2;
 
-    dna4_vector cmp{"AAGAAGAA"_dna4};
+    seqan3::dna4_vector cmp{"AAGAAGAA"_dna4};
 
-    auto v1 = views::interleave(u, s, i);
+    auto v1 = seqan3::views::interleave(u, s, i);
 
     auto it = v1.begin();
     for (auto c : cmp)

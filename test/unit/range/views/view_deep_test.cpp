@@ -23,7 +23,7 @@ inline auto const deep_take = deep{std::views::take};
 inline auto const deep_take2 = deep{std::views::take(2)};
 }
 
-using namespace seqan3;
+using seqan3::operator""_dna5;
 
 // ------------------------------------------------------------------
 // no parameters
@@ -31,30 +31,30 @@ using namespace seqan3;
 
 TEST(view_deep_reverse, basic)
 {
-    dna5_vector foo{"ACGTA"_dna5};
+    seqan3::dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | views::deep{std::views::reverse} | views::to<std::vector>;
+    seqan3::dna5_vector v0 = foo | seqan3::views::deep{std::views::reverse} | seqan3::views::to<std::vector>;
     EXPECT_EQ(v0, "ATGCA"_dna5);
 
     // pipe notation
-    dna5_vector v = foo | views::deep_reverse | views::to<std::vector>;
+    seqan3::dna5_vector v = foo | seqan3::views::deep_reverse | seqan3::views::to<std::vector>;
     EXPECT_EQ(v, "ATGCA"_dna5);
 
     // function notation
-    dna5_vector v2(views::deep_reverse(foo) | views::to<std::vector>);
+    seqan3::dna5_vector v2(seqan3::views::deep_reverse(foo) | seqan3::views::to<std::vector>);
     EXPECT_EQ(v2, "ATGCA"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | views::deep_reverse | std::views::reverse | views::to<std::vector>;
+    seqan3::dna5_vector v3 = foo | seqan3::views::deep_reverse | std::views::reverse | seqan3::views::to<std::vector>;
     EXPECT_EQ(v3, "ACGTA"_dna5);
 }
 
 TEST(view_deep_reverse, deep)
 {
-    std::vector<dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5};
+    std::vector<seqan3::dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5};
 
-    auto v = foo | views::deep_reverse;
+    auto v = foo | seqan3::views::deep_reverse;
 
     ASSERT_EQ(size(v), 2u);
     EXPECT_TRUE((std::ranges::equal(v[0], "ATGCA"_dna5)));
@@ -63,7 +63,7 @@ TEST(view_deep_reverse, deep)
 
 TEST(view_deep_reverse, concepts)
 {
-    std::vector<dna5_vector> vec{"ACGTA"_dna5, "TGCAT"_dna5};
+    std::vector<seqan3::dna5_vector> vec{"ACGTA"_dna5, "TGCAT"_dna5};
     EXPECT_TRUE(std::ranges::input_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(vec)>);
@@ -71,10 +71,10 @@ TEST(view_deep_reverse, concepts)
     EXPECT_FALSE(std::ranges::view<decltype(vec)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_range<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::output_range<decltype(vec), dna5_vector>));
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(vec)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(vec), seqan3::dna5_vector>));
 
-    auto v1 = vec | views::deep_reverse;
+    auto v1 = vec | seqan3::views::deep_reverse;
     EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
@@ -82,8 +82,8 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_range<decltype(v1)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(v1), dna5_vector>)); // view temporary returned in deep case
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v1), seqan3::dna5_vector>)); // view temporary returned in deep case
 
     auto v_elem = v1[0];
     EXPECT_TRUE(std::ranges::input_range<decltype(v_elem)>);
@@ -93,8 +93,8 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(std::ranges::view<decltype(v_elem)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(v_elem)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v_elem)>);
-    EXPECT_TRUE(const_iterable_range<decltype(v_elem)>);
-    EXPECT_TRUE((std::ranges::output_range<decltype(v_elem), dna5>));
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v_elem)>);
+    EXPECT_TRUE((std::ranges::output_range<decltype(v_elem), seqan3::dna5>));
 }
 
 // ------------------------------------------------------------------
@@ -103,30 +103,30 @@ TEST(view_deep_reverse, concepts)
 
 TEST(view_deep_take, basic)
 {
-    dna5_vector foo{"ACGTA"_dna5};
+    seqan3::dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | views::deep{std::views::take}(2) | views::to<std::vector>;
+    seqan3::dna5_vector v0 = foo | seqan3::views::deep{std::views::take}(2) | seqan3::views::to<std::vector>;
     EXPECT_EQ(v0, "AC"_dna5);
 
     // pipe notation
-    dna5_vector v = foo | views::deep_take(2) | views::to<std::vector>;
+    seqan3::dna5_vector v = foo | seqan3::views::deep_take(2) | seqan3::views::to<std::vector>;
     EXPECT_EQ(v, "AC"_dna5);
 
     // function notation
-    dna5_vector v2(views::deep_take(foo, 2) | views::to<std::vector>);
+    seqan3::dna5_vector v2(seqan3::views::deep_take(foo, 2) | seqan3::views::to<std::vector>);
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | views::deep_take(2) | std::views::reverse | views::to<std::vector>;
+    seqan3::dna5_vector v3 = foo | seqan3::views::deep_take(2) | std::views::reverse | seqan3::views::to<std::vector>;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 
 TEST(view_deep_take, deep)
 {
-    std::vector<dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5, "FOO"_dna5};
+    std::vector<seqan3::dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5, "FOO"_dna5};
 
-    auto v = foo | views::deep_take(2);
+    auto v = foo | seqan3::views::deep_take(2);
 
     ASSERT_EQ(size(v), 3u);
     EXPECT_TRUE((std::ranges::equal(v[0], "AC"_dna5)));
@@ -134,7 +134,7 @@ TEST(view_deep_take, deep)
     EXPECT_TRUE((std::ranges::equal(v[2], "NN"_dna5)));
 
     int i = 2;
-    auto v2 = foo | views::deep_take(i);
+    auto v2 = foo | seqan3::views::deep_take(i);
 
     ASSERT_EQ(size(v2), 3u);
     EXPECT_TRUE((std::ranges::equal(v2[0], "AC"_dna5)));
@@ -148,30 +148,30 @@ TEST(view_deep_take, deep)
 
 TEST(view_deep_take2, basic)
 {
-    dna5_vector foo{"ACGTA"_dna5};
+    seqan3::dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | views::deep{std::views::take(2)} | views::to<std::vector>;
+    seqan3::dna5_vector v0 = foo | seqan3::views::deep{std::views::take(2)} | seqan3::views::to<std::vector>;
     EXPECT_EQ(v0, "AC"_dna5);
 
     // pipe notation
-    dna5_vector v = foo | views::deep_take2 | views::to<std::vector>;
+    seqan3::dna5_vector v = foo | seqan3::views::deep_take2 | seqan3::views::to<std::vector>;
     EXPECT_EQ(v, "AC"_dna5);
 
     // function notation
-    dna5_vector v2(views::deep_take2(foo) | views::to<std::vector>);
+    seqan3::dna5_vector v2(seqan3::views::deep_take2(foo) | seqan3::views::to<std::vector>);
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | views::deep_take2 | std::views::reverse | views::to<std::vector>;
+    seqan3::dna5_vector v3 = foo | seqan3::views::deep_take2 | std::views::reverse | seqan3::views::to<std::vector>;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 
 TEST(view_deep_take2, deep)
 {
-    std::vector<dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5, "FOO"_dna5};
+    std::vector<seqan3::dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5, "FOO"_dna5};
 
-    auto v = foo | views::deep_take2;
+    auto v = foo | seqan3::views::deep_take2;
 
     ASSERT_EQ(size(v), 3u);
     EXPECT_TRUE((std::ranges::equal(v[0], "AC"_dna5)));
