@@ -268,3 +268,12 @@ TEST(alignment_result_test, empty_type)
     seqan3::alignment_result tmp(tr);
     // members must not be accessed
 }
+
+TEST(alignment_result_test, access_result_value_type)
+{
+    seqan3::detail::alignment_result_value_type result_value{2u, 5};
+    seqan3::alignment_result result(result_value);
+
+    using result_value_t = typename seqan3::detail::alignment_result_value_type_accessor<decltype(result)>::type;
+    EXPECT_TRUE((std::same_as<result_value_t, decltype(result_value)>));
+}
