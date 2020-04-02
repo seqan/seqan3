@@ -5,14 +5,13 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
 #include <type_traits>
-
-#include "../helper.hpp"
 
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/std/algorithm>
 
-#include <gtest/gtest.h>
+#include "../helper.hpp"
 
 using sdsl_byte_index_type = sdsl::csa_wt<
         sdsl::wt_blcd<

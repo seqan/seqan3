@@ -5,14 +5,13 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
 #include <type_traits>
-
-#include "../helper.hpp"
 
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
 #include <seqan3/std/algorithm>
 
-#include <gtest/gtest.h>
+#include "../helper.hpp"
 
 template <typename T>
 struct bi_fm_index_cursor_collection_test;

@@ -5,12 +5,14 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include "bi_fm_index_cursor_collection_test_template.hpp"
+#include <string_view>
 
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/to.hpp>
 
-#include <string_view>
+#include "bi_fm_index_cursor_collection_test_template.hpp"
 
 // generic type
 template <typename index_cursor_t>
