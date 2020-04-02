@@ -16,8 +16,6 @@
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser.hpp>
-#include <seqan3/range/views/repeat_n.hpp>
-#include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to.hpp>
 
