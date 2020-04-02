@@ -14,7 +14,6 @@
 
 #include <deque>
 
-#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/hash.hpp>
 
 namespace seqan3::detail
@@ -24,7 +23,7 @@ namespace seqan3::detail
 // ---------------------------------------------------------------------------------------------------------------------
 
 /*!\brief The type returned by seqan3::views::minimiser.
- * \tparam urng_t The type of the underlying ranges, must model std::forward_range, the reference type must model
+ * \tparam urng_t The type of the underlying ranges, must model std::input_range, the reference type must model
  *                std::size_t. The typical use case is that the reference type is the result of seqan3::kmer_hash.
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
@@ -39,7 +38,7 @@ template <std::ranges::view urng_t>
 class minimiser : public std::ranges::view_interface<minimiser<urng_t>>
 {
 private:
-    static_assert(std::ranges::forward_range<urng_t const>, "The minimiser only works on forward_ranges");
+    static_assert(std::ranges::input_range<urng_t>, "The minimiser only works on input_ranges");
 
     //!\brief The underlying range.
     urng_t urange;
@@ -177,7 +176,7 @@ public:
     //!\brief Reference to `value_type`.
     using reference = value_type;
     //!\brief Tag this class as input iterator.
-    using iterator_category = std::forward_iterator_tag;
+    using iterator_category = std::input_iterator_tag;
     //!\brief Tag this class depending on which concept `it_t` models.
     using iterator_concept = std::conditional_t<std::contiguous_iterator<it_t>,
                                                 typename std::random_access_iterator_tag,
@@ -203,7 +202,7 @@ public:
     *
     */
     window_iterator(it_t it_start, sentinel_t it_end, uint32_t w) :
-                    last_elem{std::ranges::next(it_start, it_end)}, window_left{it_start}, window_right{it_start},
+                    last_elem{it_end}, window_left{it_start}, window_right{it_start},
                     w_elems{w}
     {
         if (w_elems <= std::ranges::distance(window_left, last_elem))
@@ -347,7 +346,7 @@ public:
 
 private:
     //!brief Iterator to last element in range.
-    it_t last_elem;
+    sentinel_t last_elem;
 
     //!brief Keeps track if the minimiser value changed.
     bool minimiser_changed{false};
@@ -475,7 +474,7 @@ struct minimiser_fn
     /*!\brief               Call the view's constructor with the underlying view and an integer indicating how many
      *                      one window contains as arguments.
      * \param[in] urange    The input range to process. Must model std::ranges::viewable_range and
-     *                      std::ranges::forward_range.
+     *                      std::ranges::input_range.
      * \param[in] w_elems   The number of elements in one window.
      * \returns             A range of converted elements.
      */
@@ -484,8 +483,8 @@ struct minimiser_fn
     {
         static_assert(std::ranges::viewable_range<urng_t>,
             "The range parameter to views::minimiser cannot be a temporary of a non-view range.");
-        static_assert(std::ranges::forward_range<urng_t>,
-            "The range parameter to views::minimiser must model std::ranges::forward_range.");
+        static_assert(std::ranges::input_range<urng_t>,
+            "The range parameter to views::minimiser must model std::ranges::input_range.");
 
         return minimiser{urange, w_elems};
     }
@@ -522,14 +521,14 @@ namespace seqan3::views
  * | Concepts and traits              | `urng_t` (underlying range type)   | `rrng_t` (returned range type)   |
  * |----------------------------------|:----------------------------------:|:--------------------------------:|
  * | std::ranges::input_range         | *required*                         | *preserved*                      |
- * | std::ranges::forward_range       | *required*                         | *preserved*                      |
+ * | std::ranges::forward_range       |                                    | *preserved*                      |
  * | std::ranges::bidirectional_range |                                    | *lost*                           |
- * | std::ranges::random_access_range |                                    | *lost*                      |
+ * | std::ranges::random_access_range |                                    | *lost*                           |
  * | std::ranges::contiguous_range    |                                    | *lost*                           |
  * |                                  |                                    |                                  |
  * | std::ranges::viewable_range      | *required*                         | *guaranteed*                     |
  * | std::ranges::view                |                                    | *guaranteed*                     |
- * | std::ranges::sized_range         |                                    | *lost*                      |
+ * | std::ranges::sized_range         |                                    | *lost*                           |
  * | std::ranges::common_range        |                                    | *lost*                           |
  * | std::ranges::output_range        |                                    | *lost*                           |
  * | seqan3::const_iterable_range     |                                    | *preserved*                      |
