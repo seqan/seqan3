@@ -23,7 +23,7 @@ namespace seqan3::detail
 // ---------------------------------------------------------------------------------------------------------------------
 
 /*!\brief The type returned by seqan3::views::minimiser.
- * \tparam urng_t The type of the underlying ranges, must model std::input_range, the reference type must model
+ * \tparam urng_t The type of the underlying ranges, must model std::forward_range, the reference type must model
  *                std::size_t. The typical use case is that the reference type is the result of seqan3::kmer_hash.
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
@@ -38,7 +38,7 @@ template <std::ranges::view urng_t>
 class minimiser : public std::ranges::view_interface<minimiser<urng_t>>
 {
 private:
-    static_assert(std::ranges::input_range<urng_t>, "The minimiser only works on input_ranges");
+    static_assert(std::ranges::forward_range<urng_t const>, "The minimiser only works on forward_ranges");
 
     //!\brief The underlying range.
     urng_t urange;
@@ -474,7 +474,7 @@ struct minimiser_fn
     /*!\brief               Call the view's constructor with the underlying view and an integer indicating how many
      *                      one window contains as arguments.
      * \param[in] urange    The input range to process. Must model std::ranges::viewable_range and
-     *                      std::ranges::input_range.
+     *                      std::ranges::forward_range.
      * \param[in] w_elems   The number of elements in one window.
      * \returns             A range of converted elements.
      */
@@ -483,8 +483,8 @@ struct minimiser_fn
     {
         static_assert(std::ranges::viewable_range<urng_t>,
             "The range parameter to views::minimiser cannot be a temporary of a non-view range.");
-        static_assert(std::ranges::input_range<urng_t>,
-            "The range parameter to views::minimiser must model std::ranges::input_range.");
+        static_assert(std::ranges::forward_range<urng_t>,
+            "The range parameter to views::minimiser must model std::ranges::forward_range.");
 
         return minimiser{urange, w_elems};
     }
