@@ -127,7 +127,7 @@ template <std::ranges::range rng_t>
 //!\cond
     requires !std::input_or_output_iterator<rng_t>
 //!\endcond
-struct SEQAN3_DEPRECATED_310 difference_type<rng_t>
+struct difference_type<rng_t>
 {
     //!\brief Return the difference_type member definition from the queried type's iterator.
     using type = difference_type_t<std::ranges::iterator_t<rng_t>>;

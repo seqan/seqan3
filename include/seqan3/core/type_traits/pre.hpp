@@ -156,7 +156,7 @@ using const_reference_t = typename const_reference<t>::type;
  * There is a shortcut for this transformation trait: seqan3::difference_type_t
  */
 template <typename t>
-struct SEQAN3_DEPRECATED_310 difference_type;
+struct difference_type;
 
 /*!\brief Shortcut for seqan3::difference_type (transformation_trait shortcut).
  * \tparam t The type you wish to query.
