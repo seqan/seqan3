@@ -10,37 +10,47 @@
 #include <type_traits>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
-#include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser.hpp>
-#include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to.hpp>
 
 #include <gtest/gtest.h>
 
 using seqan3::operator""_dna4;
-using seqan3::operator""_dna5;
 using seqan3::operator""_shape;
+
+static constexpr auto kmer_view = seqan3::views::kmer_hash(seqan3::ungapped{4});
+static constexpr auto gapped_kmer_view = seqan3::views::kmer_hash(0b1001_shape);
+static constexpr auto minimiser_view = seqan3::views::minimiser(5);
+static constexpr auto minimiser_view2 = seqan3::views::minimiser(1); // kmer_size == window_size
+
+template <typename T>
+class minimiser_view_properties_test: public ::testing::Test { };
+
+using underlying_range_types = ::testing::Types<std::vector<seqan3::dna4>,
+                                                std::vector<seqan3::dna4> const,
+                                                seqan3::bitcompressed_vector<seqan3::dna4>,
+                                                seqan3::bitcompressed_vector<seqan3::dna4> const,
+                                                std::list<seqan3::dna4>,
+                                                std::list<seqan3::dna4> const,
+                                                std::forward_list<seqan3::dna4>,
+                                                std::forward_list<seqan3::dna4> const>;
+
+TYPED_TEST_SUITE(minimiser_view_properties_test, underlying_range_types, );
 
 class minimiser_test : public ::testing::Test
 {
 protected:
     using result_t = std::vector<size_t>;
 
-    static constexpr auto kmer_view = seqan3::views::kmer_hash(seqan3::ungapped{4});
-    static constexpr auto gapped_kmer_view = seqan3::views::kmer_hash(0b1001_shape);
-    static constexpr auto minimiser_view = seqan3::views::minimiser(5);
-    static constexpr auto minimiser_view2 = seqan3::views::minimiser(1); // kmer_size == window_size
-
     std::vector<seqan3::dna4> text1{"AAAAAAAAAA"_dna4};
     std::vector<seqan3::dna4> text1_short{"AAAAAA"_dna4};
     result_t result1{0, 0, 0}; // Same result for ungapped and gapped
 
     std::vector<seqan3::dna4> text2{"ACGTCGACGTTTAG"_dna4};
-    std::vector<seqan3::dna4> ctext2{"ACGTCGACGTTTAG"_dna4};
+    std::vector<seqan3::dna4> const ctext2{"ACGTCGACGTTTAG"_dna4};
     seqan3::bitcompressed_vector<seqan3::dna4> bit_text2{"ACGTCGACGTTTAG"_dna4};
     seqan3::bitcompressed_vector<seqan3::dna4> const bit_ctext2{"ACGTCGACGTTTAG"_dna4};
     std::list<seqan3::dna4> list_text2{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4, 'C'_dna4,
@@ -66,31 +76,17 @@ protected:
     result_t gapped_no_rev4_stop{2, 5};
 };
 
-TEST_F(minimiser_test, concepts)
+TYPED_TEST(minimiser_view_properties_test, concepts)
 {
-    auto v1 = text1 | kmer_view | minimiser_view;
-    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
-    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(v1), size_t>));
-
-    auto v2 = list_text2 | kmer_view | minimiser_view;
-    EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
-    EXPECT_TRUE(std::ranges::forward_range<decltype(v2)>);
-    EXPECT_TRUE(std::ranges::view<decltype(v2)>);
-    EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
-    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v2)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(v2), size_t>));
-
-    auto v3 = flist_text2 | kmer_view | minimiser_view;
-    EXPECT_TRUE(std::ranges::input_range<decltype(v3)>);
-    EXPECT_TRUE(std::ranges::forward_range<decltype(v3)>);
-    EXPECT_TRUE(std::ranges::view<decltype(v3)>);
-    EXPECT_FALSE(std::ranges::common_range<decltype(v3)>);
-    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v3)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(v3), size_t>));
+    TypeParam t{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4,
+                'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4};
+    auto v = t | kmer_view | minimiser_view;
+    EXPECT_TRUE(std::ranges::input_range<decltype(v)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v), size_t>));
 }
 
 TEST_F(minimiser_test, different_inputs_kmer_hash)
