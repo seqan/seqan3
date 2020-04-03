@@ -94,7 +94,7 @@ struct bgzf_compression
      * \param[in] header The header to validate.
      * \returns `true` if it is a bgzf header, otherwise `false`.
      */
-    template <typename char_t, ptrdiff_t extend>
+    template <typename char_t, size_t extend>
     static bool validate_header(std::span<char_t, extend> header)
     {
         static_assert(seqan3::detail::weakly_equality_comparable_with<char_t, char>,
