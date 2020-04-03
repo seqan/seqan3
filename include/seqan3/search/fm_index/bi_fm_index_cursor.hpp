@@ -908,14 +908,21 @@ public:
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 
-        size_type const loc = offset() - index->fwd_fm.index[fwd_lb];   // Position of query in concatenated texts.
-        size_type const text_idx = index->fwd_fm.text_begin_rs.rank(loc + 1) - 1; // Position of subtext in text vector,
-                                                                        // where the query was found
-                                                                        // = rank of Bitvector of the concatenated texts
-        size_type const query_begin = loc - index->fwd_fm.text_begin_ss.select(text_idx + 1);
-                                                                        // Substract lengths of previous sequences
-        return text[text_idx] | views::slice(query_begin, query_begin + query_length());
-                                                                        // Take subtext, slice query out of it    }
+        // Position of query in concatenated text.
+        size_type const location = offset() - index->fwd_fm.index[fwd_lb];
+        // The rank represents the number of delimiters before position `location + 1`.
+        // Furthermore, this number represents the i-th text this (text) position originates from, since each delimiter
+        // corresponds to one text in the whole concatenated text from left-to-right.
+        size_type const rank = index->fwd_fm.text_begin_rs.rank(location + 1);
+        // The sum of all text lengths prior to the i-th text is the start location of the i-th text in the concatenated
+        // sequence.
+        size_type const start_location = index->fwd_fm.text_begin_ss.select(rank);
+        assert(rank > 0);
+        size_type const text_id = rank - 1;
+        // Substract lengths of previous sequences.
+        size_type const query_begin = location - start_location;
+        // Take subtext, slice query out of it <-my
+        return text[text_id] | views::slice(query_begin, query_begin + query_length());
     }
 
     /*!\brief Counts the number of occurrences of the searched query in the text.
