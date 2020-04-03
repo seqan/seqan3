@@ -81,7 +81,6 @@ TEST_F(minimiser_test, concepts)
     EXPECT_FALSE(std::ranges::forward_range<decltype(v1a)>);
     EXPECT_TRUE(std::ranges::view<decltype(v1a)>);
     EXPECT_FALSE(std::ranges::common_range<decltype(v1a)>);
-    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1a)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v1a), size_t>));
 
     auto v2 = list_text2 | kmer_view | minimiser_view;

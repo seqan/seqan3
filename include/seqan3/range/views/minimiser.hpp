@@ -205,7 +205,7 @@ public:
                     last_elem{it_end}, window_left{it_start}, window_right{it_start},
                     w_elems{w}
     {
-        if (w_elems <= std::ranges::distance(window_left, last_elem))
+        if (window_right != last_elem)
             get_minimiser();
     }
     //!\}
@@ -374,7 +374,7 @@ private:
         else
         {
             // Call next_minimiser until minimiser value changed or end of the underlying range is reached.
-            while((!minimiser_changed) && (w_elems < std::ranges::distance(window_left, last_elem)))
+            while((!minimiser_changed) && (std::ranges::next(window_right) != last_elem))
             {
                 next_minimiser();
             }
