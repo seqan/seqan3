@@ -30,8 +30,6 @@ protected:
 
     static constexpr auto ungapped_view = seqan3::views::kmer_hash(seqan3::ungapped{3});
     static constexpr auto gapped_view = seqan3::views::kmer_hash(0b101_shape);
-    static constexpr auto ungapped_view2 = seqan3::views::kmer_hash(seqan3::ungapped{4});
-    static constexpr auto gapped_view2 = seqan3::views::kmer_hash(0b1001_shape);
 
     std::vector<seqan3::dna4> text1{"AAAAA"_dna4};
     std::vector<seqan3::dna4> const ctext1{"AAAAA"_dna4};
@@ -196,8 +194,15 @@ TEST_F(kmer_hash_test, issue1614)
 // https://github.com/seqan/seqan3/issues/1643
 TEST_F(kmer_hash_test, issue1643)
 {
-    EXPECT_EQ(ungapped3, text3 | ungapped_view2 | seqan3::views::to<result_t>);
-    EXPECT_EQ(gapped3, text3 | gapped_view2 | seqan3::views::to<result_t>);
-    EXPECT_EQ(ungapped3, ctext3 | ungapped_view2 | seqan3::views::to<result_t>);
-    EXPECT_EQ(gapped3, ctext3 | gapped_view2 | seqan3::views::to<result_t>);
+    std::vector<seqan3::dna4> text_23_elements{"ACGATCGATCGTAGCTACTGAGC"_dna4};
+
+    auto k_mer_size_23_view = text_23_elements | seqan3::views::kmer_hash(seqan3::ungapped{23u});
+    EXPECT_EQ(k_mer_size_23_view.size(), 1u);
+    EXPECT_EQ(k_mer_size_23_view[0], 6829917194121u);
+
+    auto k_mer_size_24_view = text_23_elements | seqan3::views::kmer_hash(seqan3::ungapped{24u});
+    EXPECT_TRUE(k_mer_size_24_view.empty());
+
+    auto k_mer_size_25_view = text_23_elements | seqan3::views::kmer_hash(seqan3::ungapped{25u});
+    EXPECT_TRUE(k_mer_size_25_view.empty());
 }
