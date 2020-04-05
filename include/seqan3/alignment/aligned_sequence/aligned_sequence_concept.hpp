@@ -19,10 +19,9 @@
 #include <range/v3/algorithm/for_each.hpp>
 
 #include <seqan3/alignment/exception.hpp>
-#include <seqan3/alphabet/gap/all.hpp>
+#include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
-#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/to_char.hpp>

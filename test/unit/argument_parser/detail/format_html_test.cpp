@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/argument_parser/all.hpp>
+#include <seqan3/argument_parser/argument_parser.hpp>
 #include <seqan3/argument_parser/detail/format_html.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 

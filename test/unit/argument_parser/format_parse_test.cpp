@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/argument_parser/all.hpp>
+#include <seqan3/argument_parser/argument_parser.hpp>
 
 TEST(parse_type_test, add_option_short_id)
 {

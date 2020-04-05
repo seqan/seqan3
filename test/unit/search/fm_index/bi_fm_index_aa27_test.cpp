@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
+
 #include "fm_index_collection_test_template.hpp"
 #include "fm_index_test_template.hpp"
 

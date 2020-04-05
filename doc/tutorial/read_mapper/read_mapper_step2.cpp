@@ -9,6 +9,7 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/search/all.hpp>
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
 
 //! [solution]
 struct reference_storage_t

@@ -13,7 +13,6 @@
 #pragma once
 
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/range/views/deep.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/std/ranges>

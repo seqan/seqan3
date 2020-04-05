@@ -16,7 +16,8 @@
 
 #include <sdsl/suffix_trees.hpp>
 
-#include <seqan3/alphabet/all.hpp>
+#include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/slice.hpp>

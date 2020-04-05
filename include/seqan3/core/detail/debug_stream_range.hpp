@@ -12,7 +12,8 @@
 
 #pragma once
 
-#include <seqan3/alphabet/adaptation/all.hpp>
+#include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/type_traits/range.hpp>

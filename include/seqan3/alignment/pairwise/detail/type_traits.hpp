@@ -12,7 +12,14 @@
 
 #pragma once
 
-#include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
+#include <seqan3/alignment/configuration/align_config_band.hpp>
+#include <seqan3/alignment/configuration/align_config_debug.hpp>
+#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_parallel.hpp>
+#include <seqan3/alignment/configuration/align_config_result.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_vectorise.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>

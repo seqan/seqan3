@@ -17,7 +17,6 @@
 #include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/search/detail/search_trivial.hpp>
 #include <seqan3/search/search_result_range.hpp>
-#include <seqan3/search/configuration/all.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 
 namespace seqan3::detail

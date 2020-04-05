@@ -22,10 +22,11 @@
 #include <variant>
 #include <vector>
 #include <seqan3/alphabet/adaptation/char.hpp>
-#include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/structure/all.hpp>
+#include <seqan3/alphabet/structure/dssp9.hpp>
+#include <seqan3/alphabet/structure/structured_aa.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
