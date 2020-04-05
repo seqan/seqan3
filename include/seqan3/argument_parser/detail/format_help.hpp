@@ -19,6 +19,7 @@
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
 #include <seqan3/argument_parser/detail/terminal.hpp>
+#include <seqan3/core/detail/test_accessor.hpp>
 #include <seqan3/version.hpp>
 
 namespace seqan3::detail
@@ -41,7 +42,6 @@ class format_help : public format_help_base<format_help>
 
     //!\brief Befriend the base class to give access to the private member functions.
     friend base_type;
-
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -64,34 +64,34 @@ protected:
     struct console_layout_struct
     {
         //!\brief The screen width.
-        unsigned screenWidth;
+        uint32_t screenWidth;
         //!\brief The default screen width.
-        unsigned defaultScreenWidth;
+        uint32_t defaultScreenWidth;
         //!\brief The maximal screen width.
-        unsigned maximalScreenWidth;
+        uint32_t maximalScreenWidth;
         //!\brief The minimal screen width.
-        unsigned minimalScreenWidth;
+        uint32_t minimalScreenWidth;
         //!\brief The left Padding.
-        unsigned leftPadding;
+        uint32_t leftPadding;
         //!\brief The center Padding.
-        unsigned centerPadding;
+        uint32_t centerPadding;
         //!\brief The right Padding.
-        unsigned rightPadding;
+        uint32_t rightPadding;
         //!\brief The left Column Width.
-        unsigned leftColumnWidth;
+        uint32_t leftColumnWidth;
         //!\brief The right Column Width.
-        unsigned rightColumnWidth;
+        uint32_t rightColumnWidth;
         //!\brief The right Column Tab.
-        unsigned rightColumnTab;
+        uint32_t rightColumnTab;
 
         //!\brief The constructor.
-        console_layout_struct() :
+        //!\param[in] terminal_width The width of the terminal.
+        console_layout_struct(uint32_t const terminal_width) :
             screenWidth{0}, defaultScreenWidth{80}, maximalScreenWidth{120}, minimalScreenWidth{40},
             leftPadding{4}, centerPadding{2}, rightPadding{2}, leftColumnWidth{4}, rightColumnWidth{0}
         {
             // Guess terminal screen width and set into layout.
-            unsigned cols = get_terminal_width();
-            screenWidth = (cols > 0) ? cols : defaultScreenWidth;
+            screenWidth = (terminal_width > 0) ? terminal_width : defaultScreenWidth;
             screenWidth = std::max(screenWidth, minimalScreenWidth);
             screenWidth = std::min(screenWidth, maximalScreenWidth);
             screenWidth -= rightPadding;
@@ -99,6 +99,9 @@ protected:
             rightColumnWidth = screenWidth - leftPadding - leftColumnWidth - centerPadding - rightPadding;
             rightColumnTab = leftPadding + leftColumnWidth + centerPadding;
         }
+
+        //!\brief The default constructor.
+        console_layout_struct() : console_layout_struct{get_terminal_width()} {}
     };
 
     //!\brief Prints a help page header to std::cout.
@@ -417,6 +420,10 @@ protected:
 
     //!\brief Needed for correct formatting while calling different print functions.
     bool prev_was_paragraph{false};
+
+    //!\brief Befriend seqan3::detail::test_accessor to grant access to layout.
+    friend struct ::seqan3::detail::test_accessor;
+
     //!\brief Stores the relevant parameters of the documentation on the screen.
     console_layout_struct layout{};
 };
