@@ -205,7 +205,17 @@ inline auto search(queries_t && queries,
     detail::search_configuration_validator::validate_query_type<queries_t>();
     detail::search_configuration_validator::validate_error_configuration(updated_cfg);
 
-    return detail::search_all(index, std::forward<queries_t>(queries), updated_cfg);
+    // return type: for each query: a vector of text_positions (or cursors)
+    // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
+    //                  duplicates. more efficient to call delegate once with one vector instead of calling
+    //                  delegate for each hit separately at once.
+    using query_t = std::ranges::range_value_t<queries_t>;
+    using single_query_result_t = decltype(search_single(index, std::declval<query_t &>(), updated_cfg));
+    using search_fn_t = std::function<single_query_result_t(query_t &)>;
+
+    search_fn_t search_fn = [&, updated_cfg] (query_t & query) { return search_single(index, query, updated_cfg); };
+
+    return search_result_range{std::move(search_fn), std::forward<queries_t>(queries) | views::type_reduce};
 }
 
 //!\cond DEV
