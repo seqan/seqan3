@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include <type_traits>
 
+#include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/std/algorithm>
 
