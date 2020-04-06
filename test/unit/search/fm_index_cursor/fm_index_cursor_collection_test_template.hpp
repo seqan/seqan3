@@ -330,8 +330,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, locate_char_string)
     // extend_right()
     {
         seqan3::fm_index index{text};
-        auto it1 = index.begin();
-        auto it2 = index.begin();
+        auto it1 = index.cursor();
+        auto it2 = index.cursor();
 
         it1.extend_right("wood");
         it2.extend_right(wood);
@@ -339,8 +339,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, locate_char_string)
         EXPECT_TRUE(std::ranges::equal(it1.locate(), it2.locate())); // [22,9] == [22,9]
 
         seqan3::bi_fm_index b_index{text};
-        auto it3 = b_index.begin();
-        auto it4 = b_index.begin();
+        auto it3 = b_index.cursor();
+        auto it4 = b_index.cursor();
 
         it3.extend_right("wood");
         it4.extend_right(wood);
@@ -350,8 +350,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, locate_char_string)
     // extend_left()
     {
         seqan3::bi_fm_index b_index{text};
-        auto it3 = b_index.begin();
-        auto it4 = b_index.begin();
+        auto it3 = b_index.cursor();
+        auto it4 = b_index.cursor();
 
         it3.extend_left("wood");
         it4.extend_left(wood);
