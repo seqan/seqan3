@@ -9,14 +9,12 @@
 
 #include <seqan3/alphabet/cigar/cigar.hpp>
 
-using namespace seqan3;
-
 TEST(debug_stream_test, cigar)
 {
     std::ostringstream o;
-    debug_stream_type my_stream{o};
+    seqan3::debug_stream_type my_stream{o};
 
-    cigar c1{};
+    seqan3::cigar c1{};
     c1.assign_string("223M");
 
     my_stream << c1;

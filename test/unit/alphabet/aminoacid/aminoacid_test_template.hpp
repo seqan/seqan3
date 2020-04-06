@@ -13,8 +13,6 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 
-using namespace seqan3;
-
 template <typename T>
 using aminoacid = ::testing::Test;
 
@@ -22,10 +20,10 @@ TYPED_TEST_SUITE_P(aminoacid);
 
 TYPED_TEST_P(aminoacid, concept_check)
 {
-    EXPECT_TRUE(aminoacid_alphabet<TypeParam>);
-    EXPECT_TRUE(aminoacid_alphabet<TypeParam &>);
-    EXPECT_TRUE(aminoacid_alphabet<TypeParam const>);
-    EXPECT_TRUE(aminoacid_alphabet<TypeParam const &>);
+    EXPECT_TRUE(seqan3::aminoacid_alphabet<TypeParam>);
+    EXPECT_TRUE(seqan3::aminoacid_alphabet<TypeParam &>);
+    EXPECT_TRUE(seqan3::aminoacid_alphabet<TypeParam const>);
+    EXPECT_TRUE(seqan3::aminoacid_alphabet<TypeParam const &>);
 }
 
 // ------------------------------------------------------------------

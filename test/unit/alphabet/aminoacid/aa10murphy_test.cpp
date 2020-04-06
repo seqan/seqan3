@@ -16,11 +16,13 @@
 #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, alphabet_, aa10murphy, );
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, semi_alphabet_test, aa10murphy, );
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, alphabet_constexpr, aa10murphy, );
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, semi_alphabet_constexpr, aa10murphy, );
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, aminoacid, aa10murphy, );
+using seqan3::operator""_aa10murphy;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, alphabet_, seqan3::aa10murphy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, semi_alphabet_test, seqan3::aa10murphy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, alphabet_constexpr, seqan3::aa10murphy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, semi_alphabet_constexpr, seqan3::aa10murphy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, aminoacid, seqan3::aa10murphy, );
 
 TEST(aa10murphy, assign_char)
 {
@@ -33,7 +35,7 @@ TEST(aa10murphy, assign_char)
         '*', '!'
     };
 
-    std::vector<aa10murphy> alphabets
+    std::vector<seqan3::aa10murphy> alphabets
     {
         'A'_aa10murphy, 'B'_aa10murphy, 'C'_aa10murphy, 'B'_aa10murphy, 'B'_aa10murphy, 'F'_aa10murphy, 'G'_aa10murphy,
         'H'_aa10murphy, 'I'_aa10murphy, 'I'_aa10murphy, 'K'_aa10murphy, 'I'_aa10murphy, 'I'_aa10murphy,
@@ -46,8 +48,8 @@ TEST(aa10murphy, assign_char)
         'F'_aa10murphy, 'S'_aa10murphy
     };
 
-    for (auto [ chr, alp ] : views::zip(chars, alphabets))
-        EXPECT_EQ((assign_char_to(chr, aa10murphy{})), alp);
+    for (auto [ chr, alp ] : seqan3::views::zip(chars, alphabets))
+        EXPECT_EQ((seqan3::assign_char_to(chr, seqan3::aa10murphy{})), alp);
 }
 
 TEST(aa10murphy, to_char)
@@ -58,7 +60,7 @@ TEST(aa10murphy, to_char)
         'B', 'K', 'S', 'S', 'I', 'F', 'F', 'B', 'I', 'K', 'C', 'S', 'B'
     };
 
-    std::vector<aa10murphy> alphabets
+    std::vector<seqan3::aa10murphy> alphabets
     {
         'A'_aa10murphy, 'C'_aa10murphy, 'D'_aa10murphy, 'E'_aa10murphy, 'F'_aa10murphy, 'G'_aa10murphy, 'H'_aa10murphy,
         'I'_aa10murphy, 'K'_aa10murphy, 'L'_aa10murphy, 'M'_aa10murphy, 'N'_aa10murphy, 'P'_aa10murphy,
@@ -66,8 +68,8 @@ TEST(aa10murphy, to_char)
         'B'_aa10murphy, 'J'_aa10murphy, 'O'_aa10murphy, 'U'_aa10murphy, 'X'_aa10murphy, 'Z'_aa10murphy
     };
 
-    for (auto [ chr, alp ] : views::zip(chars, alphabets))
-        EXPECT_EQ(to_char(alp), chr);
+    for (auto [ chr, alp ] : seqan3::views::zip(chars, alphabets))
+        EXPECT_EQ(seqan3::to_char(alp), chr);
 }
 
 // ------------------------------------------------------------------
@@ -76,35 +78,35 @@ TEST(aa10murphy, to_char)
 
 TEST(literals, char_literal)
 {
-    EXPECT_EQ(to_char('A'_aa10murphy), 'A');
-    EXPECT_EQ(to_char('B'_aa10murphy), 'B');
-    EXPECT_EQ(to_char('C'_aa10murphy), 'C');
-    EXPECT_EQ(to_char('F'_aa10murphy), 'F');
-    EXPECT_EQ(to_char('G'_aa10murphy), 'G');
-    EXPECT_EQ(to_char('H'_aa10murphy), 'H');
-    EXPECT_EQ(to_char('I'_aa10murphy), 'I');
-    EXPECT_EQ(to_char('K'_aa10murphy), 'K');
-    EXPECT_EQ(to_char('P'_aa10murphy), 'P');
-    EXPECT_EQ(to_char('S'_aa10murphy), 'S');
+    EXPECT_EQ(seqan3::to_char('A'_aa10murphy), 'A');
+    EXPECT_EQ(seqan3::to_char('B'_aa10murphy), 'B');
+    EXPECT_EQ(seqan3::to_char('C'_aa10murphy), 'C');
+    EXPECT_EQ(seqan3::to_char('F'_aa10murphy), 'F');
+    EXPECT_EQ(seqan3::to_char('G'_aa10murphy), 'G');
+    EXPECT_EQ(seqan3::to_char('H'_aa10murphy), 'H');
+    EXPECT_EQ(seqan3::to_char('I'_aa10murphy), 'I');
+    EXPECT_EQ(seqan3::to_char('K'_aa10murphy), 'K');
+    EXPECT_EQ(seqan3::to_char('P'_aa10murphy), 'P');
+    EXPECT_EQ(seqan3::to_char('S'_aa10murphy), 'S');
 
-    EXPECT_EQ(to_char('*'_aa10murphy), 'F');
-    EXPECT_EQ(to_char('!'_aa10murphy), 'S');
+    EXPECT_EQ(seqan3::to_char('*'_aa10murphy), 'F');
+    EXPECT_EQ(seqan3::to_char('!'_aa10murphy), 'S');
 }
 
 TEST(literals, vector)
 {
-    aa10murphy_vector v20;
+    seqan3::aa10murphy_vector v20;
     v20.resize(5, 'D'_aa10murphy);
     EXPECT_EQ(v20, "BBBBB"_aa10murphy);
 
-    std::vector<aa10murphy> w20{'A'_aa10murphy, 'D'_aa10murphy, 'J'_aa10murphy, 'O'_aa10murphy, 'U'_aa10murphy, 'X'_aa10murphy, 'R'_aa10murphy, '!'_aa10murphy,
-                          '*'_aa10murphy, '*'_aa10murphy};
+    std::vector<seqan3::aa10murphy> w20{'A'_aa10murphy, 'D'_aa10murphy, 'J'_aa10murphy, 'O'_aa10murphy, 'U'_aa10murphy,
+                                        'X'_aa10murphy, 'R'_aa10murphy, '!'_aa10murphy, '*'_aa10murphy, '*'_aa10murphy};
     EXPECT_EQ(w20, "ABIKCSKSF*"_aa10murphy);
 }
 
 TEST(aa10murphy, char_is_valid)
 {
-    constexpr auto aa27_validator = (is_alpha || is_char<'*'>);
+    constexpr auto aa27_validator = (seqan3::is_alpha || seqan3::is_char<'*'>);
 
     for (char c : std::views::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
     {
@@ -124,6 +126,6 @@ TEST(aa10murphy, char_is_valid)
                 break;
         }
 
-        EXPECT_EQ(aa10murphy::char_is_valid(c), expect);
+        EXPECT_EQ(seqan3::aa10murphy::char_is_valid(c), expect);
     }
 }

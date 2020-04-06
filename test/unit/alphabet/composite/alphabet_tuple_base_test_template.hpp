@@ -10,7 +10,7 @@
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 
-using namespace seqan3;
+using seqan3::get;
 
 template <typename T>
 class alphabet_tuple_base_test : public ::testing::Test {};
@@ -19,7 +19,7 @@ TYPED_TEST_SUITE_P(alphabet_tuple_base_test);
 
 TYPED_TEST_P(alphabet_tuple_base_test, concept_check)
 {
-    EXPECT_TRUE(tuple_like<TypeParam>);
+    EXPECT_TRUE(seqan3::tuple_like<TypeParam>);
 }
 
 // default/zero construction
