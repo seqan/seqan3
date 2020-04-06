@@ -180,24 +180,17 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 template <typename index_t, typename queries_t, typename configuration_t>
 inline auto search_all(index_t const & index, queries_t && queries, configuration_t const & cfg)
 {
-    if constexpr (!std::ranges::forward_range<std::ranges::range_value_t<queries_t>>)
-    {
-        return search_all(index, std::views::single(std::forward<queries_t>(queries)), cfg);
-    }
-    else
-    {
-        // return type: for each query: a vector of text_positions (or cursors)
-        // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
-        //                  duplicates. more efficient to call delegate once with one vector instead of calling
-        //                  delegate for each hit separately at once.
-        using query_t = std::ranges::range_value_t<queries_t>;
-        using single_query_result_t = decltype(search_single(index, std::declval<query_t &>(), cfg));
-        using search_fn_t = std::function<single_query_result_t(query_t &)>;
+    // return type: for each query: a vector of text_positions (or cursors)
+    // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
+    //                  duplicates. more efficient to call delegate once with one vector instead of calling
+    //                  delegate for each hit separately at once.
+    using query_t = std::ranges::range_value_t<queries_t>;
+    using single_query_result_t = decltype(search_single(index, std::declval<query_t &>(), cfg));
+    using search_fn_t = std::function<single_query_result_t(query_t &)>;
 
-        search_fn_t search_fn = [&, cfg] (query_t & query) { return search_single(index, query, cfg); };
+    search_fn_t search_fn = [&, cfg] (query_t & query) { return search_single(index, query, cfg); };
 
-        return search_result_range{std::move(search_fn), std::forward<queries_t>(queries) | views::type_reduce};
-    }
+    return search_result_range{std::move(search_fn), std::forward<queries_t>(queries) | views::type_reduce};
 }
 //!\}
 

@@ -73,6 +73,18 @@ struct search_configuration_validator
         }
     }
 
+    /*!\brief Recursively adds default configurations if they were not set by the user.
+     * \tparam configuration_t The type of the search configuration.
+     * \param[in] cfg The configuration to add defaults to if necessary.
+     * \returns The configuration (with defaults).
+     *
+     * \details
+     *
+     * The following defaults are added if the respective configuration is not set by the user:
+     *
+     * * If seqan3::search_cfg::mode was not set, it defaults to seqan3::search_cfg::all.
+     * * If seqan3::search_cfg::output was not set, it defaults to seqan3::search_cfg::text_position.
+     */
     template <typename configuration_t>
     static auto add_defaults(configuration_t const & cfg)
     {
@@ -197,7 +209,20 @@ inline auto search(queries_t && queries,
 }
 
 //!\cond DEV
-//! \overload
+// Overload for a single query (not a collection of queries)
+//!\overload
+template <fm_index_specialisation index_t,
+          typename query_t,
+          typename configuration_t = decltype(search_cfg::default_configuration)>
+    requires !std::ranges::forward_range<std::ranges::range_value_t<query_t>>
+inline auto search(query_t && query,
+                   index_t const & index,
+                   configuration_t const & cfg = search_cfg::default_configuration)
+{
+    return search(std::views::single(std::forward<query_t>(query)), index, cfg);
+}
+
+//!\overload
 template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(char const * const queries,
                    index_t const & index,
@@ -206,7 +231,7 @@ inline auto search(char const * const queries,
     return search(std::string_view{queries}, index, cfg);
 }
 
-//! \overload
+//!\overload
 template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(std::initializer_list<char const * const> const & queries,
                    index_t const & index,
