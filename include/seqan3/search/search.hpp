@@ -73,6 +73,20 @@ struct search_configuration_validator
         }
     }
 
+    template <typename configuration_t>
+    static auto add_defaults(configuration_t const & cfg)
+    {
+        static_assert(detail::is_type_specialisation_of_v<configuration_t, configuration>,
+                      "cfg must be a specialisation of seqan3::configuration.");
+
+        if constexpr (!detail::search_traits<configuration_t>::has_mode_configuration)
+            return add_defaults(cfg | search_cfg::mode{search_cfg::all});
+        else if constexpr (!detail::search_traits<configuration_t>::has_output_configuration)
+            return add_defaults(cfg | search_cfg::output{search_cfg::text_position});
+        else
+            return cfg;
+    }
+
     /*!\brief Validates the query type to model std::ranges::random_access_range and std::ranges::sized_range.
      *
      * \tparam query_t The type of the query or range of queries.
@@ -167,32 +181,19 @@ namespace seqan3
  *
  * \include test/snippet/search/search.cpp
  */
-template <fm_index_specialisation index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <fm_index_specialisation index_t,
+          typename queries_t,
+          typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(queries_t && queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
 {
-    using search_traits_t = detail::search_traits<configuration_t>;
+    auto updated_cfg = detail::search_configuration_validator::add_defaults(cfg);
 
-    // If no mode was set, default to search all hits.
-    if constexpr (!search_traits_t::has_mode_configuration)
-    {
-        return search(std::forward<queries_t>(queries), index, cfg | search_cfg::mode{search_cfg::all});
-    }
-    else
-    {   // If no output configuration was, default to returning text positions.
-        if constexpr (!search_traits_t::has_output_configuration)
-        {
-            return search(std::forward<queries_t>(queries), index, cfg | search_cfg::output{search_cfg::text_position});
-        }
-        else
-        {
-            detail::search_configuration_validator::validate_query_type<queries_t>();
-            detail::search_configuration_validator::validate_error_configuration(cfg);
+    detail::search_configuration_validator::validate_query_type<queries_t>();
+    detail::search_configuration_validator::validate_error_configuration(updated_cfg);
 
-            return detail::search_all(index, std::forward<queries_t>(queries), cfg);
-        }
-    }
+    return detail::search_all(index, std::forward<queries_t>(queries), updated_cfg);
 }
 
 //!\cond DEV
