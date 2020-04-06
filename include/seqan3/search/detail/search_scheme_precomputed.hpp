@@ -20,7 +20,7 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup submodule_search_algorithm
+/*!\addtogroup search
  * \{
  */
 

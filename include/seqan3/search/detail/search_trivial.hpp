@@ -33,7 +33,7 @@ enum class error_type : uint8_t
     none       //!< No error or match was enumerated yet.
 };
 
-/*!\addtogroup submodule_search_algorithm
+/*!\addtogroup search
  * \{
  */
 
