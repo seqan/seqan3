@@ -23,7 +23,7 @@ namespace seqan3::detail
 // ---------------------------------------------------------------------------------------------------------------------
 
 /*!\brief The type returned by seqan3::views::minimiser.
- * \tparam urng_t The type of the underlying ranges, must model std::forward_range, the reference type must be
+ * \tparam urng_t The type of the underlying ranges, must model std::forward_range, the reference type must model
  *                std::integral. The typical use case is that the reference type is the result of seqan3::kmer_hash.
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
@@ -39,8 +39,8 @@ class minimiser : public std::ranges::view_interface<minimiser<urng_t>>
 {
 private:
     static_assert(std::ranges::forward_range<urng_t const>, "The minimiser only works on forward_ranges.");
-    static_assert(std::is_integral<reference_t<urng_t>>::value, "The reference type of the underlying range must be of "
-                                                                "type std::integral.");
+    static_assert(std::is_integral<reference_t<urng_t>>::value, "The reference type of the underlying range must model "
+                                                                "std::integral.");
     //!\brief The underlying range.
     urng_t urange;
 
@@ -153,6 +153,7 @@ public:
     //!\}
 };
 
+//!\brief Iterator for calculating minimisers.
 template <std::ranges::view urng_t>
 template <typename rng_t>
 class minimiser<urng_t>::window_iterator
@@ -503,7 +504,7 @@ namespace seqan3::views
  * \{
  */
 
-/*!\brief                   Computes minimisers for a range of type std::integral. A minimiser is the smallest value in a
+/*!\brief                   Computes minimisers for a range of integral numbers. A minimiser is the smallest value in a
  *                          window.
  * \tparam urng_t           The type of the range being processed. See below for requirements. [template parameter is
  *                          omitted in pipe notation]
