@@ -24,6 +24,7 @@
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/range/views/join.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
@@ -447,17 +448,9 @@ protected:
     std::string valid_extensions_help_page_message() const
     {
         if (extensions.empty())
-        {
             return "";
-        }
         else
-        {
-            std::string msg{" Valid file extensions are: [" + extensions[0]};
-            for (auto it = extensions.begin() + 1; it != extensions.end(); ++it)
-                msg += (", " + *it);
-            msg += "].";
-            return msg;
-        }
+            return detail::to_string(" Valid file extensions are: [", extensions | views::join(std::string{", "}), "].");
     }
 
     //!\brief Stores the extensions.
