@@ -152,7 +152,9 @@ cover the typical use cases.
 
 \assignment{Assignment 2}
 
-Adapt the code from Assignment 1 to compute the semi-global alignment for the case where both ends of the first sequence can be aligned to gaps without penalising them. Note that in such a semi-global alignment, the first sequence would be aligned as an infix of the second sequence.
+Adapt the code from Assignment 1 to compute the semi-global alignment for the case where both ends of the first
+sequence can be aligned to gaps without penalising them. Note that in such a semi-global alignment, the first sequence
+would be aligned as an infix of the second sequence.
 
 \endassignment
 \solution
