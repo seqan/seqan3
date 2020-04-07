@@ -206,6 +206,8 @@ public:
                     last_elem{it_end}, window_left{it_start}, window_right{it_start},
                     num_w_elems{w}
     {
+        if (num_w_elems > std::ranges::distance(window_left, last_elem))
+            num_w_elems = std::ranges::distance(window_left, last_elem);
         if (window_right != last_elem)
             get_minimiser();
     }
