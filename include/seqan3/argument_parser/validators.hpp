@@ -444,10 +444,13 @@ protected:
         file_guard.remove();
     }
 
-    //!\brief Returns the information of valid file formats.
+    //!\brief Returns the information of valid file extensions.
     std::string valid_extensions_help_page_message() const
     {
-        return detail::to_string("Valid file formats are: [", extensions | views::join(std::string{", "}), "].");
+        if (extensions.empty())
+            return "";
+        else
+            return detail::to_string("Valid file extensions are: [", extensions | views::join(std::string{", "}), "].");
     }
 
     //!\brief Stores the extensions.
