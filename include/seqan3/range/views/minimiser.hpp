@@ -15,6 +15,7 @@
 #include <deque>
 
 #include <seqan3/range/hash.hpp>
+#include <seqan3/range/views/detail.hpp>
 
 namespace seqan3::detail
 {
@@ -472,7 +473,7 @@ struct minimiser_fn
     //!\brief Store the number of elements in one window and return a range adaptor closure object.
     constexpr auto operator()(uint32_t const & num_w_elems) const
     {
-        return seqan3::detail::adaptor_from_functor{*this, num_w_elems};
+        return adaptor_from_functor{*this, num_w_elems};
     }
 
     /*!\brief                   Call the view's constructor with two arguments: the underlying view and an integer

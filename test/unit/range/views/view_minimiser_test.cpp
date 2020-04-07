@@ -56,7 +56,7 @@ protected:
     result_t ungapped_no_rev3{26, 97, 27};    // ACGG, CGAC, ACGT
     result_t gapped_no_rev3{2, 5, 3};         // A--G, C--C-, A--T "-" for gap
     result_t ungapped_no_rev3_stop{26, 97};   // For stop at first T
-    result_t gapped_no_rev3_stop{2, 5};
+    result_t gapped_no_rev3_stop{2, 5};       // For stop at first T
 };
 
 TYPED_TEST(minimiser_view_properties_test, concepts)
@@ -66,7 +66,10 @@ TYPED_TEST(minimiser_view_properties_test, concepts)
     auto v = text | kmer_view | minimiser_view;
     EXPECT_TRUE(std::ranges::input_range<decltype(v)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v)>);
+    EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v)>);
+    EXPECT_FALSE(std::ranges::random_access_range<decltype(v)>);
     EXPECT_TRUE(std::ranges::view<decltype(v)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v)>);
     EXPECT_FALSE(std::ranges::common_range<decltype(v)>);
     EXPECT_TRUE(seqan3::const_iterable_range<decltype(v)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v), size_t>));
