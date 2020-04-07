@@ -195,7 +195,7 @@ TEST(validator_test, input_file_ext_from_file)
                                                  "Valid file extensions are: [fa, fasta, sam, bam].");
 
     seqan3::input_file_validator validator2{};
-    EXPECT_EQ(validator2.get_help_page_message(), "The input file must exist and read permissions must be granted. ");
+    EXPECT_EQ(validator2.get_help_page_message(), "The input file must exist and read permissions must be granted.");
 }
 
 TEST(validator_test, output_file)
@@ -304,7 +304,7 @@ TEST(validator_test, output_file_ext_from_file)
 
     seqan3::output_file_validator validator2{};
     EXPECT_EQ(validator2.get_help_page_message(), "The output file must not exist already and write permissions must "
-                                                  "be granted. ");
+                                                  "be granted.");
 }
 
 TEST(validator_test, input_directory)
