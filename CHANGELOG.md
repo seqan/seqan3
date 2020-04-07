@@ -175,6 +175,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1410](https://github.com/seqan/seqan3/pull/1410)).
 * Renamed `seqan3::views::all` to `seqan3::views::type_reduce`
   ([\#1410](https://github.com/seqan/seqan3/pull/1410)).
+* Added size() function to `seqan3::views::kmer_hash`
+  ([\#1722](https://github.com/seqan/seqan3/pull/1722)).
 
 #### Search
 
