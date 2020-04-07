@@ -484,18 +484,21 @@ public:
 
         // Position of query in concatenated text.
         size_type const location = offset() - index->index[node.lb];
+
         // The rank represents the number of delimiters before position `location + 1`.
         // Furthermore, this number represents the i-th text this (text) position originates from, since each delimiter
         // corresponds to one text in the whole concatenated text from left-to-right.
         size_type const rank = index->text_begin_rs.rank(location + 1);
+        assert(rank > 0);
+        size_type const text_id = rank - 1;
+
         // The sum of all text lengths prior to the i-th text is the start location of the i-th text in the concatenated
         // sequence.
         size_type const start_location = index->text_begin_ss.select(rank);
-        assert(rank > 0);
-        size_type const text_id = rank - 1;
         assert(text_id + 1 != 0);
         // Substract lengths of previous sequences.
         size_type const query_begin = location - start_location;
+
         // Take subtext, slice query out of it <-my
         return text[text_id] | views::slice(query_begin, query_begin + query_length());
     }
