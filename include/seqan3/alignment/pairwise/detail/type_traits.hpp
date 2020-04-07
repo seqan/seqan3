@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <type_traits>
+
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
@@ -65,7 +67,7 @@ struct chunked_indexed_sequence_pairs
  */
 template <typename configuration_t>
 //!\cond
-    requires is_type_specialisation_of_v<configuration_t, configuration>
+    requires is_type_specialisation_of_v<std::remove_cv_t<configuration_t>, configuration>
 //!\endcond
 struct alignment_configuration_traits
 {
