@@ -92,7 +92,7 @@ struct rvalue_reference<it_t>
  * \tparam it_t The type you wish to query; must model std::weakly_incrementable.
  */
 template <std::weakly_incrementable it_t>
-struct SEQAN3_DEPRECATED_310 difference_type<it_t>
+struct difference_type<it_t>
 {
     //!\brief Return the member type as return type.
     using type = std::iter_difference_t<it_t>;
