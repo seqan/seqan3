@@ -58,15 +58,9 @@ struct is_std_array : public is_std_array_impl<remove_cv_t<span_tp>> {};
 
 } // namespace std
 
-#if RANGE_V3_VERSION >= 901
+#if RANGE_V3_VERSION >= 1000
 namespace ranges
 {
-// forward declare in case we deal with an old version (between >= 0.9.1 and < 0.10.0) of ranges v3
-#if RANGE_V3_VERSION < 1000
-template<class span_tp>
-inline constexpr bool enable_safe_range;
-#endif // RANGE_V3_VERSION < 1000
-
 template<typename span_tp, std::size_t span_sz>
 inline constexpr bool enable_safe_range<std::span<span_tp, span_sz>> = true;
 
@@ -75,7 +69,7 @@ inline constexpr bool enable_safe_range<std::span<span_tp, span_sz>> = true;
 template<typename span_tp, std::size_t span_sz>
 inline constexpr bool enable_view<std::span<span_tp, span_sz>> = span_sz + 1 < 2;
 } // namespace ranges
-#endif // RANGE_V3_VERSION >= 901
+#endif // RANGE_V3_VERSION >= 1000
 
 namespace std
 {
