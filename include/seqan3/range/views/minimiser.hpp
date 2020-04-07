@@ -24,7 +24,7 @@ namespace seqan3::detail
 
 /*!\brief The type returned by seqan3::views::minimiser.
  * \tparam urng_t The type of the underlying ranges, must model std::forward_range, the reference type must be
- *                std::size_t. The typical use case is that the reference type is the result of seqan3::kmer_hash.
+ *                std::integral. The typical use case is that the reference type is the result of seqan3::kmer_hash.
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
  * \implements std::ranges::sized_range
@@ -39,8 +39,8 @@ class minimiser : public std::ranges::view_interface<minimiser<urng_t>>
 {
 private:
     static_assert(std::ranges::forward_range<urng_t const>, "The minimiser only works on forward_ranges.");
-    static_assert(std::is_integral<reference_t<urng_t>>::value, "The reference type of the underlying range must model "
-                                                     "std::size_t.");
+    static_assert(std::is_integral<reference_t<urng_t>>::value, "The reference type of the underlying range must be of "
+                                                                "type std::integral.");
     //!\brief The underlying range.
     urng_t urange;
 
@@ -193,10 +193,10 @@ public:
     constexpr window_iterator & operator=(window_iterator &&)      = default; //!< Defaulted.
     ~window_iterator()                                             = default; //!< Defaulted.
 
-    /*!\brief             Construct from a given iterator of std::size_t, a second iterator of std::size_t and a given
-    *                     number of elements in one window.
-    * /param[in] it_start Iterator pointing to the first position of the std::size_t range.
-    * /param[in] it_end   Iterator pointing to the last position of the std::size_t range.
+    /*!\brief Construct from begin and end iterators of a given range over std::integral elements, and the number of
+    *                      elements per window.
+    * /param[in] it_start Iterator pointing to the first position of the std::integral range.
+    * /param[in] it_end   Iterator pointing to the last position of the std::integral range.
     * /param[in] w        The number of elements in one window.
     *
     * \details
@@ -503,13 +503,13 @@ namespace seqan3::views
  * \{
  */
 
-/*!\brief                   Computes minimisers for a range of type std::size_t. A minimiser is the smallest value in a
+/*!\brief                   Computes minimisers for a range of type std::integral. A minimiser is the smallest value in a
  *                          window.
  * \tparam urng_t           The type of the range being processed. See below for requirements. [template parameter is
  *                          omitted in pipe notation]
  * \param[in] urange        The range being processed. [parameter is omitted in pipe notation]
  * \param[in] num_w_elems   The number of elements in one window.
- * \returns                 A range of std::size_t where each value is the minimal value for one window.
+ * \returns                 A range of std::integral where each value is the minimal value for one window.
  *                          See below for the properties of the returned range.
  * \ingroup views
  *
@@ -536,7 +536,7 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                    | *lost*                           |
  * | seqan3::const_iterable_range     |                                    | *preserved*                      |
  * |                                  |                                    |                                  |
- * | std::ranges::range_reference_t   | std::size_t                        | std::size_t                      |
+ * | std::ranges::range_reference_t   | std::integral                      | std::integral                    |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
