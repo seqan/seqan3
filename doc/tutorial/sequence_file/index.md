@@ -42,7 +42,7 @@ Currently, SeqAn supports the following file formats:
 For instance, you need to have *zlib* installed for reading `.gz` files and *libbz2* for reading `.bz2` files.
 You can check whether you have installed these libraries by running `cmake .` in your build directory.
 If `-- Optional dependency: ZLIB-x.x.x found.` is displayed on the command line then you can read/write
-compressed files in your programs. TODO what about bz2
+compressed files in your programs.
 
 ## Basic layout of SeqAn file objects
 
@@ -130,7 +130,7 @@ The formerly introduced formats can be identified by the following file name ext
 | EMBL        | seqan3::format_embl  |   `.embl`                                         |
 
 
-You can access the valid file extension via the `file_extension` member variable in a format:
+You can access the valid file extension via the `file_extensions` member variable in a format:
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp file_extensions
 
