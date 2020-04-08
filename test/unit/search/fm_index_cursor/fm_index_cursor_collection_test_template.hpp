@@ -323,40 +323,22 @@ TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, locate_char_string)
 {
+    using alphabet_type = typename TestFixture::alphabet_type;
+
     // test case for https://github.com/seqan/seqan3/issues/1473
-    std::string text = "How much wood would a woodchuck chuck?";
-    char const * wood = "wood";
-
-    // extend_right()
+    if constexpr (std::is_same<alphabet_type, char>::value)
     {
-        seqan3::fm_index index{text};
-        auto it1 = index.cursor();
-        auto it2 = index.cursor();
+        typename TypeParam::index_type fm{this->text_col1}; // {"ACGACG", "ACGACG"}
+        char const * cg = "CG";
 
-        it1.extend_right("wood");
-        it2.extend_right(wood);
+        // extend_right()
+        TypeParam it1 = TypeParam(fm);
+        TypeParam it2 = TypeParam(fm);
 
-        EXPECT_TRUE(std::ranges::equal(it1.locate(), it2.locate())); // [22,9] == [22,9]
+        it1.extend_right(cg);
+        it2.extend_right(seqan3::views::slice(this->text1, 1, 3));      // "CG"
 
-        seqan3::bi_fm_index b_index{text};
-        auto it3 = b_index.cursor();
-        auto it4 = b_index.cursor();
-
-        it3.extend_right("wood");
-        it4.extend_right(wood);
-
-        EXPECT_TRUE(std::ranges::equal(it3.locate(), it4.locate())); // [22,9] == [22,9]
-    }
-    // extend_left()
-    {
-        seqan3::bi_fm_index b_index{text};
-        auto it3 = b_index.cursor();
-        auto it4 = b_index.cursor();
-
-        it3.extend_left("wood");
-        it4.extend_left(wood);
-
-        EXPECT_TRUE(std::ranges::equal(it3.locate(), it4.locate())); // [22,9] == [22,9]
+        EXPECT_TRUE(std::ranges::equal(it1.locate(), it2.locate()));    // [(0,1),(0,4),(1,4),(1,1)]
     }
 }
 

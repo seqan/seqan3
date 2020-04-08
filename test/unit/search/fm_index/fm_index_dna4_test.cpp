@@ -11,9 +11,6 @@
 #include "fm_index_collection_test_template.hpp"
 #include "fm_index_test_template.hpp"
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-
 using t1 = std::pair<seqan3::fm_index<seqan3::dna4, seqan3::text_layout::single>, seqan3::dna4_vector>;
 INSTANTIATE_TYPED_TEST_SUITE_P(dna4, fm_index_test, t1, );
 using t2 = std::pair<seqan3::fm_index<seqan3::dna4, seqan3::text_layout::collection>, std::vector<seqan3::dna4_vector>>;

@@ -56,8 +56,6 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 * Added `seqan3::interleaved_bloom_filter`, a data structure that efficiently answers set-membership queries for
   multiple bins ([\#920](https://github.com/seqan/seqan3/pull/920)).
-*  The `extend_right()` function can now also handle `char const *`.
-  ([\#1588](https://github.com/seqan/seqan3/pull/1588)).
 
 ## API changes
 
