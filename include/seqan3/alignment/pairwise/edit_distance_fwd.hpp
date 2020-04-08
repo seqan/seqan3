@@ -131,7 +131,7 @@ using edit_distance_base =
 template <std::ranges::viewable_range database_t,
           std::ranges::viewable_range query_t,
           typename align_config_t,
-          typename traits_t = default_edit_distance_trait_type<database_t, query_t, align_config_t, std::false_type>>
+          typename traits_t>
 class edit_distance_unbanded; //forward declaration
 //!\endcond
 

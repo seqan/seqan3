@@ -52,7 +52,8 @@ struct align_result_selector
 {
 private:
     //!\brief The user configured score type.
-    using score_type = typename alignment_configuration_traits<configuration_t>::original_score_type;
+    using score_type = typename alignment_configuration_traits<
+                                    std::remove_reference_t<configuration_t>>::original_score_type;
 
     //!\brief Helper function to determine the actual result type.
     static constexpr auto select()

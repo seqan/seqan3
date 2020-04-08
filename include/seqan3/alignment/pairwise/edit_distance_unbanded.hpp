@@ -865,7 +865,7 @@ public:
     edit_distance_unbanded(database_t _database,
                            query_t _query,
                            align_config_t _config,
-                           edit_traits const & SEQAN3_DOXYGEN_ONLY(_traits) = edit_traits{}) :
+                           edit_traits const & SEQAN3_DOXYGEN_ONLY(_traits)) :
         database{std::forward<database_t>(_database)},
         query{std::forward<query_t>(_query)},
         config{std::forward<align_config_t>(_config)},
@@ -1168,11 +1168,6 @@ bool edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::larg
  * \relates seqan3::detail::edit_distance_unbanded
  * \{
  */
-
-//!\brief Deduce the type from the provided arguments.
-template <typename database_t, typename query_t, typename config_t>
-edit_distance_unbanded(database_t && database, query_t && query, config_t config)
-    -> edit_distance_unbanded<database_t, query_t, config_t>;
 
 //!\brief Deduce the type from the provided arguments.
 template <typename database_t, typename query_t, typename config_t, typename traits_t>

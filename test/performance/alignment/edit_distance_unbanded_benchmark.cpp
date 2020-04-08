@@ -61,9 +61,14 @@ void seqan3_edit_distance_dna4(benchmark::State & state)
     auto seq2 = generate_sequence<seqan3::dna4>(sequence_length, 0, 1);
     int score = 0;
 
+    using edit_traits_t = seqan3::detail::default_edit_distance_trait_type<std::add_lvalue_reference_t<decltype(seq1)>,
+                                                                           std::add_lvalue_reference_t<decltype(seq2)>,
+                                                                           decltype(edit_distance_cfg),
+                                                                           std::false_type>;
+
     for (auto _ : state)
     {
-        seqan3::detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
+        seqan3::detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg, edit_traits_t{}};
         edit_distance(0u);
         score += edit_distance.score().value_or(0u);
     }
@@ -135,11 +140,19 @@ void seqan3_edit_distance_dna4_collection(benchmark::State & state)
     auto vec = generate_sequence_pairs<seqan3::dna4>(sequence_length, set_size);
     int score = 0;
 
+    using seq1_t = std::tuple_element_t<0, std::ranges::range_value_t<decltype(vec)>>;
+    using seq2_t = std::tuple_element_t<1, std::ranges::range_value_t<decltype(vec)>>;
+
+    using edit_traits_t = seqan3::detail::default_edit_distance_trait_type<std::add_lvalue_reference_t<seq1_t>,
+                                                                           std::add_lvalue_reference_t<seq2_t>,
+                                                                           decltype(edit_distance_cfg),
+                                                                           std::false_type>;
+
     for (auto _ : state)
     {
         for (auto && [seq1, seq2] : vec)
         {
-            seqan3::detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg};
+            seqan3::detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg, edit_traits_t{}};
             edit_distance(0u);
             score += edit_distance.score().value_or(0u);
         }
