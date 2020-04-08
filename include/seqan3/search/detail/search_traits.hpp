@@ -22,7 +22,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A collection of traits extracted from the search configuration.
- * \ingroup submodule_search_algorithm
+ * \ingroup search
  *
  * \tparam search_configuration_t The type of the search algorithm configuration; must be of type
  *                                seqan3::configuration.

@@ -25,7 +25,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Class used to validate the search configuration.
- * \ingroup submodule_search_algorithm
+ * \ingroup search
  */
 struct search_configuration_validator
 {
@@ -103,7 +103,7 @@ struct search_configuration_validator
 namespace seqan3
 {
 
-/*!\addtogroup submodule_search_algorithm
+/*!\addtogroup search
  * \{
  */
 
