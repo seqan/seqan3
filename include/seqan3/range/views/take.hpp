@@ -294,7 +294,7 @@ private:
                                                  transformation_trait_or_t<seqan3::size_type<urng_t>, size_t>,
                                                  void>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = difference_type_t<urng_t>;
+    using difference_type   = std::ranges::range_difference_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = iterator_type<urng_t>;
     //!\brief The const_iterator type is equal to the iterator type if the underlying range is const-iterable.

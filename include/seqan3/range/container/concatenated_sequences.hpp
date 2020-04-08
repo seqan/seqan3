@@ -165,7 +165,7 @@ public:
 
     //!\brief A signed integer type (usually std::ptrdiff_t)
     //!\hideinitializer
-    using difference_type = difference_type_t<data_delimiters_type>;
+    using difference_type = std::ranges::range_difference_t<data_delimiters_type>;
 
     //!\brief An unsigned integer type (usually std::size_t)
     //!\hideinitializer

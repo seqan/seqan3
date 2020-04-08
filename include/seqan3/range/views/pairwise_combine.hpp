@@ -455,7 +455,7 @@ public:
     //!\brief If the underliying range is Sized, this resolves to range_type::size_type, otherwise void.
     using size_type         = detail::transformation_trait_or_t<seqan3::size_type<underlying_range_type>, void>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = difference_type_t<iterator>;
+    using difference_type   = std::iter_difference_t<iterator>;
     //!\}
 
     /*!\name Constructors, destructor and assignment

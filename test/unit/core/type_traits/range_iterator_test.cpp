@@ -171,13 +171,12 @@ TEST(range_and_iterator, difference_type_)
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
     auto v = std::views::iota(1);
-    using type_list_example = seqan3::type_list<seqan3::difference_type_t<std::vector<int>>, // short
-                                                typename seqan3::difference_type<std::vector<int>>::type, // long
+    using type_list_example = seqan3::type_list<std::ranges::range_difference_t<std::vector<int>>, // short
                                                 typename std::vector<int>::difference_type, // member type
-                                                seqan3::difference_type_t<std::vector<int> const>,  // const container
-                                                seqan3::difference_type_t<iterator_of_int_vector>, // iterator
-                                                seqan3::difference_type_t<foreign_iterator>, // iterator2
-                                                seqan3::difference_type_t<decltype(v)>>; // range, no member
+                                                std::ranges::range_difference_t<std::vector<int> const>, // const container
+                                                std::iter_difference_t<iterator_of_int_vector>, // iterator
+                                                std::iter_difference_t<foreign_iterator>, // iterator2
+                                                std::ranges::range_difference_t<decltype(v)>>; // range, no member
 
     // views::ints' difference_type is not std::ptrdiff_t, but depends on the size.
     // For infinite views, like in our case, it's std::int_fast64_t (or std::int_fast32_t on 32bit).
@@ -190,7 +189,6 @@ TEST(range_and_iterator, difference_type_)
                                                std::int_fast32_t>;
 
     using comp_list = seqan3::type_list<std::ptrdiff_t,
-                                        std::ptrdiff_t,
                                         std::ptrdiff_t,
                                         std::ptrdiff_t,
                                         std::ptrdiff_t,

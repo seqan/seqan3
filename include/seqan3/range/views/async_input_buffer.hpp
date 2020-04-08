@@ -187,7 +187,7 @@ public:
     * \{
     */
     //!\brief Difference type.
-    using difference_type   = difference_type_t<urng_iterator_type>;
+    using difference_type   = std::iter_difference_t<urng_iterator_type>;
     //!\brief Value type.
     using value_type        = value_type_t<urng_iterator_type>;
     //!\brief Pointer type.

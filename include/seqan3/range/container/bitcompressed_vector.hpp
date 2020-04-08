@@ -141,7 +141,7 @@ public:
     //!\brief The const_iterator type of this container (a random access iterator).
     using const_iterator    = detail::random_access_iterator<bitcompressed_vector const>;
     //!\brief A signed integer type (usually std::ptrdiff_t)
-    using difference_type   = difference_type_t<data_type>;
+    using difference_type   = std::ranges::range_difference_t<data_type>;
     //!\brief An unsigned integer type (usually std::size_t)
     using size_type         = size_type_t<data_type>;
     //!\}
