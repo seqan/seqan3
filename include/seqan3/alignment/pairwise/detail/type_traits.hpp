@@ -28,6 +28,7 @@
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
+#include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/zip.hpp>
@@ -35,6 +36,10 @@
 
 namespace seqan3::detail
 {
+
+//------------------------------------------------------------------------------
+// chunked_indexed_sequence_pairs
+//------------------------------------------------------------------------------
 
 /*!\brief A transformation trait to retrieve the chunked range over indexed sequence pairs.
  * \ingroup pairwise_alignment
@@ -57,6 +62,10 @@ struct chunked_indexed_sequence_pairs
     //!\brief The transformed type that models seqan3::detail::indexed_sequence_pair_range.
     using type = decltype(views::zip(std::declval<sequence_pairs_t>(), std::views::iota(0)) | views::chunk(1));
 };
+
+//------------------------------------------------------------------------------
+// alignment_configuration_traits
+//------------------------------------------------------------------------------
 
 /*!\brief A traits type for the alignment algorithm that exposes static information stored within the alignment
  *        configuration object.
@@ -117,6 +126,26 @@ struct alignment_configuration_traits
     //!\brief The padding symbol to use for the computation of the alignment.
     static constexpr original_score_type padding_symbol =
         static_cast<original_score_type>(1u << (sizeof_bits<original_score_type> - 1));
+};
+
+//------------------------------------------------------------------------------
+// alignment_function_traits
+//------------------------------------------------------------------------------
+
+/*!\brief A traits class to provide a uniform access to the properties of the wrapped alignment algorithm.
+ * \ingroup pairwise_alignment
+ *
+ * \tparam function_t The type of the std::function object that stores the alignment algorithm as the target.
+ */
+template <typename function_t>
+struct alignment_function_traits
+{
+    //!\brief The type of the sequence input to the alignment algorithm.
+    using sequence_input_type = typename function_traits<function_t>::template argument_type_at<0>;
+    //!\brief The type of the callback function called when a result was computed.
+    using callback_type = typename function_traits<function_t>::template argument_type_at<1>;
+    //!\brief The type of the alignment result to be computed.
+    using alignment_result_type = typename function_traits<callback_type>::template argument_type_at<0>;
 };
 
 }  // namespace seqan3::detail
