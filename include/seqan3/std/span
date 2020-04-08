@@ -67,9 +67,13 @@ template<class span_tp>
 inline constexpr bool enable_safe_range;
 #endif // RANGE_V3_VERSION < 1000
 
-template<class span_tp>
-    requires std::is_span<span_tp>::value
-inline constexpr bool enable_safe_range<span_tp> = true;
+template<typename span_tp, std::size_t span_sz>
+inline constexpr bool enable_safe_range<std::span<span_tp, span_sz>> = true;
+
+// we follow the definition of the ranges library for enable_view:
+// https://github.com/ericniebler/range-v3/blob/6103268542c27210dbc3f99f1fa0c1e348b52184/include/range/v3/range/concepts.hpp#L201
+template<typename span_tp, std::size_t span_sz>
+inline constexpr bool enable_view<std::span<span_tp, span_sz>> = span_sz + 1 < 2;
 } // namespace ranges
 #endif // RANGE_V3_VERSION >= 901
 
