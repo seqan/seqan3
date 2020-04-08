@@ -21,8 +21,7 @@ The goal of the pairwise alignment is to obtain an optimal transcript that descr
 to each other by means of substitutions, insertions, or deletions. The computed transcript describes then the operations
 necessary to translate the one sequence into the other, as can be seen in the following picture.
 
-\image html align_transcript.png
-\image latex align_transcript.png width=\\textwidth
+\image html align_transcript.png width=800px
 
 The alignment problem is solved with a dynamic programming (DP) algorithm which runs in \f$ (\mathcal{O}(n^2))\f$ time
 and space. Besides the global alignment approach many more variations of this DP based algorithm have been developed
@@ -40,7 +39,7 @@ For this we need to import the dna4 alphabet, the seqan3::nucleotide_scoring_sch
 the beginning of our file. We also import the seqan3::debug_stream which allows us to print various types in a nice
 formatted manner.
 
-In the beginning of the file we are defining our two sequences DNA sequences `first_seq` and `second_seq`.
+In the beginning of the file we are defining our two DNA sequences `s1` and `s2`.
 If you feel puzzled about what the `_dna4` suffix does we recommend to read the \ref tutorial_alphabets and
 \ref tutorial_ranges before.
 In line 16-17 we configure the alignment job with the most simplistic configuration possible.
@@ -153,8 +152,9 @@ cover the typical use cases.
 
 \assignment{Assignment 2}
 
-Adapt the code from above and compute the semi-global alignment where both ends of the first sequence can be aligned
-to gaps without penalising them.
+Adapt the code from Assignment 1 to compute the semi-global alignment for the case where both ends of the first
+sequence can be aligned to gaps without penalising them. Note that in such a semi-global alignment, the first sequence
+would be aligned as an infix of the second sequence.
 
 \endassignment
 \solution
@@ -213,7 +213,7 @@ gap scheme will be used for the alignment computation.
 Compute the alignment of the two amino acid sequences listed below using an affine gap scheme with gap costs of `-2` and
 gap open costs of `-9`. Use the BLOSUM62 similarity matrix.
  -  QFSEEILSDIYCWMLQCGQERAV
- -  AFLPGWQENKTKIWMKDCGCLWHKG
+ -  AFLPGWQEENKLSKIWMKDCGCLW
 \endassignment
 \solution
 
@@ -312,7 +312,7 @@ are supported for the aligned ends configuration with the edit distance. Using a
 disable the edit distance and fall back to the standard pairwise alignment and will not use the fast bitvector
 algorithm.
 
-\assignment{Assignment 5}
+\assignment{Assignment 6}
 
 Compute all pairwise alignments from the assignment 1 (only the scores). Only allow at most 7 errors and
 filter all alignments with 6 or less errors.
