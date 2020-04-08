@@ -95,6 +95,20 @@ namespace seqan3::views
  *
  * \details
  *
+ * A sequence can be presented by a small number of k-mers (minimisers). For a given shape and window size all k-mers
+ * are determined in the forward strand and only the lexicographically smallest k-mer is saved for
+ * one window. This process is repeated over every possible window of a sequence. If consecutive windows share a
+ * minimiser, it is saved only once. It might happen that a minimiser changes only slightly when sliding
+ * the window over the sequence. For instance, when a minimiser starts with a repetition of A’s, then in the next window
+ * it is highly likely that the minimiser will start with a repetition of A’s as well. Because it is only one A shorter,
+ * depending on how long the repetition is this might go on for multiple window shifts. Saving these only slightly
+ * different minimiser makes no sense because they contain no new information about the underlying sequence plus
+ * sequences with a repetition of A’s will be seen as more similar to each other than they actually are.
+ * As [Marçais et al.](https://doi.org/10.1093/bioinformatics/btx235) have shown, randomizing the order of the k-mers
+ * can solve this problem. Therefore, a random seed is used as a default to XOR all k-mers, thereby randomzing the
+ * order. The user can change the seed to any other value he or she thinks is useful. A seed of 0 is returning the
+ * lexicographical order.
+ *
  * \attention
  * As f the the seqan3::views::kmer_hash the alphabet size \f$\sigma\f$ of the alphabet of `urange` and the number of
  * 1s \f$s\f$ of `shape` it must hold that \f$s>\frac{64}{\log_2\sigma}\f$, i.e. hashes resulting from the
@@ -123,7 +137,7 @@ namespace seqan3::views
  *
  * ### Example
  *
- *
+ * \include test/snippet/range/views/minimiser_hash.cpp
  *
  * \hideinitializer
  */
