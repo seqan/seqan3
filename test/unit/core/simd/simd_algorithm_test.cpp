@@ -98,7 +98,7 @@ TYPED_TEST(simd_algorithm_load, load)
 template <typename simd_t>
 struct simd_algorithm_extract : ::testing::Test
 {
-    static constexpr bool simd_length = seqan3::simd::simd_traits<simd_t>::length;
+    static constexpr size_t simd_length = seqan3::simd::simd_traits<simd_t>::length;
 };
 
 using simd_extract_types = ::testing::Types<seqan3::simd::simd_type_t<uint8_t>,
