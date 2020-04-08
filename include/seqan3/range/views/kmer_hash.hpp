@@ -497,7 +497,7 @@ public:
 
 private:
     //!\brief The alphabet type of the passed iterator.
-    using alphabet_t = value_type_t<it_t>;
+    using alphabet_t = std::iter_value_t<it_t>;
 
     //!\brief The alphabet size.
     static constexpr auto const sigma{alphabet_size<alphabet_t>};

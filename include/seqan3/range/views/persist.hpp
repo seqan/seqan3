@@ -59,7 +59,7 @@ public:
     //!\brief The const_reference type is equal to the reference type.
     using const_reference   = reference;
     //!\brief The value_type (which equals the reference_type with any references removed).
-    using value_type        = value_type_t<urng_t>;
+    using value_type        = std::ranges::range_value_t<urng_t>;
     //!\brief If the underliying range is Sized, this resolves to range_type::size_type, otherwise void.
     using size_type         = detail::transformation_trait_or_t<seqan3::size_type<urng_t>, void>;
     //!\brief A signed integer type, usually std::ptrdiff_t.

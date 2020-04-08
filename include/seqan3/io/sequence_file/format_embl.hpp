@@ -113,11 +113,11 @@ protected:
         {
             if (options.embl_genbank_complete_header)
             {
-                std::ranges::copy(idbuffer | views::char_to<value_type_t<id_type>>, std::ranges::back_inserter(id));
+                std::ranges::copy(idbuffer | views::char_to<std::ranges::range_value_t<id_type>>, std::ranges::back_inserter(id));
                 do
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_char<'S'>)
-                                                  | views::char_to<value_type_t<id_type>>,
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
                                  std::ranges::back_inserter(id));
                     id.push_back(*stream_it);
                     ++stream_it;
@@ -134,13 +134,13 @@ protected:
                 if (options.truncate_ids)
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
-                                                  | views::char_to<value_type_t<id_type>>,
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
                                  std::ranges::back_inserter(id));
                 }
                 else
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_char<';'>)
-                                                  | views::char_to<value_type_t<id_type>>,
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
                                  std::ranges::back_inserter(id));
                 }
             }
@@ -176,7 +176,7 @@ protected:
                                         }
                                         return c;
                                     })
-                                  | views::char_to<value_type_t<seq_type>>,         // convert to actual target alphabet
+                                  | views::char_to<std::ranges::range_value_t<seq_type>>,         // convert to actual target alphabet
                          std::ranges::back_inserter(sequence));
         }
         else

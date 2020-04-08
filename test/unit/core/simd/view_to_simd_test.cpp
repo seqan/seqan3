@@ -37,7 +37,7 @@ public:
                                            std::allocator<simd_t>,
                                            seqan3::aligned_allocator<simd_t, sizeof(simd_t)>>;
 
-    static constexpr size_t padding_value_dna4 = seqan3::alphabet_size<seqan3::value_type_t<container_t>>;
+    static constexpr size_t padding_value_dna4 = seqan3::alphabet_size<std::ranges::range_value_t<container_t>>;
     static constexpr size_t padding_value_custom = 8;
     static constexpr size_t max_sequence_length = seqan3::simd::simd_traits<simd_t>::length * 64;
 
@@ -48,7 +48,7 @@ public:
         {
             // Generate sequences that end on different boundaries
             size_t l = max_sequence_length - (i * seqan3::simd::simd_traits<simd_t>::length) - i;
-            std::ranges::copy(seqan3::test::generate_sequence<seqan3::value_type_t<container_t>>(l),
+            std::ranges::copy(seqan3::test::generate_sequence<std::iter_value_t<container_t>>(l),
                               std::ranges::back_inserter(sequences[i]));
         }
 

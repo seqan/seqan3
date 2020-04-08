@@ -317,7 +317,7 @@ inline void format_sam_base::construct_alignment(align_type                     
         else
         {
             using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-            auto dummy_seq    = views::repeat_n(value_type_t<unaligned_t>{}, ref_length)
+            auto dummy_seq    = views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, ref_length)
                               | std::views::transform(detail::access_restrictor_fn{});
             static_assert(std::same_as<unaligned_t, decltype(dummy_seq)>,
                           "No reference information was given so the type of the first alignment tuple position"
@@ -341,7 +341,7 @@ inline void format_sam_base::construct_alignment(align_type                     
         else
         {
             using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-            assign_unaligned(get<0>(align), views::repeat_n(value_type_t<unaligned_t>{}, 0)
+            assign_unaligned(get<0>(align), views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, 0)
                                             | std::views::transform(detail::access_restrictor_fn{}));
         }
     }
@@ -371,7 +371,7 @@ template <typename stream_view_type, std::ranges::forward_range target_range_typ
 inline void format_sam_base::read_field(stream_view_type && stream_view, target_range_type & target)
 {
     if (!is_char<'*'>(*std::ranges::begin(stream_view)))
-        std::ranges::copy(stream_view | views::char_to<value_type_t<target_range_type>>,
+        std::ranges::copy(stream_view | views::char_to<std::ranges::range_value_t<target_range_type>>,
                           std::ranges::back_inserter(target));
     else
         std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
@@ -492,7 +492,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         else if (is_char<'S'>(*std::ranges::begin(stream_view)))              // SQ (sequence dictionary) tag
         {
             ref_info_present_in_header = true;
-            value_type_t<decltype(hdr.ref_ids())> id;
+            std::ranges::range_value_t<decltype(hdr.ref_ids())> id;
             std::tuple<int32_t, std::string> info{};
 
             parse_tag_value(id);                                         // parse required SN (sequence name) tag

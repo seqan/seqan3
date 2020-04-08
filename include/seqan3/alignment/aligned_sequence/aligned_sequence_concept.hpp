@@ -242,12 +242,12 @@ SEQAN3_CONCEPT aligned_sequence =
  */
 template <sequence_container aligned_seq_t>
 //!\cond
-    requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>>
+    requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>>
 //!\endcond
 inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
                                                    typename aligned_seq_t::const_iterator pos_it)
 {
-    return aligned_seq.insert(pos_it, value_type_t<aligned_seq_t>{gap{}});
+    return aligned_seq.insert(pos_it, std::iter_value_t<aligned_seq_t>{gap{}});
 }
 
 /*!\brief An implementation of seqan3::aligned_sequence::insert_gap for sequence containers.
@@ -268,13 +268,13 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
  */
 template <sequence_container aligned_seq_t>
 //!\cond
-    requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>>
+    requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>>
 //!\endcond
 inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
                                                    typename aligned_seq_t::const_iterator pos_it,
                                                    typename aligned_seq_t::size_type size)
 {
-    return aligned_seq.insert(pos_it, size, value_type_t<aligned_seq_t>{gap{}});
+    return aligned_seq.insert(pos_it, size, std::iter_value_t<aligned_seq_t>{gap{}});
 }
 
 /*!\brief An implementation of seqan3::aligned_sequence::erase_gap for sequence containers.
@@ -298,7 +298,7 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
  */
 template <sequence_container aligned_seq_t>
 //!\cond
-    requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>>
+    requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>>
 //!\endcond
 inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
                                                   typename aligned_seq_t::const_iterator pos_it)
@@ -331,7 +331,7 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  */
 template <sequence_container aligned_seq_t>
 //!\cond
-    requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>>
+    requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>>
 //!\endcond
 inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
                                                   typename aligned_seq_t::const_iterator first,
@@ -368,7 +368,7 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  */
 template <sequence_container aligned_seq_t, std::ranges::forward_range unaligned_sequence_type>
 //!\cond
-    requires detail::is_gapped_alphabet<value_type_t<aligned_seq_t>> &&
+    requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>> &&
              weakly_assignable_from<reference_t<aligned_seq_t>, reference_t<unaligned_sequence_type>>
 //!\endcond
 inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_type && unaligned_seq)

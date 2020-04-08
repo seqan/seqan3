@@ -118,13 +118,13 @@ public:
      */
     template <std::ranges::forward_range entries_t>
     //!\cond
-        requires (std::convertible_to<value_type_t<entries_t>, value_type>)
+        requires (std::convertible_to<std::ranges::range_value_t<entries_t>, value_type>)
     //!\endcond
     two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, entries_t entries) :
         row_dim{row_dim.get()},
         col_dim{col_dim.get()}
     {
-        static_assert(std::move_constructible<value_type_t<entries_t>>, "The value type must be moveable.");
+        static_assert(std::move_constructible<std::ranges::range_value_t<entries_t>>, "The value type must be moveable.");
 
         assert(static_cast<size_t>(std::ranges::distance(entries)) == (row_dim.get() * col_dim.get()));
         storage.resize(row_dim.get() * col_dim.get());
@@ -345,7 +345,7 @@ public:
     * \{
     */
     //!\brief Value type of this iterator.
-    using value_type = value_type_t<storage_iterator>;
+    using value_type = std::iter_value_t<storage_iterator>;
     //!\brief Reference to `value_type`.
     using reference = reference_t<storage_iterator>;
     //!\brief The pointer type.

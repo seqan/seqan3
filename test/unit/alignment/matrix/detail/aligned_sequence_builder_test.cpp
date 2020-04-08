@@ -44,8 +44,8 @@ struct aligned_sequence_builder_fixture : ::testing::Test
     using fst_seq_t = std::tuple_element_t<0, test_type>;
     using sec_seq_t = std::tuple_element_t<1, test_type>;
 
-    using fst_seq_value_t = seqan3::value_type_t<fst_seq_t>;
-    using sec_seq_value_t = seqan3::value_type_t<sec_seq_t>;
+    using fst_seq_value_t = std::ranges::range_value_t<fst_seq_t>;
+    using sec_seq_value_t = std::ranges::range_value_t<sec_seq_t>;
 
     using type_param = seqan3::detail::aligned_sequence_builder<fst_seq_t, sec_seq_t>;
 

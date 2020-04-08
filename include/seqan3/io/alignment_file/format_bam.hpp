@@ -451,7 +451,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
                 if (!tmp_cigar_vector.empty()) // only parse alignment if cigar information was given
                 {
                     assert(core.l_seq == (seq_length + offset_tmp + soft_clipping_end)); // sanity check
-                    using alph_t = value_type_t<decltype(get<1>(align))>;
+                    using alph_t = std::ranges::range_value_t<decltype(get<1>(align))>;
                     constexpr auto from_dna16 = detail::convert_through_char_representation<alph_t, sam_dna16>;
 
                     get<1>(align).reserve(seq_length);
@@ -496,7 +496,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         }
         else
         {
-            using alph_t = value_type_t<decltype(seq)>;
+            using alph_t = std::ranges::range_value_t<decltype(seq)>;
             constexpr auto from_dna16 = detail::convert_through_char_representation<alph_t, sam_dna16>;
 
             for (auto [d1, d2] : seq_stream)
@@ -870,7 +870,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
         }
 
         // write seq (bit-compressed: sam_dna16 characters go into one byte)
-        using alph_t = value_type_t<seq_type>;
+        using alph_t = std::ranges::range_value_t<seq_type>;
         constexpr auto to_dna16 = detail::convert_through_char_representation<sam_dna16, alph_t>;
 
         auto sit = std::ranges::begin(seq);
@@ -1188,7 +1188,8 @@ inline std::string format_bam::get_tag_dict_str(sam_tag_dictionary const & tag_d
         {
             int32_t sz{static_cast<int32_t>(arg.size())};
             result.append(reinterpret_cast<char *>(&sz), 4);
-            result.append(reinterpret_cast<char const *>(arg.data()), arg.size() * sizeof(value_type_t<T>));
+            result.append(reinterpret_cast<char const *>(arg.data()),
+                          arg.size() * sizeof(std::ranges::range_value_t<T>));
         }
     };
 

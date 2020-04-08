@@ -79,8 +79,8 @@ namespace seqan3::views
 
 /*!\brief               A view that does quality-threshold trimming on a range of seqan3::quality_alphabet.
  * \tparam urng_t       The type of the range being processed. See below for requirements.
- * \tparam threshold_t  Either seqan3::value_type_t<urng_t> or
- *                      seqan3::alphabet_phred_t<seqan3::value_type_t<urng_t>>.
+ * \tparam threshold_t  Either std::ranges::range_value_t<urng_t> or
+ *                      seqan3::alphabet_phred_t<std::ranges::range_value_t<urng_t>>.
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \param[in] threshold The minimum quality.
  * \returns             A trimmed range. See below for the properties of the returned range.

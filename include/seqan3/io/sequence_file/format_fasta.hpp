@@ -199,7 +199,7 @@ private:
                         at_delimiter = true;
                         break;
                     }
-                    id.push_back(assign_char_to(*it, value_type_t<id_type>{}));
+                    id.push_back(assign_char_to(*it, std::ranges::range_value_t<id_type>{}));
                 }
 
                 if (!at_delimiter)
@@ -212,7 +212,7 @@ private:
 
                 std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank)        // skip leading >
                                               | views::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
-                                              | views::char_to<value_type_t<id_type>>,
+                                              | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::ranges::back_inserter(id));                               // … ^A is old delimiter
 
                 // consume rest of line
@@ -236,7 +236,7 @@ private:
                         at_delimiter = true;
                         break;
                     }
-                    id.push_back(assign_char_to(*it, value_type_t<id_type>{}));
+                    id.push_back(assign_char_to(*it, std::ranges::range_value_t<id_type>{}));
                 }
 
                 if (!at_delimiter)
@@ -246,7 +246,7 @@ private:
 
                 std::ranges::copy(stream_view | views::take_line_or_throw                    // read line
                                               | std::views::drop_while(is_id || is_blank)    // skip leading >
-                                              | views::char_to<value_type_t<id_type>>,
+                                              | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::ranges::back_inserter(id));
             #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
             }
@@ -286,7 +286,7 @@ private:
                                         detail::make_printable(*it)};
                 }
 
-                seq.push_back(assign_char_to(*it, value_type_t<seq_type>{}));
+                seq.push_back(assign_char_to(*it, std::ranges::range_value_t<seq_type>{}));
             }
 
         #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
@@ -304,7 +304,7 @@ private:
                                                 }
                                                 return c;
                                             })                                      // enforce legal alphabet
-                                          | views::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
+                                          | views::char_to<std::ranges::range_value_t<seq_type>>, // convert to actual target alphabet
                               std::ranges::back_inserter(seq));
         #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
         }

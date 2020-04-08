@@ -411,7 +411,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
 
     // these variables need to be stored to compute the ALIGNMENT
     int32_t ref_offset_tmp{};
-    value_type_t<decltype(header.ref_ids())> ref_id_tmp{};
+    std::ranges::range_value_t<decltype(header.ref_ids())> ref_id_tmp{};
     [[maybe_unused]] int32_t offset_tmp{};
     [[maybe_unused]] int32_t soft_clipping_end{};
     [[maybe_unused]] std::vector<cigar> tmp_cigar_vector{};
@@ -476,7 +476,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     // -------------------------------------------------------------------------------------------------------------
     if constexpr (!detail::decays_to_ignore_v<mate_type>)
     {
-        value_type_t<decltype(header.ref_ids())> tmp_mate_ref_id{};
+        std::ranges::range_value_t<decltype(header.ref_ids())> tmp_mate_ref_id{};
         read_field(field_view, tmp_mate_ref_id); // RNEXT
 
         if (tmp_mate_ref_id == "=") // indicates "same as ref id"
@@ -541,7 +541,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
 
                     for (; seq_length > 0; --seq_length) // seq_length is not needed anymore
                     {
-                        get<1>(align).push_back(value_type_t<decltype(get<1>(align))>{}.assign_char(*tmp_iter));
+                        get<1>(align).push_back(std::ranges::range_value_t<decltype(get<1>(align))>{}.assign_char(*tmp_iter));
                         ++tmp_iter;
                     }
 

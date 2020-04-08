@@ -114,7 +114,7 @@ SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_inpu
  *     [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  *   * Instead of passing the fields seqan3::field::seq and seqan3::field::qual, you may also pass
- *     seqan3::field::seq_qual to both parameters. If you do, the seqan3::value_type_t of the argument must be
+ *     seqan3::field::seq_qual to both parameters. If you do, the std::ranges::range_value_t of the argument must be
  *     a specialisation of seqan3::qualified and the second template parameter to
  *     seqan3::sequence_file_input_options must be set to true.
  */

@@ -34,7 +34,7 @@ TYPED_TEST_SUITE_P(alignment_matrix_base_test);
 TYPED_TEST_P(alignment_matrix_base_test, range_concepts)
 {
     using outer_it = std::ranges::iterator_t<typename TestFixture::matrix_t>;
-    using column_t = seqan3::value_type_t<outer_it>;
+    using column_t = std::iter_value_t<outer_it>;
     using inner_it = std::ranges::iterator_t<column_t>;
 
     EXPECT_TRUE(std::ranges::input_range<typename TestFixture::matrix_t>);
