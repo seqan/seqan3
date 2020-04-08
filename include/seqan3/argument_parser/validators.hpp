@@ -358,7 +358,6 @@ public:
     }
 
 protected:
-
     /*!\brief Validates the given filename path based on the specified extensions.
      * \param path The filename path.
      * \throws seqan3::validation_error if the specified extensions don't match the given path, or
@@ -443,6 +442,15 @@ protected:
             throw validation_error{detail::to_string("Cannot write ", path, "!")};
 
         file_guard.remove();
+    }
+
+    //!\brief Returns the information of valid file extensions.
+    std::string valid_extensions_help_page_message() const
+    {
+        if (extensions.empty())
+            return "";
+        else
+            return detail::to_string(" Valid file extensions are: [", extensions | views::join(std::string{", "}), "].");
     }
 
     //!\brief Stores the extensions.
@@ -561,9 +569,8 @@ public:
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("Valid input file formats: [",
-                                 extensions | views::join(std::string{", "}),
-                                 "]");
+        return "The input file must exist and read permissions must be granted." +
+               valid_extensions_help_page_message();
     }
 };
 
@@ -664,9 +671,8 @@ public:
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("Valid output file formats: [",
-                                 extensions | views::join(std::string{", "}),
-                                 "]");
+        return "The output file must not exist already and write permissions must be granted." +
+               valid_extensions_help_page_message();
     }
 };
 

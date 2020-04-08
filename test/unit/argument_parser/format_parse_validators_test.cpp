@@ -177,7 +177,8 @@ TEST(validator_test, input_file)
                                "\n"
                                "POSITIONAL ARGUMENTS\n"
                                "    ARGUMENT-1 (std::filesystem::path)\n"
-                               "          desc Valid input file formats: [fa, sam, fasta]\n"
+                               "          desc The input file must exist and read permissions must be granted.\n"
+                               "          Valid file extensions are: [fa, sam, fasta].\n"
                                "\n"} +
                                basic_options_str +
                                "\n" +
@@ -190,8 +191,11 @@ TEST(validator_test, input_file_ext_from_file)
 {
     // Give as a template argument the seqan3 file type to get all valid extensions for this file.
     seqan3::input_file_validator<dummy_file> validator{};
+    EXPECT_EQ(validator.get_help_page_message(), "The input file must exist and read permissions must be granted. "
+                                                 "Valid file extensions are: [fa, fasta, sam, bam].");
 
-    EXPECT_EQ(validator.get_help_page_message(), "Valid input file formats: [fa, fasta, sam, bam]");
+    seqan3::input_file_validator validator2{};
+    EXPECT_EQ(validator2.get_help_page_message(), "The input file must exist and read permissions must be granted.");
 }
 
 TEST(validator_test, output_file)
@@ -281,7 +285,8 @@ TEST(validator_test, output_file)
                                "\n"
                                "POSITIONAL ARGUMENTS\n"
                                "    ARGUMENT-1 (std::filesystem::path)\n"
-                               "          desc Valid output file formats: [fa, sam, fasta]\n"
+                               "          desc The output file must not exist already and write permissions\n"
+                               "          must be granted. Valid file extensions are: [fa, sam, fasta].\n"
                                "\n"} +
                                basic_options_str +
                                "\n" +
@@ -294,8 +299,12 @@ TEST(validator_test, output_file_ext_from_file)
 {
     // Give as a template argument the seqan3 file type to get all valid extensions for this file.
     seqan3::output_file_validator<dummy_file> validator{};
+    EXPECT_EQ(validator.get_help_page_message(), "The output file must not exist already and write permissions must "
+                                                 "be granted. Valid file extensions are: [fa, fasta, sam, bam].");
 
-    EXPECT_EQ(validator.get_help_page_message(), "Valid output file formats: [fa, fasta, sam, bam]");
+    seqan3::output_file_validator validator2{};
+    EXPECT_EQ(validator2.get_help_page_message(), "The output file must not exist already and write permissions must "
+                                                  "be granted.");
 }
 
 TEST(validator_test, input_directory)
@@ -1157,8 +1166,9 @@ TEST(validator_test, chaining_validators)
                                basic_options_str +
                                "    -s, --string-option (std::string)\n"
                                "          desc Default: . Value must match the pattern '(/[^/]+)+/.*\\.[^/\\.]+$'.\n"
-                               "          Valid output file formats: [sa, so] Value must match the pattern\n"
-                               "          '.*'.\n"
+                               "          The output file must not exist already and write permissions must be\n"
+                               "          granted. Valid file extensions are: [sa, so]. Value must match the\n"
+                               "          pattern '.*'.\n"
                                "\n"} +
                                basic_version_str;
         EXPECT_EQ(my_stdout, expected);
