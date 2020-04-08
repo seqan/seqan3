@@ -52,9 +52,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     detail::search_param max_error{0, 0, 0, 0};
     if constexpr (search_traits_t::search_with_max_error)
     {
-        auto & [total, subs, ins, del] = max_error;
-        std::tie(total, subs, ins, del) = std::apply([](auto ...args){ return std::tuple{args...}; },
-                                                     get<search_cfg::max_error>(cfg).value);
+        max_error = get<search_cfg::max_error>(cfg).value;
     }
     else if constexpr (search_traits_t::search_with_max_error_rate)
     {
