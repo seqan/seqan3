@@ -147,18 +147,11 @@ TEST(range_and_iterator, const_reference_)
     auto v = std::views::iota(1);
     using const_iterator_of_view = std::ranges::iterator_t<decltype(v) const>;
     using type_list_example = seqan3::type_list<std::iter_reference_t<const_iterator_of_int_vector>, // short
-//                                                typename seqan3::const_reference<std::vector<int>>::type, // long
                                                 typename std::vector<int>::const_reference, // member type
-                                                std::iter_reference_t<const_iterator_of_int_vector>, // const container
-// not defined on iterators
-                                                std::iter_reference_t<const_iterator_of_int_vector>, // iterator
-                                                std::iter_reference_t<const_foreign_iterator>, // iterator2
+                                                std::iter_reference_t<const_foreign_iterator>, // iterator
                                                 std::iter_reference_t<const_iterator_of_view>>; // range, no member
 
     using comp_list = seqan3::type_list<int const &,
-//                                        int const &,
-                                        int const &,
-                                        int const &, // container is const
                                         int const &,
                                         int const &,
                                         int>; // view creates values
