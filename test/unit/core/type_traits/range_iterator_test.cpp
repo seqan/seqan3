@@ -144,14 +144,15 @@ TEST(range_and_iterator, const_reference_)
 {
     using const_iterator_of_int_vector = std::ranges::iterator_t<std::vector<int> const>;
     using const_foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int> const>;
-    auto v = std::views::iota(1);
-    using const_iterator_of_view = std::ranges::iterator_t<decltype(v) const>;
-    using type_list_example = seqan3::type_list<std::iter_reference_t<const_iterator_of_int_vector>, // short
+    using const_iterator_of_view = std::ranges::iterator_t<decltype(std::views::iota(1)) const>;
+    using type_list_example = seqan3::type_list<std::ranges::range_reference_t<std::vector<int> const>, // short
                                                 typename std::vector<int>::const_reference, // member type
-                                                std::iter_reference_t<const_foreign_iterator>, // iterator
+                                                std::iter_reference_t<const_iterator_of_int_vector>, // iterator
+                                                std::iter_reference_t<const_foreign_iterator>, // iterator2
                                                 std::iter_reference_t<const_iterator_of_view>>; // range, no member
 
     using comp_list = seqan3::type_list<int const &,
+                                        int const &,
                                         int const &,
                                         int const &,
                                         int>; // view creates values
