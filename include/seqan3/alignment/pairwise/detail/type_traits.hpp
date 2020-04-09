@@ -15,6 +15,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
+#include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
 #include <seqan3/alignment/configuration/align_config_mode.hpp>
@@ -24,6 +25,7 @@
 #include <seqan3/alignment/configuration/align_config_vectorise.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
+#include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
@@ -80,6 +82,23 @@ template <typename configuration_t>
 //!\endcond
 struct alignment_configuration_traits
 {
+private:
+    //!\brief Helper function to determine the alignment result type.
+    static constexpr auto determine_alignment_result_type() noexcept
+    {
+        if constexpr (configuration_t::template exists<alignment_result_capture_element>())
+        {
+            using wrapped_result_t =
+                decltype(seqan3::get<alignment_result_capture_element>(std::declval<configuration_t>()).value);
+            return typename wrapped_result_t::type{};  // Unwrap the type_identity.
+        }
+        else
+        {
+            return empty_type{};
+        }
+    }
+
+public:
     //!\brief Flag to indicate vectorised mode.
     static constexpr bool is_vectorised =
         configuration_t::template exists<remove_cvref_t<decltype(align_cfg::vectorise)>>();
@@ -112,6 +131,8 @@ struct alignment_configuration_traits
     using score_type = std::conditional_t<is_vectorised, simd_type_t<original_score_type>, original_score_type>;
     //!\brief The trace directions type for the alignment algorithm.
     using trace_type = std::conditional_t<is_vectorised, simd_type_t<original_score_type>, trace_directions>;
+    //!\brief The alignment result type if present. Otherwise seqan3::detail::empty_type.
+    using alignment_result_type = decltype(determine_alignment_result_type());
 
     //!\brief The number of alignments that can be computed in one simd vector.
     static constexpr size_t alignments_per_vector = [] () constexpr
