@@ -272,7 +272,7 @@ public:
             using function_wrapper_t = std::function<void(indexed_sequence_pair_chunk_t, callback_on_result_t)>;
 
             // Capture the alignment result type.
-            auto captured_cfg = cfg | align_cfg::alignment_result_capture<alignment_result_t>;
+            auto config_with_result_type = cfg | align_cfg::alignment_result_capture<alignment_result_t>;
 
             // ----------------------------------------------------------------------------
             // Test some basic preconditions
@@ -299,9 +299,9 @@ public:
             // ----------------------------------------------------------------------------
 
             // Use default edit distance if gaps are not set.
-            auto const & gaps = captured_cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
+            auto const & gaps = config_with_result_type.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
             auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
-            auto align_ends_cfg = captured_cfg.template value_or<align_cfg::aligned_ends>(free_ends_none);
+            auto align_ends_cfg = config_with_result_type.template value_or<align_cfg::aligned_ends>(free_ends_none);
 
             if constexpr (config_t::template exists<align_cfg::mode<detail::global_alignment_type>>())
             {
@@ -317,7 +317,10 @@ public:
                     {
                         if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
                             (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
-                            return std::pair{configure_edit_distance<function_wrapper_t>(captured_cfg), captured_cfg};
+                        {
+                            return std::pair{configure_edit_distance<function_wrapper_t>(config_with_result_type),
+                                             config_with_result_type};
+                        }
                     }
                 }
             }
@@ -331,7 +334,8 @@ public:
                 throw invalid_alignment_configuration{"The align_cfg::max_error configuration is only allowed for "
                                                       "the specific edit distance computation."};
             // Configure the alignment algorithm.
-            return std::pair{configure_scoring_scheme<function_wrapper_t>(captured_cfg), captured_cfg};
+            return std::pair{configure_scoring_scheme<function_wrapper_t>(config_with_result_type),
+                             config_with_result_type};
         }
     }
 

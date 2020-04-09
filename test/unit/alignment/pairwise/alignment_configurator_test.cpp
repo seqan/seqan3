@@ -28,12 +28,12 @@ template <typename config_t>
 auto run_test(config_t const & cfg)
 {
     auto r = setup();
-    auto [algorithm, new_config] = seqan3::detail::alignment_configurator::configure<decltype(r)>(cfg);
+    auto [algorithm, complete_config] = seqan3::detail::alignment_configurator::configure<decltype(r)>(cfg);
 
     auto indexed_sequence_pairs = seqan3::views::zip(r, std::views::iota(0)) | seqan3::views::chunk(1);
 
-    using new_configuration_t = decltype(new_config);
-    using traits_t = seqan3::detail::alignment_configuration_traits<new_configuration_t>;
+    using complete_configuration_t = decltype(complete_config);
+    using traits_t = seqan3::detail::alignment_configuration_traits<complete_configuration_t>;
     using alignment_result_t = typename traits_t::alignment_result_type;
 
     alignment_result_t align_result{};

@@ -88,6 +88,10 @@ private:
     using alignment_column_t = decltype(std::declval<alignment_algorithm>().current_alignment_column());
     //!\brief The iterator type over the alignment column.
     using alignment_column_iterator_t = std::ranges::iterator_t<alignment_column_t>;
+    //!\brief The alignment result type.
+    using alignment_result_t = typename traits_t::alignment_result_type;
+
+    static_assert(!std::same_as<alignment_result_t, empty_type>, "Alignment result type was not configured.");
 
     //!\brief The type of the score debug matrix.
     using score_debug_matrix_t =
@@ -177,10 +181,7 @@ public:
      */
     template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
     //!\cond
-        requires !traits_t::is_vectorised &&
-                 is_type_specialisation_of_v<
-                    typename function_traits<std::remove_reference_t<callback_t>>::template argument_type_at<0>,
-                    alignment_result>
+        requires (!traits_t::is_vectorised) && std::invocable<callback_t, alignment_result_t>
     //!\endcond
     void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
@@ -192,13 +193,10 @@ public:
 
     //!\overload
     template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
-    void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     //!\cond
-        requires traits_t::is_vectorised &&
-                 is_type_specialisation_of_v<
-                    typename function_traits<std::remove_reference_t<callback_t>>::template argument_type_at<0>,
-                    alignment_result>
+        requires traits_t::is_vectorised && std::invocable<callback_t, alignment_result_t>
     //!\endcond
+    void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
         assert(cfg_ptr != nullptr);
 
@@ -601,7 +599,7 @@ private:
                                          sequence2_t & sequence2,
                                          callback_t & callback)
     {
-        using alignment_result_t = typename function_traits<callback_t>::template argument_type_at<0>;
+        using result_value_t = typename alignment_result_value_type_accessor<alignment_result_t>::type;
 
         // ----------------------------------------------------------------------------
         // Build the alignment result
@@ -610,7 +608,7 @@ private:
         static_assert(config_t::template exists<align_cfg::result>(),
                       "The configuration must contain an align_cfg::result element.");
 
-        typename alignment_result_value_type_accessor<alignment_result_t>::type res{};
+        result_value_t res{};
 
         res.id = idx;
 
@@ -684,7 +682,6 @@ private:
     constexpr auto make_alignment_result(indexed_sequence_pair_range_t && index_sequence_pairs,
                                          callback_t & callback)
     {
-        using alignment_result_t = typename function_traits<callback_t>::template argument_type_at<0>;
         using result_value_t = typename alignment_result_value_type_accessor<alignment_result_t>::type;
 
         size_t simd_index = 0;
