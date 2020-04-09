@@ -10,7 +10,6 @@
 #include <type_traits>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser_hash.hpp>
@@ -26,8 +25,8 @@ using result_t = std::vector<size_t>;
 
 static constexpr seqan3::shape ungapped_shape = seqan3::ungapped{4};
 static constexpr seqan3::shape gapped_shape = 0b1001_shape;
-static constexpr auto ungapped_view = seqan3::views::minimiser_hash(ungapped_shape, 8, 0); // window_size 5, seed 0
-static constexpr auto gapped_view = seqan3::views::minimiser_hash(gapped_shape, 8, 0);     // window_size 5, seed 0
+static constexpr auto ungapped_view = seqan3::views::minimiser_hash(ungapped_shape, 8, 0); // window_size 8, seed 0
+static constexpr auto gapped_view = seqan3::views::minimiser_hash(gapped_shape, 8, 0);     // window_size 8, seed 0
 
 template <typename T>
 class minimiser_hash_properties_test: public ::testing::Test { };
