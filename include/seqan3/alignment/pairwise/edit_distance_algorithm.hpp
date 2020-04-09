@@ -38,6 +38,14 @@ namespace seqan3::detail
 template <typename config_t, typename traits_t>
 class edit_distance_algorithm
 {
+private:
+    //!\brief The configuration traits for the selected alignment algorithm.
+    using configuration_traits_type = alignment_configuration_traits<config_t>;
+    //!\brief The configured alignment result type.
+    using alignment_result_type = typename configuration_traits_type::alignment_result_type;
+
+    static_assert(!std::same_as<alignment_result_type, empty_type>, "Alignment result type was not configured.");
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -71,7 +79,8 @@ public:
      *                    std::invocable accepting one argument of type seqan3::alignment_result.
      *
      * \param[in] indexed_sequence_pairs The indexed sequence pairs to align.
-     * \param[in] callback The callback function to be invoked with the alignment result.
+     * \param[in] callback The callback function to be invoked with the alignment result; must model
+     *                     std::invocable with the respective seqan3::alignment_result type.
      *
      * \returns A std::vector over seqan3::alignment_result.
      *
@@ -80,12 +89,7 @@ public:
      * Computes for each contained sequence pair the respective alignment and invokes the given callback for each
      * alignment result.
      */
-    template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
-    //!\cond
-        requires is_type_specialisation_of_v<
-                    typename function_traits<std::remove_reference_t<callback_t>>::template argument_type_at<0>,
-                    alignment_result>
-    //!\endcond
+    template <indexed_sequence_pair_range indexed_sequence_pairs_t, std::invocable<alignment_result_type> callback_t>
     constexpr void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
         using std::get;
@@ -115,12 +119,9 @@ private:
                                        second_range_t && second_range,
                                        callback_t && callback)
     {
-        using alignment_result_t = typename function_traits<
-                                        std::remove_reference_t<callback_t>>::template argument_type_at<0>;
         using edit_traits = default_edit_distance_trait_type<first_range_t,
                                                              second_range_t,
                                                              config_t,
-                                                             alignment_result_t,
                                                              typename traits_t::is_semi_global_type>;
         edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, edit_traits{}};
         algo(idx, callback);
