@@ -35,6 +35,8 @@ namespace seqan3::detail
  * \tparam resource_t            The underlying range of sequence pairs to be computed; must model
  *                               std::ranges::viewable_range and std::ranges::input_range.
  * \tparam alignment_algorithm_t The alignment algorithm to be invoked on each sequence pair.
+ * \tparam value_t               The value type to buffer results generated from the algorithm; must model
+ *                               std::semiregular.
  * \tparam execution_handler_t   The execution handler managing the execution of the alignments.
  *
  * \details
@@ -45,6 +47,7 @@ namespace seqan3::detail
  */
 template <std::ranges::viewable_range resource_t,
           typename alignment_algorithm_t,
+          std::semiregular value_t,
           typename execution_handler_t = execution_handler_sequential>
 //!\cond
     requires std::ranges::forward_range<resource_t> &&
@@ -65,10 +68,8 @@ private:
     /*!\name Buffer types
      * \{
      */
-    //!\brief The actual alignment result.
-    using buffer_value_type = typename alignment_function_traits<alignment_algorithm_t>::alignment_result_type;
     //!\brief The internal buffer.
-    using buffer_type       = std::vector<buffer_value_type>;
+    using buffer_type       = std::vector<value_t>;
     //!\brief The pointer type of the buffer.
     using buffer_pointer    = std::ranges::iterator_t<buffer_type>;
     //!\}
@@ -79,7 +80,7 @@ public:
      * \{
      */
     //!\brief The result type of invoking the alignment instance.
-    using value_type      = buffer_value_type;
+    using value_type      = value_t;
     //!\brief A reference to the alignment result.
     using reference       = std::add_lvalue_reference_t<value_type>;
     //!\brief The difference type for the buffer.
@@ -134,8 +135,10 @@ public:
     /*!\brief Constructs this executor with the passed range of alignment instances.
      * \tparam exec_policy_t The type of the execution policy; seqan3::is_execution_policy must return `true`. Defaults
      *                       to seqan3::sequenced_policy.
+     *
      * \param[in] resrc The underlying resource containing the sequence pairs to align.
      * \param[in] fn The alignment kernel to invoke on the sequences pairs.
+     * \param[in] buffer_value A value to initialise the buffer with.
      * \param[in] chunk_size The number of sequence pairs to invoke the alignment algorithm with.
      * \param[in] exec Optional execution policy to use. Defaults to seqan3::seq.
      *
@@ -153,6 +156,7 @@ public:
     //!\endcond
     alignment_executor_two_way(resource_t resrc,
                                alignment_algorithm_t fn,
+                               value_t buffer_value = value_t{},
                                size_t chunk_size = 1u,
                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
         kernel{std::move(fn)},
@@ -166,9 +170,9 @@ public:
         chunked_resource_it = chunked_resource.begin();
 
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
-            init_buffer(std::ranges::distance(resrc));
+            init_buffer(std::ranges::distance(resrc), buffer_value);
         else
-            init_buffer(_chunk_size);
+            init_buffer(_chunk_size, buffer_value);
     }
 
     //!}
@@ -281,11 +285,12 @@ private:
      */
 
     /*!\brief Initialises the underlying buffer.
-     * \param size The initial size of the buffer.
+     * \param[in] size The initial size of the buffer.
+     * \param[in] init_value The value used to initialise the buffer.
      */
-    void init_buffer(size_t const size)
+    void init_buffer(size_t const size, value_t const & init_value)
     {
-        buffer.resize(size);
+        buffer.resize(size, init_value);
         setg(std::ranges::end(buffer), std::ranges::end(buffer));
     }
 
@@ -340,16 +345,17 @@ private:
  */
 
 //!\brief Deduce the type from the provided arguments and set the sequential execution handler.
-template <typename resource_rng_t, typename func_t>
-alignment_executor_two_way(resource_rng_t &&, func_t) ->
-    alignment_executor_two_way<resource_rng_t, func_t, execution_handler_sequential>;
+template <typename resource_rng_t, typename func_t, std::semiregular value_t>
+alignment_executor_two_way(resource_rng_t &&, func_t, value_t const &) ->
+    alignment_executor_two_way<resource_rng_t, func_t, value_t, execution_handler_sequential>;
 
 //!\brief Deduce the type from the provided arguments and set the sequential execution handler.
-template <typename resource_rng_t, typename func_t, typename exec_policy_t>
+template <typename resource_rng_t, typename func_t, std::semiregular value_t, typename exec_policy_t>
     requires is_execution_policy_v<exec_policy_t>
-alignment_executor_two_way(resource_rng_t &&, func_t, size_t, exec_policy_t const &) ->
+alignment_executor_two_way(resource_rng_t &&, func_t, value_t const &, size_t, exec_policy_t const &) ->
     alignment_executor_two_way<resource_rng_t,
                                func_t,
+                               value_t,
                                std::conditional_t<std::same_as<exec_policy_t, parallel_policy>,
                                                   execution_handler_parallel,
                                                   execution_handler_sequential>>;
