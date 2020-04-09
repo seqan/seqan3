@@ -14,6 +14,7 @@
 
 #include <deque>
 
+#include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/detail.hpp>
 
 namespace seqan3::detail
