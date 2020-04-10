@@ -88,9 +88,9 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         max_error2.total = 0;
         while (internal_hits.empty() && max_error2.total <= max_error.total)
         {
-            // search_traits_t::search_best_hits:     abort_on_hit = true
-            // search_traits_t::search_all_best_hits: abort_on_hit = false
-            // search_traits_t::search_strata_hits:   abort_on_hit = true
+            // If mode is search_traits_t::search_best_hits, then `abort_on_hit` is true.
+            // If mode is search_traits_t::search_all_best_hits, then `abort_on_hit` is false.
+            // If mode is search_traits_t::search_strata_hits, then `abort_on_hit` is true.
             constexpr bool abort_on_hit = !search_traits_t::search_all_best_hits;
             detail::search_algo<abort_on_hit>(index, query, max_error2, internal_delegate);
             max_error2.total++;
