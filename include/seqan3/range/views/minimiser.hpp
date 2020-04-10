@@ -222,7 +222,7 @@ public:
     //!\name Comparison operators
     //!\{
 
-    //!\brief Compare to iterator on underlying range.
+    //!\brief Compare to the sentinel of the underlying range.
     friend bool operator==(window_iterator const & lhs, sentinel_t const & rhs) noexcept
     {
         return lhs.window_right == rhs;
@@ -234,19 +234,19 @@ public:
         return lhs == rhs.window_right;
     }
 
-    //!\brief Compare to another window_iterator.
+    //!\brief Compare to the sentinel of the underlying range.
     friend bool operator==(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
         return std::tie(lhs.window_right, lhs.num_w_elems) == std::tie(rhs.window_right, rhs.num_w_elems);
     }
 
-    //!\brief Compare to iterator on  underlying range.
+    //!\brief Compare to the sentinel of the underlying range.
     friend bool operator!=(window_iterator const & lhs, sentinel_t const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
-    //!\brief Compare to iterator on underlying range.
+    //!\brief Compare to the sentinel of the underlying range.
     friend bool operator!=(sentinel_t const & lhs, window_iterator const & rhs) noexcept
     {
         return !(lhs == rhs);
