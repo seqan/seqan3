@@ -354,9 +354,8 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::forward_range value_type_t = value_type>//,
+    template <std::ranges::forward_range value_type_t = value_type>
         requires is_compatible_with_value_type<value_type_t>
-              // typename initializer_list_t = std::enable_if_t<is_compatible_with_value_type<value_type_t>>>
     concatenated_sequences(std::initializer_list<value_type_t> ilist)
     {
         assign(std::begin(ilist), std::end(ilist));
