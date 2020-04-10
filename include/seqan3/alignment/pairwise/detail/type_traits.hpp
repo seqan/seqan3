@@ -123,6 +123,14 @@ struct alignment_configuration_traits
                                                     }();
     //!\brief The rank of the selected result type.
     static constexpr int8_t result_type_rank = static_cast<int8_t>(decltype(std::declval<result_type>().value)::rank);
+    //!\brief Flag indicating whether the score shall be computed.
+    static constexpr bool compute_score = result_type_rank >= 0;
+    //!\brief Flag indicating whether the back coordintate shall be computed.
+    static constexpr bool compute_back_coordinate = result_type_rank >= 1;
+    //!\brief Flag indicating whether the front coordintate shall be computed.
+    static constexpr bool compute_front_coordinate = result_type_rank >= 2;
+    //!\brief Flag indicating whether the sequence alignment shall be computed.
+    static constexpr bool compute_sequence_alignment = result_type_rank >= 3;
     //!\brief The padding symbol to use for the computation of the alignment.
     static constexpr original_score_type padding_symbol =
         static_cast<original_score_type>(1u << (sizeof_bits<original_score_type> - 1));
