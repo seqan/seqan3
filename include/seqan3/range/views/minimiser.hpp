@@ -46,8 +46,8 @@ private:
     //!\brief The underlying range.
     urng_t urange;
 
-    //!\brief The number of elements in one window.
-    uint32_t num_w_elems;
+    //!\brief The number of values in one window.
+    uint32_t window_values_size;
 
     template <typename rng_t>
     class window_iterator;
@@ -63,17 +63,17 @@ public:
     minimiser_view & operator=(minimiser_view && rhs)      = default; //!< Defaulted.
     ~minimiser_view()                                      = default; //!< Defaulted.
 
-    //!\brief Construct from a view and a given number of elements in one window.
-    minimiser_view(urng_t urange_, uint32_t const & w_) : urange{std::move(urange_)}, num_w_elems{w_}{}
+    //!\brief Construct from a view and a given number of values in one window.
+    minimiser_view(urng_t urange_, uint32_t const & w_) : urange{std::move(urange_)}, window_values_size{w_}{}
 
-    //!\brief Construct from a non-view that can be view-wrapped and a given number of elements in one window.
+    //!\brief Construct from a non-view that can be view-wrapped and a given number of values in one window.
     template <typename rng_t>
     //!\cond
      requires std::ranges::viewable_range<rng_t> &&
               std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
     minimiser_view(rng_t && urange_, uint32_t const & w_) :
-        urange{std::views::all(std::forward<rng_t>(urange_))}, num_w_elems{w_} {}
+        urange{std::views::all(std::forward<rng_t>(urange_))}, window_values_size{w_} {}
     //!\}
 
     /*!\name Iterators
@@ -94,7 +94,7 @@ public:
      */
     auto begin() noexcept
     {
-        return window_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), num_w_elems};
+        return window_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), window_values_size};
     }
 
     //!\copydoc begin()
@@ -103,7 +103,7 @@ public:
         requires seqan3::const_iterable_range<urng_t>
     //!\endcond
     {
-        return window_iterator<urng_t const>{std::ranges::begin(urange), std::ranges::end(urange), num_w_elems};
+        return window_iterator<urng_t const>{std::ranges::begin(urange), std::ranges::end(urange), window_values_size};
     }
 
     //!\copydoc begin()
@@ -196,23 +196,23 @@ public:
     constexpr window_iterator & operator=(window_iterator &&)      = default; //!< Defaulted.
     ~window_iterator()                                             = default; //!< Defaulted.
 
-    /*!\brief Construct from begin and end iterators of a given range over std::totally_ordered elements, and the number
-    *                      of elements per window.
+    /*!\brief Construct from begin and end iterators of a given range over std::totally_ordered values, and the number
+    *                      of values per window.
     * /param[in] it_start Iterator pointing to the first position of the std::totally_ordered range.
     * /param[in] it_end   Iterator pointing to the last position of the std::totally_ordered range.
-    * /param[in] w        The number of elements in one window.
+    * /param[in] w        The number of values in one window.
     *
     * \details
     *
-    * Looks at the number of elements per window, returns the smallest as minimiser and shifts then by one to repeat
+    * Looks at the number of values per window, returns the smallest as minimiser and shifts then by one to repeat
     * this action. If a minimiser in consecutive windows is the same, it is returned only once.
     *
     */
     window_iterator(it_t it_start, sentinel_t it_end, uint32_t w) :
-                    urange_end{it_end}, window_right{it_start}, num_w_elems{w}
+                    urange_end{it_end}, window_right{it_start}, window_values_size{w}
     {
-        if (num_w_elems > std::ranges::distance(window_right, urange_end))
-            num_w_elems = std::ranges::distance(window_right, urange_end);
+        if (window_values_size > std::ranges::distance(window_right, urange_end))
+            window_values_size = std::ranges::distance(window_right, urange_end);
         if (window_right != urange_end)
             get_minimiser();
     }
@@ -237,7 +237,7 @@ public:
     //!\brief Compare to the sentinel of the underlying range.
     friend bool operator==(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return std::tie(lhs.window_right, lhs.num_w_elems) == std::tie(rhs.window_right, rhs.num_w_elems);
+        return std::tie(lhs.window_right, lhs.window_values_size) == std::tie(rhs.window_right, rhs.window_values_size);
     }
 
     //!\brief Compare to the sentinel of the underlying range.
@@ -261,25 +261,25 @@ public:
     //!\brief Compare to another window_iterator.
     friend bool operator<(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return (lhs.window_right < rhs.window_right) && (lhs.num_w_elems < rhs.num_w_elems);
+        return (lhs.window_right < rhs.window_right) && (lhs.window_values_size < rhs.window_values_size);
     }
 
     //!\brief Compare to another window_iterator.
     friend bool operator>(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return (lhs.window_right > rhs.window_right) && (lhs.num_w_elems > rhs.num_w_elems);
+        return (lhs.window_right > rhs.window_right) && (lhs.window_values_size > rhs.window_values_size);
     }
 
     //!\brief Compare to another window_iterator.
     friend bool operator<=(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return (lhs.window_right <= rhs.window_right) && (lhs.num_w_elems <= rhs.num_w_elems);
+        return (lhs.window_right <= rhs.window_right) && (lhs.window_values_size <= rhs.window_values_size);
     }
 
     //!\brief Compare to another window_iterator.
     friend bool operator>=(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return (lhs.window_right >= rhs.window_right) && (lhs.num_w_elems >= rhs.num_w_elems);
+        return (lhs.window_right >= rhs.window_right) && (lhs.window_values_size >= rhs.window_values_size);
     }
     //!\}
 
@@ -314,8 +314,8 @@ private:
     //!\brief Iterator to the rightmost element of one window.
     it_t window_right;
 
-    //!\brief The number of elements in one window.
-    uint32_t num_w_elems;
+    //!\brief The number of values in one window.
+    uint32_t window_values_size;
 
     //!\brief Stored values per window. It is necessary to store them, because a shift can remove the current minimiser.
     std::deque<uint64_t> window_values;
@@ -332,7 +332,7 @@ private:
     //!\brief Calculates minimisers for the first window.
     void window_first()
     {
-        for (uint32_t i = 0; (i < num_w_elems - 1) ; i++)
+        for (uint32_t i = 0; (i < window_values_size - 1) ; i++)
         {
             window_values.push_back(*window_right);
             std::ranges::advance(window_right,  1);
@@ -385,7 +385,7 @@ private:
 
 //!\brief A deduction guide for the view class template.
 template <std::ranges::viewable_range rng_t>
-minimiser_view(rng_t &&, uint32_t const & num_w_elems) -> minimiser_view<std::ranges::all_view<rng_t>>;
+minimiser_view(rng_t &&, uint32_t const & window_values_size) -> minimiser_view<std::ranges::all_view<rng_t>>;
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -396,28 +396,28 @@ minimiser_view(rng_t &&, uint32_t const & num_w_elems) -> minimiser_view<std::ra
 //!\brief views::minimiser's range adaptor object type (non-closure).
 struct minimiser_fn
 {
-    //!\brief Store the number of elements in one window and return a range adaptor closure object.
-    constexpr auto operator()(uint32_t const & num_w_elems) const
+    //!\brief Store the number of values in one window and return a range adaptor closure object.
+    constexpr auto operator()(uint32_t const & window_values_size) const
     {
-        return adaptor_from_functor{*this, num_w_elems};
+        return adaptor_from_functor{*this, window_values_size};
     }
 
-    /*!\brief                   Call the view's constructor with two arguments: the underlying view and an integer
-     *                          indicating how many elements one window contains.
-     * \param[in] urange        The input range to process. Must model std::ranges::viewable_range and
-     *                          std::ranges::forward_range.
-     * \param[in] num_w_elems   The number of elements in one window.
-     * \returns                 A range of converted elements.
+    /*!\brief                           Call the view's constructor with two arguments: the underlying view and an
+     *                                  integer indicating how many values one window contains.
+     * \param[in] urange                The input range to process. Must model std::ranges::viewable_range and
+     *                                  std::ranges::forward_range.
+     * \param[in] window_values_size   The number of values in one window.
+     * \returns                         A range of converted values.
      */
     template <std::ranges::range urng_t>
-    constexpr auto operator()(urng_t && urange, uint32_t const & num_w_elems) const
+    constexpr auto operator()(urng_t && urange, uint32_t const & window_values_size) const
     {
         static_assert(std::ranges::viewable_range<urng_t>,
             "The range parameter to views::minimiser cannot be a temporary of a non-view range.");
         static_assert(std::ranges::forward_range<urng_t>,
             "The range parameter to views::minimiser must model std::ranges::forward_range.");
 
-        return minimiser_view{urange, num_w_elems};
+        return minimiser_view{urange, window_values_size};
     }
 };
 //![adaptor_def]
@@ -431,20 +431,20 @@ namespace seqan3::views
  * \{
  */
 
-/*!\brief                   Computes minimisers for a range of integral numbers. A minimiser is the smallest value in a
- *                          window.
- * \tparam urng_t           The type of the range being processed. See below for requirements. [template parameter is
- *                          omitted in pipe notation]
- * \param[in] urange        The range being processed. [parameter is omitted in pipe notation]
- * \param[in] num_w_elems   The number of elements in one window.
- * \returns                 A range of std::totally_ordered where each value is the minimal value for one window.
- *                          See below for the properties of the returned range.
+/*!\brief                           Computes minimisers for a range of integral numbers. A minimiser is the smallest
+ *                                  value in a window.
+ * \tparam urng_t                   The type of the range being processed. See below for requirements. [template
+ *                                  parameter is omitted in pipe notation]
+ * \param[in] urange                The range being processed. [parameter is omitted in pipe notation]
+ * \param[in] window_values_size    The number of values in one window.
+ * \returns                         A range of std::totally_ordered where each value is the minimal value for one window.
+ *                                  See below for the properties of the returned range.
  * \ingroup views
  *
  * \details
  *
  * A minimiser is the smallest value in a window. For example for the following list of hash values
- * [28, 100, 9, 23, 4, 1, 72, 37, 8] and 4 elements per window, the minimiser values are [9,4,1].
+ * [28, 100, 9, 23, 4, 1, 72, 37, 8] and 4 as window_values_size, the minimiser values are [9,4,1].
  *
  *
  * ### View properties
