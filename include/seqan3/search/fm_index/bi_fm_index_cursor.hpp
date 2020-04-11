@@ -19,7 +19,6 @@
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/std/ranges>
@@ -911,20 +910,18 @@ public:
         // Position of query in concatenated text.
         size_type const location = offset() - index->fwd_fm.index[fwd_lb];
 
-        // The rank represents the number of delimiters before position `location + 1`.
-        // Furthermore, this number represents the i-th text this (text) position originates from, since each delimiter
-        // corresponds to one text in the whole concatenated text from left-to-right.
+        // The rank represents the number of start positions of the individual sequences/texts in the collection
+        // before position `location + 1` and thereby also the number of delimiters.
         size_type const rank = index->fwd_fm.text_begin_rs.rank(location + 1);
         assert(rank > 0);
         size_type const text_id = rank - 1;
 
-        // The sum of all text lengths prior to the i-th text is the start location of the i-th text in the concatenated
-        // sequence.
+        // The start location of the `text_id`-th text in the sequence (position of the `rank`-th 1 in the bitvector).
         size_type const start_location = index->fwd_fm.text_begin_ss.select(rank);
         // Substract lengths of previous sequences.
         size_type const query_begin = location - start_location;
 
-        // Take subtext, slice query out of it <-my
+        // Take subtext, slice query out of it
         return text[text_id] | views::slice(query_begin, query_begin + query_length());
     }
 
