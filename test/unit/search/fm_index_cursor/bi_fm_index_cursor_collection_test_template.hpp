@@ -222,7 +222,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_rev_cursor)
     }
 }
 
-TYPED_TEST_P(bi_fm_index_cursor_collection_test, locate_char_string)
+TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend_const_char_pointer)
 {
     using alphabet_type = typename TestFixture::alphabet_type;
 
@@ -256,4 +256,4 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, locate_char_string)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test, cursor, extend, extend_char, extend_range,
-                            extend_and_cycle, extend_range_and_cycle, to_fwd_cursor, to_rev_cursor, locate_char_string);
+                            extend_and_cycle, extend_range_and_cycle, to_fwd_cursor, to_rev_cursor, extend_const_char_pointer);

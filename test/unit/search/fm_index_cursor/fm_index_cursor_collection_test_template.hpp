@@ -321,7 +321,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
     EXPECT_TRUE(std::ranges::equal(it.locate(), it.lazy_locate()));
 }
 
-TYPED_TEST_P(fm_index_cursor_collection_test, locate_char_string)
+TYPED_TEST_P(fm_index_cursor_collection_test, extend_const_char_pointer)
 {
     using alphabet_type = typename TestFixture::alphabet_type;
 
@@ -350,4 +350,4 @@ TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
 REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_collection_test, ctr, begin, extend_right_range,
                             extend_right_range_empty_text, extend_right_char, extend_right_range_and_cycle,
                             extend_right_char_and_cycle, extend_right_and_cycle, query, last_rank, incomplete_alphabet,
-                            lazy_locate, locate_char_string, concept_check);
+                            lazy_locate, extend_const_char_pointer, concept_check);
