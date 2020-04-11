@@ -10,14 +10,14 @@ int main()
 
     seqan3::debug_stream << "Example to_fwd_cursor()\n";
 
-    std::vector<seqan3::dna4> genome{"GAATTAACGAAC"_dna4};
+    seqan3::dna4_vector genome{"GAATTAACGAAC"_dna4};
     seqan3::bi_fm_index index{genome};                          // build the bidirectional index
 
     auto cur = index.cursor();                                  // create a cursor
     cur.extend_left("AAC"_dna4);                                // search the sequence "AAC"
     seqan3::debug_stream << cur.path_label(genome) << '\n';     // outputs "AAC"
     auto uni_it = cur.to_fwd_cursor();                          // unidirectional cursor on the text "GAATTAACGAAC"
-    seqan3::debug_stream << uni_it.path_label(genome) << '\n';  // outputs "CAA"
+    seqan3::debug_stream << uni_it.path_label(genome) << '\n';  // outputs "AAC"
     // Undefined behaviour! Cannot be called on the forward cursor if the last extension on the bidirectional
     // cursor was to the left:
     // cur.cycle_back();

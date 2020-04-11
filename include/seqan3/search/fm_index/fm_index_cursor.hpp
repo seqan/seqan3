@@ -21,7 +21,6 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
@@ -482,9 +481,22 @@ public:
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 
-        size_type const loc = offset() - index->index[node.lb];
-        size_type const query_begin = loc - index->text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return text | views::join | views::slice(query_begin, query_begin + query_length());
+        // Position of query in concatenated text.
+        size_type const location = offset() - index->index[node.lb];
+
+        // The rank represents the number of start positions of the individual sequences/texts in the collection
+        // before position `location + 1` and thereby also the number of delimiters.
+        size_type const rank = index->text_begin_rs.rank(location + 1);
+        assert(rank > 0);
+        size_type const text_id = rank - 1;
+
+        // The start location of the `text_id`-th text in the sequence (position of the `rank`-th 1 in the bitvector).
+        size_type const start_location = index->text_begin_ss.select(rank);
+        // Substract lengths of previous sequences.
+        size_type const query_begin = location - start_location;
+
+        // Take subtext, slice query out of it
+        return text[text_id] | views::slice(query_begin, query_begin + query_length());
     }
 
     /*!\brief Counts the number of occurrences of the searched query in the text.

@@ -10,7 +10,7 @@ int main()
 
     seqan3::debug_stream << "Example cycle_back() and cycle_front()\n";
 
-    std::vector<seqan3::dna4> genome{"GAATTAATGAAC"_dna4};
+    seqan3::dna4_vector genome{"GAATTAATGAAC"_dna4};
     seqan3::bi_fm_index index{genome};                      // build the bidirectional index
 
     auto cur = index.cursor();                              // create a cursor
@@ -25,7 +25,7 @@ int main()
     seqan3::debug_stream << cur.last_rank() << '\n';        // outputs 3
 
     cur.extend_left('G'_dna4);                              // search the sequence "GAAT"
-    seqan3::debug_stream << cur.path_label(genome) << '\n'; // outputs "GAAC"
+    seqan3::debug_stream << cur.path_label(genome) << '\n'; // outputs "GAAT"
     seqan3::debug_stream << cur.last_rank() << '\n';        // outputs 2
 
     // cur.cycle_back();                                    // undefined behaviour! only cycle_front() is allowed after extend_left()
