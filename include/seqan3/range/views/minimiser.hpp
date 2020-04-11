@@ -311,7 +311,7 @@ private:
     //!\brief The minimiser value.
     size_t minimiser_value{0};
 
-    //!\brief Iterator to the rightmost element of one window.
+    //!\brief Iterator to the rightmost value of one window.
     it_t window_right;
 
     //!\brief The number of values in one window.
@@ -342,21 +342,21 @@ private:
     }
 
     //!\brief Calculates the next minimiser value.
-    // For the following windows, we remove the first window element (is now not in window_values) and add the new
-    // element that results from the window shifting.
+    // For the following windows, we remove the first window value (is now not in window_values) and add the new
+    // value that results from the window shifting.
     bool next_minimiser()
     {
         std::ranges::advance(window_right, 1);
         if (window_right == urange_end)
             return true;
 
-        uint64_t new_element = *window_right;
+        uint64_t new_value = *window_right;
         if (minimiser_value == *(std::begin(window_values)))
         {
             window_values.pop_front();
             if (!window_values.empty())
             {
-                window_values.push_back(new_element);
+                window_values.push_back(new_value);
                 minimiser_value = *(std::min_element(std::begin(window_values), std::end(window_values)));
                 return true;
             }
@@ -367,11 +367,11 @@ private:
             window_values.pop_front();
         }
 
-        window_values.push_back(new_element);
+        window_values.push_back(new_value);
 
-        if (new_element < minimiser_value)
+        if (new_value < minimiser_value)
         {
-            minimiser_value = new_element;
+            minimiser_value = new_value;
             return true;
         }
         else if (window_values.size() == 1)
