@@ -237,6 +237,9 @@ namespace seqan3
 template <fm_index_specialisation index_t,
           typename queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
+//!\cond
+    requires (dimension_v<remove_cvref_t<queries_t>> == 2u)
+//!\endcond
 inline auto search(queries_t && queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
@@ -265,12 +268,14 @@ inline auto search(queries_t && queries,
 template <fm_index_specialisation index_t,
           typename query_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
-    requires !std::ranges::forward_range<std::ranges::range_value_t<query_t>>
-inline auto search(query_t && query,
+//!\cond
+    requires (dimension_v<remove_cvref_t<query_t>> == 1u)
+//!\endcond
+inline auto search(query_t query,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
 {
-    return search(std::views::single(std::forward<query_t>(query)), index, cfg);
+    return search(std::views::single(std::move(query)), index, cfg);
 }
 
 //!\overload
