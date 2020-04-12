@@ -24,6 +24,73 @@
 namespace seqan3::detail
 {
 
+
+/*!\brief Class used to update the search configuration, e.g. add defaults.
+ * \ingroup search
+ */
+struct search_configurator
+{
+    /*!\brief Add seqan3::search_cfg::all to the configuration if seqan3::search_cfg::mode was not set.
+     * \tparam configuration_t The type of the search configuration.
+     * \param[in] cfg The configuration to add defaults to if necessary.
+     * \returns The configuration (with default mode if necessary).
+     *
+     * \details
+     *
+     * If seqan3::search_cfg::mode was not set, it defaults to seqan3::search_cfg::all.
+     */
+    template <typename configuration_t>
+    static auto add_default_mode_configuration(configuration_t const & cfg)
+    {
+        if constexpr (!detail::search_traits<configuration_t>::has_mode_configuration)
+            return cfg | search_cfg::mode{search_cfg::all};
+        else
+            return cfg;
+    }
+
+    /*!\brief Add seqan3::search_cfg::text_position to the configuration if seqan3::search_cfg::output was not set.
+     * \tparam configuration_t The type of the search configuration.
+     * \param[in] cfg The configuration to add defaults to if necessary.
+     * \returns The configuration (with defaults output if necessary).
+     *
+     * \details
+     *
+     * If seqan3::search_cfg::output was not set, it defaults to seqan3::search_cfg::text_position.
+     */
+    template <typename configuration_t>
+    static auto add_default_output_configuration(configuration_t const & cfg)
+    {
+        if constexpr (!detail::search_traits<configuration_t>::has_mode_configuration)
+            return cfg | search_cfg::output{search_cfg::text_position};
+        else
+            return cfg;
+    }
+
+    /*!\brief Recursively adds default configurations if they were not set by the user.
+     * \tparam configuration_t The type of the search configuration.
+     * \param[in] cfg The configuration to add defaults to if necessary.
+     * \returns The configuration (with defaults).
+     *
+     * \details
+     *
+     * The following defaults are added if the respective configuration is not set by the user:
+     *
+     * * If seqan3::search_cfg::mode was not set, it defaults to seqan3::search_cfg::all.
+     * * If seqan3::search_cfg::output was not set, it defaults to seqan3::search_cfg::text_position.
+     */
+    template <typename configuration_t>
+    static auto add_defaults(configuration_t const & cfg)
+    {
+        static_assert(detail::is_type_specialisation_of_v<configuration_t, configuration>,
+                      "cfg must be a specialisation of seqan3::configuration.");
+
+        auto cfg1 = add_default_mode_configuration(cfg);
+        auto cfg2 = add_default_mode_configuration(cfg1);
+
+        return cfg2;
+    }
+};
+
 /*!\brief Class used to validate the search configuration.
  * \ingroup submodule_search_algorithm
  */
@@ -71,32 +138,6 @@ struct search_configuration_validator
             if (del > total)
                 throw std::invalid_argument{"The deletion error threshold is higher than the total error threshold."};
         }
-    }
-
-    /*!\brief Recursively adds default configurations if they were not set by the user.
-     * \tparam configuration_t The type of the search configuration.
-     * \param[in] cfg The configuration to add defaults to if necessary.
-     * \returns The configuration (with defaults).
-     *
-     * \details
-     *
-     * The following defaults are added if the respective configuration is not set by the user:
-     *
-     * * If seqan3::search_cfg::mode was not set, it defaults to seqan3::search_cfg::all.
-     * * If seqan3::search_cfg::output was not set, it defaults to seqan3::search_cfg::text_position.
-     */
-    template <typename configuration_t>
-    static auto add_defaults(configuration_t const & cfg)
-    {
-        static_assert(detail::is_type_specialisation_of_v<configuration_t, configuration>,
-                      "cfg must be a specialisation of seqan3::configuration.");
-
-        if constexpr (!detail::search_traits<configuration_t>::has_mode_configuration)
-            return add_defaults(cfg | search_cfg::mode{search_cfg::all});
-        else if constexpr (!detail::search_traits<configuration_t>::has_output_configuration)
-            return add_defaults(cfg | search_cfg::output{search_cfg::text_position});
-        else
-            return cfg;
     }
 
     /*!\brief Validates the query type to model std::ranges::random_access_range and std::ranges::sized_range.
@@ -200,7 +241,7 @@ inline auto search(queries_t && queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
 {
-    auto updated_cfg = detail::search_configuration_validator::add_defaults(cfg);
+    auto updated_cfg = detail::search_configurator::add_defaults(cfg);
 
     detail::search_configuration_validator::validate_query_type<queries_t>();
     detail::search_configuration_validator::validate_error_configuration(updated_cfg);
