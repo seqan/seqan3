@@ -583,7 +583,11 @@ public:
             return self->invalid_coordinate();
 
         alignment_coordinate const back = self->end_positions();
-        return alignment_begin_positions(trace_matrix(), back);
+        auto trace_path = self->trace_matrix().trace_path(back);
+        auto trace_path_it = std::ranges::begin(trace_path);
+        std::ranges::advance(trace_path_it, std::ranges::end(trace_path));
+        matrix_coordinate coordinate = trace_path_it.coordinate();
+        return {column_index_type{coordinate.col}, row_index_type{coordinate.row}};
     }
 
     //!\brief Return the alignment, i.e. the actual base pair matching.
@@ -599,11 +603,10 @@ public:
         if (!self->is_valid())
             return alignment_t{};
 
-        return alignment_trace<alignment_t>(self->database,
-                                            self->query,
-                                            trace_matrix(),
-                                            self->end_positions(),
-                                            begin_positions());
+        alignment_coordinate const back = self->end_positions();
+        aligned_sequence_builder builder{self->database, self->query};
+        auto trace_path = self->trace_matrix().trace_path(back);
+        return builder(trace_path).alignment;
     }
     //!\}
 };
@@ -1054,11 +1057,10 @@ public:
         if constexpr (compute_end_positions)
             cached_end_positions = this->end_positions();
 
-        if constexpr (compute_begin_positions)
+        if constexpr (compute_begin_positions && !compute_sequence_alignment)
         {
             static_assert(compute_end_positions, "End positions required to compute the begin positions.");
-            if (this->is_valid())
-                cached_begin_positions = alignment_begin_positions(this->trace_matrix(), cached_end_positions);
+            cached_begin_positions = this->begin_positions();
         }
 
         // Fill the result value type. Note we need to ask what was enabled on the user side in order to store
@@ -1073,12 +1075,11 @@ public:
         {
             if (this->is_valid())
             {
-                using alignment_t = decltype(res_vt.alignment);
-                res_vt.alignment = alignment_trace<alignment_t>(database,
-                                                                query,
-                                                                this->trace_matrix(),
-                                                                cached_end_positions,
-                                                                cached_begin_positions);
+                aligned_sequence_builder builder{this->database, this->query};
+                auto trace_res = builder(this->trace_matrix().trace_path(cached_end_positions));
+                res_vt.alignment = std::move(trace_res.alignment);
+                cached_begin_positions.first = trace_res.first_sequence_slice_positions.first;
+                cached_begin_positions.second = trace_res.second_sequence_slice_positions.first;
             }
         }
 

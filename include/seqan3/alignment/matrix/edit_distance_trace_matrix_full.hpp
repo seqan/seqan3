@@ -62,6 +62,9 @@ public:
     {}
     //!\}
 
+private:
+    struct trace_path_iterator;
+
 public:
     //!\copydoc default_edit_distance_trait_type::word_type
     using word_type = word_t;
@@ -144,6 +147,21 @@ public:
         return columns.size();
     }
 
+    /*!\brief Returns a trace path starting from the given coordinate and ending in the cell with
+     *        seqan3::detail::trace_directions::none.
+     * \param[in] trace_begin A seqan3::matrix_coordinate pointing to the begin of the trace to follow.
+     * \returns A std::ranges::subrange over the corresponding trace path.
+     * \throws std::invalid_argument if the specified coordinate is out of range.
+     */
+    auto trace_path(matrix_coordinate const & trace_begin) const
+    {
+        if (trace_begin.row >= rows() || trace_begin.col >= cols())
+            throw std::invalid_argument{"The given coordinate exceeds the matrix in vertical or horizontal direction."};
+
+        using path_t = std::ranges::subrange<trace_path_iterator, std::default_sentinel_t>;
+        return path_t{trace_path_iterator{this, trace_begin}, std::default_sentinel};
+    }
+
 protected:
     //!\brief If use_max_errors is true store these additional state information in state_type.
     struct max_errors_state
@@ -214,6 +232,141 @@ private:
     size_t rows_size{};
     //!\brief The columns of the trace matrix.
     std::vector<column_type> columns{};
+};
+
+/*!\brief The iterator needed to implement seqan3::detail::edit_distance_trace_matrix_full::trace_path.
+ *
+ * \details
+ *
+ * This iterator follows the trace matrix from a starting coordinate until it finds a
+ * seqan3::detail::trace_directions::none. This iterator guarantees that it returns exactly only one of
+ * these values (normally seqan3::detail::trace_directions can be a combination of these values):
+ * * seqan3::detail::trace_directions::left
+ * * seqan3::detail::trace_directions::up
+ * * seqan3::detail::trace_directions::diagonal
+ *
+ * This requirement is needed to use the seqan3::detail::aligned_sequence_builder.
+ * \extends std::input_iterator
+ */
+template <typename word_t, bool is_semi_global, bool use_max_errors>
+struct edit_distance_trace_matrix_full<word_t, is_semi_global, use_max_errors>::trace_path_iterator
+{
+    /*!\name Associated types
+     * \{
+     */
+    //!\brief Input iterator tag.
+    using iterator_category = std::input_iterator_tag;
+    //!\copydoc seqan3::detail::trace_iterator_base::value_type
+    using value_type = detail::trace_directions;
+    //!\copydoc seqan3::detail::trace_iterator_base::difference_type
+    using difference_type = std::ptrdiff_t;
+    //!\}
+
+    //!\brief Shortcut for seqan3::detail::trace_directions::diagonal.
+    constexpr static value_type D = value_type::diagonal;
+    //!\brief Shortcut for seqan3::detail::trace_directions::left.
+    constexpr static value_type L = value_type::left;
+    //!\brief Shortcut for seqan3::detail::trace_directions::up.
+    constexpr static value_type U = value_type::up;
+    //!\brief Shortcut for seqan3::detail::trace_directions::none.
+    constexpr static value_type N = value_type::none;
+
+    /*!\name Element access
+     * \{
+     */
+    //!\copydoc seqan3::detail::trace_iterator_base::operator*
+    constexpr value_type operator*() const
+    {
+        value_type dir = parent->at(coordinate());
+
+        if (dir == N)
+            return N;
+
+        if ((dir & L) == L)
+            return L;
+        else if ((dir & U) == U)
+            return U;
+        else
+            return D;
+    }
+
+    //!\copydoc seqan3::detail::trace_iterator_base::coordinate
+    [[nodiscard]] constexpr matrix_coordinate const & coordinate() const
+    {
+        return coordinate_;
+    }
+    //!\}
+
+    /*!\name Arithmetic operators
+     * \{
+     */
+    //!\copydoc seqan3::detail::trace_iterator_base::operator++
+    constexpr trace_path_iterator & operator++()
+    {
+        value_type dir = *(*this);
+
+        if ((dir & L) == L)
+        {
+            coordinate_.col = std::max<size_t>(coordinate_.col, 1) - 1;
+        }
+        else if ((dir & U) == U)
+        {
+            coordinate_.row = std::max<size_t>(coordinate_.row, 1) - 1;
+        }
+        else if ((dir & D) == D)
+        {
+            coordinate_.row = std::max<size_t>(coordinate_.row, 1) - 1;
+            coordinate_.col = std::max<size_t>(coordinate_.col, 1) - 1;
+        }
+        else
+        {
+            // Unknown seqan3::trace_direction in an inner cell of the trace matrix.
+            // This can't happen in non-local alignments.
+            assert(coordinate_.row == 0 || coordinate_.col == 0);
+        }
+
+        return *this;
+    }
+
+    //!\copydoc seqan3::detail::trace_iterator_base::operator++
+    constexpr void operator++(int)
+    {
+        ++(*this);
+    }
+    //!\}
+
+    /*!\name Comparison operators
+     * \{
+     */
+    //!\copydoc seqan3::detail::trace_iterator_base::operator==(derived_t const &, std::default_sentinel_t const &)
+    friend bool operator==(trace_path_iterator const & it, std::default_sentinel_t)
+    {
+        return *it == value_type::none;
+    }
+
+    //!\copydoc operator==()
+    friend bool operator==(std::default_sentinel_t, trace_path_iterator const & it)
+    {
+        return it == std::default_sentinel;
+    }
+
+    //!\copydoc seqan3::detail::trace_iterator_base::operator!=(derived_t const &, std::default_sentinel_t const &)
+    friend bool operator!=(trace_path_iterator const & it, std::default_sentinel_t)
+    {
+        return !(it == std::default_sentinel);
+    }
+
+    //!\copydoc operator!=()
+    friend bool operator!=(std::default_sentinel_t, trace_path_iterator const & it)
+    {
+        return it != std::default_sentinel;
+    }
+    //!\}
+
+    //!\brief The parent trace matrix.
+    edit_distance_trace_matrix_full const * parent{nullptr};
+    //!\brief The current coordinate.
+    matrix_coordinate coordinate_{};
 };
 
 } // namespace seqan3::detail
