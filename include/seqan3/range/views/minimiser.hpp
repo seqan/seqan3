@@ -185,11 +185,11 @@ public:
     //!\brief Reference to `value_type`.
     using reference = value_type;
     //!\brief Tag this class as forward iterator.
-    using iterator_category = std::forward_iterator_tag;
+    using iterator_category = std::conditional_t<std::ranges::forward_iterator<it_t>,
+                                                 std::forward_iterator_tag,
+                                                 std::input_iterator_tag>;
     //!\brief Tag this class depending on which concept `it_t` models.
-    using iterator_concept = std::conditional_t<std::input_iterator<it_t>,
-                                                std::input_iterator_tag,
-                                                std::forward_iterator_tag>;
+    using iterator_concept = iterator_category;
     //!\}
 
     /*!\name Constructors, destructor and assignment
