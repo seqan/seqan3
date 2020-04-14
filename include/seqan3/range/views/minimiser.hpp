@@ -202,11 +202,11 @@ public:
     constexpr window_iterator & operator=(window_iterator &&)      = default; //!< Defaulted.
     ~window_iterator()                                             = default; //!< Defaulted.
 
-    /*!\brief Construct from begin and end iterators of a given range over std::totally_ordered values, and the number
-    *                      of values per window.
-    * /param[in] it_start Iterator pointing to the first position of the std::totally_ordered range.
-    * /param[in] it_end   Iterator pointing to the last position of the std::totally_ordered range.
-    * /param[in] w        The number of values in one window.
+    /*!\brief                              Construct from begin and end iterators of a given range over
+    *                                      std::totally_ordered values, and the number of values per window.
+    * /param[in] it_start                  Iterator pointing to the first position of the std::totally_ordered range.
+    * /param[in] it_end                    Iterator pointing to the last position of the std::totally_ordered range.
+    * /param[in] window_values_size        The number of values in one window.
     *
     * \details
     *
@@ -214,14 +214,13 @@ public:
     * this action. If a minimiser in consecutive windows is the same, it is returned only once.
     *
     */
-    window_iterator(it_t it_start, sentinel_t it_end, uint32_t w) :
-                    urange_end{it_end}, window_right{it_start}, window_values_size{w}
+    window_iterator(it_t it_start, sentinel_t it_end, uint32_t window_values_size) :
+                    urange_end{it_end}, window_right{it_start}
     {
         if (window_values_size > std::ranges::distance(window_right, urange_end))
             window_values_size = std::ranges::distance(window_right, urange_end);
         if (window_right != urange_end)
-            //get_minimiser();
-            window_first();
+            window_first(window_values_size);
     }
     //!\}
 
@@ -244,7 +243,8 @@ public:
     //!\brief Compare to the sentinel of the underlying range.
     friend bool operator==(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return std::tie(lhs.window_right, lhs.window_values_size) == std::tie(rhs.window_right, rhs.window_values_size);
+        return std::tuple(lhs.window_right, lhs.window_values.size()) ==
+               std::tuple(rhs.window_right, rhs.window_values.size());
     }
 
     //!\brief Compare to the sentinel of the underlying range.
@@ -268,25 +268,25 @@ public:
     //!\brief Compare to another window_iterator.
     friend bool operator<(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return (lhs.window_right < rhs.window_right) && (lhs.window_values_size < rhs.window_values_size);
+        return (lhs.window_right < rhs.window_right) && (lhs.window_values.size() < rhs.window_values.size());
     }
 
     //!\brief Compare to another window_iterator.
     friend bool operator>(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return (lhs.window_right > rhs.window_right) && (lhs.window_values_size > rhs.window_values_size);
+        return (lhs.window_right > rhs.window_right) && (lhs.window_values.size() > rhs.window_values.size());
     }
 
     //!\brief Compare to another window_iterator.
     friend bool operator<=(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return (lhs.window_right <= rhs.window_right) && (lhs.window_values_size <= rhs.window_values_size);
+        return (lhs.window_right <= rhs.window_right) && (lhs.window_values.size() <= rhs.window_values.size());
     }
 
     //!\brief Compare to another window_iterator.
     friend bool operator>=(window_iterator const & lhs, window_iterator const & rhs) noexcept
     {
-        return (lhs.window_right >= rhs.window_right) && (lhs.window_values_size >= rhs.window_values_size);
+        return (lhs.window_right >= rhs.window_right) && (lhs.window_values.size() >= rhs.window_values.size());
     }
     //!\}
 
@@ -321,23 +321,18 @@ private:
     //!\brief Iterator to the rightmost value of one window.
     it_t window_right;
 
-    //!\brief The number of values in one window.
-    uint32_t window_values_size;
-
     //!\brief Stored values per window. It is necessary to store them, because a shift can remove the current minimiser.
     std::deque<uint64_t> window_values;
 
     //!\brief Increments iterator by 1.
     void get_minimiser()
     {
-        //if (window_values.size() == 0)
-        //    window_first();
-        //else // Call next_minimiser until minimiser value changed or end of the underlying range is reached.
+        // Call next_minimiser until minimiser value changed or end of the underlying range is reached.
         while (!next_minimiser()) {}
     }
 
     //!\brief Calculates minimisers for the first window.
-    void window_first()
+    void window_first(uint32_t window_values_size)
     {
         for (uint32_t i = 0; (i < window_values_size - 1) ; i++)
         {
@@ -372,10 +367,6 @@ private:
         if (new_value < minimiser_value)
         {
             minimiser_value = new_value;
-            return true;
-        }
-        else if (window_values.size() == 1)
-        {
             return true;
         }
 
@@ -417,6 +408,10 @@ struct minimiser_fn
         static_assert(std::ranges::forward_range<urng_t>,
             "The range parameter to views::minimiser must model std::ranges::forward_range.");
 
+        if (window_values_size == 1)
+            throw std::invalid_argument{"The chosen window_valzes_size is not valid. "
+                                        "Please choose a value greater than 1."};
+
         return minimiser_view{urange, window_values_size};
     }
 };
@@ -427,7 +422,7 @@ struct minimiser_fn
 namespace seqan3::views
 {
 
-/*!\name General comparable views
+/*!\name General purpose views
  * \{
  */
 

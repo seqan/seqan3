@@ -25,7 +25,7 @@ using result_t = std::vector<size_t>;
 static constexpr auto kmer_view = seqan3::views::kmer_hash(seqan3::ungapped{4});
 static constexpr auto gapped_kmer_view = seqan3::views::kmer_hash(0b1001_shape);
 static constexpr auto minimiser_view = seqan3::views::minimiser(5);
-static constexpr auto minimiser_view2 = seqan3::views::minimiser(1); // kmer_size == window_size
+static constexpr auto minimiser_view2 = seqan3::views::minimiser(1); // kmer_size == window_size, should throw
 
 template <typename T>
 class minimiser_view_properties_test: public ::testing::Test { };
@@ -88,7 +88,7 @@ TYPED_TEST(minimiser_view_properties_test, different_inputs_kmer_hash)
 TEST_F(minimiser_test, ungapped_kmer_hash)
 {
     EXPECT_EQ(result1, text1 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(result1, text1_short | kmer_view | minimiser_view2 | seqan3::views::to<result_t>);
+    EXPECT_THROW(text1_short | kmer_view | minimiser_view2, std::invalid_argument);
     EXPECT_EQ(result2, text2 | kmer_view | seqan3::views::to<result_t>);
     EXPECT_EQ(ungapped_no_rev3, text3 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
 
@@ -97,7 +97,7 @@ TEST_F(minimiser_test, ungapped_kmer_hash)
 TEST_F(minimiser_test, gapped_kmer_hash)
 {
     EXPECT_EQ(result1, text1 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(result1, text1_short | gapped_kmer_view | minimiser_view2 | seqan3::views::to<result_t>);
+    EXPECT_THROW(text1_short | gapped_kmer_view | minimiser_view2, std::invalid_argument);
     EXPECT_EQ(result2, text2 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_EQ(gapped_no_rev3, text3 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
 }
