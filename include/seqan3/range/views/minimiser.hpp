@@ -28,8 +28,6 @@ namespace seqan3::detail
  *                std::totally_ordered. The typical use case is that the reference type is the result of
  *                seqan3::kmer_hash.
  * \implements std::ranges::view
- * \implements std::ranges::random_access_range
- * \implements std::ranges::sized_range
  * \ingroup views
  *
  * \details
@@ -63,10 +61,18 @@ public:
     minimiser_view & operator=(minimiser_view && rhs)      = default; //!< Defaulted.
     ~minimiser_view()                                      = default; //!< Defaulted.
 
-    //!\brief Construct from a view and a given number of values in one window.
+    /*!\brief Construct from a view and a given number of values in one window.
+    * \param[in] urange_   The input range to process. Must model std::ranges::viewable_range and
+    *                      std::ranges::forward_range.
+    * \param[in] w_        The number of values in one window.
+    */
     minimiser_view(urng_t urange_, uint32_t const & w_) : urange{std::move(urange_)}, window_values_size{w_}{}
 
-    //!\brief Construct from a non-view that can be view-wrapped and a given number of values in one window.
+    /*!\brief Construct from a non-view that can be view-wrapped and a given number of values in one window.
+    * \param[in] urange_   The input range to process. Must model std::ranges::viewable_range and
+    *                      std::ranges::forward_range.
+    * \param[in] w_        The number of values in one window.
+    */
     template <typename rng_t>
     //!\cond
      requires std::ranges::viewable_range<rng_t> &&
@@ -181,9 +187,9 @@ public:
     //!\brief Tag this class as forward iterator.
     using iterator_category = std::forward_iterator_tag;
     //!\brief Tag this class depending on which concept `it_t` models.
-    using iterator_concept = std::conditional_t<std::contiguous_iterator<it_t>,
-                                                typename std::forward_iterator_tag,
-                                                seqan3::iterator_tag_t<it_t>>;
+    using iterator_concept = std::conditional_t<std::input_iterator<it_t>,
+                                                std::input_iterator_tag,
+                                                std::forward_iterator_tag>;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -214,7 +220,8 @@ public:
         if (window_values_size > std::ranges::distance(window_right, urange_end))
             window_values_size = std::ranges::distance(window_right, urange_end);
         if (window_right != urange_end)
-            get_minimiser();
+            //get_minimiser();
+            window_first();
     }
     //!\}
 
@@ -323,10 +330,10 @@ private:
     //!\brief Increments iterator by 1.
     void get_minimiser()
     {
-        if (window_values.size() == 0)
-            window_first();
-        else // Call next_minimiser until minimiser value changed or end of the underlying range is reached.
-            while(!next_minimiser()){}
+        //if (window_values.size() == 0)
+        //    window_first();
+        //else // Call next_minimiser until minimiser value changed or end of the underlying range is reached.
+        while (!next_minimiser()) {}
     }
 
     //!\brief Calculates minimisers for the first window.
@@ -354,19 +361,12 @@ private:
         if (minimiser_value == *(std::begin(window_values)))
         {
             window_values.pop_front();
-            if (!window_values.empty())
-            {
-                window_values.push_back(new_value);
-                minimiser_value = *(std::min_element(std::begin(window_values), std::end(window_values)));
-                return true;
-            }
-
-        }
-        else
-        {
-            window_values.pop_front();
+            window_values.push_back(new_value);
+            minimiser_value = *(std::min_element(std::begin(window_values), std::end(window_values)));
+            return true;
         }
 
+        window_values.pop_front();
         window_values.push_back(new_value);
 
         if (new_value < minimiser_value)
@@ -406,7 +406,7 @@ struct minimiser_fn
      *                                  integer indicating how many values one window contains.
      * \param[in] urange                The input range to process. Must model std::ranges::viewable_range and
      *                                  std::ranges::forward_range.
-     * \param[in] window_values_size   The number of values in one window.
+     * \param[in] window_values_size    The number of values in one window.
      * \returns                         A range of converted values.
      */
     template <std::ranges::range urng_t>
@@ -427,11 +427,11 @@ struct minimiser_fn
 namespace seqan3::views
 {
 
-/*!\name Alphabet related views
+/*!\name General comparable views
  * \{
  */
 
-/*!\brief                           Computes minimisers for a range of integral numbers. A minimiser is the smallest
+/*!\brief                           Computes minimisers for a range of comparable values. A minimiser is the smallest
  *                                  value in a window.
  * \tparam urng_t                   The type of the range being processed. See below for requirements. [template
  *                                  parameter is omitted in pipe notation]
@@ -444,7 +444,7 @@ namespace seqan3::views
  * \details
  *
  * A minimiser is the smallest value in a window. For example for the following list of hash values
- * [28, 100, 9, 23, 4, 1, 72, 37, 8] and 4 as window_values_size, the minimiser values are [9,4,1].
+ * [28, 100, 9, 23, 4, 1, 72, 37, 8] and 4 as `window_values_size`, the minimiser values are [9,4,1].
  *
  *
  * ### View properties
