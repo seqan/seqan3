@@ -138,24 +138,19 @@ TEST(range_and_iterator, rvalue_reference_)
 
 TEST(range_and_iterator, const_reference_)
 {
-//     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
-//     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
-    auto v = std::views::iota(1);
-    using type_list_example = seqan3::type_list<seqan3::const_reference_t<std::vector<int>>, // short
-                                                typename seqan3::const_reference<std::vector<int>>::type, // long
+    using const_iterator_of_int_vector = std::ranges::iterator_t<std::vector<int> const>;
+    using const_foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int> const>;
+    using const_iterator_of_view = std::ranges::iterator_t<decltype(std::views::iota(1)) const>;
+    using type_list_example = seqan3::type_list<std::ranges::range_reference_t<std::vector<int> const>, // short
                                                 typename std::vector<int>::const_reference, // member type
-                                                seqan3::const_reference_t<std::vector<int> const>,  // const container
-// not defined on iterators
-//                                              seqan3::const_reference_t<iterator_of_int_vector>, // iterator
-//                                              seqan3::const_reference_t<foreign_iterator>, // iterator2
-                                                seqan3::const_reference_t<decltype(v)>>; // range, no member
+                                                std::iter_reference_t<const_iterator_of_int_vector>, // iterator
+                                                std::iter_reference_t<const_foreign_iterator>, // iterator2
+                                                std::iter_reference_t<const_iterator_of_view>>; // range, no member
 
     using comp_list = seqan3::type_list<int const &,
                                         int const &,
                                         int const &,
-                                        int const &, // container is const
-//                                      int const &,
-//                                      int const &,
+                                        int const &,
                                         int>; // view creates values
 
     expect_same_types<type_list_example, comp_list>();
