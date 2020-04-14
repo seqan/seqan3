@@ -103,7 +103,9 @@ TEST(pack_traits, transform)
                                 seqan3::type_list<>>));
     EXPECT_TRUE((std::is_same_v<seqan3::pack_traits::transform<std::ranges::range_value_t, std::vector<int>, std::list<bool>>,
                                 seqan3::type_list<int, bool>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::pack_traits::transform<std::ranges::range_reference_t, std::vector<int>, std::list<bool>>,
+    EXPECT_TRUE((std::is_same_v<seqan3::pack_traits::transform<std::ranges::range_reference_t,
+                                                               std::vector<int>,
+                                                               std::list<bool>>,
                                 seqan3::type_list<int &, bool &>>));
 }
 

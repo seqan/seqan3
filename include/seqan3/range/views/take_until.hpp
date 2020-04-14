@@ -54,7 +54,8 @@ class view_take_until : public std::ranges::view_interface<view_take_until<urng_
 private:
 
     static_assert(std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>,
-                  "The functor type for views::take_until must model std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>.");
+                  "The functor type for views::take_until must model"
+                  "std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>.");
     static_assert(std::boolean<std::result_of_t<fun_t&&(std::ranges::range_reference_t<urng_t>)>>,
                   "The functor type for views::take_until must return std::boolean.");
 
@@ -557,7 +558,7 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                       | *preserved*                                        |
  * | seqan3::const_iterable_range     |                                       | *preserved*¹                                       |
  * |                                  |                                       |                                                    |
- * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>                        |
+ * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>             |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *

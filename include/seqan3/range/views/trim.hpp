@@ -105,14 +105,14 @@ namespace seqan3::views
  * | std::ranges::forward_range       |                                       | *preserved*                     |
  * | std::ranges::bidirectional_range |                                       | *preserved*                     |
  * | std::ranges::random_access_range |                                       | *preserved*                     |
- * |                                  |                                       |                                  |
+ * |                                  |                                       |                                 |
  * | std::ranges::view                |                                       | *guaranteed*                    |
  * | std::ranges::sized_range         |                                       | *lost*                          |
  * | std::ranges::common_range        |                                       | *lost*                          |
  * | std::ranges::output_range        |                                       | *preserved*                     |
  * | seqan3::const_iterable_range     |                                       | *preserved*                     |
- * |                                  |                                       |                                  |
- * | std::ranges::range_reference_t   | seqan3::quality_alphabet               | std::ranges::range_reference_t<urng_t>     |
+ * |                                  |                                       |                                 |
+ * | std::ranges::range_reference_t   | seqan3::quality_alphabet              | std::ranges::range_reference_t<urng_t> |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
