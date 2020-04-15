@@ -11,8 +11,8 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/convert.hpp>
+#include <seqan3/range/views/to.hpp>
 
 using namespace seqan3;
 
@@ -45,11 +45,11 @@ TEST(debug_stream_test, aligned_sequence_multi_without_gaps)
     std::tuple<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>, std::vector<gapped<dna4>>> const alignment
     {
         "GCGGGTCACTGAGGGCTGGGATGAGGACGGCCACCACTTCGAGGAGTCCCTTCACTACGAGGGCAGGGCCGTGGACATCACCACGTCAGACAGGGACAAGAGCAAGTA"
-        "CGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4 | views::persist | views::convert<gapped<dna4>>,
+        "CGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4 | views::to<std::vector<gapped<dna4>>>,
         "CTACGGCAGAAGAAGACATCCGAAAAAGCTGACACCTCTCGCCTACAAGCAGTTCATACCTAATGTCGCGGAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAA"
-        "GATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | views::persist | views::convert<gapped<dna4>>,
+        "GATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | views::to<std::vector<gapped<dna4>>>,
         "CTACGGCAGAAGAAGACATCCCAAGAAGCTGACACCTCTCGCCTACAAGCAGTTTATACCTAATGTCGCGGAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAA"
-        "GATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | views::persist | views::convert<gapped<dna4>>
+        "GATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | views::to<std::vector<gapped<dna4>>>
     };
 
     std::ostringstream oss;
