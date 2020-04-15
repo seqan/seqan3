@@ -11,6 +11,6 @@ void initialise_argument_parser(seqan3::argument_parser & parser)
 int main(int argc, char ** argv)
 {
     seqan3::argument_parser myparser{"Game-of-Parsing", argc, argv};
-
+    initialise_argument_parser(myparser);
     // code from assignment 1
 }
