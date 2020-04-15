@@ -88,14 +88,12 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         max_error2.total = 0;
         while (internal_hits.empty() && max_error2.total <= max_error.total)
         {
-            /*
-            * If you only want the best hit (search_traits_t::search_best_hits), you stop after finding the first hit,
-              the hit with the least errors (`abort_on_hit` is true).
-            * If you are in strata mode (search_traits_t::search_strata_hits), you do the same as with best hits,
-              but then do the extra step afterwards (`abort_on_hit` is true).
-            * If you want all best hits (search_traits_t::search_all_best_hits), you do not stop after the first hit
-              but continue the current search algorithm/max_error2 pattern (`abort_on_hit` is true).
-            */
+            // * If you only want the best hit (search_traits_t::search_best_hits), you stop after finding the first hit,
+            //   the hit with the least errors (`abort_on_hit` is true).
+            // * If you are in strata mode (search_traits_t::search_strata_hits), you do the same as with best hits,
+            //   but then do the extra step afterwards (`abort_on_hit` is true).
+            // * If you want all best hits (search_traits_t::search_all_best_hits), you do not stop after the first hit
+            //   but continue the current search algorithm/max_error2 pattern (`abort_on_hit` is true).
             constexpr bool abort_on_hit = !search_traits_t::search_all_best_hits;
             detail::search_algo<abort_on_hit>(index, query, max_error2, internal_delegate);
             max_error2.total++;
