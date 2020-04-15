@@ -18,14 +18,35 @@
 
 #include <gtest/gtest.h>
 
+#include "../iterator_test_template.hpp"
+
 using seqan3::operator""_dna4;
 using seqan3::operator""_shape;
 using result_t = std::vector<size_t>;
+using iterator_type = std::ranges::iterator_t< decltype(std::declval<seqan3::dna4_vector&>()
+                                                        | seqan3::views::kmer_hash(0b1001_shape)
+                                                        | seqan3::views::minimiser(5))>;
 
 static constexpr auto kmer_view = seqan3::views::kmer_hash(seqan3::ungapped{4});
 static constexpr auto gapped_kmer_view = seqan3::views::kmer_hash(0b1001_shape);
 static constexpr auto minimiser_view = seqan3::views::minimiser(5);
 static constexpr auto minimiser_view2 = seqan3::views::minimiser(1); // kmer_size == window_size, should throw
+
+template <>
+struct iterator_fixture<iterator_type> : public ::testing::Test
+{
+    using iterator_tag = std::forward_iterator_tag;
+    static constexpr bool const_iterable = true;
+
+    seqan3::dna4_vector text{"ACGGCGACGTTTAG"_dna4};
+    decltype(seqan3::views::kmer_hash(text, 0b1001_shape)) vec = text | kmer_view;
+    result_t expected_range{26, 97, 27};
+
+    result_t test_range = seqan3::views::minimiser(vec, 5) | seqan3::views::to<result_t>;
+};
+
+using test_type = ::testing::Types<iterator_type>;
+INSTANTIATE_TYPED_TEST_SUITE_P(iterator_fixture, iterator_fixture, test_type, );
 
 template <typename T>
 class minimiser_view_properties_test: public ::testing::Test { };
@@ -47,16 +68,16 @@ protected:
     std::vector<seqan3::dna4> text1{"AAAAAAAAAA"_dna4};
     std::vector<seqan3::dna4> text1_short{"AAAAAA"_dna4};
     result_t result1{0, 0, 0}; // Same result for ungapped and gapped
-    result_t result1a{0};      // windows_size == text_size, same result for ungapped and gapped
+    result_t result1_short{0}; // windows_size == text_size, same result for ungapped and gapped
 
     std::vector<seqan3::dna4> text2{"AC"_dna4};
     result_t result2{}; // Same result for ungapped and gapped
 
     seqan3::bitcompressed_vector<seqan3::dna4> text3{"ACGGCGACGTTTAG"_dna4};
-    result_t ungapped_no_rev3{26, 97, 27};    // ACGG, CGAC, ACGT
-    result_t gapped_no_rev3{2, 5, 3};         // A--G, C--C-, A--T "-" for gap
-    result_t ungapped_no_rev3_stop{26, 97};   // For stop at first T
-    result_t gapped_no_rev3_stop{2, 5};       // For stop at first T
+    result_t result3_ungapped_no_rev{26, 97, 27}; // ACGG, CGAC, ACGT
+    result_t result3_gapped_no_rev{2, 5, 3};      // A--G, C--C-, A--T "-" for gap
+    result_t result3_ungapped_no_rev_stop{26, 97};// For stop at first T
+    result_t result3_gapped_no_rev_stop{2, 5};    // For stop at first T
 };
 
 TYPED_TEST(minimiser_view_properties_test, concepts)
@@ -90,7 +111,7 @@ TEST_F(minimiser_test, ungapped_kmer_hash)
     EXPECT_EQ(result1, text1 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_THROW(text1_short | kmer_view | minimiser_view2, std::invalid_argument);
     EXPECT_EQ(result2, text2 | kmer_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(ungapped_no_rev3, text3 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(result3_ungapped_no_rev, text3 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
 
 }
 
@@ -99,18 +120,18 @@ TEST_F(minimiser_test, gapped_kmer_hash)
     EXPECT_EQ(result1, text1 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_THROW(text1_short | gapped_kmer_view | minimiser_view2, std::invalid_argument);
     EXPECT_EQ(result2, text2 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(gapped_no_rev3, text3 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(result3_gapped_no_rev, text3 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
 }
 
 TEST_F(minimiser_test, window_too_big)
 {
-    EXPECT_EQ(result1a, text1 | kmer_view | seqan3::views::minimiser(20) | seqan3::views::to<result_t>);
-    EXPECT_EQ(result1a, text1 | gapped_kmer_view | seqan3::views::minimiser(20) | seqan3::views::to<result_t>);
+    EXPECT_EQ(result1_short, text1 | kmer_view | seqan3::views::minimiser(20) | seqan3::views::to<result_t>);
+    EXPECT_EQ(result1_short, text1 | gapped_kmer_view | seqan3::views::minimiser(20) | seqan3::views::to<result_t>);
 }
 
 TEST_F(minimiser_test, combinability)
 {
     auto stop_at_t = seqan3::views::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
-    EXPECT_EQ(ungapped_no_rev3_stop, text3 | stop_at_t | kmer_view | minimiser_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(gapped_no_rev3_stop, text3 | stop_at_t | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(result3_ungapped_no_rev_stop, text3 | stop_at_t | kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    EXPECT_EQ(result3_gapped_no_rev_stop, text3 | stop_at_t | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
 }

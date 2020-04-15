@@ -66,7 +66,7 @@ public:
     *                      std::ranges::forward_range.
     * \param[in] w_        The number of values in one window.
     */
-    minimiser_view(urng_t urange_, uint32_t const & w_) : urange{std::move(urange_)}, window_values_size{w_}{}
+    minimiser_view(urng_t urange_, uint32_t const w_) : urange{std::move(urange_)}, window_values_size{w_}{}
 
     /*!\brief Construct from a non-view that can be view-wrapped and a given number of values in one window.
     * \param[in] urange_   The input range to process. Must model std::ranges::viewable_range and
@@ -78,8 +78,8 @@ public:
      requires std::ranges::viewable_range<rng_t> &&
               std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
-    minimiser_view(rng_t && urange_, uint32_t const & w_) :
-        urange{std::views::all(std::forward<rng_t>(urange_))}, window_values_size{w_} {}
+    minimiser_view(rng_t && urange_, uint32_t const w_) :
+    urange{std::views::all(std::forward<rng_t>(urange_))}, window_values_size{w_} {}
     //!\}
 
     /*!\name Iterators
@@ -96,15 +96,15 @@ public:
      *
      * ### Exceptions
      *
-     * No-throw guarantee.
+     * Strong exception guarantee.
      */
-    auto begin() noexcept
+    auto begin()
     {
         return window_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), window_values_size};
     }
 
     //!\copydoc begin()
-    auto begin() const noexcept
+    auto begin() const
     //!\cond
         requires seqan3::const_iterable_range<urng_t>
     //!\endcond
@@ -113,7 +113,7 @@ public:
     }
 
     //!\copydoc begin()
-    auto cbegin() const noexcept
+    auto cbegin() const
     //!\cond
         requires seqan3::const_iterable_range<urng_t>
     //!\endcond
@@ -136,13 +136,13 @@ public:
      *
      * No-throw guarantee.
      */
-    auto end() noexcept
+    auto end()
     {
         return std::ranges::end(urange);
     }
 
     //!\copydoc end()
-    auto end() const noexcept
+    auto end() const
     //!\cond
         requires seqan3::const_iterable_range<urng_t>
     //!\endcond
@@ -151,7 +151,7 @@ public:
     }
 
     //!\copydoc end()
-    auto cend() const noexcept
+    auto cend() const
     //!\cond
         requires seqan3::const_iterable_range<urng_t>
     //!\endcond
@@ -179,28 +179,32 @@ public:
     //!\brief Type for distances between iterators.
     using difference_type = typename std::iter_difference_t<it_t>;
     //!\brief Value type of this iterator.
-    using value_type = size_t;
+    using value_type = reference_t<urng_t>;
     //!\brief The pointer type.
     using pointer = void;
     //!\brief Reference to `value_type`.
     using reference = value_type;
-    //!\brief Tag this class as forward iterator.
+    /*!\brief Tag this class as a forward iterator if `urng_t` models std::ranges::forward range, otherwise as an
+     *        input iterator.
+     */
     using iterator_category = std::conditional_t<std::ranges::forward_iterator<it_t>,
                                                  std::forward_iterator_tag,
                                                  std::input_iterator_tag>;
-    //!\brief Tag this class depending on which concept `it_t` models.
+    /*!\brief Tag this class as a forward iterator if `urng_t` models std::ranges::forward range, otherwise as an
+     *        input iterator.
+     */
     using iterator_concept = iterator_category;
     //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr window_iterator()                                    = default; //!< Defaulted.
-    constexpr window_iterator(window_iterator const &)             = default; //!< Defaulted.
-    constexpr window_iterator(window_iterator &&)                  = default; //!< Defaulted.
-    constexpr window_iterator & operator=(window_iterator const &) = default; //!< Defaulted.
-    constexpr window_iterator & operator=(window_iterator &&)      = default; //!< Defaulted.
-    ~window_iterator()                                             = default; //!< Defaulted.
+    window_iterator()                                    = default; //!< Defaulted.
+    window_iterator(window_iterator const &)             = default; //!< Defaulted.
+    window_iterator(window_iterator &&)                  = default; //!< Defaulted.
+    window_iterator & operator=(window_iterator const &) = default; //!< Defaulted.
+    window_iterator & operator=(window_iterator &&)      = default; //!< Defaulted.
+    ~window_iterator()                                   = default; //!< Defaulted.
 
     /*!\brief                              Construct from begin and end iterators of a given range over
     *                                      std::totally_ordered values, and the number of values per window.
@@ -215,7 +219,7 @@ public:
     *
     */
     window_iterator(it_t it_start, sentinel_t it_end, uint32_t window_values_size) :
-                    urange_end{it_end}, window_right{it_start}
+    urange_end{it_end}, window_right{it_start}
     {
         if (window_values_size > std::ranges::distance(window_right, urange_end))
             window_values_size = std::ranges::distance(window_right, urange_end);
@@ -229,62 +233,62 @@ public:
     //!\{
 
     //!\brief Compare to the sentinel of the underlying range.
-    friend bool operator==(window_iterator const & lhs, sentinel_t const & rhs) noexcept
+    friend bool operator==(window_iterator const & lhs, sentinel_t const & rhs)
     {
         return lhs.window_right == rhs;
     }
 
-    //!\brief Compare to iterator on underlying range.
-    friend bool operator==(sentinel_t const & lhs, window_iterator const & rhs) noexcept
+    //!\brief Compare to the sentinel of the underlying range.
+    friend bool operator==(sentinel_t const & lhs, window_iterator const & rhs)
     {
         return lhs == rhs.window_right;
     }
 
-    //!\brief Compare to the sentinel of the underlying range.
-    friend bool operator==(window_iterator const & lhs, window_iterator const & rhs) noexcept
+    //!\brief Compare to another window_iterator.
+    friend bool operator==(window_iterator const & lhs, window_iterator const & rhs)
     {
-        return std::tuple(lhs.window_right, lhs.window_values.size()) ==
-               std::tuple(rhs.window_right, rhs.window_values.size());
+        return (lhs.window_right == rhs.window_right) &&
+               (lhs.window_values.size() == rhs.window_values.size());
     }
 
     //!\brief Compare to the sentinel of the underlying range.
-    friend bool operator!=(window_iterator const & lhs, sentinel_t const & rhs) noexcept
+    friend bool operator!=(window_iterator const & lhs, sentinel_t const & rhs)
     {
         return !(lhs == rhs);
     }
 
     //!\brief Compare to the sentinel of the underlying range.
-    friend bool operator!=(sentinel_t const & lhs, window_iterator const & rhs) noexcept
+    friend bool operator!=(sentinel_t const & lhs, window_iterator const & rhs)
     {
         return !(lhs == rhs);
     }
 
     //!\brief Compare to another window_iterator.
-    friend bool operator!=(window_iterator const & lhs, window_iterator const & rhs) noexcept
+    friend bool operator!=(window_iterator const & lhs, window_iterator const & rhs)
     {
         return !(lhs == rhs);
     }
 
     //!\brief Compare to another window_iterator.
-    friend bool operator<(window_iterator const & lhs, window_iterator const & rhs) noexcept
+    friend bool operator<(window_iterator const & lhs, window_iterator const & rhs)
     {
         return (lhs.window_right < rhs.window_right) && (lhs.window_values.size() < rhs.window_values.size());
     }
 
     //!\brief Compare to another window_iterator.
-    friend bool operator>(window_iterator const & lhs, window_iterator const & rhs) noexcept
+    friend bool operator>(window_iterator const & lhs, window_iterator const & rhs)
     {
         return (lhs.window_right > rhs.window_right) && (lhs.window_values.size() > rhs.window_values.size());
     }
 
     //!\brief Compare to another window_iterator.
-    friend bool operator<=(window_iterator const & lhs, window_iterator const & rhs) noexcept
+    friend bool operator<=(window_iterator const & lhs, window_iterator const & rhs)
     {
         return (lhs.window_right <= rhs.window_right) && (lhs.window_values.size() <= rhs.window_values.size());
     }
 
     //!\brief Compare to another window_iterator.
-    friend bool operator>=(window_iterator const & lhs, window_iterator const & rhs) noexcept
+    friend bool operator>=(window_iterator const & lhs, window_iterator const & rhs)
     {
         return (lhs.window_right >= rhs.window_right) && (lhs.window_values.size() >= rhs.window_values.size());
     }
