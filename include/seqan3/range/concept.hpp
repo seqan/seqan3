@@ -136,13 +136,13 @@ SEQAN3_CONCEPT pseudo_random_access_range =
 //!\endcond
 
 /*!\interface seqan3::sequence <>
- * \brief The generic concept for a sequence.
+ * \brief The generic concept for a (biological) sequence.
  * \ingroup range
  * \extends std::ranges::input_range
  *
- * We define a range over an seqan3::alphabet as a *sequence*.
- * A type models seqan3::sequence if it is at least an std::ranges::input_range
- * and its references type models seqan3::alphabet.
+ * A (biological) sequence is (at least) an std::ranges::input_range whose reference type models seqan3::alphabet.
+ *
+ * For example std::vector<seqan3::dna4> is a sequence of seqan3::dna4 characters.
  *
  * ### Concepts and doxygen
  *
