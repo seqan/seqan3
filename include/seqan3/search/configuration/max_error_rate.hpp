@@ -35,19 +35,11 @@ namespace seqan3::search_cfg
  *          a deletion corresponds to a base deleted from the query sequence that does occur in the indexed text.
  *          Deletions at the beginning and at the end of the sequence are not considered during a search.
  */
-template <typename ...errors_t>
-//!\cond
-    requires sizeof...(errors_t) <= 4 &&
-            ((detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, total> ||
-              detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, substitution> ||
-              detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, deletion>  ||
-              detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, insertion>) && ...)
-//!\endcond
-class max_error_rate : public pipeable_config_element<max_error_rate<errors_t...>, std::array<double, 4>>
+class max_error_rate : public pipeable_config_element<max_error_rate, std::array<double, 4>>
 {
 
     //!\brief An alias type for the base class.
-    using base_t = pipeable_config_element<max_error_rate<errors_t...>, std::array<double, 4>>;
+    using base_t = pipeable_config_element<max_error_rate, std::array<double, 4>>;
 
     //!\brief Helper function to check valid error rate configuration.
     template <typename ..._errors_t>
@@ -70,26 +62,21 @@ class max_error_rate : public pipeable_config_element<max_error_rate<errors_t...
         }
     }
 
-    static_assert(check_consistency(errors_t{}...),
-                  "You may not use the same error specifier more than once.");
-
 public:
-
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::max_error_rate};
 
     //!\publicsection
     /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr max_error_rate()                                   noexcept = default; //!< Default constructor.
-    constexpr max_error_rate(max_error_rate const &)             noexcept = default; //!< Copy constructor.
-    constexpr max_error_rate(max_error_rate &&)                  noexcept = default; //!< Move constructor.
-    constexpr max_error_rate & operator=(max_error_rate const &) noexcept = default; //!< Copy assignment.
-    constexpr max_error_rate & operator=(max_error_rate &&)      noexcept = default; //!< Move assignment.
-    ~max_error_rate()                                            noexcept = default; //!< Destructor.
+    max_error_rate() = default; //!< Defaulted.
+    max_error_rate(max_error_rate const &) = default; //!< Defaulted.
+    max_error_rate(max_error_rate &&) = default; //!< Defaulted.
+    max_error_rate & operator=(max_error_rate const &) = default; //!< Defaulted.
+    max_error_rate & operator=(max_error_rate &&) = default; //!< Defaulted.
+    ~max_error_rate() = default; //!< Defaulted.
 
     /*!\brief Constructs the object from a set of error specifiers.
      * \tparam    errors_t A template parameter pack with the error types.
@@ -115,12 +102,19 @@ public:
      *
      * \include test/snippet/search/configuration_error_rate.cpp
      */
-    constexpr max_error_rate(errors_t && ...errors)
+    template <typename ...errors_t>
     //!\cond
-        requires sizeof...(errors_t) > 0
+        requires sizeof...(errors_t) > 0 && sizeof...(errors_t) <= 4 &&
+                ((detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, total> ||
+                  detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, substitution> ||
+                  detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, deletion>  ||
+                  detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, insertion>) && ...)
     //!\endcond
-        : base_t{}
+    constexpr max_error_rate(errors_t && ...errors) : base_t{}
     {
+        static_assert(check_consistency(errors_t{}...),
+                      "You may not use the same error specifier more than once.");
+
         detail::for_each([this](auto e)
         {
             base_t::value[remove_cvref_t<decltype(e)>::_id()] = e.get();
@@ -143,20 +137,7 @@ public:
             base_t::value[0] = std::min(1., ranges::accumulate(base_t::value | views::slice(1, 4), .0));
         }
     }
-    //!}
+    //!\}
 };
-
-/*!\name Type deduction guides
- * \relates seqan3::search_cfg::max_error_rate
- * \{
- */
-
-//!\brief Deduces empty list of error specifiers.
-max_error_rate() -> max_error_rate<>;
-
-//!\brief Deduces template arguments from the passed error specifiers.
-template <typename ...errors_t>
-max_error_rate(errors_t && ...) -> max_error_rate<remove_cvref_t<errors_t>...>;
-//!\}
 
 } // namespace seqan3::search_cfg
