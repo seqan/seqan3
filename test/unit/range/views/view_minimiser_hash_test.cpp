@@ -95,20 +95,6 @@ TEST_F(minimiser_hash_test, default_seed)
                                           | seqan3::views::to<result_t>);
 }
 
-TEST_F(minimiser_hash_test, shape_size_equal_window_size)
-{
-    auto apply_seed = std::views::transform([] (int i) { return i ^ 0x8F3F73B5CF1C9ADE; });
-    EXPECT_EQ(text1 | seqan3::views::kmer_hash(ungapped_shape)
-                    | apply_seed
-                    | seqan3::views::to<result_t>,
-              text1 | seqan3::views::minimiser_hash(ungapped_shape) | seqan3::views::to<result_t>);
-    EXPECT_EQ(text1 | seqan3::views::kmer_hash(gapped_shape)
-                    | apply_seed
-                    | seqan3::views::to<result_t>,
-              text1 | seqan3::views::minimiser_hash(gapped_shape) | seqan3::views::to<result_t>);
-}
-
-
 TEST_F(minimiser_hash_test, shape_bigger_than_window)
 {
     EXPECT_THROW(text1 | seqan3::views::minimiser_hash(ungapped_shape, 3), std::invalid_argument);

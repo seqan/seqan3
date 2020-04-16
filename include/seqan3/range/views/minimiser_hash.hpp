@@ -20,12 +20,6 @@ namespace seqan3::detail
 {
 struct minimiser_hash_fn
 {
-    //!\brief Store the shape and return a range adaptor closure object.
-    constexpr auto operator()(shape const & shape) const
-    {
-        return seqan3::detail::adaptor_from_functor{*this, shape, shape.size()};
-    }
-
     //!\brief Store the shape and the window_size and return a range adaptor closure object.
     constexpr auto operator()(shape const & shape, uint32_t const window_size) const
     {
