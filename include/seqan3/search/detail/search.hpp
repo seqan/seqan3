@@ -151,46 +151,6 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     }
 }
 
-/*!\brief Search a query or a range of queries in an index.
- * \tparam index_t    Must model seqan3::fm_index_specialisation.
- * \tparam queries_t  Must model std::ranges::random_access_range over the index's alphabet.
- *                    a range of queries must additionally model std::ranges::forward_range.
- * \param[in] index   String index to be searched.
- * \param[in] queries A single query or a range of queries.
- * \param[in] cfg     A configuration object specifying the search parameters.
- * \returns `True` if and only if `abort_on_hit` is `true` and a hit has been found.
- *
- * ### Complexity
- *
- * Each query takes \f$O(|query|^e)\f$ where \f$e\f$ is the maximum number of errors.
- *
- * ### Exceptions
- *
- * Strong exception guarantee if iterating the query does not change its state and if invoking a possible delegate
- * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
- */
-template <typename index_t, typename queries_t, typename configuration_t>
-inline auto search_all(index_t const & index, queries_t && queries, configuration_t const & cfg)
-{
-    if constexpr (!std::ranges::forward_range<std::ranges::range_value_t<queries_t>>)
-    {
-        return search_all(index, std::views::single(std::forward<queries_t>(queries)), cfg);
-    }
-    else
-    {
-        // return type: for each query: a vector of text_positions (or cursors)
-        // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
-        //                  duplicates. more efficient to call delegate once with one vector instead of calling
-        //                  delegate for each hit separately at once.
-        using query_t = std::ranges::range_value_t<queries_t>;
-        using single_query_result_t = decltype(search_single(index, std::declval<query_t &>(), cfg));
-        using search_fn_t = std::function<single_query_result_t(query_t &)>;
-
-        search_fn_t search_fn = [&, cfg] (query_t & query) { return search_single(index, query, cfg); };
-
-        return search_result_range{std::move(search_fn), std::forward<queries_t>(queries) | views::type_reduce};
-    }
-}
 //!\}
 
 } // namespace seqan3::detail

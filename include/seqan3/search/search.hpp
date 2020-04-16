@@ -24,6 +24,73 @@
 namespace seqan3::detail
 {
 
+
+/*!\brief Class used to update the search configuration, e.g. add defaults.
+ * \ingroup search
+ */
+struct search_configurator
+{
+    /*!\brief Add seqan3::search_cfg::all to the configuration if seqan3::search_cfg::mode was not set.
+     * \tparam configuration_t The type of the search configuration.
+     * \param[in] cfg The configuration to be modified if necessary.
+     * \returns The configuration which is guaranteed to have a seqan3::search_cfg::mode available.
+     *
+     * \details
+     *
+     * If seqan3::search_cfg::mode was not set, it defaults to seqan3::search_cfg::all.
+     */
+    template <typename configuration_t>
+    static auto add_default_mode_configuration(configuration_t const & cfg)
+    {
+        if constexpr (!detail::search_traits<configuration_t>::has_mode_configuration)
+            return cfg | search_cfg::mode{search_cfg::all};
+        else
+            return cfg;
+    }
+
+    /*!\brief Add seqan3::search_cfg::text_position to the configuration if seqan3::search_cfg::output was not set.
+     * \tparam configuration_t The type of the search configuration.
+     * \param[in] cfg The configuration to be modified if necessary.
+     * \returns The configuration which is guaranteed to have a seqan3::search_cfg::output available.
+     *
+     * \details
+     *
+     * If seqan3::search_cfg::output was not set, it defaults to seqan3::search_cfg::text_position.
+     */
+    template <typename configuration_t>
+    static auto add_default_output_configuration(configuration_t const & cfg)
+    {
+        if constexpr (!detail::search_traits<configuration_t>::has_output_configuration)
+            return cfg | search_cfg::output{search_cfg::text_position};
+        else
+            return cfg;
+    }
+
+    /*!\brief Adds default configurations if they were not set by the user.
+     * \tparam configuration_t The type of the search configuration.
+     * \param[in] cfg The configuration to be modified.
+     * \returns The modified configuration.
+     *
+     * \details
+     *
+     * Modifies the configuration object by adding default configuration elements.
+     *
+     * \sa seqan3::details::search_configurator::add_default_mode_configuration
+     * \sa seqan3::details::search_configurator::add_default_output_configuration
+     */
+    template <typename configuration_t>
+    static auto add_defaults(configuration_t const & cfg)
+    {
+        static_assert(detail::is_type_specialisation_of_v<configuration_t, configuration>,
+                      "cfg must be a specialisation of seqan3::configuration.");
+
+        auto cfg1 = add_default_mode_configuration(cfg);
+        auto cfg2 = add_default_output_configuration(cfg1);
+
+        return cfg2;
+    }
+};
+
 /*!\brief Class used to validate the search configuration.
  * \ingroup search
  */
@@ -167,36 +234,49 @@ namespace seqan3
  *
  * \include test/snippet/search/search.cpp
  */
-template <fm_index_specialisation index_t, typename queries_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <fm_index_specialisation index_t,
+          std::ranges::forward_range queries_t,
+          typename configuration_t = decltype(search_cfg::default_configuration)>
+//!\cond
+    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>>
+//!\endcond
 inline auto search(queries_t && queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
 {
-    using search_traits_t = detail::search_traits<configuration_t>;
+    auto updated_cfg = detail::search_configurator::add_defaults(cfg);
 
-    // If no mode was set, default to search all hits.
-    if constexpr (!search_traits_t::has_mode_configuration)
+    detail::search_configuration_validator::validate_query_type<queries_t>();
+    detail::search_configuration_validator::validate_error_configuration(updated_cfg);
+
+    // return type: for each query: a vector of text_positions (or cursors)
+    // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
+    //                  duplicates. more efficient to call delegate once with one vector instead of calling
+    //                  delegate for each hit separately at once.
+    using single_query_reference_t = std::ranges::range_reference_t<queries_t>;
+
+    std::function search_fn = [&, updated_cfg] (single_query_reference_t query)
     {
-        return search(std::forward<queries_t>(queries), index, cfg | search_cfg::mode{search_cfg::all});
-    }
-    else
-    {   // If no output configuration was, default to returning text positions.
-        if constexpr (!search_traits_t::has_output_configuration)
-        {
-            return search(std::forward<queries_t>(queries), index, cfg | search_cfg::output{search_cfg::text_position});
-        }
-        else
-        {
-            detail::search_configuration_validator::validate_query_type<queries_t>();
-            detail::search_configuration_validator::validate_error_configuration(cfg);
+        return search_single(index, std::forward<single_query_reference_t>(query), updated_cfg);
+    };
 
-            return detail::search_all(index, std::forward<queries_t>(queries), cfg);
-        }
-    }
+    return search_result_range{std::move(search_fn), std::forward<queries_t>(queries) | views::type_reduce};
 }
 
 //!\cond DEV
-//! \overload
+// Overload for a single query (not a collection of queries)
+//!\overload
+template <fm_index_specialisation index_t,
+          std::ranges::forward_range query_t,
+          typename configuration_t = decltype(search_cfg::default_configuration)>
+inline auto search(query_t query,
+                   index_t const & index,
+                   configuration_t const & cfg = search_cfg::default_configuration)
+{
+    return search(std::views::single(std::move(query)), index, cfg);
+}
+
+//!\overload
 template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(char const * const queries,
                    index_t const & index,
@@ -205,7 +285,7 @@ inline auto search(char const * const queries,
     return search(std::string_view{queries}, index, cfg);
 }
 
-//! \overload
+//!\overload
 template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(std::initializer_list<char const * const> const & queries,
                    index_t const & index,
