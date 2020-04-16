@@ -179,7 +179,7 @@ public:
     //!\brief Type for distances between iterators.
     using difference_type = typename std::iter_difference_t<it_t>;
     //!\brief Value type of this iterator.
-    using value_type = reference_t<urng_t>;
+    using value_type = std::ranges::range_value_t<urng_t>;
     //!\brief The pointer type.
     using pointer = void;
     //!\brief Reference to `value_type`.
