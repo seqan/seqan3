@@ -70,8 +70,7 @@ protected:
     result_t result1{0, 0, 0}; // Same result for ungapped and gapped
     result_t result1_short{0}; // windows_size == text_size, same result for ungapped and gapped
 
-    std::vector<seqan3::dna4> text2{"AC"_dna4};
-    result_t result2{}; // Same result for ungapped and gapped
+    std::vector<seqan3::dna4> too_short_text{"AC"_dna4};
 
     seqan3::bitcompressed_vector<seqan3::dna4> text3{"ACGGCGACGTTTAG"_dna4};
     result_t result3_ungapped_no_rev{26, 97, 27}; // ACGG, CGAC, ACGT
@@ -110,7 +109,8 @@ TEST_F(minimiser_test, ungapped_kmer_hash)
 {
     EXPECT_EQ(result1, text1 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_THROW(text1_short | kmer_view | minimiser_view2, std::invalid_argument);
-    EXPECT_EQ(result2, text2 | kmer_view | seqan3::views::to<result_t>);
+    auto empty_view = too_short_text | kmer_view | minimiser_view;
+    EXPECT_TRUE(std::ranges::empty(empty_view));
     EXPECT_EQ(result3_ungapped_no_rev, text3 | kmer_view | minimiser_view | seqan3::views::to<result_t>);
 
 }
@@ -119,7 +119,8 @@ TEST_F(minimiser_test, gapped_kmer_hash)
 {
     EXPECT_EQ(result1, text1 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
     EXPECT_THROW(text1_short | gapped_kmer_view | minimiser_view2, std::invalid_argument);
-    EXPECT_EQ(result2, text2 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
+    auto empty_view = too_short_text | gapped_kmer_view | minimiser_view;
+    EXPECT_TRUE(std::ranges::empty(empty_view));
     EXPECT_EQ(result3_gapped_no_rev, text3 | gapped_kmer_view | minimiser_view | seqan3::views::to<result_t>);
 }
 
