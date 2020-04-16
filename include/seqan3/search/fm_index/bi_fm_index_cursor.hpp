@@ -119,9 +119,9 @@ private:
     // need to store it twice. Once the cursor is switched, the information becomes invalid anyway.
 
     //!\brief Left suffix array interval of the parent node.
-    size_type parent_lb;
+    size_type parent_lb{};
     //!\brief Left suffix array interval of the parent node.
-    size_type parent_rb;
+    size_type parent_rb{};
     //!\brief Label of the last edge moved down. Needed for cycle_back() or cycle_front().
     sdsl_char_type _last_char;
     //\}
