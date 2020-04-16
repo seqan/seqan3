@@ -93,6 +93,8 @@ namespace seqan3::views
  * one window. This process is repeated over every possible window of a sequence. If consecutive windows share a
  * minimiser, it is saved only once.
  *
+ * ### Non-lexicographical Minimisers
+ *
  * It might happen that a minimiser changes only slightly when sliding the window over the sequence. For instance, when
  * a minimiser starts with a repetition of A’s, then in the next window it is highly likely that the minimiser will
  * start with a repetition of A’s as well. Because it is only one A shorter, depending on how long the repetition is
