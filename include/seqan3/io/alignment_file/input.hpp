@@ -128,10 +128,10 @@ SEQAN3_CONCEPT alignment_file_input_traits = requires (t v)
 
     // field::ref_seq
     // either ref_info_not_given or a range over ranges over alphabet (e.g. std::vector<dna4_vector>)
-    requires std::same_as<typename t::ref_sequences, ref_info_not_given> ||
-         (std::ranges::forward_range<typename t::ref_sequences> &&
-         std::ranges::forward_range<detail::transformation_trait_or_t<reference<typename t::ref_sequences>, dna4_vector>> &&
-         alphabet<reference_t<detail::transformation_trait_or_t<reference<typename t::ref_sequences>, dna4_vector>>>);
+    requires std::same_as<typename t::ref_sequences, ref_info_not_given> || requires ()
+    {
+        requires alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_sequences>>>
+    };
 
     // field::ref_id
     requires alphabet<reference_t<reference_t<typename t::ref_ids>>> &&
