@@ -20,13 +20,24 @@ namespace seqan3::detail
 {
 struct minimiser_hash_fn
 {
-    //!\brief Store the shape and the window_size and return a range adaptor closure object.
+    /*!\brief Store the shape and the window_size and return a range adaptor closure object.
+    * \param[in] shape       The seqan3::shape to use for hashing.
+    * \param[in] window_size The windows_size to use.
+    * \throws std::invalid_argument if the size of the shape is greater than the window_size.
+    * \returns               A range of converted elements.
+    */
     constexpr auto operator()(shape const & shape, uint32_t const window_size) const
     {
         return seqan3::detail::adaptor_from_functor{*this, shape, window_size};
     }
 
-    //!\brief Store the shape, the window_size and the seed and return a range adaptor closure object.
+    /*!\brief Store the shape, the window_size and the seed and return a range adaptor closure object.
+    * \param[in] shape       The seqan3::shape to use for hashing.
+    * \param[in] window_size The windows_size to use.
+    * \param[in] seed        The seed to use.
+    * \throws std::invalid_argument if the size of the shape is greater than the window_size.
+    * \returns               A range of converted elements.
+    */
     constexpr auto operator()(shape const & shape, uint32_t const window_size, uint64_t const seed) const
     {
         return seqan3::detail::adaptor_from_functor{*this, shape, window_size, seed};
@@ -34,11 +45,13 @@ struct minimiser_hash_fn
 
     /*!\brief            Call the view's constructor with the underlying view, a seqan3::shape and a window size as
      *                   argument.
-     * \param[in] urange The input range to process. Must model std::ranges::viewable_range and the reference type
-     *                   of the range must model seqan3::semialphabet.
-     * \param[in] shape_ The seqan3::shape to use for hashing.
+     * \param[in] urange      The input range to process. Must model std::ranges::viewable_range and the reference type
+     *                        of the range must model seqan3::semialphabet.
+     * \param[in] shape       The seqan3::shape to use for hashing.
+     * \param[in] window_size The windows_size to use.
+     * \param[in] seed        The seed to use.
      * \throws std::invalid_argument if the size of the shape is greater than the window_size.
-     * \returns          A range of converted elements.
+     * \returns               A range of converted elements.
      */
     template <std::ranges::range urng_t>
     constexpr auto operator()(urng_t && urange, shape const & shape, uint32_t const window_size,
