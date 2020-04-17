@@ -5,24 +5,24 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
+#include <seqan3/std/algorithm>
+#include <seqan3/std/concepts>
 #include <deque>
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
 #include <tuple>
 #include <vector>
 
-#include <gtest/gtest.h>
-
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/core/simd/debug_stream_simd.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/simd/view_to_simd.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
-
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/test/simd_utility.hpp>

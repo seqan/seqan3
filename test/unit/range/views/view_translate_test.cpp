@@ -7,25 +7,26 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/algorithm>
 #include <iostream>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/translate.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_aa27;

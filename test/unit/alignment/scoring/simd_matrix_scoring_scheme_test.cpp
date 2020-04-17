@@ -10,6 +10,7 @@
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/detail/simd_matrix_scoring_scheme.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/test/simd_utility.hpp>
