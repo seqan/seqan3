@@ -12,7 +12,8 @@
 #include "helper_search_scheme.hpp"
 #include <seqan3/test/performance/sequence_generator.hpp>
 
-#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
@@ -73,9 +74,10 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
         EXPECT_LE(error_distribution[block], single_block_length);
         if (error_distribution[block] > single_block_length)
         {
-            seqan3::debug_stream << "Error in block " << block << "(+ 1): " << error_distribution[block]
-                                 << " errors cannot fit into a block of length " << single_block_length << "." << '\n'
-                                 << "Error Distribution: " << error_distribution << '\n';
+            seqan3::debug_stream_type<char> cerr{std::cerr};
+            cerr << "Error in block " << block << "(+ 1): " << error_distribution[block]
+                 << " errors cannot fit into a block of length " << single_block_length << "." << '\n'
+                 << "Error Distribution: " << error_distribution << '\n';
             exit(1);
         }
 
@@ -177,12 +179,13 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
     EXPECT_EQ(hits_ss, hits_trivial);
     if (hits_ss != hits_trivial)
     {
-        seqan3::debug_stream << "Seed: " << seed << '\n'
-                             << "Text: " << text << '\n'
-                             << "Query: " << query << '\n'
-                             << "Errors: " << total << ", " << substitution << '\n'
-                             << "SS hits: " << hits_ss << '\n'
-                             << "Trivial hits: " << hits_trivial << '\n';
+        seqan3::debug_stream_type<char> cerr{std::cerr};
+        cerr << "Seed: " << seed << '\n'
+             << "Text: " << text << '\n'
+             << "Query: " << query << '\n'
+             << "Errors: " << total << ", " << substitution << '\n'
+             << "SS hits: " << hits_ss << '\n'
+             << "Trivial hits: " << hits_trivial << '\n';
     }
 }
 
@@ -293,13 +296,14 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, size_
                 EXPECT_EQ(hits_ss, hits_trivial);
                 if (hits_ss != hits_trivial)
                 {
-                    seqan3::debug_stream << "Seed: " << seed << '\n'
-                                         << "Text: " << text << '\n'
-                                         << "Query: " << query << '\n'
-                                         << "Errors: " << max_error << ", " << substitution << ", "
-                                                       << insertion << ", " << deletion << '\n'
-                                         << "SS hits: " << hits_ss << '\n'
-                                         << "Trivial hits: " << hits_trivial << '\n';
+                    seqan3::debug_stream_type<char> cerr{std::cerr};
+                    cerr << "Seed: " << seed << '\n'
+                         << "Text: " << text << '\n'
+                         << "Query: " << query << '\n'
+                         << "Errors: " << max_error << ", " << substitution << ", "
+                                       << insertion << ", " << deletion << '\n'
+                         << "SS hits: " << hits_ss << '\n'
+                         << "Trivial hits: " << hits_trivial << '\n';
                 }
             }
         }
