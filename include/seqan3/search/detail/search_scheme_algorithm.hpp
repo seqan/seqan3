@@ -18,7 +18,7 @@
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/detail/search_common.hpp>
 #include <seqan3/search/detail/search_scheme_precomputed.hpp>
-#include <seqan3/search/detail/search_trivial.hpp>
+#include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 
 namespace seqan3::detail
@@ -27,6 +27,126 @@ namespace seqan3::detail
 /*!\addtogroup search
  * \{
  */
+
+/*!\brief The algorithm that performs a unidirectional search on an FM index using trivial backtracking.
+ * \tparam configuration_t The search configuration type.
+ * \tparam index_t The type of index; must model seqan3::bi_fm_index_specialisation.
+ */
+template <typename configuration_t, bi_fm_index_specialisation index_t, typename ...policies_t>
+class search_scheme_algorithm : public policies_t...
+{
+private:
+    //!\brief The search configuration traits.
+    using traits_t = search_traits<configuration_t>;
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    search_scheme_algorithm() = default; //!< Defaulted.
+    search_scheme_algorithm(search_scheme_algorithm const &) = default; //!< Defaulted.
+    search_scheme_algorithm(search_scheme_algorithm &&) = default; //!< Defaulted.
+    search_scheme_algorithm & operator=(search_scheme_algorithm const &) = default; //!< Defaulted.
+    search_scheme_algorithm & operator=(search_scheme_algorithm &&) = default; //!< Defaulted.
+    ~search_scheme_algorithm() = default; //!< Defaulted.
+
+    /*!\brief Constructs from a configuration object and an index.
+     * \tparam configuration_t The search configuration type.
+     * \tparam index_t The type of index; must model seqan3::bi_fm_index_specialisation.
+     * \param[in] cfg The configuration object that guides the search algorithm.
+     * \param[in] index The index used in the algorithm.
+     */
+    search_scheme_algorithm(configuration_t const & cfg, index_t const & index) : policies_t{}...
+    {
+        config = cfg;
+        index_ptr = &index;
+    }
+    //!\}
+
+    /*!\brief Searches a query sequence in a bidirectional index.
+     * \tparam query_t Must model std::ranges::input_range over the index's alphabet.
+     * \param[in] query Query sequence to be searched in the index.
+     *
+     * ### Complexity
+     *
+     * \f$O(|query|^e)\f$ where \f$e\f$ is the total number of maximum errors.
+     */
+    template <typename query_t>
+    auto operator()(query_t && query) noexcept
+    {
+        auto error_state = this->max_error_counts(config, query); // see policy_max_error
+
+        // construct internal delegate for collecting hits for later filtering (if necessary)
+        std::vector<typename index_t::cursor_type> internal_hits;
+        auto on_hit_delegate = [&internal_hits] (auto const & it)
+        {
+            internal_hits.push_back(it);
+        };
+
+        perform_search_by_mode(internal_hits, query, error_state, on_hit_delegate);
+
+        return this->make_results(std::move(internal_hits), config); // see policy_result_builder
+    }
+
+private:
+    //!\brief The configuration object.
+    configuration_t config{};
+
+    //!\brief A pointer to the fm index which is used to perform the unidirectional search.
+    index_t const * index_ptr{nullptr};
+
+    // forward declaration
+    template <bool abort_on_hit, typename query_t, typename delegate_t>
+    inline void search_algo_bi(query_t & query, search_param const error_left, delegate_t && delegate);
+
+    /*!\brief Calls search_algo_bi depending on the search mode given in the configuration.
+     * \tparam query_t Must model std::ranges::input_range over the index's alphabet.
+     * \param[in, out] internal_hits The result vector to be filled.
+     * \param[in] query Query sequence to be searched with the cursor.
+     * \param[in] error_state Number of errors for matching the query sequence.
+     * \param[in] on_hit_delegate The function to be executed on every single (hit) result.
+     */
+    template <typename query_t, typename delegate_t>
+    void perform_search_by_mode(std::vector<typename index_t::cursor_type> & internal_hits,
+                                query_t & query,
+                                search_param error_state,
+                                delegate_t const & on_hit_delegate)
+    {
+        if constexpr (traits_t::search_best_hits || traits_t::search_all_best_hits || traits_t::search_strata_hits)
+        {
+            auto max_total = error_state.total;
+            error_state.total = 0; // start search with less errors
+            while (internal_hits.empty() && error_state.total <= max_total)
+            {
+                // * If you only want the best hit (traits_t::search_best_hits), you stop after finding the
+                //   first hit, the hit with the least errors (`abort_on_hit` is true).
+                // * If you are in strata mode (traits_t::search_strata_hits), you do the same as with best hits,
+                //   but then do the extra step afterwards (`abort_on_hit` is true).
+                // * If you want all best hits (traits_t::search_all_best_hits), you do not stop after the first
+                //   hit but continue the current search algorithm/max_error pattern (`abort_on_hit` is true).
+                constexpr bool abort_on_hit = !traits_t::search_all_best_hits;
+                search_algo_bi<abort_on_hit>(query, error_state, on_hit_delegate);
+                error_state.total++;
+            }
+            if constexpr (traits_t::search_strata_hits)
+            {
+                if (!internal_hits.empty())
+                {
+                    internal_hits.clear(); // TODO:don't clear when using Optimum Search Schemes with lower error bounds
+                    uint8_t const s = get<search_cfg::mode>(config).value;
+                    error_state.total += s - 1;
+                    search_algo_bi<false>(query, error_state, on_hit_delegate);
+                }
+            }
+        }
+        else // detail::search_mode_all
+        {
+            // If you want to find all hits, you cannot stop once you found any hit (<false>)
+            // since you have to find all paths in the search tree that satisfy the hit condition.
+            search_algo_bi<false>(query, error_state, on_hit_delegate);
+        }
+    }
+};
 
 /*!\brief Computes a (non-optimal) search scheme. Currently the generated search scheme represents trivial backtracking.
  * \param[in] min_error Minimum number of errors allowed.
@@ -486,10 +606,8 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
 
 /*!\brief Searches a query sequence in a bidirectional index.
  * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
- * \tparam index_t         Must model seqan3::bi_fm_index_specialisation.
  * \tparam query_t         Must model std::ranges::random_access_range over the index's alphabet.
  * \tparam delegate_t      Takes `typename index_t::cursor_type` as argument.
- * \param[in] index        String index built on the text that will be searched.
  * \param[in] query        Query sequence to be searched in the index.
  * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
  * \param[in] delegate     Function that is called on every hit.
@@ -503,55 +621,33 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
  * Strong exception guarantee if iterating the query does not change its state and if invoking the delegate also has a
  * strong exception guarantee; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
-inline void search_algo_bi(index_t const & index, query_t & query, search_param const error_left,
-                           delegate_t && delegate)
+template <typename configuration_t, typename index_t, typename ...policies_t>
+template <bool abort_on_hit, typename query_t, typename delegate_t>
+inline void search_scheme_algorithm<configuration_t, index_t, policies_t...>::search_algo_bi(
+    query_t & query,
+    search_param const error_left,
+    delegate_t && delegate)
 {
     switch (error_left.total)
     {
         case 0:
-            search_ss<abort_on_hit>(index, query, error_left, optimum_search_scheme<0, 0>, delegate);
+            search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 0>, delegate);
             break;
         case 1:
-            search_ss<abort_on_hit>(index, query, error_left, optimum_search_scheme<0, 1>, delegate);
+            search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 1>, delegate);
             break;
         case 2:
-            search_ss<abort_on_hit>(index, query, error_left, optimum_search_scheme<0, 2>, delegate);
+            search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 2>, delegate);
             break;
         case 3:
-            search_ss<abort_on_hit>(index, query, error_left, optimum_search_scheme<0, 3>, delegate);
+            search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 3>, delegate);
             break;
         default:
             auto const & search_scheme{compute_ss(0, error_left.total)};
-            search_ss<abort_on_hit>(index, query, error_left, search_scheme, delegate);
+            search_ss<abort_on_hit>(*index_ptr, query, error_left, search_scheme, delegate);
             break;
     }
 }
-
-/*!\brief Searches a query sequence in a unidirectional index.
- *
- * \copydetails search_algo_bi
- */
-template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
-inline void search_algo_uni(index_t const & index, query_t & query, search_param const error_left,
-                            delegate_t && delegate)
-{
-    search_trivial<abort_on_hit>(index, query, error_left, delegate);
-}
-
-/*!\brief Searches a query sequence in an index.
- *
- * \copydetails search_algo_bi
- */
-template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
-inline void search_algo(index_t const & index, query_t & query, search_param const error_left, delegate_t && delegate)
-{
-    if constexpr (bi_fm_index_specialisation<index_t>)
-        search_algo_bi<abort_on_hit>(index, query, error_left, delegate);
-    else
-        search_algo_uni<abort_on_hit>(index, query, error_left, delegate);
-}
-
 //!\}
 
 } // namespace seqan3::detail

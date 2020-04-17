@@ -13,13 +13,40 @@
 #include <seqan3/test/performance/sequence_generator.hpp>
 
 #include <seqan3/core/debug_stream.hpp>
+#include <seqan3/search/configuration/default_configuration.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
-#include <seqan3/search/detail/search_trivial.hpp>
+#include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
+#include <seqan3/search/detail/policy_max_error.hpp>
+#include <seqan3/search/detail/policy_result_builder.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/to.hpp>
 
 #include <gtest/gtest.h>
+
+namespace seqan3::detail
+{
+
+struct test_accessor
+{
+    template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
+    static void search_trivial(index_t const & index,
+                               query_t const & query,
+                               seqan3::detail::search_param error_left,
+                               delegate_t && delegate)
+    {
+        using namespace seqan3::detail;
+
+        auto cfg = seqan3::search_cfg::default_configuration;
+        using config_t = decltype(cfg);
+        using algorithm_t = unidirectional_search_algorithm<config_t, index_t, policy_max_error, policy_result_builder>;
+        algorithm_t algo{cfg, index};
+        algo.delegate = delegate;
+        algo.template search_trivial<abort_on_hit>(index.cursor(), query, 0, error_left, error_type::none);
+    }
+};
+
+} // namespace seqan3::detail
 
 template <typename text_t>
 inline void test_search_hamming(auto index, text_t const & text, auto const & search, uint64_t const query_length,
@@ -131,7 +158,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
                                      delegate_ss);
 
     // Find all hits using trivial backtracking.
-    seqan3::detail::search_trivial<false>(index, query, error_left, delegate_trivial);
+    seqan3::detail::test_accessor::search_trivial<false>(index, query, error_left, delegate_trivial);
 
     // Eliminate hits that we are not interested in (based on the search and chosen error distribution)
     hits_ss.erase(std::remove_if(hits_ss.begin(), hits_ss.end(), remove_predicate_ss), hits_ss.end());
@@ -253,7 +280,7 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, size_
                 // Find all hits using search schemes.
                 seqan3::detail::search_ss<false>(index, query, error_left, search_scheme, delegate_ss);
                 // Find all hits using trivial backtracking.
-                seqan3::detail::search_trivial<false>(index, query, error_left, delegate_trivial);
+                seqan3::detail::test_accessor::search_trivial<false>(index, query, error_left, delegate_trivial);
 
                 // Eliminate duplicates
                 hits_ss = seqan3::uniquify(hits_ss);
