@@ -10,6 +10,7 @@
 #include <type_traits>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/drop.hpp>

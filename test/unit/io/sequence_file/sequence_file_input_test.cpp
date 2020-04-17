@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/io/sequence_file/input.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>

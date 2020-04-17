@@ -7,6 +7,7 @@
 
 #include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
+#include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/range/views/zip.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"

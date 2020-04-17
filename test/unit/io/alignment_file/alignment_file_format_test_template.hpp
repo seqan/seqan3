@@ -10,6 +10,10 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/core/detail/debug_stream_optional.hpp>
+#include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/core/detail/debug_stream_variant.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
 #include <seqan3/io/alignment_file/output_format_concept.hpp>
 #include <seqan3/io/alignment_file/input.hpp>

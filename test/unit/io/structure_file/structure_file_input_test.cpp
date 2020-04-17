@@ -14,6 +14,7 @@
 #include <range/v3/view/map.hpp>
 
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>

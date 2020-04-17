@@ -12,6 +12,8 @@
 #include <range/v3/view/take.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/small_vector.hpp>
 #include <seqan3/test/cereal.hpp>

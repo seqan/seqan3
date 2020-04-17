@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/alignment_file/input.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>

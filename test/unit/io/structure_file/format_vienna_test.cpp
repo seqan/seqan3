@@ -16,6 +16,7 @@
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/alphabet/structure/structured_rna.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/structure_file/all.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>

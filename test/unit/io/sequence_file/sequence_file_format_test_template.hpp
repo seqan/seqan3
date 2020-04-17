@@ -14,6 +14,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/sequence_file/all.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/zip.hpp>

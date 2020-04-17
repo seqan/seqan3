@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/async_input_buffer.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>

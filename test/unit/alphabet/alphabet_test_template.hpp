@@ -9,6 +9,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/exception.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 template <typename T>
