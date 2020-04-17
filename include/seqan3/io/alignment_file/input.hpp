@@ -369,6 +369,16 @@ private:
     //!\brief The dummy ref sequence type if no reference information were given.
     using dummy_ref_type = decltype(views::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
                                     std::views::transform(detail::access_restrictor_fn{}));
+
+    //!\brief The unsliced ref sequence type if reference information were given.
+    using ref_sequence_unsliced_type =
+        detail::lazy_conditional_t<std::ranges::range<typename traits_type::ref_sequences const>,
+                                  detail::lazy<std::ranges::range_reference_t,
+                                               typename traits_type::ref_sequences const>,
+                                  dummy_ref_type>;
+
+    //!\brief The ref sequence type if reference information were given.
+    using ref_sequence_sliced_type = decltype(std::declval<ref_sequence_unsliced_type>() | views::slice(0, 0));
 public:
     /*!\name Field types and record type
      * \brief These types are relevant for record/row-based reading; they may be manipulated via the \ref traits_type
@@ -390,11 +400,7 @@ public:
      */
     using ref_sequence_type = std::conditional_t<std::same_as<typename traits_type::ref_sequences, ref_info_not_given>,
                                                  dummy_ref_type,
-                                                 decltype(std::declval<
-                                                     detail::transformation_trait_or_t<
-                                                        seqan3::reference<typename traits_type::ref_sequences const>,
-                                                        dummy_ref_type> /* does not matter as type is not chosen */
-                                                     >() | views::slice(0, 0))>;
+                                                 ref_sequence_sliced_type>;
     /*!\brief The type of field::ref_id is fixed to std::optional<int32_t>.
      *
      * To be consistent with the BAM format, the field::ref_id will hold the index to the actual reference
