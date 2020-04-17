@@ -7,10 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <meta/meta.hpp>
-
 #include <range/v3/view/concat.hpp>
-#include <range/v3/view/single.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>

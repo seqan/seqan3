@@ -1,3 +1,4 @@
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/simd/all.hpp>
 
 using int16x8_t = seqan3::simd::simd_type_t<int16_t, 8>;

@@ -7,8 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
