@@ -33,7 +33,7 @@ namespace seqan3::detail
 template <typename tuple_t>
 SEQAN3_CONCEPT tuple_size = requires (tuple_t v)
 {
-    { std::tuple_size<tuple_t>::value } -> size_t;
+    SEQAN3_RETURN_TYPE_CONTRAINT(std::tuple_size<tuple_t>::value, std::convertible_to, size_t);
 };
 //!\endcond
 
@@ -49,14 +49,19 @@ SEQAN3_CONCEPT tuple_get = requires (tuple_t & v, tuple_t const & v_c)
     requires std::tuple_size_v<tuple_t> > 0;
 
     typename std::tuple_element<0, tuple_t>::type;
-    { get<0>(v)              } -> typename std::tuple_element<0, tuple_t>::type;
+
+    SEQAN3_RETURN_TYPE_CONTRAINT(get<0>(v), std::convertible_to, typename std::tuple_element<0, tuple_t>::type);
 //     requires weakly_assignable_from<decltype(get<0>(v)), typename std::tuple_element<0, tuple_t>::type>;
     //TODO check that the previous returns something that can be assigned to
-    // unfortunately std::assignable_from requires lvalue-reference, but we want to accept xvalues too (returned proxies)
-    { get<0>(v_c)            } -> typename std::tuple_element<0, tuple_t>::type;
-    { get<0>(std::move(v))   } -> typename std::tuple_element<0, tuple_t>::type;
+    // unfortunately std::assignable_from requires lvalue-reference, but we want to accept xvalues too (returned
+    // proxies)
+    SEQAN3_RETURN_TYPE_CONTRAINT(get<0>(v_c), std::convertible_to, typename std::tuple_element<0, tuple_t>::type);
+    SEQAN3_RETURN_TYPE_CONTRAINT(get<0>(std::move(v)),
+                                 std::convertible_to, typename std::tuple_element<0, tuple_t>::type);
     // TODO: The return type for std::tuple is wrong until gcc-8.0, for gcc > 8.0 this is fixed.
     { get<0>(std::move(v_c)) };// -> typename std::tuple_element<0, tuple_t>::type const &&;
+    // SEQAN3_RETURN_TYPE_CONTRAINT(get<0>(std::move(v_c)),
+    //                              std::convertible_to, typename std::tuple_element<0, tuple_t>::type const &&);
 };
 //!\endcond
 

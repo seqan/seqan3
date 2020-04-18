@@ -114,8 +114,8 @@ SEQAN3_CONCEPT char_predicate = requires
     std::remove_reference_t<condition_t>::msg;
 
     //The msg type can be added with a std::string.
-    { std::string{} + std::remove_reference_t<condition_t>::msg } ->
-        decltype(std::remove_reference_t<condition_t>::msg);
+    SEQAN3_RETURN_TYPE_CONTRAINT(std::string{} + std::remove_reference_t<condition_t>::msg,
+                                 std::convertible_to, decltype(std::remove_reference_t<condition_t>::msg));
 };
 //!\endcond
 

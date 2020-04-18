@@ -95,25 +95,25 @@ SEQAN3_CONCEPT alignment_file_output_format =
 {
     t::file_extensions;
 
-    { v.write_alignment_record(stream,
-                               options,
-                               header,
-                               seq,
-                               qual,
-                               id,
-                               offset,
-                               ref_seq,
-                               ref_id,
-                               ref_offset,
-                               align,
-                               cigar,
-                               flag,
-                               mapq,
-                               mate,
-                               tag_dict,
-                               e_value,
-                               bit_score
-                               ) } -> void;
+    SEQAN3_RETURN_TYPE_CONTRAINT(v.write_alignment_record(stream,
+                                                          options,
+                                                          header,
+                                                          seq,
+                                                          qual,
+                                                          id,
+                                                          offset,
+                                                          ref_seq,
+                                                          ref_id,
+                                                          ref_offset,
+                                                          align,
+                                                          cigar,
+                                                          flag,
+                                                          mapq,
+                                                          mate,
+                                                          tag_dict,
+                                                          e_value,
+                                                          bit_score),
+                                 std::same_as, void);
 };
 //!\endcond
 

@@ -58,17 +58,23 @@ SEQAN3_CONCEPT matrix = requires(remove_cvref_t<matrix_t> m)
     /*!\fn size_type cols() const noexcept;
      * \brief The number of columns in the matrix.
      */
-    { m.cols() } -> typename remove_cvref_t<matrix_t>::size_type;
+    //!\cond
+    SEQAN3_RETURN_TYPE_CONTRAINT(m.cols(), std::same_as, typename remove_cvref_t<matrix_t>::size_type);
+    //!\endcond
 
     /*!\fn size_type rows() const noexcept;
      * \brief The number of rows in the matrix.
      */
-    { m.rows() } -> typename remove_cvref_t<matrix_t>::size_type;
+    //!\cond
+    SEQAN3_RETURN_TYPE_CONTRAINT(m.rows(), std::same_as, typename remove_cvref_t<matrix_t>::size_type);
+    //!\endcond
 
     /*!\fn reference at(matrix_coordinate coordinate) noexcept;
      * \brief A reference to the entry of the matrix at the given coordinate.
      */
-    { m.at(matrix_coordinate{}) } -> typename remove_cvref_t<matrix_t>::reference;
+    //!\cond
+    SEQAN3_RETURN_TYPE_CONTRAINT(m.at(matrix_coordinate{}), std::same_as, typename remove_cvref_t<matrix_t>::reference);
+    //!\endcond
 
 //!\cond
 };

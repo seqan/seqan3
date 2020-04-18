@@ -87,7 +87,8 @@ SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typen
 /*
     typename type::iterator;
     requires std::forward_iterator<typename type::iterator>;
-    { it } -> typename type::const_iterator; // NOTE check whether iterator is const convertible
+    // NOTE check whether iterator is const convertible
+    SEQAN3_RETURN_TYPE_CONTRAINT(it, std::same_as, typename type::const_iterator);
 
     typename type::const_iterator;
     requires std::forward_iterator<typename type::const_iterator>;
@@ -104,27 +105,27 @@ SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typen
     >;
 */
     // methods and operator
-    { type{}          } -> type;   // default constructor
-    { type{type{}}    } -> type;   // copy/move constructor
-    { val = val2      } -> type &; // assignment
-    { (&val)->~type() };           // destructor
+    SEQAN3_RETURN_TYPE_CONTRAINT(type{}, std::same_as, type); // default constructor
+    SEQAN3_RETURN_TYPE_CONTRAINT(type{type{}}, std::same_as, type); // copy/move constructor
+    SEQAN3_RETURN_TYPE_CONTRAINT(val = val2, std::same_as, type &); // assignment
+    { (&val)->~type() }; // destructor
 
-    { val.begin()     } -> typename type::iterator;
-    { val.end()       } -> typename type::iterator;
-    { cval.begin()    } -> typename type::const_iterator;
-    { cval.end()      } -> typename type::const_iterator;
-    { val.cbegin()    } -> typename type::const_iterator;
-    { val.cend()      } -> typename type::const_iterator;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.begin(), std::same_as, typename type::iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.end(), std::same_as, typename type::iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(cval.begin(), std::same_as, typename type::const_iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(cval.end(), std::same_as, typename type::const_iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.cbegin(), std::same_as, typename type::const_iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.cend(), std::same_as, typename type::const_iterator);
 
     requires !std::equality_comparable<typename type::value_type> || std::equality_comparable<type>;
 
-    { val.swap(val2)  } -> void;
-    { swap(val, val2) } -> void;
-    { std::swap(val, val2) } -> void;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.swap(val2), std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONTRAINT(swap(val, val2), std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONTRAINT(std::swap(val, val2), std::same_as, void);
 
-    { val.size()      } -> typename type::size_type;
-    { val.max_size()  } -> typename type::size_type;
-    { val.empty()     } -> bool;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.size(), std::same_as, typename type::size_type);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.max_size(), std::same_as, typename type::size_type);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.empty(), std::same_as, bool);
 };
 //!\endcond
 
@@ -150,7 +151,7 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
     { type{typename type::size_type{}, typename type::value_type{}} };
     { type{val2.begin(), val2.end()}                                }; // NOTE that this could be any input iterator:
     { type{std::initializer_list<typename type::value_type>{}}      };
-    { val = std::initializer_list<typename type::value_type>{}      } -> type &;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val = std::initializer_list<typename type::value_type>{}, std::same_as, type &);
 
     // assignment NOTE return type is type & for std::string and void for other stl containers:
     { val.assign(val2.begin(), val2.end())                                };
@@ -159,30 +160,35 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
 
     // modify container
     // TODO: how do you model this?
-    // { val.emplace(typename type::const_iterator{}, ?                                   } -> typename type::iterator;
-    { val.insert(val.cbegin(), val2.front())                                           } -> typename type::iterator;
-    { val.insert(val.cbegin(), typename type::value_type{})                            } -> typename type::iterator;
-    { val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})} -> typename type::iterator;
-    { val.insert(val.cbegin(), val2.begin(), val2.end())                               } -> typename type::iterator;
+    // SEQAN3_RETURN_TYPE_CONTRAINT(val.emplace(typename type::const_iterator{}, ?),
+    //                              std::same_as, typename type::iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.insert(val.cbegin(), val2.front()), std::same_as, typename type::iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.insert(val.cbegin(), typename type::value_type{}),
+                                 std::same_as, typename type::iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{}),
+                                 std::same_as, typename type::iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.insert(val.cbegin(), val2.begin(), val2.end()),
+                                 std::same_as, typename type::iterator);
     requires detail::is_basic_string_v<type> || requires(type val)
     {
         // TODO this function is not defined on strings (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328)
-        { val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{}) } -> typename type::iterator;
+        SEQAN3_RETURN_TYPE_CONTRAINT(val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{}),
+                                     std::same_as, typename type::iterator);
     };
 
-    { val.erase(val.cbegin())                                                          } -> typename type::iterator;
-    { val.erase(val.cbegin(), val.cend())                                              } -> typename type::iterator;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.erase(val.cbegin()), std::same_as, typename type::iterator);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.erase(val.cbegin(), val.cend()), std::same_as, typename type::iterator);
 
-    { val.push_back(val.front())                                                       } -> void;
-    { val.push_back(typename type::value_type{})                                       } -> void;
-    { val.pop_back()                                                                   } -> void;
-    { val.clear()                                                                      } -> void;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.push_back(val.front()), std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.push_back(typename type::value_type{}), std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.pop_back(), std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.clear(), std::same_as, void);
 
     // access container
-    { val.front()  } -> typename type::reference;
-    { cval.front() } -> typename type::const_reference;
-    { val.back()   } -> typename type::reference;
-    { cval.back()  } -> typename type::const_reference;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.front(), std::same_as, typename type::reference);
+    SEQAN3_RETURN_TYPE_CONTRAINT(cval.front(), std::same_as, typename type::const_reference);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.back(), std::same_as, typename type::reference);
+    SEQAN3_RETURN_TYPE_CONTRAINT(cval.back(), std::same_as, typename type::const_reference);
 };
 //!\endcond
 
@@ -207,12 +213,12 @@ SEQAN3_CONCEPT random_access_container = requires (type val)
     requires sequence_container<type>;
 
     // access container
-    { val[0]    } -> typename type::reference;
-    { val.at(0) } -> typename type::reference;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val[0], std::same_as, typename type::reference);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.at(0), std::same_as, typename type::reference);
 
     // modify container
-    { val.resize(0)                              } -> void;
-    { val.resize(0, typename type::value_type{}) } -> void;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.resize(0), std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.resize(0, typename type::value_type{}), std::same_as, void);
 };
 //!\endcond
 
@@ -232,9 +238,9 @@ SEQAN3_CONCEPT reservible_container = requires (type val)
 {
     requires random_access_container<type>;
 
-    { val.capacity()      } -> typename type::size_type;
-    { val.reserve(0)      } -> void;
-    { val.shrink_to_fit() } -> void;
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.capacity(), std::same_as, typename type::size_type);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.reserve(0), std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONTRAINT(val.shrink_to_fit(), std::same_as, void);
 };
 //!\endcond
 

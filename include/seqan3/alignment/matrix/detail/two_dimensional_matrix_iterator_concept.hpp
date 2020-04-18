@@ -106,14 +106,14 @@ SEQAN3_CONCEPT two_dimensional_matrix_iterator =
         { it.coordinate() };
         { cit.coordinate() };
 
-        requires std::same_as<decltype(it += offset), std::remove_reference_t<iter_t> &>;
-        requires std::same_as<decltype(it + offset), std::remove_reference_t<iter_t>>;
-        requires std::same_as<decltype(offset + it), std::remove_reference_t<iter_t>>;
-        requires std::same_as<decltype(it -= offset), std::remove_reference_t<iter_t> &>;
-        requires std::same_as<decltype(it - offset), std::remove_reference_t<iter_t>>;
-        requires std::same_as<decltype(cit - offset), std::remove_reference_t<iter_t>>;
-        requires std::same_as<decltype(it.coordinate()), matrix_coordinate>;
-        requires std::same_as<decltype(cit.coordinate()), matrix_coordinate>;
+        SEQAN3_RETURN_TYPE_CONTRAINT(it += offset, std::same_as, std::remove_reference_t<iter_t> &);
+        SEQAN3_RETURN_TYPE_CONTRAINT(it + offset, std::same_as, std::remove_reference_t<iter_t>);
+        SEQAN3_RETURN_TYPE_CONTRAINT(offset + it, std::same_as, std::remove_reference_t<iter_t>);
+        SEQAN3_RETURN_TYPE_CONTRAINT(it -= offset, std::same_as, std::remove_reference_t<iter_t> &);
+        SEQAN3_RETURN_TYPE_CONTRAINT(it - offset, std::same_as, std::remove_reference_t<iter_t>);
+        SEQAN3_RETURN_TYPE_CONTRAINT(cit - offset, std::same_as, std::remove_reference_t<iter_t>);
+        SEQAN3_RETURN_TYPE_CONTRAINT(it.coordinate(), std::same_as, matrix_coordinate);
+        SEQAN3_RETURN_TYPE_CONTRAINT(cit.coordinate(), std::same_as, matrix_coordinate);
     };
 //!\endcond
 } // namespace seqan3::detail
