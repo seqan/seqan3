@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/kmer_index/shape.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>

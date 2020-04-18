@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/container/dynamic_bitset.hpp>
 #include <seqan3/test/cereal.hpp>
 
