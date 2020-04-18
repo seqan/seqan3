@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/core/platform.hpp>
+
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 

@@ -13,12 +13,13 @@
 #pragma once
 
 #include <cassert>
+#include <functional>
 #include <mutex>
+#include <seqan3/std/new>
 
 #include <seqan3/core/parallel/detail/latch.hpp>
 #include <seqan3/core/parallel/detail/spin_delay.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/std/new>
 
 namespace seqan3::detail
 {

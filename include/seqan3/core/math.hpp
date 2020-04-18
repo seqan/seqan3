@@ -12,9 +12,11 @@
 
 #pragma once
 
-#include <cmath>
-
 #include <seqan3/std/concepts>
+#include <cmath>
+#include <stdexcept>
+
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {
