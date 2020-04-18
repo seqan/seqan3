@@ -37,11 +37,11 @@ namespace seqan3::search_cfg
  */
 template <typename ...errors_t>
 //!\cond
-    requires sizeof...(errors_t) <= 4 &&
-            ((detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, total> ||
-              detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, substitution> ||
-              detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, deletion>  ||
-              detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, insertion>) && ...)
+    requires (sizeof...(errors_t) <= 4) &&
+             ((detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, total> ||
+               detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, substitution> ||
+               detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, deletion>  ||
+               detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, insertion>) && ...)
 //!\endcond
 class max_error_rate : public pipeable_config_element<max_error_rate<errors_t...>, std::array<double, 4>>
 {
@@ -117,7 +117,7 @@ public:
      */
     constexpr max_error_rate(errors_t && ...errors)
     //!\cond
-        requires sizeof...(errors_t) > 0
+        requires (sizeof...(errors_t) > 0)
     //!\endcond
         : base_t{}
     {

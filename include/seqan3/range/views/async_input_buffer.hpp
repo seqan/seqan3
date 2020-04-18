@@ -117,7 +117,7 @@ public:
     //!\brief Construction from std::ranges::ViewableRange.
     template <typename other_urng_t>
     //!\cond
-    requires !std::same_as<remove_cvref_t<other_urng_t>, async_input_buffer_view> && // prevent recursive instantiation
+    requires (!std::same_as<remove_cvref_t<other_urng_t>, async_input_buffer_view>) && // prevent recursive instantiation
              std::ranges::viewable_range<other_urng_t> &&
              std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<other_urng_t>>>
     //!\endcond

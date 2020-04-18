@@ -258,7 +258,7 @@ public:
                              seqan3::bin_size size,
                              seqan3::hash_function_count funs = seqan3::hash_function_count{2u})
     //!\cond
-        requires data_layout_mode == data_layout::uncompressed
+        requires (data_layout_mode == data_layout::uncompressed)
     //!\endcond
     {
         bins = bins_.get();
@@ -293,7 +293,7 @@ public:
      */
     interleaved_bloom_filter(interleaved_bloom_filter<data_layout::uncompressed> const & ibf)
     //!\cond
-        requires data_layout_mode == data_layout::compressed
+        requires (data_layout_mode == data_layout::compressed)
     //!\endcond
     {
         std::tie(bins, technical_bins, bin_size_, hash_shift, bin_words, hash_funs) =
@@ -321,7 +321,7 @@ public:
      */
     void emplace(size_t const value, bin_index const bin)
     //!\cond
-        requires data_layout_mode == data_layout::uncompressed
+        requires (data_layout_mode == data_layout::uncompressed)
     //!\endcond
     {
         assert(bin.get() < bins);
@@ -357,7 +357,7 @@ public:
      */
     void increase_bin_number_to(bin_count const new_bins_)
     //!\cond
-        requires data_layout_mode == data_layout::uncompressed
+        requires (data_layout_mode == data_layout::uncompressed)
     //!\endcond
     {
         size_t new_bins = new_bins_.get();

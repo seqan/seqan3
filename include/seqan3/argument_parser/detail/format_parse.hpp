@@ -553,7 +553,7 @@ private:
      */
     template <sequence_container option_type, typename id_type>
     //!\cond
-        requires !std::is_same_v<option_type, std::string>
+        requires (!std::is_same_v<option_type, std::string>)
     //!\endcond
     bool get_option_by_id(option_type & value, id_type const & id)
     {

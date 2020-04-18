@@ -543,7 +543,7 @@ public:
      */
     template <typename other_range_t>
     //!\cond
-        requires !std::same_as<remove_cvref_t<other_range_t>, pairwise_combine_view> &&
+        requires (!std::same_as<remove_cvref_t<other_range_t>, pairwise_combine_view>) &&
                  std::ranges::viewable_range<other_range_t> &&  // Must come after self type check to avoid conflicts with the move constructor.
                  std::constructible_from<underlying_range_type, ranges::ref_view<std::remove_reference_t<other_range_t>>>
             //TODO: Investigate: the following expression is equivalent to the one above but raises a weird assertion in

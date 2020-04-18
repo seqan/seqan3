@@ -131,7 +131,7 @@ public:
     //!\brief Construct with the ungapped range type.
     template <typename other_range_t>
     //!\cond
-         requires !std::same_as<other_range_t, gap_decorator> &&
+         requires (!std::same_as<other_range_t, gap_decorator>) &&
                   std::same_as<remove_cvref_t<other_range_t>, remove_cvref_t<inner_type>> &&
                   std::ranges::viewable_range<other_range_t> // at end, otherwise it competes with the move ctor
     //!\endcond
@@ -567,7 +567,7 @@ private:
 //!\brief Ranges (not views!) always deduce to `const & range_type` since they are access-only anyway.
 template <std::ranges::viewable_range urng_t>
 //!\cond
-    requires !std::ranges::view<std::remove_reference_t<urng_t>>
+    requires (!std::ranges::view<std::remove_reference_t<urng_t>>)
 //!\endcond
 gap_decorator(urng_t && range) -> gap_decorator<std::remove_reference_t<urng_t> const &>;
 

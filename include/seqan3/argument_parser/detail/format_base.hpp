@@ -83,7 +83,7 @@ protected:
      */
     template <sequence_container container_type>
     //!\cond
-        requires !std::is_same_v<container_type, std::string>
+        requires (!std::is_same_v<container_type, std::string>)
     //!\endcond
     static std::string get_type_name_as_string(container_type const & /**/)
     {
@@ -110,7 +110,7 @@ protected:
      */
     template <typename container_type>
     //!\cond
-        requires sequence_container<container_type> && !std::is_same_v<container_type, std::string>
+        requires sequence_container<container_type> && (!std::is_same_v<container_type, std::string>)
     //!\endcond
     static std::string option_type_and_list_info(container_type const & container)
     {

@@ -178,7 +178,7 @@ TEST(template_inspect, is_value_specialisation_of_v)
 }
 
 template <int varg>
-    requires  0 <= varg && varg <= 2
+    requires (0 <= varg && varg <= 2)
 struct constraint_vbar
 {};
 

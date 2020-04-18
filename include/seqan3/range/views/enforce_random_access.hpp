@@ -67,7 +67,7 @@ public:
     //!\brief Construction from the underlying viewable range.
     template <typename viewable_rng_t>
     //!\cond
-     requires !std::same_as<remove_cvref_t<viewable_rng_t>, view_enforce_random_access> &&
+     requires (!std::same_as<remove_cvref_t<viewable_rng_t>, view_enforce_random_access>) &&
               std::ranges::viewable_range<viewable_rng_t> &&
               std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<viewable_rng_t>>>
     //!\endcond

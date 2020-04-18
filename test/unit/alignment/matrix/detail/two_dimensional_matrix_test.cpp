@@ -100,8 +100,8 @@ struct two_dimensional_matrix_test<test_matrix_t<score_t, order>> : public ::tes
     matrix_type matrix{seqan3::detail::number_rows{3}, seqan3::detail::number_cols{4}, matrix_storage};
 
     template <typename value1_t, typename value2_t>
-        requires !(seqan3::simd::simd_concept<std::decay_t<value1_t>> &&
-                   seqan3::simd::simd_concept<std::decay_t<value2_t>>)
+        requires (!(seqan3::simd::simd_concept<std::decay_t<value1_t>> &&
+                    seqan3::simd::simd_concept<std::decay_t<value2_t>>))
     static void expect_eq(value1_t v1, value2_t v2)
     {
         EXPECT_EQ(v1, v2);

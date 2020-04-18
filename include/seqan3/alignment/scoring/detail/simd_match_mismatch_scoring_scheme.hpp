@@ -62,7 +62,7 @@ namespace seqan3::detail
  */
 template <simd_concept simd_score_t, semialphabet alphabet_t, typename alignment_t>
 //!\cond
-    requires seqan3::alphabet_size<alphabet_t> > 1 &&
+    requires (seqan3::alphabet_size<alphabet_t> > 1) &&
              (std::same_as<alignment_t, detail::local_alignment_type> ||
               std::same_as<alignment_t, detail::global_alignment_type>)
 //!\endcond

@@ -97,7 +97,7 @@ struct matrix_index
      */
     template <std::integral other_index_t>
     //!\cond
-        requires !std::same_as<other_index_t, index_t>
+        requires (!std::same_as<other_index_t, index_t>)
     //!\endcond
     explicit constexpr matrix_index(matrix_index<other_index_t> other) noexcept
         : row{static_cast<index_t>(other.row)}, col{static_cast<index_t>(other.col)}

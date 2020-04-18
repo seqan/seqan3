@@ -466,7 +466,7 @@ public:
     template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
     //!\cond
-        requires index_t::text_layout_mode == text_layout::single
+        requires (index_t::text_layout_mode == text_layout::single)
     //!\endcond
     {
         static_assert(std::ranges::input_range<text_t>, "The text must model input_range.");
@@ -483,7 +483,7 @@ public:
     template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
     //!\cond
-        requires index_t::text_layout_mode == text_layout::collection
+        requires (index_t::text_layout_mode == text_layout::collection)
     //!\endcond
     {
         static_assert(std::ranges::input_range<text_t>, "The text collection must model input_range.");
@@ -541,7 +541,7 @@ public:
      */
     std::vector<size_type> locate() const
     //!\cond
-        requires index_t::text_layout_mode == text_layout::single
+        requires (index_t::text_layout_mode == text_layout::single)
     //!\endcond
     {
         assert(index != nullptr);
@@ -557,7 +557,7 @@ public:
     //!\overload
     std::vector<std::pair<size_type, size_type>> locate() const
     //!\cond
-        requires index_t::text_layout_mode == text_layout::collection
+        requires (index_t::text_layout_mode == text_layout::collection)
     //!\endcond
     {
         assert(index != nullptr);
@@ -588,7 +588,7 @@ public:
      */
     auto lazy_locate() const
     //!\cond
-        requires index_t::text_layout_mode == text_layout::single
+        requires (index_t::text_layout_mode == text_layout::single)
     //!\endcond
     {
         assert(index != nullptr);
@@ -600,7 +600,7 @@ public:
     //!\overload
     auto lazy_locate() const
     //!\cond
-        requires index_t::text_layout_mode == text_layout::collection
+        requires (index_t::text_layout_mode == text_layout::collection)
     //!\endcond
     {
         assert(index != nullptr);

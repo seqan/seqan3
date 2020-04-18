@@ -382,7 +382,7 @@ private:
     template <typename sequence1_t, typename sequence2_t>
     void compute_matrix(sequence1_t & sequence1, sequence2_t & sequence2)
     //!\cond
-        requires !traits_t::is_banded
+        requires (!traits_t::is_banded)
     //!\endcond
     {
         // ----------------------------------------------------------------------------
@@ -592,7 +592,7 @@ private:
      */
     template <typename index_t, typename sequence1_t, typename sequence2_t, typename callback_t>
     //!\cond
-        requires !traits_t::is_vectorised
+        requires (!traits_t::is_vectorised)
     //!\endcond
     constexpr void make_alignment_result(index_t const idx,
                                          sequence1_t & sequence1,

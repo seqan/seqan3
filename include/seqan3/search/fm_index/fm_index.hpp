@@ -177,7 +177,7 @@ private:
      */
     template <std::ranges::range text_t>
     //!\cond
-        requires text_layout_mode_ == text_layout::single
+        requires (text_layout_mode_ == text_layout::single)
     //!\endcond
     void construct(text_t && text)
     {
@@ -227,7 +227,7 @@ private:
     //!\overload
     template <std::ranges::range text_t>
     //!\cond
-        requires text_layout_mode_ == text_layout::collection
+        requires (text_layout_mode_ == text_layout::collection)
     //!\endcond
     void construct(text_t && text)
     {

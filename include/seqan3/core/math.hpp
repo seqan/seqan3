@@ -90,7 +90,7 @@ int64_t pow(base_t base, exp_t exp)
 
 // Otherwise delegate to `std::pow`.
 template <typename base_t, typename exp_t>
-    requires !(std::integral<base_t> && std::unsigned_integral<exp_t>)
+    requires (!(std::integral<base_t> && std::unsigned_integral<exp_t>))
 auto pow(base_t base, exp_t exp)
 {
     return std::pow(base, exp);

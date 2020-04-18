@@ -262,7 +262,7 @@ public:
      */
     template <std::ranges::input_range other_range_t>
     //!\cond
-        requires !std::same_as<remove_cvref_t<other_range_t>, dynamic_bitset>
+        requires (!std::same_as<remove_cvref_t<other_range_t>, dynamic_bitset>)
     //!\endcond
     explicit constexpr dynamic_bitset(other_range_t && range) noexcept :
         dynamic_bitset{std::ranges::begin(range), std::ranges::end(range)}
@@ -1531,7 +1531,7 @@ public:
      */
     template <size_t cap>
     //!\cond
-        requires cap <= bit_capacity
+        requires (cap <= bit_capacity)
     //!\endcond
     friend constexpr dynamic_bitset operator&(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
@@ -1551,7 +1551,7 @@ public:
      */
     template <size_t cap>
     //!\cond
-        requires cap <= bit_capacity
+        requires (cap <= bit_capacity)
     //!\endcond
     friend constexpr dynamic_bitset operator^(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
@@ -1571,7 +1571,7 @@ public:
      */
     template <size_t cap>
     //!\cond
-        requires cap <= bit_capacity
+        requires (cap <= bit_capacity)
     //!\endcond
     friend constexpr dynamic_bitset operator|(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {

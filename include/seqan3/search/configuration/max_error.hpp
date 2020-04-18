@@ -96,7 +96,7 @@ public:
      */
     template <typename ...errors_t>
     //!\cond
-        requires sizeof...(errors_t) > 0 && sizeof...(errors_t) <= 4 &&
+        requires (sizeof...(errors_t) > 0) && (sizeof...(errors_t) <= 4) &&
                  ((detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, total> ||
                    detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, substitution> ||
                    detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, deletion>  ||

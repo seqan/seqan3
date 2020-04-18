@@ -131,8 +131,8 @@ public:
     //!\overload
     template <typename other_urng_t>
     //!\cond
-    requires !std::same_as<remove_cvref_t<other_urng_t>, view_to_simd> &&
-             !std::same_as<other_urng_t, urng_t> &&
+    requires (!std::same_as<remove_cvref_t<other_urng_t>, view_to_simd>) &&
+             (!std::same_as<other_urng_t, urng_t>) &&
              std::ranges::viewable_range<other_urng_t>
     //!\endcond
     constexpr view_to_simd(other_urng_t && urng, scalar_type const padding_value = alphabet_size) :
@@ -552,7 +552,7 @@ private:
     //!\overload
     constexpr void underflow()
     //!\cond
-        requires !fast_load
+        requires (!fast_load)
     //!\endcond
     {
         at_end = final_chunk;

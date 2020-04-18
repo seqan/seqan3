@@ -200,7 +200,7 @@ protected:
      */
     void add_column(std::vector<word_type> vp, std::vector<word_type> vn)
     //!\cond
-        requires !use_max_errors
+        requires (!use_max_errors)
     //!\endcond
     {
         column_type column{};
