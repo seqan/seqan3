@@ -4,7 +4,8 @@
 int main()
 {
     seqan3::pod_tuple<int, float> t{3, 4.7};
-    static_assert(std::is_pod_v<seqan3::pod_tuple<int, float>>);
+    static_assert(std::is_standard_layout_v<seqan3::pod_tuple<int, float>>);
+    static_assert(std::is_trivial_v<seqan3::pod_tuple<int, float>>);
 
     // template parameters are automatically deduced:
     seqan3::pod_tuple t2{17, 3.7f, 19l};
