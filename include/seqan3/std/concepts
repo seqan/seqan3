@@ -17,6 +17,18 @@
 
 #ifdef __cpp_lib_concepts        // C++20 ranges available
 #include <concepts>
+
+namespace std
+{
+inline namespace deprecated
+{
+/*!\brief This should be named default_initializable.
+ * \deprecated Use std::default_initializable instead.
+ */
+template<class T>
+concept default_constructible = default_initializable<T>;
+} // inline namespace std::deprecated
+} // namespace std
 #else                         // use range-v3 to emulate
 
 #include <functional>
