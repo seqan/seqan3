@@ -42,6 +42,18 @@ template<class T>
 inline constexpr bool enable_view<T> = true;
 } // namespace std::ranges
 
+namespace std::ranges
+{
+inline namespace deprecated
+{
+/*!\brief this should be in std::ranges::views and not std::ranges
+ * \deprecated Use std::views::all_t instead.
+ */
+template <typename range_t>
+using all_view = std::views::all_t<range_t>;
+} // namespace std::ranges::deprecated
+} // namespace std::ranges
+
 #else // implement via range-v3
 
 //!\cond
