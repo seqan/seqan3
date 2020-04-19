@@ -27,6 +27,31 @@ inline namespace deprecated
  */
 template<class T>
 concept default_constructible = default_initializable<T>;
+
+/*!\brief This should be removed.
+ * \deprecated No viable alternative.
+ */
+template <class B>
+concept boolean =
+    movable<std::remove_cvref_t<B>> &&
+    requires(std::remove_reference_t<B> const & b1,
+             std::remove_reference_t<B> const & b2, bool const a)
+    {
+        requires convertible_to<const std::remove_reference_t<B>&, bool>;
+        !b1;      requires convertible_to<decltype(!b1), bool>;
+        b1 && a;  requires same_as<decltype(b1 && a), bool>;
+        b1 || a;  requires same_as<decltype(b1 || a), bool>;
+        b1 && b2; requires same_as<decltype(b1 && b2), bool>;
+        a && b2;  requires same_as<decltype(a && b2), bool>;
+        b1 || b2; requires same_as<decltype(b1 || b2), bool>;
+        a || b2;  requires same_as<decltype(a || b2), bool>;
+        b1 == b2; requires convertible_to<decltype(b1 == b2), bool>;
+        b1 == a;  requires convertible_to<decltype(b1 == a), bool>;
+        a == b2;  requires convertible_to<decltype(a == b2), bool>;
+        b1 != b2; requires convertible_to<decltype(b1 != b2), bool>;
+        b1 != a;  requires convertible_to<decltype(b1 != a), bool>;
+        a != b2;  requires convertible_to<decltype(a != b2), bool>;
+    };
 } // inline namespace std::deprecated
 } // namespace std
 #else                         // use range-v3 to emulate
