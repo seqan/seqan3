@@ -17,6 +17,18 @@
 #include <seqan3/std/ranges>
 #include <seqan3/test/expect_range_eq.hpp>
 
+TEST(repeat_view, deduction_guide)
+{
+    int value = 0;
+    int const & value_cref = value;
+
+    seqan3::detail::repeat_view repeat_view1{value};
+    EXPECT_TRUE((std::same_as<decltype(repeat_view1), seqan3::detail::repeat_view<int>>));
+
+    seqan3::detail::repeat_view repeat_view2{value_cref};
+    EXPECT_TRUE((std::same_as<decltype(repeat_view2), seqan3::detail::repeat_view<int>>));
+}
+
 TEST(general, construction)
 {
     // char
