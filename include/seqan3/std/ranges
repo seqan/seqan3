@@ -162,7 +162,8 @@ namespace views { using ::ranges::cpp20::views::single; }
 namespace views { using ::ranges::cpp20::views::iota; }
 
 // [range.istream], istream view
-using ::ranges::cpp20::basic_istream_view;
+template <typename Val, class CharT, class Traits>
+using basic_istream_view = ::ranges::istream_view<Val>;
 
 // [range.all], all view
 namespace views
