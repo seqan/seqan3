@@ -92,7 +92,6 @@ TEST(view_interleave, concepts)
     EXPECT_FALSE((std::ranges::output_range<decltype(v2), seqan3::dna4>));
 }
 
-#if 0 // blocked by https://github.com/ericniebler/range-v3/issues/1320
 TEST(view_interleave, chunk_join)
 {
     std::forward_list<seqan3::dna4> u{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4};
@@ -110,4 +109,3 @@ TEST(view_interleave, chunk_join)
         it++;
     }
 }
-#endif
