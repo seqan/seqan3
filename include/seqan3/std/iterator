@@ -15,7 +15,29 @@
 
 #include <iterator>
 
-#ifndef __cpp_lib_ranges
+#ifdef __cpp_lib_ranges // C++20 iterators
+
+namespace std
+{
+inline namespace deprecated
+{
+//!\cond
+/*!\brief This should be named indirectly_readable.
+ * \deprecated Use std::indirectly_readable instead.
+ */
+template<class T>
+concept readable = ::std::indirectly_readable<T>;
+
+/*!\brief This should be named indirectly_writable.
+ * \deprecated Use std::indirectly_writable instead.
+ */
+template<class Out, class T>
+concept writable = ::std::indirectly_writable<Out, T>;
+//!\endcond
+} // namespace std::deprecated
+} // namespace std
+
+#else // implement C++20 iterators via range-v3
 
 #ifndef RANGES_DEEP_STL_INTEGRATION
 #define RANGES_DEEP_STL_INTEGRATION 1
@@ -88,7 +110,6 @@ namespace
     using incrementable_traits = ::ranges::incrementable_traits<T>;
     template<typename T>
     using readable_traits = ::ranges::readable_traits<T>;
-
 } // anonymous namespace
 
 } // namespace std
