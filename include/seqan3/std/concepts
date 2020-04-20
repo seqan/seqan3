@@ -54,6 +54,29 @@ concept boolean =
     };
 } // inline namespace std::deprecated
 } // namespace std
+
+namespace std::detail
+{
+/*!\interface   std::detail::weakly_equality_comparable_with <>
+ * \tparam t1   The first type to compare.
+ * \tparam t2   The second type to compare.
+ * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
+ * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
+ */
+//!\cond
+template <class T, class U>
+concept weakly_equality_comparable_with =
+    requires(std::remove_reference_t<T> const & t,
+             std::remove_reference_t<U> const & u)
+    {
+        t == u; requires boolean<decltype(t == u)>;
+        t != u; requires boolean<decltype(t != u)>;
+        u == t; requires boolean<decltype(u == t)>;
+        u != t; requires boolean<decltype(u != t)>;
+    };
+//!\endcond
+} // namespace std::detail
+
 #else                         // use range-v3 to emulate
 
 #include <functional>
@@ -444,7 +467,7 @@ namespace std::detail
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
  * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
- * \sa          https://en.cppreference.com/w/cpp/concepts/weakly_equality_comparable_with
+ * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
  */
 //!\cond
 template <class T, class U>
