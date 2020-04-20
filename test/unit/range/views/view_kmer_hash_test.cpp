@@ -205,6 +205,16 @@ TYPED_TEST(kmer_hash_ungapped_test, issue1719)
         auto v3 = sequence2 | seqan3::views::kmer_hash(seqan3::ungapped{4});
         EXPECT_EQ(4u, v3.size());
     }
+
+TEST(kmer_hash_ungapped_test, issue1754)
+{
+    auto stop_at_t = seqan3::views::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
+
+    /*EXPECT_EQ(result_t{228}, text2 | stop_at_t | std::views::reverse | seqan3::views::kmer_hash(seqan3::ungapped{4})
+                                   | seqan3::views::to<result_t>);
+    EXPECT_EQ(result_t{228}, text2 | stop_at_t | std::views::reverse | gapped_view
+                                   | seqan3::views::to<result_t>);*/
+}
 }
 
 // https://github.com/seqan/seqan3/issues/1719
