@@ -8,7 +8,7 @@
 #include <forward_list>
 #include <list>
 #include <type_traits>
-
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
