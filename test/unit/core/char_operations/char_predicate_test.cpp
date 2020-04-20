@@ -90,14 +90,12 @@ TEST(char_predicate_, char_predicate_combiner)
 
 TEST(char_predicate_, char_predicate_combiner_msg)
 {
-    using namespace seqan3::detail;
     using or_t = seqan3::detail::char_predicate_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
     EXPECT_EQ(or_t::msg,   "(foo_a || foo_A || foo_0)"s);
 }
 
 TEST(char_predicate_, is_not)
 {
-    using namespace seqan3::detail;
     using cond_t = seqan3::detail::char_predicate_negator<foo<'a'>>;
     EXPECT_FALSE(cond_t{}('a'));
     EXPECT_TRUE(cond_t{}('A'));
@@ -111,7 +109,6 @@ TEST(char_predicate_, is_not)
 
 TEST(char_predicate_, is_not_msg)
 {
-    using namespace seqan3::detail;
     using fn = decltype(!seqan3::is_alpha);
     EXPECT_EQ(fn::msg, "!(is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
 }

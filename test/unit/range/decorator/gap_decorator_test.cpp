@@ -5,6 +5,7 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/ranges>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -16,12 +17,9 @@
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/enforce_random_access.hpp>
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/std/ranges>
 
 #include "../iterator_test_template.hpp"
 #include "../../alignment/aligned_sequence_test_template.hpp"
-
-using namespace seqan3;
 
 using decorator_t = gap_decorator<std::vector<dna4> const &>;
 
@@ -102,8 +100,9 @@ struct iterator_fixture<random_access_iterator_test> : iterator_fixture<std::ran
     using iterator_tag = std::random_access_iterator_tag;
     static constexpr bool const_iterable = true;
 
-    decltype(base_t::test_range | views::enforce_random_access) test_range = base_t::test_range
-                                                                          | views::enforce_random_access;
+    decltype(base_t::test_range
+             | seqan3::views::enforce_random_access) test_range = base_t::test_range
+                                                                | seqan3::views::enforce_random_access;
 };
 
 INSTANTIATE_TYPED_TEST_SUITE_P(gap_decorator_iterator, iterator_fixture, std::ranges::iterator_t<decorator_t>, );
@@ -308,8 +307,8 @@ TEST(gap_decorator, decorator_on_views)
     EXPECT_EQ(*(std::next(dec.begin(), 1)), gap{});
     EXPECT_EQ(*it, gap{});
 
-    // auto v_char = v | views::to_char;
-    gap_decorator dec2{v | views::to_char};
+    // auto v_char = v | seqan3::views::to_char;
+    gap_decorator dec2{v | seqan3::views::to_char};
     EXPECT_EQ(dec2.size(), 4u);
     EXPECT_EQ(*dec2.begin(), 'A');
     EXPECT_EQ(*++dec2.begin(), 'C');

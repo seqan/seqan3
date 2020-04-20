@@ -5,11 +5,11 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <gtest/gtest.h>
 
 #include <fstream>
+#include <iostream>
+#include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
@@ -18,11 +18,11 @@
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to.hpp>
-#include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>
 
 #include "../iterator_test_template.hpp"
 
+using seqan3::operator""_dna5;
 
 using iterator_type = decltype(seqan3::views::istreambuf(std::declval<std::istringstream &>()).begin());
 
@@ -73,7 +73,7 @@ TEST(view_istreambuf, basic)
     // combinability 2
     is.clear();
     is.seekg(0, std::ios::beg);
-    auto v4 = seqan3::views::istreambuf(is) | seqan3::views::take_until(is_space);
+    auto v4 = seqan3::views::istreambuf(is) | seqan3::views::take_until(seqan3::is_space);
     std::string out2 = v4 | seqan3::views::to<std::string>;
     std::string comp2 = "ACGTATATATAT";
     EXPECT_TRUE(std::ranges::equal(out2, comp2));
@@ -98,7 +98,7 @@ TEST(view_istreambuf, concepts)
 
 TEST(view_istreambuf, big_file_stram)
 {
-    test::tmp_filename file_name{"istream_storage"};
+    seqan3::test::tmp_filename file_name{"istream_storage"};
 
     {
         std::ofstream os{file_name.get_path()};

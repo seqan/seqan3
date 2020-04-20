@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
@@ -18,10 +19,10 @@
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/translate_join.hpp>
-#include <seqan3/std/ranges>
 
 #include "../iterator_test_template.hpp"
 
+using seqan3::operator""_aa27;
 using seqan3::operator""_dna4;
 
 using iterator_type =
@@ -34,9 +35,9 @@ struct iterator_fixture<iterator_type> : public ::testing::Test
     static constexpr bool const_iterable = true;
 
     std::vector<seqan3::dna4_vector > vec{"ACGTACGTACGTA"_dna4, "TCGAGAGCTTTAGC"_dna4};
-    std::vector<std::vector<aa27> > expected_range{{"TYVR"_aa27}, {"RTYV"_aa27}, {"VRT"_aa27}, {"YVRT"_aa27},
-                                                   {"TYVR"_aa27}, {"RTY"_aa27}, {"SRAL"_aa27}, {"REL*"_aa27},
-                                                   {"ESFS"_aa27}, {"AKAL"_aa27}, {"LKLS"_aa27}, {"*SSR"_aa27}};
+    std::vector<std::vector<seqan3::aa27> > expected_range{{"TYVR"_aa27}, {"RTYV"_aa27}, {"VRT"_aa27}, {"YVRT"_aa27},
+                                                           {"TYVR"_aa27}, {"RTY"_aa27}, {"SRAL"_aa27}, {"REL*"_aa27},
+                                                           {"ESFS"_aa27}, {"AKAL"_aa27}, {"LKLS"_aa27}, {"*SSR"_aa27}};
     decltype(seqan3::views::translate_join(vec)) test_range = seqan3::views::translate_join(vec);
 
     template <typename A, typename B>
@@ -54,7 +55,12 @@ class nucleotide : public ::testing::Test
 {};
 
 // add all alphabets here
-using nucleotide_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15>;
+using nucleotide_types = ::testing::Types<seqan3::dna4,
+                                          seqan3::dna5,
+                                          seqan3::dna15,
+                                          seqan3::rna4,
+                                          seqan3::rna5,
+                                          seqan3::rna15>;
 
 TYPED_TEST_SUITE(nucleotide, nucleotide_types, );
 
@@ -67,16 +73,16 @@ TYPED_TEST(nucleotide, view_translate)
     vec[0] = in1 | seqan3::views::char_to<TypeParam> | seqan3::views::to<std::vector>;
     vec[1] = in2 | seqan3::views::char_to<TypeParam> | seqan3::views::to<std::vector>;
 
-    std::vector<std::vector<aa27> > cmp1{{"TYVR"_aa27}, {"SRAL"_aa27}};
-    std::vector<std::vector<aa27> > cmp2{{"TYVR"_aa27}, {"YVRT"_aa27}, {"SRAL"_aa27}, {"AKAL"_aa27}};
-    std::vector<std::vector<aa27> > cmp3{{"TYVR"_aa27}, {"RTYV"_aa27}, {"VRT"_aa27}, {"SRAL"_aa27}, {"REL*"_aa27},
-                                         {"ESFS"_aa27}};
-    std::vector<std::vector<aa27> > cmp4{{"TYVR"_aa27}, {"RTYV"_aa27}, {"VRT"_aa27}, {"YVRT"_aa27}, {"TYVR"_aa27},
-                                         {"RTY"_aa27}, {"SRAL"_aa27}, {"REL*"_aa27}, {"ESFS"_aa27}, {"AKAL"_aa27},
-                                         {"LKLS"_aa27}, {"*SSR"_aa27}};
-    std::vector<std::vector<aa27> > cmp5{{"TYVR"_aa27}, {"VRT"_aa27}, {"SRAL"_aa27}, {"ESFS"_aa27}};
-    std::vector<std::vector<aa27> > cmp6{{"CMHA"_aa27}, {"MHAC"_aa27}, {"SSRN"_aa27}, {"RFRE"_aa27}};
-    std::vector<std::vector<aa27> > cmp7{{"CMHA"_aa27}};
+    std::vector<std::vector<seqan3::aa27> > cmp1{{"TYVR"_aa27}, {"SRAL"_aa27}};
+    std::vector<std::vector<seqan3::aa27> > cmp2{{"TYVR"_aa27}, {"YVRT"_aa27}, {"SRAL"_aa27}, {"AKAL"_aa27}};
+    std::vector<std::vector<seqan3::aa27> > cmp3{{"TYVR"_aa27}, {"RTYV"_aa27}, {"VRT"_aa27}, {"SRAL"_aa27},
+                                                 {"REL*"_aa27}, {"ESFS"_aa27}};
+    std::vector<std::vector<seqan3::aa27> > cmp4{{"TYVR"_aa27}, {"RTYV"_aa27}, {"VRT"_aa27}, {"YVRT"_aa27},
+                                                 {"TYVR"_aa27}, {"RTY"_aa27}, {"SRAL"_aa27}, {"REL*"_aa27},
+                                                 {"ESFS"_aa27}, {"AKAL"_aa27}, {"LKLS"_aa27}, {"*SSR"_aa27}};
+    std::vector<std::vector<seqan3::aa27> > cmp5{{"TYVR"_aa27}, {"VRT"_aa27}, {"SRAL"_aa27}, {"ESFS"_aa27}};
+    std::vector<std::vector<seqan3::aa27> > cmp6{{"CMHA"_aa27}, {"MHAC"_aa27}, {"SSRN"_aa27}, {"RFRE"_aa27}};
+    std::vector<std::vector<seqan3::aa27> > cmp7{{"CMHA"_aa27}};
 
     // default parameter translation_frames
     auto v1 = vec | seqan3::views::translate_join;
