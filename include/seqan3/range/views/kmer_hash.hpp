@@ -375,7 +375,7 @@ public:
     }
 
     /*!\brief Pre-decrement.
-     * \attention This function is only avaible if `it_t` models std::bidirectional_iterator.
+     * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
     shape_iterator & operator--() noexcept
     //!\cond
@@ -387,7 +387,7 @@ public:
     }
 
     /*!\brief Post-decrement.
-     * \attention This function is only avaible if `it_t` models std::bidirectional_iterator.
+     * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
     shape_iterator operator--(int) noexcept
     //!\cond
@@ -400,7 +400,7 @@ public:
     }
 
     /*!\brief Forward this iterator.
-     * \attention This function is only avaible if `it_t` models std::random_access_iterator.
+     * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     shape_iterator & operator+=(difference_type const skip) noexcept
     //!\cond
@@ -412,7 +412,7 @@ public:
     }
 
     /*!\brief Forward copy of this iterator.
-     * \attention This function is only avaible if `it_t` models std::random_access_iterator.
+     * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     shape_iterator operator+(difference_type const skip) const noexcept
     //!\cond
@@ -424,7 +424,7 @@ public:
     }
 
     /*!\brief Non-member operator+ delegates to non-friend operator+.
-     * \attention This function is only avaible if `it_t` models std::random_access_iterator.
+     * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     friend shape_iterator operator+(difference_type const skip, shape_iterator const & it) noexcept
     //!\cond
@@ -435,7 +435,7 @@ public:
     }
 
     /*!\brief Decrement iterator by `skip`.
-     * \attention This function is only avaible if `it_t` models std::random_access_iterator.
+     * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     shape_iterator & operator-=(difference_type const skip) noexcept
     //!\cond
@@ -448,7 +448,7 @@ public:
 
     /*!\anchor shape_iterator_operator-decrement
      * \brief Return decremented copy of this iterator.
-     * \attention This function is only avaible if `it_t` models std::random_access_iterator.
+     * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     shape_iterator operator-(difference_type const skip) const noexcept
     //!\cond
@@ -460,7 +460,7 @@ public:
     }
 
     /*!\brief Non-member operator- delegates to non-friend operator-.
-     * \attention This function is only avaible if `it_t` models std::random_access_iterator.
+     * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     friend shape_iterator operator-(difference_type const skip, shape_iterator const & it) noexcept
     //!\cond
@@ -472,7 +472,7 @@ public:
 
     /*!\anchor shape_iterator_operator-difference
      * \brief Return offset between this and remote iterator's position.
-     * \attention This function is only avaible if `it_t` models std::random_access_iterator.
+     * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     difference_type operator-(shape_iterator const & lhs) const noexcept
     //!\cond
@@ -483,7 +483,7 @@ public:
     }
 
     /*!\brief Return offset between remote sentinel's position and this.
-     * \attention This function is only avaible if sentinel_t and it_t model std::sized_sentinel_for.
+     * \attention This function is only available if sentinel_t and it_t model std::sized_sentinel_for.
      */
     friend difference_type operator-(sentinel_t const & lhs, shape_iterator const & rhs) noexcept
     //!\cond
@@ -494,7 +494,7 @@ public:
     }
 
     /*!\brief Return offset this and remote sentinel's position.
-     * \attention This function is only avaible if it_t and sentinel_t model std::sized_sentinel_for.
+     * \attention This function is only available if it_t and sentinel_t model std::sized_sentinel_for.
      */
     friend difference_type operator-(shape_iterator const & lhs, sentinel_t const & rhs) noexcept
     //!\cond
@@ -505,7 +505,7 @@ public:
     }
 
     /*!\brief Move the iterator by a given offset and return the corresponding hash value.
-     * \attention This function is only avaible if `it_t` models std::random_access_iterator.
+     * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     reference operator[](difference_type const n) const
     //!\cond
@@ -559,7 +559,7 @@ private:
 
     /*!\brief Increments iterator by `skip`.
      * \param skip Amount to increment.
-     * \attention This function is only avaible if `it_t` models std::random_access_iterator.
+     * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     void hash_forward(difference_type const skip)
     //!\cond
@@ -571,7 +571,7 @@ private:
     }
 
     /*!\brief Decrements iterator by 1.
-     * \attention This function is only avaible if `it_t` models std::bidirectional_iterator.
+     * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
     void hash_backward()
     //!\cond
@@ -591,7 +591,7 @@ private:
 
     /*!\brief Decrements iterator by `skip`.
      * \param skip Amount to decrement.
-     * \attention This function is only avaible if `it_t` models std::bidirectional_iterator.
+     * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
     void hash_backward(difference_type const skip)
     {
@@ -625,7 +625,7 @@ private:
     }
 
     /*!\brief Calculates the previous hash value via rolling hash.
-     * \attention This function is only avaible if `it_t` models std::bidirectional_iterator.
+     * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
     void hash_roll_backward()
         //!\cond
