@@ -32,6 +32,7 @@ public:
     public:
         using base_t = seqan3::detail::inherited_iterator_base<test_iterator<u_iterator_t>, u_iterator_t>;
         using iterator_category = std::bidirectional_iterator_tag;
+        using iterator_concept = iterator_category;
 
         using base_t::base_t;
     };
@@ -69,6 +70,7 @@ public:
     public:
         using base_t = seqan3::detail::inherited_iterator_base<test_iterator<u_iterator_t>, u_iterator_t>;
         using iterator_category = std::bidirectional_iterator_tag;
+        using iterator_concept = iterator_category;
 
         using base_t::base_t;
 

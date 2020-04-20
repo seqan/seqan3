@@ -68,7 +68,9 @@ public:
     //!\brief The pointer type.
     using pointer               = typename std::iterator_traits<base_t>::pointer;
     //!\brief The iterator category tag.
-    using iterator_category     = iterator_tag_t<base_t>;
+    using iterator_category = iterator_tag_t<base_t>;
+    //!\brief The iterator concept tag.
+    using iterator_concept = iterator_category;
     //!\}
 
     /*!\name Constructors, destructor and assignment

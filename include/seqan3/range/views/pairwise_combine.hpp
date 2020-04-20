@@ -90,6 +90,8 @@ private:
         using pointer           = void;
         //!\brief The iterator category tag.
         using iterator_category = iterator_tag_t<underlying_iterator_type>;
+        //!\brief The iterator concept.
+        using iterator_concept = iterator_category;
         //!\}
 
         /*!\name Constructors, destructor and assignment
