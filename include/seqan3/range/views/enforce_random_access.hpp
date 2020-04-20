@@ -369,7 +369,7 @@ namespace seqan3::views
  * | `urng_t` (underlying range type)       | `rrng_t` (returned range type)                       |
  * |:--------------------------------------:|:----------------------------------------------------:|
  * | `std::ranges::random_access_range`     | `std::ranges::ref_view<urng_t>`                      |
- * | `seqan3::pseudo_random_access_range`   | `seqan3::detail::view_enforce_random_access`          |
+ * | `seqan3::pseudo_random_access_range`   | `seqan3::detail::view_enforce_random_access`         |
  *
  * The adaptor returns exactly the type specified above. In the second case a view is returned whose iterator wraps
  * the iterator of the underlying range and adapts all of its functionality but overwrites the

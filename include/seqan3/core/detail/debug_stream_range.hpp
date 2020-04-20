@@ -39,8 +39,8 @@ SEQAN3_CONCEPT debug_stream_range_guard =
     !std::same_as<remove_cvref_t<std::ranges::range_reference_t<rng_t>>,
                                 remove_cvref_t<rng_t>> && // prevent recursive instantiation
     // exclude null-terminated strings:
-    !(std::is_pointer_v<std::decay_t<rng_t>> && std::same_as<remove_cvref_t<std::ranges::range_reference_t<rng_t>>,
-                                                            char>);
+    !(std::is_pointer_v<std::decay_t<rng_t>> &&
+      std::same_as<remove_cvref_t<std::ranges::range_reference_t<rng_t>>, char>);
 
 /*!\brief Helper template variable that checks if the reference type of a range can be streamed into an instance of
  *        seqan3::debug_stream_type .
