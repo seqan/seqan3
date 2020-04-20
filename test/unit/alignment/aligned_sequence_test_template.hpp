@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/iterator>
 #include <string>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
@@ -15,11 +16,8 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
-#include <seqan3/std/iterator>
 
 using seqan3::operator""_dna4;
-
-using namespace seqan3; // necessary right now because assign_unaligned is falsely a hidden friend
 
 template <typename T>
 class aligned_sequence_ : public ::testing::Test

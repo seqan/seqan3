@@ -14,7 +14,8 @@
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/to.hpp>
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
+using seqan3::operator""_rna5;
 
 TEST(debug_stream_test, aligned_sequence_multi_without_gaps)
 {
@@ -42,18 +43,20 @@ TEST(debug_stream_test, aligned_sequence_multi_without_gaps)
         "        GAGGGCAAGATCACGCGCAATTCGGAGAGATTTAAAGAAC\n"
     };
 
-    std::tuple<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>, std::vector<gapped<dna4>>> const alignment
+    std::tuple<std::vector<seqan3::gapped<seqan3::dna4>>,
+               std::vector<seqan3::gapped<seqan3::dna4>>,
+               std::vector<seqan3::gapped<seqan3::dna4>>> const alignment
     {
         "GCGGGTCACTGAGGGCTGGGATGAGGACGGCCACCACTTCGAGGAGTCCCTTCACTACGAGGGCAGGGCCGTGGACATCACCACGTCAGACAGGGACAAGAGCAAGTA"
-        "CGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4 | views::to<std::vector<gapped<dna4>>>,
+        "CGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4 | seqan3::views::to<std::vector<seqan3::gapped<seqan3::dna4>>>,
         "CTACGGCAGAAGAAGACATCCGAAAAAGCTGACACCTCTCGCCTACAAGCAGTTCATACCTAATGTCGCGGAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAA"
-        "GATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | views::to<std::vector<gapped<dna4>>>,
+        "GATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | seqan3::views::to<std::vector<seqan3::gapped<seqan3::dna4>>>,
         "CTACGGCAGAAGAAGACATCCCAAGAAGCTGACACCTCTCGCCTACAAGCAGTTTATACCTAATGTCGCGGAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAA"
-        "GATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | views::to<std::vector<gapped<dna4>>>
+        "GATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4 | seqan3::views::to<std::vector<seqan3::gapped<seqan3::dna4>>>
     };
 
     std::ostringstream oss;
-    debug_stream_type stream{oss};
+    seqan3::debug_stream_type stream{oss};
     stream << alignment;
     EXPECT_EQ(expected, oss.str());
 }
@@ -68,14 +71,14 @@ TEST(debug_stream_test, aligned_sequence_pair_with_gaps)
         "        CU-NGG\n"
     };
 
-    std::pair<std::vector<gapped<rna5>>, std::vector<gapped<rna5>>> const alignment
+    std::pair<std::vector<seqan3::gapped<seqan3::rna5>>, std::vector<seqan3::gapped<seqan3::rna5>>> const alignment
     {
-        {'C'_rna5, 'U'_rna5, 'U'_rna5, 'C'_rna5, gap{}, 'G'_rna5},
-        {'C'_rna5, 'U'_rna5, gap{}, 'N'_rna5, 'G'_rna5, 'G'_rna5}
+        {'C'_rna5, 'U'_rna5, 'U'_rna5, 'C'_rna5, seqan3::gap{}, 'G'_rna5},
+        {'C'_rna5, 'U'_rna5, seqan3::gap{}, 'N'_rna5, 'G'_rna5, 'G'_rna5}
     };
 
     std::ostringstream oss;
-    debug_stream_type stream{oss};
+    seqan3::debug_stream_type stream{oss};
     stream << alignment;
     EXPECT_EQ(expected, oss.str());
 }
