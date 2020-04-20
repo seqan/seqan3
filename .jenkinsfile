@@ -186,10 +186,6 @@ for (int h = 0; h < axis_agent.size(); ++h)
                 if (!is_nightly && (axis_build_type_value == "Debug"))
                     continue
 
-                // Skip g++-8 builds on osx for now: https://github.com/seqan/seqan3/issues/1089
-                if (agent == "osx" && axis_compiler_value == "g++-8")
-                    continue
-
                 def test_model = is_nightly ? 'Nightly' : 'Continuous'
 
                 def label = "${agent}_${axis_compiler_value}_cereal-${axis_cereal_value}_$axis_build_type_value"
