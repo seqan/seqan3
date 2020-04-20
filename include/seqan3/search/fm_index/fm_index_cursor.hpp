@@ -19,6 +19,7 @@
 
 #include <range/v3/view/slice.hpp>
 
+#include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/views/slice.hpp>
@@ -86,15 +87,15 @@ private:
     //!\}
 
     //!\brief Underlying FM index.
-    index_type const * index;
+    index_type const * index{nullptr};
     //!\brief Left suffix array interval of the parent node. Needed for cycle_back().
-    size_type parent_lb;
+    size_type parent_lb{};
     //!\brief Right suffix array interval of the parent node. Needed for cycle_back().
-    size_type parent_rb;
+    size_type parent_rb{};
     //!\brief Underlying index from the SDSL.
-    node_type node;
+    node_type node{};
     //!\brief Alphabet size of the index without delimiters
-    sdsl_sigma_type sigma;
+    sdsl_sigma_type sigma{};
 
     template <typename _index_t>
     friend class bi_fm_index_cursor;
@@ -288,6 +289,16 @@ public:
             return true;
         }
         return false;
+    }
+
+    //!\overload
+    template <typename char_type>
+    //!\cond
+        requires detail::is_char_adaptation_v<char_type>
+    //!\endcond
+    bool extend_right(char_type const * cstring) noexcept
+    {
+        return extend_right(std::basic_string_view<char_type>{cstring});
     }
 
     /*!\brief Tries to extend the query by `seq` to the right.

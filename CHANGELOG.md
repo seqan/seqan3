@@ -71,6 +71,12 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## Notable Bug-fixes
 
+#### Search
+
+* The `seqan3::fm_index_cursor::extend_right()`, `seqan3::bi_fm_index_cursor::extend_right()` and
+  `seqan3::bi_fm_index_cursor::extend_left()` functions handle c-style strings without including the null character
+  ([\#1588](https://github.com/seqan/seqan3/pull/1588)).
+
 # 3.0.1
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.

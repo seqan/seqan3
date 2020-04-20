@@ -222,5 +222,38 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_rev_cursor)
     }
 }
 
+TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend_const_char_pointer)
+{
+    using alphabet_type = typename TestFixture::alphabet_type;
+
+    // test case for https://github.com/seqan/seqan3/issues/1473
+    if constexpr (std::is_same<alphabet_type, char>::value)
+    {
+        typename TypeParam::index_type fm{this->text_col1}; // {"AACGATCGGA", "AACGATCGGA"}
+        char const * cg = "CG";
+
+        // extend_right()
+        {
+            TypeParam it1 = TypeParam(fm);
+            TypeParam it2 = TypeParam(fm);
+
+            it1.extend_right(cg);
+            it2.extend_right(seqan3::views::slice(this->text1, 1, 3));      // "CG"
+
+            EXPECT_TRUE(std::ranges::equal(it1.locate(), it2.locate()));
+        }
+        // extend_left()
+        {
+            auto it1 = TypeParam(fm);
+            auto it2 = TypeParam(fm);
+
+            it1.extend_left(cg);
+            it2.extend_right(seqan3::views::slice(this->text1, 1, 3));      // "CG"
+
+            EXPECT_TRUE(std::ranges::equal(it1.locate(), it2.locate()));
+        }
+    }
+}
+
 REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test, cursor, extend, extend_char, extend_range,
-                            extend_and_cycle, extend_range_and_cycle, to_fwd_cursor, to_rev_cursor);
+                            extend_and_cycle, extend_range_and_cycle, to_fwd_cursor, to_rev_cursor, extend_const_char_pointer);
