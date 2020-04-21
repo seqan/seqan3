@@ -146,8 +146,6 @@ public:
     using reference  = value_type &;
     //!\brief The const reference type.
     using const_reference = value_type const &;
-    //!\brief The size_type is void, because this range is never sized.
-    using size_type = void;
     //!\brief The type to store the difference of two iterators.
     using difference_type = ptrdiff_t;
     //!\brief The iterator type of this view (a random access iterator).

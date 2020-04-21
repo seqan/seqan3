@@ -446,16 +446,6 @@ public:
     //!\brief The const iterator type. Evaluates to void if the underlying range is not const iterable.
     using const_iterator    = transformation_trait_or_t<std::type_identity<iterator_type<underlying_range_type const>>,
                                                         void>;
-    //!\brief The reference_type.
-    using reference         = typename iterator::reference;
-    //!\brief The const_reference type is equal to the reference type.
-    using const_reference   = reference;
-    //!\brief The value_type (which equals the reference_type with any references removed).
-    using value_type        = typename iterator::value_type;
-    //!\brief If the underliying range is Sized, this resolves to range_type::size_type, otherwise void.
-    using size_type         = detail::transformation_trait_or_t<seqan3::size_type<underlying_range_type>, void>;
-    //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = std::iter_difference_t<iterator>;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -634,7 +624,7 @@ public:
      * \{
      */
     //!\brief Computes the size based on the size of the underlying range.
-    constexpr size_type size() const noexcept
+    constexpr auto size() const noexcept
     //!\cond
         requires std::ranges::sized_range<underlying_range_type>
     //!\endcond

@@ -48,14 +48,6 @@ private:
     //!\brief The selected frames corresponding to the frames required.
     small_vector<translation_frames, 6> selected_frames{};
 
-protected:
-    //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
-    template <typename, typename>
-    friend class detail::random_access_iterator_base;
-
-    /*!\name Associated types
-     * \{
-     */
     //!\brief The reference_type.
     using reference         = view_translate_single<std::ranges::all_view<std::ranges::range_reference_t<urng_t>>>;
     //!\brief The const_reference type.
@@ -66,6 +58,15 @@ protected:
     using size_type         = std::ranges::range_size_t<std::ranges::range_reference_t<urng_t>>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ranges::range_difference_t<std::ranges::range_reference_t<urng_t>>;
+
+protected:
+    //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
+    template <typename, typename>
+    friend class detail::random_access_iterator_base;
+
+    /*!\name Associated types
+     * \{
+     */
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = detail::random_access_iterator<view_translate_join>;
     //!\brief The const iterator type of this view (same as iterator, because it's a view).

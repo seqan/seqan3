@@ -60,6 +60,8 @@ private:
     size_t step_size{};
     //!\brief The range to be inserted into urange.
     inserted_rng_t inserted_range;
+    //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be Sized.
+    using size_type         = std::ranges::range_size_t<urng_t>;
 
 public:
     /*!\name Associated types
@@ -74,8 +76,6 @@ public:
                                                          std::ranges::range_reference_t<inserted_rng_t const>>, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = std::ranges::range_value_t<urng_t>;
-    //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be Sized.
-    using size_type         = std::ranges::range_size_t<urng_t>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ranges::range_difference_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
