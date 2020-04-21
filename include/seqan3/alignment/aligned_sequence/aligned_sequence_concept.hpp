@@ -203,8 +203,8 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT aligned_sequence =
     std::ranges::forward_range<t> &&
-    alphabet<reference_t<t>> &&
-    weakly_assignable_from<reference_t<t>, gap const &> &&
+    alphabet<std::ranges::range_reference_t<t>> &&
+    weakly_assignable_from<std::ranges::range_reference_t<t>, gap const &> &&
     requires { typename detail::unaligned_seq_t<t>; } &&
     requires (t v, detail::unaligned_seq_t<t> unaligned)
     {
@@ -369,7 +369,8 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
 template <sequence_container aligned_seq_t, std::ranges::forward_range unaligned_sequence_type>
 //!\cond
     requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>> &&
-             weakly_assignable_from<reference_t<aligned_seq_t>, reference_t<unaligned_sequence_type>>
+             weakly_assignable_from<std::ranges::range_reference_t<aligned_seq_t>,
+                                    std::ranges::range_reference_t<unaligned_sequence_type>>
 //!\endcond
 inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_type && unaligned_seq)
 {

@@ -387,8 +387,10 @@ public:
      */
     template <typename record_t>
     void push_back(record_t && r)
+    //!\cond
         requires tuple_like<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
+    //!\endcond
     {
         write_record(detail::get_or_ignore<field::seq>(r),
                      detail::get_or_ignore<field::id>(r),
@@ -425,7 +427,9 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
+    //!\cond
         requires tuple_like<tuple_t>
+    //!\endcond
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::seq)>(t),
@@ -492,7 +496,9 @@ public:
      */
     template <std::ranges::input_range rng_t>
     structure_file_output & operator=(rng_t && range)
-        requires tuple_like<reference_t<rng_t>>
+    //!\cond
+        requires tuple_like<std::ranges::range_reference_t<rng_t>>
+    //!\endcond
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -528,7 +534,9 @@ public:
      */
     template <std::ranges::input_range rng_t>
     friend structure_file_output & operator|(rng_t && range, structure_file_output & f)
-        requires tuple_like<reference_t<rng_t>>
+    //!\cond
+        requires tuple_like<std::ranges::range_reference_t<rng_t>>
+    //!\endcond
     {
         f = range;
         return f;
@@ -537,7 +545,9 @@ public:
     //!\overload
     template <std::ranges::input_range rng_t>
     friend structure_file_output operator|(rng_t && range, structure_file_output && f)
-        requires tuple_like<reference_t<rng_t>>
+    //!\cond
+        requires tuple_like<std::ranges::range_reference_t<rng_t>>
+    //!\endcond
     {
         f = range;
         return std::move(f);

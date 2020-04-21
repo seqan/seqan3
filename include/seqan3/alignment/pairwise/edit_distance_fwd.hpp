@@ -84,7 +84,7 @@ struct default_edit_distance_trait_type
     //!\brief The type of an iterator of the database sequence.
     using database_iterator = std::ranges::iterator_t<database_type>;
     //!\brief The alphabet type of the query sequence.
-    using query_alphabet_type = std::remove_reference_t<reference_t<query_type>>;
+    using query_alphabet_type = std::remove_reference_t<std::ranges::range_reference_t<query_type>>;
     //!\brief The intermediate result type of the execution of this function object.
     using result_value_type = typename align_result_selector<database_type, query_type, align_config_type>::type;
 

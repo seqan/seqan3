@@ -55,7 +55,7 @@ public:
      * \{
      */
     //!\brief The reference_type.
-    using reference         = reference_t<urng_t>;
+    using reference         = std::ranges::range_reference_t<urng_t>;
     //!\brief The const_reference type is equal to the reference type.
     using const_reference   = reference;
     //!\brief The value_type (which equals the reference_type with any references removed).
@@ -234,7 +234,7 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                       | *preserved*                                        |
  * | seqan3::const_iterable_range     |                                       | *preserved*                                        |
  * |                                  |                                       |                                                    |
- * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
+ * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>             |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *

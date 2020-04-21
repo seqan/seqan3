@@ -42,7 +42,7 @@ struct naive_kmer_hash_fn
      */
     template <std::ranges::viewable_range urng_t>
     //!\cond
-        requires semialphabet<reference_t<urng_t>>
+        requires semialphabet<std::ranges::range_reference_t<urng_t>>
     //!\endcond
     constexpr auto operator()(urng_t && urange, size_t const k) const noexcept
     {

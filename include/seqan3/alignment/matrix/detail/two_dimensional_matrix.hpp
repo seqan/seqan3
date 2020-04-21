@@ -347,7 +347,7 @@ public:
     //!\brief Value type of this iterator.
     using value_type = std::iter_value_t<storage_iterator>;
     //!\brief Reference to `value_type`.
-    using reference = reference_t<storage_iterator>;
+    using reference = std::iter_reference_t<storage_iterator>;
     //!\brief The pointer type.
     using pointer = typename storage_iterator::pointer;
     //!\brief Type for distances between iterators.

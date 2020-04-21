@@ -86,7 +86,7 @@ private:
         friend base_t;
 
         //!\brief The proxy of the underlying data type.
-        reference_t<data_type> internal_proxy;
+        std::ranges::range_reference_t<data_type> internal_proxy;
 
         //!\brief Update the sdsl-proxy.
         constexpr void on_update() noexcept
@@ -110,7 +110,7 @@ private:
         ~reference_proxy_type()                                                  noexcept = default; //!< Defaulted.
 
         //!\brief Initialise from internal proxy type.
-        reference_proxy_type(reference_t<data_type> const & internal) noexcept :
+        reference_proxy_type(std::ranges::range_reference_t<data_type> const & internal) noexcept :
             internal_proxy{internal}
         {
             static_cast<base_t &>(*this).assign_rank(internal);

@@ -30,15 +30,17 @@ namespace seqan3::detail
  * This concept refines the std::ranges::input_range concept to allow streaming the range object to the debug stream,
  * with the following requirements:
  *
- * * `rng_t` is not the same type as `reference_t<rng_t>`,
+ * * `rng_t` is not the same type as `std::ranges::range_reference_t<rng_t>`,
  * * `rng_t` is not a pointer or c-style array,
- * * `reference_t<rng_t>` is not `char`.
+ * * `std::ranges::range_reference_t<rng_t>` is not `char`.
  */
 template <typename rng_t>
 SEQAN3_CONCEPT debug_stream_range_guard =
-    !std::same_as<remove_cvref_t<reference_t<rng_t>>, remove_cvref_t<rng_t>> && // prevent recursive instantiation
+    !std::same_as<remove_cvref_t<std::ranges::range_reference_t<rng_t>>,
+                                remove_cvref_t<rng_t>> && // prevent recursive instantiation
     // exclude null-terminated strings:
-    !(std::is_pointer_v<std::decay_t<rng_t>> && std::same_as<remove_cvref_t<reference_t<rng_t>>, char>);
+    !(std::is_pointer_v<std::decay_t<rng_t>> &&
+      std::same_as<remove_cvref_t<std::ranges::range_reference_t<rng_t>>, char>);
 
 /*!\brief Helper template variable that checks if the reference type of a range can be streamed into an instance of
  *        seqan3::debug_stream_type .
@@ -56,7 +58,7 @@ constexpr bool reference_type_is_streamable_v = false;
 
 //!\cond
 template <std::ranges::range rng_t, typename char_t>
-    requires requires (reference_t<rng_t> l, debug_stream_type<char_t> s) { { s << l }; }
+    requires requires (std::ranges::range_reference_t<rng_t> l, debug_stream_type<char_t> s) { { s << l }; }
 constexpr bool reference_type_is_streamable_v<rng_t, char_t> = true;
 //!\endcond
 }
@@ -94,8 +96,8 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng
     static_assert(detail::reference_type_is_streamable_v<rng_t, char_t>,
                   "The reference type of the passed range cannot be streamed into the debug_stream.");
 
-    if constexpr (alphabet<reference_t<rng_t>> &&
-                  !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<rng_t>>>)
+    if constexpr (alphabet<std::ranges::range_reference_t<rng_t>> &&
+                  !detail::is_uint_adaptation_v<remove_cvref_t<std::ranges::range_reference_t<rng_t>>>)
     {
         for (auto && l : r)
             s << l;

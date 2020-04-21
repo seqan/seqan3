@@ -112,7 +112,7 @@ template <std::ranges::input_range rng_t>
 struct const_reference<rng_t>
 {
     //!\brief Resolves to the reference type of the `const_iterator` of t (not the `const iterator`!).
-    using type = reference_t<std::ranges::iterator_t<rng_t const>>;
+    using type = std::iter_reference_t<std::ranges::iterator_t<rng_t const>>;
 };
 
 // ----------------------------------------------------------------------------

@@ -38,7 +38,7 @@ namespace seqan3::detail
 /*!\brief The type returned by seqan3::views::take_until and seqan3::views::take_until_or_throw.
  * \tparam urng_t    The type of the underlying range, must model std::ranges::view.
  * \tparam fun_t     Type of the callable that will be evaluated on every member; must model
- *                   std::invocable with seqan3::reference_t<urng_t> as argument and return `bool`.
+ *                   std::invocable with std::ranges::range_reference_t<urng_t> as argument and return `bool`.
  * \tparam or_throw  Whether to throw an exception when the input is exhausted before the end of line is reached.
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
@@ -53,9 +53,10 @@ class view_take_until : public std::ranges::view_interface<view_take_until<urng_
 {
 private:
 
-    static_assert(std::invocable<fun_t, reference_t<urng_t>>,
-                  "The functor type for views::take_until must model std::invocable<fun_t, reference_t<urng_t>>.");
-    static_assert(std::boolean<std::result_of_t<fun_t&&(reference_t<urng_t>)>>,
+    static_assert(std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>,
+                  "The functor type for views::take_until must model"
+                  "std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>.");
+    static_assert(std::boolean<std::result_of_t<fun_t&&(std::ranges::range_reference_t<urng_t>)>>,
                   "The functor type for views::take_until must return std::boolean.");
 
     //!\brief The underlying range.
@@ -66,7 +67,7 @@ private:
 
     //!\brief Whether this view is const_iterable or not.
     static constexpr bool const_iterable = const_iterable_range<urng_t> &&
-                                           std::regular_invocable<fun_t, reference_t<urng_t>>;
+                                           std::regular_invocable<fun_t, std::ranges::range_reference_t<urng_t>>;
 
     //!\brief The iterator type inherits from the underlying type, but overwrites several operators.
     //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
@@ -349,7 +350,7 @@ public:
      * \{
      */
     //!\brief The reference_type.
-    using reference         = reference_t<urng_t>;
+    using reference         = std::ranges::range_reference_t<urng_t>;
     //!\brief The const_reference type is equal to the reference type if the underlying range is const-iterable.
     using const_reference   = detail::transformation_trait_or_t<seqan3::reference<urng_t const>, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
@@ -528,7 +529,7 @@ namespace seqan3::views
  *                      true (or the end of the underlying range is reached).
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
- * \tparam fun_t        The type of the functor; must model std::invocable with seqan3::reference_t<urng_t>
+ * \tparam fun_t        The type of the functor; must model std::invocable with std::ranges::range_reference_t<urng_t>
  *                      and return a type convertible to `bool`.
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \param[in] fun       The functor.
@@ -557,12 +558,12 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                       | *preserved*                                        |
  * | seqan3::const_iterable_range     |                                       | *preserved*¹                                       |
  * |                                  |                                       |                                                    |
- * | std::ranges::range_reference_t   |                                       | seqan3::reference_t<urng_t>                        |
+ * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>             |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ¹ The marked properties are only *preserved* if the specified functor models
- * `std::regular_invocable<fun_t, reference_t<urng_t>`, i.e. applying the functor doesn't change the functor.
+ * `std::regular_invocable<fun_t, std::ranges::range_reference_t<urng_t>`, i.e. applying the functor doesn't change the functor.
  * If the functor only models `std::invocable` and not `std::regular_invocable` these concepts are *lost*.
  *
  * Throwing: `seqan3::views::take_until_or_throw` and `seqan3::views::take_until_or_throw_and_consume` throw an exception

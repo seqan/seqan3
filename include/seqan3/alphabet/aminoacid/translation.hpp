@@ -128,7 +128,7 @@ constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (tuple_type const & input
  */
 template <genetic_code gc = genetic_code::CANONICAL, std::ranges::input_range range_type>
 //!\cond
-    requires nucleotide_alphabet<reference_t<std::decay_t<range_type>>>
+    requires nucleotide_alphabet<std::ranges::range_reference_t<std::decay_t<range_type>>>
 //!\endcond
 constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_range)
 {
@@ -164,7 +164,7 @@ constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_rang
  */
 template <genetic_code gc = genetic_code::CANONICAL, std::ranges::random_access_range rng_t>
 //!\cond
-    requires nucleotide_alphabet<reference_t<std::decay_t<rng_t>>>
+    requires nucleotide_alphabet<std::ranges::range_reference_t<std::decay_t<rng_t>>>
 //!\endcond
 constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (rng_t && input_range)
 {

@@ -615,7 +615,7 @@ public:
     template <typename rng_t>
     alignment_file_output & operator=(rng_t && range)
     //!\cond
-        requires std::ranges::input_range<rng_t> && tuple_like<reference_t<rng_t>>
+        requires std::ranges::input_range<rng_t> && tuple_like<std::ranges::range_reference_t<rng_t>>
     //!\endcond
     {
         for (auto && record : range)
@@ -654,7 +654,7 @@ public:
     template <typename rng_t>
     friend alignment_file_output & operator|(rng_t && range, alignment_file_output & f)
     //!\cond
-        requires std::ranges::input_range<rng_t> && tuple_like<reference_t<rng_t>>
+        requires std::ranges::input_range<rng_t> && tuple_like<std::ranges::range_reference_t<rng_t>>
     //!\endcond
     {
         f = range;
@@ -665,7 +665,7 @@ public:
     template <typename rng_t>
     friend alignment_file_output operator|(rng_t && range, alignment_file_output && f)
     //!\cond
-        requires std::ranges::input_range<rng_t> && tuple_like<reference_t<rng_t>>
+        requires std::ranges::input_range<rng_t> && tuple_like<std::ranges::range_reference_t<rng_t>>
     //!\endcond
     {
         f = range;
@@ -753,9 +753,9 @@ protected:
         {
             header_ptr->ref_id_info.emplace_back(ref_lengths[idx], "");
 
-            if constexpr (std::ranges::contiguous_range<reference_t<ref_ids_type_>> &&
-                          std::ranges::sized_range<reference_t<ref_ids_type_>> &&
-                          forwarding_range<reference_t<ref_ids_type_>>)
+            if constexpr (std::ranges::contiguous_range<std::ranges::range_reference_t<ref_ids_type_>> &&
+                          std::ranges::sized_range<std::ranges::range_reference_t<ref_ids_type_>> &&
+                          forwarding_range<std::ranges::range_reference_t<ref_ids_type_>>)
             {
                 auto && id = header_ptr->ref_ids()[idx];
                 header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;

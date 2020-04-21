@@ -87,8 +87,8 @@ TEST(view_to_upper, concepts)
               std::ranges::common_range<decltype(upper_view)>);
     EXPECT_EQ(seqan3::const_iterable_range<decltype(input_string)>,
               seqan3::const_iterable_range<decltype(upper_view)>);
-    EXPECT_TRUE((std::same_as<std::remove_reference_t<seqan3::reference_t<decltype(input_string)>>,
-                              std::remove_reference_t<seqan3::reference_t<decltype(upper_view)>>>));
+    EXPECT_TRUE((std::same_as<std::remove_reference_t<std::ranges::range_reference_t<decltype(input_string)>>,
+                              std::remove_reference_t<std::ranges::range_reference_t<decltype(upper_view)>>>));
 
     // Guaranteed
     EXPECT_TRUE(std::ranges::viewable_range<decltype(upper_view)>);

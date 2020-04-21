@@ -163,7 +163,7 @@
  *
  * **Returned range's reference type:** Conversely certain views make guarantees on the concepts satisfied by the
  * return range's reference type or even always have a fixed type, e.g. seqan3::views::complement operates on
- * nucleotides and of course also returns nucleotides and "seqan3::reference_t<urng_t>" would imply that
+ * nucleotides and of course also returns nucleotides and "std::ranges::range_reference_t<urng_t>" would imply that
  * the reference type is the same. However, and this is important to note, the reference type
  * of seqan3::views::complement has any actual `&` removed from the underlying ranges' reference type (if originally present),
  * this goes hand-in-hand with std::ranges::output_range being lost → original elements cannot be written to through

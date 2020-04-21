@@ -39,7 +39,7 @@ template <std::ranges::view urng_t>
 //!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
-             nucleotide_alphabet<reference_t<urng_t>>
+             nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
 //!\endcond
 class view_translate;
 
@@ -47,7 +47,7 @@ template <std::ranges::view urng_t>
 //!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
-             nucleotide_alphabet<reference_t<urng_t>>
+             nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
 //!\endcond
 class view_translate_single;
 
@@ -121,7 +121,7 @@ struct translate_fn
             "The range parameter to views::translate[_single] must model std::ranges::sized_range.");
         static_assert(std::ranges::random_access_range<urng_t>,
             "The range parameter to views::translate[_single] must model std::ranges::random_access_range.");
-        static_assert(nucleotide_alphabet<reference_t<urng_t>>,
+        static_assert(nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>,
             "The range parameter to views::translate[_single] must be over elements of seqan3::nucleotide_alphabet.");
 
         if constexpr (single)
@@ -152,7 +152,7 @@ template <std::ranges::view urng_t>
 //!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
-             nucleotide_alphabet<reference_t<urng_t>>
+             nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
 //!\endcond
 class view_translate_single : public ranges::view_base
 {
@@ -524,7 +524,7 @@ template <std::ranges::view urng_t>
 //!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
-             nucleotide_alphabet<reference_t<urng_t>>
+             nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
 //!\endcond
 class view_translate : public ranges::view_base
 {
@@ -743,7 +743,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
-             nucleotide_alphabet<reference_t<urng_t>>
+             nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
 //!\endcond
 view_translate(urng_t &&, translation_frames const = translation_frames{}) -> view_translate<std::ranges::all_view<urng_t>>;
 
