@@ -13,8 +13,6 @@
 
 #pragma once
 
-#include <seqan3/range/detail/enable_view.hpp>
-
 #if __cpp_lib_ranges // C++20 ranges available
 #include <ranges>
 #else // implement via range-v3
@@ -76,37 +74,5 @@ namespace std
 namespace views = ranges::views;
 
 } // namespace std::
-
-// ============================================================================
-//  traits voodoo
-// ============================================================================
-
-namespace ranges
-{
-
-//!\brief Customises ranges type trait that indicates whether `type` is a view.
-template <typename type>
-//!\cond
-    requires (seqan3::detail::enable_view<type> == 0) || (seqan3::detail::enable_view<type> == 1)
-//!\endcond
-constexpr bool enable_view<type> = static_cast<bool>(seqan3::detail::enable_view<type>);
-
-} // namespace ranges
-
-#endif // no standard header
-
-#if __cpp_lib_ranges
-
-namespace std::ranges
-{
-
-//!\brief Customises std::ranges type trait that indicates whether `type` is a view.
-template <typename type>
-//!\cond
-    requires (seqan3::detail::enable_view<type> == 0) || (seqan3::detail::enable_view<type> == 1)
-//!\endcond
-constexpr bool enable_view<type> = static_cast<bool>(seqan3::detail::enable_view<type>);
-
-} // namespace std::ranges
 
 #endif // standard header
