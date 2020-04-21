@@ -24,7 +24,7 @@ using seqan3::operator""_dna4;
 using seqan3::operator""_shape;
 using result_t = std::vector<size_t>;
 using iterator_type = std::ranges::iterator_t< decltype(std::declval<seqan3::dna4_vector&>()
-                                                        | seqan3::views::kmer_hash(0b1001_shape)
+                                                        | seqan3::views::kmer_hash(seqan3::ungapped{4})
                                                         | seqan3::views::minimiser(5))>;
 
 static constexpr auto kmer_view = seqan3::views::kmer_hash(seqan3::ungapped{4});
@@ -39,10 +39,11 @@ struct iterator_fixture<iterator_type> : public ::testing::Test
     static constexpr bool const_iterable = true;
 
     seqan3::dna4_vector text{"ACGGCGACGTTTAG"_dna4};
-    decltype(seqan3::views::kmer_hash(text, 0b1001_shape)) vec = text | kmer_view;
+    decltype(seqan3::views::kmer_hash(text, seqan3::ungapped{4})) vec = text | kmer_view;
     result_t expected_range{26, 97, 27};
 
-    result_t test_range = seqan3::views::minimiser(vec, 5) | seqan3::views::to<result_t>;
+    decltype(seqan3::views::minimiser(seqan3::views::kmer_hash(text, seqan3::ungapped{4}), 5)) test_range =
+    seqan3::views::minimiser(vec, 5);
 };
 
 using test_type = ::testing::Types<iterator_type>;
