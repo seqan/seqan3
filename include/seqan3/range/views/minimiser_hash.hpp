@@ -18,6 +18,7 @@
 
 namespace seqan3::detail
 {
+//!\brief views::minimiser_hash's range adaptor object type (non-closure).
 struct minimiser_hash_fn
 {
     /*!\brief Store the shape and the window_size and return a range adaptor closure object.
