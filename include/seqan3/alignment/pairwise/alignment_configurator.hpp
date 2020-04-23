@@ -262,14 +262,12 @@ public:
             using indexed_sequence_pair_chunk_t = std::ranges::range_value_t<indexed_sequence_pair_range_t>;
 
             // Select the result type based on the sequences and the configuration.
-            using result_t = alignment_result<typename align_result_selector<std::remove_reference_t<wrapped_first_t>,
-                                                                             std::remove_reference_t<wrapped_second_t>,
-                                                                             config_t
-                                                                            >::type
-                                             >;
-            using result_collection_t = std::vector<result_t>;  // Use a vector as return type.
+            using alignment_result_value_t = typename align_result_selector<std::remove_reference_t<wrapped_first_t>,
+                                                                            std::remove_reference_t<wrapped_second_t>,
+                                                                            config_t>::type;
+            using callback_on_result_t = std::function<void(alignment_result<alignment_result_value_t>)>;
             // Define the function wrapper type.
-            using function_wrapper_t = std::function<result_collection_t(indexed_sequence_pair_chunk_t)>;
+            using function_wrapper_t = std::function<void(indexed_sequence_pair_chunk_t, callback_on_result_t)>;
 
             // ----------------------------------------------------------------------------
             // Test some basic preconditions

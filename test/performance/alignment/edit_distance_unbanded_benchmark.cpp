@@ -32,6 +32,11 @@ using namespace seqan3::test;
 constexpr auto edit_distance_cfg = seqan3::align_cfg::edit |
                                    seqan3::align_cfg::result{seqan3::with_score};
 
+// Shortcut to determine the alignment result type.
+template <typename seq1_t, typename seq2_t, typename config_t>
+using alignment_result_type_t = seqan3::alignment_result<
+    typename seqan3::detail::align_result_selector<seq1_t, seq2_t, config_t>::type>;
+
 #ifdef SEQAN3_HAS_SEQAN2
 template <typename alphabet_t>
 int global_edit_distance_seqan2(
@@ -61,15 +66,21 @@ void seqan3_edit_distance_dna4(benchmark::State & state)
     auto seq2 = generate_sequence<seqan3::dna4>(sequence_length, 0, 1);
     int score = 0;
 
-    using edit_traits_t = seqan3::detail::default_edit_distance_trait_type<std::add_lvalue_reference_t<decltype(seq1)>,
-                                                                           std::add_lvalue_reference_t<decltype(seq2)>,
+    using seq1_ref_t = std::add_lvalue_reference_t<decltype(seq1)>;
+    using seq2_ref_t = std::add_lvalue_reference_t<decltype(seq2)>;
+    using alignment_result_t = alignment_result_type_t<seq1_ref_t, seq2_ref_t, decltype(edit_distance_cfg)>;
+
+    using edit_traits_t = seqan3::detail::default_edit_distance_trait_type<seq1_ref_t,
+                                                                           seq2_ref_t,
                                                                            decltype(edit_distance_cfg),
+                                                                           alignment_result_t,
                                                                            std::false_type>;
+
 
     for (auto _ : state)
     {
         seqan3::detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg, edit_traits_t{}};
-        edit_distance(0u);
+        edit_distance(0u, [] (auto) {/*do nothing*/});
         score += edit_distance.score().value_or(0u);
     }
 
@@ -143,9 +154,14 @@ void seqan3_edit_distance_dna4_collection(benchmark::State & state)
     using seq1_t = std::tuple_element_t<0, std::ranges::range_value_t<decltype(vec)>>;
     using seq2_t = std::tuple_element_t<1, std::ranges::range_value_t<decltype(vec)>>;
 
-    using edit_traits_t = seqan3::detail::default_edit_distance_trait_type<std::add_lvalue_reference_t<seq1_t>,
-                                                                           std::add_lvalue_reference_t<seq2_t>,
+    using seq1_ref_t = std::add_lvalue_reference_t<seq2_t>;
+    using seq2_ref_t = std::add_lvalue_reference_t<seq1_t>;
+    using alignment_result_t = alignment_result_type_t<seq1_ref_t, seq2_ref_t, decltype(edit_distance_cfg)>;
+
+    using edit_traits_t = seqan3::detail::default_edit_distance_trait_type<seq1_ref_t,
+                                                                           seq2_ref_t,
                                                                            decltype(edit_distance_cfg),
+                                                                           alignment_result_t,
                                                                            std::false_type>;
 
     for (auto _ : state)
@@ -153,7 +169,7 @@ void seqan3_edit_distance_dna4_collection(benchmark::State & state)
         for (auto && [seq1, seq2] : vec)
         {
             seqan3::detail::edit_distance_unbanded edit_distance{seq1, seq2, edit_distance_cfg, edit_traits_t{}};
-            edit_distance(0u);
+            edit_distance(0u, [] (auto) {/*do nothing*/});
             score += edit_distance.score().value_or(0u);
         }
     }

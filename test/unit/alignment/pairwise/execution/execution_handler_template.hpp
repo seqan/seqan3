@@ -47,20 +47,11 @@ struct execution_handler : public ::testing::Test
     std::vector<seqan3::dna4_vector> sequence_collection2{};
 };
 
-auto simulate_alignment = [](size_t const idx, auto && rng1, auto && rng2)
+auto simulate_alignment_with_range = [] (auto indexed_sequence_pairs,
+                                         std::function<void(std::pair<size_t, size_t>)> && callback)
 {
-    return std::pair{idx, rng1.size() + rng2.size()};
-};
-
-auto simulate_alignment_with_range = [] (auto indexed_sequence_pairs)
-{
-    std::vector<std::pair<size_t, size_t>> results{};
     for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
-    {
-        results.emplace_back(idx, std::get<0>(sequence_pair).size() + std::get<1>(sequence_pair).size());
-    }
-
-    return results;
+        callback(std::pair{idx, std::get<0>(sequence_pair).size() + std::get<1>(sequence_pair).size()});
 };
 
 TYPED_TEST_SUITE_P(execution_handler);
@@ -85,9 +76,10 @@ TYPED_TEST_P(execution_handler, execute_as_indexed_sequence_pairs)
          it += chunk_size, pos += chunk_size)
     {
         std::ranges::subrange<range_iterator_t, range_iterator_t> chunk{it, std::next(it, chunk_size)};
-        exec_handler.execute(simulate_alignment_with_range, chunk, [=, &buffer] (auto res_range)
+        exec_handler.execute(simulate_alignment_with_range, chunk, [_pos = pos, &buffer] (auto && res) mutable
         {
-            std::ranges::move(res_range, buffer.begin() + pos);
+            *(buffer.begin() + _pos) = std::forward<decltype(res)>(res);
+            ++_pos;
         });
     }
 

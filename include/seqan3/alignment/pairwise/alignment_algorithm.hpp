@@ -32,6 +32,7 @@
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/view_to_simd.hpp>
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
+#include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/get.hpp>
@@ -135,11 +136,11 @@ public:
     /*!\brief Computes the pairwise sequence alignment for the given range over indexed sequence pairs.
      * \tparam indexed_sequence_pairs_t The type of indexed_sequence_pairs; must model
      *                                  seqan3::detail::indexed_sequence_pair_range.
+     * \tparam callback_t The type of the callback function that is called with the alignment result; must model
+     *                    std::invocable accepting one argument of type seqan3::alignment_result.
      *
      * \param[in] indexed_sequence_pairs A range over indexed sequence pairs to be aligned.
-     *
-     * \returns A std::vector over seqan3::alignment_result with the requested alignment results for every
-     *          sequence pair in the given range.
+     * \param[in] callback The callback function to be invoked with each computed alignment result.
      *
      * \throws std::bad_alloc during allocation of the alignment matrices or
      *         seqan3::invalid_alignment_configuration if an invalid configuration for the given sequences is detected.
@@ -148,6 +149,7 @@ public:
      *
      * Uses the standard dynamic programming algorithm to compute the pairwise sequence alignment for each
      * sequence pair. The space and runtime complexities depend on the selected configurations (see below).
+     * For every computed alignment the given callback is invoked with the respective alignment result.
      *
      * ### Exception
      *
@@ -173,31 +175,29 @@ public:
      * |space (begin positions) |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
      * |space (alignment)       |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
      */
-    template <indexed_sequence_pair_range indexed_sequence_pairs_t>
+    template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
     //!\cond
-        requires !traits_t::is_vectorised
+        requires !traits_t::is_vectorised &&
+                 is_type_specialisation_of_v<
+                    typename function_traits<std::remove_reference_t<callback_t>>::template argument_type_at<0>,
+                    alignment_result>
     //!\endcond
-    auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs)
+    void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
-        using sequence_pairs_t = std::tuple_element_t<0, std::ranges::range_value_t<indexed_sequence_pairs_t>>;
-        using sequence1_t = std::tuple_element_t<0, sequence_pairs_t>;
-        using sequence2_t = std::tuple_element_t<1, sequence_pairs_t>;
-        using result_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
-
         using std::get;
 
-        std::vector<alignment_result<result_t>> results{};
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
-            results.emplace_back(compute_single_pair(idx, get<0>(sequence_pair), get<1>(sequence_pair)));
-
-        return results;
+            compute_single_pair(idx, get<0>(sequence_pair), get<1>(sequence_pair), callback);
     }
 
     //!\overload
-    template <indexed_sequence_pair_range indexed_sequence_pairs_t>
-    auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs)
+    template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
+    void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     //!\cond
-        requires traits_t::is_vectorised
+        requires traits_t::is_vectorised &&
+                 is_type_specialisation_of_v<
+                    typename function_traits<std::remove_reference_t<callback_t>>::template argument_type_at<0>,
+                    alignment_result>
     //!\endcond
     {
         assert(cfg_ptr != nullptr);
@@ -224,7 +224,7 @@ public:
 
         compute_matrix(simd_sequences1, simd_sequences2);
 
-        return make_alignment_result(indexed_sequence_pairs);
+        make_alignment_result(indexed_sequence_pairs, callback);
     }
     //!\}
 
@@ -261,12 +261,12 @@ private:
     /*!\brief Computes the pairwise sequence alignment for a single pair of sequences.
      * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
      * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.
+     * \tparam callback_t The type of the callback function.
      *
      * \param[in] idx The index of the current processed sequence pair.
      * \param[in] sequence1 The first sequence (or packed sequences).
      * \param[in] sequence2 The second sequence (or packed sequences).
-     *
-     * \returns A seqan3::alignment_result with the requested alignment outcomes.
+     * \param[in] callback The callback function to be invoked with the alignment result.
      *
      * \throws std::bad_alloc during allocation of the alignment matrices or
      *         seqan3::invalid_alignment_configuration if an invalid configuration for the given sequences is detected.
@@ -275,8 +275,13 @@ private:
      *
      * Uses the standard dynamic programming algorithm to compute the pairwise sequence alignment.
      */
-    template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
-    constexpr auto compute_single_pair(size_t const idx, sequence1_t && sequence1, sequence2_t && sequence2)
+    template <std::ranges::forward_range sequence1_t,
+              std::ranges::forward_range sequence2_t,
+              typename callback_t>
+    constexpr void compute_single_pair(size_t const idx,
+                                       sequence1_t && sequence1,
+                                       sequence2_t && sequence2,
+                                       callback_t & callback)
     {
         assert(cfg_ptr != nullptr);
 
@@ -294,12 +299,12 @@ private:
             auto && [subsequence1, subsequence2] = this->slice_sequences(sequence1, sequence2, band);
             // It would be great to use this interface here instead
             compute_matrix(subsequence1, subsequence2, band);
-            return make_alignment_result(idx, subsequence1, subsequence2);
+            make_alignment_result(idx, subsequence1, subsequence2, callback);
         }
         else
         {
             compute_matrix(sequence1, sequence2);
-            return make_alignment_result(idx, sequence1, sequence2);
+            make_alignment_result(idx, sequence1, sequence2, callback);
         }
     }
 
@@ -562,6 +567,7 @@ private:
     }
 
     /*!\brief Creates a new alignment result from the current alignment optimum and for the given pair of sequences.
+     * \tparam callback_t The type of the callback function.
      * \tparam index_t The type of the index.
      * \tparam sequence1_t The type of the first sequence.
      * \tparam sequence2_t The type of the second sequence.
@@ -569,8 +575,7 @@ private:
      * \param[in] idx The internal index used for this pair of sequences.
      * \param[in] sequence1 The first range to get the alignment for if requested.
      * \param[in] sequence2 The second range to get the alignment for if requested.
-     *
-     * \returns A seqan3::alignment_result with the requested alignment outcomes.
+     * \param[in] callback The callback function to be invoked with the alignment result.
      *
      * \details
      *
@@ -584,15 +589,20 @@ private:
      *
      * If the alignment is run in debug mode (see seqan3::align_cfg::debug) the debug score and optionally trace matrix
      * are stored in the alignment result as well.
+     *
+     * Finally, the callback is invoked with the computed alignment result.
      */
-    template <typename index_t, typename sequence1_t, typename sequence2_t>
+    template <typename index_t, typename sequence1_t, typename sequence2_t, typename callback_t>
     //!\cond
         requires !traits_t::is_vectorised
     //!\endcond
-    constexpr auto make_alignment_result(index_t const idx,
+    constexpr void make_alignment_result(index_t const idx,
                                          sequence1_t & sequence1,
-                                         sequence2_t & sequence2)
+                                         sequence2_t & sequence2,
+                                         callback_t & callback)
     {
+        using alignment_result_t = typename function_traits<callback_t>::template argument_type_at<0>;
+
         // ----------------------------------------------------------------------------
         // Build the alignment result
         // ----------------------------------------------------------------------------
@@ -600,8 +610,7 @@ private:
         static_assert(config_t::template exists<align_cfg::result>(),
                       "The configuration must contain an align_cfg::result element.");
 
-        using result_value_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
-        result_value_t res{};
+        typename alignment_result_value_type_accessor<alignment_result_t>::type res{};
 
         res.id = idx;
 
@@ -640,16 +649,16 @@ private:
                 res.trace_debug_matrix = std::move(trace_debug_matrix);
         }
 
-        return res;
+        callback(std::move(res));
     }
 
     /*!\brief Creates a new alignment result from the current alignment optimum and for the given indexed sequence
      *        range.
+     * \tparam callback_t The type of the callback function.
      * \tparam indexed_sequence_pair_range_t The type of the indexed sequence pair range.
      *
      * \param[in] index_sequence_pairs The range over indexed sequence pairs.
-     *
-     * \returns A std::vector over seqan3::alignment_result with the requested alignment outcomes.
+     * \param[in] callback The callback function to be invoked with the alignment result.
      *
      * \details
      *
@@ -665,22 +674,18 @@ private:
      *
      * If the alignment is run in debug mode (see seqan3::align_cfg::debug) the debug score and optionally trace matrix
      * are stored in the alignment result as well.
+     *
+     * Finally, the callback is invoked with each computed alignment result iteratively.
      */
-    template <typename indexed_sequence_pair_range_t>
+    template <typename indexed_sequence_pair_range_t, typename callback_t>
     //!\cond
         requires traits_t::is_vectorised
     //!\endcond
-    constexpr auto make_alignment_result(indexed_sequence_pair_range_t && index_sequence_pairs)
+    constexpr auto make_alignment_result(indexed_sequence_pair_range_t && index_sequence_pairs,
+                                         callback_t & callback)
     {
-        using indexed_sequence_pair_t = std::ranges::range_value_t<indexed_sequence_pair_range_t>;
-        using sequence_pair_t = std::tuple_element_t<0, indexed_sequence_pair_t>;
-        using sequence1_t = std::tuple_element_t<0, sequence_pair_t>;
-        using sequence2_t = std::tuple_element_t<1, sequence_pair_t>;
-
-        using result_value_t = typename align_result_selector<sequence1_t, sequence2_t, config_t>::type;
-
-        std::vector<alignment_result<result_value_t>> results{};
-        results.reserve(std::ranges::distance(index_sequence_pairs));
+        using alignment_result_t = typename function_traits<callback_t>::template argument_type_at<0>;
+        using result_value_t = typename alignment_result_value_type_accessor<alignment_result_t>::type;
 
         size_t simd_index = 0;
         for (auto && [sequence_pairs, alignment_index] : index_sequence_pairs)
@@ -698,11 +703,9 @@ private:
                 res.back_coordinate.second = this->alignment_state.optimum.row_index[simd_index];
             }
 
-            results.emplace_back(std::move(res));
+            callback(std::move(res));
             ++simd_index;
         }
-
-        return results;
     }
 
     /*!\brief Dumps the current alignment matrix in the debug score matrix and if requested debug trace matrix.

@@ -65,10 +65,8 @@ private:
     /*!\name Buffer types
      * \{
      */
-    //!\brief The result of invoking the alignment instance.
-    using alignment_result_type = typename alignment_algorithm_t::result_type;
     //!\brief The actual alignment result.
-    using buffer_value_type = std::ranges::range_value_t<alignment_result_type>;
+    using buffer_value_type = typename alignment_function_traits<alignment_algorithm_t>::alignment_result_type;
     //!\brief The internal buffer.
     using buffer_type       = std::vector<buffer_value_type>;
     //!\brief The pointer type of the buffer.
@@ -262,9 +260,10 @@ private:
             current_chunk_size = std::ranges::distance(current_chunk);
             assert(in_avail() >= current_chunk_size);
 
-            exec_handler.execute(kernel, std::move(current_chunk), [write_to = gptr] (auto && alignment_results)
+            exec_handler.execute(kernel, std::move(current_chunk), [write_to = gptr] (auto && alignment_result) mutable
             {
-                std::ranges::move(alignment_results, write_to);
+                *write_to = std::move(alignment_result);
+                ++write_to;
             });
         }
 

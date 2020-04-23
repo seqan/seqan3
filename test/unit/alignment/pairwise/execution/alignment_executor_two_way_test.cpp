@@ -21,10 +21,10 @@
 // which counts the number of equal base pairs.
 struct dummy_alignment
 {
-    template <typename indexed_sequence_pairs_t>
-    constexpr auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs) const
+    template <typename indexed_sequence_pairs_t, typename callback_t>
+    constexpr void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs,
+                              callback_t && callback) const
     {
-        std::vector<size_t> result{};
         for (auto && indexed_pair : indexed_sequence_pairs)
         {
             using std::get;
@@ -35,10 +35,8 @@ struct dummy_alignment
                 if (lhs == rhs)
                     ++count;
 
-            result.push_back(count);
+            callback(count);
         }
-
-        return result;
     }
 };
 
@@ -47,7 +45,8 @@ struct algorithm_type_for_input
 {
     using indexed_sequence_pairs_t = typename seqan3::detail::chunked_indexed_sequence_pairs<resource_t>::type;
     using algorithm_input_t = std::ranges::range_value_t<indexed_sequence_pairs_t>;
-    using type = std::function<std::vector<size_t>(algorithm_input_t)>;
+    using callback_t = std::function<void(size_t)>;
+    using type = std::function<void(algorithm_input_t, callback_t)>;
 };
 
 template <typename t>
