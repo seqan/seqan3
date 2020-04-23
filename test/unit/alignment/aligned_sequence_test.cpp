@@ -20,7 +20,7 @@ class aligned_sequence_<container_type> : public ::testing::Test
 {
 public:
     // Initializer function is needed for the typed test because the gapped_decorator
-    // will be initialized differently than the naive vector<seqan3::gapped<dna>>.
+    // will be initialized differently than the naive std::vector<seqan3::gapped<dna>>.
     void initialise_typed_test_container(container_type & container_, seqan3::dna4_vector const & target)
     {
         container_.clear();
