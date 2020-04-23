@@ -223,6 +223,9 @@ private:
     //!\brief The sentinel type of the underlying range.
     using sentinel_t = std::ranges::sentinel_t<rng_t>;
 
+    template <typename urng2_t>
+    friend class shape_iterator;
+
 public:
     /*!\name Associated types
      * \{
@@ -252,6 +255,19 @@ public:
     constexpr shape_iterator & operator=(shape_iterator const &) = default; //!< Defaulted.
     constexpr shape_iterator & operator=(shape_iterator &&)      = default; //!< Defaulted.
     ~shape_iterator()                                            = default; //!< Defaulted.
+
+    //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
+    template <typename urng2_t>
+    //!\cond
+        requires std::same_as<std::remove_const_t<urng_t>, urng2_t>
+    //!\endcond
+    shape_iterator(shape_iterator<urng2_t> it) :
+        hash_value{std::move(it.hash_value)},
+        roll_factor{std::move(it.roll_factor)},
+        shape_{std::move(it.shape_)},
+        text_left{std::move(it.text_left)},
+        text_right{std::move(it.text_right)}
+    {}
 
     /*!\brief Construct from a given iterator on the text and a seqan3::shape.
     * /param[in] it_start Iterator pointing to the first position of the text.
