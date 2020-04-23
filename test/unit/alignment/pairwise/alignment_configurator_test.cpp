@@ -9,7 +9,6 @@
 
 #include <range/v3/view/single.hpp>
 
-#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
