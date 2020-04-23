@@ -33,8 +33,7 @@ TYPED_TEST_SUITE_P(pairwise_alignment_test);
 TYPED_TEST_P(pairwise_alignment_test, score)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_score}
-                                                     | seqan3::align_cfg::debug;
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_score};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -51,8 +50,7 @@ TYPED_TEST_P(pairwise_alignment_test, back_coordinate)
 
     seqan3::configuration align_cfg = fixture.config
                                     | seqan3::align_cfg::result{seqan3::with_back_coordinate,
-                                                                seqan3::using_score_type<double>}
-                                    | seqan3::align_cfg::debug;
+                                                                seqan3::using_score_type<double>};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -68,8 +66,7 @@ TYPED_TEST_P(pairwise_alignment_test, back_coordinate)
 TYPED_TEST_P(pairwise_alignment_test, front_coordinate)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_front_coordinate}
-                                                     | seqan3::align_cfg::debug;
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_front_coordinate};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
