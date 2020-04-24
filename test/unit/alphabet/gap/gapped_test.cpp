@@ -23,9 +23,11 @@
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
-using gapped_types = ::testing::Types<gapped<dna4>, gapped<dna15>, gapped<qualified<dna4, phred42>>>;
+using gapped_types = ::testing::Types<seqan3::gapped<seqan3::dna4>,
+                                      seqan3::gapped<seqan3::dna15>,
+                                      seqan3::gapped<seqan3::qualified<seqan3::dna4, seqan3::phred42>>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(gapped, alphabet_, gapped_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(gapped, semi_alphabet_test, gapped_types, );
@@ -39,12 +41,12 @@ TYPED_TEST_SUITE(gapped_test, gapped_types, );
 
 TYPED_TEST(gapped_test, concept_check)
 {
-    EXPECT_TRUE((aligned_sequence<std::vector<TypeParam>>));
+    EXPECT_TRUE((seqan3::aligned_sequence<std::vector<TypeParam>>));
 }
 
 TEST(gapped_test, initialise_from_component_alphabet)
 {
-    using alphabet_t = gapped<dna4>;
+    using alphabet_t = seqan3::gapped<seqan3::dna4>;
 
     constexpr alphabet_t letter0{'A'_dna4};
     constexpr alphabet_t letter1 = 'C'_dna4;
@@ -56,8 +58,8 @@ TEST(gapped_test, initialise_from_component_alphabet)
     alphabet_t letter6 = {'G'_dna4};
     alphabet_t letter7 = static_cast<alphabet_t>('T'_dna4);
 
-    constexpr alphabet_t letter8{gap{}}; // letter3 = 'T'_dna4; does not work
-    alphabet_t letter9{gap{}};
+    constexpr alphabet_t letter8{seqan3::gap{}}; // letter3 = 'T'_dna4; does not work
+    alphabet_t letter9{seqan3::gap{}};
 
     EXPECT_EQ(letter0.to_rank(), 0);
     EXPECT_EQ(letter1.to_rank(), 1);
@@ -73,10 +75,10 @@ TEST(gapped_test, initialise_from_component_alphabet)
 
 TEST(gapped_test, assign_from_component_alphabet)
 {
-    using alphabet_t = gapped<dna4>;
+    using alphabet_t = seqan3::gapped<seqan3::dna4>;
     alphabet_t letter{};
 
-    letter = gap{};
+    letter = seqan3::gap{};
     EXPECT_EQ(letter.to_rank(), 4);
 
     letter = 'A'_dna4;

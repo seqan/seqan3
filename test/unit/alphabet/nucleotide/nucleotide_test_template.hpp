@@ -15,8 +15,6 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
 
-using namespace seqan3;
-
 template <typename T>
 using nucleotide = ::testing::Test;
 
@@ -24,26 +22,26 @@ TYPED_TEST_SUITE_P(nucleotide);
 
 TYPED_TEST_P(nucleotide, concept_check)
 {
-    EXPECT_TRUE(nucleotide_alphabet<TypeParam>);
-    EXPECT_TRUE(nucleotide_alphabet<TypeParam &>);
-    EXPECT_TRUE(nucleotide_alphabet<TypeParam const>);
-    EXPECT_TRUE(nucleotide_alphabet<TypeParam const &>);
+    EXPECT_TRUE(seqan3::nucleotide_alphabet<TypeParam>);
+    EXPECT_TRUE(seqan3::nucleotide_alphabet<TypeParam &>);
+    EXPECT_TRUE(seqan3::nucleotide_alphabet<TypeParam const>);
+    EXPECT_TRUE(seqan3::nucleotide_alphabet<TypeParam const &>);
 }
 
 TYPED_TEST_P(nucleotide, global_complement)
 {
-    EXPECT_EQ(complement(TypeParam{}.assign_char('A')), TypeParam{}.assign_char('T'));
-    EXPECT_EQ(complement(TypeParam{}.assign_char('C')), TypeParam{}.assign_char('G'));
-    EXPECT_EQ(complement(TypeParam{}.assign_char('G')), TypeParam{}.assign_char('C'));
-    EXPECT_EQ(complement(TypeParam{}.assign_char('T')), TypeParam{}.assign_char('A'));
+    EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('A')), TypeParam{}.assign_char('T'));
+    EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('C')), TypeParam{}.assign_char('G'));
+    EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('G')), TypeParam{}.assign_char('C'));
+    EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('T')), TypeParam{}.assign_char('A'));
 
-    using vsize_t = std::decay_t<decltype(alphabet_size<TypeParam>)>;
+    using vsize_t = std::decay_t<decltype(seqan3::alphabet_size<TypeParam>)>;
 
-    for (vsize_t i = 0u; i < alphabet_size<TypeParam>; ++i)
+    for (vsize_t i = 0u; i < seqan3::alphabet_size<TypeParam>; ++i)
     {
-        TypeParam c = assign_rank_to(i, TypeParam{});
+        TypeParam c = seqan3::assign_rank_to(i, TypeParam{});
 
-        EXPECT_EQ(complement(complement(c)), c);
+        EXPECT_EQ(seqan3::complement(seqan3::complement(c)), c);
     }
 }
 

@@ -17,9 +17,7 @@
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 
-using namespace seqan3;
-
-using masked_types = ::testing::Types<masked<dna4>, masked<dna5>>;
+using masked_types = ::testing::Types<seqan3::masked<seqan3::dna4>, seqan3::masked<seqan3::dna5>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(masked, alphabet_, masked_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(masked, semi_alphabet_test, masked_types, );

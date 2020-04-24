@@ -14,20 +14,20 @@
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 
-using namespace seqan3;
+using seqan3::operator""_wuss51;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, alphabet_, wuss51, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, semi_alphabet_test, wuss51, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, alphabet_constexpr, wuss51, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, semi_alphabet_constexpr, wuss51, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, alphabet_, wuss<15>, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, semi_alphabet_test, wuss<15>, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, alphabet_constexpr, wuss<15>, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, semi_alphabet_constexpr, wuss<15>, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, alphabet_, wuss<67>, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, semi_alphabet_test, wuss<67>, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, alphabet_constexpr, wuss<67>, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, semi_alphabet_constexpr, wuss<67>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, alphabet_, seqan3::wuss51, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, semi_alphabet_test, seqan3::wuss51, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, alphabet_constexpr, seqan3::wuss51, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, semi_alphabet_constexpr, seqan3::wuss51, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, alphabet_, seqan3::wuss<15>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, semi_alphabet_test, seqan3::wuss<15>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, alphabet_constexpr, seqan3::wuss<15>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, semi_alphabet_constexpr, seqan3::wuss<15>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, alphabet_, seqan3::wuss<67>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, semi_alphabet_test, seqan3::wuss<67>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, alphabet_constexpr, seqan3::wuss<67>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, semi_alphabet_constexpr, seqan3::wuss<67>, );
 
 // assign_char functions
 TEST(wuss, assign_char)
@@ -40,7 +40,7 @@ TEST(wuss, assign_char)
         'H', 'B', 'E', 'G', 'I', 'T', 'S'
     };
 
-    std::vector<wuss51> cmp
+    std::vector<seqan3::wuss51> cmp
     {
         '.'_wuss51, '('_wuss51, ')'_wuss51,
         ':'_wuss51, ','_wuss51, '-'_wuss51, '_'_wuss51, '~'_wuss51, ';'_wuss51,
@@ -48,67 +48,67 @@ TEST(wuss, assign_char)
         'H'_wuss51, 'B'_wuss51, 'E'_wuss51, 'G'_wuss51, 'I'_wuss51, 'T'_wuss51, 'S'_wuss51
     };
 
-    for (auto [ ch, cm ] : views::zip(input, cmp))
-        EXPECT_EQ((assign_char_to(ch, wuss51{})), cm);
+    for (auto [ ch, cm ] : seqan3::views::zip(input, cmp))
+        EXPECT_EQ((seqan3::assign_char_to(ch, seqan3::wuss51{})), cm);
 }
 
 // to_char functions
 TEST(wuss, to_char)
 {
-    EXPECT_EQ(to_char('.'_wuss51), '.');
-    EXPECT_EQ(to_char(':'_wuss51), ':');
-    EXPECT_EQ(to_char(','_wuss51), ',');
-    EXPECT_EQ(to_char('-'_wuss51), '-');
-    EXPECT_EQ(to_char('_'_wuss51), '_');
-    EXPECT_EQ(to_char('~'_wuss51), '~');
-    EXPECT_EQ(to_char(';'_wuss51), ';');
-    EXPECT_EQ(to_char('<'_wuss51), '<');
-    EXPECT_EQ(to_char('>'_wuss51), '>');
-    EXPECT_EQ(to_char('('_wuss51), '(');
-    EXPECT_EQ(to_char(')'_wuss51), ')');
-    EXPECT_EQ(to_char('['_wuss51), '[');
-    EXPECT_EQ(to_char(']'_wuss51), ']');
-    EXPECT_EQ(to_char('{'_wuss51), '{');
-    EXPECT_EQ(to_char('}'_wuss51), '}');
+    EXPECT_EQ(seqan3::to_char('.'_wuss51), '.');
+    EXPECT_EQ(seqan3::to_char(':'_wuss51), ':');
+    EXPECT_EQ(seqan3::to_char(','_wuss51), ',');
+    EXPECT_EQ(seqan3::to_char('-'_wuss51), '-');
+    EXPECT_EQ(seqan3::to_char('_'_wuss51), '_');
+    EXPECT_EQ(seqan3::to_char('~'_wuss51), '~');
+    EXPECT_EQ(seqan3::to_char(';'_wuss51), ';');
+    EXPECT_EQ(seqan3::to_char('<'_wuss51), '<');
+    EXPECT_EQ(seqan3::to_char('>'_wuss51), '>');
+    EXPECT_EQ(seqan3::to_char('('_wuss51), '(');
+    EXPECT_EQ(seqan3::to_char(')'_wuss51), ')');
+    EXPECT_EQ(seqan3::to_char('['_wuss51), '[');
+    EXPECT_EQ(seqan3::to_char(']'_wuss51), ']');
+    EXPECT_EQ(seqan3::to_char('{'_wuss51), '{');
+    EXPECT_EQ(seqan3::to_char('}'_wuss51), '}');
 }
 
 // concepts
 TEST(wuss, concept_check)
 {
-    EXPECT_TRUE(rna_structure_alphabet<wuss51>);
-    EXPECT_TRUE(rna_structure_alphabet<wuss51 &>);
-    EXPECT_TRUE(rna_structure_alphabet<wuss51 const>);
-    EXPECT_TRUE(rna_structure_alphabet<wuss51 const &>);
-    EXPECT_NE(max_pseudoknot_depth<wuss51>, 0);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss51>);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss51 &>);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss51 const>);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss51 const &>);
+    EXPECT_NE(seqan3::max_pseudoknot_depth<seqan3::wuss51>, 0);
 
-    EXPECT_TRUE(rna_structure_alphabet<wuss<>>);  // same as wuss51
-    EXPECT_TRUE(rna_structure_alphabet<wuss<> &>);
-    EXPECT_TRUE(rna_structure_alphabet<wuss<> const>);
-    EXPECT_TRUE(rna_structure_alphabet<wuss<> const &>);
-    EXPECT_NE(max_pseudoknot_depth<wuss<>>, 0);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss<>>);  // same as wuss51
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss<> &>);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss<> const>);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss<> const &>);
+    EXPECT_NE(seqan3::max_pseudoknot_depth<seqan3::wuss<>>, 0);
 
-    EXPECT_TRUE(rna_structure_alphabet<wuss<67>>);
-    EXPECT_TRUE(rna_structure_alphabet<wuss<67> &>);
-    EXPECT_TRUE(rna_structure_alphabet<wuss<67> const>);
-    EXPECT_TRUE(rna_structure_alphabet<wuss<67> const &>);
-    EXPECT_NE(max_pseudoknot_depth<wuss<67>>, 0);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss<67>>);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss<67> &>);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss<67> const>);
+    EXPECT_TRUE(seqan3::rna_structure_alphabet<seqan3::wuss<67> const &>);
+    EXPECT_NE(seqan3::max_pseudoknot_depth<seqan3::wuss<67>>, 0);
 
 }
 
 TEST(wuss, literals)
 {
-    std::vector<wuss51> vec1;
+    std::vector<seqan3::wuss51> vec1;
     vec1.resize(5, '<'_wuss51);
     EXPECT_EQ(vec1, "<<<<<"_wuss51);
 
-    std::vector<wuss51> vec2{'.'_wuss51, '<'_wuss51, '<'_wuss51, '>'_wuss51, '>'_wuss51, '.'_wuss51};
+    std::vector<seqan3::wuss51> vec2{'.'_wuss51, '<'_wuss51, '<'_wuss51, '>'_wuss51, '>'_wuss51, '.'_wuss51};
     EXPECT_EQ(vec2, ".<<>>."_wuss51);
 }
 
 TEST(wuss, rna_structure_properties)
 {
-    EXPECT_EQ(wuss51::max_pseudoknot_depth, 22);
-    std::vector<wuss51> vec = ".:,-_~;<>()[]{}AaBbCcDd"_wuss51;
+    EXPECT_EQ(seqan3::wuss51::max_pseudoknot_depth, 22);
+    std::vector<seqan3::wuss51> vec = ".:,-_~;<>()[]{}AaBbCcDd"_wuss51;
     for (unsigned idx = 0; idx <= 6; ++idx)
     {
         EXPECT_TRUE(vec[idx].is_unpaired());
