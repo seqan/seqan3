@@ -380,10 +380,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <std::ranges::forward_range rng_type>
-    concatenated_sequences & operator=(std::initializer_list<rng_type> ilist)
+    template <std::ranges::forward_range value_type_t>
+    concatenated_sequences & operator=(std::initializer_list<value_type_t> ilist)
     //!\cond
-        requires is_compatible_with_value_type<rng_type>
+        requires is_compatible_with_value_type<value_type_t>
     //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
