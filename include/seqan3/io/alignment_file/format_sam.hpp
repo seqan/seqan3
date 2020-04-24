@@ -832,7 +832,12 @@ inline void format_sam::write_alignment_record(stream_type & stream,
 
     stream << static_cast<unsigned>(mapq) << separator;
 
-    if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
+    if (!std::ranges::empty(cigar_vector))
+    {
+        for (auto & c : cigar_vector)
+            stream << c.to_string(); // returns a small_vector instead of char so write_range doesn't work
+    }
+    else if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
     {
         // compute possible distance from alignment end to sequence end
         // which indicates soft clipping at the end.
@@ -845,11 +850,6 @@ inline void format_sam::write_alignment_record(stream_type & stream,
         off_end -= std::ranges::size(get<1>(align));
 
         write_range(stream_it, detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));
-    }
-    else if (!cigar_vector.empty())
-    {
-        for (auto & c : cigar_vector)
-            stream << c.to_string(); // returns a small_vector instead of char so write_range doesn't work
     }
     else
     {

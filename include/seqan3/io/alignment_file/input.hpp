@@ -339,6 +339,7 @@ template <
                                                                field::ref_id,
                                                                field::ref_offset,
                                                                field::alignment,
+                                                               field::cigar,
                                                                field::mapq,
                                                                field::qual,
                                                                field::flag,

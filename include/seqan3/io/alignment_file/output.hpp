@@ -148,6 +148,7 @@ template <detail::fields_specialisation selected_field_ids_ =
                      field::ref_id,
                      field::ref_offset,
                      field::alignment,
+                     field::cigar,
                      field::mapq,
                      field::qual,
                      field::flag,
@@ -201,13 +202,6 @@ public:
                   "You selected a field that is not valid for alignment files, "
                   "please refer to the documentation of "
                   "seqan3::alignment_file_output::field_ids for the accepted values.");
-
-    static_assert([] () constexpr
-                  {
-                      return !(selected_field_ids::contains(field::alignment) &&
-                               selected_field_ids::contains(field::cigar));
-                  }(),
-                  "You may not select field::alignment and field::cigar at the same time.");
 
     /*!\name Range associated types
      * \brief Most of the range associated types are `void` for output ranges.

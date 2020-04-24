@@ -515,8 +515,8 @@ inline void format_bam::read_alignment_record(stream_type & stream,
             if constexpr (!detail::decays_to_ignore_v<align_type>)
             {
                 assign_unaligned(get<1>(align),
-                                 seq | views::slice(static_cast<decltype(std::ranges::distance(seq))>(offset_tmp),
-                                                   std::ranges::distance(seq) - soft_clipping_end));
+                                 seq | views::slice(static_cast<std::ranges::range_difference_t<seq_type>>(offset_tmp),
+                                                    std::ranges::distance(seq) - soft_clipping_end));
             }
         }
     }
@@ -538,7 +538,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
     // DONE READING - wrap up
     // -------------------------------------------------------------------------------------------------------------
-    if constexpr (!detail::decays_to_ignore_v<align_type>)
+    if constexpr (!detail::decays_to_ignore_v<align_type> || !detail::decays_to_ignore_v<cigar_type>)
     {
         // Check cigar, if it matches ‘kSmN’, where ‘k’ equals lseq, ‘m’ is the reference sequence length in the
         // alignment, and ‘S’ and ‘N’ are the soft-clipping and reference-clip, then the cigar string was larger
@@ -566,17 +566,21 @@ inline void format_bam::read_alignment_record(stream_type & stream,
                 std::tie(tmp_cigar_vector, ref_length, seq_length) = parse_cigar(cigar_view);
                 offset_tmp = soft_clipping_end = 0;
                 transfer_soft_clipping_to(tmp_cigar_vector, offset_tmp, soft_clipping_end);
-
-                assign_unaligned(get<1>(align),
-                                 seq | views::slice(static_cast<decltype(std::ranges::distance(seq))>(offset_tmp),
-                                                   std::ranges::distance(seq) - soft_clipping_end));
                 tag_dict.erase(it); // remove redundant information
+
+                if constexpr (!detail::decays_to_ignore_v<align_type>)
+                {
+                    assign_unaligned(get<1>(align),
+                                     seq | views::slice(static_cast<std::ranges::range_difference_t<seq_type>>(offset_tmp),
+                                                        std::ranges::distance(seq) - soft_clipping_end));
+                }
             }
         }
-
-        // Alignment object construction
-        construct_alignment(align, tmp_cigar_vector, core.refID, ref_seqs, core.pos, ref_length); // inherited from SAM format
     }
+
+    // Alignment object construction
+    if constexpr (!detail::decays_to_ignore_v<align_type>)
+        construct_alignment(align, tmp_cigar_vector, core.refID, ref_seqs, core.pos, ref_length); // inherited from SAM
 
     if constexpr (!detail::decays_to_ignore_v<cigar_type>)
         std::swap(cigar_vector, tmp_cigar_vector);
@@ -729,7 +733,13 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
 
         // if alignment is non-empty, replace cigar_vector.
         // else, compute the ref_length from given cigar_vector which is needed to fill field `bin`.
-        if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
+        if (!std::ranges::empty(cigar_vector))
+        {
+            int32_t dummy_seq_length{};
+            for (auto & [count, operation] : cigar_vector)
+                update_alignment_lengths(ref_length, dummy_seq_length, operation.to_char(), count);
+        }
+        else if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
         {
             ref_length = std::ranges::distance(get<1>(align));
 
@@ -745,12 +755,6 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
 
             off_end -= ref_length;
             cigar_vector = detail::get_cigar_vector(align, offset, off_end);
-        }
-        else
-        {
-            int32_t dummy_seq_length{};
-            for (auto & [count, operation] : cigar_vector)
-                update_alignment_lengths(ref_length, dummy_seq_length, operation.to_char(), count);
         }
 
         if (cigar_vector.size() >= (1 << 16)) // must be written into the sam tag CG
