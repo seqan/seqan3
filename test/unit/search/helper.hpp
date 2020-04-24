@@ -26,13 +26,4 @@ std::vector<std::ranges::range_value_t<search_result_range_t>> uniquify(search_r
     return unique_res;
 }
 
-void random_text(seqan3::dna4_vector & text, uint64_t const length)
-{
-    uint8_t alphabet_size{4};
-
-    text.resize(length);
-    for (uint64_t i = 0; i < length; ++i)
-        assign_rank_to(std::rand() % alphabet_size, text[i]);
-}
-
 } // namespace std
