@@ -21,12 +21,6 @@
 
 #include <gtest/gtest.h>
 
-#ifdef NDEBUG
-#define SEQAN3_SEARCH_TEST_ITERATIONS 1000
-#else
-#define SEQAN3_SEARCH_TEST_ITERATIONS 10
-#endif
-
 template <typename text_t>
 inline void test_search_hamming(auto index, text_t const & text, auto const & search, uint64_t const query_length,
                                 std::vector<uint8_t> const & error_distribution, size_t const seed,
@@ -294,7 +288,7 @@ TEST(search_scheme_test, search_scheme_hamming)
     test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<0, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
     test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<1, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
     test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<2, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    // test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<3, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    // test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<3, 3>, seed, 10);
 }
 
 TEST(search_scheme_test, search_scheme_edit)
@@ -303,10 +297,8 @@ TEST(search_scheme_test, search_scheme_edit)
 
     // TODO: test with lower bounds != 0.
     // For that we need alignment statistics to know the number of errors spent in search_trivial
-    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 0>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 1>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 2>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 0>, seed, 10);
+    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 1>, seed, 10);
+    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 2>, seed, 10);
+    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 3>, seed, 10);
 }
-
-#undef SEQAN3_SEARCH_TEST_ITERATIONS
