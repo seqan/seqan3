@@ -348,8 +348,8 @@ public:
     }
 
     /*!\brief Construct/assign from `std::initializer_list`.
-     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
-     * \param ilist an `std::initializer_list` of `rng_type`.
+     * \tparam value_type_t The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
+     * \param ilist an `std::initializer_list` of `value_type_t`.
      *
      * ###Complexity
      *
@@ -369,8 +369,8 @@ public:
     }
 
     /*!\brief Construct/assign from `std::initializer_list`.
-     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
-     * \param ilist an `std::initializer_list` of `rng_type`.
+     * \tparam value_type_t The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
+     * \param ilist an `std::initializer_list` of `value_type_t`.
      *
      * ###Complexity
      *
