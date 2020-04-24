@@ -208,13 +208,13 @@ protected:
     // unfortunately we cannot specialise the variable template so we have to add an auxiliary here
     template <typename t>
         requires std::ranges::range<std::iter_reference_t<t>> &&
-                 (dimension_v<t> == dimension_v<value_type> + 1) &&
+                 (dimension_v<std::iter_reference_t<t>> == dimension_v<value_type>) &&
                  is_compatible_with_value_type<std::iter_reference_t<t>>
     static constexpr bool iter_value_t_is_compatible_with_value_type_aux = true;
 
     template <std::ranges::range t>
         requires std::ranges::range<std::ranges::range_reference_t<t>> &&
-                 (dimension_v<t> == dimension_v<value_type> + 1) &&
+                 (dimension_v<std::ranges::range_reference_t<t>> == dimension_v<value_type>) &&
                  is_compatible_with_value_type<std::ranges::range_reference_t<t>>
     static constexpr bool range_value_t_is_compatible_with_value_type_aux = true;
     //!\endcond
