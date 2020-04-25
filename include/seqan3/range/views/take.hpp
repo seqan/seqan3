@@ -280,25 +280,18 @@ private:
         //!\}
     }; // class iterator_type
 
+private:
     /*!\name Associated types
      * \{
      */
-    //!\brief The reference_type.
-    using reference         = std::ranges::range_reference_t<urng_t>;
-    //!\brief The const_reference type is equal to the reference type if the underlying range is const-iterable.
-    using const_reference   = detail::transformation_trait_or_t<seqan3::reference<urng_t const>, void>;
-    //!\brief The value_type (which equals the reference_type with any references removed).
-    using value_type        = std::ranges::range_value_t<urng_t>;
-    //!\brief The size_type is `size_t` if the view is exact, otherwise `void`.
-    using size_type         = std::conditional_t<exactly || std::ranges::sized_range<urng_t>,
-                                                 transformation_trait_or_t<seqan3::size_type<urng_t>, size_t>,
-                                                 void>;
-    //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = std::ranges::range_difference_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = iterator_type<urng_t>;
-    //!\brief The const_iterator type is equal to the iterator type if the underlying range is const-iterable.
-    using const_iterator    = detail::transformation_trait_or_t<std::type_identity<iterator_type<urng_t const>>, void>;
+    /*!\brief Note that this declaration does not give any compiler errors for non-const iterable ranges. Although
+     * `iterator_type` inherits from std::ranges::iterator_t which is not defined on a const-range, i.e. `urng_t const,
+     *  if it is not const-iterable. We only just declare this type and never instantiate it, i.e. use this type within
+     *  this class, if the underlying range is not const-iterable.
+     */
+    using const_iterator    = iterator_type<urng_t const>;
     //!\}
 
 public:
@@ -444,8 +437,9 @@ public:
     /*!\brief Returns the number of elements in the view.
      * \returns The number of elements in the view.
      *
-     * This overload is only available if the underlying range models std::ranges::sized_range or for
-     * specialisation that have the `exactly` template parameter set.
+     * This overload is only available if the underlying range models std::ranges::sized_range (return type is
+     * std::ranges::range_size_t<urng_type>) or for specialisation that have the `exactly` (return type is std::size_t)
+     * template parameter set. If both conditions are true the return type is `std::size_t`.
      *
      * ### Complexity
      *
@@ -455,7 +449,7 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr size_type size() const noexcept
+    constexpr auto size() const noexcept
         requires exactly || std::ranges::sized_range<urng_t>
     {
         return target_size;

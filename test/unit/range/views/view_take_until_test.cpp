@@ -85,6 +85,20 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
     EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2)>);
     EXPECT_TRUE((std::ranges::output_range<decltype(v2), char>));
+
+    // explicit test for non const-iterable views
+    // https://github.com/seqan/seqan3/pull/1734#discussion_r408829267
+    auto const & v2_cref = v2;
+
+    EXPECT_FALSE(std::ranges::input_range<decltype(v2_cref)>);
+    EXPECT_FALSE(std::ranges::forward_range<decltype(v2_cref)>);
+    EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v2_cref)>);
+    EXPECT_FALSE(std::ranges::random_access_range<decltype(v2_cref)>);
+    EXPECT_FALSE(std::ranges::view<decltype(v2_cref)>);
+    EXPECT_FALSE(std::ranges::sized_range<decltype(v2_cref)>);
+    EXPECT_FALSE(std::ranges::common_range<decltype(v2_cref)>);
+    EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2_cref)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v2_cref), int>));
 }
 
 // ============================================================================
