@@ -21,6 +21,7 @@
 namespace seqan3::detail
 {
 
+// TODO Remove? Replace? Important at all?
 template <typename t>
 SEQAN3_CONCEPT simple_view = std::ranges::view<t> &&
                              std::ranges::range<t const> &&
@@ -661,7 +662,7 @@ private:
 
 public:
     //!\brief The sentinels of each range in `urng_t`.
-    std::tuple<std::ranges::sentinel_t<maybe_const<urng_t>>...> const iterators{};
+    common_tuple<std::ranges::sentinel_t<urng_t const>...> iterators{}; // TODO make private, see https://github.com/seqan/seqan3/pull/1756
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -676,7 +677,6 @@ public:
     explicit constexpr zip_sentinel(parent_t const & parent)
         : iterators{std::ranges::end(std::get<N>(parent.urange)) ...}
     {}
-    //!\}
 };
 
 // ============================================================================

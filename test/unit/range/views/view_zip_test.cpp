@@ -14,11 +14,7 @@
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/zip.hpp>
 
-#include <range/v3/view/drop_exactly.hpp>
-
-
-
-using namespace seqan3;
+using seqan3::operator""_dna4;
 
 class zip_test : public ::testing::Test
 {
@@ -26,18 +22,18 @@ protected:
     std::vector<int> vi{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     std::vector<std::string> vs{"this", "is", "a", "test"};
     std::vector<std::string> const vc{"this", "is", "a", "test"};
-    static constexpr auto vr = views::repeat('L');
+    static constexpr auto vr = seqan3::views::repeat('L');
 
     using tuple1_t = std::tuple<int, std::string, char>;
     using tuple2_t = std::tuple<int, std::string>;
     using result1_t = std::vector<tuple1_t>;
     using result2_t = std::vector<tuple2_t>;
 
-    using rng_not_common_t = decltype(views::zip(vi, vs, vr));
-    using rng_common_t = decltype(views::zip(vi, vs));
-    using rng_const_t = decltype(views::zip(vi, vc));
-    using view_const_t = decltype(views::zip(vi, vc)) const;
-    using rng_view_const_t = decltype(views::zip(vi, vc)) const;
+    using rng_not_common_t = decltype(seqan3::views::zip(vi, vs, vr));
+    using rng_common_t = decltype(seqan3::views::zip(vi, vs));
+    using rng_const_t = decltype(seqan3::views::zip(vi, vc));
+    using view_const_t = decltype(seqan3::views::zip(vi, vc)) const;
+    using rng_view_const_t = decltype(seqan3::views::zip(vi, vc)) const;
 
     result1_t expected1{{0, "this", 'L'}, {1, "is", 'L'}, {2, "a", 'L'}, {3, "test", 'L'}};
     result2_t expected2{{0, "this"}, {1, "is"}, {2, "a"}, {3, "test"}};
@@ -47,22 +43,10 @@ protected:
 
     virtual void SetUp()
     {
-        v1 = views::zip(vi, vs, vr);
-        v2 = views::zip(vi, vs);
+        v1 = seqan3::views::zip(vi, vs, vr);
+        v2 = seqan3::views::zip(vi, vs);
     }
 };
-
-TEST_F(zip_test, crash)
-{
-    seqan3::dna4_vector a{"AAAAA"_dna4};
-    seqan3::dna4_vector b{"TTTTT"_dna4};
-    std::tuple<seqan3::dna4_vector, seqan3::dna4_vector> d{a, b};
-    auto w = ranges::views::single(d);
-    auto v = views::zip(w, std::views::iota(0))  | views::chunk(1);
-    v.begin();
-    v.end();
-    (void) v;
-}
 
 TEST_F(zip_test, concepts)
 {
@@ -138,11 +122,20 @@ TEST_F(zip_test, combine)
     EXPECT_TRUE(std::ranges::equal(v1 | std::views::reverse, expected1 | std::views::reverse));
     EXPECT_TRUE(std::ranges::equal(v2 | std::views::reverse, expected2 | std::views::reverse));
 
-    EXPECT_TRUE(std::ranges::equal(v1 | views::take(2), expected1 | views::take(2)));
+    EXPECT_TRUE(std::ranges::equal(v1 | seqan3::views::take(2), expected1 | seqan3::views::take(2)));
     EXPECT_TRUE(std::ranges::equal(v1 | std::views::take(2), expected1 | std::views::take(2)));
 
-    EXPECT_TRUE(std::ranges::equal(v2 | views::take(2), expected2 | views::take(2)));
+    EXPECT_TRUE(std::ranges::equal(v2 | seqan3::views::take(2), expected2 | seqan3::views::take(2)));
     EXPECT_TRUE(std::ranges::equal(v2 | std::views::take(2), expected2 | std::views::take(2)));
+
+    // Example from usage of views::zip in alignment
+    seqan3::dna4_vector sequence_1{"AAAAA"_dna4};
+    seqan3::dna4_vector sequence_2{"TTTTT"_dna4};
+    std::tuple<seqan3::dna4_vector, seqan3::dna4_vector> sequence_pair{sequence_1, sequence_2};
+    auto tuple_view = std::views::single(sequence_pair);
+    auto zipped_tuple = seqan3::views::zip(tuple_view, std::views::iota(0));
+    auto chunked_zip = zipped_tuple | seqan3::views::chunk(1);
+    (void) chunked_zip;
 }
 
 TEST_F(zip_test, assign)
