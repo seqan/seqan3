@@ -150,36 +150,36 @@ struct iterator_tag<it_t>
 };
 
 template <std::input_iterator it_t>
-    requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
+    requires (!requires { typename std::iterator_traits<it_t>::iterator_category; })
 struct iterator_tag<it_t>
 {
     using type = std::input_iterator_tag;
 };
 
 template <typename it_t>
-    requires !std::input_iterator<it_t> && std::output_iterator<it_t, std::iter_value_t<it_t>> &&
-             !requires { typename std::iterator_traits<it_t>::iterator_category; }
+    requires (!std::input_iterator<it_t>) && std::output_iterator<it_t, std::iter_value_t<it_t>> &&
+             (!requires { typename std::iterator_traits<it_t>::iterator_category; })
 struct iterator_tag<it_t>
 {
     using type = std::output_iterator_tag;
 };
 
 template <std::forward_iterator it_t>
-    requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
+    requires (!requires { typename std::iterator_traits<it_t>::iterator_category; })
 struct iterator_tag<it_t>
 {
     using type = std::forward_iterator_tag;
 };
 
 template <std::bidirectional_iterator it_t>
-    requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
+    requires (!requires { typename std::iterator_traits<it_t>::iterator_category; })
 struct iterator_tag<it_t>
 {
     using type = std::bidirectional_iterator_tag;
 };
 
 template <std::random_access_iterator it_t>
-    requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
+    requires (!requires { typename std::iterator_traits<it_t>::iterator_category; })
 struct iterator_tag<it_t>
 {
     using type = std::random_access_iterator_tag;

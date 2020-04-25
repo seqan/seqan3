@@ -108,7 +108,7 @@ public:
     template <contiguous_iterator iterator_t, typename sentinel_t>
         requires sized_sentinel_for<sentinel_t, iterator_t> &&
                  is_convertible_v<remove_reference_t<iter_reference_t<iterator_t>>(*)[], element_type(*)[]> &&
-                 !is_convertible_v<sentinel_t, size_t>
+                 (!is_convertible_v<sentinel_t, size_t>)
     constexpr span(iterator_t f, sentinel_t l) noexcept : data_{addressof(*f)}
         { (void) l; assert(span_extent == distance(f, l)); } // "size mismatch in span's constructor (first, last)"
 
@@ -270,7 +270,7 @@ public:
     template <contiguous_iterator iterator, typename sentinel_t>
         requires sized_sentinel_for<sentinel_t, iterator> &&
                  is_convertible_v<remove_reference_t<iter_reference_t<iterator>>(*)[], element_type(*)[]> &&
-                 !is_convertible_v<sentinel_t, size_t>
+                 (!is_convertible_v<sentinel_t, size_t>)
     constexpr span(iterator f, sentinel_t l) noexcept : data_{addressof(*f)}, size_{static_cast<index_type>(distance(f, l))}
     {}
 
@@ -284,10 +284,10 @@ public:
     inline constexpr span(const array<value_type, span_sz>& arr) noexcept : data_{arr.data()}, size_{span_sz} {}
 
     template <typename range_t>
-        requires !same_as<remove_reference_t<remove_cv_t<range_t>>, span> && // guard for recursive instantiation in constructible_from
-                 !is_span<remove_reference_t<range_t>>::value &&
-                 !is_std_array<remove_reference_t<range_t>>::value &&
-                 !is_array_v<remove_reference_t<range_t>> &&
+        requires (!same_as<remove_reference_t<remove_cv_t<range_t>>, span>) && // guard for recursive instantiation in constructible_from
+                 (!is_span<remove_reference_t<range_t>>::value) &&
+                 (!is_std_array<remove_reference_t<range_t>>::value) &&
+                 (!is_array_v<remove_reference_t<range_t>>) &&
                  is_convertible_v<remove_reference_t<iter_reference_t<ranges::iterator_t<range_t>>>(*)[],
                                   element_type(*)[]> &&
                  ranges::contiguous_range<range_t> &&

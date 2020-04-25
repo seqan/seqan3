@@ -145,7 +145,7 @@ SEQAN3_CONCEPT char_predicate = requires
 
 //!\cond
 template <char_predicate... condition_ts>
-    requires sizeof...(condition_ts) >= 2
+    requires (sizeof...(condition_ts) >= 2)
 struct char_predicate_combiner;
 
 template <char_predicate condition_t>
@@ -189,7 +189,7 @@ struct char_predicate_base
     template <std::integral value_t>
     constexpr bool operator()(value_t const val) const noexcept
     //!\cond
-        requires sizeof(value_t) == 1
+        requires (sizeof(value_t) == 1)
     //!\endcond
     {
         return derived_t::data[static_cast<unsigned char>(val)];
@@ -199,7 +199,7 @@ struct char_predicate_base
     template <std::integral value_t>
     constexpr bool operator()(value_t const val) const noexcept
     //!\cond
-        requires sizeof(value_t) != 1
+        requires (sizeof(value_t) != 1)
     //!\endcond
     {
         return (static_cast<std::make_unsigned_t<value_t>>(val) < 256) ? operator()(static_cast<uint8_t>(val)) :
@@ -230,7 +230,7 @@ struct char_predicate_base
  */
 template <char_predicate... condition_ts>
 //!\cond
-    requires sizeof...(condition_ts) >= 2
+    requires (sizeof...(condition_ts) >= 2)
 //!\endcond
 struct char_predicate_combiner : public char_predicate_base<char_predicate_combiner<condition_ts...>>
 {
@@ -281,7 +281,7 @@ struct char_predicate_negator : public char_predicate_base<char_predicate_negato
  */
 template <uint8_t interval_first, uint8_t interval_last>
 //!\cond
-    requires interval_first <= interval_last
+    requires (interval_first <= interval_last)
 //!\endcond
 struct is_in_interval_type : public char_predicate_base<is_in_interval_type<interval_first, interval_last>>
 {

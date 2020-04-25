@@ -45,7 +45,7 @@ namespace seqan3
  */
 template <uint8_t interval_first, uint8_t interval_last>
 //!\cond
-    requires interval_first <= interval_last
+    requires (interval_first <= interval_last)
 //!\endcond
 inline constexpr auto is_in_interval = detail::is_in_interval_type<interval_first, interval_last>{};
 

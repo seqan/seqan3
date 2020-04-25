@@ -91,7 +91,7 @@ public:
     //!\brief Delegate to base class if inheriting from non-pointer iterator.
     constexpr inherited_iterator_base(base_t it) noexcept(std::is_nothrow_move_constructible_v<base_t>)
     //!\cond
-        requires !wrap_base
+        requires (!wrap_base)
     //!\endcond
         : base_t{std::move(it)}
     {}

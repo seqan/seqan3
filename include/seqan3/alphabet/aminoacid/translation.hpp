@@ -97,7 +97,7 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
  */
 template <genetic_code gc = genetic_code::CANONICAL, typename tuple_type>
 //!\cond
-    requires std::tuple_size<tuple_type>::value == 3 &&
+    requires (std::tuple_size<tuple_type>::value == 3) &&
              nucleotide_alphabet<std::tuple_element_t<0, tuple_type>> &&
              nucleotide_alphabet<std::tuple_element_t<1, tuple_type>> &&
              nucleotide_alphabet<std::tuple_element_t<2, tuple_type>>

@@ -184,7 +184,7 @@ public:
      */
     template <typename first_arg_t, typename ...stored_arg_types>
     //!\cond
-        requires !std::ranges::input_range<first_arg_t>
+        requires (!std::ranges::input_range<first_arg_t>)
     //!\endcond
     constexpr auto operator()(first_arg_t && first, stored_arg_types && ...args) const
     {
@@ -222,7 +222,7 @@ public:
      */
     template <std::ranges::input_range urng_t, typename ...stored_arg_types>
     //!\cond
-        requires sizeof...(stored_arg_types) > 0
+        requires (sizeof...(stored_arg_types) > 0)
     //!\endcond
     constexpr auto operator()(urng_t && urange, stored_arg_types && ...args) const
     {

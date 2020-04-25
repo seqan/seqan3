@@ -53,7 +53,7 @@ namespace seqan3
  */
 template <std::ranges::input_range rng_t>
 //!\cond
-    requires !std::input_or_output_iterator<rng_t>
+    requires (!std::input_or_output_iterator<rng_t>)
 //!\endcond
 struct value_type<rng_t>
 {
@@ -71,7 +71,7 @@ struct value_type<rng_t>
  */
 template <std::ranges::input_range rng_t>
 //!\cond
-    requires !std::input_or_output_iterator<rng_t>
+    requires (!std::input_or_output_iterator<rng_t>)
 //!\endcond
 struct reference<rng_t>
 {
@@ -89,7 +89,7 @@ struct reference<rng_t>
  */
 template <std::ranges::input_range rng_t>
 //!\cond
-    requires !std::input_or_output_iterator<rng_t>
+    requires (!std::input_or_output_iterator<rng_t>)
 //!\endcond
 struct rvalue_reference<rng_t>
 {
@@ -107,7 +107,7 @@ struct rvalue_reference<rng_t>
  */
 template <std::ranges::input_range rng_t>
 //!\cond
-    requires !std::input_or_output_iterator<rng_t>
+    requires (!std::input_or_output_iterator<rng_t>)
 //!\endcond
 struct const_reference<rng_t>
 {
@@ -125,7 +125,7 @@ struct const_reference<rng_t>
  */
 template <std::ranges::range rng_t>
 //!\cond
-    requires !std::input_or_output_iterator<rng_t>
+    requires (!std::input_or_output_iterator<rng_t>)
 //!\endcond
 struct difference_type<rng_t>
 {
@@ -143,7 +143,7 @@ struct difference_type<rng_t>
  */
 template <std::ranges::sized_range rng_t>
 //!\cond
-    requires !std::input_or_output_iterator<rng_t>
+    requires (!std::input_or_output_iterator<rng_t>)
 //!\endcond
 struct size_type<rng_t>
 {
