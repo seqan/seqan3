@@ -13,6 +13,7 @@
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include "../iterator_test_template.hpp"
 
@@ -168,15 +169,15 @@ TYPED_TEST(enforce_random_access_test, adaptor)
 
     // pipe notation
     auto v = test_range | seqan3::views::enforce_random_access;
-    EXPECT_TRUE(std::ranges::equal(v, source));
+    EXPECT_RANGE_EQ(v, source);
 
     // function notation
     auto v2 = seqan3::views::enforce_random_access(test_range);
-    EXPECT_TRUE(std::ranges::equal(v2, source));
+    EXPECT_RANGE_EQ(v2, source);
 
     // combinability
     auto v3 = test_range | seqan3::views::enforce_random_access | std::views::drop(1);
-    EXPECT_TRUE(std::ranges::equal(v3, std::vector{1, 2, 3}));
+    EXPECT_RANGE_EQ(v3, (std::vector{1, 2, 3}));
 }
 
 // ----------------------------------------------------------------------------

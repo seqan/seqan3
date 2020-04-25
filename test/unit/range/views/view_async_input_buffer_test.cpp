@@ -17,6 +17,7 @@
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include "../iterator_test_template.hpp"
 
@@ -45,7 +46,7 @@ TEST(async_input_buffer, in_out)
 
     auto v = vec | seqan3::views::async_input_buffer(3);
 
-    EXPECT_TRUE(std::ranges::equal(vec, v));
+    EXPECT_RANGE_EQ(vec, v);
 }
 
 TEST(async_input_buffer, in_out_empty)
@@ -70,7 +71,7 @@ TEST(async_input_buffer, buffer_size_huge)
 
     auto v = vec | seqan3::views::async_input_buffer(100000);
 
-    EXPECT_TRUE(std::ranges::equal(vec, v));
+    EXPECT_RANGE_EQ(vec, v);
 }
 
 TEST(async_input_buffer, destruct_with_full_buffer)
@@ -106,7 +107,7 @@ TEST(async_input_buffer, combinability)
 
     auto v = vec | adapt;
 
-    EXPECT_TRUE(std::ranges::equal(cmp, v));
+    EXPECT_RANGE_EQ(cmp, v);
 }
 
 TEST(async_input_buffer, concepts)

@@ -12,6 +12,7 @@
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include "fixture/alignment_fixture.hpp"
 
@@ -105,8 +106,8 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
     using score_matrix_t = seqan3::detail::two_dimensional_matrix<std::optional<int32_t>>;
     using trace_matrix_t = seqan3::detail::two_dimensional_matrix<std::optional<seqan3::detail::trace_directions>>;
 
-    EXPECT_TRUE(std::ranges::equal(static_cast<score_matrix_t>(res.score_matrix()), fixture.score_vector));
-    EXPECT_TRUE(std::ranges::equal(static_cast<trace_matrix_t>(res.trace_matrix()), fixture.trace_vector));
+    EXPECT_RANGE_EQ(static_cast<score_matrix_t>(res.score_matrix()), fixture.score_vector);
+    EXPECT_RANGE_EQ(static_cast<trace_matrix_t>(res.trace_matrix()), fixture.trace_vector);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_test,

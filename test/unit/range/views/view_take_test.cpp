@@ -24,6 +24,7 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 // ============================================================================
 //  test templates
@@ -51,7 +52,7 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("rab", v3b);
 
     // comparability against self
-    EXPECT_TRUE(std::ranges::equal(v,v));
+    EXPECT_RANGE_EQ(v, v);
 }
 
 template <typename adaptor_t>

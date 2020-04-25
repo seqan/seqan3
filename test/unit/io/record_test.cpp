@@ -15,10 +15,22 @@
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/std/algorithm>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna4;
 
 using default_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
+
+// This is needed for EXPECT_RANGE_EQ:
+namespace seqan3
+{
+template <typename char_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, field f)
+{
+    stream << "<field: " << static_cast<size_t>(f) << ">";
+    return stream;
+}
+} // namespace seqan3
 
 // ----------------------------------------------------------------------------
 // fields
@@ -28,7 +40,7 @@ TEST(fields, usage)
 {
     std::array comp{seqan3::field::seq, seqan3::field::id, seqan3::field::qual};
 
-    EXPECT_TRUE(std::ranges::equal(default_fields::as_array, comp));
+    EXPECT_RANGE_EQ(default_fields::as_array, comp);
     EXPECT_TRUE(default_fields::contains(seqan3::field::seq));
     EXPECT_TRUE(default_fields::contains(seqan3::field::id));
     EXPECT_TRUE(default_fields::contains(seqan3::field::qual));
@@ -73,7 +85,7 @@ TEST_F(record_, get_by_index)
     record_type r{"MY ID", "ACGT"_dna4};
 
     EXPECT_EQ(std::get<0>(r), "MY ID");
-    EXPECT_TRUE(std::ranges::equal(std::get<1>(r), "ACGT"_dna4));
+    EXPECT_RANGE_EQ(std::get<1>(r), "ACGT"_dna4);
 }
 
 TEST_F(record_, get_by_type)
@@ -81,7 +93,7 @@ TEST_F(record_, get_by_type)
     record_type r{"MY ID", "ACGT"_dna4};
 
     EXPECT_EQ(std::get<std::string>(r), "MY ID");
-    EXPECT_TRUE(std::ranges::equal(std::get<seqan3::dna4_vector>(r), "ACGT"_dna4));
+    EXPECT_RANGE_EQ(std::get<seqan3::dna4_vector>(r), "ACGT"_dna4);
 }
 
 TEST_F(record_, get_by_field)
@@ -89,7 +101,7 @@ TEST_F(record_, get_by_field)
     record_type r{"MY ID", "ACGT"_dna4};
 
     EXPECT_EQ(seqan3::get<seqan3::field::id>(r), "MY ID");
-    EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::seq>(r), "ACGT"_dna4));
+    EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(r), "ACGT"_dna4);
 }
 
 // ----------------------------------------------------------------------------

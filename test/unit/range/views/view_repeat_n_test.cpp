@@ -14,6 +14,7 @@
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 TEST(general, construction)
 {
@@ -62,7 +63,7 @@ TEST(view, factory)
         char const chr{'X'};
         auto v = seqan3::views::repeat_n(chr, 3);
         EXPECT_EQ(v.size(), 3u);
-        EXPECT_TRUE(std::ranges::equal(v, std::vector<char>{chr, chr, chr}));
+        EXPECT_RANGE_EQ(v, (std::vector<char>{chr, chr, chr}));
     }
 
     // string
@@ -78,14 +79,14 @@ TEST(view, factory)
     {
         auto view = std::string{"foobar"} | seqan3::views::persist | std::views::take(3);
         auto v = seqan3::views::repeat_n(view, 5);
-        EXPECT_TRUE(std::ranges::equal(*v.begin(), std::string{"foo"}));
+        EXPECT_RANGE_EQ(*v.begin(), std::string{"foo"});
     }
 
     // combinability
     {
         std::string str{"foobar"};
         auto v = seqan3::views::repeat_n(str, 2) | std::views::transform([] (auto & str) { return str.substr(3); });
-        EXPECT_TRUE(std::ranges::equal(v, std::vector<std::string>{"bar", "bar"}));
+        EXPECT_RANGE_EQ(v, (std::vector<std::string>{"bar", "bar"}));
     }
 }
 

@@ -20,6 +20,7 @@
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_rna5;
 using seqan3::operator""_wuss51;
@@ -237,7 +238,7 @@ TEST_F(read_fields, only_seq)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx]));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx]);
     }
 }
 
@@ -248,7 +249,7 @@ TEST_F(read_fields, only_id)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::id>(*it), expected_id[idx]));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), expected_id[idx]);
     }
 }
 
@@ -259,7 +260,7 @@ TEST_F(read_fields, only_structure)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::structure>(*it), expected_structure[idx]));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(*it), expected_structure[idx]);
     }
 }
 
@@ -282,12 +283,10 @@ TEST_F(read_fields, structured_seq)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::structured_seq>(*it)
-                                       | seqan3::views::convert<seqan3::rna5>,
-                                       expected_seq[idx]));
-        EXPECT_TRUE(std::ranges::equal(seqan3::get<seqan3::field::structured_seq>(*it)
-                                       | seqan3::views::convert<seqan3::wuss<51>>,
-                                       expected_structure[idx]));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structured_seq>(*it) | seqan3::views::convert<seqan3::rna5>,
+                        expected_seq[idx]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structured_seq>(*it) | seqan3::views::convert<seqan3::wuss<51>>,
+                        expected_structure[idx]);
     }
 }
 

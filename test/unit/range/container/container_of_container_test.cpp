@@ -13,6 +13,7 @@
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/test/cereal.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 using seqan3::operator""_dna4;
@@ -100,16 +101,16 @@ TYPED_TEST(container_of_container, iterators)
     TypeParam const t2{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     // begin
-    EXPECT_TRUE(std::ranges::equal(*t1.begin(),  "ACGT"_dna4));
-    EXPECT_TRUE(std::ranges::equal(*t1.cbegin(), "ACGT"_dna4));
-    EXPECT_TRUE(std::ranges::equal(*t2.begin(),  "ACGT"_dna4));
-    EXPECT_TRUE(std::ranges::equal(*t2.cbegin(), "ACGT"_dna4));
+    EXPECT_RANGE_EQ(*t1.begin(),  "ACGT"_dna4);
+    EXPECT_RANGE_EQ(*t1.cbegin(), "ACGT"_dna4);
+    EXPECT_RANGE_EQ(*t2.begin(),  "ACGT"_dna4);
+    EXPECT_RANGE_EQ(*t2.cbegin(), "ACGT"_dna4);
 
     // end and arithmetic
-    EXPECT_TRUE(std::ranges::equal(*(t1.end()  - 1), "GAGGA"_dna4));
-    EXPECT_TRUE(std::ranges::equal(*(t1.cend() - 1), "GAGGA"_dna4));
-    EXPECT_TRUE(std::ranges::equal(*(t2.end()  - 1), "GAGGA"_dna4));
-    EXPECT_TRUE(std::ranges::equal(*(t2.cend() - 1), "GAGGA"_dna4));
+    EXPECT_RANGE_EQ(*(t1.end()  - 1), "GAGGA"_dna4);
+    EXPECT_RANGE_EQ(*(t1.cend() - 1), "GAGGA"_dna4);
+    EXPECT_RANGE_EQ(*(t2.end()  - 1), "GAGGA"_dna4);
+    EXPECT_RANGE_EQ(*(t2.cend() - 1), "GAGGA"_dna4);
 
     // convertibility between const and non-const
     EXPECT_TRUE(t1.cend() == t1.end());
@@ -125,28 +126,28 @@ TYPED_TEST(container_of_container, element_access)
     TypeParam const t2{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     // at
-    EXPECT_TRUE(std::ranges::equal(t1.at(0), "ACGT"_dna4));
-    EXPECT_TRUE(std::ranges::equal(t2.at(0), "ACGT"_dna4));
+    EXPECT_RANGE_EQ(t1.at(0), "ACGT"_dna4);
+    EXPECT_RANGE_EQ(t2.at(0), "ACGT"_dna4);
     //TODO once we have throwing assert, check at's ability to throw
 
     // []
-    EXPECT_TRUE(std::ranges::equal(t1[0], "ACGT"_dna4));
-    EXPECT_TRUE(std::ranges::equal(t2[0], "ACGT"_dna4));
+    EXPECT_RANGE_EQ(t1[0], "ACGT"_dna4);
+    EXPECT_RANGE_EQ(t2[0], "ACGT"_dna4);
 
     // front
-    EXPECT_TRUE(std::ranges::equal(t1.front(), "ACGT"_dna4));
-    EXPECT_TRUE(std::ranges::equal(t2.front(), "ACGT"_dna4));
+    EXPECT_RANGE_EQ(t1.front(), "ACGT"_dna4);
+    EXPECT_RANGE_EQ(t2.front(), "ACGT"_dna4);
 
     // back
-    EXPECT_TRUE(std::ranges::equal(t1.back(), "GAGGA"_dna4));
-    EXPECT_TRUE(std::ranges::equal(t2.back(), "GAGGA"_dna4));
+    EXPECT_RANGE_EQ(t1.back(), "GAGGA"_dna4);
+    EXPECT_RANGE_EQ(t2.back(), "GAGGA"_dna4);
 
     if constexpr (std::is_same_v<TypeParam, seqan3::concatenated_sequences<std::vector<seqan3::dna4>>>)
     {
         using size_type = typename TypeParam::size_type;
         // concat
-        EXPECT_TRUE(std::ranges::equal(t1.concat(), "ACGTACGTGAGGA"_dna4));
-        EXPECT_TRUE(std::ranges::equal(t2.concat(), "ACGTACGTGAGGA"_dna4));
+        EXPECT_RANGE_EQ(t1.concat(), "ACGTACGTGAGGA"_dna4);
+        EXPECT_RANGE_EQ(t2.concat(), "ACGTACGTGAGGA"_dna4);
 
         // data
         EXPECT_EQ(std::get<0>(t1.raw_data()), "ACGTACGTGAGGA"_dna4);

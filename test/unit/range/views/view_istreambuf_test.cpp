@@ -18,6 +18,7 @@
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 #include "../iterator_test_template.hpp"
@@ -68,7 +69,7 @@ TEST(view_istreambuf, basic)
     is.seekg(0, std::ios::beg);
     auto v3 = seqan3::views::istreambuf(is) | seqan3::views::char_to<seqan3::dna5> | seqan3::views::complement;
     std::vector<seqan3::dna5> comp{"TGCATATATATANTATATANAATNNNTATATT"_dna5};
-    EXPECT_TRUE(std::ranges::equal(v3, comp));
+    EXPECT_RANGE_EQ(v3, comp);
 
     // combinability 2
     is.clear();
@@ -76,7 +77,7 @@ TEST(view_istreambuf, basic)
     auto v4 = seqan3::views::istreambuf(is) | seqan3::views::take_until(seqan3::is_space);
     std::string out2 = v4 | seqan3::views::to<std::string>;
     std::string comp2 = "ACGTATATATAT";
-    EXPECT_TRUE(std::ranges::equal(out2, comp2));
+    EXPECT_RANGE_EQ(out2, comp2);
 }
 
 TEST(view_istreambuf, concepts)
@@ -110,8 +111,8 @@ TEST(view_istreambuf, big_file_stram)
     auto v = seqan3::views::istreambuf(istream);
     while (v.begin() != v.end())
     {
-        EXPECT_TRUE(std::ranges::equal(v | seqan3::views::take_until_or_throw_and_consume(seqan3::is_char<'\n'>),
-                                       std::string_view{"halloballo"}));
+        EXPECT_RANGE_EQ(v | seqan3::views::take_until_or_throw_and_consume(seqan3::is_char<'\n'>),
+                        std::string_view{"halloballo"});
     }
 
 }
