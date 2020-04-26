@@ -82,7 +82,7 @@ void set_format(format_variant_type & format,
             {
                 if (std::ranges::equal(ext, extension))
                 {
-                    format = fm_type{};
+                    format.template emplace<fm_type>();
                     format_found = true;
                     return;
                 }
