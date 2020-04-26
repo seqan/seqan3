@@ -192,9 +192,9 @@ public:
     //!\brief Value type.
     using value_type = std::iter_value_t<urng_iterator_type>;
     //!\brief Pointer type.
-    using pointer = value_type *;
+    using pointer = detail::iter_pointer_t<urng_iterator_type>;
     //!\brief Reference type.
-    using reference = value_type &;
+    using reference = std::iter_reference_t<urng_iterator_type>;
     //!\brief Iterator category.
     using iterator_category = std::input_iterator_tag;
     //!\brief Iterator concept.

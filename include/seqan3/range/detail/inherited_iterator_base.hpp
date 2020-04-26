@@ -60,13 +60,13 @@ public:
      */
 
     //!\brief The difference type.
-    using difference_type       = typename std::iterator_traits<base_t>::difference_type;
+    using difference_type = std::iter_difference_t<base_t>;
     //!\brief The value type.
-    using value_type            = typename std::iterator_traits<base_t>::value_type;
+    using value_type = std::iter_value_t<base_t>;
     //!\brief The reference type.
-    using reference             = typename std::iterator_traits<base_t>::reference;
+    using reference = std::iter_reference_t<base_t>;
     //!\brief The pointer type.
-    using pointer               = typename std::iterator_traits<base_t>::pointer;
+    using pointer = detail::iter_pointer_t<base_t>;
     //!\brief The iterator category tag.
     using iterator_category = iterator_tag_t<base_t>;
     //!\brief The iterator concept tag.

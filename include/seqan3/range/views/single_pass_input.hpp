@@ -191,7 +191,7 @@ public:
     //!\brief Value type.
     using value_type = std::iter_value_t<base_iterator_type>;
     //!\brief Pointer type.
-    using pointer = typename std::iterator_traits<base_iterator_type>::pointer;
+    using pointer = detail::iter_pointer_t<base_iterator_type>;
     //!\brief Reference type.
     using reference = std::iter_reference_t<base_iterator_type>;
     //!\brief Iterator category.
