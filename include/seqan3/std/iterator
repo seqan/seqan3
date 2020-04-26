@@ -37,6 +37,22 @@ concept writable = ::std::indirectly_writable<Out, T>;
 } // namespace std::deprecated
 } // namespace std
 
+// we wrongly assume that these are in std::ranges namespace, even though they are in std namespace
+namespace std::ranges
+{
+inline namespace deprecated
+{
+// https://eel.is/c++draft/iterator.synopsis#lib:default_sentinel
+// // Header <iterator> synopsis
+// // [default.sentinels], default sentinels
+// struct default_sentinel_t;
+// inline constexpr default_sentinel_t default_sentinel{};
+using ::std::default_sentinel_t;
+using ::std::default_sentinel;
+using ::std::back_inserter;
+} // namespace std::ranges::deprecated
+} // namespace std::ranges
+
 #else // implement C++20 iterators via range-v3
 
 #ifndef RANGES_DEEP_STL_INTEGRATION
