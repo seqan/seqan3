@@ -19,11 +19,17 @@ int main()
 
     seqan3::alignment_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
 
+#if !SEQAN3_WORKAROUND_GCC_93983
     auto minimum_length10_filter = std::views::filter([] (auto const & rec)
     {
         return std::ranges::size(get<seqan3::field::seq>(rec)) >= 10;
     });
+#endif // !SEQAN3_WORKAROUND_GCC_93983
 
+#if SEQAN3_WORKAROUND_GCC_93983
+    for (auto & rec : fin /*| minimum_length10_filter*/) // only records with sequence length >= 10 will "appear"
+#else // ^^^ workaround / no workaround vvv
     for (auto & rec : fin | minimum_length10_filter) // only records with sequence length >= 10 will "appear"
+#endif // SEQAN3_WORKAROUND_GCC_93983
         seqan3::debug_stream << get<seqan3::field::id>(rec) << '\n';
 }

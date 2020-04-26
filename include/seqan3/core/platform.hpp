@@ -212,6 +212,15 @@
 #   endif
 #endif
 
+//!\brief https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93983
+#ifndef SEQAN3_WORKAROUND_GCC_93983
+#   if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
+#       define SEQAN3_WORKAROUND_GCC_93983 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_93983 0
+#   endif
+#endif
+
 //!\brief https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95371
 #ifndef SEQAN3_WORKAROUND_GCC_95371 // regressed in gcc10, fixed for gcc10.2
 #   if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ < 2)
