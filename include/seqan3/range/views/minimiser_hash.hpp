@@ -101,9 +101,10 @@ namespace seqan3::views
  * minimiser, it is saved only once.
  * For example, in the sequence "TAAAGTGCTAAA" for an ungapped shape of length 3 and a window size of 5 the first,
  * the second and the last window contain the same minimiser "AAA".
- * Because the first two windows are consecutive and storing the minimiser "AAA" twice is redundant, it is stored only
- * once. The "AAA" miniser of the last window on the other hand is stored, because the last window is not consecutive to
- * the other two and storing the second "AAA"-minimiser is also not redundant.
+ * Because the minimisers of the first two consecutive windows also share the same position, storing this minimiser
+ * twice is redundant and it is stored only once. The "AAA" minimiser of the last window on the other hand is stored,
+ * since it is located at an other position than the previous "AAA" minimiser and hence storing the second
+ * "AAA"-minimiser is not redundant but necessary.
  *
  * ### Non-lexicographical Minimisers
  *
