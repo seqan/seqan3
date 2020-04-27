@@ -10,6 +10,7 @@
 
 #include "helper.hpp"
 #include "helper_search_scheme.hpp"
+#include <seqan3/test/performance/sequence_generator.hpp>
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
@@ -20,15 +21,9 @@
 
 #include <gtest/gtest.h>
 
-#ifdef NDEBUG
-#define SEQAN3_SEARCH_TEST_ITERATIONS 1000
-#else
-#define SEQAN3_SEARCH_TEST_ITERATIONS 10
-#endif
-
 template <typename text_t>
 inline void test_search_hamming(auto index, text_t const & text, auto const & search, uint64_t const query_length,
-                                std::vector<uint8_t> const & error_distribution, time_t const seed,
+                                std::vector<uint8_t> const & error_distribution, size_t const seed,
                                 auto const & blocks_length, auto const & ordered_blocks_length,
                                 uint64_t const start_pos)
 {
@@ -161,7 +156,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
 }
 
 template <typename search_scheme_t>
-inline void test_search_scheme_hamming(search_scheme_t const & search_scheme, time_t const seed,
+inline void test_search_scheme_hamming(search_scheme_t const & search_scheme, size_t const seed,
                                        uint64_t const iterations)
 {
     seqan3::dna4_vector text;
@@ -185,7 +180,7 @@ inline void test_search_scheme_hamming(search_scheme_t const & search_scheme, ti
         uint64_t const query_length_min = std::max<uint64_t>(3, search_scheme.front().blocks() * max_error);
         uint64_t const query_length_max = std::min<uint64_t>(16, text_length);
 
-        random_text(text, text_length);
+        text = seqan3::test::generate_sequence<seqan3::dna4>(text_length, 0/*variance*/, seed);
         seqan3::bi_fm_index index(text);
 
         for (uint64_t i = 0; i < iterations; ++i)
@@ -213,7 +208,7 @@ inline void test_search_scheme_hamming(search_scheme_t const & search_scheme, ti
 }
 
 template <typename search_scheme_t>
-inline void test_search_scheme_edit(search_scheme_t const & search_scheme, time_t const seed, uint64_t const iterations)
+inline void test_search_scheme_edit(search_scheme_t const & search_scheme, size_t const seed, uint64_t const iterations)
 {
     seqan3::dna4_vector text, query;
 
@@ -227,7 +222,7 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, time_
         uint64_t const query_length_min = std::max<uint64_t>(3, search_scheme.front().blocks() * max_error);
         uint64_t const query_length_max = std::min<uint64_t>(16, text_length);
 
-        random_text(text, text_length);
+        text = seqan3::test::generate_sequence<seqan3::dna4>(text_length, 0/*variance*/, seed);
         seqan3::bi_fm_index index(text);
 
         uint8_t const substitution = std::rand() % (max_error + 1);
@@ -239,7 +234,7 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, time_
         {
             for (uint64_t query_length = query_length_min; query_length < query_length_max; ++query_length)
             {
-                random_text(query, query_length);
+                query = seqan3::test::generate_sequence<seqan3::dna4>(query_length, 0/*variance*/, seed);
 
                 std::vector<uint64_t> hits_trivial, hits_ss;
 
@@ -282,32 +277,28 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, time_
 
 TEST(search_scheme_test, search_scheme_hamming)
 {
-    time_t seed = std::time(nullptr);
-    std::srand(seed);
+    size_t seed = 42;
 
-    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<0, 0>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<0, 1>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<1, 1>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<0, 2>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<1, 2>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<2, 2>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<0, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<1, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<2, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    // test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<3, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<0, 0>, seed, 10);
+    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<0, 1>, seed, 10);
+    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<1, 1>, seed, 10);
+    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<0, 2>, seed, 10);
+    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<1, 2>, seed, 10);
+    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<2, 2>, seed, 10);
+    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<0, 3>, seed, 10);
+    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<1, 3>, seed, 10);
+    test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<2, 3>, seed, 10);
+    // test_search_scheme_hamming(seqan3::detail::optimum_search_scheme<3, 3>, seed, 10);
 }
 
 TEST(search_scheme_test, search_scheme_edit)
 {
-    time_t seed = std::time(nullptr);
-    std::srand(seed);
+    size_t seed = 42;
 
     // TODO: test with lower bounds != 0.
     // For that we need alignment statistics to know the number of errors spent in search_trivial
-    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 0>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 1>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 2>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
-    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 0>, seed, 10);
+    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 1>, seed, 10);
+    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 2>, seed, 10);
+    test_search_scheme_edit(seqan3::detail::optimum_search_scheme<0, 3>, seed, 10);
 }
-
-#undef SEQAN3_SEARCH_TEST_ITERATIONS
