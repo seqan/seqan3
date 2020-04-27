@@ -12,8 +12,6 @@
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 
-using namespace seqan3;
-
 template <typename T>
 struct iterator_fixture : public ::testing::Test
 {

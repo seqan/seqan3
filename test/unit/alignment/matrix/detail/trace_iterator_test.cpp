@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/iterator>
 #include <type_traits>
 #include <vector>
 
@@ -14,9 +15,10 @@
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/range/views/to.hpp>
-#include <seqan3/std/iterator>
 
 #include "../../../range/iterator_test_template.hpp"
+
+using seqan3::operator|;
 
 struct trace_iterator_fixture : public ::testing::Test
 {
@@ -63,7 +65,7 @@ TEST_F(trace_iterator_fixture, trace_path_2_3)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
                                                          seqan3::detail::column_index_type{3}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 5u);
     EXPECT_EQ(vec, (std::vector{L, L, L, U, U}));
@@ -73,7 +75,7 @@ TEST_F(trace_iterator_fixture, trace_path_2_2)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
                                                          seqan3::detail::column_index_type{2}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 2u);
     EXPECT_EQ(vec, (std::vector{D, D}));
@@ -83,7 +85,7 @@ TEST_F(trace_iterator_fixture, trace_path_2_1)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
                                                          seqan3::detail::column_index_type{1}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 3u);
     EXPECT_EQ(vec, (std::vector{U, U, L}));
@@ -93,7 +95,7 @@ TEST_F(trace_iterator_fixture, trace_path_2_0)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
                                                          seqan3::detail::column_index_type{0}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 2u);
     EXPECT_EQ(vec, (std::vector{U, U}));
@@ -103,7 +105,7 @@ TEST_F(trace_iterator_fixture, trace_path_1_3)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
                                                          seqan3::detail::column_index_type{3}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 3u);
     EXPECT_EQ(vec, (std::vector{D, L, L}));
@@ -113,7 +115,7 @@ TEST_F(trace_iterator_fixture, trace_path_1_2)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
                                                          seqan3::detail::column_index_type{2}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 3u);
     EXPECT_EQ(vec, (std::vector{L, L, U}));
@@ -123,7 +125,7 @@ TEST_F(trace_iterator_fixture, trace_path_1_1)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
                                                          seqan3::detail::column_index_type{1}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 1u);
     EXPECT_EQ(vec, (std::vector{D}));
@@ -133,7 +135,7 @@ TEST_F(trace_iterator_fixture, trace_path_1_0)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
                                                          seqan3::detail::column_index_type{0}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 1u);
     EXPECT_EQ(vec, (std::vector{U}));
@@ -143,7 +145,7 @@ TEST_F(trace_iterator_fixture, trace_path_0_3)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
                                                          seqan3::detail::column_index_type{3}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 3u);
     EXPECT_EQ(vec, (std::vector{L, L, L}));
@@ -153,7 +155,7 @@ TEST_F(trace_iterator_fixture, trace_path_0_2)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
                                                          seqan3::detail::column_index_type{2}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 2u);
     EXPECT_EQ(vec, (std::vector{L, L}));
@@ -163,7 +165,7 @@ TEST_F(trace_iterator_fixture, trace_path_0_1)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
                                                          seqan3::detail::column_index_type{1}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 1u);
     EXPECT_EQ(vec, (std::vector{L}));
@@ -173,7 +175,7 @@ TEST_F(trace_iterator_fixture, trace_path_0_0)
 {
     std::vector vec = path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
                                                          seqan3::detail::column_index_type{0}})
-                    | views::to<std::vector>;
+                    | seqan3::views::to<std::vector>;
 
     EXPECT_EQ(vec.size(), 0u);
     EXPECT_EQ(vec, (std::vector<seqan3::detail::trace_directions>{}));

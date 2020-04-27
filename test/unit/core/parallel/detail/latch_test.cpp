@@ -11,15 +11,13 @@
 
 #include <seqan3/core/parallel/detail/latch.hpp>
 
-using namespace seqan3::detail;
-
 TEST(latch, arrive_wait)
 {
     auto threads = std::thread::hardware_concurrency();
     if (threads > 4)
         threads = 4;
 
-    latch completion_latch{threads};
+    seqan3::detail::latch completion_latch{threads};
     std::atomic<uint32_t> counter{0};
 
     auto work = [&] ()
@@ -48,7 +46,7 @@ TEST(latch, arrive_and_wait)
     if (threads > 4)
         threads = 4;
 
-    latch completion_latch{threads};
+    seqan3::detail::latch completion_latch{threads};
     std::atomic<uint32_t> counter{0};
 
     auto work = [&] ()

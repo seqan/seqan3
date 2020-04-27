@@ -40,7 +40,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(one_column,
                                simulated_alignment_test,
                                alignment_score_matrix_one_column_test<int32_t>, );
 
-using test_type = std::pair<detail::alignment_score_matrix_one_column<int32_t>, std::false_type>;
+using test_type = std::pair<seqan3::detail::alignment_score_matrix_one_column<int32_t>, std::false_type>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(one_column,
                                alignment_matrix_base_test,

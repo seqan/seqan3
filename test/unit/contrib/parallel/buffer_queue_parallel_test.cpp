@@ -15,9 +15,6 @@
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
 
-using namespace seqan3::contrib;
-using namespace seqan3::detail;
-
 template <typename sequential_push_t, typename sequential_pop_t>
 void test_buffer_queue_wait_status()
 {
@@ -38,7 +35,7 @@ void test_buffer_queue_wait_status()
     // std::cout << "writers: " << writer_count << ‘\n‘;
 
     constexpr size_t size_v = 10000;
-    dynamic_buffer_queue<uint32_t> queue{100};
+    seqan3::contrib::dynamic_buffer_queue<uint32_t> queue{100};
 
     std::atomic<uint32_t> cnt{1};
 
@@ -54,8 +51,8 @@ void test_buffer_queue_wait_status()
                 return;
 
             // wait semantics
-            queue_op_status status = queue.wait_push(intermediate);
-            if (status != queue_op_status::success)
+            seqan3::contrib::queue_op_status status = queue.wait_push(intermediate);
+            if (status != seqan3::contrib::queue_op_status::success)
                 return;
         }
     };
@@ -65,7 +62,7 @@ void test_buffer_queue_wait_status()
     auto consume = [&]() mutable
     {
         uint32_t i = 0;
-        while (queue.wait_pop(i) != queue_op_status::closed)
+        while (queue.wait_pop(i) != seqan3::contrib::queue_op_status::closed)
             sum.fetch_add(i, std::memory_order_relaxed);
     };
 
@@ -116,10 +113,10 @@ TEST(buffer_queue, mpmc_sum)
     test_buffer_queue_wait_status<std::false_type, std::false_type>();
 }
 
-template <typename sequential_push_t, typename sequential_pop_t, buffer_queue_policy buffer_policy>
+template <typename sequential_push_t, typename sequential_pop_t, seqan3::contrib::buffer_queue_policy buffer_policy>
 void test_buffer_queue_wait_throw(size_t initialCapacity)
 {
-    using queue_t = buffer_queue<size_t, std::vector<size_t>, buffer_policy>;
+    using queue_t = seqan3::contrib::buffer_queue<size_t, std::vector<size_t>, buffer_policy>;
 
     queue_t queue{initialCapacity};
     std::vector<size_t> random;
@@ -158,8 +155,8 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
     std::vector<std::thread> workers;
     std::atomic<size_t> registered_writer = 0;
     std::atomic<size_t> registered_reader = 0;
-    queue_op_status push_status = queue_op_status::success;
-    queue_op_status pop_status = queue_op_status::success;
+    seqan3::contrib::queue_op_status push_status = seqan3::contrib::queue_op_status::success;
+    seqan3::contrib::queue_op_status pop_status = seqan3::contrib::queue_op_status::success;
     for (size_t tid = 0; tid < thread_count; ++tid)
     {
         workers.push_back(std::thread([&, tid]()
@@ -168,7 +165,7 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
             if (tid < writer_count)
             {
                 {  // Wait until all reader are present.
-                    spin_delay delay{};
+                    seqan3::detail::spin_delay delay{};
                     ++registered_writer;
                     while (registered_reader.load() < (thread_count - writer_count))
                         delay.wait();
@@ -184,7 +181,7 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
                     {
                         queue.push(random[pos]);
                     }
-                    catch (queue_op_status & ex)
+                    catch (seqan3::contrib::queue_op_status & ex)
                     {
                         push_status = ex;
                     }
@@ -204,7 +201,7 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
             {
 
                 {  // Wait until all writers are setup.
-                    spin_delay delay{};
+                    seqan3::detail::spin_delay delay{};
                     ++registered_reader;
                     while (registered_writer.load() < writer_count)
                         delay.wait();
@@ -222,7 +219,7 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
                         // if ((cnt & 0xff) == 0)
                         //    printf("%ld ", tid);
                     }
-                    catch (queue_op_status & ex)
+                    catch (seqan3::contrib::queue_op_status & ex)
                     {
                         pop_status = ex;
                         break;
@@ -246,46 +243,46 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
     // std::cout << "throughput: " << static_cast<size_t>(random.size() / time_span) << " values/s\n";
 
     EXPECT_EQ(chk_sum, chk_sum2);
-    EXPECT_TRUE(push_status == queue_op_status::success);
-    EXPECT_TRUE(pop_status == queue_op_status::closed);
+    EXPECT_TRUE(push_status == seqan3::contrib::queue_op_status::success);
+    EXPECT_TRUE(pop_status == seqan3::contrib::queue_op_status::closed);
 }
 
 TEST(buffer_queue, spsc_dynamicsize)
 {
-    test_buffer_queue_wait_throw<std::true_type, std::true_type, buffer_queue_policy::dynamic>(0u);
+    test_buffer_queue_wait_throw<std::true_type, std::true_type, seqan3::contrib::buffer_queue_policy::dynamic>(0u);
 }
 
 TEST(buffer_queue, spsc_fixedsize)
 {
-    test_buffer_queue_wait_throw<std::true_type, std::true_type, buffer_queue_policy::fixed>(30u);
+    test_buffer_queue_wait_throw<std::true_type, std::true_type, seqan3::contrib::buffer_queue_policy::fixed>(30u);
 }
 
 TEST(buffer_queue, spmc_dynamicsize)
 {
-    test_buffer_queue_wait_throw<std::true_type, std::false_type, buffer_queue_policy::dynamic>(0u);
+    test_buffer_queue_wait_throw<std::true_type, std::false_type, seqan3::contrib::buffer_queue_policy::dynamic>(0u);
 }
 
 TEST(buffer_queue, spmc_fixedsize)
 {
-    test_buffer_queue_wait_throw<std::true_type, std::false_type, buffer_queue_policy::fixed>(30u);
+    test_buffer_queue_wait_throw<std::true_type, std::false_type, seqan3::contrib::buffer_queue_policy::fixed>(30u);
 }
 
 TEST(buffer_queue, mpsc_dynamicsize)
 {
-    test_buffer_queue_wait_throw<std::false_type, std::true_type, buffer_queue_policy::dynamic>(0u);
+    test_buffer_queue_wait_throw<std::false_type, std::true_type, seqan3::contrib::buffer_queue_policy::dynamic>(0u);
 }
 
 TEST(buffer_queue, mpsc_fixedsize)
 {
-    test_buffer_queue_wait_throw<std::false_type, std::true_type, buffer_queue_policy::fixed>(30u);
+    test_buffer_queue_wait_throw<std::false_type, std::true_type, seqan3::contrib::buffer_queue_policy::fixed>(30u);
 }
 
 TEST(buffer_queue, mpmc_dynamicsize)
 {
-    test_buffer_queue_wait_throw<std::false_type, std::false_type, buffer_queue_policy::dynamic>(0u);
+    test_buffer_queue_wait_throw<std::false_type, std::false_type, seqan3::contrib::buffer_queue_policy::dynamic>(0u);
 }
 
 TEST(buffer_queue, mpmc_fixedsize)
 {
-    test_buffer_queue_wait_throw<std::false_type, std::false_type, buffer_queue_policy::fixed>(30u);
+    test_buffer_queue_wait_throw<std::false_type, std::false_type, seqan3::contrib::buffer_queue_policy::fixed>(30u);
 }

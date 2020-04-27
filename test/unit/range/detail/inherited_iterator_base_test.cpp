@@ -14,15 +14,14 @@
 
 /* This class is extensively tested by the many views that use it, e.g. views::take_line */
 
-using namespace seqan3;
-
 //! [inherited_iterator_base def]
 
-class skip_odd_numbers_it : public detail::inherited_iterator_base<skip_odd_numbers_it, std::vector<int>::iterator>
+class skip_odd_numbers_it : public seqan3::detail::inherited_iterator_base<skip_odd_numbers_it,
+                                                                           std::vector<int>::iterator>
 {
 private:
     using base_base_t = std::vector<int>::iterator;
-    using base_t      = detail::inherited_iterator_base<skip_odd_numbers_it, std::vector<int>::iterator>;
+    using base_t      = seqan3::detail::inherited_iterator_base<skip_odd_numbers_it, std::vector<int>::iterator>;
 
 public:
     skip_odd_numbers_it() = default;
