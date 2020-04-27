@@ -14,17 +14,16 @@
 
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser.hpp>
-#include <seqan3/search/kmer_index/shape.hpp>
 
 namespace seqan3::detail
 {
 //!\brief views::minimiser_hash's range adaptor object type (non-closure).
 struct minimiser_hash_fn
 {
-    /*!\brief Store the shape and the window_size and return a range adaptor closure object.
+    /*!\brief Store the shape and the window size and return a range adaptor closure object.
     * \param[in] shape       The seqan3::shape to use for hashing.
-    * \param[in] window_size The windows_size to use.
-    * \throws std::invalid_argument if the size of the shape is greater than the window_size.
+    * \param[in] window_size The windows size to use.
+    * \throws std::invalid_argument if the size of the shape is greater than the `window_size`.
     * \returns               A range of converted elements.
     */
     constexpr auto operator()(shape const & shape, uint32_t const window_size) const
@@ -32,11 +31,11 @@ struct minimiser_hash_fn
         return seqan3::detail::adaptor_from_functor{*this, shape, window_size};
     }
 
-    /*!\brief Store the shape, the window_size and the seed and return a range adaptor closure object.
+    /*!\brief Store the shape, the window size and the seed and return a range adaptor closure object.
     * \param[in] shape       The seqan3::shape to use for hashing.
-    * \param[in] window_size The windows_size to use.
+    * \param[in] window_size The size of the window.
     * \param[in] seed        The seed to use.
-    * \throws std::invalid_argument if the size of the shape is greater than the window_size.
+    * \throws std::invalid_argument if the size of the shape is greater than the `window_size`.
     * \returns               A range of converted elements.
     */
     constexpr auto operator()(shape const & shape, uint32_t const window_size, uint64_t const seed) const
@@ -49,9 +48,9 @@ struct minimiser_hash_fn
      * \param[in] urange      The input range to process. Must model std::ranges::viewable_range and the reference type
      *                        of the range must model seqan3::semialphabet.
      * \param[in] shape       The seqan3::shape to use for hashing.
-     * \param[in] window_size The windows_size to use.
+     * \param[in] window_size The size of the window.
      * \param[in] seed        The seed to use.
-     * \throws std::invalid_argument if the size of the shape is greater than the window_size.
+     * \throws std::invalid_argument if the size of the shape is greater than the `window_size`.
      * \returns               A range of converted elements.
      */
     template <std::ranges::range urng_t>
@@ -99,7 +98,11 @@ namespace seqan3::views
  * A sequence can be presented by a small number of k-mers (minimisers). For a given shape and window size all k-mers
  * are determined in the forward strand and only the lexicographically smallest k-mer is saved for
  * one window. This process is repeated over every possible window of a sequence. If consecutive windows share a
- * minimiser, it is saved only once.
+ * minimiser, it is saved only once. For example, in the sequence "TAAAGTGCTAAA" for an ungapped shape of length 3 and a
+ * window size of 5 the first, the second and the last window contain the same minimiser "AAA".
+ * Because the first two windows are consecutive and storing the minimiser "AAA" twice is redundant, it is stored only
+ * once. The "AAA" miniser of the last window on the other hand is stored, because the last window is not consecutive to
+ * the other two and storing the second "AAA"-minimiser is also not redundant.
  *
  * ### Non-lexicographical Minimisers
  *
@@ -107,10 +110,10 @@ namespace seqan3::views
  * a minimiser starts with a repetition of A’s, then in the next window it is highly likely that the minimiser will
  * start with a repetition of A’s as well. Because it is only one A shorter, depending on how long the repetition is
  * this might go on for multiple window shifts. Saving these only slightly different minimiser makes no sense because
- * they contain no new information about the underlying sequence plus
- * sequences with a repetition of A’s will be seen as more similar to each other than they actually are.
+ * they contain no new information about the underlying sequence.
+ * Additionally, sequences with a repetition of A’s will be seen as more similar to each other than they actually are.
  * As [Marçais et al.](https://doi.org/10.1093/bioinformatics/btx235) have shown, randomizing the order of the k-mers
- * can solve this problem. Therefore, a random seed is used as a default to XOR all k-mers, thereby randomzing the
+ * can solve this problem. Therefore, a random seed is used to XOR all k-mers, thereby randomizing the
  * order. The user can change the seed to any other value he or she thinks is useful. A seed of 0 is returning the
  * lexicographical order.
  *
