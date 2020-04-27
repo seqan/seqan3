@@ -507,14 +507,12 @@ public:
     /*!\brief Move the iterator by a given offset and return the corresponding hash value.
      * \attention This function is only avaible if `it_t` models std::random_access_iterator.
      */
-    value_type operator[](difference_type const n)
+    reference operator[](difference_type const n) const
     //!\cond
         requires std::random_access_iterator<it_t>
     //!\endcond
     {
-        text_left += n;
-        hash_full();
-        return operator*();
+        return *(*this + n);
     }
 
     //!\brief Return the hash value.
