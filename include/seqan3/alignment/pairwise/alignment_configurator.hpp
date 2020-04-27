@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
@@ -265,9 +266,13 @@ public:
             using alignment_result_value_t = typename align_result_selector<std::remove_reference_t<wrapped_first_t>,
                                                                             std::remove_reference_t<wrapped_second_t>,
                                                                             config_t>::type;
-            using callback_on_result_t = std::function<void(alignment_result<alignment_result_value_t>)>;
+            using alignment_result_t = alignment_result<alignment_result_value_t>;
+            using callback_on_result_t = std::function<void(alignment_result_t)>;
             // Define the function wrapper type.
             using function_wrapper_t = std::function<void(indexed_sequence_pair_chunk_t, callback_on_result_t)>;
+
+            // Capture the alignment result type.
+            auto captured_cfg = cfg | align_cfg::alignment_result_capture<alignment_result_t>;
 
             // ----------------------------------------------------------------------------
             // Test some basic preconditions
@@ -294,9 +299,9 @@ public:
             // ----------------------------------------------------------------------------
 
             // Use default edit distance if gaps are not set.
-            auto const & gaps = cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
+            auto const & gaps = captured_cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
             auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
-            auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(free_ends_none);
+            auto align_ends_cfg = captured_cfg.template value_or<align_cfg::aligned_ends>(free_ends_none);
 
             if constexpr (config_t::template exists<align_cfg::mode<detail::global_alignment_type>>())
             {
@@ -312,7 +317,7 @@ public:
                     {
                         if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
                             (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
-                            return std::pair{configure_edit_distance<function_wrapper_t>(cfg), cfg};
+                            return std::pair{configure_edit_distance<function_wrapper_t>(captured_cfg), captured_cfg};
                     }
                 }
             }
@@ -326,7 +331,7 @@ public:
                 throw invalid_alignment_configuration{"The align_cfg::max_error configuration is only allowed for "
                                                       "the specific edit distance computation."};
             // Configure the alignment algorithm.
-            return std::pair{configure_scoring_scheme<function_wrapper_t>(cfg), cfg};
+            return std::pair{configure_scoring_scheme<function_wrapper_t>(captured_cfg), captured_cfg};
         }
     }
 
