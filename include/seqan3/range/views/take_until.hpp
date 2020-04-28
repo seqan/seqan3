@@ -79,7 +79,7 @@ private:
         //!\brief The iterator type of the underlying range.
         using base_base_t = std::ranges::iterator_t<rng_t>;
         //!\brief The CRTP wrapper type.
-        using base_t      = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
+        using base_t = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
 
         //!\brief The sentinel type is identical to that of the underlying range.
         using sentinel_type = std::ranges::sentinel_t<rng_t>;
@@ -90,6 +90,8 @@ private:
                                              std::remove_reference_t<fun_t> &>;
         //!\brief Reference to the functor stored in the view.
         ranges::semiregular_t<fun_ref_t> fun;
+        //!\brief The sentinel of the underlying range.
+        sentinel_type underlying_sentinel{};
 
     public:
         /*!\name Constructors, destructor and assignment
@@ -111,8 +113,8 @@ private:
         //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
         iterator_type(base_base_t it,
                       fun_ref_t _fun,
-                      sentinel_type /*only used by the consuming iterator*/) noexcept(noexcept(base_t{it})) :
-            base_t{std::move(it)}, fun{_fun}
+                      sentinel_type sentinel) noexcept(noexcept(base_t{it})) :
+            base_t{std::move(it)}, fun{_fun}, underlying_sentinel{std::move(sentinel)}
         {}
         //!\}
 
@@ -137,23 +139,12 @@ private:
          * \brief We define comparison against self and against the sentinel.
          * \{
          */
-        //!\brief Delegate comparison to base_base_t.
-        bool operator==(iterator_type const & rhs) const
-            noexcept(noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
-        //!\cond
-            requires std::forward_iterator<base_base_t>
-        //!\endcond
-        {
-            return *this->this_to_base() == *rhs.this_to_base();
-        }
+        using base_t::operator==;
 
         //!\brief Evaluate functor, possibly throw.
-        friend bool operator==(iterator_type const & lhs, std::ranges::default_sentinel_t const & rhs)
-        noexcept(!or_throw &&
-                 noexcept(std::declval<base_base_t &>() == std::declval<sentinel_type &>()) &&
-                 noexcept(fun(std::declval<reference>())))
+        friend bool operator==(iterator_type const & lhs, std::ranges::default_sentinel_t const & /*rhs*/)
         {
-            if (lhs.this_to_base() == rhs) // [[unlikely]]
+            if (*lhs.this_to_base() == lhs.underlying_sentinel) // [[unlikely]]
             {
                 if constexpr (or_throw)
                     throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
@@ -171,10 +162,8 @@ private:
             return rhs == lhs;
         }
 
-
-
         //!\brief Delegate comparison to base_base_t.
-       friend bool operator!=(std::ranges::default_sentinel_t const & lhs, iterator_type const & rhs)
+       friend bool operator!=(iterator_type const & lhs, std::ranges::default_sentinel_t const & rhs)
         /*    noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         //!\cond
             requires std::forward_iterator<base_base_t>
@@ -184,7 +173,7 @@ private:
         }
 
         //!\brief Return the saved at_end state.
-        friend bool operator!=(iterator_type const & lhs, std::ranges::default_sentinel_t const & rhs)
+        friend bool operator!=(std::ranges::default_sentinel_t const & lhs, iterator_type const & rhs)
         //    noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         {
             return rhs != lhs;
@@ -201,7 +190,7 @@ private:
         //!\brief The iterator type of the underlying range.
         using base_base_t = std::ranges::iterator_t<rng_t>;
         //!\brief The CRTP wrapper type.
-        using base_t      = inherited_iterator_base<iterator_type_consume_input, std::ranges::iterator_t<rng_t>>;
+        using base_t = inherited_iterator_base<iterator_type_consume_input, std::ranges::iterator_t<rng_t>>;
 
         //!\brief Auxiliary type.
         using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
@@ -299,15 +288,12 @@ private:
          * \{
          */
         //!\brief Return the saved at_end state.
-        friend bool operator==(iterator_type_consume_input const & lhs, std::ranges::default_sentinel_t const & rhs)
-        /*    noexcept(!or_throw &&
-                     noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
-                     noexcept(fun(std::declval<reference>())))*/
+        friend bool operator==(iterator_type_consume_input const & lhs, std::ranges::default_sentinel_t const & /*rhs*/)
         {
             if (lhs.at_end_gracefully)
                 return true;
 
-            if (lhs->this_to_base() == rhs)
+            if (*lhs.this_to_base() == lhs.stored_end)
             {
                 if constexpr (or_throw)
                     throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};

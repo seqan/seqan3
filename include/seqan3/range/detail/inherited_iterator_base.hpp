@@ -401,6 +401,7 @@ private:
         return static_cast<derived_t const *>(this);
     }
 
+protected:
     //!\brief Cast this to base type.
     constexpr base_t * this_to_base()
     {
