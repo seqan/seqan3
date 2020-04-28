@@ -127,7 +127,7 @@ template <typename inner_type,
 //!\cond
     requires reservible_container<std::remove_reference_t<inner_type>> &&
              reservible_container<std::remove_reference_t<data_delimiters_type>> &&
-             std::is_same_v<std::ranges::range_size_t<inner_type>, value_type_t<data_delimiters_type>>
+             std::is_same_v<std::ranges::range_size_t<inner_type>, std::ranges::range_value_t<data_delimiters_type>>
 //!\endcond
 class concatenated_sequences
 {
@@ -185,69 +185,41 @@ protected:
     //!\cond
     // unfortunately we cannot specialise the variable template so we have to add an auxiliary here
     template <std::ranges::range t>
-        requires std::convertible_to<std::ranges::range_reference_t<t>, std::ranges::range_value_t<value_type>>
-    static constexpr bool is_compatible_with_value_type_aux = dimension_v<t> == dimension_v<value_type>;
+    static constexpr bool is_compatible_with_value_type_aux(std::type_identity<t>)
+    {
+        return dimension_v<t> == dimension_v<value_type> &&
+               std::convertible_to<std::ranges::range_reference_t<t>, std::ranges::range_value_t<value_type>>;
+    }
+
+    static constexpr bool is_compatible_with_value_type_aux(...)
+    {
+        return false;
+    }
     //!\endcond
 
     //!\brief Whether a type satisfies seqan3::compatible with this class's `value_type` or `reference` type.
     //!\hideinitializer
     // we explicitly check same-ness, because these types may not be fully resolved, yet
     template <std::ranges::range t>
-    static constexpr bool is_compatible_with_value_type =
-        std::is_same_v<remove_cvref_t<t>, value_type> ||
-        std::is_same_v<remove_cvref_t<t>, reference> ||
-        std::is_same_v<remove_cvref_t<t>, const_reference> ||
-        (
-            !std::same_as<remove_cvref_t<t>, iterator> &&
-            !std::same_as<remove_cvref_t<t>, const_iterator> &&
-            !std::same_as<remove_cvref_t<t>, concatenated_sequences> &&
-            is_compatible_with_value_type_aux<t>
-        );
-
-    //!\cond
-    // unfortunately we cannot specialise the variable template so we have to add an auxiliary here
-    template <typename t>
-        requires std::ranges::range<std::iter_reference_t<t>> &&
-                 (dimension_v<std::iter_reference_t<t>> == dimension_v<value_type>) &&
-                 is_compatible_with_value_type<std::iter_reference_t<t>>
-    static constexpr bool iter_value_t_is_compatible_with_value_type_aux = true;
-
-    template <std::ranges::range t>
-        requires std::ranges::range<std::ranges::range_reference_t<t>> &&
-                 (dimension_v<std::ranges::range_reference_t<t>> == dimension_v<value_type>) &&
-                 is_compatible_with_value_type<std::ranges::range_reference_t<t>>
-    static constexpr bool range_value_t_is_compatible_with_value_type_aux = true;
-    //!\endcond
+    static constexpr bool is_compatible_with_value_type = is_compatible_with_value_type_aux(std::type_identity<t>{});
 
     //!\brief Whether a type satisfies seqan3::compatible with this class.
     //!\hideinitializer
     // cannot use the concept, because this class is not yet fully defined
     template <typename t>
     //!\cond
-        requires std::ranges::range<std::iter_reference_t<t>>
+        requires is_compatible_with_value_type<std::iter_reference_t<t>>
     //!\endcond
-    static constexpr bool iter_value_t_is_compatible_with_value_type =
-        !std::is_same_v<remove_cvref_t<t>, concatenated_sequences> &&
-        (
-            std::is_same_v<remove_cvref_t<t>, iterator> ||
-            std::is_same_v<remove_cvref_t<t>, const_iterator> ||
-            iter_value_t_is_compatible_with_value_type_aux<t>
-        );
+    static constexpr bool iter_value_t_is_compatible_with_value_type = true;
 
     //!\brief Whether a type satisfies seqan3::compatible with this class.
     //!\hideinitializer
     // cannot use the concept, because this class is not yet fully defined
     template <std::ranges::range t>
     //!\cond
-        requires std::ranges::range<std::ranges::range_reference_t<t>>
+        requires is_compatible_with_value_type<std::ranges::range_reference_t<t>>
     //!\endcond
-    static constexpr bool range_value_t_is_compatible_with_value_type =
-        !std::is_same_v<remove_cvref_t<t>, iterator> &&
-        !std::is_same_v<remove_cvref_t<t>, const_iterator> &&
-        (
-            std::is_same_v<remove_cvref_t<t>, concatenated_sequences> ||
-            range_value_t_is_compatible_with_value_type_aux<t>
-        );
+    static constexpr bool range_value_t_is_compatible_with_value_type = true;
     //!\}
 
 public:
