@@ -1012,7 +1012,7 @@ public:
             value_len = std::distance(std::ranges::begin(value), std::ranges::end(value));
 
         data_values.reserve(data_values.size() + count * value_len);
-        auto placeholder = views::repeat_n(value_type_t<rng_type>{}, count * value_len)
+        auto placeholder = views::repeat_n(std::ranges::range_value_t<rng_type>{}, count * value_len)
                          | std::views::common;
         // insert placeholder so the tail is moved once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
@@ -1099,7 +1099,7 @@ public:
         }
 
         // adapt values of inserted region
-        auto placeholder = views::repeat_n(value_type_t<value_type>{}, full_len)
+        auto placeholder = views::repeat_n(std::ranges::range_value_t<value_type>{}, full_len)
                          | std::views::common;
         // insert placeholder so the tail is moved only once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],

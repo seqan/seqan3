@@ -31,7 +31,7 @@ TYPED_TEST_SUITE(container_of_container, container_of_container_types, );
 TYPED_TEST(container_of_container, concepts)
 {
     EXPECT_TRUE(seqan3::container<TypeParam>);
-    EXPECT_TRUE(seqan3::container<seqan3::value_type_t<TypeParam>>);
+    EXPECT_TRUE(seqan3::container<std::ranges::range_value_t<TypeParam>>);
 }
 
 TYPED_TEST(container_of_container, construction)
