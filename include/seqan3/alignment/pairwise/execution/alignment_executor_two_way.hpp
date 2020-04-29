@@ -44,14 +44,20 @@ namespace seqan3::detail
  * This alignment executor provides an additional buffer over the computed alignments to allow
  * a two-way execution flow. The alignment results can then be accessed in an order-preserving manner using the
  * alignment_executor_two_way::bump() member function.
+ *
+ * ### Bucket structure
+ *
+ * Since it is not clear how many results a single invocation of the given algorithm produces the buffered results
+ * are placed into buckets. The number of available buckets is determined by the execution policy. In sequential
+ * execution mode only one bucket is available and only one invocation is buffered at a time. In the parallel execution,
+ * a bucket is allocated for every element of the underlying resource.
  */
 template <std::ranges::viewable_range resource_t,
           typename alignment_algorithm_t,
           std::semiregular value_t,
           typename execution_handler_t = execution_handler_sequential>
 //!\cond
-    requires std::ranges::forward_range<resource_t> &&
-             std::copy_constructible<alignment_algorithm_t>
+    requires std::ranges::forward_range<resource_t> && std::copy_constructible<alignment_algorithm_t>
 //!\endcond
 class alignment_executor_two_way
 {
@@ -59,20 +65,32 @@ private:
     /*!\name Resource types
      * \{
      */
-    //!\brief The underlying resource type augmented with an index and a chunked view.
-    using chunked_resource_type = typename chunked_indexed_sequence_pairs<resource_t>::type;
+    //!\brief The underlying resource type.
+    using resource_type = std::ranges::all_view<resource_t>;
     //!\brief The iterator over the underlying resource.
-    using chunked_resource_iterator = std::ranges::iterator_t<chunked_resource_type>;
+    using resource_iterator_type = std::ranges::iterator_t<resource_type>;
     //!\}
 
     /*!\name Buffer types
      * \{
      */
     //!\brief The internal buffer.
-    using buffer_type       = std::vector<value_t>;
+    using buffer_type = std::vector<value_t>;
+    //!\brief The type of the bucket container.
+    using bucket_type = std::vector<buffer_type>;
     //!\brief The pointer type of the buffer.
-    using buffer_pointer    = std::ranges::iterator_t<buffer_type>;
+    using buffer_iterator_type = std::ranges::iterator_t<buffer_type>;
+    //!\brief The iterator type over the bucket container.
+    using bucket_iterator_type = std::ranges::iterator_t<bucket_type>;
     //!\}
+
+    //!\brief Return status for seqan3::detail::alignment_executor_two_way::underflow.
+    enum underflow_status
+    {
+        non_empty_buffer, //!< The buffer is not fully consumed yet and contains at least one element.
+        empty_buffer, //!< The buffer is empty after calling underflow.
+        end_of_resource //!< The end of the resource was reached.
+    };
 
 public:
 
@@ -136,43 +154,38 @@ public:
      * \tparam exec_policy_t The type of the execution policy; seqan3::is_execution_policy must return `true`. Defaults
      *                       to seqan3::sequenced_policy.
      *
-     * \param[in] resrc The underlying resource containing the sequence pairs to align.
+     * \param[in] resource The underlying resource containing the sequence pairs to align.
      * \param[in] fn The alignment kernel to invoke on the sequences pairs.
-     * \param[in] buffer_value A value to initialise the buffer with.
-     * \param[in] chunk_size The number of sequence pairs to invoke the alignment algorithm with.
+     * \param[in] buffer_value A dummy object to deduce the type of the underlying buffer value.
      * \param[in] exec Optional execution policy to use. Defaults to seqan3::seq.
      *
      * \throws std::invalid_argument if the chunk size is less than 1.
      *
      * \details
      *
-     * Forwards the resource range as a zipped view with an index view to provide internal ids for the alignments.
      * If the execution handler is parallel, it allocates a buffer of the size of the given resource range.
      * Otherwise the buffer size is 1.
+     * Also note that the third argument is used for deducing the type of the underlying buffer value and is otherwise
+     * not used in the context of the class' construction.
      */
     template <typename exec_policy_t = sequenced_policy>
     //!\cond
         requires is_execution_policy_v<exec_policy_t>
     //!\endcond
-    alignment_executor_two_way(resource_t resrc,
+    alignment_executor_two_way(resource_t resource,
                                alignment_algorithm_t fn,
-                               value_t const buffer_value = value_t{},
-                               size_t chunk_size = 1u,
+                               value_t const SEQAN3_DOXYGEN_ONLY(buffer_value) = value_t{},
                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
-        kernel{std::move(fn)},
-        _chunk_size{chunk_size}
+        resource{std::views::all(resource)},
+        resource_it{std::ranges::begin(this->resource)},
+        kernel{std::move(fn)}
     {
-
-        if (chunk_size == 0u)
-            throw std::invalid_argument{"The chunk size must be greater than 0."};
-
-        chunked_resource = views::zip(std::forward<resource_t>(resrc), std::views::iota(0)) | views::chunk(_chunk_size);
-        chunked_resource_it = chunked_resource.begin();
-
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
-            init_buffer(std::ranges::distance(resrc), std::move(buffer_value));
-        else
-            init_buffer(_chunk_size, std::move(buffer_value));
+            bucket_vector_size = std::ranges::distance(resource);
+
+        bucket_vector.resize(bucket_vector_size);
+        bucket_iterator = bucket_vector.end();
+        bucket_end = bucket_vector.end();
     }
 
     //!}
@@ -195,17 +208,20 @@ public:
      */
     std::optional<value_type> bump()
     {
-        if (underflow() == eof)
+        underflow_status status;
+        // Each invocation of the algorithm might produce zero results (e.g. a search might not find a query)
+        // this repeats the algorithm until it produces the first result or the input resource was consumed.
+        do { status = underflow(); } while (status == underflow_status::empty_buffer);
+
+        if (status == underflow_status::end_of_resource)
             return {std::nullopt};
 
-        assert(gptr < egptr);
-        return {std::move(*gptr++)};
-    }
+        assert(status == underflow_status::non_empty_buffer);
+        assert(buffer_iterator != bucket_iterator->end());
 
-    //!\brief Returns the remaining number of elements in the buffer, that are not read yet.
-    constexpr size_t in_avail() const noexcept
-    {
-        return egptr - gptr;
+        std::optional<value_type> element = std::ranges::iter_move(buffer_iterator);
+        next_buffer_iterator(); // Go to next buffered value
+        return element;
     }
     //!\}
 
@@ -215,13 +231,7 @@ public:
     //!\brief Checks whether the end of the input resource was reached.
     bool is_eof() noexcept
     {
-        return chunked_resource_it == std::ranges::end(chunked_resource);
-    }
-
-    //!\brief Returns the selected chunk size.
-    constexpr size_t chunk_size() const noexcept
-    {
-        return _chunk_size;
+        return resource_it == std::ranges::end(resource);
     }
     //!\}
 
@@ -231,52 +241,36 @@ private:
      * \{
      */
 
-    //!\brief Sets the buffer pointer.
-    void setg(buffer_pointer beg, buffer_pointer end)
+    //!\brief Fills pre-assigned buckets (one bucket = results of one alignment) with new alignment results.
+    underflow_status underflow()
     {
-        gptr = beg;
-        egptr = end;
-    }
-
-    //!\brief Refills the buffer with new alignment results.
-    size_t underflow()
-    {
-        if (gptr < egptr)  // Case: buffer not completely consumed
-            return in_avail();
+        if (!is_buffer_empty())  // Not everything consumed yet.
+            return underflow_status::non_empty_buffer;
 
         if (is_eof())  // Case: reached end of resource.
-            return eof;
+            return underflow_status::end_of_resource;
 
-        // Reset the get pointer.
-        setg(std::ranges::begin(buffer), std::ranges::end(buffer));
+        // Reset the buckets and the bucket iterator
+        reset_buckets();
 
-        using std::get;
-
-        // Apply the alignment execution.
-        size_t count = 0;
-        size_t buffer_limit = in_avail();
-
-        for (size_t current_chunk_size = std::ranges::distance(*chunked_resource_it);
-             count < buffer_limit && !is_eof();
-             count += current_chunk_size, gptr += current_chunk_size, ++chunked_resource_it)
+        // Execute the algorithm (possibly asynchronous) and fill the buckets in this pre-assigned order.
+        for (bucket_end = bucket_iterator; bucket_end != bucket_vector.end() && !is_eof(); ++bucket_end, ++resource_it)
         {
-            auto && current_chunk = std::ranges::iter_move(chunked_resource_it);
-            current_chunk_size = std::ranges::distance(current_chunk);
-            assert(in_avail() >= current_chunk_size);
-
-            exec_handler.execute(kernel, std::move(current_chunk), [write_to = gptr] (auto && alignment_result) mutable
+            exec_handler.execute(kernel, *resource_it, [target_bucket_iterator = bucket_end] (auto && alignment_result)
             {
-                *write_to = std::move(alignment_result);
-                ++write_to;
+                target_bucket_iterator->push_back(std::move(alignment_result));
             });
         }
 
         exec_handler.wait();
 
-        // Update the available get positions to cover the part of the buffer that was filled.
-        setg(std::ranges::begin(buffer), std::ranges::begin(buffer) + count);
+        // Move the results iterator to the next available result. (This skips empty results of the algorithm)
+        find_next_non_empty_bucket();
 
-        return in_avail();
+        if (is_buffer_empty())
+            return underflow_status::empty_buffer;
+
+        return underflow_status::non_empty_buffer;
     }
     //!\}
 
@@ -284,14 +278,66 @@ private:
      * \{
      */
 
-    /*!\brief Initialises the underlying buffer.
-     * \param[in] size The initial size of the buffer.
-     * \param[in] init_value The value used to initialise the buffer.
+    /*!\brief Whether the internal buffer is empty.
+     * \returns `true` if all elements of the internal buffer have been consumed, otherwise `false`.
      */
-    void init_buffer(size_t const size, value_t const init_value)
+    bool is_buffer_empty() const
     {
-        buffer.resize(size, std::move(init_value));
-        setg(std::ranges::end(buffer), std::ranges::end(buffer));
+        return bucket_iterator == bucket_end || buffer_iterator == bucket_iterator->end();
+    }
+
+    /*!\brief Resets the buckets.
+     *
+     * \details
+     *
+     * Clears all buckets and sets the bucket iterator to the first iterator, such that the allocated memory for each
+     * bucket can be reused between invocations of seqan3::detail::alignment_executor_two_way::underflow.
+     */
+    void reset_buckets()
+    {
+        // Clear all buckets
+        for (auto & bucket : bucket_vector)
+            bucket.clear();
+
+        // Reset the iterators over the buckets.
+        bucket_iterator = bucket_vector.begin();
+    }
+
+    /*!\brief Finds the first non-empty bucket starting from the current bucket iterator.
+     *
+     * \details
+     *
+     * Finds the first non-empty bucket and sets the buffer iterator to the first element of this bucket.
+     * If all buckets are empty, then the bucket iterator is set to the end of the buckets container and the buffer
+     * iterator is not modified.
+     */
+    void find_next_non_empty_bucket()
+    {
+        assert(bucket_iterator <= bucket_end);
+        // find first buffered bucket that contains at least one element
+        bucket_iterator = std::find_if(bucket_iterator, bucket_end, [] (auto const & buffer)
+        {
+            return !buffer.empty();
+        });
+
+        if (bucket_iterator != bucket_end)
+            buffer_iterator = bucket_iterator->begin();
+    }
+
+    /*!\brief Moves the buffer iterator to the next available element.
+     *
+     * \details
+     *
+     * If the current bucket is consumed, then the bucket iterator is incremented and the next non-empty bucket is found
+     * by calling seqan3::detail::alignment_executor_two_way::find_next_non_empty_bucket.
+     */
+    void next_buffer_iterator()
+    {
+        if (++buffer_iterator == bucket_iterator->end())
+        {
+            ++bucket_iterator;
+            find_next_non_empty_bucket();
+        }
     }
 
     //!\brief Helper function to move initialise `this` from `other`.
@@ -299,44 +345,54 @@ private:
     void move_initialise(alignment_executor_two_way && other) noexcept
     {
         kernel = std::move(other.kernel);
-        _chunk_size = std::move(other._chunk_size);
+        bucket_vector_size = std::move(other.bucket_vector_size);
         // Get the old resource position.
-        std::ptrdiff_t old_resource_pos = std::ranges::distance(other.chunked_resource.begin(),
-                                                                other.chunked_resource_it);
+        auto old_resource_position = std::ranges::distance(std::ranges::begin(other.resource),
+                                                           other.resource_it);
         // Move the resource and set the iterator state accordingly.
-        chunked_resource = std::move(other.chunked_resource);
-        chunked_resource_it = std::ranges::next(chunked_resource.begin(), old_resource_pos);
+        resource = std::move(other.resource);
+        resource_it = std::ranges::next(std::ranges::begin(resource), old_resource_position);
 
         // Get the old get pointer positions.
-        std::ptrdiff_t old_gptr_pos = other.gptr - buffer.begin();
-        std::ptrdiff_t old_egptr_pos = other.egptr - buffer.begin();
+        auto bucket_iterator_position = other.bucket_iterator - other.bucket_vector.begin();
+        auto bucket_end_position = other.bucket_end - other.bucket_vector.begin();
+
+        std::ptrdiff_t buffer_iterator_position = 0;
+        if (bucket_iterator_position != bucket_end_position)
+            buffer_iterator_position = other.buffer_iterator - other.bucket_iterator->begin();
+
         // Move the buffer and set the get pointer accordingly.
-        buffer = std::move(other.buffer);
-        setg(buffer.begin() + old_gptr_pos, buffer.begin() + old_egptr_pos);
+        bucket_vector = std::move(other.bucket_vector);
+        bucket_iterator = bucket_vector.begin() + bucket_iterator_position;
+        bucket_end = bucket_vector.begin() + bucket_end_position;
+
+        if (bucket_iterator_position != bucket_end_position)
+            buffer_iterator = bucket_iterator->begin() + buffer_iterator_position;
     }
     //!\}
-
-    //!\brief Indicates the end-of-stream.
-    static constexpr size_t eof{std::numeric_limits<size_t>::max()};
 
     //!\brief The execution policy.
     execution_handler_t exec_handler{};
 
     //!\brief The underlying resource containing the alignment instances.
-    chunked_resource_type chunked_resource{};
+    resource_type resource{};
     //!\brief The iterator over the resource that stores the current state of the executor.
-    chunked_resource_iterator chunked_resource_it{};
+    resource_iterator_type resource_it{};
     //!\brief Selects the correct alignment to execute.
     alignment_algorithm_t kernel{};
 
     //!\brief The buffer storing the alignment results.
-    buffer_type buffer{};
-    //!\brief The get pointer in the buffer.
-    buffer_pointer gptr{};
+    bucket_type bucket_vector{};
+
+    //!\brief The iterator pointing to the current bucket.
+    bucket_iterator_type bucket_iterator{};
+    //!\brief The iterator pointing behind the last bucket (must not be the end of the bucket_vector).
+    bucket_iterator_type bucket_end{};
+
+    //!\brief The buffer iterator pointing to the current result to be processed.
+    buffer_iterator_type buffer_iterator{};
     //!\brief The end get pointer in the buffer.
-    buffer_pointer egptr{};
-    //!\brief The size of the chunks to call the stored algorithm with.
-    size_t _chunk_size{};
+    size_t bucket_vector_size{1};
 };
 
 /*!\name Type deduction guides
@@ -348,17 +404,6 @@ private:
 template <typename resource_rng_t, typename func_t, std::semiregular value_t>
 alignment_executor_two_way(resource_rng_t &&, func_t, value_t const &) ->
     alignment_executor_two_way<resource_rng_t, func_t, value_t, execution_handler_sequential>;
-
-//!\brief Deduce the type from the provided arguments and set the sequential execution handler.
-template <typename resource_rng_t, typename func_t, std::semiregular value_t, typename exec_policy_t>
-    requires is_execution_policy_v<exec_policy_t>
-alignment_executor_two_way(resource_rng_t &&, func_t, value_t const &, size_t, exec_policy_t const &) ->
-    alignment_executor_two_way<resource_rng_t,
-                               func_t,
-                               value_t,
-                               std::conditional_t<std::same_as<exec_policy_t, parallel_policy>,
-                                                  execution_handler_parallel,
-                                                  execution_handler_sequential>>;
 
 //!\}
 } // namespace seqan3::detail
