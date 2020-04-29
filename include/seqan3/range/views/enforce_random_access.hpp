@@ -40,7 +40,7 @@ template <std::ranges::view urng_t>
 //!\cond
     requires pseudo_random_access_range<urng_t>
 //!\endcond
-class view_enforce_random_access : public ranges::view_interface<view_enforce_random_access<urng_t>>
+class view_enforce_random_access : public std::ranges::view_interface<view_enforce_random_access<urng_t>>
 {
 private:
 
