@@ -10,14 +10,14 @@ void foobar(rng_t && range)
 
 #if 0
     // The following would fail to compile if rng_t is not sized,
-    // because size_type_t<rngt_t> needs to be valid
+    // because std::ranges::range_size_t<rngt_t> needs to be valid
     // (independent of whether the condition evaluates to true)
     using size_type = std::conditional_t<std::ranges::sized_range<rng_t>,
-                                         seqan3::size_type_t<rng_t>,
+                                         std::ranges::range_size_t<rng_t>,
                                          void>;
 #endif
 
-    // This delays instantiation of size_type_t<rngt_t> until after the
+    // This delays instantiation of std::ranges::range_size_t<rngt_t> until after the
     // conditional-decision is made:
     using size_type = seqan3::detail::lazy_conditional_t<std::ranges::sized_range<rng_t>,
                                                          seqan3::detail::lazy<seqan3::size_type_t, rng_t>,

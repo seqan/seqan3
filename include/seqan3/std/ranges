@@ -62,6 +62,7 @@ namespace std::ranges
 namespace
 {
 
+using ::ranges::range_size_t;
 using namespace ::ranges::cpp20;
 
 } // anonymous namespace

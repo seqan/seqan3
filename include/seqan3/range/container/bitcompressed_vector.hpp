@@ -143,7 +143,7 @@ public:
     //!\brief A signed integer type (usually std::ptrdiff_t)
     using difference_type   = std::ranges::range_difference_t<data_type>;
     //!\brief An unsigned integer type (usually std::size_t)
-    using size_type         = size_type_t<data_type>;
+    using size_type         = std::ranges::range_size_t<data_type>;
     //!\}
 
     //!\cond
