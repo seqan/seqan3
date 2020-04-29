@@ -89,6 +89,11 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   `seqan3::bi_fm_index_cursor::extend_left()` functions handle c-style strings without including the null character
   ([\#1588](https://github.com/seqan/seqan3/pull/1588)).
 
+#### Range
+
+* Added size() function to `seqan3::views::kmer_hash`
+  ([\#1722](https://github.com/seqan/seqan3/pull/1722)).
+
 # 3.0.1
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
@@ -175,8 +180,6 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1410](https://github.com/seqan/seqan3/pull/1410)).
 * Renamed `seqan3::views::all` to `seqan3::views::type_reduce`
   ([\#1410](https://github.com/seqan/seqan3/pull/1410)).
-* Added size() function to `seqan3::views::kmer_hash`
-  ([\#1722](https://github.com/seqan/seqan3/pull/1722)).
 
 #### Search
 

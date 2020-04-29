@@ -15,7 +15,7 @@
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/take_until.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include <gtest/gtest.h>
 
@@ -30,7 +30,10 @@ static constexpr auto prefix_until_first_thymine = seqan3::views::take_until([] 
                                                    { return x == 'T'_dna4; });
 
 template <typename T>
-class kmer_hash_test: public ::testing::Test {};
+class kmer_hash_ungapped_test: public ::testing::Test {};
+
+template <typename T>
+class kmer_hash_gapped_test: public ::testing::Test {};
 
 using underlying_range_types = ::testing::Types<std::vector<seqan3::dna4>,
                                                 std::vector<seqan3::dna4> const,
@@ -41,44 +44,56 @@ using underlying_range_types = ::testing::Types<std::vector<seqan3::dna4>,
                                                 std::forward_list<seqan3::dna4>,
                                                 std::forward_list<seqan3::dna4> const>;
 
-TYPED_TEST_SUITE(kmer_hash_test, underlying_range_types, );
+TYPED_TEST_SUITE(kmer_hash_ungapped_test, underlying_range_types, );
+TYPED_TEST_SUITE(kmer_hash_gapped_test, underlying_range_types, );
 
-TYPED_TEST(kmer_hash_test, ungapped_combined_with_container)
+TYPED_TEST(kmer_hash_ungapped_test, combined_with_container)
 {
-    TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
-    result_t ungapped1{6, 27, 44, 50, 9};
-    TypeParam text2{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4}; // AAAAA
-    result_t ungapped2{0,0,0};
-    TypeParam text3{'A'_dna4, 'C'_dna4}; // AC
-    result_t ungapped3{};
-    TypeParam text4{'A'_dna4, 'C'_dna4, 'G'_dna4}; // AC
-    result_t ungapped4{6};
-
-    EXPECT_EQ(ungapped1, text1 | ungapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(ungapped2, text2 | ungapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(ungapped3, text3 | ungapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(ungapped4, text4 | ungapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(ungapped4, text1 | prefix_until_first_thymine | ungapped_view | seqan3::views::to<result_t>);
+    {
+        TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+        result_t ungapped1{6, 27, 44, 50, 9};
+        EXPECT_RANGE_EQ(ungapped1, text1 | ungapped_view);
+        EXPECT_RANGE_EQ(result_t{6}, text1 | prefix_until_first_thymine | ungapped_view);
+    }
+    {
+        TypeParam text2{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4}; // AAAAA
+        result_t ungapped2{0, 0, 0};
+        EXPECT_RANGE_EQ(ungapped2, text2 | ungapped_view);
+    }
+    {
+        TypeParam text3{'A'_dna4, 'C'_dna4}; // AC
+        EXPECT_RANGE_EQ(result_t{}, text3 | ungapped_view);
+    }
+    {
+        TypeParam text4{'A'_dna4, 'C'_dna4, 'G'_dna4}; // AC
+        EXPECT_RANGE_EQ(result_t{6}, text4 | ungapped_view);
+    }
 }
 
-TYPED_TEST(kmer_hash_test, gapped_combined_with_container)
+TYPED_TEST(kmer_hash_gapped_test, combined_with_container)
 {
-    TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
-    result_t gapped1{2, 7, 8, 14, 1};
-    TypeParam text2{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4}; // AAAAA
-    result_t gapped2{0,0,0};
-    TypeParam text3{'A'_dna4, 'C'_dna4}; // AC
-    result_t gapped3{};
-    TypeParam text4{'A'_dna4, 'C'_dna4, 'G'_dna4}; // AC
-    result_t gapped4{2};
-    EXPECT_EQ(gapped1, text1 | gapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(gapped2, text2 | gapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(gapped3, text3 | gapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(gapped4, text4 | gapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(gapped4, text1 | prefix_until_first_thymine| gapped_view | seqan3::views::to<result_t>);
+    {
+        TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+        result_t gapped1{2, 7, 8, 14, 1};
+        EXPECT_RANGE_EQ(gapped1, text1 | gapped_view);
+        EXPECT_RANGE_EQ(result_t{2}, text1 | prefix_until_first_thymine| gapped_view);
+    }
+    {
+        TypeParam text2{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4}; // AAAAA
+        result_t gapped2{0, 0, 0};
+        EXPECT_RANGE_EQ(gapped2, text2 | gapped_view);
+    }
+    {
+        TypeParam text3{'A'_dna4, 'C'_dna4}; // AC
+        EXPECT_RANGE_EQ(result_t{}, text3 | gapped_view);
+    }
+    {
+        TypeParam text4{'A'_dna4, 'C'_dna4, 'G'_dna4}; // AC
+        EXPECT_RANGE_EQ(result_t{2}, text4 | gapped_view);
+    }
 }
 
-TYPED_TEST(kmer_hash_test, ungapped_concepts)
+TYPED_TEST(kmer_hash_ungapped_test, concepts)
 {
     TypeParam text{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4}; // ACGT
     auto v1 = text | ungapped_view;
@@ -86,6 +101,7 @@ TYPED_TEST(kmer_hash_test, ungapped_concepts)
     EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
     EXPECT_EQ(std::ranges::bidirectional_range<decltype(text)>, std::ranges::bidirectional_range<decltype(v1)>);
     EXPECT_EQ(std::ranges::random_access_range<decltype(text)>, std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_EQ(std::ranges::sized_range<decltype(text)>, std::ranges::sized_range<decltype(v1)>);
     EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
@@ -93,7 +109,7 @@ TYPED_TEST(kmer_hash_test, ungapped_concepts)
     EXPECT_FALSE((std::ranges::output_range<decltype(v1), size_t>));
 }
 
-TYPED_TEST(kmer_hash_test, gapped_concepts)
+TYPED_TEST(kmer_hash_gapped_test, concepts)
 {
     TypeParam text{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4}; // ACGT
     auto v1 = text | gapped_view;
@@ -101,6 +117,7 @@ TYPED_TEST(kmer_hash_test, gapped_concepts)
     EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
     EXPECT_EQ(std::ranges::bidirectional_range<decltype(text)>, std::ranges::bidirectional_range<decltype(v1)>);
     EXPECT_EQ(std::ranges::random_access_range<decltype(text)>, std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_EQ(std::ranges::sized_range<decltype(text)>, std::ranges::sized_range<decltype(v1)>);
     EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
@@ -108,7 +125,7 @@ TYPED_TEST(kmer_hash_test, gapped_concepts)
     EXPECT_FALSE((std::ranges::output_range<decltype(v1), size_t>));
 }
 
-TYPED_TEST(kmer_hash_test, invalid_sizes)
+TYPED_TEST(kmer_hash_ungapped_test, invalid_sizes)
 {
     TypeParam text1{'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4, 'A'_dna4};
     EXPECT_NO_THROW(text1 | seqan3::views::kmer_hash(seqan3::ungapped{32}));
@@ -129,15 +146,15 @@ TYPED_TEST(kmer_hash_test, invalid_sizes)
 }
 
 // https://github.com/seqan/seqan3/issues/1614
-TEST(kmer_hash_test, issue1614)
+TEST(kmer_hash_ungapped_test, issue1614)
 {
     std::vector<seqan3::dna5> sequence{"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5};
-    EXPECT_EQ(sequence | seqan3::views::kmer_hash(seqan3::ungapped{25}) | seqan3::views::to<std::vector<size_t>>,
-              seqan3::views::repeat_n(298023223876953124, 26) | seqan3::views::to<std::vector<size_t>>);
+    EXPECT_RANGE_EQ(sequence | seqan3::views::kmer_hash(seqan3::ungapped{25}),
+                    seqan3::views::repeat_n(298023223876953124, 26));
 }
 
 // https://github.com/seqan/seqan3/issues/1643
-TEST(kmer_hash_test, issue1643)
+TEST(kmer_hash_ungapped_test, issue1643)
 {
     std::vector<seqan3::dna4> text_23_elements{"ACGATCGATCGTAGCTACTGAGC"_dna4};
 
@@ -153,14 +170,19 @@ TEST(kmer_hash_test, issue1643)
 }
 
 // https://github.com/seqan/seqan3/issues/1719
-TEST(kmer_hash_test, issue1719)
+TYPED_TEST(kmer_hash_ungapped_test, issue1719)
 {
-    uint64_t const expected = 0;
-    std::vector<seqan3::dna5> sequence{""_dna5};
-    auto v = sequence | seqan3::views::kmer_hash(seqan3::ungapped{25});
-    EXPECT_EQ(expected, v.size());
+    if constexpr (std::ranges::sized_range<TypeParam>)
+    {
+        TypeParam sequence{};
+        auto v = sequence | seqan3::views::kmer_hash(seqan3::ungapped{8});
+        EXPECT_EQ(0u, v.size());
 
-    std::vector<seqan3::dna5> sequence2{"ACGATCGATCGTAGCTACTGAGC"_dna5};
-    auto v2 = sequence2 | seqan3::views::kmer_hash(seqan3::ungapped{25});
-    EXPECT_EQ(expected, v2.size());
+        TypeParam sequence2{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4};
+        auto v2 = sequence2 | seqan3::views::kmer_hash(seqan3::ungapped{8});
+        EXPECT_EQ(0u, v2.size());
+
+        auto v3 = sequence2 | seqan3::views::kmer_hash(seqan3::ungapped{4});
+        EXPECT_EQ(4u, v3.size());
+    }
 }

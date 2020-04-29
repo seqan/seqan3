@@ -179,12 +179,12 @@ public:
      * \returns Size of range.
      */
     auto size() const
+    //!\cond
         requires std::ranges::sized_range<urng_t>
+    //!\endcond
     {
-        auto range_size{std::ranges::size(urange)};
-        if (range_size >= shape_.size())
-            return range_size - shape_.size() + 1;
-        return decltype(range_size){0};
+        using size_type = decltype(std::ranges::size(urange));
+        return std::max<size_type>(std::ranges::size(urange) + 1, shape_.size()) - shape_.size();
     }
 };
 
