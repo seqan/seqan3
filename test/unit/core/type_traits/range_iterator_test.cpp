@@ -190,21 +190,15 @@ TEST(range_and_iterator, difference_type_)
 TEST(range_and_iterator, size_type_)
 {
     //TODO(h-2): add something that actually has a different size_type
-    using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
-    using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
 // iota is not a sized range, but take_exactly is
     auto v = std::views::iota(0) | seqan3::views::take_exactly(2);
     using type_list_example = seqan3::type_list<seqan3::size_type_t<std::vector<int>>, // short
                                                 typename seqan3::size_type<std::vector<int>>::type, // long
                                                 typename std::vector<int>::size_type, // member type
                                                 seqan3::size_type_t<std::vector<int> const>, // const container
-                                                seqan3::size_type_t<iterator_of_int_vector>, // iterator
-                                                seqan3::size_type_t<foreign_iterator>, // iterator2
                                                 seqan3::size_type_t<decltype(v)>>; // range, no member
 
     using comp_list = seqan3::type_list<size_t,
-                                        size_t,
-                                        size_t,
                                         size_t,
                                         size_t,
                                         size_t,
