@@ -156,7 +156,7 @@ public:
     //!\endcond
     alignment_executor_two_way(resource_t resrc,
                                alignment_algorithm_t fn,
-                               value_t buffer_value = value_t{},
+                               value_t const buffer_value = value_t{},
                                size_t chunk_size = 1u,
                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
         kernel{std::move(fn)},
@@ -170,9 +170,9 @@ public:
         chunked_resource_it = chunked_resource.begin();
 
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
-            init_buffer(std::ranges::distance(resrc), buffer_value);
+            init_buffer(std::ranges::distance(resrc), std::move(buffer_value));
         else
-            init_buffer(_chunk_size, buffer_value);
+            init_buffer(_chunk_size, std::move(buffer_value));
     }
 
     //!}
@@ -288,9 +288,9 @@ private:
      * \param[in] size The initial size of the buffer.
      * \param[in] init_value The value used to initialise the buffer.
      */
-    void init_buffer(size_t const size, value_t const & init_value)
+    void init_buffer(size_t const size, value_t const init_value)
     {
-        buffer.resize(size, init_value);
+        buffer.resize(size, std::move(init_value));
         setg(std::ranges::end(buffer), std::ranges::end(buffer));
     }
 
