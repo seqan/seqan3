@@ -108,7 +108,7 @@ public:
     //!       be modified.
     using const_reference = reference;
     //!\brief The size_type of the underlying sequence.
-    using size_type = size_type_t<inner_type>;
+    using size_type = std::ranges::range_size_t<inner_type>;
     //!\brief The difference type of the underlying sequence.
     using difference_type = std::ranges::range_difference_t<inner_type>;
     //!\}

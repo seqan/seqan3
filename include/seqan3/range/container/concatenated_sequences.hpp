@@ -127,7 +127,7 @@ template <typename inner_type,
 //!\cond
     requires reservible_container<std::remove_reference_t<inner_type>> &&
              reservible_container<std::remove_reference_t<data_delimiters_type>> &&
-             std::is_same_v<size_type_t<inner_type>, value_type_t<data_delimiters_type>>
+             std::is_same_v<std::ranges::range_size_t<inner_type>, value_type_t<data_delimiters_type>>
 //!\endcond
 class concatenated_sequences
 {
@@ -169,7 +169,7 @@ public:
 
     //!\brief An unsigned integer type (usually std::size_t)
     //!\hideinitializer
-    using size_type = size_type_t<data_delimiters_type>;
+    using size_type = std::ranges::range_size_t<data_delimiters_type>;
     //!\}
 
     //!\cond
