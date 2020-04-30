@@ -22,6 +22,7 @@
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/alignment_matrix_policy.hpp>
@@ -510,7 +511,9 @@ private:
         }
         else  // Use new alignment algorithm implementation.
         {
-            return pairwise_alignment_algorithm<config_t>{cfg};
+            using gap_cost_policy_t = policy_affine_gap_recursion<config_t>;
+
+            return pairwise_alignment_algorithm<config_t, gap_cost_policy_t>{cfg};
         }
     }
 };
