@@ -17,6 +17,7 @@
 
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
@@ -32,6 +33,7 @@ namespace seqan3::detail
  * \ingroup pairwise_alignment
  *
  * \tparam alignment_configuration_t The configuration type; must be of type seqan3::configuration.
+ * \tparam policies_t Variadic template argument for the different policies of this alignment algorithm.
  *
  * \details
  *
@@ -42,11 +44,11 @@ namespace seqan3::detail
  * dynamic programming matrix given two sequences. After the computation a user defined callback function is invoked
  * with the computed seqan3::alignment_result.
  */
-template <typename alignment_configuration_t>
+template <typename alignment_configuration_t, typename ...policies_t>
 //!\cond
     requires is_type_specialisation_of_v<alignment_configuration_t, configuration>
 //!\endcond
-class pairwise_alignment_algorithm
+class pairwise_alignment_algorithm : protected policies_t...
 {
 private:
     //!\brief The alignment configuration traits type with auxiliary information extracted from the configuration type.
@@ -60,8 +62,6 @@ private:
 
     //!\brief The configured scoring scheme.
     scoring_scheme_type m_scoring_scheme{};
-    //!\brief The configured gap scheme.
-    gap_scheme<int8_t> m_gap_scheme{};
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -81,10 +81,9 @@ public:
      *
      * Initialises the algorithm given the user settings from the alignment configuration object.
      */
-    pairwise_alignment_algorithm(alignment_configuration_t const & config)
+    pairwise_alignment_algorithm(alignment_configuration_t const & config) : policies_t(config)...
     {
         m_scoring_scheme = seqan3::get<align_cfg::scoring>(config).value;
-        m_gap_scheme = config.template value_or<align_cfg::gap>(gap_scheme<int8_t>{gap_score{-1}, gap_open_score{-10}});
     }
     //!\}
 
@@ -162,65 +161,54 @@ protected:
     template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
     int32_t compute_matrix(sequence1_t & sequence1, sequence2_t & sequence2)
     {
-        // Use gap costs locally.
-        int32_t gap_extension{m_gap_scheme.get_gap_score()};
-        int32_t gap_open{m_gap_scheme.get_gap_open_score() + gap_extension};
+        // ---------------------------------------------------------------------
+        // Initialisation phase: allocate memory and initialise first column.
+        // ---------------------------------------------------------------------
 
-        std::vector<int32_t> optimal_column{};
-        std::vector<int32_t> horizontal_column{};
-
-        // Initialise matrix.
-        optimal_column.clear();
-        horizontal_column.clear();
-        optimal_column.resize(sequence2.size() + 1, 0);
-        horizontal_column.resize(sequence2.size() + 1, 0);
-        int32_t diagonal{};
-        int32_t vertical{gap_open};
+        thread_local score_matrix_single_column<int32_t> local_matrix{};
+        local_matrix.reset_matrix(std::forward<sequence1_t>(sequence1), std::forward<sequence2_t>(sequence2));
+        auto matrix_iterator = local_matrix.begin();
+        auto alignment_column = *matrix_iterator;
 
         // Initialise the first column.
-        for (auto && [opt, hor] : views::zip(optimal_column, horizontal_column) | views::drop(1))
-        {
-            opt = vertical;
-            hor = opt + gap_open;
-            vertical += gap_extension;
-        }
+        *alignment_column.begin() = this->initialise_origin_cell();
+        for (auto cell : alignment_column | seqan3::views::drop(1))
+            cell = this->initialise_first_column_cell(cell);
 
-        // Compute the matrix
-        for (auto it_col = sequence1.begin(); it_col != sequence1.end(); ++it_col)
-        {
-            // Initialise first cell of optimal_column.
-            auto opt_it = optimal_column.begin();
-            auto hor_it = horizontal_column.begin();
+        // ---------------------------------------------------------------------
+        // Recursion phase: compute column-wise the alignment matrix.
+        // ---------------------------------------------------------------------
 
-            diagonal = *opt_it;  // Cache the diagonal for next cell.
-            *opt_it =  gap_open + gap_extension * (it_col - sequence1.begin()); // Initialise the main score.
-            *hor_it = *opt_it; // Initialise the horizontal score.
-            vertical = *opt_it + gap_open; // Initialise the vertical score.
-            // Go to next cell.
-            ++opt_it;
-            ++hor_it;
-            for (auto it_row = sequence2.begin(); it_row != sequence2.end(); ++it_row, ++opt_it, ++hor_it)
+        // Compute remaining matrix
+        ++matrix_iterator; // Move to next column.
+        for (auto it_col = sequence1.begin(); it_col != sequence1.end(); ++it_col, ++matrix_iterator)
+        {
+            alignment_column = *matrix_iterator;
+            auto alignment_column_iter = alignment_column.begin();
+
+            // Initialise first cell of current column.
+            auto cell = *alignment_column_iter;
+            typename traits_type::score_type diagonal = cell.optimal_score();
+            *alignment_column_iter = this->initialise_first_row_cell(cell);
+
+            ++alignment_column_iter;  // Move to next cell in column.
+            for (auto it_row = sequence2.begin(); it_row != sequence2.end(); ++it_row, ++alignment_column_iter)
             {
-                // Precompute the diagonal score.
-                int32_t tmp = diagonal + m_scoring_scheme.score(*it_col, *it_row);
-
-                tmp = (tmp < vertical) ? vertical : tmp;
-                tmp = (tmp < *hor_it) ? *hor_it : tmp;
-
-                // Store the current max score.
-                diagonal = *opt_it; // Cache the next diagonal before writing it.
-                *opt_it = tmp; // Store the temporary result.
-
-                tmp += gap_open;  // Add gap open costs.
-                vertical += gap_extension;
-                *hor_it += gap_extension;
-
-                // Store the vertical and horizontal value in the next path.
-                vertical = (vertical < tmp) ? tmp : vertical;
-                *hor_it = (*hor_it < tmp) ? tmp : *hor_it;
+                auto cell = *alignment_column_iter;
+                typename traits_type::score_type next_diagonal = cell.optimal_score();
+                *alignment_column_iter = this->compute_inner_cell(diagonal,
+                                                                  cell,
+                                                                  m_scoring_scheme.score(*it_col, *it_row));
+                diagonal = next_diagonal;
             }
         }
-        return optimal_column.back();
+
+        // ---------------------------------------------------------------------
+        // Wrap up phase: track score of last column
+        // ---------------------------------------------------------------------
+
+        return alignment_column[std::ranges::distance(sequence2)].optimal_score();
     }
 };
+
 } // namespace seqan3::detail
