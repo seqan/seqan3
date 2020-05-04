@@ -81,7 +81,9 @@ private:
 
     //!\brief Befriend other base class types for const iterator compatibility.
     template <typename other_derived_t, matrix_major_order other_order>
+    //!\cond
         requires order == other_order
+    //!\endcond
     friend class two_dimensional_matrix_iterator_base;
 
     /*!\name Constructors, destructor and assignment

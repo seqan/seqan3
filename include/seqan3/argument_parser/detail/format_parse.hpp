@@ -330,7 +330,7 @@ private:
     template <sequence_container container_option_t>
     //!\cond
         requires input_stream_over<std::istringstream, typename container_option_t::value_type>
-    //!\cond
+    //!\endcond
     option_parse_result parse_option_value(container_option_t & value, std::string const & in)
     {
         typename container_option_t::value_type tmp{};
@@ -534,7 +534,7 @@ private:
      *
      */
     template <sequence_container option_type, typename id_type>
-    //!cond
+    //!\cond
         requires !std::is_same_v<option_type, std::string>
     //!\endcond
     bool get_option_by_id(option_type & value, id_type const & id)
