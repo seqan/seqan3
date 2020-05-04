@@ -15,8 +15,6 @@
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to.hpp>
 
-using namespace seqan3::test;
-
 struct options
 {
     size_t const sequence_length;
@@ -130,7 +128,7 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
                                                     double const template_fraction = 1,
                                                     size_t const seed = 0)
 {
-    std::vector<alphabet_t> seq_template = generate_sequence<alphabet_t>(template_length, 0, seed);
+    std::vector<alphabet_t> seq_template = seqan3::test::generate_sequence<alphabet_t>(template_length, 0, seed);
 
     // copy substrings of length len from seq_template mutate and concatenate them
     size_t len = std::round(template_length * template_fraction);
@@ -154,7 +152,7 @@ void unidirectional_search_all_collection(benchmark::State & state, options && o
     std::vector<std::vector<seqan3::dna4>> reads;
     for (size_t i = 0; i < set_size; ++i)
     {
-        collection.push_back(generate_sequence<seqan3::dna4>(o.sequence_length, 0, i));
+        collection.push_back(seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, i));
         std::vector<std::vector<seqan3::dna4>> seq_reads = generate_reads(collection.back(), o.number_of_reads,
                                                                           o.read_length, o.simulated_errors,
                                                                           o.prob_insertion, o.prob_deletion,
@@ -178,7 +176,7 @@ void unidirectional_search_all(benchmark::State & state, options && o)
     std::vector<seqan3::dna4> ref = (o.has_repeats) ?
                                     generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats,
                                                                               o.repeats, 0.5, 0) :
-                                    generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
+                                    seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
     seqan3::fm_index index{ref};
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
@@ -199,7 +197,7 @@ void bidirectional_search_all(benchmark::State & state, options && o)
     std::vector<seqan3::dna4> ref = (o.has_repeats) ?
                                     generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats,
                                                                               o.repeats, 0.5, 0) :
-                                    generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
+                                    seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
     seqan3::bi_fm_index index{ref};
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
@@ -220,7 +218,7 @@ void unidirectional_search_stratified(benchmark::State & state, options && o)
     std::vector<seqan3::dna4> ref = (o.has_repeats) ?
                                     generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats,
                                                                               o.repeats, 0.5, 0) :
-                                    generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
+                                    seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
     seqan3::fm_index index{ref};
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
@@ -242,7 +240,7 @@ void bidirectional_search_stratified(benchmark::State & state, options && o)
     std::vector<seqan3::dna4> ref = (o.has_repeats) ?
                                     generate_repeating_sequence<seqan3::dna4>(2 * o.sequence_length / o.repeats,
                                                                               o.repeats, 0.5, 0) :
-                                    generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
+                                    seqan3::test::generate_sequence<seqan3::dna4>(o.sequence_length, 0, 0);
 
     seqan3::bi_fm_index index{ref};
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,

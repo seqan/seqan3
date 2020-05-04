@@ -11,8 +11,6 @@
 #include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 
-using namespace seqan3;
-
 inline benchmark::Counter hashes_per_second(size_t const count)
 {
     return benchmark::Counter(count,
@@ -37,11 +35,11 @@ static void arguments(benchmark::internal::Benchmark* b)
 template <typename ibf_type>
 auto set_up(size_t bins, size_t bits, size_t hash_num, size_t sequence_length)
 {
-    auto bin_indices = test::generate_numeric_sequence<size_t>(sequence_length, 0u, bins - 1);
-    auto hash_values = test::generate_numeric_sequence<size_t>(sequence_length);
-    interleaved_bloom_filter tmp_ibf(seqan3::bin_count{bins},
-                                     seqan3::bin_size{bits},
-                                     seqan3::hash_function_count{hash_num});
+    auto bin_indices = seqan3::test::generate_numeric_sequence<size_t>(sequence_length, 0u, bins - 1);
+    auto hash_values = seqan3::test::generate_numeric_sequence<size_t>(sequence_length);
+    seqan3::interleaved_bloom_filter tmp_ibf(seqan3::bin_count{bins},
+                                             seqan3::bin_size{bits},
+                                             seqan3::hash_function_count{hash_num});
 
     ibf_type ibf{std::move(tmp_ibf)};
 
@@ -83,9 +81,12 @@ void bulk_contains_benchmark(::benchmark::State & state)
     state.counters["hashes/sec"] = hashes_per_second(std::ranges::size(hash_values));
 }
 
-BENCHMARK_TEMPLATE(emplace_benchmark, interleaved_bloom_filter<data_layout::uncompressed>)->Apply(arguments);
+BENCHMARK_TEMPLATE(emplace_benchmark,
+                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
 
-BENCHMARK_TEMPLATE(bulk_contains_benchmark, interleaved_bloom_filter<data_layout::uncompressed>)->Apply(arguments);
-BENCHMARK_TEMPLATE(bulk_contains_benchmark, interleaved_bloom_filter<data_layout::compressed>)->Apply(arguments);
+BENCHMARK_TEMPLATE(bulk_contains_benchmark,
+                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
+BENCHMARK_TEMPLATE(bulk_contains_benchmark,
+                   seqan3::interleaved_bloom_filter<seqan3::data_layout::compressed>)->Apply(arguments);
 
 BENCHMARK_MAIN();

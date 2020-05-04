@@ -109,8 +109,6 @@ BENCHMARK_CAPTURE(seqan3_affine_dna4_accelerated,
 template <typename ...args_t>
 void seqan2_affine_dna4_accelerated(benchmark::State & state, args_t && ...args)
 {
-    using namespace seqan;
-
     std::tuple captured_args{args...};
 
     size_t sequence_length_variance = state.range(0);

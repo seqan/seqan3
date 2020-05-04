@@ -31,8 +31,6 @@
     #include <seqan/align_parallel.h>
 #endif
 
-using namespace seqan3::test;
-
 constexpr auto affine_cfg = seqan3::align_cfg::mode{seqan3::global_alignment} |
                             seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                       seqan3::gap_open_score{-10}}} |
@@ -51,14 +49,14 @@ inline constexpr size_t variance        = 10;
 template <typename alphabet_t>
 auto generate_data_seqan3()
 {
-    using sequence_t = decltype(generate_sequence<alphabet_t>());
+    using sequence_t = decltype(seqan3::test::generate_sequence<alphabet_t>());
 
     std::vector<sequence_t> vec1;
     std::vector<sequence_t> vec2;
     for (unsigned i = 0; i < set_size; ++i)
     {
-        vec1.push_back(generate_sequence<alphabet_t>(sequence_length, variance, i));
-        vec2.push_back(generate_sequence<alphabet_t>(sequence_length, variance, i + set_size));
+        vec1.push_back(seqan3::test::generate_sequence<alphabet_t>(sequence_length, variance, i));
+        vec2.push_back(seqan3::test::generate_sequence<alphabet_t>(sequence_length, variance, i + set_size));
     }
     return std::pair{vec1, vec2};
 }
@@ -102,8 +100,8 @@ void seqan3_affine_dna4_parallel(benchmark::State & state)
         }
     }
 
-    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
 
@@ -128,8 +126,8 @@ void seqan3_affine_dna4_omp_for(benchmark::State & state)
         }
     }
 
-    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
 
@@ -142,8 +140,6 @@ BENCHMARK_TEMPLATE(seqan3_affine_dna4_omp_for, trace)->UseRealTime();
 template <typename result_t>
 void seqan2_affine_dna4_parallel(benchmark::State & state)
 {
-    using namespace seqan;
-
     auto [vec1, vec2] = generate_data_seqan2<seqan::Dna>();
     ExecutionPolicy<Parallel, Serial> exec{};
     setNumThreads(exec, std::thread::hardware_concurrency());
@@ -156,8 +152,8 @@ void seqan2_affine_dna4_parallel(benchmark::State & state)
         total = std::accumulate(seqan::begin(res), seqan::end(res), total);
     }
 
-    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
 
@@ -198,8 +194,8 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
         }
     }
 
-    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
 

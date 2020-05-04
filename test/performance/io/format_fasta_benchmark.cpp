@@ -29,8 +29,6 @@
 
 #include <sstream>
 
-using namespace seqan3::test;
-
 inline constexpr size_t iterations_per_run = 1024;
 
 inline std::string const fasta_hdr{"seq foobar blobber"};
@@ -68,7 +66,7 @@ void write3(benchmark::State & state)
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
-    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 
 BENCHMARK(write3);
@@ -92,7 +90,7 @@ void write2(benchmark::State & state)
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
-    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 
 BENCHMARK(write2);
@@ -116,7 +114,7 @@ void read3(benchmark::State & state)
     size_t bytes_per_run = fasta_file.size();
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
-    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 BENCHMARK(read3);
 
@@ -148,7 +146,7 @@ void read2(benchmark::State & state)
     size_t bytes_per_run = fasta_file.size();
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
-    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 BENCHMARK(read2);
 #endif

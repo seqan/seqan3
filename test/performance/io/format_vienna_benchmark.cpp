@@ -25,15 +25,13 @@
     #include <seqan/rna_io.h>
 #endif
 
-using namespace seqan3::test;
-
 inline constexpr size_t iterations_per_run = 1024;
 
 inline std::string const header{"seq foobar blobber"};
-auto const sequence = generate_sequence<seqan3::rna4>(474, 0, 0) |
-                                        seqan3::views::persist |
-                                        seqan3::views::to_char |
-                                        seqan3::views::to<std::string>;
+auto const sequence = seqan3::test::generate_sequence<seqan3::rna4>(474, 0, 0) |
+                                                      seqan3::views::persist |
+                                                      seqan3::views::to_char |
+                                                      seqan3::views::to<std::string>;
 
 inline std::string const structure
 {
@@ -69,7 +67,7 @@ void write_seqan3(benchmark::State & state)
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
-    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 BENCHMARK(write_seqan3);
 
@@ -93,7 +91,7 @@ void write_seqan2(benchmark::State & state)
     size_t bytes_per_run = ostream.str().size() * iterations_per_run;
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
-    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 BENCHMARK(write_seqan2);
 #endif
@@ -116,7 +114,7 @@ void read_seqan3(benchmark::State & state)
     size_t bytes_per_run = vienna_file.size();
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
-    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 BENCHMARK(read_seqan3);
 
@@ -142,7 +140,7 @@ void read_seqan2(benchmark::State & state)
     size_t bytes_per_run = vienna_file.size();
     state.counters["iterations_per_run"] = iterations_per_run;
     state.counters["bytes_per_run"] = bytes_per_run;
-    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 BENCHMARK(read_seqan2);
 #endif

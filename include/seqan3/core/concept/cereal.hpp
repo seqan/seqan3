@@ -117,7 +117,6 @@ SEQAN3_CONCEPT cereal_text_archive = false;
  *
  * ```
  * #include <seqan3/core/concept/cereal.hpp>
- * using namespace seqan3;
  *
  * // fundamental types are serialisable
  * static_assert(cerealisable<int>);
