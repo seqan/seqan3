@@ -11,6 +11,7 @@
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
 #include <seqan3/std/algorithm>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include "../helper.hpp"
 
@@ -152,8 +153,7 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
         auto fwd_it = it.to_fwd_cursor();
         EXPECT_TRUE(fwd_it.cycle_back()); // "GTAGG"
         EXPECT_EQ(seqan3::uniquify(fwd_it.locate()), (std::vector<uint64_t>{3}));
-        EXPECT_TRUE(std::ranges::equal(fwd_it.path_label(this->text),
-                                       seqan3::views::slice(this->text, 3, 8))); // "GTAGG"
+        EXPECT_RANGE_EQ(fwd_it.path_label(this->text), seqan3::views::slice(this->text, 3, 8)); // "GTAGG"
         EXPECT_FALSE(fwd_it.cycle_back());
     }
 
@@ -168,12 +168,10 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_fwd_cursor)
     #endif
         EXPECT_TRUE(fwd_it.extend_right());
         EXPECT_EQ(seqan3::uniquify(fwd_it.locate()), (std::vector<uint64_t>{10}));
-        EXPECT_TRUE(std::ranges::equal(fwd_it.path_label(this->text),
-                                       seqan3::views::slice(this->text, 10, 15)));    // "GTAGC"
+        EXPECT_RANGE_EQ(fwd_it.path_label(this->text), seqan3::views::slice(this->text, 10, 15)); // "GTAGC"
         EXPECT_TRUE(fwd_it.cycle_back());
         EXPECT_EQ(seqan3::uniquify(fwd_it.locate()), (std::vector<uint64_t>{3}));
-        EXPECT_TRUE(std::ranges::equal(fwd_it.path_label(this->text),
-                                       seqan3::views::slice(this->text, 3, 8)));    // "GTAGG"
+        EXPECT_RANGE_EQ(fwd_it.path_label(this->text), seqan3::views::slice(this->text, 3, 8)); // "GTAGG"
     }
 }
 
@@ -189,10 +187,10 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
 
         auto rev_it = it.to_rev_cursor(); // text "CGATGCAGGATGGCA"
         EXPECT_EQ(seqan3::uniquify(rev_it.locate()), (std::vector<uint64_t>{1}));
-        EXPECT_TRUE(std::ranges::equal(rev_it.path_label(this->rev_text1), this->pattern3));    // "GATGC"
+        EXPECT_RANGE_EQ(rev_it.path_label(this->rev_text1), this->pattern3);    // "GATGC"
         EXPECT_TRUE(rev_it.cycle_back()); // "GATGG"
         EXPECT_EQ(seqan3::uniquify(rev_it.locate()), (std::vector<uint64_t>{8}));
-        EXPECT_TRUE(std::ranges::equal(rev_it.path_label(this->rev_text1), this->pattern4));    // "GATGG"
+        EXPECT_RANGE_EQ(rev_it.path_label(this->rev_text1), this->pattern4);    // "GATGG"
         EXPECT_FALSE(rev_it.cycle_back());
     }
 
@@ -207,10 +205,10 @@ TYPED_TEST_P(bi_fm_index_cursor_test, to_rev_cursor)
     #endif
         EXPECT_TRUE(rev_it.extend_right()); // "CGTAG" resp. "GATGC"
         EXPECT_EQ(seqan3::uniquify(rev_it.locate()), (std::vector<uint64_t>{1}));
-        EXPECT_TRUE(std::ranges::equal(rev_it.path_label(this->rev_text1), this->pattern3));    // "GATGC"
+        EXPECT_RANGE_EQ(rev_it.path_label(this->rev_text1), this->pattern3);    // "GATGC"
         EXPECT_TRUE(rev_it.cycle_back()); // "GGTAG" resp. "GATGG"
         EXPECT_EQ(seqan3::uniquify(rev_it.locate()), (std::vector<uint64_t>{8}));
-        EXPECT_TRUE(std::ranges::equal(rev_it.path_label(this->rev_text1), this->pattern4));    // "GATGG"
+        EXPECT_RANGE_EQ(rev_it.path_label(this->rev_text1), this->pattern4);    // "GATGG"
     }
 }
 

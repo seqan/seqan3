@@ -19,6 +19,7 @@
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/translate_join.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include "../iterator_test_template.hpp"
 
@@ -43,7 +44,7 @@ struct iterator_fixture<iterator_type> : public ::testing::Test
     template <typename A, typename B>
     static void expect_eq(A && test_range_value, B && expected_range_value)
     {
-        EXPECT_TRUE(std::ranges::equal(test_range_value, expected_range_value));
+        EXPECT_RANGE_EQ(test_range_value, expected_range_value);
     }
 };
 

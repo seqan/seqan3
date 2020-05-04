@@ -15,6 +15,7 @@
 #include <seqan3/io/alignment_file/input.hpp>
 #include <seqan3/io/alignment_file/output.hpp>
 #include <seqan3/range/views/take.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 using seqan3::operator""_cigar_op;
@@ -212,10 +213,8 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
         EXPECT_EQ(seqan3::get<seqan3::field::offset>(rec), this->offsets[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::ref_id>(rec), 0);
         EXPECT_EQ(*seqan3::get<seqan3::field::ref_offset>(rec), this->ref_offsets[i]);
-        EXPECT_TRUE(std::ranges::equal(std::get<0>(seqan3::get<seqan3::field::alignment>(rec)),
-                                       std::get<0>(this->alignments[i])));
-        EXPECT_TRUE(std::ranges::equal(std::get<1>(seqan3::get<seqan3::field::alignment>(rec)),
-                                       std::get<1>(this->alignments[i])));
+        EXPECT_RANGE_EQ(std::get<0>(seqan3::get<seqan3::field::alignment>(rec)), std::get<0>(this->alignments[i]));
+        EXPECT_RANGE_EQ(std::get<1>(seqan3::get<seqan3::field::alignment>(rec)), std::get<1>(this->alignments[i]));
         EXPECT_EQ(seqan3::get<seqan3::field::flag>(rec), this->flags[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::mapq>(rec), this->mapqs[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::mate>(rec), this->mates[i]);
@@ -268,8 +267,8 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
         size_t i{0};
         for (auto & [alignment] : fin)
         {
-            EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(this->alignments[i])));
-            EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(this->alignments[i])));
+            EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(this->alignments[i]));
+            EXPECT_RANGE_EQ(std::get<1>(alignment), std::get<1>(this->alignments[i]));
             ++i;
         }
     }
@@ -296,7 +295,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
         size_t i{0};
         for (auto & [alignment] : fin)
         {
-            EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(this->alignments[i++])));
+            EXPECT_RANGE_EQ(std::get<1>(alignment), std::get<1>(this->alignments[i++]));
             auto & ref_aln = std::get<0>(alignment);
             EXPECT_THROW((ref_aln[0]), std::logic_error); // access on a dummy seq is not allowed
         }

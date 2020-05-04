@@ -15,6 +15,7 @@
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 TEST(general, construction)
 {
@@ -143,7 +144,7 @@ TEST(view, factory)
     {
         auto view = std::string{"foobar"} | seqan3::views::persist | std::views::take(3);
         auto v = seqan3::views::repeat(view);
-        EXPECT_TRUE(std::ranges::equal(*v.begin(), view));
+        EXPECT_RANGE_EQ(*v.begin(), view);
     }
 
     // combinability
