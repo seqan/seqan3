@@ -23,7 +23,8 @@ enable_testing()
 set (SEQAN3_DOXYGEN_TEST_SCRIPT "
     output=\$(${DOXYGEN_EXECUTABLE} 2>&1 > /dev/null | sort);
     echo \"\$output\";
-    test -z \"\$output\"")
+    test -z \"\$output\";
+    ! find . -not -name \"*_source.html\" -name \"*.html\" -print0 | xargs -0 grep \"requires\" | grep \"memname\"")
 
 if (SEQAN3_USER_DOC)
     message (STATUS "Add user doc test.")
