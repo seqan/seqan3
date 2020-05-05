@@ -80,6 +80,8 @@ public:
      * \details
      *
      * Initialises the algorithm given the user settings from the alignment configuration object.
+     * If no gap cost model was provided by the user the default gap costs `-10` and `-1` are set for the gap open score
+     * and the gap extension score respectively.
      */
     pairwise_alignment_algorithm(alignment_configuration_t const & config)
     {
