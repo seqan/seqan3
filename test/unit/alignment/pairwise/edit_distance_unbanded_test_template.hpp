@@ -9,6 +9,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 
 #include <seqan3/range/views/to_char.hpp>
@@ -24,13 +25,11 @@ template <bool compute_score_matrix_,
           typename database_t,
           typename query_t,
           typename align_cfg_t,
-          typename alignment_result_t,
           typename word_t,
           typename is_semi_global_t,
           typename traits_t = seqan3::detail::default_edit_distance_trait_type<database_t,
                                                                                query_t,
                                                                                align_cfg_t,
-                                                                               alignment_result_t,
                                                                                is_semi_global_t,
                                                                                word_t>>
 struct edit_traits_type : traits_t
@@ -49,13 +48,11 @@ struct global_fixture : public ::testing::Test
     template <bool compute_score_matrix,
               typename database_t,
               typename query_t,
-              typename align_cfg_t,
-              typename alignment_result_t>
+              typename align_cfg_t>
     using edit_traits_type = ::edit_traits_type<compute_score_matrix,
                                                 database_t,
                                                 query_t,
                                                 align_cfg_t,
-                                                alignment_result_t,
                                                 word_t,
                                                 std::false_type>;
 };
@@ -66,13 +63,11 @@ struct semi_global_fixture : public global_fixture<_fixture, word_t>
     template <bool compute_score_matrix,
               typename database_t,
               typename query_t,
-              typename align_cfg_t,
-              typename alignment_result_t>
+              typename align_cfg_t>
     using edit_traits_type = ::edit_traits_type<compute_score_matrix,
                                                 database_t,
                                                 query_t,
                                                 align_cfg_t,
-                                                alignment_result_t,
                                                 word_t,
                                                 std::true_type>;
 };
@@ -95,9 +90,17 @@ auto edit_distance(database_t && database, query_t && query, align_cfg_t && alig
                                                        query_t,
                                                        std::remove_reference_t<align_cfg_t>>::type;
     using alignment_result_t = seqan3::alignment_result<alignment_result_value_t>;
-    using edit_traits = edit_traits_type<compute_score_matrix, database_t, query_t, align_cfg_t, alignment_result_t>;
-    using algorithm_t = seqan3::detail::edit_distance_unbanded<database_t, query_t, align_cfg_t, edit_traits>;
-    auto alignment = algorithm_t{database, query, align_cfg, edit_traits{}};
+    auto align_cfg_with_result_type = align_cfg | seqan3::align_cfg::alignment_result_capture<alignment_result_t>;
+    using align_config_with_result_type_t = decltype(align_cfg_with_result_type);
+    using edit_traits = edit_traits_type<compute_score_matrix,
+                                         database_t,
+                                         query_t,
+                                         align_config_with_result_type_t>;
+    using algorithm_t = seqan3::detail::edit_distance_unbanded<database_t,
+                                                               query_t,
+                                                               align_config_with_result_type_t,
+                                                               edit_traits>;
+    auto alignment = algorithm_t{database, query, align_cfg_with_result_type, edit_traits{}};
 
     // compute alignment
     alignment(0u, [] (auto &&) { /* do nothing */ });

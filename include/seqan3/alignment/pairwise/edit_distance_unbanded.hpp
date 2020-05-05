@@ -1076,7 +1076,7 @@ public:
                                                                 res_vt.front_coordinate);
             }
         }
-        callback(std::move(res_vt));
+        callback(alignment_result_type{std::move(res_vt)});
     }
 };
 
