@@ -17,6 +17,8 @@
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
+#include "../iterator_test_template.hpp"
+
 #include <gtest/gtest.h>
 
 using seqan3::operator""_dna4;
@@ -28,6 +30,24 @@ static constexpr auto ungapped_view = seqan3::views::kmer_hash(seqan3::ungapped{
 static constexpr auto gapped_view = seqan3::views::kmer_hash(0b101_shape);
 static constexpr auto prefix_until_first_thymine = seqan3::views::take_until([] (seqan3::dna4 x)
                                                    { return x == 'T'_dna4; });
+
+using iterator_type = std::ranges::iterator_t<decltype(std::declval<seqan3::dna4_vector&>() | gapped_view)>;
+
+template <>
+struct iterator_fixture<iterator_type> : public ::testing::Test
+{
+    using iterator_tag = std::random_access_iterator_tag;
+    static constexpr bool const_iterable = true;
+
+    seqan3::dna4_vector text{"ACGTAGC"_dna4};
+
+    decltype(text | gapped_view) test_range = text | gapped_view;
+
+    std::vector<size_t> expected_range{2, 7, 8, 14, 1};
+};
+
+using test_type = ::testing::Types<iterator_type>;
+INSTANTIATE_TYPED_TEST_SUITE_P(iterator_fixture, iterator_fixture, test_type, );
 
 template <typename T>
 class kmer_hash_ungapped_test: public ::testing::Test {};
