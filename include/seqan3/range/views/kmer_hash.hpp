@@ -174,6 +174,18 @@ public:
         return end();
     }
     //!\}
+
+    /*!\brief Returns the size of the range, if the underlying range is a std::ranges::sized_range.
+     * \returns Size of range.
+     */
+    auto size() const
+    //!\cond
+        requires std::ranges::sized_range<urng_t>
+    //!\endcond
+    {
+        using size_type = decltype(std::ranges::size(urange));
+        return std::max<size_type>(std::ranges::size(urange) + 1, shape_.size()) - shape_.size();
+    }
 };
 
 /*!\brief Iterator for calculating hash values via a given seqan3::shape.
