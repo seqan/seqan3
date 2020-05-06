@@ -32,6 +32,7 @@
 #include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
+#include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
@@ -489,10 +490,28 @@ private:
     static constexpr function_wrapper_t make_algorithm(config_t const & cfg)
     {
         using traits_t = alignment_configuration_traits<config_t>;
-        using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
-        using gap_policy_t = typename select_gap_policy<traits_t>::type;
 
-        return alignment_algorithm<config_t, matrix_policy_t, gap_policy_t, policies_t...>{cfg};
+        // Temporarily we will use the new and the old alignment implementation in order to
+        // refactor step-by-step to the new implementation. The new implementation will be tested in
+        // macrobenchmarks to show that it maintains a high performance.
+
+        // Use old alignment implementation if...
+        if constexpr (traits_t::is_local ||            // it is a local alignment,
+                      traits_t::is_aligned_ends ||     // it has aligned ends configured,
+                      traits_t::is_vectorised ||       // it is vectorised,
+                      traits_t::is_banded ||           // it is banded,
+                      traits_t::is_debug ||            // it runs in debug mode,
+                      traits_t::result_type_rank > 0)  // it computes more than the score.
+        {
+            using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
+            using gap_policy_t = typename select_gap_policy<traits_t>::type;
+
+            return alignment_algorithm<config_t, matrix_policy_t, gap_policy_t, policies_t...>{cfg};
+        }
+        else  // Use new alignment algorithm implementation.
+        {
+            return pairwise_alignment_algorithm<config_t>{cfg};
+        }
     }
 };
 
