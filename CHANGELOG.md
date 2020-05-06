@@ -93,6 +93,9 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 * Added size() function to `seqan3::views::kmer_hash`
   ([\#1722](https://github.com/seqan/seqan3/pull/1722)).
+* `operator[](difference_type const n)` of the iterator of the `seqan3::views::kmer_hash` is declared `const`
+  and returns value `n` steps after the current position without jumping to that position
+  ([\#1756](https://github.com/seqan/seqan3/pull/1756)).
 
 # 3.0.1
 
