@@ -11,11 +11,9 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
-#include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser_hash.hpp>
-#include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include <gtest/gtest.h>
 
@@ -64,24 +62,23 @@ TYPED_TEST(minimiser_hash_properties_test, different_input_ranges)
                    'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4}; // ACGTCGACGTTTAG
     result_t ungapped_no_rev{27, 97, 27}; // ACGT, CGAC, ACGT
     result_t gapped_no_rev{3, 5, 3};      // A--T, C--C, A--T - "-" for gap
-    EXPECT_EQ(ungapped_no_rev, text | ungapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(gapped_no_rev, text | gapped_view | seqan3::views::to<result_t>);
+    EXPECT_RANGE_EQ(ungapped_no_rev, text | ungapped_view);
+    EXPECT_RANGE_EQ(gapped_no_rev, text | gapped_view);
 }
 
 TEST_F(minimiser_hash_test, ungapped)
 {
-    EXPECT_EQ(result1, text1 | ungapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(result2, text2 | ungapped_view | seqan3::views::to<result_t>);
+    EXPECT_RANGE_EQ(result1, text1 | ungapped_view);
+    EXPECT_RANGE_EQ(result2, text2 | ungapped_view);
 
     auto stop_at_t = seqan3::views::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
-    EXPECT_EQ(ungapped_no_rev3, text3 | stop_at_t | seqan3::views::minimiser_hash(seqan3::ungapped{4}, 8, 0)
-                                      | seqan3::views::to<result_t>);
+    EXPECT_RANGE_EQ(ungapped_no_rev3, text3 | stop_at_t | seqan3::views::minimiser_hash(seqan3::ungapped{4}, 8, 0));
 }
 
 TEST_F(minimiser_hash_test, gapped)
 {
-    EXPECT_EQ(result1, text1 | gapped_view | seqan3::views::to<result_t>);
-    EXPECT_EQ(result2, text2 | gapped_view | seqan3::views::to<result_t>);
+    EXPECT_RANGE_EQ(result1, text1 | gapped_view);
+    EXPECT_RANGE_EQ(result2, text2 | gapped_view);
 
     auto stop_at_t = seqan3::views::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
     EXPECT_EQ(gapped_no_rev3, text3 | stop_at_t | gapped_view | seqan3::views::to<result_t>);
@@ -89,10 +86,8 @@ TEST_F(minimiser_hash_test, gapped)
 
 TEST_F(minimiser_hash_test, default_seed)
 {
-    EXPECT_EQ(result1_default_seed, text1 | seqan3::views::minimiser_hash(ungapped_shape, 8)
-                                          | seqan3::views::to<result_t>);
-    EXPECT_EQ(result1_default_seed, text1 | seqan3::views::minimiser_hash(gapped_shape, 8)
-                                          | seqan3::views::to<result_t>);
+    EXPECT_RANGE_EQ(result1_default_seed, text1 | seqan3::views::minimiser_hash(ungapped_shape, 8));
+    EXPECT_RANGE_EQ(result1_default_seed, text1 | seqan3::views::minimiser_hash(gapped_shape, 8));
 }
 
 TEST_F(minimiser_hash_test, shape_bigger_than_window)
