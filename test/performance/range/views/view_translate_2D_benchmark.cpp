@@ -24,8 +24,6 @@
 #include <seqan/translation.h>
 #endif
 
-using namespace seqan3::test;
-
 // Tags used to define the benchmark type
 struct baseline_tag{}; // Baseline where view is applied and only iterating the output range is benchmarked
 struct translate_tag{}; // Benchmark view_translate followed by seqan3::views::join

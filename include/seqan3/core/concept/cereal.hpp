@@ -117,17 +117,16 @@ SEQAN3_CONCEPT cereal_text_archive = false;
  *
  * ```
  * #include <seqan3/core/concept/cereal.hpp>
- * using namespace seqan3;
  *
  * // fundamental types are serialisable
- * static_assert(cerealisable<int>);
+ * static_assert(seqan3::cerealisable<int>);
  *
  * #include <array>
  * #include <cereal/types/array.hpp> // std::array is now serialisable
- * static_assert(cerealisable<std::array<int, 12>>);
+ * static_assert(seqan3::cerealisable<std::array<int, 12>>);
  *
  * #include <seqan3/alphabet/nucleotide/dna4.hpp> // dna4 is serialisable
- * static_assert(cerealisable<dna4>);
+ * static_assert(seqan3::cerealisable<seqan3::dna4>);
  * ```
  *
  * ### Example

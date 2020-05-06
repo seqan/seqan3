@@ -27,8 +27,6 @@
     #include <seqan/align.h>
 #endif
 
-using namespace seqan3::test;
-
 constexpr auto local_affine_cfg = seqan3::align_cfg::mode{seqan3::local_alignment} |
                                   seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                             seqan3::gap_open_score{-10}}} |
@@ -43,8 +41,8 @@ constexpr auto local_affine_cfg = seqan3::align_cfg::mode{seqan3::local_alignmen
 
 void seqan3_affine_dna4(benchmark::State & state)
 {
-    auto seq1 = generate_sequence<seqan3::dna4>(500, 0, 0);
-    auto seq2 = generate_sequence<seqan3::dna4>(250, 0, 1);
+    auto seq1 = seqan3::test::generate_sequence<seqan3::dna4>(500, 0, 0);
+    auto seq2 = seqan3::test::generate_sequence<seqan3::dna4>(250, 0, 1);
 
     for (auto _ : state)
     {
@@ -53,8 +51,9 @@ void seqan3_affine_dna4(benchmark::State & state)
         *std::ranges::begin(rng);
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), local_affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)),
+                                                                  local_affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
 }
 
 BENCHMARK(seqan3_affine_dna4);
@@ -72,8 +71,9 @@ void seqan2_affine_dna4(benchmark::State & state)
         seqan::localAlignmentScore(seq1, seq2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), local_affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)),
+                                                                  local_affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
 }
 
 BENCHMARK(seqan2_affine_dna4);
@@ -85,8 +85,8 @@ BENCHMARK(seqan2_affine_dna4);
 
 void seqan3_affine_dna4_trace(benchmark::State & state)
 {
-    auto seq1 = generate_sequence<seqan3::dna4>(500, 0, 0);
-    auto seq2 = generate_sequence<seqan3::dna4>(250, 0, 1);
+    auto seq1 = seqan3::test::generate_sequence<seqan3::dna4>(500, 0, 0);
+    auto seq2 = seqan3::test::generate_sequence<seqan3::dna4>(250, 0, 1);
 
     for (auto _ : state)
     {
@@ -95,8 +95,9 @@ void seqan3_affine_dna4_trace(benchmark::State & state)
         *std::ranges::begin(rng);
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), local_affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)),
+                                                                  local_affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
 }
 
 BENCHMARK(seqan3_affine_dna4_trace);
@@ -116,8 +117,9 @@ void seqan2_affine_dna4_trace(benchmark::State & state)
         seqan::localAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
     }
 
-    state.counters["cells"] = pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)), local_affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(std::views::single(std::tie(seq1, seq2)),
+                                                                  local_affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
 }
 
 BENCHMARK(seqan2_affine_dna4_trace);
@@ -129,13 +131,13 @@ BENCHMARK(seqan2_affine_dna4_trace);
 
 void seqan3_affine_dna4_collection(benchmark::State & state)
 {
-    using sequence_t = decltype(generate_sequence<seqan3::dna4>());
+    using sequence_t = decltype(seqan3::test::generate_sequence<seqan3::dna4>());
 
     std::vector<std::pair<sequence_t, sequence_t>> vec;
     for (unsigned i = 0; i < 100; ++i)
     {
-        sequence_t seq1 = generate_sequence<seqan3::dna4>(100, 0, i);
-        sequence_t seq2 = generate_sequence<seqan3::dna4>(50, 0, i + 100);
+        sequence_t seq1 = seqan3::test::generate_sequence<seqan3::dna4>(100, 0, i);
+        sequence_t seq2 = seqan3::test::generate_sequence<seqan3::dna4>(50, 0, i + 100);
         vec.push_back(std::pair{seq1, seq2});
     }
 
@@ -145,8 +147,8 @@ void seqan3_affine_dna4_collection(benchmark::State & state)
             rng.score();
     }
 
-    state.counters["cells"] = pairwise_cell_updates(vec, local_affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(vec, local_affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
 }
 
 BENCHMARK(seqan3_affine_dna4_collection);
@@ -183,13 +185,13 @@ BENCHMARK(seqan2_affine_dna4_collection);
 
 void seqan3_affine_dna4_trace_collection(benchmark::State & state)
 {
-    using sequence_t = decltype(generate_sequence<seqan3::dna4>());
+    using sequence_t = decltype(seqan3::test::generate_sequence<seqan3::dna4>());
 
     std::vector<std::pair<sequence_t, sequence_t>> vec;
     for (unsigned i = 0; i < 100; ++i)
     {
-        sequence_t seq1 = generate_sequence<seqan3::dna4>(100, 0, i);
-        sequence_t seq2 = generate_sequence<seqan3::dna4>(50, 0, i + 100);
+        sequence_t seq1 = seqan3::test::generate_sequence<seqan3::dna4>(100, 0, i);
+        sequence_t seq2 = seqan3::test::generate_sequence<seqan3::dna4>(50, 0, i + 100);
         vec.push_back(std::pair{seq1, seq2});
     }
 
@@ -199,8 +201,8 @@ void seqan3_affine_dna4_trace_collection(benchmark::State & state)
             rng.score();
     }
 
-    state.counters["cells"] = pairwise_cell_updates(vec, local_affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(vec, local_affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
 }
 
 BENCHMARK(seqan3_affine_dna4_trace_collection);
@@ -237,8 +239,8 @@ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
         seqan::localAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11}, seqan::Gotoh());
     }
 
-    state.counters["cells"] = pairwise_cell_updates(seqan3::views::zip(vec1, vec2), local_affine_cfg);
-    state.counters["CUPS"] = cell_updates_per_second(state.counters["cells"]);
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), local_affine_cfg);
+    state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
 }
 
 BENCHMARK(seqan2_affine_dna4_trace_collection);
