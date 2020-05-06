@@ -172,6 +172,9 @@ private:
     //!\brief The sentinel type of the underlying range.
     using sentinel_t = std::ranges::sentinel_t<rng_t>;
 
+    template <typename urng2_t>
+    friend class window_iterator;
+
 public:
     /*!\name Associated types
      * \{
@@ -205,6 +208,18 @@ public:
     window_iterator & operator=(window_iterator const &) = default; //!< Defaulted.
     window_iterator & operator=(window_iterator &&)      = default; //!< Defaulted.
     ~window_iterator()                                   = default; //!< Defaulted.
+
+    //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
+    template <typename urng2_t>
+    //!\cond
+        requires std::same_as<std::remove_const_t<urng_t>, urng2_t>
+     //!\endcond
+    window_iterator(window_iterator<urng2_t> it) :
+         urange_end{std::move(it.urange_end)},
+         minimiser_value{std::move(it.minimiser_value)},
+         window_right{std::move(it.window_right)},
+         window_values{std::move(it.window_values)}
+    {}
 
     /*!\brief                              Construct from begin and end iterators of a given range over
     *                                      std::totally_ordered values, and the number of values per window.
