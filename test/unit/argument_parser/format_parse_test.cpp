@@ -60,16 +60,6 @@ TEST(parse_type_test, add_option_long_id)
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
     EXPECT_EQ(option_value, "option_string");
 
-    // add with no space
-    const char * argv2[] = {"./argument_parser_test", "--string-optionoption_string"};
-    seqan3::argument_parser parser2{"test_parser", 2, argv2, false};
-    parser2.add_option(option_value, 'S', "string-option", "this is a string option.");
-
-    testing::internal::CaptureStderr();
-    EXPECT_NO_THROW(parser2.parse());
-    EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_value, "option_string");
-
     const char * argv3[] = {"./argument_parser_test", "--string-option=option_string"};
     seqan3::argument_parser parser3{"test_parser", 2, argv3, false};
     parser3.add_option(option_value, 's', "string-option", "this is a string option.");
@@ -934,5 +924,48 @@ TEST(parse_test, subcommand_argument_parser_success)
         const char * argv[]{"./top_level", "-f", "2", "subiddysub", "foo"};
         EXPECT_THROW((seqan3::argument_parser{"top_level", 5, argv, false, {"sub1", "sub2"}}),
                      seqan3::argument_parser_error);
+    }
+}
+
+TEST(parse_test, issue1544)
+{
+    {   // wrong separation of long value:
+        std::string option_value;
+        const char * argv[] = {"./argument_parser_test", "--foohallo"};
+        seqan3::argument_parser parser{"test_parser", 2, argv, false};
+        parser.add_option(option_value, 'f', "foo", "this is a string option.");
+
+        EXPECT_THROW(parser.parse(), seqan3::unknown_option);
+    }
+
+    {   // unknown option (`--foo-bar`) that has a prefix of a known option (`--foo`)
+        std::string option_value;
+        const char * argv[] = {"./argument_parser_test", "--foo", "hallo", "--foo-bar", "ballo"};
+        seqan3::argument_parser parser{"test_parser", 5, argv, false};
+        parser.add_option(option_value, 'f', "foo", "this is a string option.");
+
+        EXPECT_THROW(parser.parse(), seqan3::unknown_option);
+    }
+
+    {   // known option (`--foo-bar`) that has a prefix of a unknown option (`--foo`)
+        std::string option_value;
+        const char * argv[] = {"./argument_parser_test", "--foo", "hallo", "--foo-bar", "ballo"};
+        seqan3::argument_parser parser{"test_parser", 5, argv, false};
+        parser.add_option(option_value, 'f', "foo-bar", "this is a string option.");
+
+        EXPECT_THROW(parser.parse(), seqan3::unknown_option);
+    }
+
+    {   // known option (`--foo`) is a prefix of another known option (`--foo-bar`)
+        std::string foo_option_value;
+        std::string foobar_option_value;
+        const char * argv[] = {"./argument_parser_test", "--foo", "hallo", "--foo-bar", "ballo"};
+        seqan3::argument_parser parser{"test_parser", 5, argv, false};
+        parser.add_option(foo_option_value, 'f', "foo", "this is a prefix of foobar.");
+        parser.add_option(foobar_option_value, 'b', "foo-bar", "this has prefix foo.");
+
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_EQ(foo_option_value, "hallo");
+        EXPECT_EQ(foobar_option_value, "ballo");
     }
 }

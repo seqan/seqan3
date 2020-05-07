@@ -75,6 +75,15 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## Notable Bug-fixes
 
+### Argument Parser
+
+* Long option identifiers and their value must be separated by a space or equal sign `=`.
+  Handling this restriction resolves the ambiguity if one long option identifier is the prefix of 
+  another ([\#1792](https://github.com/seqan/seqan3/pull/1792)).
+
+  Valid short id value pairs: `-iValue`, `-i=Value`, `-i Value`
+  Valid long id value pairs: `--id=Value`, `--id Value` (prohibited now: `--idValue`)
+
 ### I/O
 
 * The `seqan3::field::cigar` was added to the default fields for reading and writing alignment files
