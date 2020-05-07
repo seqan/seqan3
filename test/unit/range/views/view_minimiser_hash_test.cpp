@@ -7,7 +7,6 @@
 
 #include <forward_list>
 #include <list>
-#include <type_traits>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
@@ -17,14 +16,34 @@
 
 #include <gtest/gtest.h>
 
+#include "../iterator_test_template.hpp"
+
 using seqan3::operator""_dna4;
 using seqan3::operator""_shape;
 using result_t = std::vector<size_t>;
+using iterator_type = std::ranges::iterator_t< decltype(std::declval<seqan3::dna4_vector&>()
+                                                        | seqan3::views::minimiser_hash(seqan3::ungapped{4}, 8, 0))>;
 
 static constexpr seqan3::shape ungapped_shape = seqan3::ungapped{4};
 static constexpr seqan3::shape gapped_shape = 0b1001_shape;
 static constexpr auto ungapped_view = seqan3::views::minimiser_hash(ungapped_shape, 8, 0); // window_size 8, seed 0
 static constexpr auto gapped_view = seqan3::views::minimiser_hash(gapped_shape, 8, 0);     // window_size 8, seed 0
+
+template <>
+struct iterator_fixture<iterator_type> : public ::testing::Test
+{
+    using iterator_tag = std::forward_iterator_tag;
+    static constexpr bool const_iterable = true;
+
+    seqan3::dna4_vector text{"ACGGCGACGTTTAG"_dna4};
+    result_t expected_range{26, 97, 27};
+
+    decltype(seqan3::views::minimiser_hash(text, seqan3::ungapped{4}, 8, 0)) test_range =
+    seqan3::views::minimiser_hash(text, seqan3::ungapped{4}, 8, 0);
+};
+
+using test_type = ::testing::Types<iterator_type>;
+INSTANTIATE_TYPED_TEST_SUITE_P(iterator_fixture, iterator_fixture, test_type, );
 
 template <typename T>
 class minimiser_hash_properties_test: public ::testing::Test { };
@@ -39,6 +58,7 @@ using underlying_range_types = ::testing::Types<std::vector<seqan3::dna4>,
                                                 std::forward_list<seqan3::dna4> const>;
 
 TYPED_TEST_SUITE(minimiser_hash_properties_test, underlying_range_types, );
+
 
 class minimiser_hash_test : public ::testing::Test
 {
