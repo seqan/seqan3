@@ -36,7 +36,7 @@
 #include <seqan3/std/ranges>
 
 #if __cpp_lib_ranges // C++20 ranges available
-namespace std::ranges
+namespace std
 #else // implement via range-v3
 namespace ranges
 #endif
@@ -45,7 +45,7 @@ namespace ranges
 //!\brief This makes seqan iterators ranges-aware, i.e. makes them fulfil ranges::readable which is in turn needed for
 //!ranges::input_range.
 template <typename ...args_t>
-struct readable_traits<seqan::Iter<args_t...>>
+struct indirectly_readable_traits<seqan::Iter<args_t...>>
 {
     using value_type = typename seqan::Value<seqan::Iter<args_t...>>::Type;
 };

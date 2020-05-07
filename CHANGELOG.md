@@ -76,6 +76,10 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## API changes
 
+* The required version of the ranges-v3 library has increased:
+  We now support the versions >= 0.11.0 and < 0.12.0, increasing the previous requirement of >= 0.10.0 and < 0.11.0
+  ([\#2014](https://github.com/seqan/seqan3/pull/2014)).
+
 ### Alignment
 
 * The alignment configuration elements were refactored:
