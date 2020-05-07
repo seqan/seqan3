@@ -17,7 +17,7 @@
 
 namespace seqan3::detail
 {
-//!\brief views::minimiser_hash's range adaptor object type (non-closure).
+//!\brief seqan3::views::minimiser_hash's range adaptor object type (non-closure).
 struct minimiser_hash_fn
 {
     /*!\brief Store the shape and the window size and return a range adaptor closure object.
@@ -43,8 +43,7 @@ struct minimiser_hash_fn
         return seqan3::detail::adaptor_from_functor{*this, shape, window_size, seed};
     }
 
-    /*!\brief            Call the view's constructor with the underlying view, a seqan3::shape and a window size as
-     *                   argument.
+    /*!\brief Call the view's constructor with the underlying view, a seqan3::shape and a window size as argument.
      * \param[in] urange      The input range to process. Must model std::ranges::viewable_range and the reference type
      *                        of the range must model seqan3::semialphabet.
      * \param[in] shape       The seqan3::shape to use for hashing.
@@ -54,7 +53,9 @@ struct minimiser_hash_fn
      * \returns               A range of converted elements.
      */
     template <std::ranges::range urng_t>
-    constexpr auto operator()(urng_t && urange, shape const & shape, uint32_t const window_size,
+    constexpr auto operator()(urng_t && urange,
+                              shape const & shape,
+                              uint32_t const window_size,
                               uint64_t const seed = 0x8F3F73B5CF1C9ADE) const
     {
         static_assert(std::ranges::viewable_range<urng_t>,
@@ -88,7 +89,7 @@ namespace seqan3::views
  * \param[in] urange         The range being processed. [parameter is omitted in pipe notation]
  * \param[in] shape          The seqan3::shape that determines how to compute the hash value.
  * \param[in] window_size    The window size to use.
- * \param[in] seed           The seed to use. Default: 0x8F3F73B5CF1C9ADE.
+ * \param[in] seed           The seed used to skew the hash values. Default: 0x8F3F73B5CF1C9ADE.
  * \returns                  A range of `size_t` where each value is the minimiser of the resp. window.
  *                           See below for the properties of the returned range.
  * \ingroup views
@@ -96,7 +97,7 @@ namespace seqan3::views
  * \details
  *
  * A sequence can be presented by a small number of k-mers (minimisers). For a given shape and window size all k-mers
- * are determined in the forward strand and only the lexicographically smallest k-mer is saved for
+ * are determined in the forward strand and only the lexicographically smallest k-mer is returned for
  * one window. This process is repeated over every possible window of a sequence. If consecutive windows share a
  * minimiser, it is saved only once.
  * For example, in the sequence "TAAAGTGCTAAA" for an ungapped shape of length 3 and a window size of 5 the first,
@@ -106,7 +107,7 @@ namespace seqan3::views
  * since it is located at an other position than the previous "AAA" minimiser and hence storing the second
  * "AAA"-minimiser is not redundant but necessary.
  *
- * ### Non-lexicographical Minimisers
+ * ### Non-lexicographical Minimisers by skewing the hash value with a seed
  *
  * It might happen that a minimiser changes only slightly when sliding the window over the sequence. For instance, when
  * a minimiser starts with a repetition of A’s, then in the next window it is highly likely that the minimiser will
