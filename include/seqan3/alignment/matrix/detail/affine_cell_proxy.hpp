@@ -30,7 +30,7 @@ namespace seqan3::detail
  */
 template <tuple_like tuple_t>
 //!\cond
-    requires std::tuple_size_v<tuple_t> == 3
+    requires (std::tuple_size_v<tuple_t> == 3)
 //!\endcond
 class affine_cell_proxy : public tuple_t
 {

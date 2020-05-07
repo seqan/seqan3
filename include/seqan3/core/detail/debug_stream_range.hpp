@@ -122,7 +122,7 @@ template <sequence rng_t, typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
 //!\cond
     requires detail::debug_stream_range_guard<rng_t> &&
-             !detail::is_uint_adaptation_v<remove_cvref_t<std::ranges::range_reference_t<rng_t>>>
+             (!detail::is_uint_adaptation_v<remove_cvref_t<std::ranges::range_reference_t<rng_t>>>)
 //!\endcond
 {
     for (auto && l : r)
