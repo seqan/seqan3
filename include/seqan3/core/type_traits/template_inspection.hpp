@@ -59,7 +59,7 @@ template <template <typename ...> typename source_template,
 //!\cond
     requires requires ()
     {
-        std::declval<target_template<source_arg_types...>>();
+        typename target_template<source_arg_types...>;
     }
 //!\endcond
 struct transfer_template_args_onto<source_template<source_arg_types...>, target_template>
@@ -108,7 +108,7 @@ template <template <auto ...> typename source_template,
 //!\cond
     requires requires ()
     {
-        std::declval<target_template<source_varg_types...>>();
+        typename target_template<source_varg_types...>;
     }
 //!\endcond
 struct transfer_template_vargs_onto<source_template<source_varg_types...>, target_template>
