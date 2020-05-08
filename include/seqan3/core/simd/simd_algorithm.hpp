@@ -160,6 +160,20 @@ constexpr simd_t extract_halve(simd_t const & src)
     else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return detail::extract_halve_sse4<index>(src);
 }
+
+template <uint8_t index, simd::simd_concept simd_t>
+    requires detail::is_builtin_simd_v<simd_t> &&
+             detail::is_native_builtin_simd_v<simd_t> &&
+             simd_traits<simd_t>::max_length == 32
+constexpr simd_t extract_halve(simd_t const & src)
+{
+    static_assert(index < 2, "The index must be in the range of [0, 1]");
+
+    if constexpr (simd_traits<simd_t>::length < 2) // In case there are less elements available return unchanged value.
+        return src;
+    else // if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
+        return detail::extract_halve_avx2<index>(src);
+}
 //!\endcond
 
 /*!\brief Extracts one quarter of the given simd vector and stores it in the lower quarter of the target vector.
@@ -206,6 +220,20 @@ constexpr simd_t extract_quarter(simd_t const & src)
     else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return detail::extract_quarter_sse4<index>(src);
 }
+
+template <uint8_t index, simd::simd_concept simd_t>
+    requires detail::is_builtin_simd_v<simd_t> &&
+             detail::is_native_builtin_simd_v<simd_t> &&
+             simd_traits<simd_t>::max_length == 32
+constexpr simd_t extract_quarter(simd_t const & src)
+{
+    static_assert(index < 4, "The index must be in the range of [0, 1, 2, 3]");
+
+    if constexpr (simd_traits<simd_t>::length < 4) // In case there are less elements available return unchanged value.
+        return src;
+    else // if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
+        return detail::extract_quarter_avx2<index>(src);
+}
 //!\endcond
 
 /*!\brief Extracts one eighth of the given simd vector and stores it in the lower eighth of the target vector.
@@ -249,6 +277,20 @@ constexpr simd_t extract_eighth(simd_t const & src)
         return src;
     else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return detail::extract_eighth_sse4<index>(src);
+}
+
+template <uint8_t index, simd::simd_concept simd_t>
+    requires detail::is_builtin_simd_v<simd_t> &&
+             detail::is_native_builtin_simd_v<simd_t> &&
+             simd_traits<simd_t>::max_length == 32
+constexpr simd_t extract_eighth(simd_t const & src)
+{
+    static_assert(index < 8, "The index must be in the range of [0, 1, 2, 3, 4, 5, 6, 7]");
+
+    if constexpr (simd_traits<simd_t>::length < 8) // In case there are less elements available return unchanged value.
+        return src;
+    else // if constexpr (simd_traits<simd_t>::max_length == 16) // AVX2
+        return detail::extract_eighth_avx2<index>(src);
 }
 //!\endcond
 

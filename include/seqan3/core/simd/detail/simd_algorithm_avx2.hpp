@@ -139,17 +139,27 @@ constexpr target_simd_t upcast_unsigned_avx2(source_simd_t const & src)
     }
 }
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_halve
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_halve_avx2(simd_t const & src);
+constexpr simd_t extract_halve_avx2(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm256_castsi128_si256(
+            _mm256_extracti128_si256(reinterpret_cast<__m256i const &>(src), index)));
+}
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_quarter
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_quarter_avx2(simd_t const & src);
+constexpr simd_t extract_quarter_avx2(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm256_castsi128_si256(
+            _mm_cvtsi64x_si128(_mm256_extract_epi64(reinterpret_cast<__m256i const &>(src), index))));
+}
 
 // TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_eighth
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_eighth_avx2(simd_t const & src);
+constexpr simd_t extract_eighth_avx2(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm256_castsi128_si256(
+            _mm_cvtsi32_si128(_mm256_extract_epi32(reinterpret_cast<__m256i const &>(src), index))));
+}
 
 } // namespace seqan3::detail
 
