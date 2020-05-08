@@ -149,30 +149,19 @@ constexpr simd_t extract_halve(simd_t const & src)
 //!\cond
 template <uint8_t index, simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t> &&
-             (simd_traits<simd_t>::max_length == 16)
+             detail::is_native_builtin_simd_v<simd_t>
 constexpr simd_t extract_halve(simd_t const & src)
 {
     static_assert(index < 2, "The index must be in the range of [0, 1]");
 
     if constexpr (simd_traits<simd_t>::length < 2) // In case there are less elements available return unchanged value.
         return src;
-    else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
+    else if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return detail::extract_halve_sse4<index>(src);
-}
-
-template <uint8_t index, simd::simd_concept simd_t>
-    requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t> &&
-             simd_traits<simd_t>::max_length == 32
-constexpr simd_t extract_halve(simd_t const & src)
-{
-    static_assert(index < 2, "The index must be in the range of [0, 1]");
-
-    if constexpr (simd_traits<simd_t>::length < 2) // In case there are less elements available return unchanged value.
-        return src;
-    else // if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
+    else if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
         return detail::extract_halve_avx2<index>(src);
+    else // Anything else
+        return detail::extract_impl<2>(src, index);
 }
 //!\endcond
 
@@ -209,30 +198,19 @@ constexpr simd_t extract_quarter(simd_t const & src)
 //!\cond
 template <uint8_t index, simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t> &&
-             (simd_traits<simd_t>::max_length == 16)
+             detail::is_native_builtin_simd_v<simd_t>
 constexpr simd_t extract_quarter(simd_t const & src)
 {
     static_assert(index < 4, "The index must be in the range of [0, 1, 2, 3]");
 
     if constexpr (simd_traits<simd_t>::length < 4) // In case there are less elements available return unchanged value.
         return src;
-    else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
+    else if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return detail::extract_quarter_sse4<index>(src);
-}
-
-template <uint8_t index, simd::simd_concept simd_t>
-    requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t> &&
-             simd_traits<simd_t>::max_length == 32
-constexpr simd_t extract_quarter(simd_t const & src)
-{
-    static_assert(index < 4, "The index must be in the range of [0, 1, 2, 3]");
-
-    if constexpr (simd_traits<simd_t>::length < 4) // In case there are less elements available return unchanged value.
-        return src;
-    else // if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
+    else if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
         return detail::extract_quarter_avx2<index>(src);
+    else // Anything else
+        return detail::extract_impl<4>(src, index);
 }
 //!\endcond
 
@@ -267,30 +245,19 @@ constexpr simd_t extract_eighth(simd_t const & src)
 //!\cond
 template <uint8_t index, simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t> &&
-             (simd_traits<simd_t>::max_length == 16)
+             detail::is_native_builtin_simd_v<simd_t>
 constexpr simd_t extract_eighth(simd_t const & src)
 {
     static_assert(index < 8, "The index must be in the range of [0, 1, 2, 3, 4, 5, 6, 7]");
 
     if constexpr (simd_traits<simd_t>::length < 8) // In case there are less elements available return unchanged value.
         return src;
-    else // if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
+    else if constexpr (simd_traits<simd_t>::max_length == 16) // SSE4
         return detail::extract_eighth_sse4<index>(src);
-}
-
-template <uint8_t index, simd::simd_concept simd_t>
-    requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t> &&
-             simd_traits<simd_t>::max_length == 32
-constexpr simd_t extract_eighth(simd_t const & src)
-{
-    static_assert(index < 8, "The index must be in the range of [0, 1, 2, 3, 4, 5, 6, 7]");
-
-    if constexpr (simd_traits<simd_t>::length < 8) // In case there are less elements available return unchanged value.
-        return src;
-    else // if constexpr (simd_traits<simd_t>::max_length == 16) // AVX2
+    else if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
         return detail::extract_eighth_avx2<index>(src);
+    else  // Anything else
+        return detail::extract_impl<8>(src, index);
 }
 //!\endcond
 
@@ -406,14 +373,19 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
 }
 
 //!\cond
+// Implementation for seqan builtin simd.
 template <simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
              detail::is_native_builtin_simd_v<simd_t> &&
-             (simd_traits<simd_t>::max_length == 16) &&
-             (simd_traits<simd_t>::length == 16)
+             (simd_traits<simd_t>::max_length == simd_traits<simd_t>::length)
 constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
 {
-    detail::transpose_matrix_sse4(matrix);
+    if constexpr (simd_traits<simd_t>::length == 16) // SSE4 implementation
+        detail::transpose_matrix_sse4(matrix);
+    else if constexpr (simd_traits<simd_t>::length == 32) // AVX2 implementation
+        detail::transpose_matrix_avx2(matrix);
+    else
+        transpose(matrix);
 }
 //!\endcond
 
