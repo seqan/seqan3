@@ -48,6 +48,10 @@ private:
     //!\brief The selected frames corresponding to the frames required.
     small_vector<translation_frames, 6> selected_frames{};
 
+    /*!\name Associated types iterator
+     * These associated types are needed in seqan3::detail::random_access_iterator.
+     * \{
+     */
     //!\brief The reference_type.
     using reference         = view_translate_single<std::ranges::all_view<std::ranges::range_reference_t<urng_t>>>;
     //!\brief The const_reference type.
@@ -58,6 +62,7 @@ private:
     using size_type         = std::ranges::range_size_t<std::ranges::range_reference_t<urng_t>>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ranges::range_difference_t<std::ranges::range_reference_t<urng_t>>;
+    //!\}
 
 protected:
     //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.

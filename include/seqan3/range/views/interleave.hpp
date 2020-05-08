@@ -61,11 +61,11 @@ private:
     //!\brief The range to be inserted into urange.
     inserted_rng_t inserted_range;
 
-    /*!\name Associated types
-     *!\brief These associated types are needed in random_access_iterator.
+    /*!\name Associated types iterator
+     * These associated types are needed in seqan3::detail::random_access_iterator.
      * \{
      */
-    //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be Sized.
+    //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be sized.
     using size_type         = std::ranges::range_size_t<urng_t>;
     //!\brief The reference_type.
     using reference         = ranges::common_reference_t<std::ranges::range_reference_t<urng_t>,
@@ -80,11 +80,11 @@ private:
     using difference_type   = std::ranges::range_difference_t<urng_t>;
     //!\}
 
-public:
     //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
     template <typename parent_type, typename crtp_base>
     friend class detail::random_access_iterator_base;
 
+public:
     /*!\name Associated types
      * \{
      */

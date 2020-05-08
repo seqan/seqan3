@@ -50,8 +50,8 @@ private:
     //!\brief The sentinel type is set to std::ranges::default_sentinel_t.
     using sentinel_type = std::ranges::default_sentinel_t;
 
-    /*!\name Associated types
-     *!\brief These associated types are needed in random_access_iterator.
+    /*!\name Associated types iterator
+     * These associated types are needed in seqan3::detail::random_access_iterator.
      * \{
      */
     //!\brief The value type (equals the value_t with any references removed).
@@ -150,12 +150,11 @@ private:
         //!\}
     };
 
-public:
-
     //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
     template <typename parent_type, typename crtp_base>
     friend class detail::random_access_iterator_base;
 
+public:
     /*!\name Associated types
      * \{
      */
