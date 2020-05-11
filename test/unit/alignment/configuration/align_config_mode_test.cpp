@@ -12,17 +12,27 @@
 #include <seqan3/alignment/configuration/align_config_mode.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
+#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
+
+// ---------------------------------------------------------------------------------------------------------------------
+// pipeable_config_element_test template
+// ---------------------------------------------------------------------------------------------------------------------
+
+using config_element_types = ::testing::Types<seqan3::align_cfg::mode<seqan3::detail::global_alignment_type>,
+                                              seqan3::align_cfg::mode<seqan3::detail::local_alignment_type>>;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(mode, pipeable_config_element_test, config_element_types, );
+
+// ---------------------------------------------------------------------------------------------------------------------
+// align_cfg_mode_test
+// ---------------------------------------------------------------------------------------------------------------------
+
 template <typename type>
 struct align_cfg_mode_test : public ::testing::Test
 {};
 
 using test_types = ::testing::Types<seqan3::detail::global_alignment_type, seqan3::detail::local_alignment_type>;
 TYPED_TEST_SUITE(align_cfg_mode_test, test_types, );
-
-TYPED_TEST(align_cfg_mode_test, config_element)
-{
-    EXPECT_EQ(seqan3::detail::config_element<seqan3::align_cfg::mode<TypeParam>>, true);
-}
 
 TYPED_TEST(align_cfg_mode_test, configuration)
 {
