@@ -283,7 +283,7 @@ private:
      */
     bool is_buffer_empty() const
     {
-        return bucket_iterator == bucket_end || buffer_iterator == bucket_iterator->end();
+        return bucket_iterator == bucket_end;
     }
 
     /*!\brief Resets the buckets.
