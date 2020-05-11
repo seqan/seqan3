@@ -7,7 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/simd/all.hpp>
+#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/core/simd/simd.hpp>
 
 TEST(simd, auto_length)
 {

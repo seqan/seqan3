@@ -14,7 +14,7 @@
 
 #include <array>
 
-#include <seqan3/core/simd/all.hpp>
+#include <seqan3/core/simd/concept.hpp>
 
 //!\cond DEV
 /*!\brief #SIMD_EQ checks if the sizes and the content of two given

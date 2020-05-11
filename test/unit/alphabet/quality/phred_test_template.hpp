@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/quality/concept.hpp>
 
 template <typename T>
 using phred = ::testing::Test;
