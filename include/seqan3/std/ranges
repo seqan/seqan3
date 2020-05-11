@@ -13,8 +13,47 @@
 
 #pragma once
 
-#if __cpp_lib_ranges // C++20 ranges available
+#if __has_include(<ranges>)
 #include <ranges>
+#endif // __has_include(<ranges>)
+
+#if defined(__cpp_lib_ranges) // C++20 ranges available
+#include <seqan3/std/iterator>
+
+#include <range/v3/range/concepts.hpp>
+
+namespace ranges
+{
+//!\brief std::ranges::views are valid range-v3 views
+template<class T>
+//!\cond
+    requires ::std::derived_from<T, ::std::ranges::view_base>
+//!\endcond
+inline constexpr bool enable_view<T> = true;
+} // namespace ranges
+
+namespace std::ranges
+{
+//!\brief range-v3 views are valid std::ranges::views
+template<class T>
+//!\cond
+    requires ::std::derived_from<T, ::ranges::view_base>
+//!\endcond
+inline constexpr bool enable_view<T> = true;
+} // namespace std::ranges
+
+namespace std::ranges
+{
+inline namespace deprecated
+{
+/*!\brief this should be in std::ranges::views and not std::ranges
+ * \deprecated Use std::views::all_t instead.
+ */
+template <typename range_t>
+using all_view = std::views::all_t<range_t>;
+} // namespace std::ranges::deprecated
+} // namespace std::ranges
+
 #else // implement via range-v3
 
 //!\cond
