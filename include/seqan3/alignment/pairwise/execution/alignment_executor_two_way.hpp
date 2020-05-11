@@ -78,7 +78,7 @@ private:
     using buffer_type = std::vector<value_t>;
     //!\brief The type of the bucket container.
     using bucket_type = std::vector<buffer_type>;
-    //!\brief The pointer type of the buffer.
+    //!\brief The iterator type of the buffer.
     using buffer_iterator_type = std::ranges::iterator_t<buffer_type>;
     //!\brief The iterator type over the bucket container.
     using bucket_iterator_type = std::ranges::iterator_t<bucket_type>;
@@ -299,7 +299,7 @@ private:
         for (auto & bucket : bucket_vector)
             bucket.clear();
 
-        // Reset the iterators over the buckets.
+        // Reset the iterator over the buckets.
         bucket_iterator = bucket_vector.begin();
     }
 

@@ -32,10 +32,8 @@ struct dummy_alignment
             if (lhs == rhs)
                 ++count;
 
-        if (count == 0)  // Simulating not to call the callback without a result.
-            return;
-
-        callback(count);
+        if (count != 0)  // Simulating not to call the callback without a result.
+            callback(count);
     }
 };
 
