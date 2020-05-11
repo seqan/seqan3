@@ -66,6 +66,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   Use `std::ranges::{begin|end|cbegin|cend|size|empty}()` instead ([\#1663](https://github.com/seqan/seqan3/pull/1663)).
 * Added `seqan3::views::minimiser`, a view that computes the minimum in a window shifted over a range of comparable values.
   ([\#1654](https://github.com/seqan/seqan3/pull/1654)).
+* Added `seqan3::views::minimiser_hash`, a view that computes the minimisers of a range of type seqan3::semialphabet.
+  ([\#1721](https://https://github.com/seqan/seqan3/pull/1721)).
 
 #### Search
 
