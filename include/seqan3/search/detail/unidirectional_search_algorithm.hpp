@@ -13,16 +13,16 @@
 
 #pragma once
 
+#include <seqan3/std/ranges>
 #include <type_traits>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/test_accessor.hpp>
+#include <seqan3/search/detail/search_common.hpp>
+#include <seqan3/search/detail/search_traits.hpp>
+#include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/drop.hpp>
-#include <seqan3/search/detail/search_traits.hpp>
-#include <seqan3/search/detail/search_common.hpp>
-#include <seqan3/search/fm_index/concept.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -45,7 +45,7 @@ enum class error_type : uint8_t
  * \tparam index_t The type of index; must model seqan3::fm_index_specialisation.
  */
 template <typename configuration_t, fm_index_specialisation index_t, typename ...policies_t>
-class unidirectional_search_algorithm : public policies_t...
+class unidirectional_search_algorithm : protected policies_t...
 {
 private:
     //!\brief The search configuration traits.

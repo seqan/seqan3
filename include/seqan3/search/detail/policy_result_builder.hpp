@@ -95,8 +95,8 @@ protected:
                                               typename index_t::size_type>;
         std::vector<position_t> positions;
 
-        for (auto const & cur : internal_hits)
-            std::ranges::move(cursor.locate(), std::ranges::back_inserter(positions);
+        for (auto const & cursor : internal_hits)
+            std::ranges::move(cursor.locate(), std::ranges::back_inserter(positions));
 
         std::sort(positions.begin(), positions.end());
         positions.erase(std::unique(positions.begin(), positions.end()), positions.end());
