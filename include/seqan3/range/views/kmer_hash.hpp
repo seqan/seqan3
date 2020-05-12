@@ -39,21 +39,9 @@ template <std::ranges::view urng_t>
 class kmer_hash_view : public std::ranges::view_interface<kmer_hash_view<urng_t>>
 {
 private:
-<<<<<<< HEAD
     static_assert(std::ranges::forward_range<urng_t>, "The kmer_hash_view only works on forward_ranges");
     static_assert(semialphabet<reference_t<urng_t>>, "The reference type of the underlying range must model "
                   "seqan3::semialphabet.");
-=======
-<<<<<<< HEAD
-    static_assert(std::ranges::forward_range<urng_t const>, "The kmer_hash_view only works on forward_ranges");
-    static_assert(semialphabet<std::ranges::range_reference_t<urng_t>>,
-                  "The reference type of the underlying range must model seqan3::semialphabet.");
-=======
-    static_assert(std::ranges::forward_range<urng_t>, "The kmer_hash_view only works on forward_ranges");
-    static_assert(semialphabet<reference_t<urng_t>>, "The reference type of the underlying range must model "
-                  "seqan3::semialphabet.");
->>>>>>> [FIX] Remove const from static assert
->>>>>>> 66c57249... [FIX] Remove const from static assert
 
     //!\brief The underlying range.
     urng_t urange;
