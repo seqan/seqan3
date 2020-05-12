@@ -13,10 +13,11 @@
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
-
-#ifdef __cpp_lib_concepts        // C++20 ranges available
+#if __has_include(<concepts>)
 #include <concepts>
+#endif // __has_include(<concepts>)
+
+#ifdef __cpp_lib_concepts        // C++20 concepts available
 
 namespace std
 {
