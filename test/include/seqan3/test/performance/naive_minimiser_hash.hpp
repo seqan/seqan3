@@ -30,7 +30,7 @@ namespace seqan3::detail
 //!\brief views::naive_minimiser_hash's range adaptor object type (non-closure).
 struct naive_minimiser_hash_fn
 {
-    /*!\brief Store the shape and the window size and return a range adaptor closure object.
+    /*!\brief                Store the shape and the window size and return a range adaptor closure object.
     * \param[in] shape       The seqan3::shape to use for hashing.
     * \param[in] window_size The windows size to use.
     * \throws std::invalid_argument if the size of the shape is greater than the `window_size`.
@@ -43,7 +43,7 @@ struct naive_minimiser_hash_fn
 
     /*!\brief            Call the view's constructor with the underlying view as argument.
      * \param[in] urange The input range to process. Must model std::ranges::viewable_range and the reference type of the
-     *                   range of the range must model seqan3::semialphabet.
+     *                   range must model seqan3::semialphabet.
      * \param[in] k      The k-mer size to construct hashes for.
      * \returns          A range of converted elements.
      */
@@ -54,23 +54,23 @@ struct naive_minimiser_hash_fn
     constexpr auto operator()(urng_t && urange, size_t const k) const noexcept
     {
         return std::forward<urng_t>(urange) | ranges::view::sliding(k) | std::views::transform(
-        [] (auto const in)
-        {
-            std::hash<decltype(in)> h{};
-            return h(in);
-        });
+                                                                         [] (auto const in)
+                                                                         {
+                                                                                std::hash<decltype(in)> h{};
+                                                                                return h(in);
+                                                                         });
     }
 
-    /*!\brief            Call the view's constructor with the underlying view, a seqan3::shape and a window size as
-    *                   argument.
-    * \param[in] urange      The input range to process. Must model std::ranges::viewable_range and the reference type
-    *                        of the range must model seqan3::semialphabet.
-    * \param[in] shape       The seqan3::shape to use for hashing.
-    * \param[in] window_size The size of the window.
-    * \param[in] seed        The seed to use.
-    * \throws std::invalid_argument if the size of the shape is greater than the `window_size`.
-    * \returns               A range of converted elements.
-    */
+    /*!\brief                 Call the view's constructor with the underlying view, a seqan3::shape and a window size as
+     *                        argument.
+     * \param[in] urange      The input range to process. Must model std::ranges::viewable_range and the reference type
+     *                        of the range must model seqan3::semialphabet.
+     * \param[in] shape       The seqan3::shape to use for hashing.
+     * \param[in] window_size The size of the window.
+     * \param[in] seed        The seed to use.
+     * \throws std::invalid_argument if the size of the shape is greater than the `window_size`.
+     * \returns               A range of converted elements.
+     */
    template <std::ranges::range urng_t>
    constexpr auto operator()(urng_t && urange, shape const & shape, uint32_t const window_size,
                              uint64_t const seed = 0x8F3F73B5CF1C9ADE) const
@@ -89,10 +89,10 @@ struct naive_minimiser_hash_fn
                                            | std::views::transform([seed] (uint64_t i) { return i ^ seed; })
                                            | ranges::view::sliding(window_size - shape.size() + 1)
                                            | std::views::transform(
-                                           [] (auto const in)
-                                           {
-                                               return *std::min_element(in.begin(), in.end());
-                                           });
+                                                                   [] (auto const in)
+                                                                   {
+                                                                       return *std::min_element(in.begin(), in.end());
+                                                                   });
    }
 };
 
@@ -133,9 +133,11 @@ namespace seqan3::views
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   | seqan3::semialphabet                  | std::size_t                                        |
  *
- * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
+ * See the \link views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  */
 inline auto constexpr naive_minimiser_hash = detail::naive_minimiser_hash_fn{};
+
+//!\}
 
 } // namespace seqan3::views

@@ -9,8 +9,8 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/minimiser_hash.hpp>
-#include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/naive_minimiser_hash.hpp>
+#include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
 
 inline benchmark::Counter bp_per_second(size_t const basepairs)
