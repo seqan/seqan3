@@ -47,21 +47,21 @@ refined concepts (i.e. types that model a stronger concept, always also model th
 
 | Concept                           | Description                                                 |
 |-----------------------------------|-------------------------------------------------------------|
-| std::ranges::input_range           | can be iterated from beginning to end **at least once**     |
-| std::ranges::forward_range         | can be iterated from beginning to end **multiple times**    |
-| std::ranges::bidirectional_range   | iterator can also move backwards with `--`                  |
-| std::ranges::random_access_range    | you can jump to elements **in constant-time** `[]`          |
-| std::ranges::contiguous_range      | elements are always stored consecutively in memory          |
+| std::ranges::input_range          | can be iterated from beginning to end **at least once**     |
+| std::ranges::forward_range        | can be iterated from beginning to end **multiple times**    |
+| std::ranges::bidirectional_range  | iterator can also move backwards with `--`                  |
+| std::ranges::random_access_range  | you can jump to elements **in constant-time** `[]`          |
+| std::ranges::contiguous_range     | elements are always stored consecutively in memory          |
 
 For the well-known containers from the standard library this matrix shows which concepts they model:
 
-|                                   | std::forward_list | std::list | std::deque | std::array | std::vector |
-|-----------------------------------|:-----------------:|:---------:|:----------:|:----------:|:-----------:|
-| std::ranges::input_range           | ✅                 | ✅         | ✅          | ✅          | ✅           |
-| std::ranges::forward_range         | ✅                 | ✅         | ✅          | ✅          | ✅           |
-| std::ranges::bidirectional_range   |                   | ✅         | ✅          | ✅          | ✅           |
-| std::ranges::random_access_range    |                   |           | ✅          | ✅          | ✅           |
-| std::ranges::contiguous_range      |                   |           |            | ✅          | ✅           |
+|                                    | std::forward_list | std::list | std::deque | std::array | std::vector |
+|------------------------------------|:-----------------:|:---------:|:----------:|:----------:|:-----------:|
+| std::ranges::input_range           | ✅                | ✅        | ✅         | ✅         | ✅          |
+| std::ranges::forward_range         | ✅                | ✅        | ✅         | ✅         | ✅          |
+| std::ranges::bidirectional_range   |                   | ✅        | ✅         | ✅         | ✅          |
+| std::ranges::random_access_range   |                   |           | ✅         | ✅         | ✅          |
+| std::ranges::contiguous_range      |                   |           |            | ✅         | ✅          |
 
 There are also range concepts that are independent of input or output or one of the above concept, e.g.
 std::ranges::sized_range which requires that the size of a range can be computed and in constant time.
@@ -163,7 +163,7 @@ std::cout << *v.begin() << '\n'; // should print 4
 ```
 \endassignment
 \solution
-\snippet doc/tutorial/ranges/range_snippets.cpp solution1
+\include doc/tutorial/ranges/range_solution1.cpp
 \endsolution
 
 ## View concepts
@@ -208,21 +208,26 @@ Which of the following concepts do you think `v` models?
 | std::ranges::input_range         |   ✅    |
 | std::ranges::forward_range       |   ✅    |
 | std::ranges::bidirectional_range |   ✅    |
-| std::ranges::random_access_range |        |
-| std::ranges::contiguous_range    |        |
-|                                  |        |
+| std::ranges::random_access_range |         |
+| std::ranges::contiguous_range    |         |
+|                                  |         |
 | std::ranges::view                |   ✅    |
-| std::ranges::sized_range         |        |
-| std::ranges::output_range        |        |
+| std::ranges::sized_range         |         |
+| std::ranges::output_range        |         |
 
-The filter does not preserve RandomAccess and therefore not Contiguous, because it doesn't "know" which element
-of the underlying range is the i-th one in constant time.
-This also means we don't know the size.
+Surprised? Let's have a closer look at the std::views::filter view. The filter view only returns the value of the 
+underlying range for which the given predicate evaluates to `true`. To know which value is an element of the filter
+view, the view has to look at each of them. Thus, it must scan the underlying range value-by-value and cannot jump to an 
+arbitrary location in constant time since it cannot know how many elements it had to skip without looking at them. 
+Accordingly, the std::views::filter preserves only std::ranges::bidirectional_range, because it can scan the text in 
+reverse order as well. Since the view cannot guarantee that the values lie in contiguous memory, it can also not 
+preserve std::ranges::contiguous_range. Similarly, the view cannot model std::ranges::sized_range as it cannot determine
+the number of values not filtered out in constant time.
 
 The transform on the other hand produces a new element on every access (the result of the multiplication), therefore
-`v` is not an output range, you cannot assign values to its elements.
-This would have prevented modelling the contiguous_range as well – if it hadn't been already by the filter – because
-values are created on-demand and are not stored in memory at all.
+`v` is not a std::ranges::output_range, you cannot assign values to its elements.
+Note that this prevents modelling the std::ranges::contiguous_range as well because values are created on-demand and
+are not stored in memory at all.
 \endsolution
 
 We provide overview tables for all our view adaptors that document which concepts are modelled by the views they return.

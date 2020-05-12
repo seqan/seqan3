@@ -1,13 +1,27 @@
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/all.hpp>            // include all of SeqAn's views
+#include <seqan3/argument_parser/all.hpp>       // optional: include the argument_parser
+#include <seqan3/range/views/all.hpp>           // include all of SeqAn's views
 #include <seqan3/std/ranges>                    // include all of the standard library's views
+
 
 int main(int argc, char** argv)
 {
-    if (argc == 1)
-        return 0;
+    // We use the seqan3::argument_parser which was introduced in the second chapter 
+    // of the tutorial: "Parsing command line arguments with SeqAn".
+    seqan3::argument_parser myparser{"Assignment-3", argc, argv}; // initialize
+    std::string s{};
 
-    std::string s{argv[1]};
+    myparser.add_positional_option(s, "Please specify the DNA string.");
+
+    try
+    {
+       myparser.parse();
+    }
+    catch (seqan3::argument_parser_error const & ext) // the user did something wrong
+    {
+       std::cerr << "[PARSER ERROR]" << ext.what() << '\n'; // you can customize your error message
+       return 0;
+    }
 
     auto s_as_dna = s | seqan3::views::char_to<seqan3::dna5>;
     // Bonus:
