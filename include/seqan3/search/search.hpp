@@ -12,18 +12,22 @@
 
 #pragma once
 
-#include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/range/views/persist.hpp>
-#include <seqan3/search/configuration/default_configuration.hpp>
-#include <seqan3/search/detail/search.hpp>
-#include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
+#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/range/views/persist.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
+#include <seqan3/search/configuration/default_configuration.hpp>
+#include <seqan3/search/detail/policy_max_error.hpp>
+#include <seqan3/search/detail/policy_result_builder.hpp>
+#include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
+#include <seqan3/search/detail/search_scheme_algorithm.hpp>
+#include <seqan3/search/detail/search_traits.hpp>
+#include <seqan3/search/search_result_range.hpp>
 
 namespace seqan3::detail
 {
-
 
 /*!\brief Class used to update the search configuration, e.g. add defaults.
  * \ingroup search
@@ -88,6 +92,40 @@ struct search_configurator
         auto cfg2 = add_default_output_configuration(cfg1);
 
         return cfg2;
+    }
+
+    /*!\brief Chooses the appropriate search algorithm depending on the index.
+     * \tparam configuration_t The type of the search configuration.
+     * \tparam index_t The type of the index.
+     * \param[in] cfg The search configuration object that is passed to the algorithm.
+     * \param[in] index The index that is passed to the algorithm.
+     * \returns A search algorithm.
+     *
+     * \details
+     *
+     * If the `index_t` models seqan3::bi_fm_index_specialisation, then the
+     * seqan3::detail::search_scheme_algorithm is chosen. Otherwise, the
+     * detail::unidirectional_search_algorithm is chosen.
+     */
+    template <typename configuration_t, typename index_t>
+    static auto configure_algorithm(configuration_t const & cfg, index_t const & index)
+    {
+        if constexpr (bi_fm_index_specialisation<index_t>)
+        {
+            using algorithm_t = search_scheme_algorithm<configuration_t,
+                                                        index_t,
+                                                        policy_max_error,
+                                                        policy_result_builder>;
+            return algorithm_t{cfg, index};
+        }
+        else
+        {
+            using algorithm_t = unidirectional_search_algorithm<configuration_t,
+                                                                index_t,
+                                                                policy_max_error,
+                                                                policy_result_builder>;
+            return algorithm_t{cfg, index};
+        }
     }
 };
 
@@ -253,14 +291,9 @@ inline auto search(queries_t && queries,
     // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
     //                  duplicates. more efficient to call delegate once with one vector instead of calling
     //                  delegate for each hit separately at once.
-    using single_query_reference_t = std::ranges::range_reference_t<queries_t>;
+    auto algorithm = detail::search_configurator::configure_algorithm(updated_cfg, index);
 
-    std::function search_fn = [&, updated_cfg] (single_query_reference_t query)
-    {
-        return search_single(index, std::forward<single_query_reference_t>(query), updated_cfg);
-    };
-
-    return search_result_range{std::move(search_fn), std::forward<queries_t>(queries) | views::type_reduce};
+    return search_result_range{std::move(algorithm), std::forward<queries_t>(queries) | views::type_reduce};
 }
 
 //!\cond DEV
