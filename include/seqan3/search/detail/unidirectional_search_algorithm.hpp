@@ -17,7 +17,6 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/test_accessor.hpp>
-#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
@@ -77,8 +76,8 @@ public:
     //!\}
 
     /*!\brief Searches a query sequence in an FM index using trivial backtracking.
-     * \tparam query_t       Must model std::ranges::input_range over the index's alphabet.
-     * \param[in] query      Query sequence to be searched in the index.
+     * \tparam query_t The type of the query sequence to search; must model std::ranges::input_range over the index's alphabet.
+     * \param[in] query Query sequence to be searched in the index.
      *
      * ### Complexity
      *
@@ -90,7 +89,7 @@ public:
         auto error_state = this->max_error_counts(config, query); // see policy_max_error
 
         // construct internal delegate for collecting hits for later filtering (if necessary)
-        std::vector<typename index_t::cursor_type> internal_hits;
+        std::vector<typename index_t::cursor_type> internal_hits{};
         delegate = [&internal_hits] (auto const & it)
         {
             internal_hits.push_back(it);
@@ -145,7 +144,7 @@ private:
                 //   hit but continue the current search algorithm/max_error pattern (`abort_on_hit` is true).
                 constexpr bool abort_on_hit = !traits_t::search_all_best_hits;
                 search_trivial<abort_on_hit>(index_ptr->cursor(), query, 0, error_state, error_type::none);
-                error_state.total++;
+                ++error_state.total;
             }
 
             if constexpr (traits_t::search_strata_hits)
@@ -153,8 +152,8 @@ private:
                 if (!internal_hits.empty())
                 {
                     internal_hits.clear();
-                    uint8_t const s = get<search_cfg::mode>(config).value;
-                    error_state.total += s - 1;
+                    uint8_t const stratum = get<search_cfg::mode>(config).value;
+                    error_state.total += stratum - 1;
                     search_trivial<false>(index_ptr->cursor(), query, 0, error_state, error_type::none);
                 }
             }

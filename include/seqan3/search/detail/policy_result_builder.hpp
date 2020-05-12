@@ -23,7 +23,6 @@ namespace seqan3::detail
 struct policy_result_builder
 {
 protected:
-
     /*!\brief Returns all hits (index cursor) without calling locate on each cursor.
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
      * \tparam configuration_t The search configuration type.
@@ -97,10 +96,7 @@ protected:
         std::vector<position_t> positions;
 
         for (auto const & cur : internal_hits)
-        {
-            for (auto const & text_pos : cur.locate())
-                positions.push_back(text_pos);
-        }
+            std::ranges::move(cursor.locate(), std::ranges::back_inserter(positions);
 
         std::sort(positions.begin(), positions.end());
         positions.erase(std::unique(positions.begin(), positions.end()), positions.end());

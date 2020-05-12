@@ -31,6 +31,8 @@ protected:
      * \param[in] cfg The configuration object.
      * \param[in] query The current query sequence.
      *
+     * \details
+     * 
      * If seqan3::max_error is set in the configuration, its value already is of type detail::search_param and
      * can be returned as is.
      * If seqan3::max_error_rate is set in the configuration, the error rates are converted to error counts
@@ -53,7 +55,7 @@ protected:
             // NOTE: Casting doubles rounds towards zero (i.e. floor for positive numbers). Thus, given a rate of
             // 10% and a read length of 101 the max number of errors is correctly casted from 10.1 errors to 10
             auto & [total, subs, ins, del] = max_error;
-            std::tie(total, subs, ins, del) = std::apply([& query] (auto && ... args)
+            std::tie(total, subs, ins, del) = std::apply([&query] (auto && ... args)
             {
                 return std::tuple{(args * std::ranges::size(query))...};
             }, get<search_cfg::max_error_rate>(cfg).value);
