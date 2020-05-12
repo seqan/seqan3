@@ -323,7 +323,9 @@ private:
 
     //!\brief Befriend the base crtp class.
     template <typename derived_t, matrix_major_order other_order>
+    //!\cond
         requires is_type_specialisation_of_v<derived_t, iterator_type> && other_order == order
+    //!\endcond
     friend class two_dimensional_matrix_iterator_base;
 
     //!\brief Befriend the corresponding const iterator.
