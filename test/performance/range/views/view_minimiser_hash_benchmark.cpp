@@ -111,15 +111,15 @@ static void seqan2_minimiser_hash_ungapped(benchmark::State & state)
 {
     auto sequence_length = state.range(0);
     assert(sequence_length > 0);
-    size_t k = static_cast<size_t>(state.range(1));
+    size_t const k = static_cast<size_t>(state.range(1));
     assert(k > 0);
     size_t w = static_cast<size_t>(state.range(2));
     assert(w > k);
     auto seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
-    //seqan::Shape<seqan::Dna, seqan::SimpleShape> s;
-    //seqan::resize(s, k);
-    minimiser seqan_minimiser;
-    seqan_minimiser.resize(window{w}, kmer{k});
+    minimiser<seqan::Shape<seqan::Dna, seqan::SimpleShape >> seqan_minimiser;
+    seqan::Shape<seqan::Dna, seqan::SimpleShape> s;
+    seqan::resize(s, k);
+    seqan_minimiser.resize(window{w}, kmer{k}, s);
 
     /*size_t k = static_cast<size_t>(state.range(1));
     assert(k > 0);
@@ -144,7 +144,7 @@ static void seqan2_minimiser_hash_ungapped(benchmark::State & state)
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
-/*
+
 static void seqan2_minimiser_hash_gapped(benchmark::State & state)
 {
     auto sequence_length = state.range(0);
@@ -155,22 +155,22 @@ static void seqan2_minimiser_hash_gapped(benchmark::State & state)
     assert(w > k);
     auto seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
     seqan::Shape<seqan::Dna, seqan::GenericShape> s = make_gapped_shape_seqan2(k);
-    minimiser seqan_minimiser;
-    seqan_minimiser.resize(k, w, s);
+    minimiser<seqan::Shape<seqan::Dna, seqan::GenericShape>> seqan_minimiser;
+    seqan_minimiser.resize(window{w}, kmer{k}, s);
 
     volatile size_t sum{0};
 
     for (auto _ : state)
     {
-        for (auto h : seqan_minimiser.getMinimiser(seq))
+        for (auto h : seqan_minimiser.minimiser_hash)
             benchmark::DoNotOptimize(sum += h);
     }
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
-}*/
+}
 
 BENCHMARK(seqan2_minimiser_hash_ungapped)->Apply(arguments);
-//BENCHMARK(seqan2_minimiser_hash_gapped)->Apply(arguments);
+BENCHMARK(seqan2_minimiser_hash_gapped)->Apply(arguments);
 #endif // SEQAN3_HAS_SEQAN2
 
 BENCHMARK_TEMPLATE(compute_minimisers, method_tag::naive)->Apply(arguments);
