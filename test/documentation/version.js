@@ -1,20 +1,35 @@
 /* Jongkyu Kim (j.kim@fu-berlin.de), 2016.01.12
    Adaptations by Enrico Seiler (enrico.seiler@fu-berlin.de), 2020 */
 
-// Get the current script path https://stackoverflow.com/a/710996
-var scripts = document.getElementsByTagName('script');
-var lastScript = scripts[scripts.length-1];
-var scriptName = lastScript.src;
-// Remove the script name (version.js) from the path
-var split = scriptName.split("/");
-DOCUMENT_URL = split.slice(0, split.length - 2).join("/") + "/";
-
-VERSION_JSON_URL = "version.php";
-
-function changeVersion(formid)
+function changeVersion(form_id)
 {
-    var frm = document.getElementById(formid);
-    window.top.location.href = DOCUMENT_URL + frm.options[frm.selectedIndex].value;
+    // Get the base url without version information, e.g. "https://docs.seqan.de/seqan"
+    var current_script_url = document.scripts[document.scripts.length - 1].src;
+    var base_url = current_script_url.split('/').slice(0, -2).join('/');
+
+    // Get the current page, e.g. "index.html"
+    var full_url = window.top.location.href;
+    var current_page = full_url.substring(full_url.lastIndexOf("/") + 1);
+
+    // Get the selected version
+    var form = document.getElementById(form_id);
+    var version = form.options[form.selectedIndex].value;
+
+    // Check if the current page is valid with the selected version
+    var proposed_url = base_url + '/' + version + '/' + current_page;
+    var request = new XMLHttpRequest();
+    request.open('GET', proposed_url, false);
+    request.send();
+    // If the URL is invalid, redirect to main page of the selected version
+    // If htaccess is configured to redirect invalid URLs to the base domain,
+    // no 404 is returned, hence the second condition
+    if (request.status === 404 || request.responseURL == window.location.origin + '/')
+    {
+        proposed_url = base_url + '/' + version;
+    }
+
+    // Load the proper page
+    window.top.location.href = proposed_url;
 }
 
 function addVersionSelection(arr)
@@ -45,15 +60,15 @@ function addVersionSelection(arr)
 }
 
 // get JSON data & add selection form
-var req = new XMLHttpRequest();
-req.open("GET", VERSION_JSON_URL, true);
-req.setRequestHeader("Content-type", "application/json");
-req.onreadystatechange = function()
+var request = new XMLHttpRequest();
+request.open("GET", "version.php", true);
+request.setRequestHeader("Content-type", "application/json");
+request.onreadystatechange = function()
 {
-    if( req.readyState == 4 && req.status == 200 )
+    if( request.readyState == 4 && request.status == 200 )
     {
-        var response = JSON.parse(req.responseText);
+        var response = JSON.parse(request.responseText);
         addVersionSelection(response); // add selection form
     }
 }
-req.send();
+request.send();
