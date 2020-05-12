@@ -230,16 +230,3 @@ TYPED_TEST(kmer_hash_gapped_test, issue1754)
         EXPECT_RANGE_EQ(result_t{8}, text1 | stop_at_t | std::views::reverse | gapped_view);
     }
 }
-
-// https://github.com/seqan/seqan3/issues/1719
-TEST(kmer_hash_test, issue1719)
-{
-    uint64_t const expected = 0;
-    std::vector<seqan3::dna5> sequence{""_dna5};
-    auto v = sequence | seqan3::views::kmer_hash(seqan3::ungapped{25});
-    EXPECT_EQ(expected, v.size());
-
-    std::vector<seqan3::dna5> sequence2{"ACGATCGATCGTAGCTACTGAGC"_dna5};
-    auto v2 = sequence2 | seqan3::views::kmer_hash(seqan3::ungapped{25});
-    EXPECT_EQ(expected, v2.size());
-}
