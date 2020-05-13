@@ -34,7 +34,7 @@ enum use_xor : bool
 };
 
 template<typename shape_t, use_xor do_xor = use_xor::yes>
-struct minimiser
+class minimiser
 {
 private:
     //!\brief The alphabet type.
@@ -45,8 +45,6 @@ private:
     using complement_t = seqan::ModifiedString<text_t const, seqan::ModComplementDna>;
     //!\brief The type of the reverse complemented text.
     using reverse_complement_t = seqan::ModifiedString<complement_t, seqan::ModReverse>;
-    //!\brief The seqan::Shape type to compute rolling hashes with.
-    //using shape_t = seqan::Shape<alphabet_t, seqan::GenericShape>;
 
     //!\brief The window size of the minimiser.
     uint64_t w{};
@@ -106,8 +104,6 @@ public:
        seed = seed_;
        forward_shape = new_shape;
        reverse_shape = new_shape;
-       //seqan::resize(forward_shape, k);
-       //seqan::resize(reverse_shape, k);
    }
 
     void compute(text_t const & text)

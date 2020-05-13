@@ -14,8 +14,8 @@
 #include <seqan3/test/performance/units.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-    #include <seqan/index.h>
-    #include <seqan3/test/performance/seqan2_minimiser.h>
+#include <seqan/index.h>
+#include <seqan3/test/performance/seqan2_minimiser.h>
 #endif // SEQAN3_HAS_SEQAN2
 
 inline benchmark::Counter bp_per_second(size_t const basepairs)
@@ -55,8 +55,24 @@ enum class method_tag
 {
     seqan3_ungapped,
     seqan3_gapped,
-    naive
+    naive,
+    seqan2_ungapped,
+    seqan2_gapped
 };
+
+#ifdef SEQAN3_HAS_SEQAN2
+inline auto make_gapped_shape_seqan2(size_t const k)
+{
+    seqan::String<char> bitmap;
+
+    for (size_t i{0}; i < k - 1; ++i)
+        seqan::append(bitmap, seqan::CharString(std::to_string((i + 1) % 2)));
+
+    seqan::append(bitmap, seqan::CharString("1"));
+
+    return seqan::Shape<seqan::Dna, seqan::GenericShape>(bitmap);
+}
+#endif // SEQAN3_HAS_SEQAN2
 
 template <method_tag tag>
 void compute_minimisers(benchmark::State & state)
@@ -83,94 +99,46 @@ void compute_minimisers(benchmark::State & state)
             for (auto h : seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, window_size{w}))
                 benchmark::DoNotOptimize(sum += h);
         }
-        else
+        else if (tag == method_tag::seqan3_gapped)
         {
             for (auto h : seq | seqan3::views::minimiser_hash(make_gapped_shape(k), window_size{w}))
                 benchmark::DoNotOptimize(sum += h);
         }
+        #ifdef SEQAN3_HAS_SEQAN2
+        else
+        {
+            auto seqan2_seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
+            if (tag == method_tag::seqan2_ungapped)
+            {
+                minimiser<seqan::Shape<seqan::Dna, seqan::SimpleShape >> seqan_minimiser;
+                seqan::Shape<seqan::Dna, seqan::SimpleShape> simple_shape;
+                seqan::resize(simple_shape, k);
+                seqan_minimiser.resize(window{w}, kmer{k}, simple_shape);
+
+                seqan_minimiser.compute(seqan2_seq);
+                for (auto h : seqan_minimiser.minimiser_hash)
+                    benchmark::DoNotOptimize(sum += h);
+            }
+            else
+            {
+                minimiser<seqan::Shape<seqan::Dna, seqan::GenericShape>> seqan_minimiser;
+                seqan::Shape<seqan::Dna, seqan::GenericShape> generic_shape = make_gapped_shape_seqan2(k);
+                seqan_minimiser.resize(window{w}, kmer{k}, generic_shape);
+
+                seqan_minimiser.compute(seqan2_seq);
+                for (auto h : seqan_minimiser.minimiser_hash)
+                    benchmark::DoNotOptimize(sum += h);
+            }
+        }
+        #endif // SEQAN3_HAS_SEQAN2
     }
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
 
 #ifdef SEQAN3_HAS_SEQAN2
-inline auto make_gapped_shape_seqan2(size_t const k)
-{
-    seqan::String<char> bitmap;
-
-    for (size_t i{0}; i < k - 1; ++i)
-        seqan::append(bitmap, seqan::CharString(std::to_string((i + 1) % 2)));
-
-    seqan::append(bitmap, seqan::CharString("1"));
-
-    seqan::Shape<seqan::Dna, seqan::GenericShape> s(bitmap);
-    return s;
-}
-
-static void seqan2_minimiser_hash_ungapped(benchmark::State & state)
-{
-    auto sequence_length = state.range(0);
-    assert(sequence_length > 0);
-    size_t const k = static_cast<size_t>(state.range(1));
-    assert(k > 0);
-    size_t w = static_cast<size_t>(state.range(2));
-    assert(w > k);
-    auto seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
-    minimiser<seqan::Shape<seqan::Dna, seqan::SimpleShape >> seqan_minimiser;
-    seqan::Shape<seqan::Dna, seqan::SimpleShape> s;
-    seqan::resize(s, k);
-    seqan_minimiser.resize(window{w}, kmer{k}, s);
-
-    /*size_t k = static_cast<size_t>(state.range(1));
-    assert(k > 0);
-    std::cout << k << "\n\n";
-    seqan::String<seqan::Dna> seq_test = "ACGTCGACGTTTAG";
-    minimiser<use_xor::no> test;
-    seqan::Shape<seqan::Dna, seqan::SimpleShape> ss;
-    seqan::resize(ss, 4);
-    test.resize(window{8}, kmer{4});
-    test.compute(seq_test);
-    for (auto h : test.minimiser_hash)
-        std::cout << h<< "\n";*/
-
-    volatile size_t sum{0};
-
-    for (auto _ : state)
-    {
-        seqan_minimiser.compute(seq);
-        for (auto h : seqan_minimiser.minimiser_hash)
-            benchmark::DoNotOptimize(sum += h);
-    }
-
-    state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
-}
-
-static void seqan2_minimiser_hash_gapped(benchmark::State & state)
-{
-    auto sequence_length = state.range(0);
-    assert(sequence_length > 0);
-    size_t k = static_cast<size_t>(state.range(1));
-    assert(k > 0);
-    size_t w = static_cast<size_t>(state.range(2));
-    assert(w > k);
-    auto seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
-    seqan::Shape<seqan::Dna, seqan::GenericShape> s = make_gapped_shape_seqan2(k);
-    minimiser<seqan::Shape<seqan::Dna, seqan::GenericShape>> seqan_minimiser;
-    seqan_minimiser.resize(window{w}, kmer{k}, s);
-
-    volatile size_t sum{0};
-
-    for (auto _ : state)
-    {
-        for (auto h : seqan_minimiser.minimiser_hash)
-            benchmark::DoNotOptimize(sum += h);
-    }
-
-    state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
-}
-
-BENCHMARK(seqan2_minimiser_hash_ungapped)->Apply(arguments);
-BENCHMARK(seqan2_minimiser_hash_gapped)->Apply(arguments);
+BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan2_ungapped)->Apply(arguments);
+BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan2_gapped)->Apply(arguments);
 #endif // SEQAN3_HAS_SEQAN2
 
 BENCHMARK_TEMPLATE(compute_minimisers, method_tag::naive)->Apply(arguments);
