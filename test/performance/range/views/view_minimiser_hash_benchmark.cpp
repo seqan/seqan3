@@ -47,72 +47,51 @@ static void arguments(benchmark::internal::Benchmark* b)
     }
 }
 
-static void seqan_minimiser_hash_ungapped(benchmark::State & state)
+enum class method_tag
+{
+    seqan3_ungapped,
+    seqan3_gapped,
+    naive
+};
+
+template <method_tag tag>
+void compute_minimisers(benchmark::State & state)
 {
     auto sequence_length = state.range(0);
-    assert(sequence_length > 0);
     size_t k = static_cast<size_t>(state.range(1));
-    assert(k > 0);
     uint32_t w = static_cast<size_t>(state.range(2));
+    assert(sequence_length > 0);
+    assert(k > 0);
     assert(w > k);
     auto seq = seqan3::test::generate_sequence<seqan3::dna4>(sequence_length, 0, 0);
 
-    volatile size_t sum{0};
+    size_t sum{0};
+
 
     for (auto _ : state)
     {
-        for (auto h : seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, window_size{w}))
-            benchmark::DoNotOptimize(sum += h);
+        if constexpr (tag == method_tag::naive)
+        {
+            for (auto h : seq | seqan3::views::naive_minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, w))
+                benchmark::DoNotOptimize(sum += h);
+        }
+        else if (tag == method_tag::seqan3_ungapped)
+        {
+            for (auto h : seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, window_size{w}))
+                benchmark::DoNotOptimize(sum += h);
+        }
+        else
+        {
+            for (auto h : seq | seqan3::views::minimiser_hash(make_gapped_shape(k), window_size{w}))
+                benchmark::DoNotOptimize(sum += h);
+        }
     }
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
 
-static void seqan_minimiser_hash_gapped(benchmark::State & state)
-{
-    auto sequence_length = state.range(0);
-    assert(sequence_length > 0);
-    size_t k = static_cast<size_t>(state.range(1));
-    assert(k > 0);
-    uint32_t w = static_cast<size_t>(state.range(2));
-    assert(w > k);
-    auto seq = seqan3::test::generate_sequence<seqan3::dna4>(sequence_length, 0, 0);
-
-    volatile size_t sum{0};
-
-    for (auto _ : state)
-    {
-        for (auto h : seq | seqan3::views::minimiser_hash(make_gapped_shape(k), window_size{w}))
-            benchmark::DoNotOptimize(sum += h);
-    }
-
-    state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
-}
-
-static void naive_minimiser_hash(benchmark::State & state)
-{
-    auto sequence_length = state.range(0);
-    assert(sequence_length > 0);
-    size_t k = static_cast<size_t>(state.range(1));
-    assert(k > 0);
-    uint32_t w = static_cast<size_t>(state.range(2));
-    assert(w > k);
-    auto seq = seqan3::test::generate_sequence<seqan3::dna4>(sequence_length, 0, 0);
-
-    volatile size_t sum{0};
-
-
-    for (auto _ : state)
-    {
-        for (auto h : seq | seqan3::views::naive_minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, w))
-            benchmark::DoNotOptimize(sum += h);
-    }
-
-    state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
-}
-
-BENCHMARK(seqan_minimiser_hash_ungapped)->Apply(arguments);
-BENCHMARK(seqan_minimiser_hash_gapped)->Apply(arguments);
-BENCHMARK(naive_minimiser_hash)->Apply(arguments);
+BENCHMARK_TEMPLATE(compute_minimisers, method_tag::naive)->Apply(arguments);
+BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan3_ungapped)->Apply(arguments);
+BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan3_gapped)->Apply(arguments);
 
 BENCHMARK_MAIN();

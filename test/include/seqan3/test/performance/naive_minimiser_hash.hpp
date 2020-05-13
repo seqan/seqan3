@@ -41,26 +41,6 @@ struct naive_minimiser_hash_fn
         return seqan3::detail::adaptor_from_functor{*this, shape, window_size};
     }
 
-    /*!\brief            Call the view's constructor with the underlying view as argument.
-     * \param[in] urange The input range to process. Must model std::ranges::viewable_range and the reference type of the
-     *                   range must model seqan3::semialphabet.
-     * \param[in] k      The k-mer size to construct hashes for.
-     * \returns          A range of converted elements.
-     */
-    template <std::ranges::viewable_range urng_t>
-    //!\cond
-        requires semialphabet<reference_t<urng_t>>
-    //!\endcond
-    constexpr auto operator()(urng_t && urange, size_t const k) const noexcept
-    {
-        return std::forward<urng_t>(urange) | ranges::view::sliding(k) | std::views::transform(
-                                                                         [] (auto const in)
-                                                                         {
-                                                                                std::hash<decltype(in)> h{};
-                                                                                return h(in);
-                                                                         });
-    }
-
     /*!\brief                 Call the view's constructor with the underlying view, a seqan3::shape and a window size as
      *                        argument.
      * \param[in] urange      The input range to process. Must model std::ranges::viewable_range and the reference type
@@ -81,15 +61,13 @@ struct naive_minimiser_hash_fn
            "The range parameter to views::minimiser_hash must model std::ranges::forward_range.");
        static_assert(semialphabet<reference_t<urng_t>>,
            "The range parameter to views::minimiser_hash must be over elements of seqan3::semialphabet.");
-
        if (shape.size() > window_size)
            throw std::invalid_argument{"The size of the shape cannot be greater than the window size."};
 
        return std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
                                            | std::views::transform([seed] (uint64_t i) { return i ^ seed; })
                                            | ranges::view::sliding(window_size - shape.size() + 1)
-                                           | std::views::transform(
-                                                                   [] (auto const in)
+                                           | std::views::transform([] (auto const in)
                                                                    {
                                                                        return *std::min_element(in.begin(), in.end());
                                                                    });
