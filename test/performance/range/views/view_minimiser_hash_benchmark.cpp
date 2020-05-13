@@ -94,12 +94,12 @@ void compute_minimisers(benchmark::State & state)
             for (auto h : seq | seqan3::views::naive_minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, w))
                 benchmark::DoNotOptimize(sum += h);
         }
-        else if (tag == method_tag::seqan3_ungapped)
+        else if constexpr (tag == method_tag::seqan3_ungapped)
         {
             for (auto h : seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, window_size{w}))
                 benchmark::DoNotOptimize(sum += h);
         }
-        else if (tag == method_tag::seqan3_gapped)
+        else if constexpr (tag == method_tag::seqan3_gapped)
         {
             for (auto h : seq | seqan3::views::minimiser_hash(make_gapped_shape(k), window_size{w}))
                 benchmark::DoNotOptimize(sum += h);
@@ -108,7 +108,7 @@ void compute_minimisers(benchmark::State & state)
         else
         {
             auto seqan2_seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
-            if (tag == method_tag::seqan2_ungapped)
+            if constexpr (tag == method_tag::seqan2_ungapped)
             {
                 minimiser<seqan::Shape<seqan::Dna, seqan::SimpleShape >> seqan_minimiser;
                 seqan::Shape<seqan::Dna, seqan::SimpleShape> simple_shape;
@@ -119,7 +119,7 @@ void compute_minimisers(benchmark::State & state)
                 for (auto h : seqan_minimiser.minimiser_hash)
                     benchmark::DoNotOptimize(sum += h);
             }
-            else
+            else if constexpr (tag == method_tag::seqan2_gapped)
             {
                 minimiser<seqan::Shape<seqan::Dna, seqan::GenericShape>> seqan_minimiser;
                 seqan::Shape<seqan::Dna, seqan::GenericShape> generic_shape = make_gapped_shape_seqan2(k);
