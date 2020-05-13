@@ -176,11 +176,14 @@ constexpr auto align_pairwise(sequence_t && sequences,
     };
 
     using alignment_result_t = typename traits_t::alignment_result_type;
+
+    auto indexed_sequence_chunk_view = views::zip(seq_view, std::views::iota(0))
+                                     | views::chunk(traits_t::alignments_per_vector);
+
     // Create a two-way executor for the alignment.
-    detail::alignment_executor_two_way executor{std::move(seq_view),
+    detail::alignment_executor_two_way executor{indexed_sequence_chunk_view,
                                                 std::move(algorithm),
                                                 alignment_result_t{},
-                                                traits_t::alignments_per_vector,
                                                 get_execution_rule()};
     // Return the range over the alignments.
     return alignment_range{std::move(executor)};
