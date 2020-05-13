@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <seqan3/std/ranges>
+
 #include <range/v3/view/sliding.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
@@ -19,7 +21,6 @@
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

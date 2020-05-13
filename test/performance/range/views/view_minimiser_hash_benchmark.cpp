@@ -32,7 +32,6 @@ inline seqan3::shape make_gapped_shape(size_t const k)
     return shape_;
 }
 
-
 static void arguments(benchmark::internal::Benchmark* b)
 {
     for (int32_t sequence_length : {1'000, 50'000, /*1'000'000*/})
@@ -66,7 +65,6 @@ void compute_minimisers(benchmark::State & state)
     auto seq = seqan3::test::generate_sequence<seqan3::dna4>(sequence_length, 0, 0);
 
     size_t sum{0};
-
 
     for (auto _ : state)
     {
