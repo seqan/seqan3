@@ -63,10 +63,32 @@ public:
      */
     search_result_range() = default; //!< Defaulted.
     search_result_range(search_result_range const &) = delete; //!< This is a move-only type.
-    search_result_range(search_result_range &&) = default; //!< Defaulted.
     search_result_range & operator=(search_result_range const &) = delete; //!< This is a move-only type.
-    search_result_range & operator=(search_result_range &&) = default; //!< Defaulted.
     ~search_result_range() = default; //!< Defaulted.
+
+    //!\brief Move constructor. We need to reset current_query_it after moving single_pass_query_range.
+    search_result_range(search_result_range && other) noexcept
+    {
+        search_algorithm = std::move(other.search_algorithm);
+        single_pass_query_range = std::move(other.single_pass_query_range);
+        result_buffer = std::move(other.result_buffer);
+        first_call_of_begin = std::move(other.first_call_of_begin);
+
+        current_query_it = single_pass_query_range.begin();
+    }
+
+    //!\brief Move assignment. We need to reset current_query_it after moving single_pass_query_range.
+    search_result_range & operator=(search_result_range && other) noexcept
+    {
+        search_algorithm = std::move(other.search_algorithm);
+        single_pass_query_range = std::move(other.single_pass_query_range);
+        result_buffer = std::move(other.result_buffer);
+        first_call_of_begin = std::move(other.first_call_of_begin);
+
+        current_query_it = single_pass_query_range.begin();
+
+        return *this;
+    }
 
     /*!\brief Constructs a search result range.
      *
