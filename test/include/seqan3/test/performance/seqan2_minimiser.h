@@ -12,6 +12,8 @@
  
 #pragma once
 
+#include <seqan3/core/platform.hpp>
+
 #ifdef SEQAN3_HAS_SEQAN2
 #include <seqan/seq_io.h>
 
