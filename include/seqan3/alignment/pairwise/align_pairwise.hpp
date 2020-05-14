@@ -19,8 +19,9 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
+#include <seqan3/alignment/pairwise/alignment_range.hpp>
+#include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>

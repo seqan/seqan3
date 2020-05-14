@@ -43,25 +43,17 @@ class alignment_range
     static_assert(!std::is_const_v<alignment_executor_type>,
                   "Cannot create an alignment stream over a const buffer.");
 
+    //!\brief The optional type returned by the seqan3::detail::algorithm_executor_blocking
+    using optional_type = decltype(std::declval<alignment_executor_type>().bump());
+    //!\brief The actual algorithm result type.
+    using algorithm_result_type = typename optional_type::value_type;
+
     class alignment_range_iterator;
 
     //!\brief Befriend the iterator type.
     friend class alignment_range_iterator;
 
 public:
-    //!\brief The offset type.
-    using difference_type = typename alignment_executor_type::difference_type;
-    //!\brief The alignment result type.
-    using value_type      = typename alignment_executor_type::value_type;
-    //!\brief The reference type.
-    using reference       = typename alignment_executor_type::reference;
-    //!\brief The iterator type.
-    using iterator        = alignment_range_iterator;
-    //!\brief This range is never const-iterable. The const_iterator is always void.
-    using const_iterator  = void;
-    //!\brief The sentinel type.
-    using sentinel        = std::ranges::default_sentinel_t;
-
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -73,19 +65,18 @@ public:
     ~alignment_range() = default; //!< Defaulted.
 
     //!\brief Explicit deletion to forbid copy construction of the underlying executor.
-    explicit alignment_range(alignment_executor_type const & _alignment_executor) = delete;
+    explicit alignment_range(alignment_executor_type const & alignment_executor) = delete;
 
     /*!\brief Constructs a new alignment range by taking ownership over the passed alignment buffer.
-     * \tparam _alignment_executor_type The buffer type. Must be the same type as `alignment_executor_type` when
-     *                                  references and cv-qualifiers are removed.
-     * \param[in] _alignment_executor   The buffer to take ownership from.
+     *
+     * \param[in] alignment_executor   The buffer to take ownership from.
      *
      * \details
      *
      * Constructs a new alignment range by taking ownership over the passed alignment buffer.
      */
-    explicit alignment_range(alignment_executor_type && _alignment_executor) :
-        alignment_executor{new alignment_executor_type{std::move(_alignment_executor)}}
+    explicit alignment_range(alignment_executor_type && alignment_executor) :
+        alignment_executor_ptr{new alignment_executor_type{std::move(alignment_executor)}}
     {}
     //!\}
 
@@ -100,13 +91,13 @@ public:
      *
      * Invocation of this function will trigger the computation of the first alignment.
      */
-    constexpr iterator begin()
+    constexpr alignment_range_iterator begin()
     {
-        return iterator{*this};
+        return alignment_range_iterator{*this};
     }
 
-    const_iterator begin() const = delete;
-    const_iterator cbegin() const = delete;
+    //!\brief This range is not const-iterable.
+    alignment_range_iterator begin() const = delete;
 
     /*!\brief Returns a sentinel signaling the end of the alignment range.
      * \return a sentinel.
@@ -116,13 +107,13 @@ public:
      * The alignment range is an input range and the end is reached when the internal buffer over the alignment
      * results has signaled end-of-stream.
      */
-    constexpr sentinel end() noexcept
+    constexpr std::ranges::default_sentinel_t end() noexcept
     {
-        return {};
+        return std::ranges::default_sentinel;
     }
 
-    constexpr sentinel end() const = delete;
-    constexpr sentinel cend() const = delete;
+    //!\brief This range is not const-iterable.
+    constexpr std::ranges::default_sentinel_t end() const = delete;
     //!\}
 
 protected:
@@ -136,10 +127,10 @@ protected:
      */
     bool next()
     {
-        if (!alignment_executor)
+        if (!alignment_executor_ptr)
             throw std::runtime_error{"No alignment execution buffer available."};
 
-        if (auto opt = alignment_executor->bump(); opt.has_value())
+        if (auto opt = alignment_executor_ptr->bump(); opt.has_value())
         {
             cache = std::move(*opt);
             return true;
@@ -150,9 +141,9 @@ protected:
 
 private:
     //!\brief The underlying executor buffer.
-    std::unique_ptr<alignment_executor_type> alignment_executor{};
+    std::unique_ptr<alignment_executor_type> alignment_executor_ptr{};
     //!\brief Stores last read element.
-    value_type cache{};
+    algorithm_result_type cache{};
 };
 
 /*!\name Type deduction guide
@@ -173,11 +164,11 @@ class alignment_range<alignment_executor_type>::alignment_range_iterator
 {
 public:
     //!\brief Type for distances between iterators.
-    using difference_type = typename alignment_range::difference_type;
+    using difference_type = std::ptrdiff_t;
     //!\brief Value type of container elements.
-    using value_type = typename alignment_range::value_type;
+    using value_type = algorithm_result_type;
     //!\brief Use reference type defined by container.
-    using reference = typename alignment_range::reference;
+    using reference = std::add_lvalue_reference_t<value_type>;
     //!\brief Pointer type is pointer of container element type.
     using pointer = std::add_pointer_t<value_type>;
     //!\brief Sets iterator category as input iterator.
@@ -194,7 +185,7 @@ public:
     ~alignment_range_iterator() = default; //!< Defaulted.
 
     //!\brief Construct from alignment stream.
-    constexpr alignment_range_iterator(alignment_range & range) : range_ptr(& range)
+    constexpr alignment_range_iterator(alignment_range & range) : range_ptr(std::addressof(range))
     {
         ++(*this); // Fetch the next element.
     }
