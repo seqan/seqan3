@@ -206,3 +206,22 @@ TYPED_TEST(kmer_hash_ungapped_test, issue1719)
         EXPECT_EQ(4u, v3.size());
     }
 }
+
+//https://github.com/seqan/seqan3/issues/1754
+TYPED_TEST(kmer_hash_ungapped_test, issue1754)
+{
+    TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+    if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
+    {
+        EXPECT_NO_THROW(text1 | prefix_until_first_thymine | std::views::reverse | ungapped_view);
+    }
+}
+
+TYPED_TEST(kmer_hash_gapped_test, issue1754)
+{
+    TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+    if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
+    {
+        EXPECT_NO_THROW(text1 | prefix_until_first_thymine | std::views::reverse | gapped_view);
+    }
+}

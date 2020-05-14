@@ -39,7 +39,7 @@ template <std::ranges::view urng_t>
 class kmer_hash_view : public std::ranges::view_interface<kmer_hash_view<urng_t>>
 {
 private:
-    static_assert(std::ranges::forward_range<urng_t const>, "The kmer_hash_view only works on forward_ranges");
+    static_assert(std::ranges::forward_range<urng_t>, "The kmer_hash_view only works on forward_ranges");
     static_assert(semialphabet<std::ranges::range_reference_t<urng_t>>,
                   "The reference type of the underlying range must model seqan3::semialphabet.");
 
