@@ -108,27 +108,22 @@ void compute_minimisers(benchmark::State & state)
         else
         {
             auto seqan2_seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
+            using shape_t = std::conditional_t<tag == method_tag::seqan2_ungapped,
+                                               seqan::Shape<seqan::Dna, seqan::SimpleShape>,
+                                               seqan::Shape<seqan::Dna, seqan::GenericShape>>;
+
+            shape_t shape_;
             if constexpr (tag == method_tag::seqan2_ungapped)
-            {
-                minimiser<seqan::Shape<seqan::Dna, seqan::SimpleShape >> seqan_minimiser;
-                seqan::Shape<seqan::Dna, seqan::SimpleShape> simple_shape;
-                seqan::resize(simple_shape, k);
-                seqan_minimiser.resize(window{w}, kmer{k}, simple_shape);
+               seqan::resize(shape_, k);
+            else
+                shape_ = make_gapped_shape_seqan2(k);
 
-                seqan_minimiser.compute(seqan2_seq);
-                for (auto h : seqan_minimiser.minimiser_hash)
-                    benchmark::DoNotOptimize(sum += h);
-            }
-            else if constexpr (tag == method_tag::seqan2_gapped)
-            {
-                minimiser<seqan::Shape<seqan::Dna, seqan::GenericShape>> seqan_minimiser;
-                seqan::Shape<seqan::Dna, seqan::GenericShape> generic_shape = make_gapped_shape_seqan2(k);
-                seqan_minimiser.resize(window{w}, kmer{k}, generic_shape);
+            minimiser<decltype(shape_)> seqan_minimiser;
+            seqan_minimiser.resize(window{w}, kmer{k}, shape_);
+            seqan_minimiser.compute(seqan2_seq);
 
-                seqan_minimiser.compute(seqan2_seq);
-                for (auto h : seqan_minimiser.minimiser_hash)
-                    benchmark::DoNotOptimize(sum += h);
-            }
+            for (auto h : seqan_minimiser.minimiser_hash)
+                benchmark::DoNotOptimize(sum += h);
         }
         #endif // SEQAN3_HAS_SEQAN2
     }

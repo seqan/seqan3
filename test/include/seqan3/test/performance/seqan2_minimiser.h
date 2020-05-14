@@ -138,13 +138,15 @@ public:
 
         forward_hashes.reserve(possible_kmers);
         reverse_hashes.reserve(possible_kmers);
-        seqan::hashInit(forward_shape, seqan::begin(text));
-        seqan::hashInit(reverse_shape, seqan::begin(rc_text));
+        auto it1 = seqan::begin(text);
+        auto it2 = seqan::begin(rc_text);
+        seqan::hashInit(forward_shape, it1);
+        seqan::hashInit(reverse_shape, it2);
 
-        for (uint64_t i = 0; i < possible_kmers; ++i)
+        for (uint64_t i = 0; i < possible_kmers; ++i, ++it1, ++it2)
         {
-            forward_hashes.push_back(hash_impl(seqan::hashNext(forward_shape, seqan::begin(text) + i)));
-            reverse_hashes.push_back(hash_impl(seqan::hashNext(reverse_shape, seqan::begin(rc_text) + i)));
+            forward_hashes.push_back(hash_impl(seqan::hashNext(forward_shape, it1)));
+            reverse_hashes.push_back(hash_impl(seqan::hashNext(reverse_shape, it2)));
         }
 
         // Choose the minimisers.
