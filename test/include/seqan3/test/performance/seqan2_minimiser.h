@@ -4,10 +4,12 @@
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
+
 /*!\file
  * \author Mitra Darvish <mitra.darvish AT fu-berlin.de>
  * \brief Provides a SeqAn2 minimiser hash.
  */
+ 
 #pragma once
 
 #ifdef SEQAN3_HAS_SEQAN2
