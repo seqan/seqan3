@@ -18,8 +18,8 @@
 
 #include <seqan3/alignment/pairwise/alignment_range.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
-#include <seqan3/alignment/pairwise/execution/execution_handler_parallel.hpp>
-#include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
+#include <seqan3/core/algorithm/detail/execution_handler_parallel.hpp>
+#include <seqan3/core/algorithm/detail/execution_handler_sequential.hpp>
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/views/chunk.hpp>

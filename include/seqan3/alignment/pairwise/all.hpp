@@ -19,7 +19,6 @@
 #include <seqan3/alignment/pairwise/alignment_range.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
-#include <seqan3/alignment/pairwise/execution/all.hpp>
 #include <seqan3/alignment/pairwise/policy/all.hpp>
 
 /*!\defgroup pairwise_alignment Pairwise

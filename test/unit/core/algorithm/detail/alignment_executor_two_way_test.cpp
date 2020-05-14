@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
+#include <seqan3/core/algorithm/detail/alignment_executor_two_way.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/zip.hpp>
