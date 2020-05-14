@@ -16,6 +16,7 @@
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
+#include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/zip.hpp>
@@ -57,13 +58,13 @@ private:
     class matrix_iterator;
 
     //!\brief The column over the optimal scores.
-    physical_column_t m_optimal_column{};
+    physical_column_t optimal_column{};
     //!\brief The column over the horizontal gap scores.
-    physical_column_t m_horizontal_column{};
+    physical_column_t horizontal_column{};
     //!\brief The virtual column over the vertical gap scores.
-    virtual_column_t m_vertical_column{};
+    virtual_column_t vertical_column{};
     //!\brief The number of columns for this matrix.
-    size_t m_number_of_columns{};
+    size_t number_of_columns{};
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -105,10 +106,10 @@ public:
     void resize(column_index_type<column_index_t> const number_of_columns,
                 row_index_type<row_index_t> const number_of_rows)
     {
-        m_number_of_columns = number_of_columns.get();
-        m_optimal_column.resize(number_of_rows.get());
-        m_horizontal_column.resize(number_of_rows.get());
-        m_vertical_column = views::repeat_n(score_t{}, number_of_rows.get());
+        this->number_of_columns = number_of_columns.get();
+        optimal_column.resize(number_of_rows.get());
+        horizontal_column.resize(number_of_rows.get());
+        vertical_column = views::repeat_n(score_t{}, number_of_rows.get());
     }
 
     /*!\name Iterators
@@ -117,19 +118,20 @@ public:
     //!\brief Returns the iterator pointing to the first column.
     matrix_iterator begin()
     {
-        return matrix_iterator{*this};
+        return matrix_iterator{*this, 0u};
     }
+
     //!\brief This score matrix is not const-iterable.
     matrix_iterator begin() const = delete;
 
-    //!\brief Returns a default sentinel indicating the end of the matrix.
-    std::ranges::default_sentinel_t end()
+    //!\brief Returns the iterator pointing behind the last column.
+    matrix_iterator end()
     {
-        return std::ranges::default_sentinel;
+        return matrix_iterator{*this, number_of_columns};
     }
 
     //!\brief This score matrix is not const-iterable.
-    std::ranges::default_sentinel_t end() const = delete;
+    matrix_iterator end() const = delete;
     //!\}
 };
 
@@ -162,11 +164,9 @@ private:
     });
 
     //!\brief The pointer to the underlying matrix.
-    score_matrix_single_column * m_host_ptr{nullptr};
+    score_matrix_single_column * host_ptr{nullptr};
     //!\brief The current column index.
-    size_t m_current_column{};
-    //!\brief The column index of the column behind the last one.
-    size_t m_end_column{};
+    size_t current_column_id{};
 
 public:
     /*!\name Associated types
@@ -197,20 +197,21 @@ public:
     /*!\brief Initialises the iterator from the underlying matrix.
      *
      * \param[in] host_matrix The underlying matrix.
+     * \param[in] initial_column_id The initial column index.
      */
-    explicit matrix_iterator(score_matrix_single_column & host_matrix) noexcept :
-        m_host_ptr{std::addressof(host_matrix)},
-        m_end_column{m_host_ptr->m_number_of_columns}
+    explicit matrix_iterator(score_matrix_single_column & host_matrix, size_t const initial_column_id) noexcept :
+        host_ptr{std::addressof(host_matrix)},
+        current_column_id{initial_column_id}
     {}
     //!\}
 
-    /*!\name Access operators
+    /*!\name Element access
      * \{
      */
     //!\brief Returns the range over the current column.
     reference operator*() const
     {
-        return views::zip(m_host_ptr->m_optimal_column, m_host_ptr->m_horizontal_column, m_host_ptr->m_vertical_column)
+        return views::zip(host_ptr->optimal_column, host_ptr->horizontal_column, host_ptr->vertical_column)
              | transform_to_affine_cell;
     }
     //!\}
@@ -221,7 +222,7 @@ public:
     //!\brief Move `this` to the next column.
     matrix_iterator & operator++()
     {
-        ++m_current_column;
+        ++current_column_id;
         return *this;
     }
 
@@ -235,28 +236,16 @@ public:
     /*!\name Comparison operators
      * \{
      */
-    //!\brief Compares the matrix iterator with the sentinel.
-    friend bool operator==(matrix_iterator const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    //!\brief Tests whether `lhs == rhs`.
+    friend bool operator==(matrix_iterator const & lhs, matrix_iterator const & rhs) noexcept
     {
-        return lhs.m_current_column == lhs.m_end_column;
+        return lhs.current_column_id == rhs.current_column_id;
     }
 
-    //!\brief Compares the matrix iterator with the sentinel.
-    friend bool operator==(std::ranges::default_sentinel_t const & lhs, matrix_iterator const & rhs) noexcept
-    {
-        return rhs == lhs;
-    }
-
-    //!\brief Compares the matrix iterator with the sentinel.
-    friend bool operator!=(matrix_iterator const & lhs, std::ranges::default_sentinel_t const & rhs) noexcept
+    //!\brief Tests whether `lhs != rhs`.
+    friend bool operator!=(matrix_iterator const & lhs, matrix_iterator const & rhs) noexcept
     {
         return !(lhs == rhs);
-    }
-
-    //!\brief Compares the matrix iterator with the sentinel.
-    friend bool operator!=(std::ranges::default_sentinel_t const & lhs, matrix_iterator const & rhs) noexcept
-    {
-        return rhs != lhs;
     }
     //!\}
 };
