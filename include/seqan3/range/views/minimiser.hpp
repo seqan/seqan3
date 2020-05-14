@@ -39,8 +39,8 @@ class minimiser_view : public std::ranges::view_interface<minimiser_view<urng_t>
 {
 private:
     static_assert(std::ranges::forward_range<urng_t const>, "The minimiser_view only works on forward_ranges.");
-    static_assert(std::totally_ordered<reference_t<urng_t>>, "The reference type of the underlying range must model "
-                                                             "std::totally_ordered.");
+    static_assert(std::totally_ordered<std::ranges::range_reference_t<urng_t>>,
+                  "The reference type of the underlying range must model std::totally_ordered.");
     //!\brief The underlying range.
     urng_t urange;
 
