@@ -171,10 +171,11 @@ protected:
         thread_local score_matrix_single_column<int32_t> local_score_matrix{};
         coordinate_matrix local_index_matrix{};
 
-        local_score_matrix.reset_matrix(sequence1, sequence2);
-        local_index_matrix.reset_matrix(
-                column_index_type{static_cast<size_t>(std::ranges::distance(sequence1) + 1)},
-                row_index_type{static_cast<size_t>(std::ranges::distance(sequence2) + 1)});
+        size_t number_of_columns = std::ranges::distance(sequence1) + 1;
+        size_t number_of_rows = std::ranges::distance(sequence2) + 1;
+
+        local_score_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
+        local_index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
 
         auto alignment_matrix_it = local_score_matrix.begin();
         auto indexed_matrix_it = local_index_matrix.begin();

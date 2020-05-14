@@ -77,29 +77,38 @@ public:
     ~score_matrix_single_column() = default; //!< Defaulted.
     //!\}
 
-    /*!\brief Resets the matrix dimensions given by two sequences.
-     * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
-     * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.
+    /*!\brief Resizes the matrix.
+     * \tparam column_index_t The column index type; must model std::integral.
+     * \tparam row_index_t The row index type; must model std::integral.
      *
-     * \param[in] sequence1 The first sequence.
-     * \param[in] sequence2 The second sequence.
+     * \param[in] number_of_columns The number of columns for this matrix.
+     * \param[in] number_of_rows The number of rows for this matrix.
      *
      * \details
      *
-     * Resizes the optimal and the horizontal score column to the new dimensions given by the sizes of the
-     * two sequences. The number of columns is set to the size of sequence1 plus 1 for the initialisation and
-     * the number of rows is set to the size of sequence2 plus 1 for the initialisation as well.
+     * Resizes the optimal and the horizontal score column to the given number of rows and stores the number of
+     * columns to created a counted iterator over the matrix columns.
+     * Note the alignment matrix requires the number of columns and rows to be one bigger than the size of sequence1,
+     * respectively sequence2.
      * Reallocation happens only if the new column size exceeds the current capacity of the optimal and horizontal
      * score column. The underlying vectors will not be cleared during the reset.
+     *
+     * ### Complexity
+     *
+     * Linear in the number of rows.
+     *
+     * ### Exception
+     *
+     * Basic exception guarantee. Might throw std::bad_alloc on resizing the internal columns.
      */
-    template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
-    void reset_matrix(sequence1_t && sequence1, sequence2_t && sequence2)
+    template <std::integral column_index_t, std::integral row_index_t>
+    void resize(column_index_type<column_index_t> const number_of_columns,
+                row_index_type<row_index_t> const number_of_rows)
     {
-        m_number_of_columns = std::ranges::distance(sequence1) + 1;
-        size_t number_of_rows = std::ranges::distance(sequence2) + 1;
-        m_optimal_column.resize(number_of_rows);
-        m_horizontal_column.resize(number_of_rows);
-        m_vertical_column = views::repeat_n(score_t{}, number_of_rows);
+        m_number_of_columns = number_of_columns.get();
+        m_optimal_column.resize(number_of_rows.get());
+        m_horizontal_column.resize(number_of_rows.get());
+        m_vertical_column = views::repeat_n(score_t{}, number_of_rows.get());
     }
 
     /*!\name Iterators

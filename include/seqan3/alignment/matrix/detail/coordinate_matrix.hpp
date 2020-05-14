@@ -194,8 +194,18 @@ public:
      *
      * \param[in] number_of_columns \copybrief seqan3::detail::coordinate_matrix::number_of_columns
      * \param[in] number_of_rows \copybrief seqan3::detail::coordinate_matrix::number_of_rows
+     *
+     * \details
+     *
+     * ### Complexity
+     *
+     * Constant
+     *
+     * ### Exception
+     *
+     * noexcept
      */
-    void reset_matrix(column_index_type<size_t> const number_of_columns, row_index_type<size_t> const number_of_rows)
+    void resize(column_index_type<size_t> const number_of_columns, row_index_type<size_t> const number_of_rows) noexcept
     {
         this->number_of_columns = number_of_columns.get();
         this->number_of_rows = number_of_rows.get();

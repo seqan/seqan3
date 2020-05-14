@@ -39,7 +39,7 @@ struct iterator_fixture<matrix_iterator_t> : public ::testing::Test
 
     void SetUp()
     {
-        test_range.reset_matrix(column_index_t{2u}, row_index_t{3u});
+        test_range.resize(column_index_t{2u}, row_index_t{3u});
     }
 
     template <typename actual_column_t, typename expected_column_t>
