@@ -42,7 +42,7 @@ enum struct search_config_id : uint8_t
     max_error, //!< Identifier for the max_errors configuration.
     max_error_rate, //!< Identifier for the max_error_rate configuration.
     output, //!< Identifier for the output configuration.
-    mode, //!< Identifier for the search mode configuration.
+    hit, //!< Identifier for the hit configuration (all, all_best, single_best, strata).
     parallel, //!< Identifier for the parallel execution configuration.
     //!\cond
     // ATTENTION: Must always be the last item; will be used to determine the number of ids.
@@ -69,7 +69,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(search_config_
                             static_cast<uint8_t>(search_config_id::SIZE)> compatibility_table<search_config_id> =
 {
     {
-        // max_error, max_error_rate, output, mode, parallel
+        // max_error, max_error_rate, output, hit, parallel
         { 0, 0, 1, 1, 1},
         { 0, 0, 1, 1, 1},
         { 1, 1, 0, 1, 1},

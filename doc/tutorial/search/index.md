@@ -212,27 +212,28 @@ At position 85: ACT
 ```
 \endsolution
 
-## Search modes
+## Which hits are reported?
 
-Besides the error configuration, you can define what kind of hits should be reported:
+Besides the error configuration, you can define which hits should be reported:
 
-- seqan3::search_cfg::all: Report all hits that satisfy the (approximate) search.
-- seqan3::search_cfg::best: Report the best hit, i.e. the *first* hit with the lowest edit distance.
-- seqan3::search_cfg::all_best: Report all hits with the lowest edit distance.
-- seqan3::search_cfg::strata: best+x mode. Report all hits within the x-neighbourhood of the best hit.
+- seqan3::search_cfg::hit_all: Report all hits that satisfy the (approximate) search.
+- seqan3::search_cfg::hit_single_best: Report the best hit, i.e. the *first* hit with the lowest edit distance.
+- seqan3::search_cfg::hit_all_best: Report all hits with the lowest edit distance.
+- seqan3::search_cfg::hit_strata: best+x strategy. Report all hits within the x-neighbourhood of the best hit.
 
-The mode is appended to the error configuration by using the `|`-operator:
-\snippet doc/tutorial/search/search_small_snippets.cpp mode_best
+Any hit configuration element is appended to the error configuration by using the `|`-operator:
+\snippet doc/tutorial/search/search_small_snippets.cpp hit_best
 
-The strata mode needs an additional parameter:
-\snippet doc/tutorial/search/search_small_snippets.cpp mode_strata
+The `seqan3::search_cfg::strata` configuration element needs an additional parameter:
+\snippet doc/tutorial/search/search_small_snippets.cpp hit_strata
 
-If the best hit had an edit distance of 1, the strata mode would report all hits with up to an edit distance of 3.
+If the best hit had an edit distance of 1, the strata strategy would report all hits with up to an edit distance of 3.
 Since in this example the total error number is set to 2, all hits with 1 or 2 errors would be reported.
 
 \assignment{Assignment 4}
 Search for all occurrences of `GCT` in the text from [assignment 1](#assignment_create_index).<br>
-Allow up to 1 error of any type and print the number of hits for each search mode (use `mode::strata{1}`).
+Allow up to 1 error of any type and print the number of hits for each hit strategy (use
+`seqan3::search_cfg::strata{1}`).
 \endassignment
 
 \solution
@@ -254,7 +255,7 @@ There are 25 hits.
 
 \assignment{Assignment 5}
 Search for all occurrences of `GCT` in the text from [assignment 1](#assignment_create_index).<br>
-Allow up to 1 error of any type search for all occurrences in the all_best mode.<br>
+Allow up to 1 error of any type and search for all occurrences with the strategy `seqan3::search_cfg::hit_all_best`.<br>
 Align the query to each of the found positions in the genome and print the score and alignment.<br>
 **BONUS**<br>
 Do the same for the text collection from [assignment 2](#assignment_exact_search).

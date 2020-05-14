@@ -89,23 +89,23 @@ seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_c
 }
 
 {
-//![mode_best]
+//![hit_best]
 seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1},
                                                                 seqan3::search_cfg::substitution{0},
                                                                 seqan3::search_cfg::insertion{1},
                                                                 seqan3::search_cfg::deletion{1}} |
-                                                                seqan3::search_cfg::mode{seqan3::search_cfg::best};
-//![mode_best]
+                                  seqan3::search_cfg::hit_single_best;
+//![hit_best]
 }
 
 {
-//![mode_strata]
+//![hit_strata]
 seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{2},
                                                                 seqan3::search_cfg::substitution{0},
                                                                 seqan3::search_cfg::insertion{1},
                                                                 seqan3::search_cfg::deletion{1}} |
-                                                                seqan3::search_cfg::mode{seqan3::search_cfg::strata{2}};
-//![mode_strata]
+                                  seqan3::search_cfg::hit_strata{2};
+//![hit_strata]
 }
 
 }

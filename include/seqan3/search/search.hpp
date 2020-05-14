@@ -34,20 +34,21 @@ namespace seqan3::detail
  */
 struct search_configurator
 {
-    /*!\brief Add seqan3::search_cfg::all to the configuration if seqan3::search_cfg::mode was not set.
+    /*!\brief Add seqan3::search_cfg::hit_all to the configuration if no search strategy (hit configuration) was chosen.
      * \tparam configuration_t The type of the search configuration.
      * \param[in] cfg The configuration to be modified if necessary.
-     * \returns The configuration which is guaranteed to have a seqan3::search_cfg::mode available.
+     * \returns The configuration which is guaranteed to have a hit configuration element available.
      *
      * \details
      *
-     * If seqan3::search_cfg::mode was not set, it defaults to seqan3::search_cfg::all.
+     * If no \ref search_configuration_subsection_hit_strategy "hit configuration" was set,
+     * it defaults to seqan3::search_cfg::hit_all.
      */
     template <typename configuration_t>
-    static auto add_default_mode_configuration(configuration_t const & cfg)
+    static auto add_default_hit_configuration(configuration_t const & cfg)
     {
-        if constexpr (!detail::search_traits<configuration_t>::has_mode_configuration)
-            return cfg | search_cfg::mode{search_cfg::all};
+        if constexpr (!detail::search_traits<configuration_t>::has_hit_configuration)
+            return cfg | search_cfg::hit_all;
         else
             return cfg;
     }
@@ -79,7 +80,7 @@ struct search_configurator
      *
      * Modifies the configuration object by adding default configuration elements.
      *
-     * \sa seqan3::details::search_configurator::add_default_mode_configuration
+     * \sa seqan3::details::search_configurator::add_default_hit_configuration
      * \sa seqan3::details::search_configurator::add_default_output_configuration
      */
     template <typename configuration_t>
@@ -88,7 +89,7 @@ struct search_configurator
         static_assert(detail::is_type_specialisation_of_v<configuration_t, configuration>,
                       "cfg must be a specialisation of seqan3::configuration.");
 
-        auto cfg1 = add_default_mode_configuration(cfg);
+        auto cfg1 = add_default_hit_configuration(cfg);
         auto cfg2 = add_default_output_configuration(cfg1);
 
         return cfg2;

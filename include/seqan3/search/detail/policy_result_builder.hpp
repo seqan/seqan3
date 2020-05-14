@@ -51,7 +51,7 @@ protected:
     template <typename index_cursor_t, typename configuration_t>
     //!\cond
         requires search_traits<configuration_t>::search_return_text_position &&
-                 search_traits<configuration_t>::search_best_hits
+                 search_traits<configuration_t>::search_single_best_hit
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {
@@ -86,7 +86,7 @@ protected:
     template <typename index_cursor_t, typename configuration_t>
     //!\cond
         requires search_traits<configuration_t>::search_return_text_position &&
-                 (!search_traits<configuration_t>::search_best_hits)
+                 (!search_traits<configuration_t>::search_single_best_hit)
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {

@@ -16,7 +16,7 @@
 #include <seqan3/search/configuration/detail.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/max_error_rate.hpp>
-#include <seqan3/search/configuration/mode.hpp>
+#include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/output.hpp>
 
 namespace seqan3::search_cfg
@@ -27,6 +27,6 @@ namespace seqan3::search_cfg
  */
 inline constexpr configuration default_configuration = max_error{total{0}, substitution{0}, insertion{0}, deletion{0}} |
                                                        output{text_position} |
-                                                       mode{all};
+                                                       hit_all;
 
 } // namespace seqan3::search_cfg

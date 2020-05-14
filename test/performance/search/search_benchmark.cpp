@@ -225,7 +225,7 @@ void unidirectional_search_stratified(benchmark::State & state, options && o)
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
     seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}} |
-                                seqan3::search_cfg::mode{seqan3::search_cfg::strata{o.strata}};
+                                seqan3::search_cfg::hit_strata{o.strata};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
@@ -247,7 +247,7 @@ void bidirectional_search_stratified(benchmark::State & state, options && o)
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
     seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}} |
-                                seqan3::search_cfg::mode{seqan3::search_cfg::strata{o.strata}};
+                                seqan3::search_cfg::hit_strata{o.strata};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
