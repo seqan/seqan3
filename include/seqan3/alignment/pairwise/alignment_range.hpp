@@ -23,7 +23,7 @@ namespace seqan3
  * \implements std::ranges::input_range
  *
  * \tparam alignment_executor_type The type of the underlying alignment executor; must be of type
- *                                 seqan3::detail::alignment_executor_two_way.
+ *                                 seqan3::detail::algorithm_executor_blocking.
  *
  * \details
  *
@@ -34,7 +34,7 @@ namespace seqan3
  *
  * \if DEV
  * Note that the required type is not enforced in order to test this class without adding the entire machinery for
- * the seqan3::detail::alignment_executor_two_way.
+ * the seqan3::detail::algorithm_executor_blocking.
  * \endif
  */
 template <typename alignment_executor_type>

@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include <seqan3/core/algorithm/detail/alignment_executor_two_way.hpp>
+#include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/zip.hpp>
@@ -46,7 +46,7 @@ struct algorithm_type_for_input
 };
 
 template <typename t>
-struct alignment_executor_two_way_test : public ::testing::Test
+struct algorithm_executor_blocking_test : public ::testing::Test
 {
     // Some globally defined test types
     using sequence_pair_t = std::pair<std::string, std::string>;
@@ -58,16 +58,16 @@ struct alignment_executor_two_way_test : public ::testing::Test
 
 using testing_types = testing::Types<seqan3::detail::execution_handler_sequential,
                                      seqan3::detail::execution_handler_parallel>;
-TYPED_TEST_SUITE(alignment_executor_two_way_test, testing_types, );
+TYPED_TEST_SUITE(algorithm_executor_blocking_test, testing_types, );
 
-TYPED_TEST(alignment_executor_two_way_test, construction)
+TYPED_TEST(algorithm_executor_blocking_test, construction)
 {
     using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
     using alignment_executor_t =
-        seqan3::detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
-                                                   algorithm_t,
-                                                   size_t,
-                                                   TypeParam>;
+        seqan3::detail::algorithm_executor_blocking<typename TestFixture::sequence_pairs_t &,
+                                                    algorithm_t,
+                                                    size_t,
+                                                    TypeParam>;
 
     EXPECT_FALSE(std::is_default_constructible_v<alignment_executor_t>);
     EXPECT_FALSE(std::is_copy_constructible_v<alignment_executor_t>);
@@ -76,11 +76,11 @@ TYPED_TEST(alignment_executor_two_way_test, construction)
     EXPECT_TRUE(std::is_move_assignable_v<alignment_executor_t>);
 }
 
-TYPED_TEST(alignment_executor_two_way_test, is_eof)
+TYPED_TEST(algorithm_executor_blocking_test, is_eof)
 {
     using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
     using alignment_executor_t =
-        seqan3::detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+        seqan3::detail::algorithm_executor_blocking<typename TestFixture::sequence_pairs_t &,
                                                    algorithm_t,
                                                    size_t,
                                                    TypeParam>;
@@ -89,18 +89,18 @@ TYPED_TEST(alignment_executor_two_way_test, is_eof)
     EXPECT_FALSE(exec.is_eof());
 }
 
-TYPED_TEST(alignment_executor_two_way_test, type_deduction)
+TYPED_TEST(algorithm_executor_blocking_test, type_deduction)
 {
     using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
-    seqan3::detail::alignment_executor_two_way exec{this->sequence_pairs, algorithm_t{dummy_alignment{}}, 0u};
+    seqan3::detail::algorithm_executor_blocking exec{this->sequence_pairs, algorithm_t{dummy_alignment{}}, 0u};
     EXPECT_FALSE(exec.is_eof());
 }
 
-TYPED_TEST(alignment_executor_two_way_test, bump)
+TYPED_TEST(algorithm_executor_blocking_test, bump)
 {
     using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
     using alignment_executor_t =
-        seqan3::detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+        seqan3::detail::algorithm_executor_blocking<typename TestFixture::sequence_pairs_t &,
                                                    algorithm_t,
                                                    size_t,
                                                    TypeParam>;
@@ -115,11 +115,11 @@ TYPED_TEST(alignment_executor_two_way_test, bump)
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TYPED_TEST(alignment_executor_two_way_test, move_assignment)
+TYPED_TEST(algorithm_executor_blocking_test, move_assignment)
 {
     using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
     using alignment_executor_t =
-        seqan3::detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+        seqan3::detail::algorithm_executor_blocking<typename TestFixture::sequence_pairs_t &,
                                                    algorithm_t,
                                                    size_t,
                                                    TypeParam>;
@@ -139,11 +139,11 @@ TYPED_TEST(alignment_executor_two_way_test, move_assignment)
     EXPECT_FALSE(static_cast<bool>(exec_move_constructed.bump()));
 }
 
-TYPED_TEST(alignment_executor_two_way_test, lvalue_sequence_pair_view)
+TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pair_view)
 {
     auto v = std::views::single(this->sequence_pair);
     using algorithm_t = typename algorithm_type_for_input<decltype(v)>::type;
-    using alignment_executor_t = seqan3::detail::alignment_executor_two_way<decltype(v),
+    using alignment_executor_t = seqan3::detail::algorithm_executor_blocking<decltype(v),
                                                                             algorithm_t,
                                                                             size_t,
                                                                             TypeParam>;
@@ -153,11 +153,11 @@ TYPED_TEST(alignment_executor_two_way_test, lvalue_sequence_pair_view)
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TYPED_TEST(alignment_executor_two_way_test, rvalue_sequence_pair_view)
+TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pair_view)
 {
     using single_pair_t = decltype(std::views::single(this->sequence_pair));
     using algorithm_t = typename algorithm_type_for_input<single_pair_t>::type;
-    using alignment_executor_t = seqan3::detail::alignment_executor_two_way<single_pair_t,
+    using alignment_executor_t = seqan3::detail::algorithm_executor_blocking<single_pair_t,
                                                                             algorithm_t,
                                                                             size_t,
                                                                             TypeParam>;
@@ -167,10 +167,10 @@ TYPED_TEST(alignment_executor_two_way_test, rvalue_sequence_pair_view)
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TYPED_TEST(alignment_executor_two_way_test, lvalue_sequence_pairs)
+TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pairs)
 {
     using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
-    using alignment_executor_t = seqan3::detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+    using alignment_executor_t = seqan3::detail::algorithm_executor_blocking<typename TestFixture::sequence_pairs_t &,
                                                                             algorithm_t,
                                                                             size_t,
                                                                             TypeParam>;
@@ -184,11 +184,11 @@ TYPED_TEST(alignment_executor_two_way_test, lvalue_sequence_pairs)
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TYPED_TEST(alignment_executor_two_way_test, rvalue_sequence_pairs_view)
+TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pairs_view)
 {
     using persist_pairs_t = decltype(this->sequence_pairs | seqan3::views::persist);
     using algorithm_t = typename algorithm_type_for_input<persist_pairs_t>::type;
-    using alignment_executor_t = seqan3::detail::alignment_executor_two_way<persist_pairs_t,
+    using alignment_executor_t = seqan3::detail::algorithm_executor_blocking<persist_pairs_t,
                                                                             algorithm_t,
                                                                             size_t,
                                                                             TypeParam>;
@@ -202,11 +202,11 @@ TYPED_TEST(alignment_executor_two_way_test, rvalue_sequence_pairs_view)
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
-TYPED_TEST(alignment_executor_two_way_test, empty_result_bucket)
+TYPED_TEST(algorithm_executor_blocking_test, empty_result_bucket)
 {
     using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
     using alignment_executor_t =
-        seqan3::detail::alignment_executor_two_way<typename TestFixture::sequence_pairs_t &,
+        seqan3::detail::algorithm_executor_blocking<typename TestFixture::sequence_pairs_t &,
                                                    algorithm_t,
                                                    size_t,
                                                    TypeParam>;

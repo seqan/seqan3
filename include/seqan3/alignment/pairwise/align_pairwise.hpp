@@ -23,6 +23,7 @@
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
+#include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
@@ -181,7 +182,7 @@ constexpr auto align_pairwise(sequence_t && sequences,
                                      | views::chunk(traits_t::alignments_per_vector);
 
     // Create a two-way executor for the alignment.
-    detail::alignment_executor_two_way executor{indexed_sequence_chunk_view,
+    detail::algorithm_executor_blocking executor{indexed_sequence_chunk_view,
                                                 std::move(algorithm),
                                                 alignment_result_t{},
                                                 get_execution_rule()};

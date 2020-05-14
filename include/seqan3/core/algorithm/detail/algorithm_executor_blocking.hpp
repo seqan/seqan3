@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::alignment_executor_two_way.
+ * \brief Provides seqan3::detail::algorithm_executor_blocking.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -43,7 +43,7 @@ namespace seqan3::detail
  *
  * This alignment executor provides an additional buffer over the computed alignments to allow
  * a two-way execution flow. The alignment results can then be accessed in an order-preserving manner using the
- * alignment_executor_two_way::bump() member function.
+ * blocking_algorithm_executor::bump() member function.
  *
  * ### Bucket structure
  *
@@ -59,7 +59,7 @@ template <std::ranges::viewable_range resource_t,
 //!\cond
     requires std::ranges::forward_range<resource_t> && std::copy_constructible<alignment_algorithm_t>
 //!\endcond
-class alignment_executor_two_way
+class algorithm_executor_blocking
 {
 private:
     /*!\name Resource types
@@ -84,7 +84,7 @@ private:
     using bucket_iterator_type = std::ranges::iterator_t<bucket_type>;
     //!\}
 
-    //!\brief Return status for seqan3::detail::alignment_executor_two_way::underflow.
+    //!\brief Return status for seqan3::detail::blocking_algorithm_executor::underflow.
     enum underflow_status
     {
         non_empty_buffer, //!< The buffer is not fully consumed yet and contains at least one element.
@@ -110,9 +110,9 @@ public:
      * \{
      */
     //!\brief Deleted default constructor because this class manages an external resource.
-    alignment_executor_two_way() = delete;
+    algorithm_executor_blocking() = delete;
     //!\brief This class provides unique ownership over the managed resource and is therefor not copyable.
-    alignment_executor_two_way(alignment_executor_two_way const &) = delete;
+    algorithm_executor_blocking(algorithm_executor_blocking const &) = delete;
 
     /*!\brief Move constructs the resource of the other executor.
      * \param[in] other The other alignment executor (prvalue) to move from.
@@ -131,24 +131,24 @@ public:
      *
      * Constant if the underlying resource type models std::ranges::random_access_range, otherwise linear.
      */
-    alignment_executor_two_way(alignment_executor_two_way && other) noexcept
+    algorithm_executor_blocking(algorithm_executor_blocking && other) noexcept
     {
         move_initialise(std::move(other));
     }
 
     //!\brief This class provides unique ownership over the managed resource and is therefor not copyable.
-    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete;
+    algorithm_executor_blocking & operator=(algorithm_executor_blocking const &) = delete;
 
     //!\brief Move assigns from the resource of another executor.
-    //!\copydetails seqan3::detail::alignment_executor_two_way::alignment_executor_two_way(alignment_executor_two_way && other)
-    alignment_executor_two_way & operator=(alignment_executor_two_way && other)
+    //!\copydetails seqan3::detail::algorithm_executor_blocking::algorithm_executor_blocking(algorithm_executor_blocking && other)
+    algorithm_executor_blocking & operator=(algorithm_executor_blocking && other)
     {
         move_initialise(std::move(other));
         return *this;
     }
 
     //!\brief Defaulted.
-    ~alignment_executor_two_way() = default;
+    ~algorithm_executor_blocking() = default;
 
     /*!\brief Constructs this executor with the passed range of alignment instances.
      * \tparam exec_policy_t The type of the execution policy; seqan3::is_execution_policy must return `true`. Defaults
@@ -172,7 +172,7 @@ public:
     //!\cond
         requires is_execution_policy_v<exec_policy_t>
     //!\endcond
-    alignment_executor_two_way(resource_t resource,
+    algorithm_executor_blocking(resource_t resource,
                                alignment_algorithm_t fn,
                                value_t const SEQAN3_DOXYGEN_ONLY(buffer_value) = value_t{},
                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
@@ -291,7 +291,7 @@ private:
      * \details
      *
      * Clears all buckets and sets the bucket iterator to the first iterator, such that the allocated memory for each
-     * bucket can be reused between invocations of seqan3::detail::alignment_executor_two_way::underflow.
+     * bucket can be reused between invocations of seqan3::detail::blocking_algorithm_executor::underflow.
      */
     void reset_buckets()
     {
@@ -329,7 +329,7 @@ private:
      * \details
      *
      * If the current bucket is consumed, then the bucket iterator is incremented and the next non-empty bucket is found
-     * by calling seqan3::detail::alignment_executor_two_way::find_next_non_empty_bucket.
+     * by calling seqan3::detail::algorithm_executor_blocking::find_next_non_empty_bucket.
      */
     void next_buffer_iterator()
     {
@@ -341,8 +341,8 @@ private:
     }
 
     //!\brief Helper function to move initialise `this` from `other`.
-    //!\copydetails seqan3::detail::alignment_executor_two_way::alignment_executor_two_way(alignment_executor_two_way && other)
-    void move_initialise(alignment_executor_two_way && other) noexcept
+    //!\copydetails seqan3::detail::algorithm_executor_blocking::algorithm_executor_blocking(algorithm_executor_blocking && other)
+    void move_initialise(algorithm_executor_blocking && other) noexcept
     {
         kernel = std::move(other.kernel);
         bucket_vector_size = std::move(other.bucket_vector_size);
@@ -396,14 +396,14 @@ private:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::detail::alignment_executor_two_way
+ * \relates seqan3::detail::algorithm_executor_blocking
  * \{
  */
 
 //!\brief Deduce the type from the provided arguments and set the sequential execution handler.
 template <typename resource_rng_t, typename func_t, std::semiregular value_t>
-alignment_executor_two_way(resource_rng_t &&, func_t, value_t const &) ->
-    alignment_executor_two_way<resource_rng_t, func_t, value_t, execution_handler_sequential>;
+algorithm_executor_blocking(resource_rng_t &&, func_t, value_t const &) ->
+    algorithm_executor_blocking<resource_rng_t, func_t, value_t, execution_handler_sequential>;
 
 //!\}
 } // namespace seqan3::detail

@@ -1,3 +1,3 @@
-seqan3_test(alignment_executor_two_way_test.cpp)
+seqan3_test(algorithm_executor_blocking_test.cpp)
 seqan3_test(execution_handler_sequential_test.cpp)
 seqan3_test(execution_handler_parallel_test.cpp)

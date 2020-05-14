@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/algorithm/detail/alignment_executor_two_way.hpp>
+#include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/core/algorithm/detail/execution_handler_sequential.hpp>
 
 //!\cond DEV
