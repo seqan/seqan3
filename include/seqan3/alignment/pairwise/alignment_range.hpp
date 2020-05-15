@@ -44,7 +44,7 @@ class alignment_range
                   "Cannot create an alignment stream over a const buffer.");
 
     //!\brief The optional type returned by the seqan3::detail::algorithm_executor_blocking
-    using optional_type = decltype(std::declval<alignment_executor_type>().bump());
+    using optional_type = decltype(std::declval<alignment_executor_type>().next_result());
     //!\brief The actual algorithm result type.
     using algorithm_result_type = typename optional_type::value_type;
 
@@ -130,7 +130,7 @@ protected:
         if (!alignment_executor_ptr)
             throw std::runtime_error{"No alignment execution buffer available."};
 
-        if (auto opt = alignment_executor_ptr->bump(); opt.has_value())
+        if (auto opt = alignment_executor_ptr->next_result(); opt.has_value())
         {
             cache = std::move(*opt);
             return true;

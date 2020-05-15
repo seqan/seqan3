@@ -27,7 +27,7 @@ struct dummy_executor
     using reference       = value_type;
     using difference_type = std::ptrdiff_t;
 
-    std::optional<size_t> bump()
+    std::optional<size_t> next_result()
     {
         auto it = std::ranges::begin(generator);
         if (it == std::ranges::end(generator))

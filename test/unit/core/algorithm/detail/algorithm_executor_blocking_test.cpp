@@ -96,7 +96,7 @@ TYPED_TEST(algorithm_executor_blocking_test, type_deduction)
     EXPECT_FALSE(exec.is_eof());
 }
 
-TYPED_TEST(algorithm_executor_blocking_test, bump)
+TYPED_TEST(algorithm_executor_blocking_test, next_result)
 {
     using algorithm_t = typename algorithm_type_for_input<typename TestFixture::sequence_pairs_t &>::type;
     using alignment_executor_t =
@@ -107,12 +107,12 @@ TYPED_TEST(algorithm_executor_blocking_test, bump)
 
     alignment_executor_t exec{this->sequence_pairs, algorithm_t{dummy_alignment{}}};
 
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_FALSE(static_cast<bool>(exec.bump()));
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_FALSE(static_cast<bool>(exec.next_result()));
 }
 
 TYPED_TEST(algorithm_executor_blocking_test, move_assignment)
@@ -129,14 +129,14 @@ TYPED_TEST(algorithm_executor_blocking_test, move_assignment)
 
     exec_move_assigned = std::move(exec);
 
-    EXPECT_EQ(exec_move_assigned.bump().value(), 7u);
-    EXPECT_EQ(exec_move_assigned.bump().value(), 7u);
-    EXPECT_EQ(exec_move_assigned.bump().value(), 7u);
+    EXPECT_EQ(exec_move_assigned.next_result().value(), 7u);
+    EXPECT_EQ(exec_move_assigned.next_result().value(), 7u);
+    EXPECT_EQ(exec_move_assigned.next_result().value(), 7u);
 
     alignment_executor_t exec_move_constructed{std::move(exec_move_assigned)};
-    EXPECT_EQ(exec_move_constructed.bump().value(), 7u);
-    EXPECT_EQ(exec_move_constructed.bump().value(), 7u);
-    EXPECT_FALSE(static_cast<bool>(exec_move_constructed.bump()));
+    EXPECT_EQ(exec_move_constructed.next_result().value(), 7u);
+    EXPECT_EQ(exec_move_constructed.next_result().value(), 7u);
+    EXPECT_FALSE(static_cast<bool>(exec_move_constructed.next_result()));
 }
 
 TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pair_view)
@@ -149,8 +149,8 @@ TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pair_view)
                                                                             TypeParam>;
 
     alignment_executor_t exec{v, algorithm_t{dummy_alignment{}}};
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_FALSE(static_cast<bool>(exec.bump()));
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_FALSE(static_cast<bool>(exec.next_result()));
 }
 
 TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pair_view)
@@ -163,8 +163,8 @@ TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pair_view)
                                                                             TypeParam>;
 
     alignment_executor_t exec{std::views::single(this->sequence_pair), algorithm_t{dummy_alignment{}}};
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_FALSE(static_cast<bool>(exec.bump()));
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_FALSE(static_cast<bool>(exec.next_result()));
 }
 
 TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pairs)
@@ -176,12 +176,12 @@ TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pairs)
                                                                             TypeParam>;
 
     alignment_executor_t exec{this->sequence_pairs, algorithm_t{dummy_alignment{}}};
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_FALSE(static_cast<bool>(exec.bump()));
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_FALSE(static_cast<bool>(exec.next_result()));
 }
 
 TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pairs_view)
@@ -194,12 +194,12 @@ TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pairs_view)
                                                                             TypeParam>;
 
     alignment_executor_t exec{this->sequence_pairs | seqan3::views::persist, algorithm_t{dummy_alignment{}}};
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_FALSE(static_cast<bool>(exec.bump()));
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_FALSE(static_cast<bool>(exec.next_result()));
 }
 
 TYPED_TEST(algorithm_executor_blocking_test, empty_result_bucket)
@@ -213,9 +213,9 @@ TYPED_TEST(algorithm_executor_blocking_test, empty_result_bucket)
     this->sequence_pairs[3].first = "";
     alignment_executor_t exec{this->sequence_pairs, algorithm_t{dummy_alignment{}}};
 
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_EQ(exec.bump().value(), 7u);
-    EXPECT_FALSE(static_cast<bool>(exec.bump()));
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_EQ(exec.next_result().value(), 7u);
+    EXPECT_FALSE(static_cast<bool>(exec.next_result()));
 }

@@ -43,7 +43,7 @@ namespace seqan3::detail
  *
  * This alignment executor provides an additional buffer over the computed alignments to allow
  * a two-way execution flow. The alignment results can then be accessed in an order-preserving manner using the
- * blocking_algorithm_executor::bump() member function.
+ * seqan3::detail::algorithm_executor_blocking::next_result() member function.
  *
  * ### Bucket structure
  *
@@ -190,23 +190,22 @@ public:
 
     //!}
 
-    /*!\name Get area
-     * \{
-     */
-    /*!\brief Returns the current alignment result in the buffer and advances the buffer to the next position.
-     * \returns A std::optional that either contains a reference to the underlying value or is empty iff the
+    /*!\brief Returns the next available algorithm result.
+     * \returns A std::optional that either contains the next algorithm result or is empty, i.e. the
      *          underlying resource has been completely consumed.
      *
      * \details
      *
-     * If there is no available input in the result buffer anymore, this function triggers an underflow to fill
-     * the buffer with the next alignments.
+     * If there is no algorithm result available anymore the buffer will be refilled until either there is a new
+     * result available or the end of the underlying resource was reached.
+     * This operation is blocking such that the next result is only available after all algorithm invocations
+     * triggered during seqan3::detail::algorithm_executor_blocking::underflow have finished.
      *
      * ### Exception
      *
      * Throws std::bad_function_call if the algorithm was not set.
      */
-    std::optional<value_type> bump()
+    std::optional<value_type> next_result()
     {
         underflow_status status;
         // Each invocation of the algorithm might produce zero results (e.g. a search might not find a query)
@@ -223,7 +222,6 @@ public:
         next_buffer_iterator(); // Go to next buffered value
         return element;
     }
-    //!\}
 
     /*!\name Miscellaneous
      * \{
