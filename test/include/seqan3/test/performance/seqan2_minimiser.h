@@ -4,15 +4,11 @@
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
-
 /*!\file
  * \author Mitra Darvish <mitra.darvish AT fu-berlin.de>
  * \brief Provides a SeqAn2 minimiser hash.
  */
- 
 #pragma once
-
-#include <seqan3/core/platform.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
 #include <seqan/seq_io.h>
@@ -28,16 +24,7 @@ struct bits { uint64_t v; };
 //!\brief Strong type for passing number of hash functions.
 struct hashes { uint64_t v; };
 
-//!\brief Whether to use xor for computing the hash value.
-enum use_xor : bool
-{
-    //!\brief Do not use xor.
-    no,
-    //!\brief Use xor.
-    yes
-};
-
-template<typename shape_t, use_xor do_xor = use_xor::yes>
+template<typename shape_t>
 class minimiser
 {
 private:
@@ -67,7 +54,6 @@ private:
     //!\brief Stores the k-mer hashes of the reverse complement strand.
     std::vector<uint64_t> reverse_hashes;
 
-
 public:
 
     //!\brief Stores the hashes of the minimisers.
@@ -85,30 +71,14 @@ public:
     ~minimiser() = default;                                       //!< Defaulted
 
     /*!\brief Constructs a minimiser from given k-mer, window size and a seed.
-     * \param[in] w_    The window size.
-     * \param[in] k_    The k-mer size.
-     * \param[in] seed_ The seed to use. Default: 0x8F3F73B5CF1C9ADE.
+     * \param[in] w_     The window size.
+     * \param[in] k_     The k-mer size.
+     * \param[in] shape_ The shape to use.
+     * \param[in] seed_  The seed to use. Default: 0x8F3F73B5CF1C9ADE.
      */
-    minimiser(window const w_, kmer const k_, uint64_t const seed_ = 0x8F3F73B5CF1C9ADE) :
-        w{w_.v}, k{k_.v}, seed{seed_}
-    {
-        seqan::resize(forward_shape, k);
-        seqan::resize(reverse_shape, k);
-    }
-
-    /*!\brief Resize the minimiser.
-     * \param[in] w_    The new window size.
-     * \param[in] k_    The new k-mer size.
-     * \param[in] seed_ The new seed to use. Default: 0x8F3F73B5CF1C9ADE.
-     */
-     void resize(window const w_, kmer const k_, shape_t new_shape, uint64_t const seed_ = 0x8F3F73B5CF1C9ADE)
-   {
-       w = w_.v;
-       k = k_.v;
-       seed = seed_;
-       forward_shape = new_shape;
-       reverse_shape = new_shape;
-   }
+    minimiser(window const w_, kmer const k_, shape_t shape_, uint64_t const seed_ = 0x8F3F73B5CF1C9ADE) :
+        w{w_.v}, k{k_.v}, seed{seed_}, forward_shape{shape_}, reverse_shape{shape_}
+    { }
 
     void compute(text_t const & text)
     {
@@ -131,13 +101,10 @@ public:
 
         // Compute all k-mer hashes for both forward and reverse strand.
 
-        // Helper lambda for xor'ing values depending on `do_xor`.
+        // Helper lambda for xor'ing values.
         auto hash_impl = [this] (uint64_t const val)
         {
-            if constexpr(do_xor)
-                return val ^ seed;
-            else
-                return val;
+            return val ^ seed;
         };
 
         forward_hashes.reserve(possible_kmers);
@@ -174,7 +141,6 @@ public:
         minimiser_hash.push_back(std::get<0>(*min));
         minimiser_begin.push_back(std::get<1>(*min));
         minimiser_end.push_back(std::get<2>(*min));
-
 
         // For the following windows, we remove the first window k-mer (is now not in window) and add the new k-mer
         // that results from the window shifting
@@ -216,6 +182,5 @@ public:
         }
         return;
     }
-
 };
 #endif // SEQAN3_HAS_SEQAN2

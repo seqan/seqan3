@@ -118,8 +118,7 @@ void compute_minimisers(benchmark::State & state)
             else
                 shape_ = make_gapped_shape_seqan2(k);
 
-            minimiser<decltype(shape_)> seqan_minimiser;
-            seqan_minimiser.resize(window{w}, kmer{k}, shape_);
+            minimiser<decltype(shape_)> seqan_minimiser(window{w}, kmer{k}, shape_);
             seqan_minimiser.compute(seqan2_seq);
 
             for (auto h : seqan_minimiser.minimiser_hash)
