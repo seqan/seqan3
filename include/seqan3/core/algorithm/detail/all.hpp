@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link execution pairwise execution submodule \endlink.
+ * \brief Meta-header for the detail functionality of core algorithm.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -14,10 +14,3 @@
 
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/core/algorithm/detail/execution_handler_sequential.hpp>
-
-//!\cond DEV
-/*!\defgroup execution Execution
- * \ingroup pairwise_alignment
- * \brief Provides execution handler and executors for pairwise alignments.
- */
-//!\endcond
