@@ -23,6 +23,7 @@
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
 #include <seqan3/alignment/configuration/align_config_vectorise.hpp>
+#include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
@@ -31,6 +32,7 @@
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/type_traits/function.hpp>
+#include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/zip.hpp>
@@ -83,6 +85,12 @@ template <typename configuration_t>
 struct alignment_configuration_traits
 {
 private:
+    //!\brief Transforms integral types to unsigned types and chooses the minimal viable uint for floating point types.
+    template <arithmetic score_t>
+    using select_scalar_index_t = lazy_conditional_t<std::integral<score_t>,
+                                                     lazy<std::make_unsigned_t, score_t>,
+                                                     min_viable_uint_t<1ull << (sizeof_bits<score_t> - 1)>>;
+
     //!\brief Helper function to determine the alignment result type.
     static constexpr auto determine_alignment_result_type() noexcept
     {
@@ -133,6 +141,14 @@ public:
     using trace_type = std::conditional_t<is_vectorised, simd_type_t<original_score_type>, trace_directions>;
     //!\brief The alignment result type if present. Otherwise seqan3::detail::empty_type.
     using alignment_result_type = decltype(determine_alignment_result_type());
+    //!\brief The type of the matrix index.
+    using matrix_index_type = std::conditional_t<is_vectorised,
+                                                 simd_type_t<select_scalar_index_t<original_score_type>>,
+                                                 size_t>;
+    //!\brief The type of the matrix coordinate.
+    using matrix_coordinate_type = lazy_conditional_t<is_vectorised,
+                                                      lazy<simd_matrix_coordinate, matrix_index_type>,
+                                                      matrix_coordinate>;
 
     //!\brief The number of alignments that can be computed in one simd vector.
     static constexpr size_t alignments_per_vector = [] () constexpr
