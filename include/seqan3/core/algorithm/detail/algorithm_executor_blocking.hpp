@@ -84,11 +84,11 @@ private:
     using bucket_iterator_type = std::ranges::iterator_t<bucket_type>;
     //!\}
 
-    //!\brief Return status for seqan3::detail::blocking_algorithm_executor::underflow.
-    enum underflow_status
+    //!\brief Return status for seqan3::detail::algorithm_executor_blocking::fill_buffer.
+    enum fill_status
     {
         non_empty_buffer, //!< The buffer is not fully consumed yet and contains at least one element.
-        empty_buffer, //!< The buffer is empty after calling underflow.
+        empty_buffer, //!< The buffer is empty after calling fill_buffer.
         end_of_resource //!< The end of the resource was reached.
     };
 
@@ -199,7 +199,7 @@ public:
      * If there is no algorithm result available anymore the buffer will be refilled until either there is a new
      * result available or the end of the underlying resource was reached.
      * This operation is blocking such that the next result is only available after all algorithm invocations
-     * triggered during seqan3::detail::algorithm_executor_blocking::underflow have finished.
+     * triggered during seqan3::detail::algorithm_executor_blocking::fill_buffer have finished.
      *
      * ### Exception
      *
@@ -207,15 +207,15 @@ public:
      */
     std::optional<value_type> next_result()
     {
-        underflow_status status;
+        fill_status status;
         // Each invocation of the algorithm might produce zero results (e.g. a search might not find a query)
         // this repeats the algorithm until it produces the first result or the input resource was consumed.
-        do { status = underflow(); } while (status == underflow_status::empty_buffer);
+        do { status = fill_buffer(); } while (status == fill_status::empty_buffer);
 
-        if (status == underflow_status::end_of_resource)
+        if (status == fill_status::end_of_resource)
             return {std::nullopt};
 
-        assert(status == underflow_status::non_empty_buffer);
+        assert(status == fill_status::non_empty_buffer);
         assert(buffer_iterator != bucket_iterator->end());
 
         std::optional<value_type> element = std::ranges::iter_move(buffer_iterator);
@@ -234,19 +234,14 @@ public:
     //!\}
 
 private:
-
-    /*!\name Get area
-     * \{
-     */
-
-    //!\brief Fills pre-assigned buckets (one bucket = results of one alignment) with new alignment results.
-    underflow_status underflow()
+    //!\brief Fills the buffer by storing the results of an algorithm invocation into a pre-assigned bucket.
+    fill_status fill_buffer()
     {
         if (!is_buffer_empty())  // Not everything consumed yet.
-            return underflow_status::non_empty_buffer;
+            return fill_status::non_empty_buffer;
 
         if (is_eof())  // Case: reached end of resource.
-            return underflow_status::end_of_resource;
+            return fill_status::end_of_resource;
 
         // Reset the buckets and the bucket iterator
         reset_buckets();
@@ -266,11 +261,10 @@ private:
         find_next_non_empty_bucket();
 
         if (is_buffer_empty())
-            return underflow_status::empty_buffer;
+            return fill_status::empty_buffer;
 
-        return underflow_status::non_empty_buffer;
+        return fill_status::non_empty_buffer;
     }
-    //!\}
 
     /*!\name Miscellaneous
      * \{
@@ -289,7 +283,7 @@ private:
      * \details
      *
      * Clears all buckets and sets the bucket iterator to the first iterator, such that the allocated memory for each
-     * bucket can be reused between invocations of seqan3::detail::blocking_algorithm_executor::underflow.
+     * bucket can be reused between invocations of seqan3::detail::algorithm_executor_blocking::fill_buffer.
      */
     void reset_buckets()
     {
