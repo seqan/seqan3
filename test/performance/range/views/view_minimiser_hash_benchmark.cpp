@@ -39,11 +39,11 @@ inline seqan3::shape make_gapped_shape(size_t const k)
 
 static void arguments(benchmark::internal::Benchmark* b)
 {
-    for (int32_t sequence_length : {1'000, 50'000, /*1'000'000*/})
+    for (int32_t sequence_length : {50'000, /*1'000'000*/})
     {
         for (int32_t k : {8, /*16, 24,*/ 30})
         {
-            for (int32_t w : {k + 5, k + 10, k + 20})
+            for (int32_t w : {k + 5, k + 20})
             {
                 b->Args({sequence_length, k, w});
             }
