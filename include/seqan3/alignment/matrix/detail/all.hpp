@@ -20,3 +20,5 @@
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_proxy.hpp>
+#include <seqan3/alignment/matrix/detail/coordinate_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>
