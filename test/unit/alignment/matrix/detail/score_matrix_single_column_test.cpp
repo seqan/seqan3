@@ -36,7 +36,7 @@ struct iterator_fixture<matrix_iterator_t> : public ::testing::Test
         std::string seq1 = "abc";
         std::string seq2 = "abcd";
 
-        test_range.reset_matrix(seq1, seq2);
+        test_range.resize(seqan3::detail::column_index_type<size_t>{4}, seqan3::detail::row_index_type<size_t>{5});
     }
 
     template <typename actual_column_t, typename expected_column_t>

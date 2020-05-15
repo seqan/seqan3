@@ -16,6 +16,7 @@
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
+#include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/zip.hpp>
@@ -57,13 +58,13 @@ private:
     class matrix_iterator;
 
     //!\brief The column over the optimal scores.
-    physical_column_t m_optimal_column{};
+    physical_column_t optimal_column{};
     //!\brief The column over the horizontal gap scores.
-    physical_column_t m_horizontal_column{};
+    physical_column_t horizontal_column{};
     //!\brief The virtual column over the vertical gap scores.
-    virtual_column_t m_vertical_column{};
+    virtual_column_t vertical_column{};
     //!\brief The number of columns for this matrix.
-    size_t m_number_of_columns{};
+    size_t number_of_columns{};
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -77,29 +78,38 @@ public:
     ~score_matrix_single_column() = default; //!< Defaulted.
     //!\}
 
-    /*!\brief Resets the matrix dimensions given by two sequences.
-     * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
-     * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.
+    /*!\brief Resizes the matrix.
+     * \tparam column_index_t The column index type; must model std::integral.
+     * \tparam row_index_t The row index type; must model std::integral.
      *
-     * \param[in] sequence1 The first sequence.
-     * \param[in] sequence2 The second sequence.
+     * \param[in] number_of_columns The number of columns for this matrix.
+     * \param[in] number_of_rows The number of rows for this matrix.
      *
      * \details
      *
-     * Resizes the optimal and the horizontal score column to the new dimensions given by the sizes of the
-     * two sequences. The number of columns is set to the size of sequence1 plus 1 for the initialisation and
-     * the number of rows is set to the size of sequence2 plus 1 for the initialisation as well.
+     * Resizes the optimal and the horizontal score column to the given number of rows and stores the number of
+     * columns to created a counted iterator over the matrix columns.
+     * Note the alignment matrix requires the number of columns and rows to be one bigger than the size of sequence1,
+     * respectively sequence2.
      * Reallocation happens only if the new column size exceeds the current capacity of the optimal and horizontal
      * score column. The underlying vectors will not be cleared during the reset.
+     *
+     * ### Complexity
+     *
+     * Linear in the number of rows.
+     *
+     * ### Exception
+     *
+     * Basic exception guarantee. Might throw std::bad_alloc on resizing the internal columns.
      */
-    template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
-    void reset_matrix(sequence1_t && sequence1, sequence2_t && sequence2)
+    template <std::integral column_index_t, std::integral row_index_t>
+    void resize(column_index_type<column_index_t> const number_of_columns,
+                row_index_type<row_index_t> const number_of_rows)
     {
-        m_number_of_columns = std::ranges::distance(sequence1) + 1;
-        size_t number_of_rows = std::ranges::distance(sequence2) + 1;
-        m_optimal_column.resize(number_of_rows);
-        m_horizontal_column.resize(number_of_rows);
-        m_vertical_column = views::repeat_n(score_t{}, number_of_rows);
+        this->number_of_columns = number_of_columns.get();
+        optimal_column.resize(number_of_rows.get());
+        horizontal_column.resize(number_of_rows.get());
+        vertical_column = views::repeat_n(score_t{}, number_of_rows.get());
     }
 
     /*!\name Iterators
@@ -108,19 +118,20 @@ public:
     //!\brief Returns the iterator pointing to the first column.
     matrix_iterator begin()
     {
-        return matrix_iterator{*this};
+        return matrix_iterator{*this, 0u};
     }
+
     //!\brief This score matrix is not const-iterable.
     matrix_iterator begin() const = delete;
 
-    //!\brief Returns a default sentinel indicating the end of the matrix.
-    std::ranges::default_sentinel_t end()
+    //!\brief Returns the iterator pointing behind the last column.
+    matrix_iterator end()
     {
-        return std::ranges::default_sentinel;
+        return matrix_iterator{*this, number_of_columns};
     }
 
     //!\brief This score matrix is not const-iterable.
-    std::ranges::default_sentinel_t end() const = delete;
+    matrix_iterator end() const = delete;
     //!\}
 };
 
@@ -153,11 +164,9 @@ private:
     });
 
     //!\brief The pointer to the underlying matrix.
-    score_matrix_single_column * m_host_ptr{nullptr};
+    score_matrix_single_column * host_ptr{nullptr};
     //!\brief The current column index.
-    size_t m_current_column{};
-    //!\brief The column index of the column behind the last one.
-    size_t m_end_column{};
+    size_t current_column_id{};
 
 public:
     /*!\name Associated types
@@ -188,20 +197,21 @@ public:
     /*!\brief Initialises the iterator from the underlying matrix.
      *
      * \param[in] host_matrix The underlying matrix.
+     * \param[in] initial_column_id The initial column index.
      */
-    explicit matrix_iterator(score_matrix_single_column & host_matrix) noexcept :
-        m_host_ptr{std::addressof(host_matrix)},
-        m_end_column{m_host_ptr->m_number_of_columns}
+    explicit matrix_iterator(score_matrix_single_column & host_matrix, size_t const initial_column_id) noexcept :
+        host_ptr{std::addressof(host_matrix)},
+        current_column_id{initial_column_id}
     {}
     //!\}
 
-    /*!\name Access operators
+    /*!\name Element access
      * \{
      */
     //!\brief Returns the range over the current column.
     reference operator*() const
     {
-        return views::zip(m_host_ptr->m_optimal_column, m_host_ptr->m_horizontal_column, m_host_ptr->m_vertical_column)
+        return views::zip(host_ptr->optimal_column, host_ptr->horizontal_column, host_ptr->vertical_column)
              | transform_to_affine_cell;
     }
     //!\}
@@ -212,7 +222,7 @@ public:
     //!\brief Move `this` to the next column.
     matrix_iterator & operator++()
     {
-        ++m_current_column;
+        ++current_column_id;
         return *this;
     }
 
@@ -226,28 +236,16 @@ public:
     /*!\name Comparison operators
      * \{
      */
-    //!\brief Compares the matrix iterator with the sentinel.
-    friend bool operator==(matrix_iterator const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    //!\brief Tests whether `lhs == rhs`.
+    friend bool operator==(matrix_iterator const & lhs, matrix_iterator const & rhs) noexcept
     {
-        return lhs.m_current_column == lhs.m_end_column;
+        return lhs.current_column_id == rhs.current_column_id;
     }
 
-    //!\brief Compares the matrix iterator with the sentinel.
-    friend bool operator==(std::ranges::default_sentinel_t const & lhs, matrix_iterator const & rhs) noexcept
-    {
-        return rhs == lhs;
-    }
-
-    //!\brief Compares the matrix iterator with the sentinel.
-    friend bool operator!=(matrix_iterator const & lhs, std::ranges::default_sentinel_t const & rhs) noexcept
+    //!\brief Tests whether `lhs != rhs`.
+    friend bool operator!=(matrix_iterator const & lhs, matrix_iterator const & rhs) noexcept
     {
         return !(lhs == rhs);
-    }
-
-    //!\brief Compares the matrix iterator with the sentinel.
-    friend bool operator!=(std::ranges::default_sentinel_t const & lhs, matrix_iterator const & rhs) noexcept
-    {
-        return rhs != lhs;
     }
     //!\}
 };
