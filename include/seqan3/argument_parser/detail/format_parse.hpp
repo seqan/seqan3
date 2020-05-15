@@ -202,7 +202,8 @@ private:
     }
 
     /*!\brief Finds the position of a short/long identifier in format_parse::argv.
-     *
+     * \tparam id_type The identifier type; must be either of type `char` if it denotes a short identifier or
+     *                 std::string if it denotes a long identifier.
      * \param[in] begin_it The iterator where to start the search of the identifier.
      *                     Note that the end iterator is kept as a member variable.
      * \param[in] id       The identifier to search for (must not contain dashes).
@@ -210,8 +211,16 @@ private:
      *          the list pointed to by begin_t. If the list does not contain the
      *          identifier `id`, the member variable `end_of_options_it` is returned.
      *
-     * Note: The `id` is compared to the prefix of each value in the list, such
-     *       that "-idValue" arguments are correctly identified.
+     * \details
+     *
+     * **Valid short-id value pairs are: `-iValue`, `-i=Value`, or `-i Value`**
+     * If the `id` passed to this function is of type `char`, it is assumed to be a short identifier.
+     * The `id` is found by comparing the prefix of every argument in argv to the `id` prepended with a single `-`.
+     *
+     * **Valid long id value pairs are: `--id=Value`, `--id Value`**.
+     * If the `id` passed to this function is of type `std::string`, it is assumed to be a long identifier.
+     * The `id` is found by comparing every argument in argv to `id` prepended with two dashes (`--`)
+     * or a prefix of such followed by the equal sign `=`.
      */
     template <typename id_type>
     std::vector<std::string>::iterator find_option_id(std::vector<std::string>::iterator const begin_it, id_type const & id)
@@ -220,13 +229,22 @@ private:
             return end_of_options_it;
 
         return (std::find_if(begin_it, end_of_options_it,
-            [&] (const std::string & v)
+            [&] (std::string const & current_arg)
             {
-                size_t id_size{(prepend_dash(id)).size()};
-                if (v.size() < id_size)
-                    return false; // cannot be the correct identifier
+                std::string full_id = prepend_dash(id);
 
-                return v.substr(0, id_size) == prepend_dash(id); // check if prefix of v is the same
+                if constexpr (std::same_as<id_type, char>) // short id
+                {
+                    // check if current_arg starts with "-o", i.e. it correctly identifies all short notations:
+                    // "-ovalue", "-o=value", and "-o value".
+                    return current_arg.substr(0, full_id.size()) == full_id;
+                }
+                else
+                {
+                    // only "--opt Value" or "--opt=Value" are valid
+                    return current_arg.substr(0, full_id.size()) == full_id && // prefix is the same
+                           (current_arg.size() == full_id.size() || current_arg[full_id.size()] == '='); // space or `=`
+                }
             }));
     }
 
