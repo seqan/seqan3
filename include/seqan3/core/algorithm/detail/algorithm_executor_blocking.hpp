@@ -14,18 +14,12 @@
 
 #include <functional>
 #include <optional>
+#include <seqan3/std/ranges>
 #include <type_traits>
 
-#include <seqan3/alignment/pairwise/alignment_range.hpp>
-#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/algorithm/detail/execution_handler_parallel.hpp>
 #include <seqan3/core/algorithm/detail/execution_handler_sequential.hpp>
 #include <seqan3/core/parallel/execution.hpp>
-#include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/views/chunk.hpp>
-#include <seqan3/range/views/type_reduce.hpp>
-#include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -167,9 +161,9 @@ public:
         requires is_execution_policy_v<exec_policy_t>
     //!\endcond
     algorithm_executor_blocking(resource_t resource,
-                               algorithm_t algorithm,
+                                algorithm_t algorithm,
                                 algorithm_result_t const SEQAN3_DOXYGEN_ONLY(result) = algorithm_result_t{},
-                               exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
+                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
         resource{std::views::all(resource)},
         resource_it{std::ranges::begin(this->resource)},
         algorithm{std::move(algorithm)}
