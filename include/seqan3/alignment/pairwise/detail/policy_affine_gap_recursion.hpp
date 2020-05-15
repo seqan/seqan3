@@ -41,7 +41,7 @@ namespace seqan3::detail
 template <typename alignment_configuration_t>
 class policy_affine_gap_recursion
 {
-private:
+protected:
     //!\brief The configuration traits type.
     using traits_type = alignment_configuration_traits<alignment_configuration_t>;
     //!\brief The configured score type.
@@ -49,11 +49,10 @@ private:
     //!\brief The affine cell type returned by the functions.
     using affine_cell_type = affine_cell_proxy<std::tuple<score_type, score_type, score_type>>;
 
-protected:
     //!\brief The score for a gap extension.
-    score_type m_gap_extension_score{};
+    score_type gap_extension_score{};
     //!\brief The score for a gap opening including the gap extension.
-    score_type m_gap_open_score{};
+    score_type gap_open_score{};
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -77,10 +76,11 @@ protected:
     explicit policy_affine_gap_recursion(alignment_configuration_t const & config)
     {
         // Get the gap scheme from the config or choose -1 and -10 as default.
-        auto && tmp_scheme = config.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}, gap_open_score{-10}});
+        auto && selected_gap_scheme = config.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1},
+                                                                                          seqan3::gap_open_score{-10}});
 
-        m_gap_extension_score = static_cast<score_type>(tmp_scheme.get_gap_score());
-        m_gap_open_score = static_cast<score_type>(tmp_scheme.get_gap_open_score()) + m_gap_extension_score;
+        gap_extension_score = static_cast<score_type>(selected_gap_scheme.get_gap_score());
+        gap_open_score = static_cast<score_type>(selected_gap_scheme.get_gap_open_score()) + gap_extension_score;
     }
     //!\}
 
@@ -116,9 +116,9 @@ protected:
         diagonal_score = (diagonal_score < vertical_score) ? vertical_score : diagonal_score;
         diagonal_score = (diagonal_score < horizontal_score) ? horizontal_score : diagonal_score;
 
-        score_type tmp = diagonal_score + m_gap_open_score;
-        vertical_score += m_gap_extension_score;
-        horizontal_score += m_gap_extension_score;
+        score_type tmp = diagonal_score + gap_open_score;
+        vertical_score += gap_extension_score;
+        horizontal_score += gap_extension_score;
 
         // store the vertical_score and horizontal_score value in the next path
         vertical_score = (vertical_score < tmp) ? tmp : vertical_score;
@@ -139,7 +139,7 @@ protected:
      */
     affine_cell_type initialise_origin_cell() const noexcept
     {
-        return {0, m_gap_open_score, m_gap_open_score};
+        return {score_type{}, gap_open_score, gap_open_score};
     }
 
     /*!\brief Initialises a cell of the first alignment matrix column.
@@ -162,8 +162,8 @@ protected:
     //!\endcond
     affine_cell_type initialise_first_column_cell(affine_cell_t previous_cell) const noexcept
     {
-        score_type new_vertical = previous_cell.vertical_score() + m_gap_extension_score;
-        return {previous_cell.vertical_score(), previous_cell.vertical_score() + m_gap_open_score, new_vertical};
+        score_type new_vertical = previous_cell.vertical_score() + gap_extension_score;
+        return {previous_cell.vertical_score(), previous_cell.vertical_score() + gap_open_score, new_vertical};
     }
 
     /*!\brief Initialises the first cell of a alignment matrix column.
@@ -186,10 +186,10 @@ protected:
     //!\endcond
     affine_cell_type initialise_first_row_cell(affine_cell_t previous_cell) const noexcept
     {
-        score_type new_horizontal_score = previous_cell.horizontal_score() + m_gap_extension_score;
+        score_type new_horizontal_score = previous_cell.horizontal_score() + gap_extension_score;
         return {previous_cell.horizontal_score(),
                 new_horizontal_score,
-                previous_cell.horizontal_score() + m_gap_open_score};
+                previous_cell.horizontal_score() + gap_open_score};
     }
 };
 } // namespace seqan3::detail
