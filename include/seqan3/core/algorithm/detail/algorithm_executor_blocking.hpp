@@ -74,14 +74,14 @@ private:
     /*!\name Buffer types
      * \{
      */
-    //!\brief The internal buffer.
-    using buffer_type = std::vector<value_t>;
-    //!\brief The type of the bucket container.
-    using bucket_type = std::vector<buffer_type>;
+    //!\brief The type of a bucket storing the results produced by a single algorithm invocation.
+    using bucket_type = std::vector<value_t>;
+    //!\brief The iterator type of a bucket.
+    using bucket_iterator_type = std::ranges::iterator_t<bucket_type>;
+    //!\brief The type of the buffer.
+    using buffer_type = std::vector<bucket_type>;
     //!\brief The iterator type of the buffer.
     using buffer_iterator_type = std::ranges::iterator_t<buffer_type>;
-    //!\brief The iterator type over the bucket container.
-    using bucket_iterator_type = std::ranges::iterator_t<bucket_type>;
     //!\}
 
     //!\brief Return status for seqan3::detail::algorithm_executor_blocking::fill_buffer.
@@ -181,11 +181,11 @@ public:
         kernel{std::move(fn)}
     {
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
-            bucket_vector_size = std::ranges::distance(resource);
+            buffer_size = std::ranges::distance(resource);
 
-        bucket_vector.resize(bucket_vector_size);
-        bucket_iterator = bucket_vector.end();
-        bucket_end = bucket_vector.end();
+        buffer.resize(buffer_size);
+        buffer_it = buffer.end();
+        buffer_end_it = buffer_it;
     }
 
     //!}
@@ -216,11 +216,11 @@ public:
             return {std::nullopt};
 
         assert(status == fill_status::non_empty_buffer);
-        assert(buffer_iterator != bucket_iterator->end());
+        assert(bucket_it != buffer_it->end());
 
-        std::optional<value_type> element = std::ranges::iter_move(buffer_iterator);
+        std::optional<value_type> result = std::ranges::iter_move(bucket_it);
         next_buffer_iterator(); // Go to next buffered value
-        return element;
+        return result;
     }
 
     /*!\name Miscellaneous
@@ -243,15 +243,15 @@ private:
         if (is_eof())  // Case: reached end of resource.
             return fill_status::end_of_resource;
 
-        // Reset the buckets and the bucket iterator
-        reset_buckets();
+        // Reset the buckets and the buffer iterator.
+        reset_buffer();
 
         // Execute the algorithm (possibly asynchronous) and fill the buckets in this pre-assigned order.
-        for (bucket_end = bucket_iterator; bucket_end != bucket_vector.end() && !is_eof(); ++bucket_end, ++resource_it)
+        for (buffer_end_it = buffer_it; buffer_end_it != buffer.end() && !is_eof(); ++buffer_end_it, ++resource_it)
         {
-            exec_handler.execute(kernel, *resource_it, [target_bucket_iterator = bucket_end] (auto && alignment_result)
+            exec_handler.execute(kernel, *resource_it, [target_buffer_it = buffer_end_it] (auto && alignment_result)
             {
-                target_bucket_iterator->push_back(std::move(alignment_result));
+                target_buffer_it->push_back(std::move(alignment_result));
             });
         }
 
@@ -275,59 +275,60 @@ private:
      */
     bool is_buffer_empty() const
     {
-        return bucket_iterator == bucket_end;
+        return buffer_it == buffer_end_it;
     }
 
     /*!\brief Resets the buckets.
      *
      * \details
      *
-     * Clears all buckets and sets the bucket iterator to the first iterator, such that the allocated memory for each
-     * bucket can be reused between invocations of seqan3::detail::algorithm_executor_blocking::fill_buffer.
+     * Clears all buckets and sets the buffer iterator to the first bucket. The buckets are not shrunk such that the
+     * allocated memory for each bucket can be reused between invocations of
+     * seqan3::detail::algorithm_executor_blocking::fill_buffer.
      */
-    void reset_buckets()
+    void reset_buffer()
     {
         // Clear all buckets
-        for (auto & bucket : bucket_vector)
+        for (auto & bucket : buffer)
             bucket.clear();
 
         // Reset the iterator over the buckets.
-        bucket_iterator = bucket_vector.begin();
+        buffer_it = buffer.begin();
     }
 
-    /*!\brief Finds the first non-empty bucket starting from the current bucket iterator.
+    /*!\brief Finds the first non-empty bucket starting from the current position of the buffer iterator.
      *
      * \details
      *
-     * Finds the first non-empty bucket and sets the buffer iterator to the first element of this bucket.
-     * If all buckets are empty, then the bucket iterator is set to the end of the buckets container and the buffer
+     * Finds the first non-empty bucket and sets the bucket iterator to the first element of this bucket.
+     * If all buckets are empty, then the buffer iterator is set to the end of the buffer and the bucket
      * iterator is not modified.
      */
     void find_next_non_empty_bucket()
     {
-        assert(bucket_iterator <= bucket_end);
+        assert(buffer_it <= buffer_end_it);
         // find first buffered bucket that contains at least one element
-        bucket_iterator = std::find_if(bucket_iterator, bucket_end, [] (auto const & buffer)
+        buffer_it = std::find_if(buffer_it, buffer_end_it, [] (auto const & buffer)
         {
             return !buffer.empty();
         });
 
-        if (bucket_iterator != bucket_end)
-            buffer_iterator = bucket_iterator->begin();
+        if (buffer_it != buffer_end_it)
+            bucket_it = buffer_it->begin();
     }
 
-    /*!\brief Moves the buffer iterator to the next available element.
+    /*!\brief Moves the bucket iterator to the next available result.
      *
      * \details
      *
-     * If the current bucket is consumed, then the bucket iterator is incremented and the next non-empty bucket is found
+     * If the current bucket is consumed, then the buffer iterator is incremented and the next non-empty bucket is found
      * by calling seqan3::detail::algorithm_executor_blocking::find_next_non_empty_bucket.
      */
     void next_buffer_iterator()
     {
-        if (++buffer_iterator == bucket_iterator->end())
+        if (++bucket_it == buffer_it->end())
         {
-            ++bucket_iterator;
+            ++buffer_it;
             find_next_non_empty_bucket();
         }
     }
@@ -337,7 +338,7 @@ private:
     void move_initialise(algorithm_executor_blocking && other) noexcept
     {
         kernel = std::move(other.kernel);
-        bucket_vector_size = std::move(other.bucket_vector_size);
+        buffer_size = std::move(other.buffer_size);
         // Get the old resource position.
         auto old_resource_position = std::ranges::distance(std::ranges::begin(other.resource),
                                                            other.resource_it);
@@ -345,21 +346,21 @@ private:
         resource = std::move(other.resource);
         resource_it = std::ranges::next(std::ranges::begin(resource), old_resource_position);
 
-        // Get the old get pointer positions.
-        auto bucket_iterator_position = other.bucket_iterator - other.bucket_vector.begin();
-        auto bucket_end_position = other.bucket_end - other.bucket_vector.begin();
+        // Get the old buffer and bucket iterator positions.
+        auto buffer_it_position = other.buffer_it - other.buffer.begin();
+        auto buffer_end_it_position = other.buffer_end_it - other.buffer.begin();
 
-        std::ptrdiff_t buffer_iterator_position = 0;
-        if (bucket_iterator_position != bucket_end_position)
-            buffer_iterator_position = other.buffer_iterator - other.bucket_iterator->begin();
+        std::ptrdiff_t bucket_it_position = 0;
+        if (buffer_it_position != buffer_end_it_position)
+            bucket_it_position = other.bucket_it - other.buffer_it->begin();
 
-        // Move the buffer and set the get pointer accordingly.
-        bucket_vector = std::move(other.bucket_vector);
-        bucket_iterator = bucket_vector.begin() + bucket_iterator_position;
-        bucket_end = bucket_vector.begin() + bucket_end_position;
+        // Move the buffer and set the buffer and bucket iterator accordingly.
+        buffer = std::move(other.buffer);
+        buffer_it = buffer.begin() + buffer_it_position;
+        buffer_end_it = buffer.begin() + buffer_end_it_position;
 
-        if (bucket_iterator_position != bucket_end_position)
-            buffer_iterator = bucket_iterator->begin() + buffer_iterator_position;
+        if (buffer_it_position != buffer_end_it_position)
+            bucket_it = buffer_it->begin() + bucket_it_position;
     }
     //!\}
 
@@ -373,18 +374,16 @@ private:
     //!\brief Selects the correct alignment to execute.
     alignment_algorithm_t kernel{};
 
-    //!\brief The buffer storing the alignment results.
-    bucket_type bucket_vector{};
-
-    //!\brief The iterator pointing to the current bucket.
-    bucket_iterator_type bucket_iterator{};
-    //!\brief The iterator pointing behind the last bucket (must not be the end of the bucket_vector).
-    bucket_iterator_type bucket_end{};
-
-    //!\brief The buffer iterator pointing to the current result to be processed.
-    buffer_iterator_type buffer_iterator{};
+    //!\brief The buffer storing the algorithm results in buckets.
+    buffer_type buffer{};
+    //!\brief The iterator pointing to the current bucket in the buffer.
+    buffer_iterator_type buffer_it{};
+    //!\brief The iterator pointing behind the last bucket (must not be the end of the buffer).
+    buffer_iterator_type buffer_end_it{};
+    //!\brief The bucket iterator pointing to the next result within the current bucket.
+    bucket_iterator_type bucket_it{};
     //!\brief The end get pointer in the buffer.
-    size_t bucket_vector_size{1};
+    size_t buffer_size{1};
 };
 
 /*!\name Type deduction guides
