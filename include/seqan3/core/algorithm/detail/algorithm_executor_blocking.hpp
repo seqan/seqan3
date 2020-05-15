@@ -34,7 +34,7 @@ namespace seqan3::detail
  * \ingroup execution
  * \tparam resource_t            The underlying range of sequence pairs to be computed; must model
  *                               std::ranges::viewable_range and std::ranges::input_range.
- * \tparam alignment_algorithm_t The alignment algorithm to be invoked on each sequence pair.
+ * \tparam algorithm_t The algorithm to be invoked on the elements of the given resource; must model std::semiregular.
  * \tparam value_t               The value type to buffer results generated from the algorithm; must model
  *                               std::semiregular.
  * \tparam execution_handler_t   The execution handler managing the execution of the alignments.
@@ -53,11 +53,11 @@ namespace seqan3::detail
  * a bucket is allocated for every element of the underlying resource.
  */
 template <std::ranges::viewable_range resource_t,
-          typename alignment_algorithm_t,
+          std::semiregular algorithm_t,
           std::semiregular value_t,
           typename execution_handler_t = execution_handler_sequential>
 //!\cond
-    requires std::ranges::forward_range<resource_t> && std::copy_constructible<alignment_algorithm_t>
+    requires std::ranges::forward_range<resource_t> && std::copy_constructible<algorithm_t>
 //!\endcond
 class algorithm_executor_blocking
 {
@@ -155,7 +155,7 @@ public:
      *                       to seqan3::sequenced_policy.
      *
      * \param[in] resource The underlying resource containing the sequence pairs to align.
-     * \param[in] fn The alignment kernel to invoke on the sequences pairs.
+     * \param[in] algorithm The algorithm to invoke on the elements of the underlying resource.
      * \param[in] buffer_value A dummy object to deduce the type of the underlying buffer value.
      * \param[in] exec Optional execution policy to use. Defaults to seqan3::seq.
      *
@@ -173,12 +173,12 @@ public:
         requires is_execution_policy_v<exec_policy_t>
     //!\endcond
     algorithm_executor_blocking(resource_t resource,
-                               alignment_algorithm_t fn,
+                               algorithm_t algorithm,
                                value_t const SEQAN3_DOXYGEN_ONLY(buffer_value) = value_t{},
                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
         resource{std::views::all(resource)},
         resource_it{std::ranges::begin(this->resource)},
-        kernel{std::move(fn)}
+        algorithm{std::move(algorithm)}
     {
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
             buffer_size = std::ranges::distance(resource);
@@ -249,9 +249,9 @@ private:
         // Execute the algorithm (possibly asynchronous) and fill the buckets in this pre-assigned order.
         for (buffer_end_it = buffer_it; buffer_end_it != buffer.end() && !is_eof(); ++buffer_end_it, ++resource_it)
         {
-            exec_handler.execute(kernel, *resource_it, [target_buffer_it = buffer_end_it] (auto && alignment_result)
+            exec_handler.execute(algorithm, *resource_it, [target_buffer_it = buffer_end_it] (auto && algorithm_result)
             {
-                target_buffer_it->push_back(std::move(alignment_result));
+                target_buffer_it->push_back(std::move(algorithm_result));
             });
         }
 
@@ -337,7 +337,7 @@ private:
     //!\copydetails seqan3::detail::algorithm_executor_blocking::algorithm_executor_blocking(algorithm_executor_blocking && other)
     void move_initialise(algorithm_executor_blocking && other) noexcept
     {
-        kernel = std::move(other.kernel);
+        algorithm = std::move(other.algorithm);
         buffer_size = std::move(other.buffer_size);
         // Get the old resource position.
         auto old_resource_position = std::ranges::distance(std::ranges::begin(other.resource),
@@ -371,8 +371,8 @@ private:
     resource_type resource{};
     //!\brief The iterator over the resource that stores the current state of the executor.
     resource_iterator_type resource_it{};
-    //!\brief Selects the correct alignment to execute.
-    alignment_algorithm_t kernel{};
+    //!\brief The algorithm to invoke.
+    algorithm_t algorithm{};
 
     //!\brief The buffer storing the algorithm results in buckets.
     buffer_type buffer{};
@@ -392,9 +392,9 @@ private:
  */
 
 //!\brief Deduce the type from the provided arguments and set the sequential execution handler.
-template <typename resource_rng_t, typename func_t, std::semiregular value_t>
-algorithm_executor_blocking(resource_rng_t &&, func_t, value_t const &) ->
-    algorithm_executor_blocking<resource_rng_t, func_t, value_t, execution_handler_sequential>;
+template <typename resource_rng_t, std::semiregular algorithm_t, std::semiregular value_t>
+algorithm_executor_blocking(resource_rng_t &&, algorithm_t, value_t const &) ->
+    algorithm_executor_blocking<resource_rng_t, algorithm_t, value_t, execution_handler_sequential>;
 
 //!\}
 } // namespace seqan3::detail
