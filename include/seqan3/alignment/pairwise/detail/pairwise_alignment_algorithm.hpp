@@ -169,7 +169,7 @@ protected:
         this->reset_optimum(); // Reset the tracker for the new alignment computation.
 
         thread_local score_matrix_single_column<int32_t> local_score_matrix{};
-        coordinate_matrix local_index_matrix{};
+        coordinate_matrix<uint32_t> local_index_matrix{};
 
         size_t number_of_columns = std::ranges::distance(sequence1) + 1;
         size_t number_of_rows = std::ranges::distance(sequence2) + 1;
