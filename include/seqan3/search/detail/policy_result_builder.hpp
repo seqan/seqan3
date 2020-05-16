@@ -85,7 +85,8 @@ protected:
      */
     template <typename index_cursor_t, typename configuration_t>
     //!\cond
-        requires search_traits<configuration_t>::search_return_text_position
+        requires search_traits<configuration_t>::search_return_text_position &&
+                 (!search_traits<configuration_t>::search_best_hits)
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {
