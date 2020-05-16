@@ -19,7 +19,7 @@ macro (seqan3_test unit_test_cpp)
     add_executable (${target} ${unit_test_cpp})
     target_link_libraries (${target} seqan3::test::unit)
     if (NOT CMAKE_VERSION VERSION_LESS 3.10) # cmake >= 3.10
-        gtest_discover_tests(${target} TEST_PREFIX "${test_name}::")
+        gtest_discover_tests(${target} TEST_PREFIX "${test_name}::" PROPERTIES TIMEOUT "30")
     else ()
         add_test (NAME "${test_name}" COMMAND ${target})
     endif ()
