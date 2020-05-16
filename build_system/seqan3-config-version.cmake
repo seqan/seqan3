@@ -47,6 +47,10 @@ endif()
 # check that the installed version has the same 32/64bit-ness as the one which is currently searching:
 if(NOT "${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
     math(EXPR installedBits "8 * 8")
-    set(PACKAGE_VERSION "${PACKAGE_VERSION} (${installedBits}bit)")
-    set(PACKAGE_VERSION_UNSUITABLE TRUE)
+    # For some time we set these variables to show that we do not support 32 bit architectures,
+    # but it seems to hard to actively forbid them. Most of the library does build, but some parts
+    # might not.
+    # set(PACKAGE_VERSION "${PACKAGE_VERSION} (${installedBits}bit)")
+    # set(PACKAGE_VERSION_UNSUITABLE TRUE)
+    message (AUTHOR_WARNING "SeqAn3 does not support 32bit architectures; No guarantees; Patches are welcome.")
 endif()
