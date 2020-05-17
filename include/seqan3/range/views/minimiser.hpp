@@ -136,25 +136,13 @@ public:
      *
      * No-throw guarantee.
      */
-    auto end()
-    {
-        return std::ranges::end(urange);
-    }
-
-    //!\copydoc end()
     auto end() const
-    //!\cond
-        requires seqan3::const_iterable_range<urng_t>
-    //!\endcond
     {
-        return std::ranges::end(urange);
+        return std::ranges::default_sentinel;
     }
 
     //!\copydoc end()
     auto cend() const
-    //!\cond
-        requires seqan3::const_iterable_range<urng_t>
-    //!\endcond
     {
         return end();
     }
@@ -171,6 +159,8 @@ private:
     using it_t = std::ranges::iterator_t<rng_t>;
     //!\brief The sentinel type of the underlying range.
     using sentinel_t = std::ranges::sentinel_t<rng_t>;
+    //!\brief The sentinel type of the minimiser_view.
+    using sentinel_type = std::ranges::default_sentinel_t;
 
     template <typename urng2_t>
     friend class window_iterator;
@@ -248,15 +238,15 @@ public:
     //!\{
 
     //!\brief Compare to the sentinel of the underlying range.
-    friend bool operator==(window_iterator const & lhs, sentinel_t const & rhs)
+    friend bool operator==(window_iterator const & lhs, sentinel_type const &)
     {
-        return lhs.window_right == rhs;
+        return lhs.window_right == lhs.urange_end;
     }
 
     //!\brief Compare to the sentinel of the underlying range.
-    friend bool operator==(sentinel_t const & lhs, window_iterator const & rhs)
+    friend bool operator==(sentinel_type const & lhs, window_iterator const & rhs)
     {
-        return lhs == rhs.window_right;
+        return rhs == lhs;
     }
 
     //!\brief Compare to another window_iterator.
@@ -267,13 +257,13 @@ public:
     }
 
     //!\brief Compare to the sentinel of the underlying range.
-    friend bool operator!=(window_iterator const & lhs, sentinel_t const & rhs)
+    friend bool operator!=(window_iterator const & lhs, sentinel_type const & rhs)
     {
         return !(lhs == rhs);
     }
 
     //!\brief Compare to the sentinel of the underlying range.
-    friend bool operator!=(sentinel_t const & lhs, window_iterator const & rhs)
+    friend bool operator!=(sentinel_type const & lhs, window_iterator const & rhs)
     {
         return !(lhs == rhs);
     }
