@@ -286,6 +286,36 @@ public:
     }
     //!\}
 
+    /*!\name Modifiers
+     * \{
+     */
+    /*!\brief Remove a config element from the configuration.
+     * \tparam query_t The config element type to remove from the configuration.
+     * \returns A new configuration object without the config element identified by `query_t`.
+     */
+    template <typename query_t>
+    [[nodiscard]] constexpr auto remove() const
+    //!\cond
+        requires exists<query_t>()
+    //!\endcond
+    {
+        constexpr int index = pack_traits::find<query_t, configs_t...>;
+        return remove_at<index>();
+    }
+
+    //!\overload
+    template <template <typename ...> typename query_t>
+    [[nodiscard]] constexpr auto remove() const
+    //!\cond
+        requires exists<query_t>()
+    //!\endcond
+    {
+        constexpr int index = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke,
+                                                   configs_t...>;
+        return remove_at<index>();
+    }
+    //!\}
+
     /*!\name Pipe operator
      * \{
      */
@@ -510,6 +540,21 @@ private:
         return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
             std::tuple_cat(std::move(static_cast<base_type>(*this)),
             std::tuple{std::move(elem)})};
+    }
+
+    /*!\brief Remove a config element from the configuration.
+     * \tparam index The config element at `index` is removed from the config.
+     * \returns A new configuration object without the config element at `index`.
+     */
+    template <int index>
+    [[nodiscard]] constexpr auto remove_at() const
+    {
+        static_assert((index >= 0) && (index < sizeof...(configs_t)), "Index to remove from config is out of bounds.");
+
+        auto [head, middle] = tuple_split<index>(static_cast<base_type>(*this));
+        auto tail = tuple_pop_front(middle);
+
+        return make_configuration(std::tuple_cat(head, tail));
     }
     //!\}
 };
