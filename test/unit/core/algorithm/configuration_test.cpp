@@ -170,6 +170,31 @@ TEST(configuration, exists_by_type_template)
     EXPECT_FALSE(decltype(cfg)::exists<foo>());
 }
 
+TEST(configuration, remove_by_type)
+{
+    seqan3::configuration<foo, bax, bar> cfg{};
+
+    // remove middle
+    EXPECT_TRUE((std::same_as<decltype(cfg.template remove<bax>()), seqan3::configuration<foo, bar>>));
+    // remove head
+    EXPECT_TRUE((std::same_as<decltype(cfg.template remove<bar>()), seqan3::configuration<foo, bax>>));
+    // remove tail
+    EXPECT_TRUE((std::same_as<decltype(cfg.template remove<foo>()), seqan3::configuration<bax, bar>>));
+
+    seqan3::configuration<foo> single_cfg{};
+    EXPECT_TRUE((std::same_as<decltype(single_cfg.template remove<foo>()), seqan3::configuration<>>));
+}
+
+TEST(configuration, remove_by_type_template)
+{
+    seqan3::configuration<foo, foobar<>, bar> cfg{};
+
+    EXPECT_TRUE((std::same_as<decltype(cfg.template remove<foobar>()), seqan3::configuration<foo, bar>>));
+
+    seqan3::configuration<foobar<>> single_cfg{};
+    EXPECT_TRUE((std::same_as<decltype(single_cfg.template remove<foobar>()), seqan3::configuration<>>));
+}
+
 TEST(configuration, value_or_by_type)
 {
     seqan3::configuration cfg = bax{2.2} | bar{1};
