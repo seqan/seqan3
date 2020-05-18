@@ -50,7 +50,6 @@ private:
     //!\brief Shared storage of the underlying range.
     std::shared_ptr<urng_t> urange;
 
-public:
     /*!\name Associated types
      * \{
      */
@@ -59,6 +58,8 @@ public:
     //!\brief The const_iterator type is equal to the iterator type.
     using const_iterator    = iterator;
     //!\}
+    
+public:
 
     /*!\name Constructors, destructor and assignment
      * \{

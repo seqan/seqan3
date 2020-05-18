@@ -54,6 +54,7 @@ template <std::ranges::random_access_range urng_t, std::ranges::random_access_ra
 class view_interleave : public std::ranges::view_interface<view_interleave<urng_t, inserted_rng_t>>
 {
 private:
+
     //!\brief The underlying range.
     urng_t urange;
     //!\brief The step size for the insertion.
@@ -61,8 +62,8 @@ private:
     //!\brief The range to be inserted into urange.
     inserted_rng_t inserted_range;
 
-    /*!\name Associated types iterator
-     * These associated types are needed in seqan3::detail::random_access_iterator.
+    /*!\name Associated types
+     * \brief These associated types are needed in seqan3::detail::random_access_iterator.
      * \{
      */
     //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be sized.
@@ -78,6 +79,10 @@ private:
     using value_type        = std::ranges::range_value_t<urng_t>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ranges::range_difference_t<urng_t>;
+    //!\brief The iterator type of this view (a random access iterator).
+    using iterator          = detail::random_access_iterator<view_interleave>;
+    //!\brief The const_iterator type is equal to the iterator type.
+    using const_iterator    = detail::random_access_iterator<view_interleave const>;
     //!\}
 
     //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
@@ -85,14 +90,6 @@ private:
     friend class detail::random_access_iterator_base;
 
 public:
-    /*!\name Associated types
-     * \{
-     */
-    //!\brief The iterator type of this view (a random access iterator).
-    using iterator          = detail::random_access_iterator<view_interleave>;
-    //!\brief The const_iterator type is equal to the iterator type.
-    using const_iterator    = detail::random_access_iterator<view_interleave const>;
-    //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{

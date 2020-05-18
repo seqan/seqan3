@@ -435,8 +435,6 @@ private:
         underlying_iterator_type end_it{};
     };
 
-public:
-
     /*!\name Associated types
      * \{
      */
@@ -447,6 +445,8 @@ public:
     using const_iterator    = transformation_trait_or_t<std::type_identity<iterator_type<underlying_range_type const>>,
                                                         void>;
     //!\}
+    
+public:
 
     /*!\name Constructors, destructor and assignment
      * \{

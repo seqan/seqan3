@@ -49,7 +49,7 @@ private:
     small_vector<translation_frames, 6> selected_frames{};
 
     /*!\name Associated types iterator
-     * These associated types are needed in seqan3::detail::random_access_iterator.
+     * \brief These associated types are needed in seqan3::detail::random_access_iterator.
      * \{
      */
     //!\brief The reference_type.
@@ -62,21 +62,15 @@ private:
     using size_type         = std::ranges::range_size_t<std::ranges::range_reference_t<urng_t>>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ranges::range_difference_t<std::ranges::range_reference_t<urng_t>>;
-    //!\}
-
-protected:
-    //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
-    template <typename, typename>
-    friend class detail::random_access_iterator_base;
-
-    /*!\name Associated types
-     * \{
-     */
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = detail::random_access_iterator<view_translate_join>;
     //!\brief The const iterator type of this view (same as iterator, because it's a view).
     using const_iterator    = detail::random_access_iterator<view_translate_join const>;
     //!\}
+
+    //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
+    template <typename, typename>
+    friend class detail::random_access_iterator_base;
 
 public:
 
