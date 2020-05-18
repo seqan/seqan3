@@ -60,7 +60,6 @@ private:
     //!\}
     
 public:
-
     /*!\name Constructors, destructor and assignment
      * \{
      */

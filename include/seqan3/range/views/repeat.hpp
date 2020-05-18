@@ -44,7 +44,6 @@ template <std::copy_constructible value_t>
 class repeat_view : public std::ranges::view_interface<repeat_view<value_t>>
 {
 private:
-
     //!/brief the base type.
     using base_t = std::ranges::view_interface<repeat_view<value_t>>;
 
@@ -163,10 +162,8 @@ private:
     //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
     template <typename parent_type, typename crtp_base>
     friend class detail::random_access_iterator_base;
-    
 
 public:
-
     /*!\name Constructors, destructor and assignment
      * \{
      */

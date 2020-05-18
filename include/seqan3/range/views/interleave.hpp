@@ -54,7 +54,6 @@ template <std::ranges::random_access_range urng_t, std::ranges::random_access_ra
 class view_interleave : public std::ranges::view_interface<view_interleave<urng_t, inserted_rng_t>>
 {
 private:
-
     //!\brief The underlying range.
     urng_t urange;
     //!\brief The step size for the insertion.
@@ -90,7 +89,6 @@ private:
     friend class detail::random_access_iterator_base;
 
 public:
-
     /*!\name Constructors, destructor and assignment
      * \{
      */
