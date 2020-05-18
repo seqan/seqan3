@@ -20,7 +20,7 @@ void foobar(rng_t && range)
     // This delays instantiation of std::ranges::range_size_t<rngt_t> until after the
     // conditional-decision is made:
     using size_type = seqan3::detail::lazy_conditional_t<std::ranges::sized_range<rng_t>,
-                                                         seqan3::detail::lazy<seqan3::size_type_t, rng_t>,
+                                                         seqan3::detail::lazy<std::ranges::range_size_t, rng_t>,
                                                          void>;
 
     // DO SOMETHING with size_type
