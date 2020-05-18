@@ -16,6 +16,8 @@
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser.hpp>
 
+namespace seqan3
+{
 //!\brief strong_type for seed.
 struct seed : seqan3::detail::strong_type<uint64_t, seed>
 {
@@ -27,6 +29,7 @@ struct window_size : seqan3::detail::strong_type<uint32_t, window_size>
 {
     using seqan3::detail::strong_type<uint32_t, window_size>::strong_type;
 };
+} // namespace seqan3
 
 namespace seqan3::detail
 {
