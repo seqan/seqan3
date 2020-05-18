@@ -420,6 +420,9 @@ struct minimiser_fn
      * \returns                         A range of converted values.
      */
     template <std::ranges::range urng_t>
+    //!\cond
+        requires std::convertible_to<std::ranges::range_value_t<urng_t>, uint64_t>
+    //!\endcond
     constexpr auto operator()(urng_t && urange, uint32_t const & window_values_size) const
     {
         static_assert(std::ranges::viewable_range<urng_t>,
