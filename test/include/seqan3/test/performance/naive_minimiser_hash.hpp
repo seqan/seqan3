@@ -60,7 +60,7 @@ struct naive_minimiser_hash_fn
            "The range parameter to views::minimiser_hash cannot be a temporary of a non-view range.");
        static_assert(std::ranges::forward_range<urng_t>,
            "The range parameter to views::minimiser_hash must model std::ranges::forward_range.");
-       static_assert(semialphabet<reference_t<urng_t>>,
+       static_assert(semialphabet<std::ranges::range_reference_t<urng_t>>,
            "The range parameter to views::minimiser_hash must be over elements of seqan3::semialphabet.");
        if (shape.size() > window_size)
            throw std::invalid_argument{"The size of the shape cannot be greater than the window size."};
