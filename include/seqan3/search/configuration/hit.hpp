@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include <variant>
+
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/search/configuration/detail.hpp>
@@ -88,6 +90,69 @@ struct hit_strata : public pipeable_config_element<hit_strata, uint8_t>
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::hit};
+};
+
+/*!\brief A dynamic configuration element to select the search strategy.
+ * \ingroup search_configuration
+ *
+ * todo
+ *
+ * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
+ */
+struct hit : public pipeable_config_element<hit, std::variant<seqan3::detail::hit_all_tag,
+                                                              seqan3::detail::hit_all_best_tag,
+                                                              seqan3::detail::hit_single_best_tag,
+                                                              hit_strata>>
+{
+private:
+    //!\brief A variant including all possible search hit types.
+    using variant_t = std::variant<seqan3::detail::hit_all_tag,
+                                   seqan3::detail::hit_all_best_tag,
+                                   seqan3::detail::hit_single_best_tag,
+                                   hit_strata>;
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    hit() = default; //!< Defaulted.
+    hit(hit const &) = default; //!< Defaulted.
+    hit & operator=(hit const &) = default; //!< Defaulted.
+    hit(hit &&) = default; //!< Defaulted.
+    hit & operator=(hit &&) = default; //!< Defaulted.
+    ~hit() = default; //!< Defaulted.
+
+    /*!\brief Construct from a search strategy, e.g. seqan3::search_cfg::hit_strata.
+     * \tparam option_t The type of search strategy.
+     * \param[in] option The search strategy to select.
+     */
+    template <typename option_t>
+    //!\cond
+        requires seqan3::list_traits::contains<option_t, detail::transfer_template_args_onto_t<variant_t, type_list>>
+    //!\endcond
+    hit(option_t option) : selection{std::move(option)}
+    {}
+
+    /*!\brief Assign from a search strategy, e.g. seqan3::search_cfg::hit_strata.
+     * \tparam option_t The type of search strategy.
+     * \param[in] option The search strategy to select.
+     */
+    template <typename option_t>
+    //!\cond
+        requires seqan3::list_traits::contains<option_t, detail::transfer_template_args_onto_t<variant_t, type_list>>
+    //!\endcond
+    hit & operator=(option_t option)
+    {
+        selection = std::move(option);
+        return *this;
+    }
+    //!\}
+
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::hit};
+
+    //!\brief The selected search strategy.
+    variant_t selection{};
 };
 
 } // namespace seqan3::search_cfg

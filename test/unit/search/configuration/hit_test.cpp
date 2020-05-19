@@ -11,9 +11,10 @@
 #include <seqan3/search/configuration/hit.hpp>
 
 #include "../../core/algorithm/pipeable_config_element_test_template.hpp"
+#include "../../core/algorithm/pipeable_config_element_selector_test_template.hpp"
 
 // ---------------------------------------------------------------------------------------------------------------------
-// test template : pipeable_config_element_test
+// test template : pipeable_config_element_test, config_selector_test
 // ---------------------------------------------------------------------------------------------------------------------
 
 using test_types = ::testing::Types<seqan3::detail::hit_all_tag,
@@ -22,6 +23,17 @@ using test_types = ::testing::Types<seqan3::detail::hit_all_tag,
                                     seqan3::search_cfg::hit_strata>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(mode_elements, pipeable_config_element_test, test_types, );
+
+template <>
+struct config_selector_test<seqan3::search_cfg::hit> : public ::testing::Test
+{
+    using selectee_list = seqan3::type_list<seqan3::detail::hit_all_tag,
+                                            seqan3::detail::hit_all_best_tag,
+                                            seqan3::detail::hit_single_best_tag,
+                                            seqan3::search_cfg::hit_strata>;
+};
+
+INSTANTIATE_TYPED_TEST_SUITE_P(hit, config_selector_test, seqan3::search_cfg::hit, );
 
 // ---------------------------------------------------------------------------------------------------------------------
 // individual tests
