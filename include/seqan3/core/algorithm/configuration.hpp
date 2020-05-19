@@ -456,14 +456,11 @@ private:
     //!\}
 
     /*!\brief Creates a new configuration object by recursively adding the configs from the tuple.
-     * \tparam    tuple_t The tuple from which to create a new configuration object; must model seqan3::tuple_like.
-     * \param[in] tpl     The tuple to create the configuration from.
+     * \tparam tuple_t The tuple from which to create a new configuration object; must model seqan3::tuple_like.
+     * \param[in] tpl The tuple to create the configuration from.
      * \returns A new configuration object.
      */
-    template <typename tuple_t>
-    //!\cond
-        requires detail::is_type_specialisation_of_v<tuple_t, std::tuple>
-    //!\endcond
+    template <tuple_like tuple_t>
     static constexpr auto make_configuration(tuple_t && tpl)
     {
         if constexpr (std::tuple_size_v<remove_cvref_t<tuple_t>> == 0)
