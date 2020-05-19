@@ -190,8 +190,6 @@ public:
      */
     constexpr reference operator[](matrix_coordinate const & coordinate) noexcept
     {
-        assert(coordinate.col >= 0u);
-        assert(coordinate.row >= 0u);
         assert(coordinate.col < cols());
         assert(coordinate.row < rows());
 
@@ -202,8 +200,6 @@ public:
     //!\copydoc operator[]
     constexpr const_reference operator[](matrix_coordinate const & coordinate) const noexcept
     {
-        assert(coordinate.col >= 0);
-        assert(coordinate.row >= 0);
         assert(static_cast<size_t>(coordinate.col) < cols());
         assert(static_cast<size_t>(coordinate.row) < rows());
 
