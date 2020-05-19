@@ -15,45 +15,7 @@
 
 #include <iterator>
 
-#ifdef __cpp_lib_ranges // C++20 iterators
-
-namespace std
-{
-inline namespace deprecated
-{
-//!\cond
-/*!\brief This should be named indirectly_readable.
- * \deprecated Use std::indirectly_readable instead.
- */
-template<class T>
-concept readable = ::std::indirectly_readable<T>;
-
-/*!\brief This should be named indirectly_writable.
- * \deprecated Use std::indirectly_writable instead.
- */
-template<class Out, class T>
-concept writable = ::std::indirectly_writable<Out, T>;
-//!\endcond
-} // namespace std::deprecated
-} // namespace std
-
-// we wrongly assume that these are in std::ranges namespace, even though they are in std namespace
-namespace std::ranges
-{
-inline namespace deprecated
-{
-// https://eel.is/c++draft/iterator.synopsis#lib:default_sentinel
-// // Header <iterator> synopsis
-// // [default.sentinels], default sentinels
-// struct default_sentinel_t;
-// inline constexpr default_sentinel_t default_sentinel{};
-using ::std::default_sentinel_t;
-using ::std::default_sentinel;
-using ::std::back_inserter;
-} // namespace std::ranges::deprecated
-} // namespace std::ranges
-
-#else // implement C++20 iterators via range-v3
+#ifndef __cpp_lib_ranges // implement C++20 iterators via range-v3
 
 #ifndef RANGES_DEEP_STL_INTEGRATION
 #define RANGES_DEEP_STL_INTEGRATION 1
@@ -83,51 +45,229 @@ namespace std
 
 namespace
 {
-    // from range/v3/iterator/concepts.hpp
-    using ::ranges::bidirectional_iterator;
-    using ::ranges::contiguous_iterator;
-    using ::ranges::forward_iterator;
-    using ::ranges::incrementable;
-    using ::ranges::indirect_relation;
-    using ::ranges::indirect_result_t;
-    using ::ranges::indirect_strict_weak_order;
-    using ::ranges::indirect_unary_predicate;
-    using ::ranges::indirectly_comparable;
-    using ::ranges::indirectly_copyable;
-    using ::ranges::indirectly_copyable_storable;
-    using ::ranges::indirectly_movable;
-    using ::ranges::indirectly_movable_storable;
-    using ::ranges::indirectly_regular_unary_invocable;
-    using ::ranges::indirectly_swappable;
-    using ::ranges::indirectly_unary_invocable;
-    using ::ranges::input_iterator;
-    using ::ranges::input_or_output_iterator;
-    using ::ranges::mergeable;
-    using ::ranges::output_iterator;
-    using ::ranges::permutable;
-    using ::ranges::projected;
-    using ::ranges::random_access_iterator;
-    using ::ranges::readable;
-    using ::ranges::sentinel_for;
-    using ::ranges::sized_sentinel_for;
-    using ::ranges::sortable;
-    using ::ranges::weakly_incrementable;
-    using ::ranges::writable;
+// https://eel.is/c++draft/iterator.synopsis
 
-    // from range/v3/iterator/traits.hpp
-    using ::ranges::iter_common_reference_t;
-    using ::ranges::iter_difference_t;
-    using ::ranges::iter_reference_t;
-    using ::ranges::iter_rvalue_reference_t;
-    using ::ranges::iter_value_t;
+// ========================================
+// [iterator.assoc.types], associated types
+// ========================================
 
-    using ::ranges::disable_sized_sentinel;
-    template<typename T>
-    using incrementable_traits = ::ranges::incrementable_traits<T>;
-    template<typename T>
-    using readable_traits = ::ranges::readable_traits<T>;
+// [incrementable.traits], incrementable traits
+using ::ranges::cpp20::incrementable_traits;
+using ::ranges::cpp20::iter_difference_t;
+
+// [readable.traits], indirectly readable traits
+// using ::ranges::cpp20::indirectly_readable_traits;
+using ::ranges::cpp20::iter_value_t;
+
+// [iterator.traits], iterator traits
+using ::ranges::cpp20::iter_reference_t;
+using ::ranges::cpp20::iter_rvalue_reference_t;
+
+// ======================================
+// [iterator.concepts], iterator concepts
+// ======================================
+
+// [iterator.concept.readable], concept indirectly_readable
+template <class T>
+SEQAN3_CONCEPT indirectly_readable = ::ranges::cpp20::readable<T>;
+// using ::ranges::cpp20::iter_common_reference_t;
+
+// [iterator.concept.writable], concept indirectly_writable
+template<class Out, class T>
+SEQAN3_CONCEPT indirectly_writable = ::ranges::cpp20::writable<Out, T>;
+
+// [iterator.concept.winc], concept weakly_incrementable
+using ::ranges::cpp20::weakly_incrementable;
+
+// [iterator.concept.inc], concept incrementable
+using ::ranges::cpp20::incrementable;
+
+// [iterator.concept.iterator], concept input_or_output_iterator
+using ::ranges::cpp20::input_or_output_iterator;
+
+// [iterator.concept.sentinel], concept sentinel_for
+using ::ranges::cpp20::sentinel_for;
+
+// [iterator.concept.sizedsentinel], concept sized_sentinel_for
+// using ::ranges::cpp20::disable_sized_sentinel_for;
+using ::ranges::cpp20::disable_sized_sentinel; // deprecated
+using ::ranges::cpp20::sized_sentinel_for;
+
+// [iterator.concept.input], concept input_iterator
+using ::ranges::cpp20::input_iterator;
+
+// [iterator.concept.output], concept output_iterator
+using ::ranges::cpp20::output_iterator;
+
+// [iterator.concept.forward], concept forward_iterator
+using ::ranges::cpp20::forward_iterator;
+
+// [iterator.concept.bidir], concept bidirectional_iterator
+using ::ranges::cpp20::bidirectional_iterator;
+
+// [iterator.concept.random.access], concept random_­access_­iterator
+using ::ranges::cpp20::random_access_iterator;
+
+// [iterator.concept.contiguous], concept contiguous_iterator
+using ::ranges::cpp20::contiguous_iterator;
+
+// ==================================================
+// [indirectcallable], indirect callable requirements
+// ==================================================
+
+// [indirectcallable.indirectinvocable], indirect callables
+using ::ranges::cpp20::indirectly_unary_invocable;
+using ::ranges::cpp20::indirectly_regular_unary_invocable;
+using ::ranges::cpp20::indirect_unary_predicate;
+// using ::ranges::cpp20::indirect_binary_predicate;
+// using ::ranges::cpp20::indirect_equivalence_relation;
+using ::ranges::cpp20::indirect_strict_weak_order;
+using ::ranges::cpp20::indirect_result_t;
+
+// [projected], projected
+using ::ranges::cpp20::projected;
+
+// ========================================
+// [alg.req], common algorithm requirements
+// ========================================
+
+// [alg.req.ind.move], concept indirectly_movable
+using ::ranges::cpp20::indirectly_movable;
+using ::ranges::cpp20::indirectly_movable_storable;
+
+// [alg.req.ind.copy], concept indirectly_copyable
+using ::ranges::cpp20::indirectly_copyable;
+using ::ranges::cpp20::indirectly_copyable_storable;
+
+// [alg.req.ind.swap], concept indirectly_swappable
+using ::ranges::cpp20::indirectly_swappable;
+
+// [alg.req.ind.cmp], concept indirectly_comparable
+// using ::ranges::cpp20::indirectly_comparable;
+
+// [alg.req.permutable], concept permutable
+using ::ranges::cpp20::permutable;
+
+// [alg.req.mergeable], concept mergeable
+using ::ranges::cpp20::mergeable;
+
+// [alg.req.sortable], concept sortable
+using ::ranges::cpp20::sortable;
+
+// =================================
+// [iterator.primitives], primitives
+// =================================
+
+// [std.iterator.tags], iterator tags
+// using ::ranges::cpp20::contiguous_iterator_tag;
+
+// ======================================================
+// [predef.iterators], predefined iterators and sentinels
+// ======================================================
+
+// [insert.iterators], insert iterators
+inline namespace cpp20
+{
+// see https://github.com/orgs/seqan/projects/4#card-37029069
+using ::ranges::cpp20::back_inserter;
+// using ::ranges::cpp20::front_inserter;
+// using ::ranges::cpp20::insert_iterator;
+} // inline namespace cpp20
+
+// [iterators.common], common iterators
+// using ::ranges::cpp20::common_iterator;
+
+// [default.sentinels], default sentinels
+using ::ranges::cpp20::default_sentinel_t;
+using ::ranges::cpp20::default_sentinel;
+
+// [iterators.counted], counted iterators
+// using ::ranges::cpp20::counted_iterator;
+
+// [unreachable.sentinels], unreachable sentinels
+// using ::ranges::cpp20::unreachable_sentinel_t;
+// using ::ranges::cpp20::unreachable_sentinel;
+
+// [iterator.range], range access
+// using ::ranges::cpp20::ssize;
 } // anonymous namespace
 
 } // namespace std
 
-#endif
+namespace std::ranges
+{
+
+namespace
+{
+// =============================================
+// [iterator.cust], customization points
+// =============================================
+
+// [iterator.cust.move], ranges::iter_move
+using ::ranges::cpp20::iter_move;
+
+// [iterator.cust.swap], ranges::iter_swap
+// using ::ranges::cpp20::iter_swap;
+
+// =============================================
+// [range.iter.ops], range iterator operations
+// =============================================
+
+// [range.iter.op.advance], ranges::advance
+using ::ranges::cpp20::advance;
+
+// [range.iter.op.distance], ranges::distance
+using ::ranges::cpp20::distance;
+
+// [range.iter.op.next], ranges::next
+using ::ranges::cpp20::next;
+
+// [range.iter.op.prev], ranges::prev
+using ::ranges::cpp20::prev;
+} // anonymous namespace
+
+} // namespace std::ranges
+
+#endif // __cpp_lib_ranges
+
+// ==========================================
+// LEGACY wrong std:: and std::ranges:: usage
+// ==========================================
+
+#include <seqan3/core/platform.hpp> // SEQAN3_CONCEPT
+
+namespace std
+{
+inline namespace deprecated
+{
+//!\cond
+/*!\brief This should be named indirectly_readable.
+ * \deprecated Use std::indirectly_readable instead.
+ */
+template<class T>
+SEQAN3_CONCEPT readable = ::std::indirectly_readable<T>;
+
+/*!\brief This should be named indirectly_writable.
+ * \deprecated Use std::indirectly_writable instead.
+ */
+template<class Out, class T>
+SEQAN3_CONCEPT writable = ::std::indirectly_writable<Out, T>;
+//!\endcond
+} // namespace std::deprecated
+} // namespace std
+
+// we wrongly assume that these are in std::ranges namespace, even though they are in std namespace
+namespace std::ranges
+{
+inline namespace deprecated
+{
+// https://eel.is/c++draft/iterator.synopsis#lib:default_sentinel
+// // Header <iterator> synopsis
+// // [default.sentinels], default sentinels
+// struct default_sentinel_t;
+// inline constexpr default_sentinel_t default_sentinel{};
+using ::std::default_sentinel_t;
+using ::std::default_sentinel;
+using ::std::cpp20::back_inserter;
+} // namespace std::ranges::deprecated
+} // namespace std::ranges
