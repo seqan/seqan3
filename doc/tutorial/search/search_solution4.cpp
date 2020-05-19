@@ -17,23 +17,23 @@ int main()
     seqan3::configuration const cfg_all = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
                                           seqan3::search_cfg::hit_all;
     auto results_all = search(query, index, cfg_all);
-    seqan3::debug_stream << "Hits: " << results_all << "\n";
+    seqan3::debug_stream << "There are " << std::ranges::distance(results_all) << " hits.\n";
 
     seqan3::debug_stream << "Searching all best hits\n";
     seqan3::configuration const cfg_all_best = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
                                                seqan3::search_cfg::hit_all_best;
     auto results_all_best = search(query, index, cfg_all_best);
-    seqan3::debug_stream << "Hits: " << results_all_best << "\n";
+    seqan3::debug_stream << "There are " << std::ranges::distance(results_all_best) << " hits.\n";
 
     seqan3::debug_stream << "Searching best hit\n";
     seqan3::configuration const cfg_best = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
                                            seqan3::search_cfg::hit_single_best;
     auto results_best = search(query, index, cfg_best);
-    seqan3::debug_stream << "Hits " << results_best << "\n";
+    seqan3::debug_stream << "There is " << std::ranges::distance(results_best) << " hits.\n";
 
     seqan3::debug_stream << "Searching all hits in the 1-stratum\n";
     seqan3::configuration const cfg_strata = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
                                              seqan3::search_cfg::hit_strata{1};
     auto results_strata = search(query, index, cfg_strata);
-    seqan3::debug_stream << "Hits: " << results_strata << "\n";
+    seqan3::debug_stream << "There are " << std::ranges::distance(results_strata) << " hits.\n";
 }

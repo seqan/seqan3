@@ -46,7 +46,7 @@ void map_reads(std::filesystem::path const & query_path,
         iarchive(index);
     }
 
-    seqan3::sequence_file_input query_in{query_path};
+    seqan3::sequence_file_input query_file_in{query_path};
 
 //! [alignment_file_output]
     seqan3::alignment_file_output sam_out{sam_path, seqan3::fields<seqan3::field::seq,
@@ -65,12 +65,13 @@ void map_reads(std::filesystem::path const & query_path,
                                                seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                                                seqan3::align_cfg::result{seqan3::with_alignment};
 
-    for (auto & [query, id, qual] : query_in)
+    for (auto & record : query_file_in)
     {
-        for (auto & [query_idx, text_pos] : search(query, index, search_config))
+        auto & query = seqan3::get<seqan3::field::seq>(record);
+        for (auto && res : search(query, index, search_config))
         {
-            size_t start = text_pos.second ? text_pos.second - 1 : 0;
-            std::span text_view{std::data(storage.seqs[text_pos.first]) + start, query.size() + 1};
+            size_t start = res.reference_begin_pos() ? res.reference_begin_pos() - 1 : 0;
+            std::span text_view{std::data(storage.seqs[res.reference_id()]) + start, query.size() + 1};
 
             for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
             {
@@ -78,7 +79,7 @@ void map_reads(std::filesystem::path const & query_path,
                 size_t ref_offset = alignment.front_coordinate().first + 2 + start;
                 size_t map_qual = 60u + alignment.score();
 
-                sam_out.emplace_back(query, id, storage.ids[text_pos.first], ref_offset, aligned_seq, qual, map_qual);
+                sam_out.emplace_back(query, seqan3::get<seqan3::field::id>(record), storage.ids[res.reference_id()], ref_offset, aligned_seq, seqan3::get<seqan3::field::qual>(record), map_qual);
             }
         }
     }

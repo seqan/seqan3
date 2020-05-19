@@ -66,7 +66,11 @@ seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_c
                                                                 seqan3::search_cfg::substitution{0},
                                                                 seqan3::search_cfg::insertion{1},
                                                                 seqan3::search_cfg::deletion{1}};
-seqan3::debug_stream << search("cat"s, index, cfg) << '\n'; // [14,17,18,32]
+seqan3::debug_stream << search("cat"s, index, cfg) << '\n';
+// prints: [<query_id:0, reference_id:0, reference_pos:14>,
+//          <query_id:0, reference_id:0, reference_pos:17>,
+//          <query_id:0, reference_id:0, reference_pos:18>,
+//          <query_id:0, reference_id:0, reference_pos:32>]
 //![error_search]
 }
 
@@ -75,7 +79,9 @@ seqan3::debug_stream << search("cat"s, index, cfg) << '\n'; // [14,17,18,32]
 std::string text{"Garfield the fat cat without a hat."};
 seqan3::fm_index index{text};
 std::vector<std::string> query{"cat"s, "hat"s};
-seqan3::debug_stream << search(query, index) << '\n'; // [[17],[31]]
+seqan3::debug_stream << search(query, index) << '\n';
+// prints: [<query_id:0, reference_id:0, reference_pos:17>,
+//          <query_id:1, reference_id:0, reference_pos:31>]
 //![multiple_queries]
 }
 
