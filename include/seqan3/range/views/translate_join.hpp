@@ -48,12 +48,8 @@ private:
     //!\brief The selected frames corresponding to the frames required.
     small_vector<translation_frames, 6> selected_frames{};
 
-protected:
-    //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
-    template <typename, typename>
-    friend class detail::random_access_iterator_base;
-
-    /*!\name Associated types
+    /*!\name Associated types iterator
+     * \brief These associated types are needed in seqan3::detail::random_access_iterator.
      * \{
      */
     //!\brief The reference_type.
@@ -71,6 +67,10 @@ protected:
     //!\brief The const iterator type of this view (same as iterator, because it's a view).
     using const_iterator    = detail::random_access_iterator<view_translate_join const>;
     //!\}
+
+    //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
+    template <typename, typename>
+    friend class detail::random_access_iterator_base;
 
 public:
 

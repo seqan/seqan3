@@ -50,6 +50,20 @@ private:
     //!\brief The sentinel type is set to std::ranges::default_sentinel_t.
     using sentinel_type = std::ranges::default_sentinel_t;
 
+    /*!\name Associated types
+     * These associated types are needed in seqan3::detail::random_access_iterator.
+     * \{
+     */
+    //!\brief The value type (equals the value_t with any references removed).
+    using value_type = std::remove_reference_t<value_t>;
+    //!\brief The reference_type.
+    using reference  = value_type &;
+    //!\brief The const reference type.
+    using const_reference = value_type const &;
+    //!\brief The type to store the difference of two iterators.
+    using difference_type = ptrdiff_t;
+    //!\}
+
     //!\brief The iterator type for views::repeat (a random access iterator).
     template <typename parent_type>
     class repeat_view_iterator : public detail::random_access_iterator_base<parent_type, repeat_view_iterator>
@@ -136,26 +150,20 @@ private:
         //!\}
     };
 
-public:
     /*!\name Associated types
-     * \{
-     */
-    //!\brief The value type (equals the value_t with any references removed).
-    using value_type = std::remove_reference_t<value_t>;
-    //!\brief The reference_type.
-    using reference  = value_type &;
-    //!\brief The const reference type.
-    using const_reference = value_type const &;
-    //!\brief The size_type is void, because this range is never sized.
-    using size_type = void;
-    //!\brief The type to store the difference of two iterators.
-    using difference_type = ptrdiff_t;
+    * \{
+    */
     //!\brief The iterator type of this view (a random access iterator).
     using iterator = repeat_view_iterator<repeat_view>;
     //!\brief The const_iterator type is equal to the iterator type but over the const qualified type.
     using const_iterator = repeat_view_iterator<repeat_view const>;
     //!\}
 
+    //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
+    template <typename parent_type, typename crtp_base>
+    friend class detail::random_access_iterator_base;
+
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */

@@ -61,10 +61,12 @@ private:
     //!\brief The range to be inserted into urange.
     inserted_rng_t inserted_range;
 
-public:
     /*!\name Associated types
+     * \brief These associated types are needed in seqan3::detail::random_access_iterator.
      * \{
      */
+    //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be sized.
+    using size_type         = std::ranges::range_size_t<urng_t>;
     //!\brief The reference_type.
     using reference         = ranges::common_reference_t<std::ranges::range_reference_t<urng_t>,
                                                          std::ranges::range_reference_t<inserted_rng_t>>;
@@ -74,8 +76,6 @@ public:
                                                          std::ranges::range_reference_t<inserted_rng_t const>>, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = std::ranges::range_value_t<urng_t>;
-    //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be Sized.
-    using size_type         = std::ranges::range_size_t<urng_t>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ranges::range_difference_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
@@ -84,6 +84,11 @@ public:
     using const_iterator    = detail::random_access_iterator<view_interleave const>;
     //!\}
 
+    //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
+    template <typename parent_type, typename crtp_base>
+    friend class detail::random_access_iterator_base;
+
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */

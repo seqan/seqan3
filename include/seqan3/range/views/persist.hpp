@@ -50,26 +50,16 @@ private:
     //!\brief Shared storage of the underlying range.
     std::shared_ptr<urng_t> urange;
 
-public:
     /*!\name Associated types
      * \{
      */
-    //!\brief The reference_type.
-    using reference         = std::ranges::range_reference_t<urng_t>;
-    //!\brief The const_reference type is equal to the reference type.
-    using const_reference   = reference;
-    //!\brief The value_type (which equals the reference_type with any references removed).
-    using value_type        = std::ranges::range_value_t<urng_t>;
-    //!\brief If the underliying range is Sized, this resolves to range_type::size_type, otherwise void.
-    using size_type         = detail::transformation_trait_or_t<seqan3::size_type<urng_t>, void>;
-    //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = std::ranges::range_difference_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = std::ranges::iterator_t<urng_t>;
     //!\brief The const_iterator type is equal to the iterator type.
     using const_iterator    = iterator;
     //!\}
-
+    
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
