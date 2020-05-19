@@ -190,7 +190,7 @@ public:
     /*!\brief Tag this class as a forward iterator if `urng_t` models std::ranges::forward range, otherwise as an
      *        input iterator.
      */
-    using iterator_category = std::conditional_t<std::ranges::forward_iterator<it_t>,
+    using iterator_category = std::conditional_t<std::ranges::forward_range<rng_t>,
                                                  std::forward_iterator_tag,
                                                  std::input_iterator_tag>;
     /*!\brief Tag this class as a forward iterator if `urng_t` models std::ranges::forward range, otherwise as an
