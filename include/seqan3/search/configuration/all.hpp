@@ -17,7 +17,7 @@
 #include <seqan3/search/configuration/detail.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/max_error_rate.hpp>
-#include <seqan3/search/configuration/mode.hpp>
+#include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/output.hpp>
 #include <seqan3/search/configuration/parallel.hpp>
 
@@ -32,19 +32,19 @@
  *
  * \details
  *
- * ### Introduction
+ * \section search_configuration_section_introduction Introduction
  *
  * In SeqAn the search algorithm uses a configuration object to determine the desired
  * \ref seqan3::search_cfg::max_error "number"/\ref seqan3::search_cfg::max_error_rate "rate" of errors,
- * what hits are considered as \ref seqan3::search_cfg::mode "results", and how to
- * \ref seqan3::search_cfg::output "output" the result.
+ * what hits are reported based on a \ref search_configuration_subsection_hit_strategy "strategy", and how to
+ * \ref seqan3::search_cfg::output "output" the results.
  * These configurations exist in their own namespace, namely seqan3::search_cfg, to disambiguate them from the
  * configuration of other algorithms.
  *
  * If no configuration is provided upon invoking the seqan3::search algorithm, a default configuration is provided:
  * \include test/snippet/search/configuration_default.cpp
  *
- * ### Combining configuration elements
+ * \section search_configuration_section_overview Overview on search configurations
  *
  * Configurations can be combined using the `|`-operator. If a combination is invalid, a static assertion is triggered
  * during compilation and will inform the user that the the last config cannot be combined with any of the configs from
@@ -52,11 +52,28 @@
  * types cannot be printed within the static assert, but the following table shows which combinations are possible.
  * In general, the same configuration element cannot occur more than once inside of a configuration specification.
  *
- * | **Config**                                                  | **0** | **1** | **2** | **3** | **4** |
- * | ------------------------------------------------------------|-------|-------|-------|-------|-------|
- * | \ref seqan3::search_cfg::max_error  "0: Max error"          |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::search_cfg::max_error_rate "1: Max error rate" |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::search_cfg::output "2: Output"                 |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
- * | \ref seqan3::search_cfg::mode "3: Mode"                     |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
- * | \ref seqan3::search_cfg::parallel "4: Parallel"             |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
+ * | **Configuration group**                                             | **0** | **1** | **2** | **3** | **4** |
+ * | --------------------------------------------------------------------|-------|-------|-------|-------|-------|
+ * | \ref seqan3::search_cfg::max_error  "0: Max error"                  |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::search_cfg::max_error_rate "1: Max error rate"         |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::search_cfg::output "2: Output"                         |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
+ * | \ref search_configuration_subsection_hit_strategy "3. Hit"          |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
+ * | \ref seqan3::search_cfg::parallel "4: Parallel"                     |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
+ *
+ * \subsection search_configuration_subsection_hit_strategy 3. Hit Configuration
+ *
+ * This configuration can be used to determine which hits are reported.
+ * Currently these strategies are available:
+ *
+ * | Hit Configurations                  | Behaviour                                                           |
+ * |-------------------------------------|---------------------------------------------------------------------|
+ * | seqan3::search_cfg::hit_all         | Report all hits within error bounds.                                |
+ * | seqan3::search_cfg::hit_all_best    | Report all hits with the lowest number of errors within the bounds. |
+ * | seqan3::search_cfg::hit_single_best | Report one best hit (hit with lowest error) within bounds.          |
+ * | seqan3::search_cfg::hit_strata      | Report all hits within best + `stratum` errors.                             |
+ *
+ * The individual configuration elements to select a search strategy cannot be combined with each other
+ * (mutual exclusivity).
+ *
+ * \include test/snippet/search/hit_configuration_examples.cpp
  */

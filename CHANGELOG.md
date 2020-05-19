@@ -72,13 +72,23 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 #### Search
 
 * Moved `seqan3::search` from `search/algorithm/` to `search/` ([\#1696](https://github.com/seqan/seqan3/pull/1696)).
+* Configuration refactoring:
+  * The names for the search mode configuration have changed and are now individual config elements
+    that are pipeable ([\#1639](https://github.com/seqan/seqan3/pull/1639)):
+    `seqan3::search_cfg::all` to `seqan3::search_cfg::hit_all`
+    `seqan3::search_cfg::best` to `seqan3::search_cfg::hit_single_best`
+    `seqan3::search_cfg::all_best` to `seqan3::search_cfg::hit_all_best`
+    `seqan3::search_cfg::strata{5}` to `seqan3::search_cfg::hit_strata{5}`
+  * The configuration element `seqan3::search_cfg::mode` does not exist anymore.
+    You can replace it by directly using one of the above mentioned "hit strategy" configuration elements
+    ([\#1639](https://github.com/seqan/seqan3/pull/1639)).
 
 ## Notable Bug-fixes
 
 ### Argument Parser
 
 * Long option identifiers and their value must be separated by a space or equal sign `=`.
-  Handling this restriction resolves the ambiguity if one long option identifier is the prefix of 
+  Handling this restriction resolves the ambiguity if one long option identifier is the prefix of
   another ([\#1792](https://github.com/seqan/seqan3/pull/1792)).
 
   Valid short id value pairs: `-iValue`, `-i=Value`, `-i Value`

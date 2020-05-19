@@ -7,7 +7,7 @@ int main()
                                                                             seqan3::search_cfg::substitution{0},
                                                                             seqan3::search_cfg::insertion{0},
                                                                             seqan3::search_cfg::deletion{0}} |
-                                              seqan3::search_cfg::output{seqan3::search_cfg::text_position} | 
-                                              seqan3::search_cfg::mode{seqan3::search_cfg::all};
+                                              seqan3::search_cfg::output{seqan3::search_cfg::text_position} |
+                                              seqan3::search_cfg::hit_all;
     return 0;
 }

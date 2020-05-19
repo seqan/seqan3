@@ -95,7 +95,7 @@ public:
             internal_hits.push_back(it);
         };
 
-        perform_search_by_mode(internal_hits, query, error_state);
+        perform_search_by_hit_strategy(internal_hits, query, error_state);
 
         return this->make_results(std::move(internal_hits), config); // see policy_result_builder
     }
@@ -118,25 +118,25 @@ private:
                         search_param const error_left,
                         error_type const prev_error);
 
-    /*!\brief Calls search_trivial depending on the search mode given in the configuration.
+    /*!\brief Calls search_trivial depending on the search strategy (hit configuration) given in the configuration.
      * \tparam query_t Must model std::ranges::input_range over the index's alphabet.
      * \param[in, out] internal_hits The result vector to be filled.
      * \param[in] query Query sequence to be searched with the cursor.
      * \param[in] error_state Number of errors for matching the query sequence.
      */
     template <typename query_t>
-    void perform_search_by_mode(std::vector<typename index_t::cursor_type> & internal_hits,
-                                query_t & query,
-                                search_param error_state)
+    void perform_search_by_hit_strategy(std::vector<typename index_t::cursor_type> & internal_hits,
+                                        query_t & query,
+                                        search_param error_state)
     {
-        if constexpr (traits_t::search_best_hits || traits_t::search_all_best_hits || traits_t::search_strata_hits)
+        if constexpr (!traits_t::search_all_hits)
         {
             auto max_total = error_state.total;
             error_state.total = 0; // start search with less errors
 
             while (internal_hits.empty() && error_state.total <= max_total)
             {
-                // * If you only want the best hit (traits_t::search_best_hits), you stop after finding the
+                // * If you only want the best hit (traits_t::search_single_best_hit), you stop after finding the
                 //   first hit, the hit with the least errors (`abort_on_hit` is true).
                 // * If you are in strata mode (traits_t::search_strata_hits), you do the same as with best hits,
                 //   but then do the extra step afterwards (`abort_on_hit` is true).
@@ -152,13 +152,13 @@ private:
                 if (!internal_hits.empty())
                 {
                     internal_hits.clear();
-                    uint8_t const stratum = get<search_cfg::mode>(config).value;
+                    uint8_t const stratum = get<search_cfg::hit_strata>(config).value;
                     error_state.total += stratum - 1;
                     search_trivial<false>(index_ptr->cursor(), query, 0, error_state, error_type::none);
                 }
             }
         }
-        else // detail::search_mode_all
+        else // traits_t::search_all
         {
             // If you want to find all hits, you cannot stop once you found any hit (<false>)
             // since you have to find all paths in the search tree that satisfy the hit condition.

@@ -83,7 +83,7 @@ public:
             internal_hits.push_back(it);
         };
 
-        perform_search_by_mode(internal_hits, query, error_state, on_hit_delegate);
+        perform_search_by_hit_strategy(internal_hits, query, error_state, on_hit_delegate);
 
         return this->make_results(std::move(internal_hits), config); // see policy_result_builder
     }
@@ -99,7 +99,7 @@ private:
     template <bool abort_on_hit, typename query_t, typename delegate_t>
     inline void search_algo_bi(query_t & query, search_param const error_left, delegate_t && delegate);
 
-    /*!\brief Calls search_algo_bi depending on the search mode given in the configuration.
+    /*!\brief Calls search_algo_bi depending on the search strategy (hit configuration) given in the configuration.
      * \tparam query_t Must model std::ranges::input_range over the index's alphabet.
      * \param[in, out] internal_hits The result vector to be filled.
      * \param[in] query Query sequence to be searched with the cursor.
@@ -107,18 +107,18 @@ private:
      * \param[in] on_hit_delegate The function to be executed on every single (hit) result.
      */
     template <typename query_t, typename delegate_t>
-    void perform_search_by_mode(std::vector<typename index_t::cursor_type> & internal_hits,
-                                query_t & query,
-                                search_param error_state,
-                                delegate_t const & on_hit_delegate)
+    void perform_search_by_hit_strategy(std::vector<typename index_t::cursor_type> & internal_hits,
+                                        query_t & query,
+                                        search_param error_state,
+                                        delegate_t const & on_hit_delegate)
     {
-        if constexpr (traits_t::search_best_hits || traits_t::search_all_best_hits || traits_t::search_strata_hits)
+        if constexpr (!traits_t::search_all_hits)
         {
             auto max_total = error_state.total;
             error_state.total = 0; // start search with less errors
             while (internal_hits.empty() && error_state.total <= max_total)
             {
-                // * If you only want the best hit (traits_t::search_best_hits), you stop after finding the
+                // * If you only want the best hit (traits_t::search_single_best_hit), you stop after finding the
                 //   first hit, the hit with the least errors (`abort_on_hit` is true).
                 // * If you are in strata mode (traits_t::search_strata_hits), you do the same as with best hits,
                 //   but then do the extra step afterwards (`abort_on_hit` is true).
@@ -133,7 +133,7 @@ private:
                 if (!internal_hits.empty())
                 {
                     internal_hits.clear(); // TODO:don't clear when using Optimum Search Schemes with lower error bounds
-                    uint8_t const stratum = get<search_cfg::mode>(config).value;
+                    uint8_t const stratum = get<search_cfg::hit_strata>(config).value;
                     error_state.total += stratum - 1;
                     search_algo_bi<false>(query, error_state, on_hit_delegate);
                 }
@@ -165,7 +165,7 @@ inline std::vector<search_dyn> compute_ss(uint8_t const min_error, uint8_t const
     // TODO: Replace this at least by the pigeonhole principle or even better by 01*0 schemes.
     // NOTE: Make sure that the searches are sorted by their asymptotical running time (i.e. upper error bound string),
     //       s.t. easy to compute searches come first. This improves the running time of algorithms that abort after the
-    //       first hit (e.g. search mode: best). Even though it is not guaranteed, this seems to be a good greedy
+    //       first hit (e.g. search strategy: best). Even though it is not guaranteed, this seems to be a good greedy
     //       approach.
     std::vector<search_dyn> scheme{{{1}, {min_error}, {max_error}}};
     return scheme;

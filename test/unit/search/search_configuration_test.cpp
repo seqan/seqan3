@@ -17,7 +17,7 @@ class search_configuration_test : public ::testing::Test
 
 using test_types = ::testing::Types<seqan3::search_cfg::max_error_rate<>,
                                     seqan3::search_cfg::max_error,
-                                    seqan3::search_cfg::mode<seqan3::detail::search_mode_best>,
+                                    seqan3::detail::hit_single_best_tag,
                                     seqan3::search_cfg::output<seqan3::detail::search_output_text_position>,
                                     seqan3::search_cfg::parallel>;
 
