@@ -112,7 +112,7 @@ TEST_F(search_result_range_test, issue1799)
 
     { // move assignment
         seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
-        auto moved_range = std::move(rng);
+        auto && moved_range = std::move(rng);
 
         EXPECT_RANGE_EQ(expected_range, moved_range);
     }
