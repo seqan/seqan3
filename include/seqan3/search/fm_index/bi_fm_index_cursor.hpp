@@ -88,6 +88,10 @@ private:
     using sdsl_sigma_type = typename index_type::sdsl_sigma_type;
     //!\brief Alphabet type of the index.
     using index_alphabet_type = typename index_t::alphabet_type;
+    //!\brief The result value type when calling locate, a pair of reference id and reference position.
+    using locate_result_value_type = std::pair<size_type, size_type>;
+    //!\brief The result vector type when calling locate.
+    using locate_result_type = std::vector<locate_result_value_type>;
 
     //!\brief Type of the underlying FM index.
     index_type const * index;
@@ -975,17 +979,18 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    std::vector<size_type> locate() const
+    locate_result_type locate() const
     //!\cond
         requires index_t::text_layout_mode == text_layout::single
     //!\endcond
     {
         assert(index != nullptr);
 
-        std::vector<size_type> occ(count());
-        for (size_type i = 0; i < occ.size(); ++i)
+        locate_result_type occ{};
+        occ.reserve(count());
+        for (size_type i = 0; i < count(); ++i)
         {
-            occ[i] = offset() - index->fwd_fm.index[fwd_lb + i];
+            occ.emplace_back(0, offset() - index->fwd_fm.index[fwd_lb + i]);
         }
         return occ;
     }
@@ -1033,7 +1038,8 @@ public:
              | std::views::transform([*this, _offset = offset()] (auto sa_pos)
                {
                    return _offset - index->fwd_fm.index[sa_pos];
-               });
+               })
+             | std::views::transform([*this] (auto loc) { return locate_result_value_type{0, loc}; });
     }
 
     //!\overload
@@ -1045,18 +1051,17 @@ public:
         assert(index != nullptr);
 
         return std::views::iota(fwd_lb, fwd_lb + count())
-               | std::views::transform([*this, _offset = offset()] (auto sa_pos)
+             | std::views::transform([*this, _offset = offset()] (auto sa_pos)
                {
                    return _offset - index->fwd_fm.index[sa_pos];
                })
-               | std::views::transform([*this] (auto loc)
+             | std::views::transform([*this] (auto loc)
                {
                    size_type sequence_rank = index->fwd_fm.text_begin_rs.rank(loc + 1);
                    size_type sequence_position = loc - index->fwd_fm.text_begin_ss.select(sequence_rank);
-                   return std::make_pair(sequence_rank-1, sequence_position);
+                   return locate_result_value_type{sequence_rank-1, sequence_position};
                });
     }
-
 };
 
 //!\}

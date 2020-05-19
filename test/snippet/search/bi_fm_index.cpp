@@ -15,7 +15,7 @@ int main()
     cur.extend_left("AA"_dna4);                                         // search the pattern "AAGG"
     seqan3::debug_stream << "Number of hits: " << cur.count() << '\n';  // outputs: 2
     seqan3::debug_stream << "Positions in the genome: ";
-    for (auto const & pos : cur.locate())                               // outputs: 8, 22
+    for (auto const & pos : cur.locate())                               // outputs: (0, 8), (0, 22)
         seqan3::debug_stream << pos << ' ';
     seqan3::debug_stream << '\n';
     return 0;

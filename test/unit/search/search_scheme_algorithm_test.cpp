@@ -103,14 +103,14 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
 
     auto delegate_trivial = [&hits_trivial] (auto const & it)
     {
-        auto const & hits_tmp = it.locate();
-        hits_trivial.insert(hits_trivial.end(), hits_tmp.begin(), hits_tmp.end());
+        for (auto && res : it.locate())
+            hits_trivial.push_back(res.second);
     };
 
     auto delegate_ss = [&hits_ss] (auto const & it)
     {
-        auto const & hits_tmp = it.locate();
-        hits_ss.insert(hits_ss.end(), hits_tmp.begin(), hits_tmp.end());
+        for (auto && res : it.locate())
+            hits_ss.push_back(res.second);
     };
 
     auto remove_predicate_ss = [&text, &orig_query, query_length] (uint64_t const hit)
@@ -267,14 +267,14 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, size_
 
                 auto delegate_trivial = [&hits_trivial] (auto const & it)
                 {
-                    auto const & hits_tmp = it.locate();
-                    hits_trivial.insert(hits_trivial.end(), hits_tmp.begin(), hits_tmp.end());
+                    for (auto && res : it.locate())
+                        hits_trivial.push_back(res.second);
                 };
 
                 auto delegate_ss = [&hits_ss] (auto const & it)
                 {
-                    auto const & hits_tmp = it.locate();
-                    hits_ss.insert(hits_ss.end(), hits_tmp.begin(), hits_tmp.end());
+                    for (auto && res : it.locate())
+                        hits_ss.push_back(res.second);
                 };
 
                 // Find all hits using search schemes.

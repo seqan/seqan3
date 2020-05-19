@@ -28,8 +28,11 @@ using sdsl_byte_index_type = sdsl::csa_wt<
         sdsl::byte_alphabet
     >;
 
+using locate_result_t = std::vector<std::pair<uint64_t, uint64_t>>;
+
 template <typename T>
 struct fm_index_cursor_test;
+
 
 TYPED_TEST_SUITE_P(fm_index_cursor_test);
 
@@ -68,7 +71,8 @@ TYPED_TEST_P(fm_index_cursor_test, begin)
 
     // begin
     TypeParam it(fm);
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 1, 2, 3, 4, 5, 6}));// sentinel position included
+    // sentinel position included
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}}));
     EXPECT_EQ(it.query_length(), 0u);
     EXPECT_EQ(it.count(), 7u);
 }
@@ -80,12 +84,12 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range)
     // successful extend_right(range)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 4, 6)));  // "CG"
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{1, 4}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 1}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 2u);
     EXPECT_EQ(it.count(), 2u);
 
     EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1)));  // "A"
-    EXPECT_EQ(it.locate(), (std::vector<uint64_t>{1}));
+    EXPECT_EQ(it.locate(), (locate_result_t{{0, 1}}));
     EXPECT_EQ(it.query_length(), 3u);
     EXPECT_EQ(it.count(), 1u);
 
@@ -109,7 +113,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range)
 //     // successful extend_right(range) using a different alphabet
 //     TypeParam it(fm);
 //     EXPECT_TRUE(it.extend_right("GA"_dna4));
-//     EXPECT_EQ(it.locate(), (std::vector<uint64_t>{2}));
+//     EXPECT_EQ(it.locate(), (locate_result_t{{0, 2}}));
 //     EXPECT_EQ(it.query_length(), 2);
 // }
 
@@ -120,11 +124,11 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char)
     // successful extend_right(char)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right(this->text1[0]));  // 'A'
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}}));
     EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.extend_right(this->text1[1]));  // 'C'
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}}));
     EXPECT_EQ(it.query_length(), 2u);
 
     // unsuccessful extend_right(char), it remains untouched
@@ -142,7 +146,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char)
 //     // successful extend_right(char) using a different alphabet
 //     TypeParam it(fm);
 //     EXPECT_TRUE(it.extend_right(this->text[0]));   // 'A'
-//     EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
+//     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, 3}));
 //     EXPECT_EQ(it.query_length(), 1);
 // }
 
@@ -153,11 +157,11 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range_and_cycle)
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 4)));  // "ACGA"
-    EXPECT_EQ(it.locate(), (std::vector<uint64_t>{0}));
+    EXPECT_EQ(it.locate(), (locate_result_t{{0, 0}}));
     EXPECT_EQ(it.query_length(), 4u);
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(it.locate(), (std::vector<uint64_t>{4}));
+    EXPECT_EQ(it.locate(), (locate_result_t{{0, 4}}));
     EXPECT_EQ(it.query_length(), 4u);
 }
 
@@ -168,11 +172,11 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char_and_cycle)
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right(this->text2[0]));  // 'A'
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 3, 4}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{1, 5, 7}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 1}, {0, 5}, {0, 7}}));
     EXPECT_EQ(it.query_length(), 1u);
 }
 
@@ -183,15 +187,15 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_and_cycle)
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right());
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}}));
     EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{1, 4}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 1}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.extend_right());
-    EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<uint64_t>{1, 4}));
+    EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 1}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 2u);
 
     // unsuccessful cycle_back(), it remains untouched
