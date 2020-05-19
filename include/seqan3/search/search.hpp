@@ -221,38 +221,7 @@ namespace seqan3
  * \param[in] index   String index to be searched.
  * \param[in] cfg     A configuration object specifying the search parameters (e.g. number of errors, error types,
  *                    output format, etc.).
- * \returns
- * <table>
- *   <tr>
- *     <th>seqan3::text_layout</th>
- *     <th>seqan3::search_cfg::output</th>
- *     <th>Result of seqan3::search()</th>
- *   </tr>
- *   <tr>
- *     <td style="text-align:center">\ref seqan3::text_layout "single"</td>
- *     <td style="text-align:center">\ref seqan3::search_cfg::text_position "text_position"</td>
- *     <td>A `std::vector<size_t>` representing text positions where the search was successful.</td>
- *   </tr>
- *   <tr>
- *     <td style="text-align:center">\ref seqan3::text_layout "single"</td>
- *     <td style="text-align:center">\ref seqan3::search_cfg::index_cursor "index_cursor"</td>
- *     <td>A `std::vector<typename index_t::cursor_type>` containing index_cursors at the text positions where the
- *         search was successful.</td>
- *   </tr>
- *   <tr>
- *     <td style="text-align:center">\ref seqan3::text_layout "collection"</td>
- *     <td style="text-align:center">\ref seqan3::search_cfg::text_position "text_position"</td>
- *     <td>A `std::vector<std::pair<size_t, size_t>>` where the first element of the
- *         `std::pair` specifies the text index in the collection and the second element contains the position in that
- *         text of the collection.</td>
- *   </tr>
- *   <tr>
- *     <td style="text-align:center">\ref seqan3::text_layout "collection"</td>
- *     <td style="text-align:center">\ref seqan3::search_cfg::index_cursor "index_cursor"</td>
- *     <td>A `std::vector<typename index_t::cursor_type>` containing index_cursors at the text positions where the
- *         search was successful.</td>
- *   </tr>
- * </table>
+ * \returns A seqan3::search_result_range with value type of seqan3::search_result.
  *
  * \if DEV \note Always returns `void` if an on_hit delegate has been specified.\endif
  *
@@ -288,10 +257,6 @@ inline auto search(queries_t && queries,
     detail::search_configuration_validator::validate_query_type<queries_t>();
     detail::search_configuration_validator::validate_error_configuration(updated_cfg);
 
-    // return type: for each query: a vector of text_positions (or cursors)
-    // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
-    //                  duplicates. more efficient to call delegate once with one vector instead of calling
-    //                  delegate for each hit separately at once.
     auto algorithm = detail::search_configurator::configure_algorithm(updated_cfg, index);
 
     return search_result_range{std::move(algorithm), std::forward<queries_t>(queries) | views::type_reduce};

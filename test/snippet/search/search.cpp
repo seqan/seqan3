@@ -1,8 +1,8 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/search.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 
 int main()
@@ -17,12 +17,13 @@ int main()
     seqan3::fm_index index{genomes};
 
     // search for the queries "GCT" and "ACCC"
-    seqan3::debug_stream << seqan3::search(queries, index) << '\n';
-    // This should result in: [[(0,1),(1,9),(2,16)],[(1,0),(1,12),(2,9)]], where the first list [(0,1),(1,9),(2,16)]
-    // is the position list of "GCT" and the second one [(1,0),(1,12),(2,9)] the position list of "ACCC".
-    // The first element of one tuple indicates in which sequence one of the queries is found
-    // (eg. 0 stands for the first sequence in genomes). The second element of one tuple gives the position in a
-    // sequence, where the query can be found. For example, (0,1) indicates that "GCT" can be found in the first
-    // sequence at position 1, which is true for the here given example.
-
+    for (auto && res : seqan3::search(queries, index))
+        seqan3::debug_stream << res << '\n';
+    // This should result in:
+    // <query_id:0, reference_id:0, reference_pos:1>
+    // <query_id:0, reference_id:1, reference_pos:9>
+    // <query_id:0, reference_id:2, reference_pos:16>
+    // <query_id:1, reference_id:1, reference_pos:0>
+    // <query_id:1, reference_id:1, reference_pos:12>
+    // <query_id:1, reference_id:2, reference_pos:9>
 }
