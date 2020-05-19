@@ -1,6 +1,7 @@
 #include <string>
 
 #include <seqan3/range/views/move.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 int main()
