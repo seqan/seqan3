@@ -200,8 +200,8 @@ public:
     //!\copydoc operator[]
     constexpr const_reference operator[](matrix_coordinate const & coordinate) const noexcept
     {
-        assert(static_cast<size_t>(coordinate.col) < cols());
-        assert(static_cast<size_t>(coordinate.row) < rows());
+        assert(coordinate.col < cols());
+        assert(coordinate.row < rows());
 
         return *(begin() + matrix_offset{row_index_type{static_cast<std::ptrdiff_t>(coordinate.row)},
                                          column_index_type{static_cast<std::ptrdiff_t>(coordinate.col)}});
@@ -210,9 +210,9 @@ public:
     //!\copydoc seqan3::detail::matrix::at
     constexpr reference at(matrix_coordinate const & coordinate)
     {
-        if (static_cast<size_t>(coordinate.col) >= cols())
+        if (coordinate.col >= cols())
             throw std::invalid_argument{"Column index is out of range. Please check the dimensions of the matrix."};
-        if (static_cast<size_t>(coordinate.row) >= rows())
+        if (coordinate.row >= rows())
             throw std::invalid_argument{"Row index is out of range. Please check the dimensions of the matrix."};
 
         return (*this)[coordinate];
@@ -221,9 +221,9 @@ public:
     //!\copydoc seqan3::detail::matrix::at
     constexpr const_reference at(matrix_coordinate const & coordinate) const
     {
-        if (static_cast<size_t>(coordinate.col) >= cols())
+        if (coordinate.col >= cols())
             throw std::invalid_argument{"Column index is out of range. Please check the dimensions of the matrix."};
-        if (static_cast<size_t>(coordinate.row) >= rows())
+        if (coordinate.row >= rows())
             throw std::invalid_argument{"Row index is out of range. Please check the dimensions of the matrix."};
 
         return (*this)[coordinate];
