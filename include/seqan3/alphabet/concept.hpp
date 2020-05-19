@@ -756,8 +756,7 @@ SEQAN3_CONCEPT semialphabet =
     std::is_nothrow_copy_constructible_v<t> &&
     requires (t v)
 {
-    requires seqan3::alphabet_size<t> >= 0;
-
+    { seqan3::alphabet_size<t> };
     { seqan3::to_rank(v) };
 };
 //!\endcond
