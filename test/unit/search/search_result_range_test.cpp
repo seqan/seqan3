@@ -105,7 +105,7 @@ TEST_F(search_result_range_test, issue1799)
                                                           {2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4}};
     { // move construction
         seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
-        seqan3::search_result_range moved_range(std::move(rng));
+        seqan3::search_result_range moved_range{std::move(rng)};
 
         EXPECT_RANGE_EQ(expected_range, moved_range);
     }
