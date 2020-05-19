@@ -23,13 +23,17 @@ using seqan3::operator""_shape;
 using result_t = std::vector<size_t>;
 using iterator_type = std::ranges::iterator_t<decltype(std::declval<seqan3::dna4_vector&>()
                                                        | seqan3::views::minimiser_hash(seqan3::ungapped{4},
-                                                                                       window_size{8},
-                                                                                       seed{0}))>;
+                                                                                       seqan3::window_size{8},
+                                                                                       seqan3::seed{0}))>;
 
 static constexpr seqan3::shape ungapped_shape = seqan3::ungapped{4};
 static constexpr seqan3::shape gapped_shape = 0b1001_shape;
-static constexpr auto ungapped_view = seqan3::views::minimiser_hash(ungapped_shape, window_size{8}, seed{0});
-static constexpr auto gapped_view = seqan3::views::minimiser_hash(gapped_shape, window_size{8}, seed{0});
+static constexpr auto ungapped_view = seqan3::views::minimiser_hash(ungapped_shape,
+                                                                    seqan3::window_size{8},
+                                                                    seqan3::seed{0});
+static constexpr auto gapped_view = seqan3::views::minimiser_hash(gapped_shape,
+                                                                  seqan3::window_size{8},
+                                                                  seqan3::seed{0});
 
 template <>
 struct iterator_fixture<iterator_type> : public ::testing::Test
@@ -40,8 +44,8 @@ struct iterator_fixture<iterator_type> : public ::testing::Test
     seqan3::dna4_vector text{"ACGGCGACGTTTAG"_dna4};
     result_t expected_range{26, 97, 27};
 
-    decltype(seqan3::views::minimiser_hash(text, seqan3::ungapped{4}, window_size{8}, seed{0})) test_range =
-         seqan3::views::minimiser_hash(text, seqan3::ungapped{4}, window_size{8}, seed{0});
+    using test_range_t = decltype(text | ungapped_view);
+    test_range_t test_range = text | ungapped_view;
 };
 
 using test_type = ::testing::Types<iterator_type>;
@@ -93,8 +97,8 @@ TEST_F(minimiser_hash_test, ungapped)
 
     auto stop_at_t = seqan3::views::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
     EXPECT_RANGE_EQ(ungapped_no_rev3, text3 | stop_at_t | seqan3::views::minimiser_hash(seqan3::ungapped{4},
-                                                                                        window_size{8},
-                                                                                        seed{0}));
+                                                                                        seqan3::window_size{8},
+                                                                                        seqan3::seed{0}));
 }
 
 TEST_F(minimiser_hash_test, gapped)
@@ -106,14 +110,15 @@ TEST_F(minimiser_hash_test, gapped)
     EXPECT_EQ(gapped_no_rev3, text3 | stop_at_t | gapped_view | seqan3::views::to<result_t>);
 }
 
-TEST_F(minimiser_hash_test, default_seed)
+TEST_F(minimiser_hash_test, seed)
 {
-    EXPECT_RANGE_EQ(result1_default_seed, text1 | seqan3::views::minimiser_hash(ungapped_shape, window_size{8}));
-    EXPECT_RANGE_EQ(result1_default_seed, text1 | seqan3::views::minimiser_hash(gapped_shape, window_size{8}));
+    EXPECT_RANGE_EQ(result1_default_seed,
+                    text1 | seqan3::views::minimiser_hash(ungapped_shape, seqan3::window_size{8}));
+    EXPECT_RANGE_EQ(result1_default_seed, text1 | seqan3::views::minimiser_hash(gapped_shape, seqan3::window_size{8}));
 }
 
 TEST_F(minimiser_hash_test, shape_bigger_than_window)
 {
-    EXPECT_THROW(text1 | seqan3::views::minimiser_hash(ungapped_shape, window_size{3}), std::invalid_argument);
-    EXPECT_THROW(text1 | seqan3::views::minimiser_hash(gapped_shape, window_size{3}), std::invalid_argument);
+    EXPECT_THROW(text1 | seqan3::views::minimiser_hash(ungapped_shape, seqan3::window_size{3}), std::invalid_argument);
+    EXPECT_THROW(text1 | seqan3::views::minimiser_hash(gapped_shape, seqan3::window_size{3}), std::invalid_argument);
 }

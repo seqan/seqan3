@@ -96,12 +96,12 @@ void compute_minimisers(benchmark::State & state)
         }
         else if constexpr (tag == method_tag::seqan3_ungapped)
         {
-            for (auto h : seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, window_size{w}))
+            for (auto h : seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, seqan3::window_size{w}))
                 benchmark::DoNotOptimize(sum += h);
         }
         else if constexpr (tag == method_tag::seqan3_gapped)
         {
-            for (auto h : seq | seqan3::views::minimiser_hash(make_gapped_shape(k), window_size{w}))
+            for (auto h : seq | seqan3::views::minimiser_hash(make_gapped_shape(k), seqan3::window_size{w}))
                 benchmark::DoNotOptimize(sum += h);
         }
         #ifdef SEQAN3_HAS_SEQAN2
