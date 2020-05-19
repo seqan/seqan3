@@ -202,8 +202,9 @@ struct char_predicate_base
         requires (sizeof(value_t) != 1)
     //!\endcond
     {
+        using char_trait = std::char_traits<value_t>;
         return (static_cast<std::make_unsigned_t<value_t>>(val) < 256) ? operator()(static_cast<uint8_t>(val)) :
-               (static_cast<decltype(EOF)>(val) == EOF)                ? derived_t::data[256]                  : false;
+               (char_trait::eq_int_type(val, char_trait::eof()))       ? derived_t::data[256]                  : false;
     }
     //!\}
 
