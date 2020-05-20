@@ -70,7 +70,7 @@ using qualified_types = ::testing::Types<seqan3::qualified<seqan3::dna4, seqan3:
                                          seqan3::qualified<seqan3::gapped<seqan3::dna4>, seqan3::phred42>,
                                          seqan3::dna4q>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(qualified, alphabet_, qualified_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(qualified, alphabet, qualified_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(qualified, semi_alphabet_test, qualified_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(qualified, alphabet_constexpr, qualified_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(qualified, semi_alphabet_constexpr, qualified_types, );

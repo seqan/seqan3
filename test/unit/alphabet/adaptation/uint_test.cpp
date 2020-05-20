@@ -19,7 +19,7 @@
 // uint32_t, too slow
 using fast_uint_types = ::testing::Types<uint8_t, uint16_t/*, uint32_t*/>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(uint_adaptation, alphabet_, fast_uint_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(uint_adaptation, alphabet, fast_uint_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(uint_adaptation, semi_alphabet_test, fast_uint_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(uint_adaptation, alphabet_constexpr, fast_uint_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(uint_adaptation, semi_alphabet_constexpr, fast_uint_types, );

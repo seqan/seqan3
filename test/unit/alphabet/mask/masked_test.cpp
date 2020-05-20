@@ -19,7 +19,7 @@
 
 using masked_types = ::testing::Types<seqan3::masked<seqan3::dna4>, seqan3::masked<seqan3::dna5>>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(masked, alphabet_, masked_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(masked, alphabet, masked_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(masked, semi_alphabet_test, masked_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(masked, alphabet_constexpr, masked_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(masked, semi_alphabet_constexpr, masked_types, );

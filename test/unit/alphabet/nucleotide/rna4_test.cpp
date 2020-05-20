@@ -13,7 +13,7 @@
 
 using seqan3::operator""_rna4;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(rna4, alphabet_, seqan3::rna4, );
+INSTANTIATE_TYPED_TEST_SUITE_P(rna4, alphabet, seqan3::rna4, );
 INSTANTIATE_TYPED_TEST_SUITE_P(rna4, semi_alphabet_test, seqan3::rna4, );
 INSTANTIATE_TYPED_TEST_SUITE_P(rna4, alphabet_constexpr, seqan3::rna4, );
 INSTANTIATE_TYPED_TEST_SUITE_P(rna4, semi_alphabet_constexpr, seqan3::rna4, );

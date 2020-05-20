@@ -29,7 +29,7 @@ using gapped_types = ::testing::Types<seqan3::gapped<seqan3::dna4>,
                                       seqan3::gapped<seqan3::dna15>,
                                       seqan3::gapped<seqan3::qualified<seqan3::dna4, seqan3::phred42>>>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(gapped, alphabet_, gapped_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gapped, alphabet, gapped_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(gapped, semi_alphabet_test, gapped_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(gapped, alphabet_constexpr, gapped_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(gapped, semi_alphabet_constexpr, gapped_types, );

@@ -18,7 +18,7 @@
 
 using char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(char_adaptation, alphabet_, char_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(char_adaptation, alphabet, char_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(char_adaptation, semi_alphabet_test, char_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(char_adaptation, alphabet_constexpr, char_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(char_adaptation, semi_alphabet_constexpr, char_types, );

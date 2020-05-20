@@ -17,7 +17,7 @@
 
 using seqan3::operator""_phred63;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(phred63, alphabet_, seqan3::phred63, );
+INSTANTIATE_TYPED_TEST_SUITE_P(phred63, alphabet, seqan3::phred63, );
 INSTANTIATE_TYPED_TEST_SUITE_P(phred63, semi_alphabet_test, seqan3::phred63, );
 INSTANTIATE_TYPED_TEST_SUITE_P(phred63, alphabet_constexpr, seqan3::phred63, );
 INSTANTIATE_TYPED_TEST_SUITE_P(phred63, semi_alphabet_constexpr, seqan3::phred63, );

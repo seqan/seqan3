@@ -15,7 +15,7 @@
 
 using seqan3::operator""_dssp9;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(dssp9, alphabet_, seqan3::dssp9, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dssp9, alphabet, seqan3::dssp9, );
 INSTANTIATE_TYPED_TEST_SUITE_P(dssp9, semi_alphabet_test, seqan3::dssp9, );
 INSTANTIATE_TYPED_TEST_SUITE_P(dssp9, alphabet_constexpr, seqan3::dssp9, );
 INSTANTIATE_TYPED_TEST_SUITE_P(dssp9, semi_alphabet_constexpr, seqan3::dssp9, );

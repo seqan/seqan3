@@ -12,13 +12,13 @@
 #include <seqan3/test/pretty_printing.hpp>
 
 template <typename T>
-using alphabet_ = ::testing::Test;
+using alphabet = ::testing::Test;
 
 constexpr size_t max_iterations = 65536u;
 
-TYPED_TEST_SUITE_P(alphabet_);
+TYPED_TEST_SUITE_P(alphabet);
 
-TYPED_TEST_P(alphabet_, concept_check)
+TYPED_TEST_P(alphabet, concept_check)
 {
     EXPECT_TRUE(seqan3::alphabet<TypeParam>);
     EXPECT_TRUE(seqan3::alphabet<TypeParam &>);
@@ -31,7 +31,7 @@ TYPED_TEST_P(alphabet_, concept_check)
     EXPECT_FALSE(seqan3::writable_alphabet<TypeParam const &>);
 }
 
-TYPED_TEST_P(alphabet_, global_assign_char_to)
+TYPED_TEST_P(alphabet, assign_char_to)
 {
     using char_t = seqan3::alphabet_char_t<TypeParam>;
     if constexpr(std::integral<char_t>)
@@ -48,7 +48,7 @@ TYPED_TEST_P(alphabet_, global_assign_char_to)
     }
 }
 
-TYPED_TEST_P(alphabet_, global_char_is_valid_for) // only test negative example for most; more inside specialised tests
+TYPED_TEST_P(alphabet, char_is_valid_for) // only test negative example for most; more inside specialised tests
 {
     if constexpr (seqan3::alphabet_size<TypeParam> < 255) // includes most of our alphabets, but not the adaptations!
     {
@@ -56,7 +56,7 @@ TYPED_TEST_P(alphabet_, global_char_is_valid_for) // only test negative example 
     }
 }
 
-TYPED_TEST_P(alphabet_, global_assign_char_strictly_to)
+TYPED_TEST_P(alphabet, assign_char_strictly_to)
 {
     using char_t = seqan3::alphabet_char_t<TypeParam>;
     if constexpr(std::integral<char_t>)
@@ -74,7 +74,7 @@ TYPED_TEST_P(alphabet_, global_assign_char_strictly_to)
     }
 }
 
-TYPED_TEST_P(alphabet_, global_to_char)
+TYPED_TEST_P(alphabet, to_char)
 {
     TypeParam t0;
     EXPECT_TRUE((std::is_same_v<decltype(seqan3::to_char(t0)), seqan3::alphabet_char_t<TypeParam>>));
@@ -83,9 +83,9 @@ TYPED_TEST_P(alphabet_, global_to_char)
 
 }
 
-REGISTER_TYPED_TEST_SUITE_P(alphabet_,
+REGISTER_TYPED_TEST_SUITE_P(alphabet,
                             concept_check,
-                            global_assign_char_to,
-                            global_char_is_valid_for,
-                            global_assign_char_strictly_to,
-                            global_to_char);
+                            assign_char_to,
+                            char_is_valid_for,
+                            assign_char_strictly_to,
+                            to_char);

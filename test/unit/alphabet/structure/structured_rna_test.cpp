@@ -61,7 +61,7 @@ public:
 using structured_rna_types = ::testing::Types<seqan3::structured_rna<seqan3::rna5, seqan3::dot_bracket3>,
                                               seqan3::structured_rna<seqan3::rna4, seqan3::wuss51>>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, alphabet_, structured_rna_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, alphabet, structured_rna_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, semi_alphabet_test, structured_rna_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, alphabet_constexpr, structured_rna_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(structured_rna, semi_alphabet_constexpr, structured_rna_types, );

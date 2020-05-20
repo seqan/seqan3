@@ -17,7 +17,7 @@
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_SUITE_P(gap, alphabet_, seqan3::gap, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gap, alphabet, seqan3::gap, );
 INSTANTIATE_TYPED_TEST_SUITE_P(gap, semi_alphabet_test, seqan3::gap, );
 INSTANTIATE_TYPED_TEST_SUITE_P(gap, alphabet_constexpr, seqan3::gap, );
 INSTANTIATE_TYPED_TEST_SUITE_P(gap, semi_alphabet_constexpr, seqan3::gap, );

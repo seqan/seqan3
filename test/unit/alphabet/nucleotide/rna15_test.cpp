@@ -13,7 +13,7 @@
 
 using seqan3::operator""_rna15;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(rna15, alphabet_, seqan3::rna15, );
+INSTANTIATE_TYPED_TEST_SUITE_P(rna15, alphabet, seqan3::rna15, );
 INSTANTIATE_TYPED_TEST_SUITE_P(rna15, semi_alphabet_test, seqan3::rna15, );
 INSTANTIATE_TYPED_TEST_SUITE_P(rna15, alphabet_constexpr, seqan3::rna15, );
 INSTANTIATE_TYPED_TEST_SUITE_P(rna15, semi_alphabet_constexpr, seqan3::rna15, );

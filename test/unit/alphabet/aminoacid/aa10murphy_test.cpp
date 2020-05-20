@@ -16,7 +16,7 @@
 
 using seqan3::operator""_aa10murphy;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, alphabet_, seqan3::aa10murphy, );
+INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, alphabet, seqan3::aa10murphy, );
 INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, semi_alphabet_test, seqan3::aa10murphy, );
 INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, alphabet_constexpr, seqan3::aa10murphy, );
 INSTANTIATE_TYPED_TEST_SUITE_P(aa10murphy, semi_alphabet_constexpr, seqan3::aa10murphy, );
