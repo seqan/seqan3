@@ -216,12 +216,12 @@ constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_val
 //!\endcond
 
 // ----------------------------------------------------------------------------
-// compatible
+// range_compatible
 // ----------------------------------------------------------------------------
 
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
-/*!\interface seqan3::compatible <>
+/*!\interface seqan3::range_compatible <>
  * \brief Two types are "compatible" if their seqan3::range_dimension_v and their seqan3::range_innermost_value_t are
  * the same.
  *
@@ -234,7 +234,7 @@ constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_val
  */
 //!\cond
 template <typename t1, typename t2>
-SEQAN3_CONCEPT compatible = requires (t1, t2)
+SEQAN3_CONCEPT range_compatible = requires (t1, t2)
 {
     requires (range_dimension_v<t1> == range_dimension_v<t2>);
 

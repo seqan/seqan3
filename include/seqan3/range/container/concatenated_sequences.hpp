@@ -179,7 +179,7 @@ public:
 
 protected:
     /*!\name Compatibility
-     * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible (which doesn't work for types during their definition).
+     * \brief Static constexpr variables that emulate/encapsulate seqan3::range_compatible (which doesn't work for types during their definition).
      * \{
      */
     //!\cond
@@ -197,13 +197,13 @@ protected:
     }
     //!\endcond
 
-    //!\brief Whether a type satisfies seqan3::compatible with this class's `value_type` or `reference` type.
+    //!\brief Whether a type satisfies seqan3::range_compatible with this class's `value_type` or `reference` type.
     //!\hideinitializer
     // we explicitly check same-ness, because these types may not be fully resolved, yet
     template <std::ranges::range t>
     static constexpr bool is_compatible_with_value_type = is_compatible_with_value_type_aux(std::type_identity<t>{});
 
-    //!\brief Whether a type satisfies seqan3::compatible with this class.
+    //!\brief Whether a type satisfies seqan3::range_compatible with this class.
     //!\hideinitializer
     // cannot use the concept, because this class is not yet fully defined
     template <typename t>
@@ -212,7 +212,7 @@ protected:
     //!\endcond
     static constexpr bool iter_value_t_is_compatible_with_value_type = true;
 
-    //!\brief Whether a type satisfies seqan3::compatible with this class.
+    //!\brief Whether a type satisfies seqan3::range_compatible with this class.
     //!\hideinitializer
     // cannot use the concept, because this class is not yet fully defined
     template <std::ranges::range t>
