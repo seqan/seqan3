@@ -13,6 +13,7 @@
 
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/search/search_result_range.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include "../range/iterator_test_template.hpp"
 
@@ -95,4 +96,24 @@ TEST_F(search_result_range_test, empty_query_range)
     seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
 
     EXPECT_TRUE(rng.begin() == rng.end());
+}
+
+TEST_F(search_result_range_test, issue1799)
+{
+    std::vector<std::pair<size_t, size_t>> expected_range{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4},
+                                                          {1, 0}, {1, 1}, {1, 2}, {1, 3}, {1, 4},
+                                                          {2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4}};
+    { // move construction
+        seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
+        seqan3::search_result_range moved_range{std::move(rng)};
+
+        EXPECT_RANGE_EQ(expected_range, moved_range);
+    }
+
+    { // move assignment
+        seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
+        auto && moved_range = std::move(rng);
+
+        EXPECT_RANGE_EQ(expected_range, moved_range);
+    }
 }

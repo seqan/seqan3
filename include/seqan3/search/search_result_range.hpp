@@ -75,8 +75,7 @@ public:
      */
     search_result_range(search_algorithm_t search_algorithm, query_range_t query_range) :
         search_algorithm{std::move(search_algorithm)},
-        single_pass_query_range{views::zip(std::views::iota(0), std::move(query_range))},
-        current_query_it{single_pass_query_range.begin()}
+        single_pass_query_range{views::zip(std::views::iota(0), std::move(query_range))}
     {}
     //!\}
 
@@ -133,6 +132,7 @@ private:
         if (at_end())
             return false;
 
+        auto current_query_it = single_pass_query_range.begin();
         auto && [query_id, query] = *current_query_it;
         for (auto res : search_algorithm(query))
             result_buffer.emplace_back(query_id, std::move(res));
@@ -144,15 +144,13 @@ private:
     //!\brief Returns `true` if all queries in the underlying query range have been processed, otherwise false.
     bool at_end() noexcept
     {
-        return current_query_it == single_pass_query_range.end();
+        return single_pass_query_range.begin() == single_pass_query_range.end();
     }
 
     //!\brief The search algorithm called on every query in the underlying query_range.
     search_algorithm_t search_algorithm{};
     //!\brief The underlying query range wrapped in an single pass input range.
     single_pass_query_range_t single_pass_query_range{};
-    //!\brief The current iterator over the single pass query range wrapper.
-    single_pass_query_range_iterator current_query_it{};
     //!\brief Stores the current search results.
     result_buffer_t result_buffer{};
     //!\brief A flag that indicates whether begin was already called.

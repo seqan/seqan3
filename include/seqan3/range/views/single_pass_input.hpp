@@ -310,6 +310,8 @@ protected:
     //!\brief Gives access to the cached iterator.
     base_iterator_type & cached() const noexcept
     {
+        assert(view_ptr != nullptr);
+        assert(view_ptr->state_ptr != nullptr);
         return view_ptr->state_ptr->cached_urng_iter;
     }
 };
