@@ -9,9 +9,9 @@
 #include <type_traits>
 
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/search/all.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
+#include <seqan3/search/search.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 #include <gtest/gtest.h>
@@ -83,48 +83,50 @@ TYPED_TEST(search_test, error_free)
 
     {
         // successful and unsuccesful exact search using empty max_total_error
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | ref_id_and_position, expected_hits);
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | ref_id_and_position, empty_result);
     }
 
     {
         // successful and unsuccesful exact search using short version of max_total_error
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{0}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{0}};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | ref_id_and_position, expected_hits);
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | ref_id_and_position, empty_result);
     }
 
     {
         // successful and unsuccesful exact search using max_total_error
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{0},
-                                                                        seqan3::search_cfg::substitution{0},
-                                                                        seqan3::search_cfg::insertion{0},
-                                                                        seqan3::search_cfg::deletion{0}};
+        auto const zero_count = seqan3::search_cfg::error_count{0};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{zero_count} |
+                                          seqan3::search_cfg::max_error_substitution{zero_count} |
+                                          seqan3::search_cfg::max_error_insertion{zero_count} |
+                                          seqan3::search_cfg::max_error_deletion{zero_count};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | ref_id_and_position, expected_hits);
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | ref_id_and_position, empty_result);
     }
 
     {
         // successful and unsuccesful exact search using empty max_total_error_rate
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{}};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | ref_id_and_position, expected_hits);
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | ref_id_and_position, empty_result);
     }
 
     {
         // successful and unsuccesful exact search using short version of max_total_error_rate
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{.0}};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | ref_id_and_position, expected_hits);
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | ref_id_and_position, empty_result);
     }
 
     {
         // successful and unsuccesful exact search using max_total_error_rate
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0},
-                                                                             seqan3::search_cfg::substitution{.0},
-                                                                             seqan3::search_cfg::insertion{.0},
-                                                                             seqan3::search_cfg::deletion{.0}};
+        auto const zero_rate = seqan3::search_cfg::error_rate{.0};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{zero_rate} |
+                                          seqan3::search_cfg::max_error_substitution{zero_rate} |
+                                          seqan3::search_cfg::max_error_insertion{zero_rate} |
+                                          seqan3::search_cfg::max_error_deletion{zero_rate};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | ref_id_and_position, expected_hits);
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | ref_id_and_position, empty_result);
     }
@@ -146,10 +148,10 @@ TYPED_TEST(search_test, single_element_collection)
     std::vector<seqan3::dna4_vector> text{"ACGATACG"_dna4};
     TypeParam index{text};
 
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1},
-                                                                    seqan3::search_cfg::substitution{1},
-                                                                    seqan3::search_cfg::insertion{0},
-                                                                    seqan3::search_cfg::deletion{0}};
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
+                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}} |
+                                      seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}} |
+                                      seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}};
     typename TestFixture::hits_result_t expected_hits{{0, 0}};
     EXPECT_RANGE_EQ(search("ACGACACG"_dna4, index, cfg) | ref_id_and_position, expected_hits);
 }
@@ -161,10 +163,10 @@ TYPED_TEST(search_test, multiple_queries)
     typename TestFixture::hits_result_t expected_hits{{0, 0}, {1, 0}, {0, 0}, {0, 4}, {1, 0}, {1, 4}};
     std::vector<size_t> expected_query_ids{1, 1, 2, 2, 2, 2};
 
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0},
-                                                                         seqan3::search_cfg::substitution{.0},
-                                                                         seqan3::search_cfg::insertion{.0},
-                                                                         seqan3::search_cfg::deletion{.0}};
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{.0}};
     EXPECT_RANGE_EQ(search(queries, this->index, cfg) | ref_id_and_position, expected_hits);
     EXPECT_RANGE_EQ(search(queries, this->index, cfg) | query_id, expected_query_ids);
 }
