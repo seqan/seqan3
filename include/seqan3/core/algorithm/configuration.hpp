@@ -294,10 +294,10 @@ public:
      * \returns A new configuration object without the config element identified by `query_t`.
      */
     template <typename query_t>
+    [[nodiscard]] constexpr auto remove() const
     //!\cond
         requires exists<query_t>()
     //!\endcond
-    constexpr auto remove()
     {
         constexpr int index = pack_traits::find<query_t, configs_t...>;
         return remove_at<index>();
@@ -305,10 +305,10 @@ public:
 
     //!\overload
     template <template <typename ...> typename query_t>
+    [[nodiscard]] constexpr auto remove() const
     //!\cond
         requires exists<query_t>()
     //!\endcond
-    constexpr auto remove()
     {
         constexpr int index = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke,
                                                    configs_t...>;
@@ -547,7 +547,7 @@ private:
      * \returns A new configuration object without the config element at `index`.
      */
     template <int index>
-    constexpr auto remove_at()
+    [[nodiscard]] constexpr auto remove_at() const
     {
         static_assert((index >= 0) && (index < sizeof...(configs_t)), "Index to remove from config is out of bounds.");
 
