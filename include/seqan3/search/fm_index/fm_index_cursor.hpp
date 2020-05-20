@@ -470,7 +470,7 @@ public:
     //!\endcond
     {
         static_assert(std::ranges::input_range<text_t>, "The text must model input_range.");
-        static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
+        static_assert(range_dimension_v<text_t> == 1, "The input cannot be a text collection.");
         static_assert(std::same_as<innermost_value_type_t<text_t>, index_alphabet_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
@@ -487,7 +487,7 @@ public:
     //!\endcond
     {
         static_assert(std::ranges::input_range<text_t>, "The text collection must model input_range.");
-        static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
+        static_assert(range_dimension_v<text_t> == 2, "The input must be a text collection.");
         static_assert(std::same_as<innermost_value_type_t<text_t>, index_alphabet_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);

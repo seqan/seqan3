@@ -187,7 +187,7 @@ protected:
     template <std::ranges::range t>
     static constexpr bool is_compatible_with_value_type_aux(std::type_identity<t>)
     {
-        return dimension_v<t> == dimension_v<value_type> &&
+        return range_dimension_v<t> == range_dimension_v<value_type> &&
                std::convertible_to<std::ranges::range_reference_t<t>, std::ranges::range_value_t<value_type>>;
     }
 

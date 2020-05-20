@@ -190,7 +190,7 @@ template <typename t>
 using innermost_value_type_t = typename innermost_value_type<t>::type;
 
 // ----------------------------------------------------------------------------
-// dimension_v
+// range_dimension_v
 // ----------------------------------------------------------------------------
 
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
@@ -207,12 +207,12 @@ template <typename t>
 //!\cond
     requires detail::has_range_value_type<t>
 //!\endcond
-constexpr size_t dimension_v = 1;
+constexpr size_t range_dimension_v = 1;
 
 //!\cond
 template <typename t>
     requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<remove_cvref_t<t>>>
-constexpr size_t dimension_v<t> = dimension_v<std::ranges::range_value_t<remove_cvref_t<t>>> + 1;
+constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_value_t<remove_cvref_t<t>>> + 1;
 //!\endcond
 
 // ----------------------------------------------------------------------------
@@ -222,7 +222,7 @@ constexpr size_t dimension_v<t> = dimension_v<std::ranges::range_value_t<remove_
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
 /*!\interface seqan3::compatible <>
- * \brief Two types are "compatible" if their seqan3::dimension_v and their seqan3::innermost_value_type_t are
+ * \brief Two types are "compatible" if their seqan3::range_dimension_v and their seqan3::innermost_value_type_t are
  * the same.
  *
  * \details
@@ -236,7 +236,7 @@ constexpr size_t dimension_v<t> = dimension_v<std::ranges::range_value_t<remove_
 template <typename t1, typename t2>
 SEQAN3_CONCEPT compatible = requires (t1, t2)
 {
-    requires (dimension_v<t1> == dimension_v<t2>);
+    requires (range_dimension_v<t1> == range_dimension_v<t2>);
 
     requires std::is_same_v<innermost_value_type_t<t1>, innermost_value_type_t<t2>>;
 };

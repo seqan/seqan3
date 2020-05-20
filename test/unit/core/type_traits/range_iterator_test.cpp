@@ -223,8 +223,8 @@ TEST(range_and_iterator, innermost_value_type_)
 
 TEST(range_and_iterator, dimension)
 {
-    EXPECT_EQ(1u, seqan3::dimension_v<std::vector<int>>);
-    EXPECT_EQ(2u, seqan3::dimension_v<std::vector<std::vector<int>>>);
+    EXPECT_EQ(1u, seqan3::range_dimension_v<std::vector<int>>);
+    EXPECT_EQ(2u, seqan3::range_dimension_v<std::vector<std::vector<int>>>);
 }
 
 TEST(range_and_iterator, compatible)

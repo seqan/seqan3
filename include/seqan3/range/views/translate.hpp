@@ -564,7 +564,7 @@ protected:
     //!\cond
     // unfortunately we cannot specialise the variable template so we have to add an auxiliary here
     template <typename t>
-        requires (dimension_v<t> == dimension_v<value_type> + 1) &&
+        requires (range_dimension_v<t> == range_dimension_v<value_type> + 1) &&
                  std::is_same_v<remove_cvref_t<innermost_value_type_t<value_type>>,
                                 remove_cvref_t<innermost_value_type_t<t>>>
     static constexpr bool is_compatible_this_aux = true;

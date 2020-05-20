@@ -74,22 +74,26 @@ private:
 
 public:
 
-    static_assert(dimension_v<urng_t> == 2,
-        "This adaptor only handles range-of-range (two dimensions) as input.");
+    static_assert(range_dimension_v<urng_t> == 2,
+                  "This adaptor only handles range-of-range (two dimensions) as input.");
     static_assert(std::ranges::viewable_range<urng_t>,
-        "The range parameter to views::translate_join cannot be a temporary of a non-view range.");
+                  "The range parameter to views::translate_join cannot be a temporary of a non-view range.");
     static_assert(std::ranges::viewable_range<std::ranges::range_reference_t<urng_t>>,
-        "The inner range of the range parameter to views::translate_join cannot be a temporary of a non-view range.");
+                  "The inner range of the range parameter to views::translate_join cannot be a temporary of "
+                  "a non-view range.");
     static_assert(std::ranges::sized_range<urng_t>,
-        "The range parameter to views::translate_join must model std::ranges::sized_range.");
+                  "The range parameter to views::translate_join must model std::ranges::sized_range.");
     static_assert(std::ranges::sized_range<std::ranges::range_reference_t<urng_t>>,
-        "The inner range of the range parameter to views::translate_join must model std::ranges::sized_range.");
+                  "The inner range of the range parameter to views::translate_join must model "
+                  "std::ranges::sized_range.");
     static_assert(std::ranges::random_access_range<urng_t>,
-        "The range parameter to views::translate_join must model std::ranges::random_access_range.");
+                  "The range parameter to views::translate_join must model std::ranges::random_access_range.");
     static_assert(std::ranges::random_access_range<std::ranges::range_reference_t<urng_t>>,
-        "The inner range of the range parameter to views::translate_join must model std::ranges::random_access_range.");
+                  "The inner range of the range parameter to views::translate_join must model "
+                  "std::ranges::random_access_range.");
     static_assert(nucleotide_alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<urng_t>>>,
-        "The range parameter to views::translate_join must be over a range over elements of seqan3::nucleotide_alphabet.");
+                  "The range parameter to views::translate_join must be over a range over elements of "
+                  "seqan3::nucleotide_alphabet.");
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -291,22 +295,26 @@ struct translate_join_fn
     template <std::ranges::range urng_t>
     constexpr auto operator()(urng_t && urange, translation_frames const tf = translation_frames::SIX_FRAME) const
     {
-        static_assert(dimension_v<urng_t> == 2,
-            "This adaptor only handles range-of-range (two dimensions) as input.");
+        static_assert(range_dimension_v<urng_t> == 2,
+                      "This adaptor only handles range-of-range (two dimensions) as input.");
         static_assert(std::ranges::viewable_range<urng_t>,
-            "The range parameter to views::translate_join cannot be a temporary of a non-view range.");
+                      "The range parameter to views::translate_join cannot be a temporary of a non-view range.");
         static_assert(std::ranges::viewable_range<std::ranges::range_reference_t<urng_t>>,
-            "The inner range of the range parameter to views::translate_join cannot be a temporary of a non-view range.");
+                      "The inner range of the range parameter to views::translate_join cannot be a "
+                      "temporary of a non-view range.");
         static_assert(std::ranges::sized_range<urng_t>,
-            "The range parameter to views::translate_join must model std::ranges::sized_range.");
+                      "The range parameter to views::translate_join must model std::ranges::sized_range.");
         static_assert(std::ranges::sized_range<std::ranges::range_reference_t<urng_t>>,
-            "The inner range of the range parameter to views::translate_join must model std::ranges::sized_range.");
+                      "The inner range of the range parameter to views::translate_join must model "
+                      "std::ranges::sized_range.");
         static_assert(std::ranges::random_access_range<urng_t>,
-            "The range parameter to views::translate_join must model std::ranges::random_access_range.");
+                      "The range parameter to views::translate_join must model std::ranges::random_access_range.");
         static_assert(std::ranges::random_access_range<std::ranges::range_reference_t<urng_t>>,
-            "The inner range of the range parameter to views::translate_join must model std::ranges::random_access_range.");
+                      "The inner range of the range parameter to views::translate_join must model "
+                      "std::ranges::random_access_range.");
         static_assert(nucleotide_alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<urng_t>>>,
-            "The range parameter to views::translate_join must be over a range over elements of seqan3::nucleotide_alphabet.");
+                      "The range parameter to views::translate_join must be over a range over elements of "
+                      "seqan3::nucleotide_alphabet.");
 
         return detail::view_translate_join{std::forward<urng_t>(urange), tf};
     }
