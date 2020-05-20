@@ -92,7 +92,7 @@ private:
     static void ref_ids_deleter_default(ref_ids_type * ptr) { delete ptr; }
     //!\brief The key's type of ref_dict.
     using key_type = std::conditional_t<std::ranges::contiguous_range<std::ranges::range_reference_t<ref_ids_type>>,
-                        std::span<innermost_value_type_t<ref_ids_type> const>,
+                        std::span<range_innermost_value_t<ref_ids_type> const>,
                         type_reduce_view<std::ranges::range_reference_t<ref_ids_type>>>;
     //!\brief The pointer to reference ids information (non-owning if reference information is given).
     ref_ids_ptr_t ref_ids_ptr{new ref_ids_type{}, ref_ids_deleter_default};

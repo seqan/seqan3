@@ -527,7 +527,7 @@ public:
     bool extend_right(seq_t && seq) noexcept
     {
         static_assert(std::ranges::forward_range<seq_t>, "The query must model forward_range.");
-        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, index_alphabet_type>,
+        static_assert(std::convertible_to<range_innermost_value_t<seq_t>, index_alphabet_type>,
                       "The alphabet of the sequence must be convertible to the alphabet of the index.");
 
         assert(index != nullptr);
@@ -597,7 +597,7 @@ public:
     bool extend_left(seq_t && seq) noexcept
     {
         static_assert(std::ranges::bidirectional_range<seq_t>, "The query must model bidirectional_range.");
-        static_assert(std::convertible_to<innermost_value_type_t<seq_t>, index_alphabet_type>,
+        static_assert(std::convertible_to<range_innermost_value_t<seq_t>, index_alphabet_type>,
                       "The alphabet of the sequence must be convertible to the alphabet of the index.");
         assert(index != nullptr);
 
@@ -907,7 +907,7 @@ public:
     {
         static_assert(std::ranges::input_range<text_t>, "The text must model input_range.");
         static_assert(range_dimension_v<text_t> == 1, "The input cannot be a text collection.");
-        static_assert(std::same_as<innermost_value_type_t<text_t>, index_alphabet_type>,
+        static_assert(std::same_as<range_innermost_value_t<text_t>, index_alphabet_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 
@@ -924,7 +924,7 @@ public:
     {
         static_assert(std::ranges::input_range<text_t>, "The text collection must model input_range.");
         static_assert(range_dimension_v<text_t> == 2, "The input must be a text collection.");
-        static_assert(std::same_as<innermost_value_type_t<text_t>, index_alphabet_type>,
+        static_assert(std::same_as<range_innermost_value_t<text_t>, index_alphabet_type>,
                       "The alphabet types of the given text and index differ.");
         assert(index != nullptr);
 

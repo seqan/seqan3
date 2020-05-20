@@ -187,7 +187,7 @@ struct range_innermost_value<t>
 //!\brief Shortcut for seqan3::range_innermost_value (transformation_trait shortcut).
 //!\see seqan3::range_innermost_value
 template <typename t>
-using innermost_value_type_t = typename range_innermost_value<t>::type;
+using range_innermost_value_t = typename range_innermost_value<t>::type;
 
 // ----------------------------------------------------------------------------
 // range_dimension_v
@@ -222,7 +222,7 @@ constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_val
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
 /*!\interface seqan3::compatible <>
- * \brief Two types are "compatible" if their seqan3::range_dimension_v and their seqan3::innermost_value_type_t are
+ * \brief Two types are "compatible" if their seqan3::range_dimension_v and their seqan3::range_innermost_value_t are
  * the same.
  *
  * \details
@@ -238,7 +238,7 @@ SEQAN3_CONCEPT compatible = requires (t1, t2)
 {
     requires (range_dimension_v<t1> == range_dimension_v<t2>);
 
-    requires std::is_same_v<innermost_value_type_t<t1>, innermost_value_type_t<t2>>;
+    requires std::is_same_v<range_innermost_value_t<t1>, range_innermost_value_t<t2>>;
 };
 //!\endcond
 

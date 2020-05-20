@@ -57,7 +57,7 @@ sequence_store_seqan3 store{};
 template <tag index_tag, typename rng_t>
 void index_benchmark_seqan3(benchmark::State & state)
 {
-    using alphabet_t = seqan3::innermost_value_type_t<rng_t>;
+    using alphabet_t = seqan3::range_innermost_value_t<rng_t>;
     using inner_rng_t = std::conditional_t<seqan3::range_dimension_v<rng_t> == 1, rng_t, std::ranges::range_value_t<rng_t>>;
 
     rng_t sequence;

@@ -205,12 +205,12 @@ TEST(range_and_iterator, size_type_)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, innermost_value_type_)
+TEST(range_and_iterator, range_innermost_value)
 {
     using vector_of_int_vector = std::vector<std::vector<int>>;
     using type_list_example = seqan3::type_list<typename seqan3::range_innermost_value<std::vector<int>>::type, // long
-                                                seqan3::innermost_value_type_t<std::vector<int>>, // short
-                                                seqan3::innermost_value_type_t<vector_of_int_vector>>; // two-level
+                                                seqan3::range_innermost_value_t<std::vector<int>>, // short
+                                                seqan3::range_innermost_value_t<vector_of_int_vector>>; // two-level
 
     using comp_list = seqan3::type_list<int,
                                         int,

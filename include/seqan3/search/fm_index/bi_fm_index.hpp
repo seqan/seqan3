@@ -121,8 +121,8 @@ private:
     void construct(text_t && text)
     {
         static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
-        static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::convertible_to<innermost_value_type_t<text_t>, alphabet_t>,
+        static_assert(alphabet_size<range_innermost_value_t<text_t>> <= 256, "The alphabet is too big.");
+        static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
                      "The alphabet of the text collection must be convertible to the alphabet of the index.");
         static_assert(range_dimension_v<text_t> == 1, "The input cannot be a text collection.");
 
@@ -145,8 +145,8 @@ private:
         static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
         static_assert(std::ranges::bidirectional_range<std::ranges::range_reference_t<text_t>>,
                       "The elements of the text collection must model bidirectional_range.");
-        static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::convertible_to<innermost_value_type_t<text_t>, alphabet_t>,
+        static_assert(alphabet_size<range_innermost_value_t<text_t>> <= 256, "The alphabet is too big.");
+        static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
                      "The alphabet of the text collection must be convertible to the alphabet of the index.");
         static_assert(range_dimension_v<text_t> == 2, "The input must be a text collection.");
 
@@ -353,7 +353,7 @@ public:
  */
 //! \brief Deduces the dimensions of the text.
 template <std::ranges::range text_t>
-bi_fm_index(text_t &&) -> bi_fm_index<innermost_value_type_t<text_t>, text_layout{range_dimension_v<text_t> != 1}>;
+bi_fm_index(text_t &&) -> bi_fm_index<range_innermost_value_t<text_t>, text_layout{range_dimension_v<text_t> != 1}>;
 //!\}
 
 //!\}
