@@ -28,7 +28,7 @@ protected:
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
      * \tparam configuration_t The search configuration type.
      * \param[in] internal_hits internal_hits A range over internal cursor results.
-     * \returns a range over seqan3::search_result's.
+     * \returns a range over seqan3::search_result.
      *
      * \details
      *
@@ -71,17 +71,17 @@ protected:
         if (!internal_hits.empty())
         {
             // only one cursor is reported but it might contain more than one text position
-            auto [ref_id, ref_pos] = internal_hits[0].lazy_locate()[0];
+            auto && [ref_id, ref_pos] = internal_hits[0].lazy_locate()[0];
             results.push_back(search_result_t{0, ref_id, ref_pos});
         }
         return results;
     }
 
-    /*!\brief Returns a range over seqan3::search_result's by calling locate on each cursor.
+    /*!\brief Returns a range over seqan3::search_result by calling locate on each cursor.
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
      * \tparam configuration_t The search configuration type.
      * \param[in] internal_hits internal_hits A range over internal cursor results.
-     * \returns a range over seqan3::search_result's.
+     * \returns a range over seqan3::search_result.
      *
      * \details
      *
@@ -103,20 +103,14 @@ protected:
         results.reserve(internal_hits.size()); // we at least as many text positions as cursors, possibly more
 
         for (auto const & cursor : internal_hits)
-        {
-            for (auto [ref_id, ref_pos] : cursor.locate())
-            {
+            for (auto && [ref_id, ref_pos] : cursor.locate())
                 results.push_back(search_result_t{0, ref_id, ref_pos});
-                auto res = results.back();
-            }
-        }
 
         // sort by reference id and reference position
         auto compare = [] (auto const & r1, auto const & r2)
         {
-            if (r1.reference_id() == r2.reference_id())
-                return r1.reference_begin_pos() < r2.reference_begin_pos();
-            return r1.reference_id() < r2.reference_id();
+            return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_pos() < r2.reference_begin_pos()) 
+                                                            : (r1.reference_id() < r2.reference_id());
         };
 
         std::sort(results.begin(), results.end(), compare);

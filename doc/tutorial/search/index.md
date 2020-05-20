@@ -125,7 +125,7 @@ Here is an overview of the available member functions:
 | seqan3::search_result::reference_id()        | \copybrief seqan3::search_result::reference_id()        |
 | seqan3::search_result::reference_begin_pos() | \copybrief seqan3::search_result::reference_begin_pos() |
 
-Note that the cursor is not included in the a hit by default. If you are trying to access that information
+Note that the cursor is not included in the a hit by default. If you are trying to access that information,
 an exception will be thrown. The cursor is an advanced data structure that will not be covered in this tutorial
 but note that you con configure the result of the search with the output configuration (see seqan3::search_cfg::output).
 
@@ -158,14 +158,14 @@ std::vector<dna4_vector> text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTA"_dna4,
 ```console
 =====   Running on a single text   =====
 There are 3 hits.
-TThe following hits were found:
+The following hits were found:
 <query_id:0, reference_id:0, reference_pos:1>
 <query_id:0, reference_id:0, reference_pos:41>
 <query_id:0, reference_id:0, reference_pos:77>
 
 ===== Running on a text collection =====
 There are 3 hits.
-TThe following hits were found:
+The following hits were found:
 <query_id:0, reference_id:0, reference_pos:1>
 <query_id:0, reference_id:1, reference_pos:9>
 <query_id:0, reference_id:2, reference_pos:16>

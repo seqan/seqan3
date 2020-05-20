@@ -8,12 +8,13 @@
 /*!\file
  * \brief Provides seqan3::search_result.
  * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <exception>
 #include <seqan3/std/concepts>
+#include <exception>
 
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
@@ -34,9 +35,9 @@ namespace seqan3
  * \tparam reference_id_type The type of the reference_id.
  * \tparam reference_begin_pos_type The type of the reference_begin_pos.
  *
- * \cond DEV
+ * \if DEV
  * \note If the information is not available the type of the respective data is of seqan3::detail::empty_type.
- * \endcond
+ * \endif
  */
 template <typename query_id_type, typename cursor_type, typename reference_id_type, typename reference_begin_pos_type>
 class search_result
@@ -61,12 +62,12 @@ private:
         query_id_(id), cursor_(std::move(cursor))
     {}
 
-    /*!\brief Construct from a query id and an index cursor.
+    /*!\brief Construct from a query id, a reference id and a begin position in the reference.
      * \tparam query_id_type The type of the query_id.
      * \tparam reference_id_type The type of the reference id.
      * \tparam reference_begin_pos_type The type of the reference begin position.
      * \param[in] q_id The query id of the search result.
-     * \param[in] ref_id The reference if of the search result.
+     * \param[in] ref_id The reference id of the search result.
      * \param[in] ref_pos The reference begin position of the search result.
      */
     search_result(query_id_type q_id, reference_id_type ref_id, reference_begin_pos_type ref_pos) :
@@ -104,14 +105,16 @@ public:
     }
 
     /*!\brief Returns the index cursor pointing to the suffix array range where the query was found.
-     *!\sa seqan3::fm_index_cursor
-     *!\sa seqan3::bi_fm_index_cursor
+     * \sa seqan3::fm_index_cursor
+     * \sa seqan3::bi_fm_index_cursor
      */
-    constexpr cursor_type cursor() const noexcept
+    constexpr cursor_type cursor() const
     {
         if constexpr (std::same_as<cursor_type, detail::empty_type>)
+        {
             throw std::logic_error{"You tried to access the index cursor but it was not selected in the output "
                                    "configuration of the search."};
+        }
         return cursor_;
     }
 
@@ -121,20 +124,24 @@ public:
      * The reference id is an arithmetic value that corresponds to the index of the reference text in the index.
      * The order is determined on construction of the index.
      */
-    constexpr reference_id_type reference_id() const noexcept
+    constexpr reference_id_type reference_id() const noexcept(!(std::same_as<reference_id_type, detail::empty_type>))
     {
         if constexpr (std::same_as<reference_id_type, detail::empty_type>)
+        {
             throw std::logic_error{"You tried to access the reference id but it was not selected in the output "
                                    "configuration of the search."};
+        }
         return reference_id_;
     }
 
     //!\brief Returns the reference begin positions where the query was found in the reference text (at `reference id`).
-    constexpr reference_begin_pos_type reference_begin_pos() const noexcept
+    constexpr reference_begin_pos_type reference_begin_pos() const
     {
         if constexpr (std::same_as<reference_begin_pos_type, detail::empty_type>)
+        {
             throw std::logic_error{"You tried to access the reference begin position but it was not selected in the "
                                    "output configuration of the search."};
+        }
         return reference_begin_pos_;
     }
     //!\}

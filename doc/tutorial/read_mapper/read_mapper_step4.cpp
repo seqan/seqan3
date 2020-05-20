@@ -79,7 +79,13 @@ void map_reads(std::filesystem::path const & query_path,
                 size_t ref_offset = alignment.front_coordinate().first + 2 + start;
                 size_t map_qual = 60u + alignment.score();
 
-                sam_out.emplace_back(query, seqan3::get<seqan3::field::id>(record), storage.ids[res.reference_id()], ref_offset, aligned_seq, seqan3::get<seqan3::field::qual>(record), map_qual);
+                sam_out.emplace_back(query,
+                                     seqan3::get<seqan3::field::id>(record), 
+                                     storage.ids[res.reference_id()], 
+                                     ref_offset, 
+                                     aligned_seq, 
+                                     seqan3::get<seqan3::field::qual>(record), 
+                                     map_qual);
             }
         }
     }
