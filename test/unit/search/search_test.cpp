@@ -409,6 +409,18 @@ TYPED_TEST(search_test, search_strategy_strata)
     // }
 }
 
+TYPED_TEST(search_test, search_strategy_dynamic)
+{
+    using hits_result_t = typename TestFixture::hits_result_t;
+
+    seqan3::search_cfg::hit hit_option{};
+    hit_option = seqan3::search_cfg::hit_all;
+
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} | hit_option;
+    EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 1}, {0, 4},
+                                                                               {0, 5}, {0, 8}, {0, 9}}));
+}
+
 TYPED_TEST(search_string_test, error_free_string)
 {
     using hits_result_t = typename TestFixture::hits_result_t;
