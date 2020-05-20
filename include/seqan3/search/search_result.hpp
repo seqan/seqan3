@@ -108,7 +108,7 @@ public:
      * \sa seqan3::fm_index_cursor
      * \sa seqan3::bi_fm_index_cursor
      */
-    constexpr cursor_type cursor() const
+    constexpr cursor_type cursor() const noexcept(!(std::same_as<cursor_type, detail::empty_type>))
     {
         if constexpr (std::same_as<cursor_type, detail::empty_type>)
         {
@@ -136,6 +136,7 @@ public:
 
     //!\brief Returns the reference begin positions where the query was found in the reference text (at `reference id`).
     constexpr reference_begin_pos_type reference_begin_pos() const
+        noexcept(!(std::same_as<reference_begin_pos_type, detail::empty_type>))
     {
         if constexpr (std::same_as<reference_begin_pos_type, detail::empty_type>)
         {

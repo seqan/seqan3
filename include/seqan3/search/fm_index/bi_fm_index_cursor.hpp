@@ -1037,9 +1037,8 @@ public:
         return std::views::iota(fwd_lb, fwd_lb + count())
              | std::views::transform([*this, _offset = offset()] (auto sa_pos)
                {
-                   return _offset - index->fwd_fm.index[sa_pos];
-               })
-             | std::views::transform([*this] (auto loc) { return locate_result_value_type{0, loc}; });
+                   return locate_result_value_type{0u, _offset - index->fwd_fm.index[sa_pos]};
+               });
     }
 
     //!\overload

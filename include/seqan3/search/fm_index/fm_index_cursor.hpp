@@ -599,9 +599,8 @@ public:
         return std::views::iota(node.lb, node.lb + count())
              | std::views::transform([*this, _offset = offset()] (auto sa_pos)
                {
-                   return _offset - index->index[sa_pos];
-               })
-             | std::views::transform([*this] (auto loc) { return locate_result_value_type{0u, loc}; });
+                   return locate_result_value_type{0u, _offset - index->index[sa_pos]};
+               });
     }
 
     //!\overload
