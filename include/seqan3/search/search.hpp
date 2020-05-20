@@ -277,7 +277,8 @@ template <fm_index_specialisation index_t,
           std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
 //!\cond
-    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>>
+    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
+             !configuration_t::template exists<search_cfg::hit>()
 //!\endcond
 inline auto search(queries_t && queries,
                    index_t const & index,
@@ -295,6 +296,22 @@ inline auto search(queries_t && queries,
     auto algorithm = detail::search_configurator::configure_algorithm(updated_cfg, index);
 
     return search_result_range{std::move(algorithm), std::forward<queries_t>(queries) | views::type_reduce};
+}
+
+template <fm_index_specialisation index_t, std::ranges::forward_range queries_t, typename configuration_t>
+//!\cond
+    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
+             configuration_t::template exists<search_cfg::hit>()
+//!\endcond
+inline auto search(queries_t && queries, index_t const & index, configuration_t const & cfg)
+{
+    auto hit_strategy_variant = get<search_cfg::hit>(cfg).selection;
+    auto cfg_wihtout_strategy = cfg.template remove<search_cfg::hit>();
+
+    return std::visit([&] (auto strategy)
+                      {
+                          return search(std::forward<queries_t>(queries), index, cfg_wihtout_strategy | strategy);
+                      }, hit_strategy_variant);
 }
 
 //!\cond DEV
