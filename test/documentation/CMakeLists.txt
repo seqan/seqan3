@@ -20,22 +20,34 @@ include (seqan3-doxygen.cmake)
 ### Enable testing
 enable_testing()
 
-set (SEQAN3_DOXYGEN_TEST_SCRIPT "
-    output=\$(${DOXYGEN_EXECUTABLE} 2>&1 > /dev/null | sort);
-    echo \"\$output\";
-    test -z \"\$output\";
-    ! find . -not -name \"*_source.html\" -name \"*.html\" -print0 | xargs -0 grep \"requires\" | grep \"memname\"")
+# doxygen does not show any warnings (doxygen prints warnings / errors to cerr)
+set (SEQAN3_DOXYGEN_FAIL_ON_WARNINGS "
+    ${DOXYGEN_EXECUTABLE} > doxygen.cout 2> doxygen.cerr;
+    cat \"doxygen.cerr\";
+    test ! -s \"doxygen.cerr\"")
+
+# We search the HTML output to ensure that no `requires` clauses are at wrong places.
+set (SEQAN3_DOXYGEN_FAIL_ON_UNCOND_REQUIRES
+     "! find . -not -name \"*_source.html\" -name \"*.html\" -print0 | xargs -0 grep \"requires\" | grep \"memname\"")
 
 if (SEQAN3_USER_DOC)
     message (STATUS "Add user doc test.")
-    add_test(NAME doc_usr_test
-    COMMAND sh -c "${SEQAN3_DOXYGEN_TEST_SCRIPT}"
-    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc_usr)
+    add_test(NAME doc_usr_no_warnings_test
+             COMMAND bash -c "${SEQAN3_DOXYGEN_FAIL_ON_WARNINGS}"
+             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc_usr)
+
+    add_test(NAME doc_usr_no_uncond_requires_test
+             COMMAND bash -c "${SEQAN3_DOXYGEN_FAIL_ON_UNCOND_REQUIRES}"
+             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc_usr)
 endif ()
 
 if (SEQAN3_DEV_DOC)
     message (STATUS "Add dev doc test.")
-    add_test(NAME doc_dev_test
-    COMMAND sh -c "${SEQAN3_DOXYGEN_TEST_SCRIPT}"
-    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc_dev)
+    add_test(NAME doc_dev_no_warnings_test
+             COMMAND bash -c "${SEQAN3_DOXYGEN_FAIL_ON_WARNINGS}"
+             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc_dev)
+
+    add_test(NAME doc_dev_no_uncond_requires_test
+             COMMAND bash -c "${SEQAN3_DOXYGEN_FAIL_ON_UNCOND_REQUIRES}"
+             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc_dev)
 endif ()
