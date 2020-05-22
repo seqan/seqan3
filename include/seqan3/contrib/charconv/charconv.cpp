@@ -61,6 +61,7 @@ append4(char* buffer, T i)
     return append2(append2(buffer, (i) / 100), (i) % 100);
 }
 
+inline
 char*
 __u32toa(uint32_t value, char* buffer)
 {
@@ -122,6 +123,7 @@ __u32toa(uint32_t value, char* buffer)
     return buffer;
 }
 
+inline
 char*
 __u64toa(uint64_t value, char* buffer)
 {
