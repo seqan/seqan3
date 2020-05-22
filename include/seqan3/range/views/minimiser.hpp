@@ -335,13 +335,13 @@ private:
     sentinel_t urange_end;
 
     //!\brief The minimiser value.
-    size_t minimiser_value{0};
+    value_type minimiser_value{};
 
     //!\brief Iterator to the rightmost value of one window.
     it_t window_right;
 
     //!\brief Stored values per window. It is necessary to store them, because a shift can remove the current minimiser.
-    std::deque<uint64_t> window_values;
+    std::deque<value_type> window_values;
 
     //!\brief Increments iterator by 1.
     void get_minimiser()
@@ -371,7 +371,7 @@ private:
         if (window_right == urange_end)
             return true;
 
-        uint64_t new_value = *window_right;
+        value_type new_value = *window_right;
         if (minimiser_value == *(std::begin(window_values)))
         {
             window_values.pop_front();
