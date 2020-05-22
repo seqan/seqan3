@@ -10,7 +10,7 @@
 #include "charconv"
 #include <string.h>
 
-_LIBCPP_BEGIN_NAMESPACE_STD
+SEQAN3_CONTRIB_CHARCONV_LIBCPP_BEGIN_NAMESPACE_STD
 
 namespace __itoa
 {
@@ -32,7 +32,7 @@ static constexpr char cDigitsLut[200] = {
     '7', '9', '8', '9', '9'};
 
 template <typename T>
-inline _LIBCPP_INLINE_VISIBILITY char*
+inline SEQAN3_CONTRIB_CHARCONV_LIBCPP_INLINE_VISIBILITY char*
 append1(char* buffer, T i)
 {
     *buffer = '0' + static_cast<char>(i);
@@ -40,7 +40,7 @@ append1(char* buffer, T i)
 }
 
 template <typename T>
-inline _LIBCPP_INLINE_VISIBILITY char*
+inline SEQAN3_CONTRIB_CHARCONV_LIBCPP_INLINE_VISIBILITY char*
 append2(char* buffer, T i)
 {
     memcpy(buffer, &cDigitsLut[(i)*2], 2);
@@ -48,14 +48,14 @@ append2(char* buffer, T i)
 }
 
 template <typename T>
-inline _LIBCPP_INLINE_VISIBILITY char*
+inline SEQAN3_CONTRIB_CHARCONV_LIBCPP_INLINE_VISIBILITY char*
 append3(char* buffer, T i)
 {
     return append2(append1(buffer, (i) / 100), (i) % 100);
 }
 
 template <typename T>
-inline _LIBCPP_INLINE_VISIBILITY char*
+inline SEQAN3_CONTRIB_CHARCONV_LIBCPP_INLINE_VISIBILITY char*
 append4(char* buffer, T i)
 {
     return append2(append2(buffer, (i) / 100), (i) % 100);
@@ -230,4 +230,4 @@ __u64toa(uint64_t value, char* buffer)
 
 }  // namespace __itoa
 
-_LIBCPP_END_NAMESPACE_STD
+SEQAN3_CONTRIB_CHARCONV_LIBCPP_END_NAMESPACE_STD
