@@ -74,14 +74,14 @@ namespace std {
 
 */
 
-#include <__errc>
+// #include <__errc>
 #include <type_traits>
 #include <limits>
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
 
-#include <__debug>
+// #include <__debug>
 
 #if !defined(SEQAN3_CONTRIB_CHARCONV_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
 #pragma GCC system_header
