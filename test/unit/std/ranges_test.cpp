@@ -7,15 +7,15 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/ranges>
 #include <string>
 
-#include <seqan3/std/ranges>
 #include <range/v3/view/take.hpp>
 
-TEST (ranges_test, combine_std_with_range_v3)
+TEST(ranges_test, combine_std_with_range_v3)
 {
     std::string str{"foo"};
-    auto v1 = str | std::views::take(5) | ranges::view::take(1);
+    auto take_first = str | std::views::take(5) | ranges::view::take(1);
 
-    EXPECT_EQ(*std::ranges::begin(v1), 'f');
+    EXPECT_EQ(*std::ranges::begin(take_first), 'f');
 }
