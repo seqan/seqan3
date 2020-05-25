@@ -137,3 +137,9 @@ TEST_F(minimiser_test, combinability)
     EXPECT_RANGE_EQ(result3_ungapped_no_rev_stop, text3 | stop_at_t | kmer_view | minimiser_view);
     EXPECT_RANGE_EQ(result3_gapped_no_rev_stop, text3 | stop_at_t | gapped_kmer_view | minimiser_view);
 }
+
+TEST_F(minimiser_test, non_arithmetic_value)
+{
+    // just compute the minimizer directly on the alphabet
+    EXPECT_RANGE_EQ("ACACA"_dna4, text3 | minimiser_view);
+}
