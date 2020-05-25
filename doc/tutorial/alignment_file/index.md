@@ -218,7 +218,7 @@ You can pass reference ids and reference sequences as additional constructor par
 
 \assignment{Assignment 2: Combining sequence and alignment files}
 
-Read in the following reference sequence FASTA file (see the sequence file tutorial if you need a remainder):
+Read in the following reference sequence FASTA file (see the sequence file tutorial if you need a reminder):
 
 \snippet doc/tutorial/alignment_file/alignment_file_solution2.cpp ref_file
 
