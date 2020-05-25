@@ -8,6 +8,7 @@
 /*!\file
  * \brief Meta-header for the \link search_configuration search configuration module \endlink.
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
 #pragma once
@@ -16,7 +17,6 @@
 #include <seqan3/search/configuration/default_configuration.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
-#include <seqan3/search/configuration/max_error_rate.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/output.hpp>
 #include <seqan3/search/configuration/parallel.hpp>

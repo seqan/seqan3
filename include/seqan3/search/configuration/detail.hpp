@@ -8,6 +8,7 @@
 /*!\file
  * \brief Provides compatibility matrix for search configurations.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
 #pragma once
@@ -39,8 +40,10 @@ namespace seqan3::detail
  */
 enum struct search_config_id : uint8_t
 {
-    max_error, //!< Identifier for the max_errors configuration.
-    max_error_rate, //!< Identifier for the max_error_rate configuration.
+    max_error_total, //!< Identifier for the max_error_total configuration.
+    max_error_substitution, //!< Identifier for the max_error_substitution configuration.
+    max_error_insertion, //!< Identifier for the max_error_insertion configuration.
+    max_error_deletion, //!< Identifier for the max_error_deletion configuration.
     output, //!< Identifier for the output configuration.
     hit, //!< Identifier for the hit configuration (all, all_best, single_best, strata).
     parallel, //!< Identifier for the parallel execution configuration.
@@ -70,13 +73,15 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(search_config_
                             static_cast<uint8_t>(search_config_id::SIZE)> compatibility_table<search_config_id> =
 {
     {
-        // max_error, max_error_rate, output, hit, parallel, result_type
-        { 0, 0, 1, 1, 1, 1},
-        { 0, 0, 1, 1, 1, 1},
-        { 1, 1, 0, 1, 1, 1},
-        { 1, 1, 1, 0, 1, 1},
-        { 1, 1, 1, 1, 0, 1},
-        { 1, 1, 1, 1, 1, 0}
+        // max_error_total, max_error_substitution, max_error_insertion, max_error_deletion, output, hit, parallel, result_type
+        { 0, 1, 1, 1, 1, 1, 1, 1}, // max_error_total
+        { 1, 0, 1, 1, 1, 1, 1, 1}, // max_error_substitution
+        { 1, 1, 0, 1, 1, 1, 1, 1}, // max_error_insertion
+        { 1, 1, 1, 0, 1, 1, 1, 1}, // max_error_deletion
+        { 1, 1, 1, 1, 0, 1, 1, 1}, // output
+        { 1, 1, 1, 1, 1, 0, 1, 1}, // hit
+        { 1, 1, 1, 1, 1, 1, 0, 1}, // parallel
+        { 1, 1, 1, 1, 1, 1, 1, 0}  // result_type
     }
 };
 
