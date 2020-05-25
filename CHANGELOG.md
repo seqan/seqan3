@@ -28,6 +28,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
 
+* The Seqan3 Cookbook is added to the documentation. It contains a listing of code examples on how to perform
+  particular tasks using the library.
+
 ## New features
 
 #### Argument Parser
