@@ -47,9 +47,13 @@ namespace seqan3
 // value_type
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `value_type` of another type.
  * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query; must model std::ranges::input_range.
+ * \deprecated This is deprecated use std::ranges::range_value_t.
  */
 template <std::ranges::input_range rng_t>
 //!\cond
@@ -60,14 +64,20 @@ struct value_type<rng_t>
     //!\brief Return the value_type member definition from the queried type's iterator.
     using type = value_type_t<std::ranges::iterator_t<rng_t>>;
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // reference
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `reference` of another type.
  * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query; must model std::ranges::input_range.
+ * \deprecated This is deprecated use std::ranges::range_reference_t.
  */
 template <std::ranges::input_range rng_t>
 //!\cond
@@ -78,14 +88,20 @@ struct reference<rng_t>
     //!\brief Return the reference member definition from the queried type's iterator.
     using type = reference_t<std::ranges::iterator_t<rng_t>>;
 };
+ } // namespace seqan3::detail
+ #endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // rvalue_reference
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `rvalue_reference` of another type.
  * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query; must model std::ranges::input_range.
+ * \deprecated This is deprecated use std::ranges::range_rvalue_reference_t.
  */
 template <std::ranges::input_range rng_t>
 //!\cond
@@ -96,14 +112,20 @@ struct rvalue_reference<rng_t>
     //!\brief Return the rvalue_reference member definition from the queried type's iterator.
     using type = rvalue_reference_t<std::ranges::iterator_t<rng_t>>;
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // const_reference
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `const_reference` of another type.
  * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query; must model std::ranges::input_range.
+ * \deprecated This is deprecated use std::ranges::range_reference_t<rng_t const>.
  */
 template <std::ranges::input_range rng_t>
 //!\cond
@@ -114,14 +136,20 @@ struct const_reference<rng_t>
     //!\brief Resolves to the reference type of the `const_iterator` of t (not the `const iterator`!).
     using type = std::iter_reference_t<std::ranges::iterator_t<rng_t const>>;
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // difference_type
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `difference_type` of another type.
  * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query; must model std::ranges::input_range.
+ * \deprecated This is deprecated use std::ranges::range_difference_t.
  */
 template <std::ranges::range rng_t>
 //!\cond
@@ -132,14 +160,20 @@ struct difference_type<rng_t>
     //!\brief Return the difference_type member definition from the queried type's iterator.
     using type = difference_type_t<std::ranges::iterator_t<rng_t>>;
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // size_type
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `size_type` of another type.
  * \implements seqan3::transformation_trait
  * \tparam t The type you wish to query; must model std::ranges::sized_range.
+ * \deprecated This is deprecated use std::ranges::range_size_t.
  */
 template <std::ranges::sized_range rng_t>
 //!\cond
@@ -150,6 +184,8 @@ struct size_type<rng_t>
     //!\brief Return the size_type as returned by the size function.
     using type = decltype(std::ranges::size(std::declval<rng_t &>()));
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // range_innermost_value
