@@ -7,7 +7,7 @@ int main()
 {
     int16x8_t a{0, -1, 2, -3, 4, -5, 6, -7};
 
-    int16x8_t b = seqan3::detail::extract_halve<1>(a);
+    int16x8_t b = seqan3::detail::extract_half<1>(a);
     int16x8_t c = seqan3::detail::extract_quarter<1>(a);
     int16x8_t d = seqan3::detail::extract_eighth<7>(a);
 

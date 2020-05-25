@@ -107,15 +107,15 @@ using simd_extract_types = ::testing::Types<seqan3::simd::simd_type_t<uint8_t>,
                                             seqan3::simd::simd_type_t<int64_t>>;
 TYPED_TEST_SUITE(simd_algorithm_extract, simd_extract_types, );
 
-TYPED_TEST(simd_algorithm_extract, extract_halve)
+TYPED_TEST(simd_algorithm_extract, extract_half)
 {
     TypeParam vec = seqan3::simd::iota<TypeParam>(0);
 
     // + 1 needed for emulated types without arch specification (simd length = 1).
     for (size_t idx = 0; idx < (TestFixture::simd_length + 1)/ 2; ++idx)
     {
-        EXPECT_EQ(seqan3::detail::extract_halve<0>(vec)[idx], vec[idx]);
-        EXPECT_EQ(seqan3::detail::extract_halve<1>(vec)[idx], vec[idx + TestFixture::simd_length / 2]);
+        EXPECT_EQ(seqan3::detail::extract_half<0>(vec)[idx], vec[idx]);
+        EXPECT_EQ(seqan3::detail::extract_half<1>(vec)[idx], vec[idx + TestFixture::simd_length / 2]);
     }
 }
 

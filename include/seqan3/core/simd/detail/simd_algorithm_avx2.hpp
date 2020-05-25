@@ -46,11 +46,11 @@ constexpr target_simd_t upcast_signed_avx2(source_simd_t const & src);
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_unsigned_avx2(source_simd_t const & src);
 
-/*!\copydoc seqan3::detail::extract_halve
+/*!\copydoc seqan3::detail::extract_half
  * \attention This is the implementation for AVX2 intrinsics.
  */
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_halve_avx2(simd_t const & src);
+constexpr simd_t extract_half_avx2(simd_t const & src);
 
 /*!\copydoc seqan3::detail::extract_quarter
  * \attention This is the implementation for AVX2 intrinsics.
@@ -190,7 +190,7 @@ constexpr target_simd_t upcast_unsigned_avx2(source_simd_t const & src)
 }
 
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_halve_avx2(simd_t const & src)
+constexpr simd_t extract_half_avx2(simd_t const & src)
 {
     return reinterpret_cast<simd_t>(_mm256_castsi128_si256(
             _mm256_extracti128_si256(reinterpret_cast<__m256i const &>(src), index)));

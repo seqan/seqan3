@@ -46,11 +46,11 @@ constexpr target_simd_t upcast_signed_sse4(source_simd_t const & src);
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_unsigned_sse4(source_simd_t const & src);
 
-/*!\copydoc seqan3::detail::extract_halve
+/*!\copydoc seqan3::detail::extract_half
  * \attention This is the implementation for SSE4 intrinsics.
  */
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_halve_sse4(simd_t const & src);
+constexpr simd_t extract_half_sse4(simd_t const & src);
 
 /*!\copydoc seqan3::detail::extract_quarter
  * \attention This is the implementation for SSE4 intrinsics.
@@ -202,7 +202,7 @@ constexpr target_simd_t upcast_unsigned_sse4(source_simd_t const & src)
 }
 
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_halve_sse4(simd_t const & src)
+constexpr simd_t extract_half_sse4(simd_t const & src)
 {
     return reinterpret_cast<simd_t>(_mm_srli_si128(reinterpret_cast<__m128i const &>(src), (index) << 3));
 }
