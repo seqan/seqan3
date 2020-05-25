@@ -128,7 +128,7 @@ The returned result will be a vector of individual results. Each element refers 
 <a name="assignment_exact_search"></a>
 \assignment{Assignment 2}
 Search for all exact occurrences of `GCT` in the text from [assignment 1](#assignment_create_index).<br>
-Print the number of hits and the positions in a ascending ordering.<br>
+Print the number of hits and the positions in an ascending ordering.<br>
 Do the same for the following text collection:
 \code
 std::vector<dna4_vector> text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTA"_dna4,
