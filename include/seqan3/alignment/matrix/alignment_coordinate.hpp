@@ -89,7 +89,7 @@ public:
     //!\brief Copy-constructs from another advanceable_alignment_coordinate with a different policy.
     template <advanceable_alignment_coordinate_state other_state>
     //!\cond
-        requires other_state != state
+        requires (other_state != state)
     //!\endcond
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> const & other) :
         first{other.first},
@@ -99,7 +99,7 @@ public:
     //!\brief Move-constructs from another advanceable_alignment_coordinate with a different policy.
     template <advanceable_alignment_coordinate_state other_state>
     //!\cond
-        requires other_state != state
+        requires (other_state != state)
     //!\endcond
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> && other) :
         first{std::move(other.first)},
@@ -167,7 +167,7 @@ public:
      */
     constexpr advanceable_alignment_coordinate & operator++(/*pre-increment*/) noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
@@ -182,7 +182,7 @@ public:
      */
     constexpr advanceable_alignment_coordinate operator++(int /*post-increment*/) noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         advanceable_alignment_coordinate tmp{*this};
@@ -195,7 +195,7 @@ public:
      */
     constexpr advanceable_alignment_coordinate & operator--(/*pre-decrement*/) noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
@@ -210,7 +210,7 @@ public:
      */
     constexpr advanceable_alignment_coordinate operator--(int /*post-decrement*/) noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         advanceable_alignment_coordinate tmp{*this};
@@ -224,7 +224,7 @@ public:
      */
     constexpr advanceable_alignment_coordinate & operator+=(difference_type const offset) noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
@@ -240,7 +240,7 @@ public:
      */
     constexpr advanceable_alignment_coordinate & operator-=(difference_type const offset) noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
@@ -256,7 +256,7 @@ public:
      */
     constexpr advanceable_alignment_coordinate operator+(difference_type const offset) const noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         advanceable_alignment_coordinate tmp{*this};
@@ -270,7 +270,7 @@ public:
      */
     constexpr advanceable_alignment_coordinate operator-(difference_type const offset) const noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         advanceable_alignment_coordinate tmp{*this};
@@ -284,7 +284,7 @@ public:
      */
     constexpr difference_type operator-(advanceable_alignment_coordinate const & other) const noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
@@ -303,7 +303,7 @@ public:
     constexpr friend advanceable_alignment_coordinate operator+(difference_type const offset,
                                                                 advanceable_alignment_coordinate const & me) noexcept
     //!\cond
-        requires state != advanceable_alignment_coordinate_state::none
+        requires (state != advanceable_alignment_coordinate_state::none)
     //!\endcond
     {
         return me + offset;

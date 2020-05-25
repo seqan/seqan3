@@ -58,7 +58,7 @@ struct function_traits<std::function<return_t(args_t...)>>
      */
     template <size_t index>
     //!\cond
-        requires index < argument_count
+        requires (index < argument_count)
     //!\endcond
     using argument_type_at = pack_traits::at<index, args_t...>;
 };

@@ -61,7 +61,7 @@ struct unaligned_seq
 //!\brief Exposes the unaligned sequence type given an aligned sequence container type.
 template <typename t>
 //!\cond
-    requires !requires { typename std::remove_reference_t<t>::unaligned_seq_type; } &&
+    requires (!requires { typename std::remove_reference_t<t>::unaligned_seq_type; }) &&
               requires { remove_gap_from_value_type(std::declval<t>()); }
 //!\endcond
 struct unaligned_seq<t>
@@ -554,8 +554,8 @@ inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_se
  */
 template <typename tuple_t, typename char_t>
 //!\cond
-    requires !std::ranges::input_range<tuple_t> &&
-             !alphabet<tuple_t> && // exclude alphabet_tuple_base
+    requires (!std::ranges::input_range<tuple_t>) &&
+             (!alphabet<tuple_t>) && // exclude alphabet_tuple_base
              tuple_like<remove_cvref_t<tuple_t>> &&
              detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<remove_cvref_t<tuple_t>>>
 //!\endcond

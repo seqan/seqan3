@@ -82,7 +82,7 @@ public:
      */
     template <typename rng_t>
     //!\cond
-     requires !std::same_as<remove_cvref_t<rng_t>, kmer_hash_view> &&
+     requires (!std::same_as<remove_cvref_t<rng_t>, kmer_hash_view>) &&
               std::ranges::viewable_range<rng_t> &&
               std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond

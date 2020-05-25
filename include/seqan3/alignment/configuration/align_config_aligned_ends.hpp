@@ -243,7 +243,7 @@ back_end_second(value_t) -> back_end_second<value_t>;
  */
 template <typename ...ends_t>
 //!\cond
-    requires sizeof...(ends_t) <= 4 &&
+    requires (sizeof...(ends_t) <= 4) &&
              ((detail::is_type_specialisation_of_v<ends_t, front_end_first> ||
                detail::is_type_specialisation_of_v<ends_t, back_end_first> ||
                detail::is_type_specialisation_of_v<ends_t, front_end_second>  ||
@@ -295,7 +295,7 @@ public:
 
     //!\brief Construction from at least one sequence end-gap specifier.
     constexpr end_gaps(ends_t const ...args) noexcept
-        requires sizeof...(ends_t) > 0
+        requires (sizeof...(ends_t) > 0)
     {
         detail::for_each([this](auto e)
         {

@@ -62,7 +62,7 @@ namespace seqan3::detail
  */
 template <typename config_t>
 //!\cond
-    requires is_type_specialisation_of_v<config_t, configuration> && config_t::template exists<align_cfg::result>()
+    requires is_type_specialisation_of_v<config_t, configuration> && (config_t::template exists<align_cfg::result>())
 //!\endcond
 struct align_config_result_score
 {

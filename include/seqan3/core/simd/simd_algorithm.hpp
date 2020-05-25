@@ -150,7 +150,7 @@ constexpr simd_t extract_halve(simd_t const & src)
 template <uint8_t index, simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
              detail::is_native_builtin_simd_v<simd_t> &&
-             simd_traits<simd_t>::max_length == 16
+             (simd_traits<simd_t>::max_length == 16)
 constexpr simd_t extract_halve(simd_t const & src)
 {
     static_assert(index < 2, "The index must be in the range of [0, 1]");
@@ -196,7 +196,7 @@ constexpr simd_t extract_quarter(simd_t const & src)
 template <uint8_t index, simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
              detail::is_native_builtin_simd_v<simd_t> &&
-             simd_traits<simd_t>::max_length == 16
+             (simd_traits<simd_t>::max_length == 16)
 constexpr simd_t extract_quarter(simd_t const & src)
 {
     static_assert(index < 4, "The index must be in the range of [0, 1, 2, 3]");
@@ -240,7 +240,7 @@ constexpr simd_t extract_eighth(simd_t const & src)
 template <uint8_t index, simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
              detail::is_native_builtin_simd_v<simd_t> &&
-             simd_traits<simd_t>::max_length == 16
+             (simd_traits<simd_t>::max_length == 16)
 constexpr simd_t extract_eighth(simd_t const & src)
 {
     static_assert(index < 8, "The index must be in the range of [0, 1, 2, 3, 4, 5, 6, 7]");
@@ -367,8 +367,8 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
 template <simd::simd_concept simd_t>
     requires detail::is_builtin_simd_v<simd_t> &&
              detail::is_native_builtin_simd_v<simd_t> &&
-             simd_traits<simd_t>::max_length == 16 &&
-             simd_traits<simd_t>::length == 16
+             (simd_traits<simd_t>::max_length == 16) &&
+             (simd_traits<simd_t>::length == 16)
 constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
 {
     detail::transpose_matrix_sse4(matrix);

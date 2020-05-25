@@ -262,7 +262,7 @@ private:
 //!\brief Deduction guide for a parameter pack over an arithmetic type.
 template <arithmetic ...option_types>
 //!\cond
-    requires !(detail::is_char_adaptation_v<option_types> || ...)
+    requires (!(detail::is_char_adaptation_v<option_types> || ...))
 //!\endcond
 value_list_validator(option_types...) -> value_list_validator<double>;
 

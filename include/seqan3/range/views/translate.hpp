@@ -223,7 +223,7 @@ public:
      */
     template <typename rng_t>
     //!\cond
-     requires !std::same_as<remove_cvref_t<rng_t>, view_translate_single> &&
+     requires (!std::same_as<remove_cvref_t<rng_t>, view_translate_single>) &&
               std::ranges::viewable_range<rng_t> &&
               std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
@@ -610,7 +610,7 @@ public:
      */
     template <typename rng_t>
     //!\cond
-        requires !std::same_as<remove_cvref_t<rng_t>, view_translate> &&
+        requires (!std::same_as<remove_cvref_t<rng_t>, view_translate>) &&
                  std::ranges::viewable_range<rng_t> &&
                  std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond

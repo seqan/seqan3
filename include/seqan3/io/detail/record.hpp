@@ -89,7 +89,7 @@ template <typename field_types,
           typename selected_field_ids,
           size_t field_no,
           typename ...return_types>
-    requires field_no < selected_field_ids::as_array.size() // perform recursion while not at end
+    requires (field_no < selected_field_ids::as_array.size()) // perform recursion while not at end
 struct select_types_with_ids<field_types, field_types_as_ids, selected_field_ids, field_no, return_types...>
 {
     static_assert(field_types_as_ids::contains(selected_field_ids::as_array[field_no]),
