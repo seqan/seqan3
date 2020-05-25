@@ -1,4 +1,5 @@
-sudo: required
+version: ~> 1.0
+os: linux
 dist: xenial
 language: cpp
 
@@ -9,102 +10,81 @@ cache:
   apt: true
   ccache: true
 
-linux-gcc-7: &linux-gcc-7
-  os: linux
-  compiler: 'g++-7'
-  addons:
-    apt:
-      sources: ['ubuntu-toolchain-r-test']
-      packages: ['g++-7', 'lcov']
-  before_install:
-    - export CC="gcc-7" CXX="g++-7"
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
+    packages:
+      - g++-7
+      - g++-8
+      - g++-9
+      - lcov
 
-linux-gcc-8: &linux-gcc-8
-  os: linux
-  compiler: 'g++-8'
-  addons:
-    apt:
-      sources: ['ubuntu-toolchain-r-test']
-      packages: ['g++-8']
-  before_install:
-    - export CC="gcc-8" CXX="g++-8"
-
-linux-gcc-9: &linux-gcc-9
-  os: linux
-  compiler: 'g++-9'
-  addons:
-    apt:
-      sources: ['ubuntu-toolchain-r-test']
-      packages: ['g++-9']
-  before_install:
-    - export CC="gcc-9" CXX="g++-9"
-
-# https://docs.travis-ci.com/user/languages/c/#gcc-on-linux
-matrix:
+# https://docs.travis-ci.com/user/languages/c
+jobs:
   include:
-  - << : *linux-gcc-7
-    env:
-      - BUILD=coverage
-      - BUILD_TYPE=Debug
-      - CMAKE_VERSION=3.7.2
-  - << : *linux-gcc-9
-    env:
-      - BUILD=unit
-      - BUILD_TYPE=Release
-      - CXXFLAGS="-std=c++2a"
-      - CMAKE_VERSION=3.7.2
-  - << : *linux-gcc-8
-    env:
-      - BUILD=unit
-      - BUILD_TYPE=Release
-      - CMAKE_VERSION=3.7.2
-  - << : *linux-gcc-7
-    env:
-      - BUILD=unit
-      - BUILD_TYPE=Release
-      - CMAKE_VERSION=3.7.2
-  # To reduce build time we disable debug builds of unit tests, because they
-  # are completely contained in coverage test.
-  # - << : *linux-gcc-7
-  #   env:
-  #     - BUILD=unit
-  #     - BUILD_TYPE=Debug
-  - << : *linux-gcc-7
-    env:
-      - BUILD=performance
-      - BUILD_TYPE=Release
-      - CMAKE_VERSION=3.7.2
-  - << : *linux-gcc-7
-    env:
-      - BUILD=header
-      - BUILD_TYPE=Release
-      - CMAKE_VERSION=3.7.2
-      - CXXFLAGS="-Wno-deprecated-declarations"
-  - << : *linux-gcc-7
-    env:
-      - BUILD=snippet
-      - BUILD_TYPE=Release
-      - CMAKE_VERSION=3.7.2
-  - os: linux
-    compiler: 'doxygen'
-    addons:
-      apt:
-        # adds epstopdf, ghostscript, latex
-        packages: ['texlive-font-utils', 'ghostscript', 'texlive-latex-extra']
-    env:
-      - BUILD=documentation
-      - CMAKE_VERSION=3.7.2
-    cache:
-      directories:
+    - name: "Coverage gcc7"
+      env:
+        - CXX=g++-7
+        - CC=gcc-7
+        - BUILD=coverage
+        - BUILD_TYPE=Debug
+    - name: "Unit gcc9 (c++2a)"
+      env:
+        - CXX=g++-9
+        - CC=gcc-9
+        - BUILD=unit
+        - BUILD_TYPE=Release
+        - CXXFLAGS="-std=c++2a"
+    - name: "Unit gcc8"
+      env:
+        - CXX=g++-8
+        - CC=gcc-8
+        - BUILD=unit
+        - BUILD_TYPE=Release
+    - name: "Unit gcc7"
+      env:
+        - CXX=g++-7
+        - CC=gcc-7
+        - BUILD=unit
+        - BUILD_TYPE=Release
+    - name: "Performance gcc7"
+      env:
+        - CXX=g++-7
+        - CC=gcc-7
+        - BUILD=performance
+        - BUILD_TYPE=Release
+    - name: "Header gcc7"
+      env:
+        - CXX=g++-7
+        - CC=gcc-7
+        - BUILD=header
+        - BUILD_TYPE=Release
+    - name: "Snippet gcc7"
+      env:
+        - CXX=g++-7
+        - CC=gcc-7
+        - BUILD=snippet
+        - BUILD_TYPE=Release
+    - name: "Documentation"
+      compiler: 'doxygen'
+      addons:
+        apt:
+          # adds epstopdf, ghostscript, latex
+          packages: ['texlive-font-utils', 'ghostscript', 'texlive-latex-extra']
+      env:
+        - BUILD=documentation
+      cache:
+        directories:
           - /tmp/doxygen-download
-    before_install:
-       - DOXYGEN_VER=1.8.17
-       - DOXYGEN_FOLDER=doxygen-${DOXYGEN_VER}
-       - mkdir -p /tmp/doxygen-download
-       - wget --no-clobber --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VER}/${DOXYGEN_FOLDER}.linux.bin.tar.gz
-       - tar -C /tmp/ -zxvf /tmp/doxygen-download/${DOXYGEN_FOLDER}.linux.bin.tar.gz
-       - PATH=$PATH:/tmp/${DOXYGEN_FOLDER}/bin/
-       - doxygen --version
+      before_install:
+        - DOXYGEN_VER=1.8.17
+        - DOXYGEN_FOLDER=doxygen-${DOXYGEN_VER}
+        - mkdir -p /tmp/doxygen-download
+        - wget --no-clobber --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VER}/${DOXYGEN_FOLDER}.linux.bin.tar.gz
+        - tar -C /tmp/ -zxvf /tmp/doxygen-download/${DOXYGEN_FOLDER}.linux.bin.tar.gz
+        - PATH=$PATH:/tmp/${DOXYGEN_FOLDER}/bin/
+        - doxygen --version
 
 install:
   - |
@@ -112,6 +92,7 @@ install:
     mkdir -p ${HOME_BIN_PATH}
   - |
     # install cmake
+    CMAKE_VERSION="3.7.2"
     mkdir -p /tmp/cmake-download
     wget --no-clobber --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
     tar -C /tmp/ -zxvf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
@@ -145,7 +126,10 @@ script:
   - make -k -j2
   - |
     if test coverage != "${BUILD}"; then
-      ctest . --output-on-failure
+      if [[ "${BUILD}" =~ ^(snippet)$ ]]; then
+        ctest . --output-on-failure]; else
+        ctest . -j2 --output-on-failure
+      fi
     fi
 
 after_success:
