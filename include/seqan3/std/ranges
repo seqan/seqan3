@@ -42,18 +42,6 @@ template<class T>
 inline constexpr bool enable_view<T> = true;
 } // namespace std::ranges
 
-namespace std::ranges
-{
-inline namespace deprecated
-{
-/*!\brief this should be in std::ranges::views and not std::ranges
- * \deprecated Use std::views::all_t instead.
- */
-template <typename range_t>
-using all_view = std::views::all_t<range_t>;
-} // namespace std::ranges::deprecated
-} // namespace std::ranges
-
 #else // implement via range-v3
 
 //!\cond
@@ -100,9 +88,145 @@ namespace std::ranges
 
 namespace
 {
+// https://eel.is/c++draft/ranges.syn
 
+// [range.access], range access
+using ::ranges::cpp20::begin;
+using ::ranges::cpp20::end;
+using ::ranges::cpp20::cbegin;
+using ::ranges::cpp20::cend;
+// using ::ranges::cpp20::rbegin;
+// using ::ranges::cpp20::rend;
+// using ::ranges::cpp20::crbegin;
+// using ::ranges::cpp20::crend;
+using ::ranges::cpp20::size;
+// using ::ranges::cpp20::ssize;
+using ::ranges::cpp20::empty;
+using ::ranges::cpp20::data;
+// using ::ranges::cpp20::cdata;
+
+// [range.range], ranges
+using ::ranges::cpp20::range;
+// using ::ranges::cpp20::enable_borrowed_range;
+// using ::ranges::cpp20::borrowed_range;
+
+using ::ranges::iterator_t;
+using ::ranges::sentinel_t;
+using ::ranges::range_difference_t;
 using ::ranges::range_size_t;
-using namespace ::ranges::cpp20;
+using ::ranges::range_value_t;
+using ::ranges::range_reference_t;
+using ::ranges::range_rvalue_reference_t;
+
+// [range.sized], sized ranges
+// using ::ranges::cpp20::disable_sized_range;
+using ::ranges::cpp20::sized_range;
+
+// [range.view], views
+using ::ranges::cpp20::enable_view;
+// using ::ranges::cpp20::view_base;
+using ::ranges::cpp20::view;
+
+// [range.refinements], other range refinements
+using ::ranges::cpp20::output_range;
+using ::ranges::cpp20::input_range;
+using ::ranges::cpp20::forward_range;
+using ::ranges::cpp20::bidirectional_range;
+using ::ranges::cpp20::random_access_range;
+using ::ranges::cpp20::contiguous_range;
+using ::ranges::cpp20::common_range;
+using ::ranges::cpp20::viewable_range;
+
+// [view.interface], class template view_interface
+using ::ranges::cpp20::view_interface;
+
+// [range.utility]
+using ::ranges::cpp20::subrange_kind;
+using ::ranges::cpp20::subrange;
+
+// [range.dangling], dangling iterator handling
+// using ::ranges::cpp20::dangling;
+// using ::ranges::cpp20::borrowed_iterator_t;
+// using ::ranges::cpp20::borrowed_subrange_t;
+
+// [range.empty], empty view
+// using ::ranges::cpp20::empty_view;
+// namespace views { template<class T> inline constexpr empty_view<T> empty{}; }
+
+// [range.single], single view
+// using ::ranges::cpp20::single_view;
+namespace views { using ::ranges::cpp20::views::single; }
+
+// [range.single], iota view
+// using ::ranges::cpp20::iota_view;
+namespace views { using ::ranges::cpp20::views::iota; }
+
+// [range.istream], istream view
+using ::ranges::cpp20::basic_istream_view;
+
+// [range.all], all view
+namespace views
+{
+using ::ranges::cpp20::views::all;
+
+template<viewable_range R>
+using all_t = ::ranges::cpp20::all_view<R>;
+} // namespace views
+// using ::ranges::cpp20::ref_view;
+
+// [range.filter], filter view
+// using ::ranges::cpp20::filter_view;
+namespace views { using ::ranges::cpp20::views::filter; }
+
+// [range.transform], transform view
+// using ::ranges::cpp20::transform_view;
+namespace views { using ::ranges::cpp20::views::transform; }
+
+// [range.take], take view
+// using ::ranges::cpp20::take_view;
+namespace views { using ::ranges::cpp20::views::take; }
+
+// [range.take.while], take while view
+// using ::ranges::cpp20::take_while_view;
+namespace views { using ::ranges::cpp20::views::take_while; }
+
+// [range.drop], drop view
+// using ::ranges::cpp20::drop_view;
+namespace views { using ::ranges::cpp20::views::drop; }
+
+// [range.drop.while], drop while view
+// using ::ranges::cpp20::drop_while;
+namespace views { using ::ranges::cpp20::views::drop_while; }
+
+// [range.join], join view
+// using ::ranges::cpp20::join_view;
+// namespace views { using ::ranges::cpp20::views::join; }
+
+// [range.split], split view
+// using ::ranges::cpp20::split_view;
+namespace views { using ::ranges::cpp20::views::split; }
+
+// [range.counted], counted view
+// namespace views { using ::ranges::cpp20::views::counted; }
+
+// [range.common], common view
+// using ::ranges::cpp20::common_view;
+namespace views { using ::ranges::cpp20::views::common; }
+
+// [range.reverse], reverse view
+// using ::ranges::cpp20::reverse_view;
+namespace views { using ::ranges::cpp20::views::reverse; }
+
+// [range.elements], elements view
+// using ::ranges::cpp20::elements_view;
+// using ::ranges::cpp20::keys_view;
+// using ::ranges::cpp20::values_view;
+namespace views
+{
+// using ::ranges::cpp20::views::elements;
+// using ::ranges::cpp20::views::keys;
+using ::ranges::cpp20::views::values;
+} // namespace views
 
 } // anonymous namespace
 
@@ -111,8 +235,24 @@ using namespace ::ranges::cpp20;
 namespace std
 {
 
-namespace views = ranges::views;
+namespace views = ::std::ranges::views;
 
 } // namespace std::
 
 #endif // standard header
+
+// ==========================================
+// LEGACY wrong std:: and std::ranges:: usage
+// ==========================================
+
+namespace std::ranges
+{
+inline namespace deprecated
+{
+/*!\brief this should be in std::ranges::views and not std::ranges
+ * \deprecated Use std::views::all_t instead.
+ */
+template <typename range_t>
+using all_view = std::views::all_t<range_t>;
+} // namespace std::ranges::deprecated
+} // namespace std::ranges
