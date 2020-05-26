@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/search/detail/policy_max_error.hpp>
-#include <seqan3/search/detail/policy_result_builder.hpp>
+#include <seqan3/search/detail/policy_search_result_builder.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
 
@@ -108,7 +108,7 @@ public:
             using algorithm_t = search_scheme_algorithm<configuration_t,
                                                         index_t,
                                                         policy_max_error,
-                                                        policy_result_builder>;
+                                                        policy_search_result_builder>;
             return algorithm_t{cfg, index};
         }
         else
@@ -116,7 +116,7 @@ public:
             using algorithm_t = unidirectional_search_algorithm<configuration_t,
                                                                 index_t,
                                                                 policy_max_error,
-                                                                policy_result_builder>;
+                                                                policy_search_result_builder>;
             return algorithm_t{cfg, index};
         }
     }

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Provides the seqan3::detail::policy_result_builder.
+ * \brief Provides the seqan3::detail::policy_search_result_builder.
  */
 
 #pragma once
@@ -20,7 +20,7 @@ namespace seqan3::detail
 
 //!\brief Provides the function `make_results` if inherited by a search algorithm.
 //!\ingroup search
-struct policy_result_builder
+struct policy_search_result_builder
 {
 protected:
     /*!\brief Returns all hits (index cursor) without calling locate on each cursor.

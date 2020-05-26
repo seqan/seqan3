@@ -17,7 +17,7 @@
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
 #include <seqan3/search/detail/policy_max_error.hpp>
-#include <seqan3/search/detail/policy_result_builder.hpp>
+#include <seqan3/search/detail/policy_search_result_builder.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/to.hpp>
@@ -39,7 +39,10 @@ struct test_accessor
 
         auto cfg = seqan3::search_cfg::default_configuration;
         using config_t = decltype(cfg);
-        using algorithm_t = unidirectional_search_algorithm<config_t, index_t, policy_max_error, policy_result_builder>;
+        using algorithm_t = unidirectional_search_algorithm<config_t,
+                                                            index_t,
+                                                            policy_max_error,
+                                                            policy_search_result_builder>;
         algorithm_t algo{cfg, index};
         algo.delegate = delegate;
         algo.template search_trivial<abort_on_hit>(index.cursor(), query, 0, error_left, error_type::none);
