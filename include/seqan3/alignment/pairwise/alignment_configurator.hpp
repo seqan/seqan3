@@ -38,7 +38,6 @@
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
-#include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
 #include <seqan3/alignment/scoring/detail/simd_match_mismatch_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/core/concept/tuple.hpp>

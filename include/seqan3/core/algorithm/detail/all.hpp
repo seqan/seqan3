@@ -5,12 +5,12 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <gtest/gtest.h>
+/*!\file
+ * \brief Meta-header for the detail functionality of core algorithm.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
 
-#include <seqan3/alignment/pairwise/execution/execution_handler_parallel.hpp>
+#pragma once
 
-#include "execution_handler_template.hpp"
-
-INSTANTIATE_TYPED_TEST_SUITE_P(execution_handler_parallel,
-                               execution_handler,
-                               seqan3::detail::execution_handler_parallel, );
+#include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
+#include <seqan3/core/algorithm/detail/execution_handler_sequential.hpp>

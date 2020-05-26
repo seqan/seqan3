@@ -5,19 +5,12 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-/*!\file
- * \brief Meta-header for the \link execution pairwise execution submodule \endlink.
- * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- */
+#include <gtest/gtest.h>
 
-#pragma once
+#include <seqan3/core/algorithm/detail/execution_handler_parallel.hpp>
 
-#include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
-#include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
+#include "execution_handler_template.hpp"
 
-//!\cond DEV
-/*!\defgroup execution Execution
- * \ingroup pairwise_alignment
- * \brief Provides execution handler and executors for pairwise alignments.
- */
-//!\endcond
+INSTANTIATE_TYPED_TEST_SUITE_P(execution_handler_parallel,
+                               execution_handler,
+                               seqan3::detail::execution_handler_parallel, );

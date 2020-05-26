@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
+#include <seqan3/core/algorithm/detail/execution_handler_sequential.hpp>
 
 #include "execution_handler_template.hpp"
 
