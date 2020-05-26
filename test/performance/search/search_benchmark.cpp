@@ -8,9 +8,9 @@
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/search/all.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
+#include <seqan3/search/search.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to.hpp>
@@ -161,7 +161,7 @@ void unidirectional_search_all_collection(benchmark::State & state, options && o
     }
 
     seqan3::fm_index index{collection};
-    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}};
+    seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
@@ -182,7 +182,7 @@ void unidirectional_search_all(benchmark::State & state, options && o)
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
-    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}};
+    seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
@@ -203,7 +203,7 @@ void bidirectional_search_all(benchmark::State & state, options && o)
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
-    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}};
+    seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}};
 
     for (auto _ : state)
         auto results = search(reads, index, cfg);
@@ -224,7 +224,7 @@ void unidirectional_search_stratified(benchmark::State & state, options && o)
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
-    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}} |
+    seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}} |
                                 seqan3::search_cfg::hit_strata{o.strata};
 
     for (auto _ : state)
@@ -246,7 +246,7 @@ void bidirectional_search_stratified(benchmark::State & state, options && o)
     std::vector<std::vector<seqan3::dna4>> reads = generate_reads(ref, o.number_of_reads, o.read_length,
                                                                   o.simulated_errors, o.prob_insertion,
                                                                   o.prob_deletion, o.stddev);
-    seqan3::configuration cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{o.searched_errors}} |
+    seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}} |
                                 seqan3::search_cfg::hit_strata{o.strata};
 
     for (auto _ : state)
