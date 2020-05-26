@@ -68,10 +68,10 @@ void map_reads(std::filesystem::path const & query_path,
     for (auto && record : query_file_in)
     {
         auto & query = seqan3::get<seqan3::field::seq>(record);
-        for (auto && res : search(query, index, search_config))
+        for (auto && result : search(query, index, search_config))
         {
-            size_t start = res.reference_begin_pos() ? res.reference_begin_pos() - 1 : 0;
-            std::span text_view{std::data(storage.seqs[res.reference_id()]) + start, query.size() + 1};
+            size_t start = result.reference_begin_pos() ? result.reference_begin_pos() - 1 : 0;
+            std::span text_view{std::data(storage.seqs[result.reference_id()]) + start, query.size() + 1};
 
             for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
             {
@@ -80,11 +80,11 @@ void map_reads(std::filesystem::path const & query_path,
                 size_t map_qual = 60u + alignment.score();
 
                 sam_out.emplace_back(query,
-                                     seqan3::get<seqan3::field::id>(record), 
-                                     storage.ids[res.reference_id()], 
-                                     ref_offset, 
-                                     aligned_seq, 
-                                     seqan3::get<seqan3::field::qual>(record), 
+                                     seqan3::get<seqan3::field::id>(record),
+                                     storage.ids[result.reference_id()],
+                                     ref_offset,
+                                     aligned_seq,
+                                     seqan3::get<seqan3::field::qual>(record),
                                      map_qual);
             }
         }

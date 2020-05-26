@@ -36,10 +36,10 @@ struct dummy_result_type
         return !(lhs == rhs);
     }
 
-    friend std::ostream & operator<<(std::ostream & os, const dummy_result_type & res)
+    friend std::ostream & operator<<(std::ostream & stream, const dummy_result_type & result)
     {
-        os << "query_id:" << res.query_id_ << " pos:" << res.reference_begin_pos_;
-        return os;
+        stream << "query_id:" << result.query_id_ << " pos:" << result.reference_begin_pos_;
+        return stream;
     }
 };
 

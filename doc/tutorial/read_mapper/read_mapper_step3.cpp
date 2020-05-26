@@ -60,10 +60,10 @@ void map_reads(std::filesystem::path const & query_path,
     for (auto && record : query_file_in | seqan3::views::take(20))
     {
         auto & query = seqan3::get<seqan3::field::seq>(record);
-        for (auto && res : search(query, index, search_config))
+        for (auto && result : search(query, index, search_config))
         {
-            size_t start = res.reference_begin_pos() ? res.reference_begin_pos() - 1 : 0;
-            std::span text_view{std::data(storage.seqs[res.reference_id()]) + start, query.size() + 1};
+            size_t start = result.reference_begin_pos() ? result.reference_begin_pos() - 1 : 0;
+            std::span text_view{std::data(storage.seqs[result.reference_id()]) + start, query.size() + 1};
 
             for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
             {

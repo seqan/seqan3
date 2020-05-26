@@ -111,23 +111,7 @@ it's an approximate hit.
 
 ## A hit is stored in a seqan3::search_result
 
-The return type of the seqan3::search algorithm that we will use shortly, returns a range of hits.
-A single hit is stored in a seqan3::search_result. By default, the search result contains the query id,
-the reference id where the query matched and the begin position in the reference where the query sequence
-starts to match the reference sequence. Those information can be accessed via the respective member functions.
-
-Here is an overview of the available member functions:
-
-| Member function                              | Description                                             |
-|----------------------------------------------|---------------------------------------------------------|
-| seqan3::search_result::query_id()            | \copybrief seqan3::search_result::query_id()            |
-| seqan3::search_result::cursor()              | \copybrief seqan3::search_result::cursor()              |
-| seqan3::search_result::reference_id()        | \copybrief seqan3::search_result::reference_id()        |
-| seqan3::search_result::reference_begin_pos() | \copybrief seqan3::search_result::reference_begin_pos() |
-
-Note that the cursor is not included in the a hit by default. If you are trying to access that information,
-an exception will be thrown. The cursor is an advanced data structure that will not be covered in this tutorial
-but note that you con configure the result of the search with the output configuration (see seqan3::search_cfg::output).
+\copydetails seqan3::search_result
 
 ## Searching for exact hits
 

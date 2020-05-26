@@ -44,7 +44,7 @@ protected:
         std::vector<search_result_t> results(internal_hits.size());
 
         for (size_t i = 0; i < internal_hits.size(); ++i)
-            results[i] = search_result_t{0, internal_hits[i]});
+            results[i] = search_result_t{0, internal_hits[i]};
 
         return results;
     }
@@ -65,7 +65,7 @@ protected:
     {
         using index_size_t = typename index_cursor_t::index_type::size_type;
         using search_result_t = search_result<size_t, empty_type, size_t, index_size_t>;
-        
+
         std::vector<search_result_t> results{};
 
         if (!internal_hits.empty())
@@ -109,7 +109,7 @@ protected:
         // sort by reference id or by reference position if both have the same reference id.
         auto compare = [] (auto const & r1, auto const & r2)
         {
-            return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_pos() < r2.reference_begin_pos()) 
+            return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_pos() < r2.reference_begin_pos())
                                                             : (r1.reference_id() < r2.reference_id());
         };
 

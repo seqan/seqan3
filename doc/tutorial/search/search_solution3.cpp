@@ -14,10 +14,10 @@ int main()
 
     seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::substitution{1}};
 
-    for (auto && res : search("GCT"_dna4, index, cfg))
+    for (auto && result : search("GCT"_dna4, index, cfg))
     {
-        seqan3::debug_stream << "At position " << res.reference_begin_pos() << ": "
-                             << std::span{std::data(text) + res.reference_begin_pos(), 3}
+        seqan3::debug_stream << "At position " << result.reference_begin_pos() << ": "
+                             << std::span{std::data(text) + result.reference_begin_pos(), 3}
                              << '\n';
     }
 }

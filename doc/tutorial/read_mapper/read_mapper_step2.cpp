@@ -53,8 +53,8 @@ void map_reads(std::filesystem::path const & query_path,
     for (auto && record : query_file_in | seqan3::views::take(20))
     {
         seqan3::debug_stream << "Hits:" << '\n';
-        for (auto && res : search(seqan3::get<seqan3::field::seq>(record), index, search_config))
-            seqan3::debug_stream << res << '\n';
+        for (auto && result : search(seqan3::get<seqan3::field::seq>(record), index, search_config))
+            seqan3::debug_stream << result << '\n';
         seqan3::debug_stream << "======================" << '\n';
     }
     (void) sam_path; // prevent unused parameter warning

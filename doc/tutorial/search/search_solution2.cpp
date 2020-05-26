@@ -14,8 +14,8 @@ void run_text_single()
     seqan3::debug_stream << "=====   Running on a single text   =====\n"
                          << "The following hits were found:\n";
 
-    for (auto && res : search("GCT"_dna4, index))
-        seqan3::debug_stream << res << '\n';
+    for (auto && result : search("GCT"_dna4, index))
+        seqan3::debug_stream << result << '\n';
 }
 
 void run_text_collection()
@@ -28,8 +28,8 @@ void run_text_collection()
     seqan3::debug_stream << "===== Running on a text collection =====\n"
                          << "The following hits were found:\n";
 
-    for (auto && res : search("GCT"_dna4, index))
-        seqan3::debug_stream << res << '\n';
+    for (auto && result : search("GCT"_dna4, index))
+        seqan3::debug_stream << result << '\n';
 }
 
 int main()
