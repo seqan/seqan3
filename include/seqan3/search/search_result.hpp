@@ -36,28 +36,25 @@ namespace seqan3
  * \tparam reference_id_type The type of the reference_id; must model std::integral or be the empty_type.
  * \tparam reference_begin_pos_type The type of the reference_begin_pos; must model std::integral or be the empty_type.
  *
+ * \if DEV
+ * \note If the information is not available the type of the respective data field defaults to seqan3::detail::empty_type.
+ * \endif
+ *
  * The seqan3::search algorithm returns a range of hits. A single hit is stored in a seqan3::search_result.
  * By default, the search result contains the query id, the reference id where the query matched and the begin
  * position in the reference where the query sequence starts to match the reference sequence.
  * Those information can be accessed via the respective member functions.
  *
- * Here is an overview of the available member functions:
+ * The following member functions exist:
  *
- * | Member function                              | Description                                           |
- * |----------------------------------------------|-------------------------------------------------------|
- * | seqan3::search_result::query_id()            | \copybrief seqan3::search_result::query_id            |
- * | seqan3::search_result::cursor()              | \copybrief seqan3::search_result::cursor              |
- * | seqan3::search_result::reference_id()        | \copybrief seqan3::search_result::reference_id        |
- * | seqan3::search_result::reference_begin_pos() | \copybrief seqan3::search_result::reference_begin_pos |
+ * * seqan3::search_result::query_id()
+ * * seqan3::search_result::index_cursor()
+ * * seqan3::search_result::reference_id()
+ * * seqan3::search_result::reference_begin_pos()
  *
- * Note that the cursor is not included in the a hit by default. If you are trying to access that information,
- * an exception will be thrown. The cursor is an advanced data structure that will not be covered in this tutorial
- * but note that you con configure the result of the search with the output configuration
+ * Note that the index cursor is not included in a hit by default. If you are trying to access that information,
+ * an exception will be thrown. You con configure the result of the search with the output configuration
  * (see seqan3::search_cfg::output).
- *
- * \if DEV
- * \note If the information is not available the type of the respective data field defaults to seqan3::detail::empty_type.
- * \endif
  */
 template <typename query_id_type, typename cursor_type, typename reference_id_type, typename reference_begin_pos_type>
 class search_result
@@ -132,7 +129,7 @@ public:
      * \sa seqan3::fm_index_cursor
      * \sa seqan3::bi_fm_index_cursor
      */
-    constexpr cursor_type cursor() const noexcept(!(std::same_as<cursor_type, detail::empty_type>))
+    constexpr cursor_type index_cursor() const noexcept(!(std::same_as<cursor_type, detail::empty_type>))
     {
         if constexpr (std::same_as<cursor_type, detail::empty_type>)
         {
@@ -212,8 +209,8 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream
     stream << "<";
     if constexpr (!std::same_as<decltype(result.query_id()), detail::empty_type>)
         stream << "query_id:" << result.query_id();
-    if constexpr (!std::same_as<decltype(result.cursor()), detail::empty_type>)
-        stream << ", cursor present";
+    if constexpr (!std::same_as<decltype(result.index_cursor()), detail::empty_type>)
+        stream << ", index cursor is present";
     if constexpr (!std::same_as<decltype(result.reference_id()), detail::empty_type>)
         stream << ", reference_id:" << result.reference_id();
     if constexpr (!std::same_as<decltype(result.reference_begin_pos()), detail::empty_type>)

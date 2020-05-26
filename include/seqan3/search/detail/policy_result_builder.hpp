@@ -40,7 +40,7 @@ protected:
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {
-        using search_result_t = search_result<size_t, index_cursor_t, size_t, size_t>;
+        using search_result_t = search_result<size_t, index_cursor_t, empty_type, empty_type>;
         std::vector<search_result_t> results(internal_hits.size());
 
         for (size_t i = 0; i < internal_hits.size(); ++i)
@@ -64,7 +64,7 @@ protected:
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {
         using index_size_t = typename index_cursor_t::index_type::size_type;
-        using search_result_t = search_result<size_t, empty_type, size_t, index_size_t>;
+        using search_result_t = search_result<size_t, empty_type, index_size_t, index_size_t>;
 
         std::vector<search_result_t> results{};
 
@@ -97,7 +97,7 @@ protected:
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {
         using index_size_t = typename index_cursor_t::index_type::size_type;
-        using search_result_t = search_result<size_t, empty_type, size_t, index_size_t>;
+        using search_result_t = search_result<size_t, empty_type, index_size_t, index_size_t>;
 
         std::vector<search_result_t> results{};
         results.reserve(internal_hits.size()); // expect at least as many text positions as cursors, possibly more
