@@ -57,7 +57,7 @@ void map_reads(std::filesystem::path const & query_path,
                                                seqan3::align_cfg::result{seqan3::with_alignment};
 //! [alignment_config]
 
-    for (auto & record : query_file_in | seqan3::views::take(20))
+    for (auto && record : query_file_in | seqan3::views::take(20))
     {
         auto & query = seqan3::get<seqan3::field::seq>(record);
         for (auto && res : search(query, index, search_config))

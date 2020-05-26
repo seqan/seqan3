@@ -23,10 +23,11 @@ using seqan3::operator""_phred42;
 
 using namespace std::string_literals;
 
-auto ref_id_and_position = seqan3::views::persist | std::views::transform([] (auto && res)
-    {
-        return std::make_pair(res.reference_id(), res.reference_begin_pos());
-    });
+auto ref_id_and_position = seqan3::views::persist 
+                         | std::views::transform([] (auto && res)
+                         {
+                             return std::make_pair(res.reference_id(), res.reference_begin_pos());
+                         });
 auto query_id = seqan3::views::persist | std::views::transform([] (auto && res) { return res.query_id(); });
 
 template <typename index_t>

@@ -106,7 +106,7 @@ the best result.
 ## Terminology
 ### Hit
 If a query can be found in the reference with the specified error configuration, we denote this result as a hit.
-If the query hits the reference without any errors, we call this an exact hit. If a hit contains errors,
+If the query is found in the reference sequence without any errors, we call this an exact hit, otherwise, if it contains errors,
 it's an approximate hit.
 
 ## A hit is stored in a seqan3::search_result

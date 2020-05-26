@@ -41,11 +41,10 @@ protected:
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {
         using search_result_t = search_result<size_t, index_cursor_t, size_t, size_t>;
-        std::vector<search_result_t> results;
-        results.reserve(internal_hits.size());
+        std::vector<search_result_t> results(internal_hits.size());
 
-        for (auto const & cursor : internal_hits)
-            results.push_back(search_result_t{0, cursor});
+        for (size_t i = 0; i < internal_hits.size(); ++i)
+            results[i] = search_result_t{0, internal_hits[i]});
 
         return results;
     }
@@ -66,7 +65,8 @@ protected:
     {
         using index_size_t = typename index_cursor_t::index_type::size_type;
         using search_result_t = search_result<size_t, empty_type, size_t, index_size_t>;
-        std::vector<search_result_t> results;
+        
+        std::vector<search_result_t> results{};
 
         if (!internal_hits.empty())
         {
@@ -99,14 +99,14 @@ protected:
         using index_size_t = typename index_cursor_t::index_type::size_type;
         using search_result_t = search_result<size_t, empty_type, size_t, index_size_t>;
 
-        std::vector<search_result_t> results;
-        results.reserve(internal_hits.size()); // we at least as many text positions as cursors, possibly more
+        std::vector<search_result_t> results{};
+        results.reserve(internal_hits.size()); // expect at least as many text positions as cursors, possibly more
 
         for (auto const & cursor : internal_hits)
             for (auto && [ref_id, ref_pos] : cursor.locate())
                 results.push_back(search_result_t{0, ref_id, ref_pos});
 
-        // sort by reference id and reference position
+        // sort by reference id or by reference position if both have the same reference id.
         auto compare = [] (auto const & r1, auto const & r2)
         {
             return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_pos() < r2.reference_begin_pos()) 
