@@ -18,9 +18,11 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser.hpp>
+#include <seqan3/range/views/zip.hpp>
 
 namespace seqan3::detail
 {
@@ -65,10 +67,18 @@ struct naive_minimiser_hash_fn
        if (shape.size() > window_size)
            throw std::invalid_argument{"The size of the shape cannot be greater than the window size."};
 
-       return std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
-                                           | std::views::transform([seed] (uint64_t i) { return i ^ seed; })
-                                           | ranges::views::sliding(window_size - shape.size() + 1)
-                                           | std::views::transform([] (auto const in)
+       auto forward = std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
+                                                   | std::views::transform([seed] (uint64_t i) { return i ^ seed; });
+       auto reverse = std::forward<urng_t>(urange) | seqan3::views::complement
+                                                   | std::views::reverse
+                                                   | seqan3::views::kmer_hash(shape)
+                                                   | std::views::transform([seed] (uint64_t i) { return i ^ seed; })
+                                                   | std::views::reverse;
+       auto both = seqan3::views::zip(forward, reverse)
+                   | std::views::transform( [ ] (auto i) {return std::min(std::get<0>(i), std::get<1>(i));});
+
+       return both | ranges::views::sliding(window_size - shape.size() + 1)
+                                         | std::views::transform([] (auto const in)
                                                                    {
                                                                        return *std::min_element(in.begin(), in.end());
                                                                    });
