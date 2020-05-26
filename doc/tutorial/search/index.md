@@ -224,6 +224,8 @@ Besides the error configuration, you can define which hits should be reported:
 Any hit configuration element is appended to the error configuration by using the `|`-operator:
 \snippet doc/tutorial/search/search_small_snippets.cpp hit_best
 
+If you want to choose the hit strategy at runtime you can also use the dynamic configuration `seqan3::search_cfg::hit`.
+
 The `seqan3::search_cfg::strata` configuration element needs an additional parameter:
 \snippet doc/tutorial/search/search_small_snippets.cpp hit_strata
 
