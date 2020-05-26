@@ -15,8 +15,11 @@
 
 #pragma once
 
+#include <variant>
+
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 
 namespace seqan3::detail
@@ -85,6 +88,77 @@ inline constexpr detail::hit_single_best_tag hit_single_best{};
  */
 struct hit_strata : public pipeable_config_element<hit_strata, uint8_t>
 {
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::hit};
+};
+
+/*!\brief A dynamic configuration element to configure the hit strategy at runtime.
+ * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
+ */
+class hit : public pipeable_config_element<hit, seqan3::detail::empty_type>
+{
+public:
+    /*!\brief The type of the std::variant holding the hit configuration element alternatives
+     *
+     * The additional detail::empty_type marks the seqan3::search_cfg::hit as default constructed, with no selected hit
+     * configuration which can be checked within the search algorithm.
+     */
+    using hit_variant_type = std::variant<detail::empty_type,
+                                          detail::hit_all_tag,
+                                          detail::hit_all_best_tag,
+                                          detail::hit_single_best_tag,
+                                          hit_strata>;
+
+    /*!\name Constructors, assignment and destructor
+     * \{
+     */
+    hit() = default; //!< Defaulted.
+    hit(hit const &) = default; //!< Defaulted.
+    hit(hit &&) = default; //!< Defaulted.
+    hit & operator=(hit const &) = default; //!< Defaulted.
+    hit & operator=(hit &&) = default; //!< Defaulted.
+    ~hit() = default; //!< Defaulted.
+
+    /*!\brief Sets the given configuration element to the dynamic hit configuration element.
+     *
+     * \tparam hit_config_t The type of the hit configuration element to set.
+     * \param[in] hit_config The hit configuration element to set.
+     *
+     * \details
+     *
+     * Only one of the static hit configuration elements are valid: seqan3::search_cfg::hit_all,
+     * seqan3::search_cfg::hit_all_best, seqan3::search_cfg::hit_single_best and seqan3::search_cfg::hit_strata.
+     */
+    template <typename hit_config_t>
+    //!\cond
+        requires pack_traits::contains<hit_config_t, detail::hit_all_tag,
+                                                     detail::hit_all_best_tag,
+                                                     detail::hit_single_best_tag,
+                                                     hit_strata>
+    //!\endcond
+    explicit hit(hit_config_t hit_config) noexcept : hit_variant{std::move(hit_config)}
+    {}
+
+    //!\copydoc seqan3::search_cfg::hit::hit(hit_config_t hit_config)
+    template <typename hit_config_t>
+    //!\cond
+        requires pack_traits::contains<hit_config_t, detail::hit_all_tag,
+                                                     detail::hit_all_best_tag,
+                                                     detail::hit_single_best_tag,
+                                                     hit_strata>
+    //!\endcond
+    hit & operator=(hit_config_t hit_config) noexcept
+    {
+        hit_variant = std::move(hit_config);
+        return *this;
+    }
+    //!\}
+
+    //!\brief A std::variant over the valid hit configuration elements.
+    hit_variant_type hit_variant{};
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::hit};

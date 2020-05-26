@@ -74,10 +74,25 @@
  * | seqan3::search_cfg::hit_all         | Report all hits within error bounds.                                |
  * | seqan3::search_cfg::hit_all_best    | Report all hits with the lowest number of errors within the bounds. |
  * | seqan3::search_cfg::hit_single_best | Report one best hit (hit with lowest error) within bounds.          |
- * | seqan3::search_cfg::hit_strata      | Report all hits within best + `stratum` errors.                             |
+ * | seqan3::search_cfg::hit_strata      | Report all hits within best + `stratum` errors.                     |
  *
  * The individual configuration elements to select a search strategy cannot be combined with each other
  * (mutual exclusivity).
  *
  * \include test/snippet/search/hit_configuration_examples.cpp
+ *
+ * ### Dynamic hit configuration
+ *
+ * Sometimes a program needs to support different hit strategies based on some user input. Since these are mostly
+ * runtime decisisons the code can become quite cumbersome to handle the static hit configurations.
+ * Instead, one can use the dynamic hit configuration element seqan3::search::cfg::hit.
+ * This configuration element allows to set one of the above mentioned hit configurations at runtime. Later during the
+ * configuration phase of the search algorithm the selected search configuration is used for the final search algorithm.
+ * If the dynamic hit configuration is default constructed it does not hold any hit configuration. If you call search
+ * with the dynamic configuration in this state an exception will be thrown.
+ * Also note that using the dynamic configuration might have implications on the compile time, so we recommend to use
+ * the static configurations if only a single hit strategy is supported.
+ * The following example demonstrates the usage of the dynamic configuration:
+ *
+ * \include test/snippet/search/dynamic_hit_configuration_example.cpp
  */
