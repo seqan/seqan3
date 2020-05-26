@@ -19,6 +19,7 @@
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/search/fm_index/concept.hpp>
 
 namespace seqan3::detail
 {
@@ -42,12 +43,12 @@ namespace seqan3
  *
  * Here is an overview of the available member functions:
  *
- * | Member function                              | Description                                             |
- * |----------------------------------------------|---------------------------------------------------------|
- * | seqan3::search_result::query_id()            | \copybrief seqan3::search_result::query_id()            |
- * | seqan3::search_result::cursor()              | \copybrief seqan3::search_result::cursor()              |
- * | seqan3::search_result::reference_id()        | \copybrief seqan3::search_result::reference_id()        |
- * | seqan3::search_result::reference_begin_pos() | \copybrief seqan3::search_result::reference_begin_pos() |
+ * | Member function                              | Description                                           |
+ * |----------------------------------------------|-------------------------------------------------------|
+ * | seqan3::search_result::query_id()            | \copybrief seqan3::search_result::query_id            |
+ * | seqan3::search_result::cursor()              | \copybrief seqan3::search_result::cursor              |
+ * | seqan3::search_result::reference_id()        | \copybrief seqan3::search_result::reference_id        |
+ * | seqan3::search_result::reference_begin_pos() | \copybrief seqan3::search_result::reference_begin_pos |
  *
  * Note that the cursor is not included in the a hit by default. If you are trying to access that information,
  * an exception will be thrown. The cursor is an advanced data structure that will not be covered in this tutorial
