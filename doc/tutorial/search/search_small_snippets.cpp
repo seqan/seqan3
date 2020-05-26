@@ -62,10 +62,10 @@ seqan3::fm_index<char, seqan3::text_layout::single> index;
 //![error_search]
 std::string text{"Garfield the fat cat without a hat."};
 seqan3::fm_index index{text};
-seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1},
-                                                                seqan3::search_cfg::substitution{0},
-                                                                seqan3::search_cfg::insertion{1},
-                                                                seqan3::search_cfg::deletion{1}};
+seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
+                                  seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}} |
+                                  seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
+                                  seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}};
 seqan3::debug_stream << search("cat"s, index, cfg) << '\n';
 // prints: [<query_id:0, reference_id:0, reference_pos:14>,
 //          <query_id:0, reference_id:0, reference_pos:17>,
@@ -87,29 +87,29 @@ seqan3::debug_stream << search(query, index) << '\n';
 
 {
 //![error_sum]
-seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{2},
-                                                                seqan3::search_cfg::substitution{2},
-                                                                seqan3::search_cfg::insertion{1},
-                                                                seqan3::search_cfg::deletion{1}};
+seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{2}} |
+                                  seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{2}} |
+                                  seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
+                                  seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}};
 //![error_sum]
 }
 
 {
 //![hit_best]
-seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1},
-                                                                seqan3::search_cfg::substitution{0},
-                                                                seqan3::search_cfg::insertion{1},
-                                                                seqan3::search_cfg::deletion{1}} |
+seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
+                                  seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}} |
+                                  seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
+                                  seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
                                   seqan3::search_cfg::hit_single_best;
 //![hit_best]
 }
 
 {
 //![hit_strata]
-seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{2},
-                                                                seqan3::search_cfg::substitution{0},
-                                                                seqan3::search_cfg::insertion{1},
-                                                                seqan3::search_cfg::deletion{1}} |
+seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{2}} |
+                                  seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}} |
+                                  seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
+                                  seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
                                   seqan3::search_cfg::hit_strata{2};
 //![hit_strata]
 }
