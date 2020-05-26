@@ -6,7 +6,6 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <seqan3/alphabet/nucleotide/sam_dna16.hpp>
-
 #include <seqan3/core/char_operations/predicate.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"

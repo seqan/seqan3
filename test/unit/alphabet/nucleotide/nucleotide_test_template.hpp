@@ -10,8 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/alphabet/nucleotide/concept.hpp>
 
 template <typename T>
 using nucleotide = ::testing::Test;

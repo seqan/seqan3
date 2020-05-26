@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"
