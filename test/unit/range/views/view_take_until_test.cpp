@@ -39,6 +39,10 @@ void do_test(adaptor_t const & adaptor, fun_t && fun, std::string const & vec)
     EXPECT_EQ("fo", v3  | seqan3::views::to<std::string>);
     std::string v3b = vec | std::views::reverse | adaptor(fun) | ranges::view::unique | seqan3::views::to<std::string>;
     EXPECT_EQ("rab", v3b);
+    // Test combinability of take_until with std::reverse as second view, this caused a problem here: 
+    // https://github.com/seqan/seqan3/issues/1754
+    std::string v3c = vec | adaptor(fun) | std::views::reverse | seqan3::views::to<std::string>;
+    EXPECT_EQ("oof", v3c);
 
     // pointer as iterator
     std::span s{std::ranges::data(vec), vec.size()};
