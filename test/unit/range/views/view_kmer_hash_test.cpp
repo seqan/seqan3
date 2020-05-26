@@ -207,21 +207,26 @@ TYPED_TEST(kmer_hash_ungapped_test, issue1719)
     }
 }
 
-//https://github.com/seqan/seqan3/issues/1754
+// https://github.com/seqan/seqan3/issues/1754
 TYPED_TEST(kmer_hash_ungapped_test, issue1754)
 {
     TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+
+    auto stop_at_t = seqan3::views::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
     if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
     {
-        EXPECT_NO_THROW(text1 | prefix_until_first_thymine | std::views::reverse | ungapped_view);
+        EXPECT_RANGE_EQ(result_t{36}, text1 | stop_at_t | std::views::reverse | ungapped_view);
     }
 }
 
+// https://github.com/seqan/seqan3/issues/1754
 TYPED_TEST(kmer_hash_gapped_test, issue1754)
 {
-    TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+    std::vector<seqan3::dna4> text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+
+    auto stop_at_t = seqan3::views::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
     if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
     {
-        EXPECT_NO_THROW(text1 | prefix_until_first_thymine | std::views::reverse | gapped_view);
+        EXPECT_RANGE_EQ(result_t{8}, text1 | stop_at_t | std::views::reverse | gapped_view);
     }
 }
