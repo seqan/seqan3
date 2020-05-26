@@ -85,7 +85,7 @@ public:
 
         perform_search_by_hit_strategy(internal_hits, query, error_state, on_hit_delegate);
 
-        return this->make_results(std::move(internal_hits), config); // see policy_result_builder
+        return this->make_results(std::move(internal_hits), config); // see policy_search_result_builder
     }
 
 private:

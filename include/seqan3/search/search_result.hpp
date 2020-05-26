@@ -24,8 +24,8 @@
 namespace seqan3::detail
 {
 // forward declaration
-struct policy_result_builder;
-}
+struct policy_search_result_builder;
+} // namespace seqan3::detail
 
 namespace seqan3
 {
@@ -95,7 +95,7 @@ private:
 
     //!\cond
     // Grant the policy access to private constructors.
-    friend detail::policy_result_builder;
+    friend detail::policy_search_result_builder;
     // Currently, the query id is set within the search result range. This needs to be adapted.
     template <typename search_algorithm_t, typename query_range_t>
     friend class search_result_range;
