@@ -44,6 +44,7 @@ enum struct strong_type_skill
     increment      = 1 << 14,
     decrement      = 1 << 15,
     convert        = 1 << 16,
+    comparable     = 1 << 17,
     additive       = add | subtract,
     multiplicative = multiply | divide | modulo,
     bitwise_logic  = bitwise_and | bitwise_or | bitwise_xor | bitwise_not,
@@ -387,6 +388,33 @@ public:
         derived_t tmp{get()};
         --get();
         return tmp;
+    }
+    //!\}
+
+    /*!\name Comparison operators.
+     * \brief Only available if the corresponding skill from seqan3::detail::strong_type_skill is added.
+     *
+     * \if DEV
+     * Implemented as member functions because requires does not work on friends.
+     * \endif
+     * \{
+     */
+    //!\brief Return whether this instance is equal to `other`.
+    constexpr bool operator==(strong_type const & other) const
+    //!\cond
+        requires ((skills & strong_type_skill::comparable) != strong_type_skill::none)
+    //!\endcond
+    {
+        return get() == other.get();
+    }
+
+    //!\brief Return whether this instance is not equal to `other`.
+    constexpr bool operator!=(strong_type const & other) const
+    //!\cond
+        requires ((skills & strong_type_skill::comparable) != strong_type_skill::none)
+    //!\endcond
+    {
+        return !(*this == other);
     }
     //!\}
 
