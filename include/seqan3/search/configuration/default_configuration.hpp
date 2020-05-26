@@ -29,12 +29,12 @@ namespace seqan3::search_cfg
  * \todo Make constexpr after GCC7 support is dropped.
  * \endif
  */
-
 inline const configuration default_configuration = max_error_total{error_count{0}} |
                                                    max_error_substitution{error_count{0}} |
                                                    max_error_insertion{error_count{0}} |
                                                    max_error_deletion{error_count{0}} |
-                                                   output{text_position} |
+                                                   output_query_id |
+                                                   output_reference_id |
+                                                   output_reference_begin_pos |
                                                    hit_all;
-
 } // namespace seqan3::search_cfg

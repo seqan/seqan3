@@ -10,7 +10,9 @@ int main()
                                               seqan3::search_cfg::max_error_substitution{zero_errors} |
                                               seqan3::search_cfg::max_error_insertion{zero_errors} |
                                               seqan3::search_cfg::max_error_deletion{zero_errors} |
-                                              seqan3::search_cfg::output{seqan3::search_cfg::text_position} |
+                                              seqan3::search_cfg::output_query_id |
+                                              seqan3::search_cfg::output_reference_id |
+                                              seqan3::search_cfg::output_reference_begin_pos |
                                               seqan3::search_cfg::hit_all;
     return 0;
 }

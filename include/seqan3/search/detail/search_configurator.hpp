@@ -18,6 +18,7 @@
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
+#include <seqan3/search/configuration/output.hpp>
 #include <seqan3/search/configuration/result_type.hpp>
 #include <seqan3/search/detail/policy_max_error.hpp>
 #include <seqan3/search/detail/policy_search_result_builder.hpp>
@@ -48,12 +49,23 @@ private:
         using index_cursor_type = typename index_t::cursor_type;
         //!\brief The size type of the index.
         using index_size_type = typename index_t::size_type;
+        //!\brief The search traits.
+        using traits_type = search_traits<search_configuration_t>;
+
+        //!\brief The query_id type of the search_result.
+        using query_id_t = std::conditional_t<traits_type::output_query_id, size_t, empty_type>;
+        //!\brief The index_cursor type of the search_result.
+        using index_cursor_t = std::conditional_t<traits_type::output_index_cursor, index_cursor_type, empty_type>;
+        //!\brief The reference_id type of the search_result.
+        using reference_id_t = std::conditional_t<traits_type::output_reference_id, index_size_type, empty_type>;
+        //!\brief The reference_begin_pos type of the search_result.
+        using reference_begin_pos_t = std::conditional_t<traits_type::output_reference_begin_pos,
+                                                         index_size_type,
+                                                         empty_type>;
 
     public:
         //!\brief The result type depending on the output configuration.
-        using type = std::conditional_t<search_traits<search_configuration_t>::search_return_index_cursor,
-                                        search_result<query_index_t, index_cursor_type, empty_type, empty_type>,
-                                        search_result<query_index_t, empty_type, index_size_type, index_size_type>>;
+        using type = search_result<query_id_t, index_cursor_t, reference_id_t, reference_begin_pos_t>;
     };
 
     /*!\brief Selects the search algorithm based on the index type.
@@ -104,8 +116,11 @@ public:
     template <typename configuration_t>
     static auto add_default_output_configuration(configuration_t const & cfg)
     {
-        if constexpr (!detail::search_traits<configuration_t>::has_output_configuration)
-            return cfg | search_cfg::output{search_cfg::text_position};
+        if constexpr (!seqan3::detail::search_traits<configuration_t>::has_output_configuration)
+            return cfg |
+                   search_cfg::output_query_id |
+                   search_cfg::output_reference_id |
+                   search_cfg::output_reference_begin_pos;
         else
             return cfg;
     }

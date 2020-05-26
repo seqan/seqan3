@@ -53,15 +53,20 @@ protected:
      * The result is independent from the search modus (all, single_best, all_best, strata).
      */
     template <typename index_cursor_t, typename query_index_t, typename callback_t>
+    //!\cond
+        requires !search_traits_type::output_requires_locate_call
+    //!\endcond
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
         static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
-                                                                    std::declval<index_cursor_t &>()})>,
+                                                                    std::declval<index_cursor_t &>(),
+                                                                    std::declval<unsigned &&>(),
+                                                                    std::declval<unsigned &&>()})>,
                       "The configured search result type is not compatible with the requested search output. "
                       "Note trying to instantiate search result with an index cursor.");
 
         for (size_t i = 0; i < internal_hits.size(); ++i)
-            callback(search_result_type{std::move(idx), internal_hits[i]});
+            callback(search_result_type{std::move(idx), internal_hits[i], 0u, 0u});
     }
 
     /*!\brief If `internal_hits` is not empty, calls lazy_locate on the first cursor and returns a
@@ -77,13 +82,14 @@ protected:
     */
     template <typename index_cursor_t, typename query_index_t, typename callback_t>
     //!\cond
-        requires search_traits_type::search_return_text_position &&
+        requires search_traits_type::output_requires_locate_call &&
                  search_traits_type::search_single_best_hit
     //!\endcond
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
         using ref_location_pair_t = decltype(std::declval<index_cursor_t &>().lazy_locate().front());
         static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
+                                                                    std::declval<index_cursor_t &>(),
                                                                     std::declval<ref_location_pair_t &>().first,
                                                                     std::declval<ref_location_pair_t &>().second})>,
                       "The configured search result type is not compatible with the requested search output. "
@@ -93,7 +99,7 @@ protected:
         {
             // only one cursor is reported but it might contain more than one text position
             auto && [ref_id, ref_pos] = internal_hits[0].lazy_locate()[0];
-            callback(search_result_type{std::move(idx), ref_id, ref_pos});
+            callback(search_result_type{std::move(idx), internal_hits[0], ref_id, ref_pos});
         }
     }
 
@@ -115,13 +121,14 @@ protected:
      */
     template <typename index_cursor_t, typename query_index_t, typename callback_t>
     //!\cond
-        requires search_traits_type::search_return_text_position &&
+        requires search_traits_type::output_requires_locate_call &&
                  (!search_traits_type::search_single_best_hit)
     //!\endcond
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
         using ref_location_pair_t = decltype(std::declval<index_cursor_t>().lazy_locate().front());
         static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
+                                                                    std::declval<index_cursor_t &>(),
                                                                     std::declval<ref_location_pair_t &>().first,
                                                                     std::declval<ref_location_pair_t &>().second})>,
                       "The configured search result type is not compatible with the requested search output. "
@@ -133,7 +140,7 @@ protected:
 
         for (auto const & cursor : internal_hits)
             for (auto && [ref_id, ref_pos] : cursor.locate())
-                results.push_back(search_result_type{std::move(idx), ref_id, ref_pos});
+                results.push_back(search_result_type{std::move(idx), cursor, ref_id, ref_pos});
 
         // sort by reference id or by reference position if both have the same reference id.
         auto compare = [] (auto const & r1, auto const & r2)

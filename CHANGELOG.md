@@ -120,8 +120,15 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   * The configuration element `seqan3::search_cfg::mode` does not exist anymore.
     You can replace it by directly using one of the above mentioned "hit strategy" configuration elements
     ([\#1639](https://github.com/seqan/seqan3/pull/1639)).
-  * Removed `seqan3::bi_fm_index_cursor::to_rev_cursor()` and `seqan3::bi_fm_index::rev_cursor()`
-    ([\#1892](https://github.com/seqan/seqan3/pull/1892)).
+  * The configuration element `seqan3::search_cfg::output` does not exist anymore. It has been replaced by the
+    individual configuration elements
+    * `seqan3::search_cfg::output_query_id`
+    * `seqan3::search_cfg::output_reference_id`
+    * `seqan3::search_cfg::output_reference_begin_pos`
+    * `seqan3::search_cfg::output_index_cursor`
+    see the \ref search_configuration_subsection_output "output configuration" for further details.
+* Removed `seqan3::bi_fm_index_cursor::to_rev_cursor()` and `seqan3::bi_fm_index::rev_cursor()`
+  ([\#1892](https://github.com/seqan/seqan3/pull/1892)).
 
 ## Notable Bug-fixes
 

@@ -26,8 +26,7 @@ namespace seqan3::detail
 /*!\brief A collection of traits extracted from the search configuration.
  * \ingroup search
  *
- * \tparam search_configuration_t The type of the search algorithm configuration; must be of type
- *                                seqan3::configuration.
+ * \tparam search_configuration_t The type of the search algorithm configuration; must be of type seqan3::configuration.
  */
 template <typename search_configuration_t>
 struct search_traits
@@ -80,14 +79,25 @@ public:
                                                   search_strata_hits ||
                                                   search_configuration_t::template exists<search_cfg::hit>();
 
-    //!\brief A flag indicating whether search should return the index cursor.
-    static constexpr bool search_return_index_cursor =
-        search_configuration_t::template exists<search_cfg::output<detail::search_output_index_cursor>>();
-    //!\brief A flag indicating whether search should return the text position.
-    static constexpr bool search_return_text_position =
-        search_configuration_t::template exists<search_cfg::output<detail::search_output_text_position>>();
+    //!\brief A flag indicating whether search should return the query_id.
+    static constexpr bool output_query_id = search_configuration_t::template exists<detail::output_query_id_tag>();
+    //!\brief A flag indicating whether search should return the reference_id.
+    static constexpr bool output_reference_id =
+                              search_configuration_t::template exists<detail::output_reference_id_tag>();
+    //!\brief A flag indicating whether search should return the reference_begin_pos.
+    static constexpr bool output_reference_begin_pos =
+                              search_configuration_t::template exists<detail::output_reference_begin_pos_tag>();
+    //!\brief A flag indicating whether search should return the index_cursor.
+    static constexpr bool output_index_cursor =
+                              search_configuration_t::template exists<detail::output_index_cursor_tag>();
+    //!\brief A flag indicating whether it is required to call cursor.locate() to retrieve the respective information.
+    static constexpr bool output_requires_locate_call = output_reference_id | output_reference_begin_pos;
+
     //!\brief A flag indicating whether output configuration was set in the search configuration.
-    static constexpr bool has_output_configuration = search_return_index_cursor | search_return_text_position;
+    static constexpr bool has_output_configuration = output_query_id |
+                                                     output_reference_id |
+                                                     output_reference_begin_pos |
+                                                     output_index_cursor;
 };
 
 } // namespace seqan3::detail

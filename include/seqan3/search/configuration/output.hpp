@@ -6,71 +6,89 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the configuration for returning positions in the text.
+ * \brief Provides the configuration for the content of the search result.
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
-#include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 
 namespace seqan3::detail
 {
 
-//!\brief Type for the "index_cursor" value for the configuration element "output".
+//!\brief Include the query_id in the seqan3::search_result returned by a call to seqan3::search.
 //!\ingroup search_configuration
-struct search_output_index_cursor {};
-//!\brief Type for the "text_position" value for the configuration element "output".
+struct output_query_id_tag : public pipeable_config_element<output_query_id_tag>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::output_query_id};
+};
+
+//!\brief Include the reference_id in the seqan3::search_result returned by a call to seqan3::search.
 //!\ingroup search_configuration
-struct search_output_text_position {};
+struct output_reference_id_tag : public pipeable_config_element<output_reference_id_tag>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::output_reference_id};
+};
+
+//!\brief Include the reference_begin_pos in the seqan3::search_result returned by a call to seqan3::search.
+//!\ingroup search_configuration
+struct output_reference_begin_pos_tag : public pipeable_config_element<output_reference_begin_pos_tag>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::output_reference_begin_pos};
+};
+
+//!\brief Include the index_cursor in the seqan3::search_result returned by a call to seqan3::search.
+//!\ingroup search_configuration
+struct output_index_cursor_tag : public pipeable_config_element<output_index_cursor_tag>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::output_index_cursor};
+};
 
 } // namespace seqan3::detail
 
 namespace seqan3::search_cfg
 {
 
-//!\brief Configuration element to receive all hits within the error bounds.
-//!\ingroup search_configuration
-inline seqan3::detail::search_output_index_cursor constexpr index_cursor;
-//!\brief Configuration element to receive all hits within the lowest number of errors.
-//!\ingroup search_configuration
-inline seqan3::detail::search_output_text_position constexpr text_position;
-
-/*!\brief Configuration element to determine the output type of hits.
+/*!\brief \copybrief seqan3::detail::output_query_id_tag
  * \ingroup search_configuration
- *
- * \details
- * This configuration element can be used to determine the output type.
- *
- * ### Example
- *
- * \include test/snippet/search/configuration_output.cpp
+ * \sa \ref search_configuration_subsection_output "Section on Output"
+ * \hideinitializer
  */
-template <typename output_t>
-//!\cond
-    requires std::same_as<remove_cvref_t<output_t>, seqan3::detail::search_output_text_position> ||
-             std::same_as<remove_cvref_t<output_t>, seqan3::detail::search_output_index_cursor>
-//!\endcond
-struct output : public pipeable_config_element<output<output_t>, output_t>
-{
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::output};
-};
+inline constexpr detail::output_query_id_tag output_query_id{};
 
-/*!\name Type deduction guides
- * \relates seqan3::search_cfg::output
- * \{
+/*!\brief \copybrief seqan3::detail::output_reference_id_tag
+ * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_output "Section on Output"
+ * \hideinitializer
  */
+inline constexpr detail::output_reference_id_tag output_reference_id{};
 
-//!\brief Deduces search output type from constructor argument.
-template <typename output_t>
-output(output_t) -> output<remove_cvref_t<output_t>>;
-//!\}
+/*!\brief \copybrief seqan3::detail::output_reference_begin_pos_tag
+ * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_output "Section on Output"
+ * \hideinitializer
+ */
+inline constexpr detail::output_reference_begin_pos_tag output_reference_begin_pos{};
+
+/*!\brief \copybrief seqan3::detail::output_index_cursor_tag
+ * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_output "Section on Output"
+ * \hideinitializer
+ */
+inline constexpr detail::output_index_cursor_tag output_index_cursor{};
 
 } // namespace seqan3::search_cfg
