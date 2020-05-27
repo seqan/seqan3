@@ -108,7 +108,7 @@ public:
             using algorithm_t = search_scheme_algorithm<configuration_t,
                                                         index_t,
                                                         policy_max_error,
-                                                        policy_search_result_builder>;
+                                                        policy_search_result_builder<configuration_t>>;
             return algorithm_t{cfg, index};
         }
         else
@@ -116,7 +116,7 @@ public:
             using algorithm_t = unidirectional_search_algorithm<configuration_t,
                                                                 index_t,
                                                                 policy_max_error,
-                                                                policy_search_result_builder>;
+                                                                policy_search_result_builder<configuration_t>>;
             return algorithm_t{cfg, index};
         }
     }
