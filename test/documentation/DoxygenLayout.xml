@@ -15,6 +15,7 @@
             <tab type="user"  visible="yes" title="C++ Concepts"    url="@ref tutorial_concepts"      intro=""/>
             <tab type="user"  visible="yes" title="Alphabets"       url="@ref tutorial_alphabets"     intro=""/>
             <tab type="user"  visible="yes" title="Ranges"          url="@ref tutorial_ranges"        intro=""/>
+            <tab type="user" visible="yes" title="Minimiser"  url="@ref tutorial_minimiser" intro=""/>
             <tab type="user"  visible="yes" title="Sequence file I/O" url="@ref tutorial_sequence_file" intro=""/>
             <tab type="user"  visible="yes" title="Computing pairwise alignments"  url="@ref tutorial_pairwise_alignment" intro=""/>
             <tab type="user"  visible="yes" title="Index and Search"       url="@ref tutorial_index_search"     intro=""/>
