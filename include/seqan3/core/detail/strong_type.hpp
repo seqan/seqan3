@@ -391,7 +391,7 @@ public:
     }
     //!\}
 
-    /*!\name Comparison operators.
+    /*!\name Comparison operators
      * \brief Only available if the corresponding skill from seqan3::detail::strong_type_skill is added.
      *
      * \if DEV
@@ -399,22 +399,22 @@ public:
      * \endif
      * \{
      */
-    //!\brief Return whether this instance is equal to `other`.
+    //!\brief Return whether this instance is equal to `rhs`.
     constexpr bool operator==(strong_type const & other) const
     //!\cond
         requires ((skills & strong_type_skill::comparable) != strong_type_skill::none)
     //!\endcond
     {
-        return get() == other.get();
+        return get() == rhs.get();
     }
 
-    //!\brief Return whether this instance is not equal to `other`.
-    constexpr bool operator!=(strong_type const & other) const
+    //!\brief Return whether this instance is not equal to `rhs`.
+    constexpr bool operator!=(strong_type const & rhs) const
     //!\cond
         requires ((skills & strong_type_skill::comparable) != strong_type_skill::none)
     //!\endcond
     {
-        return !(*this == other);
+        return !(*this == rhs);
     }
     //!\}
 
