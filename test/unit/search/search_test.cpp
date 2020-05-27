@@ -112,6 +112,13 @@ TYPED_TEST(search_test, invalid_error_configuration)
     EXPECT_THROW(search("A"_dna4, this->index, cfg), std::invalid_argument);
 }
 
+TYPED_TEST(search_test, invalid_dynamic_hit_configuration)
+{
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+                                      seqan3::search_cfg::hit{};
+    EXPECT_THROW(search("A"_dna4, this->index, cfg), std::invalid_argument);
+}
+
 TYPED_TEST(search_test, error_substitution)
 {
     using hits_result_t = typename TestFixture::hits_result_t;
@@ -268,7 +275,14 @@ TYPED_TEST(search_test, search_strategy_all)
         seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
                                           seqan3::search_cfg::hit_all;
         EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 1}, {0, 4},
-                                                                                   {0, 5}, {0, 8}, {0, 9}}));
+                                                                                  {0, 5}, {0, 8}, {0, 9}}));
+    }
+
+    {
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+                                          seqan3::search_cfg::hit{seqan3::search_cfg::hit_all};
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 1}, {0, 4},
+                                                                                  {0, 5}, {0, 8}, {0, 9}}));
     }
 }
 
@@ -351,6 +365,16 @@ TYPED_TEST(search_test, search_strategy_best)
         ASSERT_EQ(result.size(), 1u);
         EXPECT_TRUE(std::find(possible_hits2d.begin(), possible_hits2d.end(), result[0]) != possible_hits2d.end());
     }
+
+    {  // Find best match with 2 deletions.
+        hits_result_t possible_hits2d{{0, 0}, {0, 4}}; // any of 0, 4 ... 1, 5 are not best hits
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::deletion{2}} |
+                                          seqan3::search_cfg::hit{seqan3::search_cfg::hit_single_best};
+
+        hits_result_t result = search("AGTAGT"_dna4, this->index, cfg) | seqan3::views::to<std::vector>;
+        ASSERT_EQ(result.size(), 1u);
+        EXPECT_TRUE(std::find(possible_hits2d.begin(), possible_hits2d.end(), result[0]) != possible_hits2d.end());
+    }
 }
 
 TYPED_TEST(search_test, search_strategy_all_best)
@@ -360,6 +384,15 @@ TYPED_TEST(search_test, search_strategy_all_best)
     {
         seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
                                           seqan3::search_cfg::hit_all_best;
+
+        EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8}})); // 1, 5, 9 are not best hits
+
+        EXPECT_EQ(search("AAAA"_dna4, this->index, cfg) | seqan3::views::to<std::vector>, (hits_result_t{})); // no hit
+    }
+
+    {
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+                                          seqan3::search_cfg::hit{seqan3::search_cfg::hit_all_best};
 
         EXPECT_EQ(uniquify(search("ACGT"_dna4, this->index, cfg)), (hits_result_t{{0, 0}, {0, 4}, {0, 8}})); // 1, 5, 9 are not best hits
 
@@ -387,6 +420,12 @@ TYPED_TEST(search_test, search_strategy_strata)
     {
         seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
                                           seqan3::search_cfg::hit_strata{1};
+        EXPECT_EQ(search("AAAA"_dna4, this->index, cfg) | seqan3::views::to<std::vector>, (hits_result_t{})); // no hit
+    }
+
+    {
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+                                          seqan3::search_cfg::hit{seqan3::search_cfg::hit_strata{1}};
         EXPECT_EQ(search("AAAA"_dna4, this->index, cfg) | seqan3::views::to<std::vector>, (hits_result_t{})); // no hit
     }
 

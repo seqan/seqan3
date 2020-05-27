@@ -165,9 +165,6 @@ private:
             search_trivial<false>(index_ptr->cursor(), query, 0, error_state, error_type::none);
         }
     }
-
-    //!\brief Befriend seqan3::detail::test_accessor to grant access to layout.
-    friend struct ::seqan3::detail::test_accessor;
 };
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
