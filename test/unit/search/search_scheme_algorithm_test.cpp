@@ -42,7 +42,7 @@ struct test_accessor
         using algorithm_t = unidirectional_search_algorithm<config_t,
                                                             index_t,
                                                             policy_max_error,
-                                                            policy_search_result_builder>;
+                                                            policy_search_result_builder<config_t>>;
         algorithm_t algo{cfg, index};
         algo.delegate = delegate;
         algo.template search_trivial<abort_on_hit>(index.cursor(), query, 0, error_left, error_type::none);
