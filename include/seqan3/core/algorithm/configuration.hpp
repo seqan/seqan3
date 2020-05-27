@@ -296,7 +296,9 @@ public:
     template <typename query_t>
     [[nodiscard]] constexpr auto remove() const
     //!\cond
-        requires exists<query_t>()
+#if !SEQAN3_WORKAROUND_GCC_95371
+        requires (exists<query_t>())
+#endif // !SEQAN3_WORKAROUND_GCC_95371
     //!\endcond
     {
         constexpr int index = pack_traits::find<query_t, configs_t...>;
@@ -307,7 +309,9 @@ public:
     template <template <typename ...> typename query_t>
     [[nodiscard]] constexpr auto remove() const
     //!\cond
-        requires exists<query_t>()
+#if !SEQAN3_WORKAROUND_GCC_95371
+        requires (exists<query_t>())
+#endif // !SEQAN3_WORKAROUND_GCC_95371
     //!\endcond
     {
         constexpr int index = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke,
