@@ -147,7 +147,7 @@ public:
      * \param[in] resource The underlying resource.
      * \param[in] algorithm The algorithm to invoke on the elements of the underlying resource.
      * \param[in] result A dummy result object to deduce the type of the underlying buffer value.
-     * \param[in] exec Optional execution policy to use. Defaults to seqan3::seq.
+     * \param[in] exec_handler Optional the execution handler to use.
      *
      * \details
      *
@@ -156,17 +156,14 @@ public:
      * Also note that the third argument is used for deducing the algorithm result type and is otherwise
      * not used in the context of the class' construction.
      */
-    template <typename exec_policy_t = sequenced_policy>
-    //!\cond
-        requires is_execution_policy_v<exec_policy_t>
-    //!\endcond
     algorithm_executor_blocking(resource_t resource,
                                 algorithm_t algorithm,
                                 algorithm_result_t const SEQAN3_DOXYGEN_ONLY(result) = algorithm_result_t{},
-                                exec_policy_t const & SEQAN3_DOXYGEN_ONLY(exec) = seq) :
-        resource{std::views::all(resource)},
-        resource_it{std::ranges::begin(this->resource)},
-        algorithm{std::move(algorithm)}
+                                execution_handler_t && exec_handler = execution_handler_t{})
+        : exec_handler{std::move(exec_handler)},
+          resource{std::views::all(resource)},
+          resource_it{std::ranges::begin(this->resource)},
+          algorithm{std::move(algorithm)}
     {
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
             buffer_size = std::ranges::distance(resource);
@@ -175,7 +172,6 @@ public:
         buffer_it = buffer.end();
         buffer_end_it = buffer_it;
     }
-
     //!}
 
     /*!\brief Returns the next available algorithm result.

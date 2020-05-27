@@ -217,3 +217,51 @@ TYPED_TEST(algorithm_executor_blocking_test, empty_result_bucket)
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.next_result()));
 }
+
+//See issue: https://github.com/seqan/seqan3/issues/1801
+TEST(algorithm_executor_blocking_test,  bug_thread_count_in_parallel_mode)
+{
+    std::vector<std::thread::id> thread_ids{}; // Stores the thread ids.
+    std::mutex push_mutex{}; // Used to synchronise concurrent push back operation on the thread_ids vector.
+
+    using callback_t = std::function<void(size_t)>;
+    std::function algorithm = [&] (std::string const & seq, callback_t && callback)
+    {
+        { // Tell what thread is working.
+            std::unique_lock push_lock{push_mutex};
+            thread_ids.push_back(std::this_thread::get_id());
+        }
+
+        callback(seq.size());
+    };
+
+    // The sequence vector.
+    std::vector<std::string> sequences{10000, std::string{"sequence"}};
+
+    // Define an parallel algorithm executor.
+    using algorithm_t = decltype(algorithm);
+    using executor_t =
+        seqan3::detail::algorithm_executor_blocking<std::vector<std::string> &,
+                                                    algorithm_t,
+                                                    size_t,
+                                                    seqan3::detail::execution_handler_parallel>;
+
+    // Allow at most 2 threads and then execute until no results are available anymore.
+    static constexpr size_t thread_count = 2u;
+    executor_t executor{sequences, algorithm, size_t{0}, seqan3::detail::execution_handler_parallel{thread_count}};
+    auto result = executor.next_result();
+
+    while (result.has_value())
+        result = executor.next_result();
+
+    // Expect exactly many ids as sequences were procesed.
+    EXPECT_EQ(thread_ids.size(), sequences.size());
+
+    // Sort and remove unique ids.
+    std::sort(thread_ids.begin(), thread_ids.end());
+    thread_ids.erase(std::unique(thread_ids.begin(), thread_ids.end()), thread_ids.end());
+
+    // Expect exactly thread count many ids left.
+    EXPECT_EQ(thread_ids.size(), thread_count);
+}
+
