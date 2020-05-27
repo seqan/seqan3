@@ -83,6 +83,7 @@ class configuration : public std::tuple<configs_t...>
     //!\brief Friend declaration for other instances of the configuration.
     template <detail::config_element ... _configs_t>
     friend class configuration;
+
 public:
     //!\privatesection
     //!\brief A type alias for the base class.
@@ -285,6 +286,36 @@ public:
     }
     //!\}
 
+    /*!\name Modifiers
+     * \{
+     */
+    /*!\brief Remove a config element from the configuration.
+     * \tparam query_t The config element type to remove from the configuration.
+     * \returns A new configuration object without the config element identified by `query_t`.
+     */
+    template <typename query_t>
+    [[nodiscard]] constexpr auto remove() const
+    //!\cond
+        requires exists<query_t>()
+    //!\endcond
+    {
+        constexpr int index = pack_traits::find<query_t, configs_t...>;
+        return remove_at<index>();
+    }
+
+    //!\overload
+    template <template <typename ...> typename query_t>
+    [[nodiscard]] constexpr auto remove() const
+    //!\cond
+        requires exists<query_t>()
+    //!\endcond
+    {
+        constexpr int index = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke,
+                                                   configs_t...>;
+        return remove_at<index>();
+    }
+    //!\}
+
     /*!\name Pipe operator
      * \{
      */
@@ -425,38 +456,37 @@ private:
     //!\}
 
     /*!\brief Creates a new configuration object by recursively adding the configs from the tuple.
-     * \tparam    tuple_t The tuple from which to create a new configuration object; must model
-                          seqan3::tuple_like and must at least have one element.
-     * \param[in] tpl     The tuple to create the configuration from.
+     * \tparam tuple_t The tuple from which to create a new configuration object; must model seqan3::tuple_like.
+     * \param[in] tpl The tuple to create the configuration from.
      * \returns A new configuration object.
      */
-    template <typename tuple_t>
-    //!\cond
-        requires detail::is_type_specialisation_of_v<tuple_t, std::tuple> &&
-                 (std::tuple_size_v<remove_cvref_t<tuple_t>> > 0)
-    //!\endcond
+    template <tuple_like tuple_t>
     static constexpr auto make_configuration(tuple_t && tpl)
     {
-        auto make_config = [](auto && tpl)
+        if constexpr (std::tuple_size_v<remove_cvref_t<tuple_t>> == 0)
+        {
+            return configuration<>{};
+        }
+        else
         {
             auto impl = [](auto & impl_ref, auto && config, auto && head, auto && tail)
             {
+                using cfg_t = decltype(config);
                 if constexpr (std::tuple_size_v<remove_cvref_t<decltype(tail)>> == 0)
                 {
-                    return std::forward<decltype(config)>(config).push_back(std::get<0>(std::forward<decltype(head)>(head)));
+                    return std::forward<cfg_t>(config).push_back(std::get<0>(std::forward<decltype(head)>(head)));
                 }
                 else
                 {
                     auto [_head, _tail] = tuple_split<1>(std::forward<decltype(tail)>(tail));
-                    auto tmp = std::forward<decltype(config)>(config).push_back(
-                            std::get<0>(std::forward<decltype(head)>(head)));
+                    auto tmp = std::forward<cfg_t>(config).push_back(std::get<0>(std::forward<decltype(head)>(head)));
                     return impl_ref(impl_ref, std::move(tmp), std::move(_head), std::move(_tail));
                 }
             };
+
             auto [head, tail] = tuple_split<1>(std::forward<decltype(tpl)>(tpl));
             return impl(impl, configuration<>{}, std::move(head), std::move(tail));
-        };
-        return make_config(std::forward<tuple_t>(tpl));
+        }
     }
 
     /*!\name Modifiers
@@ -510,6 +540,21 @@ private:
         return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
             std::tuple_cat(std::move(static_cast<base_type>(*this)),
             std::tuple{std::move(elem)})};
+    }
+
+    /*!\brief Remove a config element from the configuration.
+     * \tparam index The config element at `index` is removed from the config.
+     * \returns A new configuration object without the config element at `index`.
+     */
+    template <int index>
+    [[nodiscard]] constexpr auto remove_at() const
+    {
+        static_assert((index >= 0) && (index < sizeof...(configs_t)), "Index to remove from config is out of bounds.");
+
+        auto [head, middle] = tuple_split<index>(static_cast<base_type>(*this));
+        auto tail = tuple_pop_front(middle);
+
+        return make_configuration(std::tuple_cat(head, tail));
     }
     //!\}
 };
