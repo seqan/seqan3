@@ -38,8 +38,9 @@ private:
      *
      * \tparam search_configuration_t The type of the configuration.
      * \tparam index_t The type of the index.
+     *  \tparam query_index_t The index type of the query.
      */
-    template <typename search_configuration_t, typename index_t>
+    template <typename search_configuration_t, typename index_t, typename query_index_t>
     struct select_search_result
     {
     private:
@@ -51,8 +52,8 @@ private:
     public:
         //!\brief The result type depending on the output configuration.
         using type = std::conditional_t<search_traits<search_configuration_t>::search_return_index_cursor,
-                                        search_result<size_t, index_cursor_type, empty_type, empty_type>,
-                                        search_result<size_t, empty_type, index_size_type, index_size_type>>;
+                                        search_result<query_index_t, index_cursor_type, empty_type, empty_type>,
+                                        search_result<query_index_t, empty_type, index_size_type, index_size_type>>;
     };
 
     /*!\brief Selects the search algorithm based on the index type.
@@ -151,12 +152,13 @@ public:
     template <typename query_t, typename configuration_t, typename index_t>
     static auto configure_algorithm(configuration_t const & cfg, index_t const & index)
     {
-        using search_result_t = typename select_search_result<configuration_t, index_t>::type;
-        using search_result_collection_t = std::vector<search_result_t>;
-        using type_erased_algorithm_t = std::function<search_result_collection_t(query_t)>;
+        using query_index_t = std::tuple_element_t<0, query_t>;
+        using search_result_t = typename select_search_result<configuration_t, index_t, query_index_t>::type;
+        using callback_t = std::function<void(search_result_t)>;
+        using type_erased_algorithm_t = std::function<void(query_t, callback_t)>;
 
-        return configure_hit_strategy<type_erased_algorithm_t>(cfg | search_cfg::detail::result_type<search_result_t>,
-                                                               index);
+        auto complete_config = cfg | search_cfg::detail::result_type<search_result_t>;
+        return std::pair{configure_hit_strategy<type_erased_algorithm_t>(complete_config, index), complete_config};
     }
 
     template <typename algorithm_t, typename configuration_t, typename index_t>

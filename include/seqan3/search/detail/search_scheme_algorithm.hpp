@@ -38,6 +38,10 @@ class search_scheme_algorithm : protected policies_t...
 private:
     //!\brief The search configuration traits.
     using traits_t = search_traits<configuration_t>;
+    //!\brief The search result type.
+    using search_result_type = typename traits_t::search_result_type;
+
+    static_assert(!std::same_as<search_result_type, empty_type>, "The search result type was not configured.");
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -64,16 +68,34 @@ public:
     //!\}
 
     /*!\brief Searches a query sequence in a bidirectional index.
-     * \tparam query_t The type of the query sequence; must model std::ranges::input_range over the index's alphabet.
-     * \param[in] query Query sequence to be searched in the index.
+     *
+     * \tparam indexed_query_t The type of the indexed query sequence; must model seqan3::tuple_like with exactly two
+     *                         elements and the second tuple element must model std::ranges::forward_range over the
+     *                         index's alphabet.
+     * \tparam callback_t The callback type to be invoked on a search result; must model std::invocable with the
+     *                    search result.
+     *
+     * \param[in] indexed_query The indexed query sequence to be searched in the index.
+     * \param[in] callback The callback to call on a search result.
+     *
+     * \details
+     *
+     * The indexed_query parameter is a pair of an index and a query which shall be searched in the index.
+     * The search result can then be identified by the index that was associated with the given query.
      *
      * ### Complexity
      *
      * \f$O(|query|^e)\f$ where \f$e\f$ is the total number of maximum errors.
      */
-    template <typename query_t>
-    auto operator()(query_t && query)
+    template <tuple_like indexed_query_t, typename callback_t>
+    //!\cond
+        requires (std::tuple_size_v<indexed_query_t> == 2) &&
+                 std::ranges::forward_range<std::tuple_element_t<1, indexed_query_t>> &&
+                 std::invocable<callback_t, search_result_type>
+    //!\endcond
+    void operator()(indexed_query_t && indexed_query, callback_t && callback)
     {
+        auto && [query_idx, query] = indexed_query;
         auto error_state = this->max_error_counts(config, query); // see policy_max_error
 
         // construct internal delegate for collecting hits for later filtering (if necessary)
@@ -85,7 +107,8 @@ public:
 
         perform_search_by_hit_strategy(internal_hits, query, error_state, on_hit_delegate);
 
-        return this->make_results(std::move(internal_hits)); // see policy_search_result_builder
+        // Invoke the callback on the generated result.
+        this->make_results(std::move(internal_hits), query_idx, callback); // see policy_search_result_builder
     }
 
 private:

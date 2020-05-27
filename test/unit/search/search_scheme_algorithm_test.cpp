@@ -44,11 +44,12 @@ static void search_trivial(index_t const & index,
                seqan3::search_cfg::hit_all |
                seqan3::search_cfg::output{seqan3::search_cfg::index_cursor};
 
-    auto algo = seqan3::detail::search_configurator::configure_algorithm<decltype(query)>(cfg, index);
+    auto indexed_query = std::pair{size_t{0}, query};
+    auto algo = std::get<0>(seqan3::detail::search_configurator::configure_algorithm<decltype(indexed_query)>(cfg,
+                                                                                                              index));
 
     // Call the algorithm and call the delegate with the returned index cursor.
-    for (auto && result : algo(query))
-        delegate(result.index_cursor());
+    algo(indexed_query, [&] (auto result) { delegate(result.index_cursor()); });
 }
 
 template <typename text_t>

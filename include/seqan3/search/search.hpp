@@ -16,9 +16,11 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/range/views/type_reduce.hpp>
+#include <seqan3/range/views/zip.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
+#include <seqan3/search/configuration/parallel.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/search/search_result_range.hpp>
@@ -107,10 +109,38 @@ inline auto search(queries_t && queries,
 
     detail::search_configuration_validator::validate_query_type<queries_t>();
 
-    using query_t = std::ranges::range_reference_t<queries_t>;
-    auto algorithm = detail::search_configurator::configure_algorithm<query_t>(updated_cfg, index);
+    size_t queries_size = std::ranges::distance(queries);
+    auto indexed_queries = views::zip(std::views::iota(size_t{0}, queries_size), queries);
 
-    return search_result_range{std::move(algorithm), std::forward<queries_t>(queries) | views::type_reduce};
+    using indexed_queries_t = decltype(indexed_queries);
+
+    using query_t = std::ranges::range_reference_t<indexed_queries_t>;
+    auto [algorithm, complete_config] = detail::search_configurator::configure_algorithm<query_t>(updated_cfg, index);
+
+    using complete_configuration_t = decltype(complete_config);
+    using algorithm_result_t = typename detail::search_traits<complete_configuration_t>::search_result_type;
+    using execution_handler_t = std::conditional_t<
+                                    complete_configuration_t::template exists<search_cfg::parallel>(),
+                                    detail::execution_handler_parallel,
+                                    detail::execution_handler_sequential>;
+    using executor_t = detail::algorithm_executor_blocking<indexed_queries_t,
+                                                           decltype(algorithm),
+                                                           algorithm_result_t,
+                                                           execution_handler_t>;
+
+    // Select the execution handler for the alignment configuration.
+    auto select_execution_handler = [&] ()
+    {
+        if constexpr (std::same_as<execution_handler_t, detail::execution_handler_parallel>)
+            return execution_handler_t{get<search_cfg::parallel>(complete_config).value};
+        else
+            return execution_handler_t{};
+    };
+
+    return search_result_range{executor_t{std::move(indexed_queries),
+                                          std::move(algorithm),
+                                          algorithm_result_t{},
+                                          select_execution_handler()}};
 }
 
 //!\cond DEV

@@ -106,9 +106,6 @@ private:
     //!\endcond
     #endif // !SEQAN3_WORKAROUND_GCC_93467
     friend struct detail::policy_search_result_builder;
-    // Currently, the query id is set within the search result range. This needs to be adapted.
-    template <typename search_algorithm_t, std::ranges::view query_range_t>
-    friend class search_result_range;
 
 public:
     /*!\name Constructors, destructor and assignment
