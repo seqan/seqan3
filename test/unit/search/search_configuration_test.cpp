@@ -8,6 +8,7 @@
 #include <type_traits>
 
 #include <seqan3/search/all.hpp>
+#include <seqan3/search/search_result.hpp>
 
 #include <gtest/gtest.h>
 
@@ -15,11 +16,17 @@ template <typename T>
 class search_configuration_test : public ::testing::Test
 {};
 
+using search_result_t = seqan3::search_result<seqan3::detail::empty_type,
+                                              seqan3::detail::empty_type,
+                                              seqan3::detail::empty_type,
+                                              seqan3::detail::empty_type>;
+
 using test_types = ::testing::Types<seqan3::search_cfg::max_error_rate<>,
                                     seqan3::search_cfg::max_error,
                                     seqan3::detail::hit_single_best_tag,
                                     seqan3::search_cfg::output<seqan3::detail::search_output_text_position>,
-                                    seqan3::search_cfg::parallel>;
+                                    seqan3::search_cfg::parallel,
+                                    seqan3::search_cfg::detail::result_type_tag<search_result_t>>;
 
 TYPED_TEST_SUITE(search_configuration_test, test_types, );
 

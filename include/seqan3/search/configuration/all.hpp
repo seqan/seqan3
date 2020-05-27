@@ -20,6 +20,7 @@
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/output.hpp>
 #include <seqan3/search/configuration/parallel.hpp>
+#include <seqan3/search/configuration/result_type.hpp>
 
 /*!\namespace seqan3::search_cfg
  * \brief A special sub namespace for the search configurations.
