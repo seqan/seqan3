@@ -31,19 +31,19 @@ TEST(view_interleave, basic)
     // pipe notation
     // explicitly call seqan3::views::type_reduce
     auto v0 = seqan3::views::type_reduce(u) | seqan3::views::interleave(s, seqan3::views::type_reduce(i));
-    EXPECT_TRUE(ranges::equal(cmp, v0));
+    EXPECT_TRUE(std::ranges::equal(cmp, v0));
     EXPECT_EQ(cmpsize, v0.size());
     // don't call seqan3::views::type_reduce
     auto v1 = u | seqan3::views::interleave(s, i);
-    EXPECT_TRUE(ranges::equal(cmp, v1));
+    EXPECT_TRUE(std::ranges::equal(cmp, v1));
 
     // function notation
     // explicitly call seqan3::views::type_reduce
     auto v2{seqan3::views::interleave(seqan3::views::type_reduce(u), s, seqan3::views::type_reduce(i))};
-    EXPECT_TRUE(ranges::equal(cmp, v2));
+    EXPECT_TRUE(std::ranges::equal(cmp, v2));
     // don't call seqan3::views::type_reduce
     auto v3{seqan3::views::interleave(u, s, i)};
-    EXPECT_TRUE(ranges::equal(cmp, v3));
+    EXPECT_TRUE(std::ranges::equal(cmp, v3));
 
     //combinability
     // explicitly call seqan3::views::type_reduce
@@ -51,10 +51,10 @@ TEST(view_interleave, basic)
             | seqan3::views::interleave(s, seqan3::views::type_reduce(i))
             | std::views::reverse
             | seqan3::views::take(5);
-    EXPECT_TRUE(ranges::equal(cmp_rev, v4));
+    EXPECT_TRUE(std::ranges::equal(cmp_rev, v4));
     // don't call seqan3::views::type_reduce
     auto v5 = u | seqan3::views::interleave(s, i) | std::views::reverse | seqan3::views::take(5);
-    EXPECT_TRUE(ranges::equal(cmp_rev, v5));
+    EXPECT_TRUE(std::ranges::equal(cmp_rev, v5));
 }
 
 TEST(view_interleave, concepts)
