@@ -75,24 +75,6 @@ public:
     /*!\brief Constructs the object from a set of error specifiers.
      * \tparam    errors_t A template parameter pack with the error types.
      * \param[in] errors   A pack of error specifiers.
-     *
-     * \details
-     *
-     * This configuration can be used to specify the total number of error types.
-     * It restricts the number of substitutions, insertions, deletions and total errors within the search to the given
-     * values and will behave as follows:
-     * |                                  |                              |                           |                        |                       |                                       |                                      |                                   |
-     * |----------------------------------|:----------------------------:|:-------------------------:|:----------------------:|:---------------------:|:-------------------------------------:|:------------------------------------:|:---------------------------------:|
-     * | **Behaviour**                    | Set all error types to total | Set total to substitution | Set total to insertion | Set total to deletion | Set total to substitution + insertion | Set total to substitution + deletion | Set total to insertion + deletion |
-     * | seqan3::search_cfg::total        |               ✅              |                           |                        |                       |                                       |                                      |                                   |
-     * | seqan3::search_cfg::substitution |                              |             ✅             |                        |                       |                   ✅                   |                   ✅                  |                                   |
-     * | seqan3::search_cfg::insertion    |                              |                           |            ✅           |                       |                   ✅                   |                                      |                 ✅                 |
-     * | seqan3::search_cfg::deletion     |                              |                           |                        |           ✅           |                                       |                   ✅                  |                 ✅                 |
-     * If seqan3::search_cfg::total and any other error type are specified, all types are set to the respective values.
-     *
-     * ### Example
-     *
-     * \include test/snippet/search/configuration_error.cpp
      */
     template <typename ...errors_t>
     //!\cond

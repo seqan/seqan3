@@ -35,10 +35,15 @@
  *
  * \section search_configuration_section_introduction Introduction
  *
- * In SeqAn the search algorithm uses a configuration object to determine the desired
- * \ref seqan3::search_cfg::max_error "number"/\ref seqan3::search_cfg::max_error_rate "rate" of errors,
- * what hits are reported based on a \ref search_configuration_subsection_hit_strategy "strategy", and how to
- * \ref seqan3::search_cfg::output "output" the results.
+ * In SeqAn, the search algorithm uses a configuration object to determine the desired amount of
+ * \ref seqan3::search_cfg::max_error_total "total errors",
+ * of \ref seqan3::search_cfg::max_error_substitution "substitution errors",
+ * of \ref seqan3::search_cfg::max_error_insertion "insertion errors",
+ * and of \ref seqan3::search_cfg::max_error_deletion "deletion errors",
+ * where all can be given as an \ref seqan3::search_cfg::error_count "absolute number"
+ * or a \ref seqan3::search_cfg::error_rate "rate" of \ref search_configuration_subsection_error "errors".
+ * Furthermore, it can be configured what hits are reported based on a \ref search_configuration_subsection_hit_strategy
+ * "strategy", and how to \ref seqan3::search_cfg::output "output" the results.
  * These configurations exist in their own namespace, namely seqan3::search_cfg, to disambiguate them from the
  * configuration of other algorithms.
  *
@@ -53,19 +58,46 @@
  * types cannot be printed within the static assert, but the following table shows which combinations are possible.
  * In general, the same configuration element cannot occur more than once inside of a configuration specification.
  *
- * | **Configuration group**                                             | **0** | **1** | **2** | **3** | **4** |
- * | --------------------------------------------------------------------|-------|-------|-------|-------|-------|
- * | \ref seqan3::search_cfg::max_error  "0: Max error"                  |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::search_cfg::max_error_rate "1: Max error rate"         |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::search_cfg::output "2: Output"                         |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
- * | \ref search_configuration_subsection_hit_strategy "3. Hit"          |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
- * | \ref seqan3::search_cfg::parallel "4: Parallel"                     |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
+ * | **Configuration group**                                                     | **0** | **1** | **2** | **3** | **4** | **5** | **6** |
+ * | ----------------------------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|
+ * | \ref seqan3::search_cfg::max_error_total  "0: Max error total"              |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::search_cfg::max_error_substitution "1: Max error substitution" |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::search_cfg::max_error_insertion "2: Max error insertion"       |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::search_cfg::max_error_deletion "3: Max error deletion"         |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::search_cfg::output "4: Output"                                 |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
+ * | \ref search_configuration_subsection_hit_strategy "5: Hit"                  |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
+ * | \ref seqan3::search_cfg::parallel "6: Parallel"                             |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
  *
  * \subsection search_configuration_search_result Search result type
  *
  * \copydetails seqan3::search_result
  *
- * \subsection search_configuration_subsection_hit_strategy 3. Hit Configuration
+ * \subsection search_configuration_subsection_error 0 - 3: Max Error Configuration
+ *
+ * This configuration can be used to specify the number or rate of error types.
+ * It restricts the number of substitutions, insertions, deletions and total errors within the search to the given
+ * values. A mismatch corresponds to diverging bases between text and query for a certain position. An insertion
+ * corresponds to a base inserted into the query that does not occur in the text at the position. A deletion corresponds
+ * to a base deleted from the query sequence that does occur in the indexed text. Deletions at the beginning and at the
+ * end of the sequence are not considered during a search.
+ *
+ * They will behave as follows:
+ * If seqan3::search_cfg::total and any other error type are specified, all types are set to the respective values.
+ * If one or more other error types are configured, but no total, then total is set to the sum of the error types.
+ *
+ * These configuration elements can be given by a number or rate of errors:
+ * | seqan3::search_cfg::max_error_*¹| Behaviour                                    |
+ * |---------------------------------|----------------------------------------------|
+ * | seqan3::search_cfg::error_rate  | Specify the error rate.                      |
+ * | seqan3::search_cfg::error_count | Specify a descrete number of allowed errors. |
+ *
+ * ¹: max_error_total, max_error_substitution, max_error_insertion, max_error_deletion
+ *
+ * ### Example
+ *
+ * \include test/snippet/search/configuration_error.cpp
+ *
+ * \subsection search_configuration_subsection_hit_strategy 5: Hit Configuration
  *
  * This configuration can be used to determine which hits are reported.
  * Currently these strategies are available:

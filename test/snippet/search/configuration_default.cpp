@@ -1,12 +1,15 @@
-#include <seqan3/search/configuration/all.hpp>
+#include <seqan3/search/configuration/hit.hpp>
+#include <seqan3/search/configuration/max_error.hpp>
+#include <seqan3/search/configuration/output.hpp>
 
 int main()
 {
+    auto const zero_errors = seqan3::search_cfg::error_count{0};
     // No errors, all hits as text position
-    seqan3::configuration const default_cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{0},
-                                                                            seqan3::search_cfg::substitution{0},
-                                                                            seqan3::search_cfg::insertion{0},
-                                                                            seqan3::search_cfg::deletion{0}} |
+    seqan3::configuration const default_cfg = seqan3::search_cfg::max_error_total{zero_errors} |
+                                              seqan3::search_cfg::max_error_substitution{zero_errors} |
+                                              seqan3::search_cfg::max_error_insertion{zero_errors} |
+                                              seqan3::search_cfg::max_error_deletion{zero_errors} |
                                               seqan3::search_cfg::output{seqan3::search_cfg::text_position} |
                                               seqan3::search_cfg::hit_all;
     return 0;
