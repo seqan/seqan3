@@ -14,6 +14,7 @@
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
+#include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
 #include <seqan3/search/detail/policy_max_error.hpp>
@@ -24,32 +25,31 @@
 
 #include <gtest/gtest.h>
 
-namespace seqan3::detail
+// Uses the trivial search of the unidirectional search algorithm.
+// The algorithm is configured with the corrsponding configuration types.
+// To modify the trivial search use the configuration settings of the search algorithm.
+template <typename index_t, typename query_t, typename delegate_t>
+static void search_trivial(index_t const & index,
+                            query_t const & query,
+                            seqan3::detail::search_param error_left,
+                            delegate_t && delegate)
 {
+    using namespace seqan3::detail;
 
-struct test_accessor
-{
-    template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
-    static void search_trivial(index_t const & index,
-                               query_t const & query,
-                               seqan3::detail::search_param error_left,
-                               delegate_t && delegate)
-    {
-        using namespace seqan3::detail;
+    // Configure the algorithm according to the given specifications.
+    auto cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{error_left.total},
+                                             seqan3::search_cfg::substitution{error_left.substitution},
+                                             seqan3::search_cfg::insertion{error_left.insertion},
+                                             seqan3::search_cfg::deletion{error_left.deletion}} |
+                seqan3::search_cfg::hit_all |
+                seqan3::search_cfg::output{seqan3::search_cfg::index_cursor};
 
-        auto cfg = seqan3::search_cfg::default_configuration;
-        using config_t = decltype(cfg);
-        using algorithm_t = unidirectional_search_algorithm<config_t,
-                                                            index_t,
-                                                            policy_max_error,
-                                                            policy_search_result_builder<config_t>>;
-        algorithm_t algo{cfg, index};
-        algo.delegate = delegate;
-        algo.template search_trivial<abort_on_hit>(index.cursor(), query, 0, error_left, error_type::none);
-    }
-};
+    auto algo = seqan3::detail::search_configurator::configure_algorithm<decltype(query)>(cfg, index);
 
-} // namespace seqan3::detail
+    // Call the algorithm and call the delegate with the returned index cursor.
+    for (auto && result : algo(query))
+        delegate(result.index_cursor());
+}
 
 template <typename text_t>
 inline void test_search_hamming(auto index, text_t const & text, auto const & search, uint64_t const query_length,
@@ -161,7 +161,7 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
                                      delegate_ss);
 
     // Find all hits using trivial backtracking.
-    seqan3::detail::test_accessor::search_trivial<false>(index, query, error_left, delegate_trivial);
+    search_trivial(index, query, error_left, delegate_trivial);
 
     // Eliminate hits that we are not interested in (based on the search and chosen error distribution)
     hits_ss.erase(std::remove_if(hits_ss.begin(), hits_ss.end(), remove_predicate_ss), hits_ss.end());
@@ -283,7 +283,7 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, size_
                 // Find all hits using search schemes.
                 seqan3::detail::search_ss<false>(index, query, error_left, search_scheme, delegate_ss);
                 // Find all hits using trivial backtracking.
-                seqan3::detail::test_accessor::search_trivial<false>(index, query, error_left, delegate_trivial);
+                search_trivial(index, query, error_left, delegate_trivial);
 
                 // Eliminate duplicates
                 hits_ss = seqan3::uniquify(hits_ss);

@@ -12,10 +12,18 @@
 
 #pragma once
 
+#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/core/type_traits/function.hpp>
+#include <seqan3/core/type_traits/lazy.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/search/configuration/hit.hpp>
+#include <seqan3/search/configuration/max_error.hpp>
+#include <seqan3/search/configuration/result_type.hpp>
 #include <seqan3/search/detail/policy_max_error.hpp>
 #include <seqan3/search/detail/policy_search_result_builder.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
+#include <seqan3/search/search_result.hpp>
 
 namespace seqan3::detail
 {
@@ -25,6 +33,44 @@ namespace seqan3::detail
  */
 class search_configurator
 {
+private:
+    /*!\brief Select the search result based on the configuration and the index type.
+     *
+     * \tparam search_configuration_t The type of the configuration.
+     * \tparam index_t The type of the index.
+     */
+    template <typename search_configuration_t, typename index_t>
+    struct select_search_result
+    {
+    private:
+        //!\brief The cursor type of the index.
+        using index_cursor_type = typename index_t::cursor_type;
+        //!\brief The size type of the index.
+        using index_size_type = typename index_t::size_type;
+
+    public:
+        //!\brief The result type depending on the output configuration.
+        using type = std::conditional_t<search_traits<search_configuration_t>::search_return_index_cursor,
+                                        search_result<size_t, index_cursor_type, empty_type, empty_type>,
+                                        search_result<size_t, empty_type, index_size_type, index_size_type>>;
+    };
+
+    /*!\brief Selects the search algorithm based on the index type.
+     *
+     * \tparam search_configuration_t The type of the configuration.
+     * \tparam index_t The type of the index.
+     * \tparam policies_t A template parameter pack over the policies to specify the behavior of the algorithm.
+     */
+    template <typename configuration_t, typename index_t, typename ...policies_t>
+    struct select_search_algorithm
+    {
+        //!\brief The selected algorithm type based on the index.
+        using type =
+            lazy_conditional_t<bi_fm_index_specialisation<index_t>,
+                               lazy<search_scheme_algorithm, configuration_t, index_t, policies_t...>,
+                               lazy<unidirectional_search_algorithm, configuration_t, index_t, policies_t...>>;
+    };
+
 public:
     /*!\brief Add seqan3::search_cfg::hit_all to the configuration if no search strategy (hit configuration) was chosen.
      * \tparam configuration_t The type of the search configuration.
@@ -88,6 +134,8 @@ public:
     }
 
     /*!\brief Chooses the appropriate search algorithm depending on the index.
+     *
+     * \tparam query_t An explicit template argument for the query type the search algorithm is invoked with.
      * \tparam configuration_t The type of the search configuration.
      * \tparam index_t The type of the index.
      * \param[in] cfg The search configuration object that is passed to the algorithm.
@@ -100,26 +148,106 @@ public:
      * seqan3::detail::search_scheme_algorithm is chosen. Otherwise, the
      * seqan3::detail::unidirectional_search_algorithm is chosen.
      */
-    template <typename configuration_t, typename index_t>
+    template <typename query_t, typename configuration_t, typename index_t>
     static auto configure_algorithm(configuration_t const & cfg, index_t const & index)
     {
-        if constexpr (bi_fm_index_specialisation<index_t>)
-        {
-            using algorithm_t = search_scheme_algorithm<configuration_t,
-                                                        index_t,
-                                                        policy_max_error,
-                                                        policy_search_result_builder<configuration_t>>;
-            return algorithm_t{cfg, index};
-        }
-        else
-        {
-            using algorithm_t = unidirectional_search_algorithm<configuration_t,
-                                                                index_t,
-                                                                policy_max_error,
-                                                                policy_search_result_builder<configuration_t>>;
-            return algorithm_t{cfg, index};
-        }
+        using search_result_t = typename select_search_result<configuration_t, index_t>::type;
+        using search_result_collection_t = std::vector<search_result_t>;
+        using type_erased_algorithm_t = std::function<search_result_collection_t(query_t)>;
+
+        return configure_hit_strategy<type_erased_algorithm_t>(cfg | search_cfg::detail::result_type<search_result_t>,
+                                                               index);
+    }
+
+    template <typename algorithm_t, typename configuration_t, typename index_t>
+    static algorithm_t configure_hit_strategy(configuration_t const &, index_t const &);
+
+    /*!\brief Select and return the configured search algorithm.
+     *
+     * \tparam algorithm_t The type erased algorithm used for the fixed return type.
+     * \tparam configuration_t The type of the search configuration.
+     * \tparam index_t The type of the index.
+     *
+     * \param[in] config The search configuration object that is passed to the algorithm.
+     * \param[in] index The index that is passed to the algorithm.
+     *
+     * \details
+     *
+     * The final step of the configuration pipeline. Here the final algorithm is created and returned as the
+     * type erased std::function object. This step must be called at the end.
+     */
+    template <typename algorithm_t, typename configuration_t, typename index_t>
+    static algorithm_t select_and_return_algorithm(configuration_t const & config, index_t const & index)
+    {
+        using selected_algorithm_t =
+            typename select_search_algorithm<configuration_t,
+                                             index_t,
+                                             policy_max_error,
+                                             policy_search_result_builder<configuration_t>>::type;
+
+        return selected_algorithm_t{config, index};
     }
 };
+
+/*!\brief Configures the algorithm with the correct hit strategy.
+ *
+ * \tparam algorithm_t The type erased algorithm used for the fixed return type.
+ * \tparam configuration_t The type of the search configuration.
+ * \tparam index_t The type of the index.
+ *
+ * \returns The configured search algorithm.
+ *
+ * \details
+ *
+ * If the algorithm was configured with the dynamic hit configuration element seqan3::search_cfg::hit, the
+ * configuration element is removed and replaced by the selected static hit configuration element.
+ * If the hit configuration element is already a static one nothing is changed in the configuration.
+ * After selecting the correct hit strategy the corresponding search algorithm is created with the new configuration
+ * and the given index.
+ *
+ * \throws std::invalid_argument if the dynamic hit configuration was not initialised with a hit strategy.
+ *
+ * If no hit configuration was configured a static assert is emitted during compilation.
+ */
+template <typename algorithm_t, typename configuration_t, typename index_t>
+algorithm_t search_configurator::configure_hit_strategy(configuration_t const & cfg, index_t const & index)
+{
+    // Delegate to the next config with the modified configuration.
+    auto next_config_step = [&] (auto new_cfg) -> algorithm_t
+    {
+        return select_and_return_algorithm<algorithm_t>(new_cfg, index);
+    };
+
+    // Check if dynamic config present, otherwise continue.
+    if constexpr (configuration_t::template exists<search_cfg::hit>())
+    {
+        auto hit_variant = get<search_cfg::hit>(cfg).hit_variant;
+
+        if (std::holds_alternative<empty_type>(hit_variant))
+            throw std::invalid_argument{"The dynamic hit strategy was not initialised! "
+                                        "Please refer to the configuration documentation of the search algorithm for "
+                                        "more details."};
+
+        // Remove dynamic config first.
+        auto cfg_without_hit = cfg.template remove<search_cfg::hit>();
+
+        // Apply the correct static configuration element.
+        return std::visit(multi_invocable
+        {
+            [&] (hit_all_best_tag) { return next_config_step(cfg_without_hit | search_cfg::hit_all_best); },
+            [&] (hit_single_best_tag) { return next_config_step(cfg_without_hit | search_cfg::hit_single_best); },
+            [&] (search_cfg::hit_strata const & strata) { return next_config_step(cfg_without_hit | strata); },
+            [&] (auto) { return next_config_step(cfg_without_hit | search_cfg::hit_all); }
+        }, hit_variant);
+    }
+    else // Already statically configured.
+    {
+        static_assert(detail::search_traits<configuration_t>::has_hit_configuration,
+                      "The hit strategy for the search algorithm was not configured. "
+                      "Please refer to the configuration documentation of the search algorithm for more details.");
+
+        return next_config_step(cfg);
+    }
+}
 
 } // namespace seqan3::detail

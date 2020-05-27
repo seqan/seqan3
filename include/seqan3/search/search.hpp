@@ -152,7 +152,8 @@ inline auto search(queries_t && queries,
     detail::search_configuration_validator::validate_query_type<queries_t>();
     detail::search_configuration_validator::validate_error_configuration(updated_cfg);
 
-    auto algorithm = detail::search_configurator::configure_algorithm(updated_cfg, index);
+    using query_t = std::ranges::range_reference_t<queries_t>;
+    auto algorithm = detail::search_configurator::configure_algorithm<query_t>(updated_cfg, index);
 
     return search_result_range{std::move(algorithm), std::forward<queries_t>(queries) | views::type_reduce};
 }
