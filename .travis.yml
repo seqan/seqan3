@@ -1,6 +1,6 @@
 version: ~> 1.0
 os: linux
-dist: xenial
+dist: bionic
 language: cpp
 
 git:
@@ -98,6 +98,7 @@ install:
     tar -C /tmp/ -zxvf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
     export PATH="/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin:${PATH}"
   - ccache --version
+  - ccache -M 10G
   - $CXX -v
   - cmake --version
   - |
