@@ -400,7 +400,7 @@ public:
      * \{
      */
     //!\brief Return whether this instance is equal to `rhs`.
-    constexpr bool operator==(strong_type const & other) const
+    constexpr bool operator==(strong_type const & rhs) const
     //!\cond
         requires ((skills & strong_type_skill::comparable) != strong_type_skill::none)
     //!\endcond
