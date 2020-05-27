@@ -30,6 +30,11 @@ struct policy_search_result_builder
 protected:
     //!\brief The traits type over the search configuration.
     using search_traits_type = detail::search_traits<search_configuration_t>;
+    //!\brief The configured search result type.
+    using search_result_type = typename search_traits_type::search_result_type;
+
+    static_assert(!std::same_as<search_result_type, empty_type>, "The search result type was not configured properly.");
+
     /*!\brief Returns all hits (index cursor) without calling locate on each cursor.
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
      * \param[in] internal_hits internal_hits A range over internal cursor results.
@@ -57,11 +62,7 @@ protected:
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits)
     {
-        using index_t = typename index_cursor_t::index_type;
-        using position_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
-                                              std::pair<typename index_t::size_type, typename index_t::size_type>,
-                                              typename index_t::size_type>;
-        std::vector<position_t> positions;
+        std::vector<search_result_type> positions{};
 
         if (!internal_hits.empty())
         {
@@ -91,11 +92,7 @@ protected:
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits)
     {
-        using index_t = typename index_cursor_t::index_type;
-        using position_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
-                                              std::pair<typename index_t::size_type, typename index_t::size_type>,
-                                              typename index_t::size_type>;
-        std::vector<position_t> positions;
+        std::vector<search_result_type> positions{};
 
         for (auto const & cursor : internal_hits)
             std::ranges::move(cursor.locate(), std::ranges::back_inserter(positions));
