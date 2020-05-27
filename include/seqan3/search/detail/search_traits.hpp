@@ -50,10 +50,11 @@ struct search_traits
     //!\brief A flag indicating whether search should find strata hits.
     static constexpr bool search_strata_hits = search_configuration_t::template exists<search_cfg::hit_strata>();
     //!\brief A flag indicating whether hit configuration was set in the search configuration.
-    static constexpr bool has_hit_configuration = search_all_hits |
-                                                  search_single_best_hit |
-                                                  search_all_best_hits |
-                                                  search_strata_hits;
+    static constexpr bool has_hit_configuration = search_all_hits ||
+                                                  search_single_best_hit ||
+                                                  search_all_best_hits ||
+                                                  search_strata_hits ||
+                                                  search_configuration_t::template exists<search_cfg::hit>();
 
     //!\brief A flag indicating whether search should return the index cursor.
     static constexpr bool search_return_index_cursor =
