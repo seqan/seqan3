@@ -92,9 +92,17 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 #### Search
 
 * Moved `seqan3::search` from `search/algorithm/` to `search/` ([\#1696](https://github.com/seqan/seqan3/pull/1696)).
-* The `seqan3::search_result_range` returns now a `seqan3::search_result` which unifies the interface for all search instanes, e.g. using an index over a single text or a text collection
+* The `seqan3::search_result_range` returns now a `seqan3::search_result` which unifies the interface for all search
+  instances, e.g. using an index over a single text or a text collection
   ([\#1706](https://github.com/seqan/seqan3/pull/1706)).
 * Configuration refactoring:
+  * The structure of the max error configuration has changed and is now splitted in individual config elements. You can
+    also combine error counts and error rates now ([\#1861](https://github.com/seqan/seqan3/pull/1861)):
+    `seqan3::search_cfg::max_error` and `seqan3::search_cfg::max_error_rate` which could be `seqan3::search_cfg::total`,
+    `seqan3::search_cfg::substitution`, `seqan3::search_cfg::insertion` or `seqan3::search_cfg::deletion` to
+    `seqan3::search_cfg::max_error_total`, `seqan3::search_cfg::max_error_substitution`,
+    `seqan3::search_cfg::max_error_insertion` or `seqan3::search_cfg::max_error_deletion`which can be
+    `seqan3::search_cfg::error_count` or `seqan3::search_cfg::error_rate`.
   * The names for the search mode configuration have changed and are now individual config elements
     that are pipeable ([\#1639](https://github.com/seqan/seqan3/pull/1639)):
     `seqan3::search_cfg::all` to `seqan3::search_cfg::hit_all`
