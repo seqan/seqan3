@@ -12,11 +12,13 @@
 
 #pragma once
 
+#include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/max_error_rate.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/output.hpp>
+#include <seqan3/search/configuration/result_type.hpp>
 
 namespace seqan3::detail
 {
@@ -33,6 +35,14 @@ template <typename search_configuration_t>
 //!\endcond
 struct search_traits
 {
+private:
+    //!\brief Maybe the result type wrapped in type identity or int.
+    using maybe_result_type = remove_cvref_t<decltype(std::declval<search_configuration_t &>().template
+                                                            value_or<search_cfg::detail::result_type_tag>(0))>;
+public:
+    //!\brief The configured search result type or seqan3::detail::empty_type if not configured yet.
+    using search_result_type = transformation_trait_or_t<maybe_result_type, empty_type>;
+
     //!\brief A flag indicating whether search should be invoked with max error.
     static constexpr bool search_with_max_error = search_configuration_t::template exists<search_cfg::max_error>();
     //!\brief A flag indicating whether search should be invoked with max error rate.
