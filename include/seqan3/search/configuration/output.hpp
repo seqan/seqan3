@@ -36,10 +36,10 @@ namespace seqan3::search_cfg
 
 //!\brief Configuration element to receive all hits within the error bounds.
 //!\ingroup search_configuration
-inline detail::search_output_index_cursor constexpr index_cursor;
+inline seqan3::detail::search_output_index_cursor constexpr index_cursor;
 //!\brief Configuration element to receive all hits within the lowest number of errors.
 //!\ingroup search_configuration
-inline detail::search_output_text_position constexpr text_position;
+inline seqan3::detail::search_output_text_position constexpr text_position;
 
 /*!\brief Configuration element to determine the output type of hits.
  * \ingroup search_configuration
@@ -53,14 +53,14 @@ inline detail::search_output_text_position constexpr text_position;
  */
 template <typename output_t>
 //!\cond
-    requires std::same_as<remove_cvref_t<output_t>, detail::search_output_text_position> ||
-             std::same_as<remove_cvref_t<output_t>, detail::search_output_index_cursor>
+    requires std::same_as<remove_cvref_t<output_t>, seqan3::detail::search_output_text_position> ||
+             std::same_as<remove_cvref_t<output_t>, seqan3::detail::search_output_index_cursor>
 //!\endcond
 struct output : public pipeable_config_element<output<output_t>, output_t>
 {
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::search_config_id id{detail::search_config_id::output};
+    static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::output};
 };
 
 /*!\name Type deduction guides

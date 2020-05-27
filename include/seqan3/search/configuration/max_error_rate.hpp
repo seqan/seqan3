@@ -18,6 +18,7 @@
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 #include <seqan3/search/configuration/max_error_common.hpp>
@@ -38,10 +39,10 @@ namespace seqan3::search_cfg
 template <typename ...errors_t>
 //!\cond
     requires (sizeof...(errors_t) <= 4) &&
-             ((detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, total> ||
-               detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, substitution> ||
-               detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, deletion>  ||
-               detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, insertion>) && ...)
+             ((seqan3::detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, total> ||
+               seqan3::detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, substitution> ||
+               seqan3::detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, deletion>  ||
+               seqan3::detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, insertion>) && ...)
 //!\endcond
 class max_error_rate : public pipeable_config_element<max_error_rate<errors_t...>, std::array<double, 4>>
 {
@@ -77,7 +78,7 @@ public:
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::search_config_id id{detail::search_config_id::max_error_rate};
+    static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::max_error_rate};
 
     //!\publicsection
     /*!\name Constructor, destructor and assignment
@@ -94,8 +95,6 @@ public:
     /*!\brief Constructs the object from a set of error specifiers.
      * \tparam    errors_t A template parameter pack with the error types.
      * \param[in] errors   A pack of error specifiers.
-     *
-     * \details
      *
      * \details
      *
@@ -121,13 +120,13 @@ public:
     //!\endcond
         : base_t{}
     {
-        detail::for_each([this](auto e)
+        seqan3::detail::for_each([this] (auto e)
         {
             base_t::value[remove_cvref_t<decltype(e)>::_id()] = e.get();
         }, std::forward<errors_t>(errors)...);
 
         // check correct values.
-        std::ranges::for_each(base_t::value, [](auto error_elem)
+        std::ranges::for_each(base_t::value, [] (auto error_elem)
         {
             if (0.0 > error_elem  || error_elem > 1.0)
                 throw std::invalid_argument("Error rates must be between 0 and 1.");
