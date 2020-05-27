@@ -19,7 +19,8 @@ using test_types = ::testing::Types<seqan3::search_cfg::max_error_rate<>,
                                     seqan3::search_cfg::max_error,
                                     seqan3::detail::hit_single_best_tag,
                                     seqan3::search_cfg::output<seqan3::detail::search_output_text_position>,
-                                    seqan3::search_cfg::parallel>;
+                                    seqan3::search_cfg::parallel,
+                                    seqan3::search_cfg::detail::result_type_tag<int>>;
 
 TYPED_TEST_SUITE(search_configuration_test, test_types, );
 
