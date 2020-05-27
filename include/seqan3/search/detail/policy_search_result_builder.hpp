@@ -33,6 +33,10 @@ struct policy_search_result_builder
 protected:
     //!\brief The traits type over the search configuration.
     using search_traits_type = detail::search_traits<search_configuration_t>;
+    //!\brief The configured search result type.
+    using search_result_type = typename search_traits_type::search_result_type;
+
+    static_assert(!std::same_as<search_result_type, empty_type>, "The search result type was not configured properly.");
 
     /*!\brief Returns all hits (index cursors) without calling locate on each cursor.
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
@@ -46,11 +50,10 @@ protected:
     template <typename index_cursor_t>
     auto make_results(std::vector<index_cursor_t> internal_hits)
     {
-        using search_result_t = search_result<size_t, index_cursor_t, empty_type, empty_type>;
-        std::vector<search_result_t> results(internal_hits.size());
+        std::vector<search_result_type> results(internal_hits.size());
 
         for (size_t i = 0; i < internal_hits.size(); ++i)
-            results[i] = search_result_t{0, internal_hits[i]};
+            results[i] = search_result_type{0, internal_hits[i]};
 
         return results;
     }
@@ -68,16 +71,13 @@ protected:
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits)
     {
-        using index_size_t = typename index_cursor_t::index_type::size_type;
-        using search_result_t = search_result<size_t, empty_type, index_size_t, index_size_t>;
-
-        std::vector<search_result_t> results{};
+        std::vector<search_result_type> results{};
 
         if (!internal_hits.empty())
         {
             // only one cursor is reported but it might contain more than one text position
             auto && [ref_id, ref_pos] = internal_hits[0].lazy_locate()[0];
-            results.push_back(search_result_t{0, ref_id, ref_pos});
+            results.push_back(search_result_type{0, ref_id, ref_pos});
         }
         return results;
     }
@@ -100,15 +100,12 @@ protected:
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits)
     {
-        using index_size_t = typename index_cursor_t::index_type::size_type;
-        using search_result_t = search_result<size_t, empty_type, index_size_t, index_size_t>;
-
-        std::vector<search_result_t> results{};
+        std::vector<search_result_type> results{};
         results.reserve(internal_hits.size()); // expect at least as many text positions as cursors, possibly more
 
         for (auto const & cursor : internal_hits)
             for (auto && [ref_id, ref_pos] : cursor.locate())
-                results.push_back(search_result_t{0, ref_id, ref_pos});
+                results.push_back(search_result_type{0, ref_id, ref_pos});
 
         // sort by reference id or by reference position if both have the same reference id.
         auto compare = [] (auto const & r1, auto const & r2)
