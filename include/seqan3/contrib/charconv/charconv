@@ -1,5 +1,6 @@
 // -*- C++ -*-
 #include "charconv_pre.hpp"
+//!\cond
 
 // -*- C++ -*-
 //===------------------------------ charconv ------------------------------===//
@@ -611,3 +612,5 @@ from_chars(const char* __first, const char* __last, _Tp& __value, int __base)
 SEQAN3_CONTRIB_CHARCONV_LIBCPP_END_NAMESPACE_STD
 
 #endif  // SEQAN3_CONTRIB_CHARCONV_LIBCPP_CHARCONV
+
+//!\endcond
