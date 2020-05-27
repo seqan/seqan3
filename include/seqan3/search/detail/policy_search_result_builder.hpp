@@ -31,9 +31,11 @@ protected:
     //!\brief The traits type over the search configuration.
     using search_traits_type = detail::search_traits<search_configuration_t>;
     //!\brief The configured search result type.
-    using search_result_type = typename search_traits_type::search_result_type;
+    using callback_type = typename search_traits_type::search_result_type;
+    //!\brief The actual search result type.
+    using search_result_type = std::tuple_element_t<1, callback_type>;
 
-    static_assert(!std::same_as<search_result_type, empty_type>, "The search result type was not configured properly.");
+    static_assert(!std::same_as<callback_type, empty_type>, "The search result type was not configured properly.");
 
     /*!\brief Returns all hits (index cursor) without calling locate on each cursor.
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.

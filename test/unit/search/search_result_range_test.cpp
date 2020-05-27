@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/search/search_result_range.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
@@ -27,10 +26,12 @@ struct dummy_search_algorithm
     using reference       = value_type;
     using difference_type = std::ptrdiff_t;
 
-    template <typename query_t>
-    auto operator()(query_t && /*query*/)
+    template <typename indexed_query_t, typename callback_t>
+    auto operator()(indexed_query_t && indexed_query, callback_t && callback)
     {
-        return std::vector<size_t>{0, 1, 2, 3, 4};
+        auto && [idx, query] = indexed_query;
+        for (size_t i : std::vector<size_t>{0, 1, 2, 3, 4})
+            callback(std::pair{idx, i});
     }
 };
 
@@ -38,28 +39,35 @@ struct dummy_search_algorithm
 // Testing iterator.
 // ----------------------------------------------------------------------------
 
-using search_result_range_t = seqan3::search_result_range<dummy_search_algorithm,
-                                                          seqan3::type_reduce_view<std::vector<std::string>& >>;
-using search_range_iterator = std::ranges::iterator_t<search_result_range_t>;
-
 struct search_result_range_test : ::testing::Test
 {
-    std::vector<std::string> query_range{std::string{"query1"}, std::string{"query1"}, std::string{"query3"}};
+    using indexed_queries_t = std::vector<std::pair<size_t, std::string>>;
+    using algorithm_result_t = std::pair<size_t, size_t>;
+
+    using executor_t = seqan3::detail::algorithm_executor_blocking<indexed_queries_t &,
+                                                                   dummy_search_algorithm,
+                                                                   algorithm_result_t>;
+    using search_result_range_t = seqan3::search_result_range<executor_t>;
+
+    indexed_queries_t indexed_queries{{0, std::string{"query1"}},
+                                      {1, std::string{"query1"}},
+                                      {2, std::string{"query3"}}};
+
 };
 
 template <>
-struct iterator_fixture<search_range_iterator> : search_result_range_test
+struct iterator_fixture<search_result_range_test> : search_result_range_test
 {
     using iterator_tag = std::input_iterator_tag;
     static constexpr bool const_iterable = false;
 
-    search_result_range_t test_range{dummy_search_algorithm{}, this->query_range | seqan3::views::type_reduce};
+    search_result_range_t test_range{executor_t{this->indexed_queries, dummy_search_algorithm{}, algorithm_result_t{}}};
     std::vector<std::pair<size_t, size_t>> expected_range{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4},
                                                           {1, 0}, {1, 1}, {1, 2}, {1, 3}, {1, 4},
                                                           {2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4}};
 };
 
-INSTANTIATE_TYPED_TEST_SUITE_P(search_range_iterator, iterator_fixture, search_range_iterator, );
+INSTANTIATE_TYPED_TEST_SUITE_P(search_range_iterator, iterator_fixture, search_result_range_test, );
 
 // ----------------------------------------------------------------------------
 // Testing alignment range concepts and interfaces.
@@ -79,21 +87,19 @@ TEST_F(search_result_range_test, construction)
     EXPECT_FALSE(std::is_copy_assignable_v<search_result_range_t>);
     EXPECT_TRUE(std::is_move_assignable_v<search_result_range_t>);
 
-    EXPECT_TRUE((std::is_constructible_v<search_result_range_t,
-                                         dummy_search_algorithm,
-                                         seqan3::type_reduce_view<std::vector<std::string>& >>));
+    EXPECT_TRUE((std::is_constructible_v<search_result_range_t, executor_t>));
 }
 
 TEST_F(search_result_range_test, type_deduction)
 {
-    seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
+    seqan3::search_result_range rng{executor_t{indexed_queries, dummy_search_algorithm{}, algorithm_result_t{}}};
     EXPECT_TRUE((std::is_same_v<decltype(rng), search_result_range_t>));
 }
 
 TEST_F(search_result_range_test, empty_query_range)
 {
-    query_range.clear();
-    seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
+    indexed_queries.clear();
+    seqan3::search_result_range rng{executor_t{indexed_queries, dummy_search_algorithm{}, algorithm_result_t{}}};
 
     EXPECT_TRUE(rng.begin() == rng.end());
 }
@@ -104,14 +110,14 @@ TEST_F(search_result_range_test, issue1799)
                                                           {1, 0}, {1, 1}, {1, 2}, {1, 3}, {1, 4},
                                                           {2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4}};
     { // move construction
-        seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
+        seqan3::search_result_range rng{executor_t{indexed_queries, dummy_search_algorithm{}, algorithm_result_t{}}};
         seqan3::search_result_range moved_range{std::move(rng)};
 
         EXPECT_RANGE_EQ(expected_range, moved_range);
     }
 
     { // move assignment
-        seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
+        seqan3::search_result_range rng{executor_t{indexed_queries, dummy_search_algorithm{}, algorithm_result_t{}}};
         auto && moved_range = std::move(rng);
 
         EXPECT_RANGE_EQ(expected_range, moved_range);

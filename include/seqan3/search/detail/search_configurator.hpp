@@ -152,12 +152,13 @@ public:
     template <typename query_t, typename configuration_t, typename index_t>
     static auto configure_algorithm(configuration_t const & cfg, index_t const & index)
     {
-        using search_result_t = typename select_search_result<configuration_t, index_t>::type;
-        using search_result_collection_t = std::vector<search_result_t>;
-        using type_erased_algorithm_t = std::function<search_result_collection_t(query_t)>;
+        using query_index_t = std::tuple_element_t<0, query_t>;
+        using search_result_t = std::pair<query_index_t, typename select_search_result<configuration_t, index_t>::type>;
+        using callback_t = std::function<void(search_result_t)>;
+        using type_erased_algorithm_t = std::function<void(query_t, callback_t)>;
 
-        return configure_hit_strategy<type_erased_algorithm_t>(cfg | search_cfg::detail::result_type<search_result_t>,
-                                                               index);
+        auto complete_config = cfg | search_cfg::detail::result_type<search_result_t>;
+        return std::pair{configure_hit_strategy<type_erased_algorithm_t>(complete_config, index), complete_config};
     }
 
     template <typename algorithm_t, typename configuration_t, typename index_t>
