@@ -167,28 +167,36 @@ constexpr auto align_pairwise(sequence_t && sequences,
     // Configure the alignment algorithm.
     auto && [algorithm, complete_config] = detail::alignment_configurator::configure<decltype(seq_view)>(config);
 
-    using traits_t = detail::alignment_configuration_traits<remove_cvref_t<decltype(complete_config)>>;
-    //!brief Lambda function to translate specified parallel and or vectorised configurations into their execution rules.
-    constexpr auto get_execution_rule = [] ()
-    {
-        if constexpr (traits_t::is_parallel)
-            return seqan3::par;
-        else
-            return seqan3::seq;
-    };
-
-    using alignment_result_t = typename traits_t::alignment_result_type;
+    using complete_config_t = remove_cvref_t<decltype(complete_config)>;
+    using traits_t = detail::alignment_configuration_traits<complete_config_t>;
 
     auto indexed_sequence_chunk_view = views::zip(seq_view, std::views::iota(0))
                                      | views::chunk(traits_t::alignments_per_vector);
 
-    // Create a two-way executor for the alignment.
-    detail::algorithm_executor_blocking executor{indexed_sequence_chunk_view,
-                                                std::move(algorithm),
-                                                alignment_result_t{},
-                                                get_execution_rule()};
+    using indexed_sequences_t = decltype(indexed_sequence_chunk_view);
+    using alignment_result_t = typename traits_t::alignment_result_type;
+    using execution_handler_t = std::conditional_t<complete_config_t::template exists<align_cfg::parallel>(),
+                                                   detail::execution_handler_parallel,
+                                                   detail::execution_handler_sequential>;
+    using executor_t = detail::algorithm_executor_blocking<indexed_sequences_t,
+                                                           decltype(algorithm),
+                                                           alignment_result_t,
+                                                           execution_handler_t>;
+
+    // Select the execution handler for the alignment configuration.
+    auto select_execution_handler = [&] ()
+    {
+        if constexpr (std::same_as<execution_handler_t, detail::execution_handler_parallel>)
+            return execution_handler_t{get<align_cfg::parallel>(complete_config).value};
+        else
+            return execution_handler_t{};
+    };
+
     // Return the range over the alignments.
-    return alignment_range{std::move(executor)};
+    return alignment_range{executor_t{std::move(indexed_sequence_chunk_view),
+                                      std::move(algorithm),
+                                      alignment_result_t{},
+                                      select_execution_handler()}};
 }
 //!\endcond
 
