@@ -258,7 +258,6 @@ inline namespace deprecated
 // // [default.sentinels], default sentinels
 // struct default_sentinel_t;
 // inline constexpr default_sentinel_t default_sentinel{};
-using ::std::default_sentinel_t;
 using ::std::default_sentinel;
 using ::std::cpp20::back_inserter;
 } // namespace std::ranges::deprecated

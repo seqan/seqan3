@@ -39,7 +39,7 @@ struct trace_iterator_fixture : public ::testing::Test
     }};
 
     using trace_iterator_type = decltype(seqan3::detail::trace_iterator{matrix.begin()});
-    using path_type = std::ranges::subrange<trace_iterator_type, std::ranges::default_sentinel_t>;
+    using path_type = std::ranges::subrange<trace_iterator_type, std::default_sentinel_t>;
 
     path_type path(seqan3::detail::matrix_offset const & offset)
     {

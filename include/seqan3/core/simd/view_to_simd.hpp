@@ -155,7 +155,7 @@ public:
     constexpr void cbegin() const noexcept = delete;
 
     //!\brief A sentinel representing the end of this range.
-    constexpr std::ranges::default_sentinel_t end() noexcept
+    constexpr std::default_sentinel_t end() noexcept
     {
         return std::ranges::default_sentinel;
     }
@@ -316,25 +316,25 @@ public:
      * \{
      */
     //!\brief Returns `true` if iterator reached the end, otherwise `false`.
-    constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
+    constexpr bool operator==(std::default_sentinel_t const &) const noexcept
     {
         return at_end;
     }
 
     //!\copydoc seqan3::detail::view_to_simd::iterator_type::operator==
-    friend constexpr bool operator==(std::ranges::default_sentinel_t const &, iterator_type const & rhs) noexcept
+    friend constexpr bool operator==(std::default_sentinel_t const &, iterator_type const & rhs) noexcept
     {
         return rhs.at_end;
     }
 
     //!\brief Returns `true` if iterator did not reach the end yet, otherwise `false`.
-    constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
+    constexpr bool operator!=(std::default_sentinel_t const &) const noexcept
     {
         return !at_end;
     }
 
     //!\copydoc seqan3::detail::view_to_simd::iterator_type::operator!=
-    friend constexpr bool operator!=(std::ranges::default_sentinel_t const &, iterator_type const & rhs) noexcept
+    friend constexpr bool operator!=(std::default_sentinel_t const &, iterator_type const & rhs) noexcept
     {
         return !rhs.at_end;
     }

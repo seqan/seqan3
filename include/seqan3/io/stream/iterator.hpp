@@ -148,7 +148,7 @@ public:
      * \{
      */
     //!\brief True if the read buffer is not empty; involves no vtable lookup.
-    friend bool operator==(fast_istreambuf_iterator const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    friend bool operator==(fast_istreambuf_iterator const & lhs, std::default_sentinel_t const &) noexcept
     {
         assert(lhs.stream_buf != nullptr);
         // compare size of remaining buffer; since ++ always resizes if possible, safe to compare pointers here
@@ -156,19 +156,19 @@ public:
     }
 
     //!\brief True if the read buffer is empty; involves no vtable lookup.
-    friend bool operator!=(fast_istreambuf_iterator const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    friend bool operator!=(fast_istreambuf_iterator const & lhs, std::default_sentinel_t const &) noexcept
     {
         return !(lhs == std::ranges::default_sentinel);
     }
 
     //!\brief True if the read buffer is not empty; involves no vtable lookup.
-    friend bool operator==(std::ranges::default_sentinel_t const &, fast_istreambuf_iterator const & rhs) noexcept
+    friend bool operator==(std::default_sentinel_t const &, fast_istreambuf_iterator const & rhs) noexcept
     {
         return rhs == std::ranges::default_sentinel;
     }
 
     //!\brief True if the read buffer is empty; involves no vtable lookup.
-    friend bool operator!=(std::ranges::default_sentinel_t const &, fast_istreambuf_iterator const & rhs) noexcept
+    friend bool operator!=(std::default_sentinel_t const &, fast_istreambuf_iterator const & rhs) noexcept
     {
         return !(rhs == std::ranges::default_sentinel);
     }

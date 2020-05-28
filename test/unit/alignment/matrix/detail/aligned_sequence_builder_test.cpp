@@ -63,7 +63,7 @@ struct aligned_sequence_builder_fixture : ::testing::Test
     auto path(seqan3::detail::matrix_offset const & offset)
     {
         using iterator_t = decltype(seqan3::detail::trace_iterator{matrix.begin() + offset});
-        return std::ranges::subrange<iterator_t, std::ranges::default_sentinel_t>
+        return std::ranges::subrange<iterator_t, std::default_sentinel_t>
         {
             seqan3::detail::trace_iterator{matrix.begin() + offset},
             std::ranges::default_sentinel

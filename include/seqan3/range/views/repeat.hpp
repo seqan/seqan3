@@ -47,8 +47,8 @@ private:
     //!/brief the base type.
     using base_t = std::ranges::view_interface<repeat_view<value_t>>;
 
-    //!\brief The sentinel type is set to std::ranges::default_sentinel_t.
-    using sentinel_type = std::ranges::default_sentinel_t;
+    //!\brief The sentinel type is set to std::default_sentinel_t.
+    using sentinel_type = std::default_sentinel_t;
 
     /*!\name Associated types
      * These associated types are needed in seqan3::detail::random_access_iterator.
@@ -123,26 +123,26 @@ private:
         using base_t::operator!=;
 
         //!\brief Equality comparison to the sentinel always returns false on an infinite view.
-        constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
+        constexpr bool operator==(std::default_sentinel_t const &) const noexcept
         {
             return false;
         }
 
         //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
-        constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
+        constexpr bool operator!=(std::default_sentinel_t const &) const noexcept
         {
             return true;
         }
 
         //!\brief Equality comparison to the sentinel always returns false on an infinite view.
-        friend constexpr bool operator==(std::ranges::default_sentinel_t const &,
+        friend constexpr bool operator==(std::default_sentinel_t const &,
                                          repeat_view_iterator const &) noexcept
         {
             return false;
         }
 
         //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
-        friend constexpr bool operator!=(std::ranges::default_sentinel_t const &,
+        friend constexpr bool operator!=(std::default_sentinel_t const &,
                                          repeat_view_iterator const &) noexcept
         {
             return true;

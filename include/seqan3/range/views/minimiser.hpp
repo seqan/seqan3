@@ -160,7 +160,7 @@ private:
     //!\brief The sentinel type of the underlying range.
     using sentinel_t = std::ranges::sentinel_t<rng_t>;
     //!\brief The sentinel type of the minimiser_view.
-    using sentinel_type = std::ranges::default_sentinel_t;
+    using sentinel_type = std::default_sentinel_t;
 
     template <typename urng2_t>
     friend class window_iterator;

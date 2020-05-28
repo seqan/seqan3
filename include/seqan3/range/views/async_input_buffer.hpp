@@ -153,16 +153,16 @@ public:
     async_input_buffer_iterator cbegin() const = delete;
 
     //!\brief Returns a sentinel.
-    std::ranges::default_sentinel_t end()
+    std::default_sentinel_t end()
     {
         return std::ranges::default_sentinel;
     }
 
     //!\brief Const-qualified async_input_buffer_view::end() is deleted, because iterating changes the view.
-    std::ranges::default_sentinel_t end() const = delete;
+    std::default_sentinel_t end() const = delete;
 
     //!\copydoc async_input_buffer_view::end() const
-    std::ranges::default_sentinel_t cend() const = delete;
+    std::default_sentinel_t cend() const = delete;
     //!\}
 };
 
@@ -171,7 +171,7 @@ template <typename urng_t>
 class async_input_buffer_view<urng_t>::async_input_buffer_iterator
 {
     //!\brief The sentinel type to compare to.
-    using sentinel_type = std::ranges::default_sentinel_t;
+    using sentinel_type = std::default_sentinel_t;
 
     //!\brief The pointer to the associated view.
     contrib::fixed_buffer_queue<std::ranges::range_value_t<urng_t>> * buffer_ptr = nullptr;
@@ -267,30 +267,30 @@ public:
      */
     //!\brief Compares for equality with sentinel.
     friend constexpr bool operator==(async_input_buffer_iterator const & lhs,
-                                     std::ranges::default_sentinel_t const &) noexcept
+                                     std::default_sentinel_t const &) noexcept
     {
         return lhs.at_end;
     }
 
     //!\copydoc operator==
-    friend constexpr bool operator==(std::ranges::default_sentinel_t const &,
+    friend constexpr bool operator==(std::default_sentinel_t const &,
                                      async_input_buffer_iterator const & rhs) noexcept
     {
-        return rhs == std::ranges::default_sentinel_t{};
+        return rhs == std::default_sentinel_t{};
     }
 
     //!\brief Compares for inequality with sentinel.
     friend constexpr bool operator!=(async_input_buffer_iterator const & lhs,
-                                     std::ranges::default_sentinel_t const &) noexcept
+                                     std::default_sentinel_t const &) noexcept
     {
-        return !(lhs == std::ranges::default_sentinel_t{});
+        return !(lhs == std::default_sentinel_t{});
     }
 
     //!\copydoc operator!=
-    friend constexpr bool operator!=(std::ranges::default_sentinel_t const &,
+    friend constexpr bool operator!=(std::default_sentinel_t const &,
                                      async_input_buffer_iterator const & rhs) noexcept
     {
-        return rhs != std::ranges::default_sentinel_t{};
+        return rhs != std::default_sentinel_t{};
     }
     //!\}
 };

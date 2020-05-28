@@ -107,13 +107,13 @@ public:
      *
      * The search result range is an input range and the end is reached when all queries have been processed.
      */
-    constexpr std::ranges::default_sentinel_t end() noexcept
+    constexpr std::default_sentinel_t end() noexcept
     {
         return {};
     }
 
-    constexpr std::ranges::default_sentinel_t end() const = delete;
-    constexpr std::ranges::default_sentinel_t cend() const = delete;
+    constexpr std::default_sentinel_t end() const = delete;
+    constexpr std::default_sentinel_t cend() const = delete;
     //!\}
 
 private:
@@ -264,13 +264,13 @@ public:
      */
     //!\brief Checks whether `lhs` is equal to the sentinel.
     friend constexpr bool operator==(search_result_range_iterator const & lhs,
-                                     std::ranges::default_sentinel_t const &) noexcept
+                                     std::default_sentinel_t const &) noexcept
     {
         return lhs.at_end && (lhs.current_buffer_it == lhs.last_buffer_it);
     }
 
     //!\brief Checks whether `lhs` is equal to `rhs`.
-    friend constexpr bool operator==(std::ranges::default_sentinel_t const & lhs,
+    friend constexpr bool operator==(std::default_sentinel_t const & lhs,
                                      search_result_range_iterator const & rhs) noexcept
     {
         return rhs == lhs;
@@ -278,13 +278,13 @@ public:
 
     //!\brief Checks whether `lhs` is not equal to the sentinel.
     friend constexpr bool operator!=(search_result_range_iterator const & lhs,
-                                     std::ranges::default_sentinel_t const & rhs) noexcept
+                                     std::default_sentinel_t const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
-    friend constexpr bool operator!=(std::ranges::default_sentinel_t const & lhs,
+    friend constexpr bool operator!=(std::default_sentinel_t const & lhs,
                                      search_result_range_iterator const & rhs) noexcept
     {
         return !(lhs == rhs);
