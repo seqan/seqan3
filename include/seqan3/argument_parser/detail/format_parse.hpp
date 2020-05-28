@@ -66,7 +66,7 @@ public:
      * \param[in] argc_ The number of command line arguments.
      * \param[in] argv_ The command line arguments to parse.
      */
-    format_parse(int const argc_, std::vector<std::string> && argv_) :
+    format_parse(int const argc_, std::vector<std::string> argv_) :
         argc{argc_ - 1}, argv{std::move(argv_)}
     {}
     //!\}

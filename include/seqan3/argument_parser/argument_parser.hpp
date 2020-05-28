@@ -585,6 +585,9 @@ private:
     //!\brief List of option/flag identifiers that are already used.
     std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "copyright"};
 
+    //!\brief The command line arguments.
+    std::vector<std::string> cmd_arguments{};
+
     /*!\brief Initializes the seqan3::argument_parser class on construction.
      *
      * \param[in] argc        The number of command line arguments.
@@ -598,7 +601,7 @@ private:
      *
      * \details
      *
-     * This function adds all command line parameters to a std::vector<std::string>
+     * This function adds all command line parameters to the cmd_arguments member variable
      * to take advantage of the vector functionality later on. Additionally,
      * the format member variable is set, depending on which parameters are given
      * by the user:
@@ -619,9 +622,6 @@ private:
      */
     void init(int argc, char const * const * const argv)
     {
-        // cash command line input, in case --version-check is specified but shall not be passed to format_parse()
-        std::vector<std::string> argv_new{};
-
         if (argc <= 1) // no arguments provided
         {
             format = detail::format_short_help{};
@@ -708,18 +708,17 @@ private:
                 else
                     throw validation_error{"Value for option --version-check must be 1 or 0."};
 
+                // in case --version-check is specified it shall not be passed to format_parse()
                 argc -= 2;
             }
             else
             {
-                argv_new.push_back(std::move(arg));
+                cmd_arguments.push_back(std::move(arg));
             }
         }
 
         if (!special_format_was_set)
-        {
-            format = detail::format_parse(argc, std::move(argv_new));
-        }
+            format = detail::format_parse(argc, cmd_arguments);
     }
 
     //!\brief Adds standard options to the help page.
