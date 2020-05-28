@@ -159,48 +159,6 @@ public:
             return is_char<'\0'>(id);
     }
 
-private:
-    //!\brief Describes the result of parsing the user input string given the respective option value type.
-    enum class option_parse_result
-    {
-        success, //!< Parsing of user input was successful.
-        error, //!< There was some error while trying to parse the user input.
-        overflow_error //!< Parsing was successful but the arithmetic value would cause an overflow.
-    };
-
-    /*!\brief Appends a double dash to a long identifier and returns it.
-    * \param[in] long_id The name of the long identifier.
-    * \returns The input long name prepended with a double dash.
-    */
-    std::string prepend_dash(std::string const & long_id)
-    {
-        return ("--" + long_id);
-    }
-
-    /*!\brief Appends a double dash to a short identifier and returns it.
-    * \param[in] short_id The name of the short identifier.
-    * \returns The input short name prepended with a single dash.
-    */
-    std::string prepend_dash(char const short_id)
-    {
-        return ("-" + std::string(1, short_id));
-    }
-
-    /*!\brief Returns "-[short_id]/--[long_id]" if both are non-empty or just one of them if the other is empty.
-    * \param[in] short_id The name of the short identifier.
-    * \param[in] long_id  The name of the long identifier.
-    * \returns The short_id prepended with a single dash and the long_id prepended with a double dash, separated by '/'.
-    */
-    std::string combine_option_names(char const short_id, std::string const & long_id)
-    {
-        if (short_id == '\0')
-            return prepend_dash(long_id);
-        else if (long_id.empty())
-            return prepend_dash(short_id);
-        else // both are set (note: both cannot be empty, this is caught before)
-            return prepend_dash(short_id) + "/" + prepend_dash(long_id);
-    }
-
     /*!\brief Finds the position of a short/long identifier in format_parse::argv.
      * \tparam id_type The identifier type; must be either of type `char` if it denotes a short identifier or
      *                 std::string if it denotes a long identifier.
@@ -246,6 +204,48 @@ private:
                            (current_arg.size() == full_id.size() || current_arg[full_id.size()] == '='); // space or `=`
                 }
             }));
+    }
+
+private:
+    //!\brief Describes the result of parsing the user input string given the respective option value type.
+    enum class option_parse_result
+    {
+        success, //!< Parsing of user input was successful.
+        error, //!< There was some error while trying to parse the user input.
+        overflow_error //!< Parsing was successful but the arithmetic value would cause an overflow.
+    };
+
+    /*!\brief Appends a double dash to a long identifier and returns it.
+    * \param[in] long_id The name of the long identifier.
+    * \returns The input long name prepended with a double dash.
+    */
+    std::string prepend_dash(std::string const & long_id)
+    {
+        return ("--" + long_id);
+    }
+
+    /*!\brief Appends a double dash to a short identifier and returns it.
+    * \param[in] short_id The name of the short identifier.
+    * \returns The input short name prepended with a single dash.
+    */
+    std::string prepend_dash(char const short_id)
+    {
+        return ("-" + std::string(1, short_id));
+    }
+
+    /*!\brief Returns "-[short_id]/--[long_id]" if both are non-empty or just one of them if the other is empty.
+    * \param[in] short_id The name of the short identifier.
+    * \param[in] long_id  The name of the long identifier.
+    * \returns The short_id prepended with a single dash and the long_id prepended with a double dash, separated by '/'.
+    */
+    std::string combine_option_names(char const short_id, std::string const & long_id)
+    {
+        if (short_id == '\0')
+            return prepend_dash(long_id);
+        else if (long_id.empty())
+            return prepend_dash(short_id);
+        else // both are set (note: both cannot be empty, this is caught before)
+            return prepend_dash(short_id) + "/" + prepend_dash(long_id);
     }
 
     /*!\brief Returns true and removes the long identifier if it is in format_parse::argv.
