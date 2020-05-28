@@ -2,8 +2,9 @@
 
 [TOC]
 
-This tutorial introduces minimiser, a more compact representation of a sequence than k-mers. The minimisers are
-implemented as a view in SeqAn3. For more information about views and how to implement your own view, please see  
+This tutorial introduces minimisers. Minimisers are a compact representation of a sequence that is closely related to,
+but more efficient than a representation by k-mers. The minimisers are implemented as a view in SeqAn3. For more
+information about views and how to implement your own view, please see  
 \ref tutorial_ranges and \ref howto_write_a_view .
 
 \tutorial_head{Easy, 20 min, , \ref tutorial_ranges\, \ref howto_write_a_view}
@@ -13,34 +14,34 @@ implemented as a view in SeqAn3. For more information about views and how to imp
 A common way to work with sequences is to obtain their k-mers, but even with a large size of k, the number of k-mers is
 non-trivial, therefore storing k-mers is costly. At the same time, due to the overlap of consecutive k-mers, the
 information they contain is highly redundant. That is why, minimiser come in handy. Minimisers are k-mers, which are
-minimal in a window of specified size. By storing only these minimal k-mers the storage cost is significantly reduced
-while maintaining a similar percentage of information.
+minimal in a window of a specified size.  Minimal could for example mean lexicographically smallest. By storing only
+these minimal k-mers the storage cost is significantly reduced while maintaining a similar percentage of information.
 
 # Minimiser Workflow
 
-Because minimiser are minimal k-mers, they depend on a given k-mer size, a given shape (specifying which positions
+Because minimisers are minimal k-mers, they depend on a given k-mer size, a given shape (specifying which positions
 should be considered) and a window size, which has to be greater or equal than the k-mer size. If all these values are
-given, then the minimisers can be obtained by determining all k-mers in the forward as in the backward strand for one
+given, then the minimisers can be obtained by determining all k-mers in the forward and in the backward strand for one
 window. Only the lexicographically smallest k-mer in one window is saved, then the window is shifted by one and the
 procedure is repeated until all windows have been processed. If two consecutive windows share the same minimiser, it is
 stored only once.
 
 The following figure shows three examples, where a) and b) differ only in their window size, while c) introduces
 a gapped k-mer. All positions marked with a ’.’ are gaps and all k-mers in lower case come from the reverse strand.
-As the example shows, all three values k-mer size, shape and window size influence the amount of produced minimisers.
+As the example shows, k-mer size, shape and window size influence the total amount of minimisers.
 
-<img src="minimiser.png"
+<img src="Minimiser.png"
      alt="Minimiser Example"
      style="width: 1000px; float: left; margin-right: 2px;" />
 
 
 ### Non-lexicographical Minimisers
 
-It might happen that a minimiser changes only slightly when sliding the window over the sequence. For instance, when
-a minimiser starts with a repetition of A’s, then in the next window it is highly likely that the minimiser will
-start with a repetition of A’s as well. Because it is only one A shorter, depending on how long the repetition is
-this might go on for multiple window shifts. Saving these only slightly different minimiser makes no sense because
-they contain no new information about the underlying sequence.
+When sliding the window over the sequence, it might happen that consecutive minimisers differ only slightly.
+For instance, when a minimiser starts with a repetition of A’s, it is highly likely that the minimiser of the next
+window will start with a repetition of A’s too, which will then just be one A shorter. This may go on for multiple
+window shifts, depending on how long the repetition is. Saving these only slightly different minimiser makes no sense
+because they contain no new information about the underlying sequence.
 Additionally, sequences with a repetition of A’s will be seen as more similar to each other than they actually are.
 As [Marçais et al.](https://doi.org/10.1093/bioinformatics/btx235) have shown, randomizing the order of the k-mers
 can solve this problem.
@@ -48,8 +49,8 @@ can solve this problem.
 
 # Usage in SeqAn3
 
-The minimisers are implemented in `seqan3::views::minimiser_hash`. Necessary are three arguments: The sequence, the
-shape and the window size. The above mentioned k-mer size is implicitly given by the size of the shape.
+The minimisers are implemented in `seqan3::views::minimiser_hash`. The function requires three arguments: The sequence,
+the shape and the window size. The above mentioned k-mer size is implicitly given by the size of the shape.
 That is all the information you need to obtain minimisers with SeqAn3, so let's just dive right into the first
 assignment!
 
@@ -61,8 +62,9 @@ Task: Obtain the minimisers for "CCACGTCGACGGTT" with an ungapped shape of size 
 \endsolution
 
 If you have completed the assignment, you probably wonder what these large numbers mean. As explained above, the
-lexicographical ordering is less optimal, therefore, SeqAn3 uses a seed to randomize the order. To do so SeqAn3 simply
-XORs the hash values with a random seed (Default: 0x8F3F73B5CF1C9ADE). How would you get back the actual hash values?
+lexicographical ordering is less optimal, therefore, SeqAn3 uses a seed to randomize the order. To do so, SeqAn3 simply
+XORs the hash values with a random seed (Default: 0x8F3F73B5CF1C9ADE). How would you get back the actual hash values
+then?
 Well, you just use XOR again!
 
 ```cpp
@@ -71,8 +73,8 @@ auto hash_values = minimisers | std::views::transform([seed] (uint64_t i) {retur
 seqan3::debug_stream << hash_values << '\n'; // results in: [182, 216, 134]
 ```
 
-From these hash values, you now know the sequence they are representing by transforming the numbers to base 4. (For
-example, 182 is "2312" in base for and therefore represents "GTCG".)
+From these hash values, you can obtain the sequence they are representing by transforming the numbers to base 4. (For
+example, 182 is "2312" in base four and therefore represents "GTCG".)
 
 Now take a closer look at the resulting minimiser sequences. Are they what you would
 expect? Probably not, these are not the values presenting the minimisers shown in the example above. Why not?
@@ -82,10 +84,10 @@ The example above is based on a lexicographical ordering, our first assignment i
 \endhint
 
 So, what would we need to change to achieve the results from our example? We need to use a different seed. SeqAn3
-allows us to do that really simply by adding another input parameter of type `seqan3::seed`.
+makes this simple by allowing us to add another input parameter of type `seqan3::seed`.
 
 \assignment{Assignment 2: Fun with minimisers II}
-Task: Obtain the results from the example above by obtaining the minimisers for "CCACGTCGACGGTT".
+Task: Reproduce the results from the example above by obtaining the minimisers for "CCACGTCGACGGTT".
 
 To do so, you have to know which seed to use.
 
@@ -113,7 +115,7 @@ the option `reverse==false`. What happens now, if we use `reverse==false` and th
 \hint
 `seqan3::views::minimiser_hash` will return the same values as `seqan3::views::kmer_hash`, because if `shape.size()`
 equals the `window_size` there is only one comparison to determine the minimal k-mer, the comparison between forward
-and backward strand. Therefore, if the backward strand is not considered the minimisers are all k-mers from the given
+and backward strand. Therefore, if the backward strand is not considered, the minimisers are all k-mers from the given
 sequence.
 \endhint
 

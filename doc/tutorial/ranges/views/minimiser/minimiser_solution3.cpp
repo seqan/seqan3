@@ -12,10 +12,10 @@ int main()
 
     // This would lead to an static assert error, because the shape.size() equals the window size. Therefore,
     // kmer_hash needs to be used.
-    /*auto example_a = text | seqan3::views::minimiser_hash(seqan3::shape{seqan3::ungapped{4}},
-                                                          seqan3::window_size{4}
-                                                          seqan3::seed{0},
-                                                          reverse = false);*/
+    /* auto example_a = text | seqan3::views::minimiser_hash(seqan3::shape{seqan3::ungapped{4}},
+                                                             seqan3::window_size{4}
+                                                             seqan3::seed{0},
+                                                             reverse = false); */
     // results in: [81, 70, 27, 109, 182, 216, 97, 134, 26, 107, 175]
     // representing the k-mers [CCAC, CACG, ACGT, CGTC, GTCG, TCGA, CGAC, GACG, ACGG, CGGT, GGTT]
     auto example_a =  text | seqan3::views::kmer_hash(seqan3::shape{seqan3::ungapped{4}});
