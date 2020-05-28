@@ -157,7 +157,7 @@ public:
     //!\brief A sentinel representing the end of this range.
     constexpr std::default_sentinel_t end() noexcept
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     //!\brief Const iteration is disabled.

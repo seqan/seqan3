@@ -66,7 +66,7 @@ struct aligned_sequence_builder_fixture : ::testing::Test
         return std::ranges::subrange<iterator_t, std::default_sentinel_t>
         {
             seqan3::detail::trace_iterator{matrix.begin() + offset},
-            std::ranges::default_sentinel
+            std::default_sentinel
         };
     }
 

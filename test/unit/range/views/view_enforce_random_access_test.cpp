@@ -85,17 +85,17 @@ public:
 
         friend bool operator==(std::default_sentinel_t const &, test_iterator const & rhs)
         {
-            return rhs == std::ranges::default_sentinel;
+            return rhs == std::default_sentinel;
         }
 
         bool operator!=(std::default_sentinel_t const &) const
         {
-            return !(*this == std::ranges::default_sentinel);
+            return !(*this == std::default_sentinel);
         }
 
         friend bool operator!=(std::default_sentinel_t const &, test_iterator const & rhs)
         {
-            return rhs != std::ranges::default_sentinel;
+            return rhs != std::default_sentinel;
         }
 
         typename base_t::difference_type operator-(std::default_sentinel_t const &) const
@@ -124,12 +124,12 @@ public:
 
     auto end() noexcept
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     auto end() const
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 };
 

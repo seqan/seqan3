@@ -109,7 +109,7 @@ public:
      */
     constexpr std::default_sentinel_t end() noexcept
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     //!\brief This range is not const-iterable.

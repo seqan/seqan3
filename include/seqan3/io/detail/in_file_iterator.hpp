@@ -144,14 +144,14 @@ public:
     constexpr friend bool operator==(std::default_sentinel_t const &,
                                      in_file_iterator const & it) noexcept
     {
-        return (it == std::ranges::default_sentinel);
+        return (it == std::default_sentinel);
     }
 
     //!\brief Checks whether `it` is not equal to the sentinel.
     constexpr friend bool operator!=(std::default_sentinel_t const &,
                                      in_file_iterator const & it) noexcept
     {
-        return (it != std::ranges::default_sentinel);
+        return (it != std::default_sentinel);
     }
     //!\}
 

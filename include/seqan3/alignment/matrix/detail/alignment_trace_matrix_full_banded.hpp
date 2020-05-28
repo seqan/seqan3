@@ -161,7 +161,7 @@ public:
 
         return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin},
                                        column_index_type{band_col_index}},
-                      std::ranges::default_sentinel};
+                      std::default_sentinel};
     }
 
     //!\brief The column index where the upper bound of the band passes through.

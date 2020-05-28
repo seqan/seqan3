@@ -52,10 +52,10 @@ TEST(fast_istreambuf_iterator, comparison)
     std::istringstream str{"test\n"};
     seqan3::detail::fast_istreambuf_iterator<char> it{*str.rdbuf()};
 
-    EXPECT_FALSE(it == std::ranges::default_sentinel);
-    EXPECT_FALSE(std::ranges::default_sentinel == it);
-    EXPECT_TRUE(it != std::ranges::default_sentinel);
-    EXPECT_TRUE(std::ranges::default_sentinel != it);
+    EXPECT_FALSE(it == std::default_sentinel);
+    EXPECT_FALSE(std::default_sentinel == it);
+    EXPECT_TRUE(it != std::default_sentinel);
+    EXPECT_TRUE(std::default_sentinel != it);
 }
 
 // -----------------------------------------------------------------------------

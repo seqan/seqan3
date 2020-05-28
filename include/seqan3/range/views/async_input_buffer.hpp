@@ -155,7 +155,7 @@ public:
     //!\brief Returns a sentinel.
     std::default_sentinel_t end()
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     //!\brief Const-qualified async_input_buffer_view::end() is deleted, because iterating changes the view.

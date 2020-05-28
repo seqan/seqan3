@@ -138,7 +138,7 @@ public:
      */
     auto end() const
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     //!\copydoc end()

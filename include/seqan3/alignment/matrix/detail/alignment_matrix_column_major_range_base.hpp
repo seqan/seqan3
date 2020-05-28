@@ -510,7 +510,7 @@ public:
     //!\brief Returns a sentinel marking the end of the matrix.
     constexpr sentinel end() noexcept
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     //!\brief Deleted end for const-qualified alignment matrix.

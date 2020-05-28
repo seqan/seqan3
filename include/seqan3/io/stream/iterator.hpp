@@ -158,19 +158,19 @@ public:
     //!\brief True if the read buffer is empty; involves no vtable lookup.
     friend bool operator!=(fast_istreambuf_iterator const & lhs, std::default_sentinel_t const &) noexcept
     {
-        return !(lhs == std::ranges::default_sentinel);
+        return !(lhs == std::default_sentinel);
     }
 
     //!\brief True if the read buffer is not empty; involves no vtable lookup.
     friend bool operator==(std::default_sentinel_t const &, fast_istreambuf_iterator const & rhs) noexcept
     {
-        return rhs == std::ranges::default_sentinel;
+        return rhs == std::default_sentinel;
     }
 
     //!\brief True if the read buffer is empty; involves no vtable lookup.
     friend bool operator!=(std::default_sentinel_t const &, fast_istreambuf_iterator const & rhs) noexcept
     {
-        return !(rhs == std::ranges::default_sentinel);
+        return !(rhs == std::default_sentinel);
     }
     //!\}
 };

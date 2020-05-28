@@ -36,14 +36,14 @@ namespace seqan3::detail
  * specific file's constraints and is not checked by the iterator.
  *
  * The increment operations are no-ops (perform nothing) and comparisons against
- * std::ranges::default_sentinel always return false (there is no end in an output file).
+ * std::default_sentinel always return false (there is no end in an output file).
  *
  * If any of these characteristics seem unusual to you, please refer to the [standard library's
  * documentation on output iterators](https://en.cppreference.com/w/cpp/concept/output_iterator).
  *
  * This class template differs from std::back_insert_iterator only in that it performs
  * no checks itself on the assigned values and that it allows comparisons against
- * std::ranges::default_sentinel.
+ * std::default_sentinel.
  */
 template <typename file_type>
 class out_file_iterator
@@ -150,14 +150,14 @@ public:
     constexpr friend bool operator==(std::default_sentinel_t const &,
                                      out_file_iterator const & it) noexcept
     {
-        return (it == std::ranges::default_sentinel);
+        return (it == std::default_sentinel);
     }
 
     //!\brief Checks whether `it` is not equal to the sentinel.
     constexpr friend bool operator!=(std::default_sentinel_t const &,
                                      out_file_iterator const & it) noexcept
     {
-        return (it != std::ranges::default_sentinel);
+        return (it != std::default_sentinel);
     }
     //!\}
 

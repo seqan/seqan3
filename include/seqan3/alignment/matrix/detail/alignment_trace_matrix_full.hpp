@@ -149,7 +149,7 @@ public:
             throw std::invalid_argument{"The given coordinate exceeds the matrix in vertical or horizontal direction."};
 
         return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin}},
-                      std::ranges::default_sentinel};
+                      std::default_sentinel};
     }
 
 private:
