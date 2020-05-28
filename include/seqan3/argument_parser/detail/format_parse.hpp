@@ -160,14 +160,14 @@ public:
     }
 
     /*!\brief Finds the position of a short/long identifier in format_parse::argv.
+     * \tparam iterator_type The type of iterator that defines the range to search in.
      * \tparam id_type The identifier type; must be either of type `char` if it denotes a short identifier or
      *                 std::string if it denotes a long identifier.
      * \param[in] begin_it The iterator where to start the search of the identifier.
-     *                     Note that the end iterator is kept as a member variable.
-     * \param[in] id       The identifier to search for (must not contain dashes).
-     * \returns An iterator pointing to the first occurrence of the identifier in
-     *          the list pointed to by begin_t. If the list does not contain the
-     *          identifier `id`, the member variable `end_of_options_it` is returned.
+     * \param[in] end_it The iterator one past the end of where to search the identifier.
+     * \param[in] id The identifier to search for (must not contain dashes).
+     * \returns An iterator pointing to the first occurrence of `id` in the list pointed to by `begin_it`
+     *          or `end_it` if it is not contained.
      *
      * \details
      *
@@ -180,13 +180,13 @@ public:
      * The `id` is found by comparing every argument in argv to `id` prepended with two dashes (`--`)
      * or a prefix of such followed by the equal sign `=`.
      */
-    template <typename id_type>
-    std::vector<std::string>::iterator find_option_id(std::vector<std::string>::iterator const begin_it, id_type const & id)
+    template <typename iterator_type, typename id_type>
+    static iterator_type find_option_id(iterator_type begin_it, iterator_type end_it, id_type const & id)
     {
         if (is_empty_id(id))
-            return end_of_options_it;
+            return end_it;
 
-        return (std::find_if(begin_it, end_of_options_it,
+        return (std::find_if(begin_it, end_it,
             [&] (std::string const & current_arg)
             {
                 std::string full_id = prepend_dash(id);
@@ -528,12 +528,12 @@ private:
     template <typename option_type, typename id_type>
     bool get_option_by_id(option_type & value, id_type const & id)
     {
-        auto it = find_option_id(argv.begin(), id);
+        auto it = find_option_id(argv.begin(), end_of_options_it, id);
 
         if (it != end_of_options_it)
             identify_and_retrieve_option_value(value, it, id);
 
-        if (find_option_id(it, id) != end_of_options_it) // should not be found again
+        if (find_option_id(it, end_of_options_it, id) != end_of_options_it) // should not be found again
            throw option_declared_multiple_times("Option " + prepend_dash(id) +
                                                 " is no list/container but declared multiple times.");
 
@@ -557,13 +557,13 @@ private:
     //!\endcond
     bool get_option_by_id(option_type & value, id_type const & id)
     {
-        auto it = find_option_id(argv.begin(), id);
+        auto it = find_option_id(argv.begin(), end_of_options_it, id);
         bool seen_at_least_once{it != end_of_options_it};
 
         while (it != end_of_options_it)
         {
             identify_and_retrieve_option_value(value, it, id);
-            it = find_option_id(it, id);
+            it = find_option_id(it, end_of_options_it, id);
         }
 
         return seen_at_least_once;
