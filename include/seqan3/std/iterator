@@ -255,12 +255,6 @@ namespace std
 inline namespace deprecated
 {
 //!\cond
-/*!\brief This should be named indirectly_readable.
- * \deprecated Use std::indirectly_readable instead.
- */
-template<class T>
-SEQAN3_CONCEPT readable = ::std::indirectly_readable<T>;
-
 /*!\brief This should be named indirectly_writable.
  * \deprecated Use std::indirectly_writable instead.
  */

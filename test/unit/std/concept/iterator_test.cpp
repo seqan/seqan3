@@ -11,14 +11,14 @@
 
 TEST(iterator_concepts, readable)
 {
-    EXPECT_TRUE((std::readable<input_iterator>));
-    EXPECT_TRUE((!std::readable<output_iterator>));
-    EXPECT_TRUE((std::readable<forward_iterator>));
-    EXPECT_TRUE((std::readable<bidirectional_iterator>));
-    EXPECT_TRUE((std::readable<random_access_iterator>));
-    EXPECT_TRUE((std::readable<forward_iterator_const>));
-    EXPECT_TRUE((std::readable<bidirectional_iterator_const>));
-    EXPECT_TRUE((std::readable<random_access_iterator_const>));
+    EXPECT_TRUE((std::indirectly_readable<input_iterator>));
+    EXPECT_TRUE((!std::indirectly_readable<output_iterator>));
+    EXPECT_TRUE((std::indirectly_readable<forward_iterator>));
+    EXPECT_TRUE((std::indirectly_readable<bidirectional_iterator>));
+    EXPECT_TRUE((std::indirectly_readable<random_access_iterator>));
+    EXPECT_TRUE((std::indirectly_readable<forward_iterator_const>));
+    EXPECT_TRUE((std::indirectly_readable<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::indirectly_readable<random_access_iterator_const>));
 }
 
 TEST(iterator_concepts, writable)
