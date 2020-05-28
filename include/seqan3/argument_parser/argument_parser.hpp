@@ -566,6 +566,25 @@ private:
     //!\brief Stores the sub-parser names in case \link subcommand_arg_parse subcommand parsing \endlink is enabled.
     std::vector<std::string> subcommands{};
 
+    /*!\brief The format of the argument parser that decides the behavior when
+     *        calling the seqan3::argument_parser::parse function.
+     *
+     * \details
+     *
+     * The format is set in the function argument_parser::init.
+     */
+    std::variant<detail::format_parse,
+                 detail::format_help,
+                 detail::format_short_help,
+                 detail::format_version,
+                 detail::format_html,
+                 detail::format_man,
+                 detail::format_copyright/*,
+                 detail::format_ctd*/> format{detail::format_help{{}, false}}; // Will be overwritten in any case.
+
+    //!\brief List of option/flag identifiers that are already used.
+    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "copyright"};
+
     /*!\brief Initializes the seqan3::argument_parser class on construction.
      *
      * \param[in] argc        The number of command line arguments.
@@ -764,22 +783,6 @@ private:
         if (detail::format_parse::is_empty_id(short_id) && detail::format_parse::is_empty_id(long_id))
             throw design_error("Option Identifiers cannot both be empty.");
     }
-
-    /*!\brief The format of the argument parser that decides the behavior when
-     * calling the seqan3::argument_parser::parse function.
-     * \details The format is set in the function argument_parser::init.
-     */
-    std::variant<detail::format_parse,
-                 detail::format_help,
-                 detail::format_short_help,
-                 detail::format_version,
-                 detail::format_html,
-                 detail::format_man,
-                 detail::format_copyright/*,
-                 detail::format_ctd*/> format{detail::format_help{{}, false}}; // Will be overwritten in any case.
-
-    //!\brief List of option/flag identifiers that are already used.
-    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "copyright"};
 };
 
 } // namespace seqan3
