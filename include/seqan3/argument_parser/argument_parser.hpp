@@ -425,6 +425,64 @@ public:
         return *sub_parser;
     }
 
+    /*!\brief Checks whether the option identifier (`id`) was set on the command line by the user.
+     * \tparam id_type Either type `char` or a type that a `std::string` is constructible from.
+     * \param[in] id The short (`char`) or long (`std::string`) option identifier to search for.
+     * \returns `true` if option identifier `id` was set on the command line by the user.
+     * \throws seqan3::design_error if the function is used incorrectly (see details below).
+     *
+     * \details
+     *
+     * You can only ask for option identifiers that were added to the parser beforehand via
+     * `seqan3::argument_parser::add_option`.
+     * As in the `seqan3::argument_parser::add_option` call, pass short identifiers as a `char` and long identifiers
+     * as a `std::string` or a type that a `std::string` is constructible from (e.g. a `const char *`).
+     *
+     * ### Example
+     *
+     * \include test/snippet/argument_parser/is_option_set.cpp
+     *
+     * ### Exceptions
+     *
+     * This function throws a seqan3::design_error if
+     * * `seqan3::argument_parser::parse()` was not called before.
+     * * a long identifier was passed (e.g. a `std::string`) that only consists of a single character. If you mean to
+     *   pass a short identifier, please pass it as a `char` not a `std::string`.
+     * * the option identifier cannot be found in the list of valid option identifiers that were added to the parser
+     *   via `seqan3::argument_parser::add_option()` calls beforehand.
+     */
+    template <typename id_type>
+    //!\cond
+        requires std::same_as<id_type, char> || std::constructible_from<std::string, id_type>
+    //!\endcond
+    bool is_option_set(id_type const & id) const
+    {
+        if (!parse_was_called)
+            throw design_error{"You can only ask which options have been set after calling the function `parse()`."};
+
+        // the detail::format_parse::find_option_id call in the end expects either a char or std::string
+        using char_or_string_t = std::conditional_t<std::same_as<id_type, char>, char, std::string>;
+        char_or_string_t short_or_long_id = {id}; // e.g. convert char * to string here if necessary
+
+        if constexpr (!std::same_as<id_type, char>) // long id was given
+        {
+            if (short_or_long_id.size() == 1)
+            {
+                throw design_error{"Long option identifiers must be longer than one character! If " + short_or_long_id +
+                                   "' was meant to be a short identifier, please pass it as a char ('') not a string"
+                                   " (\"\")!"};
+            }
+        }
+
+        if (std::find(used_option_ids.begin(), used_option_ids.end(), std::string{id}) == used_option_ids.end())
+            throw design_error{"You can only ask for option identifiers that you added with add_option() before."};
+
+        // we only need to search for an option before the `end_of_options_indentifier` (`--`)
+        auto end_of_options = std::find(cmd_arguments.begin(), cmd_arguments.end(), end_of_options_indentifier);
+        auto option_it = detail::format_parse::find_option_id(cmd_arguments.begin(), end_of_options, short_or_long_id);
+        return option_it != end_of_options;
+    }
+
     //!\name Structuring the Help Page
     //!\{
 
@@ -559,6 +617,9 @@ private:
 
     //!\brief Validates the application name to ensure an escaped server call.
     std::regex app_name_regex{"^[a-zA-Z0-9_-]+$"};
+
+    //!\brief Signals the argument parser that no options follow this string but only positional arguments.
+    static constexpr std::string_view const end_of_options_indentifier{"--"};
 
     //!\brief Stores the sub-parser in case \link subcommand_arg_parse subcommand parsing \endlink is enabled.
     std::unique_ptr<argument_parser> sub_parser{nullptr};

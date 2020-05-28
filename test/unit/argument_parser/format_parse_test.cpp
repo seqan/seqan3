@@ -986,3 +986,35 @@ TEST(parse_test, issue1544)
         EXPECT_EQ(foobar_option_value, "ballo");
     }
 }
+
+TEST(parse_test, is_option_set)
+{
+    std::string option_value{};
+    const char * argv[] = {"./argument_parser_test", "-l", "hallo", "--foobar", "ballo", "--", "--loo"};
+    seqan3::argument_parser parser{"test_parser", 5, argv, seqan3::update_notifications::off};
+    parser.add_option(option_value, 'l', "loo", "this is a option.");
+    parser.add_option(option_value, 'f', "foobar", "this is a option.");
+
+    EXPECT_THROW(parser.is_option_set("foo"), seqan3::design_error); // you cannot call option_is_set before parse()
+
+    EXPECT_NO_THROW(parser.parse());
+
+    EXPECT_TRUE(parser.is_option_set('l'));
+    EXPECT_TRUE(parser.is_option_set("foobar"));
+
+    EXPECT_FALSE(parser.is_option_set('f'));
+    EXPECT_FALSE(parser.is_option_set("loo")); // --loo is behind the `--` which signals the end of options!
+
+    // errors:
+    EXPECT_THROW(parser.is_option_set("l"), seqan3::design_error); // short identifiers are passed as chars not strings
+    EXPECT_THROW(parser.is_option_set("f"), seqan3::design_error); // short identifiers are passed as chars not strings
+
+    EXPECT_THROW(parser.is_option_set("foo"), seqan3::design_error);
+    EXPECT_THROW(parser.is_option_set("--"), seqan3::design_error);
+    EXPECT_THROW(parser.is_option_set(""), seqan3::design_error);
+
+    EXPECT_THROW(parser.is_option_set('!'), seqan3::design_error);
+    EXPECT_THROW(parser.is_option_set('-'), seqan3::design_error);
+    EXPECT_THROW(parser.is_option_set('_'), seqan3::design_error);
+    EXPECT_THROW(parser.is_option_set('\0'), seqan3::design_error);
+}
