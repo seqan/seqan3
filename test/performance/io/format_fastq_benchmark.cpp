@@ -25,8 +25,6 @@
 #include <seqan/seq_io.h>
 #endif // SEQAN3_HAS_SEQAN2
 
-using namespace seqan3;
-
 constexpr unsigned default_seed = 1234u;
 
 // ============================================================================
@@ -46,8 +44,8 @@ std::string generate_fastq_file(size_t const entries_size)
 
     for (size_t i = 0; i < entries_size; ++i, ++seed)
     {
-        auto random_sequence = test::generate_sequence<dna5>(default_sequence_length, 0, seed);
-        auto random_qualities = test::generate_sequence<phred42>(default_sequence_length, 0, seed);
+        auto random_sequence = seqan3::test::generate_sequence<seqan3::dna5>(default_sequence_length, 0, seed);
+        auto random_qualities = seqan3::test::generate_sequence<seqan3::phred42>(default_sequence_length, 0, seed);
         format_stream << id << '\n'  // write id
                       << random_sequence << '\n' // write sequence
                       << '+' << '\n' // write qualities separator
@@ -64,7 +62,7 @@ std::string generate_fastq_file(size_t const entries_size)
 auto create_fastq_file(size_t const entries_size)
 {
     // create temporary file, automatically removed on destruction
-    test::tmp_filename fastq_file{"format_fastq_benchmark_test_file.fastq"};
+    seqan3::test::tmp_filename fastq_file{"format_fastq_benchmark_test_file.fastq"};
     auto fastq_file_path = fastq_file.get_path();
 
     // fill temporary file with a fastq file
@@ -81,11 +79,11 @@ auto create_fastq_file(size_t const entries_size)
 void fastq_write_to_stream_seqan3(benchmark::State & state)
 {
     std::ostringstream ostream;
-    sequence_file_output fout{ostream, format_fastq{}};
+    seqan3::sequence_file_output fout{ostream, seqan3::format_fastq{}};
 
     std::string const id{"@name"};
-    auto seq = test::generate_sequence<dna5>(default_sequence_length, 0, default_seed);
-    auto qual = test::generate_sequence<phred42>(default_sequence_length, 0, default_seed);
+    auto seq = seqan3::test::generate_sequence<seqan3::dna5>(default_sequence_length, 0, default_seed);
+    auto qual = seqan3::test::generate_sequence<seqan3::phred42>(default_sequence_length, 0, default_seed);
 
     for (auto _ : state)
         fout.emplace_back(seq, id, qual);
@@ -113,7 +111,7 @@ void fastq_read_from_stream_seqan3(benchmark::State & state)
         std::istringstream istream{file};
         state.ResumeTiming();
 
-        sequence_file_input fin{istream, format_fastq{}};
+        seqan3::sequence_file_input fin{istream, seqan3::format_fastq{}};
         for (auto && [read_sequence, read_id, read_quality] : fin)
         {
             sequence = std::move(read_sequence);
@@ -142,7 +140,7 @@ void fastq_read_from_disk_seqan3(benchmark::State & state)
 
     for (auto _ : state)
     {
-        sequence_file_input fin{path};
+        seqan3::sequence_file_input fin{path};
 
         for (auto && [read_sequence, read_id, read_quality] : fin)
         {
@@ -169,8 +167,6 @@ void fastq_read_from_disk_seqan3(benchmark::State & state)
 
 void fastq_read_from_stream_seqan2(benchmark::State & state)
 {
-    using namespace seqan;
-
     std::istringstream istream{};
     size_t entries_size = state.range(0);
     auto file = generate_fastq_file(entries_size);
@@ -180,14 +176,14 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
         istream = std::istringstream{file};
         // same constant as seqan3 benchmark
 
-        seqan::VirtualStream<char, Input> comp{};
-        open(comp, istream);
-        return directionIterator(comp, Input());
+        seqan::VirtualStream<char, seqan::Input> comp{};
+        seqan::open(comp, istream);
+        return seqan::directionIterator(comp, seqan::Input());
     };
 
-    String<char> id{};
-    String<Dna5> seq{};
-    String<char> qual{};
+    seqan::String<char> id{};
+    seqan::String<seqan::Dna5> seq{};
+    seqan::String<char> qual{};
 
     for (auto _ : state)
     {
@@ -196,11 +192,11 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
         state.ResumeTiming();
 
         for (size_t i = 0; i < entries_size; ++i)
-            readRecord(id, seq, qual, it, seqan::Fastq{});
+            seqan::readRecord(id, seq, qual, it, seqan::Fastq{});
 
-        clear(id);
-        clear(seq);
-        clear(qual);
+        seqan::clear(id);
+        seqan::clear(seq);
+        seqan::clear(qual);
     }
 }
 
@@ -210,27 +206,25 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
 
 void fastq_read_from_disk_seqan2(benchmark::State & state)
 {
-    using namespace seqan;
-
-    test::tmp_filename file_name{"tmp.fastq"};
+    seqan3::test::tmp_filename file_name{"tmp.fastq"};
     auto tmp_path = file_name.get_path();
 
     std::ofstream ostream{tmp_path};
     ostream << generate_fastq_file(state.range(0));
     ostream.close();
 
-    StringSet<String<char>> ids{};
-    StringSet<String<Dna5>> seqs{};
-    StringSet<String<char>> quals{};
+    seqan::StringSet<seqan::String<char>> ids{};
+    seqan::StringSet<seqan::String<seqan::Dna5>> seqs{};
+    seqan::StringSet<seqan::String<char>> quals{};
 
     for (auto _ : state)
     {
-        SeqFileIn seqFileIn(tmp_path.c_str());
-        readRecords(ids, seqs, quals, seqFileIn);
+        seqan::SeqFileIn seqFileIn(tmp_path.c_str());
+        seqan::readRecords(ids, seqs, quals, seqFileIn);
 
-        clear(ids);
-        clear(seqs);
-        clear(quals);
+        seqan::clear(ids);
+        seqan::clear(seqs);
+        seqan::clear(quals);
     }
 }
 #endif // SEQAN3_HAS_SEQAN2
