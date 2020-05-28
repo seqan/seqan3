@@ -248,22 +248,6 @@ using ::ranges::cpp20::prev;
 // LEGACY wrong std:: and std::ranges:: usage
 // ==========================================
 
-#include <seqan3/core/platform.hpp> // SEQAN3_CONCEPT
-
-namespace std
-{
-inline namespace deprecated
-{
-//!\cond
-/*!\brief This should be named indirectly_writable.
- * \deprecated Use std::indirectly_writable instead.
- */
-template<class Out, class T>
-SEQAN3_CONCEPT writable = ::std::indirectly_writable<Out, T>;
-//!\endcond
-} // namespace std::deprecated
-} // namespace std
-
 // we wrongly assume that these are in std::ranges namespace, even though they are in std namespace
 namespace std::ranges
 {
