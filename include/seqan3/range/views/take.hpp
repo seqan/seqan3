@@ -341,7 +341,7 @@ public:
      */
     template <std::ranges::viewable_range rng_t>
     //!\cond
-        requires std::constructible_from<rng_t, std::ranges::all_view<rng_t>>
+        requires std::constructible_from<rng_t, std::views::all_t<rng_t>>
     //!\endcond
     constexpr view_take(rng_t && _urange, size_t const _size)
         : view_take{std::views::all(std::forward<rng_t>(_urange)), _size}
@@ -461,7 +461,7 @@ public:
 template <typename urng_t,
           bool exactly = false,
           bool or_throw = false>
-view_take(urng_t && , size_t) -> view_take<std::ranges::all_view<urng_t>, exactly, or_throw>;
+view_take(urng_t && , size_t) -> view_take<std::views::all_t<urng_t>, exactly, or_throw>;
 
 // ============================================================================
 //  take_fn (adaptor definition)
@@ -538,7 +538,7 @@ struct take_fn
         // our type
         else
         {
-            return view_take<std::ranges::all_view<urng_t>, exactly, or_throw>
+            return view_take<std::views::all_t<urng_t>, exactly, or_throw>
             {
                 std::forward<urng_t>(urange),
                 target_size

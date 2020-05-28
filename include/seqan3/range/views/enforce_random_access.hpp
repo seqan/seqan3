@@ -265,7 +265,7 @@ public:
  */
 //!\brief A deduction guide for the view class template.
 template <std::ranges::viewable_range rng_t>
-view_enforce_random_access(rng_t &&) -> view_enforce_random_access<std::ranges::all_view<rng_t>>;
+view_enforce_random_access(rng_t &&) -> view_enforce_random_access<std::views::all_t<rng_t>>;
 //!\}
 
 // ============================================================================

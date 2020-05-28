@@ -439,12 +439,12 @@ public:
 
 //!\brief Class template argument deduction for view_translate_single.
 template <typename urng_t>
-view_translate_single(urng_t &&, translation_frames const) -> view_translate_single<std::ranges::all_view<urng_t>>;
+view_translate_single(urng_t &&, translation_frames const) -> view_translate_single<std::views::all_t<urng_t>>;
 
 
 //!\brief Class template argument deduction for view_translate_single with default translation_frames.
 template <typename urng_t>
-view_translate_single(urng_t &&) -> view_translate_single<std::ranges::all_view<urng_t>>;
+view_translate_single(urng_t &&) -> view_translate_single<std::views::all_t<urng_t>>;
 
 } // namespace seqan3::detail
 
@@ -745,7 +745,7 @@ template <typename urng_t>
              std::ranges::random_access_range<urng_t> &&
              nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
 //!\endcond
-view_translate(urng_t &&, translation_frames const = translation_frames{}) -> view_translate<std::ranges::all_view<urng_t>>;
+view_translate(urng_t &&, translation_frames const = translation_frames{}) -> view_translate<std::views::all_t<urng_t>>;
 
 } // namespace seqan3::detail
 

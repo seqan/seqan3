@@ -384,7 +384,7 @@ public:
      */
     template <std::ranges::viewable_range rng_t>
     //!\cond
-        requires std::constructible_from<rng_t, std::ranges::all_view<rng_t>>
+        requires std::constructible_from<rng_t, std::views::all_t<rng_t>>
     //!\endcond
     view_take_until(rng_t && _urange, fun_t _fun)
         : view_take_until{std::views::all(std::forward<rng_t>(_urange)), std::move(_fun)}
@@ -463,7 +463,7 @@ public:
 //!\brief Type deduction guide that strips references.
 //!\relates seqan3::detail::view_take_until
 template <typename urng_t, typename fun_t, bool or_throw = false, bool and_consume = false>
-view_take_until(urng_t &&, fun_t) -> view_take_until<std::ranges::all_view<urng_t>, fun_t, or_throw, and_consume>;
+view_take_until(urng_t &&, fun_t) -> view_take_until<std::views::all_t<urng_t>, fun_t, or_throw, and_consume>;
 
 // ============================================================================
 //  take_until_fn (adaptor definition)
@@ -492,7 +492,7 @@ struct take_until_fn
     template <std::ranges::viewable_range urng_t, typename fun_t>
     constexpr auto operator()(urng_t && urange, fun_t && fun) const
     {
-        return view_take_until<std::ranges::all_view<urng_t>, fun_t, or_throw, and_consume>
+        return view_take_until<std::views::all_t<urng_t>, fun_t, or_throw, and_consume>
         {
             std::views::all(std::forward<urng_t>(urange)),
             std::forward<fun_t>(fun)

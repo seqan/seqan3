@@ -302,7 +302,7 @@ public:
 
 //!\brief Deduces the async_input_buffer_view from the underlying range if it is a std::ranges::ViewableRange.
 template <std::ranges::viewable_range urng_t>
-async_input_buffer_view(urng_t &&, size_t const buffer_size) -> async_input_buffer_view<std::ranges::all_view<urng_t>>;
+async_input_buffer_view(urng_t &&, size_t const buffer_size) -> async_input_buffer_view<std::views::all_t<urng_t>>;
 //!\}
 
 // ============================================================================

@@ -53,7 +53,7 @@ private:
      * \{
      */
     //!\brief The reference_type.
-    using reference         = view_translate_single<std::ranges::all_view<std::ranges::range_reference_t<urng_t>>>;
+    using reference         = view_translate_single<std::views::all_t<std::ranges::range_reference_t<urng_t>>>;
     //!\brief The const_reference type.
     using const_reference   = reference;
     //!\brief The value_type (which equals the reference_type with any references removed).
@@ -272,7 +272,7 @@ public:
 
 //!\brief Class template argument deduction for view_translate_join.
 template <typename urng_t>
-view_translate_join(urng_t &&, translation_frames const = translation_frames{}) -> view_translate_join<std::ranges::all_view<urng_t>>;
+view_translate_join(urng_t &&, translation_frames const = translation_frames{}) -> view_translate_join<std::views::all_t<urng_t>>;
 
 // ============================================================================
 //  translate_fn (adaptor definition for both views)

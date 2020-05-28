@@ -133,7 +133,7 @@ public:
 //![view_deduction_guide]
 // A deduction guide for the view class template
 template <std::ranges::viewable_range orng_t>
-my_view(orng_t &&) -> my_view<std::ranges::all_view<orng_t>>;
+my_view(orng_t &&) -> my_view<std::views::all_t<orng_t>>;
 //![view_deduction_guide]
 
 //![adaptor_type_definition]

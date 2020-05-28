@@ -201,7 +201,7 @@ TEST(view_take, type_erasure)
 
         auto v = seqan3::views::take(urange, 3);
 
-        EXPECT_TRUE((std::same_as<decltype(v), seqan3::detail::view_take<std::ranges::all_view<std::list<int> &>,
+        EXPECT_TRUE((std::same_as<decltype(v), seqan3::detail::view_take<std::views::all_t<std::list<int> &>,
                                                                          false, false>>));
         EXPECT_TRUE((std::ranges::equal(v, std::vector{1, 2, 3})));
     }
@@ -299,7 +299,7 @@ TEST(view_take_exactly_or_throw, underlying_is_shorter)
                    std::invalid_argument); // no parsing, but throws in adaptor
 
     std::list l{'f', 'o', 'o'};
-    EXPECT_THROW(( seqan3::detail::view_take<std::ranges::all_view<std::list<char> &>, true, true>(l, 4) ),
+    EXPECT_THROW(( seqan3::detail::view_take<std::views::all_t<std::list<char> &>, true, true>(l, 4) ),
                    std::invalid_argument); // no parsing, but throws on construction
 
     std::string v;

@@ -68,7 +68,7 @@ private:
      * \{
      */
     //!\brief The underlying resource type.
-    using resource_type = std::ranges::all_view<resource_t>;
+    using resource_type = std::views::all_t<resource_t>;
     //!\brief The iterator over the underlying resource.
     using resource_iterator_type = std::ranges::iterator_t<resource_type>;
     //!\}

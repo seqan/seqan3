@@ -385,7 +385,7 @@ private:
 
 //!\brief A deduction guide for the view class template.
 template <std::ranges::viewable_range rng_t>
-minimiser_view(rng_t &&, uint32_t const & window_values_size) -> minimiser_view<std::ranges::all_view<rng_t>>;
+minimiser_view(rng_t &&, uint32_t const & window_values_size) -> minimiser_view<std::views::all_t<rng_t>>;
 
 
 // ---------------------------------------------------------------------------------------------------------------------
