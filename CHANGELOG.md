@@ -49,6 +49,9 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   * `seqan3::argument_parser::add_line`
   * `seqan3::argument_parser::add_list_item`
   Note that other `seqan3::argument_parser::option_spec`s like `REQUIRED` are ignored.
+* The `seqan3::file_validator` now supports compression extensions if the respective library is present:
+  * zlib is present: `.gz` and `.bgzf` are allowed
+  * bzip2 is present: `.bz2` is allowed
 
 #### I/O
 

@@ -21,9 +21,11 @@
 #include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/range/container/small_vector.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
@@ -358,40 +360,61 @@ public:
     }
 
 protected:
+    //!\privatesection
+    //!\brief Compare function object (unary) that ignores the difference between upper and lower case.
+    struct case_insensitive_compare
+    {
+        //!\brief The compare_str to compare with.
+        std::string compare_str;
+
+        //!\brief Compares the given argument `str` to the member `compare_str`.
+        auto operator()(std::string_view const & str)
+        {
+            return std::ranges::equal(str, compare_str, [] (char const chr1, char const chr2)
+                   {
+                       return std::tolower(chr1) == std::tolower(chr2);
+                   });
+        }
+    };
+
     /*!\brief Validates the given filename path based on the specified extensions.
      * \param path The filename path.
      * \throws seqan3::validation_error if the specified extensions don't match the given path, or
      *         std::filesystem::filesystem_error on underlying OS API errors.
      */
-    void validate_filename(std::filesystem::path const & path) const
+    void validate_filename(std::filesystem::path path) const
     {
         // If no valid extensions are given we can safely return here.
         if (extensions.empty())
             return;
 
+        std::string no_extension_msg{detail::to_string("The given filename ", path.string(), " has no extension.",
+                                                       " Expected one of the following valid extensions:", extensions)};
+
         // Check if extension is available.
         if (!path.has_extension())
-            throw validation_error{detail::to_string("The given filename ", path.string(),
-                                                            " has no extension. Expected one of the following valid"
-                                                            " extensions:", extensions, "!")};
+            throw validation_error{no_extension_msg};
 
-        // Drop the dot.
-        std::string drop_less_ext = path.extension().string().substr(1);
+        std::string extension = path.extension().string().substr(1); // drop the dot
 
-        // Compares the extensions in lower case.
-        auto case_insensitive_equal_to = [&] (std::string const & ext)
+        auto contained_in = [] (auto const & elem, auto const & list) constexpr
         {
-            return std::ranges::equal(ext, drop_less_ext, [] (char const chr1, char const chr2)
-                   {
-                       return std::tolower(chr1) == std::tolower(chr2);
-                   });
+            return std::ranges::find_if(list, case_insensitive_compare{elem}) != std::ranges::end(list);
         };
 
-        // Check if requested extension is present.
-        if (std::ranges::find_if(extensions, case_insensitive_equal_to) == extensions.end())
+        if (contained_in(extension, detail::compression_extensions))
+        {
+            path.replace_extension(); // strip compression extension
+            if (!path.has_extension()) // Check if another extension is available.
+                throw validation_error{no_extension_msg};
+            extension = path.extension().string().substr(1);
+        }
+
+        if (!contained_in(extension, extensions)) // Check if requested extension is present.
         {
             throw validation_error{detail::to_string("Expected one of the following valid extensions: ",
-                                                             extensions, "! Got ", drop_less_ext, " instead!")};
+                                                     extensions, "! Got ", extension, " instead (Note that valid",
+                                                     "compression extensions are stripped).")};
         }
     }
 
@@ -444,13 +467,26 @@ protected:
         file_guard.remove();
     }
 
-    //!\brief Returns the information of valid file extensions.
+    //!\brief Returns the information of valid file and compression formats.
     std::string valid_extensions_help_page_message() const
     {
-        if (extensions.empty())
-            return "";
-        else
-            return detail::to_string(" Valid file extensions are: [", extensions | views::join(std::string{", "}), "].");
+        std::string msg{};
+
+        if (!extensions.empty())
+        {
+            msg += " Valid file extensions are: [";
+            msg += detail::to_string(extensions | views::join(std::string{", "}));
+
+            if (!detail::compression_extensions.empty())
+            {
+                msg += "] possibly followed by: [";
+                msg += detail::to_string(detail::compression_extensions | views::join(std::string{", "}));
+            }
+
+            msg += "].";
+        }
+
+        return msg;
     }
 
     //!\brief Stores the extensions.

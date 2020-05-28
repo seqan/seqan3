@@ -10,6 +10,7 @@
 #include <fstream>
 
 #include <seqan3/argument_parser/argument_parser.hpp>
+#include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/filesystem>
 #include <seqan3/test/tmp_filename.hpp>
@@ -68,6 +69,14 @@ struct test_accessor
 
 using seqan3::detail::test_accessor;
 
+std::string const compression_extension_str = [] ()
+    {
+        std::string str;
+        for (auto const & s : seqan3::detail::compression_extensions | seqan3::views::join(std::string{", "}))
+            str += s;
+        return str;
+    }();
+
 TEST(validator_test, fullfill_concept)
 {
     EXPECT_FALSE(seqan3::validator<int>);
@@ -93,11 +102,24 @@ TEST(validator_test, input_file)
 {
     seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
     seqan3::test::tmp_filename tmp_name_2{"testbox_2.fasta"};
+    std::ofstream tmp_file(tmp_name.get_path());
+    std::ofstream tmp_file_2(tmp_name_2.get_path());
+
+#ifdef SEQAN3_HAS_ZLIB
+    seqan3::test::tmp_filename gz_tmp_name{"gztest.fasta.gz"};
+    seqan3::test::tmp_filename gz_no_ext_tmp_name{"gztest.gz"};
+    seqan3::test::tmp_filename bgzf_tmp_name{"bgzftest.fasta.bgzf"};
+    std::ofstream gztmp_file(gz_tmp_name.get_path());
+    std::ofstream gz_no_exttmp_file(gz_no_ext_tmp_name.get_path());
+    std::ofstream bgzftmp_file(bgzf_tmp_name.get_path());
+#endif
+#ifdef SEQAN3_HAS_BZIP2
+    seqan3::test::tmp_filename bz2_tmp_name{"bz2test.fasta.bz2"};
+    std::ofstream bz2tmp_file(bz2_tmp_name.get_path());
+#endif
 
     std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}};
 
-    std::ofstream tmp_file(tmp_name.get_path());
-    std::ofstream tmp_file_2(tmp_name_2.get_path());
 
     { // single file
 
@@ -129,6 +151,21 @@ TEST(validator_test, input_file)
             seqan3::input_file_validator<dummy_file> my_validator{};
             EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
         }
+
+#ifdef SEQAN3_HAS_ZLIB
+        {  // allow compression extension
+            seqan3::input_file_validator my_validator{std::vector{std::string{"fasta"}}};
+            EXPECT_NO_THROW(my_validator(gz_tmp_name.get_path()));
+            EXPECT_NO_THROW(my_validator(bgzf_tmp_name.get_path()));
+            EXPECT_THROW(my_validator(gz_no_ext_tmp_name.get_path()), seqan3::validation_error);
+        }
+#endif
+#ifdef SEQAN3_HAS_BZIP2
+        {  // allow compression extension
+            seqan3::input_file_validator my_validator{std::vector{std::string{"fasta"}}};
+            EXPECT_NO_THROW(my_validator(bz2_tmp_name.get_path()));
+        }
+#endif
 
         std::filesystem::path file_in_path;
 
@@ -178,8 +215,9 @@ TEST(validator_test, input_file)
                                "POSITIONAL ARGUMENTS\n"
                                "    ARGUMENT-1 (std::filesystem::path)\n"
                                "          desc The input file must exist and read permissions must be granted.\n"
-                               "          Valid file extensions are: [fa, sam, fasta].\n"
-                               "\n"} +
+                               "          Valid file extensions are: [fa, sam, fasta] possibly followed by:\n"} +
+                               "          [" + compression_extension_str + "].\n" +
+                               "\n" +
                                basic_options_str +
                                "\n" +
                                basic_version_str;
@@ -192,7 +230,8 @@ TEST(validator_test, input_file_ext_from_file)
     // Give as a template argument the seqan3 file type to get all valid extensions for this file.
     seqan3::input_file_validator<dummy_file> validator{};
     EXPECT_EQ(validator.get_help_page_message(), "The input file must exist and read permissions must be granted. "
-                                                 "Valid file extensions are: [fa, fasta, sam, bam].");
+                                                 "Valid file extensions are: [fa, fasta, sam, bam] "
+                                                 "possibly followed by: [" + compression_extension_str + "].");
 
     seqan3::input_file_validator validator2{};
     EXPECT_EQ(validator2.get_help_page_message(), "The input file must exist and read permissions must be granted.");
@@ -203,6 +242,19 @@ TEST(validator_test, output_file)
     seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
     seqan3::test::tmp_filename tmp_name_2{"testbox_2.fasta"};
     seqan3::test::tmp_filename tmp_name_3{"testbox_3.fa"};
+
+#ifdef SEQAN3_HAS_ZLIB
+    seqan3::test::tmp_filename gz_tmp_name{"gztest.fasta.gz"};
+    seqan3::test::tmp_filename gz_no_ext_tmp_name{"gztest.gz"};
+    seqan3::test::tmp_filename bgzf_tmp_name{"bgzftest.fasta.bgzf"};
+    std::ofstream gztmp_file(gz_tmp_name.get_path());
+    std::ofstream gz_no_exttmp_file(gz_no_ext_tmp_name.get_path());
+    std::ofstream bgzftmp_file(bgzf_tmp_name.get_path());
+#endif
+#ifdef SEQAN3_HAS_BZIP2
+    seqan3::test::tmp_filename bz2_tmp_name{"bz2test.fasta.bz2"};
+    std::ofstream bz2tmp_file(bz2_tmp_name.get_path());
+#endif
 
     std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}};
 
@@ -237,6 +289,20 @@ TEST(validator_test, output_file)
             EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
         }
 
+#ifdef SEQAN3_HAS_ZLIB
+        {  // allow compression extension
+            seqan3::input_file_validator my_validator{std::vector{std::string{"fasta"}}};
+            EXPECT_NO_THROW(my_validator(gz_tmp_name.get_path()));
+            EXPECT_NO_THROW(my_validator(bgzf_tmp_name.get_path()));
+            EXPECT_THROW(my_validator(gz_no_ext_tmp_name.get_path()), seqan3::validation_error);
+        }
+#endif
+#ifdef SEQAN3_HAS_BZIP2
+        {  // allow compression extension
+            seqan3::input_file_validator my_validator{std::vector{std::string{"fasta"}}};
+            EXPECT_NO_THROW(my_validator(bz2_tmp_name.get_path()));
+        }
+#endif
         std::filesystem::path file_out_path;
 
         // option
@@ -286,7 +352,8 @@ TEST(validator_test, output_file)
                                "POSITIONAL ARGUMENTS\n"
                                "    ARGUMENT-1 (std::filesystem::path)\n"
                                "          desc The output file must not exist already and write permissions\n"
-                               "          must be granted. Valid file extensions are: [fa, sam, fasta].\n"
+                               "          must be granted. Valid file extensions are: [fa, sam, fasta]\n"
+                               "          possibly followed by: [" + compression_extension_str + "].\n" +
                                "\n"} +
                                basic_options_str +
                                "\n" +
@@ -300,7 +367,8 @@ TEST(validator_test, output_file_ext_from_file)
     // Give as a template argument the seqan3 file type to get all valid extensions for this file.
     seqan3::output_file_validator<dummy_file> validator{};
     EXPECT_EQ(validator.get_help_page_message(), "The output file must not exist already and write permissions must "
-                                                 "be granted. Valid file extensions are: [fa, fasta, sam, bam].");
+                                                 "be granted. Valid file extensions are: [fa, fasta, sam, bam] "
+                                                 "possibly followed by: [" + compression_extension_str + "].");
 
     seqan3::output_file_validator validator2{};
     EXPECT_EQ(validator2.get_help_page_message(), "The output file must not exist already and write permissions must "
@@ -1162,14 +1230,14 @@ TEST(validator_test, chaining_validators)
         std::string my_stdout = testing::internal::GetCapturedStdout();
         std::string expected = std::string{"test_parser\n"
                                "===========\n"
-                               "\n" +
+                               "\n"} +
                                basic_options_str +
                                "    -s, --string-option (std::string)\n"
                                "          desc Default: . Value must match the pattern '(/[^/]+)+/.*\\.[^/\\.]+$'.\n"
                                "          The output file must not exist already and write permissions must be\n"
-                               "          granted. Valid file extensions are: [sa, so]. Value must match the\n"
-                               "          pattern '.*'.\n"
-                               "\n"} +
+                               "          granted. Valid file extensions are: [sa, so] possibly followed by:\n" +
+                               "          [" + compression_extension_str + "]. Value must match the pattern '.*'.\n"
+                               "\n" +
                                basic_version_str;
         EXPECT_EQ(my_stdout, expected);
     }
