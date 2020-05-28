@@ -115,13 +115,13 @@ protected:
         {
             if (options.embl_genbank_complete_header)
             {
-                std::ranges::copy(std::string_view{"LOCUS"}, std::ranges::back_inserter(id));
+                std::ranges::copy(std::string_view{"LOCUS"}, std::cpp20::back_inserter(id));
 
                 while (!is_char<'O'>(*std::ranges::begin(stream_view)))
                 {
                         std::ranges::copy(stream_view | views::take_line_or_throw
                                                       | views::char_to<std::ranges::range_value_t<id_type>>,
-                                                        std::ranges::back_inserter(id));
+                                                        std::cpp20::back_inserter(id));
                         id.push_back('\n');
                 }
             }
@@ -133,7 +133,7 @@ protected:
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(predicate)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
-                                      std::ranges::back_inserter(id));
+                                      std::cpp20::back_inserter(id));
                 };
 
                 if (options.truncate_ids)
@@ -169,7 +169,7 @@ protected:
                                                 return c;
                                             })
                                           | views::char_to<std::ranges::range_value_t<seq_type>>,    // convert to actual target alphabet
-                                            std::ranges::back_inserter(sequence));
+                                            std::cpp20::back_inserter(sequence));
         }
         else
         {

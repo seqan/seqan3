@@ -157,7 +157,7 @@ void unidirectional_search_all_collection(benchmark::State & state, options && o
                                                                           o.read_length, o.simulated_errors,
                                                                           o.prob_insertion, o.prob_deletion,
                                                                           o.stddev, i);
-        std::ranges::move(seq_reads, std::ranges::back_inserter(reads));
+        std::ranges::move(seq_reads, std::cpp20::back_inserter(reads));
     }
 
     seqan3::fm_index index{collection};

@@ -243,21 +243,3 @@ using ::ranges::cpp20::prev;
 } // namespace std::ranges
 
 #endif // __cpp_lib_ranges
-
-// ==========================================
-// LEGACY wrong std:: and std::ranges:: usage
-// ==========================================
-
-// we wrongly assume that these are in std::ranges namespace, even though they are in std namespace
-namespace std::ranges
-{
-inline namespace deprecated
-{
-// https://eel.is/c++draft/iterator.synopsis#lib:default_sentinel
-// // Header <iterator> synopsis
-// // [default.sentinels], default sentinels
-// struct default_sentinel_t;
-// inline constexpr default_sentinel_t default_sentinel{};
-using ::std::cpp20::back_inserter;
-} // namespace std::ranges::deprecated
-} // namespace std::ranges

@@ -17,7 +17,7 @@ number_type to_number(range_type && range)
 {
     std::string str;
     number_type num;
-    std::ranges::copy(range, std::ranges::back_inserter(str));
+    std::ranges::copy(range, std::cpp20::back_inserter(str));
     auto res = std::from_chars(&str[0], &str[0] + str.size(), num);
 
     if (res.ec != std::errc{})
