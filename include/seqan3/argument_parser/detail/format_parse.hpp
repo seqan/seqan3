@@ -219,7 +219,7 @@ private:
     * \param[in] long_id The name of the long identifier.
     * \returns The input long name prepended with a double dash.
     */
-    std::string prepend_dash(std::string const & long_id)
+    static std::string prepend_dash(std::string const & long_id)
     {
         return ("--" + long_id);
     }
@@ -228,7 +228,7 @@ private:
     * \param[in] short_id The name of the short identifier.
     * \returns The input short name prepended with a single dash.
     */
-    std::string prepend_dash(char const short_id)
+    static std::string prepend_dash(char const short_id)
     {
         return ("-" + std::string(1, short_id));
     }
