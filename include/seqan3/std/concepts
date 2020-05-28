@@ -23,12 +23,6 @@ namespace std
 {
 inline namespace deprecated
 {
-/*!\brief This should be named default_initializable.
- * \deprecated Use std::default_initializable instead.
- */
-template<class T>
-concept default_constructible = default_initializable<T>;
-
 /*!\brief This should be removed.
  * \deprecated No viable alternative.
  */
@@ -367,15 +361,15 @@ template < class T, class... Args >
 SEQAN3_CONCEPT constructible_from = destructible<T> && std::is_constructible_v<T, Args...>;
 //!\endcond
 
-/*!\interface   std::default_constructible <>
+/*!\interface   std::default_initializable <>
  * \extends     std::constructible_from
- * \brief       The std::default_constructible concept provides a shorthand for the common case when the question is whether
+ * \brief       The std::default_initializable concept provides a shorthand for the common case when the question is whether
  *              a type can be constructed with no arguments.
- * \sa          https://en.cppreference.com/w/cpp/concepts/default_constructible
+ * \sa          https://en.cppreference.com/w/cpp/concepts/default_initializable
  */
 //!\cond
 template < class T >
-SEQAN3_CONCEPT default_constructible = constructible_from<T>;
+SEQAN3_CONCEPT default_initializable = constructible_from<T>;
 //!\endcond
 
 /*!\interface   std::move_constructible <>
@@ -629,14 +623,14 @@ SEQAN3_CONCEPT copyable = copy_constructible<T> && movable<T> && assignable_from
 //!\endcond
 
 /*!\interface   std::semiregular
- * \brief       Subsumes std::copyable and std::default_constructible.
+ * \brief       Subsumes std::copyable and std::default_initializable.
  * \extends     std::copyable
- * \extends     std::default_constructible
+ * \extends     std::default_initializable
  * \sa          https://en.cppreference.com/w/cpp/concepts/semiregular
  */
 //!\cond
 template <class T>
-SEQAN3_CONCEPT semiregular = copyable<T> && default_constructible<T>;
+SEQAN3_CONCEPT semiregular = copyable<T> && default_initializable<T>;
 //!\endcond
 
 /*!\interface   std::regular

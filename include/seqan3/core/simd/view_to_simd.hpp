@@ -64,7 +64,7 @@ private:
                   "The underlying range must model forward_range.");
     static_assert(std::ranges::input_range<std::ranges::range_value_t<urng_t>>,
                   "Expects the value type of the underlying range to be an input_range.");
-    static_assert(std::default_constructible<std::ranges::range_value_t<urng_t>>,
+    static_assert(std::default_initializable<std::ranges::range_value_t<urng_t>>,
                   "Expects the inner range to be default constructible.");
     static_assert(semialphabet<std::ranges::range_value_t<std::ranges::range_value_t<urng_t>>>,
                   "Expects semi-alphabet as value type of the inner range.");
@@ -723,7 +723,7 @@ namespace seqan3::views
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * the expression `std::ranges::input_range<std::ranges::range_value_t<urng_t>` must evaluate to `true`
- * * the expression `std::default_constructible<std::ranges::range_value_t<urng_t>>` must evaluate to `true`
+ * * the expression `std::default_initializable<std::ranges::range_value_t<urng_t>>` must evaluate to `true`
  * * the expression `semialphabet<std::ranges::range_value_t<std::ranges::range_value_t<urng_t>>>` must evaluate to `true`
  * * `rrng_type` is the type of the range returned by this view.
  * * for more details, see \ref views.
