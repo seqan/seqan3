@@ -205,12 +205,12 @@ TEST(range_and_iterator, size_type_)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, innermost_value_type_)
+TEST(range_and_iterator, range_innermost_value)
 {
     using vector_of_int_vector = std::vector<std::vector<int>>;
-    using type_list_example = seqan3::type_list<typename seqan3::innermost_value_type<std::vector<int>>::type, // long
-                                                seqan3::innermost_value_type_t<std::vector<int>>, // short
-                                                seqan3::innermost_value_type_t<vector_of_int_vector>>; // two-level
+    using type_list_example = seqan3::type_list<typename seqan3::range_innermost_value<std::vector<int>>::type, // long
+                                                seqan3::range_innermost_value_t<std::vector<int>>, // short
+                                                seqan3::range_innermost_value_t<vector_of_int_vector>>; // two-level
 
     using comp_list = seqan3::type_list<int,
                                         int,
@@ -223,24 +223,25 @@ TEST(range_and_iterator, innermost_value_type_)
 
 TEST(range_and_iterator, dimension)
 {
-    EXPECT_EQ(1u, seqan3::dimension_v<std::vector<int>>);
-    EXPECT_EQ(2u, seqan3::dimension_v<std::vector<std::vector<int>>>);
+    EXPECT_EQ(1u, seqan3::range_dimension_v<std::vector<int>>);
+    EXPECT_EQ(2u, seqan3::range_dimension_v<std::vector<std::vector<int>>>);
 }
 
-TEST(range_and_iterator, compatible)
+TEST(range_and_iterator, range_compatible)
 {
     // true for "compatible" ranges
-    EXPECT_TRUE((seqan3::compatible<std::vector<int>, std::list<int>>));
-    EXPECT_TRUE((seqan3::compatible<std::list<std::vector<char>>, std::vector<std::string>>));
+    EXPECT_TRUE((seqan3::range_compatible<std::vector<int>, std::list<int>>));
+    EXPECT_TRUE((seqan3::range_compatible<std::list<std::vector<char>>, std::vector<std::string>>));
 
     // false for un-"compatible" ranges
-    EXPECT_FALSE((seqan3::compatible<std::list<std::vector<char>>, std::string>));
-    EXPECT_FALSE((seqan3::compatible<std::list<int>, int>));
-    EXPECT_FALSE((seqan3::compatible<std::vector<int>, std::string>));
+    EXPECT_FALSE((seqan3::range_compatible<std::list<std::vector<char>>, std::string>));
+    EXPECT_FALSE((seqan3::range_compatible<std::list<int>, int>));
+    EXPECT_FALSE((seqan3::range_compatible<std::vector<int>, std::string>));
 
     // compatible not defined on iterators
-    EXPECT_FALSE((seqan3::compatible<std::vector<int>, std::ranges::iterator_t<std::vector<int>>>));
-    EXPECT_FALSE((seqan3::compatible<std::vector<int>, std::ranges::iterator_t<std::vector<int> const>>));
-    EXPECT_FALSE((seqan3::compatible<std::list<std::vector<char>>, std::ranges::iterator_t<std::vector<std::string>>>));
-    EXPECT_FALSE((seqan3::compatible<std::list<std::vector<char>>, std::ranges::iterator_t<std::string>>));
+    EXPECT_FALSE((seqan3::range_compatible<std::vector<int>, std::ranges::iterator_t<std::vector<int>>>));
+    EXPECT_FALSE((seqan3::range_compatible<std::vector<int>, std::ranges::iterator_t<std::vector<int> const>>));
+    EXPECT_FALSE((seqan3::range_compatible<std::list<std::vector<char>>,
+                                           std::ranges::iterator_t<std::vector<std::string>>>));
+    EXPECT_FALSE((seqan3::range_compatible<std::list<std::vector<char>>, std::ranges::iterator_t<std::string>>));
 }

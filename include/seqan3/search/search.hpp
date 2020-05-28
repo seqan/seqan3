@@ -187,7 +187,7 @@ struct search_configuration_validator
     static void validate_query_type()
     {
         using pure_query_t = remove_cvref_t<query_t>;
-        if constexpr(dimension_v<pure_query_t> == 1u)
+        if constexpr(range_dimension_v<pure_query_t> == 1u)
         {
             static_assert(std::ranges::random_access_range<pure_query_t>,
                           "The query sequence must model random_access_range.");

@@ -182,10 +182,10 @@ private:
     void construct(text_t && text)
     {
         static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
-        static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::convertible_to<innermost_value_type_t<text_t>, alphabet_t>,
+        static_assert(alphabet_size<range_innermost_value_t<text_t>> <= 256, "The alphabet is too big.");
+        static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
                      "The alphabet of the text collection must be convertible to the alphabet of the index.");
-        static_assert(dimension_v<text_t> == 1, "The input cannot be a text collection.");
+        static_assert(range_dimension_v<text_t> == 1, "The input cannot be a text collection.");
 
         // text must not be empty
         if (std::ranges::empty(text))
@@ -234,10 +234,10 @@ private:
         static_assert(std::ranges::bidirectional_range<text_t>, "The text collection must model bidirectional_range.");
         static_assert(std::ranges::bidirectional_range<std::ranges::range_reference_t<text_t>>,
                       "The elements of the text collection must model bidirectional_range.");
-        static_assert(alphabet_size<innermost_value_type_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::convertible_to<innermost_value_type_t<text_t>, alphabet_t>,
+        static_assert(alphabet_size<range_innermost_value_t<text_t>> <= 256, "The alphabet is too big.");
+        static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
                      "The alphabet of the text collection must be convertible to the alphabet of the index.");
-        static_assert(dimension_v<text_t> == 2, "The input must be a text collection.");
+        static_assert(range_dimension_v<text_t> == 2, "The input must be a text collection.");
 
         // text collection must not be empty
         if (std::ranges::begin(text) == std::ranges::end(text))
@@ -520,7 +520,7 @@ public:
  */
 //! \brief Deduces the alphabet and dimensions of the text.
 template <std::ranges::range text_t>
-fm_index(text_t &&) -> fm_index<innermost_value_type_t<text_t>, text_layout{dimension_v<text_t> != 1}>;
+fm_index(text_t &&) -> fm_index<range_innermost_value_t<text_t>, text_layout{range_dimension_v<text_t> != 1}>;
 //!\}
 
 //!\}

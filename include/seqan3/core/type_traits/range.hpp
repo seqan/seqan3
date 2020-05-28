@@ -21,7 +21,7 @@
 #include <seqan3/std/ranges>
 #include <seqan3/std/iterator>
 
-// TODO(h-2): add innermost_reference instead of or addition to innermost_value_type?
+// TODO(h-2): add innermost_reference instead of or addition to range_innermost_value?
 
 //NOTE(h-2): for the range overloads we explicitly forbid that the type is iteratoer
 // because some types are actually both (e.g. std::directory_iterator)
@@ -152,7 +152,7 @@ struct size_type<rng_t>
 };
 
 // ----------------------------------------------------------------------------
-// innermost_value_type
+// range_innermost_value
 // ----------------------------------------------------------------------------
 
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
@@ -169,7 +169,7 @@ template <typename t>
 //!\cond
     requires detail::has_range_value_type<t>
 //!\endcond
-struct innermost_value_type
+struct range_innermost_value
 {
     //!\brief The return type (recursion not shown).
     using type = std::ranges::range_value_t<remove_cvref_t<t>>;
@@ -178,19 +178,19 @@ struct innermost_value_type
 //!\cond
 template <typename t>
     requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<remove_cvref_t<t>>>
-struct innermost_value_type<t>
+struct range_innermost_value<t>
 {
-    using type = typename innermost_value_type<std::ranges::range_value_t<remove_cvref_t<t>>>::type;
+    using type = typename range_innermost_value<std::ranges::range_value_t<remove_cvref_t<t>>>::type;
 };
 //!\endcond
 
-//!\brief Shortcut for seqan3::innermost_value_type (transformation_trait shortcut).
-//!\see seqan3::innermost_value_type
+//!\brief Shortcut for seqan3::range_innermost_value (transformation_trait shortcut).
+//!\see seqan3::range_innermost_value
 template <typename t>
-using innermost_value_type_t = typename innermost_value_type<t>::type;
+using range_innermost_value_t = typename range_innermost_value<t>::type;
 
 // ----------------------------------------------------------------------------
-// dimension_v
+// range_dimension_v
 // ----------------------------------------------------------------------------
 
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
@@ -207,22 +207,22 @@ template <typename t>
 //!\cond
     requires detail::has_range_value_type<t>
 //!\endcond
-constexpr size_t dimension_v = 1;
+constexpr size_t range_dimension_v = 1;
 
 //!\cond
 template <typename t>
     requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<remove_cvref_t<t>>>
-constexpr size_t dimension_v<t> = dimension_v<std::ranges::range_value_t<remove_cvref_t<t>>> + 1;
+constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_value_t<remove_cvref_t<t>>> + 1;
 //!\endcond
 
 // ----------------------------------------------------------------------------
-// compatible
+// range_compatible
 // ----------------------------------------------------------------------------
 
 //NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
-/*!\interface seqan3::compatible <>
- * \brief Two types are "compatible" if their seqan3::dimension_v and their seqan3::innermost_value_type_t are
+/*!\interface seqan3::range_compatible <>
+ * \brief Two types are "compatible" if their seqan3::range_dimension_v and their seqan3::range_innermost_value_t are
  * the same.
  *
  * \details
@@ -234,11 +234,11 @@ constexpr size_t dimension_v<t> = dimension_v<std::ranges::range_value_t<remove_
  */
 //!\cond
 template <typename t1, typename t2>
-SEQAN3_CONCEPT compatible = requires (t1, t2)
+SEQAN3_CONCEPT range_compatible = requires (t1, t2)
 {
-    requires (dimension_v<t1> == dimension_v<t2>);
+    requires (range_dimension_v<t1> == range_dimension_v<t2>);
 
-    requires std::is_same_v<innermost_value_type_t<t1>, innermost_value_type_t<t2>>;
+    requires std::is_same_v<range_innermost_value_t<t1>, range_innermost_value_t<t2>>;
 };
 //!\endcond
 
