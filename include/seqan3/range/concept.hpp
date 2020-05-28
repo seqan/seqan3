@@ -30,7 +30,7 @@ namespace seqan3
  * For a type `t` it usually holds that if `t` is a range, `t const` is also a range with similar properties, but
  * there are cases where this does not hold:
  *
- *   * a `const` range is usually not writable so std::output_range is lost; pure output ranges
+ *   * a `const` range is usually not writable so std::ranges::output_range is lost; pure output ranges
  * (those that are not also input ranges) are therefore not `const`-iterable;
  *   * single-pass input ranges, like SeqAn files, are not `const`-iterable, because "single-pass-ness" implies that
  * there is something in the range that changes on every iterator increment (and `const` ranges can't change);

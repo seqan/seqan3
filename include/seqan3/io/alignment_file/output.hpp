@@ -586,7 +586,7 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::output_range and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::output_range and have a reference type that
      *                   satisfies seqan3::tuple_like.
      * \param[in] range  The range to write.
      *
