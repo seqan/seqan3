@@ -75,13 +75,10 @@ struct naive_minimiser_hash_fn
                                                    | std::views::transform([seed] (uint64_t i) { return i ^ seed; })
                                                    | std::views::reverse;
        auto both = seqan3::views::zip(forward, reverse)
-                   | std::views::transform( [ ] (auto i) {return std::min(std::get<0>(i), std::get<1>(i));});
+                 | std::views::transform( [ ] (auto i) {return std::min(std::get<0>(i), std::get<1>(i));});
 
        return both | ranges::views::sliding(window_size - shape.size() + 1)
-                                         | std::views::transform([] (auto const in)
-                                                                   {
-                                                                       return *std::min_element(in.begin(), in.end());
-                                                                   });
+                   | std::views::transform([] (auto const in) {return *std::min_element(in.begin(), in.end());});
    }
 };
 
