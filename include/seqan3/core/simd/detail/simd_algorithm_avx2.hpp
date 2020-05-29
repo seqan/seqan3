@@ -46,11 +46,11 @@ constexpr target_simd_t upcast_signed_avx2(source_simd_t const & src);
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_unsigned_avx2(source_simd_t const & src);
 
-/*!\copydoc seqan3::detail::extract_halve
+/*!\copydoc seqan3::detail::extract_half
  * \attention This is the implementation for AVX2 intrinsics.
  */
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_halve_avx2(simd_t const & src);
+constexpr simd_t extract_half_avx2(simd_t const & src);
 
 /*!\copydoc seqan3::detail::extract_quarter
  * \attention This is the implementation for AVX2 intrinsics.
@@ -81,9 +81,59 @@ constexpr simd_t load_avx2(void const * mem_addr)
     return reinterpret_cast<simd_t>(_mm256_loadu_si256(reinterpret_cast<__m256i const *>(mem_addr)));
 }
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::simd::transpose
 template <simd::simd_concept simd_t>
-inline void transpose_matrix_avx2(std::array<simd_t, simd_traits<simd_t>::length> & matrix);
+inline void transpose_matrix_avx2(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
+{
+    // emulate missing _mm256_unpacklo_epi128/_mm256_unpackhi_epi128 instructions
+    auto _mm256_unpacklo_epi128 = [] (__m256i const & a, __m256i const & b)
+    {
+        return _mm256_permute2x128_si256(a, b, 0x20);
+    };
+
+    auto _mm256_unpackhi_epi128 = [] (__m256i const & a, __m256i const & b)
+    {
+        return _mm256_permute2x128_si256(a, b, 0x31);
+    };
+
+    // A look-up table to reverse the lowest 4 bits in order to permute the transposed rows.
+    static const uint8_t bit_rev[] = { 0, 8, 4,12, 2,10, 6,14, 1, 9, 5,13, 3,11, 7,15,
+                                      16,24,20,28,18,26,22,30,17,25,21,29,19,27,23,31};
+
+    // transpose a 32x32 byte matrix
+    __m256i tmp1[32];
+    for (int i = 0; i < 16; ++i)
+    {
+        tmp1[i]    = _mm256_unpacklo_epi8(
+            reinterpret_cast<const __m256i &>(matrix[2*i]),
+            reinterpret_cast<const __m256i &>(matrix[2*i+1])
+        );
+        tmp1[i+16] = _mm256_unpackhi_epi8(
+            reinterpret_cast<const __m256i &>(matrix[2*i]),
+            reinterpret_cast<const __m256i &>(matrix[2*i+1])
+        );
+    }
+    __m256i  tmp2[32];
+    for (int i = 0; i < 16; ++i)
+    {
+        tmp2[i]    = _mm256_unpacklo_epi16(tmp1[2*i], tmp1[2*i+1]);
+        tmp2[i+16] = _mm256_unpackhi_epi16(tmp1[2*i], tmp1[2*i+1]);
+    }
+    for (int i = 0; i < 16; ++i)
+    {
+        tmp1[i]    = _mm256_unpacklo_epi32(tmp2[2*i], tmp2[2*i+1]);
+        tmp1[i+16] = _mm256_unpackhi_epi32(tmp2[2*i], tmp2[2*i+1]);
+    }
+    for (int i = 0; i < 16; ++i)
+    {
+        tmp2[i]    = _mm256_unpacklo_epi64(tmp1[2*i], tmp1[2*i+1]);
+        tmp2[i+16] = _mm256_unpackhi_epi64(tmp1[2*i], tmp1[2*i+1]);
+    }
+    for (int i = 0; i < 16; ++i)
+    {
+        matrix[bit_rev[i]]    = reinterpret_cast<simd_t>(_mm256_unpacklo_epi128(tmp2[2*i],tmp2[2*i+1]));
+        matrix[bit_rev[i+16]] = reinterpret_cast<simd_t>(_mm256_unpackhi_epi128(tmp2[2*i],tmp2[2*i+1]));
+    }
+}
 
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_signed_avx2(source_simd_t const & src)
@@ -139,17 +189,26 @@ constexpr target_simd_t upcast_unsigned_avx2(source_simd_t const & src)
     }
 }
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_halve
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_halve_avx2(simd_t const & src);
+constexpr simd_t extract_half_avx2(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm256_castsi128_si256(
+            _mm256_extracti128_si256(reinterpret_cast<__m256i const &>(src), index)));
+}
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_quarter
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_quarter_avx2(simd_t const & src);
+constexpr simd_t extract_quarter_avx2(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm256_castsi128_si256(
+            _mm_cvtsi64x_si128(_mm256_extract_epi64(reinterpret_cast<__m256i const &>(src), index))));
+}
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_eighth
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_eighth_avx2(simd_t const & src);
+constexpr simd_t extract_eighth_avx2(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm256_castsi128_si256(
+            _mm_cvtsi32_si128(_mm256_extract_epi32(reinterpret_cast<__m256i const &>(src), index))));
+}
 
 } // namespace seqan3::detail
 

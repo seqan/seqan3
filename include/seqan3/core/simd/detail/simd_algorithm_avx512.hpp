@@ -46,11 +46,11 @@ constexpr target_simd_t upcast_signed_avx512(source_simd_t const & src);
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_unsigned_avx512(source_simd_t const & src);
 
-/*!\copydoc seqan3::detail::extract_halve
+/*!\copydoc seqan3::detail::extract_half
  * \attention This is the implementation for AVX512 intrinsics.
  */
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_halve_avx512(simd_t const & src);
+constexpr simd_t extract_half_avx512(simd_t const & src);
 
 /*!\copydoc seqan3::detail::extract_quarter
  * \attention This is the implementation for AVX512 intrinsics.
@@ -139,9 +139,9 @@ constexpr target_simd_t upcast_unsigned_avx512(source_simd_t const & src)
     }
 }
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_halve
+// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_half
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_halve_avx512(simd_t const & src);
+constexpr simd_t extract_half_avx512(simd_t const & src);
 
 // TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_quarter
 template <uint8_t index, simd::simd_concept simd_t>

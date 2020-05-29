@@ -348,8 +348,8 @@ private:
     {
         if constexpr (chunk_size == simd_traits<max_simd_type>::length / 2)  // upcast into 2 vectors.
         {
-            return std::array{simd::upcast<simd_t>(extract_halve<0>(row)),  // 1. half
-                              simd::upcast<simd_t>(extract_halve<1>(row))}; // 2. half
+            return std::array{simd::upcast<simd_t>(extract_half<0>(row)),  // 1. half
+                              simd::upcast<simd_t>(extract_half<1>(row))}; // 2. half
         }
         else if constexpr (chunk_size == simd_traits<max_simd_type>::length / 4) // upcast into 4 vectors.
         {
