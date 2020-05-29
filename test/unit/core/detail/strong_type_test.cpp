@@ -81,6 +81,11 @@ struct convertible_type : seqan3::detail::strong_type<int, convertible_type, seq
     using seqan3::detail::strong_type<int, convertible_type, seqan3::detail::strong_type_skill::convert>::strong_type;
 };
 
+struct comp_type : seqan3::detail::strong_type<int, comp_type, seqan3::detail::strong_type_skill::comparable>
+{
+    using seqan3::detail::strong_type<int, comp_type, seqan3::detail::strong_type_skill::comparable>::strong_type;
+};
+
 struct multi_skill_type : seqan3::detail::strong_type<int,
                                                       multi_skill_type,
                                                       seqan3::detail::strong_type_skill::additive  |
@@ -256,6 +261,17 @@ TEST(strong_type, convertible_type)
     convertible_type f1{1};
     int v{f1};
     EXPECT_EQ(v, f1.get());
+}
+
+TEST(strong_type, comparable_type)
+{
+    comp_type f1{1};
+    comp_type f2{1};
+    comp_type f3{42};
+
+    EXPECT_EQ(f1, f2);
+    EXPECT_NE(f1, f3);
+    EXPECT_NE(f2, f3);
 }
 
 TEST(strong_type, multi_skill_type)
