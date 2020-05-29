@@ -34,7 +34,6 @@ As the example shows, k-mer size, shape and window size influence the total amou
      alt="Minimiser Example"
      style="width: 1000px; float: left; margin-right: 2px;" />
 
-
 ### Non-lexicographical Minimisers
 
 When sliding the window over the sequence, it might happen that consecutive minimisers differ only slightly.
@@ -45,7 +44,6 @@ because they contain no new information about the underlying sequence.
 Additionally, sequences with a repetition of A’s will be seen as more similar to each other than they actually are.
 As [Marçais et al.](https://doi.org/10.1093/bioinformatics/btx235) have shown, randomizing the order of the k-mers
 can solve this problem.
-
 
 # Usage in SeqAn3
 
@@ -67,11 +65,7 @@ XORs the hash values with a random seed (Default: 0x8F3F73B5CF1C9ADE). How would
 then?
 Well, you just use XOR again!
 
-```cpp
-uint64_t seed = 0x8F3F73B5CF1C9ADE;
-auto hash_values = minimisers | std::views::transform([seed] (uint64_t i) {return i ^ seed;});
-seqan3::debug_stream << hash_values << '\n'; // results in: [182, 216, 134]
-```
+\include seed_example.cpp
 
 From these hash values, you can obtain the sequence they are representing by transforming the numbers to base 4. (For
 example, 182 is "2312" in base four and therefore represents "GTCG".)
