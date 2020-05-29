@@ -28,7 +28,7 @@ using alphabet_variant_types = ::testing::Types<seqan3::alphabet_variant<seqan3:
                                                 seqan3::alphabet_variant<seqan3::dna4, seqan3::dna5, seqan3::gap>,
                                                 seqan3::alphabet_variant<char, seqan3::gap>>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_variant, alphabet_, alphabet_variant_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_variant, alphabet, alphabet_variant_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_variant, semi_alphabet_test, alphabet_variant_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_variant, alphabet_constexpr, alphabet_variant_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_variant, semi_alphabet_constexpr, alphabet_variant_types, );

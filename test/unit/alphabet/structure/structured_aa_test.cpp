@@ -59,7 +59,7 @@ public:
 
 using structured_aa_types = ::testing::Types<seqan3::structured_aa<seqan3::aa27, seqan3::dssp9>>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(structured_aa, alphabet_, structured_aa_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(structured_aa, alphabet, structured_aa_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(structured_aa, semi_alphabet_test, structured_aa_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(structured_aa, alphabet_constexpr, structured_aa_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(structured_aa, semi_alphabet_constexpr, structured_aa_types, );

@@ -16,7 +16,7 @@
 
 using seqan3::operator""_rna5;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(rna5, alphabet_, seqan3::rna5, );
+INSTANTIATE_TYPED_TEST_SUITE_P(rna5, alphabet, seqan3::rna5, );
 INSTANTIATE_TYPED_TEST_SUITE_P(rna5, semi_alphabet_test, seqan3::rna5, );
 INSTANTIATE_TYPED_TEST_SUITE_P(rna5, alphabet_constexpr, seqan3::rna5, );
 INSTANTIATE_TYPED_TEST_SUITE_P(rna5, semi_alphabet_constexpr, seqan3::rna5, );

@@ -15,7 +15,7 @@
 
 using seqan3::operator""_cigar_op;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(cigar_op, alphabet_, seqan3::cigar_op, );
+INSTANTIATE_TYPED_TEST_SUITE_P(cigar_op, alphabet, seqan3::cigar_op, );
 INSTANTIATE_TYPED_TEST_SUITE_P(cigar_op, semi_alphabet_test, seqan3::cigar_op, );
 INSTANTIATE_TYPED_TEST_SUITE_P(cigar_op, alphabet_constexpr, seqan3::cigar_op, );
 INSTANTIATE_TYPED_TEST_SUITE_P(cigar_op, semi_alphabet_constexpr, seqan3::cigar_op, );

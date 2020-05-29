@@ -16,7 +16,7 @@
 
 using seqan3::operator""_db3;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(dot_bracket3, alphabet_, seqan3::dot_bracket3, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dot_bracket3, alphabet, seqan3::dot_bracket3, );
 INSTANTIATE_TYPED_TEST_SUITE_P(dot_bracket3, semi_alphabet_test, seqan3::dot_bracket3, );
 INSTANTIATE_TYPED_TEST_SUITE_P(dot_bracket3, alphabet_constexpr, seqan3::dot_bracket3, );
 INSTANTIATE_TYPED_TEST_SUITE_P(dot_bracket3, semi_alphabet_constexpr, seqan3::dot_bracket3, );

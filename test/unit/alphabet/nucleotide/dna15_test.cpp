@@ -16,7 +16,7 @@
 
 using seqan3::operator""_dna15;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(dna15, alphabet_, seqan3::dna15, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna15, alphabet, seqan3::dna15, );
 INSTANTIATE_TYPED_TEST_SUITE_P(dna15, semi_alphabet_test, seqan3::dna15, );
 INSTANTIATE_TYPED_TEST_SUITE_P(dna15, alphabet_constexpr, seqan3::dna15, );
 INSTANTIATE_TYPED_TEST_SUITE_P(dna15, semi_alphabet_constexpr, seqan3::dna15, );

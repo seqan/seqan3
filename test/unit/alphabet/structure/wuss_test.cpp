@@ -16,15 +16,15 @@
 
 using seqan3::operator""_wuss51;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, alphabet_, seqan3::wuss51, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, alphabet, seqan3::wuss51, );
 INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, semi_alphabet_test, seqan3::wuss51, );
 INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, alphabet_constexpr, seqan3::wuss51, );
 INSTANTIATE_TYPED_TEST_SUITE_P(wuss51, semi_alphabet_constexpr, seqan3::wuss51, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, alphabet_, seqan3::wuss<15>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, alphabet, seqan3::wuss<15>, );
 INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, semi_alphabet_test, seqan3::wuss<15>, );
 INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, alphabet_constexpr, seqan3::wuss<15>, );
 INSTANTIATE_TYPED_TEST_SUITE_P(wuss15, semi_alphabet_constexpr, seqan3::wuss<15>, );
-INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, alphabet_, seqan3::wuss<67>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, alphabet, seqan3::wuss<67>, );
 INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, semi_alphabet_test, seqan3::wuss<67>, );
 INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, alphabet_constexpr, seqan3::wuss<67>, );
 INSTANTIATE_TYPED_TEST_SUITE_P(wuss67, semi_alphabet_constexpr, seqan3::wuss<67>, );

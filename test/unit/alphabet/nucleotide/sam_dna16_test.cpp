@@ -19,7 +19,7 @@ using seqan3::operator""_sam_dna16;
 // sam_dna16 alphabet
 // ------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, alphabet_, seqan3::sam_dna16, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, alphabet, seqan3::sam_dna16, );
 INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, semi_alphabet_test, seqan3::sam_dna16, );
 INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, alphabet_constexpr, seqan3::sam_dna16, );
 INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, semi_alphabet_constexpr, seqan3::sam_dna16, );
