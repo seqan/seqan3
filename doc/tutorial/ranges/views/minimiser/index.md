@@ -56,7 +56,7 @@ assignment!
 Task: Obtain the minimisers for "CCACGTCGACGGTT" with an ungapped shape of size 4 and a window size of 8.
 \endassignment
 \solution
-\include minimiser_solution1.cpp
+\include doc/tutorial/ranges/views/minimiser/minimiser_solution1.cpp
 \endsolution
 
 If you have completed the assignment, you probably wonder what these large numbers mean. As explained above, the
@@ -65,7 +65,7 @@ XORs the hash values with a random seed (Default: 0x8F3F73B5CF1C9ADE). How would
 then?
 Well, you just use XOR again!
 
-\include seed_example.cpp
+\include doc/tutorial/ranges/views/minimiser/seed_example.cpp
 
 From these hash values, you can obtain the sequence they are representing by transforming the numbers to base 4. (For
 example, 182 is "2312" in base four and therefore represents "GTCG".)
@@ -96,7 +96,7 @@ same hash value.
 
 \endassignment
 \solution
-\include minimiser_solution2.cpp
+\include doc/tutorial/ranges/views/minimiser/minimiser_solution2.cpp
 \endsolution
 
 ### Ignoring the backward strand
@@ -120,5 +120,5 @@ and `shape.size()` equals `window_size` is prohibited. Please, use `seqan3::view
 Task: Repeat assignment 2 but this time do not consider the backward strand.
 \endassignment
 \solution
-\include minimiser_solution3.cpp
+\include doc/tutorial/ranges/views/minimiser/minimiser_solution3.cpp
 \endsolution
